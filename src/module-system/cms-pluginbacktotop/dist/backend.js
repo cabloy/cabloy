@@ -1,300 +1,205 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const config = __webpack_require__(1);
-      const locales = __webpack_require__(2);
-      const errors = __webpack_require__(4);
-      const middlewares = __webpack_require__(5);
+/***/ 76:
+/***/ ((module) => {
 
-      module.exports = app => {
-
-        // routes
-        const routes = __webpack_require__(6)(app);
-        // services
-        const services = __webpack_require__(8)(app);
-        // models
-        const models = __webpack_require__(10)(app);
-        // meta
-        const meta = __webpack_require__(11)(app);
-
-        return {
-          routes,
-          services,
-          models,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports) {
-
-      // eslint-disable-next-line
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
+  const config = {};
 
-        // plugin
-        config.plugin = {
-          animateSpeed: 500,
-        };
+  // plugin
+  config.plugin = {
+    animateSpeed: 500,
+  };
 
-        return config;
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'zh-cn': __webpack_require__(3),
-      };
+  return config;
+};
 
 
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = {
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = {
-      };
+/***/ 72:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(7);
-
-      module.exports = app => {
-        const routes = [
-          // version
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
-        ];
-        return routes;
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async test() {
-            await this.service.version.test(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
 
 
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const version = __webpack_require__(9);
+/***/ 232:
+/***/ ((module) => {
 
-      module.exports = app => {
-        const services = {
-          version,
-        };
-        return services;
-      };
+module.exports = app => {
+  const schemas = {};
+  return schemas;
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-          }
-
-          async init(options) {
-          }
-
-          async test() {
-          }
-
-        }
-
-        return Version;
-      };
+/***/ 95:
+/***/ ((module) => {
 
 
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        const models = {
-        };
-        return models;
-      };
+module.exports = app => {
+  const controllers = {
+  };
+  return controllers;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = app => {
-        const schemas = __webpack_require__(12)(app);
-        const meta = {
-          base: {
-            atoms: {
-            },
-            functions: {
-            },
-          },
-          validation: {
-            validators: {
-            },
-            keywords: {},
-            schemas: {
-            },
-          },
-        };
-        return meta;
-      };
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+module.exports = app => {
+
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+
+  return {
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
 
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const schemas = {};
-        return schemas;
-      };
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const schemas = __webpack_require__(232)(app);
+  const meta = {
+    base: {
+      atoms: {
+      },
+    },
+    validation: {
+      validators: {
+      },
+      keywords: {},
+      schemas: {
+      },
+    },
+  };
+  return meta;
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 230:
+/***/ ((module) => {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module) => {
+
+
+module.exports = app => {
+  const services = {
+  };
+  return services;
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

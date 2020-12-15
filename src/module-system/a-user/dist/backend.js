@@ -1,552 +1,513 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const config = __webpack_require__(1);
-      const locales = __webpack_require__(2);
-      const errors = __webpack_require__(4);
-      const middlewares = __webpack_require__(5);
+/***/ 187:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+module.exports = app => {
+  const beans = {
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  User: '用户',
+  Atoms: '原子',
+  Comments: '评论',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 836:
+/***/ ((module) => {
+
+module.exports = app => {
+  class PublicController extends app.Controller {
+
+    async profile() {
+      const res = await this.service.public.profile({
+        userId: this.ctx.request.body.userId,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return PublicController;
+};
+
+
+/***/ }),
+
+/***/ 37:
+/***/ ((module) => {
+
+module.exports = app => {
+  class UserController extends app.Controller {
+
+    async save() {
+      const res = await this.service.user.save({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async saveAvatar() {
+      const res = await this.service.user.saveAvatar({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async saveLocale() {
+      const res = await this.service.user.saveLocale({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async agent() {
+      const res = await this.service.user.agent({ userId: this.ctx.state.user.agent.id });
+      this.ctx.success(res);
+    }
+
+    async agentsBy() {
+      const res = await this.service.user.agentsBy({ userId: this.ctx.state.user.agent.id });
+      this.ctx.success(res);
+    }
+
+    async userByMobile() {
+      const res = await this.service.user.userByMobile({ mobile: this.ctx.request.body.mobile });
+      this.ctx.success(res);
+    }
+
+    async addAgent() {
+      const res = await this.service.user.addAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+        userId: this.ctx.state.user.agent.id,
+      });
+      this.ctx.success(res);
+    }
+
+    async removeAgent() {
+      const res = await this.service.user.removeAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+        userId: this.ctx.state.user.agent.id,
+      });
+      this.ctx.success(res);
+    }
+
+    async switchAgent() {
+      const res = await this.service.user.switchAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+      });
+      this.ctx.success(res);
+    }
+
+    async switchOffAgent() {
+      const res = await this.service.user.switchOffAgent();
+      this.ctx.success(res);
+    }
+
+    async authentications() {
+      const res = await this.service.user.authentications({
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async authenticationDisable() {
+      const res = await this.service.user.authenticationDisable({
+        authId: this.ctx.request.body.authId,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async themeLoad() {
+      const res = await this.service.user.themeLoad({
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async themeSave() {
+      await this.service.user.themeSave({
+        theme: this.ctx.request.body.theme,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success();
+    }
+
+  }
+  return UserController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const user = __webpack_require__(37);
+const public2 = __webpack_require__(836);
+
+module.exports = app => {
+  const controllers = {
+    user,
+    public: public2,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
 module.exports = app => {
 
-        // routes
-        const routes = __webpack_require__(6)(app);
-        // services
-        const services = __webpack_require__(9)(app);
-        // models
-        const models = __webpack_require__(12)(app);
-        // meta
-        const meta = __webpack_require__(13)(app);
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
 
-        return {
-          routes,
-          services,
-          models,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
 
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports) {
-
-      // eslint-disable-next-line
-module.exports = appInfo => {
-        const config = {};
-        return config;
-      };
+};
 
 
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(3),
-      };
+/***/ 458:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        User: '用户',
-        Atoms: '原子',
-        Comments: '评论',
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const user = __webpack_require__(7);
-      const public2 = __webpack_require__(8);
-
-      module.exports = app => {
-        const routes = [
-          // user
-          { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate',
-            meta: { validate: { module: 'a-base', validator: 'user' } },
+module.exports = app => {
+  // meta
+  const meta = {
+    stats: {
+      providers: {
+        userRed: {
+          user: true,
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
           },
-          { method: 'post', path: 'user/saveAvatar', controller: 'user' },
-          { method: 'post', path: 'user/agent', controller: 'user' },
-          { method: 'post', path: 'user/agentsBy', controller: 'user' },
-          { method: 'post', path: 'user/userByMobile', controller: 'user' },
-          { method: 'post', path: 'user/addAgent', controller: 'user' },
-          { method: 'post', path: 'user/removeAgent', controller: 'user' },
-          { method: 'post', path: 'user/switchAgent', controller: 'user' },
-          { method: 'post', path: 'user/switchOffAgent', controller: 'user' },
-          { method: 'post', path: 'user/functions', controller: 'user' },
-          { method: 'post', path: 'user/authentications', controller: 'user' },
-          { method: 'post', path: 'user/authenticationDisable', controller: 'user' },
-          { method: 'post', path: 'user/themeLoad', controller: 'user' },
-          { method: 'post', path: 'user/themeSave', controller: 'user' },
-          // public
-          { method: 'post', path: 'public/profile', controller: 'public2' },
-        ];
-        return routes;
+          dependencies: [
+            'a-flowtask:taskClaimings',
+            'a-flowtask:taskHandlings',
+          ],
+        },
+        userOrange: {
+          user: true,
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
+          dependencies: [
+            'a-base:drafts',
+            'a-base:stars',
+            'a-flow:flowInitiateds',
+          ],
+        },
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module) => {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+    // user
+    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate',
+      meta: { validate: { module: 'a-base', validator: 'user' } },
+    },
+    { method: 'post', path: 'user/saveAvatar', controller: 'user' },
+    { method: 'post', path: 'user/saveLocale', controller: 'user' },
+    { method: 'post', path: 'user/agent', controller: 'user' },
+    { method: 'post', path: 'user/agentsBy', controller: 'user' },
+    { method: 'post', path: 'user/userByMobile', controller: 'user' },
+    { method: 'post', path: 'user/addAgent', controller: 'user' },
+    { method: 'post', path: 'user/removeAgent', controller: 'user' },
+    { method: 'post', path: 'user/switchAgent', controller: 'user' },
+    { method: 'post', path: 'user/switchOffAgent', controller: 'user' },
+    { method: 'post', path: 'user/authentications', controller: 'user' },
+    { method: 'post', path: 'user/authenticationDisable', controller: 'user' },
+    { method: 'post', path: 'user/themeLoad', controller: 'user' },
+    { method: 'post', path: 'user/themeSave', controller: 'user' },
+    // public
+    { method: 'post', path: 'public/profile', controller: 'public' },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 879:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Public2 extends app.Service {
+
+    async profile({ userId }) {
+      const item = await this.ctx.bean.user.get({ id: userId });
+      const user = {
+        userName: item.userName,
+        avatar: item.avatar,
+        motto: item.motto,
       };
+      return { user };
+    }
+
+  }
+  return Public2;
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class UserController extends app.Controller {
+/***/ 323:
+/***/ ((module) => {
 
-          async save() {
-            const res = await this.service.user.save({
-              data: this.ctx.request.body.data,
-              user: this.ctx.state.user.agent,
-            });
-            this.ctx.success(res);
-          }
+module.exports = app => {
 
-          async saveAvatar() {
-            const res = await this.service.user.saveAvatar({
-              data: this.ctx.request.body.data,
-              user: this.ctx.state.user.agent,
-            });
-            this.ctx.success(res);
-          }
+  class User extends app.Service {
 
-          async agent() {
-            const res = await this.service.user.agent({ userId: this.ctx.state.user.agent.id });
-            this.ctx.success(res);
-          }
+    async save({ data, user }) {
+      // id
+      data.id = user.id;
+      // readOnly
+      delete data.userName;
+      delete data.email;
+      delete data.mobile;
+      delete data.locale;
+      // save
+      return await this.ctx.bean.user.save({ user: data });
+    }
 
-          async agentsBy() {
-            const res = await this.service.user.agentsBy({ userId: this.ctx.state.user.agent.id });
-            this.ctx.success(res);
-          }
+    async saveAvatar({ data, user }) {
+      const userData = { id: user.id, avatar: data.avatar };
+      return await this.ctx.bean.user.save({ user: userData });
+    }
 
-          async userByMobile() {
-            const res = await this.service.user.userByMobile({ mobile: this.ctx.request.body.mobile });
-            this.ctx.success(res);
-          }
+    async saveLocale({ data, user }) {
+      const userData = { id: user.id, locale: data.locale };
+      return await this.ctx.bean.user.save({ user: userData });
+    }
 
-          async addAgent() {
-            const res = await this.service.user.addAgent({
-              userIdAgent: this.ctx.request.body.userIdAgent,
-              userId: this.ctx.state.user.agent.id,
-            });
-            this.ctx.success(res);
-          }
+    async agent({ userId }) {
+      return await this.ctx.bean.user.agent({ userId });
+    }
 
-          async removeAgent() {
-            const res = await this.service.user.removeAgent({
-              userIdAgent: this.ctx.request.body.userIdAgent,
-              userId: this.ctx.state.user.agent.id,
-            });
-            this.ctx.success(res);
-          }
+    async agentsBy({ userId }) {
+      return await this.ctx.bean.user.agentsBy({ userId });
+    }
 
-          async switchAgent() {
-            const res = await this.service.user.switchAgent({
-              userIdAgent: this.ctx.request.body.userIdAgent,
-            });
-            this.ctx.success(res);
-          }
+    async userByMobile({ mobile }) {
+      return await this.ctx.bean.user.exists({ mobile });
+    }
 
-          async switchOffAgent() {
-            const res = await this.service.user.switchOffAgent();
-            this.ctx.success(res);
-          }
+    async addAgent({ userIdAgent, userId }) {
+      return await this.ctx.bean.user.addAgent({ userIdAgent, userId });
+    }
 
-          async authentications() {
-            const res = await this.service.user.authentications({
-              user: this.ctx.state.user.agent,
-            });
-            this.ctx.success(res);
-          }
+    async removeAgent({ userIdAgent, userId }) {
+      return await this.ctx.bean.user.removeAgent({ userIdAgent, userId });
+    }
 
-          async authenticationDisable() {
-            const res = await this.service.user.authenticationDisable({
-              authId: this.ctx.request.body.authId,
-              user: this.ctx.state.user.agent,
-            });
-            this.ctx.success(res);
-          }
+    async switchAgent({ userIdAgent }) {
+      return await this.ctx.bean.user.switchAgent({ userIdAgent });
+    }
 
-          functions() {
-            const res = this.service.user.functions();
-            this.ctx.success(res);
-          }
+    async switchOffAgent() {
+      return await this.ctx.bean.user.switchOffAgent();
+    }
 
-          async themeLoad() {
-            const res = await this.service.user.themeLoad({
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success(res);
-          }
-
-          async themeSave() {
-            await this.service.user.themeSave({
-              theme: this.ctx.request.body.theme,
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success();
-          }
-
-        }
-        return UserController;
-      };
-
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class PublicController extends app.Controller {
-
-          async profile() {
-            const res = await this.service.public.profile({
-              userId: this.ctx.request.body.userId,
-            });
-            this.ctx.success(res);
-          }
-
-        }
-        return PublicController;
-      };
-
-
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const user = __webpack_require__(10);
-      const public2 = __webpack_require__(11);
-
-      module.exports = app => {
-        const services = {
-          user,
-          public: public2,
-        };
-        return services;
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      const _functions = {};
-
-      module.exports = app => {
-
-        class User extends app.Service {
-
-          async save({ data, user }) {
-            // id
-            data.id = user.id;
-            // readOnly
-            delete data.userName;
-            delete data.email;
-            delete data.mobile;
-            // save
-            return await this.ctx.bean.user.save({ user: data });
-          }
-
-          async saveAvatar({ data, user }) {
-            data.id = user.id;
-            return await this.ctx.bean.user.save({ user: data });
-          }
-
-          async agent({ userId }) {
-            return await this.ctx.bean.user.agent({ userId });
-          }
-
-          async agentsBy({ userId }) {
-            return await this.ctx.bean.user.agentsBy({ userId });
-          }
-
-          async userByMobile({ mobile }) {
-            return await this.ctx.bean.user.exists({ mobile });
-          }
-
-          async addAgent({ userIdAgent, userId }) {
-            return await this.ctx.bean.user.addAgent({ userIdAgent, userId });
-          }
-
-          async removeAgent({ userIdAgent, userId }) {
-            return await this.ctx.bean.user.removeAgent({ userIdAgent, userId });
-          }
-
-          async switchAgent({ userIdAgent }) {
-            return await this.ctx.bean.user.switchAgent({ userIdAgent });
-          }
-
-          async switchOffAgent() {
-            return await this.ctx.bean.user.switchOffAgent();
-          }
-
-          async authentications({ user }) {
-            // 1. get auth providers list from a-login
-            const listLogin = await this.ctx.performAction({
-              method: 'post',
-              url: '/a/login/auth/list',
-            });
-            if (listLogin.length === 0) return [];
-            const ids = listLogin.map(item => item.id);
-            // 2. list with aAuth
-            const sql = `
+    async authentications({ user }) {
+      // 1. get auth providers list from a-login
+      const listLogin = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/login/auth/list',
+      });
+      if (listLogin.length === 0) return [];
+      const ids = listLogin.map(item => item.id);
+      // 2. list with aAuth
+      const sql = `
         select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
           left join aAuth b on a.id=b.providerId and b.userId=?
             where a.id in (${ids.join(',')})
       `;
-            const list = await this.ctx.model.query(sql, [ user.id ]);
-            // sort
-            list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
-            // meta
-            const authProviders = this.ctx.bean.base.authProviders();
-            for (const item of list) {
-              const key = `${item.module}:${item.providerName}`;
-              const authProvider = authProviders[key];
-              item.meta = authProvider.meta;
-            }
-            // ok
-            return list;
-          }
+      const list = await this.ctx.model.query(sql, [ user.id ]);
+      // sort
+      list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
+      // meta
+      const authProviders = this.ctx.bean.base.authProviders();
+      for (const item of list) {
+        const key = `${item.module}:${item.providerName}`;
+        const authProvider = authProviders[key];
+        item.meta = authProvider.meta;
+      }
+      // ok
+      return list;
+    }
 
-          async authenticationDisable({ authId, user }) {
-            // must use userId in where
-            await this.ctx.model.query('delete from aAuth where id=? and userId=?',
-              [ authId, user.id ]);
-          }
+    async authenticationDisable({ authId, user }) {
+      // must use userId in where
+      await this.ctx.model.query('delete from aAuth where id=? and userId=?',
+        [ authId, user.id ]);
+    }
 
-          functions() {
-            if (!_functions[this.ctx.locale]) {
-              _functions[this.ctx.locale] = this._prepareFunctions();
-            }
-            return _functions[this.ctx.locale];
-          }
+    async themeLoad({ user }) {
+      const name = `user-theme:${user.id}`;
+      return await this.ctx.bean.status.get(name);
+    }
 
-          async themeLoad({ user }) {
-            const name = `user-theme:${user.id}`;
-            return await this.ctx.bean.status.get(name);
-          }
+    async themeSave({ theme, user }) {
+      const name = `user-theme:${user.id}`;
+      await this.ctx.bean.status.set(name, theme);
+    }
 
-          async themeSave({ theme, user }) {
-            const name = `user-theme:${user.id}`;
-            await this.ctx.bean.status.set(name, theme);
-          }
+  }
 
-          _prepareFunctions() {
-            const functions = {};
-            for (const relativeName in this.ctx.app.meta.modules) {
-              const module = this.ctx.app.meta.modules[relativeName];
-              if (module.main.meta && module.main.meta.user && module.main.meta.user.functions) {
-                functions[relativeName] = this._prepareFunctionsModule(module, module.main.meta.user.functions);
-              }
-            }
-            return functions;
-          }
-
-          _prepareFunctionsModule(module, _functions) {
-            const functions = {};
-            for (const key in _functions) {
-              const _func = _functions[key];
-              const func = {
-                name: key,
-                title: _func.title || key,
-                module: module.info.relativeName,
-                actionModule: _func.actionModule || module.info.relativeName,
-                actionComponent: _func.actionComponent,
-                actionPath: _func.actionPath,
-              };
-              func.titleLocale = this.ctx.text(func.title);
-              functions[key] = func;
-            }
-            return functions;
-          }
-
-        }
-
-        return User;
-      };
+  return User;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-        class Public2 extends app.Service {
+const user = __webpack_require__(323);
+const public2 = __webpack_require__(879);
 
-          async profile({ userId }) {
-            const item = await this.ctx.bean.user.get({ id: userId });
-            const user = {
-              userName: item.userName,
-              avatar: item.avatar,
-              motto: item.motto,
-            };
-            return { user };
-          }
-
-        }
-        return Public2;
-      };
+module.exports = app => {
+  const services = {
+    user,
+    public: public2,
+  };
+  return services;
+};
 
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports) {
+/***/ })
 
-      module.exports = app => {
-        const models = {
-        };
-        return models;
-      };
-
-
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const require3 = __webpack_require__(14);
-      const extend = require3('extend2');
-
-      module.exports = app => {
-        // meta
-        const meta = {
-          user: {
-            functions: {
-              myAtoms: {
-                title: 'Atoms',
-                actionPath: '/a/base/atom/list?scene=mine',
-              },
-              myComments: {
-                title: 'Comments',
-                actionPath: '/a/base/comment/all?scene=mine',
-              },
-            },
-          },
-        };
-        return meta;
-      };
-
-
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
-
-      module.exports = require('require3');
-
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

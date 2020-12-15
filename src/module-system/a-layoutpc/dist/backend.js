@@ -1,329 +1,395 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const routes = __webpack_require__(1);
-      const services = __webpack_require__(3);
-      const config = __webpack_require__(5);
-      const locales = __webpack_require__(6);
-      const errors = __webpack_require__(9);
+/***/ 899:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
 module.exports = app => {
 
-        // meta
-        const meta = __webpack_require__(10)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(2);
-
-      module.exports = [
-        { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-        { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-      ];
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class VersionController extends app.Controller {
-
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(4);
-
-      module.exports = {
-        version,
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          // eslint-disable-next-line
+    // eslint-disable-next-line
     async update(options) {
-          }
+    }
 
-          async init(options) {
+    async init(options) {
 
-            if (options.version === 1) {
+      if (options.version === 1) {}
 
-              // roleFunctions: panels
-              const rolePanels = [
-                { roleName: null, name: 'panelMenu' },
-                { roleName: null, name: 'panelAtom' },
-                { roleName: null, name: 'panelSearch' },
-              ];
-              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: rolePanels });
+      if (options.version === 2) {}
 
-              // roleFunctions: sections
-              const roleSections = [
-                { roleName: null, name: 'sectionCopyright' },
-                { roleName: null, name: 'sectionClock' },
-              ];
-              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleSections });
+    }
 
-              // roleFunctions: buttons
-              const roleButtons = [
-                { roleName: null, name: 'buttonDashboard' },
-                { roleName: null, name: 'buttonFullscreen' },
-                { roleName: null, name: 'buttonMine' },
-              ];
-              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
+  }
 
-            }
-
-          }
-
-        }
-
-        return Version;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const versionManager = __webpack_require__(899);
+
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
+  const config = {};
 
-        return config;
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'en-us': __webpack_require__(7),
-        'zh-cn': __webpack_require__(8),
-      };
+  return config;
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = {
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        Copyright: '版权',
-        Clock: '时钟',
-        Dashboard: '仪表板',
-        Mine: '我的',
-        Fullscreen: '全屏',
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // error code should start from 1001
-      module.exports = {
-      };
+/***/ 327:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        // meta
-        const meta = {
-          base: {
-            functions: {
-              // panels
-              panelMenu: {
-                title: 'Menu',
-                url: '/a/base/menu/list',
-                menu: 2,
-                public: 1,
-              },
-              panelAtom: {
-                title: 'Atom',
-                url: '/a/base/atom/list',
-                menu: 2,
-                public: 1,
-              },
-              panelSearch: {
-                title: 'Search',
-                url: '/a/base/atom/searchQuick',
-                menu: 2,
-                public: 1,
-              },
-              // sections
-              sectionCopyright: {
-                title: 'Copyright',
-                component: 'sectionCopyright',
-                menu: 4,
-                public: 1,
-              },
-              sectionClock: {
-                title: 'Clock',
-                component: 'sectionClock',
-                menu: 4,
-                public: 1,
-              },
-              // header buttons
-              buttonDashboard: {
-                title: 'Dashboard',
-                component: 'buttonDashboard',
-                menu: 5,
-                public: 1,
-              },
-              buttonFullscreen: {
-                title: 'Fullscreen',
-                component: 'buttonFullscreen',
-                menu: 5,
-                public: 1,
-              },
-              buttonMine: {
-                title: 'Mine',
-                component: 'buttonMine',
-                menu: 5,
-                public: 1,
-              },
-            },
-          },
-        };
-        return meta;
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  Copyright: '版权',
+  Clock: '时钟',
+  Dashboard: '仪表板',
+  Mine: '我的',
+  Fullscreen: '全屏',
+  Button: '按钮',
+  Buttons: '按钮',
+  Panel: '面板',
+  Panels: '面板',
+  'Sidebar Button': '边栏按钮',
+  'Sidebar Panel': '边栏面板',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'en-us': __webpack_require__(327),
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 429:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // panels
+    {
+      atomName: 'Menu',
+      atomStaticKey: 'panelMenu',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
+      resourceConfig: JSON.stringify({
+        url: '/a/basefront/resource/tree',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Atom',
+      atomStaticKey: 'panelAtom',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
+      resourceConfig: JSON.stringify({
+        url: '/a/basefront/atom/list',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Search',
+      atomStaticKey: 'panelSearch',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
+      resourceConfig: JSON.stringify({
+        url: '/a/basefront/atom/searchQuick',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'panelMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
+      resourceConfig: JSON.stringify({
+        url: '/a/user/user/mine',
+      }),
+      resourceRoles: 'root',
+    },
+    // buttons
+    {
+      atomName: 'Home',
+      atomStaticKey: 'buttonHome',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { material: 'home' },
+        actionPath: '/a/dashboard/dashboard?key=home',
+        scene: 'dashboard',
+        sceneOptions: { name: 'home' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Dashboard',
+      atomStaticKey: 'buttonDashboard',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { material: 'dashboard' },
+        actionPath: '/a/dashboard/dashboard',
+        scene: 'dashboard',
+        sceneOptions: { name: 'dashboard' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Fullscreen',
+      atomStaticKey: 'buttonFullscreen',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonFullscreen',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'buttonMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonMine',
+        icon: { material: 'person' },
+        actionPath: null,
+        scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
+        showSeparator: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Clock',
+      atomStaticKey: 'buttonClock',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonClock',
+        actionPath: '/a/layoutpc/button/clock/preferences',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'preferences', title: 'Preferences' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Copyright',
+      atomStaticKey: 'buttonCopyright',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: null,
+        actionPath: '/a/basefront/base/about',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'about', title: 'About' },
+        showLabel: true,
+      }),
+      resourceRoles: 'root',
+    },
+
+
+  ];
+  return resources;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module) => {
+
+
+module.exports = app => {
+  const controllers = {
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const routes = __webpack_require__(825);
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const staticResources = __webpack_require__(429)(app);
+  // meta
+  const meta = {
+    base: {
+      resources: {
+        button: {
+          title: 'Sidebar Button',
+        },
+        panel: {
+          title: 'Sidebar Panel',
+        },
+      },
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = [
+];
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module) => {
+
+
+module.exports = {
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

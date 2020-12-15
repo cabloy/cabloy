@@ -1,142 +1,169 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const services = __webpack_require__(1);
-      const config = __webpack_require__(4);
-      const locales = __webpack_require__(5);
-      const errors = __webpack_require__(7);
-      const middlewares = __webpack_require__(8);
+/***/ 115:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+let __sequences;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Sequence extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'sequence');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    async reset(name) {
+      const provider = this._findSequenceProvider(name);
+      const sequence = await this._get(name);
+      await ctx.db.update('aSequence', {
+        id: sequence.id,
+        value: JSON.stringify(provider.start),
+      });
+    }
+
+    async current(name) {
+      const sequence = await this._get(name);
+      if (sequence) return JSON.parse(sequence.value);
+      const provider = this._findSequenceProvider(name);
+      return provider.start;
+    }
+
+    async next(name) {
+      const moduleName = this.moduleName;
+      return await ctx.app.meta.util.lock({
+        subdomain: ctx.subdomain,
+        resource: `${moduleInfo.relativeName}.sequence.${moduleName}.${name}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'sequence',
+            fn: async ({ bean }) => {
+              return await bean.module(moduleName)._nextLock(name);
+            },
+          });
+        },
+      });
+    }
+
+    async _nextLock(name) {
+      const provider = this._findSequenceProvider(name);
+      const sequence = await this._get(name);
+
+      // current
+      let current;
+      if (sequence) {
+        current = JSON.parse(sequence.value);
+      } else {
+        current = provider.start;
+      }
+
+      // next
+      const value = await ctx.bean._getBean(provider.beanFullName).execute({ value: current });
+
+      // save
+      if (sequence) {
+        await ctx.db.update('aSequence', {
+          id: sequence.id,
+          value: JSON.stringify(value),
+        });
+      } else {
+        // insert
+        await ctx.db.insert('aSequence', {
+          iid: ctx.instance.id,
+          module: this.moduleName,
+          name,
+          value: JSON.stringify(value),
+        });
+      }
+
+      return value;
+    }
+
+    async _get(name) {
+      // get
+      const sequence = await ctx.db.get('aSequence', {
+        iid: ctx.instance.id,
+        module: this.moduleName,
+        name,
+      });
+      return sequence;
+    }
+
+    _findSequenceProvider(name) {
+      const fullKey = `${this.moduleName}:${name}`;
+      if (!__sequences) {
+        __sequences = this._collectSequences();
+      }
+      return __sequences[fullKey];
+    }
+
+    _collectSequences() {
+      const sequences = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const providers = module.main.meta && module.main.meta.sequence && module.main.meta.sequence.providers;
+        if (!providers) continue;
+        for (const key in providers) {
+          const provider = providers[key];
+          const beanName = provider.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.sequence.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.sequence.${beanName.name}`;
+          }
+          const fullKey = `${module.info.relativeName}:${key}`;
+          sequences[fullKey] = {
+            ...provider,
+            beanFullName,
+          };
+        }
+      }
+      return sequences;
+    }
+
+  }
+
+  return Sequence;
+};
+
+
+/***/ }),
+
+/***/ 80:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Sequence {
+
+    async execute(context) {
+      let value = context.value;
+      return ++value;
+    }
+
+  }
+
+  return Sequence;
+};
+
+
+/***/ }),
+
+/***/ 899:
+/***/ ((module) => {
+
 module.exports = app => {
 
-        // meta
-        const meta = __webpack_require__(11)(app);
-        const routes = __webpack_require__(12)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(2);
-      const sequence = __webpack_require__(3);
-      module.exports = {
-        version,
-        sequence,
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-              // create table: aSequence
-              const sql = `
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aSequence
+        const sql = `
           CREATE TABLE aSequence (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -149,289 +176,234 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-              await this.ctx.model.query(sql);
-            }
-          }
+        await this.ctx.model.query(sql);
+      }
+    }
 
-        }
+  }
 
-        return Version;
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Sequence extends app.Service {
-
-          // next
-          async next({ module, name }) {
-            const res = await this.ctx.bean.sequence.module(module)._next(name);
-            return res;
-          }
-
-        }
-
-        return Sequence;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const versionManager = __webpack_require__(899);
+const sequenceSimple = __webpack_require__(80);
+const beanSequence = __webpack_require__(115);
+
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // sequence
+    'sequence.simple': {
+      mode: 'ctx',
+      bean: sequenceSimple,
+    },
+    // global
+    sequence: {
+      mode: 'ctx',
+      bean: beanSequence,
+      global: true,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
-
-        // middlewares
-        config.middlewares = {
-          sequence: {
-            global: true,
-            dependencies: 'instance',
-          },
-        };
-
-        // queues
-        config.queues = {
-          sequence: {
-            path: 'sequence/next',
-          },
-        };
-
-        return config;
-      };
+  const config = {};
+  return config;
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(6),
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // error code should start from 1001
-      module.exports = {
-      };
+/***/ 72:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const sequence = __webpack_require__(9);
-
-      module.exports = {
-        sequence,
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const SequenceFn = __webpack_require__(10);
-      const SEQUENCE = Symbol('CTX#__SEQUENCE');
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = () => {
-        return async function sequence(ctx, next) {
-          ctx.meta = ctx.meta || {};
-          Object.defineProperty(ctx.meta, 'sequence', {
-            get() {
-              if (ctx.meta[SEQUENCE] === undefined) {
-                ctx.meta[SEQUENCE] = new (SequenceFn(ctx))();
-              }
-              return ctx.meta[SEQUENCE];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
 
 
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      const Fn = module.exports = ctx => {
-        const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class Sequence {
+/***/ 110:
+/***/ ((module) => {
 
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
+module.exports = app => {
 
-          // other module's sequence
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
+  class SequenceController extends app.Controller {
+  }
 
-          async reset(name) {
-            const provider = this._findSequenceProvider(name);
-            const sequence = await this._get(name);
-            await ctx.db.update('aSequence', {
-              id: sequence.id,
-              value: JSON.stringify(provider.start),
-            });
-          }
-
-          async current(name) {
-            const sequence = await this._get(name);
-            if (sequence) return JSON.parse(sequence.value);
-            const provider = this._findSequenceProvider(name);
-            return provider.start;
-          }
-
-          async next(name) {
-            const res = await ctx.app.meta.queue.pushAsync({
-              subdomain: ctx.subdomain,
-              module: moduleInfo.relativeName,
-              queueName: 'sequence',
-              data: {
-                module: this.moduleName,
-                name,
-              },
-            });
-            return res;
-          }
-
-          async _next(name) {
-            const provider = this._findSequenceProvider(name);
-            const sequence = await this._get(name);
-
-            // current
-            let current;
-            if (sequence) {
-              current = JSON.parse(sequence.value);
-            } else {
-              current = provider.start;
-            }
-
-            // next
-            const value = await provider.expression({ ctx, value: current });
-
-            // save
-            if (sequence) {
-              await ctx.db.update('aSequence', {
-                id: sequence.id,
-                value: JSON.stringify(value),
-              });
-            }
-            // insert
-            else {
-              await ctx.db.insert('aSequence', {
-                iid: ctx.instance.id,
-                module: this.moduleName,
-                name,
-                value: JSON.stringify(value),
-              });
-            }
-
-            return value;
-          }
-
-          async _get(name) {
-            // get
-            const sequence = await ctx.db.get('aSequence', {
-              iid: ctx.instance.id,
-              module: this.moduleName,
-              name,
-            });
-            return sequence;
-          }
-
-          _findSequenceProvider(name) {
-            const meta = ctx.app.meta.modules[this.moduleName].main.meta;
-            return meta.sequence.providers[name];
-          }
-
-        }
-
-        return Sequence;
-      };
+  return SequenceController;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const meta = {};
-        return meta;
-      };
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const sequence = __webpack_require__(110);
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(13);
-      const sequence = __webpack_require__(14);
-
-      module.exports = app => {
-        const routes = [
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'sequence/next', controller: 'sequence', middlewares: 'inner', meta: { auth: { enable: false } } },
-        ];
-        return routes;
-      };
+module.exports = app => {
+  const controllers = {
+    sequence,
+  };
+  return controllers;
+};
 
 
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
 
-        }
-        return VersionController;
-      };
+// eslint-disable-next-line
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
 
 
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 458:
+/***/ ((module) => {
 
-        class SequenceController extends app.Controller {
-
-          async next() {
-            const res = await this.ctx.service.sequence.next(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-        }
-
-        return SequenceController;
-      };
+module.exports = app => {
+  const meta = {};
+  return meta;
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 543:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Sequence extends app.Service {
+  }
+
+  return Sequence;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const sequence = __webpack_require__(543);
+module.exports = {
+  sequence,
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

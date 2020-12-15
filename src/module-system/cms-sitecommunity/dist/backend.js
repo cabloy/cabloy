@@ -1,810 +1,717 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const config = __webpack_require__(1);
-      const locales = __webpack_require__(2);
-      const errors = __webpack_require__(5);
-      const middlewares = __webpack_require__(6);
+/***/ 183:
+/***/ ((module) => {
 
-      module.exports = app => {
+module.exports = app => {
+  // this module
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // article bean
+  const articleBeanModule = 'a-cms';
+  const articleBeanFullName = 'a-cms.atom.article';
 
-        // routes
-        const routes = __webpack_require__(7)(app);
-        // services
-        const services = __webpack_require__(11)(app);
-        // models
-        const models = __webpack_require__(16)(app);
-        // meta
-        const meta = __webpack_require__(18)(app);
+  class Atom extends app.meta.AtomBase {
 
-        return {
-          routes,
-          services,
-          models,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
+    async create({ atomClass, item, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, item, user },
+        fn: 'create',
+      });
+    }
 
-      };
+    async read({ atomClass, options, key, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, options, key, user },
+        fn: 'read',
+      });
+    }
+
+    async select({ atomClass, options, items, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, options, items, user },
+        fn: 'select',
+      });
+    }
+
+    async write({ atomClass, target, key, item, options, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, target, key, item, options, user },
+        fn: 'write',
+      });
+    }
+
+    async delete({ atomClass, key, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, key, user },
+        fn: 'delete',
+      });
+    }
+
+    async submit({ atomClass, key, options, user }) {
+      return await this.ctx.executeBean({
+        beanModule: articleBeanModule,
+        beanFullName: articleBeanFullName,
+        context: { atomClass, key, options, user },
+        fn: 'submit',
+      });
+    }
+
+  }
+
+  return Atom;
+};
 
 
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
-module.exports = appInfo => {
-        const config = {};
+/***/ 899:
+/***/ ((module) => {
 
-        // site
-        config.site = {
-          base: {
-            title: 'Community',
-            subTitle: 'Everything About CabloyJS',
-            description: '',
-            keywords: '',
-            publishOnSubmit: true,
-          },
-          host: {
-            url: 'http://community.example.com',
-            rootPath: '',
-          },
-          language: {
-            default: 'en-us',
-            items: 'en-us',
-          },
-          themes: {
-            'en-us': 'cms-themecommunity',
-          },
-          edit: {
-            mode: 1, // markdown
-          },
-          env: {
-            format: {
-              date: 'YYYY-MM-DD',
-              time: 'HH:mm:ss',
-            },
-            article2: {
-              recentNum: 5,
-            },
-            comment: {
-              order: 'asc',
-              recentNum: 5,
-            },
-            brother: {
-              order: 'desc',
-            },
-            loadMore: {
-              loadOnScroll: false,
-            },
-          },
-          profile: {
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version extends app.meta.BeanBase {
 
-          },
-        };
+    async update(options) {
+      if (options.version === 1) {
+      }
+    }
 
-        return config;
-      };
+    async init(options) {
+      if (options.version === 1) {
+        // create roles: cms-community-writer to template
+        const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
+        const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+        const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
+        for (const roleName of roles) {
+          const roleId = await this.ctx.bean.role.add({
+            roleName,
+            roleIdParent: roleTemplate.id,
+          });
+          // role:superuser include cms-community
+          await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          // role:activated include cms-community-writer
+          if (roleName === 'cms-community-writer') {
+            await this.ctx.bean.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
+          }
+        }
+        // build roles
+        await this.ctx.bean.role.setDirty(true);
 
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'en-us': __webpack_require__(3),
-        'zh-cn': __webpack_require__(4),
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        Post2: 'Post',
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        'CMS:Community': 'CMS:社区',
-        Post2: '帖子',
-        'Create Post': '新建帖子',
-        'Post List': '帖子列表',
-        'Post List(by Category)': '帖子列表(按目录)',
-      };
-
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(8);
-      const post = __webpack_require__(9);
-      const event = __webpack_require__(10);
-
-      module.exports = app => {
-        const routes = [
-          // version
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
-          // post
-          { method: 'post', path: 'post/create', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'post/read', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'post/select', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'post/write', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } },
-          },
-          { method: 'post', path: 'post/delete', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'post/action', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'post/enable', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
-          // event
-          { method: 'post', path: 'event/atomClassValidator', controller: 'event', middlewares: 'inner', meta: { auth: { enable: false } } },
+        // add role rights
+        const roleRights = [
+          { roleName: 'cms-community-writer', action: 'create' },
+          { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-writer', action: 'write', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'delete', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'clone', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'deleteBulk' },
+          { roleName: 'cms-community-writer', action: 'exportBulk' },
+          { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 0 },
         ];
-        return routes;
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+
+      }
+    }
+
+    async test() {
+      const atomClass = {
+        module: moduleInfo.relativeName,
+        atomClassName: 'post',
       };
+      const categories = [
+        { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, categorySorting: 2 },
+        { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, categorySorting: 3 },
+      ];
+      const categoryIds = {};
+      for (const item of categories) {
+        // add
+        const categoryId = await this.ctx.bean.category.add({
+          atomClass,
+          data: {
+            language: item.language,
+            categoryName: item.categoryName,
+            categoryHidden: item.categoryHidden,
+            categorySorting: item.categorySorting,
+            categoryFlag: item.categoryFlag,
+            categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
+          },
+        });
+        categoryIds[item.categoryName] = categoryId;
+      }
+    }
+
+  }
+
+  return Version;
+};
 
 
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
+const versionManager = __webpack_require__(899);
+const atomPost = __webpack_require__(183);
 
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async test() {
-            await this.service.version.test(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // atom
+    'atom.post': {
+      mode: 'app',
+      bean: atomPost,
+    },
+  };
+  return beans;
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 76:
+/***/ ((module) => {
 
-        class PostController extends app.Controller {
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
 
-          async create() {
-            const res = await this.ctx.service.post.create(this.ctx.request.body);
-            this.ctx.success(res);
-          }
+  // site
+  config.site = {
+    base: {
+      title: 'Community',
+      subTitle: 'Everything About CabloyJS',
+      description: '',
+      keywords: '',
+    },
+    host: {
+      url: 'http://community.example.com',
+      rootPath: '',
+    },
+    language: {
+      default: 'en-us',
+      items: 'en-us',
+    },
+    themes: {
+      'en-us': 'cms-themecommunity',
+    },
+    edit: {
+      mode: 1, // markdown
+    },
+    env: {
+      format: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+      },
+      article2: {
+        recentNum: 5,
+      },
+      comment: {
+        order: 'asc',
+        recentNum: 5,
+      },
+      brother: {
+        order: 'desc',
+      },
+      loadMore: {
+        loadOnScroll: false,
+      },
+    },
+    profile: {
 
-          async read() {
-            const res = await this.ctx.service.post.read(this.ctx.request.body);
-            this.ctx.success(res);
-          }
+    },
+  };
 
-          async select() {
-            const res = await this.ctx.service.post.select(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-          async write() {
-            await this.ctx.service.post.write(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async delete() {
-            await this.ctx.service.post.delete(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async action() {
-            const res = await this.ctx.service.post.action(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-          async enable() {
-            const res = await this.ctx.service.post.enable(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-        }
-        return PostController;
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class EventController extends app.Controller {
-
-          async atomClassValidator() {
-            const res = await this.ctx.service.event.atomClassValidator({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
-
-        }
-
-        return EventController;
-      };
+  return config;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const version = __webpack_require__(12);
-      const post = __webpack_require__(13);
-      const event = __webpack_require__(15);
+/***/ 624:
+/***/ ((module) => {
 
-      module.exports = app => {
-        const services = {
-          version,
-          post,
-          event,
-        };
-        return services;
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 327:
+/***/ ((module) => {
 
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-            }
-          }
-
-          async init(options) {
-            if (options.version === 1) {
-              // create roles: cms-community-writer to template
-              const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
-              const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
-              const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
-              const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
-              for (const roleName of roles) {
-                const roleId = await this.ctx.bean.role.add({
-                  roleName,
-                  roleIdParent: roleTemplate.id,
-                });
-                // role:superuser include cms-community
-                await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
-                // role:activated include cms-community-writer
-                if (roleName === 'cms-community-writer') {
-                  await this.ctx.bean.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
-                }
-              }
-              // build roles
-              await this.ctx.bean.role.setDirty(true);
-
-              // add role rights
-              const roleRights = [
-                { roleName: 'cms-community-writer', action: 'create' },
-                { roleName: 'cms-community-writer', action: 'write', scopeNames: 0 },
-                { roleName: 'cms-community-writer', action: 'delete', scopeNames: 0 },
-                { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
-                { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
-                { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
-                { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
-                { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
-              ];
-              await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
-
-            }
-          }
-
-          async test() {
-          }
-
-        }
-
-        return Version;
-      };
+module.exports = {
+  Post2: 'Post',
+};
 
 
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const require3 = __webpack_require__(14);
-      const mparse = require3('egg-born-mparse').default;
+/***/ 72:
+/***/ ((module) => {
 
-      module.exports = app => {
-        // this module
-        // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        // article module
-        const articleModuleInfo = mparse.parseInfo('a-cms');
-        const articleAtomClassName = 'article';
-
-        class Post extends app.Service {
-
-          async create({ atomClass, key, item, user }) {
-            // route to article
-            const itemKey = await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/create`,
-              body: {
-                atomClass,
-                key,
-                item,
-                user,
-              },
-            });
-            // return key
-            return itemKey;
-          }
-
-          async read({ atomClass, key, item, user }) {
-            // route to article
-            await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/read`,
-              body: {
-                atomClass,
-                key,
-                item,
-                user,
-              },
-            });
-          }
-
-          async select({ atomClass, options, items, user }) {
-            // route to article
-            await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/select`,
-              body: {
-                atomClass,
-                options,
-                items,
-                user,
-              },
-            });
-          }
-
-          async write({ atomClass, key, item, user }) {
-            // route to article
-            await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
-              body: {
-                atomClass,
-                key,
-                item,
-                user,
-              },
-            });
-          }
-
-          async delete({ atomClass, key, user }) {
-            // route to article
-            await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/delete`,
-              body: {
-                atomClass,
-                key,
-                user,
-              },
-            });
-          }
-
-          async action({ action, atomClass, key, user }) {
-            // route to article
-            return await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/action`,
-              body: {
-                action,
-                atomClass,
-                key,
-                user,
-              },
-            });
-          }
-
-          async enable({ atomClass, key, atom, user }) {
-            // route to article
-            await this.ctx.performAction({
-              method: 'post',
-              url: `/${articleModuleInfo.url}/${articleAtomClassName}/enable`,
-              body: {
-                atomClass,
-                key,
-                atom,
-                user,
-              },
-            });
-          }
-
-        }
-
-        return Post;
-      };
+module.exports = {
+  'CMS:Community': 'CMS:社区',
+  Post2: '帖子',
+  'Create Post': '新建帖子',
+  'Post List': '帖子列表',
+  'Post List(by Category)': '帖子列表(按目录)',
+};
 
 
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = require('require3');
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      /***/ },
-    /* 15 */
-    /***/ function(module, exports) {
+module.exports = {
+  'en-us': __webpack_require__(327),
+  'zh-cn': __webpack_require__(72),
+};
 
-      module.exports = app => {
-        const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class Event extends app.Service {
 
-          async atomClassValidator({ event, data: { atomClass, user } }) {
-            if (atomClass.module === moduleInfo.relativeName && atomClass.atomClassName === 'post') {
-              // check if in role:cms-community-publisher
-              const rolePublisher = await this.ctx.bean.role.get({ roleName: 'cms-community-publisher' });
-              const check = await this.ctx.bean.role.userInRoleExpand({ userId: user.id, roleId: rolePublisher.id });
-              if (!check) return null;
-              // break event
-              event.break = true;
-              // more fields
-              const validator = {
+/***/ }),
+
+/***/ 801:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    listener: null,
+    process: {
+      nodes: [
+        {
+          id: 'startEvent_1',
+          name: 'Drafting',
+          type: 'startEventAtom',
+          options: {
+            atom: {
+              module: moduleInfo.relativeName,
+              atomClassName: 'post',
+            },
+            conditionExpression: null,
+          },
+        },
+        {
+          id: 'activity_1',
+          name: 'Review',
+          type: 'activityUserTask',
+          options: {
+            assignees: {
+              roles: 'superuser',
+            },
+            confirmation: false,
+            bidding: true,
+            schema: {
+              write: {
                 module: 'a-cms',
-                validator: 'article',
-              };
-              return validator;
-            }
-          }
-
-        }
-
-        return Event;
-      };
-
-
-      /***/ },
-    /* 16 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const post = __webpack_require__(17);
-
-      module.exports = app => {
-        const models = {
-          post,
-        };
-        return models;
-      };
-
-
-      /***/ },
-    /* 17 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class Post extends app.meta.Model {
-          constructor(ctx) {
-            super(ctx, { table: 'aCmsArticle', options: { disableDeleted: false } });
-          }
-        }
-        return Post;
-      };
-
-
-      /***/ },
-    /* 18 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = app => {
-        const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        const atomClass = {
-          module: moduleInfo.relativeName,
-          atomClassName: 'post',
-        };
-        const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
-        const schemas = __webpack_require__(19)(app);
-        const meta = {
-          base: {
-            atoms: {
-              post: {
-                info: {
-                  title: 'Post2',
-                  tableName: 'aCmsArticleView',
-                  tableNameFull: 'aCmsArticleViewFull',
-                  tableNameSearch: 'aCmsArticleViewSearch',
-                  tableNameTag: 'aCmsArticleViewTag',
-                  flow: 1,
-                  cms: true,
-                },
-                actions: {
-                  publish: {
-                    code: 101,
-                    title: 'Publish',
-                    flag: '1,2',
-                  },
-                },
-                flags: {
-                  1: {
-                    title: 'Publishing',
-                  },
-                  2: {
-                    title: 'Published',
-                  },
-                },
-                validator: 'post',
-                search: {
-                  validator: 'postSearch',
-                },
-                orders: [
-                  { name: 'sticky', title: 'Sticky', by: 'desc' },
-                ],
-              },
-            },
-            functions: {
-              createPost: {
-                title: 'Create Post',
-                scene: 'create',
-                autoRight: 1,
-                atomClassName: 'post',
-                action: 'create',
-                sorting: 2,
-                menu: 1,
-              },
-              listPost: {
-                title: 'Post List',
-                scene: 'list',
-                autoRight: 1,
-                atomClassName: 'post',
-                action: 'read',
-                sorting: 2,
-                menu: 1,
-              },
-              listPostByCategory: {
-                title: 'Post List(by Category)',
-                scene: 'list',
-                autoRight: 1,
-                atomClassName: 'post',
-                action: 'read',
-                sorting: 2,
-                menu: 1,
-                actionPath: `/a/cms/article/category?${atomClassQuery}`,
+                schema: 'article',
               },
             },
           },
-          validation: {
-            validators: {
-              post: {
-                schemas: 'post',
-              },
-              postSearch: {
-                schemas: 'postSearch',
-              },
-            },
-            keywords: {},
-            schemas: {
-              post: schemas.post,
-              postSearch: schemas.postSearch,
-            },
-          },
-          settings: {
-            instance: {
-              actionPath: `/a/cms/config/list?${atomClassQuery}`,
-            },
-          },
-          event: {
-            implementations: {
-              'a-base:atomClassValidator': 'event/atomClassValidator',
-            },
-          },
-        };
-        return meta;
-      };
+        },
+        {
+          id: 'endEvent_1',
+          name: 'End',
+          type: 'endEventNone',
+        },
+      ],
+      edges: [
+        {
+          id: 'edge_1',
+          source: 'startEvent_1',
+          target: 'activity_1',
+        },
+        {
+          id: 'edge_2',
+          source: 'activity_1',
+          target: 'endEvent_1',
+        },
+      ],
+    },
+  };
+  const definition = {
+    atomName: 'Community Post Publish',
+    atomStaticKey: 'flowPostPublish',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
+  };
+  return definition;
+};
 
 
-      /***/ },
-    /* 19 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const schemas = {};
-        // post
-        schemas.post = {
-          type: 'object',
-          meta: {
-            custom: {
-              component: 'postItem',
-            },
-          },
-          properties: {
-            atomName: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Atom Name',
-              notEmpty: true,
-            },
-            language: {
-              type: 'string',
-              ebType: 'select',
-              ebTitle: 'Language',
-              ebMultiple: false,
-              ebOptionsBlankAuto: true,
-              notEmpty: true,
-            },
-            categoryId: {
-              type: 'number',
-              ebType: 'text',
-              ebTitle: 'Category',
-              notEmpty: true,
-            },
-            tags: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Tags',
-            },
-            content: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Content',
-            },
-          },
-        };
-        // post search
-        schemas.postSearch = {
-          type: 'object',
-          meta: {
-            custom: {
-              component: 'postSearch',
-            },
-          },
-          properties: {
-            language: {
-              type: 'string',
-              ebType: 'select',
-              ebTitle: 'Language',
-              ebMultiple: false,
-              ebOptionsBlankAuto: true,
-            },
-            categoryId: {
-              type: 'number',
-              ebType: 'text',
-              ebTitle: 'Category',
-            },
-            content: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Content',
-            },
-          },
-        };
-        return schemas;
-      };
+/***/ 772:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const postPublish = __webpack_require__(801);
+
+module.exports = app => {
+  const flowDefs = [
+    postPublish(app),
+  ];
+  return flowDefs;
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 429:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // menu
+    {
+      atomName: 'Create Post',
+      atomStaticKey: 'createPost',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Create',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'post',
+        atomAction: 'create',
+      }),
+      resourceRoles: 'template.cms-community-writer',
+    },
+    {
+      atomName: 'Post List',
+      atomStaticKey: 'listPost',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'post',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'root',
+    },
+  ];
+  return resources;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const schemas = {};
+  // post
+  schemas.post = {
+    type: 'object',
+    properties: {
+      atomId: {
+        type: 'number',
+      },
+      // title
+      groupTitle: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
+      atomName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Atom Name',
+        notEmpty: true,
+      },
+      // content
+      groupContent: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Content',
+      },
+      content: {
+        type: 'string',
+        ebType: 'component',
+        ebTitle: 'Content',
+        ebRender: {
+          module: 'a-cms',
+          name: 'renderArticleContent',
+        },
+      },
+      // Basic Info
+      groupBasicInfo: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+        ebGroupWhole: true,
+      },
+      atomLanguage: {
+        type: 'string',
+        ebType: 'language',
+        ebTitle: 'Language',
+      },
+      atomCategoryId: {
+        type: 'number',
+        ebType: 'category',
+        ebTitle: 'Category',
+      },
+      atomTags: {
+        type: [ 'string', 'null' ],
+        ebType: 'tags',
+        ebTitle: 'Tags',
+      },
+    },
+  };
+  // post search
+  schemas.postSearch = {
+    type: 'object',
+    properties: {
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Content',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module) => {
+
+module.exports = app => {
+  const controllers = {
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const atomClass = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'post',
+  };
+  const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
+  const schemas = __webpack_require__(232)(app);
+  const staticFlowDefs = __webpack_require__(772)(app);
+  const staticResources = __webpack_require__(429)(app);
+  const meta = {
+    base: {
+      atoms: {
+        post: {
+          info: {
+            bean: 'post',
+            title: 'Post2',
+            tableName: 'aCmsArticle',
+            tableNameModes: {
+              default: 'aCmsArticle',
+              full: 'aCmsArticleViewFull',
+              search: 'aCmsArticleViewSearch',
+            },
+            language: true,
+            category: true,
+            tag: true,
+            cms: true,
+          },
+          actions: {
+          },
+          validator: 'post',
+          search: {
+            validator: 'postSearch',
+          },
+        },
+      },
+      statics: {
+        'a-flow.flowDef': {
+          items: staticFlowDefs,
+        },
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
+    validation: {
+      validators: {
+        post: {
+          schemas: 'post',
+        },
+        postSearch: {
+          schemas: 'postSearch',
+        },
+      },
+      keywords: {},
+      schemas: {
+        post: schemas.post,
+        postSearch: schemas.postSearch,
+      },
+    },
+    settings: {
+      instance: {
+        actionPath: `/a/cms/config/list?${atomClassQuery}`,
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 273:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Post extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aCmsArticle', options: { disableDeleted: false } });
+    }
+  }
+  return Post;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const post = __webpack_require__(273);
+
+module.exports = app => {
+  const models = {
+    post,
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module) => {
+
+module.exports = app => {
+  const services = {
+  };
+  return services;
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

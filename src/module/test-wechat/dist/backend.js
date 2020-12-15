@@ -1,481 +1,418 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const config = __webpack_require__(1);
-      const locales = __webpack_require__(2);
-      const errors = __webpack_require__(4);
-      const middlewares = __webpack_require__(5);
+/***/ 427:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = app => {
+const require3 = __webpack_require__(718);
+const extend = require3('extend2');
 
-        // routes
-        const routes = __webpack_require__(6)(app);
-        // services
-        const services = __webpack_require__(10)(app);
-        // models
-        const models = __webpack_require__(15)(app);
-        // meta
-        const meta = __webpack_require__(16)(app);
+module.exports = ctx => {
+  class eventBean {
 
-        return {
-          routes,
-          services,
-          models,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports) {
-
-      // eslint-disable-next-line
-module.exports = appInfo => {
-        const config = {};
-        return config;
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'zh-cn': __webpack_require__(3),
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        Reply: '回复',
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(7);
-      const event = __webpack_require__(8);
-      const test = __webpack_require__(9);
-
-      module.exports = app => {
-        const routes = [
-          // version
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
-          // event
-          { method: 'post', path: 'event/wechatMessage', controller: 'event', middlewares: 'inner,wechat', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'event/wechatMessageMini', controller: 'event', middlewares: 'inner,wechat', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'event/loginInfo', controller: 'event', middlewares: 'inner', meta: { auth: { enable: false } } },
-          // test
-          { method: 'post', path: 'test/getOpenid', controller: 'test', middlewares: 'inWechat' },
-          { method: 'post', path: 'test/getOpenidMini', controller: 'test', middlewares: 'inWechat',
-            meta: {
-              inWechat: {
-                scene: 'wechatmini',
+    async execute(context, next) {
+      const info = context.data.info;
+      const provider = info.user && info.user.provider;
+      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+        info.config = extend(true, info.config, {
+          modules: {
+            'a-layoutmobile': {
+              layout: {
+                login: '/a/login/login',
+                loginOnStart: true,
+                toolbar: {
+                  tabbar: true, labels: true, bottomMd: true,
+                },
+                tabs: [
+                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
+                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/basefront/menu/list' },
+                  { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
+                ],
               },
             },
           },
-        ];
-        return routes;
-      };
+        });
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 288:
+/***/ ((module) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
 
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async test() {
-            await this.service.version.test(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
-
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class EventController extends app.Controller {
-
-          async wechatMessage() {
-            const res = await this.service.event.wechatMessage({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
-
-          async wechatMessageMini() {
-            const res = await this.service.event.wechatMessageMini({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
-
-          async loginInfo() {
-            const res = await this.service.event.loginInfo({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
-
-        }
-        return EventController;
-      };
-
-
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class TestController extends app.Controller {
-
-          async getOpenid() {
-            const res = await this.service.test.getOpenid({
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success(res);
-          }
-
-          async getOpenidMini() {
-            const res = await this.service.test.getOpenidMini({
-              scene: this.ctx.request.body.scene,
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success(res);
-          }
-
-
-        }
-        return TestController;
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(11);
-      const event = __webpack_require__(12);
-      const test = __webpack_require__(14);
-
-      module.exports = app => {
-        const services = {
-          version,
-          event,
-          test,
+    async execute(context, next) {
+      const data = context.data;
+      const message = data.message;
+      if (message.MsgType === 'text') {
+        context.result = {
+          ToUserName: message.FromUserName,
+          FromUserName: message.ToUserName,
+          CreateTime: new Date().getTime(),
+          MsgType: 'text',
+          Content: `${ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
         };
-        return services;
+        // break
+        return;
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
+
+
+/***/ }),
+
+/***/ 177:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
+
+    async execute(context, next) {
+      const data = context.data;
+      // scene
+      const scene = data.scene;
+      // message
+      const message = data.message;
+      if (message.MsgType === 'text') {
+        const text = `${ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
+        await ctx.bean.wechat.mini[scene].sendText(message.FromUserName, text);
+        // break
+        return;
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const eventLoginInfo = __webpack_require__(427);
+const eventWechatMessage = __webpack_require__(288);
+const eventWechatMessageMini = __webpack_require__(177);
+
+module.exports = app => {
+  const beans = {
+    'event.loginInfo': {
+      mode: 'ctx',
+      bean: eventLoginInfo,
+    },
+    'event.wechatMessage': {
+      mode: 'ctx',
+      bean: eventWechatMessage,
+    },
+    'event.wechatMessageMini': {
+      mode: 'ctx',
+      bean: eventWechatMessageMini,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  Reply: '回复',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 821:
+/***/ ((module) => {
+
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async getOpenid() {
+      const res = await this.service.test.getOpenid({
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async getOpenidMini() {
+      const res = await this.service.test.getOpenidMini({
+        scene: this.ctx.request.body.scene,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+
+  }
+  return TestController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const test = __webpack_require__(821);
+
+module.exports = app => {
+  const controllers = {
+    test,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const schemas = require('./config/validation/schemas.js')(app);
+  const meta = {
+    base: {
+      atoms: {
+      },
+    },
+    validation: {
+      validators: {
+      },
+      keywords: {},
+      schemas: {
+      },
+    },
+    event: {
+      implementations: {
+        'a-wechat:wechatMessage': 'wechatMessage',
+        'a-wechat:wechatMessageMini': 'wechatMessageMini',
+        'a-base:loginInfo': 'loginInfo',
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module) => {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+    // test
+    { method: 'post', path: 'test/getOpenid', controller: 'test', middlewares: 'inWechat' },
+    { method: 'post', path: 'test/getOpenidMini', controller: 'test', middlewares: 'inWechat',
+      meta: {
+        inWechat: {
+          scene: 'wechatmini',
+        },
+      },
+    },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 618:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Test extends app.Service {
+
+    async getOpenid({ user }) {
+      const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
+      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 'wechat' });
+      return {
+        openid: wechatUser.openid,
+        unionid: wechatUser.unionid,
       };
+    }
 
-
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-          }
-
-          async init(options) {
-          }
-
-          async test() {
-          }
-
-        }
-
-        return Version;
+    async getOpenidMini({ scene, user }) {
+      const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
+      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: `wechatmini${scene}` });
+      return {
+        openid: wechatUser.openid,
+        unionid: wechatUser.unionid,
       };
+    }
+
+  }
+
+  return Test;
+};
 
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const require3 = __webpack_require__(13);
-      const extend = require3('extend2');
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = app => {
+const test = __webpack_require__(618);
 
-        class Event extends app.Service {
-
-          async wechatMessage({ event, data }) {
-            const message = data.message;
-            if (message.MsgType === 'text') {
-              event.break = true;
-              return {
-                ToUserName: message.FromUserName,
-                FromUserName: message.ToUserName,
-                CreateTime: new Date().getTime(),
-                MsgType: 'text',
-                Content: `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
-              };
-            }
-          }
-
-          async wechatMessageMini({ event, data }) {
-            // scene
-            const scene = data.scene;
-            // message
-            const message = data.message;
-            if (message.MsgType === 'text') {
-              event.break = true;
-              const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-              await this.ctx.bean.wechat.mini[scene].sendText(message.FromUserName, text);
-            }
-          }
-
-          async loginInfo({ /* event,*/ data }) {
-            const info = data.info;
-            const provider = info.user && info.user.provider;
-            if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
-              info.config = extend(true, info.config, {
-                modules: {
-                  'a-layoutmobile': {
-                    layout: {
-                      login: '/a/login/login',
-                      loginOnStart: true,
-                      toolbar: {
-                        tabbar: true, labels: true, bottomMd: true,
-                      },
-                      tabs: [
-                        { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
-                        { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
-                        { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
-                      ],
-                    },
-                  },
-                },
-              });
-            }
-          }
-
-        }
-
-        return Event;
-      };
+module.exports = app => {
+  const services = {
+    test,
+  };
+  return services;
+};
 
 
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = require('require3');
+/***/ 718:
+/***/ ((module) => {
 
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
+"use strict";
+module.exports = require("require3");;
 
-      module.exports = app => {
+/***/ })
 
-        class Test extends app.Service {
-
-          async getOpenid({ user }) {
-            const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-            const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 'wechat' });
-            return {
-              openid: wechatUser.openid,
-              unionid: wechatUser.unionid,
-            };
-          }
-
-          async getOpenidMini({ scene, user }) {
-            const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-            const wechatUser = await modelWechatUser.get({ userId: user.id, scene: `wechatmini${scene}` });
-            return {
-              openid: wechatUser.openid,
-              unionid: wechatUser.unionid,
-            };
-          }
-
-        }
-
-        return Test;
-      };
-
-
-      /***/ },
-    /* 15 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        const models = {
-        };
-        return models;
-      };
-
-
-      /***/ },
-    /* 16 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        // const schemas = require('./config/validation/schemas.js')(app);
-        const meta = {
-          base: {
-            atoms: {
-            },
-            functions: {
-            },
-          },
-          validation: {
-            validators: {
-            },
-            keywords: {},
-            schemas: {
-            },
-          },
-          event: {
-            implementations: {
-              'a-wechat:wechatMessage': 'event/wechatMessage',
-              'a-wechat:wechatMessageMini': 'event/wechatMessageMini',
-              'a-base:loginInfo': 'event/loginInfo',
-            },
-          },
-        };
-        return meta;
-      };
-
-
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

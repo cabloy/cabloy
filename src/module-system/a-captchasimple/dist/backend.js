@@ -1,130 +1,49 @@
 module.exports =
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-const config = __webpack_require__(1);
-const locales = __webpack_require__(2);
-const errors = __webpack_require__(5);
-const middlewares = __webpack_require__(6);
+/***/ 952:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Captcha {
+
+    async verify(context) {
+      const { data, dataInput } = context;
+      if (!data) ctx.throw.module(moduleInfo.relativeName, 1001);
+      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) ctx.throw.module(moduleInfo.relativeName, 1002);
+    }
+
+  }
+  return Captcha;
+};
+
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const captchaProvider = __webpack_require__(952);
 
 module.exports = app => {
-
-  // routes
-  const routes = __webpack_require__(7)(app);
-  // controllers
-  const controllers = __webpack_require__(8)(app);
-  // services
-  const services = __webpack_require__(12)(app);
-  // models
-  const models = __webpack_require__(14)(app);
-  // meta
-  const meta = __webpack_require__(15)(app);
-
-  return {
-    routes,
-    controllers,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    middlewares,
-    meta,
+  const beans = {
+    // captcha.provider
+    'captcha.provider.captcha': {
+      mode: 'ctx',
+      bean: captchaProvider,
+    },
   };
-
+  return beans;
 };
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
+
+/***/ 76:
+/***/ ((module) => {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
@@ -134,38 +53,9 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  'en-us': __webpack_require__(3),
-  'zh-cn': __webpack_require__(4),
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  CaptchaInvalid: 'Verification code is invalid, please retrieve again',
-  CaptchaMismatch: 'Mismatch Captcha Code',
-};
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  CaptchaInvalid: '验证码已失效，请重新获取',
-  CaptchaMismatch: '验证码不匹配',
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
+/***/ 624:
+/***/ ((module) => {
 
 // error code should start from 1001
 module.exports = {
@@ -175,79 +65,55 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
+
+/***/ 327:
+/***/ ((module) => {
 
 module.exports = {
+  CaptchaInvalid: 'Verification code is invalid, please retrieve again',
+  CaptchaMismatch: 'Mismatch Captcha Code',
 };
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  CaptchaInvalid: '验证码已失效，请重新获取',
+  CaptchaMismatch: '验证码不匹配',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'en-us': __webpack_require__(327),
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-    // version
-    { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
-    // captcha
-    { method: 'get', path: 'captcha/image', controller: 'captcha' },
-    { method: 'post', path: 'captcha/verify', controller: 'captcha', middlewares: 'inner' },
-  ];
-  return routes;
+  const schemas = {};
+  return schemas;
 };
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(9);
-const captcha = __webpack_require__(10);
+/***/ 820:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = app => {
-  const controllers = {
-    version,
-    captcha,
-  };
-  return controllers;
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class VersionController extends app.Controller {
-
-    async update() {
-      await this.service.version.update(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-    async init() {
-      await this.service.version.init(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-    async test() {
-      await this.service.version.test(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-  }
-  return VersionController;
-};
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(11);
+const require3 = __webpack_require__(718);
 const captcha = require3('trek-captcha');
 
 module.exports = app => {
@@ -268,84 +134,75 @@ module.exports = app => {
       this.ctx.body = buffer;
     }
 
-    async verify() {
-      // const { providerInstanceId, context } = this.ctx.request.body;
-      const { data, dataInput } = this.ctx.request.body;
-      if (!data) this.ctx.throw(1001);
-      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) this.ctx.throw(1002);
-      this.ctx.success();
-    }
-
   }
   return CaptchaController;
 };
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
 
-module.exports = require("require3");
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const version = __webpack_require__(13);
+const captcha = __webpack_require__(820);
 
 module.exports = app => {
-  const services = {
-    version,
+  const controllers = {
+    captcha,
   };
-  return services;
+  return controllers;
 };
 
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports) {
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
 
 module.exports = app => {
 
-  class Version extends app.Service {
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
 
-    async update(options) {
-    }
-
-    async init(options) {
-    }
-
-    async test() {
-    }
-
-  }
-
-  return Version;
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  const models = {
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
   };
-  return models;
+
 };
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  const schemas = __webpack_require__(16)(app);
+  const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
       atoms: {
-      },
-      functions: {
       },
     },
     validation: {
@@ -361,15 +218,84 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports) {
+
+/***/ 230:
+/***/ ((module) => {
 
 module.exports = app => {
-  const schemas = {};
-  return schemas;
+  const models = {
+  };
+  return models;
 };
 
 
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+    // captcha
+    { method: 'get', path: 'captcha/image', controller: 'captcha' },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module) => {
+
+
+module.exports = app => {
+  const services = {
+  };
+  return services;
+};
+
+
+/***/ }),
+
+/***/ 718:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("require3");;
+
 /***/ })
-/******/ ]);
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
 //# sourceMappingURL=backend.js.map

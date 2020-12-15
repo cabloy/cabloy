@@ -1,216 +1,363 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 1);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const Fn = module.exports = ctx => {
-        // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class RedisDb {
+/***/ 850:
+/***/ ((module) => {
 
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cache {
 
-          // other module's cache
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
+    get db() {
+      const config = ctx.config.module(moduleInfo.relativeName);
+      if (config.db.redis) {
+        return this.redis;
+      }
+      return this._db;
+    }
 
-          _getKey(name) {
-            return `${ctx.instance ? ctx.instance.id : 0}:${this.moduleName}:${name}`;
-          }
+    get _db() {
+      return ctx.bean._getBean(moduleInfo, 'local.db');
+    }
 
-          async get(name) {
-            const redis = ctx.app.redis.get('cache');
-            const key = this._getKey(name);
-            const value = await redis.get(key);
-            return value ? JSON.parse(value) : undefined;
-          }
+    get mem() {
+      return ctx.bean._getBean(moduleInfo, 'local.mem');
+    }
 
-          async set(name, value, timeout) {
-            const redis = ctx.app.redis.get('cache');
-            const key = this._getKey(name);
-            if (timeout) {
-              await redis.set(key, JSON.stringify(value), 'PX', timeout);
-            } else {
-              await redis.set(key, JSON.stringify(value));
-            }
-          }
+    get redis() {
+      return ctx.bean._getBean(moduleInfo, 'local.redis');
+    }
 
-          async getset(name, value, timeout) {
-            const redis = ctx.app.redis.get('cache');
-            const key = this._getKey(name);
-            let valuePrev;
-            if (timeout) {
-              const res = await redis.multi()
-                .get(key)
-                .set(key, JSON.stringify(value), 'PX', timeout)
-                .exec();
-              valuePrev = res[0][1];
-            } else {
-              const res = await redis.multi()
-                .get(key)
-                .set(key, JSON.stringify(value))
-                .exec();
-              valuePrev = res[0][1];
-            }
-            return valuePrev ? JSON.parse(valuePrev) : undefined;
-          }
+  }
 
-          async has(name) {
-            const redis = ctx.app.redis.get('cache');
-            const key = this._getKey(name);
-            return await redis.exists(key) > 0;
-          }
+  return Cache;
+};
 
-          async remove(name) {
-            const redis = ctx.app.redis.get('cache');
-            const key = this._getKey(name);
-            await redis.del(key);
-          }
 
+/***/ }),
+
+/***/ 258:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+
+    async execute(context) {
+      const sameAsCaller = context.sameAsCaller;
+      const data = context.data;
+      if (!sameAsCaller) {
+        const moduleCache = this.ctx.cache.mem.module(data.moduleName);
+        moduleCache._clear();
+      }
+    }
+
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
+/***/ 261:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+
+    async execute(context) {
+      const sameAsCaller = context.sameAsCaller;
+      const data = context.data;
+      if (!sameAsCaller) {
+        const moduleCache = this.ctx.cache.mem.module(data.moduleName);
+        moduleCache._remove(data.name);
+      }
+    }
+
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
+/***/ 420:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class CacheDb extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, `${moduleInfo.relativeName}.local.db`);
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    async get(name) {
+      const res = await this._has(name);
+      return res ? JSON.parse(res.value) : undefined;
+    }
+
+    async set(name, value, timeout) {
+      await this._set({ name, value, timeout, queue: true });
+    }
+
+    async getset(name, value, timeout) {
+      const res = await this._set({ name, value, timeout, queue: true });
+      return res ? JSON.parse(res.value) : undefined;
+    }
+
+    async _set({ name, value, timeout, queue }) {
+      // second
+      const second = timeout ? parseInt(timeout / 1000) : timeout;
+      // expired
+      const expired = second ? `TIMESTAMPADD(SECOND,${second},CURRENT_TIMESTAMP)` : 'null';
+      const res = await ctx.db.get('aCache', {
+        iid: ctx.instance ? ctx.instance.id : 0,
+        module: this.moduleName,
+        name,
+      });
+      if (res) {
+        await ctx.db.query(`
+          update aCache set value=?, expired=${expired}
+            where id=?
+          `, [ JSON.stringify(value), res.id ]);
+      } else {
+        if (queue) {
+          await ctx.app.meta.util.lock({
+            subdomain: ctx.subdomain,
+            resource: `${moduleInfo.relativeName}.cacheDbSet.${this.moduleName}.${name}`,
+            fn: async () => {
+              return await ctx.app.meta.util.executeBean({
+                subdomain: ctx.subdomain,
+                beanModule: moduleInfo.relativeName,
+                fn: async ({ ctx }) => {
+                  return await ctx.cache._db.module(this.moduleName)._set({ name, value, timeout, queue: false });
+                },
+              });
+            },
+          });
+        } else {
+          await ctx.db.query(`
+            insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
+            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
         }
+      }
+      // return old value
+      if (!res) return null;
+      if (!res.expired || res.expired.getTime() > new Date().getTime()) return res;
+      return null;
+    }
 
-        return RedisDb;
+    async has(name) {
+      const res = await this._has(name);
+      return !!res;
+    }
+
+    async _has(name) {
+      const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
+      const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
+      return res;
+    }
+
+    async remove(name) {
+      await ctx.db.delete('aCache', {
+        iid: ctx.instance ? ctx.instance.id : 0,
+        module: this.moduleName,
+        name,
+      });
+    }
+
+    async clear() {
+      await ctx.db.delete('aCache', {
+        iid: ctx.instance ? ctx.instance.id : 0,
+        module: this.moduleName,
+      });
+    }
+
+  }
+
+  return CacheDb;
+};
+
+
+/***/ }),
+
+/***/ 583:
+/***/ ((module) => {
+
+const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class CacheMem extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, `${moduleInfo.relativeName}.local.mem`);
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get memory() {
+      return ctx.app.geto(CACHEMEMORY).geto(ctx.subdomain).geto(this.moduleName);
+    }
+
+    get(name) {
+      const res = this.has(name);
+      return res ? res.value : undefined;
+    }
+
+    set(name, value, timeout) {
+      this.memory[name] = {
+        value,
+        timeout: timeout || 0,
+        timestamp: new Date(),
       };
+    }
+
+    getset(name, value, timeout) {
+      const valueOld = this.get(name);
+      this.memory[name] = {
+        value,
+        timeout: timeout || 0,
+        timestamp: new Date(),
+      };
+      return valueOld;
+    }
+
+    has(name) {
+      const res = this.memory[name];
+      if (!res) return null;
+      return (res.timeout === 0 || (new Date() - res.timestamp) < res.timeout) ? res : null;
+    }
+
+    remove(name) {
+      // remove this
+      this._remove(name);
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memRemove',
+        data: { moduleName: this.moduleName, name },
+      });
+    }
+
+    // by broadcast
+    _remove(name) {
+      delete this.memory[name];
+    }
+
+    clear() {
+      // clear this
+      this._clear();
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memClear',
+        data: { moduleName: this.moduleName },
+      });
+    }
+
+    // by broadcast
+    _clear() {
+      ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
+    }
+
+  }
+
+  return CacheMem;
+};
 
 
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const services = __webpack_require__(2);
-      const config = __webpack_require__(5);
-      const locales = __webpack_require__(6);
-      const errors = __webpack_require__(8);
-      const middlewares = __webpack_require__(9);
+/***/ 310:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class RedisDb extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, `${moduleInfo.relativeName}.local.redis`);
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    _getKey(name) {
+      return `${ctx.instance ? ctx.instance.id : 0}:${this.moduleName}:${name}`;
+    }
+
+    async get(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      const value = await redis.get(key);
+      return value ? JSON.parse(value) : undefined;
+    }
+
+    async set(name, value, timeout) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      if (timeout) {
+        await redis.set(key, JSON.stringify(value), 'PX', timeout);
+      } else {
+        await redis.set(key, JSON.stringify(value));
+      }
+    }
+
+    async getset(name, value, timeout) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      let valuePrev;
+      if (timeout) {
+        const res = await redis.multi()
+          .get(key)
+          .set(key, JSON.stringify(value), 'PX', timeout)
+          .exec();
+        valuePrev = res[0][1];
+      } else {
+        const res = await redis.multi()
+          .get(key)
+          .set(key, JSON.stringify(value))
+          .exec();
+        valuePrev = res[0][1];
+      }
+      return valuePrev ? JSON.parse(valuePrev) : undefined;
+    }
+
+    async has(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      return await redis.exists(key) > 0;
+    }
+
+    async remove(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      await redis.del(key);
+    }
+
+  }
+
+  return RedisDb;
+};
+
+
+/***/ }),
+
+/***/ 899:
+/***/ ((module) => {
+
 module.exports = app => {
 
-        const routes = __webpack_require__(15)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-        };
-
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(3);
-      const db = __webpack_require__(4);
-
-      module.exports = {
-        version,
-        db,
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-              // create table: aCache
-              const sql = `
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aCache
+        const sql = `
           CREATE TABLE aCache (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -224,516 +371,275 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-              await this.ctx.db.query(sql);
-            }
+        await this.ctx.db.query(sql);
+      }
 
-            if (options.version === 2) {
-              let sql;
-              // delete
-              sql = `
+      if (options.version === 2) {
+        let sql;
+        // delete
+        sql = `
           delete from aCache
         `;
-              await this.ctx.db.query(sql);
-              // alter table: aCache
-              sql = `
+        await this.ctx.db.query(sql);
+        // alter table: aCache
+        sql = `
           ALTER TABLE aCache
             DROP COLUMN timeout,
             ADD COLUMN expired timestamp DEFAULT NULL
         `;
-              await this.ctx.db.query(sql);
-            }
-          }
+        await this.ctx.db.query(sql);
+      }
+    }
 
-        }
+  }
 
-        return Version;
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Db extends app.Service {
-
-          async set({ module, name, value, timeout }) {
-            const res = await this.ctx.cache._db.module(module)._set({ name, value, timeout, queue: false });
-            return res;
-          }
-
-        }
-
-        return Db;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const versionManager = __webpack_require__(899);
+const localDb = __webpack_require__(420);
+const localMem = __webpack_require__(583);
+const localRedis = __webpack_require__(310);
+const broadcastMemClear = __webpack_require__(258);
+const broadcastMemRemove = __webpack_require__(261);
+const beanCache = __webpack_require__(850);
+
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // local
+    'local.db': {
+      mode: 'ctx',
+      bean: localDb,
+    },
+    'local.mem': {
+      mode: 'ctx',
+      bean: localMem,
+    },
+    'local.redis': {
+      mode: 'ctx',
+      bean: localRedis,
+    },
+    // broadcast
+    'broadcast.memClear': {
+      mode: 'app',
+      bean: broadcastMemClear,
+    },
+    // broadcast
+    'broadcast.memRemove': {
+      mode: 'app',
+      bean: broadcastMemRemove,
+    },
+    // global
+    cache: {
+      mode: 'ctx',
+      bean: beanCache,
+      global: true,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
-
-        // middlewares
-        config.middlewares = {
-          cachedb: {
-            global: true,
-          },
-          cachemem: {
-            global: true,
-          },
-          cacheredis: {
-            global: true,
-          },
-        };
-
-        // queues
-        config.queues = {
-          cacheDbSet: {
-            path: 'db/set',
-          },
-        };
-
-        // broadcasts
-        config.broadcasts = {
-          memRemove: {
-            path: 'broadcast/memRemove',
-          },
-          memClear: {
-            path: 'broadcast/memClear',
-          },
-        };
-
-        // db
-        config.db = {
-          redis: true,
-        };
-
-        return config;
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'zh-cn': __webpack_require__(7),
-      };
-
-
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const cachedb = __webpack_require__(10);
-      const cachemem = __webpack_require__(12);
-      const cacheredis = __webpack_require__(14);
-
-      module.exports = {
-        cachedb,
-        cachemem,
-        cacheredis,
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const dbFn = __webpack_require__(11);
-      const redisFn = __webpack_require__(0);
-      const CACHE = Symbol('CTX#__CACHE');
-      const CACHEDB = Symbol('CTX#__CACHEDB');
-
-      module.exports = (options, app) => {
-        const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        return async function cachedb(ctx, next) {
-          ctx.cache = ctx.cache || {};
-          Object.defineProperty(ctx.cache, 'db', {
-            get() {
-              if (ctx.cache[CACHE] === undefined) {
-                const config = ctx.config.module(moduleInfo.relativeName);
-                if (config.db.redis) {
-                  ctx.cache[CACHE] = new (redisFn(ctx))();
-                } else {
-                  ctx.cache[CACHE] = new (dbFn(ctx))();
-                }
-              }
-              return ctx.cache[CACHE];
-            },
-          });
-          Object.defineProperty(ctx.cache, '_db', {
-            get() {
-              if (ctx.cache[CACHEDB] === undefined) {
-                ctx.cache[CACHEDB] = new (dbFn(ctx))();
-              }
-              return ctx.cache[CACHEDB];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
-
-
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
-
-      const Fn = module.exports = ctx => {
-        const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class CacheDb {
-
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
-
-          // other module's cache
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
-
-          async get(name) {
-            const res = await this._has(name);
-            return res ? JSON.parse(res.value) : undefined;
-          }
-
-          async set(name, value, timeout) {
-            await this._set({ name, value, timeout, queue: true });
-          }
-
-          async getset(name, value, timeout) {
-            const res = await this._set({ name, value, timeout, queue: true });
-            return res ? JSON.parse(res.value) : undefined;
-          }
-
-          async _set({ name, value, timeout, queue }) {
-            // second
-            const second = timeout ? parseInt(timeout / 1000) : timeout;
-            // expired
-            const expired = second ? `TIMESTAMPADD(SECOND,${second},CURRENT_TIMESTAMP)` : 'null';
-            const res = await ctx.db.get('aCache', {
-              iid: ctx.instance ? ctx.instance.id : 0,
-              module: this.moduleName,
-              name,
-            });
-            if (res) {
-              await ctx.db.query(`
-          update aCache set value=?, expired=${expired}
-            where id=?
-          `, [ JSON.stringify(value), res.id ]);
-            } else {
-              if (queue) {
-                await ctx.app.meta.queue.pushAsync({
-                  subdomain: ctx.subdomain,
-                  module: moduleInfo.relativeName,
-                  queueName: 'cacheDbSet',
-                  data: {
-                    module: this.moduleName,
-                    name,
-                    value,
-                    timeout,
-                  },
-                });
-              } else {
-                await ctx.db.query(`
-            insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
-              }
-            }
-            // return old value
-            if (!res) return null;
-            if (!res.expired || res.expired.getTime() > new Date().getTime()) return res;
-            return null;
-          }
-
-          async has(name) {
-            const res = await this._has(name);
-            return !!res;
-          }
-
-          async _has(name) {
-            const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
-            const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
-            return res;
-          }
-
-          async remove(name) {
-            await ctx.db.delete('aCache', {
-              iid: ctx.instance ? ctx.instance.id : 0,
-              module: this.moduleName,
-              name,
-            });
-          }
-
-          async clear() {
-            await ctx.db.delete('aCache', {
-              iid: ctx.instance ? ctx.instance.id : 0,
-              module: this.moduleName,
-            });
-          }
-
-        }
-
-        return CacheDb;
-      };
-
-
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const memFn = __webpack_require__(13);
-      const CACHE = Symbol('CTX#__CACHE');
-
-      module.exports = () => {
-        return async function cachemem(ctx, next) {
-          ctx.cache = ctx.cache || {};
-          Object.defineProperty(ctx.cache, 'mem', {
-            get() {
-              if (ctx.cache[CACHE] === undefined) {
-                ctx.cache[CACHE] = new (memFn(ctx))();
-              }
-              return ctx.cache[CACHE];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
-
-
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
-
-      const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
-
-      const Fn = module.exports = ctx => {
-
-        class CacheMem {
-
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
-
-          get memory() {
-            return ctx.app.geto(CACHEMEMORY).geto(ctx.subdomain).geto(this.moduleName);
-          }
-
-          // other module's cache
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
-
-          get(name) {
-            const res = this.has(name);
-            return res ? res.value : undefined;
-          }
-
-          set(name, value, timeout) {
-            this.memory[name] = {
-              value,
-              timeout: timeout || 0,
-              timestamp: new Date(),
-            };
-          }
-
-          getset(name, value, timeout) {
-            const valueOld = this.get(name);
-            this.memory[name] = {
-              value,
-              timeout: timeout || 0,
-              timestamp: new Date(),
-            };
-            return valueOld;
-          }
-
-          has(name) {
-            const res = this.memory[name];
-            if (!res) return null;
-            return (res.timeout === 0 || (new Date() - res.timestamp) < res.timeout) ? res : null;
-          }
-
-          remove(name) {
-            // remove this
-            this._remove(name);
-            // broadcast
-            ctx.app.meta.broadcast.emit({
-              subdomain: ctx.subdomain,
-              module: 'a-cache',
-              broadcastName: 'memRemove',
-              data: { moduleName: this.moduleName, name },
-            });
-          }
-
-          // by broadcast
-          _remove(name) {
-            delete this.memory[name];
-          }
-
-          clear() {
-            // clear this
-            this._clear();
-            // broadcast
-            ctx.app.meta.broadcast.emit({
-              subdomain: ctx.subdomain,
-              module: 'a-cache',
-              broadcastName: 'memClear',
-              data: { moduleName: this.moduleName },
-            });
-          }
-
-          // by broadcast
-          _clear() {
-            ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
-          }
-
-        }
-
-        return CacheMem;
-      };
-
-
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const redisFn = __webpack_require__(0);
-      const CACHE = Symbol('CTX#__CACHE');
-
-      module.exports = () => {
-        return async function cachedb(ctx, next) {
-          ctx.cache = ctx.cache || {};
-          Object.defineProperty(ctx.cache, 'redis', {
-            get() {
-              if (ctx.cache[CACHE] === undefined) {
-                ctx.cache[CACHE] = new (redisFn(ctx))();
-              }
-              return ctx.cache[CACHE];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
-
-
-      /***/ },
-    /* 15 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(16);
-      const db = __webpack_require__(17);
-      const broadcast = __webpack_require__(18);
-
-      module.exports = app => {
-        const routes = [
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'db/set', controller: 'db', middlewares: 'inner',
-            meta: { auth: { enable: false } },
-          },
-          // broadcast
-          { method: 'post', path: 'broadcast/memRemove', controller: 'broadcast', middlewares: 'inner', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'broadcast/memClear', controller: 'broadcast', middlewares: 'inner', meta: { auth: { enable: false } } },
-        ];
-        return routes;
-      };
-
-
-      /***/ },
-    /* 16 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class VersionController extends app.Controller {
-
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
-
-
-      /***/ },
-    /* 17 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class DbController extends app.Controller {
-
-          async set() {
-            const res = await this.ctx.service.db.set(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-        }
-
-        return DbController;
-      };
-
-
-      /***/ },
-    /* 18 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class BroadcastController extends app.Controller {
-
-          async memRemove() {
-            const { sameAsCaller, moduleName, name } = this.ctx.request.body;
-            if (!sameAsCaller) {
-              const moduleCache = this.ctx.cache.mem.module(moduleName);
-              moduleCache._remove(name);
-            }
-            this.ctx.success();
-          }
-
-          async memClear() {
-            const { sameAsCaller, moduleName } = this.ctx.request.body;
-            if (!sameAsCaller) {
-              const moduleCache = this.ctx.cache.mem.module(moduleName);
-              moduleCache._clear();
-            }
-            this.ctx.success();
-          }
-
-        }
-
-        return BroadcastController;
-
-      };
-
-
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+  const config = {};
+
+  // broadcasts
+  config.broadcasts = {
+    memRemove: {
+      bean: 'memRemove',
+    },
+    memClear: {
+      bean: 'memClear',
+    },
+  };
+
+  // db
+  config.db = {
+    redis: true,
+  };
+
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 792:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class DbController extends app.Controller {
+  }
+
+  return DbController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const db = __webpack_require__(792);
+
+module.exports = app => {
+  const controllers = {
+    db,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 219:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Db extends app.Service {
+  }
+
+  return Db;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const db = __webpack_require__(219);
+
+module.exports = {
+  db,
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

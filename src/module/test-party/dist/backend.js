@@ -1,4 +1,4 @@
-module.exports.backend =
+module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 

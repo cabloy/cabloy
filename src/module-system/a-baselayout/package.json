@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baselayout",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "title": "Base Layout",
   "eggBornModule": {
     "dependencies": {}
@@ -14,8 +14,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-bin": "^3.0.0",
-    "egg-born-mock": "^2.0.0",
-    "require3": "^2.0.0"
+    "egg-born-bin": "^3.0.2",
+    "egg-born-mock": "^2.0.3",
+    "require3": "^2.0.2"
   }
 }

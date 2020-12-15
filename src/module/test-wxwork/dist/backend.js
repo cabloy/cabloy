@@ -1,472 +1,394 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const config = __webpack_require__(1);
-      const locales = __webpack_require__(2);
-      const errors = __webpack_require__(4);
-      const middlewares = __webpack_require__(5);
+/***/ 427:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = app => {
+const require3 = __webpack_require__(718);
+const extend = require3('extend2');
 
-        // routes
-        const routes = __webpack_require__(6)(app);
-        // services
-        const services = __webpack_require__(10)(app);
-        // models
-        const models = __webpack_require__(15)(app);
-        // meta
-        const meta = __webpack_require__(16)(app);
+module.exports = ctx => {
+  class eventBean {
 
-        return {
-          routes,
-          services,
-          models,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
+    async execute(context, next) {
+      const info = context.data.info;
+      const provider = info.user && info.user.provider;
+      if (provider && provider.module === 'a-wxwork' && provider.providerName === 'wxwork') {
+        info.config = extend(true, info.config, {
+          modules: {
+            'a-layoutmobile': {
+              layout: {
+                login: '/a/login/login',
+                loginOnStart: true,
+                toolbar: {
+                  tabbar: true, labels: true, bottomMd: true,
+                },
+                tabs: [
+                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wxwork/test/index' },
+                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/basefront/menu/list' },
+                  { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
+                ],
+              },
+            },
+          },
+        });
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
+
+
+/***/ }),
+
+/***/ 114:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
+
+    async execute(context, next) {
+      const data = context.data;
+      const message = data.message;
+      if (message.MsgType === 'text') {
+        context.result = {
+          ToUserName: message.FromUserName,
+          FromUserName: message.ToUserName,
+          CreateTime: new Date().getTime(),
+          MsgType: 'text',
+          Content: `${ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
         };
+        // break
+        return;
+      }
+      // next
+      await next();
+    }
 
-      };
+  }
+
+  return eventBean;
+};
 
 
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const eventLoginInfo = __webpack_require__(427);
+const eventWxworkMessage = __webpack_require__(114);
+
+module.exports = app => {
+  const beans = {
+    'event.loginInfo': {
+      mode: 'ctx',
+      bean: eventLoginInfo,
+    },
+    'event.wxworkMessage': {
+      mode: 'ctx',
+      bean: eventWxworkMessage,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
-        return config;
+  const config = {};
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  Reply: '回复',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 821:
+/***/ ((module) => {
+
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async getMemberId() {
+      const res = await this.service.test.getMemberId({
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async sendAppMessage() {
+      const res = await this.service.test.sendAppMessage({
+        message: this.ctx.request.body.message,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return TestController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const test = __webpack_require__(821);
+
+module.exports = app => {
+  const controllers = {
+    test,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const schemas = require('./config/validation/schemas.js')(app);
+  const meta = {
+    base: {
+      atoms: {
+      },
+    },
+    validation: {
+      validators: {
+      },
+      keywords: {},
+      schemas: {
+      },
+    },
+    event: {
+      implementations: {
+        'a-wxwork:wxworkMessage': 'wxworkMessage',
+        'a-base:loginInfo': 'loginInfo',
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module) => {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
+
+module.exports = app => {
+  const routes = [
+    // test
+    { method: 'post', path: 'test/getMemberId', controller: 'test', middlewares: 'inWxwork',
+      meta: {
+        inWxwork: {
+          scene: _sceneAll,
+        },
+      },
+    },
+    { method: 'post', path: 'test/sendAppMessage', controller: 'test', middlewares: 'inWxwork',
+      meta: {
+        inWxwork: {
+          scene: _sceneAll,
+        },
+      },
+    },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 618:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Test extends app.Service {
+
+    async getMemberId({ user }) {
+      const modelMember = this.ctx.model.module('a-wxwork').member;
+      const member = await modelMember.get({ userId: user.id });
+      return {
+        memberId: member.memberId,
       };
+    }
 
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = {
-        'zh-cn': __webpack_require__(3),
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        Reply: '回复',
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(7);
-      const event = __webpack_require__(8);
-      const test = __webpack_require__(9);
-
-      const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
-
-      module.exports = app => {
-        const routes = [
-          // version
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
-          // event
-          { method: 'post', path: 'event/wxworkMessage', controller: 'event', middlewares: 'inner,wxwork', meta: { auth: { enable: false } } },
-          { method: 'post', path: 'event/loginInfo', controller: 'event', middlewares: 'inner', meta: { auth: { enable: false } } },
-          // test
-          { method: 'post', path: 'test/getMemberId', controller: 'test', middlewares: 'inWxwork',
-            meta: {
-              inWxwork: {
-                scene: _sceneAll,
-              },
-            },
+    async sendAppMessage({ message, user }) {
+      const content = {
+        userIds: [ user.id ],
+        data: {
+          msgtype: 'text',
+          text: {
+            content: message.text,
           },
-          { method: 'post', path: 'test/sendAppMessage', controller: 'test', middlewares: 'inWxwork',
-            meta: {
-              inWxwork: {
-                scene: _sceneAll,
-              },
-            },
-          },
-        ];
-        return routes;
+        },
       };
+      await this.ctx.bean.io.pushDirect({
+        content,
+        channel: { module: 'a-wxwork', name: 'app' },
+      });
+    }
+
+  }
+
+  return Test;
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
+const test = __webpack_require__(618);
 
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async test() {
-            await this.service.version.test(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
+module.exports = app => {
+  const services = {
+    test,
+  };
+  return services;
+};
 
 
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class EventController extends app.Controller {
+/***/ 718:
+/***/ ((module) => {
 
-          async wxworkMessage() {
-            const res = await this.service.event.wxworkMessage({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
+"use strict";
+module.exports = require("require3");;
 
-          async loginInfo() {
-            const res = await this.service.event.loginInfo({
-              event: this.ctx.request.body.event,
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success(res);
-          }
+/***/ })
 
-        }
-        return EventController;
-      };
-
-
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class TestController extends app.Controller {
-
-          async getMemberId() {
-            const res = await this.service.test.getMemberId({
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success(res);
-          }
-
-          async sendAppMessage() {
-            const res = await this.service.test.sendAppMessage({
-              message: this.ctx.request.body.message,
-              user: this.ctx.state.user.op,
-            });
-            this.ctx.success(res);
-          }
-
-        }
-        return TestController;
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(11);
-      const event = __webpack_require__(12);
-      const test = __webpack_require__(14);
-
-      module.exports = app => {
-        const services = {
-          version,
-          event,
-          test,
-        };
-        return services;
-      };
-
-
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-          }
-
-          async init(options) {
-          }
-
-          async test() {
-          }
-
-        }
-
-        return Version;
-      };
-
-
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const require3 = __webpack_require__(13);
-      const extend = require3('extend2');
-
-      module.exports = app => {
-
-        class Event extends app.Service {
-
-          async wxworkMessage({ event, data }) {
-            const message = data.message;
-            if (message.MsgType === 'text') {
-              event.break = true;
-              return {
-                ToUserName: message.FromUserName,
-                FromUserName: message.ToUserName,
-                CreateTime: new Date().getTime(),
-                MsgType: 'text',
-                Content: `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
-              };
-            }
-          }
-
-          async loginInfo({ /* event,*/ data }) {
-            const info = data.info;
-            const provider = info.user && info.user.provider;
-            if (provider && provider.module === 'a-wxwork' && provider.providerName === 'wxwork') {
-              info.config = extend(true, info.config, {
-                modules: {
-                  'a-layoutmobile': {
-                    layout: {
-                      login: '/a/login/login',
-                      loginOnStart: true,
-                      toolbar: {
-                        tabbar: true, labels: true, bottomMd: true,
-                      },
-                      tabs: [
-                        { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wxwork/test/index' },
-                        { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
-                        { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
-                      ],
-                    },
-                  },
-                },
-              });
-            }
-          }
-
-        }
-
-        return Event;
-      };
-
-
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
-
-      module.exports = require('require3');
-
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Test extends app.Service {
-
-          async getMemberId({ user }) {
-            const modelMember = this.ctx.model.module('a-wxwork').member;
-            const member = await modelMember.get({ userId: user.id });
-            return {
-              memberId: member.memberId,
-            };
-          }
-
-          async sendAppMessage({ message, user }) {
-            const content = {
-              userIds: [ user.id ],
-              data: {
-                msgtype: 'text',
-                text: {
-                  content: message.text,
-                },
-              },
-            };
-            await this.ctx.bean.io.pushDirect({
-              content,
-              channel: { module: 'a-wxwork', name: 'app' },
-            });
-          }
-
-        }
-
-        return Test;
-      };
-
-
-      /***/ },
-    /* 15 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        const models = {
-        };
-        return models;
-      };
-
-
-      /***/ },
-    /* 16 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        // const schemas = require('./config/validation/schemas.js')(app);
-        const meta = {
-          base: {
-            atoms: {
-            },
-            functions: {
-            },
-          },
-          validation: {
-            validators: {
-            },
-            keywords: {},
-            schemas: {
-            },
-          },
-          event: {
-            implementations: {
-              'a-wxwork:wxworkMessage': 'event/wxworkMessage',
-              'a-base:loginInfo': 'event/loginInfo',
-            },
-          },
-        };
-        return meta;
-      };
-
-
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

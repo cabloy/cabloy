@@ -1,437 +1,625 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const services = __webpack_require__(1);
-      const config = __webpack_require__(4);
-      const locales = __webpack_require__(5);
-      const errors = __webpack_require__(7);
-      const middlewares = __webpack_require__(8);
+/***/ 565:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+let __stats;
+let __statsDeps;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Stats extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'stats');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get modelStats() {
+      return ctx.model.module(moduleInfo.relativeName).stats;
+    }
+
+    notify({ module, name, nameSub, user }) {
+      module = module || this.moduleName;
+      user = user || (ctx.state.user && ctx.state.user.op);
+      ctx.tail(() => {
+        this._notify_tail({ module, name, nameSub, user, async: false });
+      });
+    }
+
+    async notifyAsync({ module, name, nameSub, user }) {
+      module = module || this.moduleName;
+      user = user || (ctx.state.user && ctx.state.user.op);
+      await this._notify_tail({ module, name, nameSub, user, async: true });
+    }
+
+    _notify_tail({ module, name, nameSub, user, async }) {
+      const provider = this._findStatsProvider({ module, name });
+      if (provider.user && !user) return;
+      // queue
+      const method = async ? 'pushAsync' : 'push';
+      return ctx.app.meta.queue[method]({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'stats',
+        queueNameSub: provider.user ? 'user' : 'instance',
+        data: {
+          module, name, nameSub, user,
+        },
+      });
+    }
+
+    async _notify_queue({ module, name, nameSub, user }) {
+      // loop names
+      await this._notify_queue_names({ module, name, nameSub, user });
+      // deps
+      await this._notify_queue_deps({ module, name, user });
+    }
+
+    async _notify_queue_names({ module, name, nameSub, user }) {
+      const provider = this._findStatsProvider({ module, name });
+      const fullName = this._getFullName({ name, nameSub });
+      const names = fullName.split('.');
+      for (let i = 0; i < names.length; i++) {
+        const keys = names.slice(0, names.length - i);
+        const fullNameSub = keys.join('.');
+        // execute
+        const value = await ctx.bean._getBean(provider.beanFullName).execute({
+          keys, provider, user,
+        });
+        // set
+        await this._set({
+          module,
+          fullName: fullNameSub,
+          value,
+          user: provider.user ? user : null,
+        });
+        // push
+        if (provider.user && user) {
+          const message = {
+            userIdTo: user.id,
+            content: {
+              module, name,
+              fullName: fullNameSub,
+              value,
+            },
+          };
+          await ctx.bean.io.publish({
+            path: `/a/stats/stats/${module}/${fullNameSub}`,
+            message,
+            messageClass: {
+              module: 'a-stats',
+              messageClassName: 'stats',
+            },
+          });
+        }
+      }
+    }
+
+    async _notify_queue_deps({ module, name, user }) {
+      const fullKey = `${module}:${name}`;
+      const deps = __statsDeps[fullKey];
+      if (!deps || deps.length === 0) return;
+      for (const dep of deps) {
+        const [ depModule, depName ] = dep.split(':');
+        await this._notify_queue({ module: depModule, name: depName, user });
+      }
+    }
+
+    async get({ module, name, nameSub, user }) {
+      module = module || this.moduleName;
+      const provider = this._findStatsProvider({ module, name });
+      const fullName = this._getFullName({ name, nameSub });
+      return await this._get({
+        module,
+        fullName,
+        user: provider.user ? user : null,
+      });
+    }
+
+    _getFullName({ name, nameSub }) {
+      return nameSub ? `${name}.${nameSub}` : name;
+    }
+
+    async _get({ module, fullName, user }) {
+      const where = { module, name: fullName };
+      if (user) { where.userId = user.id; }
+      const item = await this.modelStats.get(where);
+      return item ? JSON.parse(item.value) : undefined;
+    }
+
+    async _set({ module, fullName, value, user }) {
+      const where = { module, name: fullName };
+      if (user) { where.userId = user.id; }
+      const item = await this.modelStats.get(where);
+      if (item) {
+        await this.modelStats.update({
+          id: item.id,
+          value: JSON.stringify(value),
+        });
+      } else {
+        const data = { module, name: fullName, value: JSON.stringify(value) };
+        if (user) { data.userId = user.id; }
+        await this.modelStats.insert(data);
+      }
+    }
+
+    _findStatsProvider({ module, name }) {
+      module = module || this.moduleName;
+      const fullKey = `${module}:${name}`;
+      if (!__stats) {
+        __statsDeps = {};
+        __stats = this._collectStats();
+      }
+      const provider = __stats[fullKey];
+      if (!provider) throw new Error(`stats provider not found: ${fullKey}`);
+      return provider;
+    }
+
+    _collectStats() {
+      const stats = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const providers = module.main.meta && module.main.meta.stats && module.main.meta.stats.providers;
+        if (!providers) continue;
+        for (const key in providers) {
+          const provider = providers[key];
+          const fullKey = `${module.info.relativeName}:${key}`;
+          // bean
+          const beanName = provider.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.stats.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.stats.${beanName.name}`;
+          }
+          // dependencies
+          const dependencies = this._parseDependencies(fullKey, module, provider.dependencies);
+          // ok
+          stats[fullKey] = {
+            ...provider,
+            beanFullName,
+            dependencies,
+          };
+        }
+      }
+      return stats;
+    }
+
+    _parseDependencies(fullKey, module, dependencies) {
+      if (!dependencies) return null;
+      if (!Array.isArray(dependencies)) {
+        dependencies = dependencies.split(',');
+      }
+      dependencies = dependencies.map(item => {
+        if (item.indexOf(':') > -1) return item;
+        return `${module.info.relativeName}:${item}`;
+      });
+      for (const dep of dependencies) {
+        if (!__statsDeps[dep]) __statsDeps[dep] = [];
+        __statsDeps[dep].push(fullKey);
+      }
+      return dependencies;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 870:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
+  }
+  return IOMessage;
+};
+
+
+/***/ }),
+
+/***/ 58:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Queue extends app.meta.BeanBase {
+
+    async execute(context) {
+      const data = context.data;
+      return await this.ctx.bean.stats._notify_queue(data);
+    }
+
+  }
+
+  return Queue;
+};
+
+
+/***/ }),
+
+/***/ 370:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Stats {
+
+    async execute(context) {
+      const { provider, user } = context;
+      const dependencies = provider.dependencies;
+      let count = 0;
+      for (const dep of dependencies) {
+        const [ module, fullName ] = dep.split(':');
+        const value = await ctx.bean.stats._get({
+          module, fullName, user,
+        });
+        if (value) {
+          count += value;
+        }
+      }
+      return count;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 899:
+/***/ ((module) => {
+
 module.exports = app => {
 
-        // meta
-        const meta = __webpack_require__(11)(app);
-        const routes = __webpack_require__(12)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(2);
-      const sequence = __webpack_require__(3);
-      module.exports = {
-        version,
-        sequence,
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-              // create table: aSequence
-              const sql = `
-          CREATE TABLE aSequence (
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aStats
+        const sql = `
+          CREATE TABLE aStats (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
             module varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
             value json DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
-              await this.ctx.model.query(sql);
-            }
-          }
+        await this.ctx.model.query(sql);
+      }
+    }
 
-        }
+  }
 
-        return Version;
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Sequence extends app.Service {
-
-          // next
-          async next({ module, name }) {
-            const res = await this.ctx.bean.sequence.module(module)._next(name);
-            return res;
-          }
-
-        }
-
-        return Sequence;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const versionManager = __webpack_require__(899);
+const queueStats = __webpack_require__(58);
+const beanStats = __webpack_require__(565);
+const ioMessageStats = __webpack_require__(870);
+const statsDeps = __webpack_require__(370);
+
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // queue
+    'queue.stats': {
+      mode: 'app',
+      bean: queueStats,
+    },
+    // io
+    'io.message.stats': {
+      mode: 'ctx',
+      bean: ioMessageStats,
+    },
+    // global
+    stats: {
+      mode: 'ctx',
+      bean: beanStats,
+      global: true,
+    },
+    // stats
+    'stats.deps': {
+      mode: 'ctx',
+      bean: statsDeps,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
+  const config = {};
 
-        // middlewares
-        config.middlewares = {
-          sequence: {
-            global: true,
-            dependencies: 'instance',
-          },
-        };
+  // queues
+  config.queues = {
+    stats: {
+      bean: 'stats',
+    },
+  };
 
-        // queues
-        config.queues = {
-          sequence: {
-            path: 'sequence/next',
-          },
-        };
-
-        return config;
-      };
+  return config;
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(6),
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // error code should start from 1001
-      module.exports = {
-      };
+/***/ 72:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const sequence = __webpack_require__(9);
-
-      module.exports = {
-        sequence,
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const SequenceFn = __webpack_require__(10);
-      const SEQUENCE = Symbol('CTX#__SEQUENCE');
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = () => {
-        return async function sequence(ctx, next) {
-          ctx.meta = ctx.meta || {};
-          Object.defineProperty(ctx.meta, 'sequence', {
-            get() {
-              if (ctx.meta[SEQUENCE] === undefined) {
-                ctx.meta[SEQUENCE] = new (SequenceFn(ctx))();
-              }
-              return ctx.meta[SEQUENCE];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
 
 
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      const Fn = module.exports = ctx => {
-        const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class Sequence {
+/***/ 707:
+/***/ ((module) => {
 
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
-
-          // other module's sequence
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
-
-          async reset(name) {
-            const provider = this._findSequenceProvider(name);
-            const sequence = await this._get(name);
-            await ctx.db.update('aSequence', {
-              id: sequence.id,
-              value: JSON.stringify(provider.start),
-            });
-          }
-
-          async current(name) {
-            const sequence = await this._get(name);
-            if (sequence) return JSON.parse(sequence.value);
-            const provider = this._findSequenceProvider(name);
-            return provider.start;
-          }
-
-          async next(name) {
-            const res = await ctx.app.meta.queue.pushAsync({
-              subdomain: ctx.subdomain,
-              module: moduleInfo.relativeName,
-              queueName: 'sequence',
-              data: {
-                module: this.moduleName,
-                name,
-              },
-            });
-            return res;
-          }
-
-          async _next(name) {
-            const provider = this._findSequenceProvider(name);
-            const sequence = await this._get(name);
-
-            // current
-            let current;
-            if (sequence) {
-              current = JSON.parse(sequence.value);
-            } else {
-              current = provider.start;
-            }
-
-            // next
-            const value = await provider.expression({ ctx, value: current });
-
-            // save
-            if (sequence) {
-              await ctx.db.update('aSequence', {
-                id: sequence.id,
-                value: JSON.stringify(value),
-              });
-            }
-            // insert
-            else {
-              await ctx.db.insert('aSequence', {
-                iid: ctx.instance.id,
-                module: this.moduleName,
-                name,
-                value: JSON.stringify(value),
-              });
-            }
-
-            return value;
-          }
-
-          async _get(name) {
-            // get
-            const sequence = await ctx.db.get('aSequence', {
-              iid: ctx.instance.id,
-              module: this.moduleName,
-              name,
-            });
-            return sequence;
-          }
-
-          _findSequenceProvider(name) {
-            const meta = ctx.app.meta.modules[this.moduleName].main.meta;
-            return meta.sequence.providers[name];
-          }
-
-        }
-
-        return Sequence;
-      };
+module.exports = app => {
+  const stats = {
+    info: {
+      bean: 'stats',
+      title: 'Stats',
+      persistence: false,
+    },
+  };
+  return stats;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const meta = {};
-        return meta;
-      };
+/***/ 473:
+/***/ ((module) => {
 
+module.exports = app => {
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
+  class StatsController extends app.Controller {
 
-      const version = __webpack_require__(13);
-      const sequence = __webpack_require__(14);
+    async get() {
+      const { module, name, nameSub } = this.ctx.request.body;
+      // only support user stats
+      const provider = this.ctx.bean.stats._findStatsProvider({ module, name });
+      if (!provider.user) this.ctx.throw(403);
+      // get
+      const res = await this.service.stats.get({
+        module, name, nameSub,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
 
-      module.exports = app => {
-        const routes = [
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'sequence/next', controller: 'sequence', middlewares: 'inner', meta: { auth: { enable: false } } },
-        ];
-        return routes;
-      };
+  }
 
-
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class VersionController extends app.Controller {
-
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
+  return StatsController;
+};
 
 
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-        class SequenceController extends app.Controller {
+const stats = __webpack_require__(473);
 
-          async next() {
-            const res = await this.ctx.service.sequence.next(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-        }
-
-        return SequenceController;
-      };
+module.exports = app => {
+  const controllers = {
+    stats,
+  };
+  return controllers;
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const socketioStats = __webpack_require__(707)(app);
+  const meta = {
+    socketio: {
+      messages: {
+        stats: socketioStats,
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 453:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Stats extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aStats', options: { disableDeleted: true } });
+    }
+  }
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const stats = __webpack_require__(453);
+
+module.exports = app => {
+  const models = {
+    stats,
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+    { method: 'post', path: 'stats/get', controller: 'stats' },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 854:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Stats extends app.Service {
+
+    async get({ module, name, nameSub, user }) {
+      return await this.ctx.bean.stats.get({ module, name, nameSub, user });
+    }
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const stats = __webpack_require__(854);
+module.exports = {
+  stats,
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

@@ -1,347 +1,261 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const services = __webpack_require__(1);
-      const config = __webpack_require__(3);
-      const locales = __webpack_require__(4);
-      const errors = __webpack_require__(6);
-      const middlewares = __webpack_require__(7);
+/***/ 839:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
+  const __adapter = (context, chain) => {
+    const eventBean = ctx.bean._getBean(chain);
+    if (!eventBean) throw new Error(`event not found: ${chain}`);
+    if (!eventBean.execute) throw new Error(`event.execute not found: ${chain}`);
+    return {
+      receiver: eventBean,
+      fn: eventBean.execute,
+    };
+  };
+
+  class Event extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'event');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    async invoke({ module, name, data, result, next }) {
+      const eventArray = this._getEventArray({ module, name });
+      // context
+      const context = {
+        data,
+        result,
+      };
+      // invoke
+      await ctx.app.meta.util.composeAsync(eventArray, __adapter)(context, async (context, _next) => {
+        if (next) {
+          await next(context, _next);
+        } else {
+          await _next();
+        }
+      });
+      // ok
+      return context.result;
+    }
+
+    _getEventArray({ module, name }) {
+      module = module || this.moduleName;
+      const key = `${module}:${name}`;
+      const events = ctx.app.meta.geto('events');
+      if (events[key]) return events[key];
+      events[key] = this._collectEventArray(key);
+      return events[key];
+    }
+
+    _collectEventArray(key) {
+      const eventArray = [];
+      for (const module of ctx.app.meta.modulesArray) {
+        const implementations = module.main.meta && module.main.meta.event && module.main.meta.event.implementations;
+        if (!implementations) continue;
+        // bean
+        const implementationName = implementations[key];
+        if (!implementationName) continue;
+        let beanFullName;
+        if (typeof implementationName === 'string') {
+          beanFullName = `${module.info.relativeName}.event.${implementationName}`;
+        } else {
+          beanFullName = `${implementationName.module || module.info.relativeName}.event.${implementationName.name}`;
+        }
+        eventArray.push(beanFullName);
+      }
+      return eventArray;
+    }
+
+  }
+
+  return Event;
+};
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const beanEvent = __webpack_require__(839);
+
+module.exports = app => {
+  const beans = {
+    // global
+    event: {
+      mode: 'ctx',
+      bean: beanEvent,
+      global: true,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+
+  // middlewares
+  config.middlewares = {
+  };
+
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module) => {
+
+module.exports = app => {
+  const controllers = {
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
 module.exports = app => {
 
-        // meta
-        const meta = __webpack_require__(10)(app);
-        const routes = __webpack_require__(11)(app);
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-          meta,
-        };
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+    meta,
+  };
 
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const event = __webpack_require__(2);
-
-      module.exports = {
-        event,
-      };
+};
 
 
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
+/***/ 458:
+/***/ ((module) => {
 
-        class Event extends app.Service {
-
-          // register all events
-          async registerAllEvents() {
-            for (const module of this.app.meta.modulesArray) {
-              if (module.main.meta && module.main.meta.event && module.main.meta.event.implementations) {
-                this._registerEvents(module, module.main.meta.event.implementations);
-              }
-            }
-          }
-
-          async _registerEvents(module, implementations) {
-            const events = this.app.meta.geto('events');
-            for (const key in implementations) {
-              events.geta(key).push(`/${module.info.url}/${implementations[key]}`);
-            }
-          }
-
-        }
-
-        return Event;
-      };
+module.exports = app => {
+  const meta = {};
+  return meta;
+};
 
 
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
-module.exports = appInfo => {
-        const config = {};
+/***/ 825:
+/***/ ((module) => {
 
-        // middlewares
-        config.middlewares = {
-          event: {
-            global: true,
-            dependencies: 'instance',
-          },
-        };
-
-        // startups
-        config.startups = {
-          installEvents: {
-            path: 'event/installEvents',
-          },
-        };
-
-        return config;
-      };
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
 
 
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(5),
-      };
+/***/ 214:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
+/***/ })
 
-      // error code should start from 1001
-      module.exports = {
-      };
-
-
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const event = __webpack_require__(8);
-
-      module.exports = {
-        event,
-      };
-
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const EventFn = __webpack_require__(9);
-      const EVENT = Symbol('CTX#EVENT');
-
-      module.exports = () => {
-        return async function event(ctx, next) {
-          ctx.meta = ctx.meta || {};
-          Object.defineProperty(ctx.meta, 'event', {
-            get() {
-              if (ctx.meta[EVENT] === undefined) {
-                ctx.meta[EVENT] = new (EventFn(ctx))();
-              }
-              return ctx.meta[EVENT];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
-
-
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports) {
-
-      const Fn = module.exports = ctx => {
-        // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class Event {
-
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
-
-          // other module's event
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
-
-          // support: returnValue / event.break
-          async invoke({ module, name, data }) {
-            //
-            module = module || this.moduleName;
-            const key = `${module}:${name}`;
-            const events = ctx.app.meta.geto('events');
-            const eventArray = events[key];
-            if (!eventArray) return;
-            //
-            let returnValue;
-            for (const eventUrl of eventArray) {
-              const event = {
-                break: false,
-              };
-              const res = await ctx.performAction({
-                method: 'post',
-                url: eventUrl,
-                body: { event, data },
-              });
-              // check returnValue
-              if (res !== undefined) returnValue = res;
-              // check break
-              if (event.break) break;
-            }
-            // ok
-            return returnValue;
-          }
-
-        }
-
-        return Event;
-      };
-
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        const meta = {};
-        return meta;
-      };
-
-
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const event = __webpack_require__(12);
-
-      module.exports = app => {
-        const routes = [
-          { method: 'post', path: 'event/installEvents', controller: 'event', middlewares: 'inner',
-            meta: {
-              instance: { enable: false },
-            },
-          },
-        ];
-        return routes;
-      };
-
-
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class EventController extends app.Controller {
-
-          async installEvents() {
-            // register all events
-            await this.ctx.service.event.registerAllEvents();
-            this.ctx.success();
-          }
-
-        }
-
-        return EventController;
-      };
-
-
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

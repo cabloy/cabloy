@@ -1,4 +1,4 @@
-module.exports.index =
+module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({

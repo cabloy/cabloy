@@ -1,140 +1,88 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 0);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports, __webpack_require__) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      const services = __webpack_require__(1);
-      const config = __webpack_require__(4);
-      const locales = __webpack_require__(5);
-      const errors = __webpack_require__(7);
-      const middlewares = __webpack_require__(8);
+/***/ 405:
+/***/ ((module) => {
 
-      // eslint-disable-next-line
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Status extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'status');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    async get(name) {
+      const status = await ctx.db.get('aStatus', {
+        iid: ctx.instance.id,
+        module: this.moduleName,
+        name,
+      });
+      return status ? JSON.parse(status.value) : undefined;
+    }
+
+    async set(name, value) {
+      await this._set({ name, value, queue: true });
+    }
+
+    async _set({ name, value, queue }) {
+      const status = await ctx.db.get('aStatus', {
+        iid: ctx.instance.id,
+        module: this.moduleName,
+        name,
+      });
+      if (status) {
+        await ctx.db.update('aStatus', {
+          id: status.id,
+          value: JSON.stringify(value),
+        });
+      } else {
+        if (queue) {
+          await ctx.app.meta.util.lock({
+            subdomain: ctx.subdomain,
+            resource: `${moduleInfo.relativeName}.statusSet.${this.moduleName}.${name}`,
+            fn: async () => {
+              return await ctx.app.meta.util.executeBean({
+                subdomain: ctx.subdomain,
+                beanModule: moduleInfo.relativeName,
+                fn: async ({ ctx }) => {
+                  return await ctx.bean.status.module(this.moduleName)._set({ name, value, queue: false });
+                },
+              });
+            },
+          });
+        } else {
+          await ctx.db.insert('aStatus', {
+            iid: ctx.instance.id,
+            module: this.moduleName,
+            name,
+            value: JSON.stringify(value),
+          });
+        }
+      }
+    }
+
+  }
+
+  return Status;
+};
+
+
+/***/ }),
+
+/***/ 899:
+/***/ ((module) => {
+
 module.exports = app => {
 
-        const routes = __webpack_require__(11)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-        };
-
-      };
-
-
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(2);
-      const status = __webpack_require__(3);
-
-      module.exports = {
-        version,
-        status,
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-              // create table: aStatus
-              const sql = `
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aStatus
+        const sql = `
           CREATE TABLE aStatus (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -147,248 +95,215 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-              await this.ctx.model.query(sql);
-            }
-          }
+        await this.ctx.model.query(sql);
+      }
+    }
 
-        }
+  }
 
-        return Version;
-      };
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Status extends app.Service {
-
-          async set({ module, name, value }) {
-            const res = await this.ctx.bean.status.module(module)._set({ name, value, queue: false });
-            return res;
-          }
-
-        }
-
-        return Status;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // eslint-disable-next-line
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const versionManager = __webpack_require__(899);
+const beanStatus = __webpack_require__(405);
+
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // global
+    status: {
+      mode: 'ctx',
+      bean: beanStatus,
+      global: true,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
-
-        // middlewares
-        config.middlewares = {
-          status: {
-            global: true,
-            dependencies: 'instance',
-          },
-        };
-
-        // queues
-        config.queues = {
-          statusSet: {
-            path: 'status/set',
-          },
-        };
-
-        return config;
-      };
+  const config = {};
+  return config;
+};
 
 
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(6),
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // error code should start from 1001
-      module.exports = {
-      };
+/***/ 72:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const status = __webpack_require__(9);
-
-      module.exports = {
-        status,
-      };
+module.exports = {
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const StatusFn = __webpack_require__(10);
-      const STATUS = Symbol('CTX#__STATUS');
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = () => {
-        return async function status(ctx, next) {
-          ctx.meta = ctx.meta || {};
-          Object.defineProperty(ctx.meta, 'status', {
-            get() {
-              if (ctx.meta[STATUS] === undefined) {
-                ctx.meta[STATUS] = new (StatusFn(ctx))();
-              }
-              return ctx.meta[STATUS];
-            },
-          });
-
-          // next
-          await next();
-        };
-      };
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
 
 
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      const Fn = module.exports = ctx => {
-        const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        class Status {
+/***/ 948:
+/***/ ((module) => {
 
-          constructor(moduleName) {
-            this.moduleName = moduleName || ctx.module.info.relativeName;
-          }
+module.exports = app => {
 
-          // other module's status
-          module(moduleName) {
-            return new (Fn(ctx))(moduleName);
-          }
+  class StatusController extends app.Controller {
+  }
 
-          async get(name) {
-            const status = await ctx.db.get('aStatus', {
-              iid: ctx.instance.id,
-              module: this.moduleName,
-              name,
-            });
-            return status ? JSON.parse(status.value) : undefined;
-          }
-
-          async set(name, value) {
-            await this._set({ name, value, queue: true });
-          }
-
-          async _set({ name, value, queue }) {
-            const status = await ctx.db.get('aStatus', {
-              iid: ctx.instance.id,
-              module: this.moduleName,
-              name,
-            });
-            if (status) {
-              await ctx.db.update('aStatus', {
-                id: status.id,
-                value: JSON.stringify(value),
-              });
-            } else {
-              if (queue) {
-                await ctx.app.meta.queue.pushAsync({
-                  subdomain: ctx.subdomain,
-                  module: moduleInfo.relativeName,
-                  queueName: 'statusSet',
-                  data: {
-                    module: this.moduleName,
-                    name,
-                    value,
-                  },
-                });
-              } else {
-                await ctx.db.insert('aStatus', {
-                  iid: ctx.instance.id,
-                  module: this.moduleName,
-                  name,
-                  value: JSON.stringify(value),
-                });
-              }
-            }
-          }
-
-        }
-
-        return Status;
-      };
+  return StatusController;
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const version = __webpack_require__(12);
-      const status = __webpack_require__(13);
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = app => {
-        const routes = [
-          { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-          { method: 'post', path: 'status/set', controller: 'status', middlewares: 'inner',
-            meta: { auth: { enable: false } },
-          },
-        ];
-        return routes;
-      };
+const status = __webpack_require__(948);
+
+module.exports = app => {
+  const controllers = {
+    status,
+  };
+  return controllers;
+};
 
 
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        class VersionController extends app.Controller {
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
 
-        }
-        return VersionController;
-      };
+// eslint-disable-next-line
+module.exports = app => {
 
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
 
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports) {
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+  };
 
-      module.exports = app => {
-
-        class StatusController extends app.Controller {
-
-          async set() {
-            const res = await this.ctx.service.status.set(this.ctx.request.body);
-            this.ctx.success(res);
-          }
-
-        }
-
-        return StatusController;
-      };
+};
 
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 257:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Status extends app.Service {
+  }
+
+  return Status;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const status = __webpack_require__(257);
+
+module.exports = {
+  status,
+};
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map

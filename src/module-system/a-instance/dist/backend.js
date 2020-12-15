@@ -1,238 +1,315 @@
 module.exports =
-/** ****/ (function(modules) { // webpackBootstrap
-    /** ****/ 	// The module cache
-    /** ****/ 	const installedModules = {};
-    /** ****/
-    /** ****/ 	// The require function
-    /** ****/ 	function __webpack_require__(moduleId) {
-      /** ****/
-      /** ****/ 		// Check if module is in cache
-      /** ****/ 		if (installedModules[moduleId]) {
-        /** ****/ 			return installedModules[moduleId].exports;
-        /** ****/ 		}
-      /** ****/ 		// Create a new module (and put it into the cache)
-      /** ****/ 		const module = installedModules[moduleId] = {
-        /** ****/ 			i: moduleId,
-        /** ****/ 			l: false,
-        /** ****/ 			exports: {},
-        /** ****/ 		};
-      /** ****/
-      /** ****/ 		// Execute the module function
-      /** ****/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      /** ****/
-      /** ****/ 		// Flag the module as loaded
-      /** ****/ 		module.l = true;
-      /** ****/
-      /** ****/ 		// Return the exports of the module
-      /** ****/ 		return module.exports;
-      /** ****/ 	}
-    /** ****/
-    /** ****/
-    /** ****/ 	// expose the modules object (__webpack_modules__)
-    /** ****/ 	__webpack_require__.m = modules;
-    /** ****/
-    /** ****/ 	// expose the module cache
-    /** ****/ 	__webpack_require__.c = installedModules;
-    /** ****/
-    /** ****/ 	// define getter function for harmony exports
-    /** ****/ 	__webpack_require__.d = function(exports, name, getter) {
-      /** ****/ 		if (!__webpack_require__.o(exports, name)) {
-        /** ****/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-        /** ****/ 		}
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// define __esModule on exports
-    /** ****/ 	__webpack_require__.r = function(exports) {
-      /** ****/ 		if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-        /** ****/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-        /** ****/ 		}
-      /** ****/ 		Object.defineProperty(exports, '__esModule', { value: true });
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// create a fake namespace object
-    /** ****/ 	// mode & 1: value is a module id, require it
-    /** ****/ 	// mode & 2: merge all properties of value into the ns
-    /** ****/ 	// mode & 4: return value when already ns object
-    /** ****/ 	// mode & 8|1: behave like require
-    /** ****/ 	__webpack_require__.t = function(value, mode) {
-      /** ****/ 		if (mode & 1) value = __webpack_require__(value);
-      /** ****/ 		if (mode & 8) return value;
-      /** ****/ 		if ((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-      /** ****/ 		const ns = Object.create(null);
-      /** ****/ 		__webpack_require__.r(ns);
-      /** ****/ 		Object.defineProperty(ns, 'default', { enumerable: true, value });
-      /** ****/ 		if (mode & 2 && typeof value !== 'string') for (const key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-      /** ****/ 		return ns;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// getDefaultExport function for compatibility with non-harmony modules
-    /** ****/ 	__webpack_require__.n = function(module) {
-      /** ****/ 		const getter = module && module.__esModule ?
-      /** ****/ 			function getDefault() { return module.default; } :
-      /** ****/ 			function getModuleExports() { return module; };
-      /** ****/ 		__webpack_require__.d(getter, 'a', getter);
-      /** ****/ 		return getter;
-      /** ****/ 	};
-    /** ****/
-    /** ****/ 	// Object.prototype.hasOwnProperty.call
-    /** ****/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-    /** ****/
-    /** ****/ 	// __webpack_public_path__
-    /** ****/ 	__webpack_require__.p = '';
-    /** ****/
-    /** ****/
-    /** ****/ 	// Load entry module and return exports
-    /** ****/ 	return __webpack_require__(__webpack_require__.s = 1);
-    /** ****/ })([
-    /* 0 */
-    /***/ function(module, exports) {
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-      module.exports = require('require3');
+/***/ 755:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      /***/ },
-    /* 1 */
-    /***/ function(module, exports, __webpack_require__) {
+const require3 = __webpack_require__(718);
+const extend = require3('extend2');
+const async = require3('async');
 
-      const routes = __webpack_require__(2);
-      const services = __webpack_require__(5);
-      const config = __webpack_require__(8);
-      const locales = __webpack_require__(9);
-      const errors = __webpack_require__(11);
-      const middlewares = __webpack_require__(12);
+const __queueInstanceStartup = {};
 
-      // eslint-disable-next-line
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Instance {
+
+    async list(options) {
+      // options
+      if (!options) options = { where: null, orders: null, page: null };
+      const page = ctx.bean.util.page(options.page, false);
+      const orders = options.orders;
+      const where = options.where || { disabled: 0 };// allow disabled=undefined
+      // select
+      const _options = { where, orders };
+      if (page.size !== 0) {
+        _options.limit = page.size;
+        _options.offset = page.index;
+      }
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      return await modelInstance.select(_options);
+    }
+
+    async get({ subdomain }) {
+      // cache
+      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+      const instance = cacheMem.get('instance');
+      if (instance) return instance;
+      return await this.resetCache({ subdomain });
+    }
+
+    async _get({ subdomain }) {
+      // get
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      const instance = await modelInstance.get({ name: subdomain });
+      if (instance) return instance;
+      // instance base
+      const instanceBase = this._getInstanceBase({ subdomain });
+      if (!instanceBase) return null;
+      // lock
+      return await ctx.app.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'instance',
+            context: { instanceBase },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    async _registerLock({ instanceBase }) {
+      // get again
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      let instance = await modelInstance.get({ name: instanceBase.subdomain });
+      if (instance) return instance;
+      // insert
+      instance = {
+        name: instanceBase.subdomain,
+        title: instanceBase.title,
+        config: JSON.stringify(instanceBase.config || {}),
+        disabled: 0,
+      };
+      const res = await modelInstance.insert(instance);
+      instance.id = res.insertId;
+      return instance;
+    }
+
+    _getInstanceBase({ subdomain }) {
+      const instances = ctx.app.config.instances || [{ subdomain: '', password: '' }];
+      return instances.find(item => item.subdomain === subdomain);
+    }
+
+    async resetCache({ subdomain }) {
+      // cache
+      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+      const instance = await this._get({ subdomain });
+      if (!instance) return null;
+      // config
+      instance.config = JSON.parse(instance.config) || {};
+      // cache configs
+      const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
+      cacheMem.set('instanceConfigs', instanceConfigs);
+      // cache instance
+      cacheMem.set('instance', instance);
+      return instance;
+    }
+
+    async checkAppReady() {
+      while (!ctx.app.meta.appReady) {
+        await ctx.bean.util.sleep(300);
+      }
+    }
+
+    async checkAppReadyInstance() {
+      // chech appReady first
+      await ctx.bean.instance.checkAppReady();
+      // check appReady instance
+      const subdomain = ctx.subdomain;
+      if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
+      if (ctx.app.meta.appReadyInstances[subdomain]) return;
+      // instance startup
+      await this.instanceStartup({ subdomain });
+    }
+
+    // options: force/instanceBase
+    async instanceStartup({ subdomain, options }) {
+      // queue within the same worker
+      if (!__queueInstanceStartup[subdomain]) {
+        __queueInstanceStartup[subdomain] = async.queue((info, cb) => {
+          // check again
+          const force = info.options && info.options.force;
+          if (ctx.app.meta.appReadyInstances[info.subdomain] && !force) {
+            info.resolve();
+            cb();
+            return;
+          }
+          // startup
+          ctx.app.meta._runStartupInstance({ subdomain: info.subdomain, options: info.options }).then(() => {
+            info.resolve();
+            cb();
+          }).catch(err => {
+            info.reject(err);
+            cb();
+          });
+        });
+      }
+      // promise
+      return new Promise((resolve, reject) => {
+        // options
+        if (!options) options = { force: false, instanceBase: null };
+        // queue push
+        __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
+      });
+    }
+
+  }
+  return Instance;
+};
+
+
+/***/ }),
+
+/***/ 875:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+
+    async execute() {
+      await this.ctx.bean.instance.instanceStartup({
+        subdomain: this.ctx.subdomain,
+        options: {
+          force: true, instanceBase: null,
+        },
+      });
+    }
+
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
+/***/ 160:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+
+    async execute() {
+      await this.ctx.bean.instance.resetCache({ subdomain: this.ctx.subdomain });
+    }
+
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
+/***/ 714:
+/***/ ((module) => {
+
+// MaxListenersExceededWarning
+// const eventAppReady = 'eb:event:appReady';
+
+// function checkAppReady(app) {
+//   return new Promise(resolve => {
+//     app.once(eventAppReady, () => {
+//       resolve();
+//     });
+//   });
+// }
+
+module.exports = ctx => {
+  class Middleware {
+    async execute(options, next) {
+      // check appReady
+      if (!ctx.innerAccess) {
+        await ctx.bean.instance.checkAppReady();
+      }
+      // next
+      await next();
+    }
+  }
+  return Middleware;
+};
+
+
+/***/ }),
+
+/***/ 122:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const chalk = require3('chalk');
+const boxen = require3('boxen');
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Middleware {
+    async execute(options, next) {
+      // instance
+      const instance = await ctx.bean.instance.get({ subdomain: ctx.subdomain });
+      if (!instance) {
+        // prompt
+        if (ctx.app.meta.isLocal) {
+          const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
+          let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
+          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+          message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
+          console.log('\n' + boxen(message, boxenOptions));
+        }
+        return ctx.throw(423);
+      }
+      // check if disabled
+      if (instance.disabled) {
+        // locked
+        return ctx.throw(423);
+      }
+
+      // check instance startup ready
+      await ctx.bean.instance.checkAppReadyInstance();
+
+      // try to save host/protocol to config
+      if (ctxHostValid(ctx)) {
+        if (!instance.config['a-base']) instance.config['a-base'] = {};
+        const aBase = instance.config['a-base'];
+        if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
+          aBase.host = ctx.host;
+          aBase.protocol = ctx.protocol;
+          // update
+          const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+          await modelInstance.update({
+            id: instance.id,
+            config: JSON.stringify(instance.config) });
+          // broadcast
+          ctx.app.meta.broadcast.emit({
+            subdomain: ctx.subdomain,
+            module: 'a-instance',
+            broadcastName: 'resetCache',
+            data: null,
+          });
+        }
+      }
+
+      // ok
+      ctx.instance = instance;
+
+      // next
+      await next();
+    }
+  }
+  return Middleware;
+};
+
+function ctxHostValid(ctx) {
+  return !ctx.innerAccess && ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
+}
+
+
+/***/ }),
+
+/***/ 899:
+/***/ ((module) => {
+
 module.exports = app => {
 
-        // models
-        const models = __webpack_require__(15)(app);
-        // meta
-        const meta = __webpack_require__(16)(app);
+  class Version extends app.meta.BeanBase {
 
-        return {
-          routes,
-          services,
-          config,
-          locales,
-          errors,
-          middlewares,
-          models,
-          meta,
-        };
-
-      };
-
-
-      /***/ },
-    /* 2 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(3);
-      const instance = __webpack_require__(4);
-
-      module.exports = [
-        // version
-        { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-        { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner', meta: { instance: { enable: false } } },
-        // instance
-        { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-        { method: 'post', path: 'instance/save', controller: 'instance', middlewares: 'validate',
-          meta: {
-            validate: { validator: 'instance' },
-            right: { type: 'resource', module: 'a-settings', name: 'settings' },
-          },
-        },
-        { method: 'post', path: 'instance/getConfigsPreview', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-        { method: 'post', path: 'instance/startup', controller: 'instance', middlewares: 'inner', meta: { instance: { enable: true }, auth: { enable: false } } },
-        { method: 'post', path: 'instance/broadcast/resetCache', controller: 'instance', middlewares: 'inner', meta: { auth: { enable: false } } },
-      ];
-
-
-      /***/ },
-    /* 3 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class VersionController extends app.Controller {
-
-          async update() {
-            await this.service.version.update(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-          async init() {
-            await this.service.version.init(this.ctx.request.body);
-            this.ctx.success();
-          }
-
-        }
-        return VersionController;
-      };
-
-
-      /***/ },
-    /* 4 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-        class InstanceController extends app.Controller {
-
-          async item() {
-            const res = await this.service.instance.item();
-            this.ctx.success(res);
-          }
-
-          async save() {
-            await this.service.instance.save({
-              data: this.ctx.request.body.data,
-            });
-            this.ctx.success();
-          }
-
-          async getConfigsPreview() {
-            const res = await this.service.instance.getConfigsPreview();
-            this.ctx.success(res);
-          }
-
-          async startup() {
-            // do nothing
-            this.ctx.success();
-          }
-
-          async resetCache() {
-            // do nothing
-            this.ctx.success();
-          }
-
-        }
-        return InstanceController;
-      };
-
-
-      /***/ },
-    /* 5 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const version = __webpack_require__(6);
-      const instance = __webpack_require__(7);
-
-      module.exports = {
-        version,
-        instance,
-      };
-
-
-      /***/ },
-    /* 6 */
-    /***/ function(module, exports) {
-
-      module.exports = app => {
-
-        class Version extends app.Service {
-
-          async update(options) {
-            if (options.version === 1) {
-              // create table: aInstance
-              const sql = `
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aInstance
+        const sql = `
           CREATE TABLE aInstance (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -243,376 +320,478 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-              await this.ctx.db.query(sql);
-            }
-            if (options.version === 2) {
-              // aInstance
-              const sql = `
+        await this.ctx.db.query(sql);
+      }
+      if (options.version === 2) {
+        // aInstance
+        const sql = `
           ALTER TABLE aInstance
           ADD COLUMN title varchar(255) DEFAULT NULL
         `;
-              await this.ctx.model.query(sql);
-            }
-            if (options.version === 3) {
-              // aInstance
-              const sql = `
+        await this.ctx.model.query(sql);
+      }
+      if (options.version === 3) {
+        // aInstance
+        const sql = `
           ALTER TABLE aInstance
           ADD COLUMN meta json DEFAULT NULL
         `;
-              await this.ctx.model.query(sql);
-            }
-            if (options.version === 4) {
-              // aInstance
-              const sql = `
+        await this.ctx.model.query(sql);
+      }
+      if (options.version === 4) {
+        // aInstance
+        const sql = `
           ALTER TABLE aInstance
           CHANGE COLUMN meta config json DEFAULT NULL
         `;
-              await this.ctx.model.query(sql);
-            }
-          }
+        await this.ctx.model.query(sql);
+      }
+    }
 
-          async init(options) {
-            if (options.version === 1) {
-              await this.ctx.db.insert('aInstance', { name: options.subdomain, disabled: 0 });
-            }
-            if (options.version === 2) {
-              if (options.title) {
-                const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-                await this.ctx.db.update('aInstance', { id: instance.id, title: options.title });
-              }
-            }
-            // if (options.version === 3) {
-            //   if (options.meta) {
-            //     const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-            //     await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
-            //   }
-            // }
-            if (options.version === 4) {
-              const config = options.config || {};
-              const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-              await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(config) });
-            }
-          }
+    async init(options) { }
 
-        }
+  }
 
-        return Version;
-      };
+  return Version;
+};
 
 
-      /***/ },
-    /* 7 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const require3 = __webpack_require__(0);
-      const extend = require3('extend2');
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      module.exports = app => {
+const versionManager = __webpack_require__(899);
+const beanInstance = __webpack_require__(755);
+const broadcastResetCache = __webpack_require__(160);
+const broadcastReload = __webpack_require__(875);
+const middlewareAppReady = __webpack_require__(714);
+const middlewareInstance = __webpack_require__(122);
 
-        class Instance extends app.Service {
+module.exports = app => {
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+    // broadcast
+    'broadcast.resetCache': {
+      mode: 'app',
+      bean: broadcastResetCache,
+    },
+    'broadcast.reload': {
+      mode: 'app',
+      bean: broadcastReload,
+    },
+    // middleware
+    'middleware.appReady': {
+      mode: 'ctx',
+      bean: middlewareAppReady,
+    },
+    'middleware.instance': {
+      mode: 'ctx',
+      bean: middlewareInstance,
+    },
+    // global
+    instance: {
+      mode: 'ctx',
+      bean: beanInstance,
+      global: true,
+    },
+  };
+  return beans;
+};
 
-          async item() {
-            return await this.ctx.db.get('aInstance', { id: this.ctx.instance.id });
-          }
 
-          async save({ data }) {
-            // update
-            await this.ctx.db.update('aInstance', {
-              id: this.ctx.instance.id,
-              title: data.title,
-              config: data.config,
-            });
-            // broadcast
-            this.ctx.app.meta.broadcast.emit({
-              subdomain: this.ctx.subdomain,
-              module: 'a-instance',
-              broadcastName: 'resetCache',
-              data: null,
-            });
-          }
+/***/ }),
 
-          async getConfigsPreview() {
-            const instance = await this.item();
-            instance.config = JSON.parse(instance.config);
-            if (!this.ctx.app.meta._configsOriginal) this.ctx.app.meta._configsOriginal = extend(true, {}, this.ctx.app.meta.configs);
-            this.ctx.app.meta.configs = extend(true, {}, this.ctx.app.meta._configsOriginal, instance.config);
-            return { data: this.ctx.app.meta.configs };
-          }
+/***/ 76:
+/***/ ((module) => {
 
-        }
-
-        return Instance;
-      };
-
-
-      /***/ },
-    /* 8 */
-    /***/ function(module, exports) {
-
-      // eslint-disable-next-line
+// eslint-disable-next-line
 module.exports = appInfo => {
-        const config = {};
+  const config = {};
 
-        // middlewares
-        config.middlewares = {
-          instance: {
-            global: true,
-            dependencies: 'appReady,cachemem',
-            ignore: /\/version\/update$/,
-          },
-          appReady: {
-            global: true,
-          },
-        };
+  // middlewares
+  config.middlewares = {
+    instance: {
+      bean: 'instance',
+      global: true,
+      dependencies: 'appReady',
+    },
+    appReady: {
+      bean: 'appReady',
+      global: true,
+    },
+  };
 
-        // startups
-        config.startups = {
-          startupInstance: {
-            instance: true,
-            path: 'instance/startup',
-          },
-        };
+  // broadcasts
+  config.broadcasts = {
+    resetCache: {
+      bean: 'resetCache',
+    },
+    reload: {
+      bean: 'reload',
+    },
+  };
 
-        // broadcasts
-        config.broadcasts = {
-          resetCache: {
-            path: 'instance/broadcast/resetCache',
-          },
-        };
-
-        return config;
-      };
+  return config;
+};
 
 
-      /***/ },
-    /* 9 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      module.exports = {
-        'zh-cn': __webpack_require__(10),
-      };
+/***/ 624:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 10 */
-    /***/ function(module, exports) {
-
-      module.exports = {
-        Instance: '实例',
-      };
+// error code should start from 1001
+module.exports = {
+};
 
 
-      /***/ },
-    /* 11 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // error code should start from 1001
-      module.exports = {
-      };
+/***/ 72:
+/***/ ((module) => {
 
-
-      /***/ },
-    /* 12 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      const instance = __webpack_require__(13);
-      const appReady = __webpack_require__(14);
-
-      module.exports = {
-        instance,
-        appReady,
-      };
+module.exports = {
+  Instance: '实例',
+};
 
 
-      /***/ },
-    /* 13 */
-    /***/ function(module, exports, __webpack_require__) {
+/***/ }),
 
-      const require3 = __webpack_require__(0);
-      const extend = require3('extend2');
-      const chalk = require3('chalk');
-      const boxen = require3('boxen');
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-      const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
-
-      const regexURL_resetCache = /\/a\/instance\/instance\/broadcast\/resetCache/;
-
-      module.exports = (options, app) => {
-        const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-        return async function instance(ctx, next) {
-          // cache
-          const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-          let instance = regexURL_resetCache.test(ctx.url) ? null : cacheMem.get('instance');
-          if (!instance) {
-            instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
-            if (instance) {
-              // config
-              instance.config = JSON.parse(instance.config) || {};
-              // cache configs
-              const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
-              cacheMem.set('instanceConfigs', instanceConfigs);
-              // cache instance
-              cacheMem.set('instance', instance);
-            }
-          }
-
-          // try to save host/protocol to config
-          if (instance && !instance.disabled && ctxHostValid(ctx)) {
-            if (!instance.config['a-base']) instance.config['a-base'] = {};
-            const aBase = instance.config['a-base'];
-            if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
-              aBase.host = ctx.host;
-              aBase.protocol = ctx.protocol;
-              // update
-              await ctx.db.update('aInstance', {
-                id: instance.id,
-                config: JSON.stringify(instance.config) });
-              // broadcast
-              ctx.app.meta.broadcast.emit({
-                subdomain: ctx.subdomain,
-                module: 'a-instance',
-                broadcastName: 'resetCache',
-                data: null,
-              });
-            }
-          }
-
-          if (!ctx.innerAccess && (!instance || instance.disabled)) {
-            // prompt
-            if (!instance && ctx.app.meta.isLocal) {
-              const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
-              let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
-              message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
-              message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
-              console.log('\n' + boxen(message, boxenOptions));
-            }
-            // locked
-            ctx.throw(423);
-          }
-
-          ctx.instance = instance;
-
-          // next
-          await next();
-        };
-      };
-
-      function ctxHostValid(ctx) {
-        return !ctx.innerAccess && ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
-      }
+module.exports = {
+  'zh-cn': __webpack_require__(72),
+};
 
 
-      /***/ },
-    /* 14 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      // MaxListenersExceededWarning
-      // const eventAppReady = 'eb:event:appReady';
+/***/ 232:
+/***/ ((module) => {
 
-      // function checkAppReady(app) {
-      //   return new Promise(resolve => {
-      //     app.once(eventAppReady, () => {
-      //       resolve();
-      //     });
-      //   });
-      // }
+module.exports = app => {
+  const schemas = {};
+  // instance
+  schemas.instance = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Subdomain',
+        ebReadOnly: true,
+      },
+      title: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Title',
+      },
+      config: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Config',
+        notEmpty: true,
+      },
+    },
+  };
 
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
+  return schemas;
+};
 
-      async function checkAppReady(app) {
-        while (!app.meta.appReady) {
-          await sleep(300);
+
+/***/ }),
+
+/***/ 731:
+/***/ ((module) => {
+
+module.exports = app => {
+  class InstanceController extends app.Controller {
+
+    async item() {
+      const res = await this.service.instance.item();
+      this.ctx.success(res);
+    }
+
+    async save() {
+      await this.service.instance.save({
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success();
+    }
+
+    async getConfigsPreview() {
+      const res = await this.service.instance.getConfigsPreview();
+      this.ctx.success(res);
+    }
+
+    async reload() {
+      await this.service.instance.reload();
+      this.ctx.success();
+    }
+
+  }
+  return InstanceController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const instance = __webpack_require__(731);
+
+module.exports = app => {
+  const controllers = {
+    instance,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const routes = __webpack_require__(825);
+const services = __webpack_require__(214);
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    config,
+    locales,
+    errors,
+    models,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const schemas = __webpack_require__(232)(app);
+  const meta = {
+    validation: {
+      validators: {
+        instance: {
+          schemas: 'instance',
+        },
+      },
+      keywords: {},
+      schemas: {
+        instance: schemas.instance,
+      },
+    },
+    settings: {
+      instance: {
+        actionPath: 'instance/config',
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+
+/***/ 373:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Instance extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aInstance', options: { disableDeleted: false, disableInstance: true } });
+    }
+  }
+  return Instance;
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const instance = __webpack_require__(373);
+
+module.exports = app => {
+  const models = {
+    instance,
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = [
+  // instance
+  { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  { method: 'post', path: 'instance/save', controller: 'instance', middlewares: 'validate',
+    meta: {
+      validate: { validator: 'instance' },
+      right: { type: 'resource', module: 'a-settings', name: 'settings' },
+    },
+  },
+  { method: 'post', path: 'instance/getConfigsPreview', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  { method: 'post', path: 'instance/reload', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+];
+
+
+/***/ }),
+
+/***/ 878:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const extend = require3('extend2');
+
+const __blackFields = [ 'startups', 'queues', 'broadcasts', 'middlewares', 'schedules' ];
+
+module.exports = app => {
+
+  class Instance extends app.Service {
+
+    async item() {
+      return await this.ctx.model.instance.get({ id: this.ctx.instance.id });
+    }
+
+    async save({ data }) {
+      // update
+      await this.ctx.model.instance.update({
+        id: this.ctx.instance.id,
+        title: data.title,
+        config: JSON.stringify(this.__configBlackFields(data.config)),
+      });
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-instance',
+        broadcastName: 'resetCache',
+        data: null,
+      });
+    }
+
+    async getConfigsPreview() {
+      const instance = await this.item();
+      let configPreview = extend(true, {}, app.meta.configs, JSON.parse(instance.config));
+      configPreview = this.__configBlackFields(configPreview);
+      return { data: configPreview };
+    }
+
+    async reload() {
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-instance',
+        broadcastName: 'reload',
+        data: null,
+      });
+    }
+
+    __configBlackFields(config) {
+      if (typeof config === 'string') config = JSON.parse(config);
+      for (const moduleName in config) {
+        const moduleConfig = config[moduleName];
+        for (const field of __blackFields) {
+          delete moduleConfig[field];
         }
       }
+      return config;
+    }
 
-      module.exports = (options, app) => {
-        return async function appReady(ctx, next) {
-          if (!ctx.innerAccess && !app.meta.appReady) {
-            await checkAppReady(app);
-          }
+  }
 
-          // next
-          await next();
-        };
-      };
+  return Instance;
+};
 
 
-      /***/ },
-    /* 15 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const models = {
-        };
-        return models;
-      };
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const instance = __webpack_require__(878);
 
-      /***/ },
-    /* 16 */
-    /***/ function(module, exports, __webpack_require__) {
-
-      module.exports = app => {
-        const schemas = __webpack_require__(17)(app);
-        const meta = {
-          validation: {
-            validators: {
-              instance: {
-                schemas: 'instance',
-              },
-            },
-            keywords: {},
-            schemas: {
-              instance: schemas.instance,
-            },
-          },
-          settings: {
-            instance: {
-              actionPath: 'instance/config',
-            },
-          },
-        };
-        return meta;
-      };
+module.exports = {
+  instance,
+};
 
 
-      /***/ },
-    /* 17 */
-    /***/ function(module, exports) {
+/***/ }),
 
-      module.exports = app => {
-        const schemas = {};
-        // instance
-        schemas.instance = {
-          type: 'object',
-          properties: {
-            name: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Subdomain',
-              ebReadOnly: true,
-            },
-            title: {
-              type: 'string',
-              ebType: 'text',
-              ebTitle: 'Title',
-            },
-            config: {
-              type: 'string',
-              ebType: 'text',
-              ebTextarea: true,
-              ebTitle: 'Config',
-              notEmpty: true,
-            },
-          },
-        };
+/***/ 718:
+/***/ ((module) => {
 
-        return schemas;
-      };
+"use strict";
+module.exports = require("require3");;
 
+/***/ })
 
-      /***/ },
-    /** ****/ ]);
-// # sourceMappingURL=backend.js.map
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map
