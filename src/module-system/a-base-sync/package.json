@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 9,
@@ -23,7 +23,7 @@
     "@zhennann/markdown": "^3.0.5",
     "@zhennann/markdown-it-block": "^3.0.5",
     "@zhennann/trim-html": "^0.1.12",
-    "egg-born-bin": "^3.0.4",
+    "egg-born-bin": "^3.0.5",
     "egg-born-mock": "^2.0.4",
     "exceljs": "^4.1.1",
     "extend2": "^1.0.0",
