@@ -32,7 +32,7 @@ class BackendCovCommand extends CovCommand {
     const testArgv = Object.assign({}, argv);
 
     /* istanbul ignore next */
-    testArgv.timeout = testArgv.timeout || process.env.TEST_TIMEOUT || 60000;
+    testArgv.timeout = testArgv.timeout || process.env.TEST_TIMEOUT || 3600 * 1000;
     testArgv.reporter = testArgv.reporter || process.env.TEST_REPORTER;
     // force exit
     testArgv.exit = true;

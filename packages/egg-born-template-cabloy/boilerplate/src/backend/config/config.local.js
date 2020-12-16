@@ -20,7 +20,7 @@ module.exports = appInfo => {
         database: 'sys', // recommended
         hook: {
           meta: {
-            long_query_time: 0,
+            long_query_time: 200,
           },
         },
       },
