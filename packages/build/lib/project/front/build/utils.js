@@ -82,14 +82,17 @@ module.exports = context => {
       fse.emptyDirSync(path.join(runtimePath, 'modules'));
 
       // global modules
+      const __terserPluginExcludes = [ /\.min\.js/ ];
       for (const relativeName in modulesGlobal) {
         const module = modules[relativeName];
+        // terser
+        __terserPluginExcludes.push(new RegExp(`static[\\/]js[\\/]${relativeName}`));
         // copy js
-        let fileSrc = `${module.root}/dist/front.js`;
         let fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js');
-        fse.copySync(fileSrc, fileDest);
+        fse.copySync(module.js.front, fileDest);
+        module.js.front = fileDest;
         // copy js.map
-        fileSrc = `${module.root}/dist/front.js.map`;
+        let fileSrc = `${module.root}/dist/front.js.map`;
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js.map');
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
         // copy static
@@ -99,6 +102,7 @@ module.exports = context => {
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/static');
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
       }
+      context.config.build.__terserPluginExcludes = __terserPluginExcludes;
 
       // require/import
       let jsModules = '';

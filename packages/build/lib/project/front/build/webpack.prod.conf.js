@@ -61,7 +61,7 @@ module.exports = context => {
           ],
           exclude: [
             /\.min\.js$/,
-            path.join(context.config.frontPath, '__runtime/modules/'),
+            /__runtime[\\\/]modules/,
           ],
           use: {
             loader: 'babel-loader',
@@ -90,7 +90,7 @@ module.exports = context => {
       minimizer: [
         new TerserPlugin({
           parallel: true,
-          exclude: [ /\.min\.js/, /\/__runtime\/modules\// ],
+          exclude: context.config.build.__terserPluginExcludes,
           // chunkFilter: chunk => {
           //   if (!chunk._modules) return true;
           //   for (const module of chunk._modules.values()) {
