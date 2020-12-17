@@ -82,7 +82,7 @@ module.exports = context => {
       fse.emptyDirSync(path.join(runtimePath, 'modules'));
 
       // global modules
-      const __terserPluginExcludes = [ /\.min\.js/ ];
+      const __terserPluginExcludes = [ ];
       for (const relativeName in modulesGlobal) {
         const module = modules[relativeName];
         // terser

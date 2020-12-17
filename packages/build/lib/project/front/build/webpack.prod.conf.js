@@ -84,7 +84,6 @@ module.exports = context => {
     optimization: {
       runtimeChunk: false,
       splitChunks: {
-        chunks: 'all',
       },
       minimize: context.config.build.uglify,
       minimizer: [
