@@ -1892,6 +1892,8 @@ module.exports = app => {
       if (options.version === 7) {
         // migration: languange/category/tag
         await this._update7Migration(options);
+        // schemas
+        await this._update7Migration_schemas(options);
       }
 
     }
@@ -2095,8 +2097,6 @@ module.exports = app => {
            left join aCmsArticleTag c on c.atomId=a.atomId
             where a.iid=? and a.deleted=0 and b.atomStage=1
         `, [ this.ctx.instance.id ]);
-      // schemas
-      await this._update7Migration_schemas();
       // loop
       for (const article of articles) {
         await this._update7Migration_article({ mapCagetoryIds, mapTagIds, article });

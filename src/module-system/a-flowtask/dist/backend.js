@@ -957,6 +957,7 @@ module.exports = ctx => {
       fields.atomId = {};
       fields.module = {};
       fields.atomClassName = {};
+      fields.atomCategoryName = {};
       for (const field in fields) {
         item[field] = atom[field];
       }
@@ -981,15 +982,14 @@ module.exports = ctx => {
       if (!fields) return null;
       // { module, validator, schema }
       if (fields && !Array.isArray(fields) && typeof fields === 'object') {
-        const schema = ctx.bean.validation.getSchema({
+        const schema = {
           module: fields.module,
           validator: fields.validator,
           schema: fields.schema,
-        });
-        return {
-          module: fields.module,
-          schema,
         };
+        // use validator directly
+        if (schema.validator) return schema;
+        return ctx.bean.validation.getSchema(schema);
       }
       // base
       let schemaBase = await this._getSchemaBase();

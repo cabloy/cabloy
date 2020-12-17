@@ -183,7 +183,10 @@ module.exports = ctx => {
         const schemas = this._adjustSchemas(meta.validation.validators[validator].schemas);
         schema = schemas[0];
       }
-      return meta.validation.schemas[schema];
+      return {
+        module, validator,
+        schema: meta.validation.schemas[schema],
+      };
     }
 
     async validate({ module, validator, schema, data }) {

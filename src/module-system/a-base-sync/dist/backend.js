@@ -865,12 +865,7 @@ module.exports = ctx => {
     async schema({ atomClass, schema }) {
       const validator = await this.validator({ atomClass });
       if (!validator) return null;
-      const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
-      return {
-        module: validator.module,
-        validator: validator.validator,
-        schema: _schema,
-      };
+      return ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
     }
 
     async validator({ atomClass: { id } }) {
@@ -7597,11 +7592,22 @@ module.exports = app => {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
-        await this.ctx.bean.validation.ajvFromSchemaAndValidate({
-          module: optionsSchema.module,
-          schema: optionsSchema.schema,
-          data: item,
-        });
+        if (optionsSchema.validator) {
+          // use validator directly
+          await this.ctx.bean.validation.validate({
+            module: optionsSchema.module,
+            validator: optionsSchema.validator,
+            schema: optionsSchema.schema,
+            data: item,
+          });
+        } else {
+          // create validator dynamicly
+          await this.ctx.bean.validation.ajvFromSchemaAndValidate({
+            module: optionsSchema.module,
+            schema: optionsSchema.schema,
+            data: item,
+          });
+        }
       } else {
         const validator = await this.ctx.bean.atom.validator({ atomClass });
         if (validator) {
