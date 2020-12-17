@@ -18,9 +18,9 @@
   ],
   "scripts":
   {
-    "build:front": "../../../node_modules/.bin/egg-born-bin front-build-module",
-    "build:backend": "../../../node_modules/.bin/egg-born-bin backend-build-module",
-    "lint": "../../../node_modules/.bin/eslint front backend",
+    "build:front": "npx ../../../node_modules/.bin/egg-born-bin front-build-module",
+    "build:backend": "npx ../../../node_modules/.bin/egg-born-bin backend-build-module",
+    "lint": "npx ../../../node_modules/.bin/eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "{{author}}",
@@ -29,8 +29,6 @@
   "dependencies":
   {
     "require3": "^2.0.0",
-    "extend2": "^1.0.0",
-    "egg-born-bin": "^3.0.0",
-    "egg-born-mock": "^2.0.0"
+    "extend2": "^1.0.0"
   }
 }
