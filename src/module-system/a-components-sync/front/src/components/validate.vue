@@ -107,6 +107,7 @@ export default {
           if (err) {
             if (err.code !== 422) throw err;
             this.verrors = err.message;
+            throw new Error(this.$text('Data Validation Error'));
           }
         });
     },

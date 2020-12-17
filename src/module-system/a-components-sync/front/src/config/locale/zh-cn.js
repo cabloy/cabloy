@@ -20,4 +20,5 @@ export default {
   'Select Time': '选择时间',
   'Select Date': '选择日期',
   'Component Not Found': '组件未发现',
+  'Data Validation Error': '数据验证错误',
 };

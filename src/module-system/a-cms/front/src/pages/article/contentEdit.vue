@@ -111,6 +111,8 @@ export default {
     onSave() {
       this.onPerformSave().then(text => {
         this.$view.toast.show({ text });
+      }).catch(err => {
+        this.$view.toast.show({ text: err.message });
       });
     },
     onPerformSave() {
