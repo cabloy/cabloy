@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:afterin="onPageAfterIn">
-    <eb-navbar large largeTransparent :title="$text('Post')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Edit')" eb-back-link="Back"></eb-navbar>
     <f7-block class="text-align-center">
       <f7-preloader></f7-preloader>
     </f7-block>
@@ -18,19 +18,7 @@ export default {
   methods: {
     async onPageAfterIn() {
       try {
-        let item = JSON.parse(this.$f7route.query.item);
-        const key = await this.$api.post('/a/base/atom/create', {
-          atomClass: {
-            module: item.module,
-            atomClassName: item.atomClassName,
-          },
-          item,
-        });
-        item = {
-          ...item,
-          atomId: key.atomId,
-          itemId: key.itemId,
-        };
+        const item = JSON.parse(this.$f7route.query.item);
         const action = {
           actionModule: 'a-base',
           actionComponent: 'action',

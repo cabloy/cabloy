@@ -155,8 +155,15 @@ util.article = {
     const $container = $(options.container);
     if ($container.length === 0) return;
     if (env.article.userIdCreated === util.user.op.id) {
-      const editUrl = `${env.site.serverUrl}/#!/a/base/atom/edit?atomId=${env.article.atomId}&itemId=${env.article.itemId}&module=${env.site.atomClass.module}&atomClassName=${env.site.atomClass.atomClassName}&atomClassIdParent=${env.site.atomClass.atomClassIdParent}`;
-      const edit = `<a href="${editUrl}" target="_blank"><i class="fas fa-edit"></i></a>`;
+      const item = {
+        atomId:env.article.atomId,
+        itemId:env.article.itemId,
+        module: env.site.atomClass.module,
+        atomClassName: env.site.atomClass.atomClassName,
+        atomClassIdParent: env.site.atomClass.atomClassIdParent,
+      };
+      const url = `${env.site.serverUrl}/#!/a/cms/article/edit?item=${encodeURIComponent(JSON.stringify(item))}`;
+      const edit = `<a href="${url}" target="_blank"><i class="fas fa-edit"></i></a>`;
       $container.append($(edit));
     }
   },
