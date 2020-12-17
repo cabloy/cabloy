@@ -91,21 +91,28 @@ module.exports = ctx => {
       return instance;
     }
 
-    async checkAppReady() {
+    async checkAppReady(options) {
+      if (!options) options = { wait: true };
+      if (!ctx.app.meta.appReady && options.wait === false) return false;
       while (!ctx.app.meta.appReady) {
         await ctx.bean.util.sleep(300);
       }
+      return true;
     }
 
-    async checkAppReadyInstance() {
+    async checkAppReadyInstance(options) {
+      if (!options) options = { startup: true };
       // chech appReady first
-      await ctx.bean.instance.checkAppReady();
+      const appReady = await ctx.bean.instance.checkAppReady({ wait: options.startup !== false });
+      if (!appReady) return false;
       // check appReady instance
       const subdomain = ctx.subdomain;
       if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
-      if (ctx.app.meta.appReadyInstances[subdomain]) return;
+      if (ctx.app.meta.appReadyInstances[subdomain]) return true;
       // instance startup
+      if (options.startup === false) return false;
       await this.instanceStartup({ subdomain });
+      return true;
     }
 
     // options: force/instanceBase

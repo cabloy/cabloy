@@ -2,6 +2,8 @@ module.exports = ctx => {
   const app = ctx.app;
   class Middleware {
     async execute(options, next) {
+      const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: false });
+      if (!appReadyInstance) return ctx.throw(403);
       // cache userId/socketId for disconnect
       const user = ctx.session.passport.user.op;
       if (user.anonymous) return ctx.throw(403);
