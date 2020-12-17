@@ -554,6 +554,10 @@ module.exports = app => {
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.atomLanguage });
+      // check if build site first
+      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      if (!siteBuilt) return; // not throw error
+      // render scene
       site.render = { scene: 'single', inner };
       // render article
       await this._renderArticle({ site, article });
@@ -1402,6 +1406,13 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
     }
 
+    async _checkIfSiteBuilt({ site }) {
+      // check if build site first
+      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const fileName = path.join(pathIntermediate, 'main/article.ejs');
+      return await fse.pathExists(fileName);
+    }
+
     async getArticleUrl({ key }) {
       // article
       const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
@@ -1409,10 +1420,8 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const pathIntermediate = await this.getPathIntermediate(article.atomLanguage);
-      const fileName = path.join(pathIntermediate, 'main/article.ejs');
-      const exists = await fse.pathExists(fileName);
-      if (!exists) this.ctx.throw(1006);
+      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      if (!siteBuilt) this.ctx.throw(1006);
       // url
       return {
         relativeUrl: article.url,
