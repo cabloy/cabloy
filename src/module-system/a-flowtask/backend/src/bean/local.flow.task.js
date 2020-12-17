@@ -450,6 +450,7 @@ module.exports = ctx => {
       fields.atomId = {};
       fields.module = {};
       fields.atomClassName = {};
+      fields.atomCategoryName = {};
       for (const field in fields) {
         item[field] = atom[field];
       }

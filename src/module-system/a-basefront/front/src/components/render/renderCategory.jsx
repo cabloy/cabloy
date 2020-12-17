@@ -59,11 +59,11 @@ export default {
             callback: (code, node) => {
               if (code === 200) {
                 if (node) {
-                  data.atomCategoryId = node.id;
-                  data.atomCategoryName = node.data.categoryName;
+                  this.$set(data, 'atomCategoryId', node.id);
+                  this.$set(data, 'atomCategoryName', node.data.categoryName);
                 } else {
-                  data.atomCategoryId = 0;
-                  data.atomCategoryName = '';
+                  this.$set(data, 'atomCategoryId', 0);
+                  this.$set(data, 'atomCategoryName', '');
                 }
                 resolve(true);
               } else if (code === false) {

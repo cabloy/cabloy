@@ -77,7 +77,7 @@ export default {
             },
             callback: (code, tags) => {
               if (code === 200) {
-                data.atomTags = tags ? JSON.stringify(tags) : null;
+                this.$set(data, 'atomTags', tags ? JSON.stringify(tags) : null);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);

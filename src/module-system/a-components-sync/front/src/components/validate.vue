@@ -15,16 +15,20 @@ export default {
     if (this.auto && this.ready) {
       // custom
       if (this.custom) {
+        const context = {
+          validate: this,
+          data: this.data,
+          readOnly: this.readOnly,
+          onSubmit: this.onSubmit,
+        };
         return c('eb-component', {
           props: {
             module: this.custom.module,
             name: this.custom.name,
             options: {
               props: {
-                data: this.data,
-                readOnly: this.readOnly,
+                context,
               },
-              on: { submit: this.onSubmit },
             },
           },
         });
