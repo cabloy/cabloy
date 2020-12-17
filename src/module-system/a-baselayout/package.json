@@ -14,8 +14,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-bin": "^3.0.5",
-    "egg-born-mock": "^2.0.4",
     "require3": "^2.0.4"
   }
 }
