@@ -174,8 +174,8 @@ module.exports = ctx => {
     _getSchema({ scene, module, schemaName }) {
       const validator = this._getValidator({ scene, module });
       if (!validator) return null;
-      const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
-      return extend(true, {}, validator, { schema: _schema });
+      const schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
+      return extend(true, {}, schema);
     }
 
   }

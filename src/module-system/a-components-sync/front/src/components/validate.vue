@@ -150,7 +150,7 @@ export default {
           validator: this.params.validator,
           schema: this.params.schema,
         }).then(data => {
-          this.__schemaReady(data, moduleName);
+          this.__schemaReady(data.schema, moduleName);
         });
       });
     },

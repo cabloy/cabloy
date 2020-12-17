@@ -768,12 +768,7 @@ module.exports = ctx => {
     async schema({ atomClass, schema }) {
       const validator = await this.validator({ atomClass });
       if (!validator) return null;
-      const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
-      return {
-        module: validator.module,
-        validator: validator.validator,
-        schema: _schema,
-      };
+      return ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
     }
 
     async validator({ atomClass: { id } }) {
