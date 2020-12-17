@@ -6,9 +6,9 @@
   },
   "description": "egg-born-module-aa-login",
   "scripts": {
-    "build:front": "egg-born-bin front-build-module",
-    "build:backend": "egg-born-bin backend-build-module",
-    "lint": "eslint front backend",
+    "build:front": "npx ../../../packages/egg-born-bin/bin/egg-born-bin.js front-build-module",
+    "build:backend": "npx ../../../packages/egg-born-bin/bin/egg-born-bin.js backend-build-module",
+    "lint": "npx ../../../node_modules/.bin/eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
