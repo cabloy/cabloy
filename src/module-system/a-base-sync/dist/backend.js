@@ -7575,7 +7575,7 @@ module.exports = app => {
       }
       // validate
       if (atomStage === 0 && !target) {
-        await this._writeValidate({ atomClass, item, options });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options });
       }
       // write atom
       await this._writeAtom({ key, item, user, atomStage });
@@ -7584,40 +7584,6 @@ module.exports = app => {
         await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
         if (atomStage === 1) {
           await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
-        }
-      }
-    }
-
-    async _writeValidate({ atomClass, item, options }) {
-      // validator
-      const optionsSchema = options && options.schema;
-      if (optionsSchema) {
-        if (optionsSchema.validator) {
-          // use validator directly
-          await this.ctx.bean.validation.validate({
-            module: optionsSchema.module,
-            validator: optionsSchema.validator,
-            schema: optionsSchema.schema,
-            data: item,
-          });
-        } else {
-          // create validator dynamicly
-          await this.ctx.bean.validation.ajvFromSchemaAndValidate({
-            module: optionsSchema.module,
-            schema: optionsSchema.schema,
-            data: item,
-          });
-        }
-      } else {
-        const validator = await this.ctx.bean.atom.validator({ atomClass });
-        if (validator) {
-          // if error throw 422
-          await this.ctx.bean.validation.validate({
-            module: validator.module,
-            validator: validator.validator,
-            schema: validator.schema,
-            data: item,
-          });
         }
       }
     }
