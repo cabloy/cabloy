@@ -28,6 +28,10 @@ module.exports = ctx => {
     }
 
     async ajvFromSchemaAndValidate({ module, schema, options, data }) {
+      if (typeof schema === 'string') {
+        const _schema = this.getSchema({ module, schema });
+        schema = _schema.schema;
+      }
       const ajv = this.ajvFromSchema({ module, schema, options });
       return await this.ajvValidate({ ajv, schema: null, data });
     }
@@ -75,6 +79,40 @@ module.exports = ctx => {
     _adjustSchemas(schemas) {
       if (typeof schemas === 'string') return schemas.split(',');
       return schemas;
+    }
+
+    async _validate({ atomClass, data, options }) {
+      // validator
+      const optionsSchema = options && options.schema;
+      if (optionsSchema) {
+        if (optionsSchema.validator) {
+          // use validator directly
+          await this.validate({
+            module: optionsSchema.module,
+            validator: optionsSchema.validator,
+            schema: optionsSchema.schema,
+            data,
+          });
+        } else {
+          // create validator dynamicly
+          await this.ajvFromSchemaAndValidate({
+            module: optionsSchema.module,
+            schema: optionsSchema.schema,
+            data,
+          });
+        }
+      } else if (atomClass) {
+        const validator = await ctx.bean.atom.validator({ atomClass });
+        if (validator) {
+          // if error throw 422
+          await this.validate({
+            module: validator.module,
+            validator: validator.validator,
+            schema: validator.schema,
+            data,
+          });
+        }
+      }
     }
 
   }

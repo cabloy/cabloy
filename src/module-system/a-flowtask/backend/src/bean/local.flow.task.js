@@ -440,10 +440,9 @@ module.exports = ctx => {
       // item
       const item = extend(true, {}, atom);
       // validate
-      await ctx.bean.validation.ajvFromSchemaAndValidate({
-        module: schema.module,
-        schema: schema.schema,
+      await ctx.bean.validation._validate({
         data: item,
+        options: { schema },
       });
       // basic fields
       const fields = await ctx.bean.atom.modelAtom.columns();
@@ -475,14 +474,11 @@ module.exports = ctx => {
       if (!fields) return null;
       // { module, validator, schema }
       if (fields && !Array.isArray(fields) && typeof fields === 'object') {
-        const schema = {
+        return {
           module: fields.module,
           validator: fields.validator,
           schema: fields.schema,
         };
-        // use validator directly
-        if (schema.validator) return schema;
-        return ctx.bean.validation.getSchema(schema);
       }
       // base
       let schemaBase = await this._getSchemaBase();
