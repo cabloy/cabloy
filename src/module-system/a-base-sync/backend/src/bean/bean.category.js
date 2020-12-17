@@ -130,6 +130,7 @@ module.exports = ctx => {
     }
 
     async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale }) {
+      if (categoryId === undefined) categoryId = 0;
       return await this._treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale });
     }
 
