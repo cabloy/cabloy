@@ -942,7 +942,7 @@ module.exports = ctx => {
       // must be the same flowId
       if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
       // schema
-      const schema = await this._getSchema({ mode });
+      let schema = await this._getSchema({ mode });
       if (!schema) return null;
       // item
       const item = extend(true, {}, atom);
@@ -951,6 +951,8 @@ module.exports = ctx => {
         data: item,
         options: { schema },
       });
+      // get real schema
+      schema = ctx.bean.validation.getSchema(schema);
       // basic fields
       const fields = await ctx.bean.atom.modelAtom.columns();
       fields.atomId = {};
@@ -989,14 +991,19 @@ module.exports = ctx => {
       }
       // base
       let schemaBase = await this._getSchemaBase();
+      // full read/write
+      if (fields === true && schemaBase) {
+        return {
+          module: schemaBase.module,
+          validator: schemaBase.validator,
+        };
+      }
       if (!schemaBase) {
         schemaBase = {
           module,
           schema: { type: 'object', properties: {} },
         };
       }
-      // full read/write
-      if (fields === true) return schemaBase;
       // some fields
       const propertiesBase = schemaBase.schema.properties;
       // properties

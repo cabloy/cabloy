@@ -177,6 +177,10 @@ module.exports = ctx => {
     }
 
     getSchema({ module, validator, schema }) {
+      // for flexible
+      if (schema && typeof schema === 'object') {
+        return { module, validator, schema };
+      }
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
       if (!schema) {
