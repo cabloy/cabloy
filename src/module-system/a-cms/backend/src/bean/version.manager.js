@@ -327,6 +327,9 @@ module.exports = app => {
       if (options.version === 7) {
         // migration: languange/category/tag
         await this._update7Migration(options);
+      }
+
+      if (options.version === 8) {
         // schemas
         await this._update7Migration_schemas(options);
       }

@@ -3,7 +3,7 @@
   "version": "4.0.6",
   "title": "CMS",
   "eggBornModule": {
-    "fileVersion": 7,
+    "fileVersion": 8,
     "cms": {
       "name": "cms",
       "site": true
