@@ -4932,13 +4932,16 @@ module.exports = ctx => {
       action = parseInt(action || 0);
 
       const _actionWhere = action ? `and a.code=${action}` : '';
-
+      const _rightWhere = `
+        and exists(
+          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.atomClassId=b.atomClassId and a.code=b.action and b.userIdWho=${userIdWho}
+        )
+      `;
       // sql
       const _sql =
         `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
-            inner join aViewUserRightAtomClass b on a.atomClassId=b.atomClassId and a.code=b.action
             left join aAtomClass c on a.atomClassId=c.id
-              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} and b.userIdWho=${userIdWho}
+              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
         `;
       return _sql;
     }
@@ -4950,11 +4953,15 @@ module.exports = ctx => {
       atomClassId = parseInt(atomClassId);
       roleIdOwner = parseInt(roleIdOwner);
 
+      const _rightWhere = `
+        and exists(
+          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.id=b.atomClassId and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
+        )
+      `;
       // sql
       const _sql =
         `select a.* from aAtomClass a
-            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
-              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
+            where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
         `;
       return _sql;
     }
