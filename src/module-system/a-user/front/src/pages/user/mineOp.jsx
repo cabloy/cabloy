@@ -76,7 +76,7 @@ export default {
     onClickAvatar() {
       if (this.user.agent.anonymous || this.inAgent) return;
       this.$view.navigate('/a/file/file/upload', {
-        target: '_self',
+        target: this.$meta.vueApp.layout === 'pc' ? '_self' : '',
         context: {
           params: {
             mode: 1,
