@@ -17,7 +17,7 @@ module.exports = app => {
       const categoryId = await this.ctx.bean.category.add({
         atomClass,
         data: {
-          categoryLanguage: 'en-us',
+          language: 'en-us',
           categoryName: 'levelOne',
           categoryIdParent: 0,
         },
@@ -27,7 +27,7 @@ module.exports = app => {
       // parseCategoryName: levelOne.levelTwo.levelThree
       const category = await this.ctx.bean.category.parseCategoryName({
         atomClass,
-        categoryLanguage: 'en-us',
+        language: 'en-us',
         categoryName: 'levelOne.levelTwo.levelThree',
         force: true,
       });
