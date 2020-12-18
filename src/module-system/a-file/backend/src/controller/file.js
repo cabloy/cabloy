@@ -15,6 +15,7 @@ module.exports = app => {
       for (const item of res.list) {
         item.i_downloadUrl = this.ctx.service.file.getDownloadUrl({
           downloadId: item.i_downloadId,
+          atomId: item.atomId,
           mode: item.i_mode,
           fileExt: item.i_fileExt,
         });
@@ -87,6 +88,7 @@ module.exports = app => {
     async download() {
       await this.service.file.download({
         downloadId: this.ctx.params.downloadId,
+        atomId: parseInt(this.ctx.query.atomId || 0),
         width: this.ctx.query.width,
         height: this.ctx.query.height,
       });

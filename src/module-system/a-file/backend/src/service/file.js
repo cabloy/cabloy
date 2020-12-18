@@ -166,20 +166,37 @@ module.exports = app => {
 
     }
 
-    getDownloadUrl({ downloadId, mode, fileExt }) {
-      return this.ctx.bean.base.getAbsoluteUrl(
-        `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`
-      );
+    getDownloadUrl({ downloadId, atomId, mode, fileExt }) {
+      let url = `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`;
+      if (atomId) {
+        url = `${url}?atomId=${atomId}`;
+      }
+      return this.ctx.bean.base.getAbsoluteUrl(url);
     }
 
-    async download({ downloadId, width, height }) {
+    async _getFileByDownloadId({ downloadId, atomId }) {
+      if (atomId) {
+        return await this.ctx.model.file.get({ downloadId, atomId });
+      }
+      // try to get archive
+      const file = await this.ctx.model.queryOne(`
+          select a.* from aFile a
+            inner join aAtom b on a.atomId=b.id
+              where a.iid=? and a.deleted=0 and a.downloadId=? and b.atomStage=1
+        `, [ this.ctx.instance.id, downloadId ]);
+      if (file) return file;
+      // maybe file.atomId = 0
+      return await this.ctx.model.file.get({ downloadId, atomId: 0 });
+    }
+
+    async download({ downloadId, atomId, width, height }) {
       // downloadId
       if (!downloadId) this.ctx.throw(404);
       const extPos = downloadId.indexOf('.');
       if (extPos > -1) downloadId = downloadId.substr(0, extPos);
 
       // get file
-      const file = await this.ctx.model.file.get({ downloadId });
+      const file = await this._getFileByDownloadId({ downloadId, atomId });
       if (!file) this.ctx.throw(404);
 
       // pre
@@ -287,30 +304,38 @@ module.exports = app => {
         await this.ctx.bean.user.check();
         user = this.ctx.state.user.op;
       }
+      // check
+      const result = await this._fileUpdateCheck({ file, user });
+      if (result) return;
+      this.ctx.throw(403);
+    }
+
+    async _fileUpdateCheck({ file, user }) {
       // invoke event
-      const res = await this.ctx.bean.event.invoke({
+      return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'fileUpdateCheck',
         data: { file, user },
+        next: async (context, next) => {
+          if (context.result !== undefined) return await next();
+          // not check if !atomId
+          if (file.atomId) {
+            const res = await this.ctx.bean.atom.checkRightAction({
+              atom: { id: file.atomId },
+              action: 3,
+              stage: 'draft',
+              user,
+              checkFlow: true,
+            });
+            context.result = res && res.atomClosed === 0;
+          } else {
+            // check if self
+            context.result = file.userId === user.id;
+          }
+          // next
+          await next();
+        },
       });
-      if (res === false) this.ctx.throw(403);
-      if (res === true) return;
-      // check right: atom.write or user's file
-      if (file.atomId) {
-        const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: file.atomId },
-          action: 3,
-          stage: 'draft',
-          user,
-          checkFlow: true,
-        });
-        if (res && res.atomClosed === 0) return;
-        this.ctx.throw(403);
-      }
-      // check if self
-      if (file.userId === user.id) return;
-      // others
-      this.ctx.throw(403);
     }
 
     async fileDownloadCheck({ file, user }) {
@@ -319,28 +344,36 @@ module.exports = app => {
         await this.ctx.bean.user.check();
         user = this.ctx.state.user.op;
       }
+      // check
+      const result = await this._fileDownloadCheck({ file, user });
+      if (result) return;
+      this.ctx.throw(403);
+    }
+
+    async _fileDownloadCheck({ file, user }) {
       // invoke event
-      const res = await this.ctx.bean.event.invoke({
+      return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'fileDownloadCheck',
         data: { file, user },
+        next: async (context, next) => {
+          if (context.result !== undefined) return await next();
+          // not check if !atomId
+          if (file.atomId) {
+            const res = await this.ctx.bean.atom.checkRightRead({
+              atom: { id: file.atomId },
+              user,
+              checkFlow: true,
+            });
+            context.result = !!res;
+          } else {
+            // check if self
+            context.result = file.userId === user.id;
+          }
+          // next
+          await next();
+        },
       });
-      if (res === false) this.ctx.throw(403);
-      if (res === true) return;
-      // not check if !atomId
-      if (file.atomId) {
-        const res = await this.ctx.bean.atom.checkRightRead({
-          atom: { id: file.atomId },
-          user,
-          checkFlow: true,
-        });
-        if (res) return;
-        this.ctx.throw(403);
-      }
-      // check if self
-      if (file.userId === user.id) return;
-      // others
-      this.ctx.throw(403);
     }
 
   }
