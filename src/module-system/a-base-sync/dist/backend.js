@@ -711,7 +711,6 @@ module.exports = ctx => {
       for (const file of files) {
         delete file.id;
         file.atomId = atomIdDest;
-        file.downloadId = uuid.v4().replace(/-/g, '');
         await this.modelFile.insert(file);
       }
     }
