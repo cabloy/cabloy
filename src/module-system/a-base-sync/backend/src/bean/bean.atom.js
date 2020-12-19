@@ -922,7 +922,11 @@ module.exports = ctx => {
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action });
-      if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
+      // if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
+      if (!actionBase) {
+        await ctx.bean.atomAction.model.delete({ atomClassId: atomClass.id, code: action });
+        return null;
+      }
       if (actionBase.stage) {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) return null;
