@@ -1,10 +1,20 @@
 # History
 
-## 2020-08-08,
+## 2020-12-19, Version 4.0.0-alpha.0
+
+* **features**
+  * Bean & AOP
+    1. Almost everything is Bean
+    2. Bean supports AOP
+    3. AOP is also Bean
+  * NodeJS Workflow Engine
+  * Atom Stages: Draft, Archive, History
+  * Stats Value Update and Push Automatically
+
+## 2020-08-08
 
 * **feature**
   * lerna: managing multiple packages with lerna
-
 
 ## 2020-06-21, Version 3.3.0-beta.0
 
