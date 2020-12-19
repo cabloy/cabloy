@@ -1890,6 +1890,13 @@ module.exports = app => {
       }
 
       if (options.version === 7) {
+        // update cms blocks
+        await this.ctx.model.query(`
+          update aCmsContent set content = replace (content,'cms-pluginblock:audio','cms-pluginblock:blockAudio') where content like '%cms-pluginblock:audio%'
+        `);
+        await this.ctx.model.query(`
+          update aCmsContent set content = replace (content,'cms-pluginblock:iframe','cms-pluginblock:blockIFrame') where content like '%cms-pluginblock:iframe%'
+        `);
         // migration: languange/category/tag
         await this._update7Migration(options);
       }
