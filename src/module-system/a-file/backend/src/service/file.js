@@ -93,7 +93,7 @@ module.exports = app => {
 
       // write
       if (mode === 1) {
-        if (fileInfo.ext === '.svg') {
+        if (fileInfo.ext === '.svg' || fileInfo.ext === '.svgz') {
           await this._outputFileContent({ destFile, fileContent });
         } else {
           // image
@@ -210,7 +210,7 @@ module.exports = app => {
       // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        if (file.fileExt !== '.svg') {
+        if (file.fileExt !== '.svg' && file.fileExt !== '.svgz') {
           // adjust image
           fileName = await this.adjustImage(file, width, height);
         }
