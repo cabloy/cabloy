@@ -2277,7 +2277,7 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'json',
         ebTextarea: true,
         ebTitle: 'Content',
       },
