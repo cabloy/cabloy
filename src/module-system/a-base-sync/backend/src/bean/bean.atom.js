@@ -606,10 +606,10 @@ module.exports = ctx => {
 
     async _copyAttachments({ atomIdSrc, atomIdDest }) {
       // delete old files
-      await this.modelFile.delete({ atomId: atomIdDest });
+      await this.modelFile.delete({ atomId: atomIdDest, mode: 2 });
       // add new files
       const files = await this.modelFile.select({
-        where: { atomId: atomIdSrc },
+        where: { atomId: atomIdSrc, mode: 2 },
       });
       for (const file of files) {
         delete file.id;
