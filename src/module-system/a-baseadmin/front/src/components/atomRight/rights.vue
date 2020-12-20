@@ -1,11 +1,11 @@
 <template>
   <div>
-    <f7-list>
+    <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
           <div slot="after">
-            <f7-badge v-if="item.action!==1 && item.scope==='0'">Self</f7-badge>
+            <f7-badge v-if="item.actionBulk===0 && item.scope==='0'">{{$text('Self')}}</f7-badge>
             <template v-if="item.scopeRoles">
               <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
             </template>
@@ -42,14 +42,11 @@ export default {
     };
   },
   computed: {
+    ready() {
+      return this.modulesAll && this.atomClassesAll && this.actionsAll;
+    },
     itemGroups() {
-      const modulesAll = this.modulesAll;
-      if (!modulesAll) return [];
-      const atomClassesAll = this.atomClassesAll;
-      if (!atomClassesAll) return [];
-
       if (!this.items) return [];
-
       const groups = [];
       let group = null;
       for (const item of this.items) {

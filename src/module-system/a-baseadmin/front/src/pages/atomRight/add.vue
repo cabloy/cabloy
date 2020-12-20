@@ -13,7 +13,7 @@
         <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
-        <span class="text-color-gray">Self</span>
+        <span class="text-color-gray">{{$text('Self')}}</span>
         <eb-toggle v-model="scopeSelf"></eb-toggle>
       </f7-list-item>
       <f7-list-item v-if="scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">

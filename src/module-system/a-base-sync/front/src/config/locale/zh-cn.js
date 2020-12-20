@@ -117,6 +117,7 @@ export default {
   User: '用户',
   Instance: '实例',
   Stats: '统计',
+  Self: '自己',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

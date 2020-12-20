@@ -27,14 +27,6 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).roleRightRef;
     }
 
-    get modelFunction() {
-      return ctx.model.module(moduleInfo.relativeName).function;
-    }
-
-    get modelRoleFunction() {
-      return ctx.model.module(moduleInfo.relativeName).roleFunction;
-    }
-
     async get(where) {
       return await this.model.get(where);
     }
@@ -108,9 +100,6 @@ module.exports = ctx => {
       // delete all atom rights
       await this.modelRoleRight.delete({ roleId });
       await this.modelRoleRightRef.delete({ roleId });
-
-      // delete all function rights
-      await this.modelRoleFunction.delete({ roleId });
 
       // delete this
       await this.model.delete({ id: roleId });
@@ -284,7 +273,6 @@ module.exports = ctx => {
     async deleteRoleRight({ id }) {
       await this.modelRoleRight.delete({ id });
       await this.modelRoleRightRef.delete({ roleRightId: id });
-      await this.modelRoleFunction.delete({ roleRightId: id });
     }
 
     // child
@@ -342,7 +330,7 @@ module.exports = ctx => {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.atomClassName,c.name as actionName from aRoleRight a
+        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
             where a.iid=? and a.roleId=?
@@ -362,7 +350,7 @@ module.exports = ctx => {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,e.roleName from aRoleRight a
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRoleExpand d on a.roleId=d.roleIdBase
@@ -384,7 +372,7 @@ module.exports = ctx => {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,e.roleName from aViewUserRightAtomClass a
+        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aViewUserRightAtomClass a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRole e on a.roleIdBase=e.id
