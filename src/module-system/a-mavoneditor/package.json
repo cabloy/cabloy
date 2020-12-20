@@ -16,7 +16,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@zhennann/mavon-editor": "^3.0.1",
+    "@zhennann/mavon-editor": "^3.0.2",
     "extend2": "^1.0.0",
     "require3": "^2.0.4"
   }
