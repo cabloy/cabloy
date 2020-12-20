@@ -13,7 +13,7 @@ export default {
       if (action.name === 'write' && atomStage !== undefined) {
         if (atomStage === 0) return this.$text('Edit');
         if (atomStage === 1) return this.$text('Edit Again');
-        if (atomStage === 2) return this.$text('RevertToThisVersion');
+        if (atomStage === 2) return this.$text('RevertToThisRevision');
       }
       const _action = this.getAction(action);
       return _action ? _action.titleLocale : null;

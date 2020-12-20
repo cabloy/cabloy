@@ -5,6 +5,6 @@ export default {
   KeyForAtom: 'Key',
   AtomClassSelectRoleTip: 'Select Role',
   SelectLanguageTip: 'Select Language',
-  RevertToThisVersion: 'Revert To This Version',
+  RevertToThisRevision: 'Revert To This Revision',
   DeleteBulkNotAllDone: 'Some Items Cannot be Deleted',
 };
