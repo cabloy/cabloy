@@ -190,7 +190,7 @@ module.exports = app => {
       const file = await this.ctx.model.queryOne(`
           select a.* from aFile a
             inner join aAtom b on a.atomId=b.id
-              where a.iid=? and a.deleted=0 and a.downloadId=? and b.atomStage=1
+              where a.iid=? and a.deleted=0 and a.mode=2 and a.downloadId=? and b.atomStage=1
         `, [ this.ctx.instance.id, downloadId ]);
       if (file) return file;
       // no matter what atomId is: maybe ===0 or !==0
