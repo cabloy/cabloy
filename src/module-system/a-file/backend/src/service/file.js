@@ -93,37 +93,32 @@ module.exports = app => {
 
       // write
       if (mode === 1) {
-        // image
-        await bb.fromCallback(cb => {
-          let img = gm(fileContent);
-          if (fields.cropped === 'true') {
-            const cropbox = JSON.parse(fields.cropbox);
-            img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
-          }
-          img.quality(93).write(destFile, cb);
-        });
-        // size
-        const imgSize = await bb.fromCallback(cb => {
-          gm(destFile).size(cb);
-        });
-        imgWidth = imgSize.width;
-        imgHeight = imgSize.height;
+        if (fileInfo.ext === '.svg') {
+          await this._outputFileContent({ destFile, fileContent });
+        } else {
+          // image
+          await bb.fromCallback(cb => {
+            let img = gm(fileContent);
+            if (fields.cropped === 'true') {
+              const cropbox = JSON.parse(fields.cropbox);
+              img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
+            }
+            img.quality(93).write(destFile, cb);
+          });
+          // size
+          const imgSize = await bb.fromCallback(cb => {
+            gm(destFile).size(cb);
+          });
+          imgWidth = imgSize.width;
+          imgHeight = imgSize.height;
+        }
       } else if (mode === 2 || mode === 3) {
         // check right only for file
         if (mode === 2) {
           await this.checkRightWrite(atomId, user);
         }
         // file
-        if (Buffer.isBuffer(fileContent)) {
-          // buffer
-          await fse.outputFile(destFile, fileContent);
-        } else {
-          // stream
-          const writeStream = fs.createWriteStream(destFile);
-          await bb.fromCallback(cb => {
-            pump(fileContent, writeStream, cb);
-          });
-        }
+        await this._outputFileContent({ destFile, fileContent });
       }
 
       // fileSize
@@ -166,6 +161,19 @@ module.exports = app => {
 
     }
 
+    async _outputFileContent({ destFile, fileContent }) {
+      if (Buffer.isBuffer(fileContent)) {
+        // buffer
+        await fse.outputFile(destFile, fileContent);
+      } else {
+        // stream
+        const writeStream = fs.createWriteStream(destFile);
+        await bb.fromCallback(cb => {
+          pump(fileContent, writeStream, cb);
+        });
+      }
+    }
+
     getDownloadUrl({ downloadId, atomId, mode, fileExt }) {
       let url = `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`;
       if (atomId) {
@@ -185,8 +193,8 @@ module.exports = app => {
               where a.iid=? and a.deleted=0 and a.downloadId=? and b.atomStage=1
         `, [ this.ctx.instance.id, downloadId ]);
       if (file) return file;
-      // maybe file.atomId = 0
-      return await this.ctx.model.file.get({ downloadId, atomId: 0 });
+      // no matter what atomId is: maybe ===0 or !==0
+      return await this.ctx.model.file.get({ downloadId });
     }
 
     async download({ downloadId, atomId, width, height }) {
@@ -202,8 +210,10 @@ module.exports = app => {
       // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        // adjust image
-        fileName = await this.adjustImage(file, width, height);
+        if (file.fileExt !== '.svg') {
+          // adjust image
+          fileName = await this.adjustImage(file, width, height);
+        }
       } else if (file.mode === 2) {
         // check right
         await this.fileDownloadCheck({ file });
