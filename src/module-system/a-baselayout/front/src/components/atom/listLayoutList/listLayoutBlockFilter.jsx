@@ -26,7 +26,7 @@ export default {
       tag: (this.layoutManager.container.options && this.layoutManager.container.options.tag) || 0,
       star: (this.layoutManager.container.options && this.layoutManager.container.options.star) || 0,
       label: (this.layoutManager.container.options && this.layoutManager.container.options.label) || 0,
-      atomClass: null,
+      atomClass: this.layoutManager.container.atomClass,
     };
     const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.data.formAtomClass') || {};
     return {
@@ -55,7 +55,7 @@ export default {
       return [{ title: '', value: '' }].concat(locales);
     },
     atomClass() {
-      return this.form.atomClass || this.layoutManager.container.atomClass;
+      return this.form.atomClass;
     },
     atomClassBase() {
       if (!this.atomClass) return null;
