@@ -14,8 +14,10 @@ export default {
           click: () => {
             const params = this.validate.params;
             const verrors = this.validate.verrors;
+            let target = this.$meta.util.getProperty(property, 'ebParams.target');
+            if (target === undefined) target = '_self';
             this.$view.navigate('/a/validation/validate', {
-              target: '_self',
+              target,
               context: {
                 params: {
                   params: {

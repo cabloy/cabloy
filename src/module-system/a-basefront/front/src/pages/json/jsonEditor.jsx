@@ -1,6 +1,9 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
+  meta: {
+    size: 'medium',
+  },
   mixins: [ ebPageContext ],
   data() {
     return {

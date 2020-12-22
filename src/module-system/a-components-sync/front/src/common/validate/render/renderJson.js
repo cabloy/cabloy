@@ -9,8 +9,10 @@ export default {
         props: {
           link: '#',
           onPerform: () => {
+            let target = this.$meta.util.getProperty(property, 'ebParams.target');
+            if (target === undefined) target = '_self';
             this.$view.navigate('/a/basefront/json/editor', {
-              target: '_self',
+              target,
               context: {
                 params: {
                   value: this.getValue(data, key, property),
@@ -20,6 +22,10 @@ export default {
                 callback: (code, value) => {
                   if (code === 200) {
                     this.setValue(data, key, value, property);
+                    // submit
+                    if (property.ebAutoSubmit !== false) {
+                      this.validate.onSubmit();
+                    }
                   }
                 },
               },
