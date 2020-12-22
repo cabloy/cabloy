@@ -22,7 +22,7 @@ export default {
     if (!this.value) {
       this.content = '{}';
     } else {
-      this.content = JSON5.stringify(JSON.parse(this.value), null, 2);
+      this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
     }
   },
   methods: {
@@ -36,7 +36,7 @@ export default {
       this.content = event.target.value;
     },
     onPerformDone() {
-      const data = this.content ? JSON.stringify(JSON5.parse(this.content)) : null;
+      const data = this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
       this.contextCallback(200, data);
       this.$f7router.back();
     },

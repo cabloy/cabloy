@@ -6,14 +6,7 @@
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate v-if="instance" ref="validate" :auto="false" :params="{validator: 'instance'}" :onPerform="onPerformValidate">
-      <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
-        <eb-list-input type="text" disabled :value="instance.name || $text('Empty')" dataPath="name" :label="$text('Subdomain')" :placeholder="$text('Subdomain')"></eb-list-input>
-        <eb-list-input type="text" v-model="instance.title" dataPath="title" :label="$text('Title')" :placeholder="$text('Title')" clear-button></eb-list-input>
-        <eb-list-input type="textarea" :input="false" dataPath="config" :label="$text('Config')" :placeholder="$text('Config')">
-          <textarea slot="root" type="textarea" v-model="instance.config" class="json-textarea config-edit"></textarea>
-        </eb-list-input>
-      </eb-list>
+    <eb-validate v-if="instance" ref="validate" :auto="true" :data="instance" :params="{module:'a-instance', validator: 'instance'}" :onPerform="onPerformValidate" @submit="onSubmit">
     </eb-validate>
     <f7-toolbar bottom-md>
       <eb-link :onPerform="onPerformReload">{{$text('Reload Instance')}}</eb-link>
