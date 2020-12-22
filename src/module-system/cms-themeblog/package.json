@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeblog",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "title": "cms:theme:blog",
   "eggBornModule": {
     "cms": {
@@ -21,14 +21,14 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-cms-pluginarticle": "^4.0.6",
+    "egg-born-module-cms-pluginarticle": "^4.0.7",
     "egg-born-module-cms-pluginbacktotop": "^4.0.5",
     "egg-born-module-cms-pluginbase": "^4.0.5",
     "egg-born-module-cms-pluginblock": "^4.0.5",
     "egg-born-module-cms-plugincopyright": "^4.0.5",
     "egg-born-module-cms-pluginmarkdowngithub": "^4.0.5",
     "egg-born-module-cms-pluginrss": "^4.0.5",
-    "egg-born-module-cms-pluginsidebar": "^4.0.5",
+    "egg-born-module-cms-pluginsidebar": "^4.0.6",
     "egg-born-module-cms-pluginsocialshare": "^4.0.5",
     "egg-born-module-cms-pluginsubmit": "^4.0.5",
     "egg-born-module-cms-plugintrack": "^4.0.5",

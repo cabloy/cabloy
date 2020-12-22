@@ -501,8 +501,7 @@ module.exports = app => {
       },
       config: {
         type: 'string',
-        ebType: 'text',
-        ebTextarea: true,
+        ebType: 'json',
         ebTitle: 'Config',
         notEmpty: true,
       },
