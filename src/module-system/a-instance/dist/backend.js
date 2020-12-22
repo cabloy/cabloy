@@ -503,6 +503,9 @@ module.exports = app => {
         type: 'string',
         ebType: 'json',
         ebTitle: 'Config',
+        ebParams: {
+          target: '',
+        },
         notEmpty: true,
       },
     },
