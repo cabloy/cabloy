@@ -483,6 +483,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // instance
   schemas.instance = {
@@ -505,6 +506,14 @@ module.exports = app => {
         ebTitle: 'Config',
         ebParams: {
           target: '',
+          immediate: true,
+          actions: [{
+            name: 'preview',
+            actionModule: moduleInfo.relativeName,
+            actionComponent: 'action',
+            icon: { material: 'visibility' },
+            navigateOptions: { target: '_self' },
+          }],
         },
         notEmpty: true,
       },

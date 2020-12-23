@@ -1901,7 +1901,7 @@ module.exports = ctx => {
           const _authProvider = metaAuth.providers[providerName];
           if (!_authProvider) continue;
           const authProvider = {
-            meta: _authProvider.meta,
+            meta: { ..._authProvider.meta }, // for titleLocale separately
             config: _authProvider.config,
             configFunctions: _authProvider.configFunctions,
             handler: _authProvider.handler,
