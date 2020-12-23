@@ -1,0 +1,11 @@
+name: actions-unittest
+on: [push]
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm install -g lerna
+      - run: lerna bootstrap
+      - run: npm run test:backend
