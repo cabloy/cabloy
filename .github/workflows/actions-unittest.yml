@@ -3,6 +3,7 @@ on: [push]
 jobs:
   unittest:
     runs-on: ubuntu-latest
+    container: node:12
     services:
       redis:
         image: redis:latest
