@@ -16,7 +16,7 @@ module.exports = appInfo => {
         host: '127.0.0.1',
         port: '33060',
         user: 'root',
-        password: '',
+        password: 'root',
         database: 'sys', // donnot change the name
         hook: {
           meta: {
