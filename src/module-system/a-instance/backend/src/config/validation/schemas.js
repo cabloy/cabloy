@@ -31,7 +31,7 @@ module.exports = app => {
             navigateOptions: { target: '_self' },
           }],
         },
-        notEmpty: true,
+        // notEmpty: true,
       },
     },
   };
