@@ -28,6 +28,7 @@
   {},
   "dependencies":
   {
+    "egg-born-mock": "^2.0.4",
     "require3": "^2.0.0",
     "extend2": "^1.0.0"
   }

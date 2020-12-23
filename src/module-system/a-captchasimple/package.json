@@ -18,6 +18,7 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-mock": "^2.0.4",
     "extend2": "^1.0.0",
     "require3": "^2.0.4",
     "trek-captcha": "^0.4.0"

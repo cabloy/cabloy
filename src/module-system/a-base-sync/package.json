@@ -23,6 +23,7 @@
     "@zhennann/markdown": "^3.0.5",
     "@zhennann/markdown-it-block": "^3.0.5",
     "@zhennann/trim-html": "^0.1.12",
+    "egg-born-mock": "^2.0.4",
     "exceljs": "^4.1.1",
     "extend2": "^1.0.0",
     "moment": "^2.24.0",

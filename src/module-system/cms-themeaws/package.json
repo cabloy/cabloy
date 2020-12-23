@@ -21,6 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-mock": "^2.0.4",
     "egg-born-module-cms-themeblog": "^4.0.7",
     "extend2": "^1.0.0",
     "require3": "^2.0.4"
