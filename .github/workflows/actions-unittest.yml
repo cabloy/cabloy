@@ -3,7 +3,6 @@ on: [push]
 jobs:
   unittest:
     runs-on: ubuntu-latest
-    container: node:12
     services:
       redis:
         image: redis:latest
@@ -13,6 +12,9 @@ jobs:
           MYSQL_ROOT_PASSWORD: ""
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
       - run: npm install -g lerna
       - run: lerna bootstrap
       - run: cp -r src/front/_config src/front/config
