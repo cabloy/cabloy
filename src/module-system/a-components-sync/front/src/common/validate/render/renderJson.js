@@ -9,8 +9,11 @@ export default {
         props: {
           link: '#',
           onPerform: () => {
+            // target
             let target = this.$meta.util.getProperty(property, 'ebParams.target');
             if (target === undefined) target = '_self';
+            // immediate
+            const immediate = this.$meta.util.getProperty(property, 'ebParams.immediate') === true;
             this.$view.navigate('/a/basefront/json/editor', {
               target,
               context: {
@@ -18,6 +21,11 @@ export default {
                   value: this.getValue(data, key, property),
                   title,
                   readOnly: this.validate.readOnly || property.ebReadOnly,
+                  immediate,
+                  onSave: value => {
+                    this.setValue(data, key, value, property);
+                    return this.validate.perform(null);
+                  },
                 },
                 callback: (code, value) => {
                   if (code === 200) {

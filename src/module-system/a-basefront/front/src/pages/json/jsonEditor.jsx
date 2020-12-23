@@ -20,6 +20,12 @@ export default {
     readOnly() {
       return this.contextParams.readOnly;
     },
+    immediate() {
+      return this.contextParams.immediate;
+    },
+    onSave() {
+      return this.contextParams.onSave;
+    },
   },
   created() {
     if (!this.value) {
@@ -38,18 +44,33 @@ export default {
     onInput(event) {
       this.content = event.target.value;
     },
+    getValue() {
+      return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
+    },
     onPerformDone() {
-      const data = this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
-      this.contextCallback(200, data);
+      const value = this.getValue();
+      this.contextCallback(200, value);
       this.$f7router.back();
+    },
+    onPerformSave() {
+      const value = this.getValue();
+      return this.onSave(value).then(() => {
+        return this.$text('Saved');
+      });
     },
   },
   render() {
     let domDone;
     if (!this.readOnly) {
-      domDone = (
-        <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
-      );
+      if (this.immediate) {
+        domDone = (
+          <eb-link iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>
+        );
+      } else {
+        domDone = (
+          <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
+        );
+      }
     }
     return (
       <eb-page>

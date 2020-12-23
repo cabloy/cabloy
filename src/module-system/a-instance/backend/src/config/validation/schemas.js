@@ -21,6 +21,7 @@ module.exports = app => {
         ebTitle: 'Config',
         ebParams: {
           target: '',
+          immediate: true,
         },
         notEmpty: true,
       },
