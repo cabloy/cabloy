@@ -5,7 +5,7 @@
 CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + VueJS + Framework7
 
 [![NPM version][npm-image]][npm-url]
-[![Unit Test][test-image]]
+[![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![NPM download][download-image]][download-url]
@@ -14,6 +14,7 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/cabloy
 [test-image]: https://github.com/zhennann/cabloy/workflows/actions-unittest/badge.svg
+[test-url]: https://github.com/zhennann/cabloy/actions
 [codecov-image]: https://img.shields.io/codecov/c/github/zhennann/cabloy.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/zhennann/cabloy
 [david-image]: https://img.shields.io/david/zhennann/cabloy.svg?style=flat-square
