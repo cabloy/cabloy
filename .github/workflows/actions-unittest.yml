@@ -6,8 +6,12 @@ jobs:
     services:
       redis:
         image: redis:latest
+        ports:
+          - 6379:6379
       mysql:
         image: mysql:latest
+        ports:
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: ""
     steps:
