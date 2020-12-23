@@ -13,7 +13,7 @@ module.exports = appInfo => {
     clients: {
       // donnot change the name
       __ebdb: {
-        host: '127.0.0.1',
+        host: 'mysql',
         port: '3306',
         user: 'root',
         password: '',
@@ -29,7 +29,7 @@ module.exports = appInfo => {
 
   // redis
   const __redisConnectionDefault = {
-    host: '127.0.0.1',
+    host: 'redis',
     port: 6379,
     password: '',
     db: 0,
