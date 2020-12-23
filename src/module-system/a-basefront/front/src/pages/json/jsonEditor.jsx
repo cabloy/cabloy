@@ -26,12 +26,22 @@ export default {
     onSave() {
       return this.contextParams.onSave;
     },
+    actions() {
+      return this.contextParams.actions;
+    },
+    context() {
+      return this.contextParams.context;
+    },
   },
   created() {
     if (!this.value) {
       this.content = '{}';
     } else {
-      this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
+      if (typeof this.value === 'string') {
+        this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
+      } else {
+        this.content = window.JSON5.stringify(this.value, null, 2);
+      }
     }
   },
   methods: {
@@ -58,6 +68,23 @@ export default {
         return this.$text('Saved');
       });
     },
+    async onPerformAction(event, action) {
+      action = {
+        ...action,
+        targetEl: event.target,
+      };
+      await this.$meta.util.performAction({ ctx: this, action, item: this.context });
+    },
+    renderActions() {
+      if (!this.actions) return;
+      const children = [];
+      for (const action of this.actions) {
+        children.push(
+          <eb-link iconMaterial={action.icon && action.icon.material} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>
+        );
+      }
+      return children;
+    },
   },
   render() {
     let domDone;
@@ -77,6 +104,7 @@ export default {
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
           <f7-nav-right>
             {domDone}
+            {this.renderActions()}
           </f7-nav-right>
         </eb-navbar>
         <eb-box onSize={this.onSize}>

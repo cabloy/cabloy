@@ -3,7 +3,6 @@
     <eb-navbar large largeTransparent :title="$text('Instance')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" ref="buttonSubmit" :onPerform="onPerformSave"></eb-link>
-        <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate v-if="instance" ref="validate" :auto="true" :data="instance" :params="{module:'a-instance', validator: 'instance'}" :onPerform="onPerformValidate" @submit="onSubmit">
@@ -31,8 +30,6 @@ export default {
       const data = this.$utils.extend({}, this.instance);
       data.config = JSON.stringify(window.JSON5.parse(data.config || '{}'));
       await this.$api.post('instance/save', { data });
-      // change preview
-      this.$emit('preview');
       // instance
       this.$store.commit('auth/setInstance', { name: this.instance.name, title: this.instance.title });
       // title
@@ -42,15 +39,6 @@ export default {
     },
     onPerformSave() {
       return this.$refs.validate.perform();
-    },
-    onPerformPreview() {
-      this.$view.navigate('/a/instance/instance/configPreview', {
-        context: {
-          params: {
-            source: this,
-          },
-        },
-      });
     },
     onSubmit() {
       this.$refs.buttonSubmit.onClick();

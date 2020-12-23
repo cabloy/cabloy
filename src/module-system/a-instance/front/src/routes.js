@@ -4,5 +4,4 @@ function load(name) {
 
 export default [
   { path: 'instance/config', component: load('instance/config') },
-  { path: 'instance/configPreview', component: load('instance/configPreview') },
 ];

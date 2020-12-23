@@ -14,7 +14,10 @@ export default {
             if (target === undefined) target = '_self';
             // immediate
             const immediate = this.$meta.util.getProperty(property, 'ebParams.immediate') === true;
-            this.$view.navigate('/a/basefront/json/editor', {
+            // actions
+            const actions = this.$meta.util.getProperty(property, 'ebParams.actions');
+            // navigate
+            this.$view.navigate(`/a/basefront/json/editor?t=${Date.now()}`, {
               target,
               context: {
                 params: {
@@ -26,6 +29,8 @@ export default {
                     this.setValue(data, key, value, property);
                     return this.validate.perform(null);
                   },
+                  actions,
+                  context,
                 },
                 callback: (code, value) => {
                   if (code === 200) {

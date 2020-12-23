@@ -200,7 +200,14 @@ export default function(Vue) {
       // actionPath
       if (!action.actionComponent) {
         const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-        this.navigate({ ctx, url, options: action.navigateOptions });
+        const options = Object.assign({}, action.navigateOptions, {
+          context: {
+            params: {
+              item,
+            },
+          },
+        });
+        this.navigate({ ctx, url, options });
         return;
       }
       // actionComponent
@@ -211,12 +218,6 @@ export default function(Vue) {
       try {
         const res = await componentInstance.onAction({ ctx, action, item });
         componentInstance.$destroy();
-        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-        if (url) {
-          ctx.$nextTick(() => {
-            this.navigate({ ctx, url, options: action.navigateOptions });
-          });
-        }
         return res;
       } catch (err) {
         componentInstance.$destroy();
