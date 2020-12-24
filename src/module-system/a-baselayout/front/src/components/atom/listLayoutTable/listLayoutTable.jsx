@@ -41,9 +41,7 @@ export default {
   methods: {
     onPageRefresh(/* force*/) {
       this.onPageClear();
-      this._loadTotal().then(() => {
-
-      });
+      this._loadTotal();
     },
     onPageInfinite() {
       // do nothing
@@ -129,9 +127,8 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     _renderEmpty() {
-      return (
-        <div>{this.$text('No Data')}</div>
-      );
+      if (this.loading) return (<f7-preloader></f7-preloader>);
+      return (<div>{this.$text('No Data')}</div>);
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;

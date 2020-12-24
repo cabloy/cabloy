@@ -366,7 +366,6 @@ export default {
           columns={this.columns}
           rowKey={item => item.atomId}
           dataSource={this.layout.dataSource}
-          loading={this.layout.loading}
           pagination={false}
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
