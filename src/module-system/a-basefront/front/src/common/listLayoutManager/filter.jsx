@@ -86,7 +86,7 @@ export default {
       } else {
         navigateOptions.target = '_self';
       }
-      this.$view.navigate('/a/baselayout/listLayoutFilter', navigateOptions);
+      this.$view.navigate(`/a/baselayout/listLayoutFilter?t=${Date.now()}`, navigateOptions);
     },
     filter_onChanged(value) {
       this.filter.data = value;
