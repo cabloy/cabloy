@@ -73,15 +73,21 @@ export default {
       }
       return { pageNum: null, items: null, index: -1 };
     },
-    async _loadTotal() {
+    _loadTotal() {
       // params
       const params = this.layoutManager.base_prepareSelectParams();
       // fetch
-      const res = await this.$api.post('/a/base/atom/count', params);
-      this.info.total = res;
-      if (this.info.total === 0) return;
-      // page 1
-      this.gotoPage(1);
+      this.loading = true;
+      this.$api.post('/a/base/atom/count', params).then(res => {
+        this.loading = false;
+        this.info.total = res;
+        if (this.info.total === 0) return;
+        // page 1
+        this.gotoPage(1);
+      }).catch(err => {
+        this.$view.toast.show({ text: err.message });
+        this.loading = false;
+      });
     },
     async _loadMore({ index, size }) {
       // params
