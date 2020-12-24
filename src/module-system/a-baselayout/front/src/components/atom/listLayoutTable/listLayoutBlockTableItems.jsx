@@ -242,17 +242,19 @@ export default {
     _getActionTitle(action, item) {
       return this.getActionTitle(action, item.atomStage);
     },
+    _checkColumnNameEqualOrder(atomOrder, columnName) {
+      const key = this.layoutManager.order_getKey(atomOrder);
+      return (key === `a.${columnName}` || key === `f.${columnName}` || key === columnName);
+    },
     _columnSorterFind(columnName) {
       return this.layoutManager.order_list.find(atomOrder => {
-        const key = this.layoutManager.order_getKey(atomOrder);
-        if (key === `a.${columnName}` || key === `f.${columnName}`) return true;
-        return false;
+        return this._checkColumnNameEqualOrder(atomOrder, columnName);
       });
     },
     _columnSorterCurrent(columnName) {
       const atomOrderCurrent = this.layoutManager.order_current;
       const key = this.layoutManager.order_getKey(atomOrderCurrent);
-      if (key === `a.${columnName}` || key === `f.${columnName}`) {
+      if (this._checkColumnNameEqualOrder(atomOrderCurrent, columnName)) {
         return atomOrderCurrent.by === 'desc' ? 'descend' : 'ascend';
       }
       return false;

@@ -46,9 +46,9 @@ export default {
       } else {
         // others
         atomOrder = {
-          name: 'updatedAt',
+          name: 'atomUpdatedAt',
           by: 'desc',
-          tableAlias: 'a',
+          tableAlias: '',
         };
       }
       // ok
@@ -74,7 +74,14 @@ export default {
       this.page_onRefresh();
     },
     order_getKey(atomOrder) {
-      return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
+      if (!atomOrder) return null;
+      let orderName;
+      if (atomOrder.tableAlias === '') {
+        orderName = atomOrder.name;
+      } else {
+        orderName = `${atomOrder.tableAlias || 'f'}.${atomOrder.name}`;
+      }
+      return orderName;
     },
     order_getStatus(atomOrder) {
       const atomOrderCurrent = this.order_current;

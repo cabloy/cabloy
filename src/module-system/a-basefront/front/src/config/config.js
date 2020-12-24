@@ -4,8 +4,8 @@ export default {
       list: {
         info: {
           orders: [
-            { name: 'createdAt', title: 'Created Time', by: 'desc', tableAlias: 'a' },
-            { name: 'updatedAt', title: 'Modification Time', by: 'desc', tableAlias: 'a' },
+            { name: 'atomCreatedAt', title: 'Created Time', by: 'desc', tableAlias: '' },
+            { name: 'atomUpdatedAt', title: 'Modification Time', by: 'desc', tableAlias: '' },
             { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
           ],
           filter: {
@@ -18,8 +18,8 @@ export default {
             fields: [
               { name: 'atomName', title: 'AtomName' },
               { name: 'userName', title: 'Creator' },
-              { name: 'createdAt', title: 'Created Time' },
-              { name: 'updatedAt', title: 'Modification Time' },
+              { name: 'atomCreatedAt', title: 'Created Time' },
+              { name: 'atomUpdatedAt', title: 'Modification Time' },
             ],
           },
         },
@@ -87,12 +87,12 @@ export default {
                     },
                   },
                   {
-                    dataIndex: 'createdAt',
+                    dataIndex: 'atomCreatedAt',
                     title: 'Created Time',
                     align: 'left',
                   },
                   {
-                    dataIndex: 'updatedAt',
+                    dataIndex: 'atomUpdatedAt',
                     title: 'Modification Time',
                     align: 'left',
                   },
