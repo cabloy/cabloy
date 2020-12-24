@@ -6,12 +6,12 @@ module.exports = app => {
   if (app.meta.isTest || app.meta.isLocal) {
     Object.assign(aops, {
       simple: {
-        match: 'test.ctx',
+        match: 'testctx',
         mode: 'ctx',
         bean: simple,
       },
       regExp: {
-        match: [ /^test-party.test\.\w+$/, 'test.ctx' ],
+        match: [ /^test-party.test\.\w+$/, 'testctx' ],
         mode: 'ctx',
         bean: regExp,
       },

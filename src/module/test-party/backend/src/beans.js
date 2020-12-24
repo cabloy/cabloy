@@ -38,7 +38,7 @@ module.exports = app => {
         mode: 'app',
         bean: testClass,
       },
-      'test.ctx': {
+      testctx: {
         mode: 'ctx',
         bean: testCtx,
         global: true,
