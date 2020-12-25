@@ -27,6 +27,13 @@ export default {
         if (createParams) {
           item = this.$utils.extend({}, item, createParams);
         }
+        const params = this.base_prepareSelectParams({ setOrder: false });
+        if (params.options.language) {
+          item.atomLanguage = params.options.language;
+        }
+        if (params.options.category) {
+          item.atomCategoryId = params.options.category;
+        }
       }
       // performAction
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
