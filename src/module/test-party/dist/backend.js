@@ -95,12 +95,12 @@ module.exports = app => {
   if (app.meta.isTest || app.meta.isLocal) {
     Object.assign(aops, {
       simple: {
-        match: 'test.ctx',
+        match: 'testctx',
         mode: 'ctx',
         bean: simple,
       },
       regExp: {
-        match: [ /^test-party.test\.\w+$/, 'test.ctx' ],
+        match: [ /^test-party.test\.\w+$/, 'testctx' ],
         mode: 'ctx',
         bean: regExp,
       },
@@ -1016,7 +1016,7 @@ module.exports = app => {
         mode: 'app',
         bean: testClass,
       },
-      'test.ctx': {
+      testctx: {
         mode: 'ctx',
         bean: testCtx,
         global: true,
@@ -3253,22 +3253,22 @@ module.exports = app => {
       assert.equal(res, `${a + b}:regexpaop`);
 
       // ctx.bean: global
-      assert.equal(this.ctx.bean['test.ctx'], this.ctx.bean['test.ctx']);
+      assert.equal(this.ctx.bean.testctx, this.ctx.bean.testctx);
 
-      this.ctx.bean['test.ctx'].name = 'test-party:regexpaop:simpleaop';
-      res = this.ctx.bean['test.ctx'].name;
+      this.ctx.bean.testctx.name = 'test-party:regexpaop:simpleaop';
+      res = this.ctx.bean.testctx.name;
       assert.equal(res, 'test-party:regexpaop:simpleaop');
 
-      res = this.ctx.bean['test.ctx'].actionSync({ a, b });
+      res = this.ctx.bean.testctx.actionSync({ a, b });
       assert.equal(res, `${a + b}:regexpaop:simpleaop`);
 
-      res = await this.ctx.bean['test.ctx'].actionAsync({ a, b });
+      res = await this.ctx.bean.testctx.actionAsync({ a, b });
       assert.equal(res, `${a + b}:regexpaop:simpleaop`);
 
-      res = await this.ctx.bean['test.ctx'].actionAsync2({ a, b });
+      res = await this.ctx.bean.testctx.actionAsync2({ a, b });
       assert.equal(res, `test-party:regexpaop:simpleaop:${a + b}:regexpaop:simpleaop`);
 
-      res = await this.ctx.bean['test.ctx'].actionAsync3({ a, b });
+      res = await this.ctx.bean.testctx.actionAsync3({ a, b });
       assert.equal(res, `test-party:regexpaop:simpleaop:${a + b}:regexpaop:simpleaop`);
 
       // ctx.bean: class
