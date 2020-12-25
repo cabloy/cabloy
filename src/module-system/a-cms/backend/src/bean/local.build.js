@@ -114,7 +114,7 @@ module.exports = app => {
 
     // site<plugin<theme<site(db)<language(db)
     async combineSite({ siteBase, language }) {
-    // themeModuleName
+      // themeModuleName
       const themeModuleName = siteBase.themes[language];
       if (!themeModuleName) {
         this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
@@ -138,7 +138,7 @@ module.exports = app => {
     }
 
     _combineThemes(themeModuleName) {
-    // module
+      // module
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
       const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
@@ -151,7 +151,7 @@ module.exports = app => {
 
     // site<plugin<theme<site(db)<language(db)
     async getSite({ language, options }) {
-    // options
+      // options
       options = options || {};
       // base
       const siteBase = await this.combineSiteBase();
@@ -203,7 +203,7 @@ module.exports = app => {
 
     getUrlRawRoot(site) {
       if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
-      // cms or cms.moduleName
+        // cms or cms.moduleName
         const cmsPathName = this.getCMSPathName();
         const publicDir = this.ctx.app.config.static.prefix + 'public/';
         const prefix = this.ctx.bean.base.host ? `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}` : '';
@@ -236,11 +236,11 @@ module.exports = app => {
       return path.join(rawDist, language === site.language.default ? '' : '/' + language);
     }
     async getPathCms() {
-    // cms
+      // cms
       return await this.ctx.bean.base.getPath(this.getCMSPathName());
     }
     async getPathRawDist() {
-    // cms/dist
+      // cms/dist
       return await this.ctx.bean.base.getPath(`${this.getCMSPathName()}/dist`);
     }
 
@@ -284,15 +284,22 @@ module.exports = app => {
     }
 
     async deleteArticle({ key, article, inner }) {
+      // same logic with renderArticle
+      if (!article.atomLanguage) {
+        article.atomLanguage = this.ctx.locale;
+      }
       // clearCache
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.atomLanguage });
+      // check if build site first
+      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      if (!siteBuilt) return; // not throw error
       // remove file
       const pathDist = await this.getPathDist(site, article.atomLanguage);
       await fse.remove(path.join(pathDist, article.url));
       if (!inner) {
-      // remove sitemap
+        // remove sitemap
         let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
         const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
         xml = xml.toString().replace(regexp, '');
@@ -326,7 +333,7 @@ module.exports = app => {
 
       // concurrency
       const mapper = async article => {
-      // progress: initialize
+        // progress: initialize
         if (progressId) {
           await this.ctx.bean.progress.update({
             progressId,
@@ -364,7 +371,7 @@ module.exports = app => {
         glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
       });
       for (const item of indexFiles) {
-      // data
+        // data
         const data = await this.getData({ site });
         // path
         const _fileSrc = item.substr(pathIntermediate.length + 1);
@@ -446,7 +453,7 @@ module.exports = app => {
         glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
       });
       for (const item of staticFiles) {
-      // data
+        // data
         const data = await this.getData({ site });
         // path
         const _fileSrc = item.substr(pathIntermediate.length + 1);
@@ -540,7 +547,7 @@ module.exports = app => {
         if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin
         && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })
         ) {
-        // path intermediate
+          // path intermediate
           const pathIntermediate = await this.getPathIntermediate(language);
           let incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
           const exists = await fse.pathExists(incudeFileName);
@@ -573,7 +580,7 @@ module.exports = app => {
       if (site._cache[type][cacheSha]) {
         urlDest = site._cache[type][cacheSha];
       } else {
-      // combine
+        // combine
         let result = '';
         for (const item of items) {
           let _content;
@@ -765,7 +772,7 @@ var env=${JSON.stringify(env, null, 2)};
         let progress0_progress = 0;
 
         for (const language of languages) {
-        // progress: language
+          // progress: language
           if (progressId) {
             await this.ctx.bean.progress.update({
               progressId,
@@ -799,7 +806,7 @@ var env=${JSON.stringify(env, null, 2)};
           time,
         };
       } catch (err) {
-      // error
+        // error
         if (progressId) {
           if (progressNo === 0) {
             await this.ctx.bean.progress.error({ progressId, message: err.message });
@@ -898,14 +905,14 @@ var env=${JSON.stringify(env, null, 2)};
         // /  assets plugins/[plugin]/assets
         for (const dir of [ 'assets', 'plugins' ]) {
           if (dir === 'assets') {
-          // assets
+            // assets
             const _filename = path.join(pathIntermediate, 'assets');
             const exists = await fse.pathExists(_filename);
             if (exists) {
               await fse.copy(_filename, path.join(pathDist, 'assets'));
             }
           } else {
-          // plugins
+            // plugins
             const pluginsFiles = await bb.fromCallback(cb => {
               glob(`${pathIntermediate}/plugins/\*`, cb);
             });
@@ -1062,7 +1069,7 @@ ${items}</sitemapindex>`;
     }
 
     async createRobots({ site }) {
-    // content
+      // content
       const urlRawRoot = this.getUrlRawRoot(site);
       const content =
 `User-agent: *
@@ -1081,7 +1088,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     async _copyThemes(pathIntermediate, themeModuleName) {
-    // module
+      // module
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
       // extend
@@ -1151,7 +1158,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const envs = {};
       for (const module of this.ctx.app.meta.modulesArray) {
         if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
-        // may be more atoms
+          // may be more atoms
           for (const key in module.main.meta.base.atoms) {
             if (module.main.meta.base.atoms[key].info.cms !== true) continue;
             // atomClass
@@ -1162,7 +1169,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
             };
             const atomClassFullName = this.getAtomClassFullName(atomClass);
             if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
-            // getSite
+              // getSite
               let site;
               try {
                 site = await this.ctx.service.site.getSite({
