@@ -2,7 +2,7 @@
 
 # CabloyJS
 
-CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + VueJS + Framework7
+一款内置工作流引擎的Node.js全栈框架, 基于koa + egg + vue + framework7
 
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]

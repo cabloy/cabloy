@@ -1,7 +1,7 @@
 {
   "name": "cabloy",
   "private": true,
-  "description": "The Ultimate Javascript Full Stack Framework",
+  "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zhennann/cabloy.git"
@@ -9,7 +9,9 @@
   "author": "zhennann",
   "license": "MIT",
   "keywords": [
-    "egg",
+    "nodejs",
+    "full-stack",
+    "workflow-engine",
     "egg-framework",
     "framework7",
     "cabloy"
