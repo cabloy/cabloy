@@ -2,7 +2,7 @@
 
 # CabloyJS
 
-一款内置工作流引擎的Node.js全栈框架, 基于koa + egg + vue + framework7
+一款自带工作流引擎的Node.js全栈框架, 基于koa + egg + vue + framework7
 
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
