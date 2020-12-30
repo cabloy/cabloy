@@ -7,6 +7,7 @@ module.exports = app => {
 
     async pushAsync() {
       const res = await this.ctx.app.meta.queue.pushAsync({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: 'test-party',
         queueName: 'queueTest',
@@ -18,6 +19,7 @@ module.exports = app => {
 
     async push() {
       this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: 'test-party',
         queueName: 'queueTest',

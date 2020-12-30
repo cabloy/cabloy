@@ -16,7 +16,7 @@ module.exports = function(app) {
       this._queuePush(info, false);
     }
 
-    // { subdomain, module, queueName,queueNameSub,data }
+    // { locale, subdomain, module, queueName,queueNameSub,data }
     pushAsync(info) {
       return this._queuePush(info, true);
     }

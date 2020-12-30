@@ -24,7 +24,7 @@ module.exports = function(app) {
       });
     }
 
-    // { subdomain, module, broadcastName, data }
+    // { locale, subdomain, module, broadcastName, data }
     emit(info) {
       info.__callerId = this.__callerId;
       this.pub.publish(this.channelName, JSON.stringify(info));
