@@ -1161,7 +1161,6 @@ module.exports = appInfo => {
     config.schedules = {
       test: {
         bean: 'test',
-        instance: true,
         repeat: {
           every: 3000,
         },

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themecommunity",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "title": "cms:theme:community",
   "eggBornModule": {
     "cms": {
@@ -22,7 +22,7 @@
   "author": "zhennann",
   "dependencies": {
     "egg-born-mock": "^2.0.4",
-    "egg-born-module-cms-pluginarticle": "^4.0.8",
+    "egg-born-module-cms-pluginarticle": "^4.0.9",
     "egg-born-module-cms-pluginbacktotop": "^4.0.6",
     "egg-born-module-cms-pluginbase": "^4.0.6",
     "egg-born-module-cms-pluginblock": "^4.0.6",
