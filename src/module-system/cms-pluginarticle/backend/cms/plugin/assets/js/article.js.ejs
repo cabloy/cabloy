@@ -154,7 +154,7 @@ util.article = {
   articleEdit(options) {
     const $container = $(options.container);
     if ($container.length === 0) return;
-    if (env.article.userIdCreated === util.user.op.id) {
+    if (env.article.userIdCreated === util.user.op.id || env.article.userIdUpdated === util.user.op.id) {
       const item = {
         atomId:env.article.atomId,
         itemId:env.article.itemId,
