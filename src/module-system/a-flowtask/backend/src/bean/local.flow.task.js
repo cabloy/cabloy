@@ -262,6 +262,8 @@ module.exports = ctx => {
       }
       // handle
       await this._cancelFlow_handle({ handle });
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
     }
 
     async _cancelFlow_handle({ handle }) {
