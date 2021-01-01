@@ -60,6 +60,9 @@ module.exports = app => {
       const layout = options && options.layout;
       // flags
       const flags = [];
+      if (item.partyOver) {
+        flags.push(this.ctx.text('PartyOverFlag'));
+      }
       if (layout !== 'table' && item.personCount) {
         flags.push(item.personCount + 'P');
       }

@@ -5,6 +5,13 @@ module.exports = app => {
     routes = routes.concat([
       // atom: party
       { method: 'post', path: 'party/types', controller: 'party' },
+      { method: 'post', path: 'party/over', controller: 'party' },
+      { method: 'post', path: 'party/over', controller: 'party', middlewares: 'transaction',
+        meta: { right: { type: 'atom', action: 101 } },
+      },
+      { method: 'post', path: 'party/overBulk', controller: 'party', middlewares: 'transaction',
+        meta: { right: { type: 'atom', action: 201 } },
+      },
 
       // test/atom/starLabel
       { method: 'post', path: 'test/atom/starLabel', controller: 'testAtomStarLabel', middlewares: 'test' },

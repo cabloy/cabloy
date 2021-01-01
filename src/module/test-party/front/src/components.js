@@ -1,3 +1,4 @@
+import action from './components/action.js';
 import helloGlobal from './kitchen-sink/components/helloGlobal.vue';
 import monkeyeeComponent from './kitchen-sink/components/monkeyeeComponent.vue';
 import widgetSales from './kitchen-sink/components/widgets/sales.vue';
@@ -8,6 +9,7 @@ import renderMotto from './kitchen-sink/components/renderMotto.vue';
 import loadComponentAsync from './kitchen-sink/components/loadComponentAsync.vue';
 
 export default {
+  action,
   helloGlobal,
   monkeyeeComponent,
   widgetSales,

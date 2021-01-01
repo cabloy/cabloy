@@ -12,6 +12,17 @@ module.exports = app => {
       });
     }
 
+    async over({ key, user }) {
+      await this.ctx.model.party.update({
+        id: key.itemId,
+        partyOver: 1,
+      });
+    }
+
+    async overBulk({ keys, user }) {
+
+    }
+
   }
 
   return Party;

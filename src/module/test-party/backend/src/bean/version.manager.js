@@ -20,6 +20,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             personCount int(11) DEFAULT '0',
             partyTypeId int(11) DEFAULT '0',
+            partyOver int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
@@ -60,6 +61,7 @@ module.exports = app => {
         }
         // add role rights
         const roleRights = [
+          // basic
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'write', scopeNames: 0 },
@@ -67,6 +69,9 @@ module.exports = app => {
           { roleName: 'system', action: 'clone', scopeNames: 0 },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
+          // custom
+          { roleName: 'system', action: 'partyOver', scopeNames: 0 },
+          { roleName: 'system', action: 'partyOverBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }

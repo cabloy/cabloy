@@ -11,6 +11,8 @@ module.exports = {
   Snapshots: '快照',
   About: '关于',
   Demonstration: '演示',
+  PartyOver: '宴会结束',
+  PartyOverFlag: '结束',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',

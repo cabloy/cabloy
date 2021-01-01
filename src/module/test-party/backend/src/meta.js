@@ -2,6 +2,7 @@ const require3 = require('require3');
 const extend = require3('extend2');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const meta = {
   };
   if (app.meta.isTest || app.meta.isLocal) {
@@ -31,6 +32,24 @@ module.exports = app => {
               tag: true,
             },
             actions: {
+              partyOver: {
+                code: 101,
+                title: 'PartyOver',
+                actionModule: moduleInfo.relativeName,
+                actionComponent: 'action',
+                icon: { material: 'check_circle_outline' },
+                enableOnOpened: true,
+                stage: 'archive',
+              },
+              partyOverBulk: {
+                code: 201,
+                title: 'PartyOver',
+                actionModule: moduleInfo.relativeName,
+                actionComponent: 'action',
+                icon: { material: 'check_circle_outline' },
+                bulk: true,
+                select: true,
+              },
             },
             validator: 'party',
             search: {
