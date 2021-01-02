@@ -4,6 +4,7 @@ export default {
   ToggleSwitch: 'Toggle',
   CaptchaCode: 'Captcha',
   SMSVerificationCode: 'Code',
+  PartyOverBulkNotAllDone: 'Some Items Cannot be Overed',
   MonkeyeeTestTip1: 'The page will be monkeyed',
   MonkeyeeTestTip2: 'The component will be monkeyed',
   F7AboutTip1: 'Framework7 - is a free and open source HTML mobile framework to develop hybrid mobile apps or web apps with iOS or Android (Material) native look and feel. It is also an indispensable prototyping apps tool to show working app prototype as soon as possible in case you need to. Framework7 is created by Vladimir Kharlampidi (iDangero.us)',

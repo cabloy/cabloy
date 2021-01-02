@@ -7,7 +7,7 @@ export default {
       if (action.name === 'partyOver') {
         const key = { atomId: item.atomId, itemId: item.itemId };
         return await this._onActionPartyOver({ ctx, key });
-      } else if (action.name === 'enable') {
+      } else if (action.name === 'partyOverBulk') {
         return await this._onActionPartyOverBulk({ ctx, item });
       }
     },
@@ -25,21 +25,18 @@ export default {
       const keys = selectedAtoms.map(item => {
         return { atomId: item.atomId, itemId: item.itemId };
       });
-      // deleteBulk
-      const res = await ctx.$api.post('/a/base/atom/deleteBulk', { atomClass, keys });
-      // delete
+      // overBulk
+      const res = await ctx.$api.post('/test/party/party/overBulk', { atomClass, keys });
+      // change
       for (const key of res.keys) {
-        // selected
-        const index = selectedAtoms.findIndex(_item => _item.atomId === key.atomId);
-        if (index > -1) {
-          selectedAtoms.splice(index, 1);
-        }
         // action
-        ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+        ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
       }
+      // clear selection
+      ctx.bulk_clearSelectedAtoms();
       // check result
       if (res.keys.length === keys.length) return true;
-      return this.$text('DeleteBulkNotAllDone');
+      return this.$text('PartyOverBulkNotAllDone');
     },
   },
 };

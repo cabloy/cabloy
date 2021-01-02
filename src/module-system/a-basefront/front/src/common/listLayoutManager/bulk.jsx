@@ -46,10 +46,13 @@ export default {
         this.bulk.actions = data;
       });
     },
+    bulk_clearSelectedAtoms() {
+      this.bulk.selectedAtoms = [];
+    },
     bulk_onSelectingSwitch() {
       this.bulk.selecting = !this.bulk.selecting;
       if (!this.bulk.selecting) {
-        this.bulk.selectedAtoms = [];
+        this.bulk_clearSelectedAtoms();
       }
     },
     bulk_onItemChange(event, item) {
