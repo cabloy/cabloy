@@ -173,11 +173,26 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      if (action !== 101) return res;
+      // partyOver
+      const item = await this.ctx.model.party.get({ id: atom.itemId });
+      if (action === 101 && item.partyOver === 0) return res;
+      return null;
+    }
+
     _getMeta(item, options) {
       // layout: list/table/mobile/pc
       const layout = options && options.layout;
       // flags
       const flags = [];
+      if (item.partyOver) {
+        flags.push(this.ctx.text('PartyOverFlag'));
+      }
       if (layout !== 'table' && item.personCount) {
         flags.push(item.personCount + 'P');
       }
@@ -725,6 +740,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             personCount int(11) DEFAULT '0',
             partyTypeId int(11) DEFAULT '0',
+            partyOver int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
@@ -765,6 +781,7 @@ module.exports = app => {
         }
         // add role rights
         const roleRights = [
+          // basic
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'write', scopeNames: 0 },
@@ -772,6 +789,9 @@ module.exports = app => {
           { roleName: 'system', action: 'clone', scopeNames: 0 },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
+          // custom
+          { roleName: 'system', action: 'partyOver', scopeNames: 0 },
+          { roleName: 'system', action: 'partyOverBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }
@@ -1228,6 +1248,17 @@ module.exports = {
 
 /***/ }),
 
+/***/ 6327:
+/***/ ((module) => {
+
+module.exports = {
+  PartyOver: 'Party Over',
+  PartyOverFlag: 'Over',
+};
+
+
+/***/ }),
+
 /***/ 3072:
 /***/ ((module) => {
 
@@ -1244,6 +1275,8 @@ module.exports = {
   Snapshots: '快照',
   About: '关于',
   Demonstration: '演示',
+  PartyOver: '宴会结束',
+  PartyOverFlag: '结束',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',
@@ -1264,6 +1297,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(6327),
   'zh-cn': __webpack_require__(3072),
 };
 
@@ -2263,7 +2297,23 @@ module.exports = app => {
   class PartyController extends app.Controller {
 
     async types() {
-      const res = await this.ctx.service.party.types(this.ctx.request.body);
+      const res = await this.ctx.service.party.types();
+      this.ctx.success(res);
+    }
+
+    async over() {
+      const res = await this.ctx.service.party.over({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async overBulk() {
+      const res = await this.ctx.service.party.overBulk({
+        keys: this.ctx.request.body.keys,
+        user: this.ctx.state.user.op,
+      });
       this.ctx.success(res);
     }
 
@@ -3682,6 +3732,7 @@ module.exports = app => {
 
     async pushAsync() {
       const res = await this.ctx.app.meta.queue.pushAsync({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: 'test-party',
         queueName: 'queueTest',
@@ -3693,6 +3744,7 @@ module.exports = app => {
 
     async push() {
       this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: 'test-party',
         queueName: 'queueTest',
@@ -4413,6 +4465,7 @@ const require3 = __webpack_require__(6718);
 const extend = require3('extend2');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const meta = {
   };
   if (app.meta.isTest || app.meta.isLocal) {
@@ -4442,6 +4495,24 @@ module.exports = app => {
               tag: true,
             },
             actions: {
+              partyOver: {
+                code: 101,
+                title: 'PartyOver',
+                actionModule: moduleInfo.relativeName,
+                actionComponent: 'action',
+                icon: { material: 'check_circle_outline' },
+                enableOnOpened: true,
+                stage: 'archive',
+              },
+              partyOverBulk: {
+                code: 201,
+                title: 'PartyOver',
+                actionModule: moduleInfo.relativeName,
+                actionComponent: 'action',
+                icon: { material: 'check_circle_outline' },
+                bulk: true,
+                select: true,
+              },
             },
             validator: 'party',
             search: {
@@ -4634,6 +4705,13 @@ module.exports = app => {
     routes = routes.concat([
       // atom: party
       { method: 'post', path: 'party/types', controller: 'party' },
+      { method: 'post', path: 'party/over', controller: 'party' },
+      { method: 'post', path: 'party/over', controller: 'party', middlewares: 'transaction',
+        meta: { right: { type: 'atom', action: 101 } },
+      },
+      { method: 'post', path: 'party/overBulk', controller: 'party', middlewares: 'transaction',
+        meta: { right: { type: 'atom', action: 201 } },
+      },
 
       // test/atom/starLabel
       { method: 'post', path: 'test/atom/starLabel', controller: 'testAtomStarLabel', middlewares: 'test' },
@@ -4819,6 +4897,36 @@ module.exports = app => {
           name: this.ctx.text(item.name),
         };
       });
+    }
+
+    async over({ key, user }) {
+      await this.ctx.model.party.update({
+        id: key.itemId,
+        partyOver: 1,
+      });
+    }
+
+    async overBulk({ keys, user }) {
+      const resKeys = [];
+      for (const key of keys) {
+        const res = await this._overBulk_item({ key, user });
+        if (res) {
+          resKeys.push(key);
+        }
+      }
+      return { keys: resKeys };
+    }
+
+    async _overBulk_item({ key, user }) {
+      // check right
+      const res = await this.ctx.bean.atom.checkRightAction({
+        atom: { id: key.atomId }, action: 101, user,
+      });
+      if (!res) return false;
+      // over
+      await this.over({ key, user });
+      // ok
+      return true;
     }
 
   }

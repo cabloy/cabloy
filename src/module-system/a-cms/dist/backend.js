@@ -2996,7 +2996,7 @@ module.exports = app => {
         type: 'boolean',
         ebType: 'toggle',
         ebTitle: 'Allow Comment',
-        default: false,
+        default: true,
       },
       // Extra
       groupExtra: {
