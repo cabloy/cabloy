@@ -784,6 +784,7 @@ module.exports = ctx => {
         itemId, atomName, roleIdOwner = 0,
         atomStatic = 0, atomStaticKey = null, atomRevision = 0,
         atomLanguage = null, atomCategoryId = 0, atomTags = null,
+        allowComment = 1,
       },
       user,
     }) {
@@ -800,6 +801,7 @@ module.exports = ctx => {
         atomLanguage,
         atomCategoryId,
         atomTags,
+        allowComment,
         userIdCreated: user.id,
         userIdUpdated: user.id,
         roleIdOwner,
