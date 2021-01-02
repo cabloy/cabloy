@@ -63,7 +63,7 @@ module.exports = app => {
       if (action !== 101) return res;
       // partyOver
       const item = await this.ctx.model.party.get({ id: atom.itemId });
-      if (item.partyOver === 0) return res;
+      if (action === 101 && item.partyOver === 0) return res;
       return null;
     }
 
