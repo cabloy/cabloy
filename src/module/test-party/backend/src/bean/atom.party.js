@@ -55,6 +55,18 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      if (action !== 101) return res;
+      // partyOver
+      const item = await this.ctx.model.party.get({ id: atom.itemId });
+      if (item.partyOver === 0) return res;
+      return null;
+    }
+
     _getMeta(item, options) {
       // layout: list/table/mobile/pc
       const layout = options && options.layout;
