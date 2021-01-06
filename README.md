@@ -28,7 +28,7 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 
 ## Features
 
-### Part One: Basic
+### - Part One: Basic
 
 - Bean & AOP
   1. Almost everything is Bean
@@ -47,7 +47,7 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 - [Multi-Tenant/Multi-Domain/Multi-Instance](https://cabloy.com/articles/49e49e0dadfe4ed39687e4a06f012397.html)
 - [Test-Driven Development](https://cabloy.com/articles/d22e7290f7d0452ebc2d051c3030e6e8.html)
 
-### Part Two: Business
+### - Part Two: Business
 
 - NodeJS Workflow Engine
 - [Adaptive Layout: pc = mobile + pad](https://cabloy.com/articles/adaptive-layout.html)
@@ -84,27 +84,29 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 
 ## Resources
 
-### Version - English
+### - Version - English
 
 - [CabloyJS Store](https://store.cabloy.com/index.html)
 - [CabloyJS Community](https://community.cabloy.com/index.html)
 - [CabloyJS Awesome](./docs/awesome.md)
 
-### Version - Chinese
+### - Version - Chinese
 
 - [CabloyJS 商店](https://store.cabloy.com/zh-cn/index.html)
 - [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
-### QQ官方交流群
+### - CabloyJS官方交流群
 
-  ![IMG_8136](./docs/assets/images/qq-group.jpg)
+请添加个人微信，联系加群，备注：`加群`
 
-### 文章
+  ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
+
+### - 文章
 
 - [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
 
-### 视频
+### - 视频
 
 - [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
 

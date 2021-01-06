@@ -28,7 +28,7 @@
 
 ## 特性
 
-### 第一部分: 基础功能
+### - 第一部分: 基础功能
 
 - Bean & AOP
   1. 几乎所有事物都是Bean
@@ -47,7 +47,7 @@
 - [多租户/多域名/多实例](https://cabloy.com/zh-cn/articles/44e45b3928ca4c6cb63809558145e000.html)
 - [测试驱动开发](https://cabloy.com/zh-cn/articles/990962d4e3604fc099c27806de6d6be8.html)
 
-### 第二部分: 业务功能
+### - 第二部分: 业务功能
 
 - NodeJS工作流引擎
 - [自适应布局: pc = mobile + pad](https://cabloy.com/zh-cn/articles/adaptive-layout.html)
@@ -84,27 +84,29 @@
 
 ## 资源
 
-### 英文版
+### - 英文版
 
 - [CabloyJS Store](https://store.cabloy.com/index.html)
 - [CabloyJS Community](https://community.cabloy.com/index.html)
 - [CabloyJS Awesome](./docs/awesome.md)
 
-### 中文版
+### - 中文版
 
 - [CabloyJS 商店](https://store.cabloy.com/zh-cn/index.html)
 - [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
-### QQ官方交流群
+### - CabloyJS官方交流群
 
-  ![IMG_8136](./docs/assets/images/qq-group.jpg)
+请添加个人微信，联系加群，备注：`加群`
 
-### 文章
+  ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
+
+### - 文章
 
 - [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
 
-### 视频
+### - 视频
 
 - [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
 
