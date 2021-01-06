@@ -9,7 +9,7 @@
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![NPM download][download-image]][download-url]
-[![Join the chat at https://gitter.im/cabloy/main](https://badges.gitter.im/cabloy/main.svg)](https://gitter.im/cabloy/main?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/cabloy
