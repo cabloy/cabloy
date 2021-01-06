@@ -16,6 +16,11 @@ module.exports = appInfo => {
       provider: 'authsimple',
     },
     {
+      module: 'a-authsms',
+      provider: 'authsms',
+    },
+    {
+      // disable: true,
       module: 'a-authgithub',
       provider: 'authgithub',
     },

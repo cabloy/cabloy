@@ -3504,10 +3504,9 @@ module.exports = ctx => {
           await ctx.bean.role.deleteUserRole({ userId, roleId: roleRegistered.id });
         }
         // add to activated
-        const roleNames = this.config.account.activatedRoles.split(',');
-        for (const roleName of roleNames) {
-          if (!map[roleName]) {
-            const role = await ctx.bean.role.get({ roleName });
+        const rolesActivated = await ctx.bean.role.parseRoleNames({ roleNames: this.config.account.activatedRoles });
+        for (const role of rolesActivated) {
+          if (!map[role.roleName]) {
             await ctx.bean.role.addUserRole({ userId, roleId: role.id });
           }
         }
@@ -7807,7 +7806,7 @@ module.exports = appInfo => {
     needActivation: true,
     activationWays: 'mobile,email',
     activationProviders: {
-      mobile: '', // a-authsms recommended
+      mobile: 'a-authsms',
       email: 'a-authsimple',
     },
     url: {
