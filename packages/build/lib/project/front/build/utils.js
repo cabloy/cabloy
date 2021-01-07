@@ -90,7 +90,7 @@ module.exports = context => {
         // copy js
         let fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js');
         fse.copySync(module.js.front, fileDest);
-        module.js.front = fileDest;
+        module.js.front = fileDest.replace(/\\/g, '/');
         // copy js.map
         let fileSrc = `${module.root}/dist/front.js.map`;
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js.map');
