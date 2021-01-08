@@ -11,6 +11,10 @@ App({
 
     // 初始化cabloy
     const cabloyOptions = {
+      base: {
+        scene: 'default',
+        locale: 'en-us',
+      },
       api: {
         baseURL: 'https://demo.cabloy.com',
       },
