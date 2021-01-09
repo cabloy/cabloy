@@ -1,5 +1,9 @@
 # History
 
+## 2020-01-09, Version 4.1.0
+
+  * Some fixes and enhances
+
 ## 2020-12-19, Version 4.0.0-alpha.0
 
 * **features**
