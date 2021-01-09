@@ -8,8 +8,12 @@ App({
 
     // 初始化cabloy
     const cabloyOptions = {
+      base: {
+        scene: 'default',
+        locale: 'en-us',
+      },
       api: {
-        baseURL: 'https://demo.cabloy.com',
+        baseURL: 'http://yourdomain.com',
       },
     };
     this.cabloy = Cabloy(this, cabloyOptions);
