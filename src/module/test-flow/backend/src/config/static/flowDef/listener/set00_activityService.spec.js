@@ -7,13 +7,13 @@ module.exports = class Listener {
   }
 
   async onNodeBegin(contextNode) {
-    if (contextNode._nodeRef.id === 'activity_1') {
+    if (contextNode._nodeDef.id === 'activity_1') {
       this.context.vars.set('echo', 'hello');
     }
   }
 
   async onNodeDoing(contextNode) {
-    if (contextNode._nodeRef.id === 'activity_2') {
+    if (contextNode._nodeDef.id === 'activity_2') {
       // execute activity service
       const res = await contextNode.utils.executeService({
         bean: {
@@ -27,7 +27,7 @@ module.exports = class Listener {
   }
 
   async onNodeEnd(contextNode) {
-    if (contextNode._nodeRef.id === 'activity_1') {
+    if (contextNode._nodeDef.id === 'activity_1') {
       const echo = contextNode.vars.get('echo');
       assert.equal(echo, 'hello');
     }

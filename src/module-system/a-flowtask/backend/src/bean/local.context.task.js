@@ -2,10 +2,10 @@ module.exports = ctx => {
 
   class ContextTask {
 
-    constructor({ context, contextNode, nodeRef }) {
+    constructor({ context, contextNode, nodeDef }) {
       this.context = context;
       this.contextNode = contextNode;
-      this._nodeRef = nodeRef;
+      this._nodeDef = nodeDef;
       //
       this._flowTaskId = null;
       this._flowTask = null;

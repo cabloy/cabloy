@@ -115,9 +115,9 @@ module.exports = ctx => {
       }
     }
 
-    getNodeRefOptions(contextNode, { options }) {
-      if (this.flowListener && this.flowListener.getNodeRefOptions) {
-        return this.flowListener.getNodeRefOptions(contextNode, { options });
+    getNodeDefOptions(contextNode, { options }) {
+      if (this.flowListener && this.flowListener.getNodeDefOptions) {
+        return this.flowListener.getNodeDefOptions(contextNode, { options });
       }
     }
 

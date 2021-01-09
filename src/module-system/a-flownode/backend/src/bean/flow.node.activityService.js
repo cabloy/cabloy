@@ -8,8 +8,8 @@ module.exports = ctx => {
       // super
       await super.onNodeDoing();
       // bean/parameters
-      const bean = this.contextNode._nodeRef.options.bean;
-      const parameterExpression = this.contextNode._nodeRef.options.parameterExpression;
+      const bean = this.contextNode._nodeDef.options.bean;
+      const parameterExpression = this.contextNode._nodeDef.options.parameterExpression;
       await ctx.bean.flow.executeService({
         bean,
         parameterExpression,

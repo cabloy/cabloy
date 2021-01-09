@@ -8,7 +8,7 @@ module.exports = ctx => {
       // super
       await super.onEdgeEnter();
       // check conditionExpression
-      const conditionExpression = this.contextEdge._edgeRef.options && this.contextEdge._edgeRef.options.conditionExpression;
+      const conditionExpression = this.contextEdge._edgeDef.options && this.contextEdge._edgeDef.options.conditionExpression;
       if (conditionExpression === undefined) return true;
       if (!conditionExpression) return false;
       const res = ctx.bean.flow.evaluateExpression({

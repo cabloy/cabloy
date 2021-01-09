@@ -3,7 +3,7 @@ const UtilsFn = require('../common/utils.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowEdge {
-    constructor({ flowInstance, context, contextNode, edgeRef }) {
+    constructor({ flowInstance, context, contextNode, edgeDef }) {
       this.flowInstance = flowInstance;
       this.context = context;
       this.contextNode = contextNode;
@@ -11,7 +11,7 @@ module.exports = ctx => {
       this._edgeBaseBean = null;
       // context
       this.contextEdge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
-        context, contextNode, edgeRef,
+        context, contextNode, edgeDef,
       });
     }
 
@@ -70,7 +70,7 @@ module.exports = ctx => {
     }
 
     get edgeBase() {
-      if (!this._edgeBase) this._edgeBase = ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeRef.type);
+      if (!this._edgeBase) this._edgeBase = ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeDef.type);
       return this._edgeBase;
     }
 

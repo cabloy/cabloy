@@ -12,18 +12,18 @@ module.exports = class FlowNodeBase {
     }
   }
 
-  getNodeRefOptions() {
-    // nodeRef
-    const nodeRef = this.contextNode._nodeRef;
+  getNodeDefOptions() {
+    // nodeDef
+    const nodeDef = this.contextNode._nodeDef;
     // options
-    let options = nodeRef.options || {};
+    let options = nodeDef.options || {};
     // default
     const optionsDefault = this.nodeInstance.nodeBase.options.default;
     if (optionsDefault) {
       options = extend(true, {}, optionsDefault, options);
     }
     // listener
-    const res = this.flowInstance._flowListener.getNodeRefOptions(this.contextNode, { options });
+    const res = this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
     if (res) {
       options = res;
     }

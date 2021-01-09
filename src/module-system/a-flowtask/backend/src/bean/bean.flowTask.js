@@ -87,7 +87,7 @@ module.exports = ctx => {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options
-      const options = this._getNodeRefOptionsTask({ nodeInstance });
+      const options = this._getNodeDefOptionsTask({ nodeInstance });
       // completionCondition
       const completionCondition = options.completionCondition;
       // task count
@@ -158,7 +158,7 @@ module.exports = ctx => {
       }
       // nodeInstancePrev
       const nodeInstancePrev = await nodeInstance.flowInstance._findNodeInstanceNext({
-        nodeRefId: rejectedNode,
+        nodeDefId: rejectedNode,
         flowNodeIdPrev: flowNodeId,
       });
       // delete tasks
@@ -172,8 +172,8 @@ module.exports = ctx => {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
-        flowNodeId, cb: ({ /* flowNode*/ nodeRef }) => {
-          return nodeRef.type === 'startEventAtom' || nodeRef.type === 'activityUserTask';
+        flowNodeId, cb: ({ /* flowNode*/ nodeDef }) => {
+          return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
         },
       });
     }
@@ -240,12 +240,12 @@ module.exports = ctx => {
       return task;
     }
 
-    _getNodeRefOptionsTask({ nodeInstance }) {
-      // nodeRef
-      const nodeRef = nodeInstance.contextNode._nodeRef;
+    _getNodeDefOptionsTask({ nodeInstance }) {
+      // nodeDef
+      const nodeDef = nodeInstance.contextNode._nodeDef;
       // options
-      const options = nodeInstance.getNodeRefOptions();
-      return nodeRef.type === 'startEventAtom' ? options.task : options;
+      const options = nodeInstance.getNodeDefOptions();
+      return nodeDef.type === 'startEventAtom' ? options.task : options;
     }
 
     async _clearRemains({ nodeInstance }) {

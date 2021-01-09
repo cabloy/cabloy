@@ -13,7 +13,7 @@ module.exports = ctx => {
       await super.onNodeEnter();
 
       // options
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({
         nodeInstance: this.nodeInstance,
       });
 
@@ -30,7 +30,7 @@ module.exports = ctx => {
       await super.onNodeBegin();
 
       // options
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({
         nodeInstance: this.nodeInstance,
       });
 

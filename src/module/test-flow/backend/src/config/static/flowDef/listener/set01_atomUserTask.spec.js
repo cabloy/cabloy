@@ -7,31 +7,31 @@ module.exports = class Listener {
   }
 
   async onNodeEnter(contextNode) {
-    if (contextNode._nodeRef.id === 'startEvent_1') {
+    if (contextNode._nodeDef.id === 'startEvent_1') {
       const _flowDefKey = this.context.atom._flowDefKey;
       assert.equal(_flowDefKey, 'set01_atomUserTask');
     }
   }
 
   async onTaskCreated(contextTask, contextNode) {
-    console.log('onTaskCreated: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+    console.log('onTaskCreated: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
   async onTaskClaimed(contextTask, contextNode) {
-    console.log('onTaskClaimed: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+    console.log('onTaskClaimed: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
   async onTaskCompleted(contextTask, contextNode) {
-    console.log('onTaskCompleted: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+    console.log('onTaskCompleted: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
     console.log('handleStatus: %d, handleRemark: %s', contextTask._flowTask.handleStatus, contextTask._flowTask.handleRemark);
   }
 
   async getSchemaWrite(contextTask, contextNode/* { schemaBase, schema }*/) {
-    console.log('getSchemaWrite: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+    console.log('getSchemaWrite: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
-  getNodeRefOptions(contextNode /* { options }*/) {
-    console.log('getNodeRefOptions: ', contextNode._nodeRef.id);
+  getNodeDefOptions(contextNode /* { options }*/) {
+    console.log('getNodeDefOptions: ', contextNode._nodeDef.id);
   }
 
 };

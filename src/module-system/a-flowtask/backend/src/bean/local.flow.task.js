@@ -15,7 +15,7 @@ module.exports = ctx => {
       this.contextTask = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.task`, {
         context: nodeInstance.context,
         contextNode: nodeInstance.contextNode,
-        nodeRef: nodeInstance.contextNode._nodeRef,
+        nodeDef: nodeInstance.contextNode._nodeDef,
       });
     }
 
@@ -115,7 +115,7 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.flowTaskHidden = 0; // show
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // check if bidding
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (options.bidding) {
         // delete other tasks
         await ctx.model.query(`
@@ -152,7 +152,7 @@ module.exports = ctx => {
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // check if pass/reject
       if (handle) {
-        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+        const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
         if (handle.status === 1 && !options.allowPassTask) {
           ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
         }
@@ -233,7 +233,7 @@ module.exports = ctx => {
         });
       }
       // options
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       // ok
       return {
         users,
@@ -256,7 +256,7 @@ module.exports = ctx => {
       // check handled
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // check if allowCancelFlow
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (!options.allowCancelFlow) {
         ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
       }
@@ -309,7 +309,7 @@ module.exports = ctx => {
 
     async _assigneesConfirmation_handle({ handle }) {
       // options
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.flowTaskStatus = 1;
       this.contextTask._flowTaskHistory.timeHandled = new Date();
@@ -395,7 +395,7 @@ module.exports = ctx => {
         });
       } else if (flowTask.specificFlag === 0) {
         // options
-        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+        const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
           actions.push({
@@ -473,7 +473,7 @@ module.exports = ctx => {
     async _getSchema({ mode }) {
       const module = this.context._atom.module;
       // options
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       const fields = options.schema && options.schema[mode];
       if (!fields) return null;
       // { module, validator, schema }

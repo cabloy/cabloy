@@ -2,10 +2,10 @@ module.exports = ctx => {
 
   class ContextEdge {
 
-    constructor({ context, contextNode, edgeRef }) {
+    constructor({ context, contextNode, edgeDef }) {
       this.context = context;
       this.contextNode = contextNode;
-      this._edgeRef = edgeRef;
+      this._edgeDef = edgeDef;
       //
       this._utils = null;
     }

@@ -4,14 +4,14 @@ const UtilsFn = require('../common/utils.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode {
-    constructor({ flowInstance, context, nodeRef }) {
+    constructor({ flowInstance, context, nodeDef }) {
       this.flowInstance = flowInstance;
       this.context = context;
       this._nodeBase = null;
       this._nodeBaseBean = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
-        context, nodeRef,
+        context, nodeDef,
       });
     }
 
@@ -44,9 +44,9 @@ module.exports = ctx => {
       // flowNode
       const data = {
         flowId: this.context._flowId,
-        flowNodeDefId: this.contextNode._nodeRef.id,
-        flowNodeName: this.contextNode._nodeRef.name,
-        flowNodeType: this.contextNode._nodeRef.type,
+        flowNodeDefId: this.contextNode._nodeDef.id,
+        flowNodeName: this.contextNode._nodeDef.name,
+        flowNodeType: this.contextNode._nodeDef.type,
         flowNodeIdPrev,
         nodeVars: '{}',
       };
@@ -99,7 +99,7 @@ module.exports = ctx => {
     async _setCurrent(clear) {
       // flow
       this.context._flow.flowNodeIdCurrent = clear ? 0 : this.contextNode._flowNodeId;
-      this.context._flow.flowNodeNameCurrent = clear ? '' : this.contextNode._nodeRef.name;
+      this.context._flow.flowNodeNameCurrent = clear ? '' : this.contextNode._nodeDef.name;
       await this.modelFlow.update(this.context._flow);
       // flow history
       this.context._flowHistory.flowNodeIdCurrent = this.context._flow.flowNodeIdCurrent;
@@ -133,8 +133,8 @@ module.exports = ctx => {
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
-    getNodeRefOptions() {
-      return this.nodeBaseBean.getNodeRefOptions();
+    getNodeDefOptions() {
+      return this.nodeBaseBean.getNodeDefOptions();
     }
 
     async enter() {
@@ -195,8 +195,8 @@ module.exports = ctx => {
 
     get nodeBase() {
       if (!this._nodeBase) {
-        this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeRef.type);
-        if (!this._nodeBase) throw new Error(`flow node not found: ${this.contextNode._nodeRef.type}`);
+        this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeDef.type);
+        if (!this._nodeBase) throw new Error(`flow node not found: ${this.contextNode._nodeDef.type}`);
       }
       return this._nodeBase;
     }
