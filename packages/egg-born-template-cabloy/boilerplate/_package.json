@@ -15,7 +15,8 @@
     "test:backend": "egg-born-bin backend-test",
     "cov:backend": "egg-born-bin backend-cov",
     "start:backend": "egg-born-scripts backend-start",
-    "stop:backend": "egg-born-scripts backend-stop"
+    "stop:backend": "egg-born-scripts backend-stop",
+    "update:test": "egg-born-bin test-update"
   },
   "author": "{{author}}",
   "devDependencies":

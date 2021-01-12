@@ -33,6 +33,7 @@
     "nock": "^11.7.2",
     "semver-diff": "^3.1.1",
     "should": "^13.2.3",
-    "urllib": "^2.34.2"
+    "urllib": "^2.34.2",
+    "compressing": "^1.5.1"
   }
 }

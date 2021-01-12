@@ -1,0 +1,160 @@
+const path = require('path');
+const glob = require('glob');
+const urllib = require('urllib');
+const os = require('os');
+const assert = require('assert');
+const homedir = require('node-homedir');
+const compressing = require('compressing');
+const rimraf = require('mz-modules/rimraf');
+const fse = require('fs-extra');
+const chalk = require('chalk');
+const Command = require('egg-bin').Command;
+
+class TestUpdateCommand extends Command {
+
+  constructor(rawArgv) {
+    super(rawArgv);
+    this.usage = 'Usage: egg-born-bin test-update';
+
+    this.httpClient = urllib.create();
+  }
+
+  * run({ cwd, argv }) {
+    this.log('update test modules at %s', cwd);
+
+    // detect registry url
+    this.registryUrl = this.getRegistryByType(argv.registry);
+    this.log(`use registry: ${this.registryUrl}`);
+
+    const projectPath = cwd;
+    const moduleName = argv.module;
+
+    if (moduleName) {
+      yield this.__updateCabloyModule({ projectPath, moduleName });
+    } else {
+      yield this.__updateCabloyModules({ projectPath });
+    }
+
+  }
+
+  description() {
+    return 'test update';
+  }
+
+  * __updateCabloyModules({ projectPath }) {
+    const prefix = `${projectPath}/src/module/`;
+    const files = glob.sync(`${prefix}test-*`);
+    for (const file of files) {
+      const moduleName = file.substr(prefix.length);
+      yield this.__updateCabloyModule({ projectPath, moduleName });
+    }
+  }
+
+  * __updateCabloyModule({ projectPath, moduleName }) {
+    try {
+      const moduleSrcDir = yield this.__downloadCabloyModule({ moduleName });
+      const destDir = path.join(projectPath, 'src/module', moduleName);
+      yield rimraf(destDir);
+      // move
+      fse.moveSync(moduleSrcDir, destDir);
+
+      console.log(chalk.cyan(`update module done: ${moduleName}\n`));
+    } catch (err) {
+      console.log(chalk.red(`update module failed and ignored: ${moduleName}\n`));
+    }
+  }
+
+  * __downloadCabloyModule({ moduleName }) {
+    const pkgName = `egg-born-module-${moduleName}`;
+    const result = yield this.getPackageInfo(pkgName, false);
+    const tgzUrl = result.dist.tarball;
+
+    this.log(`downloading ${tgzUrl}`);
+
+    const saveDir = path.join(os.tmpdir(), pkgName);
+    yield rimraf(saveDir);
+
+    const response = yield this.curl(tgzUrl, { streaming: true, followRedirect: true });
+    yield compressing.tgz.uncompress(response.res, saveDir);
+
+    this.log(`extract to ${saveDir}`);
+    return path.join(saveDir, '/package');
+  }
+
+  /**
+   * send curl to remote server
+   * @param {String} url - target url
+   * @param {Object} [options] - request options
+   * @return {Object} response data
+   */
+  * curl(url, options) {
+    return yield this.httpClient.request(url, options);
+  }
+
+  /**
+   * get package info from registry
+   *
+   * @param {String} pkgName - package name
+   * @param {Boolean} [withFallback] - when http request fail, whethe to require local
+   * @return {Object} pkgInfo
+   */
+  * getPackageInfo(pkgName, withFallback) {
+    this.log(`fetching npm info of ${pkgName}`);
+    try {
+      const result = yield this.curl(`${this.registryUrl}/${pkgName}/latest`, {
+        dataType: 'json',
+        followRedirect: true,
+        maxRedirects: 5,
+        timeout: 20000,
+      });
+      assert(result.status === 200, `npm info ${pkgName} got error: ${result.status}, ${result.data.reason}`);
+      return result.data;
+    } catch (err) {
+      if (withFallback) {
+        this.log(`use fallback from ${pkgName}`);
+        return require(`${pkgName}/package.json`);
+      }
+      throw err;
+
+    }
+  }
+
+  /**
+   * get registryUrl by short name
+   * @param {String} key - short name, support `china / npm / npmrc`, default to read from .npmrc
+   * @return {String} registryUrl
+   */
+  getRegistryByType(key) {
+    switch (key) {
+      case 'china':
+        return 'https://registry.npm.taobao.org';
+      case 'npm':
+        return 'https://registry.npmjs.org';
+      default: {
+        if (/^https?:/.test(key)) {
+          return key.replace(/\/$/, '');
+        }
+        // support .npmrc
+        const home = homedir();
+        let url = process.env.npm_registry || process.env.npm_config_registry || 'https://registry.npmjs.org';
+        if (fse.existsSync(path.join(home, '.cnpmrc')) || fse.existsSync(path.join(home, '.tnpmrc'))) {
+          url = 'https://registry.npm.taobao.org';
+        }
+        url = url.replace(/\/$/, '');
+        return url;
+
+      }
+    }
+  }
+
+  /**
+   * log with prefix
+   */
+  log() {
+    const args = Array.prototype.slice.call(arguments);
+    console.log.apply(console, args);
+  }
+
+}
+
+module.exports = TestUpdateCommand;
