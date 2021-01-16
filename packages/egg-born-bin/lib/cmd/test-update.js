@@ -8,6 +8,7 @@ const compressing = require('compressing');
 const rimraf = require('mz-modules/rimraf');
 const fse = require('fs-extra');
 const chalk = require('chalk');
+const semverDiff = require('semver-diff');
 const Command = require('egg-bin').Command;
 
 class TestUpdateCommand extends Command {
@@ -52,29 +53,48 @@ class TestUpdateCommand extends Command {
 
   * __updateCabloyModule({ projectPath, moduleName }) {
     try {
-      const moduleSrcDir = yield this.__downloadCabloyModule({ moduleName });
-      const destDir = path.join(projectPath, 'src/module', moduleName);
-      yield rimraf(destDir);
+      const moduleDestDir = path.join(projectPath, 'src/module', moduleName);
+      // check
+      const downloadUrl = yield this.__checkCabloyModule({ moduleDestDir, moduleName });
+      if (!downloadUrl) {
+        // not changed
+        console.log(chalk.cyan(`module is up to date: ${moduleName}\n`));
+        return;
+      }
+      // download
+      const moduleSrcDir = yield this.__downloadCabloyModule({ downloadUrl, moduleName });
       // move
-      fse.moveSync(moduleSrcDir, destDir);
-
+      yield rimraf(moduleDestDir);
+      fse.moveSync(moduleSrcDir, moduleDestDir);
+      // done
       console.log(chalk.cyan(`update module done: ${moduleName}\n`));
     } catch (err) {
       console.log(chalk.red(`update module failed and ignored: ${moduleName}\n`));
     }
   }
 
-  * __downloadCabloyModule({ moduleName }) {
+  * __checkCabloyModule({ moduleDestDir, moduleName }) {
     const pkgName = `egg-born-module-${moduleName}`;
     const result = yield this.getPackageInfo(pkgName, false);
-    const tgzUrl = result.dist.tarball;
+    const downloadUrl = result.dist.tarball;
+    const version = result.version;
 
-    this.log(`downloading ${tgzUrl}`);
+    const _pkg = require(path.join(moduleDestDir, 'package.json'));
+    const diffType = semverDiff(_pkg.version, version);
+    if (!diffType) return null;
+
+    return downloadUrl;
+  }
+
+  * __downloadCabloyModule({ downloadUrl, moduleName }) {
+    const pkgName = `egg-born-module-${moduleName}`;
+
+    this.log(`downloading ${downloadUrl}`);
 
     const saveDir = path.join(os.tmpdir(), pkgName);
     yield rimraf(saveDir);
 
-    const response = yield this.curl(tgzUrl, { streaming: true, followRedirect: true });
+    const response = yield this.curl(downloadUrl, { streaming: true, followRedirect: true });
     yield compressing.tgz.uncompress(response.res, saveDir);
 
     this.log(`extract to ${saveDir}`);
