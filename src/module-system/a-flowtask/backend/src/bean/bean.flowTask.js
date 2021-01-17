@@ -250,6 +250,14 @@ module.exports = ctx => {
 
     async _clearRemains({ nodeInstance }) {
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
+      // notify
+      const _tasks = await this.modelFlowTask.select({
+        where: { flowNodeId },
+      });
+      for (const _task of _tasks) {
+        this._notifyTaskClaimings(_task.userIdAssignee);
+        this._notifyTaskHandlings(_task.userIdAssignee);
+      }
       // flowTask delete
       await this.modelFlowTask.delete({ flowNodeId });
       // flowTaskHistory close
@@ -259,6 +267,26 @@ module.exports = ctx => {
         update aFlowTaskHistory set flowTaskStatus=1
           where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
         `, [ ctx.instance.id, flowNodeId ]);
+    }
+
+    _notifyTaskClaimings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskClaimings',
+          user: { id: userId },
+        });
+      }
+    }
+
+    _notifyTaskHandlings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskHandlings',
+          user: { id: userId },
+        });
+      }
     }
 
   }
