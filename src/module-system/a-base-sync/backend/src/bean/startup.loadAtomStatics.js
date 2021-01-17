@@ -36,16 +36,23 @@ module.exports = app => {
         atomStage: 'archive',
       });
       if (atom) {
-        // check revision: not use !==
-        if (atomRevision > atom.atomRevision) {
-          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-          await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+        if (atomRevision === -1) {
+          // delete
+          await this.ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
+        } else {
+          // check revision: not use !==
+          if (atomRevision > atom.atomRevision) {
+            item = await this._adjustItem({ moduleName, atomClass, item, register: false });
+            await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+          }
         }
       } else {
-        // register
-        item = await this._adjustItem({ moduleName, atomClass, item, register: true });
-        const atomId = await this._register({ atomClass, item });
-        await this._addResourceRoles({ atomId, roles: item.resourceRoles });
+        if (atomRevision !== -1) {
+          // register
+          item = await this._adjustItem({ moduleName, atomClass, item, register: true });
+          const atomId = await this._register({ atomClass, item });
+          await this._addResourceRoles({ atomId, roles: item.resourceRoles });
+        }
       }
     }
 
