@@ -8,7 +8,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Completeds',
     atomStaticKey: 'mineTaskCompleteds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Task',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({

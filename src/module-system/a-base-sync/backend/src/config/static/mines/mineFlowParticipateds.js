@@ -8,7 +8,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Participateds',
     atomStaticKey: 'mineFlowParticipateds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Flow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
