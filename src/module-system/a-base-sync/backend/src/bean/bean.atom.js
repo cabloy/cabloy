@@ -96,6 +96,9 @@ module.exports = ctx => {
         context: { atomClass, options, key, user },
         fn: 'read',
       });
+      // revision
+      this._appendRevisionToHistory({ item });
+      // ok
       return item;
     }
 
@@ -154,6 +157,12 @@ module.exports = ctx => {
           context: { atomClass, options, items, user },
           fn: 'select',
         });
+      }
+      // revision
+      if (!count && options.stage === 'history') {
+        for (const item of items) {
+          this._appendRevisionToHistory({ item });
+        }
       }
       // ok
       return items;
@@ -645,6 +654,13 @@ module.exports = ctx => {
       });
       // ok
       return resFile;
+    }
+
+    _appendRevisionToHistory({ item }) {
+      if (!item.atomRevision || item.atomStage !== 2) return;
+      if (!item._meta) item._meta = {};
+      if (!item._meta.flags) item._meta.flags = [];
+      item._meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
     // atom other functions
