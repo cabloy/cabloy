@@ -136,10 +136,11 @@ module.exports = {
     }
   },
   async tailDone() {
-    for (const cb of this.tailCallbacks) {
+    while (true) {
+      const cb = this.tailCallbacks.shift();
+      if (!cb) break;
       await cb();
     }
-    this[TAILCALLBACKS] = null;
   },
   get tailCallbacks() {
     if (!this[TAILCALLBACKS]) {
