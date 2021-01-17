@@ -35,12 +35,6 @@ module.exports = app => {
         'a-base:accountMigration': 'accountMigration',
       },
     },
-    index: {
-      indexes: {
-        aWxworkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
-        aWxworkMember: 'createdAt,updatedAt,userId,memberId',
-      },
-    },
     socketio: {
       messages: {
         progress: socketioMessageProgress,

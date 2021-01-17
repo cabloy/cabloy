@@ -50,6 +50,11 @@ module.exports = app => {
           purchaseOrderSearch: schemas.purchaseOrderSearch,
         },
       },
+      index: {
+        indexes: {
+          testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
+        },
+      },
     });
   }
   return meta;

@@ -65,11 +65,6 @@ module.exports = app => {
         dashboardSearch: schemas.dashboardSearch,
       },
     },
-    index: {
-      indexes: {
-        aDashboard: 'createdAt,updatedAt,atomId',
-      },
-    },
   };
   return meta;
 };

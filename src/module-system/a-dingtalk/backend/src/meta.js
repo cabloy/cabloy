@@ -34,12 +34,6 @@ module.exports = app => {
         'a-base:accountMigration': 'accountMigration',
       },
     },
-    index: {
-      indexes: {
-        aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
-        aDingtalkMember: 'createdAt,updatedAt,userId,memberId',
-      },
-    },
     socketio: {
       messages: {
         progress: socketioMessageProgress,
