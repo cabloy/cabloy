@@ -2,6 +2,7 @@ module.exports = ctx => {
   const app = ctx.app;
   class Middleware {
     async execute(options, next) {
+      // should startup: true
       const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: true });
       if (!appReadyInstance) return ctx.throw(403);
       // cache userId/socketId for disconnect
