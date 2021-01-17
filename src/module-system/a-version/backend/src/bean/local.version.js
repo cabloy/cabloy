@@ -258,7 +258,7 @@ module.exports = app => {
       // dev/debug db
       if (app.meta.isLocal) {
         const mysqlConfig = app.config.mysql.clients.__ebdb;
-        if (mysqlConfig.database === 'sys' && !app.mysql.__ebdb_test) {
+        if ((mysqlConfig.database === 'sys' || mysqlConfig.database === 'mysql') && !app.mysql.__ebdb_test) {
           let databaseName;
           const mysql = app.mysql.get('__ebdb');
           const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);

@@ -17,7 +17,7 @@ module.exports = appInfo => {
         port: '3306',
         user: 'root',
         password: '',
-        database: 'sys', // donnot change the name
+        database: 'mysql', // donnot change the name
         hook: {
           meta: {
             long_query_time: 200,
