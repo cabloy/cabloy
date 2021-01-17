@@ -11,6 +11,7 @@ export default [
   { path: 'user/edit', component: load('user/edit') },
   { path: 'user/agent', component: load('user/agent') },
   { path: 'user/authentications', component: load('user/authentications') },
+  { path: 'user/appearance', component: load('user/appearance') },
   { path: 'user/exports', component: load('user/exports') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },

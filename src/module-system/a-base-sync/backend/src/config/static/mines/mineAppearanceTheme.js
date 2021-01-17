@@ -4,7 +4,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Theme',
     atomStaticKey: 'mineAppearanceTheme',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
