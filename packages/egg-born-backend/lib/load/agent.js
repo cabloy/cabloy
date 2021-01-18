@@ -18,6 +18,7 @@ module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   getAppname() {
     if (!this.pkgCabloy) {
       this.pkgCabloy = require(path.join(process.cwd(), 'package.json'));
+      this.pkg.name = this.pkgCabloy.name;
     }
     return this.pkgCabloy.name;
   }
