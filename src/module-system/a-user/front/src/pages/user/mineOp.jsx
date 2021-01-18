@@ -99,7 +99,7 @@ export default {
       const stats = resourceConfig.stats;
       if (!stats) return;
       return (
-        <eb-stats params={stats.params} color={stats.color}></eb-stats>
+        <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>
       );
     },
     renderMineItems(category) {

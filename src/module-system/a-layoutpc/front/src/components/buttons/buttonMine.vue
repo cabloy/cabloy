@@ -5,8 +5,8 @@
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    <div :class="statsUserRedClass"><eb-stats :params="{module:'a-user', name:'userRed'}" color="red" @change="onChangeStatsUserRed"></eb-stats></div>
-    <div :class="statsUserOrangeClass" class="item"><eb-stats :params="{module:'a-user', name:'userOrange'}" color="orange" @change="onChangeStatsUserOrange"></eb-stats></div>
+    <div :class="statsUserRedClass"><eb-stats :stats_params="{module:'a-user', name:'userRed'}" stats_color="red" @change="onChangeStatsUserRed"></eb-stats></div>
+    <div :class="statsUserOrangeClass" class="item"><eb-stats :stats_params="{module:'a-user', name:'userOrange'}" stats_color="orange" @change="onChangeStatsUserOrange"></eb-stats></div>
   </eb-link>
 </template>
 <script>

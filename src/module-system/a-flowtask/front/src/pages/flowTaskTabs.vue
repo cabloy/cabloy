@@ -3,22 +3,20 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <f7-link :tab-link="`#${tabIdClaimings}`" :tabLinkActive="tabName==='claimings'">
-            <f7-icon material="play_arrow"><eb-stats :params="{module: 'a-flowtask',name: 'taskClaimings',}" color="red"></eb-stats></f7-icon>
-          </f7-link>
-          <f7-link :tab-link="`#${tabIdHandlings}`" :tabLinkActive="tabName==='handlings'" icon-only icon-material="fast_forward" :icon-badge="0"></f7-link>
-          <f7-link :tab-link="`#${tabIdCompleteds}`" :tabLinkActive="tabName==='completeds'" icon-only icon-material="done"></f7-link>
+          <eb-link :tab-link="`#${tabId.claimings}`" :tabLinkActive="tabName==='claimings'" icon-only icon-material="play_arrow" :icon-badge="stats.claimings" :stats_params="{module: 'a-flowtask',name: 'taskClaimings'}" stats_color="red" @stats_change="onStatsChange($event,'claimings')"></eb-link>
+          <eb-link :tab-link="`#${tabId.handlings}`" :tabLinkActive="tabName==='handlings'" icon-only icon-material="fast_forward" :icon-badge="stats.handlings" :stats_params="{module: 'a-flowtask',name: 'taskHandlings'}" stats_color="red" @stats_change="onStatsChange($event,'handlings')"></eb-link>
+          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName==='completeds'" icon-only icon-material="done"></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabIdClaimings" :tabActive="tabName==='claimings'" data-ref="claimings" @tab:show="tabName='claimings'">
+      <eb-tab-page-content :id="tabId.claimings" :tabActive="tabName==='claimings'" data-ref="claimings" @tab:show="tabName='claimings'">
         <flowTaskTab ref="claimings" slot="list" :container="getContainer('claimings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdHandlings" :tabActive="tabName==='handlings'" data-ref="handlings" @tab:show="tabName='handlings'">
+      <eb-tab-page-content :id="tabId.handlings" :tabActive="tabName==='handlings'" data-ref="handlings" @tab:show="tabName='handlings'">
         <flowTaskTab ref="handlings" slot="list" :container="getContainer('handlings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdCompleteds" :tabActive="tabName==='completeds'" data-ref="completeds" @tab:show="tabName='completeds'">
+      <eb-tab-page-content :id="tabId.completeds" :tabActive="tabName==='completeds'" data-ref="completeds" @tab:show="tabName='completeds'">
         <flowTaskTab ref="completeds" slot="list" :container="getContainer('completeds')"></flowTaskTab>
       </eb-tab-page-content>
     </f7-tabs>
@@ -38,9 +36,15 @@ export default {
     return {
       options,
       layout,
-      tabIdClaimings: Vue.prototype.$meta.util.nextId('tab'),
-      tabIdHandlings: Vue.prototype.$meta.util.nextId('tab'),
-      tabIdCompleteds: Vue.prototype.$meta.util.nextId('tab'),
+      stats: {
+        claimings: 0,
+        handlings: 0,
+      },
+      tabId: {
+        claimings: Vue.prototype.$meta.util.nextId('tab'),
+        handlings: Vue.prototype.$meta.util.nextId('tab'),
+        completeds: Vue.prototype.$meta.util.nextId('tab'),
+      },
       tabName: options.mode,
     };
   },
@@ -65,6 +69,9 @@ export default {
         options: { mode },
         layout: this.layout,
       };
+    },
+    onStatsChange(event, mode) {
+      this.stats[mode] = event;
     },
   },
 };
