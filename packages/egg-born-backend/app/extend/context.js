@@ -139,7 +139,11 @@ module.exports = {
     while (true) {
       const cb = this.tailCallbacks.shift();
       if (!cb) break;
-      await cb();
+      try {
+        await cb();
+      } catch (err) {
+        this.app.logger.error(err);
+      }
     }
   },
   get tailCallbacks() {
