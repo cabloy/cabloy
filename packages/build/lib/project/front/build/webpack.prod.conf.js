@@ -37,7 +37,7 @@ module.exports = context => {
       // more options:
       // https://github.com/kangax/html-minifier#options-quick-reference
       },
-      title: context.config.build.title,
+      title: context.config.configProject.base.title,
     }),
     // Banner
     new webpack.BannerPlugin({

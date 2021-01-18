@@ -53,11 +53,36 @@ module.exports = (context, cb) => {
   webpack(files, err => {
     if (err) throw err;
 
+    // name/title
+    const pkgCabloy = require(path.join(context.projectPath, 'package.json'));
+    const pkgName = pkgCabloy.name;
+    const pkgTitle = pkgCabloy.title || pkgCabloy.name;
+
     const fileDefault = path.join(tmpdir, 'cabloy-front-config-default.js');
     const fileScene = path.join(tmpdir, `cabloy-front-config-${sceneValue}.js`);
     let configProject = require(fileDefault).default;
     const configScene = require(fileScene).default;
-    configProject = extend(true, {}, configProject, configScene);
+    configProject = extend(true, {
+      base: {
+        name: pkgName,
+        title: pkgTitle,
+      },
+    }, configProject, configScene);
+
+    const envCustomTitle = {
+      build: {
+        env: {
+          NAME: JSON.stringify(configProject.base.name),
+          TITLE: JSON.stringify(configProject.base.title),
+        },
+      },
+      dev: {
+        env: {
+          NAME: JSON.stringify(configProject.base.name),
+          TITLE: JSON.stringify(configProject.base.title),
+        },
+      },
+    };
 
     fse.removeSync(fileDefault);
     fse.removeSync(fileScene);
@@ -67,6 +92,7 @@ module.exports = (context, cb) => {
       projectPath: context.projectPath,
       frontPath: context.frontPath,
       configProject,
+      pkgCabloy,
       build: {
         env: require('./prod.env'),
         index: path.resolve(distPath, 'index.html'),
@@ -104,10 +130,9 @@ module.exports = (context, cb) => {
         // just be aware of this issue when enabling this option.
         cssSourceMap: false,
       },
-    }, envCustom, config.front);
+    }, envCustom, envCustomTitle, config.front);
 
     cb(null, res);
   });
 
 };
-

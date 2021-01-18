@@ -1,5 +1,6 @@
 {
   "name": "cabloy",
+  "title": "Cabloy",
   "private": true,
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {

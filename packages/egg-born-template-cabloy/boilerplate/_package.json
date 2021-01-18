@@ -1,6 +1,7 @@
 {
   "name": "{{name}}",
   "version": "1.0.0",
+  "title": "{{name}}",
   "description": "{{description}}",
   "keywords": [
     "Cabloy Project"

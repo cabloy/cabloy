@@ -1,6 +1,3 @@
-// title
-const title = 'cabloy';
-
 // backend
 const backend = {
   port: 7102,
@@ -10,12 +7,10 @@ const backend = {
 // front
 const front = {
   build: {
-    title,
     productionSourceMap: true,
     uglify: true,
   },
   dev: {
-    title,
     // hostname: 'localhost',
     port: 9192,
     // proxyBaseURL: 'http://localhost:7002',

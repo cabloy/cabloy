@@ -34,7 +34,7 @@ module.exports = context => {
         filename: 'index.html',
         template: context.utils.getIndexPath(),
         inject: true,
-        title: context.config.dev.title,
+        title: context.config.configProject.base.title,
       }),
       new FriendlyErrorsPlugin(),
     ],

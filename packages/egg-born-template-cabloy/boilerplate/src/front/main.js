@@ -19,6 +19,8 @@ function install(_Vue, cb) {
     const configScene = require(`./config/config.${process.env.SCENE}.js`).default;
     Vue.prototype.$meta.util.extend(config, configScene);
   }
+  config.base.name = process.env.NAME;
+  config.base.title = process.env.TITLE;
 
   // options
   return cb({
@@ -26,7 +28,7 @@ function install(_Vue, cb) {
     locales,
     parameters: {
       framework7: {
-        name: '{{name}}',
+        name: config.base.name,
       },
     },
   });

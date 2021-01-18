@@ -24,7 +24,7 @@ export default function(Vue) {
     getters: {
       title(state) {
         const _title = state.instance ? state.instance.title : null;
-        return _title || Vue.prototype.$f7.params.name;
+        return _title || Vue.prototype.$meta.config.base.title || Vue.prototype.$f7.params.name;
       },
     },
     mutations: {
