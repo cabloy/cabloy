@@ -27,6 +27,17 @@ module.exports = app => {
           user: true,
           bean: 'taskHandlings',
         },
+        taskClaimingsHandlings: {
+          user: true,
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
+          dependencies: [
+            'a-flowtask:taskClaimings',
+            'a-flowtask:taskHandlings',
+          ],
+        },
       },
     },
   };

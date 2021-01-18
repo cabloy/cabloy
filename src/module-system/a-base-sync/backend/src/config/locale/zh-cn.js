@@ -87,4 +87,5 @@ module.exports = {
   Language: '语言',
   Theme: '主题',
   ViewLayout: '视图',
+  WorkFlow: '工作流',
 };

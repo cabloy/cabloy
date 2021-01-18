@@ -1,6 +1,8 @@
 const mineAtomDrafts = require('./mines/mineAtomDrafts.js');
 const mineAtomStars = require('./mines/mineAtomStars.js');
 const mineAtomArchives = require('./mines/mineAtomArchives.js');
+const mineWorkFlowTasks = require('./mines/mineWorkFlowTasks.js');
+const mineWorkFlowFlows = require('./mines/mineWorkFlowFlows.js');
 const mineTaskClaimings = require('./mines/mineTaskClaimings.js');
 const mineTaskHandlings = require('./mines/mineTaskHandlings.js');
 const mineTaskCompleteds = require('./mines/mineTaskCompleteds.js');
@@ -19,6 +21,8 @@ module.exports = app => {
     mineAtomDrafts(app),
     mineAtomStars(app),
     mineAtomArchives(app),
+    mineWorkFlowTasks(app),
+    mineWorkFlowFlows(app),
     mineTaskClaimings(app),
     mineTaskHandlings(app),
     mineTaskCompleteds(app),
