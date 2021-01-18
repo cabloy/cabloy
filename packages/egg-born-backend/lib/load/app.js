@@ -1,3 +1,4 @@
+const path = require('path');
 const AppWorkerLoader = require('egg').AppWorkerLoader;
 const loadModules = require('../module');
 
@@ -13,5 +14,11 @@ module.exports = class CustomAppWorkerLoader extends AppWorkerLoader {
     super.load();
     // load modules
     loadModules(this);
+  }
+  getAppname() {
+    if (!this.pkgCabloy) {
+      this.pkgCabloy = require(path.join(process.cwd(), 'package.json'));
+    }
+    return this.pkgCabloy.name;
   }
 };

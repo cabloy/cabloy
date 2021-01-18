@@ -1,3 +1,4 @@
+const path = require('path');
 const AgentWorkerLoader = require('egg').AgentWorkerLoader;
 const loadModules = require('../module');
 
@@ -13,5 +14,11 @@ module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
     super.load();
     // load modules
     loadModules(this);
+  }
+  getAppname() {
+    if (!this.pkgCabloy) {
+      this.pkgCabloy = require(path.join(process.cwd(), 'package.json'));
+    }
+    return this.pkgCabloy.name;
   }
 };
