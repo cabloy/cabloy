@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const globby = require('globby');
 const mock = require('egg-mock');
 const TestCommand = require('egg-bin').TestCommand;
+const utils = require('../utils.js');
 const eventAppReady = 'eb:event:appReady';
 
 class BackendTestCommand extends TestCommand {
@@ -18,6 +19,7 @@ class BackendTestCommand extends TestCommand {
     if (context.argv.timeout === undefined) context.argv.timeout = 3600 * 1000;
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
+    if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/backend/test/**/*.test.js' ];
 
@@ -33,6 +35,7 @@ class BackendTestCommand extends TestCommand {
       // options
       const options = {};
       options.baseDir = context.env.EGG_BASE_DIR;
+      options.framework = context.env.EGG_FRAMEWORK;
 
       // env
       mock.env('unittest');

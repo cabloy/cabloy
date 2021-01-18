@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-mock#readme",
   "dependencies": {
-    "egg-mock": "^3.25.1"
+    "@zhennann/egg-mock": "^4.0.1"
   }
 }

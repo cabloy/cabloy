@@ -1,4 +1,5 @@
 const StopCommand = require('egg-scripts').StopCommand;
+const utils = require('../utils.js');
 
 class BackendStopCommand extends StopCommand {
 
@@ -8,6 +9,10 @@ class BackendStopCommand extends StopCommand {
   }
 
   * run(context) {
+
+    if (!context.argv.framework) {
+      context.argv.framework = utils.getModulePath('egg-born-backend');
+    }
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/backend' ];
 

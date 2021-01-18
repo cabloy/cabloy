@@ -1,3 +1,4 @@
+const path = require('path');
 const urllib = require('urllib');
 const semverDiff = require('semver-diff');
 const chalk = require('chalk');
@@ -35,6 +36,10 @@ const utils = {
         console.log('\n' + boxen(message, boxenOptions));
       }, 6000);
     } catch (err) { }
+  },
+  getModulePath(moduleName) {
+    const moduleFile = require.resolve(`${moduleName}/package.json`);
+    return path.dirname(moduleFile);
   },
 };
 module.exports = utils;

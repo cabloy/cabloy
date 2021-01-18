@@ -1,5 +1,4 @@
-const path = require('path');
-const { assert, app, mock, mm } = require('egg-mock/bootstrap');
+const { assert, app, mock, mm } = require('@zhennann/egg-mock/bootstrap');
 const eventAppReady = 'eb:event:appReady';
 
 before(done => {

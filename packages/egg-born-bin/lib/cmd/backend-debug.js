@@ -10,6 +10,10 @@ class BackendDebugCommand extends DebugCommand {
 
   * run(context) {
 
+    if (!context.argv.framework) {
+      context.argv.framework = utils.getModulePath('egg-born-backend');
+    }
+
     if (!context.argv.baseDir) context.argv.baseDir = 'src/backend';
 
     utils.versionCheck('cabloy', 'debug').then(data => {

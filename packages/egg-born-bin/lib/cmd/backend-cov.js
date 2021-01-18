@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const globby = require('globby');
 const CovCommand = require('egg-bin').CovCommand;
+const utils = require('../utils.js');
 
 class BackendCovCommand extends CovCommand {
 
@@ -13,6 +14,7 @@ class BackendCovCommand extends CovCommand {
   * run(context) {
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
+    if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/backend/test/**/*.test.js' ];
 
