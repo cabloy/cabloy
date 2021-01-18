@@ -20,6 +20,8 @@ import flowLayoutBlockPCTitle from './components/flow/flowLayoutPC/flowLayoutBlo
 import atomLayoutMobile from './components/flowTask/atomLayoutMobile/atomLayoutMobile.jsx';
 import atomLayoutBlockMobileTitle from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileTitle.jsx';
 import atomLayoutBlockMobileMain from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileMain.jsx';
+// tab
+import flowTaskTab from './components/tab/flowTaskTab.jsx';
 
 export default {
   // action
@@ -44,4 +46,6 @@ export default {
   atomLayoutMobile,
   atomLayoutBlockMobileTitle,
   atomLayoutBlockMobileMain,
+  // flowTaskTab
+  flowTaskTab,
 };
