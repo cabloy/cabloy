@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "4.0.11",
+  "version": "4.0.12",
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 8,
@@ -36,7 +36,7 @@
     "chokidar": "^2.1.8",
     "clean-css": "^4.2.3",
     "debounce": "^1.2.0",
-    "egg-born-mock": "^2.0.4",
+    "egg-born-mock": "^2.1.0",
     "extend2": "^1.0.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",

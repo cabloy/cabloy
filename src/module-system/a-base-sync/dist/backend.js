@@ -193,6 +193,9 @@ module.exports = ctx => {
         context: { atomClass, options, key, user },
         fn: 'read',
       });
+      // revision
+      this._appendRevisionToHistory({ item });
+      // ok
       return item;
     }
 
@@ -251,6 +254,12 @@ module.exports = ctx => {
           context: { atomClass, options, items, user },
           fn: 'select',
         });
+      }
+      // revision
+      if (!count && options.stage === 'history') {
+        for (const item of items) {
+          this._appendRevisionToHistory({ item });
+        }
       }
       // ok
       return items;
@@ -742,6 +751,13 @@ module.exports = ctx => {
       });
       // ok
       return resFile;
+    }
+
+    _appendRevisionToHistory({ item }) {
+      if (!item.atomRevision || item.atomStage !== 2) return;
+      if (!item._meta) item._meta = {};
+      if (!item._meta.flags) item._meta.flags = [];
+      item._meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
     // atom other functions
@@ -5663,16 +5679,23 @@ module.exports = app => {
         atomStage: 'archive',
       });
       if (atom) {
-        // check revision: not use !==
-        if (atomRevision > atom.atomRevision) {
-          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-          await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+        if (atomRevision === -1) {
+          // delete
+          await this.ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
+        } else {
+          // check revision: not use !==
+          if (atomRevision > atom.atomRevision) {
+            item = await this._adjustItem({ moduleName, atomClass, item, register: false });
+            await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+          }
         }
       } else {
-        // register
-        item = await this._adjustItem({ moduleName, atomClass, item, register: true });
-        const atomId = await this._register({ atomClass, item });
-        await this._addResourceRoles({ atomId, roles: item.resourceRoles });
+        if (atomRevision !== -1) {
+          // register
+          item = await this._adjustItem({ moduleName, atomClass, item, register: true });
+          const atomId = await this._register({ atomClass, item });
+          await this._addResourceRoles({ atomId, roles: item.resourceRoles });
+        }
       }
     }
 
@@ -8059,6 +8082,7 @@ module.exports = {
   CloneCopyText: 'Copy',
   KeyForAtom: 'Key',
   ViewLayout: 'View',
+  WorkFlow: 'Work Flow',
 };
 
 
@@ -8156,6 +8180,7 @@ module.exports = {
   Language: '语言',
   Theme: '主题',
   ViewLayout: '视图',
+  WorkFlow: '工作流',
 };
 
 
@@ -8178,6 +8203,8 @@ module.exports = {
 const mineAtomDrafts = __webpack_require__(4353);
 const mineAtomStars = __webpack_require__(9706);
 const mineAtomArchives = __webpack_require__(7737);
+const mineWorkFlowTasks = __webpack_require__(2339);
+const mineWorkFlowFlows = __webpack_require__(7118);
 const mineTaskClaimings = __webpack_require__(8405);
 const mineTaskHandlings = __webpack_require__(296);
 const mineTaskCompleteds = __webpack_require__(7283);
@@ -8196,6 +8223,8 @@ module.exports = app => {
     mineAtomDrafts(app),
     mineAtomStars(app),
     mineAtomArchives(app),
+    mineWorkFlowTasks(app),
+    mineWorkFlowFlows(app),
     mineTaskClaimings(app),
     mineTaskHandlings(app),
     mineTaskCompleteds(app),
@@ -8223,7 +8252,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Language',
     atomStaticKey: 'mineAppearanceLanguage',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8249,7 +8278,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Theme',
     atomStaticKey: 'mineAppearanceTheme',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8272,7 +8301,7 @@ module.exports = app => {
   const resource = {
     atomName: 'ViewLayout',
     atomStaticKey: 'mineAppearanceView',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8408,7 +8437,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Ends',
     atomStaticKey: 'mineFlowEnds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Flow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8436,7 +8465,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Initiateds',
     atomStaticKey: 'mineFlowInitiateds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Flow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8471,7 +8500,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Participateds',
     atomStaticKey: 'mineFlowParticipateds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Flow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8571,7 +8600,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Claimings',
     atomStaticKey: 'mineTaskClaimings',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Task',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8606,7 +8635,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Completeds',
     atomStaticKey: 'mineTaskCompleteds',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Task',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8634,7 +8663,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Handlings',
     atomStaticKey: 'mineTaskHandlings',
-    atomRevision: 0,
+    atomRevision: -1,
     atomCategoryId: 'a-base:mine.Task',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8649,6 +8678,70 @@ module.exports = app => {
     }),
     resourceRoles: 'root',
     resourceSorting: 2,
+  };
+  return resource;
+};
+
+
+/***/ }),
+
+/***/ 7118:
+/***/ ((module) => {
+
+module.exports = app => {
+  // actionPath
+  const actionPath = '/a/flowtask/flow/tabs';
+  // resource
+  const resource = {
+    atomName: 'Flows',
+    atomStaticKey: 'mineWorkFlowFlows',
+    atomRevision: 0,
+    atomCategoryId: 'a-base:mine.WorkFlow',
+    resourceType: 'a-base:mine',
+    resourceConfig: JSON.stringify({
+      actionPath,
+      stats: {
+        params: {
+          module: 'a-flow',
+          name: 'flowInitiateds',
+        },
+        color: 'orange',
+      },
+    }),
+    resourceRoles: 'root',
+    resourceSorting: 2,
+  };
+  return resource;
+};
+
+
+/***/ }),
+
+/***/ 2339:
+/***/ ((module) => {
+
+module.exports = app => {
+  // actionPath
+  const actionPath = '/a/flowtask/flowTask/tabs';
+  // resource
+  const resource = {
+    atomName: 'Tasks',
+    atomStaticKey: 'mineWorkFlowTasks',
+    atomRevision: 0,
+    atomCategoryId: 'a-base:mine.WorkFlow',
+    resourceType: 'a-base:mine',
+    resourceConfig: JSON.stringify({
+      actionPath,
+      stats: {
+        params: {
+          module: 'a-flowtask',
+          name: 'taskClaimingsHandlings',
+        },
+        color: 'red',
+      },
+    }),
+    resourceRoles: 'root',
+    resourceSorting: 1,
   };
   return resource;
 };

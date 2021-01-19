@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginmarkdowngithub",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "title": "cms:plugin:markdowngithub",
   "eggBornModule": {
     "cms": {
@@ -21,7 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.0.4",
+    "egg-born-mock": "^2.1.0",
     "extend2": "^1.0.0",
     "require3": "^2.0.4"
   }

@@ -958,7 +958,8 @@ module.exports = ctx => {
   const app = ctx.app;
   class Middleware {
     async execute(options, next) {
-      const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: false });
+      // should startup: true
+      const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: true });
       if (!appReadyInstance) return ctx.throw(403);
       // cache userId/socketId for disconnect
       const user = ctx.session.passport.user.op;
@@ -1620,13 +1621,6 @@ module.exports = app => {
       },
       keywords: {},
       schemas: {
-      },
-    },
-    index: {
-      indexes: {
-        aSocketIOMessageClass: 'createdAt,updatedAt,module+messageClassName',
-        aSocketIOMessage: 'createdAt,updatedAt,messageClassId,messageFilter,sessionId',
-        aSocketIOMessageSync: 'createdAt,updatedAt,messageId,userId,messageRead',
       },
     },
   };

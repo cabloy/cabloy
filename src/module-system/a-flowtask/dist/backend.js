@@ -268,6 +268,14 @@ module.exports = ctx => {
 
     async _clearRemains({ nodeInstance }) {
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
+      // notify
+      const _tasks = await this.modelFlowTask.select({
+        where: { flowNodeId },
+      });
+      for (const _task of _tasks) {
+        this._notifyTaskClaimings(_task.userIdAssignee);
+        this._notifyTaskHandlings(_task.userIdAssignee);
+      }
       // flowTask delete
       await this.modelFlowTask.delete({ flowNodeId });
       // flowTaskHistory close
@@ -277,6 +285,26 @@ module.exports = ctx => {
         update aFlowTaskHistory set flowTaskStatus=1
           where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
         `, [ ctx.instance.id, flowNodeId ]);
+    }
+
+    _notifyTaskClaimings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskClaimings',
+          user: { id: userId },
+        });
+      }
+    }
+
+    _notifyTaskHandlings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskHandlings',
+          user: { id: userId },
+        });
+      }
     }
 
   }
@@ -624,6 +652,14 @@ module.exports = ctx => {
       // check if bidding
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (options.bidding) {
+        // notify
+        const _tasks = await ctx.model.query(`
+          select id,userIdAssignee from aFlowTask
+            where iid=? and flowNodeId=? and id<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+        for (const _task of _tasks) {
+          this._notifyTaskClaimings(_task.userIdAssignee);
+        }
         // delete other tasks
         await ctx.model.query(`
           delete from aFlowTask
@@ -769,18 +805,20 @@ module.exports = ctx => {
       }
       // handle
       await this._cancelFlow_handle({ handle });
-      // notify
-      this._notifyTaskHandlings(flowTask.userIdAssignee);
     }
 
     async _cancelFlow_handle({ handle }) {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
       // close draft
       const atomId = this.context._flow.flowAtomId;
       if (atomId) {
         await ctx.bean.atom.closeDraft({ key: { atomId } });
       }
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
       // delete flowTask
-      const flowTaskId = this.contextTask._flowTaskId;
       await this.modelFlowTask.delete({ id: flowTaskId });
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.flowTaskStatus = 1;
@@ -1083,23 +1121,11 @@ module.exports = ctx => {
     }
 
     _notifyTaskClaimings(userId) {
-      if (userId) {
-        ctx.bean.stats.notify({
-          module: moduleInfo.relativeName,
-          name: 'taskClaimings',
-          user: { id: userId },
-        });
-      }
+      ctx.bean.flowTask._notifyTaskClaimings(userId);
     }
 
     _notifyTaskHandlings(userId) {
-      if (userId) {
-        ctx.bean.stats.notify({
-          module: moduleInfo.relativeName,
-          name: 'taskHandlings',
-          user: { id: userId },
-        });
-      }
+      ctx.bean.flowTask._notifyTaskHandlings(userId);
     }
 
   }
@@ -2055,6 +2081,17 @@ module.exports = app => {
         taskHandlings: {
           user: true,
           bean: 'taskHandlings',
+        },
+        taskClaimingsHandlings: {
+          user: true,
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
+          dependencies: [
+            'a-flowtask:taskClaimings',
+            'a-flowtask:taskHandlings',
+          ],
         },
       },
     },

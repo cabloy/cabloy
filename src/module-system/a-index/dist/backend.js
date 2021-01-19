@@ -117,7 +117,7 @@ module.exports = appInfo => {
       aAuthSimple: 'createdAt,updatedAt,userId',
     },
     'a-base': {
-      aAtom: 'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated',
+      aAtom: 'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated,atomStaticKey,atomLanguage,atomCategoryId',
       aAtomAction: 'createdAt,updatedAt,atomClassId+code,name',
       aAtomClass: 'createdAt,updatedAt,module+atomClassName',
       aAtomLabel: 'createdAt,updatedAt,userId,atomId',
@@ -125,9 +125,13 @@ module.exports = appInfo => {
       aAtomStar: 'createdAt,updatedAt,userId,atomId',
       aAuth: 'createdAt,updatedAt,userId,providerId+profileId',
       aAuthProvider: 'createdAt,updatedAt,module+providerName',
+      aCategory: 'createdAt,updatedAt,atomClassId,categoryName,categorySorting,categoryIdParent',
       aComment: 'createdAt,updatedAt,atomId,userId,sorting',
       aCommentHeart: 'createdAt,updatedAt,userId,atomId,commentId',
       aLabel: 'createdAt,updatedAt,userId',
+      aResource: 'createdAt,updatedAt,atomId,resourceSorting,resourceType',
+      aResourceLocale: 'createdAt,updatedAt,atomId,locale',
+      aResourceRole: 'createdAt,updatedAt,atomId,roleId',
       aRole: 'createdAt,updatedAt,roleName,sorting,roleIdParent',
       aRoleExpand: 'createdAt,updatedAt,roleId,roleIdBase',
       aRoleInc: 'createdAt,updatedAt,roleId,roleIdInc',
@@ -135,6 +139,8 @@ module.exports = appInfo => {
       aRoleRef: 'createdAt,updatedAt,roleId,roleIdParent',
       aRoleRight: 'createdAt,updatedAt,roleId,atomClassId+action',
       aRoleRightRef: 'createdAt,updatedAt,roleRightId,roleId,atomClassId+action,roleIdScope',
+      aTag: 'createdAt,updatedAt,atomClassId,tagName',
+      aTagRef: 'createdAt,updatedAt,atomId,tagId',
       aUser: 'createdAt,updatedAt,userName,email,mobile',
       aUserAgent: 'createdAt,updatedAt,userId,userIdAgent',
       aUserRole: 'createdAt,updatedAt,userId,roleId',
@@ -143,11 +149,33 @@ module.exports = appInfo => {
       aCache: 'createdAt,updatedAt,module+name',
     },
     'a-cms': {
-      aCmsArticle: 'createdAt,updatedAt,atomId,sticky,sorting',
+      aCmsArticle: 'createdAt,updatedAt,atomId,sticky,slug,sorting',
       aCmsContent: 'createdAt,updatedAt,atomId,itemId,content:fulltext',
+    },
+    'a-dashboard': {
+      aDashboard: 'createdAt,updatedAt,atomId',
+      aDashboardContent: 'createdAt,updatedAt,atomId,itemId',
+      aDashboardUser: 'createdAt,updatedAt,userId,dashboardAtomId',
+    },
+    'a-dingtalk': {
+      aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
+      aDingtalkMember: 'createdAt,updatedAt,userId,memberId',
     },
     'a-file': {
       aFile: 'createdAt,updatedAt,userId,downloadId,atomId',
+    },
+    'a-flow': {
+      aFlow: 'createdAt,updatedAt,flowDefId,flowStatus,flowUserId',
+      aFlowDef: 'createdAt,updatedAt,atomId',
+      aFlowDefContent: 'createdAt,updatedAt,atomId,itemId',
+      aFlowHistory: 'createdAt,updatedAt,flowId,flowDefId,flowStatus,flowUserId',
+      aFlowNode: 'createdAt,updatedAt,flowId,flowNodeIdPrev',
+      aFlowNodeHistory: 'createdAt,updatedAt,flowId,flowNodeId,flowNodeIdPrev',
+    },
+    'a-flowtask': {
+      aFlowNodeStartEventAtomCondition: 'createdAt,updatedAt,flowDefId,atomClassId',
+      aFlowTask: 'createdAt,updatedAt,flowId,flowNodeId,flowTaskStatus,userIdAssignee',
+      aFlowTaskHistory: 'createdAt,updatedAt,flowId,flowTaskId,flowNodeId,flowTaskStatus,userIdAssignee',
     },
     'a-instance': {
       aInstance: 'createdAt,updatedAt,name',
@@ -165,10 +193,24 @@ module.exports = appInfo => {
       aSettings: 'createdAt,updatedAt,module+scene+userId',
       aSettingsRef: 'createdAt,updatedAt,module+scene+userId+name',
     },
+    'a-socketio': {
+      aSocketIOMessage: 'createdAt,updatedAt,messageClassId,messageFilter,sessionId',
+      aSocketIOMessageClass: 'createdAt,updatedAt,module+messageClassName',
+      aSocketIOMessageSync: 'createdAt,updatedAt,messageId,userId,messageRead',
+    },
+    'a-stats': {
+      aStats: 'createdAt,updatedAt,userId,module+name',
+    },
     'a-status': {
       aStatus: 'createdAt,updatedAt,module+name',
     },
-
+    'a-wechat': {
+      aWechatUser: 'createdAt,updatedAt,userId,openid,unionid',
+    },
+    'a-wxwork': {
+      aWxworkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
+      aWxworkMember: 'createdAt,updatedAt,userId,memberId',
+    },
   };
   // indexes extend
   config.indexesExtend = null;

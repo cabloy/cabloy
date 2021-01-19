@@ -1041,11 +1041,6 @@ module.exports = app => {
         'a-base:accountMigration': 'accountMigration',
       },
     },
-    index: {
-      indexes: {
-        aWechatUser: 'createdAt,updatedAt,openid,unionid',
-      },
-    },
     auth: authFn,
   };
   return meta;

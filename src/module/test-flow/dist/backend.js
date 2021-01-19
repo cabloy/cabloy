@@ -417,6 +417,10 @@ module.exports = class Listener {
     console.log('handleStatus: %d, handleRemark: %s', contextTask._flowTask.handleStatus, contextTask._flowTask.handleRemark);
   }
 
+  async getSchemaRead(contextTask, contextNode/* { schemaBase, schema }*/) {
+    console.log('getSchemaRead: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
+  }
+
   async getSchemaWrite(contextTask, contextNode/* { schemaBase, schema }*/) {
     console.log('getSchemaWrite: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
@@ -1151,6 +1155,11 @@ module.exports = app => {
         schemas: {
           purchaseOrder: schemas.purchaseOrder,
           purchaseOrderSearch: schemas.purchaseOrderSearch,
+        },
+      },
+      index: {
+        indexes: {
+          testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
         },
       },
     });
