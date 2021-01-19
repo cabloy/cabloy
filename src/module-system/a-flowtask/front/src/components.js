@@ -22,6 +22,7 @@ import atomLayoutBlockMobileTitle from './components/flowTask/atomLayoutMobile/a
 import atomLayoutBlockMobileMain from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileMain.jsx';
 // tab
 import flowTaskTab from './components/tab/flowTaskTab.jsx';
+import flowTab from './components/tab/flowTab.jsx';
 
 export default {
   // action
@@ -48,4 +49,6 @@ export default {
   atomLayoutBlockMobileMain,
   // flowTaskTab
   flowTaskTab,
+  // flowTab
+  flowTab,
 };

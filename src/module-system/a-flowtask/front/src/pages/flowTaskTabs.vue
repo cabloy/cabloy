@@ -3,9 +3,9 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.claimings}`" :tabLinkActive="tabName==='claimings'" icon-only icon-material="play_arrow" :icon-badge="stats.claimings" :stats_params="{module: 'a-flowtask',name: 'taskClaimings'}" stats_color="red" @stats_change="onStatsChange($event,'claimings')"></eb-link>
-          <eb-link :tab-link="`#${tabId.handlings}`" :tabLinkActive="tabName==='handlings'" icon-only icon-material="fast_forward" :icon-badge="stats.handlings" :stats_params="{module: 'a-flowtask',name: 'taskHandlings'}" stats_color="red" @stats_change="onStatsChange($event,'handlings')"></eb-link>
-          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName==='completeds'" icon-only icon-material="done"></eb-link>
+          <eb-link :tab-link="`#${tabId.claimings}`" :tabLinkActive="tabName==='claimings'" icon-only icon-material="play_arrow" badge-color="red" :icon-badge="stats.claimings" :stats_params="{module: 'a-flowtask',name: 'taskClaimings'}" @stats_change="onStatsChange($event,'claimings')"></eb-link>
+          <eb-link :tab-link="`#${tabId.handlings}`" :tabLinkActive="tabName==='handlings'" icon-only icon-material="fast_forward" badge-color="red" :icon-badge="stats.handlings" :stats_params="{module: 'a-flowtask',name: 'taskHandlings'}" @stats_change="onStatsChange($event,'handlings')"></eb-link>
+          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName==='completeds'" icon-only icon-material="stop"></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
@@ -52,11 +52,11 @@ export default {
     pageTitle() {
       const tabName = this.tabName;
       if (tabName === 'claimings') {
-        return `${this.$text('Task')}: ${this.$text('Claimings')}`;
+        return `${this.$text('Claimings')}`;
       } else if (tabName === 'handlings') {
-        return `${this.$text('Task')}: ${this.$text('Handlings')}`;
+        return `${this.$text('Handlings')}`;
       } else if (tabName === 'completeds') {
-        return `${this.$text('Task')}: ${this.$text('Completeds')}`;
+        return `${this.$text('Completeds')}`;
       }
       return this.$text('Task');
     },

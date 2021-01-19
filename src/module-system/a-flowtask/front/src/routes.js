@@ -12,4 +12,5 @@ export default [
   { path: 'flowTaskAtom', component: loadjsx('flowTaskAtom') },
   { path: 'assigneesConfirmation', component: loadjsx('assigneesConfirmation') },
   { path: 'flowTask/tabs', component: load('flowTaskTabs') },
+  { path: 'flow/tabs', component: load('flowTabs') },
 ];
