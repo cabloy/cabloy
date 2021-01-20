@@ -1,0 +1,26 @@
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
+
+    async execute(context, next) {
+      const data = context.data;
+      // provider
+      const providerItem = await ctx.bean.user.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authsms',
+      });
+      // model auth
+      const modelAuth = ctx.model.module('a-base').auth;
+      const authItem = await modelAuth.get({ userId: data.userIdFrom, providerId: providerItem.id });
+      if (authItem) {
+        const user = { id: data.userIdTo, mobile: authItem.profileId };
+        await ctx.bean.user.save({ user });
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
