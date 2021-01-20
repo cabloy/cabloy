@@ -1,1 +1,1002 @@
-module.exports=(()=>{var e={241:(e,t,n)=>{function r(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}const o=n(718),i=o("chalk"),a=o("boxen"),s={padding:1,margin:1,align:"center",borderColor:"yellow",borderStyle:"round"};e.exports=function(e){const t=e.app.meta.mockUtil.parseInfoFromPackage(__dirname);return class{verify(e){var t,n=this;return(t=function*(){const{providerInstanceId:t,context:r,data:o,dataInput:i}=e,{provider:a,config:s}=n.__createSMSProvider();yield a.verify({providerInstanceId:t,context:r,data:o,dataInput:i,config:s})},function(){var e=this,n=arguments;return new Promise((function(o,i){var a=t.apply(e,n);function s(e){r(a,o,i,s,c,"next",e)}function c(e){r(a,o,i,s,c,"throw",e)}s(void 0)}))})()}__createSMSProvider(n){const r=e.config.module(t.relativeName);let o=n&&n.providerName;if(!o&&(o=r.sms.provider.default,o||!e.app.meta.isTest&&!e.app.meta.isLocal||(o="test"),!o)){const n=i.keyword("orange")(e.text("smsProviderNonePrompt"));console.log("\n"+a(n,s)),e.throw.module(t.relativeName,1001)}return{provider:e.bean._getBean(t.relativeName,"sms.provider.".concat(o)),config:r.sms.providers[o]}}}}},987:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}e.exports=function(e){const n=e.app.meta.mockUtil.parseInfoFromPackage(__dirname);return class{execute(r,o){return(i=function*(){const t=r.data,i=yield e.bean.user.getAuthProvider({module:n.relativeName,providerName:"authsms"}),a=e.model.module("a-base").auth,s=yield a.get({userId:t.userIdFrom,providerId:i.id});if(s){const n={id:t.userIdTo,mobile:s.profileId};yield e.bean.user.save({user:n})}yield o()},function(){var e=this,n=arguments;return new Promise((function(r,o){var a=i.apply(e,n);function s(e){t(a,r,o,s,c,"next",e)}function c(e){t(a,r,o,s,c,"throw",e)}s(void 0)}))})();var i}}}},654:(e,t,n)=>{function r(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}function o(e){return function(){var t=this,n=arguments;return new Promise((function(o,i){var a=e.apply(t,n);function s(e){r(a,o,i,s,c,"next",e)}function c(e){r(a,o,i,s,c,"throw",e)}s(void 0)}))}}const i=n(718)("@alicloud/pop-core");e.exports=function(e){const t=e.app.meta.mockUtil.parseInfoFromPackage(__dirname);return class{sendCode(t){var n=this;return o((function*(){let{providerInstanceId:r,context:o,config:i}=t;const a=yield e.bean.captcha.getProviderInstance({providerInstanceId:r});a||e.throw(403);const s=n.__prefix0(parseInt(1e4*Math.random()),4),c={code:s},u={PhoneNumbers:o.mobile,SignName:i.signName,TemplateCode:i.templates[a.sceneName],TemplateParam:JSON.stringify(c)};return yield n.__sendSms({params:u,config:i}),{token:s}}))()}verify(n){return o((function*(){let{data:r,dataInput:o}=n;r||e.throw.module(t.relativeName,1002),r.token!==o.token&&e.throw.module(t.relativeName,1003)}))()}__sendSms(e){return o((function*(){let{params:t,config:n}=e;const r=new i.RPCClient({accessKeyId:n.accessKeyId,secretAccessKey:n.secretAccessKey,endpoint:n.endpoint,apiVersion:n.apiVersion});yield r.request("SendSms",t,{method:"POST"})}))()}__prefix0(e,t){return(Array(t).join("0")+e).slice(-t)}}}},428:(e,t,n)=>{function r(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}function o(e){return function(){var t=this,n=arguments;return new Promise((function(o,i){var a=e.apply(t,n);function s(e){r(a,o,i,s,c,"next",e)}function c(e){r(a,o,i,s,c,"throw",e)}s(void 0)}))}}const i=n(718),a=i("chalk"),s=i("boxen"),c={padding:1,margin:1,align:"center",borderColor:"yellow",borderStyle:"round"};e.exports=function(e){const t=e.app.meta.mockUtil.parseInfoFromPackage(__dirname);return class{sendCode(e){var t=this;return o((function*(){let{context:n}=e;const r=t.__prefix0(parseInt(1e4*Math.random()),4),o=a.keyword("cyan")("Test SMS Verification Code To: ")+a.keyword("yellow")(n.mobile)+a.keyword("orange")("\n"+r);return console.log("\n"+s(o,c)),{token:r}}))()}verify(n){return o((function*(){let{data:r,dataInput:o}=n;r||e.throw.module(t.relativeName,1002),r.token!==o.token&&e.throw.module(t.relativeName,1003)}))()}__prefix0(e,t){return(Array(t).join("0")+e).slice(-t)}}}},313:(e,t,n)=>{const r=n(987),o=n(428),i=n(654),a=n(241);e.exports=function(e){return{"event.accountMigration":{mode:"ctx",bean:r},"sms.provider.test":{mode:"ctx",bean:o},"sms.provider.aliyun":{mode:"ctx",bean:i},"captcha.provider.captcha":{mode:"ctx",bean:a}}}},817:e=>{e.exports=function(e){const t={account:{url:{mobileVerify:"/a/authsms/mobileVerify"}}},n={module:"a-authsms",name:"captcha"};return t.captcha={scenes:{mobileVerify:n,signup:n,signin:n,signupCode:null}},t.sms={provider:{default:""},providers:{aliyun:{accessKeyId:"",secretAccessKey:"",endpoint:"https://dysmsapi.aliyuncs.com",apiVersion:"2017-05-25",signName:"",templates:{mobileVerify:"",signup:"",signin:""}}}},t}},971:e=>{e.exports={1001:"smsProviderNonePrompt",1002:"SMSCodeInvalid",1003:"SMSCodeMismatch",1004:"Authentication Failed",1005:"User is Disabled"}},724:e=>{e.exports={smsProviderNonePrompt:"Please specify the sms provider",SMSCodeInvalid:"Verification code is invalid, please retrieve again",SMSCodeMismatch:"Mismatch Verification Code"}},995:e=>{e.exports={SMS:"短信",smsProviderNonePrompt:"请指定SMS Provider",SMSCodeInvalid:"认证码已失效，请重新获取",SMSCodeMismatch:"认证码不匹配","Element Exists":"元素已存在","Cannot Contain __":"不能包含__","SMS Verification":"短信认证","Authentication Failed":"认证失败","User is Disabled":"用户被禁用"}},266:(e,t,n)=>{e.exports={"en-us":n(724),"zh-cn":n(995)}},480:(e,t,n)=>{function r(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}function o(e){return function(){var t=this,n=arguments;return new Promise((function(o,i){var a=e.apply(t,n);function s(e){r(a,o,i,s,c,"next",e)}function c(e){r(a,o,i,s,c,"throw",e)}s(void 0)}))}}const i=n(752);e.exports=function(e){const t=e.meta.mockUtil.parseInfoFromPackage(__dirname),n=t.name;function r(){return(r=o((function*(e,r){const{mobile:o,rememberMe:i}=r.data;yield e.bean.validation.validate({validator:"signin",data:r.data});const a=yield e.bean.user.exists({mobile:o});return a?a.disabled?e.throw(1005):{module:t.relativeName,provider:n,profileId:o,maxAge:i?null:0,authShouldExists:!0,profile:{mobile:o,rememberMe:i}}:e.throw(1004)}))).apply(this,arguments)}return{providers:{[n]:{meta:{title:"SMS",inline:!0,mode:"direct",component:"signin"},config:{},handler:function(e){return{strategy:i,callback:function(t,n,o){(function(e,t){return r.apply(this,arguments)})(t.ctx,n).then((function(n){e.passport.doVerify(t,n,o)})).catch((function(e){o(e)}))}}}}}}}},752:(e,t,n)=>{const r=n(581);function o(e,t){if("function"==typeof e&&(t=e,e={}),!t)throw new TypeError("LocalStrategy requires a verify callback");r.Strategy.call(this),this.name="sms",this._verify=t,this._passReqToCallback=e.passReqToCallback}n(669).inherits(o,r.Strategy),o.prototype.authenticate=function(e){const t=this;if("GET"===e.method)return t.error(e.ctx.parseFail(403));function n(n,r,o){return n?t.error(n):r?(e.ctx.success(r),void t.success(r,o)):t.fail(o)}try{t._passReqToCallback?this._verify(e,e.body,n):this._verify(e.body,n)}catch(e){return t.error(e)}},e.exports=o},623:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}e.exports=function(e){const n={};return n.exists={async:!0,type:"string",errors:!0,compile:function(){return function(){var n,r=(n=function*(t,n,r,o){const i=this,a=yield i.bean.user.exists({[o]:t});if(a&&a.id!==i.state.user.agent.id){const t=[{keyword:"x-exists",params:[],message:i.text("Element Exists")}];throw new e.meta.ajv.ValidationError(t)}if(!a&&t.indexOf("__")>-1){const t=[{keyword:"x-exists",params:[],message:i.text("Cannot Contain __")}];throw new e.meta.ajv.ValidationError(t)}return!0},function(){var e=this,r=arguments;return new Promise((function(o,i){var a=n.apply(e,r);function s(e){t(a,o,i,s,c,"next",e)}function c(e){t(a,o,i,s,c,"throw",e)}s(void 0)}))});return function(e,t,n,o){return r.apply(this,arguments)}}()}},n}},326:e=>{e.exports=function(e){return{signup:{type:"object",properties:{userName:{type:"string",ebType:"text",ebTitle:"Username",notEmpty:!0,"x-exists":!0},realName:{type:"string",ebType:"text",ebTitle:"Realname",notEmpty:!0},mobile:{type:"string",ebType:"text",ebInputType:"tel",ebTitle:"Phone Number",notEmpty:!0,"x-exists":!0}}},signin:{type:"object",properties:{mobile:{type:"string",ebType:"text",ebInputType:"tel",ebTitle:"Phone Number",notEmpty:!0},rememberMe:{type:"boolean",ebType:"toggle",ebTitle:"Remember Me"}}},mobileVerify:{type:"object",properties:{userName:{type:"string",ebType:"text",ebTitle:"Username",ebReadOnly:!0},mobile:{type:"string",ebType:"text",ebInputType:"tel",ebTitle:"Phone Number",notEmpty:!0,"x-exists":!0}}}}}},954:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}function n(e){return function(){var n=this,r=arguments;return new Promise((function(o,i){var a=e.apply(n,r);function s(e){t(a,o,i,s,c,"next",e)}function c(e){t(a,o,i,s,c,"throw",e)}s(void 0)}))}}e.exports=function(e){class t extends e.Controller{signin(){var e=this;return n((function*(){const t=e.ctx.request.body.data,n=e.ctx.request.body.state,r=yield e.service.auth.signin({data:t,state:n});e.ctx.success(r)}))()}signup(){var e=this;return n((function*(){const{userName:t,realName:n,mobile:r}=e.ctx.request.body.data,o=e.ctx.request.body.state,i=yield e.service.auth.signup({user:e.ctx.state.user.agent,state:o,userName:t,realName:n,mobile:r});e.ctx.success(i)}))()}mobileVerify(){var e=this;return n((function*(){const{mobile:t}=e.ctx.request.body.data,n=yield e.service.auth.mobileVerify({user:e.ctx.state.user.agent,mobile:t});e.ctx.success(n)}))()}}return t}},167:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}e.exports=function(e){class n extends e.Controller{sendCode(){var e,n=this;return(e=function*(){yield n.ctx.service.captcha.sendCode({providerInstanceId:n.ctx.request.body.providerInstanceId,context:n.ctx.request.body.context}),n.ctx.success()},function(){var n=this,r=arguments;return new Promise((function(o,i){var a=e.apply(n,r);function s(e){t(a,o,i,s,c,"next",e)}function c(e){t(a,o,i,s,c,"throw",e)}s(void 0)}))})()}}return n}},691:(e,t,n)=>{const r=n(167),o=n(954);e.exports=function(e){return{captcha:r,auth:o}}},312:(e,t,n)=>{const r=n(817),o=n(266),i=n(971);e.exports=function(e){const t=n(313)(e),a=n(788)(e),s=n(691)(e),c=n(481)(e),u=n(700)(e),d=n(730)(e);return{beans:t,routes:a,controllers:s,services:c,models:u,config:r,locales:o,errors:i,meta:d}}},730:(e,t,n)=>{e.exports=function(e){const t=n(480)(e),r=n(623)(e),o=n(326)(e);return{auth:t,validation:{validators:{signup:{schemas:"signup"},signin:{schemas:"signin"},mobileVerify:{schemas:"mobileVerify"}},keywords:{"x-exists":r.exists},schemas:{signup:o.signup,signin:o.signin,mobileVerify:o.mobileVerify}},event:{implementations:{"a-base:accountMigration":"accountMigration"}}}}},700:e=>{e.exports=function(e){return{}}},788:e=>{e.exports=function(e){return[{method:"post",path:"captcha/sendCode",controller:"captcha"},{method:"post",path:"auth/signin",controller:"auth",middlewares:"captchaVerify",meta:{captchaVerify:{scene:{name:"signin"}}}},{method:"post",path:"auth/signup",controller:"auth",middlewares:"captchaVerify,validate",meta:{captchaVerify:{scenes:[{name:"signupCode",dataKey:"captchaCode",fieldKey:"tokenCode"},{name:"signup",dataKey:"captcha",fieldKey:"token"}]},validate:{validator:"signup"}}},{method:"post",path:"auth/mobileVerify",controller:"auth",middlewares:"validate,captchaVerify",meta:{validate:{validator:"mobileVerify"},captchaVerify:{scene:{name:"mobileVerify"}}}}]}},574:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}function n(e){return function(){var n=this,r=arguments;return new Promise((function(o,i){var a=e.apply(n,r);function s(e){t(a,o,i,s,c,"next",e)}function c(e){t(a,o,i,s,c,"throw",e)}s(void 0)}))}}e.exports=function(e){const t=e.meta.mockUtil.parseInfoFromPackage(__dirname);class r extends e.Service{signup(e){var r=this;return n((function*(){let{user:n,state:o="login",userName:i,realName:a,mobile:s}=e;const c={module:t.relativeName,provider:"authsms",profileId:s,maxAge:0,profile:{mobile:s,rememberMe:!1}},u=yield r.ctx.bean.user.verify({state:o,profileUser:c});u||r.ctx.throw(403);const d=u.agent.id,l={id:d};return i&&("login"===o||!n.userName||n.userName.indexOf("__")>-1)&&(l.userName=i),a&&(l.realName=a),yield r.ctx.bean.user.save({user:l}),yield r.ctx.bean.user.setActivated({user:{id:d,mobile:s,mobileVerified:1}}),yield r.ctx.login(u),u}))()}signin(e){var t=this;return n((function*(){let{data:n,state:r="login"}=e;return yield t.ctx.performAction({method:"post",url:"passport/a-authsms/authsms?state=".concat(r),body:{data:n}})}))()}mobileVerify(e){var t=this;return n((function*(){let{user:n,mobile:r}=e;yield t.signup({user:n,state:"associate",userName:null,realName:null,mobile:r})}))()}}return r}},723:e=>{function t(e,t,n,r,o,i,a){try{var s=e[i](a),c=s.value}catch(e){return void n(e)}s.done?t(c):Promise.resolve(c).then(r,o)}e.exports=function(e){const n=e.meta.mockUtil.parseInfoFromPackage(__dirname);class r extends e.Service{sendCode(e){var r,o=this;return(r=function*(){let{providerInstanceId:t,context:r}=e;const i=o.ctx.bean._getBean("".concat(n.relativeName,".captcha.provider.captcha")),{provider:a,config:s}=i.__createSMSProvider(),c=yield a.sendCode({providerInstanceId:t,context:r,config:s});yield o.ctx.bean.captcha.update({providerInstanceId:t,data:c,context:r})},function(){var e=this,n=arguments;return new Promise((function(o,i){var a=r.apply(e,n);function s(e){t(a,o,i,s,c,"next",e)}function c(e){t(a,o,i,s,c,"throw",e)}s(void 0)}))})()}}return r}},481:(e,t,n)=>{const r=n(723),o=n(574);e.exports=function(e){return{captcha:r,auth:o}}},581:(e,t,n)=>{var r=n(703);(e.exports=r).Strategy=r},703:e=>{function t(){}t.prototype.authenticate=function(e,t){throw new Error("Strategy#authenticate must be overridden by subclass")},e.exports=t},718:e=>{"use strict";e.exports=require("require3")},669:e=>{"use strict";e.exports=require("util")}},t={};return function n(r){if(t[r])return t[r].exports;var o=t[r]={exports:{}};return e[r](o,o.exports,n),o.exports}(312)})();
+module.exports =
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 581:
+/***/ ((module, exports, __webpack_require__) => {
+
+/**
+ * Module dependencies.
+ */
+var Strategy = __webpack_require__(703);
+
+
+/**
+ * Expose `Strategy` directly from package.
+ */
+exports = module.exports = Strategy;
+
+/**
+ * Export constructors.
+ */
+exports.Strategy = Strategy;
+
+
+/***/ }),
+
+/***/ 703:
+/***/ ((module) => {
+
+/**
+ * Creates an instance of `Strategy`.
+ *
+ * @constructor
+ * @api public
+ */
+function Strategy() {
+}
+
+/**
+ * Authenticate request.
+ *
+ * This function must be overridden by subclasses.  In abstract form, it always
+ * throws an exception.
+ *
+ * @param {Object} req The request to authenticate.
+ * @param {Object} [options] Strategy-specific options.
+ * @api public
+ */
+Strategy.prototype.authenticate = function(req, options) {
+  throw new Error('Strategy#authenticate must be overridden by subclass');
+};
+
+
+/**
+ * Expose `Strategy`.
+ */
+module.exports = Strategy;
+
+
+/***/ }),
+
+/***/ 952:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const chalk = require3('chalk');
+const boxen = require3('boxen');
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Captcha {
+
+    async verify(_context) {
+      const { providerInstanceId, context, data, dataInput } = _context;
+      // sms provider
+      const { provider, config } = this.__createSMSProvider();
+      // verify
+      await provider.verify({ providerInstanceId, context, data, dataInput, config });
+    }
+
+    __createSMSProvider(options) {
+      const configModule = ctx.config.module(moduleInfo.relativeName);
+      // provider name
+      let providerName = options && options.providerName;
+      if (!providerName) {
+        providerName = configModule.sms.provider.default;
+        if (!providerName && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
+          providerName = 'test';
+        }
+        if (!providerName) {
+          // prompt
+          const message = chalk.keyword('orange')(ctx.text('smsProviderNonePrompt'));
+          console.log('\n' + boxen(message, boxenOptions));
+          ctx.throw.module(moduleInfo.relativeName, 1001);
+        }
+      }
+      // provider
+      const provider = ctx.bean._getBean(moduleInfo.relativeName, `sms.provider.${providerName}`);
+      const config = configModule.sms.providers[providerName];
+      return { provider, config };
+    }
+
+  }
+  return Captcha;
+};
+
+
+
+/***/ }),
+
+/***/ 836:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
+
+    async execute(context, next) {
+      const data = context.data;
+      // provider
+      const providerItem = await ctx.bean.user.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authsms',
+      });
+      // model auth
+      const modelAuth = ctx.model.module('a-base').auth;
+      const authItem = await modelAuth.get({ userId: data.userIdFrom, providerId: providerItem.id });
+      if (authItem) {
+        const user = { id: data.userIdTo, mobile: authItem.profileId };
+        await ctx.bean.user.save({ user });
+      }
+      // next
+      await next();
+    }
+
+  }
+
+  return eventBean;
+};
+
+
+/***/ }),
+
+/***/ 881:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const popCore = require3('@alicloud/pop-core');
+
+module.exports = function(ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Provider {
+
+    async sendCode({ providerInstanceId, context, config }) {
+      // get
+      const providerInstance = await ctx.bean.captcha.getProviderInstance({ providerInstanceId });
+      if (!providerInstance) ctx.throw(403);
+      // token
+      const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
+      const templateParam = { code: token };
+      // params
+      const params = {
+        PhoneNumbers: context.mobile,
+        SignName: config.signName,
+        TemplateCode: config.templates[providerInstance.sceneName],
+        TemplateParam: JSON.stringify(templateParam),
+      };
+      // send
+      await this.__sendSms({ params, config });
+      // ok
+      return { token };
+    }
+
+    async verify({ data, dataInput }) {
+      if (!data) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (data.token !== dataInput.token) ctx.throw.module(moduleInfo.relativeName, 1003);
+    }
+
+    async __sendSms({ params, config }) {
+      const client = new popCore.RPCClient({
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+        endpoint: config.endpoint,
+        apiVersion: config.apiVersion,
+      });
+      const requestOption = {
+        method: 'POST',
+      };
+      await client.request('SendSms', params, requestOption);
+    }
+
+    __prefix0(num, length) {
+      return (Array(length).join('0') + num).slice(-length);
+    }
+
+  }
+
+  return Provider;
+};
+
+
+/***/ }),
+
+/***/ 87:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const chalk = require3('chalk');
+const boxen = require3('boxen');
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
+module.exports = function(ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Provider {
+
+    async sendCode({ context }) {
+      // token
+      const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
+      // prompt
+      const message = chalk.keyword('cyan')('Test SMS Verification Code To: ')
+                        + chalk.keyword('yellow')(context.mobile)
+                        + chalk.keyword('orange')('\n' + token);
+      console.log('\n' + boxen(message, boxenOptions));
+      // ok
+      return { token };
+    }
+
+    async verify({ data, dataInput }) {
+      if (!data) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (data.token !== dataInput.token) ctx.throw.module(moduleInfo.relativeName, 1003);
+    }
+
+    __prefix0(num, length) {
+      return (Array(length).join('0') + num).slice(-length);
+    }
+
+  }
+
+  return Provider;
+};
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const eventAccountMigration = __webpack_require__(836);
+const smsProviderTest = __webpack_require__(87);
+const smsProviderAliyun = __webpack_require__(881);
+const captchaProvider = __webpack_require__(952);
+
+module.exports = app => {
+  const beans = {
+    // event
+    'event.accountMigration': {
+      mode: 'ctx',
+      bean: eventAccountMigration,
+    },
+    // sms.provider
+    'sms.provider.test': {
+      mode: 'ctx',
+      bean: smsProviderTest,
+    },
+    'sms.provider.aliyun': {
+      mode: 'ctx',
+      bean: smsProviderAliyun,
+    },
+    // captcha.provider
+    'captcha.provider.captcha': {
+      mode: 'ctx',
+      bean: captchaProvider,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 76:
+/***/ ((module) => {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+
+  // account
+  config.account = {
+    url: {
+      mobileVerify: '/a/authsms/mobileVerify',
+    },
+  };
+
+  // captcha scenes
+  // const _captchaSimple = {
+  //   module: 'a-captchasimple',
+  //   name: 'captcha',
+  // };
+  const _captchaSMS = {
+    module: 'a-authsms',
+    name: 'captcha',
+  };
+  config.captcha = {
+    scenes: {
+      mobileVerify: _captchaSMS,
+      signup: _captchaSMS,
+      signin: _captchaSMS,
+      signupCode: null, // _captchaSimple,
+    },
+  };
+
+  // sms provider
+  config.sms = {
+    provider: {
+      default: '',
+    },
+    providers: {
+      aliyun: {
+        accessKeyId: '',
+        secretAccessKey: '',
+        endpoint: 'https://dysmsapi.aliyuncs.com',
+        apiVersion: '2017-05-25',
+        signName: '',
+        templates: {
+          mobileVerify: '',
+          signup: '',
+          signin: '',
+        },
+      },
+    },
+  };
+
+  return config;
+};
+
+
+/***/ }),
+
+/***/ 624:
+/***/ ((module) => {
+
+// error code should start from 1001
+module.exports = {
+  1001: 'smsProviderNonePrompt',
+  1002: 'SMSCodeInvalid',
+  1003: 'SMSCodeMismatch',
+  1004: 'Authentication Failed',
+  1005: 'User is Disabled',
+};
+
+
+/***/ }),
+
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {
+  smsProviderNonePrompt: 'Please specify the sms provider',
+  SMSCodeInvalid: 'Verification code is invalid, please retrieve again',
+  SMSCodeMismatch: 'Mismatch Verification Code',
+};
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module) => {
+
+module.exports = {
+  SMS: '短信',
+  smsProviderNonePrompt: '请指定SMS Provider',
+  SMSCodeInvalid: '认证码已失效，请重新获取',
+  SMSCodeMismatch: '认证码不匹配',
+  'Auth-SMS': '认证-短信',
+  'Element Exists': '元素已存在',
+  'Cannot Contain __': '不能包含__',
+  'SMS Verification': '短信认证',
+  'Authentication Failed': '认证失败',
+  'User is Disabled': '用户被禁用',
+};
+
+
+/***/ }),
+
+/***/ 25:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = {
+  'en-us': __webpack_require__(327),
+  'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 443:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const strategy = __webpack_require__(966);
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const provider = moduleInfo.name;
+  async function verify(ctx, body) {
+    const { mobile, rememberMe } = body.data;
+    // validate
+    await ctx.bean.validation.validate({ validator: 'signin', data: body.data });
+    // exists
+    const user = await ctx.bean.user.exists({ mobile });
+    if (!user) return ctx.throw(1004);
+    // disabled
+    if (user.disabled) return ctx.throw(1005);
+    return {
+      module: moduleInfo.relativeName,
+      provider,
+      profileId: mobile,
+      maxAge: rememberMe ? null : 0,
+      authShouldExists: true,
+      profile: {
+        mobile,
+        rememberMe,
+      },
+    };
+  }
+  return {
+    providers: {
+      [provider]: {
+        meta: {
+          title: 'SMS',
+          inline: true,
+          mode: 'direct',
+          component: 'signin',
+        },
+        config: {
+        },
+        handler: app => {
+          return {
+            strategy,
+            callback: (req, body, done) => {
+              verify(req.ctx, body).then(user => {
+                app.passport.doVerify(req, user, done);
+              }).catch(err => { done(err); });
+            },
+          };
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
+/***/ 966:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const passport = __webpack_require__(581);
+const util = __webpack_require__(669);
+
+function Strategy(options, verify) {
+  if (typeof options === 'function') {
+    verify = options;
+    options = {};
+  }
+  if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
+
+  passport.Strategy.call(this);
+  this.name = 'sms';
+  this._verify = verify;
+  this._passReqToCallback = options.passReqToCallback;
+}
+
+/**
+ * Inherit from `passport.Strategy`.
+ */
+util.inherits(Strategy, passport.Strategy);
+
+Strategy.prototype.authenticate = function(req) {
+  // self
+  const self = this;
+
+  // check
+  if (req.method === 'GET') {
+    // not allow
+    return self.error(req.ctx.parseFail(403));
+  }
+
+  // verified
+  function verified(err, user, info) {
+    if (err) { return self.error(err); }
+    if (!user) { return self.fail(info); }
+    req.ctx.success(user);
+    self.success(user, info);
+  }
+
+  try {
+    if (self._passReqToCallback) {
+      this._verify(req, req.body, verified);
+    } else {
+      this._verify(req.body, verified);
+    }
+  } catch (ex) {
+    return self.error(ex);
+  }
+};
+
+module.exports = Strategy;
+
+
+/***/ }),
+
+/***/ 415:
+/***/ ((module) => {
+
+module.exports = app => {
+  const keywords = {};
+  keywords.exists = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        const ctx = this;
+        const res = await ctx.bean.user.exists({ [name]: data });
+        if (res && res.id !== ctx.state.user.agent.id) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
+          throw new app.meta.ajv.ValidationError(errors);
+        }
+        if (!res && data.indexOf('__') > -1) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot Contain __') }];
+          throw new app.meta.ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.signup = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+        'x-exists': true,
+      },
+      realName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Realname',
+        notEmpty: true,
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+        'x-exists': true,
+      },
+    },
+  };
+  schemas.signin = {
+    type: 'object',
+    properties: {
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+      },
+      rememberMe: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Remember Me',
+      },
+    },
+  };
+  schemas.mobileVerify = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        ebReadOnly: true,
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+        'x-exists': true,
+      },
+    },
+  };
+
+  return schemas;
+};
+
+
+
+/***/ }),
+
+/***/ 523:
+/***/ ((module) => {
+
+module.exports = app => {
+  class AuthController extends app.Controller {
+
+    async signin() {
+      // data: { mobile, rememberMe }
+      const data = this.ctx.request.body.data;
+      const state = this.ctx.request.body.state;
+      const res = await this.service.auth.signin({ data, state });
+      this.ctx.success(res);
+    }
+
+    async signup() {
+      const { userName, realName, mobile } = this.ctx.request.body.data;
+      const state = this.ctx.request.body.state;
+      const res = await this.service.auth.signup({
+        user: this.ctx.state.user.agent,
+        state,
+        userName, realName, mobile,
+      });
+      this.ctx.success(res);
+    }
+
+    async mobileVerify() {
+      const { mobile } = this.ctx.request.body.data;
+      const res = await this.service.auth.mobileVerify({
+        user: this.ctx.state.user.agent,
+        mobile,
+      });
+      this.ctx.success(res);
+    }
+
+
+  }
+  return AuthController;
+};
+
+
+/***/ }),
+
+/***/ 820:
+/***/ ((module) => {
+
+module.exports = app => {
+  class CaptchaController extends app.Controller {
+
+    async sendCode() {
+      await this.ctx.service.captcha.sendCode({
+        providerInstanceId: this.ctx.request.body.providerInstanceId,
+        context: this.ctx.request.body.context,
+      });
+      this.ctx.success();
+    }
+
+  }
+  return CaptchaController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const captcha = __webpack_require__(820);
+const auth = __webpack_require__(523);
+
+module.exports = app => {
+  const controllers = {
+    captcha,
+    auth,
+  };
+  return controllers;
+};
+
+
+/***/ }),
+
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const config = __webpack_require__(76);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(624);
+
+module.exports = app => {
+
+  // beans
+  const beans = __webpack_require__(187)(app);
+  // routes
+  const routes = __webpack_require__(825)(app);
+  // controllers
+  const controllers = __webpack_require__(95)(app);
+  // services
+  const services = __webpack_require__(214)(app);
+  // models
+  const models = __webpack_require__(230)(app);
+  // meta
+  const meta = __webpack_require__(458)(app);
+
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
+
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  // auth
+  const auth = __webpack_require__(443)(app);
+  // keywords
+  const keywords = __webpack_require__(415)(app);
+  // schemas
+  const schemas = __webpack_require__(232)(app);
+  return {
+    auth,
+    validation: {
+      validators: {
+        signup: {
+          schemas: 'signup',
+        },
+        signin: {
+          schemas: 'signin',
+        },
+        mobileVerify: {
+          schemas: 'mobileVerify',
+        },
+      },
+      keywords: {
+        'x-exists': keywords.exists,
+      },
+      schemas: {
+        signup: schemas.signup,
+        signin: schemas.signin,
+        mobileVerify: schemas.mobileVerify,
+      },
+    },
+    event: {
+      implementations: {
+        'a-base:accountMigration': 'accountMigration',
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module) => {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+
+/***/ 825:
+/***/ ((module) => {
+
+module.exports = app => {
+  const routes = [
+    // captcha
+    { method: 'post', path: 'captcha/sendCode', controller: 'captcha' },
+    // auth
+    { method: 'post', path: 'auth/signin', controller: 'auth', middlewares: 'captchaVerify',
+      meta: {
+        captchaVerify: { scene: { name: 'signin' } },
+      },
+    },
+    { method: 'post', path: 'auth/signup', controller: 'auth', middlewares: 'captchaVerify,validate',
+      meta: {
+        captchaVerify: {
+          scenes: [
+            { name: 'signupCode', dataKey: 'captchaCode', fieldKey: 'tokenCode' },
+            { name: 'signup', dataKey: 'captcha', fieldKey: 'token' },
+          ],
+        },
+        validate: { validator: 'signup' },
+      },
+    },
+    { method: 'post', path: 'auth/mobileVerify', controller: 'auth', middlewares: 'validate,captchaVerify',
+      meta: {
+        validate: { validator: 'mobileVerify' },
+        captchaVerify: { scene: { name: 'mobileVerify' } },
+      },
+    },
+  ];
+  return routes;
+};
+
+
+/***/ }),
+
+/***/ 300:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Auth extends app.Service {
+
+    async signup({ user, state = 'login', userName, realName, mobile }) {
+
+      // profileUser
+      const profileUser = {
+        module: moduleInfo.relativeName,
+        provider: 'authsms',
+        profileId: mobile,
+        maxAge: 0,
+        profile: {
+          mobile,
+          rememberMe: false,
+        },
+      };
+
+      // verify
+      const verifyUser = await this.ctx.bean.user.verify({ state, profileUser });
+      if (!verifyUser) this.ctx.throw(403);
+
+      // userId
+      const userId = verifyUser.agent.id;
+
+      // override user's info: userName/realName/mobile
+      const userNew = { id: userId };
+      if (userName) {
+        if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
+          userNew.userName = userName;
+        }
+      }
+      if (realName) {
+        userNew.realName = realName;
+      }
+      await this.ctx.bean.user.save({
+        user: userNew,
+      });
+      // save mobile
+      await this.ctx.bean.user.setActivated({
+        user: { id: userId, mobile, mobileVerified: 1 },
+      });
+
+      // login now
+      //   always no matter login/associate
+      await this.ctx.login(verifyUser);
+
+      // ok
+      return verifyUser;
+    }
+
+    // data: { mobile, rememberMe }
+    async signin({ data, state = 'login' }) {
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: `passport/a-authsms/authsms?state=${state}`,
+        body: { data },
+      });
+      return res;
+    }
+
+    async mobileVerify({ user, mobile }) {
+      await this.signup({ user, state: 'associate', userName: null, realName: null, mobile });
+    }
+
+  }
+
+  return Auth;
+};
+
+
+/***/ }),
+
+/***/ 68:
+/***/ ((module) => {
+
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Captcha extends app.Service {
+
+    async sendCode({ providerInstanceId, context }) {
+      // sms provider
+      const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.captcha.provider.captcha`);
+      const { provider, config } = bean.__createSMSProvider();
+      // sendCode
+      const data = await provider.sendCode({ providerInstanceId, context, config });
+      // update
+      await this.ctx.bean.captcha.update({
+        providerInstanceId, data, context,
+      });
+    }
+
+  }
+
+  return Captcha;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const captcha = __webpack_require__(68);
+const auth = __webpack_require__(300);
+
+module.exports = app => {
+  const services = {
+    captcha,
+    auth,
+  };
+  return services;
+};
+
+
+/***/ }),
+
+/***/ 718:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("require3");;
+
+/***/ }),
+
+/***/ 669:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("util");;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(421);
+/******/ })()
+;
+//# sourceMappingURL=backend.js.map
