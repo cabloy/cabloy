@@ -8,5 +8,11 @@ export default {
   layout: {},
   markdown: {},
   theme: {},
-  modules: {},
+  modules: {
+    'a-user': {
+      agent: {
+        disabled: true,
+      },
+    },
+  },
 };
