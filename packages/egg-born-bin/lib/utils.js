@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const urllib = require('urllib');
 const semverDiff = require('semver-diff');
 const chalk = require('chalk');
@@ -26,7 +27,9 @@ const utils = {
   versionPrompt(moduleName, moduleVersion) {
     try {
       if (!moduleVersion) return;
-      const _pkg = require('cabloy/package.json');
+      const cabloyPath = this.__getCabloyPath();
+      if (!cabloyPath) return;
+      const _pkg = require(path.join(cabloyPath, 'package.json'));
       const diffType = semverDiff(_pkg.version, moduleVersion);
       if (!diffType) return;
       setTimeout(() => {
@@ -40,6 +43,14 @@ const utils = {
   getModulePath(moduleName) {
     const moduleFile = require.resolve(`${moduleName}/package.json`);
     return path.dirname(moduleFile);
+  },
+  __getCabloyPath() {
+    const cwd = process.cwd();
+    let cabloyPath = path.join(cwd, 'node_modules/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    cabloyPath = path.join(cwd, 'packages/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    return null;
   },
 };
 module.exports = utils;
