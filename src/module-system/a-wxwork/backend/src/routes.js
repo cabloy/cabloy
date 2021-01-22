@@ -14,7 +14,7 @@ module.exports = app => {
     { method: 'post', path: 'jssdk/jsconfigAgent', controller: 'jssdk' },
 
     // authMini
-    { method: 'post', path: 'authMini/login', controller: 'authMini', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'authMini/login', controller: 'authMini' },
 
   ];
   return routes;
