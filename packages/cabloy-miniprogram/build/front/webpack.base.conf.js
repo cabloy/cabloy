@@ -8,7 +8,7 @@ function resolve(dir) {
 
 module.exports = {
   entry: {
-    socketio: resolve('src/main.js'),
+    miniprogram: resolve('src/index.js'),
   },
   output: {
     path: config.build.assetsRoot,
