@@ -1,8 +1,8 @@
-English | [简体中文](./README.zh-CN.md)
+简体中文 | [English](./README.en-US.md)
 
 # CabloyJS
 
-A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7
+一款自带工作流引擎的Node.js全栈框架, 基于koa + egg + vue + framework7
 
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
@@ -22,75 +22,75 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
-## Goals, History, Faith
+## 目标、历史、信念
 
-- [About CabloyJS](https://cabloy.com/articles/introduce.html)
+- [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
 
-## Features
+## 特性
 
-### - Part One: Basic
+### - 第一部分: 基础功能
 
-- Bean & AOP
-  1. Almost everything is Bean
-  2. Bean supports AOP
-  3. AOP is also Bean
-- Cluster Framework based on `Redis`
-  - [Broadcast](https://cabloy.com/articles/broadcast.html)
-  - [Queue](https://cabloy.com/articles/queue.html)
-  - [Schedule](https://cabloy.com/articles/schedule.html)
-  - [Startup](https://cabloy.com/articles/startup.html)
-- [Frontend and Backend Separation](https://cabloy.com/articles/3e5e9fcb2a37471889ad117ccee29c85.html)
+- [Bean & AOP](https://cabloy.com/zh-cn/articles/bean.html)
+  1. 几乎所有事物都是Bean
+  2. Bean支持AOP
+  3. AOP也是一种Bean
+- 基于`Redis`的分布式集群框架
+  - [Broadcast](https://cabloy.com/zh-cn/articles/broadcast.html)
+  - [Queue](https://cabloy.com/zh-cn/articles/queue.html)
+  - [Schedule](https://cabloy.com/zh-cn/articles/schedule.html)
+  - [Startup](https://cabloy.com/zh-cn/articles/startup.html)
+- [前后端分离](https://cabloy.com/zh-cn/articles/f66dc04c64ca43fa9e8ea30312ca714f.html)
 - I18N
-  - [Backend](https://cabloy.com/articles/70bbc388147540338aa626768a4836ed.html)
-  - [Front](https://cabloy.com/articles/bd3ae53c2b3543ada207c6af083bb522.html)
-- [Theme](https://cabloy.com/articles/theme.html)
-- [Multi-Tenant/Multi-Domain/Multi-Instance](https://cabloy.com/articles/49e49e0dadfe4ed39687e4a06f012397.html)
-- [Test-Driven Development](https://cabloy.com/articles/d22e7290f7d0452ebc2d051c3030e6e8.html)
+  - [后端](https://cabloy.com/zh-cn/articles/f6d5a48f10dc40d3b8aed7862c23570b.html)
+  - [前端](https://cabloy.com/zh-cn/articles/1c7c9cf3861744c2a63ae134076c652f.html)
+- [主题](https://cabloy.com/zh-cn/articles/theme.html)
+- [多租户/多域名/多实例](https://cabloy.com/zh-cn/articles/44e45b3928ca4c6cb63809558145e000.html)
+- [测试驱动开发](https://cabloy.com/zh-cn/articles/990962d4e3604fc099c27806de6d6be8.html)
 
-### - Part Two: Business
+### - 第二部分: 业务功能
 
-- NodeJS Workflow Engine
-- [Adaptive Layout: pc = mobile + pad](https://cabloy.com/articles/adaptive-layout.html)
-- Drag & Drop
-  - [Move](https://cabloy.com/articles/dragdrop-move.html)
-  - [Resize](https://cabloy.com/articles/dragdrop-resize.html)
-- [Dashboard](https://cabloy.com/articles/e6848b3c477b4807b78986e1e0342717.html)
-- [Layout PC](https://cabloy.com/articles/8635ddb9fba041778ef3621f257e1da4.html)
-- [Unified Data Management](https://cabloy.com/articles/atom-basic.html)
-- [Unified User Role Privilege Management](https://cabloy.com/articles/10c0b3a60d2a4e5f9c9b38d35bbf4101.html)
+- [NodeJS工作流引擎](https://cabloy.com/zh-cn/articles/flow-introduce.html)
+- [自适应布局: pc = mobile + pad](https://cabloy.com/zh-cn/articles/adaptive-layout.html)
+- 拖拽
+  - [移动](https://cabloy.com/zh-cn/articles/dragdrop-move.html)
+  - [调整尺寸](https://cabloy.com/zh-cn/articles/dragdrop-resize.html)
+- [仪表板](https://cabloy.com/zh-cn/articles/5c90f4fd15174772adb34dfbf6d1adfb.html)
+- [PC布局](https://cabloy.com/zh-cn/articles/28f14f839af5457b9243c9e9210d5324.html)
+- [统一数据管理](https://cabloy.com/zh-cn/articles/atom-basic.html)
+- [统一用户角色权限管理](https://cabloy.com/zh-cn/articles/535f42e8fb8c487fb33b88c9a9e56a7e.html)
 - Socket IO
-  - Stats Value Update and Push Automatically
-  - [Progress Bar](https://cabloy.com/articles/progress-bar.html)
-- [Built-in many core modules](https://cabloy.com/articles/ce7ea65e7c5240ca88daf6aa849baaed.html)
+  - 统计值自动更新、自动推送机制
+  - [进度条](https://cabloy.com/zh-cn/articles/10327f8fdae44d87b7604ba3fa9c1a89.html)
+- [内置大量核心模块](https://cabloy.com/zh-cn/articles/e678d328cb5b4efdaf5d60c8df1ca691.html)
 
-## Documentations
+## 文档
 
-- [Website && Documentations](https://cabloy.com)
+- [官网 && 文档](https://cabloy.com)
 
-## Demonstration
+## 在线演示
 
-|Website Type|Website Link|
+|网站类型|网站链接|
 |--|--|
-|Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile Layout)|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+|管理系统（PC布局）|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|管理系统（Mobile布局）|![](./docs/assets/images/cabloy-demo-qrcode.png)|
 |||
-|Blog|[https://zhennann.com](https://zhennann.com)|
-|Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
-|Technical Documentations(Chinese)|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
-|Community(English)|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
-|Community(Chinese)|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
-|Cabloy Store(English)|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
-|Cabloy Store(Chinese)|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
+|博客|[https://zhennann.com](https://zhennann.com)|
+|技术文档（英文）|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
+|技术文档（中文）|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
+|社区（英文）|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
+|社区（中文）|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|Cabloy商店（英文）|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
+|Cabloy商店（中文）|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
-## Resources
+## 资源
 
-### - Version - English
+### - 英文版
 
 - [CabloyJS Store](https://store.cabloy.com/index.html)
 - [CabloyJS Community](https://community.cabloy.com/index.html)
 - [CabloyJS Awesome](./docs/awesome.md)
 
-### - Version - Chinese
+### - 中文版
 
 - [CabloyJS 商店](https://store.cabloy.com/zh-cn/index.html)
 - [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
