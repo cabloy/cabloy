@@ -5,6 +5,7 @@ const VersionUpdate4Fn = require('./version/update4.js');
 const VersionUpdate6Fn = require('./version/update6.js');
 const VersionUpdate8Fn = require('./version/update8.js');
 const VersionUpdate9Fn = require('./version/update9.js');
+const VersionUpdate10Fn = require('./version/update10.js');
 const VersionInit2Fn = require('./version/init2.js');
 const VersionInit4Fn = require('./version/init4.js');
 const VersionInit5Fn = require('./version/init5.js');
@@ -17,6 +18,11 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
 
     async update(options) {
+
+      if (options.version === 10) {
+        const versionUpdate10 = new (VersionUpdate10Fn(this.ctx))();
+        await versionUpdate10.run();
+      }
 
       if (options.version === 9) {
         const versionUpdate9 = new (VersionUpdate9Fn(this.ctx))();
