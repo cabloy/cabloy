@@ -587,7 +587,7 @@ module.exports = app => {
       if (atomId) {
         return await this.ctx.model.file.get({ downloadId, atomId });
       }
-      // try to get archive
+      // try to get formal
       const file = await this.ctx.model.queryOne(`
           select a.* from aFile a
             inner join aAtom b on a.atomId=b.id
