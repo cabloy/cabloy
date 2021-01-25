@@ -30,7 +30,7 @@ export default {
           // delete draft
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
           // update archive
-          ctx.$meta.eventHub.$emit('atom:action', { key: data.archive.key, action: { name: 'save' } });
+          ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
           // back
           ctx.$f7router.back();
         } else {

@@ -136,7 +136,7 @@ describe('test/controller/test.test.js', () => {
         options: { ignoreFlow: true },
       });
       assert(result.body.code === 0);
-      const keyFormal = result.body.data.archive.key;
+      const keyFormal = result.body.data.formal.key;
 
       // special test
       if (article.special) {

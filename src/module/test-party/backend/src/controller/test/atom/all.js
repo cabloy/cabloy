@@ -59,7 +59,7 @@ module.exports = app => {
         options: { ignoreFlow: true },
         user: { id: userIds.Tom },
       });
-      const partyKeyArchive = res.archive.key;
+      const partyKeyArchive = res.formal.key;
 
       await this._testCheckList('archive', userIds, [
         [ 'Tom', 1 ],

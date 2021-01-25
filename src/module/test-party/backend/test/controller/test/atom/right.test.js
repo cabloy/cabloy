@@ -106,7 +106,7 @@ describe('test/controller/test/atom/right.test.js', () => {
       key: partyKeyDraft,
     });
     assert.equal(res.body.code, 0);
-    const partyKeyArchive = res.body.data.archive.key;
+    const partyKeyArchive = res.body.data.formal.key;
 
     // // check right actions
     // const checkRightActions = [

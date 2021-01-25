@@ -40,7 +40,7 @@ module.exports = app => {
         options: { ignoreFlow: true },
         user,
       });
-      const partyKeyArchive = res.archive.key;
+      const partyKeyArchive = res.formal.key;
 
       // get party
       let party = await this.ctx.bean.atom.read({ key: partyKeyArchive, user });

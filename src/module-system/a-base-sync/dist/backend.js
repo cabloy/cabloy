@@ -5835,7 +5835,7 @@ module.exports =
                 options: { ignoreFlow: true },
                 user: { id: 0 },
               });
-              return res.archive.key.atomId;
+              return res.formal.key.atomId;
             }
 
           }

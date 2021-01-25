@@ -32,7 +32,7 @@ describe('[your tests start from here]', () => {
       },
     });
     assert(result.body.code === 0);
-    const keyFormal = result.body.data.archive.key;
+    const keyFormal = result.body.data.formal.key;
 
     // read
     result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
