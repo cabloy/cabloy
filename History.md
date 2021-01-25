@@ -1,5 +1,27 @@
 # History
 
+## 2020-01-25, Version 4.3.0
+
+* **重构**
+  * 术语变更：将`归档`改为`正式`，即`Archive`->`Formal`
+
+## 2020-01-19, Version 4.2.0
+
+* **重构**
+  * 我的页面：将`任务`和`流程`按钮进行合并显示，使布局更紧凑
+  * 我的页面：将`外观`按钮移入二级页面
+  * 项目的`name`和`title`直接在根目录的`package.json`中设置
+
+* **特性**
+  * 统计值：支持在`eb-link`中使用
+  * 字段索引：补全新数据表的字段索引
+  * 历史Atom：显示`修订`badget
+  * 测试与开发环境，database默认设置为`mysql`，从而兼容`mysql`和`mariadb`
+  * 静态原子：当`atomRevision`设置为`-1`时，自动删除数据库中的数据
+
+* **修复**
+  * 当服务中断重启时，前端socketio可以自动重连
+
 ## 2020-01-09, Version 4.1.0
 
   * Some fixes and enhances
