@@ -134,8 +134,8 @@ module.exports = app => {
           authorize: false,
           icon: { material: 'change_history' },
         },
-        archive: {
-          title: 'Archive',
+        formal: {
+          title: 'Formal',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,

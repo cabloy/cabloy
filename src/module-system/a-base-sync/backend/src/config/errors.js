@@ -9,7 +9,7 @@ module.exports = {
   1007: 'Incomplete Information',
   1008: 'Should Delete Children first',
   1009: 'The Auth should be Enabled',
-  1010: 'Only Valid for Archive Atom',
+  1010: 'Only Valid for Formal Atom',
   1011: 'Invalid Arguments',
   1012: 'Cannot delete if has atoms',
   1013: 'Cannot delete if has children',

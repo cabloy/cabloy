@@ -18,6 +18,8 @@ export default {
   Tools: '工具',
   Draft: '草稿',
   Drafts: '草稿',
+  Formal: '正式',
+  Formals: '正式',
   Archive: '归档',
   Archives: '归档',
   History: '历史',
