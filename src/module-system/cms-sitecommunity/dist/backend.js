@@ -241,6 +241,9 @@ module.exports = appInfo => {
     profile: {
 
     },
+    beian: {
+      icp: '',
+    },
   };
 
   return config;
