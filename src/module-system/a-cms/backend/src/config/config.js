@@ -76,6 +76,9 @@ module.exports = appInfo => {
       url: 'index.html',
       extra: '',
     },
+    beian: {
+      icp: '',
+    },
   };
 
   //

@@ -1,7 +1,13 @@
   </div> <!-- container -->
   <footer>
     <div class="container">
-      <div class="small">Powered by <a target="_blank" href="https://cms.cabloy.com">Cabloy-CMS</a> | Theme - <a target="_blank" href="<%=site._theme.url%>"><%=site._theme.name%></a></div>
+      <div class="small">
+        Powered by <a target="_blank" href="https://cms.cabloy.com">Cabloy-CMS</a>
+        | Theme - <a target="_blank" href="<%=site._theme.url%>"><%=site._theme.name%></a>
+        <% if(site.beian && site.beian.icp){ %>
+        | <a href="https://beian.miit.gov.cn/"><%=site.beian.icp%></a>
+        <% } %>
+      </div>
     </div>
   </footer>
   <div class="bsnav-mobile">
