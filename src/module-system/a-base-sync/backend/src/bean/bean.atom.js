@@ -228,7 +228,7 @@ module.exports = ctx => {
       // atom
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 0) {
-        if (_atom.atomIdArchive) {
+        if (_atom.atomIdFormal) {
           // just close
           await this.modelAtom.update({
             id: key.atomId,
@@ -250,7 +250,7 @@ module.exports = ctx => {
         const listHistory = await this.modelAtom.select({
           where: {
             atomStage: 2,
-            atomIdArchive: _atom.id,
+            atomIdFormal: _atom.id,
           },
         });
         for (const item of listHistory) {
@@ -264,7 +264,7 @@ module.exports = ctx => {
         // delete draft
         const itemDraft = await this.modelAtom.get({
           atomStage: 0,
-          atomIdArchive: _atom.id,
+          atomIdFormal: _atom.id,
         });
         if (itemDraft) {
           await ctx.executeBean({
@@ -312,20 +312,20 @@ module.exports = ctx => {
 
     async _submitDirect({ /* key,*/ item, options, user }) {
       // archive -> history
-      if (item.atomIdArchive) {
+      if (item.atomIdFormal) {
         await this._copy({
           target: 'history',
-          srcKey: { atomId: item.atomIdArchive }, srcItem: null,
+          srcKey: { atomId: item.atomIdFormal }, srcItem: null,
           destKey: null,
           options,
           user,
         });
       }
       // draft -> archive
-      const keyArchive = await this._copy({
+      const keyFormal = await this._copy({
         target: 'archive',
         srcKey: { atomId: item.atomId }, srcItem: item,
-        destKey: item.atomIdArchive ? { atomId: item.atomIdArchive } : null,
+        destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
         options,
         user,
       });
@@ -333,12 +333,12 @@ module.exports = ctx => {
       await this.modelAtom.update({
         id: item.atomId,
         atomClosed: 1,
-        atomIdArchive: keyArchive.atomId,
+        atomIdFormal: keyFormal.atomId,
       });
       // notify
       this._notifyDrafts();
-      // return keyArchive
-      return { archive: { key: keyArchive } };
+      // return keyFormal
+      return { archive: { key: keyFormal } };
     }
 
     async closeDraft({ key }) {
@@ -417,8 +417,8 @@ module.exports = ctx => {
       if (_atom.atomIdDraft) {
         const _atom2 = await this.modelAtom.get({ id: _atom.atomIdDraft });
         atomRevision = _atom2.atomRevision + 1;
-      } else if (_atom.atomIdArchive) {
-        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdArchive });
+      } else if (_atom.atomIdFormal) {
+        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdFormal });
         atomRevision = _atom2.atomRevision + 1;
       } else {
         atomRevision = _atom.atomRevision + 1;
@@ -509,9 +509,9 @@ module.exports = ctx => {
       const atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
       // atomClosed
       const atomClosed = 0;
-      // atomIdDraft/atomIdArchive
+      // atomIdDraft/atomIdFormal
       let atomIdDraft;
-      let atomIdArchive;
+      let atomIdFormal;
       let userIdUpdated = srcItem.userIdUpdated;
       let userIdCreated = srcItem.userIdCreated || userIdUpdated;
       let atomFlowId = srcItem.atomFlowId;
@@ -524,19 +524,19 @@ module.exports = ctx => {
       const atomTags = srcItem.atomTags;
       if (target === 'draft') {
         atomIdDraft = 0;
-        atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
+        atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
         userIdUpdated = user.id;
         atomFlowId = 0;
         atomRevision = undefined;
       } else if (target === 'archive') {
         atomIdDraft = srcItem.atomId;
-        atomIdArchive = 0;
+        atomIdFormal = 0;
       } else if (target === 'history') {
         atomIdDraft = srcItem.atomIdDraft;
-        atomIdArchive = srcItem.atomId;
+        atomIdFormal = srcItem.atomId;
       } else if (target === 'clone') {
         atomIdDraft = 0;
-        atomIdArchive = 0;
+        atomIdFormal = 0;
         userIdUpdated = user.id;
         userIdCreated = user.id;
         atomFlowId = 0;
@@ -566,7 +566,7 @@ module.exports = ctx => {
         attachmentCount: srcItem.attachmentCount,
         atomClosed,
         atomIdDraft,
-        atomIdArchive,
+        atomIdFormal,
         createdAt: srcItem.atomCreatedAt,
         updatedAt: srcItem.atomUpdatedAt,
       });
@@ -589,7 +589,7 @@ module.exports = ctx => {
         attachmentCount: destItem.attachmentCount,
         atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
-        atomIdArchive: destItem.atomIdArchive,
+        atomIdFormal: destItem.atomIdFormal,
         createdAt: destItem.createdAt,
         updatedAt: destItem.updatedAt,
       });

@@ -46,11 +46,11 @@ describe('flow.set01_startEventAtom', () => {
     });
     assert(result.body.code === 0);
     const archive = result.body.data.list[0];
-    const keyArchive = { atomId: archive.atomId };
+    const keyFormal = { atomId: archive.atomId };
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: keyArchive,
+      key: keyFormal,
     });
     assert(result.body.code === 0);
   });

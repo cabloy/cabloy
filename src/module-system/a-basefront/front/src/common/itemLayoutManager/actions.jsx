@@ -46,7 +46,7 @@ export default {
         });
       }
       //    archive
-      if (this.base.item.atomIdArchive) {
+      if (this.base.item.atomIdFormal) {
         actions.push({
           module: this.base.atomClass.module,
           atomClassName: this.base.atomClass.atomClassName,
@@ -54,7 +54,7 @@ export default {
         });
       }
       //    history
-      if (this.base.item.atomIdArchive || this.base.item.atomStage === 1) {
+      if (this.base.item.atomIdFormal || this.base.item.atomStage === 1) {
         actions.push({
           module: this.base.atomClass.module,
           atomClassName: this.base.atomClass.atomClassName,

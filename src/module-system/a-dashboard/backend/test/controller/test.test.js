@@ -32,17 +32,17 @@ describe('[your tests start from here]', () => {
       },
     });
     assert(result.body.code === 0);
-    const keyArchive = result.body.data.archive.key;
+    const keyFormal = result.body.data.archive.key;
 
     // read
     result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
-      key: keyArchive,
+      key: keyFormal,
     });
     assert(result.body.code === 0);
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: keyArchive,
+      key: keyFormal,
     });
     assert(result.body.code === 0);
 

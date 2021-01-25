@@ -93,12 +93,12 @@ export default {
           throw err;
         }
       } else if (action.name === 'history') {
-        const atomIdArchive = item.atomStage === 1 ? item.atomId : item.atomIdArchive;
-        if (!atomIdArchive) return;
+        const atomIdFormal = item.atomStage === 1 ? item.atomId : item.atomIdFormal;
+        if (!atomIdFormal) return;
         // options
         const options = {
           where: {
-            'a.atomIdArchive': atomIdArchive,
+            'a.atomIdFormal': atomIdFormal,
           },
           stage: 'history',
         };
@@ -118,7 +118,7 @@ export default {
           // target: '_self'
         });
       } else if (action.name === 'archive') {
-        await this._onActionRead({ ctx, item, atomId: item.atomIdArchive });
+        await this._onActionRead({ ctx, item, atomId: item.atomIdFormal });
       } else if (action.name === 'draft') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
       } else if (action.name === 'selectLocale') {

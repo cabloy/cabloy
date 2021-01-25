@@ -125,13 +125,13 @@ describe('test/controller/test.test.js', () => {
         options: { ignoreFlow: true },
       });
       assert(result.body.code === 0);
-      const keyArchive = result.body.data.archive.key;
+      const keyFormal = result.body.data.archive.key;
 
       // special test
       if (article.special) {
         // delete
         result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-          key: keyArchive,
+          key: keyFormal,
         });
         assert(result.body.code === 0);
       }

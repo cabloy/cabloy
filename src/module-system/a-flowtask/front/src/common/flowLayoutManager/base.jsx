@@ -66,7 +66,7 @@ export default {
           // delete draft
           this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomId }, action: { name: 'delete' } });
           // update archive
-          this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomIdArchive }, action: { name: 'save' } });
+          this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomIdFormal }, action: { name: 'save' } });
         }
         // ok
         return true;

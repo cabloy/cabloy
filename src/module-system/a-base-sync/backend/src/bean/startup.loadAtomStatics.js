@@ -43,7 +43,7 @@ module.exports = app => {
           // check revision: not use !==
           if (atomRevision > atom.atomRevision) {
             item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-            await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+            await this._updateRevision({ atomClass, atomIdFormal: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
           }
         }
       } else {
@@ -111,7 +111,7 @@ module.exports = app => {
       return item;
     }
 
-    async _updateRevision({ atomClass, atomIdArchive, atomIdDraft, item }) {
+    async _updateRevision({ atomClass, atomIdFormal, atomIdDraft, item }) {
       return await this.ctx.app.meta.util.lock({
         subdomain: this.ctx.subdomain,
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
@@ -120,7 +120,7 @@ module.exports = app => {
             subdomain: this.ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
-            context: { atomClass, atomIdArchive, atomIdDraft, item },
+            context: { atomClass, atomIdFormal, atomIdDraft, item },
             fn: '_updateRevisionLock',
           });
         },
