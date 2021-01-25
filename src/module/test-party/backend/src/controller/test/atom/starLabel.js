@@ -40,19 +40,19 @@ module.exports = app => {
         options: { ignoreFlow: true },
         user,
       });
-      const partyKeyArchive = res.formal.key;
+      const partyKeyFormal = res.formal.key;
 
       // get party
-      let party = await this.ctx.bean.atom.read({ key: partyKeyArchive, user });
+      let party = await this.ctx.bean.atom.read({ key: partyKeyFormal, user });
       assert.equal(party.star, null);
       assert.equal(party.labels, null);
 
       // set star/label
-      await this.ctx.bean.atom.star({ key: partyKeyArchive, atom: { star: 1 }, user });
-      await this.ctx.bean.atom.labels({ key: partyKeyArchive, atom: { labels: [ 1 ] }, user });
+      await this.ctx.bean.atom.star({ key: partyKeyFormal, atom: { star: 1 }, user });
+      await this.ctx.bean.atom.labels({ key: partyKeyFormal, atom: { labels: [ 1 ] }, user });
 
       // get party
-      party = await this.ctx.bean.atom.read({ key: partyKeyArchive, user });
+      party = await this.ctx.bean.atom.read({ key: partyKeyFormal, user });
       assert.equal(party.star, 1);
       assert.equal(party.labels, '[1]');
 
@@ -88,16 +88,16 @@ module.exports = app => {
       assert.equal(parties.length, 0);
 
       // clear star/label
-      await this.ctx.bean.atom.star({ key: partyKeyArchive, atom: { star: 0 }, user });
-      await this.ctx.bean.atom.labels({ key: partyKeyArchive, atom: { labels: null }, user });
+      await this.ctx.bean.atom.star({ key: partyKeyFormal, atom: { star: 0 }, user });
+      await this.ctx.bean.atom.labels({ key: partyKeyFormal, atom: { labels: null }, user });
 
       // get party
-      party = await this.ctx.bean.atom.read({ key: partyKeyArchive, user });
+      party = await this.ctx.bean.atom.read({ key: partyKeyFormal, user });
       assert.equal(party.star, null);
       assert.equal(party.labels, null);
 
       // delete party
-      await this.ctx.bean.atom.delete({ key: partyKeyArchive, user });
+      await this.ctx.bean.atom.delete({ key: partyKeyFormal, user });
 
       // done
       this.ctx.success();

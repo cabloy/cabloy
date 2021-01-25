@@ -106,7 +106,7 @@ describe('test/controller/test/atom/right.test.js', () => {
       key: partyKeyDraft,
     });
     assert.equal(res.body.code, 0);
-    const partyKeyArchive = res.body.data.formal.key;
+    const partyKeyFormal = res.body.data.formal.key;
 
     // // check right actions
     // const checkRightActions = [
@@ -123,10 +123,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     //   });
     //   // checkRightAction
     //   const result = await app.httpRequest().post(mockUrl('test/atom/checkRightAction')).send({
-    //     key: partyKeyArchive,
+    //     key: partyKeyFormal,
     //   });
     //   if (right) {
-    //     assert.equal(result.body.data.id, partyKeyArchive.atomId);
+    //     assert.equal(result.body.data.id, partyKeyFormal.atomId);
     //   } else {
     //     assert.equal(result.status, 403);
     //   }
@@ -165,7 +165,7 @@ describe('test/controller/test/atom/right.test.js', () => {
       },
     });
     res = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: partyKeyArchive,
+      key: partyKeyFormal,
     });
     assert.equal(res.body.code, 0);
   });

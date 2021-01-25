@@ -59,7 +59,7 @@ module.exports = app => {
         options: { ignoreFlow: true },
         user: { id: userIds.Tom },
       });
-      const partyKeyArchive = res.formal.key;
+      const partyKeyFormal = res.formal.key;
 
       await this._testCheckList('formal', userIds, [
         [ 'Tom', 1 ],
@@ -96,7 +96,7 @@ module.exports = app => {
       assert.equal(parties.length, 1);
 
       // checkRightRead
-      const checkRightReads = [[ 'Tom', partyKeyArchive.atomId, true ]];
+      const checkRightReads = [[ 'Tom', partyKeyFormal.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
@@ -106,7 +106,7 @@ module.exports = app => {
       }
 
       // checkRightWrite
-      const checkRightWrites = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
+      const checkRightWrites = [[ 'Tom', partyKeyFormal.atomId, true ], [ 'Tomson', partyKeyFormal.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
@@ -117,7 +117,7 @@ module.exports = app => {
       }
 
       // checkRightDelete
-      const checkRightDeletes = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
+      const checkRightDeletes = [[ 'Tom', partyKeyFormal.atomId, true ], [ 'Tomson', partyKeyFormal.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
@@ -175,7 +175,7 @@ module.exports = app => {
 
       // Tom delete party
       await this.ctx.bean.atom.delete({
-        key: partyKeyArchive,
+        key: partyKeyFormal,
         user: { id: userIds.Tom },
       });
 
