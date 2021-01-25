@@ -235,7 +235,7 @@ export default {
         } else if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
           groupId = null;
           groupForceNew = true;
-        } else if (!$viewEl || $viewEl.parents('.eb-layout-scene').length > 0) {
+        } else if (!$viewEl || $viewEl.parents('.eb-layout-scene').length > 0 || ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0) {
           groupId = null;
           groupForceNew = false;
         } else {
