@@ -5,7 +5,7 @@ module.exports = app => {
     atom: {
       stage: {
         draft: 0,
-        archive: 1,
+        formal: 1,
         history: 2,
       },
       action: {
@@ -25,7 +25,7 @@ module.exports = app => {
         save: 51,
         submit: 52,
         history: 53,
-        archive: 54,
+        formal: 54,
         draft: 55,
         custom: 100, // custom action start from custom
       },

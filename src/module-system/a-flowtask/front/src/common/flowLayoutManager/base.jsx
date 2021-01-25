@@ -65,7 +65,7 @@ export default {
         if (atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
           // delete draft
           this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomId }, action: { name: 'delete' } });
-          // update archive
+          // update formal
           this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomIdFormal }, action: { name: 'save' } });
         }
         // ok

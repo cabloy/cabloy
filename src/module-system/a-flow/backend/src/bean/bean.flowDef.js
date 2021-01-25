@@ -32,7 +32,7 @@ module.exports = ctx => {
     }
 
     async getByKeyAndRevision({ flowDefKey, flowDefRevision }) {
-      // get from archive
+      // get from formal
       let flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'formal' });
       if (flowDef) return flowDef;
       // get from history

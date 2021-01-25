@@ -45,7 +45,7 @@ export default {
           name: 'draft',
         });
       }
-      //    archive
+      //    formal
       if (this.base.item.atomIdFormal) {
         actions.push({
           module: this.base.atomClass.module,

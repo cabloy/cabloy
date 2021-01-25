@@ -20,7 +20,7 @@ module.exports = ctx => {
         return this._selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag });
       }
       if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale });
-      // archive/history
+      // formal/history
       return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale });
     }
 
@@ -700,7 +700,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    // check for archive/history
+    // check for formal/history
     checkRightRead({ iid, userIdWho, atomId }) {
       // for safe
       iid = parseInt(iid);

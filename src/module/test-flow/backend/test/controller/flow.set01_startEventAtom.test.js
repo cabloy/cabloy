@@ -45,8 +45,8 @@ describe('flow.set01_startEventAtom', () => {
       },
     });
     assert(result.body.code === 0);
-    const archive = result.body.data.list[0];
-    const keyFormal = { atomId: archive.atomId };
+    const formal = result.body.data.list[0];
+    const keyFormal = { atomId: formal.atomId };
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({

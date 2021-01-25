@@ -26,10 +26,10 @@ export default {
         await ctx.$view.dialog.confirm();
         const key = { atomId: item.atomId, itemId: item.itemId };
         const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
-        if (data.archive) {
+        if (data.formal) {
           // delete draft
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
-          // update archive
+          // update formal
           ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
           // back
           ctx.$f7router.back();

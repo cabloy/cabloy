@@ -274,7 +274,7 @@ module.exports = ctx => {
             fn: 'delete',
           });
         }
-        // delete archive
+        // delete formal
         await ctx.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
@@ -311,7 +311,7 @@ module.exports = ctx => {
     }
 
     async _submitDirect({ /* key,*/ item, options, user }) {
-      // archive -> history
+      // formal -> history
       if (item.atomIdFormal) {
         await this._copy({
           target: 'history',
@@ -321,7 +321,7 @@ module.exports = ctx => {
           user,
         });
       }
-      // draft -> archive
+      // draft -> formal
       const keyFormal = await this._copy({
         target: 'formal',
         srcKey: { atomId: item.atomId }, srcItem: item,
@@ -338,7 +338,7 @@ module.exports = ctx => {
       // notify
       this._notifyDrafts();
       // return keyFormal
-      return { archive: { key: keyFormal } };
+      return { formal: { key: keyFormal } };
     }
 
     async closeDraft({ key }) {
@@ -365,7 +365,7 @@ module.exports = ctx => {
         }
         return { draft: { key } };
       }
-      // archive
+      // formal
       if (_atom.atomStage === 1) {
         if (_atom.atomIdDraft > 0) {
           // open
@@ -376,7 +376,7 @@ module.exports = ctx => {
           });
           return { draft: { key: { atomId: _atom.atomIdDraft } } };
         }
-        // ** create draft from archive
+        // ** create draft from formal
         const keyDraft = await this._copy({
           target: 'draft',
           srcKey: { atomId: key.atomId }, srcItem: null,
@@ -483,7 +483,7 @@ module.exports = ctx => {
       return { draft: { key: keyDraft } };
     }
 
-    // target: draft/archive/history/clone
+    // target: draft/formal/history/clone
     async _copy({ target, srcKey, srcItem, destKey, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
@@ -876,7 +876,7 @@ module.exports = ctx => {
 
     async checkRoleRightRead({ atom: { id }, roleId }) {
       // not check draft
-      // archive/history
+      // formal/history
       const sql = this.sqlProcedure.checkRoleRightRead({
         iid: ctx.instance.id,
         roleIdWho: roleId,
@@ -905,7 +905,7 @@ module.exports = ctx => {
         // others
         return null;
       }
-      // archive/history
+      // formal/history
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,
@@ -979,7 +979,7 @@ module.exports = ctx => {
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
-      // check archive/history
+      // check formal/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,

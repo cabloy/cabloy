@@ -45,9 +45,9 @@ describe('flow.set01_atomUserTask', () => {
       },
     });
     assert(result.body.code === 0);
-    let archive = result.body.data.list[0];
+    let formal = result.body.data.list[0];
     // not found
-    assert(!archive);
+    assert(!formal);
 
     // select task from history
     result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
@@ -98,7 +98,7 @@ describe('flow.set01_atomUserTask', () => {
     });
     assert(result.body.code === 0);
 
-    // select archive
+    // select formal
     result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
       atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
       options: {
@@ -109,8 +109,8 @@ describe('flow.set01_atomUserTask', () => {
       },
     });
     assert(result.body.code === 0);
-    archive = result.body.data.list[0];
-    const keyFormal = { atomId: archive.atomId };
+    formal = result.body.data.list[0];
+    const keyFormal = { atomId: formal.atomId };
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({

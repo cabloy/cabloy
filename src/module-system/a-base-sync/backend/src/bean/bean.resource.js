@@ -163,7 +163,7 @@ module.exports = ctx => {
       if (!atomId) {
         const atom = await ctx.bean.atom.modelAtom.get({
           atomStaticKey,
-          atomStage: 1, // archive
+          atomStage: 1, // formal
         });
         if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
         atomId = atom.id;
