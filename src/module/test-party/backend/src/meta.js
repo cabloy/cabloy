@@ -39,7 +39,7 @@ module.exports = app => {
                 actionComponent: 'action',
                 icon: { material: 'check_circle_outline' },
                 enableOnOpened: true,
-                stage: 'archive',
+                stage: 'formal',
               },
               partyOverBulk: {
                 code: 201,

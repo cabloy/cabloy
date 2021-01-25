@@ -82,7 +82,7 @@ export default {
     base_getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
       if (!stage) stage = this.container.options && this.container.options.stage;
-      if (!stage) stage = 'archive';
+      if (!stage) stage = 'formal';
       return stage;
     },
     base_getExportFields() {

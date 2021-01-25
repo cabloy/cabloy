@@ -62,7 +62,7 @@ module.exports = app => {
         options: {
           star: 1,
           where: { atomName: 'test:starLabel' },
-          stage: 'archive',
+          stage: 'formal',
         },
       });
       assert.equal(parties.length, 1);
@@ -72,7 +72,7 @@ module.exports = app => {
         options: {
           label: 1,
           where: { atomName: 'test:starLabel' },
-          stage: 'archive',
+          stage: 'formal',
         },
       });
       assert.equal(parties.length, 1);
@@ -82,7 +82,7 @@ module.exports = app => {
         options: {
           label: 2,
           where: { atomName: 'test:starLabel' },
-          stage: 'archive',
+          stage: 'formal',
         },
       });
       assert.equal(parties.length, 0);

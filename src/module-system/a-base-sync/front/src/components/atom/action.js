@@ -117,7 +117,7 @@ export default {
         ctx.$view.navigate(url, {
           // target: '_self'
         });
-      } else if (action.name === 'archive') {
+      } else if (action.name === 'formal') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdFormal });
       } else if (action.name === 'draft') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });

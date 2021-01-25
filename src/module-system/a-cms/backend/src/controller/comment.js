@@ -10,7 +10,7 @@ module.exports = app => {
       // options
       const options = this.ctx.request.body.options;
       // stage
-      options.stage = 'archive';
+      options.stage = 'formal';
       // select
       const res = await this.ctx.performAction({
         method: 'post',

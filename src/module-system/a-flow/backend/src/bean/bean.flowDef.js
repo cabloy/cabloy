@@ -23,7 +23,7 @@ module.exports = ctx => {
     }
 
     async getByKey({ flowDefKey }) {
-      return await this._getByKey({ flowDefKey, atomStage: 'archive' });
+      return await this._getByKey({ flowDefKey, atomStage: 'formal' });
     }
 
     async getById({ flowDefId }) {
@@ -33,7 +33,7 @@ module.exports = ctx => {
 
     async getByKeyAndRevision({ flowDefKey, flowDefRevision }) {
       // get from archive
-      let flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'archive' });
+      let flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'formal' });
       if (flowDef) return flowDef;
       // get from history
       flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'history' });

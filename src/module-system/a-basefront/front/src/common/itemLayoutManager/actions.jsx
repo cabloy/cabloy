@@ -50,7 +50,7 @@ export default {
         actions.push({
           module: this.base.atomClass.module,
           atomClassName: this.base.atomClass.atomClassName,
-          name: 'archive',
+          name: 'formal',
         });
       }
       //    history

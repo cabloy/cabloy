@@ -41,7 +41,7 @@ describe('flow.set01_atomUserTask', () => {
         where: {
           atomFlowId: flowId,
         },
-        stage: 'archive',
+        stage: 'formal',
       },
     });
     assert(result.body.code === 0);
@@ -105,7 +105,7 @@ describe('flow.set01_atomUserTask', () => {
         where: {
           atomFlowId: flowId,
         },
-        stage: 'archive',
+        stage: 'formal',
       },
     });
     assert(result.body.code === 0);

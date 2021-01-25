@@ -41,7 +41,7 @@ describe('flow.set01_startEventAtom', () => {
         where: {
           atomFlowId: flowId,
         },
-        stage: 'archive',
+        stage: 'formal',
       },
     });
     assert(result.body.code === 0);

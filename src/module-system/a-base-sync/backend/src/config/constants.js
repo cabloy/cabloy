@@ -76,7 +76,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
-          stage: 'archive',
+          stage: 'formal',
           icon: { material: 'play_arrow' },
         },
         disable: {
@@ -85,7 +85,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
-          stage: 'archive',
+          stage: 'formal',
           icon: { material: 'stop' },
         },
         authorize: {
@@ -94,7 +94,7 @@ module.exports = app => {
           actionPath: '/a/basefront/resource/authorize?atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
-          stage: 'archive',
+          stage: 'formal',
           icon: { material: 'groups' },
         },
         deleteBulk: {

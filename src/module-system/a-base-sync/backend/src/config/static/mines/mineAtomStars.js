@@ -2,7 +2,7 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // actionPath
   const options = {
-    stage: 'archive',
+    stage: 'formal',
     star: 1,
   };
   const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;

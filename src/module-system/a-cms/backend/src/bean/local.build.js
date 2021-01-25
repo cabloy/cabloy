@@ -323,7 +323,7 @@ module.exports = app => {
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
           mode: 'search',
-          stage: 'archive',
+          stage: 'formal',
         },
         user: { id: user.id },
         pageForce: false,

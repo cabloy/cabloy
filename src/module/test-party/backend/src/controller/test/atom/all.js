@@ -20,7 +20,7 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
 
       // user->atom
-      await this._testCheckList('archive', userIds, [
+      await this._testCheckList('formal', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -61,7 +61,7 @@ module.exports = app => {
       });
       const partyKeyArchive = res.formal.key;
 
-      await this._testCheckList('archive', userIds, [
+      await this._testCheckList('formal', userIds, [
         [ 'Tom', 1 ],
         [ 'Jane', 1 ],
         [ 'Jimmy', 1 ],
@@ -89,7 +89,7 @@ module.exports = app => {
           where: { atomName: { val: 'test:all', op: 'likeRight' } },
           orders: [[ 'a.createdAt', 'desc' ]],
           page: { index: 0, size: 0 },
-          stage: 'archive',
+          stage: 'formal',
         },
         user: { id: userIds.Tom },
       });
@@ -179,7 +179,7 @@ module.exports = app => {
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList('archive', userIds, [
+      await this._testCheckList('formal', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],

@@ -420,7 +420,7 @@ module.exports =
               }
               // draft -> archive
               const keyFormal = await this._copy({
-                target: 'archive',
+                target: 'formal',
                 srcKey: { atomId: item.atomId }, srcItem: item,
                 destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
                 options,
@@ -625,7 +625,7 @@ module.exports =
                 userIdUpdated = user.id;
                 atomFlowId = 0;
                 atomRevision = undefined;
-              } else if (target === 'archive') {
+              } else if (target === 'formal') {
                 atomIdDraft = srcItem.atomId;
                 atomIdFormal = 0;
               } else if (target === 'history') {
@@ -952,7 +952,7 @@ module.exports =
               return await ctx.model.queryOne(sql);
             }
 
-            async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'archive', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+            async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
               page = ctx.bean.util.page(page, pageForce);
               stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
               const sql = this.sqlProcedure.selectAtoms({
@@ -1033,7 +1033,7 @@ module.exports =
             async _checkRightAction({ atom, action, stage, user, checkFlow }) {
               const _atom = atom;
               if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-              if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
+              if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)) return null;
               // action.stage
               const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
               const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action });
@@ -2217,7 +2217,7 @@ module.exports =
 
             // select
             //   donot set atomDisabled
-            async select({ atomClass, options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
+            async select({ atomClass, options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'formal', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
               // atomClass
               atomClass = atomClass || __atomClass;
               // locale
@@ -5675,7 +5675,7 @@ module.exports =
               const atom = await this.ctx.bean.atom.readByStaticKey({
                 atomClass,
                 atomStaticKey,
-                atomStage: 'archive',
+                atomStage: 'formal',
               });
               if (atom) {
                 if (atomRevision === -1) {
@@ -5815,7 +5815,7 @@ module.exports =
               const atom = await this.ctx.bean.atom.readByStaticKey({
                 atomClass,
                 atomStaticKey: item.atomStaticKey,
-                atomStage: 'archive',
+                atomStage: 'formal',
               });
               if (atom) return atom.atomId;
               // add atom
@@ -7989,7 +7989,7 @@ module.exports = appInfo => {
                   actionComponent: 'action',
                   enableOnStatic: true,
                   enableOnOpened: true,
-                  stage: 'archive',
+                  stage: 'formal',
                   icon: { material: 'play_arrow' },
                 },
                 disable: {
@@ -7998,7 +7998,7 @@ module.exports = appInfo => {
                   actionComponent: 'action',
                   enableOnStatic: true,
                   enableOnOpened: true,
-                  stage: 'archive',
+                  stage: 'formal',
                   icon: { material: 'stop' },
                 },
                 authorize: {
@@ -8007,7 +8007,7 @@ module.exports = appInfo => {
                   actionPath: '/a/basefront/resource/authorize?atomId={{atomId}}&itemId={{itemId}}',
                   enableOnStatic: true,
                   enableOnOpened: true,
-                  stage: 'archive',
+                  stage: 'formal',
                   icon: { material: 'groups' },
                 },
                 deleteBulk: {
@@ -8354,7 +8354,7 @@ module.exports = appInfo => {
         module.exports = app => {
           // actionPath
           const options = {
-            stage: 'archive',
+            stage: 'formal',
             mine: 1,
           };
           const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;
@@ -8421,7 +8421,7 @@ module.exports = appInfo => {
           const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
           // actionPath
           const options = {
-            stage: 'archive',
+            stage: 'formal',
             star: 1,
           };
           const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;

@@ -20,7 +20,7 @@ export default {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.data.form') || {
       atomName: null,
       mine: (this.layoutManager.container.options && this.layoutManager.container.options.mine) || 0,
-      stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'archive',
+      stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'formal',
       language: (this.layoutManager.container.options && this.layoutManager.container.options.language) || '',
       category: (this.layoutManager.container.options && this.layoutManager.container.options.category) || 0,
       tag: (this.layoutManager.container.options && this.layoutManager.container.options.tag) || 0,
@@ -70,7 +70,7 @@ export default {
     },
     stages() {
       const stages = [];
-      for (const key of [ 'draft', 'archive', 'history' ]) {
+      for (const key of [ 'draft', 'formal', 'history' ]) {
         stages.push({ title: key.replace(key[0], key[0].toUpperCase()), value: key });
       }
       return stages;

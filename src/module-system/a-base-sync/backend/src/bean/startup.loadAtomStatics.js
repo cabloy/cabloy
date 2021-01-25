@@ -33,7 +33,7 @@ module.exports = app => {
       const atom = await this.ctx.bean.atom.readByStaticKey({
         atomClass,
         atomStaticKey,
-        atomStage: 'archive',
+        atomStage: 'formal',
       });
       if (atom) {
         if (atomRevision === -1) {
@@ -173,7 +173,7 @@ module.exports = app => {
       const atom = await this.ctx.bean.atom.readByStaticKey({
         atomClass,
         atomStaticKey: item.atomStaticKey,
-        atomStage: 'archive',
+        atomStage: 'formal',
       });
       if (atom) return atom.atomId;
       // add atom

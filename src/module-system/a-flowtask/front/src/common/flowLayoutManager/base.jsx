@@ -78,7 +78,7 @@ export default {
     base_getCurrentStage() {
       if (!this.base.item) return null;
       const stage = this.base.item.atomStage;
-      return stage === 0 ? 'draft' : stage === 1 ? 'archive' : 'history';
+      return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
     base_onCommentChanged(data) {
       const atom = this.base_atom;

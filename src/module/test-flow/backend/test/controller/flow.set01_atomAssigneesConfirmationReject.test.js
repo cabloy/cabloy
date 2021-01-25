@@ -216,7 +216,7 @@ describe('flow.set01_atomAssigneesConfirmationReject', () => {
         where: {
           atomFlowId: flowId,
         },
-        stage: 'archive',
+        stage: 'formal',
       },
     });
     assert(result.body.code === 0);

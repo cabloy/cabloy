@@ -145,7 +145,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
         where: {
           atomFlowId: flowId,
         },
-        stage: 'archive',
+        stage: 'formal',
       },
     });
     assert(result.body.code === 0);

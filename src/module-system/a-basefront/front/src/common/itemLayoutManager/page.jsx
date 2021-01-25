@@ -11,7 +11,7 @@ export default {
     },
     page_getSubtitle() {
       const stage = this.base_getCurrentStage();
-      if (!stage || stage === 'archive') return '';
+      if (!stage || stage === 'formal') return '';
       return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
     },
   },

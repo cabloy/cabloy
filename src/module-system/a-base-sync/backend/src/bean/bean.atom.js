@@ -323,7 +323,7 @@ module.exports = ctx => {
       }
       // draft -> archive
       const keyFormal = await this._copy({
-        target: 'archive',
+        target: 'formal',
         srcKey: { atomId: item.atomId }, srcItem: item,
         destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
         options,
@@ -528,7 +528,7 @@ module.exports = ctx => {
         userIdUpdated = user.id;
         atomFlowId = 0;
         atomRevision = undefined;
-      } else if (target === 'archive') {
+      } else if (target === 'formal') {
         atomIdDraft = srcItem.atomId;
         atomIdFormal = 0;
       } else if (target === 'history') {
@@ -855,7 +855,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'archive', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
       const sql = this.sqlProcedure.selectAtoms({
@@ -936,7 +936,7 @@ module.exports = ctx => {
     async _checkRightAction({ atom, action, stage, user, checkFlow }) {
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
+      if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)) return null;
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action });
