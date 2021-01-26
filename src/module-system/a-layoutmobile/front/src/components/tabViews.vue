@@ -12,7 +12,7 @@ export default {
     for (const button of this.buttons) {
       const fullName = this.layout._buttonFullName(button);
       // tab id
-      const id = `eb-layout-tab-${fullName}`;
+      const id = `eb-layout-tab-${fullName.replace(':', '_')}`;
       // link
       toolbarLinks.push(c('eb-tab-button', {
         key: fullName,
@@ -30,7 +30,7 @@ export default {
         tab: true,
         'data-url': button.resourceConfig.url,
         init: true,
-        tabActive: button.active,
+        tabActive: fullName === this.buttonActiveFullName,
         pushState: false,
         stackPages: true,
         pushStateOnLoad: false,
@@ -81,6 +81,15 @@ export default {
     buttons() {
       return this.toolbarConfig.buttons;
     },
+    buttonActive() {
+      if (!this.toolbarConfig.buttonActive) return this.buttons[0];
+      const [ button ] = this._getButtonAndIndex({ atomStaticKey: this.toolbarConfig.buttonActive });
+      if (button) return button;
+      return this.buttons[0];
+    },
+    buttonActiveFullName() {
+      return this.buttonActive ? this.layout._buttonFullName(this.buttonActive) : '';
+    },
   },
   mounted() {
     this.onTabShow();
@@ -92,6 +101,11 @@ export default {
         const path = target[0].f7View.router.currentRoute.path;
         if (!path || path === '/') {
           target[0].f7View.router.navigate(target.data('url'));
+        }
+        const fullName = target[0].f7View.name;
+        if (this.buttonActiveFullName !== fullName) {
+          this.toolbarConfig.buttonActive = fullName;
+          this.layout.__saveLayoutConfig();
         }
       }
     },

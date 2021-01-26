@@ -30,6 +30,7 @@ export default function(Vue) {
       buttonClass() {
         return {
           'tab-link': true,
+          'tab-link-active': this.button.buttonFullName === this.button.group.buttonActiveFullName,
         };
       },
     },
@@ -41,13 +42,7 @@ export default function(Vue) {
     },
     methods: {
       onPerformClick() {
-        const action = this.$utils.extend({}, this.buttonConfig, {
-          navigateOptions: {
-            scene: this.buttonConfig.scene,
-            sceneOptions: this.buttonConfig.sceneOptions,
-          },
-        });
-        this.$meta.util.performAction({ ctx: this, action, item: null });
+        this.$f7.tab.show(`#eb-layout-tab-${this.button.buttonFullName.replace(':', '_')}`);
       },
     },
   };

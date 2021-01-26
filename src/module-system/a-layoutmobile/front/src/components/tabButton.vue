@@ -6,7 +6,7 @@ export default {
       const props = {
         button: this, // for more extensible
       };
-      return c(this.layout._buttonFullName(this.options), {
+      return c(this.buttonFullName, {
         staticClass: `tab-button ${this.showing ? '' : 'display-none'}`,
         props,
         on: {
@@ -57,6 +57,9 @@ export default {
     buttons() {
       return this.group.buttons;
     },
+    buttonFullName() {
+      return this.layout._buttonFullName(this.options);
+    },
   },
   created() {
     this.__init();
@@ -72,7 +75,7 @@ export default {
         return;
       }
       this.$meta.module.use(this.options.resourceConfig.module, module => {
-        const fullName = this.layout._buttonFullName(this.options);
+        const fullName = this.buttonFullName;
         let component = module.options.components[this.options.resourceConfig.component];
         if (!component) {
           this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
@@ -119,11 +122,11 @@ export default {
       return button.titleLocale || this.$text(button.title) || button.name;
     },
     __onButtonRealReady(buttonReal) {
-      const fullName = this.layout._buttonFullName(this.options);
+      const fullName = this.buttonFullName;
       this.group.buttonsReal[fullName] = buttonReal;
     },
     __onButtonRealDestroy(buttonReal) {
-      const fullName = this.layout._buttonFullName(this.options);
+      const fullName = this.buttonFullName;
       delete this.group.buttonsReal[fullName];
     },
   },
