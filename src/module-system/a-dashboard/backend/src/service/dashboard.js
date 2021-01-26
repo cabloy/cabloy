@@ -14,12 +14,7 @@ module.exports = app => {
     }
 
     async itemByKey({ atomStaticKey, user }) {
-      // adjust key
-      if (!atomStaticKey || atomStaticKey === 'default') {
-        atomStaticKey = this.ctx.config.dashboard.default;
-      } else if (atomStaticKey === 'home') {
-        atomStaticKey = this.ctx.config.dashboard.home;
-      }
+      if (!atomStaticKey) return this.ctx.throw.module('a-base', 1002);
       // get atomId
       const atomClass = await this.ctx.bean.atomClass.get(this.atomClass);
       const atom = await this.ctx.bean.atom.modelAtom.get({
