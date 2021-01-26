@@ -207,6 +207,7 @@ export default {
       if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) _node.attrs.selected = (this.selectedItem && this.selectedItem.id === node.id);
+      if (_node.attrs.disabled === undefined) _node.attrs.disabled = this.treeviewRoot.attrs.disabled;
       // attrs onNodePerform
       if (this.onNodePerform && node.attrs.onPerform === undefined) {
         _node.attrs.onPerform = (e, context) => {
@@ -222,6 +223,7 @@ export default {
           slot: 'content-start',
           attrs: {
             checked: _node.attrs.checked,
+            disabled: _node.attrs.disabled,
           },
           on: {
             change: e => {
@@ -234,6 +236,7 @@ export default {
           slot: 'content-start',
           attrs: {
             checked: _node.attrs.checked,
+            disabled: _node.attrs.disabled,
             indeterminate: _node.attrs.indeterminate,
           },
           on: {
@@ -342,9 +345,10 @@ export default {
       let ignore = false;
 
       // checkbox
+      const disabled = node.attrs.disabled === undefined ? this.treeviewRoot.attrs.disabled : node.attrs.disabled;
       const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
       const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
-      if (checkbox && checkOnLabel) {
+      if (!disabled && checkbox && checkOnLabel) {
         const radio = !this.treeviewRoot.attrs.multiple;
         if (radio) {
           if (!node.attrs.checked) this._onNodeChange(node, true);

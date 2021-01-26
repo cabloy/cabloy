@@ -38,6 +38,9 @@ export default {
     multiple() {
       return this.contextParams.multiple;
     },
+    fixed() {
+      return this.contextParams.fixed;
+    },
     checkedAtomStaticKeys() {
       return this.contextParams.checkedAtomStaticKeys;
     },
@@ -116,10 +119,9 @@ export default {
     async _loadNodeResources(node) {
       const resources = this.resourcesArrayAll.filter(item => item.atomCategoryId === node.id);
       return resources.map(item => {
-        // checkbox
         const checkbox = true;
-        // checked
         const checked = this._checkCheckedInit(item);
+        const disabled = this.fixed === 'disabled' && JSON.parse(item.resourceConfig).fixed === true;
         // node
         const node = {
           id: item.atomId,
@@ -132,6 +134,7 @@ export default {
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
+            disabled,
           },
           data: item,
         };

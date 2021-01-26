@@ -104,6 +104,7 @@ module.exports = app => {
         actionPath: null,
         scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
         showSeparator: true,
+        fixed: true,
       }),
       resourceRoles: 'root',
     },

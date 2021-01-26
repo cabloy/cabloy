@@ -12,6 +12,7 @@ export default {
         context: {
           params: {
             multiple: true,
+            fixed: 'disabled',
             checkedAtomStaticKeys,
           },
           callback: (code, nodes) => {

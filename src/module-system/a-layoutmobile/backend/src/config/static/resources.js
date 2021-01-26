@@ -41,6 +41,7 @@ module.exports = app => {
         component: 'buttonMine',
         icon: { material: 'person' },
         url: '/a/user/user/mine',
+        fixed: true,
       }),
       resourceRoles: 'root',
     },
