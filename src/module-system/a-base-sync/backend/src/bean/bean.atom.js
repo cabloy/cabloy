@@ -97,7 +97,9 @@ module.exports = ctx => {
         fn: 'read',
       });
       // revision
-      this._appendRevisionToHistory({ item });
+      if (item) {
+        this._appendRevisionToHistory({ item });
+      }
       // ok
       return item;
     }
@@ -842,7 +844,7 @@ module.exports = ctx => {
     async _get({ atomClass, options, key, mode, user }) {
       if (!options) options = {};
       const resource = options.resource || 0;
-      const resourceLocale = options.resourceLocale || ctx.locale;
+      const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
       //
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const tableName = this._getTableName({ atomClass: _atomClass, mode });

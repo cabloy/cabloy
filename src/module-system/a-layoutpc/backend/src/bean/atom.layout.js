@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = app => {
 
   class Atom extends app.meta.AtomBase {

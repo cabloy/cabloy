@@ -38,6 +38,7 @@ export default {
       tabShowed: false,
       sizeExtent: null,
       size: null,
+      layoutDefault: null,
       layoutConfig: null,
       buttonsAll: null,
     };
@@ -45,7 +46,7 @@ export default {
   created() {},
   mounted() {
     this.$f7ready(() => {
-      this.__init(() => {
+      this.__init().then(() => {
         this.$nextTick(() => {
           // start
           this.start();
@@ -166,7 +167,8 @@ export default {
       // remove dynamic resources
       this.__removeDynamicResources(value);
       // save
-      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutmobile', key: 'layout', value });
+      const atomStaticKey = this.$config.layout.default;
+      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutmobile', key: `layout:${atomStaticKey}`, value });
     }, 1000),
     __removeDynamicResource(resources) {
       for (let index = resources.length - 1; index >= 0; index--) {
@@ -186,27 +188,30 @@ export default {
         this.__removeDynamicResource(resources);
       }
     },
-    __init(cb) {
-      // panelsAll & buttonsAll
-      this.__getResourcesAll().then(() => {
-        // layoutConfig
-        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile').then(res => {
-          // init layoutConfig
-          this.__initLayoutConfig(res.layout);
-          // init toolbar
-          this.__initToolbar();
-          // inited
-          this.toolbarInited = true;
-          cb();
-        });
+    async __init() {
+      const atomStaticKey = this.$config.layout.default;
+      // buttonsAll
+      await this.__getResourcesAll();
+      // layoutDefault
+      const _layout = await this.$api.post('/a/base/resource/read', {
+        atomStaticKey,
+        options: { locale: false },
       });
+      this.layoutDefault = JSON.parse(_layout.content);
+      // layoutConfig
+      const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile');
+      // init layoutConfig
+      this.__initLayoutConfig(res[`layout:${atomStaticKey}`]);
+      // init toolbar
+      this.__initToolbar();
+      // inited
+      this.toolbarInited = true;
     },
     __initLayoutConfig(layoutConfig) {
-      const configDefault = this.$config.layout;
       if (layoutConfig) {
-        this.layoutConfig = this.$meta.util.extend({}, configDefault, layoutConfig);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, layoutConfig);
       } else {
-        this.layoutConfig = this.$meta.util.extend({}, configDefault);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
       }
     },
     __initToolbar() {
