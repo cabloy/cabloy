@@ -50,7 +50,10 @@ export default {
     }
     // toolbar
     const _toolbarAttrs = this.$utils.extend({}, this.toolbarConfig.meta);
-    const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
+    const toolbar = c('f7-toolbar', {
+      staticClass: 'tab-buttons',
+      attrs: _toolbarAttrs,
+    }, toolbarLinks);
     // views
     return c('f7-views', {
       staticClass: 'eb-layout-scene eb-layout-scene-tool',
