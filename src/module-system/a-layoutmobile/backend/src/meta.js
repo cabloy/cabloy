@@ -4,7 +4,7 @@ module.exports = app => {
   const meta = {
     base: {
       resources: {
-        tab: {
+        button: {
           title: 'Tabbar Button',
         },
       },

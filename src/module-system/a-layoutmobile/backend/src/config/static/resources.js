@@ -4,13 +4,13 @@ module.exports = app => {
     // tabbar buttons
     {
       atomName: 'Home',
-      atomStaticKey: 'tabHome',
+      atomStaticKey: 'buttonHome',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutmobile:tab.General',
-      resourceType: 'a-layoutmobile:tab',
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'tabLink',
+        component: 'buttonLink',
         icon: { material: 'home' },
         url: '/a/basefront/resource/tree',
       }),
@@ -18,13 +18,13 @@ module.exports = app => {
     },
     {
       atomName: 'Atom',
-      atomStaticKey: 'tabAtom',
+      atomStaticKey: 'buttonAtom',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutmobile:tab.General',
-      resourceType: 'a-layoutmobile:tab',
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'tabLink',
+        component: 'buttonLink',
         icon: { material: 'group_work' },
         url: '/a/basefront/atom/list',
       }),
@@ -32,13 +32,13 @@ module.exports = app => {
     },
     {
       atomName: 'Mine',
-      atomStaticKey: 'tabMine',
+      atomStaticKey: 'buttonMine',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutmobile:tab.General',
-      resourceType: 'a-layoutmobile:tab',
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'tabLink',
+        component: 'buttonLink',
         icon: { material: 'person' },
         url: '/a/user/user/mine',
       }),

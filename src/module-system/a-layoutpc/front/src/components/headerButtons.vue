@@ -1,7 +1,6 @@
 <script>
-import HeaderButton from './headerButton.vue';
-
 import Vue from 'vue';
+import HeaderButton from './headerButton.vue';
 export default {
   components: {
     ebHeaderButton: HeaderButton,

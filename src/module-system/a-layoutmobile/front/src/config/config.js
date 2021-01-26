@@ -5,9 +5,9 @@ export default {
     toolbar: {
       tabbar: true, labels: true, bottom: true,
       buttons: [
-        { module: 'a-layoutmobile', name: 'tabHome', active: true },
-        { module: 'a-layoutmobile', name: 'tabAtom' },
-        { module: 'a-layoutmobile', name: 'tabMine' },
+        { module: 'a-layoutmobile', name: 'buttonHome', active: true },
+        { module: 'a-layoutmobile', name: 'buttonAtom' },
+        { module: 'a-layoutmobile', name: 'buttonMine' },
       ],
     },
     size: {

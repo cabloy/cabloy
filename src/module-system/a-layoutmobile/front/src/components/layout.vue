@@ -147,7 +147,7 @@ export default {
     },
     __getResourcesAll() {
       const resourceTypes = [
-        { name: 'tab', var: 'buttonsAll' },
+        { name: 'button', var: 'buttonsAll' },
       ];
       const promises = [];
       for (const resourceType of resourceTypes) {

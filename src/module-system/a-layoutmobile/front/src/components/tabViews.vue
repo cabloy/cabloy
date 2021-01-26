@@ -1,5 +1,10 @@
 <script>
+import Vue from 'vue';
+import TabButton from './tabButton.vue';
 export default {
+  components: {
+    ebTabButton: TabButton,
+  },
   render(c) {
     // links and tabs
     const toolbarLinks = [];
@@ -12,6 +17,8 @@ export default {
       toolbarLinks.push(c('eb-tab-button', {
         key: fullName,
         props: {
+          layout: this.layout,
+          buttons: this.toolbarConfig.buttons,
           options: button,
           dragdropScene: this.dragdropScene,
         },
@@ -21,7 +28,7 @@ export default {
         id,
         name: fullName,
         tab: true,
-        'data-url': tab.url,
+        'data-url': button.resourceConfig.url,
         init: true,
         tabActive: button.active,
         pushState: false,
@@ -54,6 +61,12 @@ export default {
     toolbarConfig: {
       type: Object,
     },
+  },
+  data() {
+    return {
+      buttonsReal: {},
+      dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
+    };
   },
   computed: {
     layout() {
