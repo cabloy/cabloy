@@ -4,12 +4,12 @@ export default {
     loginOnStart: true,
     toolbar: {
       tabbar: true, labels: true, bottom: true,
+      buttons: [
+        { module: 'a-layoutmobile', name: 'tabHome', active: true },
+        { module: 'a-layoutmobile', name: 'tabAtom' },
+        { module: 'a-layoutmobile', name: 'tabMine' },
+      ],
     },
-    tabs: [
-      { name: 'Home', tabLinkActive: true, iconMaterial: 'home', url: '/a/basefront/resource/tree' },
-      { name: 'Atom', tabLinkActive: false, iconMaterial: 'group_work', url: '/a/basefront/atom/list' },
-      { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
-    ],
     size: {
       small: 320,
     },

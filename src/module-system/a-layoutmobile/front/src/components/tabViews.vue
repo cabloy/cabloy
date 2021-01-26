@@ -4,22 +4,26 @@ export default {
     // links and tabs
     const toolbarLinks = [];
     const tabs = [];
-    this.$config.layout.tabs.forEach(tab => {
+    for (const button of this.toolbarConfig.buttons) {
+      const fullName = this.layout._buttonFullName(button);
       // tab id
-      const id = `eb-layout-tab-${tab.name}`;
+      const id = `eb-layout-tab-${fullName}`;
       // link
-      const _linkAttrs = this.$utils.extend({}, tab);
-      _linkAttrs.text = this.$text(_linkAttrs.text || _linkAttrs.name);
-      _linkAttrs.tabLink = `#${id}`;
-      toolbarLinks.push(c('f7-link', { attrs: _linkAttrs }));
+      toolbarLinks.push(c('eb-tab-button', {
+        key: fullName,
+        props: {
+          options: button,
+          dragdropScene: this.dragdropScene,
+        },
+      }));
       // view
       const _viewAttrs = {
         id,
-        name: tab.name,
+        name: fullName,
         tab: true,
         'data-url': tab.url,
         init: true,
-        tabActive: tab.tabLinkActive,
+        tabActive: button.active,
         pushState: false,
         stackPages: true,
         pushStateOnLoad: false,
@@ -36,7 +40,7 @@ export default {
         },
         on: { 'tab:show': this.onTabShow },
       }));
-    });
+    }
     // toolbar
     const _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
     const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
@@ -45,6 +49,11 @@ export default {
       staticClass: 'eb-layout-scene eb-layout-scene-tool',
       attrs: { tabs: true },
     }, [ toolbar, ...tabs ]);
+  },
+  props: {
+    toolbarConfig: {
+      type: Object,
+    },
   },
   computed: {
     layout() {

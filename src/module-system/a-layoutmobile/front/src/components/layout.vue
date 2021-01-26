@@ -16,11 +16,16 @@ export default {
 
     // tab views
     if (this.tabShowed) {
-      children.push(c('eb-tab-views', { ref: 'tabViews' }));
+      children.push(c('eb-tab-views', {
+        key: 'tabViews', ref: 'tabViews',
+        props: {
+          toolbarConfig: this.layoutConfig.toolbar,
+        },
+      }));
     }
 
     // group
-    children.push(c('eb-group', { ref: 'group' }));
+    children.push(c('eb-group', { key: 'group', ref: 'group' }));
 
     // ready
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, children);
@@ -28,16 +33,23 @@ export default {
   data() {
     return {
       started: false,
+      toolbarInited: false,
       tabShowed: false,
       sizeExtent: null,
       size: null,
+      layoutConfig: null,
+      buttonsAll: null,
     };
   },
   created() {},
   mounted() {
     this.$f7ready(() => {
-      // start
-      this.start();
+      this.__init(() => {
+        this.$nextTick(() => {
+          // start
+          this.start();
+        });
+      });
     });
   },
   methods: {
@@ -53,9 +65,9 @@ export default {
       this.sizeExtent = { width, height };
 
       // size
-      if (width <= this.$config.layout.size.small * 2) {
+      if (width <= this.layoutConfig.size.small * 2) {
         this.size = 'small';
-      } else if (width > this.$config.layout.size.small * 3) {
+      } else if (width > this.layoutConfig.size.small * 3) {
         this.size = 'large';
       } else {
         this.size = 'medium';
@@ -133,6 +145,73 @@ export default {
       }
       return backLink;
     },
+    __getResourcesAll() {
+      const resourceTypes = [
+        { name: 'tab', var: 'buttonsAll' },
+      ];
+      const promises = [];
+      for (const resourceType of resourceTypes) {
+        promises.push(
+          this.$store.dispatch('a/base/getResources', { resourceType: `a-layoutmobile:${resourceType.name}` }).then(data => {
+            this[resourceType.var] = data;
+          })
+        );
+      }
+      return Promise.all(promises);
+    },
+    __init(cb) {
+      // panelsAll & buttonsAll
+      this.__getResourcesAll().then(() => {
+        // layoutConfig
+        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile').then(layoutConfig => {
+          // init layoutConfig
+          this.__initLayoutConfig(layoutConfig);
+          // init toolbar
+          this.__initToolbar();
+          // inited
+          this.toolbarInited = true;
+          cb();
+        });
+      });
+    },
+    __initLayoutConfig(layoutConfig) {
+      const configDefault = this.$config.layout;
+      if (layoutConfig) {
+        this.layoutConfig = this.$meta.util.extend({}, configDefault, layoutConfig);
+      } else {
+        this.layoutConfig = this.$meta.util.extend({}, configDefault);
+      }
+    },
+    __initToolbar() {
+      const buttons = this.layoutConfig.toolbar.buttons;
+      if (buttons) {
+        this.layoutConfig.toolbar.buttons = [];
+        for (const button of buttons) {
+          this.layoutConfig.toolbar.buttons.push(this._prepareButton(button));
+        }
+      }
+    },
+    _prepareButton(button) {
+      // stock
+      const buttonStock = this._findButtonStock(button);
+      // extend
+      return this.$meta.util.extend({}, buttonStock, button);
+    },
+    _findResourceStock(resourcesAll, resource) {
+      if (!resourcesAll) return null;
+      const _resource = resourcesAll[this._resourceFullName(resource)];
+      if (!_resource) return null;
+      return {
+        ...resource,
+        title: _resource.atomName,
+        titleLocale: _resource.atomNameLocale,
+        resourceAtomId: _resource.atomId,
+        resourceConfig: JSON.parse(_resource.resourceConfig),
+      };
+    },
+    _findButtonStock(button) {
+      return this._findResourceStock(this.buttonsAll, button);
+    },
     _combineViewSizeClass() {
       let sizeClass = '';
       switch (this.size) {
@@ -149,6 +228,13 @@ export default {
           break;
       }
       return sizeClass;
+    },
+    _resourceFullName(resource) {
+      if (resource.atomStaticKey) return resource.atomStaticKey;
+      return `${resource.module}:${resource.name}`;
+    },
+    _buttonFullName(button) {
+      return this._resourceFullName(button);
     },
   },
 };
