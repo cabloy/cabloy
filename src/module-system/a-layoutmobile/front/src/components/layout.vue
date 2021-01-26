@@ -263,6 +263,25 @@ export default {
     _buttonFullName(button) {
       return this._resourceFullName(button);
     },
+    _findButton(button) {
+      const _buttonIndex = this.layoutConfig.toolbar.buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      if (_buttonIndex === -1) return [ null, -1 ];
+      return [ this.layoutConfig.toolbar.buttons[_buttonIndex], _buttonIndex ];
+    },
+    closeButton(button) {
+      const [ , _buttonIndex ] = this._findButton(button);
+      if (_buttonIndex === -1) return;
+      this.layoutConfig.toolbar.buttons.splice(_buttonIndex, 1);
+      this.__saveLayoutConfig();
+    },
+    openButton(button) {
+      const [ , _buttonIndex ] = this._findButton(button);
+      if (_buttonIndex > -1) return;
+      // prepare button
+      button = this._prepareButton(button);
+      this.layoutConfig.toolbar.buttons.push(button);
+      this.__saveLayoutConfig();
+    },
   },
 };
 

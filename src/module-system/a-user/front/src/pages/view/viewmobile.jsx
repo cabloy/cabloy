@@ -4,8 +4,8 @@ export default {
   },
   created() {},
   methods: {
-    onPerformResources(event, side, resourceVar, resourceType) {
-      const resourcesShowOld = this.$meta.vueLayout.sidebar[side][resourceVar];
+    onPerformResources(event, resourceType) {
+      const resourcesShowOld = this.$meta.vueLayout.layoutConfig.toolbar.buttons;
       const checkedAtomStaticKeys = resourcesShowOld.map(item => this._resourceFullName(item));
       this.$view.navigate(`/a/basefront/resource/select?resourceType=${resourceType}`, {
         target: '_self',
@@ -16,35 +16,25 @@ export default {
           },
           callback: (code, nodes) => {
             if (code === 200) {
-              this._switchResources(side, nodes, resourceVar, resourceType);
+              this._switchResources(nodes, resourceType);
             }
           },
         },
       });
     },
     _switchPolicy(resourceType) {
-      if (resourceType === 'a-layoutpc:button') {
+      if (resourceType === 'a-layoutmobile:button') {
         return {
-          open: (side, resource) => {
-            this.$meta.vueLayout.openButton(side, resource);
+          open: resource => {
+            this.$meta.vueLayout.openButton(resource);
           },
-          close: (side, resource) => {
-            this.$meta.vueLayout.closeButton(side, resource);
-          },
-        };
-      } else if (resourceType === 'a-layoutpc:panel') {
-        return {
-          open: (side, resource) => {
-            const sceneOptions = this.$utils.extend({}, resource, { side });
-            this.$meta.vueLayout.navigate(null, { scene: 'sidebar', sceneOptions });
-          },
-          close: (side, resource) => {
-            this.$meta.vueLayout.closePanel(side, resource);
+          close: resource => {
+            this.$meta.vueLayout.closeButton(resource);
           },
         };
       }
     },
-    _switchResources(side, nodes, resourcesVar, resourceType) {
+    _switchResources(nodes, resourceType) {
       const policy = this._switchPolicy(resourceType);
       // new
       let resourcesShowNew;
@@ -56,12 +46,12 @@ export default {
         });
       }
       // old
-      const resourcesShowOld = this.$meta.vueLayout.sidebar[side][resourcesVar].concat();
+      const resourcesShowOld = this.$meta.vueLayout.layoutConfig.toolbar.buttons.concat();
       // open
       for (const resource of resourcesShowNew) {
         const index = resourcesShowOld.findIndex(item => this._resourceFullName(item) === resource.atomStaticKey);
         if (index === -1) {
-          policy.open(side, resource);
+          policy.open(resource);
         }
       }
       // close
@@ -71,7 +61,7 @@ export default {
         // check
         const index = resourcesShowNew.findIndex(item => item.atomStaticKey === this._resourceFullName(resource));
         if (index === -1) {
-          policy.close(side, resource);
+          policy.close(resource);
         }
       }
     },
@@ -83,13 +73,9 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('ViewLayout') + ' TBD'} eb-back-link="Back"></eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back"></eb-navbar>
         <f7-list>
-          <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:button')}></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:panel')}></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:panel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:panel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'buttons', 'a-layoutpc:button')}></eb-list-item>
+          <eb-list-item title={this.$text('Tabbar Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'a-layoutmobile:button')}></eb-list-item>
         </f7-list>
       </eb-page>
     );
