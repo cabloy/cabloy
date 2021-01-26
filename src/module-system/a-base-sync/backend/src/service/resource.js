@@ -6,6 +6,10 @@ module.exports = app => {
       return await this.ctx.bean.resource.select({ options, user });
     }
 
+    async read({ atomStaticKey, options, user }) {
+      return await this.ctx.bean.resource.readByStaticKey({ atomStaticKey, options, user });
+    }
+
     async check({ atomStaticKeys, user }) {
       return await this.ctx.bean.resource.check({ atomStaticKeys, user });
     }

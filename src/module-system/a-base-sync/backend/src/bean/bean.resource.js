@@ -57,6 +57,22 @@ module.exports = ctx => {
       });
     }
 
+    async readByStaticKey({ atomStaticKey, options, user }) {
+      if (!atomStaticKey) return ctx.throw.module('a-base', 1002);
+      // get atomId
+      const atom = await ctx.bean.atom.modelAtom.get({
+        atomStaticKey,
+        atomStage: 1,
+      });
+      if (!atom) return ctx.throw.module('a-base', 1002);
+      const atomId = atom.id;
+      // check resource right
+      const res = await this.checkRightResource({ resourceAtomId: atomId, user });
+      if (!res) ctx.throw(403);
+      // read
+      return await this.read({ key: { atomId }, options, user });
+    }
+
     // read
     async read({ key, options, user }) {
       options = Object.assign({ resource: 1 }, options);

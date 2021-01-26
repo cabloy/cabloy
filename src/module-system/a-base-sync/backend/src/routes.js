@@ -103,6 +103,7 @@ module.exports = app => {
     { method: 'post', path: 'user/setLabels', controller: 'user' },
     // resource
     { method: 'post', path: 'resource/select', controller: 'resource' },
+    { method: 'post', path: 'resource/read', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
     { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
       meta: { right: { type: 'atom', action: 25 } },
