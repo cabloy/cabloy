@@ -1,8 +1,8 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
-  // dashboard
-  schemas.dashboard = {
+  // layout
+  schemas.layout = {
     type: 'object',
     properties: {
       atomName: {
@@ -25,18 +25,14 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'json',
         ebTitle: 'Content',
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderDashboardContent',
-        },
         notEmpty: true,
       },
     },
   };
-  // dashboard search
-  schemas.dashboardSearch = {
+  // layout search
+  schemas.layoutSearch = {
     type: 'object',
     properties: {
       description: {
