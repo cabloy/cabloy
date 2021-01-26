@@ -1,4 +1,5 @@
 module.exports = {
+  Layout: '布局',
   Copyright: '版权',
   Clock: '时钟',
   Dashboard: '仪表板',
@@ -10,4 +11,6 @@ module.exports = {
   Panels: '面板',
   'Sidebar Button': '边栏按钮',
   'Sidebar Panel': '边栏面板',
+  'Create Layout': '新建布局',
+  'Layout List': '布局列表',
 };

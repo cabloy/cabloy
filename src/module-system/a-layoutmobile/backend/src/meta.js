@@ -1,4 +1,5 @@
 module.exports = app => {
+  const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
@@ -9,6 +10,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-layoutpc.layout': {
+          items: staticLayouts,
+        },
         'a-base.resource': {
           items: staticResources,
         },

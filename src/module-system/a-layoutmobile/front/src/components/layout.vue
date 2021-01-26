@@ -190,9 +190,9 @@ export default {
       // panelsAll & buttonsAll
       this.__getResourcesAll().then(() => {
         // layoutConfig
-        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile').then(layoutConfig => {
+        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile').then(res => {
           // init layoutConfig
-          this.__initLayoutConfig(layoutConfig.layout);
+          this.__initLayoutConfig(res.layout);
           // init toolbar
           this.__initToolbar();
           // inited

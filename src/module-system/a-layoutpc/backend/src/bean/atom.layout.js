@@ -8,19 +8,17 @@ module.exports = app => {
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // add dashboard
-      const res = await this.ctx.model.dashboard.insert({
+      // add layout
+      const res = await this.ctx.model.layout.insert({
         atomId: key.atomId,
       });
       const itemId = res.insertId;
       // add content
       const content = {
-        root: {
-          id: uuid.v4().replace(/-/g, ''),
-          widgets: [],
-        },
+        login: '/a/login/login',
+        loginOnStart: true,
       };
-      await this.ctx.model.dashboardContent.insert({
+      await this.ctx.model.layoutContent.insert({
         atomId: key.atomId,
         itemId,
         content: JSON.stringify(content),
@@ -50,12 +48,12 @@ module.exports = app => {
     async write({ atomClass, target, key, item, options, user }) {
       // super
       await super.write({ atomClass, target, key, item, options, user });
-      // update dashboard
-      const data = await this.ctx.model.dashboard.prepareData(item);
+      // update layout
+      const data = await this.ctx.model.layout.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.dashboard.update(data);
+      await this.ctx.model.layout.update(data);
       // update content
-      await this.ctx.model.dashboardContent.update({
+      await this.ctx.model.layoutContent.update({
         content: item.content,
       }, { where: {
         atomId: key.atomId,
@@ -63,12 +61,12 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
-      // delete dashboard
-      await this.ctx.model.dashboard.delete({
+      // delete layout
+      await this.ctx.model.layout.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.dashboardContent.delete({
+      await this.ctx.model.layoutContent.delete({
         itemId: key.itemId,
       });
       // super
