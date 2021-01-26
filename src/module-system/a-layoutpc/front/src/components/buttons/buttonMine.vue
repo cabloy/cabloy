@@ -5,8 +5,7 @@
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    <div :class="statsUserRedClass"><eb-stats :stats_params="{module:'a-user', name:'userRed'}" stats_color="red" @change="onChangeStatsUserRed"></eb-stats></div>
-    <div :class="statsUserOrangeClass" class="item"><eb-stats :stats_params="{module:'a-user', name:'userOrange'}" stats_color="orange" @change="onChangeStatsUserOrange"></eb-stats></div>
+    <div :class="statsUserClass"><eb-stats :stats_params="{module:'a-user', name:'user'}" :stats_color="statsUserColor" :onAdjustValue="onAdjustValue" @change="onChangeStatsUser"></eb-stats></div>
   </eb-link>
 </template>
 <script>
@@ -23,8 +22,7 @@ function installFactory(_Vue) {
     mixins: [ ebLayoutButtonBase ],
     data() {
       return {
-        statsUserRed: null,
-        statsUserOrange: null,
+        statsUser: null,
       };
     },
     computed: {
@@ -55,25 +53,26 @@ function installFactory(_Vue) {
           'button-separator': this.buttonConfig.showSeparator,
         };
       },
-      statsUserRedClass() {
+      statsUserClass() {
         return {
           item: true,
-          'display-none': !this.statsUserRed,
+          'display-none': !this.statsUser || (!this.statsUser['a-user:userRed'] && !this.statsUser['a-user:userOrange']),
         };
       },
-      statsUserOrangeClass() {
-        return {
-          item: true,
-          'display-none': this.statsUserRed || !this.statsUserOrange,
-        };
+      statsUserColor() {
+        if (!this.statsUser) return null;
+        if (this.statsUser['a-user:userRed']) return 'red';
+        if (this.statsUser['a-user:userOrange']) return 'orange';
+        return null;
       },
     },
     methods: {
-      onChangeStatsUserRed(value) {
-        this.statsUserRed = value;
+      onChangeStatsUser(statsUser) {
+        this.statsUser = statsUser;
       },
-      onChangeStatsUserOrange(value) {
-        this.statsUserOrange = value;
+      onAdjustValue(statsUser) {
+        if (!statsUser) return null;
+        return statsUser['a-user:userRed'] || statsUser['a-user:userOrange'] || null;
       },
     },
   };

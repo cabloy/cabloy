@@ -17,26 +17,24 @@ function installFactory(_Vue) {
     mixins: [ ebLayoutButtonBase ],
     data() {
       return {
-        stats: null,
+        statsUser: null,
       };
     },
     computed: {
       badgeColor() {
-        if (!this.stats) return null;
-        if (this.stats['a-user:userRed']) return 'red';
-        if (this.stats['a-user:userOrange']) return 'orange';
+        if (!this.statsUser) return null;
+        if (this.statsUser['a-user:userRed']) return 'red';
+        if (this.statsUser['a-user:userOrange']) return 'orange';
         return null;
       },
       statsValue() {
-        if (!this.stats) return null;
-        if (this.stats['a-user:userRed']) return this.stats['a-user:userRed'];
-        if (this.stats['a-user:userOrange']) return this.stats['a-user:userOrange'];
-        return null;
+        if (!this.statsUser) return null;
+        return this.statsUser['a-user:userRed'] || this.statsUser['a-user:userOrange'] || null;
       },
     },
     methods: {
       onStatsChange(event) {
-        this.stats = event;
+        this.statsUser = event;
       },
     },
   };

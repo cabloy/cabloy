@@ -14,6 +14,9 @@ export default {
       type: Boolean,
       default: true,
     },
+    onAdjustValue: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -25,11 +28,16 @@ export default {
       this.value = value;
       this.$emit('change', value);
     },
+    __adjustValue() {
+      if (!this.onAdjustValue) return this.value;
+      return this.onAdjustValue(this.value);
+    },
   },
   render() {
-    const hidden = this.hidden || (!this.value && this.hiddenOnEmpty);
+    const value = this.__adjustValue();
+    const hidden = this.hidden || (!value && this.hiddenOnEmpty);
     return (
-      <f7-badge color={this.stats_color} class={hidden ? 'display-none' : ''}>{this.value}</f7-badge>
+      <f7-badge color={this.stats_color} class={hidden ? 'display-none' : ''}>{value}</f7-badge>
     );
   },
 };
