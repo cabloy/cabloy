@@ -26,6 +26,17 @@ module.exports = app => {
             'a-flow:flowInitiateds',
           ],
         },
+        user: {
+          user: true,
+          bean: {
+            module: 'a-user',
+            name: 'user',
+          },
+          dependencies: [
+            'a-user:userRed',
+            'a-user:userOrange',
+          ],
+        },
       },
     },
   };

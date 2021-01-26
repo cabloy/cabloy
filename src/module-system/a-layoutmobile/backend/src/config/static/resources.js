@@ -38,7 +38,7 @@ module.exports = app => {
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'buttonLink',
+        component: 'buttonMine',
         icon: { material: 'person' },
         url: '/a/user/user/mine',
       }),
