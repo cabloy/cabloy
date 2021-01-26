@@ -3,7 +3,9 @@ export default {
     login: '/a/login/login',
     loginOnStart: true,
     toolbar: {
-      tabbar: true, labels: true, bottom: true,
+      meta: {
+        tabbar: true, labels: true, bottom: true,
+      },
       buttons: [
         { module: 'a-layoutmobile', name: 'buttonHome', active: true },
         { module: 'a-layoutmobile', name: 'buttonAtom' },

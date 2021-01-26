@@ -8,7 +8,7 @@ export default {
         button: this, // for more extensible
       };
       children.push(c(this.layout._buttonFullName(this.options), {
-        staticClass: 'header-button-inner',
+        staticClass: 'tab-button-inner',
         props,
         on: {
           'buttonReal:ready': this.__onButtonRealReady,
@@ -17,12 +17,12 @@ export default {
       }));
     } else if (this.errorMessage) {
       children.push(c('div', {
-        staticClass: 'header-button-inner header-button-inner-error',
+        staticClass: 'tab-button-inner tab-button-inner-error',
         domProps: { innerText: this.errorMessage },
       }));
     }
     return c('div', {
-      staticClass: `header-button ${this.showing ? '' : 'display-none'}`,
+      staticClass: `tab-button ${this.showing ? '' : 'display-none'}`,
       directives: [{
         name: 'eb-dragdrop',
         value: {
@@ -41,6 +41,9 @@ export default {
     },
     buttons: {
       type: Array,
+    },
+    group: {
+      type: Object,
     },
     options: {
       type: Object,

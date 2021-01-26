@@ -9,7 +9,7 @@ export default {
     // links and tabs
     const toolbarLinks = [];
     const tabs = [];
-    for (const button of this.toolbarConfig.buttons) {
+    for (const button of this.buttons) {
       const fullName = this.layout._buttonFullName(button);
       // tab id
       const id = `eb-layout-tab-${fullName}`;
@@ -18,7 +18,8 @@ export default {
         key: fullName,
         props: {
           layout: this.layout,
-          buttons: this.toolbarConfig.buttons,
+          buttons: this.buttons,
+          group: this,
           options: button,
           dragdropScene: this.dragdropScene,
         },
@@ -49,7 +50,7 @@ export default {
       }));
     }
     // toolbar
-    const _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
+    const _toolbarAttrs = this.$utils.extend({}, this.toolbarConfig.meta);
     const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
     // views
     return c('f7-views', {
@@ -78,6 +79,9 @@ export default {
     sizeExtent() {
       return this.$parent.sizeExtent;
     },
+    buttons() {
+      return this.toolbarConfig.buttons;
+    },
   },
   mounted() {
     this.onTabShow();
@@ -91,6 +95,14 @@ export default {
           target[0].f7View.router.navigate(target.data('url'));
         }
       }
+    },
+    _getButtonIndex(button) {
+      return this.buttons.findIndex(item => this.layout._buttonFullName(item) === this.layout._buttonFullName(button));
+    },
+    _getButtonAndIndex(button) {
+      const buttonIndex = this._getButtonIndex(button);
+      if (buttonIndex === -1) return [ null, -1 ];
+      return [ this.buttons[buttonIndex], buttonIndex ];
     },
   },
 };
