@@ -2,6 +2,7 @@
 import TabViews from './tabViews.vue';
 import Group from './group.vue';
 
+import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -159,13 +160,39 @@ export default {
       }
       return Promise.all(promises);
     },
+    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+      // override
+      const value = this.$meta.util.extend({}, this.layoutConfig);
+      // remove dynamic resources
+      this.__removeDynamicResources(value);
+      // save
+      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutmobile', key: 'layout', value });
+    }, 1000),
+    __removeDynamicResource(resources) {
+      for (let index = resources.length - 1; index >= 0; index--) {
+        const resource = resources[index];
+        if (!resource.atomStaticKey && !resource.module) {
+          resources.splice(index, 1);
+        } else {
+          resources[index] = resource.atomStaticKey ?
+            { atomStaticKey: resource.atomStaticKey } :
+            { module: resource.module, name: resource.name };
+        }
+      }
+    },
+    __removeDynamicResources(value) {
+      const resources = value.toolbar.buttons;
+      if (resources) {
+        this.__removeDynamicResource(resources);
+      }
+    },
     __init(cb) {
       // panelsAll & buttonsAll
       this.__getResourcesAll().then(() => {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile').then(layoutConfig => {
           // init layoutConfig
-          this.__initLayoutConfig(layoutConfig);
+          this.__initLayoutConfig(layoutConfig.layout);
           // init toolbar
           this.__initToolbar();
           // inited
