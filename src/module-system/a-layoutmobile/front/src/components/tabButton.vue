@@ -1,46 +1,40 @@
 <script>
 export default {
   render(c) {
-    const children = [];
     if (!this.errorMessage && this.ready) {
       // props
       const props = {
         button: this, // for more extensible
       };
-      children.push(c(this.layout._buttonFullName(this.options), {
-        staticClass: 'tab-button-inner',
+      return c(this.layout._buttonFullName(this.options), {
+        staticClass: `tab-button ${this.showing ? '' : 'display-none'}`,
         props,
         on: {
           'buttonReal:ready': this.__onButtonRealReady,
           'buttonReal:destroy': this.__onButtonRealDestroy,
         },
-      }));
+        directives: [{
+          name: 'eb-dragdrop',
+          value: {
+            scene: this.dragdropScene,
+            button: this.options,
+            onDragStart: this.onDragStart,
+            onDropElement: this.onDropElement,
+            onDragDone: this.onDragDone,
+          },
+        }],
+      });
     } else if (this.errorMessage) {
-      children.push(c('div', {
+      return c('div', {
         staticClass: 'tab-button-inner tab-button-inner-error',
         domProps: { innerText: this.errorMessage },
-      }));
+      });
     }
-    return c('div', {
-      staticClass: `tab-button ${this.showing ? '' : 'display-none'}`,
-      directives: [{
-        name: 'eb-dragdrop',
-        value: {
-          scene: this.dragdropScene,
-          button: this.options,
-          onDragStart: this.onDragStart,
-          onDropElement: this.onDropElement,
-          onDragDone: this.onDragDone,
-        },
-      }],
-    }, children);
+    return c('div');
   },
   props: {
     layout: {
       type: Object,
-    },
-    buttons: {
-      type: Array,
     },
     group: {
       type: Object,
@@ -58,6 +52,11 @@ export default {
       errorMessage: null,
       showing: true,
     };
+  },
+  computed: {
+    buttons() {
+      return this.group.buttons;
+    },
   },
   created() {
     this.__init();

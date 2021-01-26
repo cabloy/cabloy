@@ -18,7 +18,6 @@ export default {
         key: fullName,
         props: {
           layout: this.layout,
-          buttons: this.buttons,
           group: this,
           options: button,
           dragdropScene: this.dragdropScene,

@@ -19,8 +19,12 @@ export default function(Vue) {
       buttonIcon() {
         return this.buttonConfig.icon && this.buttonConfig.icon.material;
       },
+      buttonShowLabel() {
+        if (this.buttonConfig.showLabel !== undefined) return this.buttonConfig.showLabel;
+        return this.button.group.toolbarConfig.meta.labels;
+      },
       buttonLabel() {
-        if (!this.buttonConfig.showLabel) return null;
+        if (!this.buttonShowLabel) return null;
         return this.button.options.titleLocale;
       },
       buttonClass() {
