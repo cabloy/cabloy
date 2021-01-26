@@ -64,12 +64,16 @@ export default {
         verySmall: false,
       },
       groups: [],
-      sidebar: null,
+      layoutDefault: null,
+      layoutConfig: null,
       panelsAll: null,
       buttonsAll: null,
     };
   },
   computed: {
+    sidebar() {
+      return this.layoutConfig.sidebar;
+    },
     sizeSpacing() {
       return this.size.verySmall ? 0 : this.size.spacing;
     },
@@ -88,11 +92,10 @@ export default {
     this.$f7.off('click', this._handleClicks);
   },
   created() {
-    this.size.spacing = this.$config.layout.size.spacing;
   },
   mounted() {
     this.$f7ready(() => {
-      this.__init(() => {
+      this.__init().then(() => {
         // click
         this.$f7.on('click', this._handleClicks);
         this.$nextTick(() => {
@@ -118,7 +121,7 @@ export default {
       this.layoutHeight = layoutHeight;
 
       // verySmall
-      this.size.verySmall = (layoutWidth < layoutHeight) || (layoutWidth <= this.$config.layout.size.small);
+      this.size.verySmall = (layoutWidth < layoutHeight) || (layoutWidth <= this.layoutConfig.size.small);
 
       // spacing
       const spacing = this.sizeSpacing;
@@ -135,10 +138,10 @@ export default {
       let enoughLarge = true;
       let enoughMedium = true;
       let small = parseInt((width - spacing * 4) / 3);
-      if (small < this.$config.layout.size.small) {
+      if (small < this.layoutConfig.size.small) {
         enoughLarge = false;
         small = parseInt((width - spacing * 3) / 2);
-        if (small < this.$config.layout.size.small) {
+        if (small < this.layoutConfig.size.small) {
           enoughMedium = false;
           small = parseInt(width - spacing * 2);
         }
@@ -153,7 +156,7 @@ export default {
 
       // height
       let height = layoutHeight;
-      this.size.top = this.$config.layout.size.top;
+      this.size.top = this.layoutConfig.size.top;
 
       height -= this.size.top;
       height -= this._sidebarHeight('bottom');
@@ -342,7 +345,7 @@ export default {
       }
     },
     _autoHideAllSidebars() {
-      if (!this.$config.layout.autoHideSidebarOnOpenUrl) return;
+      if (!this.layoutConfig.autoHideSidebarOnOpenUrl) return;
       this._hideAllSidebars();
     },
     __getResourcesAll() {
@@ -360,41 +363,47 @@ export default {
       }
       return Promise.all(promises);
     },
-    __init(cb) {
+    async __init() {
+      const atomStaticKey = this.$config.layout.default;
       // panelsAll & buttonsAll
-      this.__getResourcesAll().then(() => {
-        // layoutConfig
-        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
-          // init layoutConfig
-          this.__initLayoutConfig(layoutConfig);
-          // init sidebar
-          this.__initSidebar('top');
-          this.__initSidebar('left');
-          this.__initSidebar('right');
-          this.__initSidebar('bottom');
-          // inited
-          this.sidebarInited = true;
-          cb();
-        });
+      await this.__getResourcesAll();
+      // layoutDefault
+      const _layout = await this.$api.post('/a/base/resource/read', {
+        atomStaticKey,
+        options: { locale: false },
       });
+      this.layoutDefault = JSON.parse(_layout.content);
+      // layoutConfig
+      const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc');
+      // init layoutConfig
+      this.__initLayoutConfig(res[`layout:${atomStaticKey}`]);
+      // init sidebar
+      this.__initSidebar('top');
+      this.__initSidebar('left');
+      this.__initSidebar('right');
+      this.__initSidebar('bottom');
+      // spacing
+      this.size.spacing = this.layoutConfig.size.spacing;
+      // inited
+      this.sidebarInited = true;
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      const value = this.$meta.util.extend({}, this.sidebar);
+      const value = this.$meta.util.extend({}, this.layoutConfig);
       // remove dynamic resources
-      this.__removeDynamicResources(value.top);
-      this.__removeDynamicResources(value.left);
-      this.__removeDynamicResources(value.right);
-      this.__removeDynamicResources(value.bottom);
+      this.__removeDynamicResources(value.sidebar.top);
+      this.__removeDynamicResources(value.sidebar.left);
+      this.__removeDynamicResources(value.sidebar.right);
+      this.__removeDynamicResources(value.sidebar.bottom);
       // save
-      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
+      const atomStaticKey = this.$config.layout.default;
+      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: `layout:${atomStaticKey}`, value });
     }, 1000),
     __initLayoutConfig(layoutConfig) {
-      const sidebarDefault = this.$config.layout.sidebar;
-      if (layoutConfig.sidebar) {
-        this.sidebar = this.$meta.util.extend({}, sidebarDefault, layoutConfig.sidebar);
+      if (layoutConfig) {
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, layoutConfig);
       } else {
-        this.sidebar = this.$meta.util.extend({}, sidebarDefault);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
       }
     },
     __removeDynamicResource(resources) {

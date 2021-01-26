@@ -43,9 +43,9 @@ export default {
     viewSize() {
       let size;
       const width = this.options.panelWidth;
-      if (width <= this.$config.layout.size.small * 2) {
+      if (width <= this.layout.layoutConfig.size.small * 2) {
         size = 'small';
-      } else if (width > this.$config.layout.size.small * 3) {
+      } else if (width > this.layout.layoutConfig.size.small * 3) {
         size = 'large';
       } else {
         size = 'medium';
