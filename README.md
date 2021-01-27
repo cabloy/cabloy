@@ -125,6 +125,12 @@
 
 - [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
 
+### - 图片
+
+一图胜千言
+
+  ![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
+
 ## License
 
 [MIT](./LICENSE)
