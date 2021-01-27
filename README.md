@@ -127,7 +127,7 @@
 
 ### - 图片
 
-一图胜千言
+一图胜千言: [如何阅读本文档](https://cabloy.com/zh-cn/articles/how-to-read.html)
 
   ![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
 
