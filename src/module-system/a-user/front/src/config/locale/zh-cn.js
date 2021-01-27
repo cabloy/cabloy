@@ -39,6 +39,7 @@ export default {
   LocaleReloadConfirmText: '您是否想重新加载让新语言生效？',
   Rename: '重命名',
   Recent: '最近的',
+  Reset: '重置',
   'Tabbar Buttons': '选项卡按钮',
   'Header Buttons': '头部按钮',
   'Sidebar (Left)': '左边栏',

@@ -80,11 +80,18 @@ export default {
       if (resource.atomStaticKey) return resource.atomStaticKey;
       return `${resource.module}:${resource.name}`;
     },
+    onPerformReset() {
+      this.$meta.vueLayout.reset();
+    },
   },
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back"></eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back">
+          <f7-nav-right>
+            <eb-link propsOnPerform={() => this.onPerformReset()}>{this.$text('Reset')}</eb-link>
+          </f7-nav-right>
+        </eb-navbar>
         <f7-list>
           <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:button')}></eb-list-item>
           <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:panel')}></eb-list-item>

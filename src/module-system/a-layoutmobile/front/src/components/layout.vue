@@ -162,6 +162,9 @@ export default {
       return Promise.all(promises);
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+      this.__saveLayoutConfigNow();
+    }, 1000),
+    __saveLayoutConfigNow() {
       // override
       const value = this.$meta.util.extend({}, this.layoutConfig);
       // remove dynamic resources
@@ -169,7 +172,7 @@ export default {
       // save
       const atomStaticKey = this.$config.layout.default;
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutmobile', key: `layout:${atomStaticKey}`, value });
-    }, 1000),
+    },
     __removeDynamicResource(resources) {
       for (let index = resources.length - 1; index >= 0; index--) {
         const resource = resources[index];
@@ -213,6 +216,11 @@ export default {
       } else {
         this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
       }
+    },
+    reset() {
+      this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
+      this.__saveLayoutConfigNow();
+      this.$meta.vueApp.reload();
     },
     __initToolbar() {
       const buttons = this.layoutConfig.toolbar.buttons;
