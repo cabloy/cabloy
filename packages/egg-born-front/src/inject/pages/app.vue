@@ -214,9 +214,8 @@ export default {
     _getLayoutItem(layout) {
       return this.$meta.config.layout.items[layout];
     },
-    _getLayoutModuleConfig(layout) {
-      const moduleName = this._getLayoutItem(layout).module;
-      return this.$meta.config.modules[moduleName];
+    _getLayoutModuleConfig() {
+      return this.getLayout().layoutConfig;
     },
     _checkIfPasswordReset() {
       const hashInit = this.$store.state.auth.hashInit;
@@ -228,8 +227,8 @@ export default {
       return hashInit.indexOf(url) > -1;
     },
     checkIfNeedOpenLogin() {
-      const configLayout = this._getLayoutModuleConfig(this.layout);
-      return (configLayout.layout.loginOnStart === true &&
+      const configLayout = this._getLayoutModuleConfig();
+      return (configLayout.loginOnStart === true &&
         !this.$store.state.auth.loggedIn &&
         !this._checkIfPasswordReset()
       );
@@ -239,8 +238,8 @@ export default {
       const hashInit = this.$store.state.auth.hashInit;
       this.$store.commit('auth/setHashInit', null);
       //
-      const configLayout = this._getLayoutModuleConfig(this.layout);
-      if (hashInit && hashInit !== '/' && hashInit !== configLayout.layout.login) {
+      const configLayout = this._getLayoutModuleConfig();
+      if (hashInit && hashInit !== '/' && hashInit !== configLayout.login) {
         return hashInit;
       }
       return null;
@@ -284,8 +283,8 @@ export default {
       // query
       const query = routeTo && routeTo.query;
       // url
-      const configLayout = this._getLayoutModuleConfig(this.layout);
-      let url = configLayout.layout.login;
+      const configLayout = this._getLayoutModuleConfig();
+      let url = configLayout.login;
       url = query ? this.$meta.util.combineQueries(url, query) : url;
       // navigate
       this.getLayout().navigate(url, options);
