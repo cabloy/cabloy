@@ -1,5 +1,7 @@
 export default {
   layout: {
-    default: 'a-layoutpc:layoutPC',
+    scene: {
+      web: 'a-layoutpc:layoutPC',
+    },
   },
 };

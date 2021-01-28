@@ -363,8 +363,15 @@ export default {
       }
       return Promise.all(promises);
     },
+    __getLayoutKey() {
+      let atomStaticKey = this.$config.layout.scene[this.$meta.config.scene];
+      if (!atomStaticKey) {
+        atomStaticKey = this.$config.layout.scene.web;
+      }
+      return atomStaticKey;
+    },
     async __init() {
-      const atomStaticKey = this.$config.layout.default;
+      const atomStaticKey = this.__getLayoutKey();
       // panelsAll & buttonsAll
       await this.__getResourcesAll();
       // layoutDefault
@@ -399,7 +406,7 @@ export default {
       this.__removeDynamicResources(value.sidebar.right);
       this.__removeDynamicResources(value.sidebar.bottom);
       // save
-      const atomStaticKey = this.$config.layout.default;
+      const atomStaticKey = this.__getLayoutKey();
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: `layout:${atomStaticKey}`, value });
     },
     __initLayoutConfig(layoutConfig) {

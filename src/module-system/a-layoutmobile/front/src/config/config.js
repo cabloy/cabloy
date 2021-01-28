@@ -1,5 +1,7 @@
 export default {
   layout: {
-    default: 'a-layoutmobile:layoutMobile',
+    scene: {
+      web: 'a-layoutmobile:layoutMobile',
+    },
   },
 };
