@@ -53,14 +53,20 @@ module.exports = ctx => {
     }
 
     async _getConfig() {
+      // instanceConfigsFront
+      const instanceConfigsFront = ctx.bean.instance.getInstanceConfigsFront();
       // config
-      const config = {
+      let config = {
+        modules: instanceConfigsFront,
+      };
+      // config base
+      config = extend(true, config, {
         modules: {
           'a-base': {
             account: this._getAccount(),
           },
         },
-      };
+      });
       // theme
       const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
       const theme = await ctx.bean.status.module('a-user').get(themeStatus);

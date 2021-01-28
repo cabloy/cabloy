@@ -27,7 +27,7 @@ module.exports = function(loader, modules) {
             if (context[CTXCONFIG]) return context[CTXCONFIG];
             // get
             let useCache;
-            let _configs = context.cache.mem.module('a-instance').get('instanceConfigs');
+            let _configs = context.bean.instance.getInstanceConfigs();
             if (!_configs) {
               _configs = loader.app.meta.configs;
               useCache = false;
