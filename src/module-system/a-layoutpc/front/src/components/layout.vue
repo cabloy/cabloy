@@ -65,6 +65,7 @@ export default {
       },
       groups: [],
       layoutDefault: null,
+      layoutScene: null,
       layoutConfig: null,
       panelsAll: null,
       buttonsAll: null,
@@ -375,11 +376,13 @@ export default {
       // panelsAll & buttonsAll
       await this.__getResourcesAll();
       // layoutDefault
+      this.layoutDefault = this.$config.layout.default;
+      // layoutScene
       const _layout = await this.$api.post('/a/base/resource/read', {
         atomStaticKey,
         options: { locale: false },
       });
-      this.layoutDefault = JSON.parse(_layout.content);
+      this.layoutScene = JSON.parse(_layout.content);
       // layoutConfig
       const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc');
       // init layoutConfig
@@ -411,13 +414,13 @@ export default {
     },
     __initLayoutConfig(layoutConfig) {
       if (layoutConfig) {
-        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, layoutConfig);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene, layoutConfig);
       } else {
-        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene);
       }
     },
     reset() {
-      this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault);
+      this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene);
       this.__saveLayoutConfigNow();
       this.$meta.vueApp.reload();
     },
