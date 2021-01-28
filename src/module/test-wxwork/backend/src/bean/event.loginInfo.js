@@ -12,16 +12,9 @@ module.exports = ctx => {
           modules: {
             'a-layoutmobile': {
               layout: {
-                login: '/a/login/login',
-                loginOnStart: true,
-                toolbar: {
-                  tabbar: true, labels: true, bottomMd: true,
+                scene: {
+                  web: 'test-wxwork:layoutTest',
                 },
-                tabs: [
-                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wxwork/test/index' },
-                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/basefront/menu/list' },
-                  { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
-                ],
               },
             },
           },
