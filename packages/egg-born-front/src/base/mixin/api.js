@@ -41,6 +41,7 @@ export default function(Vue) {
         if (!config.headers) config.headers = {};
         config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
       }
+      config.headers['x-scene'] = Vue.prototype.$meta.config.scene;
       return config;
     }, function(error) {
       return Promise.reject(error);
