@@ -93,9 +93,33 @@ module.exports = ctx => {
       // cache configs
       const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
       cacheMem.set('instanceConfigs', instanceConfigs);
+      // cache configsFront
+      const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });
+      cacheMem.set('instanceConfigsFront', instanceConfigsFront);
       // cache instance
       cacheMem.set('instance', instance);
       return instance;
+    }
+
+    getInstanceConfigs() {
+      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+      return cacheMem.get('instanceConfigs');
+    }
+
+    getInstanceConfigsFront() {
+      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+      return cacheMem.get('instanceConfigsFront');
+    }
+
+    _mergeInstanceConfigFront({ instanceConfigs }) {
+      const instanceConfigsFront = {};
+      for (const moduleName in instanceConfigs) {
+        const instanceConfig = instanceConfigs[moduleName];
+        if (instanceConfig.configFront) {
+          instanceConfigsFront[moduleName] = instanceConfig.configFront;
+        }
+      }
+      return instanceConfigsFront;
     }
 
     async checkAppReady(options) {

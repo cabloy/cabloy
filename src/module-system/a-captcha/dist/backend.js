@@ -119,17 +119,29 @@ module.exports = ctx => {
       const scenes = options.scenes;
       if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
 
-      // scene
-      if (scene) {
-        await sceneVerify({ ctx, scene });
-      } else if (scenes) {
-        for (const scene of scenes) {
-          await sceneVerify({ ctx, scene });
-        }
+      // local.disabled
+      if (ctx.app.meta.isLocal && ctx.config.module(moduleInfo.relativeName).configFront.local.disabled) {
+        // next
+        return await next();
       }
 
-      // next
-      await next();
+      try {
+        // scene
+        if (scene) {
+          await sceneVerify({ ctx, scene });
+        } else if (scenes) {
+          for (const scene of scenes) {
+            await sceneVerify({ ctx, scene });
+          }
+        }
+        // next
+        await next();
+      } catch (e) {
+        if (e.code !== 422) throw e;
+        ctx.response.status = 200;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { code: 422, message: e.message };
+      }
     }
   }
   return Middleware;
@@ -234,6 +246,13 @@ module.exports = appInfo => {
         name: 'captcha',
         timeout: 20 * 60 * 1000,
       },
+    },
+  };
+
+  // configFront
+  config.configFront = {
+    local: {
+      disabled: false,
     },
   };
 

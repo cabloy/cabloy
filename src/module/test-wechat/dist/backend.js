@@ -19,16 +19,9 @@ module.exports = ctx => {
           modules: {
             'a-layoutmobile': {
               layout: {
-                login: '/a/login/login',
-                loginOnStart: true,
-                toolbar: {
-                  tabbar: true, labels: true, bottomMd: true,
+                scene: {
+                  web: 'test-wechat:layoutTest',
                 },
-                tabs: [
-                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
-                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/basefront/menu/list' },
-                  { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
-                ],
               },
             },
           },
@@ -180,6 +173,78 @@ module.exports = {
 
 /***/ }),
 
+/***/ 756:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    toolbar: {
+      buttons: [
+        { module: 'test-wechat', name: 'buttonTest' },
+        { module: 'a-layoutmobile', name: 'buttonHome' },
+        { module: 'a-layoutmobile', name: 'buttonMine' },
+      ],
+    },
+  };
+  const layout = {
+    atomName: 'Test Layout(Wechat)',
+    atomStaticKey: 'layoutTest',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutTest = __webpack_require__(756);
+
+module.exports = app => {
+  const layouts = [
+    layoutTest(app),
+  ];
+  return layouts;
+};
+
+
+/***/ }),
+
+/***/ 429:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // tabbar buttons
+    {
+      atomName: 'Test',
+      description: 'Tabbar Button: Test(Wechat)',
+      atomStaticKey: 'buttonTest',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: 'a-layoutmobile',
+        component: 'buttonLink',
+        icon: { material: 'group_work' },
+        url: '/test/wechat/test/index',
+      }),
+      resourceRoles: 'root',
+    },
+  ];
+  return resources;
+};
+
+
+/***/ }),
+
 /***/ 821:
 /***/ ((module) => {
 
@@ -264,13 +329,23 @@ module.exports = app => {
 /***/ }),
 
 /***/ 458:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
+  const staticLayouts = __webpack_require__(512)(app);
+  const staticResources = __webpack_require__(429)(app);
   const meta = {
     base: {
       atoms: {
+      },
+      statics: {
+        'a-layoutpc.layout': {
+          items: staticLayouts,
+        },
+        'a-base.resource': {
+          items: staticResources,
+        },
       },
     },
     validation: {

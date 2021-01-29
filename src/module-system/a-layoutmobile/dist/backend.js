@@ -29,6 +29,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  'Tabbar Button': '选项卡按钮',
 };
 
 
@@ -39,6 +40,106 @@ module.exports = {
 
 module.exports = {
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 215:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    toolbar: {
+      buttons: [
+        { module: 'a-layoutmobile', name: 'buttonHome' },
+        { module: 'a-layoutmobile', name: 'buttonAtom' },
+        { module: 'a-layoutmobile', name: 'buttonMine' },
+      ],
+    },
+  };
+  const layout = {
+    atomName: 'Mobile Layout',
+    atomStaticKey: 'layoutMobile',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutMobile = __webpack_require__(215);
+
+module.exports = app => {
+  const layouts = [
+    layoutMobile(app),
+  ];
+  return layouts;
+};
+
+
+/***/ }),
+
+/***/ 429:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // tabbar buttons
+    {
+      atomName: 'Home',
+      atomStaticKey: 'buttonHome',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { material: 'home' },
+        url: '/a/basefront/resource/tree',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Atom',
+      atomStaticKey: 'buttonAtom',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { material: 'group_work' },
+        url: '/a/basefront/atom/list',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'buttonMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonMine',
+        icon: { material: 'person' },
+        url: '/a/user/user/mine',
+        fixed: true,
+      }),
+      resourceRoles: 'root',
+    },
+  ];
+  return resources;
 };
 
 
@@ -68,6 +169,8 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
+  // meta
+  const meta = __webpack_require__(458)(app);
   // controllers
   const controllers = __webpack_require__(95)(app);
   return {
@@ -77,8 +180,39 @@ module.exports = app => {
     config,
     locales,
     errors,
+    meta,
   };
 
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = app => {
+  const staticLayouts = __webpack_require__(512)(app);
+  const staticResources = __webpack_require__(429)(app);
+  // meta
+  const meta = {
+    base: {
+      resources: {
+        button: {
+          title: 'Tabbar Button',
+        },
+      },
+      statics: {
+        'a-layoutpc.layout': {
+          items: staticLayouts,
+        },
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
+  };
+  return meta;
 };
 
 

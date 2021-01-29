@@ -850,6 +850,8 @@ module.exports = ctx => {
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // handle
       await this._assigneesConfirmation_handle({ handle });
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
     }
 
     async _assigneesConfirmation_handle({ handle }) {

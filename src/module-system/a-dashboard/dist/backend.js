@@ -13,10 +13,6 @@ module.exports = app => {
   class Atom extends app.meta.AtomBase {
 
     async create({ atomClass, item, user }) {
-      // atomStaticKey
-      if (!item.atomStaticKey) {
-        item.atomStaticKey = uuid.v4().replace(/-/g, '');
-      }
       // super
       const key = await super.create({ atomClass, item, user });
       // add dashboard
@@ -843,12 +839,7 @@ module.exports = app => {
     }
 
     async itemByKey({ atomStaticKey, user }) {
-      // adjust key
-      if (!atomStaticKey || atomStaticKey === 'default') {
-        atomStaticKey = this.ctx.config.dashboard.default;
-      } else if (atomStaticKey === 'home') {
-        atomStaticKey = this.ctx.config.dashboard.home;
-      }
+      if (!atomStaticKey) return this.ctx.throw.module('a-base', 1002);
       // get atomId
       const atomClass = await this.ctx.bean.atomClass.get(this.atomClass);
       const atom = await this.ctx.bean.atom.modelAtom.get({

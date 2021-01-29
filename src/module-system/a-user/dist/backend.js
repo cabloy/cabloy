@@ -2,11 +2,45 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 187:
+/***/ 435:
 /***/ ((module) => {
 
+module.exports = ctx => {
+  class Stats {
+
+    async execute(context) {
+      const { provider, user } = context;
+      const dependencies = provider.dependencies;
+      const res = {};
+      for (const dep of dependencies) {
+        const [ module, fullName ] = dep.split(':');
+        const value = await ctx.bean.stats._get({
+          module, fullName, user,
+        });
+        res[dep] = value;
+      }
+      return res;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const statsUser = __webpack_require__(435);
 module.exports = app => {
   const beans = {
+    // stats
+    'stats.user': {
+      mode: 'ctx',
+      bean: statsUser,
+    },
   };
   return beans;
 };
@@ -274,6 +308,17 @@ module.exports = app => {
             'a-base:drafts',
             'a-base:stars',
             'a-flow:flowInitiateds',
+          ],
+        },
+        user: {
+          user: true,
+          bean: {
+            module: 'a-user',
+            name: 'user',
+          },
+          dependencies: [
+            'a-user:userRed',
+            'a-user:userOrange',
           ],
         },
       },

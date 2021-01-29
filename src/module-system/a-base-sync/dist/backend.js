@@ -194,7 +194,9 @@ module.exports = ctx => {
         fn: 'read',
       });
       // revision
-      this._appendRevisionToHistory({ item });
+      if (item) {
+        this._appendRevisionToHistory({ item });
+      }
       // ok
       return item;
     }
@@ -939,7 +941,7 @@ module.exports = ctx => {
     async _get({ atomClass, options, key, mode, user }) {
       if (!options) options = {};
       const resource = options.resource || 0;
-      const resourceLocale = options.resourceLocale || ctx.locale;
+      const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
       //
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const tableName = this._getTableName({ atomClass: _atomClass, mode });
@@ -1088,7 +1090,7 @@ module.exports = ctx => {
 
     async checkRightActionBulk({
       atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action,
+      action, stage,
       user,
     }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
@@ -1098,7 +1100,24 @@ module.exports = ctx => {
         atomClassId: id,
         action,
       });
-      return await ctx.model.queryOne(sql);
+      const actionRes = await ctx.model.queryOne(sql);
+      return await this.__checkRightActionBulk({ actionRes, stage, user });
+    }
+
+    async __checkRightActionBulk({ actionRes, stage /* user*/ }) {
+      // not care about stage
+      if (!stage) return actionRes;
+      // action base
+      const actionBase = ctx.bean.base.action({ module: actionRes.module, atomClassName: actionRes.atomClassName, code: actionRes.code });
+      if (!actionBase) {
+        await ctx.bean.atomAction.model.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        return null;
+      }
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => item === stage)) return null;
+      }
+      return actionRes;
     }
 
     async checkRightCreate({ atomClass, user }) {
@@ -1145,14 +1164,22 @@ module.exports = ctx => {
     }
 
     // actionsBulk of atomClass
-    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, user }) {
+    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, stage, user }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClassId: id,
       });
-      return await ctx.model.query(sql);
+      const actionsRes = await ctx.model.query(sql);
+      const res = [];
+      for (const actionRes of actionsRes) {
+        const _res = await this.__checkRightActionBulk({ actionRes, stage, user });
+        if (_res) {
+          res.push(_res);
+        }
+      }
+      return res;
     }
 
     // preffered roles
@@ -1430,14 +1457,20 @@ module.exports = ctx => {
     }
 
     async _getConfig() {
+      // instanceConfigsFront
+      const instanceConfigsFront = ctx.bean.instance.getInstanceConfigsFront();
       // config
-      const config = {
+      let config = {
+        modules: instanceConfigsFront,
+      };
+      // config base
+      config = extend(true, config, {
         modules: {
           'a-base': {
             account: this._getAccount(),
           },
         },
-      };
+      });
       // theme
       const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
       const theme = await ctx.bean.status.module('a-user').get(themeStatus);
@@ -1878,9 +1911,15 @@ module.exports = ctx => {
       for (const relativeName in ctx.app.meta.modules) {
         const module = ctx.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          actions[relativeName] = {};
+          const res = {};
           for (const atomClassName in module.main.meta.base.atoms) {
-            actions[relativeName][atomClassName] = this._prepareActionsAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+            const res2 = this._prepareActionsAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+            if (Object.keys(res2).length > 0) {
+              res[atomClassName] = res2;
+            }
+          }
+          if (Object.keys(res).length > 0) {
+            actions[relativeName] = res;
           }
         }
       }
@@ -2237,6 +2276,22 @@ module.exports = ctx => {
       return await ctx.bean.atom.select({
         atomClass, options, user, pageForce, count,
       });
+    }
+
+    async readByStaticKey({ atomStaticKey, options, user }) {
+      if (!atomStaticKey) return ctx.throw.module('a-base', 1002);
+      // get atomId
+      const atom = await ctx.bean.atom.modelAtom.get({
+        atomStaticKey,
+        atomStage: 1,
+      });
+      if (!atom) return ctx.throw.module('a-base', 1002);
+      const atomId = atom.id;
+      // check resource right
+      const res = await this.checkRightResource({ resourceAtomId: atomId, user });
+      if (!res) ctx.throw(403);
+      // read
+      return await this.read({ key: { atomId }, options, user });
     }
 
     // read
@@ -5467,7 +5522,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
       atomClass: ctx.request.body.atomClass,
-      action: actionOther,
+      action: actionOther, stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
@@ -9266,6 +9321,7 @@ module.exports = app => {
     async actionsBulk() {
       const res = await this.ctx.service.atom.actionsBulk({
         atomClass: this.ctx.request.body.atomClass,
+        stage: this.ctx.request.body.stage,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
@@ -9723,6 +9779,15 @@ module.exports = app => {
         user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
+    }
+
+    async read() {
+      const res = await this.ctx.service.resource.read({
+        atomStaticKey: this.ctx.request.body.atomStaticKey,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
     }
 
     async check() {
@@ -10727,6 +10792,7 @@ module.exports = app => {
     { method: 'post', path: 'user/setLabels', controller: 'user' },
     // resource
     { method: 'post', path: 'resource/select', controller: 'resource' },
+    { method: 'post', path: 'resource/read', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
     { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
       meta: { right: { type: 'atom', action: 25 } },
@@ -10862,8 +10928,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.actions({ key, basic, user });
     }
 
-    async actionsBulk({ atomClass, user }) {
-      return await this.ctx.bean.atom.actionsBulk({ atomClass, user });
+    async actionsBulk({ atomClass, stage, user }) {
+      return await this.ctx.bean.atom.actionsBulk({ atomClass, stage, user });
     }
 
     async checkRightAction({ key, action, stage, user, checkFlow }) {
@@ -11344,6 +11410,10 @@ module.exports = app => {
 
     async select({ options, user }) {
       return await this.ctx.bean.resource.select({ options, user });
+    }
+
+    async read({ atomStaticKey, options, user }) {
+      return await this.ctx.bean.resource.readByStaticKey({ atomStaticKey, options, user });
     }
 
     async check({ atomStaticKeys, user }) {
