@@ -108,10 +108,17 @@ export default {
     },
     bulk_renderActionsRight() {
       const children = [];
+      const stageCurrent = this.base_getCurrentStage();
       const selectedAtoms = this.bulk.selectedAtoms;
       if (this.bulk.actions && this.actionsAll) {
         for (const action of this.bulk.actions) {
           const _action = this.getAction(action);
+          // stage
+          if (_action.stage) {
+            const stages = _action.stage.split(',');
+            if (!stages.some(item => item === stageCurrent)) continue;
+          }
+          // select
           if (_action.select === undefined || _action.select === null ||
             (_action.select === true && selectedAtoms.length > 0) ||
             (_action.select === false && !this.bulk.selecting)
