@@ -7,6 +7,12 @@ module.exports = ctx => {
       const scenes = options.scenes;
       if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
 
+      // local.disabled
+      if (ctx.app.meta.isLocal && ctx.config.module(moduleInfo.relativeName).configFront.local.disabled) {
+        // next
+        return await next();
+      }
+
       try {
         // scene
         if (scene) {

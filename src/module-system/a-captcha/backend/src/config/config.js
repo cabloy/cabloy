@@ -22,5 +22,12 @@ module.exports = appInfo => {
     },
   };
 
+  // configFront
+  config.configFront = {
+    local: {
+      disabled: false,
+    },
+  };
+
   return config;
 };
