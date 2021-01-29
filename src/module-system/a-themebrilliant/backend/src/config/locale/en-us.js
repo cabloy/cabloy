@@ -1,0 +1,3 @@
+module.exports = {
+  BrilliantThemeTitle: 'Brilliant',
+};
