@@ -42,6 +42,7 @@ export default {
       if (this.bulk.actions) return;
       this.$api.post('/a/base/atom/actionsBulk', {
         atomClass: this.container.atomClass,
+        stage: this.base_getCurrentStage(),
       }).then(data => {
         this.bulk.actions = data;
       });

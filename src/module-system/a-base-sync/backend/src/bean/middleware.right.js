@@ -111,7 +111,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
       atomClass: ctx.request.body.atomClass,
-      action: actionOther,
+      action: actionOther, stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);

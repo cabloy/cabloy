@@ -49,6 +49,7 @@ module.exports = app => {
                 icon: { material: 'check_circle_outline' },
                 bulk: true,
                 select: true,
+                stage: 'formal',
               },
             },
             validator: 'party',

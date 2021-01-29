@@ -191,6 +191,7 @@ module.exports = app => {
     async actionsBulk() {
       const res = await this.ctx.service.atom.actionsBulk({
         atomClass: this.ctx.request.body.atomClass,
+        stage: this.ctx.request.body.stage,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

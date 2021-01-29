@@ -993,7 +993,7 @@ module.exports = ctx => {
 
     async checkRightActionBulk({
       atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action,
+      action, stage,
       user,
     }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
@@ -1003,7 +1003,24 @@ module.exports = ctx => {
         atomClassId: id,
         action,
       });
-      return await ctx.model.queryOne(sql);
+      const actionRes = await ctx.model.queryOne(sql);
+      return await this.__checkRightActionBulk({ actionRes, stage, user });
+    }
+
+    async __checkRightActionBulk({ actionRes, stage /* user*/ }) {
+      // not care about stage
+      if (!stage) return actionRes;
+      // action base
+      const actionBase = ctx.bean.base.action({ module: actionRes.module, atomClassName: actionRes.atomClassName, code: actionRes.code });
+      if (!actionBase) {
+        await ctx.bean.atomAction.model.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        return null;
+      }
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => item === stage)) return null;
+      }
+      return actionRes;
     }
 
     async checkRightCreate({ atomClass, user }) {
@@ -1050,14 +1067,22 @@ module.exports = ctx => {
     }
 
     // actionsBulk of atomClass
-    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, user }) {
+    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, stage, user }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClassId: id,
       });
-      return await ctx.model.query(sql);
+      const actionsRes = await ctx.model.query(sql);
+      const res = [];
+      for (const actionRes of actionsRes) {
+        const _res = await this.__checkRightActionBulk({ actionRes, stage, user });
+        if (_res) {
+          res.push(_res);
+        }
+      }
+      return res;
     }
 
     // preffered roles
