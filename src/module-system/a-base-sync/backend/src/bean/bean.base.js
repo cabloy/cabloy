@@ -263,9 +263,15 @@ module.exports = ctx => {
       for (const relativeName in ctx.app.meta.modules) {
         const module = ctx.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          actions[relativeName] = {};
+          const res = {};
           for (const atomClassName in module.main.meta.base.atoms) {
-            actions[relativeName][atomClassName] = this._prepareActionsAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+            const res2 = this._prepareActionsAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+            if (Object.keys(res2).length > 0) {
+              res[atomClassName] = res2;
+            }
+          }
+          if (Object.keys(res).length > 0) {
+            actions[relativeName] = res;
           }
         }
       }
