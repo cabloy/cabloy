@@ -24,11 +24,21 @@ module.exports = {
 
 /***/ }),
 
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {
+  BrilliantThemeTitle: 'Brilliant',
+};
+
+
+/***/ }),
+
 /***/ 72:
 /***/ ((module) => {
 
 module.exports = {
-  Hyacinth: '风信子',
+  BrilliantThemeTitle: '灿烂',
 };
 
 
@@ -38,6 +48,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
 };
 
