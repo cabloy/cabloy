@@ -45,11 +45,13 @@ module.exports = app => {
         type: 'string',
         ebType: 'language',
         ebTitle: 'Language',
+        notEmpty: true,
       },
       atomCategoryId: {
         type: 'number',
         ebType: 'category',
         ebTitle: 'Category',
+        notEmpty: true,
       },
       atomTags: {
         type: [ 'string', 'null' ],
