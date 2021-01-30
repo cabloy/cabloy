@@ -5,7 +5,7 @@
       <img ref="image" class="image">
     </eb-box>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
-    <div v-if="fileName" class="fileName">{{fileName}}</div>
+    <div class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{fileName || $text('UploadFileDragTip')}}</div>
     <f7-toolbar bottom-md>
       <f7-button @click="onClickSelect">{{selectText}}</f7-button>
       <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>

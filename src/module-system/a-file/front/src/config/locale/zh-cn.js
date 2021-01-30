@@ -1,6 +1,7 @@
 export default {
   Upload: '上传',
   InvalidFileFormat: '无效的文件格式',
+  UploadFileDragTip: '将文件拖拽至此',
   'Clear Crop': '清除剪裁',
   'Select Image': '选择图片',
   'Select File': '选择文件',
