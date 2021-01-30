@@ -120,10 +120,14 @@ export default {
     onFileDragenter(event) {
       event.preventDefault();
       event.stopPropagation();
+      const $target = this.$$(event.target);
+      $target.addClass('fileDropPrompt');
     },
     onFileDragleave(event) {
       event.preventDefault();
       event.stopPropagation();
+      const $target = this.$$(event.target);
+      $target.removeClass('fileDropPrompt');
     },
     onFileDrop(event) {
       event.preventDefault();
@@ -173,6 +177,10 @@ export default {
   background: var(--f7-text-editor-toolbar-bg-color);
   opacity: 0.6;
   user-select: none;
+}
+
+.fileDropPrompt{
+  background: hsla(0, 0%, 100%, .32);
 }
 
 </style>
