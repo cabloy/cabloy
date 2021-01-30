@@ -9,7 +9,7 @@
     <f7-toolbar bottom-md>
       <f7-button @click="onClickSelect">{{selectText}}</f7-button>
       <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-      <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+      <eb-button v-if="fileBlob" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -23,6 +23,7 @@ export default {
     return {
       cropped: false,
       fileName: null,
+      fileBlob: null,
     };
   },
   computed: {
@@ -42,17 +43,20 @@ export default {
       if (this.mode === 1) return this.$text('Upload Image');
       else if (this.mode === 2) return this.$text('Upload File');
       else if (this.mode === 3) return this.$text('Upload Audio');
+      return 'Not Support';
     },
     selectText() {
       if (this.mode === 1) return this.$text('Select Image');
       else if (this.mode === 2) return this.$text('Select File');
       else if (this.mode === 3) return this.$text('Select Audio');
+      return 'Not Support';
     },
     accept() {
       const custom = this.contextParams && this.contextParams.accept;
       if (this.mode === 1) return custom || 'image/*';
       else if (this.mode === 2) return custom || '';
       else if (this.mode === 3) return custom || 'audio/*';
+      return 'Not Support';
     },
   },
   mounted() {},
@@ -81,13 +85,17 @@ export default {
       this.$refs.file.click();
     },
     onFileChange(event) {
-      this.fileName = event.target.files[0].name;
+      const file = event.target.files[0];
+      if (!file) return;
+      this.fileBlob = file;
+      this.fileName = file.name;
+      event.target.value = '';
       if (this.mode === 1) {
         const reader = new window.FileReader();
         reader.onload = () => {
           this._cropper.reset().replace(reader.result);
         };
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(this.fileBlob);
       }
     },
     onClickClearCrop() {
@@ -110,7 +118,7 @@ export default {
           formData.append('cropbox', JSON.stringify(data));
         }
       }
-      formData.append('file', this.$refs.file.files[0]);
+      formData.append('file', this.fileBlob);
       return this.$api.post('file/upload', formData)
         .then(data => {
           this.contextCallback(200, data);
