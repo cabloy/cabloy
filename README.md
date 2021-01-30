@@ -131,6 +131,32 @@
 
   ![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
 
+### - 预览
+
+- 白色主题
+
+![白色主题](./docs/assets/images/zh-cn/theme-light.png)
+
+- 暗色主题
+
+![暗色主题](./docs/assets/images/zh-cn/theme-dark.png)
+
+- 风信子主题
+
+![风信子主题](./docs/assets/images/zh-cn/theme-hyacinth.png)
+
+- 灿烂主题
+
+![灿烂主题](./docs/assets/images/zh-cn/theme-brilliant.png)
+
+- 显示侧边栏
+
+![显示侧边栏](./docs/assets/images/zh-cn/theme-brilliant-panel.png)
+
+- 移动端风格
+
+![移动端风格](./docs/assets/images/zh-cn/theme-mobile.png)
+
 ## License
 
 [MIT](./LICENSE)
