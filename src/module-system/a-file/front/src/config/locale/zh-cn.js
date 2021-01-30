@@ -1,4 +1,6 @@
 export default {
+  Upload: '上传',
+  InvalidFileFormat: '无效的文件格式',
   'Clear Crop': '清除剪裁',
   'Select Image': '选择图片',
   'Select File': '选择文件',
@@ -6,5 +8,4 @@ export default {
   'Upload Image': '上传图片',
   'Upload File': '上传文件',
   'Upload Audio': '上传音频',
-  Upload: '上传',
 };

@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <eb-box @size="onSize" toolbar>
+    <eb-box @size="onSize" toolbar @dragover.native="onFileDragover" @dragenter.native="onFileDragenter" @dragleave.native="onFileDragleave" @drop.native="onFileDrop">
       <img ref="image" class="image">
     </eb-box>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
@@ -24,6 +24,7 @@ export default {
       cropped: false,
       fileName: null,
       fileBlob: null,
+      fileNameDragging: false,
     };
   },
   computed: {
@@ -85,8 +86,22 @@ export default {
       this.$refs.file.click();
     },
     onFileChange(event) {
-      const file = event.target.files[0];
+      this.__setFile(event.target.files[0]);
+    },
+    __checkFileType(file) {
+      const type = file.type;
+      if (this.mode === 1 && type.indexOf('image/') !== 0) return false;
+      if (this.mode === 3 && type.indexOf('audio/') !== 0) return false;
+      return true;
+    },
+    __setFile(file) {
       if (!file) return;
+      // check
+      if (!this.__checkFileType(file)) {
+        this.$view.toast.show({ text: this.$text('InvalidFileFormat') });
+        return;
+      }
+      // set
       this.fileBlob = file;
       this.fileName = file.name;
       event.target.value = '';
@@ -97,6 +112,23 @@ export default {
         };
         reader.readAsDataURL(this.fileBlob);
       }
+    },
+    onFileDragover(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    onFileDragenter(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    onFileDragleave(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    onFileDrop(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.__setFile(event.dataTransfer.files[0]);
     },
     onClickClearCrop() {
       this._cropper.clear();
