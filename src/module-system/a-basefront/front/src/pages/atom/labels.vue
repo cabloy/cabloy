@@ -6,10 +6,10 @@
         <!-- <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link> -->
       </f7-nav-right>
     </eb-navbar>
-    <f7-list v-if="labelsAll">
+    <f7-list class="label-edit-list" v-if="labelsAll">
       <f7-list-item group-title :title="item?item.atomName:''"></f7-list-item>
       <eb-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event,key)" swipeout>
-        <div slot="media" class="media" :style="{backgroundColor:labelsAll[key].color}"></div>
+        <div slot="media" class="label-media" :style="{backgroundColor:labelsAll[key].color}"></div>
         <eb-context-menu>
           <div slot="right">
             <div close color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</div>
@@ -17,7 +17,7 @@
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
-    <f7-sheet ref="ebSheet" fill :opened="sheetOpened" @sheet:closed="sheetOpened = false">
+    <f7-sheet class="label-edit" ref="ebSheet" fill :opened="sheetOpened" @sheet:closed="sheetOpened = false">
       <f7-toolbar>
         <div class="left">
           <f7-link sheet-close>{{$text('Close')}}</f7-link>
@@ -27,14 +27,14 @@
         </div>
       </f7-toolbar>
       <f7-page-content>
-        <div class="label">
-          <f7-badge :style="{backgroundColor:labelColor}">{{labelText}}</f7-badge>
+        <div class="label-prompt">
+          <f7-badge :style="{backgroundColor:labelColor}">{{labelText || $text('PleaseInputText')}}</f7-badge>
         </div>
-        <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
+        <eb-list class="label-form" form inline-labels no-hairlines-md @submit="onFormSubmit">
           <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="labelText">
           </eb-list-input>
           <f7-list-item>
-            <div class="row colors">
+            <div class="row label-colors">
               <f7-button v-for="color of colors" :key="color.value" class="col-33" :style="{backgroundColor:color.value}" small fill @click="onColorSelect(color)">{{$text(color.name)}}</f7-button>
             </div>
           </f7-list-item>
@@ -146,23 +146,31 @@ export default {
 };
 
 </script>
-<style scoped>
-.label {
-  position: absolute;
-  width: 100%;
-  top: 10px;
-  text-align: center;
+<style lang="less" scoped>
+.label-edit-list{
+  .label-media {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+  }
 }
 
-.media {
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-}
+.label-edit{
+  .label-prompt {
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    text-align: center;
+  }
 
-.colors {
-  height: 60px;
-  width: 100%;
+  .label-form{
+    margin-top: 40px;
+  }
+
+  .label-colors {
+    height: 60px;
+    width: 100%;
+  }
 }
 
 </style>
