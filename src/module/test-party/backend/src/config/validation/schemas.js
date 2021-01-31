@@ -239,7 +239,13 @@ module.exports = app => {
         type: 'string',
         ebType: 'file',
         ebTitle: 'Avatar',
-        ebParams: { mode: 1 },
+        ebParams: {
+          mode: 1,
+          fixed: {
+            width: 96,
+            height: 96,
+          },
+        },
         notEmpty: true,
       },
       motto: {

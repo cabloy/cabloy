@@ -38,6 +38,8 @@ export default {
       const flag = this.getMetaValue(meta, 'flag', dataPath) || property.ebParams.flag;
       // accept
       const accept = this.getMetaValue(meta, 'accept', dataPath) || property.ebParams.accept;
+      // fixed
+      const fixed = this.getMetaValue(meta, 'fixed', dataPath) || property.ebParams.fixed;
       // render
       return c('eb-list-input', {
         key,
@@ -95,6 +97,7 @@ export default {
                     attachment,
                     flag,
                     accept,
+                    fixed,
                   },
                   callback: (code, value) => {
                     if (code === 200) {
