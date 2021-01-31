@@ -5,7 +5,7 @@
       <img ref="image" class="image">
     </eb-box>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
-    <div class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{fileName || $text('UploadFileDragTip')}}</div>
+    <div v-if="fileNameTip" class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{fileNameTip}}</div>
     <f7-toolbar bottom-md>
       <f7-button @click="onClickSelect">{{selectText}}</f7-button>
       <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
@@ -61,6 +61,10 @@ export default {
       else if (this.mode === 2) return custom || '';
       else if (this.mode === 3) return custom || 'audio/*';
       return 'Not Support';
+    },
+    fileNameTip() {
+      if (!this.fileName) return this.$text('UploadFileDragTip');
+      return this.$config.upload.showFileName ? this.fileName : null;
     },
   },
   mounted() {},
