@@ -129,9 +129,9 @@ function transformDate(fun, ctx, data) {
 
 module.exports = {
   errors: true,
-  compile(schema) {
+  compile(schema, schemaProperty) {
     const fun = function(data) {
-      if (schema && checkIfEmpty(data)) {
+      if (schema && checkIfEmpty(schemaProperty, data)) {
         fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('RequiredField') }];
         return false;
       }
@@ -141,7 +141,10 @@ module.exports = {
   },
 };
 
-function checkIfEmpty(value) {
+function checkIfEmpty(schemaProperty, value) {
+  const type = schemaProperty.type;
+  // number
+  if (type === 'number') return !value;
   // except 0
   return value === '' || value === undefined || value === null;
 }
