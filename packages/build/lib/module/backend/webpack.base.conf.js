@@ -24,7 +24,8 @@ module.exports = context => {
             '@babel/plugin-transform-spread',
             '@babel/plugin-transform-template-literals',
             '@babel/plugin-proposal-object-rest-spread',
-            '@babel/plugin-transform-async-to-generator',
+            // atom.party.js: Unable to handle nested super.prop usage (This is an error on an internal node. Probably an internal error.)
+            // '@babel/plugin-transform-async-to-generator',
           ],
         },
       },
