@@ -99,10 +99,23 @@ module.exports = app => {
           // image
           await bb.fromCallback(cb => {
             let img = gm(fileContent);
+            // crop
             if (fields.cropped === 'true') {
               const cropbox = JSON.parse(fields.cropbox);
               img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
             }
+            // fixed
+            if (fields.fixed) {
+              const fixed = JSON.parse(fields.fixed);
+              if (fixed.width && fixed.height) {
+                img = img.resize(fixed.width, fixed.height, '!');
+              } else if (fixed.width) {
+                img = img.resize(fixed.width);
+              } else if (fixed.height) {
+                img = img.resize(null, fixed.height);
+              }
+            }
+            // save
             img.quality(93).write(destFile, cb);
           });
           // size

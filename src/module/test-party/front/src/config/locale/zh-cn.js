@@ -167,4 +167,5 @@ export default {
   'Remember Me': '记住我',
   'Captcha Code': '验证码',
   'Load Component Async': '异步加载组件',
+  'Image(Fixed Size: 400*200)': '图像(固定尺寸: 400*200)',
 };

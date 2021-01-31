@@ -9,6 +9,13 @@
       </f7-card-content>
     </f7-card>
     <f7-card>
+      <f7-card-header>{{$text('Image(Fixed Size: 400*200)')}}</f7-card-header>
+      <f7-card-content>
+        <img v-if="imageUrlFixed" class="image" :src="imageUrlFixed">
+        <eb-button :onPerform="onPerformImageFixed">{{$text('Select And Upload')}}</eb-button>
+      </f7-card-content>
+    </f7-card>
+    <f7-card>
       <f7-card-header>{{$text('Audio')}}</f7-card-header>
       <f7-card-content>
         <audio v-if="audioUrl" :src="audioUrl" controls autoplay></audio>
@@ -29,6 +36,7 @@ export default {
   data() {
     return {
       imageUrl: null,
+      imageUrlFixed: null,
       audioUrl: null,
       file: null,
     };
@@ -45,6 +53,31 @@ export default {
             callback: (code, data) => {
               if (code === 200) {
                 this.imageUrl = data.downloadUrl;
+                resolve();
+              }
+              if (code === false) {
+                reject();
+              }
+            },
+          },
+        });
+      });
+    },
+    onPerformImageFixed() {
+      return new Promise((resolve, reject) => {
+        this.$view.navigate('/a/file/file/upload', {
+          context: {
+            params: {
+              mode: 1,
+              // atomId: 0,
+              fixed: {
+                width: 400,
+                height: 200,
+              },
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                this.imageUrlFixed = data.downloadUrl;
                 resolve();
               }
               if (code === false) {

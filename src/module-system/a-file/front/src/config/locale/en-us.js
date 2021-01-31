@@ -1,4 +1,4 @@
 export default {
   InvalidFileFormat: 'Invalid File Format',
-  UploadFileDragTip: 'Drag and drop files here',
+  UploadFileDragTip: 'Drag and drop one file here',
 };

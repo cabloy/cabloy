@@ -40,6 +40,9 @@ export default {
     flag() {
       return this.contextParams && this.contextParams.flag || '';
     },
+    fixed() {
+      return this.contextParams && this.contextParams.fixed;
+    },
     title() {
       if (this.mode === 1) return this.$text('Upload Image');
       else if (this.mode === 2) return this.$text('Upload File');
@@ -64,10 +67,11 @@ export default {
   methods: {
     createCropper() {
       if (this.mode === 1) {
-        this._cropper = new Cropper(this.$refs.image, {
+        const autoCrop = !!this.fixed;
+        const options = {
           viewMode: 2,
           checkOrientation: false,
-          autoCrop: false,
+          autoCrop,
           movable: false,
           rotatable: false,
           scalable: false,
@@ -76,7 +80,14 @@ export default {
           crop: () => {
             this.cropped = true;
           },
-        });
+          ready: () => {
+          },
+        };
+        if (this.fixed && this.fixed.width && this.fixed.height) {
+          options.aspectRatio = this.fixed.width / this.fixed.height;
+        }
+        // new cropper
+        this._cropper = new Cropper(this.$refs.image, options);
       }
     },
     onSize() {
@@ -152,6 +163,9 @@ export default {
             data[key] = parseInt(data[key]);
           }
           formData.append('cropbox', JSON.stringify(data));
+        }
+        if (this.fixed) {
+          formData.append('fixed', JSON.stringify(this.fixed));
         }
       }
       formData.append('file', this.fileBlob);
