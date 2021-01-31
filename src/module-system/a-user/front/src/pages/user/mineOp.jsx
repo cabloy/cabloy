@@ -80,6 +80,10 @@ export default {
         context: {
           params: {
             mode: 1,
+            fixed: {
+              width: 200,
+              height: 200,
+            },
           },
           callback: (code, res) => {
             if (code === 200) {
