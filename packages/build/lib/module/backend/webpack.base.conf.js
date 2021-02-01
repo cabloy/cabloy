@@ -15,18 +15,32 @@ module.exports = context => {
         loader: 'babel-loader',
         options: {
           babelrc: false,
-          // presets: [ '@babel/preset-env' ],
-          plugins: [
-            '@babel/plugin-transform-arrow-functions',
-            '@babel/plugin-transform-for-of',
-            '@babel/plugin-transform-parameters',
-            '@babel/plugin-transform-shorthand-properties',
-            '@babel/plugin-transform-spread',
-            '@babel/plugin-transform-template-literals',
-            '@babel/plugin-proposal-object-rest-spread',
-            // atom.party.js: Unable to handle nested super.prop usage (This is an error on an internal node. Probably an internal error.)
-            // '@babel/plugin-transform-async-to-generator',
+          presets: [
+            [ '@babel/preset-env', {
+              targets: {
+                node: '6',
+              },
+              include: [
+                '@babel/plugin-transform-for-of',
+                '@babel/plugin-transform-parameters',
+                '@babel/plugin-transform-shorthand-properties',
+                '@babel/plugin-transform-spread',
+                '@babel/plugin-transform-template-literals',
+                '@babel/plugin-proposal-object-rest-spread',
+              ],
+            }],
           ],
+          // plugins: [
+          //   '@babel/plugin-transform-arrow-functions',
+          //   '@babel/plugin-transform-for-of',
+          //   '@babel/plugin-transform-parameters',
+          //   '@babel/plugin-transform-shorthand-properties',
+          //   '@babel/plugin-transform-spread',
+          //   '@babel/plugin-transform-template-literals',
+          //   '@babel/plugin-proposal-object-rest-spread',
+          //   // atom.party.js: Unable to handle nested super.prop usage (This is an error on an internal node. Probably an internal error.)
+          //   '@babel/plugin-transform-async-to-generator',
+          // ],
         },
       },
     });
