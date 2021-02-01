@@ -64,7 +64,7 @@
 <span>${util.escapeHtml(item.userName)}</span>
 <span class="num date">${util.formatDateTime(item.updatedAt)}</span>
 <a target="_blank" href="${url('static/articles.html')}?categoryId=${item.atomCategoryId}&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(item.atomCategoryName)}</span></a>
-<i class="fas fa-eye-open"></i><span class="num readCount"></span>
+<i class="fas fa-eye"></i><span class="num readCount"></span>
 <i class="fas fa-heart"></i><span class="num starCount"></span>
 <a target="_blank" href="${url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount"></span></a>
 ${tagsText}
