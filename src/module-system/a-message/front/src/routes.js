@@ -6,4 +6,5 @@ function loadjsx(name) {
 }
 
 export default [
+  { path: 'list', component: loadjsx('message/list') },
 ];

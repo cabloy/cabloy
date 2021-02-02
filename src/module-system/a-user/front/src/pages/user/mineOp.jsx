@@ -139,19 +139,30 @@ export default {
         </f7-list>
       );
     },
+    renderTitleButtons() {
+      if (this.user.agent.anonymous) return;
+      const children = [];
+      // message
+      if (!this.$config.message.disabled) {
+        children.push(
+          <eb-link key="messages" iconMaterial="message" eb-href="/a/message/list" eb-target="_self"></eb-link>
+        );
+      }
+      // settings
+      if (!this.inAgent) {
+        children.push(
+          <eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
+        );
+      }
+      return children;
+    },
   },
   render() {
-    let domSettings;
-    if (!this.user.agent.anonymous && !this.inAgent) {
-      domSettings = (
-        <eb-link iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
-      );
-    }
     return (
       <eb-page>
         <eb-navbar title={this.$text('Mine')} eb-back-link="Back">
           <f7-nav-right>
-            {domSettings}
+            {this.renderTitleButtons()}
           </f7-nav-right>
         </eb-navbar>
         <div class="mine-user">
