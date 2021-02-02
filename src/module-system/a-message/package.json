@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-message",
   "version": "4.0.0",
-  "title": "a-message",
+  "title": "Messages",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
