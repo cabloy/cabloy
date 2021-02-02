@@ -51,6 +51,7 @@
     "egg-born-module-a-mail": "^4.0.7",
     "egg-born-module-a-markdownstyle": "^4.0.7",
     "egg-born-module-a-mavoneditor": "^4.0.8",
+    "egg-born-module-a-message": "^4.0.0",
     "egg-born-module-a-progress": "^4.0.7",
     "egg-born-module-a-sequence": "^4.0.7",
     "egg-born-module-a-settings": "^4.0.8",
