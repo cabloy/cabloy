@@ -1,5 +1,11 @@
 # History
 
+## 2020-02-03, Version 4.4.5
+
+* **特性**
+  * clientId：每个页面分配唯一clientId
+  * socketIO：clientId机制，支持多个页面同时接收socket消息
+
 ## 2020-02-01, Version 4.4.4
 
 * **优化**
