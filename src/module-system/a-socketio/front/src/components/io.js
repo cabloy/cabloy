@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import adapter from './adapter.js';
 import helperFn from './helper.js';
 
@@ -22,6 +23,14 @@ export default {
     _getInstance() {
       if (!_io) {
         _io = IOFn(adapter);
+        const _subscribe = _io.subscribe;
+        _io.subscribe = function(path, cbMessage, cbSubscribed, options) {
+          options = options || {};
+          if (options.scene === undefined) {
+            options.scene = Vue.prototype.$meta.store.state.auth.clientId;
+          }
+          return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
+        };
       }
       return _io;
     },

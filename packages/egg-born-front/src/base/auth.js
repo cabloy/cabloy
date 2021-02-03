@@ -20,6 +20,7 @@ export default function(Vue) {
       loginInfo: null,
       hashInit: null,
       reload: false,
+      clientId: null,
     },
     getters: {
       title(state) {
@@ -47,6 +48,9 @@ export default function(Vue) {
       },
       setLoginInfo(state, info) {
         state.loginInfo = info;
+      },
+      setClientId(state, clientId) {
+        state.clientId = clientId;
       },
       setHashInit(state, hashInit) {
         state.hashInit = hashInit;

@@ -143,6 +143,8 @@ export default {
         this.$store.commit('auth/setInstance', data.instance);
         // loginInfo
         this.$store.commit('auth/setLoginInfo', data);
+        // clientId
+        this.$store.commit('auth/setClientId', data.clientId);
         // title
         window.document.title = this.$store.getters['auth/title'];
         // check if need activation
