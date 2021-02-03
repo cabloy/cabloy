@@ -466,6 +466,7 @@ const util = {
       url: '/a/base/auth/echo',
     }).then(data => {
       this.user = data.user;
+      this.clientId = data.clientId;
       $(document).trigger('echo-ready', data);
     });
   },

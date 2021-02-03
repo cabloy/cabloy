@@ -426,31 +426,32 @@ module.exports = ctx => {
       if (!userId) return true;
       // options
       const messageScene = (options && options.scene) || '';
-      // no scene
-      if (!messageScene) {
-        return await this._emitNoScene({ path, message, messageSync, messageScene });
-      }
+      // // no scene
+      // if (!messageScene) {
+      //   return await this._emitNoScene({ path, message, messageSync, messageScene });
+      // }
       // scene
       return await this._emitScene({ path, message, messageSync, messageScene });
     }
 
-    async _emitNoScene({ path, message, messageSync, messageScene }) {
-      // userId
-      const userId = messageSync.userId;
-      const isSender = message.userIdFrom === userId;
-      // ignore sender
-      if (isSender) return true;
-      // get hash value
-      const key = `${ctx.instance.id}:${userId}:${path}`;
-      const value = await this.redis.hget(key, messageScene);
-      if (!value) return false; // offline
-      // emit
-      const [ workerId, socketId ] = value.split(':');
-      this._emitSocket({ path, message, workerId, socketId });
-      // done
-      return true;
-    }
+    // async _emitNoScene({ path, message, messageSync, messageScene }) {
+    //   // userId
+    //   const userId = messageSync.userId;
+    //   const isSender = message.userIdFrom === userId;
+    //   // ignore sender
+    //   if (isSender) return true;
+    //   // get hash value
+    //   const key = `${ctx.instance.id}:${userId}:${path}`;
+    //   const value = await this.redis.hget(key, messageScene);
+    //   if (!value) return false; // offline
+    //   // emit
+    //   const [ workerId, socketId ] = value.split(':');
+    //   this._emitSocket({ path, message, workerId, socketId });
+    //   // done
+    //   return true;
+    // }
 
+    // return true when any emitSocket
     async _emitScene({ path, message, messageSync, messageScene }) {
       // userId
       const userId = messageSync.userId;

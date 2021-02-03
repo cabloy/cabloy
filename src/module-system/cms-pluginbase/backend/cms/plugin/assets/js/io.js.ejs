@@ -1,5 +1,5 @@
 // socketio adapter
-const __socketioAdapter= {
+const __socketioAdapter = {
   _io: null,
   initialize(io) {
     this._io = io;
@@ -32,7 +32,16 @@ const __socketioAdapter= {
 Object.defineProperty(util, 'io', {
   get() {
     if (!util.__io) {
-      util.__io = socketio.default(__socketioAdapter);
+      const _io = socketio.default(__socketioAdapter);
+      const _subscribe = _io.subscribe;
+      _io.subscribe = function(path, cbMessage, cbSubscribed, options) {
+        options = options || {};
+        if (options.scene === undefined) {
+          options.scene = util.clientId;
+        }
+        return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
+      };
+      util.__io = _io;
     }
     return util.__io;
   },

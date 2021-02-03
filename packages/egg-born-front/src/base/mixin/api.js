@@ -37,11 +37,19 @@ export default function(Vue) {
 
     // add a request interceptor
     axios.interceptors.request.use(function(config) {
+      // jwt
       if (Vue.prototype.$meta.config.base.jwt) {
         if (!config.headers) config.headers = {};
         config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
       }
+      // scene
       config.headers['x-scene'] = Vue.prototype.$meta.config.scene;
+      // clientId
+      const clientId = Vue.prototype.$meta.store.state.auth.clientId;
+      if (clientId) {
+        config.headers['x-clientid'] = clientId;
+      }
+      // config
       return config;
     }, function(error) {
       return Promise.reject(error);
