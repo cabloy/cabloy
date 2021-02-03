@@ -19,10 +19,6 @@ module.exports = appInfo => {
     registerMessageClass: {
       bean: 'registerMessageClass',
     },
-    saveMessage: {
-      bean: 'saveMessage',
-      concurrency: true,
-    },
     process: {
       bean: 'process',
       concurrency: true,

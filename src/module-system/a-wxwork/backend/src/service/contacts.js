@@ -239,9 +239,6 @@ module.exports = app => {
           module: moduleInfo.relativeName,
           messageClassName: 'progress',
         },
-        options: {
-          saveMessageAsync: true,
-        },
       });
     }
 

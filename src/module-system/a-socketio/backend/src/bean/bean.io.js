@@ -97,7 +97,6 @@ module.exports = ctx => {
     async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
-      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -123,22 +122,6 @@ module.exports = ctx => {
         content: JSON.stringify(message.content), // should use string for db/queue
       };
 
-      // save message async
-      if (messageClassBase.info.persistence && saveMessageAsync) {
-        // must use pushAsync for the correct order of message id
-        return await ctx.app.meta.queue.pushAsync({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'saveMessage',
-          data: {
-            path,
-            options,
-            message: _message,
-            messageClass,
-          },
-        });
-      }
-
       // save
       if (messageClassBase.info.persistence) {
         _message.id = await this.message.save({ message: _message });
@@ -163,28 +146,6 @@ module.exports = ctx => {
       // ok
       return {
         id: _message.id,
-      };
-    }
-
-    // queue: saveMessage async
-    async queueSaveMessage({ path, options, message, messageClass }) {
-      // save message async
-      message.id = await this.message.save({ message });
-      // to queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'process',
-        data: {
-          path,
-          options,
-          message,
-          messageClass,
-        },
-      });
-      // ok
-      return {
-        id: message.id,
       };
     }
 

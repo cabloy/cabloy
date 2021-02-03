@@ -3,7 +3,6 @@ const localMessage = require('./bean/local.message.js');
 const localMessageClass = require('./bean/local.messageClass.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastSocketEmit = require('./bean/broadcast.socketEmit.js');
-const queueSaveMessage = require('./bean/queue.saveMessage.js');
 const queueProcess = require('./bean/queue.process.js');
 const queueDelivery = require('./bean/queue.delivery.js');
 const queuePush = require('./bean/queue.push.js');
@@ -38,10 +37,6 @@ module.exports = app => {
       bean: broadcastSocketEmit,
     },
     // queue
-    'queue.saveMessage': {
-      mode: 'app',
-      bean: queueSaveMessage,
-    },
     'queue.process': {
       mode: 'app',
       bean: queueProcess,
