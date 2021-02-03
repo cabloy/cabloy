@@ -90,6 +90,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  Messages: '消息',
 };
 
 

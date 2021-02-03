@@ -1403,6 +1403,7 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(6718);
+const uuid = require3('uuid');
 const extend = require3('extend2');
 const mparse = require3('egg-born-mparse').default;
 
@@ -1418,7 +1419,7 @@ module.exports = ctx => {
         // check
         await ctx.bean.user.check();
         // logined
-        return await this.getLoginInfo();
+        return await this.getLoginInfo({ clientId: true });
       } catch (e) {
         // deleted,disabled
         return await this.logout();
@@ -1435,13 +1436,19 @@ module.exports = ctx => {
       return await this.getLoginInfo();
     }
 
-    async getLoginInfo() {
+    async getLoginInfo(options) {
+      options = options || {};
+      // config
       const config = await this._getConfig();
       const info = {
         user: ctx.state.user,
         instance: this._getInstance(),
         config,
       };
+      // clientId
+      if (options.clientId === true) {
+        info.clientId = uuid.v4().replace(/-/g, '');
+      }
       // login info event
       await ctx.bean.event.invoke({
         name: 'loginInfo', data: { info },
