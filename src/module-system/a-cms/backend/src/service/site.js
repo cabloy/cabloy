@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const extend = require3('extend2');
+const fse = require3('fs-extra');
 
 let __blocks = null;
 
@@ -194,6 +194,24 @@ module.exports = app => {
         blocksModule[fullName] = blocks[key];
       }
       return blocksModule;
+    }
+
+    async checkFile({ file, mtime }) {
+      // exists
+      const exists = await fse.pathExists(file);
+      if (!exists) {
+        // deleted
+        return null;
+      }
+      // stat
+      const stat = await fse.stat(file);
+      const mtimeCurrent = stat.mtime.valueOf();
+      if (mtime !== mtimeCurrent) {
+        // different
+        return { mtime: mtimeCurrent };
+      }
+      // default
+      return null;
     }
 
   }

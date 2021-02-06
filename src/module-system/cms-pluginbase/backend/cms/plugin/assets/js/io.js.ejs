@@ -2,10 +2,20 @@
 const __socketioAdapter = {
   _io: null,
   initialize(io) {
-    this._io = io;
+    const self = this;
+    self._io = io;
     $(document).on('echo-ready', function() {
       // reset
-      this._io.reset();
+      self._io.reset();
+    });
+    // visibilitychange
+    $(document).on('visibilitychange', function() {
+      if (document.visibilityState === 'hidden') {
+        self._io.disconnect();
+      }
+      if (document.visibilityState === 'visible') {
+        self._io.connect();
+      }
     });
   },
   subscribe({ subscribes, socketId }) {

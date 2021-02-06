@@ -15,11 +15,28 @@ $(document).ready(function() {
 $(document).on('echo-ready', function() {
   // hotload file
   if (env.site.hotloadFile && !util.user.op.anonymous) {
+    let __hotloadFileTime = 0;
     window.setTimeout(() => {
       const subscribePath = `/a/cms/hotloadFile/${env.site.hotloadFile}`;
       util.io.subscribe(subscribePath, () => {
         location.reload(true);
-      }, null);
+      }, () => {
+        util.performAction({
+          method: 'post',
+          url: '/a/cms/site/checkFile',
+          body: { file: env.site.hotloadFile, mtime: __hotloadFileTime },
+        }).then(data => {
+          if (!__hotloadFileTime) {
+            if (data && data.mtime) {
+              __hotloadFileTime = data.mtime;
+            }
+          } else {
+            if (data && data.mtime !== __hotloadFileTime) {
+              location.reload(true);
+            }
+          }
+        });
+      });
     }, 0);
   }
 });
