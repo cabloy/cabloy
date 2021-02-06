@@ -11,9 +11,19 @@ export default {
   _io: null,
   initialize(io) {
     this._io = io;
+    // auth:login
     Vue.prototype.$meta.eventHub.$on('auth:login', () => {
       // reset
       this._io.reset();
+    });
+    // visibilitychange
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        this._io.disconnect();
+      }
+      if (document.visibilityState === 'visible') {
+        this._io.connect();
+      }
     });
   },
   subscribe({ subscribes, socketId }) {

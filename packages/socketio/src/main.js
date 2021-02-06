@@ -211,14 +211,22 @@ export default adapter => {
         this._socket.connect();
       }
     },
+    connect() {
+      if (this._socket) {
+        this._socket.connect();
+      }
+    },
+    disconnect() {
+      if (this._socket) {
+        this._socket.disconnect();
+      }
+    },
     reset() {
       this._unsubscribesWaiting = {};
       this._subscribesWaiting = {};
       this._subscribesAll = {};
       this._subscribesPath = {};
-      if (this._socket) {
-        this._socket.disconnect();
-      }
+      this.disconnect();
     },
   };
   adapter.initialize(io);
