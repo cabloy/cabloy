@@ -104,7 +104,6 @@ module.exports = ctx => {
     async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
-      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -130,22 +129,6 @@ module.exports = ctx => {
         content: JSON.stringify(message.content), // should use string for db/queue
       };
 
-      // save message async
-      if (messageClassBase.info.persistence && saveMessageAsync) {
-        // must use pushAsync for the correct order of message id
-        return await ctx.app.meta.queue.pushAsync({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'saveMessage',
-          data: {
-            path,
-            options,
-            message: _message,
-            messageClass,
-          },
-        });
-      }
-
       // save
       if (messageClassBase.info.persistence) {
         _message.id = await this.message.save({ message: _message });
@@ -170,28 +153,6 @@ module.exports = ctx => {
       // ok
       return {
         id: _message.id,
-      };
-    }
-
-    // queue: saveMessage async
-    async queueSaveMessage({ path, options, message, messageClass }) {
-      // save message async
-      message.id = await this.message.save({ message });
-      // to queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'process',
-        data: {
-          path,
-          options,
-          message,
-          messageClass,
-        },
-      });
-      // ok
-      return {
-        id: message.id,
       };
     }
 
@@ -1075,25 +1036,6 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 926:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Queue extends app.meta.BeanBase {
-
-    async execute(context) {
-      const { path, options, message, messageClass } = context.data;
-      return await this.ctx.bean.io.queueSaveMessage({ path, options, message, messageClass });
-    }
-
-  }
-
-  return Queue;
-};
-
-
-/***/ }),
-
 /***/ 899:
 /***/ ((module) => {
 
@@ -1192,7 +1134,6 @@ const localMessage = __webpack_require__(834);
 const localMessageClass = __webpack_require__(45);
 const localProcedure = __webpack_require__(716);
 const broadcastSocketEmit = __webpack_require__(472);
-const queueSaveMessage = __webpack_require__(926);
 const queueProcess = __webpack_require__(275);
 const queueDelivery = __webpack_require__(288);
 const queuePush = __webpack_require__(276);
@@ -1227,10 +1168,6 @@ module.exports = app => {
       bean: broadcastSocketEmit,
     },
     // queue
-    'queue.saveMessage': {
-      mode: 'app',
-      bean: queueSaveMessage,
-    },
     'queue.process': {
       mode: 'app',
       bean: queueProcess,
@@ -1358,10 +1295,6 @@ module.exports = appInfo => {
   config.queues = {
     registerMessageClass: {
       bean: 'registerMessageClass',
-    },
-    saveMessage: {
-      bean: 'saveMessage',
-      concurrency: true,
     },
     process: {
       bean: 'process',

@@ -563,7 +563,7 @@ module.exports = ctx => {
 
     async init({ userIdAssignee, user }) {
       // create flowTask
-      const flowTaskId = await this._createFlowTask({ userIdAssignee });
+      const flowTaskId = await this._createFlowTask({ userIdAssignee, user });
       // context init
       await this._contextInit({ flowTaskId, user });
       // event
@@ -575,7 +575,7 @@ module.exports = ctx => {
       await this._contextInit({ flowTaskId: flowTask.id, user, history });
     }
 
-    async _createFlowTask({ userIdAssignee }) {
+    async _createFlowTask({ userIdAssignee, user }) {
       // flowTask
       const data = {
         flowId: this.context._flowId,
@@ -592,6 +592,10 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.insert(data);
       // notify
       this._notifyTaskClaimings(userIdAssignee);
+      // message
+      if (userIdAssignee !== user.id) {
+
+      }
       // ok
       return flowTaskId;
     }

@@ -3527,6 +3527,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async checkFile() {
+      const res = await this.ctx.service.site.checkFile({
+        file: this.ctx.request.body.file,
+        mtime: this.ctx.request.body.mtime,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return SiteController;
 };
@@ -3771,6 +3779,8 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
+      // site
+      { method: 'post', path: 'site/checkFile', controller: 'site' },
     ]);
   }
   return routes;
@@ -3812,7 +3822,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(718);
-const extend = require3('extend2');
+const fse = require3('fs-extra');
 
 let __blocks = null;
 
@@ -4007,6 +4017,24 @@ module.exports = app => {
         blocksModule[fullName] = blocks[key];
       }
       return blocksModule;
+    }
+
+    async checkFile({ file, mtime }) {
+      // exists
+      const exists = await fse.pathExists(file);
+      if (!exists) {
+        // deleted
+        return null;
+      }
+      // stat
+      const stat = await fse.stat(file);
+      const mtimeCurrent = stat.mtime.valueOf();
+      if (mtime !== mtimeCurrent) {
+        // different
+        return { mtime: mtimeCurrent };
+      }
+      // default
+      return null;
     }
 
   }
