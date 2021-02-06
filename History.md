@@ -1,5 +1,10 @@
 # History
 
+## 2020-02-06, Version 4.4.6
+
+* **特性**
+  * socketIO：支持visibilitychange事件，从而节约资源占用：当页面隐藏时断开socket，当页面显示时自动恢复socket
+
 ## 2020-02-03, Version 4.4.5
 
 * **特性**
