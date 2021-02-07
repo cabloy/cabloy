@@ -103,7 +103,12 @@ module.exports = ctx => {
 
     async publish({ path, message, messageClass, options }) {
       // options
-      const messageScene = (options && options.scene) || '';
+      options = options || {};
+      // scene
+      if (options.scene === undefined) {
+        options.scene = ctx.headers['x-clientid'] || '';
+      }
+      const messageScene = options.scene;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -382,6 +387,8 @@ module.exports = ctx => {
     }
 
     async delivery({ path, options, message, messageSync, messageClass }) {
+      // not delivery/push for userId===0
+      if (messageSync.userId === 0) return;
       // ignore delivery online if !path
       if (path) {
         const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
@@ -576,7 +583,8 @@ module.exports = ctx => {
       }
       //  :save
       for (const messageSync of messageSyncs) {
-        if (persistence) {
+        // userId===0 not save to db
+        if (persistence && messageSync.userId !== 0) {
           const res = await this.modelMessageSync.insert(messageSync);
           messageSync.messageSyncId = res.insertId;
         } else {
