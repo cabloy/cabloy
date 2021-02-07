@@ -163,11 +163,13 @@ module.exports = ctx => {
       const beanMessage = this._getBeanMessage(messageClassBase);
       // groupUsers
       const groupUsers = await beanMessage.onGroupUsers({ path, message, options });
+      // messageSyncs
+      const messageSyncs = await beanMessage.onSaveSyncs({ path, options, message, groupUsers, messageClass });
       // onProcess
-      await beanMessage.onProcess({ path, options, message, groupUsers, messageClass });
+      await beanMessage.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
     }
 
-    async _onProcessBase({ path, options, message, groupUsers, messageClass }) {
+    async _onSaveSyncs({ /* path, options,*/ message, groupUsers, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // save syncs
@@ -176,6 +178,10 @@ module.exports = ctx => {
         groupUsers,
         persistence: messageClassBase.info.persistence,
       });
+      return messageSyncs;
+    }
+
+    async _onProcessBase({ path, options, message, messageSyncs, /* groupUsers,*/ messageClass }) {
       // to queue: delivery/push
       if (path) {
         // delivery
@@ -1239,8 +1245,12 @@ module.exports = ctx => {
       return null;
     }
 
-    async onProcess({ path, options, message, groupUsers, messageClass }) {
-      return await ctx.bean.io._onProcessBase({ path, options, message, groupUsers, messageClass });
+    async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
+      return await ctx.bean.io._onProcessBase({ path, options, message, messageSyncs, groupUsers, messageClass });
+    }
+
+    async onSaveSyncs({ path, options, message, groupUsers, messageClass }) {
+      return await ctx.bean.io._onSaveSyncs({ path, options, message, groupUsers, messageClass });
     }
 
     async onPush({ options, message, messageSync, messageClass }) {

@@ -2,12 +2,25 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 224:
+/***/ 718:
 /***/ ((module) => {
 
-module.exports = app => {
-  const aops = {};
-  return aops;
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Message extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'message');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    // publish
+    async publish({ message, messageClass, options }) {
+      //
+    }
+
+  }
+  return Message;
 };
 
 
@@ -40,6 +53,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const versionManager = __webpack_require__(899);
+const beanMessage = __webpack_require__(718);
 
 module.exports = app => {
   const beans = {
@@ -47,6 +61,12 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
+    },
+    // global
+    message: {
+      mode: 'ctx',
+      bean: beanMessage,
+      global: true,
     },
   };
   return beans;
@@ -139,8 +159,6 @@ const errors = __webpack_require__(624);
 
 module.exports = app => {
 
-  // aops
-  const aops = __webpack_require__(224)(app);
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -155,7 +173,6 @@ module.exports = app => {
   const meta = __webpack_require__(458)(app);
 
   return {
-    aops,
     beans,
     routes,
     controllers,
