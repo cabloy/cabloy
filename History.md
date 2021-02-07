@@ -1,5 +1,10 @@
 # History
 
+## 2020-02-07, Version 4.4.7
+
+* **重构**
+  * 主题themebrilliant：调整颜色
+
 ## 2020-02-06, Version 4.4.6
 
 * **特性**
