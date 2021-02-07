@@ -10,8 +10,8 @@ module.exports = ctx => {
       return await super.onGroupUsers({ path, message, options });
     }
 
-    async onProcess({ path, options, message, groupUsers, messageClass }) {
-      return await super.onProcess({ path, options, message, groupUsers, messageClass });
+    async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
+      return await super.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
     }
 
     async onPush({ options, message, messageSync, messageClass }) {

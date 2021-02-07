@@ -69,7 +69,8 @@ module.exports = ctx => {
       }
       //  :save
       for (const messageSync of messageSyncs) {
-        if (persistence) {
+        // userId===0 not save to db
+        if (persistence && messageSync.userId !== 0) {
           const res = await this.modelMessageSync.insert(messageSync);
           messageSync.messageSyncId = res.insertId;
         } else {

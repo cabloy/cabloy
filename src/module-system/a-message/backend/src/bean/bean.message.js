@@ -1,3 +1,5 @@
+const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
+
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends ctx.app.meta.BeanModuleBase {
@@ -9,7 +11,15 @@ module.exports = ctx => {
 
     // publish
     async publish({ message, messageClass, options }) {
-      //
+      // messageClass
+      messageClass.module = messageClass.module || this.moduleName;
+      // publish
+      return await ctx.bean.io.publish({
+        path: __PATH_MESSAGE_UNIFORM,
+        message,
+        messageClass,
+        options,
+      });
     }
 
   }

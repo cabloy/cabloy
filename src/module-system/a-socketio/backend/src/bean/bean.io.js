@@ -375,6 +375,8 @@ module.exports = ctx => {
     }
 
     async delivery({ path, options, message, messageSync, messageClass }) {
+      // not delivery/push for userId===0
+      if (messageSync.userId === 0) return;
       // ignore delivery online if !path
       if (path) {
         const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
