@@ -1,5 +1,11 @@
 # History
 
+## 2020-02-07, Version 4.4.8
+
+* **修复**
+  * socketIO: message.onProcess变更
+  * socketIO: 增加x-clientid支持
+
 ## 2020-02-07, Version 4.4.7
 
 * **重构**
