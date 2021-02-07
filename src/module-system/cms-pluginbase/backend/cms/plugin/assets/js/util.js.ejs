@@ -239,6 +239,9 @@ const util = {
         xhrFields: {
           withCredentials: true,
         },
+        headers: {
+          'x-clientid': this.clientId,
+        },
       }).done(function(data) {
         if (data.code === 0) {
           resolve(data.data);
