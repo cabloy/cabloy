@@ -4,8 +4,6 @@ const errors = require('./config/errors.js');
 
 module.exports = app => {
 
-  // aops
-  const aops = require('./aops.js')(app);
   // beans
   const beans = require('./beans.js')(app);
   // routes
@@ -20,7 +18,6 @@ module.exports = app => {
   const meta = require('./meta.js')(app);
 
   return {
-    aops,
     beans,
     routes,
     controllers,
