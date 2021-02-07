@@ -156,11 +156,13 @@ module.exports = ctx => {
       const beanMessage = this._getBeanMessage(messageClassBase);
       // groupUsers
       const groupUsers = await beanMessage.onGroupUsers({ path, message, options });
+      // messageSyncs
+      const messageSyncs = await beanMessage.onSaveSyncs({ path, options, message, groupUsers, messageClass });
       // onProcess
-      await beanMessage.onProcess({ path, options, message, groupUsers, messageClass });
+      await beanMessage.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
     }
 
-    async _onProcessBase({ path, options, message, groupUsers, messageClass }) {
+    async _onSaveSyncs({ /* path, options,*/ message, groupUsers, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // save syncs
@@ -169,6 +171,10 @@ module.exports = ctx => {
         groupUsers,
         persistence: messageClassBase.info.persistence,
       });
+      return messageSyncs;
+    }
+
+    async _onProcessBase({ path, options, message, messageSyncs, /* groupUsers,*/ messageClass }) {
       // to queue: delivery/push
       if (path) {
         // delivery

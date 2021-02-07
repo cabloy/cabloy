@@ -11,8 +11,12 @@ module.exports = ctx => {
       return null;
     }
 
-    async onProcess({ path, options, message, groupUsers, messageClass }) {
-      return await ctx.bean.io._onProcessBase({ path, options, message, groupUsers, messageClass });
+    async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
+      return await ctx.bean.io._onProcessBase({ path, options, message, messageSyncs, groupUsers, messageClass });
+    }
+
+    async onSaveSyncs({ path, options, message, groupUsers, messageClass }) {
+      return await ctx.bean.io._onSaveSyncs({ path, options, message, groupUsers, messageClass });
     }
 
     async onPush({ options, message, messageSync, messageClass }) {
