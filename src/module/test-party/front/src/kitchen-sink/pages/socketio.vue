@@ -20,7 +20,6 @@ export default {
     return {
       io: null,
       messagesData: [],
-      messageScene: Vue.prototype.$meta.config.scene,
       subscribeId: null,
       messageOffset: -1,
       messageOffsetPending: -1,
@@ -78,7 +77,7 @@ export default {
       this.subscribeId = this.io.subscribe(
         _subscribePath,
         this.onMessage.bind(this),
-        this.onSubscribed.bind(this), { scene: this.messageScene }
+        this.onSubscribed.bind(this)
       );
     });
   },
@@ -205,7 +204,6 @@ export default {
         messageType: 1, // text
         messageFilter: 0,
         messageGroup: 0,
-        messageScene: this.messageScene,
         userIdTo: 0,
         userIdFrom: this.user.id,
         content: {
@@ -223,9 +221,6 @@ export default {
       // send
       this.$api.post('test/feat/socketio/publish', {
         message,
-        options: {
-          scene: this.messageScene,
-        },
       }).then(data => {
         message.id = data.id;
         this.setMessageOffset(message.id);

@@ -96,7 +96,12 @@ module.exports = ctx => {
 
     async publish({ path, message, messageClass, options }) {
       // options
-      const messageScene = (options && options.scene) || '';
+      options = options || {};
+      // scene
+      if (options.scene === undefined) {
+        options.scene = ctx.headers['x-clientid'] || '';
+      }
+      const messageScene = options.scene;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
