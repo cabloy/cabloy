@@ -7,6 +7,15 @@ module.exports = appInfo => {
   // proxy
   config.proxy = true;
 
+  // queue
+  config.queue = {
+    redlock: {
+      options: {
+        lockTTL: 6 * 1000,
+      },
+    },
+  };
+
   // mysql
   config.mysql = {
     app: true,
