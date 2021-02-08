@@ -1,5 +1,10 @@
 # History
 
+## 2020-02-08, Version 4.4.9
+
+* **增强**
+  * egg-born-backend: redlock.lockTTL=8*1000 for local
+
 ## 2020-02-07, Version 4.4.8
 
 * **修复**
