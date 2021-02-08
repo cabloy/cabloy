@@ -1,5 +1,10 @@
 # History
 
+## 2020-02-08, Version 4.4.10
+
+* **特性**
+  * socketio: add field uniform for messageClass
+
 ## 2020-02-08, Version 4.4.9
 
 * **增强**
