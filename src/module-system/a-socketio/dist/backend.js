@@ -137,6 +137,7 @@ module.exports = ctx => {
       // save
       if (messageClassBase.info.persistence) {
         _message.id = await this.message.save({ message: _message });
+        _message.createdAt = new Date();
       } else {
         _message.id = message.id || uuid.v4();
         _message.createdAt = new Date();
@@ -736,6 +737,7 @@ module.exports = ctx => {
       const data = {
         module,
         messageClassName,
+        uniform: messageClass.info.uniform || 0,
       };
       // insert
       const res2 = await this.modelMessageClass.insert(data);
@@ -1058,6 +1060,15 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
 
     async update(options) {
+      if (options.version === 2) {
+        // aSocketIOMessageClass
+        const sql = `
+        ALTER TABLE aSocketIOMessageClass
+          ADD COLUMN uniform int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
       if (options.version === 1) {
         let sql;
 
