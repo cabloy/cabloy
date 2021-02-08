@@ -7,6 +7,7 @@ const localProcedure = require('./bean/local.procedure.js');
 const beanFlowTask = require('./bean/bean.flowTask.js');
 const statsTaskClaimings = require('./bean/stats.taskClaimings.js');
 const statsTaskHandlings = require('./bean/stats.taskHandlings.js');
+const ioMessageWorkflow = require('./bean/io.message.workflow.js');
 
 module.exports = app => {
   const beans = {
@@ -51,6 +52,11 @@ module.exports = app => {
     'stats.taskHandlings': {
       mode: 'ctx',
       bean: statsTaskHandlings,
+    },
+    // io
+    'io.message.workflow': {
+      mode: 'ctx',
+      bean: ioMessageWorkflow,
     },
   };
   return beans;

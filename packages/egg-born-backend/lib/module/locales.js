@@ -21,11 +21,12 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
+        const defaultLocale = loader.app.config.i18n.defaultLocale;
         context.text = function(...args) {
-          return getText(context.locale, ...args);
+          return getText(context.locale || defaultLocale, ...args);
         };
         context.text.locale = function(locale, ...args) {
-          return getText(locale, ...args);
+          return getText(locale || defaultLocale, ...args);
         };
       }
 

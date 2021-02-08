@@ -57,9 +57,30 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.insert(data);
       // notify
       this._notifyTaskClaimings(userIdAssignee);
-      // message
+      // publish uniform message
       if (userIdAssignee !== user.id) {
-
+        const userFlow = await ctx.bean.user.get({ id: this.context._flow.flowUserId });
+        const userAssignee = await ctx.bean.user.get({ id: userIdAssignee });
+        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(userAssignee.locale, this.contextNode._flowNode.flowNodeName)}`;
+        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}&flowTaskId=${flowTaskId}`;
+        const message = {
+          userIdTo: userIdAssignee,
+          content: {
+            userId: userFlow.id,
+            userName: userFlow.userName,
+            userAvatar: userFlow.avatar,
+            title,
+            body: this.context._flow.flowName,
+            actionPath,
+          },
+        };
+        await ctx.bean.message.publishUniform({
+          message,
+          messageClass: {
+            module: 'a-flowtask',
+            messageClassName: 'workflow',
+          },
+        });
       }
       // ok
       return flowTaskId;

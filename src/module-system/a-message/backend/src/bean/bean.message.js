@@ -10,7 +10,7 @@ module.exports = ctx => {
     }
 
     // publish
-    async publish({ message, messageClass, options }) {
+    async publishUniform({ message, messageClass, options }) {
       // messageClass
       messageClass.module = messageClass.module || this.moduleName;
       // publish
