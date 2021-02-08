@@ -11,7 +11,7 @@ module.exports = appInfo => {
   config.queue = {
     redlock: {
       options: {
-        lockTTL: 6 * 1000,
+        lockTTL: 8 * 1000,
       },
     },
   };
