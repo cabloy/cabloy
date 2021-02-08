@@ -492,6 +492,18 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 723:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
+  }
+  return IOMessage;
+};
+
+
+/***/ }),
+
 /***/ 288:
 /***/ ((module) => {
 
@@ -592,9 +604,30 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.insert(data);
       // notify
       this._notifyTaskClaimings(userIdAssignee);
-      // message
+      // publish uniform message
       if (userIdAssignee !== user.id) {
-
+        const userFlow = await ctx.bean.user.get({ id: this.context._flow.flowUserId });
+        const userAssignee = await ctx.bean.user.get({ id: userIdAssignee });
+        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(userAssignee.locale, this.contextNode._flowNode.flowNodeName)}`;
+        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}&flowTaskId=${flowTaskId}`;
+        const message = {
+          userIdTo: userIdAssignee,
+          content: {
+            userId: userFlow.id,
+            userName: userFlow.userName,
+            userAvatar: userFlow.avatar,
+            title,
+            body: this.context._flow.flowName,
+            actionPath,
+          },
+        };
+        await ctx.bean.message.publishUniform({
+          message,
+          messageClass: {
+            module: 'a-flowtask',
+            messageClassName: 'workflow',
+          },
+        });
       }
       // ok
       return flowTaskId;
@@ -1445,6 +1478,7 @@ const localProcedure = __webpack_require__(716);
 const beanFlowTask = __webpack_require__(302);
 const statsTaskClaimings = __webpack_require__(951);
 const statsTaskHandlings = __webpack_require__(843);
+const ioMessageWorkflow = __webpack_require__(723);
 
 module.exports = app => {
   const beans = {
@@ -1489,6 +1523,11 @@ module.exports = app => {
     'stats.taskHandlings': {
       mode: 'ctx',
       bean: statsTaskHandlings,
+    },
+    // io
+    'io.message.workflow': {
+      mode: 'ctx',
+      bean: ioMessageWorkflow,
     },
   };
   return beans;
@@ -1834,6 +1873,7 @@ module.exports = nodes;
 module.exports = {
   StartEventAtom: 'StartEvent: Atom Draft',
   ActivityUserTask: 'Activity: User Task',
+  WorkFlow: 'Work Flow',
 };
 
 
@@ -1845,6 +1885,7 @@ module.exports = {
 module.exports = {
   StartEventAtom: '原子起草开始事件',
   ActivityUserTask: '用户任务活动',
+  WorkFlow: '工作流',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
   'Task has been claimed: %s': '任务已被申领: %s',
@@ -1866,6 +1907,23 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 836:
+/***/ ((module) => {
+
+module.exports = app => {
+  const workflow = {
+    info: {
+      bean: 'workflow',
+      title: 'WorkFlow',
+      persistence: true,
+    },
+  };
+  return workflow;
 };
 
 
@@ -2063,6 +2121,7 @@ const flowNodes = __webpack_require__(587);
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
+  const socketioWorkflow = __webpack_require__(836)(app);
   const meta = {
     base: {
       atoms: {
@@ -2099,6 +2158,11 @@ module.exports = app => {
             'a-flowtask:taskHandlings',
           ],
         },
+      },
+    },
+    socketio: {
+      messages: {
+        workflow: socketioWorkflow,
       },
     },
   };
