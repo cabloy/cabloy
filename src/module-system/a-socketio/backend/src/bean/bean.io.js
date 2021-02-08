@@ -130,6 +130,7 @@ module.exports = ctx => {
       // save
       if (messageClassBase.info.persistence) {
         _message.id = await this.message.save({ message: _message });
+        _message.createdAt = new Date();
       } else {
         _message.id = message.id || uuid.v4();
         _message.createdAt = new Date();

@@ -4,6 +4,7 @@ module.exports = app => {
       bean: 'workflow',
       title: 'WorkFlow',
       persistence: true,
+      uniform: true,
     },
   };
   return workflow;
