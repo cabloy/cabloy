@@ -1,5 +1,10 @@
 # History
 
+## 2020-02-09, Version 4.4.11
+
+* **重构**
+  * socketio: 将uniform初始化移入buttonMine
+
 ## 2020-02-08, Version 4.4.10
 
 * **特性**
