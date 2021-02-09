@@ -221,9 +221,10 @@ module.exports = ctx => {
             subdomain: ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'flowTask',
-            context: { flowNodeId, user },
+            context: { flowNodeId },
             fn: '_nodeDoneCheckLock',
             transaction: true,
+            ctxParent: { state: { user: { op: user } } },
           });
         },
       });

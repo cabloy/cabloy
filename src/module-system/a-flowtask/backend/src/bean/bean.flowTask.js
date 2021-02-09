@@ -83,7 +83,7 @@ module.exports = ctx => {
       return await taskInstance._editAtom();
     }
 
-    async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {
+    async _nodeDoneCheckLock({ flowNodeId }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options

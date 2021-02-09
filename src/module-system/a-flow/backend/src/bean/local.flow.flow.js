@@ -328,7 +328,8 @@ module.exports = ctx => {
     _getOpUser() {
       let user = ctx.state.user && ctx.state.user.op;
       if (!user || user.anonymous === 1) {
-        user = { id: this.context._flow.flowUserId };
+        user = { id: 0 };
+        // user = { id: this.context._flow.flowUserId };
       }
       return user;
     }

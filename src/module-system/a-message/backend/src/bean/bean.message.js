@@ -1,7 +1,7 @@
 const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
@@ -11,6 +11,8 @@ module.exports = ctx => {
 
     // publish
     async publishUniform({ message, messageClass, options }) {
+      // todo: will be removed
+      if (ctx.config.module(moduleInfo.relativeName).message.disabled) return;
       // messageClass
       messageClass.module = messageClass.module || this.moduleName;
       // publish
