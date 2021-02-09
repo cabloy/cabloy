@@ -1,9 +1,12 @@
+import Vue from 'vue';
 const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 
 export default function(io) {
   const Simple = function() {
 
     this.subscribe = function() {
+      const user = Vue.prototype.$meta.store.state.auth.user.op;
+      if (user.anonymous) return;
       this.subscribeId = io.subscribe(
         __PATH_MESSAGE_UNIFORM, this._onMessage.bind(this), this._onSubscribed.bind(this)
       );

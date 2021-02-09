@@ -155,13 +155,6 @@ export default {
         await this._setTheme(data.config.theme);
         // localeModules
         await this._setLocaleModules(data.config.localeModules);
-        // uniform messages
-        const action = {
-          actionModule: 'a-message',
-          actionComponent: 'uniform',
-          name: 'initialize',
-        };
-        await this.$meta.util.performAction({ ctx: this, action });
         // error
         this.error = null;
       } catch (err) {
