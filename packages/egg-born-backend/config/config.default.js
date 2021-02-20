@@ -158,6 +158,10 @@ module.exports = appInfo => {
 
   // onerror
   config.onerror = {
+    appErrorFilter(err) {
+      if (err && err.code === 422) return false;
+      return true;
+    },
     json(err) {
       const status = detectStatus(err);
 
