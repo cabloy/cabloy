@@ -25,6 +25,12 @@ export default {
         actionComponent: 'action',
         icon: { material: 'group' },
       },
+      recall: {
+        title: 'Recall',
+        actionModule: 'a-flowtask',
+        actionComponent: 'action',
+        icon: { material: 'undo' },
+      },
     },
     render: {
       list: {

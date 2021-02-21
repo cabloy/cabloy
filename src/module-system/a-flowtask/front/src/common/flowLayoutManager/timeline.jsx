@@ -51,7 +51,10 @@ export default {
     _timeline_renderFlowNodeItems({ tasks }) {
       const children = [];
       for (const task of tasks) {
-        children.push(this._timeline_renderFlowTask({ task }));
+        const domTask = this._timeline_renderFlowTask({ task });
+        if (domTask) {
+          children.push(domTask);
+        }
       }
       return (
         <f7-list medial-list>
@@ -130,7 +133,8 @@ export default {
     },
     _timeline_renderFlowTaskActions({ task }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
-      const children = this._timeline_renderFlowTaskActionsChildren({ task, enableView: true });
+      const enableView = task.specificFlag === 0;
+      const children = this._timeline_renderFlowTaskActionsChildren({ task, enableView });
       return (
         <div class="task-actions">
           {children}
@@ -143,8 +147,14 @@ export default {
         // assigneesConfirmation
         return this.$text('AssigneesConfirmationPrompt');
       }
+      if (task.flowTaskStatus === 0 && task.specificFlag === 2) {
+        // assigneesConfirmation
+        return this.$text('Recall Available');
+      }
     },
     _timeline_renderFlowTask({ task }) {
+      // check user
+      if (task.specificFlag > 0 && task.userIdAssignee !== this.base_user.id) return null;
       // taskCurrentClass
       const taskCurrentClass = task.id === this.container.flowTaskId ? 'item flowTaskCurrent' : 'item';
       // media

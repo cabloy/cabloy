@@ -26,6 +26,10 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.assigneesConfirmation({ flowTaskId, handle, user });
     }
 
+    async recall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.recall({ flowTaskId, user });
+    }
+
     async cancelFlow({ flowTaskId, handle, user }) {
       return await this.ctx.bean.flowTask.cancelFlow({ flowTaskId, handle, user });
     }

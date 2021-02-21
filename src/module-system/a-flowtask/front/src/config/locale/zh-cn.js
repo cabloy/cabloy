@@ -16,8 +16,10 @@ export default {
   Submitted: '已提交',
   AssigneesConfirmationPrompt: '请确认参与人',
   CancelFlowPrompt: '您确认要取消本流程吗？',
-  TaskPassPrompt: '您确认要通过本任务吗？?',
+  TaskPassPrompt: '您确认要通过本任务吗？',
   TaskRejectPrompt: '您确认要驳回本任务吗？',
+  RecallPrompt: '您确认要撤回本任务吗？',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
+  'Recall Available': '可撤回',
 };

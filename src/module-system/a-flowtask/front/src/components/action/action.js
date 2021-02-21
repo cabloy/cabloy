@@ -16,6 +16,8 @@ export default {
         return await this._cancelFlow({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'handleTask') {
         return await this._handleTask({ ctx, action, flowLayoutManager, task, flowTaskId });
+      } else if (action.name === 'recall') {
+        return await this._recall({ ctx, action, flowLayoutManager, task, flowTaskId });
       }
     },
     async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
@@ -105,6 +107,13 @@ export default {
       }
       // navigate
       ctx.$view.navigate(`/a/flowtask/assigneesConfirmation?flowTaskId=${flowTaskId}`, navigateOptions);
+    },
+    async _recall({ ctx, flowLayoutManager, flowTaskId }) {
+      await ctx.$view.dialog.confirm(ctx.$text('RecallPrompt'));
+      await ctx.$api.post('/a/flowtask/task/recall', {
+        flowTaskId,
+      });
+      await flowLayoutManager.base_loadData();
     },
     async _cancelFlow({ ctx, flowLayoutManager, flowTaskId }) {
       ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });

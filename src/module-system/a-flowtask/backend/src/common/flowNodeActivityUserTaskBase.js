@@ -41,6 +41,16 @@ module.exports = ctx => {
       const assignees = this.contextNode.vars.get('_assigneesConfirmation');
       assert(assignees && assignees.length > 0);
 
+      // recall
+      if (options.allowRecall) {
+        const taskInstance = await ctx.bean.flowTask._createTaskInstance({
+          nodeInstance: this.nodeInstance,
+          userIdAssignee: user.id,
+          user,
+        });
+        await this._taskConfirmationClaim({ taskInstance, specificFlag: 2 });
+      }
+
       // create tasks
       for (const userIdAssignee of assignees) {
         const taskInstance = await ctx.bean.flowTask._createTaskInstance({
@@ -92,7 +102,7 @@ module.exports = ctx => {
           userIdAssignee: user.id,
           user,
         });
-        await this._taskConfirmationClaim({ taskInstance });
+        await this._taskConfirmationClaim({ taskInstance, specificFlag: 1 });
         // break
         return false;
       }
@@ -104,9 +114,8 @@ module.exports = ctx => {
       return true;
     }
 
-    async _taskConfirmationClaim({ taskInstance }) {
+    async _taskConfirmationClaim({ taskInstance, specificFlag }) {
       // specificFlag timeClaimed
-      const specificFlag = 1;
       const timeClaimed = new Date();
       taskInstance.contextTask._flowTask.specificFlag = specificFlag;
       taskInstance.contextTask._flowTask.timeClaimed = timeClaimed;

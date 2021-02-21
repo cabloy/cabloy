@@ -57,6 +57,12 @@ module.exports = ctx => {
       await taskInstance._assigneesConfirmation({ handle });
     }
 
+    async recall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._recall();
+    }
+
     async cancelFlow({ flowTaskId, handle, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
@@ -146,7 +152,7 @@ module.exports = ctx => {
       return await this._gotoFlowNodePrevious({ nodeInstance, rejectedNode: options.rejectedNode });
     }
 
-    async _gotoFlowNodePrevious({ nodeInstance, rejectedNode }) {
+    async _gotoFlowNodePrevious({ nodeInstance, rejectedNode, flowNodeRemark = 'Rejected' }) {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       // rejectedNode
@@ -164,7 +170,7 @@ module.exports = ctx => {
       // delete tasks
       await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeRemark: 'Rejected' });
+      await nodeInstance._clear({ flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 

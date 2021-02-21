@@ -55,6 +55,10 @@ export default {
         // assigneesConfirmation
         return this.$text('AssigneesConfirmationPrompt');
       }
+      if (task.flowTaskStatus === 0 && task.specificFlag === 2) {
+        // 可撤回
+        return this.$text('Recall Available');
+      }
     },
     _renderListItem(item) {
       // media

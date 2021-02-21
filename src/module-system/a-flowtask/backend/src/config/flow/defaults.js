@@ -20,6 +20,7 @@ module.exports = {
       allowPassTask: true,
       allowRejectTask: false,
       allowCancelFlow: true,
+      allowRecall: false,
       schema: {
         read: true,
         write: true,
@@ -44,6 +45,7 @@ module.exports = {
     allowPassTask: true,
     allowRejectTask: true,
     allowCancelFlow: false,
+    allowRecall: true,
     schema: {
       read: true,
       write: false,

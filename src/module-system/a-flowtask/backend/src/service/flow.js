@@ -47,6 +47,7 @@ module.exports = app => {
           },
           orders: [
             [ 'a.flowNodeId', 'desc' ],
+            [ 'a.specificFlag', 'desc' ],
             [ 'a.flowTaskStatus', 'asc' ],
           ],
           history: 1,
