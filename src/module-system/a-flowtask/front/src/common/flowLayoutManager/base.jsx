@@ -41,6 +41,24 @@ export default {
         atomClassName: this.base.data.atom.atomClassName,
       };
     },
+    base_tasksGroup() {
+      const tasks = this.base_tasks;
+      if (!tasks) return null;
+      const groups = [];
+      let group = null;
+      for (const task of tasks) {
+        // node as group
+        if (!group || group.flowNodeId !== task.flowNodeId) {
+          group = {
+            ... task,
+            items: [],
+          };
+          groups.push(group);
+        }
+        group.items.push(task);
+      }
+      return groups;
+    },
   },
   created() {
   },

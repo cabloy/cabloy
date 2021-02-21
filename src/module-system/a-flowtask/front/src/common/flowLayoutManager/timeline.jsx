@@ -48,39 +48,65 @@ export default {
       const actionBase = actions[action.name];
       return this.$meta.util.extend({}, actionBase, action);
     },
+    _timeline_renderFlowNodeItems({ tasks }) {
+      const children = [];
+      for (const task of tasks) {
+        children.push(this._timeline_renderFlowTask({ task }));
+      }
+      return (
+        <f7-list medial-list>
+          {children}
+        </f7-list>
+      );
+    },
     _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
-      // date
-      const domDate = (
-        <f7-badge color="teal">{flowNodeGroupIndex}</f7-badge>
+      // index
+      const domIndex = (
+        <f7-badge class="flowNodeIndex" color="teal">{flowNodeGroupIndex}</f7-badge>
       );
       // title
+      const domTitle = (
+        <span>{task.flowNodeNameLocale}</span>
+      );
+      // remark
       let domRemark;
       if (task.flowNodeRemarkLocale) {
         domRemark = (
-          <f7-badge class="flowRemark" color="gray">{task.flowNodeRemarkLocale}</f7-badge>
+          <f7-badge color="gray">{task.flowNodeRemarkLocale}</f7-badge>
         );
       }
-      const domTitle = (
-        <div class="timeline-item-title">
-          <span>{task.flowNodeNameLocale}</span>
-          {domRemark}
-        </div>
-      );
+      // current
+      let domCurrent;
+      if (task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
+        domCurrent = (
+          <f7-badge color="orange">{this.$text('Current')}</f7-badge>
+        );
+      }
+      // tasks
+      const items = this._timeline_renderFlowNodeItems({ tasks: task.items });
       return (
-        <div key={`flowNode:${task.flowNodeId}`} class="timeline-item">
-          <div class="timeline-item-date">{domDate}</div>
-          <div class="timeline-item-divider"></div>
-          <div class="timeline-item-content flowNode">
-            {domTitle}
-          </div>
-        </div>
+        <f7-card key={`flowNode:${task.flowNodeId}`} outline>
+          <f7-card-header>
+            <div>
+              {domIndex}
+              {domTitle}
+            </div>
+            <div>
+              {domRemark}
+              {domCurrent}
+            </div>
+          </f7-card-header>
+          <f7-card-content padding={false}>
+            {items}
+          </f7-card-content>
+        </f7-card>
       );
     },
     _timeline_renderFlowTaskStatus({ task }) {
       if (task.handleStatus === 0) return;
       const status = __flowTaskStatuses[task.handleStatus];
       return (
-        <f7-badge class="flowRemark" color={status.color}>{this.$text(status.text)}</f7-badge>
+        <f7-badge color={status.color}>{this.$text(status.text)}</f7-badge>
       );
     },
     // also be invoked by atomLayoutManager
@@ -114,91 +140,75 @@ export default {
     },
     _timeline_renderFlowTask({ task }) {
       // taskCurrentClass
-      const taskCurrentClass = task.id === this.container.flowTaskId ? 'text-color-orange' : '';
-      // date
-      let domDate;
-      if (task.handleStatus === 0) {
-        if (task.userIdAssignee === this.base_user.id) {
-          domDate = (
-            <f7-icon class={taskCurrentClass} material="play_arrow"></f7-icon>
-          );
-        }
-      } else {
-        domDate = (
-          <small class={taskCurrentClass}>{this.$meta.util.formatDateTime(task.timeHandled, 'MM-DD')}</small>
-        );
-      }
-      // info
-      let domTime;
+      const taskCurrentClass = task.id === this.container.flowTaskId ? 'item flowTaskCurrent' : 'item';
+      // media
+      const domMedia = (
+        <div slot="media">
+          <img class="avatar avatar24" src={this.info_getItemMetaMedia(task.avatar)} />
+        </div>
+      );
+      // domHeader
+      let date;
       if (task.handleStatus > 0) {
-        domTime = (
-          <span>{this.$meta.util.formatDateTime(task.timeHandled, 'HH:mm')}</span>
-        );
+        date = this.$meta.util.formatDateTime(task.timeHandled);
       }
       const domStatus = this._timeline_renderFlowTaskStatus({ task });
-      const domActions = this._timeline_renderFlowTaskActions({ task });
-      const domInfo = (
-        <div class="timeline-item-time flowTaskInfo">
-          <div class="task-user">
-            {domTime}
-            <img class="avatar avatar12" src={this.info_getItemMetaMedia(task.avatar)} />
-            <span>{task.userName}</span>
+      const domHeader = (
+        <div slot="root-start" class="header">
+          <div class="mediaLabel">
+            <span>{date}</span>
+          </div>
+          <div class="date">
             {domStatus}
           </div>
+        </div>
+      );
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{task.userName}</div>
+        </div>
+      );
+      // domSummary
+      const handleRemark = this._timeline_getHandleRemark({ task });
+      const domSummary = (
+        <div slot="root-end" class="summary">
+          { handleRemark }
+        </div>
+      );
+      // domAfter
+
+      const domActions = this._timeline_renderFlowTaskActions({ task });
+      const domAfter = (
+        <div slot="after" class="after">
           {domActions}
         </div>
       );
-      // remark
-      let domRemark;
-      const handleRemark = this._timeline_getHandleRemark({ task });
-      if (handleRemark) {
-        domRemark = (
-          <div class="timeline-item-text">
-            {'> ' + handleRemark}
-          </div>
-        );
-      }
+
       return (
-        <div key={`flowTask:${task.flowTaskId}`} ref={`flowTask:${task.flowTaskId}`} class="timeline-item">
-          <div class="timeline-item-date">{domDate}</div>
-          <div class="timeline-item-divider"></div>
-          <div class={`timeline-item-content flowTask ${taskCurrentClass}` }>
-            {domInfo}
-            {domRemark}
-          </div>
-        </div>
+        <eb-list-item class={taskCurrentClass} key={`flowTask:${task.flowTaskId}`} ref={`flowTask:${task.flowTaskId}`}>
+          {domMedia}
+          {domHeader}
+          {domTitle}
+          {domSummary}
+          {domAfter}
+        </eb-list-item>
       );
     },
     _timeline_renderTasks() {
-      const flowNodeCount = this._timeline_getFlowNodeCount();
-      let flowNodeGroup;
-      let flowNodeGroupIndex = flowNodeCount + 1;
       const children = [];
-      const tasks = this.base.data.tasks;
-      for (const task of tasks) {
-        // node as group
-        if (flowNodeGroup !== task.flowNodeId) {
-          flowNodeGroup = task.flowNodeId;
-          flowNodeGroupIndex--;
-          children.push(this._timeline_renderFlowNode({ task, flowNodeGroupIndex }));
-        }
-        // task
-        children.push(this._timeline_renderFlowTask({ task }));
+      const groups = this.base_tasksGroup;
+      let flowNodeGroupIndex = groups.length;
+      for (const group of groups) {
+        children.push(this._timeline_renderFlowNode({ task: group, flowNodeGroupIndex }));
+        flowNodeGroupIndex--;
       }
       return children;
-    },
-    _timeline_getFlowNodeCount() {
-      const flowNodeIds = {};
-      const tasks = this.base.data.tasks;
-      for (const task of tasks) {
-        flowNodeIds[task.flowNodeId] = true;
-      }
-      return Object.keys(flowNodeIds).length;
     },
     timeline_render() {
       const tasks = this._timeline_renderTasks();
       return (
-        <div class="timeline eb-flow-timeline">
+        <div class="eb-flow-timeline">
           {tasks}
         </div>
       );

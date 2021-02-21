@@ -8,35 +8,28 @@
 
   .eb-flow-timeline {
 
-    .flowNode.timeline-item-content {
-      width: 100%;
-      background: var(--f7-list-group-title-bg-color);
-      padding: 6px;
+    .task-actions {
+      display: flex;
+      align-items: center;
     }
 
-    .flowTask.timeline-item-content {
-      width: 100%;
-
-      .flowTaskInfo {
-        display: flex;
-        justify-content: space-between;
-
-        .task-user,
-        .task-actions {
-          display: flex;
-          align-items: center;
-        }
-
-        .task-actions {
-          .link {
-            margin-left: 6px;
-          }
-        }
+    .task-actions {
+      .link {
+        margin-left: 6px;
       }
     }
 
     .flowRemark.badge {
       margin: 0 16px;
+    }
+
+    .flowNodeIndex.badge {
+      margin-top: -3px;
+      margin-right: 6px;
+    }
+
+    .flowTaskCurrent {
+      background: var(--f7-list-item-divider-bg-color);
     }
 
   }
