@@ -13,6 +13,7 @@ export default {
   Handle: '处理',
   Outdated: '已过期',
   Remark: '说明',
+  Submitted: '已提交',
   AssigneesConfirmationPrompt: '请确认参与人',
   CancelFlowPrompt: '您确认要取消本流程吗？',
   TaskPassPrompt: '您确认要通过本任务吗？?',

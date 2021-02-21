@@ -4,7 +4,7 @@ const __flowTaskStatuses = {
     text: 'Passed',
   },
   2: {
-    color: 'orange',
+    color: 'gray',
     text: 'Rejected',
   },
   3: {
@@ -70,11 +70,11 @@ export default {
       );
       // remark
       let domRemark;
-      if (task.flowNodeRemarkLocale) {
-        domRemark = (
-          <f7-badge color="gray">{task.flowNodeRemarkLocale}</f7-badge>
-        );
-      }
+      // if (task.flowNodeRemarkLocale) {
+      //   domRemark = (
+      //     <f7-badge color="gray">{task.flowNodeRemarkLocale}</f7-badge>
+      //   );
+      // }
       // current
       let domCurrent;
       if (task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
@@ -105,8 +105,14 @@ export default {
     _timeline_renderFlowTaskStatus({ task }) {
       if (task.handleStatus === 0) return;
       const status = __flowTaskStatuses[task.handleStatus];
+      let text;
+      if (task.flowNodeType === 'startEventAtom') {
+        text = this.$text('Submitted');
+      } else {
+        text = this.$text(status.text);
+      }
       return (
-        <f7-badge color={status.color}>{this.$text(status.text)}</f7-badge>
+        <f7-badge color={status.color}>{text}</f7-badge>
       );
     },
     // also be invoked by atomLayoutManager
