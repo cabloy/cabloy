@@ -56,6 +56,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
         where: {
           'a.flowId': flowId,
           'a.flowTaskStatus': 0,
+          'a.specificFlag': 0,
         },
         history: 0,
       },
@@ -99,6 +100,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
         where: {
           'a.flowId': flowId,
           'a.flowTaskStatus': 0,
+          'a.specificFlag': 0,
         },
         history: 0,
       },

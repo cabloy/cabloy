@@ -69,6 +69,7 @@ describe('flow.set01_atomUserTask', () => {
         where: {
           'a.flowId': flowId,
           'a.flowTaskStatus': 0,
+          'a.specificFlag': 0,
         },
         history: 0,
       },
