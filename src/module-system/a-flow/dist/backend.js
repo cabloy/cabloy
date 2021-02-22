@@ -1012,7 +1012,8 @@ module.exports = ctx => {
     _getOpUser() {
       let user = ctx.state.user && ctx.state.user.op;
       if (!user || user.anonymous === 1) {
-        user = { id: this.context._flow.flowUserId };
+        user = { id: 0 };
+        // user = { id: this.context._flow.flowUserId };
       }
       return user;
     }
@@ -2208,6 +2209,24 @@ module.exports = {
 
 /***/ }),
 
+/***/ 459:
+/***/ ((module) => {
+
+module.exports = app => {
+  const workflow = {
+    info: {
+      bean: 'workflow',
+      title: 'WorkFlow',
+      persistence: true,
+      uniform: true,
+    },
+  };
+  return workflow;
+};
+
+
+/***/ }),
+
 /***/ 429:
 /***/ ((module) => {
 
@@ -2462,6 +2481,7 @@ module.exports = app => {
 module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const staticResources = __webpack_require__(429)(app);
+  const socketioWorkflow = __webpack_require__(459)(app);
   const meta = {
     base: {
       atoms: {
@@ -2509,6 +2529,11 @@ module.exports = app => {
           user: true,
           bean: 'flowInitiateds',
         },
+      },
+    },
+    socketio: {
+      messages: {
+        workflow: socketioWorkflow,
       },
     },
   };

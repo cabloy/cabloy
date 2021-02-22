@@ -75,6 +75,12 @@ module.exports = ctx => {
       await taskInstance._assigneesConfirmation({ handle });
     }
 
+    async recall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._recall();
+    }
+
     async cancelFlow({ flowTaskId, handle, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
@@ -101,7 +107,7 @@ module.exports = ctx => {
       return await taskInstance._editAtom();
     }
 
-    async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {
+    async _nodeDoneCheckLock({ flowNodeId }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options
@@ -164,7 +170,7 @@ module.exports = ctx => {
       return await this._gotoFlowNodePrevious({ nodeInstance, rejectedNode: options.rejectedNode });
     }
 
-    async _gotoFlowNodePrevious({ nodeInstance, rejectedNode }) {
+    async _gotoFlowNodePrevious({ nodeInstance, rejectedNode, flowNodeRemark = 'Rejected' }) {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       // rejectedNode
@@ -182,7 +188,7 @@ module.exports = ctx => {
       // delete tasks
       await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeRemark: 'Rejected' });
+      await nodeInstance._clear({ flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 
@@ -624,7 +630,7 @@ module.exports = ctx => {
         await ctx.bean.message.publishUniform({
           message,
           messageClass: {
-            module: 'a-flowtask',
+            module: 'a-flow',
             messageClassName: 'workflow',
           },
         });
@@ -686,13 +692,30 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
       this.contextTask._flowTaskHistory.flowTaskHidden = 0; // show
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // delete recall task: (specificFlag=2)
+      const _taskRecall = await ctx.model.queryOne(`
+          select id,userIdAssignee from aFlowTask
+            where iid=? and deleted=0 and flowNodeId=? and specificFlag=2
+          `, [ ctx.instance.id, flowTask.flowNodeId ]);
+      if (_taskRecall) {
+        this._notifyTaskHandlings(_taskRecall.userIdAssignee);
+        // delete task
+        await ctx.model.query(`
+          delete from aFlowTask
+            where iid=? and id=?
+          `, [ ctx.instance.id, _taskRecall.id ]);
+        await ctx.model.query(`
+          update aFlowTaskHistory set deleted=1
+            where iid=? and deleted=0 and flowTaskId=?
+          `, [ ctx.instance.id, _taskRecall.id ]);
+      }
       // check if bidding
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (options.bidding) {
         // notify
         const _tasks = await ctx.model.query(`
           select id,userIdAssignee from aFlowTask
-            where iid=? and flowNodeId=? and id<>?
+            where iid=? and deleted=0 and flowNodeId=? and id<>?
           `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
         for (const _task of _tasks) {
           this._notifyTaskClaimings(_task.userIdAssignee);
@@ -768,9 +791,10 @@ module.exports = ctx => {
             subdomain: ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'flowTask',
-            context: { flowNodeId, user },
+            context: { flowNodeId },
             fn: '_nodeDoneCheckLock',
             transaction: true,
+            ctxParent: { state: { user: { op: user } } },
           });
         },
       });
@@ -869,6 +893,61 @@ module.exports = ctx => {
       await this.nodeInstance._clear({ flowNodeRemark: remark });
       // end flow
       await this.flowInstance._endFlow({ flowRemark: remark });
+    }
+
+    async _recall() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // specificFlag must be 2
+      if (flowTask.specificFlag !== 2) ctx.throw(403);
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // timeClaimed first
+      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      // check handled
+      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // handle
+      await this._recall_handle();
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
+    }
+
+    async _recall_handle() {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
+      this.contextTask._flowTaskHistory.timeHandled = new Date();
+      this.contextTask._flowTaskHistory.handleStatus = 1;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // delete flowTask and flowTaskHistory
+      await this.modelFlowTask.delete({ id: flowTaskId });
+      await this.modelFlowTaskHistory.delete({ flowTaskId });
+      // notify
+      const _tasks = await ctx.model.query(`
+          select id,userIdAssignee from aFlowTask
+            where iid=? and deleted=0 and flowNodeId=? and id<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+      for (const _task of _tasks) {
+        this._notifyTaskClaimings(_task.userIdAssignee);
+      }
+      // delete other tasks
+      await ctx.model.query(`
+          delete from aFlowTask
+            where iid=? and flowNodeId=? and id<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+      await ctx.model.query(`
+          update aFlowTaskHistory set deleted=1
+            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+      // recall
+      return await ctx.bean.flowTask._gotoFlowNodePrevious({
+        nodeInstance: this.nodeInstance, rejectedNode: null, flowNodeRemark: 'Recalled',
+      });
     }
 
     async _assigneesConfirmation({ handle }) {
@@ -976,6 +1055,10 @@ module.exports = ctx => {
       if (flowTask.specificFlag === 1) {
         actions.push({
           name: 'assigneesConfirmation',
+        });
+      } else if (flowTask.specificFlag === 2) {
+        actions.push({
+          name: 'recall',
         });
       } else if (flowTask.specificFlag === 0) {
         // options
@@ -1582,6 +1665,16 @@ module.exports = ctx => {
       const assignees = this.contextNode.vars.get('_assigneesConfirmation');
       assert(assignees && assignees.length > 0);
 
+      // recall
+      if (options.allowRecall) {
+        const taskInstance = await ctx.bean.flowTask._createTaskInstance({
+          nodeInstance: this.nodeInstance,
+          userIdAssignee: user.id,
+          user,
+        });
+        await this._taskConfirmationClaim({ taskInstance, specificFlag: 2 });
+      }
+
       // create tasks
       for (const userIdAssignee of assignees) {
         const taskInstance = await ctx.bean.flowTask._createTaskInstance({
@@ -1633,7 +1726,7 @@ module.exports = ctx => {
           userIdAssignee: user.id,
           user,
         });
-        await this._taskConfirmationClaim({ taskInstance });
+        await this._taskConfirmationClaim({ taskInstance, specificFlag: 1 });
         // break
         return false;
       }
@@ -1645,9 +1738,8 @@ module.exports = ctx => {
       return true;
     }
 
-    async _taskConfirmationClaim({ taskInstance }) {
+    async _taskConfirmationClaim({ taskInstance, specificFlag }) {
       // specificFlag timeClaimed
-      const specificFlag = 1;
       const timeClaimed = new Date();
       taskInstance.contextTask._flowTask.specificFlag = specificFlag;
       taskInstance.contextTask._flowTask.timeClaimed = timeClaimed;
@@ -1798,6 +1890,7 @@ module.exports = {
       allowPassTask: true,
       allowRejectTask: false,
       allowCancelFlow: true,
+      allowRecall: false,
       schema: {
         read: true,
         write: true,
@@ -1822,6 +1915,7 @@ module.exports = {
     allowPassTask: true,
     allowRejectTask: true,
     allowCancelFlow: false,
+    allowRecall: true,
     schema: {
       read: true,
       write: false,
@@ -1912,24 +2006,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ 836:
-/***/ ((module) => {
-
-module.exports = app => {
-  const workflow = {
-    info: {
-      bean: 'workflow',
-      title: 'WorkFlow',
-      persistence: true,
-      uniform: true,
-    },
-  };
-  return workflow;
-};
-
-
-/***/ }),
-
 /***/ 623:
 /***/ ((module) => {
 
@@ -2010,6 +2086,14 @@ module.exports = app => {
       const res = await this.ctx.service.flowTask.assigneesConfirmation({
         flowTaskId: this.ctx.request.body.flowTaskId,
         handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async recall() {
+      const res = await this.ctx.service.flowTask.recall({
+        flowTaskId: this.ctx.request.body.flowTaskId,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
@@ -2122,7 +2206,6 @@ const flowNodes = __webpack_require__(587);
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
-  const socketioWorkflow = __webpack_require__(836)(app);
   const meta = {
     base: {
       atoms: {
@@ -2159,11 +2242,6 @@ module.exports = app => {
             'a-flowtask:taskHandlings',
           ],
         },
-      },
-    },
-    socketio: {
-      messages: {
-        workflow: socketioWorkflow,
       },
     },
   };
@@ -2251,6 +2329,7 @@ module.exports = app => {
     { method: 'post', path: 'task/complete', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/assignees', controller: 'flowTask' },
     { method: 'post', path: 'task/assigneesConfirmation', controller: 'flowTask', middlewares: 'transaction' },
+    { method: 'post', path: 'task/recall', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/cancelFlow', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/actions', controller: 'flowTask' },
     { method: 'post', path: 'task/viewAtom', controller: 'flowTask' },
@@ -2314,6 +2393,7 @@ module.exports = app => {
           },
           orders: [
             [ 'a.flowNodeId', 'desc' ],
+            [ 'a.specificFlag', 'desc' ],
             [ 'a.flowTaskStatus', 'asc' ],
           ],
           history: 1,
@@ -2368,6 +2448,10 @@ module.exports = app => {
 
     async assigneesConfirmation({ flowTaskId, handle, user }) {
       return await this.ctx.bean.flowTask.assigneesConfirmation({ flowTaskId, handle, user });
+    }
+
+    async recall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.recall({ flowTaskId, user });
     }
 
     async cancelFlow({ flowTaskId, handle, user }) {

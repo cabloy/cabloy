@@ -125,23 +125,16 @@ module.exports = ctx => {
         return await next();
       }
 
-      try {
-        // scene
-        if (scene) {
+      // scene
+      if (scene) {
+        await sceneVerify({ ctx, scene });
+      } else if (scenes) {
+        for (const scene of scenes) {
           await sceneVerify({ ctx, scene });
-        } else if (scenes) {
-          for (const scene of scenes) {
-            await sceneVerify({ ctx, scene });
-          }
         }
-        // next
-        await next();
-      } catch (e) {
-        if (e.code !== 422) throw e;
-        ctx.response.status = 200;
-        ctx.response.type = 'application/json';
-        ctx.response.body = { code: 422, message: e.message };
       }
+      // next
+      await next();
     }
   }
   return Middleware;

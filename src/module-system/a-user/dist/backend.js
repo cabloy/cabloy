@@ -306,7 +306,7 @@ module.exports = app => {
           },
           dependencies: [
             'a-base:drafts',
-            'a-base:stars',
+            // 'a-base:stars',
             'a-flow:flowInitiateds',
           ],
         },
