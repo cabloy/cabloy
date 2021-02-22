@@ -1,6 +1,7 @@
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
+  const socketioWorkflow = require('./config/socketio/workflow.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -48,6 +49,11 @@ module.exports = app => {
           user: true,
           bean: 'flowInitiateds',
         },
+      },
+    },
+    socketio: {
+      messages: {
+        workflow: socketioWorkflow,
       },
     },
   };

@@ -77,7 +77,7 @@ module.exports = ctx => {
         await ctx.bean.message.publishUniform({
           message,
           messageClass: {
-            module: 'a-flowtask',
+            module: 'a-flow',
             messageClassName: 'workflow',
           },
         });

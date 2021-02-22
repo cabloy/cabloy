@@ -2,7 +2,6 @@ const flowNodes = require('./config/flow/nodes.js');
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
-  const socketioWorkflow = require('./config/socketio/workflow.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -39,11 +38,6 @@ module.exports = app => {
             'a-flowtask:taskHandlings',
           ],
         },
-      },
-    },
-    socketio: {
-      messages: {
-        workflow: socketioWorkflow,
       },
     },
   };
