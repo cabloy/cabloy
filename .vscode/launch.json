@@ -6,50 +6,26 @@
   "configurations": [
   {
     "name": "dev:backend",
-    "type": "node",
+    "type": "pwa-node",
     "request": "launch",
     "cwd": "${workspaceRoot}",
     "runtimeExecutable": "npm",
-    "windows":
-    {
-      "runtimeExecutable": "npm.cmd"
-    },
-    "runtimeArgs": ["run", "dev:backend"],
-    "console": "integratedTerminal",
-    "protocol": "auto",
-    "restart": true,
-    "port": 9999
+    "runtimeArgs": ["run", "dev:backend"]
   },
   {
     "name": "test:backend",
-    "type": "node",
+    "type": "pwa-node",
     "request": "launch",
     "cwd": "${workspaceRoot}",
     "runtimeExecutable": "npm",
-    "windows":
-    {
-      "runtimeExecutable": "npm.cmd"
-    },
-    "runtimeArgs": ["run", "test:backend"],
-    "console": "integratedTerminal",
-    "protocol": "auto",
-    "restart": true,
-    "port": 9999
+    "runtimeArgs": ["run", "test:backend"]
   },
   {
     "name": "cov:backend",
-    "type": "node",
+    "type": "pwa-node",
     "request": "launch",
     "cwd": "${workspaceRoot}",
     "runtimeExecutable": "npm",
-    "windows":
-    {
-      "runtimeExecutable": "npm.cmd"
-    },
-    "runtimeArgs": ["run", "cov:backend"],
-    "console": "integratedTerminal",
-    "protocol": "auto",
-    "restart": true,
-    "port": 9999
+    "runtimeArgs": ["run", "cov:backend"]
   }]
 }

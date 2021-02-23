@@ -35,7 +35,8 @@ const utils = {
       setTimeout(() => {
         // log
         let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(_pkg.version)} → ${chalk.keyword('orange')(moduleVersion)}`;
-        message += `\nRun ${chalk.keyword('orange')('npm update')} to update!`;
+        message += `\nRun ${chalk.keyword('orange')('> npm update <')} to update cabloy!`;
+        message += `\nRun ${chalk.keyword('orange')('> npm run update:test <')} to update the test modules!`;
         console.log('\n' + boxen(message, boxenOptions));
       }, 6000);
     } catch (err) { }
