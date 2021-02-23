@@ -1,5 +1,11 @@
 # History
 
+## 2020-02-23, Version 4.4.13
+
+* **杂项**
+  * vscode: 调整launch.json配置
+  * cli: 提示升级测试模块
+
 ## 2020-02-22, Version 4.4.12
 
 * **特性**
