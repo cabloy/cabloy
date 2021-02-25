@@ -1,5 +1,7 @@
 const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 
+const _cacheMessageClassesUniform = {};
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends ctx.app.meta.BeanModuleBase {
@@ -22,6 +24,37 @@ module.exports = ctx => {
         messageClass,
         options,
       });
+    }
+
+    async group({ /* options, user */}) {
+      const items = this.messageClassesUniform();
+      return items;
+    }
+
+    messageClassesUniform() {
+      if (!_cacheMessageClassesUniform[ctx.locale]) {
+        _cacheMessageClassesUniform[ctx.locale] = this._prepareMessageClassesUniform();
+      }
+      return _cacheMessageClassesUniform[ctx.locale];
+    }
+
+    _prepareMessageClassesUniform() {
+      const messageClasses = ctx.bean.io.messageClass.messageClasses();
+      const items = [];
+      for (const relativeName in messageClasses) {
+        const _module = messageClasses[relativeName];
+        for (const messageClassName in _module) {
+          const messageClass = _module[messageClassName];
+          if (messageClass.info.uniform) {
+            items.push({
+              module: relativeName,
+              messageClassName,
+              messageClass,
+            });
+          }
+        }
+      }
+      return items;
     }
 
   }
