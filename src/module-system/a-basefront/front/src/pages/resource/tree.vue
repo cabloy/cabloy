@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="pageTitle" eb-back-link="Back"></eb-navbar>
-    <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
+    <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren" :onNodePerform="onNodePerform">
     </eb-treeview>
     <f7-block></f7-block>
   </eb-page>
@@ -124,7 +124,7 @@ export default {
       }
       return await this._loadNodeResources(node);
     },
-    onNodeClick(event, node) {
+    onNodePerform(event, context, node) {
       const resourceConfig = JSON.parse(node.data.resourceConfig);
       // special for action
       let action;
