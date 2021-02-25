@@ -32,15 +32,6 @@ function installFactory(_Vue) {
         return this.statsUser['a-user:userRed'] || this.statsUser['a-user:userOrange'] || null;
       },
     },
-    created() {
-      // uniform messages
-      const action = {
-        actionModule: 'a-message',
-        actionComponent: 'uniform',
-        name: 'initialize',
-      };
-      this.$meta.util.performAction({ ctx: this, action }).then(() => {});
-    },
     methods: {
       onStatsChange(event) {
         this.statsUser = event;

@@ -66,15 +66,6 @@ function installFactory(_Vue) {
         return null;
       },
     },
-    created() {
-      // uniform messages
-      const action = {
-        actionModule: 'a-message',
-        actionComponent: 'uniform',
-        name: 'initialize',
-      };
-      this.$meta.util.performAction({ ctx: this, action }).then(() => {});
-    },
     methods: {
       onChangeStatsUser(statsUser) {
         this.statsUser = statsUser;

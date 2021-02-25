@@ -4,6 +4,10 @@ const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 export default function(io) {
   const Simple = function() {
 
+    this.initialize = function() {
+      Vue.prototype.$f7.on('notificationClick', this._onNotificationClick.bind(this));
+    };
+
     this.subscribe = function() {
       const user = Vue.prototype.$meta.store.state.auth.user.op;
       if (user.anonymous) return;
@@ -32,6 +36,8 @@ export default function(io) {
         closeButton: true,
         closeOnClick: true,
         swipeToClose: false,
+        _message: message,
+        _content: content,
       };
       // closeTimeout
       const closeTimeout = Vue.prototype.$meta.config.modules['a-message'].notification.closeTimeout;
@@ -47,10 +53,19 @@ export default function(io) {
       // donothing
     };
 
+    this._onNotificationClick = function(notification) {
+      // content
+      const content = notification.params._content;
+      // actionPath
+      const actionPath = content.actionPath;
+      Vue.prototype.$meta.vueLayout.navigate(actionPath);
+    };
+
   };
   return {
     simple() {
       const simple = new Simple();
+      simple.initialize();
       return simple;
     },
   };
