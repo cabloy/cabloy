@@ -47,9 +47,12 @@ export default function(io) {
       callbacks.splice(index, 1);
     };
 
-    this._onMessage = function({ message }) {
+    this._onMessage = async function({ message }) {
       // content
       const content = JSON.parse(message.content);
+      // callbacks
+      const res = await this._performCallbacks({ scene: 'show', message, content });
+      if (res) return;
       // icon
       let icon;
       if (!content.userAvatar) {
@@ -84,12 +87,34 @@ export default function(io) {
       // donothing
     };
 
-    this._onNotificationClick = function(notification) {
+    this._onNotificationClick = async function(notification) {
+      // message
+      const message = notification.params._message;
       // content
       const content = notification.params._content;
+      // callbacks
+      const res = await this._performCallbacks({ scene: 'click', message, content });
+      if (res) return;
       // actionPath
       const actionPath = content.actionPath;
-      Vue.prototype.$meta.vueLayout.navigate(actionPath);
+      if (actionPath) {
+        Vue.prototype.$meta.vueLayout.navigate(actionPath);
+      }
+    };
+
+    // res=true: break the default handler
+    this._performCallbacks = async function({ scene, message, content }) {
+      const messageClassName = `${message.module}:${message.messageClassName}`;
+      const callbacks = this._callbacksAll[messageClassName];
+      if (!callbacks) return;
+      let res = false;
+      for (const item of callbacks) {
+        const _res = await item.callback({ scene, message, content });
+        if (_res === true) {
+          res = true;
+        }
+      }
+      return res;
     };
 
   };

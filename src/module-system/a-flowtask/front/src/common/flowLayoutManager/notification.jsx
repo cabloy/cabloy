@@ -29,8 +29,14 @@ export default {
     }
   },
   methods: {
-    notification_callback() {
-
+    async notification_callback({ scene, message, content }) {
+      if (scene === 'click') {
+        const flowId = this.base_flow && this.base_flow.flowId;
+        if (flowId === content.params.flowId) {
+          this.base_loadData();
+          return true;
+        }
+      }
     },
   },
 };
