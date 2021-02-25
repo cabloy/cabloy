@@ -145,7 +145,7 @@ export default {
       // message
       if (!this.$config.message.disabled) {
         children.push(
-          <eb-link key="messages" iconMaterial="message" eb-href="/a/message/list" eb-target="_self"></eb-link>
+          <eb-link key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self"></eb-link>
         );
       }
       // settings
