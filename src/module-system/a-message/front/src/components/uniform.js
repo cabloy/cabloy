@@ -24,6 +24,7 @@ export default {
       _simple = _helper.simple();
       // auth:login
       Vue.prototype.$meta.eventHub.$on('auth:login', () => {
+        _simple.reset();
         _simple.subscribe();
       });
       // subscribe

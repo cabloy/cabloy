@@ -21,6 +21,11 @@ export default function(io) {
       );
     };
 
+    this.reset = function() {
+      this._callbacksAll = {};
+      this._callbacksMap = {};
+    };
+
     this.register = function(messageClassName, callback) {
       if (!messageClassName) throw new Error('messageClassName not empty');
       if (!this._callbacksAll[messageClassName]) {
