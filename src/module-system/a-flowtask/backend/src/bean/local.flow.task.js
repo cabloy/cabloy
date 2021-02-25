@@ -72,6 +72,10 @@ module.exports = ctx => {
             title,
             body: this.context._flow.flowName,
             actionPath,
+            params: {
+              flowId: this.context._flowId,
+              flowTaskId,
+            },
           },
         };
         await ctx.bean.message.publishUniform({

@@ -136,6 +136,10 @@ module.exports = ctx => {
         _message.createdAt = new Date();
       }
 
+      // messageClass
+      _message.module = messageClass.module;
+      _message.messageClassName = messageClass.messageClassName;
+
       // to queue
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
