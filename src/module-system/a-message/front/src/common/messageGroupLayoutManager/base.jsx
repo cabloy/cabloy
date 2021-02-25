@@ -3,7 +3,7 @@ export default {
     return {
       base: {
         ready: false,
-        configMessageGroup: null,
+        configMessageBase: null,
         config: null,
       },
     };

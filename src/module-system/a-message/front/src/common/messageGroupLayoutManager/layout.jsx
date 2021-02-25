@@ -16,14 +16,14 @@ export default {
       return 'list';
     },
     async layout_prepareConfig() {
-      // configMessageGroup
-      this.base.configMessageGroup = this.$meta.config.modules['a-message'].messageGroup;
+      // configMessageBase
+      this.base.configMessageBase = this.$meta.config.modules['a-message'].message;
       // config
-      this.base.config = this.base.configMessageGroup;
+      this.base.config = this.base.configMessageBase;
       // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      let _config = this.$meta.util.getProperty(this.base.config, `render.group.layouts.${this.layout.current}`);
       if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.list');
+        _config = this.$meta.util.getProperty(this.base.config, 'render.group.layouts.list');
       }
       this.layout.config = _config;
     },
