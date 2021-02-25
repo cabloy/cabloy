@@ -13,13 +13,13 @@ export default {
   },
   methods: {
     layout_get() {
-      return (this.$view.size === 'small') ? 'list' : 'table';
+      return 'list';
     },
     async layout_prepareConfig() {
-      // configFlowBase
-      this.base.configFlowBase = this.$meta.config.modules['a-flowtask'].flow;
+      // configMessageGroup
+      this.base.configMessageGroup = this.$meta.config.modules['a-message'].messageGroup;
       // config
-      this.base.config = this.base.configFlowBase;
+      this.base.config = this.base.configMessageGroup;
       // layoutConfig
       let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
       if (!_config) {

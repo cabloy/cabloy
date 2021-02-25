@@ -3,8 +3,6 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 
 // container: {
-//   options,
-//   layout,
 // },
 
 export default {
