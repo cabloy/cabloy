@@ -26,6 +26,9 @@ export default {
       const url = `/a/flowtask/flow?flowId=${item.flowId}`;
       this.$view.navigate(url);
     },
+    _getMessageClassNameFull(item) {
+      return `${item.module}:${item.messageClassName}`;
+    },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
@@ -48,59 +51,22 @@ export default {
       }
       return flags;
     },
+    _renderStats(item) {
+      const stats = item.messageClass.info.stats;
+      if (!stats) return;
+      return (
+        <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>
+      );
+    },
     _renderListItem(item) {
-      // media
-      const domMedia = (
-        <div slot="media">
-          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
-        </div>
-      );
-      // domHeader
-      const domHeader = (
-        <div slot="root-start" class="header">
-          <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
-          </div>
-          <div class="date">
-            <span>{this.$meta.util.formatDateTimeRelative(item.timeEnd || item.updatedAt)}</span>
-          </div>
-        </div>
-      );
-      // domTitle
-      const domTitle = (
-        <div slot="title" class="title">
-          <div>{item.flowName}</div>
-        </div>
-      );
-      // domSummary
-      const domSummary = (
-        <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
-        </div>
-      );
-      // domAfter
-      const domAfterMetaFlags = [];
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
-      }
-      const domAfter = (
-        <div slot="after" class="after">
-          {domAfterMetaFlags}
-        </div>
-      );
       // ok
       return (
-        <eb-list-item class="item" key={item.flowId}
-          link='#'
-          propsOnPerform={event => this.onItemClick(event, item)}
-        >
-          {domMedia}
-          {domHeader}
-          {domTitle}
-          {domSummary}
-          {domAfter}
+        <eb-list-item key={this._getMessageClassNameFull(item)}
+          link="#" title={item.messageClass.info.titleLocale}
+          propsOnPerform={event => this.onPerformItem(event, item)}>
+          <div slot="after">
+            {this._renderStats(item)}
+          </div>
         </eb-list-item>
       );
     },

@@ -14,6 +14,14 @@ module.exports = app => {
       schemas: {
       },
     },
+    stats: {
+      providers: {
+        message: {
+          user: true,
+          bean: 'message',
+        },
+      },
+    },
   };
   return meta;
 };
