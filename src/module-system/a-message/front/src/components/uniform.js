@@ -12,7 +12,7 @@ export default {
       if (action.name === 'initialize') return this._initialize({ ctx });
     },
     async _initialize({ ctx }) {
-      if (_simple) return;
+      if (_simple) return _simple;
       // io
       const action = {
         actionModule: 'a-socketio',
@@ -28,6 +28,8 @@ export default {
       });
       // subscribe
       _simple.subscribe();
+      // ok
+      return _simple;
     },
   },
 };

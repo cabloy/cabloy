@@ -4,6 +4,11 @@ const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 export default function(io) {
   const Simple = function() {
 
+    // callbacks
+    this._callbackCounter = 0;
+    this._callbacksAll = {};
+    this._callbacksMap = {};
+
     this.initialize = function() {
       Vue.prototype.$f7.on('notificationClick', this._onNotificationClick.bind(this));
     };
@@ -14,6 +19,32 @@ export default function(io) {
       this.subscribeId = io.subscribe(
         __PATH_MESSAGE_UNIFORM, this._onMessage.bind(this), this._onSubscribed.bind(this)
       );
+    };
+
+    this.register = function(messageClassName, callback) {
+      if (!messageClassName) throw new Error('messageClassName not empty');
+      if (!this._callbacksAll[messageClassName]) {
+        this._callbacksAll[messageClassName] = [];
+      }
+      const callbackId = ++this._callbackCounter;
+      this._callbacksAll[messageClassName].push({
+        id: callbackId, callback,
+      });
+      this._callbacksMap[callbackId] = messageClassName;
+      return callbackId;
+    };
+
+    this.unRegister = function(callbackId) {
+      const messageClassName = this._callbacksMap[callbackId];
+      if (!messageClassName) return;
+      // delete from map
+      delete this._callbacksMap[callbackId];
+      // delete from all
+      const callbacks = this._callbacksAll[messageClassName];
+      if (!callbacks) return;
+      const index = callbacks.findIndex(item => item.id === callbackId);
+      if (index === -1) return;
+      callbacks.splice(index, 1);
     };
 
     this._onMessage = function({ message }) {

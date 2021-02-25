@@ -5,6 +5,7 @@ import Subnavbar from './subnavbar.jsx';
 import Info from './info.jsx';
 import Timeline from './timeline.jsx';
 import Actions from './actions.jsx';
+import Notification from './notification.jsx';
 
 // container: {
 //   flowId,
@@ -13,7 +14,7 @@ import Actions from './actions.jsx';
 // },
 
 export default {
-  mixins: [ Base, Page, Layout, Subnavbar, Info, Timeline, Actions ],
+  mixins: [ Base, Page, Layout, Subnavbar, Info, Timeline, Actions, Notification ],
   data() {
     return {
     };
