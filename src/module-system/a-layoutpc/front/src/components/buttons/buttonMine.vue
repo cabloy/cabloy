@@ -5,7 +5,7 @@
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    <div :class="statsUserClass"><eb-stats :stats_params="{module:'a-user', name:'user'}" :stats_color="statsUserColor" :onAdjustValue="onAdjustValue" @change="onChangeStatsUser"></eb-stats></div>
+    <div class="item"><eb-stats-color :stats_params="{module:'a-user', name:'user'}"></eb-stats-color></div>
   </eb-link>
 </template>
 <script>
@@ -22,7 +22,6 @@ function installFactory(_Vue) {
     mixins: [ ebLayoutButtonBase ],
     data() {
       return {
-        statsUser: null,
       };
     },
     computed: {
@@ -53,27 +52,8 @@ function installFactory(_Vue) {
           'button-separator': this.buttonConfig.showSeparator,
         };
       },
-      statsUserClass() {
-        return {
-          item: true,
-          'display-none': !this.statsUser || (!this.statsUser.red && !this.statsUser.orange),
-        };
-      },
-      statsUserColor() {
-        if (!this.statsUser) return null;
-        if (this.statsUser.red) return 'red';
-        if (this.statsUser.orange) return 'orange';
-        return null;
-      },
     },
     methods: {
-      onChangeStatsUser(statsUser) {
-        this.statsUser = statsUser;
-      },
-      onAdjustValue(statsUser) {
-        if (!statsUser) return null;
-        return statsUser.red || statsUser.orange || null;
-      },
     },
   };
 }
