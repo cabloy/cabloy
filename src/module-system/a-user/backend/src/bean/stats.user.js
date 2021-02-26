@@ -10,7 +10,11 @@ module.exports = ctx => {
         const value = await ctx.bean.stats._get({
           module, fullName, user,
         });
-        res[dep] = value;
+        if (dep === 'a-user:userRed') {
+          res.red = value;
+        } else if (dep === 'a-user:userOrange') {
+          res.orange = value;
+        }
       }
       return res;
     }

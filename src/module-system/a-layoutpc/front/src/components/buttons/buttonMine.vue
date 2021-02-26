@@ -56,13 +56,13 @@ function installFactory(_Vue) {
       statsUserClass() {
         return {
           item: true,
-          'display-none': !this.statsUser || (!this.statsUser['a-user:userRed'] && !this.statsUser['a-user:userOrange']),
+          'display-none': !this.statsUser || (!this.statsUser.red && !this.statsUser.orange),
         };
       },
       statsUserColor() {
         if (!this.statsUser) return null;
-        if (this.statsUser['a-user:userRed']) return 'red';
-        if (this.statsUser['a-user:userOrange']) return 'orange';
+        if (this.statsUser.red) return 'red';
+        if (this.statsUser.orange) return 'orange';
         return null;
       },
     },
@@ -72,7 +72,7 @@ function installFactory(_Vue) {
       },
       onAdjustValue(statsUser) {
         if (!statsUser) return null;
-        return statsUser['a-user:userRed'] || statsUser['a-user:userOrange'] || null;
+        return statsUser.red || statsUser.orange || null;
       },
     },
   };
