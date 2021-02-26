@@ -4,7 +4,7 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessageUniformBase extends ctx.app.meta.IOMessageBase(ctx) {
 
-    async publish({ path, message, messageClass, options }) {
+    async onPublish({ path, message, messageClass, options }) {
       // todo: will be removed
       if (ctx.config.module(moduleInfo.relativeName).message.disabled) return;
       // path
@@ -18,8 +18,8 @@ module.exports = ctx => {
         nameSub: `${messageClass.module}_${messageClass.messageClassName}`,
         user,
       });
-      // publish
-      return await super.publish({ path, message, messageClass, options });
+      // onPublish
+      return await super.onPublish({ path, message, messageClass, options });
     }
 
   }

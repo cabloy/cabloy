@@ -31,7 +31,7 @@ module.exports = ctx => {
       return null;
     }
 
-    async publish({ path, message, messageClass, options }) {
+    async onPublish({ path, message, messageClass, options }) {
       return await ctx.bean.io._publish({ path, message, messageClass, options });
     }
 

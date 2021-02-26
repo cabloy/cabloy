@@ -99,7 +99,7 @@ module.exports = ctx => {
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
-      return await beanMessage.publish({ path, message, messageClass, options });
+      return await beanMessage.onPublish({ path, message, messageClass, options });
     }
 
     async _publish({ path, message, messageClass, options }) {
