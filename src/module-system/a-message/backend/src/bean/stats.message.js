@@ -4,7 +4,6 @@ module.exports = ctx => {
 
     async execute(context) {
       const { keys, user } = context;
-      const fullName = keys.join('.');
       if (keys.length === 2) {
         // messageClass
         const [ module, messageClassName ] = keys[1].split('_');

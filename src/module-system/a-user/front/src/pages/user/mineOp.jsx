@@ -145,7 +145,7 @@ export default {
       // message
       if (!this.$config.message.disabled) {
         children.push(
-          <eb-link key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self"></eb-link>
+          <eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={ { module: 'a-message', name: 'message' } }></eb-link-color>
         );
       }
       // settings

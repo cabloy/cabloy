@@ -3,6 +3,7 @@ import view from './components/view2.vue';
 import page from './components/page.vue';
 import navbar from './components/navbar.vue';
 import link from './components/link.vue';
+import linkColor from './components/linkColor.vue';
 import button from './components/button.vue';
 import component from './components/component.vue';
 import input from './components/input.vue';
@@ -37,6 +38,7 @@ export default {
   ebPage: page,
   ebNavbar: navbar,
   ebLink: link,
+  ebLinkColor: linkColor,
   ebButton: button,
   ebComponent: component,
   ebInput: input,

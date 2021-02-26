@@ -33,7 +33,7 @@ export default {
       const stats = item.messageClass.info.uniform.stats;
       if (!stats) return;
       return (
-        <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>
+        <eb-stats-color stats_params={stats.params}></eb-stats-color>
       );
     },
     _renderListItem(item) {
