@@ -49,7 +49,7 @@ module.exports = ctx => {
       const data = {
         module,
         messageClassName,
-        uniform: messageClass.info.uniform || 0,
+        uniform: messageClass.info.uniform ? 1 : 0,
       };
       // insert
       const res2 = await this.modelMessageClass.insert(data);

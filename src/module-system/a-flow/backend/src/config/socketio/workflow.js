@@ -5,14 +5,15 @@ module.exports = app => {
       bean: 'workflow',
       title: 'WorkFlow',
       persistence: true,
-      uniform: true,
-      stats: {
-        params: {
-          module: 'a-message',
-          name: 'message',
-          nameSub: `${moduleInfo.relativeName}_workflow`,
+      uniform: {
+        stats: {
+          params: {
+            module: 'a-message',
+            name: 'message',
+            nameSub: `${moduleInfo.relativeName}_workflow`,
+          },
+          color: 'red',
         },
-        color: 'red',
       },
     },
   };
