@@ -35,6 +35,7 @@ module.exports = app => {
           dependencies: [
             'a-user:userRed',
             'a-user:userOrange',
+            'a-message:message',
           ],
         },
       },
