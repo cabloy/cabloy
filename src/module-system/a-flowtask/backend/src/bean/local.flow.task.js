@@ -78,7 +78,7 @@ module.exports = ctx => {
             },
           },
         };
-        await ctx.bean.message.publishUniform({
+        await ctx.bean.io.publish({
           message,
           messageClass: {
             module: 'a-flow',

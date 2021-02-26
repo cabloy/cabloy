@@ -32,7 +32,7 @@ module.exports = ctx => {
     }
 
     async publish({ path, message, messageClass, options }) {
-      return await ctx.bean.io.publish({ path, message, messageClass, options });
+      return await ctx.bean.io._publish({ path, message, messageClass, options });
     }
 
     // combine sessionId

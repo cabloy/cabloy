@@ -3,12 +3,8 @@ module.exports = ctx => {
   class Stats {
 
     async execute(context) {
-      const { user } = context;
-      const modelFlow = ctx.model.module(moduleInfo).flow;
-      const count = await modelFlow.count({
-        flowUserId: user.id,
-      });
-      return count;
+      const { keys, user } = context;
+      const fullName = keys.join('.');
     }
 
   }

@@ -95,6 +95,17 @@ module.exports = ctx => {
     }
 
     async publish({ path, message, messageClass, options }) {
+      // messageClass
+      messageClass = await this.messageClass.get(messageClass);
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      return await beanMessage.publish({ path, message, messageClass, options });
+    }
+
+    async _publish({ path, message, messageClass, options }) {
+      // messageClass
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      const beanMessage = this._getBeanMessage(messageClassBase);
       // options
       options = options || {};
       // scene
@@ -102,9 +113,7 @@ module.exports = ctx => {
         options.scene = ctx.headers['x-clientid'] || '';
       }
       const messageScene = options.scene;
-      // messageClass
-      messageClass = await this.messageClass.get(messageClass);
-      const messageClassBase = this.messageClass.messageClass(messageClass);
+
       // message/userId
       message.userIdFrom = parseInt(message.userIdFrom || 0);
       if (message.userIdTo === undefined || message.userIdTo === null) message.userIdTo = -2;
@@ -112,7 +121,6 @@ module.exports = ctx => {
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
       // sessionId
-      const beanMessage = this._getBeanMessage(messageClassBase);
       const sessionId = await beanMessage.onSessionId({ path, message, options });
       // message
       const _message = {
@@ -340,7 +348,11 @@ module.exports = ctx => {
         beanMessage = ctx.bean._getBean(beanFullName);
       }
       if (!beanMessage) {
-        beanMessage = new (ctx.app.meta.IOMessageBase(ctx))();
+        if (messageClassBase.info.uniform) {
+          beanMessage = new (ctx.app.meta.IOMessageUniformBase(ctx))();
+        } else {
+          beanMessage = new (ctx.app.meta.IOMessageBase(ctx))();
+        }
         // ctx.logger.info(`message bean not found: ${beanFullName}`);
         // return;
       }

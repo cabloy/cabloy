@@ -1,8 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const IOMessageUniformBaseFn = require('./common/ioMessageUniformBase.js');
 
 module.exports = app => {
+
+  // base
+  app.meta.IOMessageUniformBase = IOMessageUniformBaseFn;
 
   // beans
   const beans = require('./beans.js')(app);
