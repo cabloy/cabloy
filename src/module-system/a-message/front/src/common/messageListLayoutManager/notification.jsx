@@ -15,8 +15,8 @@ export default {
       name: 'initialize',
     };
     this.$meta.util.performAction({ ctx: this, action }).then(simple => {
-      const messageClass = this.container.messageClass;
-      const messageClassName = `${messageClass.info.module}:${messageClass.info.name}`;
+      const messageClass = this.base_messageClass;
+      const messageClassName = `${messageClass.module}:${messageClass.messageClassName}`;
       this.notification.simple = simple;
       this.notification.callbackId = this.notification.simple.register(
         messageClassName,

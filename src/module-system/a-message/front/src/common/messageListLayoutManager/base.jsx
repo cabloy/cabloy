@@ -12,6 +12,13 @@ export default {
     base_user() {
       return this.$store.state.auth.user.op;
     },
+    base_messageClass() {
+      const messageClass = this.container.messageClass;
+      return {
+        module: messageClass.info.module,
+        messageClassName: messageClass.info.name,
+      };
+    },
   },
   created() {
   },
@@ -38,12 +45,8 @@ export default {
       // options
       const options = this.base_prepareSelectOptions();
       // params
-      const messageClass = this.container.messageClass;
       const params = {
-        messageClass: {
-          module: messageClass.info.module,
-          messageClassName: messageClass.info.name,
-        },
+        messageClass: this.base_messageClass,
         options,
       };
       return params;

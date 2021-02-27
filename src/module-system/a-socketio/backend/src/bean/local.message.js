@@ -128,7 +128,7 @@ module.exports = ctx => {
       // messageClass
       if (messageClass) {
         messageClass = await ctx.bean.io.messageClass.get(messageClass);
-        const messageClassBase = this.messageClass.messageClass(messageClass);
+        const messageClassBase = ctx.bean.io.messageClass.messageClass(messageClass);
         const beanMessage = ctx.bean.io._getBeanMessage(messageClassBase);
         return await beanMessage.onSetRead({ messageClass, messageIds, all, user });
       }

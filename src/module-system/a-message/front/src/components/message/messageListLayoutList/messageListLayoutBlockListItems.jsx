@@ -25,7 +25,10 @@ export default {
     onItemClick(event, item) {
       // setRead
       const messageIds = [ item.id ];
-      this.$api.post('/a/socketio/message/setRead', { messageIds }).then(() => {
+      this.$api.post('/a/socketio/message/setRead', {
+        messageClass: this.layoutManager.base_messageClass,
+        messageIds,
+      }).then(() => {
         this.layout.messageReadSet({ message: item });
       });
       // content

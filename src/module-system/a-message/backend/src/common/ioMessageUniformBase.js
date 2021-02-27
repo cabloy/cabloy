@@ -12,14 +12,28 @@ module.exports = ctx => {
       // user
       const user = { id: message.userIdTo };
       // stats
+      this._notify({ messageClass, user });
+      // onPublish
+      return await super.onPublish({ path, message, messageClass, options });
+    }
+
+    async onSetRead({ messageClass, messageIds, all, user }) {
+      // stats
+      if (messageClass) {
+        this._notify({ messageClass, user });
+      }
+      // onPublish
+      return await super.onSetRead({ messageClass, messageIds, all, user });
+    }
+
+    _notify({ messageClass, user }) {
+      // stats
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'message',
         nameSub: `${messageClass.module}_${messageClass.messageClassName}`,
         user,
       });
-      // onPublish
-      return await super.onPublish({ path, message, messageClass, options });
     }
 
   }
