@@ -22,8 +22,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.count({ atomClass, options, user });
     }
 
-    async write({ key, item, user }) {
-      return await this.ctx.bean.atom.write({ key, item, user });
+    async write({ key, item, options, user }) {
+      return await this.ctx.bean.atom.write({ key, item, options, user });
     }
 
     async openDraft({ key, user }) {

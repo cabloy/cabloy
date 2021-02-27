@@ -52,10 +52,12 @@ module.exports = app => {
     }
 
     async write() {
+      const options = { ignoreValidate: true };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
+        options,
       });
       this.ctx.success();
     }
@@ -84,10 +86,12 @@ module.exports = app => {
 
     async writeSubmit() {
       // write
+      const options = { ignoreValidate: false };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
+        options,
       });
       // submit
       await this.submit();

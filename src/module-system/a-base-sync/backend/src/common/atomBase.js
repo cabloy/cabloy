@@ -71,7 +71,8 @@ module.exports = app => {
         _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       }
       // validate
-      if (atomStage === 0 && !target) {
+      const ignoreValidate = options && options.ignoreValidate;
+      if (atomStage === 0 && !target && !ignoreValidate) {
         await this.ctx.bean.validation._validate({ atomClass, data: item, options });
       }
       // write atom
