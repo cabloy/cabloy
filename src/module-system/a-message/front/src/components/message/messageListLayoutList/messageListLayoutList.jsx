@@ -17,6 +17,8 @@ export default {
   },
   created() {
     this.layoutManager.layout.instance = this;
+    // queueScroll
+    this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
   },
   methods: {
     onPageRefresh(force) {
@@ -53,6 +55,20 @@ export default {
     },
     getItems() {
       return this.items;
+    },
+    messageAppendNew({ message }) {
+      this.items.unshift(message);
+      this._scroll();
+    },
+    _scroll() {
+      this.$nextTick(() => {
+        this._queueScroll.push();
+      });
+    },
+    _queueTaskScroll(none, cb) {
+      const pageContent = this.$$(this.$page.$el).find('.page-content');
+      if (pageContent.scrollTop() === 0) return cb();
+      pageContent.scrollTop(0, 300, cb);
     },
     _renderBlock({ blockName }) {
       const blockConfig = this.layoutConfig.blocks[blockName];

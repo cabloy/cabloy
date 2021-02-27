@@ -1,6 +1,7 @@
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
+import Notification from './notification.jsx';
 
 // container: {
 //   messageClass,
@@ -8,7 +9,7 @@ import Layout from './layout.jsx';
 
 export default {
   mixins: [
-    Base, Page, Layout,
+    Base, Page, Layout, Notification,
   ],
   data() {
     return {

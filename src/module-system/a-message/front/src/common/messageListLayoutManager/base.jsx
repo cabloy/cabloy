@@ -38,10 +38,11 @@ export default {
       // options
       const options = this.base_prepareSelectOptions();
       // params
+      const messageClass = this.container.messageClass;
       const params = {
         messageClass: {
-          module: this.container.messageClass.info.module,
-          messageClassName: this.container.messageClass.info.name,
+          module: messageClass.info.module,
+          messageClassName: messageClass.info.name,
         },
         options,
       };
