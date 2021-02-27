@@ -62,6 +62,13 @@ export default {
         item.messageRead = 1;
       }
     },
+    messageReadAll() {
+      for (const item of this.items) {
+        if (item.messageRead === 0) {
+          item.messageRead = 1;
+        }
+      }
+    },
     messageAppendNew({ message }) {
       this.items.unshift(message);
       this._scroll();
