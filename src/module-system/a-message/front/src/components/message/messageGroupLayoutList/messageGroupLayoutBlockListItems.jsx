@@ -23,8 +23,8 @@ export default {
   },
   methods: {
     onPerformItem(event, item) {
-      const url = `/a/flowtask/flow?flowId=${item.flowId}`;
-      this.$view.navigate(url);
+      const url = `/a/message/list?messageClass=${encodeURIComponent(JSON.stringify(item.messageClass))}`;
+      this.$view.navigate(url, { target: '_self' });
     },
     _getMessageClassNameFull(item) {
       return `${item.module}:${item.messageClassName}`;
