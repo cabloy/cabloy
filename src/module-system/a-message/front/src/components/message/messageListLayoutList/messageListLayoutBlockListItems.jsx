@@ -22,29 +22,84 @@ export default {
   beforeDestroy() {
   },
   methods: {
-    onPerformItem(event, item) {
-      const url = `/a/message/list?messageClass=${encodeURIComponent(JSON.stringify(item.messageClass))}`;
-      this.$view.navigate(url, { target: '_self' });
+    onItemClick(event, item) {
+      // content
+      const content = JSON.parse(item.content);
+      if (content.actionPath) {
+        this.$view.navigate(content.actionPath);
+      }
     },
-    _getMessageClassNameFull(item) {
-      return `${item.module}:${item.messageClassName}`;
+    _getItemMetaMedia(content) {
+      const media = content.userAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 24);
     },
-    _renderStats(item) {
-      const stats = item.messageClass.info.uniform.stats;
-      if (!stats) return;
-      return (
-        <eb-stats-color stats_params={stats.params}></eb-stats-color>
-      );
+    _getItemMetaMediaLabel(content) {
+      const mediaLabel = content.userName;
+      return mediaLabel;
+    },
+    _getItemMetaSummary(content) {
+      const summary = content.body || '';
+      return summary;
+    },
+    _getItemMetaFlags(item, content) {
+      const flags = [];
+      return flags;
     },
     _renderListItem(item) {
+      // content
+      const content = JSON.parse(item.content);
+      // media
+      const domMedia = (
+        <div slot="media">
+          <img class="avatar avatar24" src={this._getItemMetaMedia(content)} />
+        </div>
+      );
+      // domHeader
+      const domHeader = (
+        <div slot="root-start" class="header">
+          <div class="mediaLabel">
+            <span>{this._getItemMetaMediaLabel(content)}</span>
+          </div>
+          <div class="date">
+            <span>{this.$meta.util.formatDateTimeRelative(item.createdAt)}</span>
+          </div>
+        </div>
+      );
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{content.title}</div>
+        </div>
+      );
+      // domSummary
+      const domSummary = (
+        <div slot="root-end" class="summary">
+          { this._getItemMetaSummary(content) }
+        </div>
+      );
+      // domAfter
+      const domAfterMetaFlags = [];
+      for (const flag of this._getItemMetaFlags(item, content)) {
+        domAfterMetaFlags.push(
+          <f7-badge key={flag}>{flag}</f7-badge>
+        );
+      }
+      const domAfter = (
+        <div slot="after" class="after">
+          {domAfterMetaFlags}
+        </div>
+      );
       // ok
       return (
-        <eb-list-item key={this._getMessageClassNameFull(item)}
-          link="#" title={item.messageClass.info.titleLocale}
-          propsOnPerform={event => this.onPerformItem(event, item)}>
-          <div slot="after">
-            {this._renderStats(item)}
-          </div>
+        <eb-list-item class="item" key={item.id}
+          link='#'
+          propsOnPerform={event => this.onItemClick(event, item)}
+        >
+          {domMedia}
+          {domHeader}
+          {domTitle}
+          {domSummary}
+          {domAfter}
         </eb-list-item>
       );
     },

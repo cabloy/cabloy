@@ -24,9 +24,9 @@ export default {
       // layout
       options.layout = this.layout.current;
       // order
-      // options.orders = [
-      // [ 'a.updatedAt', 'desc' ],
-      // ];
+      options.orders = [
+        [ 'a.createdAt', 'desc' ],
+      ];
       // extend 1
       if (this.container.options) {
         options = this.$utils.extend({}, options, this.container.options);
@@ -39,6 +39,10 @@ export default {
       const options = this.base_prepareSelectOptions();
       // params
       const params = {
+        messageClass: {
+          module: this.container.messageClass.info.module,
+          messageClassName: this.container.messageClass.info.name,
+        },
         options,
       };
       return params;
