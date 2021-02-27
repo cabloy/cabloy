@@ -10,6 +10,8 @@ module.exports = ctx => {
         const value = await ctx.bean.stats._get({
           module, fullName, user,
         });
+        // value maybe undefined
+        if (!value) continue;
         if (dep === 'a-user:userRed') {
           res.red += value;
         } else if (dep === 'a-user:userOrange') {
