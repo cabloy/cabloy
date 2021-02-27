@@ -3,6 +3,7 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 
 // container: {
+//   messageClass,
 // },
 
 export default {

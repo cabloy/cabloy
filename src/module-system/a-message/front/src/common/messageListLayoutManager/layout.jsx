@@ -21,9 +21,9 @@ export default {
       // config
       this.base.config = this.base.configMessageBase;
       // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.group.layouts.${this.layout.current}`);
+      let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
       if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.group.layouts.list');
+        _config = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.list');
       }
       this.layout.config = _config;
     },
