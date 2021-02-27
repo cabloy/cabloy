@@ -14,8 +14,8 @@ module.exports = app => {
       return await this.ctx.bean.io.message.count({ messageClass, options, user });
     }
 
-    async setRead({ messageIds, user }) {
-      return await this.ctx.bean.io.message.setRead({ messageIds, user });
+    async setRead({ messageClass, messageIds, all, user }) {
+      return await this.ctx.bean.io.message.setRead({ messageClass, messageIds, all, user });
     }
 
     async delete({ messageIds, user }) {

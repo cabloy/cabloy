@@ -3,7 +3,7 @@
   "version": "4.1.4",
   "title": "a-socketio",
   "eggBornModule": {
-    "fileVersion": 2,
+    "fileVersion": 3,
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0"

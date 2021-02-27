@@ -45,18 +45,29 @@ module.exports = ctx => {
       return _sql;
     }
 
-    setRead({ iid, messageIds, userId }) {
+    setRead({ iid, messageClassId, messageIds, all, userId }) {
+      if (messageIds && messageIds.length > 0) {
+        const _messageIds = messageIds.map(item => parseInt(item)).join(',');
 
-      const _messageIds = messageIds.map(item => parseInt(item)).join(',');
-
-      // sql
-      const _sql =
+        // sql
+        const _sql =
         `update aSocketIOMessageSync set messageRead=1
           where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
-      // ok
-      return _sql;
+        // ok
+        return _sql;
+      } else if (messageClassId > 0 && all) {
+        // sql
+        const _sql =
+        `update aSocketIOMessageSync set messageRead=1
+          where iid=${iid} and userId=${userId} and messageClassId=${messageClassId}
+        `;
+
+        // ok
+        return _sql;
+      }
+      return null;
     }
 
     delete({ iid, messageIds, userId }) {

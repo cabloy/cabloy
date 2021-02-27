@@ -33,7 +33,9 @@ module.exports = app => {
 
     async setRead() {
       const res = await this.ctx.service.message.setRead({
+        messageClass: this.ctx.request.body.messageClass,
         messageIds: this.ctx.request.body.messageIds,
+        all: this.ctx.request.body.all,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

@@ -35,6 +35,10 @@ module.exports = ctx => {
       return await ctx.bean.io._publish({ path, message, messageClass, options });
     }
 
+    async onSetRead({ messageClass, messageIds, all, user }) {
+      return await ctx.bean.io.message._setRead({ messageClass, messageIds, all, user });
+    }
+
     // combine sessionId
     _combineSessionId(userIdFrom, userIdTo) {
       if (userIdFrom === userIdTo) return userIdFrom;

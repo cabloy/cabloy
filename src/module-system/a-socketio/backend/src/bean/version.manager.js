@@ -3,6 +3,16 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
 
     async update(options) {
+
+      if (options.version === 3) {
+        // aSocketIOMessageSync
+        const sql = `
+        ALTER TABLE aSocketIOMessageSync
+          ADD COLUMN messageClassId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
       if (options.version === 2) {
         // aSocketIOMessageClass
         const sql = `

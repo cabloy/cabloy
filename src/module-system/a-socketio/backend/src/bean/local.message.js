@@ -27,7 +27,9 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async saveSyncs({ message, groupUsers, persistence }) {
+    async saveSyncs({ messageClass, message, groupUsers, persistence }) {
+      // messageClassId
+      const messageClassId = messageClass.id;
       // messageId
       const messageId = message.id;
       // message sync
@@ -35,6 +37,7 @@ module.exports = ctx => {
       //  :userIdFrom
       const isSame = message.userIdTo === message.userIdFrom;
       messageSyncs.push({
+        messageClassId,
         messageId,
         userId: message.userIdFrom,
         messageDirection: isSame ? 0 : 1, // self/send
@@ -45,6 +48,7 @@ module.exports = ctx => {
         // single chat
         if (!isSame) {
           messageSyncs.push({
+            messageClassId,
             messageId,
             userId: message.userIdTo,
             messageDirection: 2, // receive
@@ -58,6 +62,7 @@ module.exports = ctx => {
             const _userIdTo = groupUser.userId;
             if (_userIdTo !== message.userIdFrom) {
               messageSyncs.push({
+                messageClassId,
                 messageId,
                 userId: _userIdTo,
                 messageDirection: 2, // receive
@@ -117,15 +122,33 @@ module.exports = ctx => {
       return { count };
     }
 
-    async setRead({ messageIds, user }) {
-      if (!messageIds || messageIds.length === 0) return;
+    async setRead({ messageClass, messageIds, all, user }) {
+      if ((!messageIds || messageIds.length === 0) && !all) return;
+      if (all && !messageClass) return;
+      // messageClass
+      if (messageClass) {
+        messageClass = await ctx.bean.io.messageClass.get(messageClass);
+        const messageClassBase = this.messageClass.messageClass(messageClass);
+        const beanMessage = ctx.bean.io._getBeanMessage(messageClassBase);
+        return await beanMessage.onSetRead({ messageClass, messageIds, all, user });
+      }
+      // default
+      return await this._setRead({ messageClass, messageIds, all, user });
+    }
+
+    async _setRead({ messageClass, messageIds, all, user }) {
+      const messageClassId = messageClass ? messageClass.id : 0;
       // query
       const sql = this.sqlProcedure.setRead({
         iid: ctx.instance.id,
+        messageClassId,
         messageIds,
+        all,
         userId: user ? user.id : 0,
       });
-      await ctx.model.query(sql);
+      if (sql) {
+        await ctx.model.query(sql);
+      }
     }
 
     async delete({ messageIds, user }) {

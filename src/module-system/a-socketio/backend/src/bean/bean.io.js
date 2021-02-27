@@ -185,6 +185,7 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // save syncs
       const messageSyncs = await this.message.saveSyncs({
+        messageClass,
         message,
         groupUsers,
         persistence: messageClassBase.info.persistence,
