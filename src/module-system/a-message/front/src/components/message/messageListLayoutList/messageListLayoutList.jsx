@@ -56,6 +56,12 @@ export default {
     getItems() {
       return this.items;
     },
+    messageReadSet({ message }) {
+      const item = this.items.find(item => item.id === message.id);
+      if (item) {
+        item.messageRead = 1;
+      }
+    },
     messageAppendNew({ message }) {
       this.items.unshift(message);
       this._scroll();

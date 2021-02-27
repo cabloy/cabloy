@@ -23,6 +23,11 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
+      // setRead
+      const messageIds = [ item.id ];
+      this.$api.post('/a/socketio/message/setRead', { messageIds }).then(() => {
+        this.layout.messageReadSet({ message: item });
+      });
       // content
       const content = JSON.parse(item.content);
       if (content.actionPath) {

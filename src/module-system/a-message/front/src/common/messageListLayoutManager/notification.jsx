@@ -41,11 +41,12 @@ export default {
         // false
         return false;
       } else if (scene === 'click') {
-        const flowId = this.base_flow && this.base_flow.flowId;
-        if (flowId === content.params.flowId) {
-          this.base_loadData();
-          return true;
+        // just change messageRead=1
+        if (this.layout.instance) {
+          this.layout.instance.messageReadSet({ message });
         }
+        // false
+        return false;
       }
     },
   },
