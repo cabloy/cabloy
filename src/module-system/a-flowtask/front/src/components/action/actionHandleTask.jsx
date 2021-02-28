@@ -17,10 +17,10 @@ export default {
       // this.$refs.buttonSubmit.onClick();
     },
     async onSubmit(event, status) {
-      // close
-      this.$refs.sheet.f7Sheet.close(false);
       // prompt
       await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+      // close
+      this.$refs.sheet.f7Sheet.close(false);
       // handle
       const handle = {
         status,
