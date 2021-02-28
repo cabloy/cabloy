@@ -3,6 +3,11 @@ import Vue from 'vue';
 export default function(io) {
   const Simple = function() {
 
+    this.initialize = function(options) {
+      // messageClass is optional
+      this.messageClass = (options && options.messageClass) || null;
+    };
+
     this.subscribe = function({
       path, options,
       onMessageOffset, onMessageSelect, onMessagePush,
@@ -130,7 +135,10 @@ export default function(io) {
     this._performRead2 = function() {
       const messageIds = Object.keys(this.messageIdsToRead);
       this.messageIdsToRead = {};
-      Vue.prototype.$meta.api.post('/a/socketio/message/setRead', { messageIds }).then(() => {
+      Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
+        messageClass: this.messageClass,
+        messageIds,
+      }).then(() => {
         // do nothing
       }).catch(() => {
         // save back
@@ -141,8 +149,9 @@ export default function(io) {
     };
   };
   return {
-    simple() {
+    simple(options) {
       const simple = new Simple();
+      simple.initialize(options);
       return simple;
     },
   };

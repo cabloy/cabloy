@@ -76,7 +76,9 @@ export default {
       this._scroll(true);
       // socket io
       const path = `/a/wxwork/progress/${this.progressId}`;
-      this.ioSimple = this.ioHelper.simple();
+      this.ioSimple = this.ioHelper.simple({
+        messageClass: this.messageClass,
+      });
       this.ioSimple.subscribe({
         path,
         onMessageOffset: this._onMessageOffset.bind(this),
