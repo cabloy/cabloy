@@ -97,6 +97,14 @@ export default function(io) {
       const message = notification.params._message;
       // content
       const content = notification.params._content;
+      // setRead
+      await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
+        messageClass: {
+          module: message.module,
+          messageClassName: message.messageClassName,
+        },
+        messageIds: [ message.id ],
+      });
       // callbacks
       const res = await this._performCallbacks({ scene: 'click', message, content });
       if (res) return;
