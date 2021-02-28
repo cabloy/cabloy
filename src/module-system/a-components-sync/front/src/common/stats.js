@@ -49,7 +49,7 @@ export default {
         module: this.stats_params.module,
         name: this.stats_params.name,
         nameSub: this.stats_params.nameSub,
-      });
+      }, { debounce: true });
       if (value === undefined) {
         this.stats_setValue(this.stats_default);
       } else {

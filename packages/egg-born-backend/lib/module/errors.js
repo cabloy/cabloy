@@ -35,12 +35,12 @@ module.exports = function(loader, modules) {
           };
         });
 
-        // createError
-        context.createError = function(data) {
-          return loader.app.meta.util.createError(data);
-        };
-
       }
+
+      // createError
+      context.createError = function(data) {
+        return loader.app.meta.util.createError(data);
+      };
 
       return context;
     };

@@ -35,16 +35,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async performAction() {
-      // params
-      const params = JSON.parse(this.ctx.request.query.params);
-      // force innerAccess as false
-      params.innerAccess = false;
-      // performAction
-      const res = await this.ctx.performAction(params);
-      this.ctx.success(res);
-    }
-
     async qrcode() {
       const query = this.ctx.request.query;
       const img = qr.image(query.text || '', {

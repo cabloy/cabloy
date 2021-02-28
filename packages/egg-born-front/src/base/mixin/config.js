@@ -8,6 +8,7 @@ export default function(Vue) {
     },
     api: {
       baseURL: '',
+      debounce: 200,
     },
     layout: {
       breakpoint: 600,

@@ -6,7 +6,6 @@ module.exports = app => {
     { method: 'post', path: 'base/resourceTypes', controller: 'base' },
     { method: 'post', path: 'base/atomClasses', controller: 'base' },
     { method: 'post', path: 'base/actions', controller: 'base' },
-    { method: 'get', path: 'base/performAction', controller: 'base', middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'get', path: 'base/qrcode', controller: 'base', meta: { auth: { enable: false } } },
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
@@ -126,6 +125,9 @@ module.exports = app => {
     { method: 'options', path: /.*/ },
     // jwt
     { method: 'post', path: 'jwt/create', controller: 'jwt' },
+    // util
+    { method: 'get', path: 'util/performAction', controller: 'util', middlewares: 'jsonp', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'util/performActions', controller: 'util' },
     // layoutConfig
     { method: 'post', path: 'layoutConfig/load', controller: 'layoutConfig' },
     { method: 'post', path: 'layoutConfig/save', controller: 'layoutConfig' },

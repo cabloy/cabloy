@@ -87,7 +87,8 @@ export default function(Vue) {
 
 function wrapApi(Vue, obj, objBase, vueComponent) {
   [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
-    Vue.prototype.$meta.util.overrideProperty({
+    overrideProperty({
+      Vue,
       obj,
       key,
       objBase,
@@ -96,5 +97,79 @@ function wrapApi(Vue, obj, objBase, vueComponent) {
         return Vue.prototype.$meta.util.combineFetchPath(moduleInfo, arg);
       },
     });
+  });
+}
+
+function overrideProperty({ Vue, obj, key, objBase, vueComponent, combinePath }) {
+  Object.defineProperty(obj, key, {
+    get() {
+      return function() {
+        const moduleInfo = vueComponent && vueComponent.$module && vueComponent.$module.info;
+        const args = new Array(arguments.length);
+        args[0] = combinePath(moduleInfo, arguments[0]);
+        for (let i = 1; i < args.length; i++) {
+          args[i] = arguments[i];
+        }
+        const res = checkDebounce({ Vue, key, objBase, args });
+        if (res) return res;
+        return objBase[key].apply(objBase, args);
+      };
+    },
+  });
+}
+
+let __fnDebounce;
+let __invokes = [];
+function checkDebounce({ Vue, key, objBase, args }) {
+  // config
+  const config = args[args.length - 1];
+  if (!config || !config.debounce) return null;
+  // fn
+  if (!__fnDebounce) {
+    __fnDebounce = Vue.prototype.$meta.util.debounce(apiDebounce, Vue.prototype.$meta.config.api.debounce);
+  }
+  // promise
+  return new Promise((resolve, reject) => {
+    const callback = function(err, res) {
+      if (err) return reject(err);
+      return resolve(res);
+    };
+    // push
+    __invokes.push({ key, args, callback });
+    __fnDebounce({ Vue });
+  });
+}
+
+function apiDebounce({ Vue }) {
+  // invokes
+  const invokes = __invokes;
+  __invokes = [];
+  // actions
+  const actions = invokes.map(item => {
+    const params = {
+      method: item.key,
+      url: item.args[0].substr('/api'.length),
+    };
+    if (item.key === 'post') {
+      params.body = item.args[1];
+    }
+    return params;
+  });
+  Vue.prototype.$meta.api.post('/a/base/util/performActions', { actions }).then(data => {
+    for (let i = 0; i < invokes.length; i++) {
+      const item = data[i];
+      let err;
+      if (item.err) {
+        err = new Error();
+        err.code = item.err.code;
+        err.message = item.err.message;
+      }
+      invokes[i].callback(err, item.res);
+    }
+  }).catch(err => {
+    // all err
+    for (const item of invokes) {
+      item.callback(err);
+    }
   });
 }

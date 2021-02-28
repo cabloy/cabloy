@@ -10,6 +10,7 @@ const layoutConfig = require('./controller/layoutConfig.js');
 const user = require('./controller/user.js');
 const category = require('./controller/category.js');
 const tag = require('./controller/tag.js');
+const util = require('./controller/util.js');
 
 module.exports = app => {
   const controllers = {
@@ -25,6 +26,7 @@ module.exports = app => {
     user,
     category,
     tag,
+    util,
   };
   return controllers;
 };

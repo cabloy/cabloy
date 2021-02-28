@@ -10,6 +10,7 @@ const jwt = require('./service/jwt.js');
 const layoutConfig = require('./service/layoutConfig.js');
 const category = require('./service/category.js');
 const tag = require('./service/tag.js');
+const util = require('./service/util.js');
 
 module.exports = app => {
   const services = {
@@ -25,6 +26,7 @@ module.exports = app => {
     layoutConfig,
     category,
     tag,
+    util,
   };
   return services;
 };
