@@ -26,11 +26,20 @@ module.exports = ctx => {
       return await super.onSetRead({ messageClass, messageIds, all, user });
     }
 
+    async onPushEnable(/* { options, message, messageSyncs, messageClass }*/) {
+      return true;
+    }
+
     async onChannels({ options, message, messageSync, messageClass }) {
-      return await super.onChannels({ options, message, messageSync, messageClass });
+      let channels = await super.onChannels({ options, message, messageSync, messageClass });
+      if (!channels) {
+        channels = ctx.config.module(moduleInfo.relativeName).socketio.message.push.channels;
+      }
+      return channels;
     }
 
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
+      console.log('------------:', channelFullName);
       // if (channelFullName === 'a-mail:mail') {
       //   return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
       // }

@@ -19,16 +19,22 @@ module.exports = ctx => {
       return await ctx.bean.io._onSaveSyncs({ path, options, message, groupUsers, messageClass });
     }
 
-    async onPush({ options, message, messageSync, messageClass }) {
-      return await ctx.bean.io.push({ options, message, messageSync, messageClass });
-    }
-
     async onDelivery({ path, options, message, messageSync, messageClass }) {
       return await ctx.bean.io.delivery({ path, options, message, messageSync, messageClass });
     }
 
-    async onChannels({ options, message, messageSync, messageClass }) {
-      return await ctx.bean.io._onChannels({ options, message, messageSync, messageClass });
+    async onPushEnable({ /* options, message, messageSyncs,*/ messageClass }) {
+      const messageClassBase = ctx.bean.io.messageClass.messageClass(messageClass);
+      return !!(messageClassBase.info.push && messageClassBase.info.push.channels);
+    }
+
+    async onPush({ options, message, messageSync, messageClass }) {
+      return await ctx.bean.io.push({ options, message, messageSync, messageClass });
+    }
+
+    async onChannels({ /* options, message, messageSync,*/ messageClass }) {
+      const messageClassBase = ctx.bean.io.messageClass.messageClass(messageClass);
+      return messageClassBase.info.push && messageClassBase.info.push.channels;
     }
 
     async onChannelRender(/* { channelFullName, options, message, messageSync, messageClass }*/) {

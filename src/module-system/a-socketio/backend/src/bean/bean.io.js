@@ -211,7 +211,7 @@ module.exports = ctx => {
         });
       } else {
         // push
-        this._pushQueuePush({ options, message, messageSyncs, messageClass });
+        await this._pushQueuePush({ options, message, messageSyncs, messageClass });
       }
     }
 
@@ -236,22 +236,33 @@ module.exports = ctx => {
       }
     }
 
-    // queue: push
-    async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
-      const messageClassBase = this.messageClass.messageClass(messageClass);
-      if (messageSync) {
-        // only one message
-        return await this._queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass });
-      }
-      // more messages
-      for (const messageSync of messageSyncs) {
-        await this._queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass });
-      }
+    async _pushQueuePush({ options, message, messageSyncs, messageClass }) {
+      // check if enable push
+      const pushEnable = await this._checkPushEnable({ options, message, messageSyncs, messageClass });
+      if (!pushEnable) return;
+      // queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'push',
+        data: {
+          options,
+          message,
+          messageSyncs,
+          messageClass,
+        },
+      });
     }
 
-    async _queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass }) {
+    // queue: push
+    async queuePush({ options, message, messageSyncs, messageClass }) {
+      // bean
+      const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
-      await beanMessage.onPush({ options, message, messageSync, messageClass });
+      // messages
+      for (const messageSync of messageSyncs) {
+        await beanMessage.onPush({ options, message, messageSync, messageClass });
+      }
     }
 
     async push({ options, message, messageSync, messageClass }) {
@@ -260,23 +271,15 @@ module.exports = ctx => {
       const isSender = message.userIdFrom === userId;
       // ignore sender
       if (isSender) return true;
-      // bean
-      const messageClassBase = this.messageClass.messageClass(messageClass);
-      const beanMessage = this._getBeanMessage(messageClassBase);
-      if (!beanMessage) return false;
       // adjust auto
-      let autoFirstValid = false;
-      // options maybe set push.channels
-      let channels = options && options.push && options.channels;
-      if (!channels) {
-        channels = await beanMessage.onChannels({ options, message, messageSync, messageClass });
-        autoFirstValid = true;
-      }
+      const autoFirstValid = !options || !options.push || options.push.AtMostOnce !== false;
+      // channels
+      const channels = await this._getChannels({ options, message, messageSync, messageClass });
       if (!channels) return false;
       // loop
       let atLeastDone = false;
       for (const channelFullName of channels) {
-        const res = await this._pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName });
+        const res = await this._pushChannel({ options, message, messageSync, messageClass, channelFullName });
         if (!res) continue;
         atLeastDone = true;
         if (autoFirstValid) break;
@@ -290,14 +293,31 @@ module.exports = ctx => {
       return true;
     }
 
-    async _onChannels({ /* options, message, messageSync,*/ messageClass }) {
+    async _checkPushEnable({ options, message, messageSyncs, messageClass }) {
+      // options maybe set push.channels
+      const channels = options && options.push && options.push.channels;
+      if (channels) return true;
+      // bean
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      return messageClassBase.info.push.channels;
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      // check if enable push
+      return await beanMessage.onPushEnable({ options, message, messageSyncs, messageClass });
     }
 
-    async _pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName }) {
+    async _getChannels({ options, message, messageSync, messageClass }) {
+      // options maybe set push.channels
+      const channels = options && options.push && options.push.channels;
+      if (channels) return channels;
+      // bean
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      return await beanMessage.onChannels({ options, message, messageSync, messageClass });
+    }
+
+    async _pushChannel({ options, message, messageSync, messageClass, channelFullName }) {
       try {
         // bean
+        const messageClassBase = this.messageClass.messageClass(messageClass);
         const beanMessage = this._getBeanMessage(messageClassBase);
         if (!beanMessage) return false;
         // render message content
@@ -337,14 +357,14 @@ module.exports = ctx => {
       const channelBase = this.messageClass.channel(channelFullName);
       if (!channelBase) {
         ctx.logger.info(`channel not found: ${channelFullName}`);
-        return;
+        return null;
       }
       // bean
       const beanFullName = `${channelBase.info.module}.io.channel.${channelBase.info.bean}`;
       const beanChannel = ctx.bean._getBean(beanFullName);
       if (!beanChannel) {
         ctx.logger.info(`channel bean not found: ${beanFullName}`);
-        return;
+        return null;
       }
       return beanChannel;
     }
@@ -366,26 +386,6 @@ module.exports = ctx => {
         // return;
       }
       return beanMessage;
-    }
-
-    _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
-      const messageClassBase = this.messageClass.messageClass(messageClass);
-      // check if enable push
-      const infoPush = messageClassBase.info && messageClassBase.info.push;
-      if (infoPush && infoPush.channels) {
-        ctx.app.meta.queue.push({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'push',
-          data: {
-            options,
-            message,
-            messageSyncs,
-            messageSync,
-            messageClass,
-          },
-        });
-      }
     }
 
     async _getPathUsersOnline({ path }) {
@@ -414,7 +414,7 @@ module.exports = ctx => {
         if (deliveryDone) return;
       }
       // to queue: push
-      this._pushQueuePush({ options, message, messageSync, messageClass });
+      await this._pushQueuePush({ options, message, messageSyncs: [ messageSync ], messageClass });
     }
 
     // offline: return false
