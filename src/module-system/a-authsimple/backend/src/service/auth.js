@@ -190,7 +190,7 @@ module.exports = app => {
       const token = uuid.v4().replace(/-/g, '');
       const link = this.ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
       // email scene
-      const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
+      const scene = 'system';
       // email subject
       let subject = this.ctx.text('passwordResetEmailSubject');
       subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
@@ -227,7 +227,7 @@ module.exports = app => {
       const token = uuid.v4().replace(/-/g, '');
       const link = this.ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
       // email scene
-      const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
+      const scene = 'system';
       // email subject
       let subject = this.ctx.text('confirmationEmailSubject');
       subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });

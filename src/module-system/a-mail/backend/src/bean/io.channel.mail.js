@@ -10,15 +10,26 @@ module.exports = ctx => {
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
 
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
+      // check if content.message
+      // not set content.message.to dynamic for test, which must be set by business
+      if (!content.message || !content.message.to) return false;
       // scene
       let scene;
-      if (content.scene === 'test') {
-        scene = await this._createSceneTest();
+      let sceneTest = false;
+      // 1. maybe object by dynamic
+      if (content.scene && typeof content.scene === 'object') {
+        scene = content.scene;
       } else {
+        // 2. from config
         scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene];
       }
+      // 3. test
+      if (!scene && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
+        scene = await this._createSceneTest();
+        sceneTest = true;
+      }
       // check if empty
-      if (!scene.transport.host) {
+      if (!scene || !scene.transport || !scene.transport.host) {
         const message = chalk.keyword('orange')(ctx.text('mailhostNotConfigAlert'));
         console.log('\n' + boxen(message, boxenOptions));
         return false;
@@ -28,7 +39,7 @@ module.exports = ctx => {
       // send
       const res = await transporter.sendMail(content.message);
       // log
-      if (content.scene === 'test') {
+      if (sceneTest) {
         const url = nodemailer.getTestMessageUrl(res);
         const message = chalk.keyword('cyan')('Test Mail To: ')
                         + chalk.keyword('yellow')(content.message.to)
