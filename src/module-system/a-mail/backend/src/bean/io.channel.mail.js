@@ -21,7 +21,7 @@ module.exports = ctx => {
         scene = content.scene;
       } else {
         // 2. from config
-        scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene];
+        scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene || 'system'];
       }
       // 3. test
       if (!this._sceneValid(scene) && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
