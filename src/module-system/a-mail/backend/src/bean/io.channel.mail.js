@@ -24,12 +24,12 @@ module.exports = ctx => {
         scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene];
       }
       // 3. test
-      if (!scene && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
+      if (!this._sceneValid(scene) && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
         scene = await this._createSceneTest();
         sceneTest = true;
       }
       // check if empty
-      if (!scene || !scene.transport || !scene.transport.host) {
+      if (!this._sceneValid(scene)) {
         const message = chalk.keyword('orange')(ctx.text('mailhostNotConfigAlert'));
         console.log('\n' + boxen(message, boxenOptions));
         return false;
@@ -69,6 +69,10 @@ module.exports = ctx => {
           from: 'Nodemailer <example@nodemailer.com>',
         },
       };
+    }
+
+    _sceneValid(scene) {
+      return (scene && scene.transport && scene.transport.host);
     }
 
   }
