@@ -370,22 +370,17 @@ module.exports = ctx => {
     }
 
     _getBeanMessage(messageClassBase) {
-      // bean
-      let beanMessage;
+      // beanFullName
+      let beanFullName;
       if (messageClassBase.info.bean) {
-        const beanFullName = `${messageClassBase.info.module}.io.message.${messageClassBase.info.bean}`;
-        beanMessage = ctx.bean._getBean(beanFullName);
+        beanFullName = `${messageClassBase.info.module}.io.message.${messageClassBase.info.bean}`;
+      } else if (messageClassBase.info.uniform) {
+        beanFullName = 'a-message.local.ioMessageUniformBase';
+      } else {
+        beanFullName = 'a-socketio.local.ioMessageBase';
       }
-      if (!beanMessage) {
-        if (messageClassBase.info.uniform) {
-          beanMessage = new (ctx.app.meta.IOMessageUniformBase(ctx))();
-        } else {
-          beanMessage = new (ctx.app.meta.IOMessageBase(ctx))();
-        }
-        // ctx.logger.info(`message bean not found: ${beanFullName}`);
-        // return;
-      }
-      return beanMessage;
+      // bean
+      return ctx.bean._getBean(beanFullName);
     }
 
     async _getPathUsersOnline({ path }) {

@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const localMessage = require('./bean/local.message.js');
 const localMessageClass = require('./bean/local.messageClass.js');
 const localProcedure = require('./bean/local.procedure.js');
+const localIoMessageBase = require('./bean/local.ioMessageBase.js');
 const broadcastSocketEmit = require('./bean/broadcast.socketEmit.js');
 const queueProcess = require('./bean/queue.process.js');
 const queueDelivery = require('./bean/queue.delivery.js');
@@ -30,6 +31,10 @@ module.exports = app => {
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
+    },
+    'local.ioMessageBase': {
+      mode: 'ctx',
+      bean: localIoMessageBase,
     },
     // broadcast
     'broadcast.socketEmit': {

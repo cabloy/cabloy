@@ -2,7 +2,6 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const workflow = {
     info: {
-      bean: 'workflow',
       title: 'WorkFlow',
       persistence: true,
       uniform: {

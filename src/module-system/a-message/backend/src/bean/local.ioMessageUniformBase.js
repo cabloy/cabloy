@@ -39,7 +39,6 @@ module.exports = ctx => {
     }
 
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
-      console.log('------------:', channelFullName);
       // if (channelFullName === 'a-mail:mail') {
       //   return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
       // }
