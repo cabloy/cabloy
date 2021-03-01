@@ -39,11 +39,39 @@ module.exports = ctx => {
     }
 
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
-      // if (channelFullName === 'a-mail:mail') {
-      //   return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
-      // }
-      // // super
-      // await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+      if (channelFullName === 'a-mail:mail') {
+        return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
+      }
+      // super
+      return await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+    }
+
+    async _onChannelRenderMail({ message, messageSync }) {
+      // user
+      const userId = messageSync.userId;
+      const user = await ctx.bean.user.get({ id: userId });
+      if (!user) {
+        ctx.logger.info('not found user:', userId);
+        return null;
+      }
+      let to = user.email;
+      if (!to && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
+        to = `${user.userName}@test.com`;
+      }
+      if (!to) return null;
+      // content
+      const content = JSON.parse(message.content);
+      // message
+      const _message = {
+        to,
+        subject: content.title,
+        text: content.body,
+      };
+      // ok
+      return {
+        scene: null, // use default
+        message: _message,
+      };
     }
 
     _notify({ messageClass, user }) {

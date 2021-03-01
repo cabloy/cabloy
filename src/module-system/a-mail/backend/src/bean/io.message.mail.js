@@ -27,7 +27,7 @@ module.exports = ctx => {
         return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
       }
       // super
-      await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+      return await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
     }
 
     async _onChannelRenderMail({ message }) {
