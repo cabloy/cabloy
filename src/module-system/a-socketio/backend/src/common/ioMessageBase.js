@@ -27,6 +27,10 @@ module.exports = ctx => {
       return await ctx.bean.io.delivery({ path, options, message, messageSync, messageClass });
     }
 
+    async onChannels({ options, message, messageSync, messageClass }) {
+      return await ctx.bean.io._onChannels({ options, message, messageSync, messageClass });
+    }
+
     async onChannelRender(/* { channelFullName, options, message, messageSync, messageClass }*/) {
       return null;
     }

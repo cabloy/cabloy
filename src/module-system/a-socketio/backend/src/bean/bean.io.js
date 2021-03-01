@@ -255,18 +255,21 @@ module.exports = ctx => {
     }
 
     async push({ options, message, messageSync, messageClass }) {
-      const messageClassBase = this.messageClass.messageClass(messageClass);
       // userId
       const userId = messageSync.userId;
       const isSender = message.userIdFrom === userId;
       // ignore sender
       if (isSender) return true;
+      // bean
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      if (!beanMessage) return false;
       // adjust auto
       let autoFirstValid = false;
       // options maybe set push.channels
       let channels = options && options.push && options.channels;
       if (!channels) {
-        channels = messageClassBase.info.push.channels;
+        channels = await beanMessage.onChannels({ options, message, messageSync, messageClass });
         autoFirstValid = true;
       }
       if (!channels) return false;
@@ -285,6 +288,11 @@ module.exports = ctx => {
       }
       // done
       return true;
+    }
+
+    async _onChannels({ /* options, message, messageSync,*/ messageClass }) {
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      return messageClassBase.info.push.channels;
     }
 
     async _pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName }) {

@@ -7,5 +7,14 @@ module.exports = appInfo => {
     disabled: true,
   };
 
+  // socketio
+  config.socketio = {
+    message: {
+      push: {
+        channels: [ 'a-mail:mail' ],
+      },
+    },
+  };
+
   return config;
 };

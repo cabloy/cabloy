@@ -26,6 +26,18 @@ module.exports = ctx => {
       return await super.onSetRead({ messageClass, messageIds, all, user });
     }
 
+    async onChannels({ options, message, messageSync, messageClass }) {
+      return await super.onChannels({ options, message, messageSync, messageClass });
+    }
+
+    async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
+      // if (channelFullName === 'a-mail:mail') {
+      //   return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
+      // }
+      // // super
+      // await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+    }
+
     _notify({ messageClass, user }) {
       // stats
       ctx.bean.stats.notify({
