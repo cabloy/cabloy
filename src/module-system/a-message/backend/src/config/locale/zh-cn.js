@@ -18,6 +18,7 @@ const uniformMessageRenderTemplateMailBody =
 
 module.exports = {
   Messages: '消息',
+  Message: '消息',
   uniformMessageRenderTemplateMailSubject,
   uniformMessageRenderTemplateMailBody,
 };

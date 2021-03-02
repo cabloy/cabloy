@@ -97,11 +97,15 @@ export default function(io) {
       const message = notification.params._message;
       // content
       const content = notification.params._content;
+      // open
+      await this._openMessage({ message, content });
+    };
+
+    this._openMessage = async function({ message, content, options }) {
       // setRead
       await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
         messageClass: {
-          module: message.module,
-          messageClassName: message.messageClassName,
+          id: message.messageClassId,
         },
         messageIds: [ message.id ],
       });
@@ -111,7 +115,7 @@ export default function(io) {
       // actionPath
       const actionPath = content.actionPath;
       if (actionPath) {
-        Vue.prototype.$meta.vueLayout.navigate(actionPath);
+        Vue.prototype.$meta.vueLayout.navigate(actionPath, options);
       }
     };
 

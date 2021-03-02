@@ -8,4 +8,5 @@ function loadjsx(name) {
 export default [
   { path: 'group', component: loadjsx('message/group') },
   { path: 'list', component: loadjsx('message/list') },
+  { path: 'autojump', component: loadjsx('message/autojump'), meta: { auth: true } },
 ];

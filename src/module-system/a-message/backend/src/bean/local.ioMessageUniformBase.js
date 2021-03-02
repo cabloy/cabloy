@@ -61,13 +61,15 @@ module.exports = ctx => {
       if (!to) return null;
       // content
       const content = JSON.parse(message.content);
+      // link
+      const link = ctx.bean.base.getAbsoluteUrl(`/#!/a/message/autojump?id=${message.id}`);
       // scope
       const scope = {
         user,
         message,
         content,
         info: {
-          link: 'http://link.com',
+          link,
           siteName: ctx.instance.title,
         },
       };

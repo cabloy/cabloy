@@ -164,10 +164,12 @@ module.exports = ctx => {
 
     async _list({ messageClass, options, user, count }) {
       // messageClass
-      messageClass = await ctx.bean.io.messageClass.get(messageClass);
+      messageClass = messageClass ? await ctx.bean.io.messageClass.get(messageClass) : null;
       // where
       const where = (options && options.where) || {};
-      where.messageClassId = messageClass.id;
+      if (messageClass) {
+        where.messageClassId = messageClass.id;
+      }
       where.userId = user ? user.id : 0;
       // orders
       const orders = (options && options.orders) || [[ 'createdAt', 'asc' ]];
