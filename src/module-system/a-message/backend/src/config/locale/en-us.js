@@ -1,17 +1,19 @@
 // confirmationEmail
 //   subject
-const uniformMessageRenderTemplateMailSubject = '[{{siteName}}] {{title}}';
+const uniformMessageRenderTemplateMailSubject = '[{{info.siteName}}] {{content.title}}';
 //   body
 const uniformMessageRenderTemplateMailBody =
 `
-Hi {{userName}},
+Hi {{user.userName}},
 
-Welcome to join us. Please click this link to confirm your email:
+You have received a new message. Here are the details:
 
-{{link}}
+Title: {{content.title}}
+Body: {{content.body}}
+Link: {{info.link}}
 
 Regards,
-{{siteName}} Team
+{{info.siteName}} Team
 `;
 
 module.exports = {

@@ -40,13 +40,13 @@ module.exports = ctx => {
 
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
       if (channelFullName === 'a-mail:mail') {
-        return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
+        return await this._onChannelRenderMail({ channelFullName, options, message, messageSync, messageClass });
       }
       // super
       return await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
     }
 
-    async _onChannelRenderMail({ message, messageSync }) {
+    async _onChannelRenderMail({ channelFullName, message, messageSync }) {
       // user
       const userId = messageSync.userId;
       const user = await ctx.bean.user.get({ id: userId });
@@ -61,11 +61,29 @@ module.exports = ctx => {
       if (!to) return null;
       // content
       const content = JSON.parse(message.content);
+      // scope
+      const scope = {
+        user,
+        message,
+        content,
+        info: {
+          link: 'http://link.com',
+          siteName: ctx.instance.title,
+        },
+      };
+      // config
+      const configTemplate = ctx.config.module(moduleInfo.relativeName).socketio.message.render.templates[channelFullName];
+      // subject
+      let subject = ctx.text.locale(user.locale, configTemplate.subject);
+      subject = ctx.bean.util.replaceTemplate(subject, scope);
+      // body
+      let body = ctx.text.locale(user.locale, configTemplate.body);
+      body = ctx.bean.util.replaceTemplate(body, scope);
       // message
       const _message = {
         to,
-        subject: content.title,
-        text: content.body,
+        subject,
+        text: body,
       };
       // ok
       return {
