@@ -170,9 +170,9 @@ module.exports = ctx => {
         const message = {
           userIdTo: flowUserId,
           content: {
-            userId: userFlow.id,
-            userName: userFlow.userName,
-            userAvatar: userFlow.avatar,
+            issuerId: userFlow.id,
+            issuerName: userFlow.userName,
+            issuerAvatar: userFlow.avatar,
             title,
             body: this.context._flow.flowName,
             actionPath,

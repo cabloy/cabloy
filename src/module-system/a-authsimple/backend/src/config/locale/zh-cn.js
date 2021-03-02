@@ -1,6 +1,6 @@
 // confirmationEmail
 //   subject
-const confirmationEmailSubject = '{{siteName}} 账号确认';
+const confirmationEmailSubject = '[{{siteName}}] 账号确认';
 //   body
 const confirmationEmailBody =
 `
@@ -16,7 +16,7 @@ const confirmationEmailBody =
 
 // passwordResetEmail
 //   subject
-const passwordResetEmailSubject = '{{siteName}}重置密码';
+const passwordResetEmailSubject = '[{{siteName}}] 重置密码';
 //   body
 const passwordResetEmailBody =
 `

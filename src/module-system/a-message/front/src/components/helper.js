@@ -60,15 +60,15 @@ export default function(io) {
       if (res) return;
       // icon
       let icon;
-      if (!content.userAvatar) {
+      if (!content.issuerAvatar) {
         icon = '<i class="material-icons">error</i>';
       } else {
-        icon = `<img class="avatar avatar16" src="${content.userAvatar}">`;
+        icon = `<img class="avatar avatar16" src="${content.issuerAvatar}">`;
       }
       // options
       const options = {
         icon,
-        title: content.userName,
+        title: content.issuerName,
         titleRightText: Vue.prototype.$meta.util.formatDateTime(message.createdAt),
         subtitle: content.title,
         text: content.body,

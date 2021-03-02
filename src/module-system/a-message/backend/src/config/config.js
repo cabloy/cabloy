@@ -13,6 +13,14 @@ module.exports = appInfo => {
       push: {
         channels: [ 'a-mail:mail' ],
       },
+      render: {
+        templates: {
+          'a-mail:mail': {
+            subject: 'uniformMessageRenderTemplateMailSubject',
+            body: 'uniformMessageRenderTemplateMailBody',
+          },
+        },
+      },
     },
   };
 

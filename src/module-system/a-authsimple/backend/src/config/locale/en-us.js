@@ -1,6 +1,6 @@
 // confirmationEmail
 //   subject
-const confirmationEmailSubject = '{{siteName}} Account Confirmation';
+const confirmationEmailSubject = '[{{siteName}}] Account Confirmation';
 //   body
 const confirmationEmailBody =
 `
@@ -16,7 +16,7 @@ Regards,
 
 // passwordResetEmail
 //   subject
-const passwordResetEmailSubject = 'Password Reset for {{siteName}}';
+const passwordResetEmailSubject = '[{{siteName}}] Password Reset';
 //   body
 const passwordResetEmailBody =
 `

@@ -38,11 +38,11 @@ export default {
       }
     },
     _getItemMetaMedia(content) {
-      const media = content.userAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      const media = content.issuerAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
     },
     _getItemMetaMediaLabel(content) {
-      const mediaLabel = content.userName;
+      const mediaLabel = content.issuerName;
       return mediaLabel;
     },
     _getItemMetaSummary(content) {
