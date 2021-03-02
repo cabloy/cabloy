@@ -52,6 +52,7 @@ export default function(ctx, router) {
       loadRoute(url, route => {
         if (!route) return cb && cb();
         // check if loggedIn
+        //   just the placeholder for logical thinking
         if (route.route.meta && route.route.meta.auth && !ctx.$meta.store.state.auth.loggedIn) {
           navigate.call(router, navigateParams, navigateOptions);
           return cb && cb();

@@ -39,5 +39,19 @@ module.exports = appInfo => {
     },
   };
 
+  // email
+  config.email = {
+    templates: {
+      confirmation: {
+        subject: 'confirmationEmailSubject',
+        body: 'confirmationEmailBody',
+      },
+      passwordReset: {
+        subject: 'passwordResetEmailSubject',
+        body: 'passwordResetEmailBody',
+      },
+    },
+  };
+
   return config;
 };
