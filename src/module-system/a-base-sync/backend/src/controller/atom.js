@@ -52,7 +52,7 @@ module.exports = app => {
     }
 
     async write() {
-      const options = { ignoreValidate: true };
+      const options = { ignoreValidate: false };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
