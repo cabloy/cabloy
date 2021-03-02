@@ -143,11 +143,12 @@ export default function(Vue) {
     },
     replaceTemplate(content, scope) {
       if (!content) return null;
-      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+      return content.toString().replace(/(\\)?{{ *([\w\.]+) *}}/g, (block, skip, key) => {
         if (skip) {
           return block.substring(skip.length);
         }
-        return scope[key] !== undefined ? scope[key] : '';
+        const value = this.getProperty(scope, key);
+        return value !== undefined ? value : '';
       });
     },
     parseModuleInfo(moduleName) {

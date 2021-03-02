@@ -53,12 +53,37 @@ module.exports = ctx => {
 
     replaceTemplate(content, scope) {
       if (!content) return null;
-      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+      return content.toString().replace(/(\\)?{{ *([\w\.]+) *}}/g, (block, skip, key) => {
         if (skip) {
           return block.substring(skip.length);
         }
-        return scope[key] !== undefined ? scope[key] : '';
+        const value = this.getProperty(scope, key);
+        return value !== undefined ? value : '';
       });
+    }
+
+    setProperty(obj, name, value) {
+      const names = name.split('.');
+      if (names.length === 1) {
+        obj[name] = value;
+      } else {
+        for (let i = 0; i < names.length - 1; i++) {
+          obj = obj[names[i]];
+        }
+        obj[names[names.length - 1]] = value;
+      }
+    }
+
+    getProperty(obj, name) {
+      if (!obj) return undefined;
+      const names = name.split('.');
+      if (names.length === 1) return obj[name];
+      // loop
+      for (const name of names) {
+        obj = obj[name];
+        if (!obj) break;
+      }
+      return obj;
     }
 
     sleep(ms) {
