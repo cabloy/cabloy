@@ -44,5 +44,12 @@ module.exports = appInfo => {
     },
   };
 
+  // message
+  config.message = {
+    sync: {
+      saveLimit: 20,
+    },
+  };
+
   return config;
 };

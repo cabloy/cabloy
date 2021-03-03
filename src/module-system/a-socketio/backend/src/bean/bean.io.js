@@ -199,19 +199,85 @@ module.exports = ctx => {
 
     // support userIdTo/userIds
     //   userIdTo: 0/-1/-2/-3
-    async _onSaveSyncs({ /* path, options,*/ message, groupUsers, messageClass }) {
-      // todo:
+    async _onSaveSyncs({ path, options, message, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      // save syncs
-      const messageSyncs = await this.message.saveSyncs({
-        messageClass,
-        message,
-        groupUsers,
-        persistence: messageClassBase.info.persistence,
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      // persistence
+      const persistence = this._checkPersistence({ options, message, messageClass });
+      // messageClassId
+      const messageClassId = messageClass.id;
+      // messageId
+      const messageId = message.id;
+      // message syncs
+      let messageSyncs = [];
+      // saveLimit/counter
+      const saveLimit = ctx.config.module(moduleInfo.relative).message.sync.saveLimit;
+      // sender
+      //   not save ===0
+      if (message.userIdFrom !== 0) {
+        const messageSync = {
+          messageClassId,
+          messageId,
+          userId: message.userIdFrom,
+          messageDirection: 1,
+          messageRead: 1,
+        };
+        if (persistence) {
+          const res = await this.modelMessageSync.insert(messageSync);
+          messageSync.messageSyncId = res.insertId;
+        } else {
+          messageSync.messageSyncId = uuid.v4();
+        }
+        messageSyncs.push(messageSyncs);
+      }
+      // receiver
+      await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync: async userIds => {
+        // over limit
+        if (messageSyncs && messageSyncs.length > 1) {
+          // means enter this callback again
+          messageSyncs = null;
+        }
+        // syncs
+        for (const userIdTo of userIds) {
+          if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
+            const messageSync = {
+              messageClassId,
+              messageId,
+              userId: userIdTo,
+              messageDirection: 2, // receive
+              messageRead: 0,
+            };
+            if (persistence) {
+              const res = await this.modelMessageSync.insert(messageSync);
+              messageSync.messageSyncId = res.insertId;
+            } else {
+              messageSync.messageSyncId = uuid.v4();
+            }
+            if (messageSyncs) {
+              messageSyncs.push(messageSync);
+            }
+          }
+        }
+      },
       });
+      // array / null
       return messageSyncs;
     }
+
+    // support userIdTo/userIds
+    //   userIdTo: 0/-1/-2/-3
+    async _onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+      // userIds
+      if (message.userIds) {
+        return await this._onSaveSyncsPolicy_userIds({ path, options, message, messageClass, saveLimit, onSaveSync });
+      }
+    }
+
+    async _onSaveSyncsPolicy_userIds({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+
+    }
+
 
     async _onProcessBase({ path, options, message, messageSyncs, /* groupUsers,*/ messageClass }) {
       // to queue: delivery/push
@@ -239,15 +305,18 @@ module.exports = ctx => {
     async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       for (const messageSync of messageSyncs) {
-        if (messageSync.userId === -1 && path) {
-          // broadcast to online users
-          const userIds = await this._getPathUsersOnline({ path });
-          for (const userId of userIds) {
-            const _messageSync = {
-              ...messageSync,
-              userId,
-            };
-            await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync: _messageSync, messageClass });
+        if (messageSync.userId === -1) {
+          // must be set path
+          if (path) {
+            // broadcast to online users
+            const userIds = await this._getPathUsersOnline({ path });
+            for (const userId of userIds) {
+              const _messageSync = {
+                ...messageSync,
+                userId,
+              };
+              await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync: _messageSync, messageClass });
+            }
           }
         } else {
           // normal

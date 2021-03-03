@@ -15,6 +15,10 @@ module.exports = ctx => {
       return await ctx.bean.io._onSaveSyncs({ path, options, message, messageClass });
     }
 
+    async onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+      return await ctx.bean.io._onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync });
+    }
+
     async onDelivery({ path, options, message, messageSync, messageClass }) {
       return await ctx.bean.io.delivery({ path, options, message, messageSync, messageClass });
     }
