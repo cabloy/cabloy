@@ -40,7 +40,7 @@ module.exports = ctx => {
         messageClassId,
         messageId,
         userId: message.userIdFrom,
-        messageDirection: isSame ? 0 : 1, // self/send
+        messageDirection: 1, // only use send
         messageRead: 1,
       });
       //  :userIdTo
