@@ -197,7 +197,7 @@ module.exports = ctx => {
       return messageClassBase.info.persistence;
     }
 
-    // support userIdTo/userIds
+    // support userIdTo/userIdsTo
     //   userIdTo: 0/-1/-2/-3
     async _onSaveSyncs({ path, options, message, messageClass }) {
       // messageClass
@@ -265,19 +265,43 @@ module.exports = ctx => {
       return messageSyncs;
     }
 
-    // support userIdTo/userIds
+    // support userIdTo/userIdsTo
     //   userIdTo: 0/-1/-2/-3
     async _onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync }) {
-      // userIds
-      if (message.userIds) {
-        return await this._onSaveSyncsPolicy_userIds({ path, options, message, messageClass, saveLimit, onSaveSync });
+      // userIdsTo
+      if (message.userIdsTo) {
+        return await this._onSaveSyncsPolicy_userIdsTo({ path, options, message, messageClass, saveLimit, onSaveSync });
+      }
+      // -1
+      if (message.userIdTo === -1) {
+        // only delivery to the online users
+        return await onSaveSync([ message.userIdTo ]);
+      } else if (message.userIdTo === -2) {
+        // all users
+        return await this._onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSaveSync });
+      } else if (message.userIdTo === -3) {
+        // unkonwn user, but also should create messageSync for push
+        return await onSaveSync([ message.userIdTo ]);
+      } else if (message.userIdTo === 0) {
+        // system user: ignore
+        return await onSaveSync([ ]);
+      }
+      // normal user
+      return await onSaveSync([ message.userIdTo ]);
+
+    }
+
+    async _onSaveSyncsPolicy_userIdsTo({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+      const loop = Math.ceil(message.userIdsTo.length / saveLimit);
+      for (let i = 0; i < loop; i++) {
+        const userIds = message.userIdsTo.slice(i * saveLimit, (i + 1) * saveLimit);
+        await onSaveSync(userIds);
       }
     }
 
-    async _onSaveSyncsPolicy_userIds({ path, options, message, messageClass, saveLimit, onSaveSync }) {
-
+    async _onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+      //
     }
-
 
     async _onProcessBase({ path, options, message, messageSyncs, /* groupUsers,*/ messageClass }) {
       // to queue: delivery/push
