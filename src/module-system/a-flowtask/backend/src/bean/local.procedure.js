@@ -19,6 +19,7 @@ module.exports = ctx => {
       // -- b: aFlowNode
       // -- c: aFlow
       // -- d: aUser
+      // -- e: aUser(for flowUserId)
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -48,7 +49,8 @@ module.exports = ctx => {
         _selectFields = `a.*,a.id as flowTaskId,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+            d.userName,d.avatar,
+            e.userName as flowUserName,e.avatar as flowUserAvatar
           `;
       }
 
@@ -58,6 +60,7 @@ module.exports = ctx => {
             inner join aFlowNode b on a.flowNodeId=b.id
             inner join aFlow c on a.flowId=c.id
             left join aUser d on a.userIdAssignee=d.id
+            left join aUser e on c.flowUserId=e.id
 
           ${_where}
            (
@@ -79,6 +82,7 @@ module.exports = ctx => {
       // -- b: aFlowNodeHistory
       // -- c: aFlowHistory
       // -- d: aUser
+      // -- e: aUser(for flowUserId)
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -108,7 +112,8 @@ module.exports = ctx => {
         _selectFields = `a.*,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,b.flowNodeStatus,b.flowNodeRemark,b.timeDone,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+            d.userName,d.avatar,
+            e.userName as flowUserName,e.avatar as flowUserAvatar
           `;
       }
 
@@ -118,6 +123,7 @@ module.exports = ctx => {
             inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
             inner join aFlowHistory c on a.flowId=c.flowId
             left join aUser d on a.userIdAssignee=d.id
+            left join aUser e on c.flowUserId=e.id
 
           ${_where}
            (

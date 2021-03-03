@@ -27,11 +27,11 @@ export default {
       this.$view.navigate(url);
     },
     _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      const media = (item._meta && item._meta.media) || item.flowUserAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
     },
     _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
+      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.flowUserName;
       return mediaLabel;
     },
     _getItemMetaSummary(item) {
