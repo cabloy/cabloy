@@ -380,7 +380,12 @@ module.exports = ctx => {
         beanFullName = 'a-socketio.local.ioMessageBase';
       }
       // bean
-      return ctx.bean._getBean(beanFullName);
+      const beanMessage = ctx.bean._getBean(beanFullName);
+      if (!beanMessage) {
+        ctx.logger.info(`message bean not found: ${beanFullName}`);
+        return null;
+      }
+      return beanMessage;
     }
 
     async _getPathUsersOnline({ path }) {
