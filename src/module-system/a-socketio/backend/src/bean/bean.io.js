@@ -116,10 +116,14 @@ module.exports = ctx => {
 
       // message/userId
       message.userIdFrom = parseInt(message.userIdFrom || 0);
-      if (message.userIdTo === undefined || message.userIdTo === null) message.userIdTo = -2;
+      if (message.userIdTo === undefined || message.userIdTo === null) message.userIdTo = -3;
       message.userIdTo = parseInt(message.userIdTo || 0);
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
+      // userIdsTo
+      if (message.userIdsTo) {
+        message.userIdsTo = message.userIdsTo.map(userId => parseInt(userId));
+      }
       // sessionId
       const sessionId = await beanMessage.onSessionId({ path, message, options });
       // message
@@ -136,12 +140,17 @@ module.exports = ctx => {
       };
 
       // save
-      if (messageClassBase.info.persistence) {
+      if (this._checkPersistence({ options, message, messageClass })) {
         _message.id = await this.message.save({ message: _message });
         _message.createdAt = new Date();
       } else {
         _message.id = message.id || uuid.v4();
         _message.createdAt = new Date();
+      }
+
+      // userIdsTo: not save, but use as save syncs
+      if (message.userIdsTo) {
+        _message.userIdsTo = message.userIdsTo;
       }
 
       // messageClass
@@ -172,15 +181,26 @@ module.exports = ctx => {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
-      // groupUsers
-      const groupUsers = await beanMessage.onGroupUsers({ path, message, options });
       // messageSyncs
-      const messageSyncs = await beanMessage.onSaveSyncs({ path, options, message, groupUsers, messageClass });
+      const messageSyncs = await beanMessage.onSaveSyncs({ path, options, message, messageClass });
       // onProcess
       await beanMessage.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
     }
 
+    _checkPersistence({ options, message, messageClass }) {
+      // 1.
+      if (message.userIdTo === -2 || message.userIdsTo) return true;
+      // 2.
+      if (options && options.persistence !== undefined) return options.persistence;
+      // 3.
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      return messageClassBase.info.persistence;
+    }
+
+    // support userIdTo/userIds
+    //   userIdTo: 0/-1/-2/-3
     async _onSaveSyncs({ /* path, options,*/ message, groupUsers, messageClass }) {
+      // todo:
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // save syncs

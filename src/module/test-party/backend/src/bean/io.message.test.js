@@ -5,10 +5,6 @@ module.exports = ctx => {
       return await super.onSessionId({ path, message, options });
     }
 
-    async onGroupUsers({ path, message, options }) {
-      return await super.onGroupUsers({ path, message, options });
-    }
-
     async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
       return await super.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
     }
@@ -28,6 +24,7 @@ module.exports = ctx => {
           messageFilter: message.messageFilter,
           messageGroup: message.messageGroup,
           messageScene,
+          userIdFrom: 0,
           userIdTo: message.userIdFrom,
           content: {
             text: `Reply: ${content.text}`,
