@@ -115,7 +115,9 @@ export default function(io) {
       // actionPath
       const actionPath = content.actionPath;
       if (actionPath) {
-        Vue.prototype.$meta.vueLayout.navigate(actionPath, options);
+        // navigateOptions
+        const navigateOptions = options && options.navigate;
+        Vue.prototype.$meta.vueLayout.navigate(actionPath, navigateOptions);
       }
     };
 

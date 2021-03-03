@@ -2,11 +2,20 @@ export default {
   data() {
     return {
       messageId: parseInt(this.$f7route.query.id),
+      done: false,
     };
   },
   methods: {
     onPageAfterIn() {
-      this.autojump();
+      // only once
+      if (!this.done) {
+        this.autojump().then(() => {
+          this.done = true;
+        }).catch(err => {
+          this.done = true;
+          this.$view.toast.show({ text: err.message });
+        });
+      }
     },
     async autojump() {
       // message
@@ -18,8 +27,7 @@ export default {
       const messages = await this.$api.post('/a/socketio/message/select', { options });
       const message = messages.list[0];
       if (!message) {
-        this.$view.toast.show({ text: this.$text('Message Not Exists') });
-        return;
+        throw new Error(this.$text('Message Not Exists'));
       }
       // content
       const content = JSON.parse(message.content);
@@ -31,13 +39,15 @@ export default {
       };
       const simple = await this.$meta.util.performAction({ ctx: this, action });
       // open
-      simple._openMessage({
+      await simple._openMessage({
         message,
         content,
         options: {
-          ctx: this,
-          target: '_self',
-          reloadCurrent: true,
+          navigate: {
+            ctx: this,
+            target: '_self',
+            reloadCurrent: true,
+          },
         },
       });
     },
@@ -45,8 +55,9 @@ export default {
   render() {
     return (
       <eb-page onPageAfterIn={this.onPageAfterIn}>
-        <eb-navbar large largeTransparent title={this.$text('Message')} eb-back-link="Back"></eb-navbar>
-        <f7-block>
+        <eb-navbar title={this.$text('Message')} eb-back-link="Back"></eb-navbar>
+        <f7-block class="text-align-center">
+          {!this.done && <f7-preloader></f7-preloader>}
         </f7-block>
       </eb-page>
     );
