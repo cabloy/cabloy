@@ -4,17 +4,21 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessageUniformBase extends ctx.app.meta.IOMessageBase(ctx) {
 
-    async onPublish({ path, message, messageClass, options }) {
+    async onPublish({ /* path,*/ message, messageClass, options }) {
       // todo: will be removed
       if (ctx.config.module(moduleInfo.relativeName).message.disabled) return;
-      // path
-      path = __PATH_MESSAGE_UNIFORM;
-      // user
-      const user = { id: message.userIdTo };
-      // stats
-      this._notify({ messageClass, user });
       // onPublish
-      return await super.onPublish({ path, message, messageClass, options });
+      return await super.onPublish({ path: __PATH_MESSAGE_UNIFORM, message, messageClass, options });
+    }
+
+    async onSaveSync({ path, options, message, messageSync, messageClass }) {
+      if (messageSync.userId > 0 && messageSync.messageDirection === 2) {
+        // user
+        const user = { id: messageSync.userId };
+        // stats
+        this._notify({ messageClass, user });
+      }
+      return await super.onSaveSync({ path, options, message, messageSync, messageClass });
     }
 
     async onSetRead({ messageClass, messageIds, all, user }) {
@@ -95,6 +99,7 @@ module.exports = ctx => {
     }
 
     _notify({ messageClass, user }) {
+      if (user.id <= 0) return;
       // stats
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,

@@ -216,6 +216,7 @@ module.exports = ctx => {
       // sender
       //   not save ===0
       if (message.userIdFrom !== 0) {
+        // save
         const messageSync = {
           messageClassId,
           messageId,
@@ -228,6 +229,9 @@ module.exports = ctx => {
         } else {
           messageSync.id = uuid.v4();
         }
+        // extensible
+        await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
+        // push
         messageSyncs.push(messageSyncs);
       }
       // receiver
@@ -240,6 +244,7 @@ module.exports = ctx => {
         // syncs
         for (const userIdTo of userIds) {
           if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
+            // save
             const messageSync = {
               messageClassId,
               messageId,
@@ -252,6 +257,9 @@ module.exports = ctx => {
             } else {
               messageSync.id = uuid.v4();
             }
+            // extensible
+            await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
+            // push
             if (messageSyncs) {
               messageSyncs.push(messageSync);
             }
