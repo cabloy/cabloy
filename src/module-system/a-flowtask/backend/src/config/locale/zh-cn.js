@@ -1,7 +1,6 @@
 module.exports = {
   StartEventAtom: '原子起草开始事件',
   ActivityUserTask: '用户任务活动',
-  WorkFlow: '工作流',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
   'Task has been claimed: %s': '任务已被申领: %s',

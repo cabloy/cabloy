@@ -68,6 +68,8 @@ module.exports = app => {
         html,
         updatedAt: new Date(),
       });
+      // publish
+      await this._publish({ atomId: key.atomId, commentId, replyId: item.replyId, replyUserId: item.replyUserId, user, mode: 'edit' });
       // ok
       return {
         action: 'update',
@@ -87,6 +89,8 @@ module.exports = app => {
       if (replyId) {
         reply = await this.ctx.model.commentView.get({ id: replyId });
       }
+      // replyUserId
+      const replyUserId = reply ? reply.userId : 0;
       // replyContent
       const replyContent = !reply ? '' :
         this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
@@ -105,19 +109,22 @@ module.exports = app => {
         sorting,
         heartCount: 0,
         replyId,
-        replyUserId: reply ? reply.userId : 0,
+        replyUserId,
         replyContent,
         content,
         summary: summary.html,
         html,
       });
+      const commentId = res.insertId;
       // commentCount
       await this.ctx.bean.atom.comment({ key, atom: { comment: 1 }, user });
+      // publish
+      await this._publish({ atomId: key.atomId, commentId, replyId, replyUserId, user, mode: 'add' });
       // ok
       return {
         action: 'create',
         atomId: key.atomId,
-        commentId: res.insertId,
+        commentId,
       };
     }
 
@@ -188,6 +195,74 @@ module.exports = app => {
         commentId,
         heart, heartCount,
       };
+    }
+
+    // publish
+    async _publish({ atomId, commentId, replyId, replyUserId, user, mode }) {
+      const userIdsTo = {};
+      // 1. atom.userIdUpdated
+      const atom = await this.ctx.model.atom.get({ id: atomId });
+      const userIdUpdated = atom.userIdUpdated;
+      if (userIdUpdated !== user.id) {
+        const title = await this._publishTitle({ userId: userIdUpdated, replyId: 0, mode });
+        userIdsTo[userIdUpdated] = { title };
+      }
+      // 2. replyUser
+      if (replyUserId && replyUserId !== user.id) {
+        const title = await this._publishTitle({ userId: replyUserId, replyId, mode });
+        userIdsTo[replyUserId] = { title };
+      }
+      // actionPath
+      const actionPath = `/a/basefront/comment/list?atomId=${atomId}&commentId=${commentId}`;
+      // publish
+      for (const userIdTo in userIdsTo) {
+        const info = userIdsTo[userIdTo];
+        const message = {
+          userIdTo,
+          content: {
+            issuerId: user.id,
+            issuerName: user.userName,
+            issuerAvatar: user.avatar,
+            title: info.title,
+            body: atom.atomName,
+            actionPath,
+            params: {
+              atomId,
+              commentId,
+              replyId,
+            },
+          },
+        };
+        await this.ctx.bean.io.publish({
+          message,
+          messageClass: {
+            module: 'a-base',
+            messageClassName: 'comment',
+          },
+        });
+      }
+    }
+
+    async _publishTitle({ userId, replyId, mode }) {
+      const user = await this.ctx.bean.user.get({ id: userId });
+      const locale = user.locale;
+      let title;
+      if (mode === 'add') {
+        // add
+        if (replyId === 0) {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleNewComment');
+        } else {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleReplyComment');
+        }
+      } else {
+        // edit
+        if (replyId === 0) {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleEditComment');
+        } else {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleEditReplyComment');
+        }
+      }
+      return title;
     }
 
     _fullContent({ content, replyContent, replyUserName }) {

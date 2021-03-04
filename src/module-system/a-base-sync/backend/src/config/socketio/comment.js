@@ -1,20 +1,20 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const workflow = {
+  const comment = {
     info: {
-      title: 'WorkFlows',
+      title: 'Comments',
       persistence: true,
       uniform: {
         stats: {
           params: {
             module: 'a-message',
             name: 'message',
-            nameSub: `${moduleInfo.relativeName}_workflow`,
+            nameSub: `${moduleInfo.relativeName}_comment`,
           },
           color: 'red',
         },
       },
     },
   };
-  return workflow;
+  return comment;
 };

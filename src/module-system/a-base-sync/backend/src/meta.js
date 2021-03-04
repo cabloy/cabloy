@@ -6,6 +6,8 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   // static
   const staticResources = require('./config/static/resources.js')(app);
+  // socketio
+  const socketioComment = require('./config/socketio/comment.js')(app);
   // meta
   const meta = {
     base: {
@@ -109,6 +111,11 @@ module.exports = app => {
           user: true,
           bean: 'stars',
         },
+      },
+    },
+    socketio: {
+      messages: {
+        comment: socketioComment,
       },
     },
   };
