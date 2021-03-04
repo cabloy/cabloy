@@ -24,7 +24,8 @@
         <f7-card-content padding class="markdown-body" v-html="item.html"></f7-card-content>
       </f7-card>
     </template>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
+    <eb-load-more :class="showSingle?'display-none':''" ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
+    <eb-button v-if="showSingle" :onPerform="onPerformShowAllComments">{{$text('ShowAllComments')}}</eb-button>
   </eb-page>
 </template>
 <script>
@@ -33,14 +34,19 @@ export default {
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
+      commentId: parseInt(this.$f7route.query.commentId || 0),
       order: 'desc',
       items: [],
       moduleStyle: null,
+      single: true,
     };
   },
   computed: {
     user() {
       return this.$store.state.auth.user.op;
+    },
+    showSingle() {
+      return this.commentId > 0 && this.single;
     },
   },
   created() {
@@ -67,8 +73,14 @@ export default {
       done();
     },
     onLoadMore({ index }) {
+      // where
+      const where = {};
+      if (this.showSingle) {
+        where.id = this.commentId;
+      }
       // options
       const options = {
+        where,
         orders: [
           [ 'updatedAt', this.order ],
         ],
@@ -151,6 +163,10 @@ export default {
     getItemMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 32);
+    },
+    onPerformShowAllComments() {
+      this.single = false;
+      this.reload();
     },
   },
 };
