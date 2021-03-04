@@ -7,16 +7,16 @@ module.exports = ctx => {
       return message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
     }
 
-    async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
-      return await ctx.bean.io._onProcessBase({ path, options, message, messageSyncs, groupUsers, messageClass });
+    async onProcess({ path, options, message, messageSyncs, messageClass }) {
+      return await ctx.bean.io._onProcessBase({ path, options, message, messageSyncs, messageClass });
     }
 
     async onSaveSyncs({ path, options, message, messageClass }) {
       return await ctx.bean.io._onSaveSyncs({ path, options, message, messageClass });
     }
 
-    async onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync }) {
-      return await ctx.bean.io._onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync });
+    async onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave }) {
+      return await ctx.bean.io._onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave });
     }
 
     async onDelivery({ path, options, message, messageSync, messageClass }) {

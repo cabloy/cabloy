@@ -184,7 +184,7 @@ module.exports = ctx => {
       // messageSyncs
       const messageSyncs = await beanMessage.onSaveSyncs({ path, options, message, messageClass });
       // onProcess
-      await beanMessage.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
+      await beanMessage.onProcess({ path, options, message, messageSyncs, messageClass });
     }
 
     _checkPersistence({ options, message, messageClass }) {
@@ -232,7 +232,7 @@ module.exports = ctx => {
         messageSyncs.push(messageSyncs);
       }
       // receiver
-      await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync: async userIds => {
+      await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave: async userIds => {
         // over limit
         if (messageSyncs && messageSyncs.length > 1) {
           // means enter this callback again
@@ -267,43 +267,61 @@ module.exports = ctx => {
 
     // support userIdTo/userIdsTo
     //   userIdTo: 0/-1/-2/-3
-    async _onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+    async _onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave }) {
       // userIdsTo
       if (message.userIdsTo) {
-        return await this._onSaveSyncsPolicy_userIdsTo({ path, options, message, messageClass, saveLimit, onSaveSync });
+        return await this._onSaveSyncsPolicy_userIdsTo({ path, options, message, messageClass, saveLimit, onSave });
       }
       // -1
       if (message.userIdTo === -1) {
         // only delivery to the online users
-        return await onSaveSync([ message.userIdTo ]);
+        return await onSave([ message.userIdTo ]);
       } else if (message.userIdTo === -2) {
         // all users
-        return await this._onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSaveSync });
+        return await this._onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSave });
       } else if (message.userIdTo === -3) {
         // unkonwn user, but also should create messageSync for push
-        return await onSaveSync([ message.userIdTo ]);
+        return await onSave([ message.userIdTo ]);
       } else if (message.userIdTo === 0) {
         // system user: ignore
-        return await onSaveSync([ ]);
+        return await onSave([ ]);
       }
       // normal user
-      return await onSaveSync([ message.userIdTo ]);
-
+      return await onSave([ message.userIdTo ]);
     }
 
-    async _onSaveSyncsPolicy_userIdsTo({ path, options, message, messageClass, saveLimit, onSaveSync }) {
+    async _onSaveSyncsPolicy_userIdsTo({ message, saveLimit, onSave }) {
       const loop = Math.ceil(message.userIdsTo.length / saveLimit);
       for (let i = 0; i < loop; i++) {
         const userIds = message.userIdsTo.slice(i * saveLimit, (i + 1) * saveLimit);
-        await onSaveSync(userIds);
+        await onSave(userIds);
       }
     }
 
-    async _onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSaveSync }) {
-      //
+    async _onSaveSyncsPolicy_userIdsAll({ saveLimit, onSave }) {
+      const modelUser = ctx.model.module('a-base').user;
+      let offset = 0;
+      // eslint-disable-next-line
+      while (true) {
+        // users
+        const users = await modelUser.select({
+          where: { disabled: 0 },
+          columns: [ 'id' ],
+          limit: saveLimit,
+          offset,
+        });
+        // save
+        await onSave(users.map(item => item.id));
+        // next
+        if (users.length < saveLimit) {
+          break;
+        } else {
+          offset += saveLimit;
+        }
+      }
     }
 
-    async _onProcessBase({ path, options, message, messageSyncs, /* groupUsers,*/ messageClass }) {
+    async _onProcessBase({ path, options, message, messageSyncs, messageClass }) {
       // to queue: delivery/push
       if (path) {
         // delivery

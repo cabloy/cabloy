@@ -1,18 +1,6 @@
 module.exports = ctx => {
   class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
 
-    async onSessionId({ path, message, options }) {
-      return await super.onSessionId({ path, message, options });
-    }
-
-    async onProcess({ path, options, message, messageSyncs, groupUsers, messageClass }) {
-      return await super.onProcess({ path, options, message, messageSyncs, groupUsers, messageClass });
-    }
-
-    async onPush({ options, message, messageSync, messageClass }) {
-      return await super.onPush({ options, message, messageSync, messageClass });
-    }
-
     async onDelivery({ path, options, message, messageSync, messageClass }) {
       // options
       const messageScene = (options && options.scene) || '';
@@ -34,10 +22,6 @@ module.exports = ctx => {
       }
       // default
       return await super.onDelivery({ path, options, message, messageSync, messageClass });
-    }
-
-    async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
-      await super.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
     }
 
   }
