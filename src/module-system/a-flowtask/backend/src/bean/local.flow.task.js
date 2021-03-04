@@ -78,12 +78,15 @@ module.exports = ctx => {
             },
           },
         };
-        await ctx.bean.io.publish({
-          message,
-          messageClass: {
-            module: 'a-flow',
-            messageClassName: 'workflow',
-          },
+        // jump out of the transaction
+        ctx.tail(async () => {
+          await ctx.bean.io.publish({
+            message,
+            messageClass: {
+              module: 'a-flow',
+              messageClassName: 'workflow',
+            },
+          });
         });
       }
       // ok
