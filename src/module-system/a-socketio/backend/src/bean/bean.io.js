@@ -211,7 +211,7 @@ module.exports = ctx => {
       const messageId = message.id;
       // message syncs
       let messageSyncs = [];
-      // saveLimit/counter
+      // saveLimit
       const saveLimit = ctx.config.module(moduleInfo.relative).message.sync.saveLimit;
       // sender
       //   not save ===0
@@ -224,10 +224,9 @@ module.exports = ctx => {
           messageRead: 1,
         };
         if (persistence) {
-          const res = await this.modelMessageSync.insert(messageSync);
-          messageSync.messageSyncId = res.insertId;
+          messageSync.id = await this.message.saveSync({ messageSync });
         } else {
-          messageSync.messageSyncId = uuid.v4();
+          messageSync.id = uuid.v4();
         }
         messageSyncs.push(messageSyncs);
       }
@@ -249,10 +248,9 @@ module.exports = ctx => {
               messageRead: 0,
             };
             if (persistence) {
-              const res = await this.modelMessageSync.insert(messageSync);
-              messageSync.messageSyncId = res.insertId;
+              messageSync.id = await this.message.saveSync({ messageSync });
             } else {
-              messageSync.messageSyncId = uuid.v4();
+              messageSync.id = uuid.v4();
             }
             if (messageSyncs) {
               messageSyncs.push(messageSync);
@@ -324,7 +322,7 @@ module.exports = ctx => {
     async _onProcessBase({ path, options, message, messageSyncs, messageClass }) {
       // to queue: delivery/push
       if (path) {
-        // delivery
+        // try delivery first, then try push if failed
         ctx.app.meta.queue.push({
           subdomain: ctx.subdomain,
           module: moduleInfo.relativeName,
@@ -345,8 +343,11 @@ module.exports = ctx => {
 
     // queue: delivery
     async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
+      // bean
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      for (const messageSync of messageSyncs) {
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      // loop
+      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
         if (messageSync.userId === -1) {
           // must be set path
           if (path) {
@@ -357,12 +358,50 @@ module.exports = ctx => {
                 ...messageSync,
                 userId,
               };
-              await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync: _messageSync, messageClass });
+              await beanMessage.onDelivery({ path, options, message, messageSync: _messageSync, messageClass });
             }
           }
         } else {
           // normal
-          await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass });
+          await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
+        }
+      },
+      });
+    }
+
+    async _loopMessageSyncs({ message, messageSyncs, onHandle }) {
+      // array
+      if (messageSyncs) {
+        for (const messageSync of messageSyncs) {
+          await onHandle(messageSync);
+        }
+        return;
+      }
+      // from db
+      // saveLimit
+      const saveLimit = ctx.config.module(moduleInfo.relative).message.sync.saveLimit;
+      const modelMessageSync = this.message.modelMessageSync;
+      let offset = 0;
+      // eslint-disable-next-line
+      while (true) {
+        // mess
+        const messageSyncs = await modelMessageSync.select({
+          where: {
+            messageId: message.id,
+            // messageRead:0, ??
+          },
+          limit: saveLimit,
+          offset,
+        });
+        // handle
+        for (const messageSync of messageSyncs) {
+          await onHandle(messageSync);
+        }
+        // next
+        if (messageSyncs.length < saveLimit) {
+          break;
+        } else {
+          offset += saveLimit;
         }
       }
     }
@@ -390,10 +429,11 @@ module.exports = ctx => {
       // bean
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
-      // messages
-      for (const messageSync of messageSyncs) {
+      // loop
+      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
         await beanMessage.onPush({ options, message, messageSync, messageClass });
-      }
+      },
+      });
     }
 
     async push({ options, message, messageSync, messageClass }) {
@@ -531,14 +571,7 @@ module.exports = ctx => {
       return userIds;
     }
 
-    async _queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass }) {
-      const beanMessage = this._getBeanMessage(messageClassBase);
-      await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
-    }
-
     async delivery({ path, options, message, messageSync, messageClass }) {
-      // not delivery/push for userId===0
-      if (messageSync.userId === 0) return;
       // ignore delivery online if !path
       if (path) {
         const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });

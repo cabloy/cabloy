@@ -27,63 +27,10 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async saveSyncs({ messageClass, message, groupUsers, persistence }) {
-      // messageClassId
-      const messageClassId = messageClass.id;
-      // messageId
-      const messageId = message.id;
-      // message sync
-      const messageSyncs = [];
-      //  :userIdFrom
-      const isSame = message.userIdTo === message.userIdFrom;
-      messageSyncs.push({
-        messageClassId,
-        messageId,
-        userId: message.userIdFrom,
-        messageDirection: 1, // only use send
-        messageRead: 1,
-      });
-      //  :userIdTo
-      if (!message.messageGroup) {
-        // single chat
-        if (!isSame) {
-          messageSyncs.push({
-            messageClassId,
-            messageId,
-            userId: message.userIdTo,
-            messageDirection: 2, // receive
-            messageRead: 0,
-          });
-        }
-      } else {
-        // group chat
-        if (groupUsers) {
-          for (const groupUser of groupUsers) {
-            const _userIdTo = groupUser.userId;
-            if (_userIdTo !== message.userIdFrom) {
-              messageSyncs.push({
-                messageClassId,
-                messageId,
-                userId: _userIdTo,
-                messageDirection: 2, // receive
-                messageRead: 0,
-              });
-            }
-          }
-        }
-      }
-      //  :save
-      for (const messageSync of messageSyncs) {
-        // userId===0 not save to db
-        if (persistence && messageSync.userId !== 0) {
-          const res = await this.modelMessageSync.insert(messageSync);
-          messageSync.messageSyncId = res.insertId;
-        } else {
-          messageSync.messageSyncId = uuid.v4();
-        }
-      }
-      // ok
-      return messageSyncs;
+    async saveSync({ messageSync }) {
+      // insert
+      const res = await this.modelMessageSync.insert(messageSync);
+      return res.insertId;
     }
 
     // the first unread message
@@ -189,3 +136,62 @@ module.exports = ctx => {
   }
   return MessageClass;
 };
+
+// async saveSyncs({ messageClass, message, groupUsers, persistence }) {
+//   // messageClassId
+//   const messageClassId = messageClass.id;
+//   // messageId
+//   const messageId = message.id;
+//   // message sync
+//   const messageSyncs = [];
+//   //  :userIdFrom
+//   const isSame = message.userIdTo === message.userIdFrom;
+//   messageSyncs.push({
+//     messageClassId,
+//     messageId,
+//     userId: message.userIdFrom,
+//     messageDirection: 1, // only use send
+//     messageRead: 1,
+//   });
+//   //  :userIdTo
+//   if (!message.messageGroup) {
+//     // single chat
+//     if (!isSame) {
+//       messageSyncs.push({
+//         messageClassId,
+//         messageId,
+//         userId: message.userIdTo,
+//         messageDirection: 2, // receive
+//         messageRead: 0,
+//       });
+//     }
+//   } else {
+//     // group chat
+//     if (groupUsers) {
+//       for (const groupUser of groupUsers) {
+//         const _userIdTo = groupUser.userId;
+//         if (_userIdTo !== message.userIdFrom) {
+//           messageSyncs.push({
+//             messageClassId,
+//             messageId,
+//             userId: _userIdTo,
+//             messageDirection: 2, // receive
+//             messageRead: 0,
+//           });
+//         }
+//       }
+//     }
+//   }
+//   //  :save
+//   for (const messageSync of messageSyncs) {
+//     // userId===0 not save to db
+//     if (persistence && messageSync.userId !== 0) {
+//       const res = await this.modelMessageSync.insert(messageSync);
+//       messageSync.messageSyncId = res.insertId;
+//     } else {
+//       messageSync.messageSyncId = uuid.v4();
+//     }
+//   }
+//   // ok
+//   return messageSyncs;
+// }
