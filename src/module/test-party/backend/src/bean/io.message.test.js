@@ -1,11 +1,11 @@
 module.exports = ctx => {
   class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
 
-    async onDelivery({ path, options, message, messageSync, messageClass }) {
+    async onSaveSync({ path, options, message, messageSync, messageClass }) {
       // options
       const messageScene = (options && options.scene) || '';
       // send back
-      if (messageSync.messageDirection === 2 && messageSync.userId === 0) {
+      if (messageSync.messageDirection === 1 && message.userIdTo === 0) {
         const content = JSON.parse(message.content);
         const _message = {
           messageType: message.messageType,
@@ -13,15 +13,14 @@ module.exports = ctx => {
           messageGroup: message.messageGroup,
           messageScene,
           userIdFrom: 0,
-          userIdTo: message.userIdFrom,
+          userIdTo: messageSync.userId,
           content: {
             text: `Reply: ${content.text}`,
           },
         };
-        return await super.publish({ path, message: _message, messageClass, options, user: { id: 0 } });
+        await ctx.bean.io.publish({ path, message: _message, messageClass, options });
       }
-      // default
-      return await super.onDelivery({ path, options, message, messageSync, messageClass });
+      return await super.onSaveSync({ path, options, message, messageSync, messageClass });
     }
 
   }

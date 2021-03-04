@@ -232,7 +232,7 @@ module.exports = ctx => {
         // extensible
         await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
         // push
-        messageSyncs.push(messageSyncs);
+        messageSyncs.push(messageSync);
       }
       // receiver
       await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave: async userIds => {
