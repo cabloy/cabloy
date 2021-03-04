@@ -212,7 +212,7 @@ module.exports = ctx => {
       // message syncs
       let messageSyncs = [];
       // saveLimit
-      const saveLimit = ctx.config.module(moduleInfo.relative).message.sync.saveLimit;
+      const saveLimit = ctx.config.module(moduleInfo.relativeName).message.sync.saveLimit;
       // sender
       //   not save ===0
       if (message.userIdFrom !== 0) {
@@ -387,7 +387,7 @@ module.exports = ctx => {
       }
       // from db
       // saveLimit
-      const saveLimit = ctx.config.module(moduleInfo.relative).message.sync.saveLimit;
+      const saveLimit = ctx.config.module(moduleInfo.relativeName).message.sync.saveLimit;
       const modelMessageSync = this.message.modelMessageSync;
       let offset = 0;
       // eslint-disable-next-line
