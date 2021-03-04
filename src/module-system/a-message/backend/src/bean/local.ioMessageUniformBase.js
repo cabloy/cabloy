@@ -5,8 +5,6 @@ module.exports = ctx => {
   class IOMessageUniformBase extends ctx.app.meta.IOMessageBase(ctx) {
 
     async onPublish({ /* path,*/ message, messageClass, options }) {
-      // todo: will be removed
-      if (ctx.config.module(moduleInfo.relativeName).message.disabled) return;
       // onPublish
       return await super.onPublish({ path: __PATH_MESSAGE_UNIFORM, message, messageClass, options });
     }

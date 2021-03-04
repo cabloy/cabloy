@@ -143,11 +143,9 @@ export default {
       if (this.user.agent.anonymous) return;
       const children = [];
       // message
-      if (!this.$config.message.disabled) {
-        children.push(
-          <eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={ { module: 'a-message', name: 'message' } }></eb-link-color>
-        );
-      }
+      children.push(
+        <eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={ { module: 'a-message', name: 'message' } }></eb-link-color>
+      );
       // settings
       if (!this.inAgent) {
         children.push(
