@@ -44,9 +44,7 @@ class BackendDevCommand extends DevCommand {
 
     if (context.argv.sticky === undefined) context.argv.sticky = true;
 
-    utils.versionCheck('cabloy', 'dev').then(data => {
-      utils.versionPrompt('cabloy', data);
-    });
+    utils.versionCheckCabloy({ scene: 'dev' }).then(() => { });
 
     yield super.run(context);
 

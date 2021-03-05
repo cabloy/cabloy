@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const urllib = require('urllib');
 const semverDiff = require('semver-diff');
 const chalk = require('chalk');
@@ -7,11 +8,15 @@ const boxen = require('boxen');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
-  async versionCheck(moduleName, scene) {
+  async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {
       const httpClient = urllib.create();
-      const url = `https://admin.cabloy.com/api/cabloy/store/util/version/${moduleName}/${scene}`;
+      const url = 'https://admin.cabloy.com/api/cabloy/store/util/version';
       const options = {
+        method: 'POST',
+        data: {
+          moduleName, moduleVersion, scene, mode,
+        },
         dataType: 'json',
         followRedirect: true,
         maxRedirects: 5,
@@ -20,27 +25,55 @@ const utils = {
       const res = await httpClient.request(url, options);
       return res.data.data;
     } catch (err) {
+      console.log(err);
       return null;
     }
   },
-  versionPrompt(moduleName, moduleVersion) {
+  async versionCheckCabloy({ scene }) {
     try {
-      if (!moduleVersion) return;
-      const _pkg = require('cabloy/package.json');
-      const diffType = semverDiff(_pkg.version, moduleVersion);
+      // cabloy
+      const cabloyPath = this.__getCabloyPath();
+      if (!cabloyPath) return;
+      const _pkg = require(path.join(cabloyPath, 'package.json'));
+      // moduleVersion
+      const moduleVersion = _pkg.version;
+      // mode
+      const mode = cabloyPath.indexOf('packages') > -1 ? 'lerna' : '';
+      // versionCheck
+      const moduleVersionCurrent = await this.versionCheck({ moduleName: 'cabloy', moduleVersion, scene, mode });
+      if (!moduleVersionCurrent) return;
+      // prompt
+      this.versionPromptCabloy({ moduleName: 'cabloy', moduleVersion, moduleVersionCurrent });
+    } catch (err) { console.log(err); }
+  },
+  versionPromptCabloy({ moduleName, moduleVersion, moduleVersionCurrent }) {
+    try {
+      const diffType = semverDiff(moduleVersion, moduleVersionCurrent);
       if (!diffType) return;
       setTimeout(() => {
         // log
-        let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(_pkg.version)} → ${chalk.keyword('orange')(moduleVersion)}`;
+        let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(moduleVersion)} → ${chalk.keyword('orange')(moduleVersionCurrent)}`;
         message += `\nRun ${chalk.keyword('orange')('> npm update <')} to update cabloy!`;
         message += `\nRun ${chalk.keyword('orange')('> npm run update:test <')} to update the test modules!`;
         console.log('\n' + boxen(message, boxenOptions));
       }, 6000);
-    } catch (err) { }
+    } catch (err) { console.log(err); }
   },
   getModulePath(moduleName) {
     const moduleFile = require.resolve(`${moduleName}/package.json`);
     return path.dirname(moduleFile);
+  },
+  __getCabloyPath() {
+    const cwd = process.cwd();
+    let cabloyPath = path.join(cwd, 'node_modules/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    cabloyPath = path.join(cwd, 'packages/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    return null;
+  },
+  getAppPackage() {
+    const cwd = process.cwd();
+    return require(path.join(cwd, 'package.json'));
   },
 };
 module.exports = utils;

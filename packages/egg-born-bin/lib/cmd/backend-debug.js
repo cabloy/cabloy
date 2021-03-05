@@ -16,9 +16,7 @@ class BackendDebugCommand extends DebugCommand {
 
     if (!context.argv.baseDir) context.argv.baseDir = 'src/backend';
 
-    utils.versionCheck('cabloy', 'debug').then(data => {
-      utils.versionPrompt('cabloy', data);
-    });
+    utils.versionCheckCabloy({ scene: 'debug' }).then(() => { });
 
     yield super.run(context);
 

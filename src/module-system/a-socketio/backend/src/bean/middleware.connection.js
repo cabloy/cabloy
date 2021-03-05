@@ -6,6 +6,7 @@ module.exports = ctx => {
       const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: true });
       if (!appReadyInstance) return ctx.throw(403);
       // cache userId/socketId for disconnect
+      if (!ctx.session.passport || !ctx.session.passport.user) return ctx.throw(403);
       const user = ctx.session.passport.user.op;
       if (user.anonymous) return ctx.throw(403);
       const iid = user.iid;
