@@ -619,20 +619,27 @@ module.exports = ctx => {
         const message = {
           userIdTo: userIdAssignee,
           content: {
-            userId: userFlow.id,
-            userName: userFlow.userName,
-            userAvatar: userFlow.avatar,
+            issuerId: userFlow.id,
+            issuerName: userFlow.userName,
+            issuerAvatar: userFlow.avatar,
             title,
             body: this.context._flow.flowName,
             actionPath,
+            params: {
+              flowId: this.context._flowId,
+              flowTaskId,
+            },
           },
         };
-        await ctx.bean.message.publishUniform({
-          message,
-          messageClass: {
-            module: 'a-flow',
-            messageClassName: 'workflow',
-          },
+        // jump out of the transaction
+        ctx.tail(async () => {
+          await ctx.bean.io.publish({
+            message,
+            messageClass: {
+              module: 'a-flow',
+              messageClassName: 'workflow',
+            },
+          });
         });
       }
       // ok
@@ -1281,6 +1288,7 @@ module.exports = ctx => {
       // -- b: aFlowNode
       // -- c: aFlow
       // -- d: aUser
+      // -- e: aUser(for flowUserId)
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -1310,7 +1318,8 @@ module.exports = ctx => {
         _selectFields = `a.*,a.id as flowTaskId,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+            d.userName,d.avatar,
+            e.userName as flowUserName,e.avatar as flowUserAvatar
           `;
       }
 
@@ -1320,6 +1329,7 @@ module.exports = ctx => {
             inner join aFlowNode b on a.flowNodeId=b.id
             inner join aFlow c on a.flowId=c.id
             left join aUser d on a.userIdAssignee=d.id
+            left join aUser e on c.flowUserId=e.id
 
           ${_where}
            (
@@ -1341,6 +1351,7 @@ module.exports = ctx => {
       // -- b: aFlowNodeHistory
       // -- c: aFlowHistory
       // -- d: aUser
+      // -- e: aUser(for flowUserId)
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -1370,7 +1381,8 @@ module.exports = ctx => {
         _selectFields = `a.*,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,b.flowNodeStatus,b.flowNodeRemark,b.timeDone,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+            d.userName,d.avatar,
+            e.userName as flowUserName,e.avatar as flowUserAvatar
           `;
       }
 
@@ -1380,6 +1392,7 @@ module.exports = ctx => {
             inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
             inner join aFlowHistory c on a.flowId=c.flowId
             left join aUser d on a.userIdAssignee=d.id
+            left join aUser e on c.flowUserId=e.id
 
           ${_where}
            (
@@ -1967,7 +1980,6 @@ module.exports = nodes;
 module.exports = {
   StartEventAtom: 'StartEvent: Atom Draft',
   ActivityUserTask: 'Activity: User Task',
-  WorkFlow: 'Work Flow',
 };
 
 
@@ -1979,7 +1991,6 @@ module.exports = {
 module.exports = {
   StartEventAtom: '原子起草开始事件',
   ActivityUserTask: '用户任务活动',
-  WorkFlow: '工作流',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
   'Task has been claimed: %s': '任务已被申领: %s',

@@ -834,11 +834,48 @@ module.exports = ctx => {
         await this._flowListener.onFlowEnd(options);
         // clear nodes
         await this._clearNodeRemains();
+        // publish uniform message
+        await this._endFlowPublish();
         // log
         // console.log(`--------flow end: ${flowId}`);
       });
       // notify
       this._notifyFlowInitiateds(this.context._flow.flowUserId);
+    }
+
+    async _endFlowPublish() {
+      // publish uniform message
+      const userOp = this._getOpUser();
+      const flowUserId = this.context._flow.flowUserId;
+      if (flowUserId !== userOp.id) {
+        const userFlow = await ctx.bean.user.get({ id: flowUserId });
+        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(userFlow.locale, this.context._flow.flowRemark || 'End')}`;
+        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}`;
+        const message = {
+          userIdTo: flowUserId,
+          content: {
+            issuerId: userFlow.id,
+            issuerName: userFlow.userName,
+            issuerAvatar: userFlow.avatar,
+            title,
+            body: this.context._flow.flowName,
+            actionPath,
+            params: {
+              flowId: this.context._flowId,
+            },
+          },
+        };
+        // jump out of the transaction
+        ctx.tail(async () => {
+          await ctx.bean.io.publish({
+            message,
+            messageClass: {
+              module: 'a-flow',
+              messageClassName: 'workflow',
+            },
+          });
+        });
+      }
     }
 
     async _clearNodeRemains() {
@@ -2162,6 +2199,8 @@ module.exports = {
 
 module.exports = {
   FlowTitle: 'Flow',
+  WorkFlow: 'Work Flow',
+  WorkFlows: 'Work Flows',
 };
 
 
@@ -2173,6 +2212,8 @@ module.exports = {
 module.exports = {
   FlowTitle: '流程',
   FlowDefinition: '流程定义',
+  WorkFlow: '工作流',
+  WorkFlows: '工作流',
   End: '结束',
   Current: '当前',
   Drafting: '起草',
@@ -2213,12 +2254,21 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const workflow = {
     info: {
-      bean: 'workflow',
-      title: 'WorkFlow',
+      title: 'WorkFlows',
       persistence: true,
-      uniform: true,
+      uniform: {
+        stats: {
+          params: {
+            module: 'a-message',
+            name: 'message',
+            nameSub: `${moduleInfo.relativeName}_workflow`,
+          },
+          color: 'red',
+        },
+      },
     },
   };
   return workflow;

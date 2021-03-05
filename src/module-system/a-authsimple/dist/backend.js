@@ -297,6 +297,20 @@ module.exports = appInfo => {
     },
   };
 
+  // email
+  config.email = {
+    templates: {
+      confirmation: {
+        subject: 'confirmationEmailSubject',
+        body: 'confirmationEmailBody',
+      },
+      passwordReset: {
+        subject: 'passwordResetEmailSubject',
+        body: 'passwordResetEmailBody',
+      },
+    },
+  };
+
   return config;
 };
 
@@ -321,7 +335,7 @@ module.exports = {
 
 // confirmationEmail
 //   subject
-const confirmationEmailSubject = '{{siteName}} Account Confirmation';
+const confirmationEmailSubject = '[{{siteName}}] Account Confirmation';
 //   body
 const confirmationEmailBody =
 `
@@ -337,7 +351,7 @@ Regards,
 
 // passwordResetEmail
 //   subject
-const passwordResetEmailSubject = 'Password Reset for {{siteName}}';
+const passwordResetEmailSubject = '[{{siteName}}] Password Reset';
 //   body
 const passwordResetEmailBody =
 `
@@ -370,7 +384,7 @@ module.exports = {
 
 // confirmationEmail
 //   subject
-const confirmationEmailSubject = '{{siteName}} 账号确认';
+const confirmationEmailSubject = '[{{siteName}}] 账号确认';
 //   body
 const confirmationEmailBody =
 `
@@ -386,7 +400,7 @@ const confirmationEmailBody =
 
 // passwordResetEmail
 //   subject
-const passwordResetEmailSubject = '{{siteName}}重置密码';
+const passwordResetEmailSubject = '[{{siteName}}] 重置密码';
 //   body
 const passwordResetEmailBody =
 `
@@ -1195,13 +1209,13 @@ module.exports = app => {
       // link
       const token = uuid.v4().replace(/-/g, '');
       const link = this.ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
-      // email scene
-      const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
+      // config
+      const configTemplate = this.ctx.config.email.templates.passwordReset;
       // email subject
-      let subject = this.ctx.text('passwordResetEmailSubject');
+      let subject = this.ctx.text(configTemplate.subject);
       subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
       // email body
-      let body = this.ctx.text('passwordResetEmailBody');
+      let body = this.ctx.text(configTemplate.body);
       body = this.ctx.bean.util.replaceTemplate(body, {
         userName: user.userName,
         link,
@@ -1209,7 +1223,7 @@ module.exports = app => {
       });
       // send
       await this.ctx.bean.mail.send({
-        scene,
+        scene: null, // use default
         message: {
           to: email,
           subject,
@@ -1232,13 +1246,13 @@ module.exports = app => {
       // link
       const token = uuid.v4().replace(/-/g, '');
       const link = this.ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
-      // email scene
-      const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
+      // config
+      const configTemplate = this.ctx.config.email.templates.confirmation;
       // email subject
-      let subject = this.ctx.text('confirmationEmailSubject');
+      let subject = this.ctx.text(configTemplate.subject);
       subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
       // email body
-      let body = this.ctx.text('confirmationEmailBody');
+      let body = this.ctx.text(configTemplate.body);
       body = this.ctx.bean.util.replaceTemplate(body, {
         userName: user.userName,
         link,
@@ -1246,7 +1260,7 @@ module.exports = app => {
       });
       // send
       await this.ctx.bean.mail.send({
-        scene,
+        scene: null, // use default
         message: {
           to: email,
           subject,

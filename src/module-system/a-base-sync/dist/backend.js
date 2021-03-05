@@ -4194,12 +4194,37 @@ module.exports = ctx => {
 
     replaceTemplate(content, scope) {
       if (!content) return null;
-      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+      return content.toString().replace(/(\\)?{{ *([\w\.]+) *}}/g, (block, skip, key) => {
         if (skip) {
           return block.substring(skip.length);
         }
-        return scope[key] !== undefined ? scope[key] : '';
+        const value = this.getProperty(scope, key);
+        return value !== undefined ? value : '';
       });
+    }
+
+    setProperty(obj, name, value) {
+      const names = name.split('.');
+      if (names.length === 1) {
+        obj[name] = value;
+      } else {
+        for (let i = 0; i < names.length - 1; i++) {
+          obj = obj[names[i]];
+        }
+        obj[names[names.length - 1]] = value;
+      }
+    }
+
+    getProperty(obj, name) {
+      if (!obj) return undefined;
+      const names = name.split('.');
+      if (names.length === 1) return obj[name];
+      // loop
+      for (const name of names) {
+        obj = obj[name];
+        if (!obj) break;
+      }
+      return obj;
     }
 
     sleep(ms) {
@@ -7690,7 +7715,8 @@ module.exports = app => {
         _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       }
       // validate
-      if (atomStage === 0 && !target) {
+      const ignoreValidate = options && options.ignoreValidate;
+      if (atomStage === 0 && !target && !ignoreValidate) {
         await this.ctx.bean.validation._validate({ atomClass, data: item, options });
       }
       // write atom
@@ -8172,6 +8198,10 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  CommentPublishTitleNewComment: 'Posted a new comment',
+  CommentPublishTitleEditComment: 'Modified the comment',
+  CommentPublishTitleReplyComment: 'Replied to your comment',
+  CommentPublishTitleEditReplyComment: 'Modified the comment replied before',
   CloneCopyText: 'Copy',
   KeyForAtom: 'Key',
   ViewLayout: 'View',
@@ -8208,6 +8238,10 @@ module.exports = {
   'Cannot delete if has children': '有子元素时不允许删除',
   'Create Resource': '新建资源',
   'Resource List': '资源列表',
+  CommentPublishTitleNewComment: '发表了新评论',
+  CommentPublishTitleEditComment: '修改了评论',
+  CommentPublishTitleReplyComment: '回复了您的评论',
+  CommentPublishTitleEditReplyComment: '修改了回复的评论',
   Draft: '草稿',
   Drafts: '草稿',
   Formal: '正式',
@@ -8287,6 +8321,33 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(6327),
   'zh-cn': __webpack_require__(3072),
+};
+
+
+/***/ }),
+
+/***/ 5210:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const comment = {
+    info: {
+      title: 'Comments',
+      persistence: true,
+      uniform: {
+        stats: {
+          params: {
+            module: 'a-message',
+            name: 'message',
+            nameSub: `${moduleInfo.relativeName}_comment`,
+          },
+          color: 'red',
+        },
+      },
+    },
+  };
+  return comment;
 };
 
 
@@ -9189,10 +9250,12 @@ module.exports = app => {
     }
 
     async write() {
+      const options = { ignoreValidate: false };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
+        options,
       });
       this.ctx.success();
     }
@@ -9221,10 +9284,12 @@ module.exports = app => {
 
     async writeSubmit() {
       // write
+      const options = { ignoreValidate: false };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
+        options,
       });
       // submit
       await this.submit();
@@ -9488,16 +9553,6 @@ module.exports = app => {
 
     themes() {
       const res = this.ctx.service.base.themes();
-      this.ctx.success(res);
-    }
-
-    async performAction() {
-      // params
-      const params = JSON.parse(this.ctx.request.query.params);
-      // force innerAccess as false
-      params.innerAccess = false;
-      // performAction
-      const res = await this.ctx.performAction(params);
       this.ctx.success(res);
     }
 
@@ -9919,6 +9974,35 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 6841:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class UtilController extends app.Controller {
+
+    async performAction() {
+      const res = await this.ctx.service.util.performAction({
+        params: JSON.parse(this.ctx.request.query.params),
+      });
+      this.ctx.success(res);
+    }
+
+    async performActions() {
+      const res = await this.ctx.service.util.performActions({
+        actions: this.ctx.request.body.actions,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return UtilController;
+};
+
+
+
+/***/ }),
+
 /***/ 7095:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -9934,6 +10018,7 @@ const layoutConfig = __webpack_require__(8055);
 const user = __webpack_require__(2037);
 const category = __webpack_require__(8615);
 const tag = __webpack_require__(3205);
+const util = __webpack_require__(6841);
 
 module.exports = app => {
   const controllers = {
@@ -9949,6 +10034,7 @@ module.exports = app => {
     user,
     category,
     tag,
+    util,
   };
   return controllers;
 };
@@ -10014,6 +10100,8 @@ module.exports = app => {
   const schemas = __webpack_require__(8232)(app);
   // static
   const staticResources = __webpack_require__(5429)(app);
+  // socketio
+  const socketioComment = __webpack_require__(5210)(app);
   // meta
   const meta = {
     base: {
@@ -10117,6 +10205,11 @@ module.exports = app => {
           user: true,
           bean: 'stars',
         },
+      },
+    },
+    socketio: {
+      messages: {
+        comment: socketioComment,
       },
     },
   };
@@ -10702,7 +10795,6 @@ module.exports = app => {
     { method: 'post', path: 'base/resourceTypes', controller: 'base' },
     { method: 'post', path: 'base/atomClasses', controller: 'base' },
     { method: 'post', path: 'base/actions', controller: 'base' },
-    { method: 'get', path: 'base/performAction', controller: 'base', middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'get', path: 'base/qrcode', controller: 'base', meta: { auth: { enable: false } } },
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
@@ -10822,6 +10914,9 @@ module.exports = app => {
     { method: 'options', path: /.*/ },
     // jwt
     { method: 'post', path: 'jwt/create', controller: 'jwt' },
+    // util
+    { method: 'get', path: 'util/performAction', controller: 'util', middlewares: 'jsonp', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'util/performActions', controller: 'util' },
     // layoutConfig
     { method: 'post', path: 'layoutConfig/load', controller: 'layoutConfig' },
     { method: 'post', path: 'layoutConfig/save', controller: 'layoutConfig' },
@@ -10879,8 +10974,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.count({ atomClass, options, user });
     }
 
-    async write({ key, item, user }) {
-      return await this.ctx.bean.atom.write({ key, item, user });
+    async write({ key, item, options, user }) {
+      return await this.ctx.bean.atom.write({ key, item, options, user });
     }
 
     async openDraft({ key, user }) {
@@ -11177,6 +11272,8 @@ module.exports = app => {
         html,
         updatedAt: new Date(),
       });
+      // publish
+      await this._publish({ atomId: key.atomId, commentId, replyId: item.replyId, replyUserId: item.replyUserId, user, mode: 'edit' });
       // ok
       return {
         action: 'update',
@@ -11196,6 +11293,8 @@ module.exports = app => {
       if (replyId) {
         reply = await this.ctx.model.commentView.get({ id: replyId });
       }
+      // replyUserId
+      const replyUserId = reply ? reply.userId : 0;
       // replyContent
       const replyContent = !reply ? '' :
         this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
@@ -11214,19 +11313,22 @@ module.exports = app => {
         sorting,
         heartCount: 0,
         replyId,
-        replyUserId: reply ? reply.userId : 0,
+        replyUserId,
         replyContent,
         content,
         summary: summary.html,
         html,
       });
+      const commentId = res.insertId;
       // commentCount
       await this.ctx.bean.atom.comment({ key, atom: { comment: 1 }, user });
+      // publish
+      await this._publish({ atomId: key.atomId, commentId, replyId, replyUserId, user, mode: 'add' });
       // ok
       return {
         action: 'create',
         atomId: key.atomId,
-        commentId: res.insertId,
+        commentId,
       };
     }
 
@@ -11297,6 +11399,74 @@ module.exports = app => {
         commentId,
         heart, heartCount,
       };
+    }
+
+    // publish
+    async _publish({ atomId, commentId, replyId, replyUserId, user, mode }) {
+      const userIdsTo = {};
+      // 1. atom.userIdUpdated
+      const atom = await this.ctx.model.atom.get({ id: atomId });
+      const userIdUpdated = atom.userIdUpdated;
+      if (userIdUpdated !== user.id) {
+        const title = await this._publishTitle({ userId: userIdUpdated, replyId: 0, mode });
+        userIdsTo[userIdUpdated] = { title };
+      }
+      // 2. replyUser
+      if (replyUserId && replyUserId !== user.id) {
+        const title = await this._publishTitle({ userId: replyUserId, replyId, mode });
+        userIdsTo[replyUserId] = { title };
+      }
+      // actionPath
+      const actionPath = `/a/basefront/comment/list?atomId=${atomId}&commentId=${commentId}`;
+      // publish
+      for (const userIdTo in userIdsTo) {
+        const info = userIdsTo[userIdTo];
+        const message = {
+          userIdTo,
+          content: {
+            issuerId: user.id,
+            issuerName: user.userName,
+            issuerAvatar: user.avatar,
+            title: info.title,
+            body: atom.atomName,
+            actionPath,
+            params: {
+              atomId,
+              commentId,
+              replyId,
+            },
+          },
+        };
+        await this.ctx.bean.io.publish({
+          message,
+          messageClass: {
+            module: 'a-base',
+            messageClassName: 'comment',
+          },
+        });
+      }
+    }
+
+    async _publishTitle({ userId, replyId, mode }) {
+      const user = await this.ctx.bean.user.get({ id: userId });
+      const locale = user.locale;
+      let title;
+      if (mode === 'add') {
+        // add
+        if (replyId === 0) {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleNewComment');
+        } else {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleReplyComment');
+        }
+      } else {
+        // edit
+        if (replyId === 0) {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleEditComment');
+        } else {
+          title = this.ctx.text.locale(locale, 'CommentPublishTitleEditReplyComment');
+        }
+      }
+      return title;
     }
 
     _fullContent({ content, replyContent, replyUserName }) {
@@ -11520,6 +11690,49 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 5102:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(6718);
+const pMap = require3('p-map');
+
+module.exports = app => {
+
+  class Util extends app.Service {
+
+    async performAction({ params }) {
+      // force innerAccess as false
+      params.innerAccess = false;
+      // performAction
+      return await this.ctx.performAction(params);
+    }
+
+    async performActions({ actions }) {
+      // concurrency
+      const mapper = async params => {
+        let err;
+        let res;
+        try {
+          res = await this.performAction({ params });
+        } catch (error) {
+          err = {
+            code: error.code || 500,
+            message: error.message,
+          };
+        }
+        return { err, res };
+      };
+      return await pMap(actions, mapper, { concurrency: 10 });
+    }
+
+  }
+
+  return Util;
+};
+
+
+/***/ }),
+
 /***/ 7214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -11535,6 +11748,7 @@ const jwt = __webpack_require__(4506);
 const layoutConfig = __webpack_require__(2637);
 const category = __webpack_require__(4408);
 const tag = __webpack_require__(6295);
+const util = __webpack_require__(5102);
 
 module.exports = app => {
   const services = {
@@ -11550,6 +11764,7 @@ module.exports = app => {
     layoutConfig,
     category,
     tag,
+    util,
   };
   return services;
 };
