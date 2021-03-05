@@ -7,6 +7,8 @@
       _url=link.url;
     }else if(link.url.indexOf('/')===0){
       _url=`${site.serverUrl}/#!${link.url}`;
+    }else if(link.url.indexOf('?')===0){
+      _url=`${site.serverUrl}/${link.url}`;
     }else{
       _url=`${url(link.url)}`;
     }

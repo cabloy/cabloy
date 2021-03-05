@@ -89,13 +89,24 @@ export default {
         if (hashInit) {
           this.navigate(hashInit);
         } else {
-          this.openHome();
+          if (!this._checkSpecialPath()) {
+            this.openHome();
+          }
         }
       }
       // started
       this.$nextTick(() => {
         this.started = true;
       });
+    },
+    _checkSpecialPath() {
+      const query = this.$utils.parseUrlQuery();
+      const path = query && query.__to;
+      if (!path) return false;
+      return false;
+    },
+    openMine() {
+      this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
       this.tabShowed = true;
