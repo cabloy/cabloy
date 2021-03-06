@@ -8,6 +8,7 @@ Hi {{user.userName}},
 
 You have received a new message. Here are the details:
 
+From: {{content.issuerName}}
 Title: {{content.title}}
 Body: {{content.body}}
 Link: {{info.link}}
