@@ -18,6 +18,7 @@ module.exports = appInfo => {
         user: 'root',
         password: '',
         database: 'mysql', // recommended
+        charset: 'utf8mb4_general_ci',
         hook: {
           meta: {
             long_query_time: 200,
