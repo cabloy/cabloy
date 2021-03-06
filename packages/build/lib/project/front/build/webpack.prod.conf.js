@@ -83,7 +83,13 @@ module.exports = context => {
     plugins,
     optimization: {
       runtimeChunk: false,
-      splitChunks: {
+      splitChunks: (context.config.build.optimization && context.config.build.optimization.splitChunks) || {
+        chunks: 'initial',
+        maxInitialRequests: 20,
+        maxInitialSize: 800000,
+        cacheGroups: {
+          default: false,
+        },
       },
       minimize: context.config.build.uglify,
       minimizer: [
