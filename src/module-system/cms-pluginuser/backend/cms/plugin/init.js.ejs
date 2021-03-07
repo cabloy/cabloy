@@ -21,7 +21,57 @@ $(document).ready(function() {
 
 $(document).on('echo-ready', function() {
   _renderNavbarUser({ container: '.navbar-user' });
+  _renderStatsUser({ container: '.navbar-user' });
 });
+
+function _renderStatsUser({ container }){
+  const $container = $(container);
+  if ($container.length === 0) return;
+  const $stats=$('.stats-user',$container);
+  if (util.user.op.anonymous) return;
+
+  window.setTimeout(() => {
+    const subscribePath = '/a/stats/stats/a-user/user';
+    util.io.subscribe(subscribePath,stats_onMessage,stats_onSubscribed);
+  }, 0);
+
+  function stats_onMessage({ message }) {
+    const content = JSON.parse(message.content);
+    stats_setValue(content.value);
+  }
+
+  function stats_onSubscribed() {
+    stats_loadValue();
+  }
+
+  function stats_loadValue() {
+    util.performAction({
+      method:'post',
+      url:'/a/stats/stats/get',
+      body:{
+        module: 'a-user',
+        name: 'user',
+        nameSub: null,
+      },
+    }).then(value=>{
+      stats_setValue(value);
+    });
+  }
+
+  function stats_setValue(value){
+    if(!value || (!value.red && !value.orange)){
+      $stats.html('');
+    }else{
+      let html;
+      if(value.red){
+        html=`<span class="badge badge-danger">${value.red}</span>`;
+      }else{
+        html=`<span class="badge badge-warning">${value.orange}</span>`;
+      }
+      $stats.html(html);
+    }
+  }
+}
 
 function _renderNavbarUser({ container }) {
   const $container = $(container);
