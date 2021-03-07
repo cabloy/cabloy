@@ -4,6 +4,9 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
+    workerAlive: {
+      bean: 'workerAlive',
+    },
     databaseInit: {
       bean: 'databaseInit',
       debounce: true,
@@ -15,6 +18,13 @@ module.exports = appInfo => {
       bean: 'instanceInit',
       instance: true,
       debounce: true,
+    },
+  };
+
+  // worker
+  config.worker = {
+    alive: {
+      timeout: 6000,
     },
   };
 

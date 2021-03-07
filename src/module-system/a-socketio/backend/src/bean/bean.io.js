@@ -639,10 +639,19 @@ module.exports = ctx => {
       let bSent = false;
       for (const field in values) {
         if (!isSender || field !== messageScene) {
-          bSent = true;
           const value = values[field];
           const [ workerId, socketId ] = value.split(':');
-          this._emitSocket({ path, message, workerId, socketId });
+          // check workerAlive
+          const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
+          if (workerAlive) {
+            this._emitSocket({ path, message, workerId, socketId });
+            bSent = true;
+          } else {
+            // only del on production
+            if (ctx.app.meta.isProd) {
+              await this.redis.hdel(key, field);
+            }
+          }
         }
       }
       if (!bSent) {
