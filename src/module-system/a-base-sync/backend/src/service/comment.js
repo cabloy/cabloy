@@ -267,15 +267,26 @@ module.exports = app => {
 
     _fullContent({ content, replyContent, replyUserName }) {
       if (!replyContent) return content;
+      const sep = this._getMarkdownSep(replyContent);
       return `${content}
 
 > \`${replyUserName}\`:
 
-::: comment-quot
+${sep} comment-quot
 ${replyContent}
-:::
+${sep}
 
 `;
+    }
+
+    _getMarkdownSep(replyContent) {
+      const posA = replyContent.indexOf(':::');
+      if (posA === -1) return ':::';
+      let posB = posA + 3;
+      while (replyContent[posB] === ':') {
+        ++posB;
+      }
+      return ':'.repeat(posB - posA + 1);
     }
 
     _renderContent({ content, replyContent, replyUserName }) {
