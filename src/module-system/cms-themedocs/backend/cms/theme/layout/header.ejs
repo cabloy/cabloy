@@ -4,6 +4,17 @@
   <%- await include('./header/head.ejs') %>
 </head>
 <body>
-  <%- await include('./header/menu.ejs') %>
+  <header style="display:none;">
+    <%- await include('./header/menu.ejs') %>
+  </header>
+  <script>
+    // iframe
+    var __header = document.getElementsByTagName('header')[0];
+    if(window.self !== window.top){
+      __header.style.display = 'none';
+    }else{
+      __header.style.display = '';
+    }
+ </script>
   <div class="container container-site">
 

@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
   // adjust container padding-top
-  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'), { topDiff: -19, categorySidebarDiff: 1 });
+  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'));
 });
 
 $(document).on('echo-ready', function() {
@@ -380,17 +380,14 @@ function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = 
   });
 }
 
-function _fixContainerSite($navbar, $containerSite, $footer, options) {
+function _fixContainerSite($navbar, $containerSite, $footer) {
+  if (window.self !== window.top) return;
   if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
   // init
   const $window = $(window);
 
   // onScroll
   const _onScroll = function() {
-    // padding-top / category-sidebar top
-    const navHeight = $navbar.outerHeight(false);
-    $containerSite.css('padding-top', navHeight - options.topDiff);
-    $('.category-sidebar').css('top', navHeight - options.categorySidebarDiff);
     // min-height
     const diff = parseInt($window.height() - ($footer.offset().top + $footer.outerHeight(true)));
     const height = parseInt($containerSite.outerHeight());
