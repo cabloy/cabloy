@@ -351,6 +351,7 @@ Hi {{user.userName}},
 
 You have received a new message. Here are the details:
 
+From: {{content.issuerName}}
 Title: {{content.title}}
 Body: {{content.body}}
 Link: {{info.link}}
@@ -380,6 +381,7 @@ const uniformMessageRenderTemplateMailBody =
 
 您收到一条新消息，详情如下：
 
+来自: {{content.issuerName}}
 标题: {{content.title}}
 正文: {{content.body}}
 链接: {{info.link}}

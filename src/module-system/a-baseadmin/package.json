@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baseadmin",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "title": "Basic Admin",
   "eggBornModule": {
     "fileVersion": 3,
@@ -19,6 +19,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.0",
     "extend2": "^1.0.0",
-    "require3": "^2.0.4"
+    "require3": "^2.0.5"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-plugincopyright",
-  "version": "4.0.7",
+  "version": "4.0.8",
   "title": "cms:plugin:copyright",
   "eggBornModule": {
     "cms": {
@@ -23,6 +23,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.0",
     "extend2": "^1.0.0",
-    "require3": "^2.0.4"
+    "require3": "^2.0.5"
   }
 }

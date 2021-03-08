@@ -2,6 +2,40 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 616:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Worker extends app.meta.BeanBase {
+
+    get id() {
+      return app.meta.workerId;
+    }
+
+    async setAlive() {
+      const config = app.meta.configs[moduleInfo.relativeName];
+      const aliveTimeout = config.worker.alive.timeout;
+      const key = `workerAlive:${this.id}`;
+      const redis = app.redis.get('cache');
+      await redis.set(key, JSON.stringify(true), 'PX', aliveTimeout * 2);
+    }
+
+    async getAlive({ id }) {
+      const key = `workerAlive:${id}`;
+      const redis = app.redis.get('cache');
+      const value = await redis.get(key);
+      return value ? JSON.parse(value) : undefined;
+    }
+
+  }
+
+  return Worker;
+};
+
+
+/***/ }),
+
 /***/ 456:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -379,6 +413,30 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 127:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Startup extends app.meta.BeanBase {
+
+    async execute() {
+      const aliveTimeout = this.ctx.config.worker.alive.timeout;
+      // interval
+      setInterval(async () => {
+        await app.bean.worker.setAlive();
+      }, aliveTimeout);
+      // alive
+      await app.bean.worker.setAlive();
+    }
+
+  }
+
+  return Startup;
+};
+
+
+/***/ }),
+
 /***/ 899:
 /***/ ((module) => {
 
@@ -417,9 +475,11 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const localVersion = __webpack_require__(456);
+const startupWorkerAlive = __webpack_require__(127);
 const startupDatabaseInit = __webpack_require__(794);
 const startupDatabaseName = __webpack_require__(88);
 const startupInstanceInit = __webpack_require__(598);
+const beanWorker = __webpack_require__(616);
 
 module.exports = app => {
   const beans = {
@@ -434,6 +494,10 @@ module.exports = app => {
       bean: localVersion,
     },
     // startup
+    'startup.workerAlive': {
+      mode: 'app',
+      bean: startupWorkerAlive,
+    },
     'startup.databaseInit': {
       mode: 'app',
       bean: startupDatabaseInit,
@@ -445,6 +509,12 @@ module.exports = app => {
     'startup.instanceInit': {
       mode: 'app',
       bean: startupInstanceInit,
+    },
+    // global
+    worker: {
+      mode: 'app',
+      bean: beanWorker,
+      global: true,
     },
   };
   return beans;
@@ -462,6 +532,9 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
+    workerAlive: {
+      bean: 'workerAlive',
+    },
     databaseInit: {
       bean: 'databaseInit',
       debounce: true,
@@ -473,6 +546,13 @@ module.exports = appInfo => {
       bean: 'instanceInit',
       instance: true,
       debounce: true,
+    },
+  };
+
+  // worker
+  config.worker = {
+    alive: {
+      timeout: 6000,
     },
   };
 
