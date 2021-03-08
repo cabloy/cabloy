@@ -4,11 +4,20 @@
   <%- await include('./header/head.ejs') %>
 </head>
 <body>
-  <header>
+  <header style="display:none;">
     <div class="container">
       <%- await include('./header/title.ejs') %>
       <%- await include('./header/menu.ejs') %>
     </div>
   </header>
+  <script>
+    // iframe
+    var __header = document.getElementsByTagName('header')[0];
+    if(window.self !== window.top){
+      __header.style.display = 'none';
+    }else{
+      __header.style.display = '';
+    }
+ </script>
   <div class="container container-site">
 

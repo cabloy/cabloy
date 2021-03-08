@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
   // adjust container padding-top
-  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'), { topDiff: 30 });
+  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'));
 });
 
 $(document).on('echo-ready', function() {
@@ -180,16 +180,14 @@ ${tagsText}
   });
 }
 
-function _fixContainerSite($navbar, $containerSite, $footer, options) {
+function _fixContainerSite($navbar, $containerSite, $footer) {
+  if(window.self !== window.top) return;
   if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
   // init
   const $window = $(window);
 
   // onScroll
   const _onScroll = function() {
-    // padding-top
-    const navHeight = $navbar.outerHeight(false);
-    $containerSite.css('padding-top', navHeight - options.topDiff);
     // min-height
     const diff = parseInt($window.height() - ($footer.offset().top + $footer.outerHeight(true)));
     const height = parseInt($containerSite.outerHeight());
