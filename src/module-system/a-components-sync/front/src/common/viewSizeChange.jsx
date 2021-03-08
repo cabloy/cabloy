@@ -5,6 +5,7 @@ export default {
         size: null,
         unwatch: null,
         heightHeader: 56,
+        heightSubnavbar: 48,
         heightToolbar: 48,
         diffDesktop: 8,
       },
@@ -32,6 +33,9 @@ export default {
       }
       if (this.header === true) {
         height -= this.viewSize.heightHeader;
+      }
+      if (this.subnavbar === true) {
+        height -= this.viewSize.heightSubnavbar;
       }
       if (this.toolbar === true) {
         height -= this.viewSize.heightToolbar;

@@ -1145,10 +1145,16 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       // check if build site first
       const siteBuilt = await this._checkIfSiteBuilt({ site });
       if (!siteBuilt) this.ctx.throw(1006);
-      // url
+      // fileName
+      const pathDist = await this.getPathDist(site, article.atomLanguage);
+      const fileName = path.join(pathDist, article.url);
+      const exists = await fse.pathExists(fileName);
+      if (!exists) this.ctx.throw.module('a-base', 1002);
+      // ok
+      const url = this.getUrl(site, site.language.current, article.url);
       return {
         relativeUrl: article.url,
-        url: this.getUrl(site, site.language.current, article.url),
+        url,
       };
     }
 

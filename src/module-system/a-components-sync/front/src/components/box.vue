@@ -14,6 +14,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    subnavbar: {
+      type: Boolean,
+      default: true,
+    },
     toolbar: {
       type: Boolean,
       default: false,
@@ -28,7 +32,7 @@ export default {
       this.$$(this.$refs.box).css({
         position: 'absolute',
         height: `${size.height}px`,
-        width: '100%',
+        width: `${size.width}px`, // '100%',
       });
       this.$emit('size', size);
     },
