@@ -87,7 +87,7 @@ describe('test/controller/test.test.js', () => {
   <script>window.alert('test');</script>
   :::
 
-  $$$ cms-pluginblock:audio
+  $$$ cms-pluginblock:blockAudio
 {
   audio: {
     name: 'Yadikar',
