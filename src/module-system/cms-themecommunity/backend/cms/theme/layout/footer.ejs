@@ -1,5 +1,5 @@
   </div> <!-- container -->
-  <footer>
+  <footer style="display:none;">
       <span class="small">
         Powered by <a target="_blank" href="https://cms.cabloy.com">Cabloy-CMS</a>
         | Theme - <a target="_blank" href="<%=site._theme.url%>"><%=site._theme.name%></a>
@@ -8,6 +8,15 @@
         <% } %>
       </span>
   </footer>
+  <script>
+    // iframe
+    var __footer = document.getElementsByTagName('footer')[0];
+    if (window.self !== window.top) {
+      __footer.style.display = 'none';
+    } else {
+      __footer.style.display = '';
+    }
+  </script>
   <div class="bsnav-mobile">
     <div class="bsnav-mobile-overlay"></div>
     <div class="navbar"></div>

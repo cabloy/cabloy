@@ -181,7 +181,7 @@ ${tagsText}
 }
 
 function _fixContainerSite($navbar, $containerSite, $footer) {
-  if(window.self !== window.top) return;
+  if (window.self !== window.top) return;
   if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
   // init
   const $window = $(window);
