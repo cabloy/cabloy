@@ -16,7 +16,7 @@ export default {
     },
     subnavbar: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     toolbar: {
       type: Boolean,
