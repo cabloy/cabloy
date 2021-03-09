@@ -74,15 +74,15 @@ function categoryTree($treeContainer) {
   }).on('load_node.jstree', function(e, data) {
     if (data.status) {
       const node = data.node;
-      if (node.id === '#') {
-        // open article's parent category
-        $tree.jstree(true).open_node(env.article.atomCategoryId);
-      } else if (node.id === env.article.atomCategoryId.toString()) {
+      if (String(node._id) === String(env.article.atomCategoryId)) {
         // fill article's h2es
         _fillArticleH2es($tree);
         // open article
         $tree.jstree(true).select_node(`${env.article.atomCategoryId}:${env.article.atomId}`, true);
         $tree.jstree(true).open_node(`${env.article.atomCategoryId}:${env.article.atomId}`);
+      } else if (node.id === '#') {
+        // open article's parent category
+        $tree.jstree(true).open_node(env.article.atomCategoryId);
       }
     }
   });
@@ -103,33 +103,47 @@ function categoryTree($treeContainer) {
           // articleCategoryTop
           const category = _getRelativeTop();
           if (!category) return cb.call(self, []);
+          // node._id
+          node._id = category.id;
           // menu active
           menuActive({ categoryId: category.id });
           // title
           $title.text(category.categoryName);
           // tree
           const tree = _getTree(category.id);
-          // prepare tree data
-          const data = _prepareTreeData(tree);
-          cb.call(self, data);
+          if (!tree) {
+            // articles
+            _fetchArticlesOfCategory(category.id).then(res => {
+              const data = _prepareArtilesData(category.id, res.list);
+              cb.call(self, data);
+            });
+          } else {
+            // prepare tree data
+            const data = _prepareTreeData(tree);
+            cb.call(self, data || []);
+          }
         } else {
           // articles
-          _fetchArticles({
-            index: 0,
-            categoryId: node.id,
-            orders: [
-              [ 'f.sticky', 'desc' ],
-              [ 'f.sorting', 'asc' ],
-              [ 'a.createdAt', 'asc' ],
-            ],
-            pageForce: false,
-          }).then(res => {
+          _fetchArticlesOfCategory(node.id).then(res => {
             const data = _prepareArtilesData(node.id, res.list);
             cb.call(self, data);
           });
         }
       },
     },
+  });
+}
+
+function _fetchArticlesOfCategory(categoryId) {
+  return _fetchArticles({
+    index: 0,
+    categoryId,
+    orders: [
+      [ 'f.sticky', 'desc' ],
+      [ 'f.sorting', 'asc' ],
+      [ 'a.createdAt', 'asc' ],
+    ],
+    pageForce: false,
   });
 }
 
