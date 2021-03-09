@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "3.2.12",
+  "version": "3.2.13",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -22,14 +22,14 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
   "dependencies": {
-    "@zhennann/build": "^1.1.3",
+    "@zhennann/build": "^1.1.4",
     "boxen": "^4.2.0",
     "chai": "^4.2.0",
     "chalk": "^3.0.0",
     "compressing": "^1.5.1",
     "egg-bin": "^4.14.1",
-    "egg-born-backend": "^6.1.4",
-    "egg-born-front": "^8.2.4",
+    "egg-born-backend": "^6.1.5",
+    "egg-born-front": "^8.2.5",
     "egg-mock": "^3.25.1",
     "nock": "^11.7.2",
     "semver-diff": "^3.1.1",
