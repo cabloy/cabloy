@@ -7,7 +7,7 @@
       </f7-nav-right>
       <f7-subnavbar>
         <div></div>
-        <eb-link v-if="atom" :onPerform="onPerformViewAtom">{{atom.atomName}}</eb-link>
+        <eb-link v-if="atom" :onPerform="onPerformViewAtom"><span class="eb-text-overflow-ellipsis">{{atom.atomName}}</span></eb-link>
       </f7-subnavbar>
     </eb-navbar>
     <template v-if="moduleStyle">
