@@ -10,12 +10,4 @@ module.exports = {
   ],
   plugins: [ '@babel/plugin-syntax-dynamic-import' ],
   comments: false,
-  env:
-    {
-      test:
-        {
-          presets: [ 'env' ],
-          plugins: [ 'istanbul' ],
-        },
-    },
 };

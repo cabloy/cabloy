@@ -598,22 +598,27 @@ module.exports = app => {
           if (type === 'CSS') {
             let _needMinify = false;
             if (item.indexOf('.less') > -1) {
-            // less
+              // less
               const output = await less.render(_content, { filename: item });
               _content = output.css;
               _needMinify = true;
             } else if (item.indexOf('.min.css') === -1) {
-            // normal
+              // normal
               _needMinify = true;
             }
             if (_needMinify) {
-            // minify
+              // minify
               const output = new CleanCSS().minify(_content);
               _content = output.styles;
             }
           } else {
             if (item.indexOf('.min.js') === -1) {
-              _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ '@babel/preset-env' ] }).code;
+              _content = babel.transform(_content, {
+                ast: false,
+                babelrc: false,
+                presets: [ '@babel/preset-env' ],
+                plugins: [],
+              }).code;
               // not minify for test/dev
               if (!this.ctx.app.meta.isTest && !this.ctx.app.meta.isLocal) {
                 const output = UglifyJS.minify(_content);
