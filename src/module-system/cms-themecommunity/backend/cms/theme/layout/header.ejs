@@ -14,6 +14,12 @@
     // iframe
     var __header = document.getElementsByTagName('header')[0];
     if(window.self !== window.top){
+      var html = document.getElementsByTagName('html')[0];
+      if(!html.className){
+        html.className = 'in-iframe';
+      }else{
+        html.className += ' in-iframe';
+      }
       __header.style.display = 'none';
     }else{
       __header.style.display = '';
