@@ -22,6 +22,6 @@
   "devDependencies": {
     "markdown-it": "^12.0.4",
     "markdown-it-testgen": "~0.1.6",
-    "mocha": "*"
+    "mocha": "^6.2.3"
   }
 }

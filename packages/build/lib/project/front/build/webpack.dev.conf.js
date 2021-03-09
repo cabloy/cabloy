@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const baseWebpackConfigFn = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+// const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = context => {
@@ -36,7 +36,7 @@ module.exports = context => {
         inject: true,
         title: context.config.configProject.base.title,
       }),
-      new FriendlyErrorsPlugin(),
+      // new FriendlyErrorsPlugin(),
     ],
     optimization: {
       emitOnErrors: true,
