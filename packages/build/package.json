@@ -21,7 +21,7 @@
     "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
     "@vue/babel-preset-jsx": "^1.1.2",
     "autoprefixer": "^9.7.4",
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.13.10",
     "babel-loader": "^8.2.2",
     "babel-plugin-jsx-v-model": "^2.0.3",
     "bluebird": "^3.7.2",

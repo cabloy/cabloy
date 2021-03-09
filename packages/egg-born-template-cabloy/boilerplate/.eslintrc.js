@@ -5,7 +5,7 @@ module.exports = {
     'plugin:vue/essential',
   ],
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
     sourceType: 'module',
   },
   plugins: [
