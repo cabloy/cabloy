@@ -1,10 +1,14 @@
 <template>
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar large largeTransparent :title="$text('Comment List')" eb-back-link="Back">
+    <eb-navbar :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!user.anonymous" iconMaterial="add" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=0`"></eb-link>
         <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
+      <f7-subnavbar>
+        <div></div>
+        <eb-link v-if="atom" :onPerform="onPerformViewAtom">{{atom.atomName}}</eb-link>
+      </f7-subnavbar>
     </eb-navbar>
     <template v-if="moduleStyle">
       <f7-card class="comment" v-for="item of items" :key="item.id">
@@ -30,7 +34,9 @@
 </template>
 <script>
 import Vue from 'vue';
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
+  mixins: [ ebAtomActions ],
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
@@ -39,6 +45,7 @@ export default {
       items: [],
       moduleStyle: null,
       single: true,
+      atom: null,
     };
   },
   computed: {
@@ -53,6 +60,7 @@ export default {
     this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
       this.moduleStyle = module;
     });
+    this._loadAtom();
   },
   mounted() {
     this.$meta.eventHub.$on('comment:action', this.onCommentChanged);
@@ -97,6 +105,21 @@ export default {
     },
     reload() {
       this.$refs.loadMore.reload();
+    },
+    async _loadAtom() {
+      this.atom = await this.$api.post('/a/base/atom/read', {
+        key: { atomId: this.atomId },
+      });
+    },
+    async onPerformViewAtom() {
+      if (!this.atom) return;
+      const _action = this.getAction({
+        module: this.atom.module,
+        atomClassName: this.atom.atomClassName,
+        name: 'read',
+      });
+      if (!_action) return;
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.atom });
     },
     onPerformDelete(event, item) {
       // delete

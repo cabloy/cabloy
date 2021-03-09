@@ -21,7 +21,6 @@
 <script>
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
-
 export default {
   mixins: [ ebAtomActions ],
   data() {
