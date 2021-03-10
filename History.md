@@ -1,5 +1,10 @@
 # History
 
+## 2020-03-10, Version 4.5.4
+
+* **杂项**
+  * 修复markdown-it-katex安全预警
+
 ## 2020-03-10, Version 4.5.3
 
 * **杂项**
