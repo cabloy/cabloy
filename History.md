@@ -1,5 +1,11 @@
 # History
 
+## 2020-03-10, Version 4.5.3
+
+* **杂项**
+  * babel-eslint升级为@babel/eslint-parser
+  * 删除子仓库的package-lock.json
+
 ## 2020-03-09, Version 4.5.2
 
 * **增强**
