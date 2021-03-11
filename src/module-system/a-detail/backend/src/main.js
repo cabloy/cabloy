@@ -1,8 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const DetailBaseFn = require('./common/detailBase.js');
 
 module.exports = app => {
+
+  // detailBase
+  app.meta.DetailBase = DetailBaseFn(app);
 
   // aops
   const aops = require('./aops.js')(app);

@@ -39,7 +39,7 @@ module.exports = app => {
         details: {
           default: {
             info: {
-              bean: 'default',
+              bean: 'purchaseOrder',
               title: 'Details',
               tableName: 'testFlowPurchaseOrderDetail',
             },
