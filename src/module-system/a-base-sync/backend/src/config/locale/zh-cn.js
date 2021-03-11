@@ -94,4 +94,6 @@ module.exports = {
   Theme: '主题',
   ViewLayout: '视图',
   WorkFlow: '工作流',
+  Detail: '明细',
+  Details: '明细',
 };

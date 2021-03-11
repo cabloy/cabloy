@@ -35,6 +35,20 @@ module.exports = app => {
           },
         },
       },
+      detail: {
+        details: {
+          default: {
+            info: {
+              bean: 'default',
+              title: 'Details',
+              tableName: 'testFlowPurchaseOrderDetail',
+            },
+            actions: {
+            },
+            validator: 'purchaseOrderDetail',
+          },
+        },
+      },
       validation: {
         validators: {
           purchaseOrder: {

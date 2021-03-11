@@ -122,6 +122,8 @@ export default {
   Stats: '统计',
   Self: '自己',
   Text: '文本',
+  Detail: '明细',
+  Details: '明细',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
