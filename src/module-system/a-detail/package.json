@@ -4,7 +4,7 @@
   "title": "a-detail",
   "eggBornModule":
   {
-    "fileVersion": 0,
+    "fileVersion": 1,
     "dependencies":
     {
       "a-instance": "4.0.0",
