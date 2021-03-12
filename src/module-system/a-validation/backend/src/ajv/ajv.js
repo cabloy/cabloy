@@ -59,6 +59,7 @@ function createValidate(schemaRoot) {
       const res = await validate.call(ctx, data);
       return res;
     } catch (e) {
+      if (!Array.isArray(e.errors)) throw e;
       const locale = ctx.locale.split('-')[0];
       if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
       // need not output error
