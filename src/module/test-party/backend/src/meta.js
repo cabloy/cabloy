@@ -94,16 +94,7 @@ module.exports = app => {
         keywords: {
           'x-languages': keywords.languages,
         },
-        schemas: {
-          party: schemas.party,
-          partySearch: schemas.partySearch,
-          settingsUser: schemas.settingsUser,
-          settingsUserExtra: schemas.settingsUserExtra,
-          settingsInstance: schemas.settingsInstance,
-          formTest: schemas.formTest,
-          formCaptchaTest: schemas.formCaptchaTest,
-          formMobileVerifyTest: schemas.formMobileVerifyTest,
-        },
+        schemas,
       },
       settings: {
         user: {
