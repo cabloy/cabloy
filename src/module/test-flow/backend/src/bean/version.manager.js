@@ -72,6 +72,20 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'purchaseOrder', roleRights });
       }
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'authenticated', action: 'create' },
+          { roleName: 'authenticated', action: 'read', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'write', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'clone', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'deleteBulk' },
+          { roleName: 'authenticated', action: 'exportBulk' },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'product', roleRights });
+      }
     }
 
     async test() {

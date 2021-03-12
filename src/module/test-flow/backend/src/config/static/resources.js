@@ -1,7 +1,7 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
-    // menu
+    // menu: purchase order
     {
       atomName: 'Create Purchase Order',
       atomStaticKey: 'createPurchaseOrder',
@@ -24,6 +24,33 @@ module.exports = app => {
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'purchaseOrder',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'authenticated',
+    },
+    // menu: product
+    {
+      atomName: 'Create Product',
+      atomStaticKey: 'createProduct',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Create',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'product',
+        atomAction: 'create',
+      }),
+      resourceRoles: 'authenticated',
+    },
+    {
+      atomName: 'Product List',
+      atomStaticKey: 'listProduct',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'product',
         atomAction: 'read',
       }),
       resourceRoles: 'authenticated',

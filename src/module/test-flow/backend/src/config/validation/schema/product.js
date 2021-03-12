@@ -20,6 +20,7 @@ module.exports = app => {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Product Price',
+        // notEmpty: true,
       },
     },
   };
