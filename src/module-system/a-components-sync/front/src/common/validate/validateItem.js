@@ -13,13 +13,14 @@ import renderCategory from './render/renderCategory.js';
 import renderTags from './render/renderTags.js';
 import renderResourceType from './render/renderResourceType.js';
 import renderJson from './render/renderJson.js';
+import renderCurrency from './render/renderCurrency.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson,
+    renderJson, renderCurrency,
   ],
   props: {
     data: {
@@ -94,7 +95,11 @@ export default {
         _value = null; // for distinguish from 0
       } else {
         if (property.type === 'number') {
-          _value = Number(value);
+          if (isNaN(value)) {
+            _value = value;
+          } else {
+            _value = Number(value);
+          }
         } else if (property.type === 'boolean') {
           _value = Boolean(value);
         } else {
@@ -234,8 +239,11 @@ export default {
         // resourceType
         return this.renderResourceType(c, context);
       } else if (ebType === 'json') {
-        // resourceJson
+        // json
         return this.renderJson(c, context);
+      } else if (ebType === 'currency') {
+        // currency
+        return this.renderCurrency(c, context);
       }
       // not support
       return c('div', {
