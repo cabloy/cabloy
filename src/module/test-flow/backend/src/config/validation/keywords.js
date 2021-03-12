@@ -1,0 +1,29 @@
+module.exports = app => {
+  const keywords = {};
+  keywords.productCode = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        // ignore if empty
+        if (!data) return true;
+        // ctx
+        const ctx = this;
+        //   atomClass from atomId
+        const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: rootData.atomId });
+        const item = await ctx.model.queryOne(`
+          select a.id from aAtom a
+            left join testFlowProduct b on a.id=b.atomId
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.productCode=?
+          `, [ ctx.instance.id, atomClass.id, data ]);
+        if (item && item.id !== rootData.atomId) {
+          const errors = [{ keyword: 'x-productCode', params: [], message: ctx.text('Product Code Exists') }];
+          throw new app.meta.ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};

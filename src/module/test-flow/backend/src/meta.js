@@ -5,6 +5,7 @@ module.exports = app => {
   const meta = {
   };
   if (app.meta.isTest || app.meta.isLocal) {
+    const keywords = require('./config/validation/keywords.js')(app);
     const schemas = require('./config/validation/schemas.js')(app);
     const staticFlowDefs = require('./config/static/flowDefs.js')(app);
     const staticResources = require('./config/static/resources.js')(app);
@@ -83,7 +84,9 @@ module.exports = app => {
             schemas: 'purchaseOrderDetail',
           },
         },
-        keywords: {},
+        keywords: {
+          'x-productCode': keywords.productCode,
+        },
         schemas,
       },
       index: {
