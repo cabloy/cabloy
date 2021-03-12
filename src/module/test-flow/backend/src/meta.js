@@ -25,6 +25,19 @@ module.exports = app => {
               validator: 'purchaseOrderSearch',
             },
           },
+          product: {
+            info: {
+              bean: 'product',
+              title: 'Product',
+              tableName: 'testFlowProduct',
+            },
+            actions: {
+            },
+            validator: 'product',
+            search: {
+              validator: 'productSearch',
+            },
+          },
         },
         statics: {
           'a-flow.flowDef': {
@@ -51,18 +64,23 @@ module.exports = app => {
       },
       validation: {
         validators: {
+          // purchaseOrder
           purchaseOrder: {
             schemas: 'purchaseOrder',
           },
           purchaseOrderSearch: {
             schemas: 'purchaseOrderSearch',
           },
+          // product
+          product: {
+            schemas: 'product',
+          },
+          productSearch: {
+            schemas: 'productSearch',
+          },
         },
         keywords: {},
-        schemas: {
-          purchaseOrder: schemas.purchaseOrder,
-          purchaseOrderSearch: schemas.purchaseOrderSearch,
-        },
+        schemas,
       },
       index: {
         indexes: {
