@@ -1,12 +1,12 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('[your tests start from here]', () => {
-  it('[atom]', async () => {
+describe('atom:product', () => {
+  it('atom', async () => {
     app.mockSession({});
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
-    const atomClassName = 'purchaseOrder';
+    const atomClassName = 'product';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
@@ -28,7 +28,8 @@ describe('[your tests start from here]', () => {
       key: keyDraft,
       item: {
         atomName: 'test',
-        description: 'this is a test',
+        productCode: 'test:321',
+        productPrice: 321,
       },
     });
     assert(result.body.code === 0);

@@ -5,7 +5,6 @@ const chalk = require('chalk');
 const uuid = require('uuid');
 
 const {
-  isProd,
   detectStatus,
   detectErrorMessage,
   /* accepts,*/
@@ -158,8 +157,8 @@ module.exports = appInfo => {
 
   // onerror
   config.onerror = {
-    appErrorFilter(err) {
-      if (err && err.code === 422) return false;
+    appErrorFilter(err, ctx) {
+      if (err && err.code === 422 && !ctx.app.meta.isTest) return false;
       return true;
     },
     json(err) {
@@ -176,7 +175,7 @@ module.exports = appInfo => {
         errors: err.errors,
       };
 
-      if (status >= 500 && !isProd(this.app)) {
+      if (status >= 500 && !this.app.meta.isProd) {
         // provide detail error stack in local env
         errorJson.stack = err.stack;
         errorJson.name = err.name;
