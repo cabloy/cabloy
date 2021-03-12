@@ -11,8 +11,7 @@ module.exports = app => {
       validators: {
       },
       keywords: {},
-      schemas: {
-      },
+      schemas,
     },
   };
   return meta;

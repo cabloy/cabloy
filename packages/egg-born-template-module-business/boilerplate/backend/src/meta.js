@@ -40,10 +40,7 @@ module.exports = app => {
         },
       },
       keywords: {},
-      schemas: {
-        {{atomClassName}}: schemas.{{atomClassName}},
-        {{atomClassName}}Search: schemas.{{atomClassName}}Search,
-      },
+      schemas,
     },
   };
   return meta;
