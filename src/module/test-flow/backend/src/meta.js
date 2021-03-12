@@ -78,6 +78,10 @@ module.exports = app => {
           productSearch: {
             schemas: 'productSearch',
           },
+          // purchaseOrderDetail
+          purchaseOrderDetail: {
+            schemas: 'purchaseOrderDetail',
+          },
         },
         keywords: {},
         schemas,
