@@ -64,29 +64,24 @@ module.exports = ctx => {
       return data;
     }
 
-    // async getByAtomId({ atomId }) {
-    //   const res = await this.model.query(`
-    //     select a.*,b.id as atomId,b.itemId from aAtomClass a
-    //       left join aAtom b on a.id=b.atomClassId
-    //         where b.iid=? and b.id=?
-    //     `, [ ctx.instance.id, atomId ]);
-    //   return res[0];
-    // }
+    async getByDetailId({ detailId }) {
+      const res = await this.model.query(`
+        select a.*,b.id as detailId,b.detailItemId from aDetailClass a
+          left join aDetail b on a.id=b.detailClassId
+            where b.iid=? and b.id=?
+        `, [ ctx.instance.id, detailId ]);
+      return res[0];
+    }
 
-    // async getTopByAtomId({ atomId }) {
-    //   const atomClass = await this.getByAtomId({ atomId });
-    //   return await this.top(atomClass);
-    // }
-
-    // async validator({ atomClass }) {
-    //   // default
-    //   const _module = ctx.app.meta.modules[atomClass.module];
-    //   const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-    //   return validator ? {
-    //     module: atomClass.module,
-    //     validator,
-    //   } : null;
-    // }
+    async validator({ detailClass }) {
+      // default
+      const _module = ctx.app.meta.modules[detailClass.module];
+      const validator = _module.main.meta.detail.details[detailClass.detailClassName].validator;
+      return validator ? {
+        module: detailClass.module,
+        validator,
+      } : null;
+    }
 
     _prepareDetailClasses() {
       const detailClasses = {};

@@ -85,7 +85,7 @@ module.exports = ctx => {
       return schemas;
     }
 
-    async _validate({ atomClass, data, options }) {
+    async _validate({ atomClass, detailClass, data, options }) {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
@@ -107,6 +107,17 @@ module.exports = ctx => {
         }
       } else if (atomClass) {
         const validator = await ctx.bean.atom.validator({ atomClass });
+        if (validator) {
+          // if error throw 422
+          await this.validate({
+            module: validator.module,
+            validator: validator.validator,
+            schema: validator.schema,
+            data,
+          });
+        }
+      } else if (detailClass) {
+        const validator = await ctx.bean.detail.validator({ detailClass });
         if (validator) {
           // if error throw 422
           await this.validate({

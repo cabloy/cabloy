@@ -12,6 +12,7 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
+            atomStage int(11) DEFAULT '0',
             detailItemId int(11) DEFAULT '0',
             detailClassId int(11) DEFAULT '0',
             detailCodeId int(11) DEFAULT '0',

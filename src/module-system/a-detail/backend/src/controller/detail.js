@@ -12,6 +12,17 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async write() {
+      const options = { ignoreValidate: false };
+      await this.ctx.service.detail.write({
+        key: this.ctx.request.body.key,
+        item: this.ctx.request.body.item,
+        user: this.ctx.state.user.op,
+        options,
+      });
+      this.ctx.success();
+    }
+
   }
   return DetailController;
 };

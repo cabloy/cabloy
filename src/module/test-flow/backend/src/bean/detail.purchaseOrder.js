@@ -5,13 +5,22 @@ module.exports = app => {
     async create({ atomKey, detailClass, item, user }) {
       // super
       const key = await super.create({ atomKey, detailClass, item, user });
-      // add detail
+      // add purchaseOrder detail
       const res = await this.ctx.model.purchaseOrderDetail.insert({
         atomId: atomKey.atomId,
         detailId: key.detailId,
       });
       // return key
       return { detailId: key.detailId, detailItemId: res.insertId };
+    }
+
+    async write({ detailClass, target, key, item, options, user }) {
+      // super
+      await super.write({ detailClass, target, key, item, options, user });
+      // update purchaseOrder detail
+      const data = await this.ctx.model.purchaseOrderDetail.prepareData(item);
+      data.id = key.detailItemId;
+      await this.ctx.model.purchaseOrderDetail.update(data);
     }
 
   }

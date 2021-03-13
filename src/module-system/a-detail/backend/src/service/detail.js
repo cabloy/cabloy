@@ -6,6 +6,10 @@ module.exports = app => {
       return await this.ctx.bean.detail.create({ atomKey, detailClass, item, user });
     }
 
+    async write({ key, item, options, user }) {
+      return await this.ctx.bean.detail.write({ key, item, options, user });
+    }
+
   }
 
   return Detail;

@@ -31,7 +31,7 @@ describe.only('atom:purchaseOrder', () => {
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
 
-    // detail
+    // detail: create
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/create')).send({
       atomKey: keyDraft,
       detailClass: {
@@ -41,6 +41,17 @@ describe.only('atom:purchaseOrder', () => {
     });
     assert(result.body.code === 0);
     const detailKey = result.body.data;
+    // detail: update
+    result = await app.httpRequest().post(mockUrl('/a/detail/detail/write')).send({
+      key: detailKey,
+      item: {
+        detailCode: 'test:321',
+        detailName: 'test',
+        productPrice: 321,
+        productQuantity: 2,
+      },
+    });
+    assert(result.body.code === 0);
 
     // submit
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
