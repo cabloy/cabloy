@@ -18,6 +18,7 @@ module.exports = app => {
               bean: 'purchaseOrder',
               title: 'Purchase Order',
               tableName: 'testFlowPurchaseOrder',
+              details: [ 'default' ],
             },
             actions: {
             },

@@ -14,6 +14,19 @@ module.exports = app => {
       return { detailId: key.detailId, detailItemId: res.insertId };
     }
 
+    async read({ detailClass, options, key, user }) {
+      // super
+      const item = await super.read({ detailClass, options, key, user });
+      if (!item) return null;
+      // ok
+      return item;
+    }
+
+    async select({ atomKey, detailClass, options, items, user }) {
+      // super
+      await super.select({ atomKey, detailClass, options, items, user });
+    }
+
     async write({ detailClass, target, key, item, options, user }) {
       // super
       await super.write({ detailClass, target, key, item, options, user });

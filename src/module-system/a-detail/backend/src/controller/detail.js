@@ -28,6 +28,7 @@ module.exports = app => {
       options.page = this.ctx.bean.util.page(options.page, false); // false
       const items = await this.ctx.service.detail.select({
         atomKey: this.ctx.request.body.atomKey,
+        detailClass: this.ctx.request.body.detailClass,
         options,
         user: this.ctx.state.user.op,
       });

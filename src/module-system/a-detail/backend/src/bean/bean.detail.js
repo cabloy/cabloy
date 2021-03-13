@@ -74,7 +74,47 @@ module.exports = ctx => {
       return item;
     }
 
-    async select({ atomKey, options, user }) {
+    async select({ atomKey, detailClass, options, user, pageForce = false, count = 0 }) {
+      // detailClass
+      if (!detailClass) {
+        // use default detail
+        detailClass = await this.getDetailClassDefault({ atomId: atomKey.atomId });
+      }
+      detailClass = await ctx.bean.atomClass.get(detailClass);
+      const _detailClass = await ctx.bean.detailClass.detailClass(detailClass);
+      // tableName
+      const tableName = this._getTableName({ detailClass: _detailClass, mode: options.mode });
+      // 'where' should append atomClassId, such as article/post using the same table
+      if (!options.where) options.where = {};
+      options.where['a.atomId'] = atomKey.atomId;
+      options.where['a.detailClassId'] = detailClass.id;
+      // orders
+      if (!options.orders || options.orders.length === 0) {
+        options.orders = [
+          [ 'a.detailLineNo', 'asc' ],
+        ];
+      }
+      // select
+      const items = await this._list({
+        tableName,
+        options,
+        user,
+        pageForce,
+        count,
+      });
+      // select items
+      if (!count) {
+        const _moduleInfo = mparse.parseInfo(detailClass.module);
+        const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomKey, detailClass, options, items, user },
+          fn: 'select',
+        });
+      }
+      // ok
+      return items;
     }
 
     async count({ atomKey, options, user }) {
@@ -133,6 +173,21 @@ module.exports = ctx => {
       return await this.detailClass.validator({ detailClass });
     }
 
+    async getDetailClassDefault({ atomId }) {
+      // use default
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const detailDefault = _atomClass.details && _atomClass.details[0];
+      if (!detailDefault) return null;
+      return (typeof detailDefault === 'string') ? {
+        module: atomClass.module,
+        detailClassName: detailDefault,
+      } : {
+        module: detailDefault.module || atomClass.module,
+        detailClassName: detailDefault.detailClassName,
+      };
+    }
+
     // detail
 
     async _add({
@@ -175,6 +230,23 @@ module.exports = ctx => {
         tableName, detailId: key.detailId,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+      page = ctx.bean.util.page(page, pageForce);
+      stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
+      const sql = this.sqlProcedure.selectAtoms({
+        iid: ctx.instance.id,
+        userIdWho: user ? user.id : 0,
+        tableName, where, orders, page,
+        star, label, comment, file, count,
+        stage,
+        language, category, tag,
+        mine,
+        resource, resourceLocale,
+      });
+      const res = await ctx.model.query(sql);
+      return count ? res[0]._count : res;
     }
 
     _getTableName({ detailClass, mode }) {

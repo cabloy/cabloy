@@ -24,6 +24,10 @@ module.exports = app => {
       return await this.ctx.bean.detail._get({ detailClass, options, key, mode: 'full', user });
     }
 
+    async select(/* {  atomKey, detailClass, options, items, user }*/) {
+      // donothing
+    }
+
     async delete({ /* detailClass,*/ key, user }) {
       // delete
       await this.ctx.bean.detail._delete({
