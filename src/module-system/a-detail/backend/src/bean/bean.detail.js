@@ -18,6 +18,14 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).detail;
     }
 
+    async getDetailClassId({ module, detailClassName }) {
+      const res = await this.detailClass.get({
+        module,
+        detailClassName,
+      });
+      return res.id;
+    }
+
     async create({ atomKey, detailClass, item, user }) {
       // atomClass
       detailClass = await ctx.bean.detailClass.get(detailClass);
@@ -41,6 +49,33 @@ module.exports = ctx => {
       });
       // ok: detailKey
       return { detailId, detailItemId };
+    }
+
+    // detail
+
+    async _add({
+      atomKey,
+      detailClass: { id, detailClassName },
+      detail: {
+        detailItemId, detailName,
+      },
+      user,
+    }) {
+      let detailClassId = id;
+      if (!detailClassId) detailClassId = await this.getDetailClassId({ detailClassName });
+      const res = await this.modelDetail.insert({
+        detailItemId,
+        atomId: atomKey.atomId,
+        detailClassId,
+        detailName,
+        userIdCreated: user.id,
+        userIdUpdated: user.id,
+      });
+      return res.insertId;
+    }
+
+    async _update({ detail/* , user,*/ }) {
+      await this.modelDetail.update(detail);
     }
 
 

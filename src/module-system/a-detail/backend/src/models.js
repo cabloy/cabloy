@@ -3,6 +3,7 @@ const detailClass = require('./model/detailClass.js');
 
 module.exports = app => {
   const models = {
+    detail,
     detailClass,
   };
   return models;

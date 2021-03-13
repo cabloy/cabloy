@@ -7,12 +7,22 @@ module.exports = app => {
       functions: {
       },
     },
+    sequence: {
+      providers: {
+        detail: {
+          bean: {
+            module: 'a-sequence',
+            name: 'simple',
+          },
+          start: 0,
+        },
+      },
+    },
     validation: {
       validators: {
       },
       keywords: {},
-      schemas: {
-      },
+      schemas,
     },
   };
   return meta;

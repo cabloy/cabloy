@@ -2,7 +2,7 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class DetailBase extends app.meta.BeanBase {
 
-    async create({ atomKey, atomClass, item, user }) {
+    async create({ atomKey, detailClass, item, user }) {
       // detailName
       if (!item.detailName) {
         // draftId
