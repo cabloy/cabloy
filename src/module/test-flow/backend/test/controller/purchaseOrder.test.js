@@ -63,9 +63,12 @@ describe.only('atom:purchaseOrder', () => {
     // select
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/select')).send({
       atomKey: keyDraft,
+      detailClass: {
+        module: detailClassModule,
+        detailClassName,
+      },
     });
     assert(result.body.code === 0);
-    console.log(result.body.data.list);
 
     // detail: delete
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/delete')).send({

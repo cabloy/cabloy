@@ -80,14 +80,17 @@ module.exports = ctx => {
         // use default detail
         detailClass = await this.getDetailClassDefault({ atomId: atomKey.atomId });
       }
-      detailClass = await ctx.bean.atomClass.get(detailClass);
+      detailClass = await ctx.bean.detailClass.get(detailClass);
       const _detailClass = await ctx.bean.detailClass.detailClass(detailClass);
+      // atom
+      const atom = await ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
       // tableName
       const tableName = this._getTableName({ detailClass: _detailClass, mode: options.mode });
-      // 'where' should append atomClassId, such as article/post using the same table
+      // 'where' should append atomClassId for safe
       if (!options.where) options.where = {};
       options.where['a.atomId'] = atomKey.atomId;
       options.where['a.detailClassId'] = detailClass.id;
+      options.stage = atom.atomStage;
       // orders
       if (!options.orders || options.orders.length === 0) {
         options.orders = [
@@ -232,18 +235,14 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+    async _list({ tableName, options: { where, orders, page, stage }, /* user,*/ pageForce = false, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
-      const sql = this.sqlProcedure.selectAtoms({
+      const sql = this.sqlProcedure.selectDetails({
         iid: ctx.instance.id,
-        userIdWho: user ? user.id : 0,
         tableName, where, orders, page,
-        star, label, comment, file, count,
+        count,
         stage,
-        language, category, tag,
-        mine,
-        resource, resourceLocale,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;

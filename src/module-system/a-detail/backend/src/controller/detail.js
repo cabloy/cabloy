@@ -24,7 +24,7 @@ module.exports = app => {
     // options
     //   where, orders, page, star, label
     async select() {
-      const options = this.ctx.request.body.options;
+      const options = this.ctx.request.body.options || {};
       options.page = this.ctx.bean.util.page(options.page, false); // false
       const items = await this.ctx.service.detail.select({
         atomKey: this.ctx.request.body.atomKey,
