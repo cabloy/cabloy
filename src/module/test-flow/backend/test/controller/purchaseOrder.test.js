@@ -33,16 +33,14 @@ describe.only('atom:purchaseOrder', () => {
 
     // detail
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/create')).send({
-      key: {
-        atomId: keyDraft.atomId,
-      },
+      atomKey: keyDraft,
       detailClass: {
         module: detailClassModule,
         detailClassName,
       },
     });
     assert(result.body.code === 0);
-    const keyDetail = result.body.data;
+    const detailKey = result.body.data;
 
     // submit
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
