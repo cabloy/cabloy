@@ -12,7 +12,7 @@ WORKDIR /opt/node/app
 COPY ./build /opt/node/app/build
 COPY ./scripts /opt/node/app/scripts
 COPY ./src /opt/node/app/src
-COPY ./.babelrc /opt/node/app
+COPY ./babel.config.js /opt/node/app
 COPY ./package.json /opt/node/app
 COPY ./README.md /opt/node/app
 
