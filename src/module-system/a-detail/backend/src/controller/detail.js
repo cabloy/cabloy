@@ -36,9 +36,10 @@ module.exports = app => {
     }
 
     async count() {
-      const options = this.ctx.request.body.options;
+      const options = this.ctx.request.body.options || {};
       const count = await this.ctx.service.detail.count({
         atomKey: this.ctx.request.body.atomKey,
+        detailClass: this.ctx.request.body.detailClass,
         options,
         user: this.ctx.state.user.op,
       });

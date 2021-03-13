@@ -120,7 +120,8 @@ module.exports = ctx => {
       return items;
     }
 
-    async count({ atomKey, options, user }) {
+    async count({ atomKey, detailClass, options, user }) {
+      return await this.select({ atomKey, detailClass, options, user, count: 1 });
     }
 
     // write

@@ -54,19 +54,29 @@ describe.only('atom:purchaseOrder', () => {
     });
     assert(result.body.code === 0);
 
-    // read
+    // detail: read
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/read')).send({
       key: detailKey,
     });
     assert(result.body.code === 0);
 
-    // select
+    // detail: select
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/select')).send({
       atomKey: keyDraft,
       detailClass: {
         module: detailClassModule,
         detailClassName,
       },
+    });
+    assert(result.body.code === 0);
+
+    // detail: count
+    result = await app.httpRequest().post(mockUrl('/a/detail/detail/count')).send({
+      atomKey: keyDraft,
+      // detailClass: {
+      //   module: detailClassModule,
+      //   detailClassName,
+      // },
     });
     assert(result.body.code === 0);
 

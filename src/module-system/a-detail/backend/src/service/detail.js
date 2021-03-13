@@ -14,8 +14,8 @@ module.exports = app => {
       return await this.ctx.bean.detail.select({ atomKey, detailClass, options, user });
     }
 
-    async count({ atomKey, options, user }) {
-      return await this.ctx.bean.detail.count({ atomKey, options, user });
+    async count({ atomKey, detailClass, options, user }) {
+      return await this.ctx.bean.detail.count({ atomKey, detailClass, options, user });
     }
 
     async write({ key, item, options, user }) {
