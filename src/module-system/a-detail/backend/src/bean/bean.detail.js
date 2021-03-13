@@ -64,8 +64,8 @@ module.exports = ctx => {
       let detailClassId = id;
       if (!detailClassId) detailClassId = await this.getDetailClassId({ detailClassName });
       const res = await this.modelDetail.insert({
-        detailItemId,
         atomId: atomKey.atomId,
+        detailItemId,
         detailClassId,
         detailName,
         userIdCreated: user.id,
