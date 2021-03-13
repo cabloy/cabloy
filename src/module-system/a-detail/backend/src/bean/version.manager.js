@@ -4,13 +4,14 @@ module.exports = app => {
     async update(options) {
       if (options.version === 1) {
         // create table: aDetail
-        const sql = `
+        let sql = `
           CREATE TABLE aDetail (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            detailItemId int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             detailClassId int(11) DEFAULT '0',
             detailCodeId int(11) DEFAULT '0',
@@ -19,6 +20,21 @@ module.exports = app => {
             detailLineNo int(11) DEFAULT '0',
             userIdCreated int(11) DEFAULT '0',
             userIdUpdated int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aDetailClass
+        sql = `
+          CREATE TABLE aDetailClass (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            module varchar(255) DEFAULT NULL,
+            detailClassName varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
