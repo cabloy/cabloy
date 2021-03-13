@@ -31,7 +31,7 @@ module.exports = ctx => {
       detailClass = await ctx.bean.detailClass.get(detailClass);
       // item
       item = item || { };
-      // atom bean
+      // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
@@ -57,7 +57,7 @@ module.exports = ctx => {
       const detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
       if (!detailClass) ctx.throw.module('a-base', 1002);
       if (!key.detailItemId) key.detailItemId = detailClass.detailItemId;
-      // atom bean
+      // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
@@ -72,6 +72,24 @@ module.exports = ctx => {
         beanFullName,
         context: { detailClass, target, key, item: itemDraft, options, user },
         fn: 'write',
+      });
+    }
+
+    // delete
+    async delete({ key, user }) {
+      const detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
+      if (!detailClass) ctx.throw.module('a-base', 1002);
+      if (!key.detailItemId) key.detailItemId = detailClass.detailItemId;
+      // detail bean
+      const _moduleInfo = mparse.parseInfo(detailClass.module);
+      const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
+      const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
+      // delete
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { detailClass, key, user },
+        fn: 'delete',
       });
     }
 
@@ -111,6 +129,11 @@ module.exports = ctx => {
 
     async _update({ detail/* , user,*/ }) {
       await this.modelDetail.update(detail);
+    }
+
+    async _delete({ detail /* user,*/ }) {
+      // aDetail
+      await this.modelDetail.delete(detail);
     }
 
 

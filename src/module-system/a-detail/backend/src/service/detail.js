@@ -10,6 +10,10 @@ module.exports = app => {
       return await this.ctx.bean.detail.write({ key, item, options, user });
     }
 
+    async delete({ key, user }) {
+      return await this.ctx.bean.detail.delete({ key, user });
+    }
+
   }
 
   return Detail;

@@ -19,6 +19,14 @@ module.exports = app => {
       return { detailId };
     }
 
+    async delete({ /* detailClass,*/ key, user }) {
+      // delete
+      await this.ctx.bean.detail._delete({
+        detail: { id: key.detailId },
+        user,
+      });
+    }
+
     async write({ detailClass, target, key, item, options, user }) {
       if (!item) return;
       // stage

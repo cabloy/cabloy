@@ -7,7 +7,7 @@ module.exports = app => {
       detailCodeId: {
         type: 'number',
       },
-      productCode: {
+      detailCode: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Product Code',

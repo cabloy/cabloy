@@ -23,6 +23,14 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async delete() {
+      await this.ctx.service.detail.delete({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success();
+    }
+
   }
   return DetailController;
 };

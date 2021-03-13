@@ -20,7 +20,19 @@ module.exports = app => {
       // update purchaseOrder detail
       const data = await this.ctx.model.purchaseOrderDetail.prepareData(item);
       data.id = key.detailItemId;
+      // productAmount
+      data.productAmount = data.productPrice * data.productQuantity;
+      // update
       await this.ctx.model.purchaseOrderDetail.update(data);
+    }
+
+    async delete({ detailClass, key, user }) {
+      // delete purchaseOrder detail
+      await this.ctx.model.purchaseOrderDetail.delete({
+        id: key.detailItemId,
+      });
+      // super
+      await super.delete({ detailClass, key, user });
     }
 
   }
