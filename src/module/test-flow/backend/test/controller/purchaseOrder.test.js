@@ -1,12 +1,16 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('atom:purchaseOrder', () => {
+describe.only('atom:purchaseOrder', () => {
   it('atom', async () => {
     app.mockSession({});
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
     const atomClassName = 'purchaseOrder';
+
+    // detailClass info
+    const detailClassModule = mockInfo().relativeName;
+    const detailClassName = 'default';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
@@ -18,10 +22,27 @@ describe('atom:purchaseOrder', () => {
 
     // create
     let result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+      atomClass: {
+        module: atomClassModule,
+        atomClassName,
+        atomClassIdParent: 0,
+      },
     });
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
+
+    // detail
+    result = await app.httpRequest().post(mockUrl('/a/detail/detail/create')).send({
+      key: {
+        atomId: keyDraft.atomId,
+      },
+      detailClass: {
+        module: detailClassModule,
+        detailClassName,
+      },
+    });
+    assert(result.body.code === 0);
+    const keyDetail = result.body.data;
 
     // submit
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
