@@ -12,6 +12,38 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async read() {
+      const res = await this.ctx.service.detail.read({
+        key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    // options
+    //   where, orders, page, star, label
+    async select() {
+      const options = this.ctx.request.body.options;
+      options.page = this.ctx.bean.util.page(options.page, false); // false
+      const items = await this.ctx.service.detail.select({
+        atomKey: this.ctx.request.body.atomKey,
+        options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, options.page.index, options.page.size);
+    }
+
+    async count() {
+      const options = this.ctx.request.body.options;
+      const count = await this.ctx.service.detail.count({
+        atomKey: this.ctx.request.body.atomKey,
+        options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(count);
+    }
+
     async write() {
       const options = { ignoreValidate: false };
       await this.ctx.service.detail.write({

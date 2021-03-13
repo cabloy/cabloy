@@ -18,6 +18,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).detail;
     }
 
+    get sqlProcedure() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
+    }
+
     async getDetailClassId({ module, detailClassName }) {
       const res = await this.detailClass.get({
         module,
@@ -49,6 +53,31 @@ module.exports = ctx => {
       });
       // ok: detailKey
       return { detailId, detailItemId };
+    }
+
+    // read
+    async read({ key, options, user }) {
+      // detailClass
+      const detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
+      if (!detailClass) ctx.throw.module('a-base', 1002);
+      // detail bean
+      const _moduleInfo = mparse.parseInfo(detailClass.module);
+      const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
+      const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
+      const item = await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { detailClass, options, key, user },
+        fn: 'read',
+      });
+      // ok
+      return item;
+    }
+
+    async select({ atomKey, options, user }) {
+    }
+
+    async count({ atomKey, options, user }) {
     }
 
     // write
@@ -134,6 +163,27 @@ module.exports = ctx => {
     async _delete({ detail /* user,*/ }) {
       // aDetail
       await this.modelDetail.delete(detail);
+    }
+
+    async _get({ detailClass, options, key, mode/* , user*/ }) {
+      if (!options) options = {};
+      //
+      const _detailClass = await ctx.bean.detailClass.detailClass(detailClass);
+      const tableName = this._getTableName({ detailClass: _detailClass, mode });
+      const sql = this.sqlProcedure.getDetail({
+        iid: ctx.instance.id,
+        tableName, detailId: key.detailId,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    _getTableName({ detailClass, mode }) {
+      const tableNameModes = detailClass.tableNameModes || {};
+      // not support search
+      // if (mode === 'search') {
+      //   return tableNameModes.search || tableNameModes.full || tableNameModes.default || detailClass.tableName;
+      // }
+      return tableNameModes[mode] || tableNameModes.default || detailClass.tableName;
     }
 
 

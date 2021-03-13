@@ -54,6 +54,12 @@ describe.only('atom:purchaseOrder', () => {
     });
     assert(result.body.code === 0);
 
+    // read
+    result = await app.httpRequest().post(mockUrl('/a/detail/detail/read')).send({
+      key: detailKey,
+    });
+    assert(result.body.code === 0);
+    console.log(result.body.data);
     // detail: delete
     result = await app.httpRequest().post(mockUrl('/a/detail/detail/delete')).send({
       key: detailKey,

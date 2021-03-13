@@ -1,4 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
+const localProcedure = require('./bean/local.procedure.js');
 const beanDetail = require('./bean/bean.detail.js');
 const beanDetailClass = require('./bean/bean.detailClass.js');
 
@@ -8,6 +9,11 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
+    },
+    // local
+    'local.procedure': {
+      mode: 'ctx',
+      bean: localProcedure,
     },
     // global
     detail: {
