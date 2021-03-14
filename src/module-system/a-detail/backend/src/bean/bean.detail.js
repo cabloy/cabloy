@@ -239,18 +239,14 @@ module.exports = ctx => {
     }
 
     async _copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
-      // delete old details of dest
+      // details dest
       const detailsDest = await this.modelDetail.select({
         where: {
           atomId: destKeyAtom.atomId,
           detailClassId: detailClass.id,
         },
       });
-      for (const detailDest of detailsDest) {
-        const key = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
-        await this._delete2({ detailClass, key, target, user });
-      }
-      // add new details to dest
+      // details src
       const detailsSrc = await this.select({
         atomKey: { atomId: srcKeyAtom.atomId },
         detailClass,
@@ -259,6 +255,24 @@ module.exports = ctx => {
         },
         user,
       });
+      // loop
+      for (const detailDest of detailsDest) {
+        const indexSrc = detailsSrc.findIndex(item => item.detailStaticKey === detailDest.detailStaticKey);
+        if (indexSrc === -1) {
+          // delete
+          const key = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
+          await this._delete2({ detailClass, key, target, user });
+        } else {
+          // write
+          const srcItem = detailsSrc[indexSrc];
+          const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
+          const destKey = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
+          await this._copyDetail({ srcKey, srcItem, destKey, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+          // delete src
+          detailsSrc.splice(indexSrc, 1);
+        }
+      }
+      // append the remains
       for (const srcItem of detailsSrc) {
         const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
         await this._copyDetail({ srcKey, srcItem, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
@@ -266,13 +280,15 @@ module.exports = ctx => {
     }
 
     // target: draft/formal/history/clone
-    async _copyDetail({ srcKey, srcItem, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+    async _copyDetail({ srcKey, srcItem, destKey, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
       // destKey
-      const destKey = await this.create({ atomKey: destKeyAtom, detailClass, item: null, user });
+      if (!destKey) {
+        destKey = await this.create({ atomKey: destKeyAtom, detailClass, item: null, user });
+      }
       // atomStage
       const atomStage = ctx.constant.module('a-base').atom.stage[target] || 0;
       // detail
