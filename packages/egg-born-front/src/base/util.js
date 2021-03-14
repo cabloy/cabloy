@@ -245,13 +245,25 @@ export default function(Vue) {
       }
     },
     getProperty(obj, name) {
+      return this._getProperty(obj, name, false);
+    },
+    getPropertyObject(obj, name) {
+      return this._getProperty(obj, name, true);
+    },
+    _getProperty(obj, name, forceObject) {
       if (!obj) return undefined;
       const names = name.split('.');
-      if (names.length === 1) return obj[name];
       // loop
       for (const name of names) {
+        if (obj[name] === undefined || obj[name] === null) {
+          if (forceObject) {
+            obj[name] = {};
+          } else {
+            obj = obj[name];
+            break;
+          }
+        }
         obj = obj[name];
-        if (!obj) break;
       }
       return obj;
     },
