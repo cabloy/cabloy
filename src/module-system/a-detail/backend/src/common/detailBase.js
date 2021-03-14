@@ -1,6 +1,10 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 // detailLineNo will be changed by other way
 const __detailBasicFields = [
   'detailCodeId', 'detailCode', 'detailName',
+  'detailStatic', 'detailStaticKey', 'detailRevision',
 ];
 
 module.exports = app => {
@@ -14,6 +18,10 @@ module.exports = app => {
         const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
         const uniqueId = await sequence.next('detail');
         item.detailName = `${this.ctx.text('Detail')}-${uniqueId}`;
+      }
+      // detailStaticKey
+      if (!item.detailStaticKey) {
+        item.detailStaticKey = uuid.v4().replace(/-/g, '');
       }
       // add
       const detailId = await this.ctx.bean.detail._add({ atomKey, detailClass, detail: item, user });

@@ -19,6 +19,9 @@ module.exports = app => {
             detailCode varchar(255) DEFAULT NULL,
             detailName varchar(255) DEFAULT NULL,
             detailLineNo int(11) DEFAULT '0',
+            detailStatic int(11) DEFAULT '0',
+            detailStaticKey varchar(255) DEFAULT NULL,
+            detailRevision int(11) DEFAULT '0'
             userIdCreated int(11) DEFAULT '0',
             userIdUpdated int(11) DEFAULT '0',
             PRIMARY KEY (id)

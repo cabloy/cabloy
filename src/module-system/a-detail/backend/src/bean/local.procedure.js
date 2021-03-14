@@ -44,6 +44,7 @@ module.exports = ctx => {
         _selectFields = `${_itemField}
                 a.id as detailId,a.atomId,a.atomStage,a.detailItemId,a.detailClassId,
                 a.detailCodeId,a.detailCode,a.detailName,a.detailLineNo,
+                a.detailStatic,a.detailStaticKey,a.detailRevision,
                 a.userIdCreated,a.userIdUpdated,a.createdAt as detailCreatedAt,a.updatedAt as detailUpdatedAt,
                 b.module,b.detailClassName,
                 g.userName,g.avatar,
@@ -104,6 +105,7 @@ module.exports = ctx => {
         `select ${_itemField}
                 a.id as detailId,a.atomId,a.atomStage,a.detailItemId,a.detailClassId,
                 a.detailCodeId,a.detailCode,a.detailName,a.detailLineNo,
+                a.detailStatic,a.detailStaticKey,a.detailRevision,
                 a.userIdCreated,a.userIdUpdated,a.createdAt as detailCreatedAt,a.updatedAt as detailUpdatedAt,
                 b.module,b.detailClassName,
                 g.userName,g.avatar,

@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -74,6 +75,23 @@ module.exports = ctx => {
       return item;
     }
 
+    // readByStaticKey
+    //   atomKey or atomStage must be set
+    async readByStaticKey({ atomKey, detailClass, detailStaticKey, detailRevision, atomStage }) {
+      const options = {
+        mode: 'full',
+        stage: atomStage,
+        where: {
+          'a.detailStaticKey': detailStaticKey,
+        },
+      };
+      if (detailRevision !== undefined) {
+        options.where['a.detailRevision'] = detailRevision;
+      }
+      const list = await this.select({ atomKey, detailClass, options });
+      return list[0];
+    }
+
     async select({ atomKey, detailClass, options, user, pageForce = false, count = 0 }) {
       // detailClass
       if (!detailClass) {
@@ -82,15 +100,22 @@ module.exports = ctx => {
       }
       detailClass = await ctx.bean.detailClass.get(detailClass);
       const _detailClass = await ctx.bean.detailClass.detailClass(detailClass);
-      // atom
-      const atom = await ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
+
       // tableName
       const tableName = this._getTableName({ detailClass: _detailClass, mode: options.mode });
       // 'where' should append atomClassId for safe
       if (!options.where) options.where = {};
-      options.where['a.atomId'] = atomKey.atomId;
+      // atomKey maybe nulll
+      if (atomKey) {
+        options.where['a.atomId'] = atomKey.atomId;
+      }
       options.where['a.detailClassId'] = detailClass.id;
-      options.stage = atom.atomStage;
+      // atomStage
+      if (options.stage === undefined) {
+        // atom
+        const atom = await ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
+        options.stage = atom.atomStage;
+      }
       // orders
       if (!options.orders || options.orders.length === 0) {
         options.orders = [
@@ -260,8 +285,12 @@ module.exports = ctx => {
       const detailCode = srcItem.detailCode;
       let detailName = srcItem.detailName;
       const detailLineNo = srcItem.detailLineNo;
+      let detailStatic = srcItem.detailStatic;
+      let detailStaticKey = srcItem.detailStaticKey;
+      let detailRevision = srcItem.detailRevision;
       if (target === 'draft') {
         userIdUpdated = user.id;
+        detailRevision = undefined;
       } else if (target === 'formal') {
         // do nothing
       } else if (target === 'history') {
@@ -270,6 +299,11 @@ module.exports = ctx => {
         userIdUpdated = user.id;
         userIdCreated = user.id;
         detailName = `${srcItem.detailName}-${ctx.text('CloneCopyText')}`;
+        detailStatic = 0;
+        if (detailStaticKey) {
+          detailStaticKey = uuid.v4().replace(/-/g, '');
+        }
+        detailRevision = 0;
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
@@ -283,6 +317,9 @@ module.exports = ctx => {
         detailCode,
         detailName,
         detailLineNo,
+        detailStatic,
+        detailStaticKey,
+        detailRevision,
         createdAt: srcItem.atomCreatedAt,
         updatedAt: srcItem.atomUpdatedAt,
       });
@@ -295,6 +332,9 @@ module.exports = ctx => {
         // detailCodeId: destItem.detailCodeId,
         // detailCode: destItem.detailCode,
         // detailName: destItem.detailName,
+        // detailStatic: destItem.detailStatic,
+        // detailStaticKey: destItem.detailStaticKey,
+        // detailRevision: destItem.detailRevision,
         atomStage: destItem.atomStage,
         detailLineNo: destItem.detailLineNo,
         createdAt: destItem.detailCreatedAt,
@@ -328,6 +368,7 @@ module.exports = ctx => {
       detailClass: { id, detailClassName },
       detail: {
         detailItemId, detailName,
+        detailStatic = 0, detailStaticKey = null, detailRevision = 0,
       },
       user,
     }) {
@@ -338,6 +379,9 @@ module.exports = ctx => {
         detailItemId,
         detailClassId,
         detailName,
+        detailStatic,
+        detailStaticKey,
+        detailRevision,
         userIdCreated: user.id,
         userIdUpdated: user.id,
       });
