@@ -19,17 +19,17 @@ module.exports = app => {
         ebTitle: 'Product Name',
         notEmpty: true,
       },
-      productPrice: {
+      price: {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Price',
       },
-      productQuantity: {
+      quantity: {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Quantity',
       },
-      productAmount: {
+      amount: {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Amount',

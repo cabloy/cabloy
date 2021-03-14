@@ -47,9 +47,9 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             detailId int(11) DEFAULT '0',
-            productPrice int(11) DEFAULT '0',
-            productQuantity int(11) DEFAULT '0',
-            productAmount int(11) DEFAULT '0',
+            price int(11) DEFAULT '0',
+            quantity int(11) DEFAULT '0',
+            amount int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

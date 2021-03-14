@@ -33,8 +33,8 @@ module.exports = app => {
       // update purchaseOrder detail
       const data = await this.ctx.model.purchaseOrderDetail.prepareData(item);
       data.id = key.detailItemId;
-      // productAmount
-      data.productAmount = data.productPrice * data.productQuantity;
+      // amount
+      data.amount = data.price * data.quantity;
       // update
       await this.ctx.model.purchaseOrderDetail.update(data);
     }

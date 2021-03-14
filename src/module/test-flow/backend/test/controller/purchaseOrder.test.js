@@ -48,8 +48,8 @@ describe.only('atom:purchaseOrder', () => {
       item: {
         detailCode: 'test:321',
         detailName: 'test',
-        productPrice: 321,
-        productQuantity: 2,
+        price: 321,
+        quantity: 2,
       },
     });
     assert(result.body.code === 0);
