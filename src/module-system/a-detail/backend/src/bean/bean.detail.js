@@ -154,10 +154,10 @@ module.exports = ctx => {
       if (!detailClass) ctx.throw.module('a-base', 1002);
       if (!key.detailItemId) key.detailItemId = detailClass.detailItemId;
       // delete
-      await this._delete({ detailClass, key, target, user });
+      await this._delete2({ detailClass, key, target, user });
     }
 
-    async _delete({ detailClass, key, target, user }) {
+    async _delete2({ detailClass, key, target, user }) {
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
@@ -226,7 +226,7 @@ module.exports = ctx => {
       });
       for (const detailDest of detailsDest) {
         const key = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
-        await this._delete({ detailClass, key, target, user });
+        await this._delete2({ detailClass, key, target, user });
       }
       // add new details to dest
       const detailsSrc = await this.select({
@@ -297,8 +297,8 @@ module.exports = ctx => {
         // detailName: destItem.detailName,
         atomStage: destItem.atomStage,
         detailLineNo: destItem.detailLineNo,
-        createdAt: destItem.createdAt,
-        updatedAt: destItem.updatedAt,
+        createdAt: destItem.detailCreatedAt,
+        updatedAt: destItem.detailUpdatedAt,
       });
       // detail write
       await ctx.executeBean({

@@ -80,11 +80,11 @@ describe.only('atom:purchaseOrder', () => {
     });
     assert(result.body.code === 0);
 
-    // detail: delete
-    result = await app.httpRequest().post(mockUrl('/a/detail/detail/delete')).send({
-      key: detailKey,
-    });
-    assert(result.body.code === 0);
+    // // detail: delete
+    // result = await app.httpRequest().post(mockUrl('/a/detail/detail/delete')).send({
+    //   key: detailKey,
+    // });
+    // assert(result.body.code === 0);
 
     // submit
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
