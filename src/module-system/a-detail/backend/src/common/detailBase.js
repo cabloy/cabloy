@@ -4,7 +4,7 @@ const uuid = require3('uuid');
 // detailLineNo will be changed by other way
 const __detailBasicFields = [
   'detailCodeId', 'detailCode', 'detailName',
-  'detailStatic', 'detailStaticKey', 'detailRevision',
+  'detailStatic', 'detailStaticKey',
 ];
 
 module.exports = app => {

@@ -77,7 +77,7 @@ module.exports = ctx => {
 
     // readByStaticKey
     //   atomKey or atomStage must be set
-    async readByStaticKey({ atomKey, detailClass, detailStaticKey, detailRevision, atomStage }) {
+    async readByStaticKey({ atomKey, detailClass, detailStaticKey, atomStage }) {
       const options = {
         mode: 'full',
         stage: atomStage,
@@ -85,9 +85,6 @@ module.exports = ctx => {
           'a.detailStaticKey': detailStaticKey,
         },
       };
-      if (detailRevision !== undefined) {
-        options.where['a.detailRevision'] = detailRevision;
-      }
       const list = await this.select({ atomKey, detailClass, options });
       return list[0];
     }
@@ -287,10 +284,8 @@ module.exports = ctx => {
       const detailLineNo = srcItem.detailLineNo;
       let detailStatic = srcItem.detailStatic;
       let detailStaticKey = srcItem.detailStaticKey;
-      let detailRevision = srcItem.detailRevision;
       if (target === 'draft') {
         userIdUpdated = user.id;
-        detailRevision = undefined;
       } else if (target === 'formal') {
         // do nothing
       } else if (target === 'history') {
@@ -303,7 +298,6 @@ module.exports = ctx => {
         if (detailStaticKey) {
           detailStaticKey = uuid.v4().replace(/-/g, '');
         }
-        detailRevision = 0;
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
@@ -319,7 +313,6 @@ module.exports = ctx => {
         detailLineNo,
         detailStatic,
         detailStaticKey,
-        detailRevision,
         createdAt: srcItem.atomCreatedAt,
         updatedAt: srcItem.atomUpdatedAt,
       });
@@ -334,7 +327,6 @@ module.exports = ctx => {
         // detailName: destItem.detailName,
         // detailStatic: destItem.detailStatic,
         // detailStaticKey: destItem.detailStaticKey,
-        // detailRevision: destItem.detailRevision,
         atomStage: destItem.atomStage,
         detailLineNo: destItem.detailLineNo,
         createdAt: destItem.detailCreatedAt,
@@ -368,7 +360,7 @@ module.exports = ctx => {
       detailClass: { id, detailClassName },
       detail: {
         detailItemId, detailName,
-        detailStatic = 0, detailStaticKey = null, detailRevision = 0,
+        detailStatic = 0, detailStaticKey = null,
       },
       user,
     }) {
@@ -381,7 +373,6 @@ module.exports = ctx => {
         detailName,
         detailStatic,
         detailStaticKey,
-        detailRevision,
         userIdCreated: user.id,
         userIdUpdated: user.id,
       });
