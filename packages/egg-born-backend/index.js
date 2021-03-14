@@ -1,4 +1,3 @@
-require('object-get-o-a');
 require('@zhennann/set');
 require('./lib/base/json.js');
 

@@ -8,7 +8,8 @@ const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
 module.exports = function(loader) {
 
   // meta
-  const meta = loader.app.geto('meta');
+  if (!loader.app.meta) loader.app.meta = {};
+  const meta = loader.app.meta;
 
   // workerId
   meta.workerId = uuid.v4();

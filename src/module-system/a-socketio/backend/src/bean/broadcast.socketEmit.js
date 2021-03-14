@@ -5,8 +5,8 @@ module.exports = app => {
     async execute(context) {
       const data = context.data;
       if (app.meta.workerId === data.workerId) {
-        const socketsOnline = app.geto(SOCKETSONLINE);
-        const socket = socketsOnline[data.socketId];
+        const socketsOnline = app[SOCKETSONLINE];
+        const socket = socketsOnline && socketsOnline[data.socketId];
         if (socket) {
           socket.emit('message', {
             path: data.path,

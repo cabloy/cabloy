@@ -50,7 +50,6 @@
     "koa-jwt2": "^1.0.3",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
-    "object-get-o-a": "^2.0.4",
     "redlock": "^4.1.0",
     "semver": "^7.1.2",
     "supertest": "^4.0.2",
