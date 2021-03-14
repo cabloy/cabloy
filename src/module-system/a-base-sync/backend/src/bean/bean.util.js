@@ -74,17 +74,17 @@ module.exports = app => {
       }
     }
 
-    getProperty(obj, name) {
-      return this._getProperty(obj, name, false);
+    getProperty(obj, name, sep) {
+      return this._getProperty(obj, name, sep, false);
     }
 
-    getPropertyObject(obj, name) {
-      return this._getProperty(obj, name, true);
+    getPropertyObject(obj, name, sep) {
+      return this._getProperty(obj, name, sep, true);
     }
 
-    _getProperty(obj, name, forceObject) {
+    _getProperty(obj, name, sep, forceObject) {
       if (!obj) return undefined;
-      const names = name.split('.');
+      const names = name.split(sep || '.');
       // loop
       for (const name of names) {
         if (obj[name] === undefined || obj[name] === null) {

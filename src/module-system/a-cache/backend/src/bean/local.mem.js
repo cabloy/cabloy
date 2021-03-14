@@ -13,13 +13,7 @@ module.exports = ctx => {
       if (!ctx.app[CACHEMEMORY]) {
         ctx.app[CACHEMEMORY] = {};
       }
-      if (!ctx.app[CACHEMEMORY][ctx.subdomain]) {
-        ctx.app[CACHEMEMORY][ctx.subdomain] = {};
-      }
-      if (!ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]) {
-        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
-      }
-      return ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName];
+      return ctx.bean.util.getPropertyObject(ctx.app[CACHEMEMORY], `${ctx.subdomain}&&${this.moduleName}`, '&&');
     }
 
     get(name) {
