@@ -39,13 +39,13 @@ module.exports = app => {
       await this.ctx.model.purchaseOrderDetail.update(data);
     }
 
-    async delete({ detailClass, key, user }) {
+    async delete({ detailClass, target, key, user }) {
       // delete purchaseOrder detail
       await this.ctx.model.purchaseOrderDetail.delete({
         id: key.detailItemId,
       });
       // super
-      await super.delete({ detailClass, key, user });
+      await super.delete({ detailClass, target, key, user });
     }
 
   }

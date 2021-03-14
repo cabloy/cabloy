@@ -611,6 +611,8 @@ module.exports = ctx => {
       });
       // copy attachments
       await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
+      // copy details
+      await ctx.bean.detail._copyDetails({ atomClass, target, srcKeyAtom: srcKey, destKeyAtom: destKey, destAtom: destItem, options, user });
       // ok
       return destKey;
     }

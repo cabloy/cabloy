@@ -1,3 +1,4 @@
+// detailLineNo will be changed by other way
 const __detailBasicFields = [
   'detailCodeId', 'detailCode', 'detailName',
 ];
@@ -28,7 +29,7 @@ module.exports = app => {
       // donothing
     }
 
-    async delete({ /* detailClass,*/ key, user }) {
+    async delete({ /* detailClass, target, */ key, user }) {
       // delete
       await this.ctx.bean.detail._delete({
         detail: { id: key.detailId },
@@ -61,6 +62,13 @@ module.exports = app => {
       // update
       detail.id = key.detailId;
       await this.ctx.bean.detail._update({ detail, user });
+    }
+
+    async copy(/* {
+      detailClass, target, srcKey, srcItem, destKey, destItem, options, user,
+      atomClass, srcKeyAtom, destKeyAtom, destAtom,
+    }*/) {
+      // do nothing
     }
 
   }

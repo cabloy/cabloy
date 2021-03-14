@@ -132,7 +132,7 @@ module.exports = app => {
     }
 
     async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
-      // donothing
+      // do nothing
     }
 
     async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {

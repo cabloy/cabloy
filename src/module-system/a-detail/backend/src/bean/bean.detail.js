@@ -149,10 +149,15 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, user }) {
+    async delete({ key, target, user }) {
       const detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
       if (!detailClass) ctx.throw.module('a-base', 1002);
       if (!key.detailItemId) key.detailItemId = detailClass.detailItemId;
+      // delete
+      await this._delete({ detailClass, key, target, user });
+    }
+
+    async _delete({ detailClass, key, target, user }) {
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
@@ -161,7 +166,7 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { detailClass, key, user },
+        context: { detailClass, target, key, user },
         fn: 'delete',
       });
     }
@@ -183,13 +188,137 @@ module.exports = ctx => {
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const detailDefault = _atomClass.details && _atomClass.details[0];
       if (!detailDefault) return null;
-      return (typeof detailDefault === 'string') ? {
+      return this._prepareDetailClassFromName({
+        atomClass, detailClassName: detailDefault,
+      });
+    }
+
+    _prepareDetailClassFromName({ atomClass, detailClassName }) {
+      return (typeof detailClassName === 'string') ? {
         module: atomClass.module,
-        detailClassName: detailDefault,
+        detailClassName,
       } : {
-        module: detailDefault.module || atomClass.module,
-        detailClassName: detailDefault.detailClassName,
+        module: detailClassName.module || atomClass.module,
+        detailClassName: detailClassName.detailClassName,
       };
+    }
+
+    async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+      // all details of atom
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const detailClassNames = _atomClass.details;
+      if (!detailClassNames) return; // do nothing
+      // loop
+      for (const detailClassName of detailClassNames) {
+        let detailClass = this._prepareDetailClassFromName({ atomClass, detailClassName });
+        detailClass = await this.detailClass.get(detailClass);
+        await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+      }
+    }
+
+    async _copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+      // delete old details of dest
+      const detailsDest = await this.modelDetail.select({
+        where: {
+          atomId: destKeyAtom.atomId,
+          detailClassId: detailClass.id,
+        },
+      });
+      for (const detailDest of detailsDest) {
+        const key = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
+        await this._delete({ detailClass, key, target, user });
+      }
+      // add new details to dest
+      const detailsSrc = await this.select({
+        atomKey: { atomId: srcKeyAtom.atomId },
+        detailClass,
+        options: {
+          mode: 'full',
+        },
+        user,
+      });
+      for (const srcItem of detailsSrc) {
+        const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
+        await this._copyDetail({ srcKey, srcItem, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+      }
+    }
+
+    // target: draft/formal/history/clone
+    async _copyDetail({ srcKey, srcItem, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+      // detail bean
+      const _moduleInfo = mparse.parseInfo(detailClass.module);
+      const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
+      const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
+      // destKey
+      const destKey = await this.create({ atomKey: destKeyAtom, detailClass, item: null, user });
+      // atomStage
+      const atomStage = ctx.constant.module('a-base').atom.stage[target] || 0;
+      // detail
+      let userIdUpdated = srcItem.userIdUpdated;
+      let userIdCreated = srcItem.userIdCreated || userIdUpdated;
+      const detailCodeId = srcItem.detailCodeId;
+      const detailCode = srcItem.detailCode;
+      let detailName = srcItem.detailName;
+      const detailLineNo = srcItem.detailLineNo;
+      if (target === 'draft') {
+        userIdUpdated = user.id;
+      } else if (target === 'formal') {
+        // do nothing
+      } else if (target === 'history') {
+        // do nothing
+      } else if (target === 'clone') {
+        userIdUpdated = user.id;
+        userIdCreated = user.id;
+        detailName = `${srcItem.detailName}-${ctx.text('CloneCopyText')}`;
+      }
+      // destItem
+      const destItem = Object.assign({}, srcItem, {
+        atomId: destKeyAtom.atomId,
+        atomStage,
+        detailId: destKey.detailId,
+        detailItemId: destKey.detailItemId,
+        userIdCreated,
+        userIdUpdated,
+        detailCodeId,
+        detailCode,
+        detailName,
+        detailLineNo,
+        createdAt: srcItem.atomCreatedAt,
+        updatedAt: srcItem.atomUpdatedAt,
+      });
+      // update fields
+      await this.modelDetail.update({
+        id: destItem.detailId,
+        userIdCreated: destItem.userIdCreated,
+        userIdUpdated: destItem.userIdUpdated,
+        //   see also: detailBase
+        // detailCodeId: destItem.detailCodeId,
+        // detailCode: destItem.detailCode,
+        // detailName: destItem.detailName,
+        atomStage: destItem.atomStage,
+        detailLineNo: destItem.detailLineNo,
+        createdAt: destItem.createdAt,
+        updatedAt: destItem.updatedAt,
+      });
+      // detail write
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { detailClass, target, key: destKey, item: destItem, options, user },
+        fn: 'write',
+      });
+      // detail copy
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: {
+          detailClass, target, srcKey, srcItem, destKey, destItem, options, user,
+          atomClass, srcKeyAtom, destKeyAtom, destAtom,
+        },
+        fn: 'copy',
+      });
+      // ok
+      return destKey;
     }
 
     // detail
@@ -238,7 +367,7 @@ module.exports = ctx => {
 
     async _list({ tableName, options: { where, orders, page, stage }, /* user,*/ pageForce = false, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);
-      stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
+      stage = typeof stage === 'number' ? stage : ctx.constant.module('a-base').atom.stage[stage];
       const sql = this.sqlProcedure.selectDetails({
         iid: ctx.instance.id,
         tableName, where, orders, page,
