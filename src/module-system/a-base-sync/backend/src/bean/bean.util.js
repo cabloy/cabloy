@@ -2,12 +2,12 @@ const require3 = require('require3');
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
 
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Util {
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Util extends app.meta.BeanBase {
 
     page(_page, force = true) {
-      const pageSize = ctx.config.module(moduleInfo.relativeName).pageSize;
+      const pageSize = this.ctx.config.module(moduleInfo.relativeName).pageSize;
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
@@ -16,7 +16,7 @@ module.exports = ctx => {
     }
 
     user(_user) {
-      return _user || ctx.state.user.op;
+      return _user || this.ctx.state.user.op;
     }
 
     now() {
@@ -35,13 +35,13 @@ module.exports = ctx => {
     }
 
     formatDate(date, sep) {
-      if (this.isUndefined(sep)) sep = '-';
+      if (sep === undefined) sep = '-';
       const fmt = `YYYY${sep}MM${sep}DD`;
       return this.formatDateTime(date, fmt);
     }
 
     formatTime(date, sep) {
-      if (this.isUndefined(sep)) sep = ':';
+      if (sep === undefined) sep = ':';
       const fmt = `HH${sep}mm${sep}ss`;
       return this.formatDateTime(date, fmt);
     }

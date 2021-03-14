@@ -158,7 +158,7 @@ module.exports = app => {
       global: true,
     },
     util: {
-      mode: 'ctx',
+      mode: 'app',
       bean: beanUtil,
       global: true,
     },
