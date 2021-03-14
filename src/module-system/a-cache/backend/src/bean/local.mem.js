@@ -10,7 +10,16 @@ module.exports = ctx => {
     }
 
     get memory() {
-      return ctx.app.geto(CACHEMEMORY).geto(ctx.subdomain).geto(this.moduleName);
+      if (!ctx.app[CACHEMEMORY]) {
+        ctx.app[CACHEMEMORY] = {};
+      }
+      if (!ctx.app[CACHEMEMORY][ctx.subdomain]) {
+        ctx.app[CACHEMEMORY][ctx.subdomain] = {};
+      }
+      if (!ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]) {
+        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
+      }
+      return ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName];
     }
 
     get(name) {
@@ -73,7 +82,9 @@ module.exports = ctx => {
 
     // by broadcast
     _clear() {
-      ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
+      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain] && ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]) {
+        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
+      }
     }
 
   }
