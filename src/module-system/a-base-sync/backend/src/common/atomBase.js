@@ -53,6 +53,7 @@ module.exports = app => {
       }
       // delete
       await this.ctx.bean.atom._delete({
+        atomClass,
         atom: { id: key.atomId },
         user,
       });

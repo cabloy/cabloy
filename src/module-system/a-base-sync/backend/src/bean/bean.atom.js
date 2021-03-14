@@ -834,13 +834,19 @@ module.exports = ctx => {
     }
 
     async _delete({
+      atomClass,
       atom,
-      /* user,*/
+      user,
     }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atom.id });
+      }
       // aAtom
       await this.modelAtom.delete(atom);
       // aFile
       await this.modelFile.delete({ atomId: atom.id });
+      // details
+      await ctx.bean.detail._deleteDetails({ atomClass, atomKey: { atomId: atom.id }, user });
     }
 
     async _get({ atomClass, options, key, mode, user }) {

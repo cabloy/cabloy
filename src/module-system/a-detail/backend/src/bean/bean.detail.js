@@ -225,7 +225,7 @@ module.exports = ctx => {
       };
     }
 
-    async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+    async _loopDetailClasses({ atomClass, fn }) {
       // all details of atom
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const detailClassNames = _atomClass.details;
@@ -234,8 +234,36 @@ module.exports = ctx => {
       for (const detailClassName of detailClassNames) {
         let detailClass = this._prepareDetailClassFromName({ atomClass, detailClassName });
         detailClass = await this.detailClass.get(detailClass);
-        await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+        await fn({ detailClass });
       }
+    }
+
+    async _deleteDetails({ atomClass, atomKey, user }) {
+      await this._loopDetailClasses({ atomClass, fn: async ({ detailClass }) => {
+        await this._deleteDetails_Class({ detailClass, atomClass, atomKey, user });
+      } });
+    }
+
+    async _deleteDetails_Class({ detailClass, atomKey, user }) {
+      // details
+      const details = await this.modelDetail.select({
+        where: {
+          atomId: atomKey.atomId,
+          detailClassId: detailClass.id,
+        },
+      });
+      // loop
+      for (const detail of details) {
+        // delete
+        const key = { detailId: detail.id, detailItemId: detail.detailItemId };
+        await this._delete2({ detailClass, key, user });
+      }
+    }
+
+    async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+      await this._loopDetailClasses({ atomClass, fn: async ({ detailClass }) => {
+        await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+      } });
     }
 
     async _copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
