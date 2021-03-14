@@ -47,14 +47,32 @@ module.exports = function(app) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
     }
 
+    _getWatcherKey({ subdomain, atomClass }) {
+      return `${subdomain}&&${atomClass.module}&&${atomClass.atomClassName}`;
+    }
+
+    _getWatcherAtomClass({ subdomain, atomClass }) {
+      const watcherKey = this._getWatcherKey({ subdomain, atomClass });
+      if (!this._watchers[watcherKey]) {
+        this._watchers[watcherKey] = {};
+      }
+      return this._watchers[watcherKey];
+    }
+
+    _getWatcherAtomClassLanguage({ subdomain, atomClass, language }) {
+      const watchers = this._getWatcherAtomClass({ subdomain, atomClass });
+      if (!watchers[language]) {
+        watchers[language] = {};
+      }
+      return watchers[language];
+    }
+
     // invoked in agent
     _registerLanguages({ info, watcherInfos }) {
-      // key
-      const atomClasskey = JSON.stringify(info.atomClass);
       // clear
-      const _arr = this._watchers.geto(info.subdomain).geto(info.atomClass.module).geto(atomClasskey);
-      for (const language in _arr) {
-        const watcherEntry = _arr[language];
+      const watchers = this._getWatcherAtomClass({ subdomain: info.subdomain, atomClass: info.atomClass });
+      for (const language in watchers) {
+        const watcherEntry = watchers[language];
         if (watcherEntry.watcher) {
           watcherEntry.watcher.close();
           watcherEntry.watcher = null;
@@ -68,17 +86,13 @@ module.exports = function(app) {
 
     // invoked in agent
     _register({ subdomain, atomClass, language, watchers }) {
-      // key
-      const atomClasskey = JSON.stringify(atomClass);
       // watcherEntry
-      const watcherEntry = this._watchers
-        .geto(subdomain).geto(atomClass.module).geto(atomClasskey)
-        .geto(language);
+      const watcherEntry = this._getWatcherAtomClassLanguage({ subdomain, atomClass, language });
+      watcherEntry.info = { subdomain, atomClass, language, watchers };
+      // close
       if (watcherEntry.watcher) {
         watcherEntry.watcher.close();
         watcherEntry.watcher = null;
-      } else {
-        watcherEntry.info = { subdomain, atomClass, language, watchers };
       }
       // watcher
       watcherEntry.watcher = chokidar.watch(watchers)
