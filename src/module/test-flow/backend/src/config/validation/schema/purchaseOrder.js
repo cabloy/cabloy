@@ -46,22 +46,26 @@ module.exports = app => {
       details: {
         ebType: 'details',
         ebOptions: {
-        },
-      },
-      __groupDetails2: {
-        ebType: 'group-flatten',
-        ebTitle: 'Details 2',
-        ebGroupWhole: true,
-      },
-      details_2: {
-        ebType: 'details',
-        ebOptions: {
           detailClass: {
             module: moduleInfo.relativeName,
             detailClassName: 'default',
           },
         },
       },
+      // __groupDetails2: {
+      //   ebType: 'group-flatten',
+      //   ebTitle: 'Details 2',
+      //   ebGroupWhole: true,
+      // },
+      // details_2: {
+      //   ebType: 'details',
+      //   ebOptions: {
+      //     detailClass: {
+      //       module: moduleInfo.relativeName,
+      //       detailClassName: 'default',
+      //     },
+      //   },
+      // },
     },
   };
   // purchase order search
