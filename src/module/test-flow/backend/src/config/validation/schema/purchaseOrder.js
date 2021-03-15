@@ -1,9 +1,15 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // purchase order
   schemas.purchaseOrder = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -15,6 +21,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      // Work Flow
+      __groupWorkFlow: {
+        ebType: 'group-flatten',
+        ebTitle: 'WorkFlow',
+      },
       _flowDefKey: {
         type: 'string',
         ebType: 'select',
@@ -25,6 +36,31 @@ module.exports = app => {
           { title: 'Test_Set01_Atom_UserTask', value: 'set01_atomUserTask' },
           { title: 'Test_Set01_Atom_AssigneesConfirmation', value: 'set01_atomAssigneesConfirmation' },
         ],
+      },
+      // Details
+      __groupDetails: {
+        ebType: 'group-flatten',
+        ebTitle: 'Details',
+        ebGroupWhole: true,
+      },
+      details: {
+        ebType: 'details',
+        ebOptions: {
+        },
+      },
+      __groupDetails2: {
+        ebType: 'group-flatten',
+        ebTitle: 'Details 2',
+        ebGroupWhole: true,
+      },
+      details_2: {
+        ebType: 'details',
+        ebOptions: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+        },
       },
     },
   };

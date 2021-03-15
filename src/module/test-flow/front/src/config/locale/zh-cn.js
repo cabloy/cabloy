@@ -5,4 +5,5 @@ export default {
   'Product Code': '产品编码',
   'Product Name': '产品名称',
   'Product Price': '产品价格',
+  'Details 2': '明细2',
 };

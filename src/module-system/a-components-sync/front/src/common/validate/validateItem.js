@@ -14,13 +14,14 @@ import renderTags from './render/renderTags.js';
 import renderResourceType from './render/renderResourceType.js';
 import renderJson from './render/renderJson.js';
 import renderCurrency from './render/renderCurrency.js';
+import renderDetails from './render/renderDetails.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson, renderCurrency,
+    renderJson, renderCurrency, renderDetails,
   ],
   props: {
     data: {
@@ -244,6 +245,9 @@ export default {
       } else if (ebType === 'currency') {
         // currency
         return this.renderCurrency(c, context);
+      } else if (ebType === 'details') {
+        // details
+        return this.renderDetails(c, context);
       }
       // not support
       return c('div', {

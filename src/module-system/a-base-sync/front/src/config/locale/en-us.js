@@ -4,6 +4,8 @@ export default {
   UserLabels: 'User Labels',
   HeartForAtom: 'Heart',
   KeyForAtom: 'Key',
+  WorkFlow: 'Work Flow',
+  WorkFlows: 'Work Flows',
   AtomClassSelectRoleTip: 'Select Role',
   SelectLanguageTip: 'Select Language',
   RevertToThisRevision: 'Revert To This Revision',

@@ -124,6 +124,8 @@ export default {
   Text: '文本',
   Detail: '明细',
   Details: '明细',
+  WorkFlow: '工作流',
+  WorkFlows: '工作流',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

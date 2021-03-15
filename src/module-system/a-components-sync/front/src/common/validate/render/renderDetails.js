@@ -1,12 +1,13 @@
 export default {
   methods: {
-    renderComponent(c, context) {
-      const { property } = context;
-      return this._renderComponent(c, context, property.ebRender);
-    },
-    _renderComponent(c, context, ebRender) {
+    renderDetails(c, context) {
       const { data, pathParent, key, property, dataPath } = context;
-      const renderProps = this.$meta.util.extend({ options: { props: {} } }, ebRender);
+      const renderProps = this.$meta.util.extend(
+        { options: { props: {} } },
+        {
+          module: 'a-detail',
+          name: 'renderDetails',
+        });
       renderProps.options.props.context = {
         validate: this.validate,
         validateItem: this,
