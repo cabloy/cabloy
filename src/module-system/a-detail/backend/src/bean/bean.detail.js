@@ -466,6 +466,15 @@ module.exports = ctx => {
       return tableNameModes[mode] || tableNameModes.default || detailClass.tableName;
     }
 
+    // right
+    async _checkRightForMiddleware({ options }) {
+      // constant
+      const constant = ctx.constant.module(moduleInfo.relativeName);
+      // create
+      if (options.action === constant.detail.action.create) {
+
+      }
+    }
 
   }
 

@@ -45,6 +45,9 @@ async function checkRight(type, moduleInfo, options, ctx) {
 
   // resource
   if (type === 'resource') await checkResource(moduleInfo, options, ctx);
+
+  // detail
+  if (type === 'detail') await checkDetail(moduleInfo, options, ctx);
 }
 
 async function checkAtom(moduleInfo, options, ctx) {
@@ -150,4 +153,8 @@ async function checkResource(moduleInfo, options, ctx) {
   });
   if (!res) ctx.throw(403);
   ctx.meta._resource = res;
+}
+
+async function checkDetail(moduleInfo, options, ctx) {
+  await ctx.bean.detail._checkRightForMiddleware({ options });
 }

@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const localProcedure = require('./bean/local.procedure.js');
 const beanDetail = require('./bean/bean.detail.js');
 const beanDetailClass = require('./bean/bean.detailClass.js');
+const beanDetailAction = require('./bean/bean.detailAction.js');
 
 module.exports = app => {
   const beans = {
@@ -24,6 +25,11 @@ module.exports = app => {
     detailClass: {
       mode: 'ctx',
       bean: beanDetailClass,
+      global: true,
+    },
+    detailAction: {
+      mode: 'ctx',
+      bean: beanDetailAction,
       global: true,
     },
   };

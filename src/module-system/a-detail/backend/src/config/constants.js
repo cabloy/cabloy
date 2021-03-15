@@ -20,30 +20,35 @@ module.exports = app => {
           actionComponent: 'action',
           bulk: true,
           icon: { material: 'add' },
+          inherit: 'write',
         },
         read: {
           title: 'View',
           actionModule: moduleInfo.relativeName,
           actionPath: '/a/detail/detail/item?mode=view&detailId={{detailId}}&detailItemId={{detailItemId}}',
           icon: { material: 'visibility' },
+          inherit: 'read',
         },
         write: {
           title: 'Edit',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           icon: { material: 'edit' },
+          inherit: 'write',
         },
         delete: {
           title: 'Delete',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           icon: { material: 'delete' },
+          inherit: 'write',
         },
         clone: {
           title: 'Clone',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           icon: { material: 'content_copy' },
+          inherit: 'write',
         },
         save: {
           title: 'Save',
@@ -51,6 +56,7 @@ module.exports = app => {
           actionComponent: 'action',
           authorize: false,
           icon: { material: 'save' },
+          inherit: 'write',
         },
         custom: {
           title: 'Custom',
