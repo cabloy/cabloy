@@ -3,9 +3,6 @@ export default {
     context: {
       type: Object,
     },
-    height: {
-      type: String,
-    },
   },
   data() {
     return {};

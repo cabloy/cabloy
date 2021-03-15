@@ -60,8 +60,7 @@ export default {
       return this.$text('Flow');
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     getContainer(mode) {
       const options = { mode };
