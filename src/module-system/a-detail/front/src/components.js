@@ -1,4 +1,4 @@
-import renderDetails from './components/renderDetails.vue';
+import renderDetails from './components/renderDetails.jsx';
 
 export default {
   renderDetails,
