@@ -17,6 +17,7 @@ export default {
       if (!this.base_ready) return null;
       return (
         <eb-validate ref="validate"
+          containerMode={this.container.mode}
           readOnly={this.container.mode !== 'edit'}
           auto data={this.container_data.item}
           meta={

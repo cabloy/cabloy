@@ -3,6 +3,10 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 
 // container: {
+//   mode,
+//   atomId,
+//   atom,
+//   detailClass,
 //   options,
 //   layout,
 // },

@@ -39,6 +39,9 @@ export default {
     return c('div');
   },
   props: {
+    containerMode: {
+      type: String,
+    },
     readOnly: {
       type: Boolean,
       default: false,

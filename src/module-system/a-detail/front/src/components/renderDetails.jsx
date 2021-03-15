@@ -8,14 +8,13 @@ export default {
     },
   },
   data() {
-    const options = {
-      atomId: this.context.data.atomId,
-      atom: this.context.data,
-      detailClass: this.context.property.ebOptions.detailClass,
-    };
     return {
       container: {
-        options,
+        mode: this.context.validate.containerMode,
+        atomId: this.context.data.atomId,
+        atom: this.context.data,
+        detailClass: this.context.property.ebOptions.detailClass,
+        options: {},
         layout: null,
       },
     };
