@@ -40,7 +40,7 @@ export default {
       if (this.bulk.actions) return;
       this.$api.post('/a/detail/detail/actionsBulk', {
         atomKey: { atomId: this.container.atomId },
-        detailClass: this.container.atomClass,
+        detailClass: this.container.detailClass,
         mode: this.container.mode,
       }).then(data => {
         this.bulk.actions = data;

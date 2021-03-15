@@ -468,50 +468,46 @@ module.exports = ctx => {
 
     // right
 
+    async actions({ atomKey, detailClass, mode, user }) {
+      return this._actions({ atomKey, detailClass, mode, user, bulk: false });
+    }
+
     async actionsBulk({ atomKey, detailClass, mode, user }) {
-      if (!mode) return [];
+      return this._actions({ atomKey, detailClass, mode, user, bulk: true });
+    }
+
+    async _actions({ atomKey, detailClass, mode, user, bulk }) {
+      // atom
+      const atomId = atomKey.atomId;
+      const atom = await ctx.bean.atom.modelAtom.get({ id: atomId });
       // actionsAll
-      const actionsAll = ctx.bean.detailAction.actions();
-      // actions
-      const _actions = actionsAll.filter(action => {
-        if (!action.bulk) return false;
-        return (
-          (mode === 'read' && action.inherit === 'read') ||
-         (mode === 'write')
-        );
-      });
-      // inherit: read/write
-      const res = [];
-      let rightRead;
-      let rightWrite;
-      for (const action of _actions) {
-        // read
-        if (action.inherit === 'read') {
-          if (rightRead === undefined) {
-            rightRead = await ctx.bean.atom.checkRightRead({
-              atom: { id: atomKey.atomId },
-              user,
-              checkFlow: true,
-            });
-          }
-          if (rightRead) {
-            res.push(action);
-          }
+      let actionsAll = ctx.bean.detailAction.actions();
+      actionsAll = actionsAll[detailClass.module][detailClass.detailClassName];
+      // actions of mode
+      let _actions = [];
+      for (const name in actionsAll) {
+        const action = actionsAll[name];
+        if ((!!action.bulk) === bulk && (!action.mode || action.mode === mode)) {
+          _actions.push(action);
         }
-        // write
-        if (action.inherit === 'write') {
-          if (rightWrite === undefined) {
-            rightWrite = await ctx.bean.atom.checkRightAction({
-              atom: { id: atomKey.atomId },
-              action: 3,
-              stage: 'draft',
-              user,
-              checkFlow: true,
-            });
+      }
+      // sort
+      _actions = _actions.sort((a, b) => a.code - b.code);
+      // inherit: read/others
+      const res = [];
+      const rights = [];
+      for (const actionBase of _actions) {
+        let right = rights[actionBase.inherit];
+        if (right === undefined) {
+          if (actionBase.inherit === 'read') {
+            right = await this._checkRightRead({ atomId, atom, actionBase, user });
+          } else {
+            right = await this._checkRightAction({ atomId, atom, actionBase, user });
           }
-          if (rightWrite) {
-            res.push(action);
-          }
+          rights[actionBase.inherit] = right;
+        }
+        if (right) {
+          res.push(actionBase);
         }
       }
       // ok
@@ -543,11 +539,13 @@ module.exports = ctx => {
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
       // todo: special check for flow
+      //     if not write details in flowing, also means not perform other actions
       // atom action
       return await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
         action: atomActionBase.code,
-        stage: ctx.constant.module('a-base').atom.stage[atom.atomStage],
+        // need not set stage
+        // stage,
         user,
         checkFlow: false,
       });

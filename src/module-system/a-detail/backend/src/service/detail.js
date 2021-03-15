@@ -26,6 +26,10 @@ module.exports = app => {
       return await this.ctx.bean.detail.delete({ key, user });
     }
 
+    async actions({ atomKey, detailClass, mode, user }) {
+      return await this.ctx.bean.detail.actions({ atomKey, detailClass, mode, user });
+    }
+
     async actionsBulk({ atomKey, detailClass, mode, user }) {
       return await this.ctx.bean.detail.actionsBulk({ atomKey, detailClass, mode, user });
     }
