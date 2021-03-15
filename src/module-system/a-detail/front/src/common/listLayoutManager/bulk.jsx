@@ -3,8 +3,6 @@ export default {
     return {
       bulk: {
         actions: null,
-        selectedAtoms: [],
-        selecting: false,
       },
     };
   },
@@ -40,9 +38,10 @@ export default {
     },
     bulk_loadActions() {
       if (this.bulk.actions) return;
-      this.$api.post('/a/base/atom/actionsBulk', {
-        atomClass: this.container.atomClass,
-        stage: this.base_getCurrentStage(),
+      this.$api.post('/a/detail/detail/actionsBulk', {
+        atomKey: { atomId: this.container.atomId },
+        detailClass: this.container.atomClass,
+        mode: this.container.mode,
       }).then(data => {
         this.bulk.actions = data;
       });

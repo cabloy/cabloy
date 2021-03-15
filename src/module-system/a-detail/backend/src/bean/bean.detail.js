@@ -466,7 +466,94 @@ module.exports = ctx => {
       return tableNameModes[mode] || tableNameModes.default || detailClass.tableName;
     }
 
-    async _checkRightAction({ atomId, detailClass, action, user }) {
+    // right
+
+    async actionsBulk({ atomKey, detailClass, mode, user }) {
+      if (!mode) return [];
+      // actionsAll
+      const actionsAll = ctx.bean.detailAction.actions();
+      // actions
+      const _actions = actionsAll.filter(action => {
+        if (!action.bulk) return false;
+        return (
+          (mode === 'read' && action.inherit === 'read') ||
+         (mode === 'write')
+        );
+      });
+      // inherit: read/write
+      const res = [];
+      let rightRead;
+      let rightWrite;
+      for (const action of _actions) {
+        // read
+        if (action.inherit === 'read') {
+          if (rightRead === undefined) {
+            rightRead = await ctx.bean.atom.checkRightRead({
+              atom: { id: atomKey.atomId },
+              user,
+              checkFlow: true,
+            });
+          }
+          if (rightRead) {
+            res.push(action);
+          }
+        }
+        // write
+        if (action.inherit === 'write') {
+          if (rightWrite === undefined) {
+            rightWrite = await ctx.bean.atom.checkRightAction({
+              atom: { id: atomKey.atomId },
+              action: 3,
+              stage: 'draft',
+              user,
+              checkFlow: true,
+            });
+          }
+          if (rightWrite) {
+            res.push(action);
+          }
+        }
+      }
+      // ok
+      return res;
+    }
+
+    async _checkRightRead({ atomId, atom, actionBase, user }) {
+      // special check for stage
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
+      }
+      // todo: special check for flow
+      // atom read
+      return await ctx.bean.atom.checkRightRead({
+        atom: { id: atomId },
+        user,
+        checkFlow: false,
+      });
+    }
+
+    async _checkRightAction({ atomId, atom, actionBase, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: atom.atomClassId });
+      const atomActionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, name: actionBase.inherit });
+      // special check for stage
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
+      }
+      // todo: special check for flow
+      // atom action
+      return await ctx.bean.atom.checkRightAction({
+        atom: { id: atomId },
+        action: atomActionBase.code,
+        stage: ctx.constant.module('a-base').atom.stage[atom.atomStage],
+        user,
+        checkFlow: false,
+      });
+    }
+
+    async _checkRight({ atomId, detailClass, action, user }) {
       // detailClass
       if (!detailClass) {
         // use default detail
@@ -474,28 +561,16 @@ module.exports = ctx => {
       }
       // actionBase
       const actionBase = ctx.bean.detailAction.action({ module: detailClass.module, detailClassName: detailClass.detailClassName, code: action });
+      // atom
+      const atom = await ctx.bean.atom.modelAtom.get({ id: atomId });
       // inherit
       const inherit = actionBase.inherit;
       // read
       if (inherit === 'read') {
-        return await ctx.bean.atom.checkRightRead({
-          atom: { id: atomId },
-          user,
-          checkFlow: true,
-        });
+        return await this._checkRightRead({ atomId, atom, actionBase, user });
       }
-      // write
-      if (inherit === 'write') {
-        return await ctx.bean.atom.checkRightAction({
-          atom: { id: atomId },
-          action: 3,
-          stage: 'draft',
-          user,
-          checkFlow: true,
-        });
-      }
-      // prompt
-      throw new Error('should set inherit to read or write for action: ', actionBase.name);
+      // write or others
+      return await this._checkRightAction({ atomId, atom, actionBase, user });
     }
 
     // right
@@ -516,7 +591,7 @@ module.exports = ctx => {
         if (!detailClass) ctx.throw.module('a-base', 1002);
       }
       // check
-      const res = await this._checkRightAction({
+      const res = await this._checkRight({
         atomId,
         detailClass,
         action: options.action,

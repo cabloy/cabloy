@@ -21,6 +21,8 @@ module.exports = app => {
           bulk: true,
           icon: { material: 'add' },
           inherit: 'write',
+          mode: 'write',
+          stage: 'draft',
         },
         read: {
           title: 'View',
@@ -28,6 +30,8 @@ module.exports = app => {
           actionPath: '/a/detail/detail/item?mode=view&detailId={{detailId}}&detailItemId={{detailItemId}}',
           icon: { material: 'visibility' },
           inherit: 'read',
+          mode: 'read',
+          stage: '',
         },
         write: {
           title: 'Edit',
@@ -35,6 +39,8 @@ module.exports = app => {
           actionComponent: 'action',
           icon: { material: 'edit' },
           inherit: 'write',
+          mode: 'write',
+          stage: 'draft',
         },
         delete: {
           title: 'Delete',
@@ -42,6 +48,8 @@ module.exports = app => {
           actionComponent: 'action',
           icon: { material: 'delete' },
           inherit: 'write',
+          mode: 'write',
+          stage: 'draft',
         },
         clone: {
           title: 'Clone',
@@ -49,6 +57,8 @@ module.exports = app => {
           actionComponent: 'action',
           icon: { material: 'content_copy' },
           inherit: 'write',
+          mode: 'write',
+          stage: 'draft',
         },
         save: {
           title: 'Save',
@@ -57,6 +67,8 @@ module.exports = app => {
           authorize: false,
           icon: { material: 'save' },
           inherit: 'write',
+          mode: 'write',
+          stage: 'draft',
         },
         custom: {
           title: 'Custom',

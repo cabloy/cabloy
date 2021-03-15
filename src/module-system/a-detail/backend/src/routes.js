@@ -19,6 +19,8 @@ module.exports = app => {
     { method: 'post', path: 'detail/delete', controller: 'detail', middlewares: 'transaction',
       meta: { right: { type: 'detail', action: 4, atomKey: false } },
     },
+    { method: 'post', path: 'detail/actions', controller: 'detail' },
+    { method: 'post', path: 'detail/actionsBulk', controller: 'detail' },
   ];
   return routes;
 };

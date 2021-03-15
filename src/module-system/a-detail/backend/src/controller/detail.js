@@ -65,6 +65,25 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async actions() {
+      const res = await this.ctx.service.atom.actions({
+        key: this.ctx.request.body.key,
+        basic: this.ctx.request.body.basic,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async actionsBulk() {
+      const res = await this.ctx.service.atom.actionsBulk({
+        atomKey: this.ctx.request.body.atomKey,
+        detailClass: this.ctx.request.body.detailClass,
+        mode: this.ctx.request.body.mode,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return DetailController;
 };
