@@ -466,14 +466,63 @@ module.exports = ctx => {
       return tableNameModes[mode] || tableNameModes.default || detailClass.tableName;
     }
 
+    async _checkRightAction({ atomId, detailClass, action, user }) {
+      // detailClass
+      if (!detailClass) {
+        // use default detail
+        detailClass = await this.getDetailClassDefault({ atomId });
+      }
+      // actionBase
+      const actionBase = ctx.bean.detailAction.action({ module: detailClass.module, detailClassName: detailClass.detailClassName, code: action });
+      // inherit
+      const inherit = actionBase.inherit;
+      // read
+      if (inherit === 'read') {
+        return await ctx.bean.atom.checkRightRead({
+          atom: { id: atomId },
+          user,
+          checkFlow: true,
+        });
+      }
+      // write
+      if (inherit === 'write') {
+        return await ctx.bean.atom.checkRightAction({
+          atom: { id: atomId },
+          action: 3,
+          stage: 'draft',
+          user,
+          checkFlow: true,
+        });
+      }
+      // prompt
+      throw new Error('should set inherit to read or write for action: ', actionBase.name);
+    }
+
     // right
     async _checkRightForMiddleware({ options }) {
-      // constant
-      const constant = ctx.constant.module(moduleInfo.relativeName);
-      // create
-      if (options.action === constant.detail.action.create) {
-
+      // atomId/detailClass
+      let atomId;
+      let detailClass;
+      if (options.atomKey) {
+        atomId = ctx.request.body.atomKey.atomId;
+        detailClass = ctx.request.body.detailClass;
+      } else {
+        const key = ctx.request.body.key;
+        const detail = await this.modelDetail.get({ id: key.detailId });
+        if (!detail) ctx.throw(403);
+        atomId = detail.atomId;
+        // detailClass
+        detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
+        if (!detailClass) ctx.throw.module('a-base', 1002);
       }
+      // check
+      const res = await this._checkRightAction({
+        atomId,
+        detailClass,
+        action: options.action,
+        user: ctx.state.user.op,
+      });
+      if (!res) ctx.throw(403);
     }
 
   }

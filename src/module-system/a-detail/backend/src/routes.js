@@ -2,22 +2,22 @@ module.exports = app => {
   const routes = [
     // detail
     { method: 'post', path: 'detail/create', controller: 'detail', middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 1 } },
+      meta: { right: { type: 'detail', action: 1, atomKey: true } },
     },
     { method: 'post', path: 'detail/read', controller: 'detail',
-      meta: { right: { type: 'detail', action: 2 } },
+      meta: { right: { type: 'detail', action: 2, atomKey: false } },
     },
     { method: 'post', path: 'detail/select', controller: 'detail',
-      meta: { right: { type: 'detail', action: 2 } },
+      meta: { right: { type: 'detail', action: 2, atomKey: true } },
     },
     { method: 'post', path: 'detail/count', controller: 'detail',
-      meta: { right: { type: 'detail', action: 2 } },
+      meta: { right: { type: 'detail', action: 2, atomKey: true } },
     },
     { method: 'post', path: 'detail/write', controller: 'detail', middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 3 } },
+      meta: { right: { type: 'detail', action: 3, atomKey: false } },
     },
     { method: 'post', path: 'detail/delete', controller: 'detail', middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 4 } },
+      meta: { right: { type: 'detail', action: 4, atomKey: false } },
     },
   ];
   return routes;
