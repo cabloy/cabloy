@@ -3,7 +3,8 @@ export default {
     return {
       base: {
         ready: false,
-        configFlowBase: null,
+        configDetailBase: null,
+        configDetail: null,
         config: null,
       },
     };
@@ -24,9 +25,7 @@ export default {
       // layout
       options.layout = this.layout.current;
       // order
-      options.orders = [
-        [ 'a.updatedAt', 'desc' ],
-      ];
+      options.orders = null;
       // extend 1
       if (this.container.options) {
         options = this.$utils.extend({}, options, this.container.options);
@@ -39,8 +38,11 @@ export default {
       const options = this.base_prepareSelectOptions();
       // params
       const params = {
+        atomKey: { atomId: this.container.atomId },
+        detailClass: this.container.detailClass,
         options,
       };
+      // ok
       return params;
     },
     base_getItems() {

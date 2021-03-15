@@ -16,16 +16,18 @@ export default {
       return (this.$view.size === 'small') ? 'list' : 'table';
     },
     async layout_prepareConfig() {
-      // configFlowBase
-      this.base.configFlowBase = this.$meta.config.modules['a-flowtask'].flow;
-      // config
-      this.base.config = this.base.configFlowBase;
-      // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
-      if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.list');
+      // configDetailBase
+      this.base.configDetailBase = this.$meta.config.modules['a-detail'].detail;
+      // configDetail
+      if (this.container.detailClass) {
+        // load module
+        await this.$meta.module.use(this.container.detailClass.module);
+        this.base.configDetail = this.$meta.util.getProperty(this.$meta.config.modules[this.container.detailClass.module], `details.${this.container.detailClass.detailClassName}`);
       }
-      this.layout.config = _config;
+      // config
+      this.base.config = this.base.configDetail ? this.$meta.util.extend({}, this.base.configDetailBase, this.base.configDetail) : this.base.configDetailBase;
+      // layoutConfig
+      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
     },
     layout_getComponentOptions() {
       return {

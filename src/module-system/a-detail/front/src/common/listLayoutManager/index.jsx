@@ -1,6 +1,7 @@
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
+import Bulk from './bulk.jsx';
 
 // container: {
 //   mode,
@@ -13,7 +14,7 @@ import Layout from './layout.jsx';
 
 export default {
   mixins: [
-    Base, Page, Layout,
+    Base, Page, Layout, Bulk,
   ],
   data() {
     return {
