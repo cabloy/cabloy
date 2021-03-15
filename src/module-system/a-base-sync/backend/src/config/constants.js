@@ -153,15 +153,5 @@ module.exports = app => {
         },
       },
     },
-    function: {
-      scene: {
-      // default: 0,
-        create: 1,
-        list: 2,
-        // report: 20,
-        tools: 50,
-      // custom: 100,
-      },
-    },
   };
 };

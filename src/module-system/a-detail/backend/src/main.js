@@ -18,6 +18,8 @@ module.exports = app => {
   const services = require('./services.js')(app);
   // models
   const models = require('./models.js')(app);
+  // constants
+  const constants = require('./config/constants.js')(app);
   // meta
   const meta = require('./meta.js')(app);
 
@@ -30,6 +32,7 @@ module.exports = app => {
     config,
     locales,
     errors,
+    constants,
     meta,
   };
 
