@@ -97,7 +97,8 @@ export default {
       return mediaLabel;
     },
     _getItemMetaSummary(item) {
-      return (item._meta && item._meta.summary) || item.detailCode;
+      return (item._meta && item._meta.summary) || '';
+      // return (item._meta && item._meta.summary) || item.detailCode;
     },
     _getItemMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];
