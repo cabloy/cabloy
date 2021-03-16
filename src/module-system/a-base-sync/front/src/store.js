@@ -38,6 +38,7 @@ export default function(Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
+      detailActions: null,
       resourceTypes: null,
     },
     getters: {
@@ -100,6 +101,9 @@ export default function(Vue) {
       },
       setActions(state, actions) {
         state.actions = actions;
+      },
+      setDetailActions(state, actions) {
+        state.detailActions = actions;
       },
       setResourceTypes(state, resourceTypes) {
         state.resourceTypes = resourceTypes;
@@ -203,6 +207,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/actions').then(data => {
             data = data || {};
             commit('setActions', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getDetailActions({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.detailActions) return resolve(state.detailActions);
+          Vue.prototype.$meta.api.post('/a/detail/base/actions').then(data => {
+            data = data || {};
+            commit('setDetailActions', data);
             resolve(data);
           }).catch(err => {
             reject(err);

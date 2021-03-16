@@ -107,25 +107,16 @@ export default {
     },
     bulk_renderActionsRight() {
       const children = [];
-      const stageCurrent = this.base_getCurrentStage();
-      const selectedAtoms = this.bulk.selectedAtoms;
-      if (this.bulk.actions && this.actionsAll) {
+      if (this.bulk.actions && this.detailActionsAll) {
         for (const action of this.bulk.actions) {
-          const _action = this.getAction(action);
-          // stage
-          if (_action.stage) {
-            const stages = _action.stage.split(',');
-            if (!stages.some(item => item === stageCurrent)) continue;
-          }
-          // select
-          if (_action.select === undefined || _action.select === null ||
-            (_action.select === true && selectedAtoms.length > 0) ||
-            (_action.select === false && !this.bulk.selecting)
-          ) {
-            children.push(
-              <eb-link key={`actionsRight:${_action.name}`} iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.bulk_onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
-            );
-          }
+          const _action = this.getDetailAction({
+            module: this.container.detailClass.module,
+            detailClassName: this.container.detailClass.detailClassName,
+            name: action.name,
+          });
+          children.push(
+            <eb-link key={`actionsRight:${_action.name}`} iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.bulk_onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
+          );
         }
       }
       return children;

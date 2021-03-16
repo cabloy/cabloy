@@ -1,5 +1,7 @@
 module.exports = app => {
   const routes = [
+    // base
+    { method: 'post', path: 'base/actions', controller: 'base' },
     // detail
     { method: 'post', path: 'detail/create', controller: 'detail', middlewares: 'transaction',
       meta: { right: { type: 'detail', action: 1, atomKey: true } },
