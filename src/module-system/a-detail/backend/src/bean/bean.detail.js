@@ -469,11 +469,11 @@ module.exports = ctx => {
     // right
 
     async actions({ atomKey, detailClass, mode, user }) {
-      return this._actions({ atomKey, detailClass, mode, user, bulk: false });
+      return await this._actions({ atomKey, detailClass, mode, user, bulk: false });
     }
 
     async actionsBulk({ atomKey, detailClass, mode, user }) {
-      return this._actions({ atomKey, detailClass, mode, user, bulk: true });
+      return await this._actions({ atomKey, detailClass, mode, user, bulk: true });
     }
 
     async _actions({ atomKey, detailClass, mode, user, bulk }) {
@@ -522,7 +522,7 @@ module.exports = ctx => {
       }
       // todo: special check for flow
       // atom read
-      return await ctx.bean.atom.checkRightRead({
+      return !!await ctx.bean.atom.checkRightRead({
         atom: { id: atomId },
         user,
         checkFlow: false,
@@ -541,7 +541,7 @@ module.exports = ctx => {
       // todo: special check for flow
       //     if not write details in flowing, also means not perform other actions
       // atom action
-      return await ctx.bean.atom.checkRightAction({
+      return !!await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
         action: atomActionBase.code,
         // need not set stage
