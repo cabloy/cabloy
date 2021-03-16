@@ -17,9 +17,6 @@ export default {
   },
   created() {
     this.layoutManager.layout.instance = this;
-    if (this.layoutManager.container.detailClass) {
-      this.layoutManager.bulk_loadActions();
-    }
     this.loadDetails();
   },
   methods: {

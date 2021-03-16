@@ -6,6 +6,9 @@ export default {
       },
     };
   },
+  created() {
+    this.bulk_loadActions();
+  },
   methods: {
     bulk_onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
