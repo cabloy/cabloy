@@ -7,18 +7,22 @@ export default {
       let domGroupFlattenkey = null;
       let domGroupFlattenProperty = null;
       const _closeGroup = () => {
-        // title
-        const groupTitle = c('f7-list-item', {
-          attrs: {
-            groupTitle: true,
-            title: this.getTitle({
-              key: domGroupFlattenkey,
-              property: domGroupFlattenProperty,
-            }),
-          },
-        });
-        // combine
-        domGroupFlattenChildren.unshift(groupTitle);
+        // group title
+        const titleHidden = domGroupFlattenProperty.ebOptions && domGroupFlattenProperty.ebOptions.titleHidden;
+        if (!titleHidden) {
+          // title
+          const groupTitle = c('f7-list-item', {
+            attrs: {
+              groupTitle: true,
+              title: this.getTitle({
+                key: domGroupFlattenkey,
+                property: domGroupFlattenProperty,
+              }),
+            },
+          });
+          // combine
+          domGroupFlattenChildren.unshift(groupTitle);
+        }
         // group
         const className = domGroupFlattenProperty.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
         const item = c('f7-list-group', {

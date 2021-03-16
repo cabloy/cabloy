@@ -12,14 +12,17 @@ export default {
       // children
       const children = this.renderProperties(c, context2);
       // group
-      const group = c('f7-list-item', {
-        attrs: {
-          groupTitle: true,
-          title: this.getTitle(context),
-        },
-      });
-      // combine
-      children.unshift(group);
+      const titleHidden = property.ebOptions && property.ebOptions.titleHidden;
+      if (!titleHidden) {
+        const group = c('f7-list-item', {
+          attrs: {
+            groupTitle: true,
+            title: this.getTitle(context),
+          },
+        });
+        // combine
+        children.unshift(group);
+      }
       // group
       const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
       return c('f7-list-group', {
