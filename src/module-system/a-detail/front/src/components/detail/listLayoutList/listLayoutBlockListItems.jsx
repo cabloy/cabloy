@@ -27,6 +27,16 @@ export default {
     this.$meta.eventHub.$off('detail:action', this.onActionChanged);
   },
   methods: {
+    getItemActions() {
+      const actions = this.layoutManager.action.actions;
+      if (!actions) return actions;
+      if (this.$device.desktop) {
+        // just remove save
+        return actions.filter(item => [ 'save' ].indexOf(item.name) === -1);
+      }
+      // only read/write/delete
+      return actions.filter(item => [ 'read', 'write', 'delete' ].indexOf(item.name) > -1);
+    },
     onItemClick(event, item) {
       return this.onAction(event, item, {
         module: item.module,
@@ -150,52 +160,30 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      // domLeft
-      let domLeft;
-      if (item.atomStage === 1) {
-        const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
-          </div>
-        );
-        const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text('UserLabels')}</div>}
-          </div>
-        );
-        domLeft = (
-          <div slot="left">
-            {domLeftStar}
-            {domLeftLabel}
-          </div>
-        );
-      }
+      const itemActions = this.getItemActions();
       // domRight
       const domActions = [];
-      if (item._actions) {
-        for (let index in item._actions) {
+      if (itemActions) {
+        for (let index in itemActions) {
           index = parseInt(index);
-          const action = item._actions[index];
-          const _action = this.getAction(action);
+          const action = itemActions[index];
+          const _action = this.getDetailAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
+            <div key={action.code} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this._getActionTitle(action, item)}</div>}
+              {this.$device.desktop && <div slot="title">{this._getActionTitle(action)}</div>}
             </div>
           );
         }
       }
       const domRight = (
-        <div slot="right" ready={!!item._actions}>
+        <div slot="right" ready={!!itemActions}>
           {domActions}
         </div>
       );
 
       return (
         <eb-context-menu>
-          {domLeft}
           {domRight}
         </eb-context-menu>
       );

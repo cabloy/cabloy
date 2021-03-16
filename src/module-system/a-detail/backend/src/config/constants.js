@@ -30,7 +30,7 @@ module.exports = app => {
           actionPath: '/a/detail/detail/item?mode=view&detailId={{detailId}}&detailItemId={{detailItemId}}',
           icon: { material: 'visibility' },
           inherit: 'read',
-          mode: '',
+          mode: 'view',
           stage: '',
         },
         write: {
