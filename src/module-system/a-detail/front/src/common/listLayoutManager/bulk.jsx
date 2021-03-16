@@ -15,6 +15,7 @@ export default {
       _action = this.$utils.extend({}, _action, { targetEl: event.target });
       // item
       const item = {
+        atomId: this.container.atomId,
         module: action.module,
         detailClassName: action.detailClassName,
       };
