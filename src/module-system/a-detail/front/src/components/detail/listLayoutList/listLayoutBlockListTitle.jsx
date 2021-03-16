@@ -16,11 +16,9 @@ export default {
   },
   methods: {
     _renderActionsLeft() {
-      const children = this.layoutManager.bulk_renderActionsLeft();
+      const title = this.layoutManager.container.title;
       return (
-        <div class="actions-block actions-block-left">
-          {children}
-        </div>
+        <div class="actions-block actions-block-left">{title}</div>
       );
     },
     _renderActionsRight() {
@@ -33,10 +31,12 @@ export default {
     },
   },
   render() {
-    const title = this.layoutManager.container.title;
     return (
-      <f7-list-item groupTitle title={title}>
-
+      <f7-list-item groupTitle>
+        <div class="detail-list-title-container">
+          {this._renderActionsLeft()}
+          {this._renderActionsRight()}
+        </div>
       </f7-list-item>
     );
   },

@@ -1,1 +1,109 @@
+:root {
 
+  .detail-list-title-container,
+  .detail-item-title-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--f7-toolbar-font-size);
+
+
+    .actions-block {
+      height: var(--f7-toolbar-height);
+      display: flex;
+      align-items: center;
+
+      a.link {
+        padding: 0 6px;
+        width: auto;
+        min-width: auto;
+      }
+    }
+
+    .actions-block-left {
+      justify-content: flex-start;
+    }
+
+    .actions-block-right {
+      justify-content: flex-end;
+
+      .info-avatar,
+      .info-date {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        color: var(--f7-block-footer-text-color);
+        font-size: 10px;
+      }
+
+    }
+  }
+
+  .atom-list-layout-table-container {}
+
+  .atom-list-layout-table-pagination-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+  }
+
+  .atom-list-layout-table-cell-atomName {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+
+    .atomName-inner {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      align-items: center;
+      align-self: stretch;
+
+      .atomName-left {
+        min-width: 0;
+        flex-shrink: 1;
+        white-space: var(--f7-list-item-title-white-space);
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
+
+      .atomName-right {
+        white-space: nowrap;
+        flex-shrink: 0;
+        display: flex;
+      }
+
+      .stats {
+        span {
+          padding-right: 4px;
+        }
+      }
+    }
+
+    .atomName-summary {
+      position: absolute;
+      left: 1px;
+      bottom: -7px;
+      height: 12px;
+      color: var(--f7-block-header-text-color);
+      font-size: 12px;
+
+      span+span {
+        margin-left: 4px;
+      }
+    }
+
+  }
+
+}
