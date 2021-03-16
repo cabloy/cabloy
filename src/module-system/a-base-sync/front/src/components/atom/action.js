@@ -13,7 +13,9 @@ export default {
         await ctx.$api.post('/a/base/atom/delete', { key });
         ctx.$meta.eventHub.$emit('atom:action', { key, action });
         // back
-        ctx.$f7router.back();
+        if (ctx.$f7route.path === '/a/basefront/atom/item') {
+          ctx.$f7router.back();
+        }
       } else if (action.name === 'save') {
         // save
         const key = { atomId: item.atomId, itemId: item.itemId };

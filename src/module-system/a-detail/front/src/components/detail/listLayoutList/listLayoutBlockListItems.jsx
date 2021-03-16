@@ -72,7 +72,7 @@ export default {
         return;
       }
       // delete
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
+      const index = this.layout.items.findIndex(item => item.detailId === key.detailId);
       if (action.name === 'delete') {
         if (index !== -1) {
           this.layout.items.splice(index, 1);

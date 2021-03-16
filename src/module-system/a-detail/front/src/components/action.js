@@ -7,7 +7,20 @@ export default {
       if (action.name === 'create' || action.action === 'create') {
         return await this._onActionCreate({ ctx, action, item });
       } else if (action.name === 'delete') {
-
+        // delete
+        await ctx.$view.dialog.confirm();
+        // atomKey
+        const atomKey = { atomId: item.atomId };
+        // key
+        const key = { detailId: item.detailId, detailItemId: item.detailItemId };
+        // delete
+        await ctx.$api.post('/a/detail/detail/delete', { key });
+        // event
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, key, action });
+        // back
+        if (ctx.$f7route.path === '/a/detail/detail/item') {
+          ctx.$f7router.back();
+        }
       } else if (action.name === 'save') {
 
       } else if (action.name === 'write') {
