@@ -91,17 +91,34 @@ module.exports = function(app) {
       watcherEntry.info = { subdomain, atomClass, language, watchers };
       // close
       if (watcherEntry.watcher) {
-        watcherEntry.watcher.close();
+        const _watcher = watcherEntry.watcher;
+        if (!_watcher.__eb_closed) {
+          if (_watcher.__eb_ready) {
+            _watcher.close();
+          } else {
+            _watcher.__eb_closing = true;
+          }
+        }
         watcherEntry.watcher = null;
       }
       // watcher
-      watcherEntry.watcher = chokidar.watch(watchers)
+      const _watcher = chokidar.watch(watchers)
         .on('change', debounce(function() {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
             data: { subdomain, atomClass, language },
           });
         }, 300));
+      // on ready
+      _watcher.once('ready', function() {
+        _watcher.__eb_ready = true;
+        if (_watcher.__eb_closing) {
+          _watcher.close();
+          _watcher.__eb_closed = true;
+        }
+      });
+      // ok
+      watcherEntry.watcher = _watcher;
     }
 
     // invoked in app
