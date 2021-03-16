@@ -37,10 +37,10 @@ export default {
       // only read/write/delete
       return actions.filter(item => [ 'read', 'write', 'delete' ].indexOf(item.name) > -1);
     },
-    onItemClick(event, item) {
-      return this.onAction(event, item, {
+    async onItemClick(event, item) {
+      return await this.onAction(event, item, {
         module: item.module,
-        atomClassName: item.atomClassName,
+        detailClassName: item.detailClassName,
         name: 'read',
       });
     },
@@ -53,20 +53,22 @@ export default {
         Vue.set(item, '_actions', data);
       });
     },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
+    async onAction(event, item, action) {
+      const _action = this.getDetailAction(action);
       if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item })
-        .then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-        });
+      const res = await this.$meta.util.performAction({ ctx: this, action: _action, item });
+      this.$meta.util.swipeoutClose(event.target);
+      return res;
     },
     onActionChanged(data) {
+      const atomKey = data.atomKey;
+      if (atomKey.atomId !== this.layoutManager.container.atomId) return;
       const key = data.key;
       const action = data.action;
       // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
+      if (action.name === 'create') {
+        // load
+        this.layout.loadDetails();
         return;
       }
       // delete
