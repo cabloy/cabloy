@@ -507,7 +507,11 @@ module.exports = ctx => {
           rights[actionBase.inherit] = right;
         }
         if (right) {
-          res.push(actionBase);
+          res.push({
+            ...actionBase,
+            module: detailClass.module,
+            detailClassName: detailClass.detailClassName,
+          });
         }
       }
       // ok
