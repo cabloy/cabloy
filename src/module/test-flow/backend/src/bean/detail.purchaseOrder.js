@@ -57,7 +57,9 @@ module.exports = app => {
     _getMeta(item) {
       // flags
       const flags = [];
-      flags.push(item.quantity);
+      if (item.quantity !== 0) {
+        flags.push(item.quantity);
+      }
       const amount = (item.amount / 100).toFixed(2);
       flags.push(amount);
       // meta
