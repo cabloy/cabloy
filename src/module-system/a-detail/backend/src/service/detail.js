@@ -26,6 +26,10 @@ module.exports = app => {
       return await this.ctx.bean.detail.delete({ key, user });
     }
 
+    async clone({ key, user }) {
+      return await this.ctx.bean.detail.clone({ key, user });
+    }
+
     async actions({ atomKey, detailClass, mode, user }) {
       return await this.ctx.bean.detail.actions({ atomKey, detailClass, mode, user });
     }

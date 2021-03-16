@@ -27,7 +27,29 @@ export default {
         const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', item);
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'clone') {
-
+        // clone
+        // atomKey
+        const atomKey = { atomId: item.atomId };
+        // key
+        const key = { detailId: item.detailId, detailItemId: item.detailItemId };
+        try {
+          const keyDest = await ctx.$api.post('/a/detail/detail/clone', { key });
+          const _item = {
+            ...item,
+            detailId: keyDest.detailId,
+            detailItemId: keyDest.detailItemId,
+          };
+          // event
+          ctx.$meta.eventHub.$emit('detail:action', { atomKey, key: keyDest, action: { name: 'create' } });
+          // open
+          const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', _item);
+          ctx.$view.navigate(url, action.navigateOptions);
+        } catch (err) {
+          if (err.code === 422) {
+            throw new Error(err.message[0].message);
+          }
+          throw err;
+        }
       }
     },
     async _onActionCreate({ ctx, action, item }) {

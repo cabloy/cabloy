@@ -179,6 +179,27 @@ module.exports = ctx => {
       await this._delete2({ detailClass, key, target, user });
     }
 
+    async clone({ key, user }) {
+      const srcItem = await this.read({ key, options: null, user });
+      const srcKeyAtom = { atomId: srcItem.atomId };
+      const destKeyAtom = srcKeyAtom;
+      const keyDest = await this._copyDetail({
+        srcKey: key,
+        srcItem,
+        destKey: null,
+        detailClass: null,
+        atomClass: null,
+        target: 'clone',
+        srcKeyAtom,
+        destKeyAtom,
+        destAtom: null,
+        options: null,
+        user,
+      });
+      // ok
+      return keyDest;
+    }
+
     async _delete2({ detailClass, key, target, user }) {
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
@@ -309,6 +330,10 @@ module.exports = ctx => {
 
     // target: draft/formal/history/clone
     async _copyDetail({ srcKey, srcItem, destKey, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+      // detailClass
+      if (!detailClass) {
+        detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: srcKey.detailId });
+      }
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);

@@ -65,6 +65,14 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async clone() {
+      const res = await this.ctx.service.detail.clone({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async actions() {
       const res = await this.ctx.service.detail.actions({
         atomKey: this.ctx.request.body.atomKey,
