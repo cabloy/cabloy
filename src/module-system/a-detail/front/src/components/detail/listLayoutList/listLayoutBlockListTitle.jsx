@@ -33,13 +33,11 @@ export default {
     },
   },
   render() {
+    const title = this.layoutManager.container.title;
     return (
-      <f7-subnavbar>
-        <div class="atom-list-subnavbar-container">
-          {this._renderActionsLeft()}
-          {this._renderActionsRight()}
-        </div>
-      </f7-subnavbar>
+      <f7-list-item groupTitle title={title}>
+
+      </f7-list-item>
     );
   },
 };

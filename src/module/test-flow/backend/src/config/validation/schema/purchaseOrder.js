@@ -40,7 +40,6 @@ module.exports = app => {
       // Details
       __groupDetails: {
         ebType: 'group-flatten',
-        ebTitle: 'Details',
         ebGroupWhole: true,
         ebOptions: {
           titleHidden: true,
@@ -48,6 +47,7 @@ module.exports = app => {
       },
       details: {
         ebType: 'details',
+        ebTitle: 'Details',
         ebOptions: {
           detailClass: {
             module: moduleInfo.relativeName,
@@ -57,7 +57,6 @@ module.exports = app => {
       },
       // __groupDetails2: {
       //   ebType: 'group-flatten',
-      //   ebTitle: 'Details 2',
       //   ebGroupWhole: true,
       //   ebOptions: {
       //     titleHidden: true,
@@ -65,6 +64,7 @@ module.exports = app => {
       // },
       // details_2: {
       //   ebType: 'details',
+      //   ebTitle: 'Details 2',
       //   ebOptions: {
       //     detailClass: {
       //       module: moduleInfo.relativeName,

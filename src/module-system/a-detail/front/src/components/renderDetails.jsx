@@ -10,6 +10,7 @@ export default {
   data() {
     return {
       container: {
+        title: this.context.getTitle(true),
         mode: this.context.validate.containerMode,
         atomId: this.context.data.atomId,
         atom: this.context.data,

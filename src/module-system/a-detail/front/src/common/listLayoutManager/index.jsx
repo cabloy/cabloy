@@ -4,6 +4,7 @@ import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 
 // container: {
+//   title,
 //   mode,
 //   atomId,
 //   atom,
