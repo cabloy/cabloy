@@ -92,26 +92,6 @@ export default {
               },
             },
           },
-          pc: {
-            component: {
-              module: 'a-detail',
-              name: 'itemLayoutPC',
-            },
-            blocks: {
-              title: {
-                component: {
-                  module: 'a-detail',
-                  name: 'itemLayoutBlockPCTitle',
-                },
-              },
-              main: {
-                component: {
-                  module: 'a-detail',
-                  name: 'itemLayoutBlockMobileMain',
-                },
-              },
-            },
-          },
         },
       },
     },

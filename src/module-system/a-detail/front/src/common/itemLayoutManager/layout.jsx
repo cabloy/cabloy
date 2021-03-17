@@ -17,12 +17,12 @@ export default {
       return (this.$view.size === 'large') ? 'pc' : 'mobile';
     },
     async layout_prepareConfig() {
-      // configAtomBase
-      this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
-      // configAtom
-      this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.base.atomClass.module], `atoms.${this.base.atomClass.atomClassName}`);
+      // configDetailBase
+      this.base.configDetailBase = this.$meta.config.modules['a-detail'].detail;
+      // configDetail
+      this.base.configDetail = this.$meta.util.getProperty(this.$meta.config.modules[this.base.detailClass.module], `details.${this.base.detailClass.detailClassName}`);
       // config
-      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
+      this.base.config = this.base.configDetail ? this.$meta.util.extend({}, this.base.configDetailBase, this.base.configDetail) : this.base.configDetailBase;
       // layoutConfig
       let _config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
       if (!_config) {
