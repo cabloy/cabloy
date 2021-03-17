@@ -62,12 +62,12 @@ export default {
         }
       } else if (action.name === 'moveUp') {
         // moveUp
-        await ctx.$api.post('/a/detail/detail/moveUp', { key });
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
+        const result = await ctx.$api.post('/a/detail/detail/moveUp', { key });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
       } else if (action.name === 'moveDown') {
         // moveUp
-        await ctx.$api.post('/a/detail/detail/moveDown', { key });
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
+        const result = await ctx.$api.post('/a/detail/detail/moveDown', { key });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
       }
     },
     async _onActionCreate({ ctx, action, item, atomKey, detailClass }) {

@@ -62,6 +62,7 @@ export default {
 
       const key = data.key;
       const action = data.action;
+      const result = data.result;
       // create
       if (action.name === 'create') {
         // load
@@ -74,6 +75,22 @@ export default {
         if (index !== -1) {
           this.layout.items.splice(index, 1);
         }
+        return;
+      }
+      // move
+      if (action.name === 'moveUp' || action.name === 'moveDown') {
+        if (!result) return;
+        const a = action.name === 'moveUp' ? result.to : result.from;
+        const b = action.name === 'moveUp' ? result.from : result.to;
+        const aIndex = this.layout.items.findIndex(item => item.detailId === a);
+        const bIndex = this.layout.items.findIndex(item => item.detailId === b);
+        if (aIndex === -1 || bIndex === -1) {
+          // load
+          this.layout.loadDetails();
+          return;
+        }
+        const row = this.layout.items.splice(bIndex, 1);
+        this.layout.items.splice(aIndex, 0, row[0]);
         return;
       }
       // others

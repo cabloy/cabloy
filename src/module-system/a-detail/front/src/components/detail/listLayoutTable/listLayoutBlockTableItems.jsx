@@ -79,6 +79,7 @@ export default {
 
       const key = data.key;
       const action = data.action;
+      const result = data.result;
       // create
       if (action.name === 'create') {
         // load
@@ -92,6 +93,22 @@ export default {
           items.splice(index, 1);
           this.layout.info.total -= 1;
         }
+        return;
+      }
+      // move
+      if (action.name === 'moveUp' || action.name === 'moveDown') {
+        if (!result) return;
+        const a = action.name === 'moveUp' ? result.to : result.from;
+        const b = action.name === 'moveUp' ? result.from : result.to;
+        const aRow = this.layout._findItem(a);
+        const bRow = this.layout._findItem(b);
+        if (aRow.index === -1 || bRow.index === -1 || aRow.items !== bRow.items) {
+          // load
+          this.layout.loadDetails();
+          return;
+        }
+        const row = aRow.items.splice(bRow.index, 1);
+        aRow.items.splice(aRow.index, 0, row[0]);
         return;
       }
       // others
