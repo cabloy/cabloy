@@ -428,7 +428,7 @@ module.exports = ctx => {
       atomKey,
       detailClass: { id, detailClassName },
       detail: {
-        detailItemId, detailName,
+        detailItemId, detailName, detailLineNo,
         detailStatic = 0, detailStaticKey = null,
       },
       user,
@@ -440,6 +440,7 @@ module.exports = ctx => {
         detailItemId,
         detailClassId,
         detailName,
+        detailLineNo,
         detailStatic,
         detailStaticKey,
         userIdCreated: user.id,

@@ -23,6 +23,8 @@ module.exports = app => {
       if (!item.detailStaticKey) {
         item.detailStaticKey = uuid.v4().replace(/-/g, '');
       }
+      // detailLineNo
+      item.detailLineNo = await this._createLineNo({ atomKey, detailClass });
       // add
       const detailId = await this.ctx.bean.detail._add({ atomKey, detailClass, detail: item, user });
       return { detailId };
@@ -77,6 +79,16 @@ module.exports = app => {
       atomClass, srcKeyAtom, destKeyAtom, destAtom,
     }*/) {
       // do nothing
+    }
+
+    async _createLineNo({ atomKey, detailClass }) {
+      // need not check atomStage
+      const res = await this.ctx.model.queryOne(`
+        select max(a.detailLineNo) as detailLineNo from aDetail a
+          where a.iid=? and a.deleted=0 and a.atomId=? and a.detailClassId=?
+        `, [ this.ctx.instance.id, atomKey.atomId, detailClass.id ]);
+      const detailLineNo = res.detailLineNo;
+      return detailLineNo ? detailLineNo + 1 : 1;
     }
 
   }
