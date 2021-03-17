@@ -46,25 +46,23 @@ export default {
                   {
                     dataIndex: 'detailLineNo',
                     title: '#',
-                    align: 'left',
-                  },
-                  {
-                    dataIndex: 'detailCode',
-                    title: 'Code',
-                    align: 'left',
+                    align: 'center',
+                    width: '50px',
+                    component: {
+                      module: 'a-detail',
+                      name: 'listLayoutTableCellDetailLineNo',
+                    },
                   },
                   {
                     dataIndex: 'detailName',
                     title: 'Name',
                     align: 'left',
+                    component: {
+                      module: 'a-detail',
+                      name: 'listLayoutTableCellDetailName',
+                    },
                   },
                 ],
-              },
-              bottombar: {
-                component: {
-                  module: 'a-detail',
-                  name: 'listLayoutBlockTableBottombar',
-                },
               },
             },
           },
