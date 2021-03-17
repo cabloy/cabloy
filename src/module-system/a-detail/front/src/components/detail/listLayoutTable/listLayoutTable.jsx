@@ -35,12 +35,20 @@ export default {
   },
   methods: {
     async loadDetails() {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // fetch
-      const res = await this.$api.post('/a/detail/detail/select', params);
-      this.itemsPages[this.info.pageCurrent] = res.list;
-      this.info.pageSize = this.info.total = res.list.length;
+      try {
+        this.loading = true;
+        // params
+        const params = this.layoutManager.base_prepareSelectParams();
+        // fetch
+        const res = await this.$api.post('/a/detail/detail/select', params);
+        const items = res.list;
+        this.$set(this.itemsPages, this.info.pageCurrent, items);
+        this.info.pageSize = this.info.total = items.length;
+        this.loading = false;
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+        this.loading = false;
+      }
     },
     getItems() {
       return this.dataSource || [];
