@@ -13,7 +13,8 @@ export default {
   },
   methods: {
     layout_get() {
-      return (this.$view.size === 'small') ? 'list' : 'table';
+      return 'table';
+      // return (this.$view.size === 'small') ? 'list' : 'table';
     },
     async layout_prepareConfig() {
       // configDetailBase
