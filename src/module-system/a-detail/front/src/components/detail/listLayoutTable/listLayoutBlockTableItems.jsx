@@ -37,9 +37,6 @@ export default {
         _column.ellipsis = true;
         // customRender
         _column.customRender = this._customRender;
-        // sorter
-        _column.sorter = !!this._columnSorterFind(_column.dataIndex);
-        _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
         // push
         _columns.push(_column);
       }
@@ -53,6 +50,12 @@ export default {
     this.$meta.eventHub.$off('detail:action', this.onActionChanged);
   },
   methods: {
+    getItemActions() {
+      const actions = this.layoutManager.action.actions;
+      if (!actions) return actions;
+      // just remove save
+      return actions.filter(item => [ 'save' ].indexOf(item.name) === -1);
+    },
     async onItemClick(event, item) {
       return await this.onAction(event, item, {
         module: item.module,
@@ -105,62 +108,22 @@ export default {
         });
       }
     },
-    _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 24);
-    },
-    _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
     _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
-      }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
+      return (item._meta && item._meta.summary) || '';
+      // return (item._meta && item._meta.summary) || item.detailCode;
     },
     _getItemMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [ this.$text('Disabled') ].concat(flags);
-      }
       return flags;
-    },
-    _getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
     },
     _getActionColor(action, index) {
       if (index === 0) return 'orange';
       else if (index === 1) return 'red';
       return 'blue';
     },
-    _getActionTitle(action, item) {
-      return this.getActionTitle(action, item.atomStage);
-    },
-    _checkColumnNameEqualOrder(atomOrder, columnName) {
-      const key = this.layoutManager.order_getKey(atomOrder);
-      return (key === `a.${columnName}` || key === `f.${columnName}` || key === columnName);
-    },
-    _columnSorterFind(columnName) {
-      return this.layoutManager.order_list.find(atomOrder => {
-        return this._checkColumnNameEqualOrder(atomOrder, columnName);
-      });
-    },
-    _columnSorterCurrent(columnName) {
-      const atomOrderCurrent = this.layoutManager.order_current;
-      const key = this.layoutManager.order_getKey(atomOrderCurrent);
-      if (this._checkColumnNameEqualOrder(atomOrderCurrent, columnName)) {
-        return atomOrderCurrent.by === 'desc' ? 'descend' : 'ascend';
-      }
-      return false;
+    _getActionTitle(action) {
+      return this.getDetailActionTitle(action);
     },
     _customRender(text, record, index, column) {
       if (!column.component) {
@@ -212,51 +175,30 @@ export default {
     },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
-      // domLeft
-      let domLeft;
-      if (item && item.atomStage === 1) {
-        const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {<div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
-          </div>
-        );
-        const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
-            {<div slot="title">{this.$text('UserLabels')}</div>}
-          </div>
-        );
-        domLeft = (
-          <div slot="left">
-            {domLeftStar}
-            {domLeftLabel}
-          </div>
-        );
-      }
+      const itemActions = this.getItemActions();
       // domRight
       const domActions = [];
-      if (item && item._actions) {
-        for (let index in item._actions) {
+      if (itemActions) {
+        for (let index in itemActions) {
           index = parseInt(index);
-          const action = item._actions[index];
-          const _action = this.getAction(action);
+          const action = itemActions[index];
+          const _action = this.getDetailAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
+            <div key={action.code} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {<div slot="title">{this._getActionTitle(action, item)}</div>}
+              {this.$device.desktop && <div slot="title">{this._getActionTitle(action)}</div>}
             </div>
           );
         }
       }
       const domRight = (
-        <div slot="right" ready={item && !!item._actions}>
+        <div slot="right" ready={!!itemActions}>
           {domActions}
         </div>
       );
+
       return (
         <eb-context-menu mode="menu">
-          {domLeft}
           {domRight}
         </eb-context-menu>
       );
@@ -265,13 +207,10 @@ export default {
       return (
         <a-table
           bordered
-          rowSelection={this.rowSelection}
           columns={this.columns}
-          rowKey={item => item.atomId}
+          rowKey={item => item.detailId}
           dataSource={this.layout.dataSource}
           pagination={false}
-          scroll={{ y: this.tableHeight }}
-          onChange={this.onTableChange}
           customRow={this._customRow}
         >
         </a-table>
@@ -279,9 +218,8 @@ export default {
     },
   },
   render() {
-    return null;
     return (
-      <div class="atom-list-layout-table-container" >
+      <div class="detai-list-layout-table-container" >
         {this._renderTable()}
         {this._renderListItemContextMenu()}
       </div>
