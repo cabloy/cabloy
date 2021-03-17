@@ -87,7 +87,11 @@ export default {
             itemId: keyDraft.itemId,
           };
           const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
-          ctx.$view.navigate(url, action.navigateOptions);
+          let navigateOptions = action.navigateOptions;
+          if (ctx.$f7route.path === '/a/basefront/atom/item') {
+            navigateOptions = { target: '_self' };
+          }
+          ctx.$view.navigate(url, navigateOptions);
         } catch (err) {
           if (err.code === 422) {
             throw new Error(err.message[0].message);

@@ -21,7 +21,7 @@ module.exports = app => {
       },
       price: {
         type: 'number',
-        ebType: 'text',
+        ebType: 'currency',
         ebTitle: 'Price',
       },
       quantity: {
@@ -31,7 +31,7 @@ module.exports = app => {
       },
       amount: {
         type: 'number',
-        ebType: 'text',
+        ebType: 'currency',
         ebTitle: 'Amount',
       },
     },

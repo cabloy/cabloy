@@ -28,7 +28,11 @@ export default {
           ctx.$f7router.back();
         }
       } else if (action.name === 'save') {
-
+        // save
+        await ctx.$api.post('/a/detail/detail/write', { key, item });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
+        // toast
+        return ctx.$text('Saved');
       } else if (action.name === 'write') {
         const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', item);
         ctx.$view.navigate(url, action.navigateOptions);
@@ -45,7 +49,11 @@ export default {
           ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key: keyDest, action: { name: 'create' } });
           // open
           const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', _item);
-          ctx.$view.navigate(url, action.navigateOptions);
+          let navigateOptions = action.navigateOptions;
+          if (ctx.$f7route.path === '/a/detail/detail/item') {
+            navigateOptions = { target: '_self' };
+          }
+          ctx.$view.navigate(url, navigateOptions);
         } catch (err) {
           if (err.code === 422) {
             throw new Error(err.message[0].message);

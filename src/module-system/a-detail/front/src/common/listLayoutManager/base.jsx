@@ -17,6 +17,15 @@ export default {
   created() {
   },
   methods: {
+    base_prepareReadOptions() {
+      // options
+      const options = {
+      };
+      // layout
+      options.layout = this.layout.current;
+      // options
+      return options;
+    },
     base_prepareSelectOptions() {
       // options
       let options = {
