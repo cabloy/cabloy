@@ -41,7 +41,7 @@ export default {
       return await this.onAction(event, item, {
         module: item.module,
         detailClassName: item.detailClassName,
-        name: 'read',
+        name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
       });
     },
     onSwipeoutOpened(event, item) {

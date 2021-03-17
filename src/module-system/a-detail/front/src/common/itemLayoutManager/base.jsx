@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     base_ready() {
-      return this.base.ready && this.actionsAll;
+      return this.base.ready && this.detailActionsAll;
     },
     base_user() {
       return this.$store.state.auth.user.op;

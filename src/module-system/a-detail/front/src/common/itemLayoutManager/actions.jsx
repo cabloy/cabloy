@@ -9,6 +9,13 @@ export default {
     };
   },
   computed: {
+    actions_itemActions() {
+      if (!this.actions.list) return null;
+      const actions = this.actions.list;
+      // just remove read/write
+      //    should show moveUp/moveDown
+      return actions.filter(item => [ 'read', 'write' ].indexOf(item.name) === -1);
+    },
     actions_listPopover() {
       if (!this.base_ready) return null;
       const actions = [];
@@ -22,19 +29,21 @@ export default {
         });
       }
       // others
-      for (const action of this.actions.list) {
+      if (this.actions_itemActions) {
+        for (const action of this.actions_itemActions) {
         // write
-        if (action.name === 'write' && this.base.item.atomStage === 0) continue;
-        // view
-        if (action.name === 'read' && this.container.mode === 'view') continue;
-        // stage
-        const _action = this.getAction(action);
-        if (_action.stage) {
-          const stages = _action.stage.split(',');
-          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) continue;
+          if (action.name === 'write' && this.base.item.atomStage === 0) continue;
+          // view
+          if (action.name === 'read' && this.container.mode === 'view') continue;
+          // stage
+          const _action = this.getAction(action);
+          if (_action.stage) {
+            const stages = _action.stage.split(',');
+            if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) continue;
+          }
+          // ok
+          actions.push(action);
         }
-        // ok
-        actions.push(action);
       }
       // specials
       //    draft
@@ -75,8 +84,8 @@ export default {
       });
     },
     actions_findAction(actionName) {
-      if (!this.actions.list) return null;
-      return this.actions.list.find(item => item.name === actionName);
+      if (!this.actions_itemActions) return null;
+      return this.actions_itemActions.find(item => item.name === actionName);
     },
     actions_onSubmit() {
       this.$refs.buttonSave.onClick();
