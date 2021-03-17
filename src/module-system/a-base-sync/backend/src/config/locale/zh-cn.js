@@ -22,6 +22,8 @@ module.exports = {
   'Cannot delete if has children': '有子元素时不允许删除',
   'Create Resource': '新建资源',
   'Resource List': '资源列表',
+  'Move Up': '上移',
+  'Move Down': '下移',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',

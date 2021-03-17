@@ -8,6 +8,8 @@ module.exports = app => {
         write: 3,
         delete: 4,
         clone: 5,
+        moveUp: 6,
+        moveDown: 7,
 
         save: 51,
 
@@ -56,6 +58,24 @@ module.exports = app => {
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           icon: { material: 'content_copy' },
+          inherit: 'write',
+          mode: 'edit',
+          stage: 'draft',
+        },
+        moveUp: {
+          title: 'Move Up',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          icon: { material: 'arrow_upward' },
+          inherit: 'write',
+          mode: 'edit',
+          stage: 'draft',
+        },
+        moveDown: {
+          title: 'Move Down',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          icon: { material: 'arrow_downward' },
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
