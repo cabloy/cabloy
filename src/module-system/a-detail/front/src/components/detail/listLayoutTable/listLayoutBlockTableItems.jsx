@@ -1,12 +1,10 @@
 import Vue from 'vue';
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
-const ebViewSizeChange = Vue.prototype.$meta.module.get('a-components').options.mixins.ebViewSizeChange;
-const _heightTableHeader = 44;
+const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomActions, ebViewSizeChange ],
+  mixins: [ ebDetailActions ],
   props: {
     layoutManager: {
       type: Object,
@@ -20,11 +18,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: 0,
       contextmenuRecord: null,
-      // viewSize
-      header: true,
-      toolbar: true,
     };
   },
   computed: {
@@ -51,109 +45,48 @@ export default {
       }
       return _columns;
     },
-    rowSelection() {
-      if (!this.layoutManager.bulk.selecting) return null;
-      const selectedRowKeys = this.layoutManager.bulk.selectedAtoms.map(item => item.atomId);
-      return {
-        selectedRowKeys,
-        onChange: this.onSelectChange,
-      };
-    },
   },
   mounted() {
-    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
+    this.$meta.eventHub.$on('detail:action', this.onActionChanged);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
+    this.$meta.eventHub.$off('detail:action', this.onActionChanged);
   },
   methods: {
-    onViewSizeChange(size) {
-      this.tableHeight = size.height - _heightTableHeader;
-    },
-    onTableChange(pagination, filters, sorter) {
-      const { field, order = 'ascend' } = sorter;
-      const currentOrder = this._columnSorterCurrent(field);
-      if (currentOrder === order) return;
-      const atomOrder = this._columnSorterFind(field);
-      this.layoutManager.order_onPerformChange(null, atomOrder);
-    },
-    onSelectChange(selectedRowKeys) {
-      const items = this.layoutManager.base_getItems();
-      this.layoutManager.bulk.selectedAtoms = items.filter(item => {
-        return selectedRowKeys.findIndex(atomId => atomId === item.atomId) > -1;
-      });
-    },
-    onItemClick(event, item) {
-      return this.onAction(event, item, {
+    async onItemClick(event, item) {
+      return await this.onAction(event, item, {
         module: item.module,
-        atomClassName: item.atomClassName,
+        detailClassName: item.detailClassName,
         name: 'read',
       });
     },
     onSwipeoutOpened(event, item) {
-      if (item._actions) return;
-      this.$api.post('/a/base/atom/actions', {
-        key: { atomId: item.atomId },
-        basic: !this.$device.desktop,
-      }).then(data => {
-        Vue.set(item, '_actions', data);
-      });
     },
-    onLabel(event, item) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // navigate
-      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
-        // target: '_self',
-      });
-      this.$meta.util.swipeoutClose(event.target);
-    },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
-    },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
+    async onAction(event, item, action) {
+      const _action = this.getDetailAction(action);
       if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item })
-        .then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-        });
-    },
-    onStarChanged(data) {
-      const { items, index } = this.layout._findItem(data.key.atomId);
-      if (index !== -1) {
-        items[index].star = data.star;
-      }
-    },
-    onLabelsChanged(data) {
-      const { items, index } = this.layout._findItem(data.key.atomId);
-      if (index !== -1) {
-        items[index].labels = JSON.stringify(data.labels);
-      }
+      const res = await this.$meta.util.performAction({ ctx: this, action: _action, item });
+      this.$meta.util.swipeoutClose(event.target);
+      return res;
     },
     onActionChanged(data) {
+      const { atomKey, detailClass } = data;
+      if (
+        atomKey.atomId !== this.layoutManager.container.atomId ||
+        detailClass.module !== this.layoutManager.container.detailClass.module ||
+        detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
+      ) return;
+
       const key = data.key;
       const action = data.action;
       // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
+      if (action.name === 'create') {
+        // load
+        this.layout.loadDetails();
         return;
       }
       // delete
-      const { items, index } = this.layout._findItem(key.atomId);
+      const { items, index } = this.layout._findItem(key.detailId);
       if (action.name === 'delete') {
         if (index !== -1) {
           items.splice(index, 1);
@@ -164,43 +97,13 @@ export default {
       // others
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api.post('/a/base/atom/read', {
+        this.$api.post('/a/detail/detail/read', {
           key,
           options,
         }).then(data => {
           Vue.set(items, index, data);
         });
       }
-    },
-    onActionsChanged(data) {
-      const key = data.key;
-      const { items, index } = this.layout._findItem(key.atomId);
-      if (index !== -1) {
-        Vue.set(items[index], '_actions', null);
-      }
-    },
-    _onStarSwitch(event, item, star, swipeoutAction) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // key
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      //
-      return this.$api.post('/a/base/atom/star', {
-        key,
-        atom: { star },
-      }).then(data => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util[swipeoutAction](event.target);
-      });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;

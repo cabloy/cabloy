@@ -45,13 +45,6 @@ export default {
       });
     },
     onSwipeoutOpened(event, item) {
-      if (item._actions) return;
-      this.$api.post('/a/base/atom/actions', {
-        key: { atomId: item.atomId },
-        basic: !this.$device.desktop,
-      }).then(data => {
-        Vue.set(item, '_actions', data);
-      });
     },
     async onAction(event, item, action) {
       const _action = this.getDetailAction(action);
@@ -61,8 +54,13 @@ export default {
       return res;
     },
     onActionChanged(data) {
-      const atomKey = data.atomKey;
-      if (atomKey.atomId !== this.layoutManager.container.atomId) return;
+      const { atomKey, detailClass } = data;
+      if (
+        atomKey.atomId !== this.layoutManager.container.atomId ||
+        detailClass.module !== this.layoutManager.container.detailClass.module ||
+        detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
+      ) return;
+
       const key = data.key;
       const action = data.action;
       // create
@@ -82,7 +80,7 @@ export default {
       // others
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api.post('/a/base/atom/read', {
+        this.$api.post('/a/detail/detail/read', {
           key,
           options,
         }).then(data => {

@@ -13,10 +13,15 @@ export default {
         const atomKey = { atomId: item.atomId };
         // key
         const key = { detailId: item.detailId, detailItemId: item.detailItemId };
+        // detailClass
+        const detailClass = {
+          module: item.module,
+          detailClassName: item.detailClassName,
+        };
         // delete
         await ctx.$api.post('/a/detail/detail/delete', { key });
         // event
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, key, action });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
         // back
         if (ctx.$f7route.path === '/a/detail/detail/item') {
           ctx.$f7router.back();
@@ -32,6 +37,11 @@ export default {
         const atomKey = { atomId: item.atomId };
         // key
         const key = { detailId: item.detailId, detailItemId: item.detailItemId };
+        // detailClass
+        const detailClass = {
+          module: item.module,
+          detailClassName: item.detailClassName,
+        };
         try {
           const keyDest = await ctx.$api.post('/a/detail/detail/clone', { key });
           const _item = {
@@ -40,7 +50,7 @@ export default {
             detailItemId: keyDest.detailItemId,
           };
           // event
-          ctx.$meta.eventHub.$emit('detail:action', { atomKey, key: keyDest, action: { name: 'create' } });
+          ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key: keyDest, action: { name: 'create' } });
           // open
           const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', _item);
           ctx.$view.navigate(url, action.navigateOptions);
@@ -55,17 +65,19 @@ export default {
     async _onActionCreate({ ctx, action, item }) {
       // atomKey
       const atomKey = { atomId: item.atomId };
+      // detailClass
+      const detailClass = {
+        module: item.module,
+        detailClassName: item.detailClassName,
+      };
       // create
       const key = await ctx.$api.post('/a/detail/detail/create', {
         atomKey,
-        detailClass: {
-          module: item.module,
-          detailClassName: item.detailClassName,
-        },
+        detailClass,
         item,
       });
       // event
-      ctx.$meta.eventHub.$emit('detail:action', { atomKey, key, action });
+      ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
       // menu
       if (action.menu === 1 || (action.actionComponent || action.actionPath)) {
         item = ctx.$utils.extend({}, item, key);
