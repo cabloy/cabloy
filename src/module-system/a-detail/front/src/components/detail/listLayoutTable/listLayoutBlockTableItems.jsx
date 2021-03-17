@@ -186,7 +186,7 @@ export default {
           domActions.push(
             <div key={action.code} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this._getActionTitle(action)}</div>}
+              <div slot="title">{this._getActionTitle(action)}</div>
             </div>
           );
         }
