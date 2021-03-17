@@ -3,7 +3,6 @@ import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Subnavbar from './subnavbar.jsx';
-import Info from './info.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
@@ -16,7 +15,7 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [ ebDetailActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate ],
+  mixins: [ ebDetailActions, Base, Page, Layout, Subnavbar, Actions, Validate ],
   data() {
     return {
     };

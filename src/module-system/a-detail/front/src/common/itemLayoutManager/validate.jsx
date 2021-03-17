@@ -13,7 +13,7 @@ export default {
     validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
-      const _action = this.getAction(action);
+      const _action = this.getDetailAction(action);
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
     },
     validate_render() {
