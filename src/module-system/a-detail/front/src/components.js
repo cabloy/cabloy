@@ -10,6 +10,10 @@ import listLayoutBlockTableTitle from './components/detail/listLayoutTable/listL
 import listLayoutBlockTableItems from './components/detail/listLayoutTable/listLayoutBlockTableItems.jsx';
 import listLayoutTableCellDetailLineNo from './components/detail/listLayoutTable/listLayoutTableCellDetailLineNo.jsx';
 import listLayoutTableCellDetailName from './components/detail/listLayoutTable/listLayoutTableCellDetailName.jsx';
+// itemLayoutMobile
+import itemLayoutMobile from './components/detail/itemLayoutMobile/itemLayoutMobile.jsx';
+import itemLayoutBlockMobileTitle from './components/detail/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
+import itemLayoutBlockMobileMain from './components/detail/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
 
 export default {
   action,
@@ -24,4 +28,8 @@ export default {
   listLayoutBlockTableItems,
   listLayoutTableCellDetailLineNo,
   listLayoutTableCellDetailName,
+  // itemLayoutMobile
+  itemLayoutMobile,
+  itemLayoutBlockMobileTitle,
+  itemLayoutBlockMobileMain,
 };
