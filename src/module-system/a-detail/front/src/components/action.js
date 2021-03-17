@@ -4,20 +4,21 @@ export default {
   },
   methods: {
     async onAction({ ctx, action, item }) {
+      // atomKey
+      const atomKey = { atomId: item.atomId };
+      // key
+      const key = { detailId: item.detailId, detailItemId: item.detailItemId };
+      // detailClass
+      const detailClass = {
+        module: item.module,
+        detailClassName: item.detailClassName,
+      };
+      // do
       if (action.name === 'create' || action.action === 'create') {
-        return await this._onActionCreate({ ctx, action, item });
+        return await this._onActionCreate({ ctx, action, item, atomKey, detailClass });
       } else if (action.name === 'delete') {
         // delete
         await ctx.$view.dialog.confirm();
-        // atomKey
-        const atomKey = { atomId: item.atomId };
-        // key
-        const key = { detailId: item.detailId, detailItemId: item.detailItemId };
-        // detailClass
-        const detailClass = {
-          module: item.module,
-          detailClassName: item.detailClassName,
-        };
         // delete
         await ctx.$api.post('/a/detail/detail/delete', { key });
         // event
@@ -33,15 +34,6 @@ export default {
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'clone') {
         // clone
-        // atomKey
-        const atomKey = { atomId: item.atomId };
-        // key
-        const key = { detailId: item.detailId, detailItemId: item.detailItemId };
-        // detailClass
-        const detailClass = {
-          module: item.module,
-          detailClassName: item.detailClassName,
-        };
         try {
           const keyDest = await ctx.$api.post('/a/detail/detail/clone', { key });
           const _item = {
@@ -62,14 +54,7 @@ export default {
         }
       }
     },
-    async _onActionCreate({ ctx, action, item }) {
-      // atomKey
-      const atomKey = { atomId: item.atomId };
-      // detailClass
-      const detailClass = {
-        module: item.module,
-        detailClassName: item.detailClassName,
-      };
+    async _onActionCreate({ ctx, action, item, atomKey, detailClass }) {
       // create
       const key = await ctx.$api.post('/a/detail/detail/create', {
         atomKey,
