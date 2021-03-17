@@ -60,6 +60,14 @@ export default {
           }
           throw err;
         }
+      } else if (action.name === 'moveUp') {
+        // moveUp
+        await ctx.$api.post('/a/detail/detail/moveUp', { key });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
+      } else if (action.name === 'moveDown') {
+        // moveUp
+        await ctx.$api.post('/a/detail/detail/moveDown', { key });
+        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
       }
     },
     async _onActionCreate({ ctx, action, item, atomKey, detailClass }) {

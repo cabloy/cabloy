@@ -73,6 +73,22 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async moveUp() {
+      const res = await this.ctx.service.detail.moveUp({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async moveDown() {
+      const res = await this.ctx.service.detail.moveDown({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async actions() {
       const res = await this.ctx.service.detail.actions({
         atomKey: this.ctx.request.body.atomKey,

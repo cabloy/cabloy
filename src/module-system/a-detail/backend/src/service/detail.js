@@ -30,6 +30,14 @@ module.exports = app => {
       return await this.ctx.bean.detail.clone({ key, user });
     }
 
+    async moveUp({ key, user }) {
+      return await this.ctx.bean.detail.moveUp({ key, user });
+    }
+
+    async moveDown({ key, user }) {
+      return await this.ctx.bean.detail.moveDown({ key, user });
+    }
+
     async actions({ atomKey, detailClass, mode, user }) {
       return await this.ctx.bean.detail.actions({ atomKey, detailClass, mode, user });
     }

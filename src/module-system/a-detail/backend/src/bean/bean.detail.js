@@ -200,6 +200,46 @@ module.exports = ctx => {
       return keyDest;
     }
 
+    async moveUp({ key, user }) {
+      return await this._moveLineNo({ key, user, direction: 'up' });
+    }
+
+    async moveDown({ key, user }) {
+      return await this._moveLineNo({ key, user, direction: 'down' });
+    }
+
+    async _moveLineNo({ key, user, direction }) {
+      // from
+      const detailFrom = await this.modelDetail.get({ id: key.detailId });
+      // sql
+      let sql;
+      if (direction === 'up') {
+        sql = `select a.id,a.detailLineNo from aDetail a
+          where a.iid=? and a.deleted=0 and a.atomId=? and a.detailClassId=? and a.detailLineNo<?
+          order by detailLineNo desc`;
+      } else {
+        sql = `select a.id,a.detailLineNo from aDetail a
+          where a.iid=? and a.deleted=0 and a.atomId=? and a.detailClassId=? and a.detailLineNo>?
+          order by detailLineNo asc`;
+      }
+      // to
+      const detailTo = await ctx.model.queryOne(sql, [
+        ctx.instance.id, detailFrom.atomId, detailFrom.detailClassId, detailFrom.detailLineNo,
+      ]);
+      if (!detailTo) {
+        // do nothing
+        return null;
+      }
+      // switch
+      await this.modelDetail.update({ id: key.detailId, detailLineNo: detailTo.detailLineNo });
+      await this.modelDetail.update({ id: detailTo.id, detailLineNo: detailFrom.detailLineNo });
+      // ok
+      return {
+        from: key.detailId,
+        to: detailTo.id,
+      };
+    }
+
     async _delete2({ detailClass, key, target, user }) {
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
