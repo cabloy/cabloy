@@ -1,23 +1,23 @@
 export default {
   data() {
     return {
-      action: {
-        actions: null,
+      actions: {
+        list: null,
       },
     };
   },
   created() {
-    this.action_loadActions();
+    this.actions_fetchActions();
   },
   methods: {
-    action_loadActions() {
-      if (this.action.actions) return;
+    actions_fetchActions() {
+      if (this.actions.list) return;
       this.$api.post('/a/detail/detail/actions', {
         atomKey: { atomId: this.container.atomId },
         detailClass: this.container.detailClass,
         mode: this.container.mode,
       }).then(data => {
-        this.action.actions = data;
+        this.actions.list = data;
       });
     },
   },

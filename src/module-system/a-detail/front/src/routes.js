@@ -6,5 +6,5 @@ function loadjsx(name) {
 }
 
 export default [
-  { path: 'detail/item', component: loadjsx('detail/item') },
+  // { path: 'detail/item', component: loadjsx('detail/item') },
 ];

@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     getItemActions() {
-      const actions = this.layoutManager.action.actions;
+      const actions = this.layoutManager.actions.list;
       if (!actions) return actions;
       if (this.$device.desktop) {
         // just remove save
