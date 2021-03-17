@@ -16,7 +16,6 @@ export default {
   },
   created() {
     this.layoutManager.layout.instance = this;
-    this.layoutManager.subnavbar.enable = true;
   },
   methods: {
     getBlockComponentOptions({ blockConfig }) {

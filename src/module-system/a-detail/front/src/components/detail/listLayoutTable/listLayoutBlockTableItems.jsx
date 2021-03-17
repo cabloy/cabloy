@@ -51,10 +51,7 @@ export default {
   },
   methods: {
     getItemActions() {
-      const actions = this.layoutManager.actions.list;
-      if (!actions) return actions;
-      // just remove save
-      return actions.filter(item => [ 'save' ].indexOf(item.name) === -1);
+      return this.layoutManager.actions.list;
     },
     async onItemClick(event, item) {
       return await this.onAction(event, item, {

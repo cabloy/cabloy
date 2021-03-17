@@ -512,6 +512,7 @@ module.exports = ctx => {
       let _actions = [];
       for (const name in actionsAll) {
         const action = actionsAll[name];
+        if (action.authorize === false) continue;
         if ((!!action.bulk) === bulk && (!action.mode || action.mode === mode)) {
           _actions.push(action);
         }

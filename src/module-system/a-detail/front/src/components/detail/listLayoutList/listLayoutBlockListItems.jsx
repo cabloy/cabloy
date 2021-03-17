@@ -31,8 +31,7 @@ export default {
       const actions = this.layoutManager.actions.list;
       if (!actions) return actions;
       if (this.$device.desktop) {
-        // just remove save
-        return actions.filter(item => [ 'save' ].indexOf(item.name) === -1);
+        return actions;
       }
       // only read/write/delete
       return actions.filter(item => [ 'read', 'write', 'delete' ].indexOf(item.name) > -1);

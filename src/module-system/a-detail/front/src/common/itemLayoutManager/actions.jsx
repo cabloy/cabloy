@@ -12,64 +12,16 @@ export default {
     actions_itemActions() {
       if (!this.actions.list) return null;
       const actions = this.actions.list;
-      // just remove read/write
-      //    should show moveUp/moveDown
-      return actions.filter(item => [ 'read', 'write' ].indexOf(item.name) === -1);
+      // just remove read
+      //    should show write/moveUp/moveDown
+      return actions.filter(item => [ 'read' ].indexOf(item.name) === -1);
     },
     actions_listPopover() {
       if (!this.base_ready) return null;
-      const actions = [];
-      // submit
-      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0;
-      if (submit) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'submit',
-        });
-      }
-      // others
-      if (this.actions_itemActions) {
-        for (const action of this.actions_itemActions) {
-        // write
-          if (action.name === 'write' && this.base.item.atomStage === 0) continue;
-          // view
-          if (action.name === 'read' && this.container.mode === 'view') continue;
-          // stage
-          const _action = this.getAction(action);
-          if (_action.stage) {
-            const stages = _action.stage.split(',');
-            if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) continue;
-          }
-          // ok
-          actions.push(action);
-        }
-      }
-      // specials
-      //    draft
-      if (this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'draft',
-        });
-      }
-      //    formal
-      if (this.base.item.atomIdFormal) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'formal',
-        });
-      }
-      //    history
-      if (this.base.item.atomIdFormal || this.base.item.atomStage === 1) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'history',
-        });
-      }
+      let actions = this.actions_itemActions;
+      if (!actions) return null;
+      // just remove write
+      actions = actions.filter(item => [ 'write' ].indexOf(item.name) === -1);
       // ok
       return actions.length > 0 ? actions : null;
     },
@@ -96,11 +48,8 @@ export default {
       return validateInstance.perform(event, { action });
     },
     actions_onAction(event, action) {
-      if (action === 'save' || action === 'submit') {
+      if (action === 'save') {
         return this.actions_submit(event, action);
-      }
-      if (action.name === 'submit') {
-        return this.actions_submit(event, action.name);
       }
       if (typeof action === 'string') {
         action = {
@@ -110,11 +59,7 @@ export default {
         };
       }
       // action
-      let _action = this.getAction(action);
-      // for write
-      if (action.name === 'write') {
-        _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });
-      }
+      const _action = this.getDetailAction(action);
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
     },
     actions_render() {
@@ -122,9 +67,9 @@ export default {
       const children = [];
       // only show on draft
       const actionWrite = this.actions_findAction('write');
-      if (actionWrite && this.base.item.atomStage === 0) {
-        const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
-        const actionName = this.container.mode === 'edit' ? 'save' : 'write';
+      if (actionWrite) {
+        const actionIcon = 'save';
+        const actionName = 'save';
         children.push(
           <eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>
         );
@@ -144,11 +89,11 @@ export default {
       if (actions) {
         const children = [];
         for (const action of actions) {
-          const _action = this.getAction(action);
+          const _action = this.getDetailAction(action);
           children.push(
-            <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
+            <eb-list-item key={action.code} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
               <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
-              <div slot="title">{this.getActionTitle(action, this.base.item.atomStage)}</div>
+              <div slot="title">{this.getDetailActionTitle(action)}</div>
             </eb-list-item>
           );
         }
