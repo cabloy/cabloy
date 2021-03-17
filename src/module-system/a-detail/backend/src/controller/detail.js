@@ -93,6 +93,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async validator() {
+      const res = await this.ctx.service.detail.validator({
+        detailClass: this.ctx.request.body.detailClass,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return DetailController;
 };

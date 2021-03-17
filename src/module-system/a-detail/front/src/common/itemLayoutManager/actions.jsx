@@ -67,8 +67,11 @@ export default {
   },
   methods: {
     async actions_fetchActions() {
-      this.actions.list = await this.$api.post('/a/base/atom/actions', {
-        key: { atomId: this.container.atomId },
+      if (this.actions.list) return;
+      this.actions.list = await this.$api.post('/a/detail/detail/actions', {
+        atomKey: { atomId: this.base.item.atomId },
+        detailClass: this.base.detailClass,
+        mode: this.container.mode,
       });
     },
     actions_findAction(actionName) {

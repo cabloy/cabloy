@@ -13,7 +13,7 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 //   mode,  // edit/view
 //   atomId,
 //   itemId,
-//   atomClassId,
+//   layout,
 // },
 
 export default {

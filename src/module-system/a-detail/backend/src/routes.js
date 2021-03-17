@@ -26,6 +26,7 @@ module.exports = app => {
     },
     { method: 'post', path: 'detail/actions', controller: 'detail' },
     { method: 'post', path: 'detail/actionsBulk', controller: 'detail' },
+    { method: 'post', path: 'detail/validator', controller: 'detail' },
   ];
   return routes;
 };

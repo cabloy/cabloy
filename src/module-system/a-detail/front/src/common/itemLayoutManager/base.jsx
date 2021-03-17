@@ -3,12 +3,12 @@ export default {
     return {
       base: {
         ready: false,
-        configAtomBase: null,
-        configAtom: null,
+        configDetailBase: null,
+        configDetail: null,
         config: null,
         //
         item: null,
-        atomClass: null,
+        detailClass: null,
         module: null,
         validateParams: null,
         notfound: false,
@@ -17,54 +17,40 @@ export default {
   },
   computed: {
     base_ready() {
-      return this.base.ready && this.base_userLabels && this.atomClassesAll && this.actionsAll;
+      return this.base.ready && this.actionsAll;
     },
     base_user() {
       return this.$store.state.auth.user.op;
     },
-    base_userLabels() {
-      return this.$store.getters['a/base/userLabels'];
-    },
   },
   created() {
-    this.$store.dispatch('a/base/getLabels');
   },
   mounted() {
-    this.$meta.eventHub.$on('atom:star', this.base_onStarChanged);
-    this.$meta.eventHub.$on('atom:labels', this.base_onLabelsChanged);
-    this.$meta.eventHub.$on('atom:action', this.base_onActionChanged);
-    this.$meta.eventHub.$on('atom:actions', this.base_onActionsChanged);
-    this.$meta.eventHub.$on('comment:action', this.base_onCommentChanged);
-    this.$meta.eventHub.$on('attachment:action', this.base_onAttachmentChanged);
+    this.$meta.eventHub.$on('detail:action', this.base_onActionChanged);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.base_onStarChanged);
-    this.$meta.eventHub.$off('atom:labels', this.base_onLabelsChanged);
-    this.$meta.eventHub.$off('atom:action', this.base_onActionChanged);
-    this.$meta.eventHub.$off('atom:actions', this.base_onActionsChanged);
-    this.$meta.eventHub.$off('comment:action', this.base_onCommentChanged);
-    this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
+    this.$meta.eventHub.$off('detail:action', this.base_onActionChanged);
   },
   methods: {
     async base_loadItem() {
       try {
         // item
         const options = this.base_prepareReadOptions();
-        this.base.item = await this.$api.post('/a/base/atom/read', {
-          key: { atomId: this.container.atomId },
+        this.base.item = await this.$api.post('/a/detail/detail/read', {
+          key: { detailId: this.container.detailId },
           options,
         });
-        // atomClass
-        this.base.atomClass = {
-          id: this.base.item.atomClassId,
+        // detailClass
+        this.base.detailClass = {
+          id: this.base.item.detailClassId,
           module: this.base.item.module,
-          atomClassName: this.base.item.atomClassName,
+          detailClassName: this.base.item.detailClassName,
         };
         // module
         this.base.module = await this.$meta.module.use(this.base.item.module);
         // validateParams
-        const res = await this.$api.post('/a/base/atom/validator', {
-          atomClass: { id: this.base.item.atomClassId },
+        const res = await this.$api.post('/a/detail/detail/validator', {
+          detailClass: { id: this.base.item.detailClassId },
         });
         this.base.validateParams = {
           module: res.module,
@@ -97,16 +83,16 @@ export default {
       const action = data.action;
 
       if (!this.base_ready) return;
-      if (this.base.item.atomId !== key.atomId) return;
+      if (this.base.item.detailId !== key.detailId) return;
 
       if (this.container.mode === 'edit') {
         // just update time
-        this.base.item.atomUpdatedAt = new Date();
+        this.base.item.detailUpdatedAt = new Date();
         return;
       }
 
       // create
-      if (action.menu === 1 && action.action === 'create') {
+      if (action.name === 'create') {
         // do nothing
         return;
       }
@@ -119,40 +105,6 @@ export default {
       }
       // others
       await this.base_loadItem();
-    },
-    async base_onActionsChanged(data) {
-      const key = data.key;
-
-      if (!this.base_ready) return;
-      if (this.base.item.atomId !== key.atomId) return;
-
-      await this.actions_fetchActions();
-    },
-    async base_onOpenDrafted(data) {
-      const key = data.key;
-
-      if (!this.base_ready) return;
-      if (this.base.item.atomId !== key.atomId) return;
-
-      await this.actions_fetchActions();
-    },
-    base_onCommentChanged(data) {
-      if (!this.base.item || data.atomId !== this.container.atomId) return;
-      if (data.action === 'create') this.base.item.commentCount += 1;
-      if (data.action === 'delete') this.base.item.commentCount -= 1;
-    },
-    base_onAttachmentChanged(data) {
-      if (!this.base.item || data.atomId !== this.container.atomId) return;
-      if (data.action === 'create') this.base.item.attachmentCount += 1;
-      if (data.action === 'delete') this.base.item.attachmentCount -= 1;
-    },
-    base_onStarChanged(data) {
-      if (!this.base.item || data.key.atomId !== this.container.atomId) return;
-      this.base.item.star = data.star;
-    },
-    base_onLabelsChanged(data) {
-      if (!this.base.item || data.key.atomId !== this.container.atomId) return;
-      this.base.item.labels = JSON.stringify(data.labels);
     },
   },
 };

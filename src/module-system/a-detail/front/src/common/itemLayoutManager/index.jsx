@@ -6,18 +6,17 @@ import Subnavbar from './subnavbar.jsx';
 import Info from './info.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 
 // container: {
 //   mode,  // edit/view
-//   atomId,
-//   itemId,
-//   atomClassId,
+//   detailId,
+//   detailItemId,
+//   layout,
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate ],
+  mixins: [ ebDetailActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate ],
   data() {
     return {
     };

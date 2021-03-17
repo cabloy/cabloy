@@ -38,6 +38,10 @@ module.exports = app => {
       return await this.ctx.bean.detail.actionsBulk({ atomKey, detailClass, mode, user });
     }
 
+    async validator({ detailClass }) {
+      return await this.ctx.bean.detail.validator({ detailClass });
+    }
+
   }
 
   return Detail;
