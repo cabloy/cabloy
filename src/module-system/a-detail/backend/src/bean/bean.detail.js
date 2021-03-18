@@ -585,13 +585,33 @@ module.exports = ctx => {
       return res;
     }
 
-    async _checkRightRead({ atomId, atom, actionBase, user }) {
+    async _checkSchemaValid({ schema, detailClass }) {
+      for (const key in schema.properties) {
+        const property = schema.properties[key];
+        if (property.ebType === 'detail' &&
+          property.ebOptions.module === detailClass.module &&
+          property.ebOptions.detailClassName === detailClass.detailClassName) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    async _checkRightRead({ flowTaskId, detailClass, atomId, atom, actionBase, user }) {
       // special check for stage
       if (actionBase.stage) {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
       // todo: special check for flow
+      if (atom.atomStage === 0 && atom.atomFlowId > 0) {
+        if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
+        const viewAtom = await ctx.bean.flowTask.viewAtom({ flowTaskId, user });
+        if (!viewAtom) ctx.throw(403);
+        if (this._checkSchemaValid({ schema: viewAtom.schema.schema, detailClass })) return true;
+        // default is false
+        return false;
+      }
       // atom read
       return !!await ctx.bean.atom.checkRightRead({
         atom: { id: atomId },
@@ -600,7 +620,7 @@ module.exports = ctx => {
       });
     }
 
-    async _checkRightAction({ atomId, atom, actionBase, user }) {
+    async _checkRightAction({ flowTaskId, detailClass, atomId, atom, actionBase, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id: atom.atomClassId });
       const atomActionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, name: actionBase.inherit });
@@ -609,7 +629,7 @@ module.exports = ctx => {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
-      // todo: special check for flow
+      // special check for flow
       //     if not write details in flowing, also means not perform other actions
       // atom action
       return !!await ctx.bean.atom.checkRightAction({
@@ -622,7 +642,7 @@ module.exports = ctx => {
       });
     }
 
-    async _checkRight({ atomId, detailClass, action, user }) {
+    async _checkRight({ flowTaskId, atomId, detailClass, action, user }) {
       // detailClass
       if (!detailClass) {
         // use default detail
@@ -636,10 +656,10 @@ module.exports = ctx => {
       const inherit = actionBase.inherit;
       // read
       if (inherit === 'read') {
-        return await this._checkRightRead({ atomId, atom, actionBase, user });
+        return await this._checkRightRead({ flowTaskId, detailClass, atomId, atom, actionBase, user });
       }
       // write or others
-      return await this._checkRightAction({ atomId, atom, actionBase, user });
+      return await this._checkRightAction({ flowTaskId, detailClass, atomId, atom, actionBase, user });
     }
 
     // right
@@ -659,8 +679,11 @@ module.exports = ctx => {
         detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
         if (!detailClass) ctx.throw.module('a-base', 1002);
       }
+      // flowTaskId
+      const flowTaskId = ctx.request.body.flowTaskId;
       // check
       const res = await this._checkRight({
+        flowTaskId,
         atomId,
         detailClass,
         action: options.action,

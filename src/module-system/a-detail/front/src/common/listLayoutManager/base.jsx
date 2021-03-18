@@ -47,6 +47,7 @@ export default {
       const options = this.base_prepareSelectOptions();
       // params
       const params = {
+        flowTaskId: this.container.flowTaskId,
         atomKey: { atomId: this.container.atomId },
         detailClass: this.container.detailClass,
         options,

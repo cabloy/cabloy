@@ -21,7 +21,10 @@ export default {
           readOnly={this.container.mode !== 'edit'}
           auto data={this.container_data.item}
           meta={
-            { schema: this.container_data.schema }
+            {
+              schema: this.container_data.schema,
+              flowTaskId: this.container.flowTaskId,
+            }
           }
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}>

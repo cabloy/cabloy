@@ -97,6 +97,7 @@ export default {
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
         this.$api.post('/a/detail/detail/read', {
+          flowTaskId: this.layoutManager.container.flowTaskId,
           key,
           options,
         }).then(data => {
