@@ -679,17 +679,29 @@ module.exports = ctx => {
       // atomId/detailClass
       let atomId;
       let detailClass;
-      if (options.atomKey) {
-        atomId = ctx.request.body.atomKey.atomId;
-        detailClass = ctx.request.body.detailClass;
-      } else {
-        const key = ctx.request.body.key;
-        const detail = await this.modelDetail.get({ id: key.detailId });
+      // check key first
+      const key = ctx.request.body.key;
+      if (key) {
+        const detailId = key.detailId;
+        const detail = await this.modelDetail.get({ id: detailId });
         if (!detail) ctx.throw(403);
         atomId = detail.atomId;
         // detailClass
-        detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: key.detailId });
+        detailClass = await ctx.bean.detailClass.getByDetailId({ detailId });
         if (!detailClass) ctx.throw.module('a-base', 1002);
+        // for safe
+        if (ctx.request.body.atomKey) {
+          ctx.request.body.atomKey = { atomId };
+        }
+        if (ctx.request.body.detailClass) {
+          ctx.request.body.detailClass = detailClass;
+        }
+      } else {
+        // atomKey must be set
+        atomId = ctx.request.body.atomKey && ctx.request.body.atomKey.atomId;
+        if (!atomId) ctx.throw(403);
+        // detailClass maybe empty
+        detailClass = ctx.request.body.detailClass;
       }
       // flowTaskId
       const flowTaskId = ctx.request.body.flowTaskId;
