@@ -13,7 +13,7 @@ export default {
         await ctx.$api.post('/a/base/atom/delete', { key });
         ctx.$meta.eventHub.$emit('atom:action', { key, action });
         // back
-        if (ctx.$f7route.path === '/a/basefront/atom/item') {
+        if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
           ctx.$f7router.back();
         }
       } else if (action.name === 'save') {
@@ -88,7 +88,7 @@ export default {
           };
           const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
           let navigateOptions = action.navigateOptions;
-          if (ctx.$f7route.path === '/a/basefront/atom/item') {
+          if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
             navigateOptions = { target: '_self' };
           }
           ctx.$view.navigate(url, navigateOptions);

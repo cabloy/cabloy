@@ -75,7 +75,7 @@ export default {
           },
         },
       };
-      if (ctx.$f7route.path === '/a/flowtask/flowTaskAtom') {
+      if (ctx.$pageRoute.path === '/a/flowtask/flowTaskAtom') {
         navigateOptions.target = '_self';
         navigateOptions.reloadCurrent = true;
       }
@@ -101,7 +101,7 @@ export default {
           },
         },
       };
-      if (ctx.$f7route.path === '/a/flowtask/flowTaskAtom') {
+      if (ctx.$pageRoute.path === '/a/flowtask/flowTaskAtom') {
         navigateOptions.target = '_self';
         navigateOptions.reloadCurrent = true;
       }
