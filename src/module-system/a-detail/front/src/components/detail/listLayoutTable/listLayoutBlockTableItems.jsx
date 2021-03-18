@@ -65,7 +65,16 @@ export default {
     async onAction(event, item, action) {
       const _action = this.getDetailAction(action);
       if (!_action) return;
-      const res = await this.$meta.util.performAction({ ctx: this, action: _action, item });
+      const res = await this.$meta.util.performAction({
+        ctx: this,
+        action: _action,
+        item: {
+          item,
+          meta: {
+            flowTaskId: this.layoutManager.container.flowTaskId,
+          },
+        },
+      });
       this.$meta.util.swipeoutClose(event.target);
       return res;
     },

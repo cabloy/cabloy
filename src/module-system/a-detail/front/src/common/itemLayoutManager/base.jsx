@@ -37,6 +37,7 @@ export default {
         // item
         const options = this.base_prepareReadOptions();
         this.base.item = await this.$api.post('/a/detail/detail/read', {
+          flowTaskId: this.container.flowTaskId,
           key: { detailId: this.container.detailId },
           options,
         });

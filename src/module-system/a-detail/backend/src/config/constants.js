@@ -29,7 +29,7 @@ module.exports = app => {
         read: {
           title: 'View',
           actionModule: moduleInfo.relativeName,
-          actionPath: '/a/detail/detail/item?mode=view&detailId={{detailId}}&detailItemId={{detailItemId}}',
+          actionComponent: 'action',
           icon: { material: 'visibility' },
           inherit: 'read',
           mode: 'view',

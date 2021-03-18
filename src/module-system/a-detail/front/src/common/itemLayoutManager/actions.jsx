@@ -30,6 +30,7 @@ export default {
     async actions_fetchActions() {
       if (this.actions.list) return;
       this.actions.list = await this.$api.post('/a/detail/detail/actions', {
+        flowTaskId: this.container.flowTaskId,
         atomKey: { atomId: this.base.item.atomId },
         detailClass: this.base.detailClass,
         mode: this.container.mode,
@@ -60,7 +61,16 @@ export default {
       }
       // action
       const _action = this.getDetailAction(action);
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      return this.$meta.util.performAction({
+        ctx: this,
+        action: _action,
+        item: {
+          item: this.base.item,
+          meta: {
+            flowTaskId: this.container.flowTaskId,
+          },
+        },
+      });
     },
     actions_render() {
       if (!this.base_ready) return null;

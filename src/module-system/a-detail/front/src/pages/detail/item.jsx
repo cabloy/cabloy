@@ -7,12 +7,14 @@ export default {
   data() {
     const query = this.$f7route.query;
     const mode = query.mode;
+    const flowTaskId = parseInt(query.flowTaskId || 0);
     const detailId = parseInt(query.detailId || 0);
     const detailItemId = parseInt(query.detailItemId || 0);
     const layout = query.layout;
     return {
       container: {
         mode,
+        flowTaskId,
         detailId,
         detailItemId,
         layout,

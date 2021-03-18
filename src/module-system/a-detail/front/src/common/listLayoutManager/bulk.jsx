@@ -23,11 +23,21 @@ export default {
         detailClassName: action.detailClassName,
       };
       // performAction
-      return this.$meta.util.performAction({ ctx: this, action: _action, item });
+      return this.$meta.util.performAction({
+        ctx: this,
+        action: _action,
+        item: {
+          item,
+          meta: {
+            flowTaskId: this.container.flowTaskId,
+          },
+        },
+      });
     },
     bulk_loadActions() {
       if (this.bulk.actions) return;
       this.$api.post('/a/detail/detail/actionsBulk', {
+        flowTaskId: this.container.flowTaskId,
         atomKey: { atomId: this.container.atomId },
         detailClass: this.container.detailClass,
         mode: this.container.mode,

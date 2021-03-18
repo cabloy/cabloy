@@ -14,7 +14,16 @@ export default {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
       const _action = this.getDetailAction(action);
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      return this.$meta.util.performAction({
+        ctx: this,
+        action: _action,
+        item: {
+          item: this.base.item,
+          meta: {
+            flowTaskId: this.container.flowTaskId,
+          },
+        },
+      });
     },
     validate_render() {
       if (!this.base_ready) return null;

@@ -9,6 +9,7 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 
 // container: {
 //   mode,  // edit/view
+//   flowTaskId,
 //   detailId,
 //   detailItemId,
 //   layout,

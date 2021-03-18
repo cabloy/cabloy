@@ -38,12 +38,12 @@ module.exports = app => {
       return await this.ctx.bean.detail.moveDown({ key, user });
     }
 
-    async actions({ atomKey, detailClass, mode, user }) {
-      return await this.ctx.bean.detail.actions({ atomKey, detailClass, mode, user });
+    async actions({ flowTaskId, atomKey, detailClass, mode, user }) {
+      return await this.ctx.bean.detail.actions({ flowTaskId, atomKey, detailClass, mode, user });
     }
 
-    async actionsBulk({ atomKey, detailClass, mode, user }) {
-      return await this.ctx.bean.detail.actionsBulk({ atomKey, detailClass, mode, user });
+    async actionsBulk({ flowTaskId, atomKey, detailClass, mode, user }) {
+      return await this.ctx.bean.detail.actionsBulk({ flowTaskId, atomKey, detailClass, mode, user });
     }
 
     async validator({ detailClass }) {

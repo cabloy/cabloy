@@ -534,15 +534,15 @@ module.exports = ctx => {
 
     // right
 
-    async actions({ atomKey, detailClass, mode, user }) {
-      return await this._actions({ atomKey, detailClass, mode, user, bulk: false });
+    async actions({ flowTaskId, atomKey, detailClass, mode, user }) {
+      return await this._actions({ flowTaskId, atomKey, detailClass, mode, user, bulk: false });
     }
 
-    async actionsBulk({ atomKey, detailClass, mode, user }) {
-      return await this._actions({ atomKey, detailClass, mode, user, bulk: true });
+    async actionsBulk({ flowTaskId, atomKey, detailClass, mode, user }) {
+      return await this._actions({ flowTaskId, atomKey, detailClass, mode, user, bulk: true });
     }
 
-    async _actions({ atomKey, detailClass, mode, user, bulk }) {
+    async _actions({ flowTaskId, atomKey, detailClass, mode, user, bulk }) {
       // atom
       const atomId = atomKey.atomId;
       const atom = await ctx.bean.atom.modelAtom.get({ id: atomId });
@@ -567,9 +567,9 @@ module.exports = ctx => {
         let right = rights[actionBase.inherit];
         if (right === undefined) {
           if (actionBase.inherit === 'read') {
-            right = await this._checkRightRead({ atomId, atom, actionBase, user });
+            right = await this._checkRightRead({ flowTaskId, detailClass, atomId, atom, actionBase, user });
           } else {
-            right = await this._checkRightAction({ atomId, atom, actionBase, user });
+            right = await this._checkRightAction({ flowTaskId, detailClass, atomId, atom, actionBase, user });
           }
           rights[actionBase.inherit] = right;
         }
@@ -629,8 +629,17 @@ module.exports = ctx => {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
-      // special check for flow
-      //     if not write details in flowing, also means not perform other actions
+      // special check write for flow
+      if (actionBase.inherit === 'write') {
+        if (atom.atomStage === 0 && atom.atomFlowId > 0) {
+          if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
+          const editAtom = await ctx.bean.flowTask.editAtom({ flowTaskId, user });
+          if (!editAtom) ctx.throw(403);
+          if (this._checkSchemaValid({ schema: editAtom.schema.schema, detailClass })) return true;
+          // default is false
+          return false;
+        }
+      }
       // atom action
       return !!await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },

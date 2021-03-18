@@ -91,6 +91,7 @@ module.exports = app => {
 
     async actions() {
       const res = await this.ctx.service.detail.actions({
+        flowTaskId: this.ctx.request.body.flowTaskId,
         atomKey: this.ctx.request.body.atomKey,
         detailClass: this.ctx.request.body.detailClass,
         mode: this.ctx.request.body.mode,
@@ -101,6 +102,7 @@ module.exports = app => {
 
     async actionsBulk() {
       const res = await this.ctx.service.detail.actionsBulk({
+        flowTaskId: this.ctx.request.body.flowTaskId,
         atomKey: this.ctx.request.body.atomKey,
         detailClass: this.ctx.request.body.detailClass,
         mode: this.ctx.request.body.mode,

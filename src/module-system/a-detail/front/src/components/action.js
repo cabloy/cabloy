@@ -3,7 +3,9 @@ export default {
     global: false,
   },
   methods: {
-    async onAction({ ctx, action, item }) {
+    async onAction({ ctx, action, item: { item, meta } }) {
+      // flowTaskId
+      const flowTaskId = (meta && meta.flowTaskId) || 0;
       // atomKey
       const atomKey = { atomId: item.atomId };
       // key
@@ -15,12 +17,12 @@ export default {
       };
       // do
       if (action.name === 'create' || action.action === 'create') {
-        return await this._onActionCreate({ ctx, action, item, atomKey, detailClass });
+        return await this._onActionCreate({ ctx, action, item, meta, atomKey, detailClass });
       } else if (action.name === 'delete') {
         // delete
         await ctx.$view.dialog.confirm();
         // delete
-        await ctx.$api.post('/a/detail/detail/delete', { key });
+        await ctx.$api.post('/a/detail/detail/delete', { flowTaskId, key });
         // event
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
         // back
@@ -29,17 +31,32 @@ export default {
         }
       } else if (action.name === 'save') {
         // save
-        await ctx.$api.post('/a/detail/detail/write', { key, item });
+        await ctx.$api.post('/a/detail/detail/write', { flowTaskId, key, item });
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
         // toast
         return ctx.$text('Saved');
+      } else if (action.name === 'read') {
+        const queries = {
+          mode: 'view',
+          detailId: item.detailId,
+          detailItemId: item.detailItemId,
+          flowTaskId,
+        };
+        const url = ctx.$meta.util.combineQueries('/a/detail/detail/item', queries);
+        ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'write') {
-        const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', item);
+        const queries = {
+          mode: 'edit',
+          detailId: item.detailId,
+          detailItemId: item.detailItemId,
+          flowTaskId,
+        };
+        const url = ctx.$meta.util.combineQueries('/a/detail/detail/item', queries);
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'clone') {
         // clone
         try {
-          const keyDest = await ctx.$api.post('/a/detail/detail/clone', { key });
+          const keyDest = await ctx.$api.post('/a/detail/detail/clone', { flowTaskId, key });
           const _item = {
             ...item,
             detailId: keyDest.detailId,
@@ -47,13 +64,16 @@ export default {
           };
           // event
           ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key: keyDest, action: { name: 'create' } });
-          // open
-          const url = ctx.$meta.util.replaceTemplate('/a/detail/detail/item?mode=edit&detailId={{detailId}}&detailItemId={{detailItemId}}', _item);
-          let navigateOptions = action.navigateOptions;
+          // write
+          const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
+          let actionWrite = actionsAll[item.module][item.detailClassName].write;
+          actionWrite = ctx.$utils.extend({}, actionWrite);
           if (ctx.$f7route.path === '/a/detail/detail/item') {
-            navigateOptions = { target: '_self' };
+            actionWrite.navigateOptions = { target: '_self' };
+          } else {
+            actionWrite.navigateOptions = action.navigateOptions;
           }
-          ctx.$view.navigate(url, navigateOptions);
+          await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: { item: _item, meta } });
         } catch (err) {
           if (err.code === 422) {
             throw new Error(err.message[0].message);
@@ -62,17 +82,18 @@ export default {
         }
       } else if (action.name === 'moveUp') {
         // moveUp
-        const result = await ctx.$api.post('/a/detail/detail/moveUp', { key });
+        const result = await ctx.$api.post('/a/detail/detail/moveUp', { flowTaskId, key });
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
       } else if (action.name === 'moveDown') {
         // moveUp
-        const result = await ctx.$api.post('/a/detail/detail/moveDown', { key });
+        const result = await ctx.$api.post('/a/detail/detail/moveDown', { flowTaskId, key });
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
       }
     },
-    async _onActionCreate({ ctx, action, item, atomKey, detailClass }) {
+    async _onActionCreate({ ctx, action, item, meta, atomKey, detailClass }) {
       // create
       const key = await ctx.$api.post('/a/detail/detail/create', {
+        flowTaskId: meta.flowTaskId,
         atomKey,
         detailClass,
         item,
@@ -86,7 +107,7 @@ export default {
         const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
         let actionWrite = actionsAll[item.module][item.detailClassName].write;
         actionWrite = ctx.$utils.extend({}, actionWrite);
-        await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
+        await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: { item, meta } });
       }
       // just return key
       return key;
