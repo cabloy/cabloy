@@ -26,7 +26,7 @@ export default {
         // event
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
         // back
-        if (ctx.$f7route.path === '/a/detail/detail/item') {
+        if (ctx.$pageRoute.path === '/a/detail/detail/item') {
           ctx.$f7router.back();
         }
       } else if (action.name === 'save') {
@@ -68,7 +68,7 @@ export default {
           const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
           let actionWrite = actionsAll[item.module][item.detailClassName].write;
           actionWrite = ctx.$utils.extend({}, actionWrite);
-          if (ctx.$f7route.path === '/a/detail/detail/item') {
+          if (ctx.$pageRoute.path === '/a/detail/detail/item') {
             actionWrite.navigateOptions = { target: '_self' };
           } else {
             actionWrite.navigateOptions = action.navigateOptions;

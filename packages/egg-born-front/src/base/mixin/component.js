@@ -18,6 +18,15 @@ export default function() {
         return page;
       },
     });
+    Object.defineProperty(ctx, '$pageRoute', {
+      get() {
+        const page = ctx.$page;
+        if (!page) {
+          return ctx.$f7router.currentRoute;
+        }
+        return page.$vnode.data.props.f7route;
+      },
+    });
   };
 
   return { beforeCreate };
