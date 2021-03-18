@@ -426,7 +426,7 @@ module.exports = ctx => {
         updatedAt: srcItem.atomUpdatedAt,
       });
       // update fields
-      await this.modelDetail.update({
+      const params = {
         id: destItem.detailId,
         userIdCreated: destItem.userIdCreated,
         userIdUpdated: destItem.userIdUpdated,
@@ -437,10 +437,13 @@ module.exports = ctx => {
         // detailStatic: destItem.detailStatic,
         // detailStaticKey: destItem.detailStaticKey,
         atomStage: destItem.atomStage,
-        detailLineNo: destItem.detailLineNo,
         createdAt: destItem.detailCreatedAt,
         updatedAt: destItem.detailUpdatedAt,
-      });
+      };
+      if (target !== 'clone') {
+        params.detailLineNo = destItem.detailLineNo;
+      }
+      await this.modelDetail.update(params);
       // detail write
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
