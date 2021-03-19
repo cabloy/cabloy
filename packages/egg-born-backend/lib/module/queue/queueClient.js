@@ -162,8 +162,8 @@ module.exports = function(app) {
     _callCallback(jobId, failedReason, data) {
       const _callback = this._queueCallbacks[jobId];
       if (_callback) {
-        _callback.callback(failedReason ? new Error(failedReason) : null, data);
         delete this._queueCallbacks[jobId];
+        _callback.callback(failedReason ? new Error(failedReason) : null, data);
       }
     }
 

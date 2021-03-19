@@ -28,15 +28,19 @@ export default function() {
   // onmessage
   self.onmessage = function(event) {
     const { id, expression, scope } = event.data;
-    const scopeKeys = Object.keys(scope);
-    const scopeParams = [];
-    for (const key of scopeKeys) {
-      scopeParams.push(scope[key]);
+    try {
+      const scopeKeys = Object.keys(scope);
+      const scopeParams = [];
+      for (const key of scopeKeys) {
+        scopeParams.push(scope[key]);
+      }
+      const js = `return (${expression})`;
+      const fn = new Function(scopeKeys.join(','), js);
+      const value = fn.apply(null, scopeParams);
+      // ok
+      self.postMessage({ id, value });
+    } catch (err) {
+      self.postMessage({ id, err: { message: err.message } });
     }
-    const js = `return (${expression})`;
-    const fn = new Function(scopeKeys.join(','), js);
-    const value = fn.apply(null, scopeParams);
-    console.log(value);
-    self.postMessage({ id, value });
   };
 }
