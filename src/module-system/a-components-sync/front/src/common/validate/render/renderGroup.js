@@ -12,7 +12,7 @@ export default {
       // children
       const children = this.renderProperties(c, context2);
       // group
-      const titleHidden = property.ebOptions && property.ebOptions.titleHidden;
+      const titleHidden = property.ebParams && property.ebParams.titleHidden;
       if (!titleHidden) {
         const group = c('f7-list-item', {
           attrs: {

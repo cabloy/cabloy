@@ -588,12 +588,12 @@ module.exports = ctx => {
       return res;
     }
 
-    async _checkSchemaValid({ schema, detailClass }) {
+    _checkSchemaValid({ schema, detailClass }) {
       for (const key in schema.properties) {
         const property = schema.properties[key];
-        if (property.ebType === 'detail' &&
-          property.ebOptions.module === detailClass.module &&
-          property.ebOptions.detailClassName === detailClass.detailClassName) {
+        if (property.ebType === 'details' &&
+          property.ebParams.detailClass.module === detailClass.module &&
+          property.ebParams.detailClass.detailClassName === detailClass.detailClassName) {
           return true;
         }
       }

@@ -41,14 +41,14 @@ module.exports = app => {
       __groupDetails: {
         ebType: 'group-flatten',
         ebGroupWhole: true,
-        ebOptions: {
+        ebParams: {
           titleHidden: true,
         },
       },
       details: {
         ebType: 'details',
         ebTitle: 'Details',
-        ebOptions: {
+        ebParams: {
           detailClass: {
             module: moduleInfo.relativeName,
             detailClassName: 'default',
@@ -58,14 +58,14 @@ module.exports = app => {
       // __groupDetails2: {
       //   ebType: 'group-flatten',
       //   ebGroupWhole: true,
-      //   ebOptions: {
+      //   ebParams: {
       //     titleHidden: true,
       //   },
       // },
       // details_2: {
       //   ebType: 'details',
       //   ebTitle: 'Details 2',
-      //   ebOptions: {
+      //   ebParams: {
       //     detailClass: {
       //       module: moduleInfo.relativeName,
       //       detailClassName: 'default',

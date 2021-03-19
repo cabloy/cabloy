@@ -15,7 +15,7 @@ export default {
         flowTaskId: (this.context.validate.meta && this.context.validate.meta.flowTaskId) || 0,
         atomId: this.context.data.atomId,
         atom: this.context.data,
-        detailClass: this.context.property.ebOptions.detailClass,
+        detailClass: this.context.property.ebParams.detailClass,
         options: {},
         layout: null,
       },

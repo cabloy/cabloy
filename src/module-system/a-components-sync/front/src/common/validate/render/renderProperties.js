@@ -8,7 +8,7 @@ export default {
       let domGroupFlattenProperty = null;
       const _closeGroup = () => {
         // group title
-        const titleHidden = domGroupFlattenProperty.ebOptions && domGroupFlattenProperty.ebOptions.titleHidden;
+        const titleHidden = domGroupFlattenProperty.ebParams && domGroupFlattenProperty.ebParams.titleHidden;
         if (!titleHidden) {
           // title
           const groupTitle = c('f7-list-item', {
