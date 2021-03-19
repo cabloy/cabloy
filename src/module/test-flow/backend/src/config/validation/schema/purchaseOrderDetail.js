@@ -24,7 +24,7 @@ module.exports = app => {
       },
       detailCode: {
         type: 'string',
-        ebType: 'atom',
+        ebType: 'text',
         ebTitle: 'Product Code',
         ebReadOnly: true,
         notEmpty: true,
