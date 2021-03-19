@@ -3,6 +3,7 @@ import moment from 'moment';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
+import sandboxFn from './sandbox.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
 
@@ -412,6 +413,10 @@ export default function(Vue) {
       const urlCurrent = view.f7View.router.currentRoute.url;
       return urlNew === urlCurrent;
     },
+    fn2workerURL(fn) {
+      const blob = new Blob([ '(' + fn.toString() + ')()' ], { type: 'text/javascript' });
+      return URL.createObjectURL(blob);
+    },
   };
 
   // moment
@@ -419,6 +424,7 @@ export default function(Vue) {
 
   // mixin
   Object.assign(util, {
+    sandbox: sandboxFn(Vue),
     moment,
     queue,
     cookies,
