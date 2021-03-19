@@ -15,13 +15,14 @@ import renderResourceType from './render/renderResourceType.js';
 import renderJson from './render/renderJson.js';
 import renderCurrency from './render/renderCurrency.js';
 import renderDetails from './render/renderDetails.js';
+import renderAtom from './render/renderAtom.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson, renderCurrency, renderDetails,
+    renderJson, renderCurrency, renderDetails, renderAtom,
   ],
   props: {
     data: {
@@ -248,6 +249,9 @@ export default {
       } else if (ebType === 'details') {
         // details
         return this.renderDetails(c, context);
+      } else if (ebType === 'atom') {
+        // atom
+        return this.renderAtom(c, context);
       }
       // not support
       return c('div', {

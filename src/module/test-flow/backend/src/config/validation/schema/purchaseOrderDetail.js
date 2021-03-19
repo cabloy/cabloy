@@ -1,6 +1,18 @@
 module.exports = app => {
   const schemas = {};
   // detail
+  const __atomParams = {
+    atomClass: {
+      module: 'test-flow',
+      atomClassName: 'product',
+    },
+    atomId: 'detailCodeId',
+    mapper: {
+      detailCodeId: 'atomId',
+      detailCode: 'productCode',
+      detailName: 'atomName',
+    },
+  };
   schemas.purchaseOrderDetail = {
     type: 'object',
     properties: {
@@ -9,13 +21,15 @@ module.exports = app => {
       },
       detailCode: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'atom',
         ebTitle: 'Product Code',
+        ebParams: __atomParams,
+        ebReadOnly: true,
         notEmpty: true,
       },
       detailName: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'atom',
         ebTitle: 'Product Name',
         notEmpty: true,
       },
