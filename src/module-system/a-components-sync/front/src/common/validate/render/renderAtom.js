@@ -28,18 +28,21 @@ export default {
       } else {
         type = 'text';
       }
-      // mode
-      const mode = this.getMetaValue(meta, 'mode', dataPath) || property.ebParams.mode;
+      // target
+      const target = this.getMetaValue(meta, 'target', dataPath) || property.ebParams.target;
+      // atomClass
+      const atomClass = this.getMetaValue(meta, 'atomClass', dataPath) || property.ebParams.atomClass;
+      // selectOptions
+      const selectOptions = this.getMetaValue(meta, 'selectOptions', dataPath) || property.ebParams.selectOptions;
       // atomId
-      const atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId || 0;
-      // attachment
-      const attachment = this.getMetaValue(meta, 'attachment', dataPath) || property.ebParams.attachment;
-      // flag
-      const flag = this.getMetaValue(meta, 'flag', dataPath) || property.ebParams.flag;
-      // accept
-      const accept = this.getMetaValue(meta, 'accept', dataPath) || property.ebParams.accept;
-      // fixed
-      const fixed = this.getMetaValue(meta, 'fixed', dataPath) || property.ebParams.fixed;
+      let atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId;
+      if (typeof atomId === 'string') {
+        atomId = data[atomId] || 0;
+      } else {
+        atomId = atomId || 0;
+      }
+      // mapper
+      const mapper = this.getMetaValue(meta, 'mapper', dataPath) || property.ebParams.mapper;
       // render
       return c('eb-list-input', {
         key,
@@ -49,7 +52,7 @@ export default {
           placeholder,
           info,
           resizable: property.ebTextarea,
-          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
           value: this.getValue(data, key, property),
           disabled: this.validate.readOnly || property.ebReadOnly,
@@ -85,23 +88,26 @@ export default {
         c('eb-button', {
           slot: 'root-end',
           staticClass: 'eb-input-file-upload',
-          domProps: { innerText: this.$text('Upload') },
+          domProps: { innerText: this.$text('Select') },
           props: {
             onPerform: () => {
-              this.$view.navigate('/a/file/file/upload', {
-                target: '_self',
+              const url = '/a/basefront/atom/select';
+              this.$view.navigate(url, {
+                target,
                 context: {
                   params: {
-                    mode,
-                    atomId,
-                    attachment,
-                    flag,
-                    accept,
-                    fixed,
+                    selectMode: 'single',
+                    selectedAtomId: atomId,
+                    atomClass,
+                    options: selectOptions,
                   },
-                  callback: (code, value) => {
+                  callback: (code, selectedAtom) => {
                     if (code === 200) {
-                      this.setValue(data, key, value.downloadUrl, property);
+                      // mapper
+                      for (const key in mapper) {
+                        const value = selectedAtom[mapper[key]];
+                        this.setValue(data, key, value, property);
+                      }
                     }
                   },
                 },

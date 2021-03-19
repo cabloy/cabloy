@@ -31,7 +31,12 @@ export default {
       // mode
       const mode = this.getMetaValue(meta, 'mode', dataPath) || property.ebParams.mode;
       // atomId
-      const atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId || 0;
+      let atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId;
+      if (typeof atomId === 'string') {
+        atomId = data[atomId] || 0;
+      } else {
+        atomId = atomId || 0;
+      }
       // attachment
       const attachment = this.getMetaValue(meta, 'attachment', dataPath) || property.ebParams.attachment;
       // flag
@@ -49,7 +54,7 @@ export default {
           placeholder,
           info,
           resizable: property.ebTextarea,
-          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
           value: this.getValue(data, key, property),
           disabled: this.validate.readOnly || property.ebReadOnly,
