@@ -1,3 +1,4 @@
+import validateComputed from './validateComputed.js';
 import renderProperties from './render/renderProperties.js';
 import renderComponent from './render/renderComponent.js';
 import renderGroup from './render/renderGroup.js';
@@ -19,6 +20,7 @@ import renderAtom from './render/renderAtom.js';
 
 export default {
   mixins: [
+    validateComputed,
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
@@ -84,7 +86,14 @@ export default {
       // dataPath is not empty
       return (validateMeta[dataPath] && validateMeta[dataPath][key]) || validateMeta[key];
     },
+    _handleComputed(data, key, property) {
+      const ebComputed = property.ebComputed;
+      if (!ebComputed) return;
+      const deps = ebComputed.dependencies.split(',');
+      this.computed_register(key, ebComputed.expression, deps, property);
+    },
     getValue(data, key, property) {
+      this._handleComputed(data, key, property);
       const _value = data[key];
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;

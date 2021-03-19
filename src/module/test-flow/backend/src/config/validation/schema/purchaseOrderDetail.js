@@ -49,6 +49,11 @@ module.exports = app => {
       amount: {
         type: 'number',
         ebType: 'currency',
+        ebComputed: {
+          expression: 'price * quantity',
+          dependencies: 'price,quantity',
+        },
+        ebReadOnly: true,
         ebTitle: 'Amount',
       },
     },
