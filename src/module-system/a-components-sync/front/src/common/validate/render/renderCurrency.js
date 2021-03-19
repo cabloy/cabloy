@@ -12,7 +12,8 @@ export default {
       const { data, key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value
-      const value = this._formatValueCurrency(data[key]);
+      let value = this.getValue(data, key, property);
+      value = this._formatValueCurrency(value);
       if ((this.validate.readOnly || property.ebReadOnly)) {
         return c('f7-list-item', {
           key,

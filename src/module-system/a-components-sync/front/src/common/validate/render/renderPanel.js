@@ -3,6 +3,7 @@ export default {
     renderPanel(c, context) {
       let { data, key, property, dataPath } = context;
       dataPath = dataPath + '/';
+      const value = this.getValue(data, key, property);
       return c('eb-list-item-panel', {
         key,
         attrs: {
@@ -25,7 +26,7 @@ export default {
                     validator: params.validator,
                     schema: property.$ref,
                   },
-                  data: data[key],
+                  data: value,
                   dataPathRoot: this.adjustDataPath(dataPath),
                   errors: verrors ? verrors.slice(0) : null,
                   readOnly: this.validate.readOnly || property.ebReadOnly,

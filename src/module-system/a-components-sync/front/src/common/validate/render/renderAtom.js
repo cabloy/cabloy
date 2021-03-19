@@ -3,12 +3,13 @@ export default {
     renderAtom(c, context) {
       const { data, key, property, dataPath, meta } = context;
       const title = this.getTitle(context);
+      const value = this.getValue(data, key, property);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           attrs: {
-            after: data[key] ? data[key].toString() : null,
+            after: value,
           },
         }, [
           c('div', {
@@ -54,7 +55,7 @@ export default {
           resizable: property.ebTextarea,
           clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
-          value: this.getValue(data, key, property),
+          value,
           disabled: this.validate.readOnly || property.ebReadOnly,
         },
         on: {

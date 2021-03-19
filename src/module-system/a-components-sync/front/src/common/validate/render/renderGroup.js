@@ -2,9 +2,10 @@ export default {
   methods: {
     renderGroup(c, context) {
       const { data, key, property, dataPath } = context;
+      const value = this.getValue(data, key, property);
       // context2
       const context2 = {
-        data: data[key],
+        data: value,
         pathParent: dataPath + '/',
         schema: context.schema,
         properties: property.properties,

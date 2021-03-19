@@ -3,6 +3,13 @@ export default {
     renderDatepicker(c, context) {
       const { data, key, property, dataPath } = context;
       const title = this.getTitle(context);
+      // value
+      let value = this.getValue(data, key, property);
+      if (!value) {
+        value = [];
+      } else if (!Array.isArray(value)) {
+        value = [ value ];
+      }
       // should format date
       // // the form is readOnly
       // if (this.validate.readOnly || property.ebDisabled) {
@@ -11,19 +18,12 @@ export default {
       //     staticClass: '',
       //     attrs: {
       //       title,
-      //       after: data[key] ? data[key].toString() : null,
+      //       after: value,
       //     },
       //   });
       // }
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
-      // value
-      let value = this.getValue(data, key, property);
-      if (!value) {
-        value = [];
-      } else if (!Array.isArray(value)) {
-        value = [ value ];
-      }
       // input
       return c('eb-list-input', {
         key,
