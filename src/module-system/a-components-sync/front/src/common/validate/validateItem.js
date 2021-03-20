@@ -93,22 +93,25 @@ export default {
     },
     setValue(parcel, key, value) {
       const property = parcel.properties[key];
-
+      // value
       let _value;
-
-      if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
-        _value = null; // for distinguish from 0
+      if (!property) {
+        _value = value;
       } else {
-        if (property.type === 'number') {
-          if (isNaN(value)) {
-            _value = value;
-          } else {
-            _value = Number(value);
-          }
-        } else if (property.type === 'boolean') {
-          _value = Boolean(value);
+        if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
+          _value = null; // for distinguish from 0
         } else {
-          _value = value;
+          if (property.type === 'number') {
+            if (isNaN(value)) {
+              _value = value;
+            } else {
+              _value = Number(value);
+            }
+          } else if (property.type === 'boolean') {
+            _value = Boolean(value);
+          } else {
+            _value = value;
+          }
         }
       }
 
@@ -117,7 +120,8 @@ export default {
       this.$set(parcel.data, key, _value); // always set as maybe Object
 
       // dataSrc
-      if (property.type) {
+      //   always set value for !property
+      if (!property || property.type) {
         this.$set(parcel.dataSrc, key, _value);
       }
 
