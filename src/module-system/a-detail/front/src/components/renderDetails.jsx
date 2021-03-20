@@ -8,14 +8,15 @@ export default {
     },
   },
   data() {
+    const { parcel, property, validate } = this.context;
     return {
       container: {
         title: this.context.getTitle(true),
-        mode: this.context.validate.containerMode,
-        flowTaskId: (this.context.validate.meta && this.context.validate.meta.flowTaskId) || 0,
-        atomId: this.context.data.atomId,
-        atom: this.context.data,
-        detailClass: this.context.property.ebParams.detailClass,
+        mode: validate.containerMode,
+        flowTaskId: (validate.meta && validate.meta.flowTaskId) || 0,
+        atomId: parcel.data.atomId,
+        atom: parcel.data,
+        detailClass: property.ebParams.detailClass,
         options: {},
         layout: null,
       },
