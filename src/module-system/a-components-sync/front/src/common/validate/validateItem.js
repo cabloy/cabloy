@@ -27,15 +27,8 @@ export default {
     renderJson, renderCurrency, renderDetails, renderAtom,
   ],
   props: {
-    data: {
+    parcel: {
       type: Object,
-    },
-    dataSrc: {
-      type: Object,
-    },
-    pathParent: {
-      type: String,
-      default: '',
     },
     dataKey: {
       type: String,
@@ -89,21 +82,21 @@ export default {
       // dataPath is not empty
       return (validateMeta[dataPath] && validateMeta[dataPath][key]) || validateMeta[key];
     },
-    _handleComputed(data, key, property) {
+    _handleComputed(parcel, key, property) {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
       const deps = Array.isArray(ebComputed.dependencies) ? ebComputed.dependencies : ebComputed.dependencies.split(',');
       const immediate = !!ebComputed.immediate;
-      this.computed_register(key, ebComputed.expression, deps, immediate, property);
+      this.computed_register(parcel, key, ebComputed.expression, deps, immediate, property);
     },
-    getValue(data, key, property) {
-      this._handleComputed(data, key, property);
-      const _value = data[key];
+    getValue(parcel, key, property) {
+      this._handleComputed(parcel, key, property);
+      const _value = parcel.data[key];
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;
       return property.default;
     },
-    setValue(data, key, value, property) {
+    setValue(parcel, key, value, property) {
       let _value;
 
       if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
@@ -122,14 +115,13 @@ export default {
         }
       }
 
-      const _valueOld = data[key];
+      const _valueOld = parcel.data[key];
 
-      this.$set(data, key, _value); // always set as maybe Object
+      this.$set(parcel.data, key, _value); // always set as maybe Object
 
-      // check if dataSrc
-      if (property.type && this.getData() === data) {
-        const dataSrc = this.getDataSrc();
-        this.$set(dataSrc, key, _value);
+      // dataSrc
+      if (property.type) {
+        this.$set(parcel.dataSrc, key, _value);
       }
 
       if (_valueOld !== _value) {
@@ -179,18 +171,14 @@ export default {
     onSubmit(event) {
       this.validate.onSubmit(event);
     },
-    getData() {
-      return this.data || this.validate.dataCopy;
-    },
-    getDataSrc() {
-      return this.dataSrc || this.validate.data;
+    getParcel() {
+      return this.parcel || this.validate.parcel;
     },
     renderRoot(c) {
       if (!this.validate.ready) return c('div');
       // context
       const context = {
-        data: this.getData(),
-        pathParent: this.pathParent,
+        parcel: this.getParcel(),
         schema: this.schema || this.validate.schema,
         properties: this.properties || this.validate.schema.properties,
       };
@@ -207,18 +195,17 @@ export default {
       }, children);
     },
     renderItem(c) {
-      if (!this.validate.data || !this.validate.schema) return c('div');
+      if (!this.validate.ready) return c('div');
       // context
       const context = {
-        data: this.getData(),
-        pathParent: this.pathParent,
+        parcel: this.getParcel(),
         schema: this.schema || this.validate.schema,
         properties: this.properties || this.validate.schema.properties,
         key: this.dataKey,
         meta: this.meta,
       };
       context.property = this.property || context.properties[context.key];
-      context.dataPath = context.pathParent + context.key;
+      context.dataPath = context.parcel.pathParent + context.key;
       return this._renderItem(c, context);
     },
     _renderItem(c, context) {

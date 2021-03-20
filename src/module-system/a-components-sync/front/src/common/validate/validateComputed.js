@@ -7,32 +7,34 @@ export default {
     this.__computed_dynamics = {};
   },
   beforeDestroy() {
-    for (const name in this.__computed_dynamics) {
-      this.computed_unRegister(name);
+    for (const dataPath in this.__computed_dynamics) {
+      this.computed_unRegister(dataPath);
     }
     this.__computed_dynamics = null;
   },
   methods: {
-    computed_register(name, expression, deps, immediate, property) {
+    computed_register(parcel, name, expression, deps, immediate, property) {
+      const dataPath = parcel.pathParent + name;
       // check if exists
-      let info = this.__computed_dynamics[name];
+      let info = this.__computed_dynamics[dataPath];
       if (info) return info;
       // info
       info = {
+        parcel, name,
         expression, deps, immediate, property,
         watchers: {},
       };
       for (const depName of deps) {
-        info.watchers[depName] = this.$watch(`data.${depName}`, () => {
+        info.watchers[depName] = this.$watch(`parcel.data.${depName}`, () => {
           // changed
-          this.computed_onChange(name);
+          this.computed_onChange(dataPath);
         });
       }
       // hold
-      this.__computed_dynamics[name] = info;
+      this.__computed_dynamics[dataPath] = info;
       // immediate
       if (immediate) {
-        this.computed_onChange(name);
+        this.computed_onChange(dataPath);
       }
       // ok
       return info;
@@ -40,7 +42,7 @@ export default {
     computed_fillScope(scope, data, depName) {
       const depNames = depName.split('.');
       if (depNames.length === 1) {
-        scope[depName] = this.data[depName];
+        scope[depName] = data[depName];
         return;
       }
       for (let i = 0; i < depNames.length - 1; i++) {
@@ -54,25 +56,25 @@ export default {
       const depNameLast = depNames[depNames.length - 1];
       scope[depNameLast] = data[depNameLast];
     },
-    computed_onChange(name) {
-      const info = this.__computed_dynamics[name];
+    computed_onChange(dataPath) {
+      const info = this.__computed_dynamics[dataPath];
       if (!info) return;
       // scope
       const scope = {};
       for (const depName of info.deps) {
-        this.computed_fillScope(scope, this.data, depName);
+        this.computed_fillScope(scope, this.parcel.data, depName);
       }
       // evaluate
       this.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
-        this.setValue(this.data, name, value, info.property);
+        this.setValue(info.parcel, info.name, value, info.property);
       }).catch(err => {
         throw err;
       });
     },
-    computed_unRegister(name) {
-      const info = this.__computed_dynamics[name];
+    computed_unRegister(dataPath) {
+      const info = this.__computed_dynamics[dataPath];
       if (!info) return;
-      delete this.__computed_dynamics[name];
+      delete this.__computed_dynamics[dataPath];
       for (const depName in info.watchers) {
         const unwatch = info.watchers[depName];
         unwatch();

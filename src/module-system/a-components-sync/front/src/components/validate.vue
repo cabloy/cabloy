@@ -17,7 +17,7 @@ export default {
       if (this.custom) {
         const context = {
           validate: this,
-          data: this.data,
+          parcel: this.parcel,
           readOnly: this.readOnly,
           onSubmit: this.onSubmit,
         };
@@ -77,12 +77,12 @@ export default {
       custom: null,
       schemaModuleName: null,
       renderModuleName: null,
-      dataCopy: null,
+      parcel: null,
     };
   },
   computed: {
     ready() {
-      return this.data && this.dataCopy && this.schema;
+      return this.data && this.parcel && this.schema;
     },
   },
   watch: {
@@ -93,16 +93,23 @@ export default {
       });
     },
     data() {
-      this.dataCopy = this.$meta.util.extend({}, this.data);
+      this.initParcel();
     },
   },
   created() {
-    this.dataCopy = this.$meta.util.extend({}, this.data);
+    this.initParcel();
   },
   mounted() {
     this.fetchSchema();
   },
   methods: {
+    initParcel() {
+      this.parcel = {
+        data: this.$meta.util.extend({}, this.data),
+        dataSrc: this.data,
+        pathParent: '',
+      };
+    },
     reset() {
       this.verrors = null;
     },
@@ -191,9 +198,7 @@ export default {
     renderSchema(c) {
       return c('validateItem', {
         props: {
-          data: this.dataCopy,
-          dataSrc: this.data,
-          pathParent: '',
+          parcel: this.parcel,
           dataKey: null,
           schema: this.schema,
           properties: this.schema.properties,
