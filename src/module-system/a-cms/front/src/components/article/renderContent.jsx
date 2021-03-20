@@ -11,9 +11,10 @@ export default {
   },
   computed: {
     atomClass() {
+      const { parcel } = this.context;
       return {
-        module: this.context.data.module,
-        atomClassName: this.context.data.atomClassName,
+        module: parcel.data.module,
+        atomClassName: parcel.data.atomClassName,
       };
     },
   },
@@ -28,19 +29,19 @@ export default {
       return utils.combineAtomClass(this.atomClass, url);
     },
     onChooseEditContent() {
-      const { data, validate } = this.context;
+      const { parcel, validate } = this.context;
       const url = this.combineAtomClass('/a/cms/article/contentEdit');
       this.$view.navigate(url, {
         target: validate.readOnly ? '_self' : undefined,
         context: {
           params: {
             ctx: this,
-            item: data,
+            item: parcel.data,
             readOnly: validate.readOnly,
           },
           callback: (code, res) => {
             if (code === 200) {
-              data.content = res.content;
+              this.context.setValue(res.content);
             }
           },
         },

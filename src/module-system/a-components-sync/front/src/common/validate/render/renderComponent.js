@@ -12,8 +12,6 @@ export default {
         validateItem: this,
         parcel,
         key,
-        schema: context.schema,
-        properties: context.properties,
         property,
         dataPath,
         meta: context.meta,

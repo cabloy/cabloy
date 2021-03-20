@@ -77,12 +77,22 @@ export default {
       custom: null,
       schemaModuleName: null,
       renderModuleName: null,
-      parcel: null,
+      dataCopy: null,
     };
   },
   computed: {
     ready() {
-      return this.data && this.parcel && this.schema;
+      return this.data && this.dataCopy && this.schema;
+    },
+    parcel() {
+      if (!this.ready) return null;
+      return {
+        data: this.dataCopy,
+        dataSrc: this.data,
+        schema: this.schema,
+        properties: this.schema.properties,
+        pathParent: '',
+      };
     },
   },
   watch: {
@@ -93,22 +103,18 @@ export default {
       });
     },
     data() {
-      this.initParcel();
+      this.initData();
     },
   },
   created() {
-    this.initParcel();
+    this.initData();
   },
   mounted() {
     this.fetchSchema();
   },
   methods: {
-    initParcel() {
-      this.parcel = {
-        data: this.$meta.util.extend({}, this.data),
-        dataSrc: this.data,
-        pathParent: '',
-      };
+    initData() {
+      this.dataCopy = this.$meta.util.extend({}, this.data);
     },
     reset() {
       this.verrors = null;
@@ -200,8 +206,6 @@ export default {
         props: {
           parcel: this.parcel,
           dataKey: null,
-          schema: this.schema,
-          properties: this.schema.properties,
           property: null,
           meta: null,
           root: true,

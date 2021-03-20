@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderProperties(c, context) {
-      const { parcel, properties } = context;
+      const { parcel } = context;
       const children = [];
       let domGroupFlattenChildren = null;
       let domGroupFlattenkey = null;
@@ -34,8 +34,8 @@ export default {
         domGroupFlattenProperty = null;
         return item;
       };
-      for (const key in properties) {
-        const property = properties[key];
+      for (const key in parcel.properties) {
+        const property = parcel.properties[key];
         const bGroup = property.ebType === 'group';
         const bGroupFlatten = property.ebType === 'group-flatten';
         if ((bGroup || bGroupFlatten) && domGroupFlattenChildren) {
@@ -52,11 +52,9 @@ export default {
           // context
           const context2 = {
             parcel,
-            schema: context.schema,
-            properties,
             key,
           };
-          context2.property = context2.properties[context2.key];
+          context2.property = context2.parcel.properties[context2.key];
           context2.dataPath = context2.parcel.pathParent + context2.key;
           // render
           const item = this._renderItem(c, context2);

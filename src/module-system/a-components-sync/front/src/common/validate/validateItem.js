@@ -33,12 +33,6 @@ export default {
     dataKey: {
       type: String,
     },
-    schema: {
-      type: Object,
-    },
-    properties: {
-      type: Object,
-    },
     property: {
       type: Object,
     },
@@ -179,8 +173,6 @@ export default {
       // context
       const context = {
         parcel: this.getParcel(),
-        schema: this.schema || this.validate.schema,
-        properties: this.properties || this.validate.schema.properties,
       };
       const children = this.renderProperties(c, context);
       const attrs = {
@@ -199,12 +191,10 @@ export default {
       // context
       const context = {
         parcel: this.getParcel(),
-        schema: this.schema || this.validate.schema,
-        properties: this.properties || this.validate.schema.properties,
         key: this.dataKey,
         meta: this.meta,
       };
-      context.property = this.property || context.properties[context.key];
+      context.property = this.property || context.parcel.properties[context.key];
       context.dataPath = context.parcel.pathParent + context.key;
       return this._renderItem(c, context);
     },

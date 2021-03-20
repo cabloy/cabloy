@@ -7,13 +7,13 @@ export default {
       const parcel2 = {
         data: value,
         dataSrc: parcel.dataSrc[key],
+        schema: parcel.schema,
+        properties: property.properties,
         pathParent: dataPath + '/',
       };
       // context2
       const context2 = {
         parcel: parcel2,
-        schema: context.schema,
-        properties: property.properties,
       };
       // children
       const children = this.renderProperties(c, context2);

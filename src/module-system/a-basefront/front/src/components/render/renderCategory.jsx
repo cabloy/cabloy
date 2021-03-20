@@ -30,7 +30,7 @@ export default {
       return queries;
     },
     async onChooseCategory(event) {
-      const { data } = this.context;
+      const { parcel } = this.context;
       const action = {
         actionModule: 'a-base',
         actionComponent: 'action',
