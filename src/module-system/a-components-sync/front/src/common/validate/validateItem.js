@@ -90,7 +90,8 @@ export default {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
       const deps = ebComputed.dependencies.split(',');
-      this.computed_register(key, ebComputed.expression, deps, property);
+      const immediate = !!ebComputed.immediate;
+      this.computed_register(key, ebComputed.expression, deps, immediate, property);
     },
     getValue(data, key, property) {
       this._handleComputed(data, key, property);
