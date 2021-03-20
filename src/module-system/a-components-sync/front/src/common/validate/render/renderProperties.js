@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderProperties(c, context) {
-      const { data, properties, pathParent } = context;
+      const { parcel, properties } = context;
       const children = [];
       let domGroupFlattenChildren = null;
       let domGroupFlattenkey = null;
@@ -51,14 +51,13 @@ export default {
           // others
           // context
           const context2 = {
-            data,
-            pathParent,
+            parcel,
             schema: context.schema,
             properties,
             key,
           };
           context2.property = context2.properties[context2.key];
-          context2.dataPath = context2.pathParent + context2.key;
+          context2.dataPath = context2.parcel.pathParent + context2.key;
           // render
           const item = this._renderItem(c, context2);
           if (item) {
