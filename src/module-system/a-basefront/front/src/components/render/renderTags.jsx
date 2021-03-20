@@ -11,14 +11,16 @@ export default {
   },
   computed: {
     atomClass() {
+      const { parcel } = this.context;
       return {
-        module: this.context.data.module,
-        atomClassName: this.context.data.atomClassName,
+        module: parcel.data.module,
+        atomClassName: parcel.data.atomClassName,
       };
     },
   },
   created() {
-    this.loadTagsAll(this.context.data.atomLanguage);
+    const { parcel } = this.context;
+    this.loadTagsAll(parcel.data.atomLanguage);
   },
   methods: {
     combineAtomClassAndLanguage(language) {
@@ -47,7 +49,7 @@ export default {
       return tags.join(',');
     },
     async onChooseTags(event) {
-      const { data } = this.context;
+      const { parcel } = this.context;
       const action = {
         actionModule: 'a-base',
         actionComponent: 'action',
@@ -55,13 +57,13 @@ export default {
         targetEl: event.target,
       };
       let language;
-      if (data.atomLanguage) {
-        language = data.atomLanguage;
+      if (parcel.data.atomLanguage) {
+        language = parcel.data.atomLanguage;
       } else {
         const locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
         if (locale) {
           language = locale.value;
-          data.atomLanguage = locale.value;
+          this.context.setValue(locale.value, 'atomLanguage');
         }
       }
       if (language) {
@@ -73,11 +75,11 @@ export default {
           target: '_self',
           context: {
             params: {
-              tags: data.atomTags,
+              tags: parcel.data.atomTags,
             },
             callback: (code, tags) => {
               if (code === 200) {
-                this.$set(data, 'atomTags', tags ? JSON.stringify(tags) : null);
+                this.context.setValue(tags ? JSON.stringify(tags) : null, 'atomTags');
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -89,19 +91,19 @@ export default {
     },
   },
   render() {
-    const { data, dataPath, property, validate } = this.context;
+    const { parcel, dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{this.adjustTags(data.atomTags)}</div>
+          <div slot="after">{this.adjustTags(parcel.data.atomTags)}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose
         link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
-        <div slot="after">{this.adjustTags(data.atomTags)}</div>
+        <div slot="after">{this.adjustTags(parcel.data.atomTags)}</div>
       </eb-list-item-choose>
     );
   },

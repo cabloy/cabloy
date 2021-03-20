@@ -10,9 +10,10 @@ export default {
   },
   computed: {
     atomClass() {
+      const { parcel } = this.context;
       return {
-        module: this.context.data.module,
-        atomClassName: this.context.data.atomClassName,
+        module: parcel.data.module,
+        atomClassName: parcel.data.atomClassName,
       };
     },
     locales() {
@@ -22,21 +23,21 @@ export default {
   created() {
     this.$store.dispatch('a/base/getLocales').then(locales => {
       if (locales.length === 1) {
-        this.context.data.atomLanguage = locales[0].value;
+        this.context.setValue(locales[0].value, 'atomLanguage');
       }
     });
   },
   methods: {
   },
   render() {
-    const { data, pathParent, key, schema, properties, property, meta } = this.context;
+    const { parcel, key, property, meta } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.locales,
     });
     return (
       <eb-list-item-validate
-        data={data} pathParent={pathParent} schema={schema} properties={properties} meta={meta}
+        parcel={parcel} meta={meta}
         dataKey={key} property={propertyNew}>
       </eb-list-item-validate>
     );

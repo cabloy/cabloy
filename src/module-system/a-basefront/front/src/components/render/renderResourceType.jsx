@@ -26,14 +26,14 @@ export default {
   methods: {
   },
   render() {
-    const { data, pathParent, key, schema, properties, property, meta } = this.context;
+    const { parcel, key, property, meta } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.resourceTypes,
     });
     return (
       <eb-list-item-validate
-        data={data} pathParent={pathParent} schema={schema} properties={properties} meta={meta}
+        parcel={parcel} meta={meta}
         dataKey={key} property={propertyNew}>
       </eb-list-item-validate>
     );

@@ -95,7 +95,12 @@ export default {
       return property.default;
     },
     setValue(parcel, key, value) {
-      const property = parcel.properties[key];
+      let property;
+      if (parcel === this.parcel && key === this.dataKey && this.property) {
+        property = this.property;
+      } else {
+        property = parcel.properties[key];
+      }
       // value
       let _value;
       if (!property) {

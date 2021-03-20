@@ -60,11 +60,11 @@ export default {
             callback: (code, node) => {
               if (code === 200) {
                 if (node) {
-                  this.$set(data, 'atomCategoryId', node.id);
-                  this.$set(data, 'atomCategoryName', node.data.categoryName);
+                  this.context.setValue(node.id, 'atomCategoryId');
+                  this.context.setValue(node.data.categoryName, 'atomCategoryName');
                 } else {
-                  this.$set(data, 'atomCategoryId', 0);
-                  this.$set(data, 'atomCategoryName', '');
+                  this.context.setValue(0, 'atomCategoryId');
+                  this.context.setValue('', 'atomCategoryName');
                 }
                 resolve(true);
               } else if (code === false) {
@@ -77,19 +77,19 @@ export default {
     },
   },
   render() {
-    const { data, dataPath, property, validate } = this.context;
+    const { parcel, dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{data.atomCategoryName}</div>
+          <div slot="after">{parcel.data.atomCategoryName}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose
         link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
-        <div slot="after">{data.atomCategoryName}</div>
+        <div slot="after">{parcel.data.atomCategoryName}</div>
       </eb-list-item-choose>
     );
   },
