@@ -16,19 +16,19 @@ export default {
       return validate.perform(null, { action: 'save' });
     },
     onChooseEditContent() {
-      const { data, validate } = this.context;
-      const url = `/a/dashboard/dashboard?scene=manager&atomId=${data.atomId}`;
+      const { parcel, validate } = this.context;
+      const url = `/a/dashboard/dashboard?scene=manager&atomId=${parcel.data.atomId}`;
       this.$view.navigate(url, {
         target: '_view',
         context: {
           params: {
             ctx: this,
-            item: data,
+            item: parcel.data,
             readOnly: validate.readOnly,
           },
           callback: (code, res) => {
             if (code === 200) {
-              data.content = res.content;
+              this.context.setValue(res.content);
             }
           },
         },
