@@ -77,11 +77,12 @@ export default {
       custom: null,
       schemaModuleName: null,
       renderModuleName: null,
+      dataCopy: null,
     };
   },
   computed: {
     ready() {
-      return this.data && this.schema;
+      return this.data && this.dataCopy && this.schema;
     },
   },
   watch: {
@@ -91,6 +92,12 @@ export default {
         this.fetchSchema();
       });
     },
+    data() {
+      this.dataCopy = this.$meta.util.extend({}, this.data);
+    },
+  },
+  created() {
+    this.dataCopy = this.$meta.util.extend({}, this.data);
   },
   mounted() {
     this.fetchSchema();
@@ -184,7 +191,8 @@ export default {
     renderSchema(c) {
       return c('validateItem', {
         props: {
-          data: this.data,
+          data: this.dataCopy,
+          dataSrc: this.data,
           pathParent: '',
           dataKey: null,
           schema: this.schema,

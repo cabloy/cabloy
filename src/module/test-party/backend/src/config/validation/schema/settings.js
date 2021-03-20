@@ -5,7 +5,7 @@ module.exports = app => {
     type: 'object',
     properties: {
       _myInfo_: {
-        type: 'string',
+        type: '', // will not post back to the backend
         ebType: 'text',
         ebTitle: 'My Info',
         ebComputed: {

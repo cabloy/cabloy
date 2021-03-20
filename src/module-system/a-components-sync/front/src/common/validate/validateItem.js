@@ -30,6 +30,9 @@ export default {
     data: {
       type: Object,
     },
+    dataSrc: {
+      type: Object,
+    },
     pathParent: {
       type: String,
       default: '',
@@ -123,6 +126,12 @@ export default {
 
       this.$set(data, key, _value); // always set as maybe Object
 
+      // check if dataSrc
+      if (property.type && this.getData() === data) {
+        const dataSrc = this.getDataSrc();
+        this.$set(dataSrc, key, _value);
+      }
+
       if (_valueOld !== _value) {
         this.$emit('change', _value);
         this.validate.$emit('validateItem:change', key, _value);
@@ -170,11 +179,17 @@ export default {
     onSubmit(event) {
       this.validate.onSubmit(event);
     },
+    getData() {
+      return this.data || this.validate.dataCopy;
+    },
+    getDataSrc() {
+      return this.dataSrc || this.validate.data;
+    },
     renderRoot(c) {
-      if (!this.validate.data || !this.validate.schema) return c('div');
+      if (!this.validate.ready) return c('div');
       // context
       const context = {
-        data: this.data || this.validate.data,
+        data: this.getData(),
         pathParent: this.pathParent,
         schema: this.schema || this.validate.schema,
         properties: this.properties || this.validate.schema.properties,
@@ -195,7 +210,7 @@ export default {
       if (!this.validate.data || !this.validate.schema) return c('div');
       // context
       const context = {
-        data: this.data || this.validate.data,
+        data: this.getData(),
         pathParent: this.pathParent,
         schema: this.schema || this.validate.schema,
         properties: this.properties || this.validate.schema.properties,

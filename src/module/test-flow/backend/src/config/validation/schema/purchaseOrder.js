@@ -21,11 +21,6 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
-      // Work Flow
-      __groupWorkFlow: {
-        ebType: 'group-flatten',
-        ebTitle: 'WorkFlow',
-      },
       _flowDefKey: {
         type: 'string',
         ebType: 'select',
@@ -36,6 +31,27 @@ module.exports = app => {
           { title: 'Test_Set01_Atom_UserTask', value: 'set01_atomUserTask' },
           { title: 'Test_Set01_Atom_AssigneesConfirmation', value: 'set01_atomAssigneesConfirmation' },
         ],
+      },
+      // Stats
+      __groupStats: {
+        ebType: 'group-flatten',
+        ebTitle: 'Stats',
+      },
+      detailsCount: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Quantity',
+        ebReadOnly: true,
+      },
+      detailsAmount: {
+        type: 'number',
+        ebType: 'currency',
+        ebTitle: 'Amount',
+        ebComputed: {
+          expression: 'price * quantity',
+          dependencies: 'price,quantity',
+        },
+        ebReadOnly: true,
       },
       // Details
       __groupDetails: {
