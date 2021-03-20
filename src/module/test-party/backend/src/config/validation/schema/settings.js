@@ -37,6 +37,7 @@ module.exports = app => {
         ebTitle: 'Extra Group',
         properties: {
           panelExtra: {
+            type: 'object',
             ebType: 'panel',
             ebTitle: 'Extra',
             $ref: 'settingsUserExtra',
