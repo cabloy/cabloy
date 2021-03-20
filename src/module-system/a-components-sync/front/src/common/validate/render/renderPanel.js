@@ -1,9 +1,9 @@
 export default {
   methods: {
     renderPanel(c, context) {
-      let { data, key, property, dataPath } = context;
+      let { parcel, key, property, dataPath } = context;
       dataPath = dataPath + '/';
-      const value = this.getValue(data, key, property);
+      const value = this.getValue(parcel, key, property);
       return c('eb-list-item-panel', {
         key,
         attrs: {
@@ -33,7 +33,7 @@ export default {
                 },
                 callback: (code, res) => {
                   if (code === 200) {
-                    this.setValue(data, key, res.data, property);
+                    this.setValue(parcel, key, res.data, property);
                     this.validate.verrors = res.errors;
                     // submit
                     if (property.ebAutoSubmit !== false) {

@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderJson(c, context) {
-      const { data, key, property /* dataPath, meta*/ } = context;
+      const { parcel, key, property /* dataPath, meta*/ } = context;
       const title = this.getTitle(context);
       return c('eb-list-item', {
         key,
@@ -21,12 +21,12 @@ export default {
               target,
               context: {
                 params: {
-                  value: this.getValue(data, key, property),
+                  value: this.getValue(parcel, key, property),
                   title,
                   readOnly: this.validate.readOnly || property.ebReadOnly,
                   immediate,
                   onSave: value => {
-                    this.setValue(data, key, value, property);
+                    this.setValue(parcel, key, value, property);
                     return this.validate.perform(null);
                   },
                   actions,
@@ -34,7 +34,7 @@ export default {
                 },
                 callback: (code, value) => {
                   if (code === 200) {
-                    this.setValue(data, key, value, property);
+                    this.setValue(parcel, key, value, property);
                     // submit
                     if (property.ebAutoSubmit !== false) {
                       this.validate.onSubmit();

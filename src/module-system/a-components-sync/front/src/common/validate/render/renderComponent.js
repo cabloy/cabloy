@@ -5,13 +5,12 @@ export default {
       return this._renderComponent(c, context, property.ebRender);
     },
     _renderComponent(c, context, ebRender) {
-      const { data, pathParent, key, property, dataPath } = context;
+      const { parcel, key, property, dataPath } = context;
       const renderProps = this.$meta.util.extend({ options: { props: {} } }, ebRender);
       renderProps.options.props.context = {
         validate: this.validate,
         validateItem: this,
-        data,
-        pathParent,
+        parcel,
         key,
         schema: context.schema,
         properties: context.properties,
@@ -22,10 +21,10 @@ export default {
           return this.getTitle(context, notHint);
         },
         getValue: () => {
-          return this.getValue(data, key, property);
+          return this.getValue(parcel, key, property);
         },
         setValue: value => {
-          this.setValue(data, key, value, property);
+          this.setValue(parcel, key, value, property);
         },
       };
       return c('eb-list-item-component', {

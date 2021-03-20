@@ -1,12 +1,17 @@
 export default {
   methods: {
     renderGroup(c, context) {
-      const { data, key, property, dataPath } = context;
-      const value = this.getValue(data, key, property);
+      const { parcel, key, property, dataPath } = context;
+      const value = this.getValue(parcel, key, property);
+      // parcel2
+      const parcel2 = {
+        data: value,
+        dataSrc: parcel.dataSrc[key],
+        pathParent: dataPath + '/',
+      };
       // context2
       const context2 = {
-        data: value,
-        pathParent: dataPath + '/',
+        parcel: parcel2,
         schema: context.schema,
         properties: property.properties,
       };

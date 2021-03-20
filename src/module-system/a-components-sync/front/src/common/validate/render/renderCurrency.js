@@ -9,10 +9,10 @@ export default {
       return (Number(value) * 100).toFixed(0);
     },
     renderCurrency(c, context) {
-      const { data, key, property, dataPath } = context;
+      const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value
-      let value = this.getValue(data, key, property);
+      let value = this.getValue(parcel, key, property);
       value = this._formatValueCurrency(value);
       if ((this.validate.readOnly || property.ebReadOnly)) {
         return c('f7-list-item', {
@@ -57,7 +57,7 @@ export default {
         on: {
           input: value => {
             const _value = this._updateValueCurrency(value);
-            this.setValue(data, key, _value, property);
+            this.setValue(parcel, key, _value, property);
           },
         },
       }, [

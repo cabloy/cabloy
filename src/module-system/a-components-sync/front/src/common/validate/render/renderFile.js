@@ -1,9 +1,9 @@
 export default {
   methods: {
     renderFile(c, context) {
-      const { data, key, property, dataPath, meta } = context;
+      const { parcel, key, property, dataPath, meta } = context;
       const title = this.getTitle(context);
-      const value = this.getValue(data, key, property);
+      const value = this.getValue(parcel, key, property);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -34,7 +34,7 @@ export default {
       // atomId
       let atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId;
       if (typeof atomId === 'string') {
-        atomId = data[atomId] || 0;
+        atomId = parcel.data[atomId] || 0;
       } else {
         atomId = atomId || 0;
       }
@@ -62,7 +62,7 @@ export default {
         },
         on: {
           input: value => {
-            this.setValue(data, key, value, property);
+            this.setValue(parcel, key, value, property);
           },
           focus: event => {
             const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
@@ -107,7 +107,7 @@ export default {
                   },
                   callback: (code, value) => {
                     if (code === 200) {
-                      this.setValue(data, key, value.downloadUrl, property);
+                      this.setValue(parcel, key, value.downloadUrl, property);
                     }
                   },
                 },

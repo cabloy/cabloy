@@ -1,9 +1,9 @@
 export default {
   methods: {
     renderSelect(c, context) {
-      const { data, key, property, dataPath, meta } = context;
+      const { parcel, key, property, dataPath, meta } = context;
       const title = this.getTitle(context);
-      const valueCurrent = this.getValue(data, key, property);
+      const valueCurrent = this.getValue(parcel, key, property);
       const attrs = {
         name: key,
         dataPath,
@@ -49,7 +49,7 @@ export default {
           attrs,
           on: {
             input: value => {
-              this.setValue(data, key, value, property);
+              this.setValue(parcel, key, value, property);
             },
           },
         }),
