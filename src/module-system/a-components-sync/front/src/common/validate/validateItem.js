@@ -81,12 +81,15 @@ export default {
       if (!ebComputed) return;
       const deps = Array.isArray(ebComputed.dependencies) ? ebComputed.dependencies : ebComputed.dependencies.split(',');
       const immediate = !!ebComputed.immediate;
-      this.computed_register(parcel, key, ebComputed.expression, deps, immediate, property);
+      this.computed_register(parcel, key, ebComputed.expression, deps, immediate);
     },
     getValue(parcel, key) {
       const property = parcel.properties[key];
-      this._handleComputed(parcel, key, property);
       const _value = parcel.data[key];
+      if (!property) {
+        return _value;
+      }
+      this._handleComputed(parcel, key, property);
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;
       return property.default;

@@ -13,7 +13,7 @@ export default {
     this.__computed_dynamics = null;
   },
   methods: {
-    computed_register(parcel, name, expression, deps, immediate, property) {
+    computed_register(parcel, name, expression, deps, immediate) {
       const dataPath = parcel.pathParent + name;
       // check if exists
       let info = this.__computed_dynamics[dataPath];
@@ -21,7 +21,7 @@ export default {
       // info
       info = {
         parcel, name,
-        expression, deps, immediate, property,
+        expression, deps, immediate,
         watchers: {},
       };
       for (const depName of deps) {
