@@ -47,7 +47,7 @@ export default {
       });
     },
     getDataPath() {
-      return this.dataPath || this.getDataPath();
+      return this.dataPath;
     },
   },
 };
