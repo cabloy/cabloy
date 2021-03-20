@@ -12,7 +12,7 @@ export default {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value
-      let value = this.getValue(parcel, key, property);
+      let value = this.getValue(parcel, key);
       value = this._formatValueCurrency(value);
       if ((this.validate.readOnly || property.ebReadOnly)) {
         return c('f7-list-item', {
@@ -57,7 +57,7 @@ export default {
         on: {
           input: value => {
             const _value = this._updateValueCurrency(value);
-            this.setValue(parcel, key, _value, property);
+            this.setValue(parcel, key, _value);
           },
         },
       }, [

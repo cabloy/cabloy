@@ -3,7 +3,7 @@ export default {
     renderFile(c, context) {
       const { parcel, key, property, dataPath, meta } = context;
       const title = this.getTitle(context);
-      const value = this.getValue(parcel, key, property);
+      const value = this.getValue(parcel, key);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -62,7 +62,7 @@ export default {
         },
         on: {
           input: value => {
-            this.setValue(parcel, key, value, property);
+            this.setValue(parcel, key, value);
           },
           focus: event => {
             const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
@@ -107,7 +107,7 @@ export default {
                   },
                   callback: (code, value) => {
                     if (code === 200) {
-                      this.setValue(parcel, key, value.downloadUrl, property);
+                      this.setValue(parcel, key, value.downloadUrl);
                     }
                   },
                 },

@@ -66,7 +66,7 @@ export default {
       }
       // evaluate
       this.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
-        this.setValue(info.parcel, info.name, value, info.property);
+        this.setValue(info.parcel, info.name, value);
       }).catch(err => {
         throw err;
       });

@@ -21,12 +21,12 @@ export default {
               target,
               context: {
                 params: {
-                  value: this.getValue(parcel, key, property),
+                  value: this.getValue(parcel, key),
                   title,
                   readOnly: this.validate.readOnly || property.ebReadOnly,
                   immediate,
                   onSave: value => {
-                    this.setValue(parcel, key, value, property);
+                    this.setValue(parcel, key, value);
                     return this.validate.perform(null);
                   },
                   actions,
@@ -34,7 +34,7 @@ export default {
                 },
                 callback: (code, value) => {
                   if (code === 200) {
-                    this.setValue(parcel, key, value, property);
+                    this.setValue(parcel, key, value);
                     // submit
                     if (property.ebAutoSubmit !== false) {
                       this.validate.onSubmit();

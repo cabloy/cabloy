@@ -4,7 +4,7 @@ export default {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value
-      let value = this.getValue(parcel, key, property);
+      let value = this.getValue(parcel, key);
       if (!value) {
         value = [];
       } else if (!Array.isArray(value)) {
@@ -46,9 +46,9 @@ export default {
           'calendar:change': values => {
             // date or array of date
             if (property.type === 'array') {
-              this.setValue(parcel, key, values, property);
+              this.setValue(parcel, key, values);
             } else {
-              this.setValue(parcel, key, values[0] || null, property);
+              this.setValue(parcel, key, values[0] || null);
             }
           },
         },

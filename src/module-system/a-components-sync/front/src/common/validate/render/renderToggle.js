@@ -15,12 +15,12 @@ export default {
           slot: 'after',
           attrs: {
             dataPath,
-            value: this.getValue(parcel, key, property),
+            value: this.getValue(parcel, key),
             disabled: this.validate.readOnly || property.ebReadOnly,
           },
           on: {
             input: value => {
-              this.setValue(parcel, key, value, property);
+              this.setValue(parcel, key, value);
             },
           },
         }),

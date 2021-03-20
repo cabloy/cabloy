@@ -3,7 +3,7 @@ export default {
     renderText(c, context) {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
-      const value = this.getValue(parcel, key, property);
+      const value = this.getValue(parcel, key);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -46,7 +46,7 @@ export default {
         },
         on: {
           input: value => {
-            this.setValue(parcel, key, value, property);
+            this.setValue(parcel, key, value);
           },
         },
       }, [
