@@ -18,10 +18,10 @@ export default {
         getTitle: notHint => {
           return this.getTitle(context, notHint);
         },
-        getValue: () => {
+        getValue: property => {
           return this.getValue(parcel, key, property);
         },
-        setValue: value => {
+        setValue: (value, property) => {
           this.setValue(parcel, key, value, property);
         },
       };

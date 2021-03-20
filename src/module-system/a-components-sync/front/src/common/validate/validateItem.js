@@ -84,6 +84,7 @@ export default {
       this.computed_register(parcel, key, ebComputed.expression, deps, immediate, property);
     },
     getValue(parcel, key, property) {
+      property = property || parcel.properties[key];
       this._handleComputed(parcel, key, property);
       const _value = parcel.data[key];
       if (!this.checkIfEmptyForSelect(_value)) return _value;
@@ -91,6 +92,8 @@ export default {
       return property.default;
     },
     setValue(parcel, key, value, property) {
+      property = property || parcel.properties[key];
+
       let _value;
 
       if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
