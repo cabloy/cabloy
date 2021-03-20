@@ -83,6 +83,8 @@ export default {
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
+  'My Mobile': '我的手机',
+  'My Info': '我的信息',
   'Party Name': '宴会名称',
   'Person Count': '人数',
   'Party Type': '宴会类型',

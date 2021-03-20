@@ -37,13 +37,30 @@ export default {
       // ok
       return info;
     },
+    computed_fillScope(scope, data, depName) {
+      const depNames = depName.split('.');
+      if (depNames.length === 1) {
+        scope[depName] = this.data[depName];
+        return;
+      }
+      for (let i = 0; i < depNames.length - 1; i++) {
+        const depName = depNames[i];
+        if (!scope[depName]) {
+          scope[depName] = {};
+        }
+        scope = scope[depName];
+        data = data[depName];
+      }
+      const depNameLast = depNames[depNames.length - 1];
+      scope[depNameLast] = data[depNameLast];
+    },
     computed_onChange(name) {
       const info = this.__computed_dynamics[name];
       if (!info) return;
       // scope
       const scope = {};
       for (const depName of info.deps) {
-        scope[depName] = this.data[depName];
+        this.computed_fillScope(scope, this.data, depName);
       }
       // evaluate
       this.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {

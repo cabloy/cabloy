@@ -4,6 +4,17 @@ module.exports = app => {
   schemas.settingsUser = {
     type: 'object',
     properties: {
+      _myInfo_: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'My Info',
+        ebComputed: {
+          expression: 'groupInfo.username + "(" + (groupExtra.panelExtra.groupInfo.mobile || "-") + ")"',
+          dependencies: 'groupInfo.username,groupExtra.panelExtra.groupInfo.mobile',
+          immediate: true,
+        },
+        ebReadOnly: true,
+      },
       groupInfo: {
         type: 'object',
         ebType: 'group',
