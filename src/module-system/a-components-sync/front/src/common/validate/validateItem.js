@@ -89,7 +89,7 @@ export default {
     _handleComputed(data, key, property) {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
-      const deps = ebComputed.dependencies.split(',');
+      const deps = Array.isArray(ebComputed.dependencies) ? ebComputed.dependencies : ebComputed.dependencies.split(',');
       const immediate = !!ebComputed.immediate;
       this.computed_register(key, ebComputed.expression, deps, immediate, property);
     },
