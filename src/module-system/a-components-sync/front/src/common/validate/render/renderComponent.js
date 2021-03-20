@@ -18,11 +18,11 @@ export default {
         getTitle: notHint => {
           return this.getTitle(context, notHint);
         },
-        getValue: property => {
-          return this.getValue(parcel, key, property);
+        getValue: name => {
+          return this.getValue(parcel, name || key);
         },
-        setValue: (value, property) => {
-          this.setValue(parcel, key, value, property);
+        setValue: (value, name) => {
+          this.setValue(parcel, name || key, value);
         },
       };
       return c('eb-list-item-component', {

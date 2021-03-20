@@ -83,16 +83,16 @@ export default {
       const immediate = !!ebComputed.immediate;
       this.computed_register(parcel, key, ebComputed.expression, deps, immediate, property);
     },
-    getValue(parcel, key, property) {
-      property = property || parcel.properties[key];
+    getValue(parcel, key) {
+      const property = parcel.properties[key];
       this._handleComputed(parcel, key, property);
       const _value = parcel.data[key];
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;
       return property.default;
     },
-    setValue(parcel, key, value, property) {
-      property = property || parcel.properties[key];
+    setValue(parcel, key, value) {
+      const property = parcel.properties[key];
 
       let _value;
 

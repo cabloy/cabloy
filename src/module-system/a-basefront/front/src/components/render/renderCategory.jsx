@@ -10,9 +10,10 @@ export default {
   },
   computed: {
     atomClass() {
+      const { parcel } = this.context;
       return {
-        module: this.context.data.module,
-        atomClassName: this.context.data.atomClassName,
+        module: parcel.data.module,
+        atomClassName: parcel.data.atomClassName,
       };
     },
   },
@@ -38,13 +39,13 @@ export default {
         targetEl: event.target,
       };
       let language;
-      if (data.atomLanguage) {
-        language = data.atomLanguage;
+      if (parcel.data.atomLanguage) {
+        language = parcel.data.atomLanguage;
       } else {
-        const locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
+        const locale = await this.$meta.util.performAction({ ctx: this, action, item: parcel.data });
         if (locale) {
           language = locale.value;
-          data.atomLanguage = locale.value;
+          this.context.setValue(locale.value, 'atomLanguage');
         }
       }
       return new Promise(resolve => {
