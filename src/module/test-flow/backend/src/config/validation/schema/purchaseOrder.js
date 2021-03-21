@@ -59,8 +59,9 @@ module.exports = app => {
             module: moduleInfo.relativeName,
             detailClassName: 'default',
           },
-          expression: 'details.reduce(function(a,b){return a.amount+b.amount;})',
+          expression: 'details.reduce(function(a,b){return a+b.amount;},0)',
         },
+        ebCurrency: true,
         ebReadOnly: true,
       },
       // Details

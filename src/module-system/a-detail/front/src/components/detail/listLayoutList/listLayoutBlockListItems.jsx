@@ -61,7 +61,7 @@ export default {
       this.$meta.util.swipeoutClose(event.target);
       return res;
     },
-    onActionChanged(data) {
+    async onActionChanged(data) {
       const { atomKey, detailClass } = data;
       if (
         atomKey.atomId !== this.layoutManager.container.atomId ||
@@ -69,50 +69,61 @@ export default {
         detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
       ) return;
 
-      const key = data.key;
-      const action = data.action;
-      const result = data.result;
+      const changed = await this._onActionChanged(data);
+      if (changed) {
+        // details:change
+        this.$meta.eventHub.$emit('details:change', {
+          ...data,
+          details: this.layout.items,
+        });
+      }
+    },
+    async _onActionChanged(data) {
+      const { key, action, result } = data;
       // create
       if (action.name === 'create') {
         // load
-        this.layout.loadDetails();
-        return;
+        await this.layout.loadDetails();
+        return true;
       }
       // delete
       const index = this.layout.items.findIndex(item => item.detailId === key.detailId);
       if (action.name === 'delete') {
         if (index !== -1) {
           this.layout.items.splice(index, 1);
+          return true;
         }
-        return;
+        return false;
       }
       // move
       if (action.name === 'moveUp' || action.name === 'moveDown') {
-        if (!result) return;
+        if (!result) return false;
         const a = action.name === 'moveUp' ? result.to : result.from;
         const b = action.name === 'moveUp' ? result.from : result.to;
         const aIndex = this.layout.items.findIndex(item => item.detailId === a);
         const bIndex = this.layout.items.findIndex(item => item.detailId === b);
         if (aIndex === -1 || bIndex === -1) {
           // load
-          this.layout.loadDetails();
-          return;
+          await this.layout.loadDetails();
+          return false;
         }
         const row = this.layout.items.splice(bIndex, 1);
         this.layout.items.splice(aIndex, 0, row[0]);
-        return;
+        return false;
       }
       // others
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api.post('/a/detail/detail/read', {
+        const res = await this.$api.post('/a/detail/detail/read', {
           flowTaskId: this.layoutManager.container.flowTaskId,
           key,
           options,
-        }).then(data => {
-          Vue.set(this.layout.items, index, data);
         });
+        Vue.set(this.layout.items, index, res);
+        return true;
       }
+      // default
+      return false;
     },
     _getItemMetaSummary(item) {
       return (item._meta && item._meta.summary) || '';

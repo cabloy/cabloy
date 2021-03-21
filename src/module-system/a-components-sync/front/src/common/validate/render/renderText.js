@@ -6,7 +6,7 @@ export default {
     },
     _updateValueCurrency(value) {
       if (isNaN(value)) return value;
-      return (Number(value) * 100).toFixed(0);
+      return Number((Number(value) * 100).toFixed(0));
     },
     renderText(c, context) {
       const { parcel, key, property, dataPath } = context;
@@ -58,11 +58,11 @@ export default {
           disabled: this.validate.readOnly || property.ebReadOnly,
         },
         on: {
-          input: value => {
+          input: valueNew => {
             if (property.ebCurrency) {
-              value = this._updateValueCurrency(value);
+              valueNew = this._updateValueCurrency(valueNew);
             }
-            this.setValue(parcel, key, value);
+            this.setValue(parcel, key, valueNew);
           },
         },
       }, [
