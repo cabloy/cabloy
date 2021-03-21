@@ -38,8 +38,9 @@ module.exports = app => {
       },
       price: {
         type: 'number',
-        ebType: 'currency',
+        ebType: 'text',
         ebTitle: 'Price',
+        ebCurrency: true,
       },
       quantity: {
         type: 'number',
@@ -48,12 +49,13 @@ module.exports = app => {
       },
       amount: {
         type: 'number',
-        ebType: 'currency',
+        ebType: 'text',
         ebTitle: 'Amount',
         ebComputed: {
           expression: 'price * quantity',
           dependencies: 'price,quantity',
         },
+        ebCurrency: true,
         ebReadOnly: true,
       },
     },

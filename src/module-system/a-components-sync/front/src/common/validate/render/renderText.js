@@ -1,9 +1,22 @@
 export default {
   methods: {
+    _formatValueCurrency(value) {
+      if (isNaN(value)) return value;
+      return (Number(value) / 100).toFixed(2);
+    },
+    _updateValueCurrency(value) {
+      if (isNaN(value)) return value;
+      return (Number(value) * 100).toFixed(0);
+    },
     renderText(c, context) {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
-      const value = this.getValue(parcel, key);
+      let value = this.getValue(parcel, key);
+      // currency
+      if (property.ebCurrency) {
+        value = this._formatValueCurrency(value);
+      }
+      // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -46,6 +59,9 @@ export default {
         },
         on: {
           input: value => {
+            if (property.ebCurrency) {
+              value = this._updateValueCurrency(value);
+            }
             this.setValue(parcel, key, value);
           },
         },

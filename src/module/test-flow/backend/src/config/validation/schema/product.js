@@ -22,8 +22,9 @@ module.exports = app => {
       },
       productPrice: {
         type: 'number',
-        ebType: 'currency',
+        ebType: 'text',
         ebTitle: 'Product Price',
+        ebCurrency: true,
         // notEmpty: true,
       },
     },
