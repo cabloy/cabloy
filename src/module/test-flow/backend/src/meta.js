@@ -9,6 +9,7 @@ module.exports = app => {
     const schemas = require('./config/validation/schemas.js')(app);
     const staticFlowDefs = require('./config/static/flowDefs.js')(app);
     const staticResources = require('./config/static/resources.js')(app);
+    const staticProducts = require('./config/static/products.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -47,6 +48,9 @@ module.exports = app => {
           },
           'a-base.resource': {
             items: staticResources,
+          },
+          'test-flow.product': {
+            items: staticProducts,
           },
         },
       },
