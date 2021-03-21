@@ -34,6 +34,11 @@ export default {
       selectMode,
       selectedAtomIds,
     };
+    // special for selectMode=single
+    if (contextParams.selectMode === 'single') {
+      this.container.scene = 'selecting';
+      this.container.layout = 'selecting';
+    }
   },
   render() {
     return (

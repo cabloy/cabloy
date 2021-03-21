@@ -9,13 +9,13 @@ export default {
     };
   },
   created() {
-    this.layout.current = this.container.layout || this.layout_get();
   },
   methods: {
     layout_get() {
       return (this.$view.size === 'small') ? 'list' : 'table';
     },
     async layout_prepareConfig() {
+      this.layout.current = this.container.layout || this.layout_get();
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom

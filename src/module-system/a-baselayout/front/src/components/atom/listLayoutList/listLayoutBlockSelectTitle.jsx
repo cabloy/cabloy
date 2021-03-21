@@ -35,6 +35,9 @@ export default {
           },
           callback: (code, selectedAtoms) => {
             if (code === 200) {
+              if (!Array.isArray(selectedAtoms)) {
+                selectedAtoms = [ selectedAtoms ];
+              }
               this.layoutManager.container.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
               this.layoutManager.page_onRefresh();
             }

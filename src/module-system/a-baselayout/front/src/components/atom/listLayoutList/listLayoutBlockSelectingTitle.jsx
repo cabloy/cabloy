@@ -30,7 +30,9 @@ export default {
     },
     onPerformDone() {
       // ok
-      this.layoutManager.contextCallback(200, this.selectedAtoms);
+      const selectMode = this.layoutManager.container.params.selectMode;
+      const res = selectMode === 'single' ? this.selectedAtoms[0] : this.selectedAtoms;
+      this.layoutManager.contextCallback(200, res);
       this.$f7router.back();
     },
   },
