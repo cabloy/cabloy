@@ -17,7 +17,7 @@ export default {
   methods: {
     onActionChanged(data) {
       const { atomKey, detailClass, details } = data;
-      const { parcel, property } = this.context;
+      const { parcel, property, validate } = this.context;
       if (
         atomKey.atomId !== parcel.data.atomId ||
         detailClass.module !== property.ebParams.detailClass.module ||
@@ -28,6 +28,12 @@ export default {
       const scope = { details };
       this.$meta.util.sandbox.evaluate(property.ebParams.expression, scope).then(value => {
         this.context.setValue(value);
+        // submit
+        if (property.ebAutoSubmit) {
+          this.$nextTick(() => {
+            validate.onSubmit();
+          });
+        }
       }).catch(err => {
         throw err;
       });

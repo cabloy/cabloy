@@ -61,6 +61,7 @@ module.exports = app => {
           },
           expression: 'details.reduce(function(a,b){return a+b.amount;},0)',
         },
+        ebAutoSubmit: true,
         ebCurrency: true,
         ebReadOnly: true,
       },
