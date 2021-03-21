@@ -53,6 +53,9 @@ export default {
     getItems() {
       return this.dataSource || [];
     },
+    getItemsAll() {
+      return this.getItems();
+    },
     _findItem(detailId) {
       for (const pageNum in this.itemsPages) {
         const items = this.itemsPages[pageNum];

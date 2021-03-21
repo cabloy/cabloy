@@ -74,7 +74,7 @@ export default {
         // details:change
         this.$meta.eventHub.$emit('details:change', {
           ...data,
-          details: this.layout.items,
+          details: this.layout.getItemsAll(),
         });
       }
     },

@@ -78,7 +78,7 @@ export default {
       this.$meta.util.swipeoutClose(event.target);
       return res;
     },
-    onActionChanged(data) {
+    async onActionChanged(data) {
       const { atomKey, detailClass } = data;
       if (
         atomKey.atomId !== this.layoutManager.container.atomId ||
@@ -86,14 +86,22 @@ export default {
         detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
       ) return;
 
-      const key = data.key;
-      const action = data.action;
-      const result = data.result;
+      const changed = await this._onActionChanged(data);
+      if (changed) {
+        // details:change
+        this.$meta.eventHub.$emit('details:change', {
+          ...data,
+          details: this.layout.getItemsAll(),
+        });
+      }
+    },
+    async _onActionChanged(data) {
+      const { key, action, result } = data;
       // create
       if (action.name === 'create') {
         // load
-        this.layout.loadDetails();
-        return;
+        await this.layout.loadDetails();
+        return true;
       }
       // delete
       const { items, index } = this.layout._findItem(key.detailId);
@@ -101,36 +109,39 @@ export default {
         if (index !== -1) {
           items.splice(index, 1);
           this.layout.info.total -= 1;
+          return true;
         }
-        return;
+        return false;
       }
       // move
       if (action.name === 'moveUp' || action.name === 'moveDown') {
-        if (!result) return;
+        if (!result) return false;
         const a = action.name === 'moveUp' ? result.to : result.from;
         const b = action.name === 'moveUp' ? result.from : result.to;
         const aRow = this.layout._findItem(a);
         const bRow = this.layout._findItem(b);
         if (aRow.index === -1 || bRow.index === -1 || aRow.items !== bRow.items) {
           // load
-          this.layout.loadDetails();
-          return;
+          await this.layout.loadDetails();
+          return false;
         }
         const row = aRow.items.splice(bRow.index, 1);
         aRow.items.splice(aRow.index, 0, row[0]);
-        return;
+        return false;
       }
       // others
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api.post('/a/detail/detail/read', {
+        const res = await this.$api.post('/a/detail/detail/read', {
           flowTaskId: this.layoutManager.container.flowTaskId,
           key,
           options,
-        }).then(data => {
-          Vue.set(items, index, data);
         });
+        Vue.set(items, index, res);
+        return true;
       }
+      // default
+      return false;
     },
     _getItemMetaSummary(item) {
       return (item._meta && item._meta.summary) || '';

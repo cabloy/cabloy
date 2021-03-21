@@ -39,6 +39,9 @@ export default {
     getItems() {
       return this.items;
     },
+    getItemsAll() {
+      return this.getItems();
+    },
     _renderBlock({ blockName }) {
       const blockConfig = this.layoutConfig.blocks[blockName];
       if (!blockConfig) return null;
