@@ -16,6 +16,7 @@ import renderResourceType from './render/renderResourceType.js';
 import renderJson from './render/renderJson.js';
 import renderCurrency from './render/renderCurrency.js';
 import renderDetails from './render/renderDetails.js';
+import renderDetailsStat from './render/renderDetailsStat.js';
 import renderAtom from './render/renderAtom.js';
 
 export default {
@@ -24,7 +25,7 @@ export default {
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson, renderCurrency, renderDetails, renderAtom,
+    renderJson, renderCurrency, renderDetails, renderDetailsStat, renderAtom,
   ],
   props: {
     parcel: {
@@ -266,6 +267,9 @@ export default {
       } else if (ebType === 'details') {
         // details
         return this.renderDetails(c, context);
+      } else if (ebType === 'detailsStat') {
+        // details
+        return this.renderDetailsStat(c, context);
       } else if (ebType === 'atom') {
         // atom
         return this.renderAtom(c, context);

@@ -39,17 +39,27 @@ module.exports = app => {
       },
       detailsCount: {
         type: 'number',
-        ebType: 'text',
+        ebType: 'detailsStat',
         ebTitle: 'Quantity',
+        ebParams: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+          expression: 'details.length',
+        },
         ebReadOnly: true,
       },
       detailsAmount: {
         type: 'number',
-        ebType: 'currency',
+        ebType: 'detailsStat',
         ebTitle: 'Amount',
-        ebComputed: {
-          expression: 'price * quantity',
-          dependencies: 'price,quantity',
+        ebParams: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+          expression: 'details.reduce(function(a,b){return a.amount+b.amount;})',
         },
         ebReadOnly: true,
       },

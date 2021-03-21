@@ -1,5 +1,6 @@
 import action from './components/action.js';
 import renderDetails from './components/renderDetails.jsx';
+import renderDetailsStat from './components/renderDetailsStat.jsx';
 // listLayoutList
 import listLayoutList from './components/detail/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListTitle from './components/detail/listLayoutList/listLayoutBlockListTitle.jsx';
@@ -18,6 +19,7 @@ import itemLayoutBlockMobileMain from './components/detail/itemLayoutMobile/item
 export default {
   action,
   renderDetails,
+  renderDetailsStat,
   // listLayoutList
   listLayoutList,
   listLayoutBlockListTitle,
