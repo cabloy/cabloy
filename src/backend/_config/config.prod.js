@@ -6,7 +6,11 @@ module.exports = appInfo => {
 
   // disabledModules
   config.disabledModules = [
+    'test-flow',
+    'test-localeone',
+    'test-localetwo',
     'test-party',
+    'test-partymonkey-monkey',
   ];
 
   // instances
