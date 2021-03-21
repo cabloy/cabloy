@@ -9,10 +9,16 @@ export default {
     };
   },
   mounted() {
-    this.$meta.eventHub.$on('details:change', this.onActionChanged);
+    const { validate } = this.context;
+    if (validate.containerMode === 'edit') {
+      this.$meta.eventHub.$on('details:change', this.onActionChanged);
+    }
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('details:change', this.onActionChanged);
+    const { validate } = this.context;
+    if (validate.containerMode === 'edit') {
+      this.$meta.eventHub.$off('details:change', this.onActionChanged);
+    }
   },
   methods: {
     onActionChanged(data) {
