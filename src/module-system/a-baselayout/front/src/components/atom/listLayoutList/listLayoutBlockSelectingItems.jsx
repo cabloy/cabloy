@@ -31,10 +31,10 @@ export default {
       const selectMode = this.layoutManager.container.params.selectMode;
       if (selectMode === 'single') {
         if (event.target.checked) {
-          this.layoutManager.container.params.selectedAtoms = [ item ];
+          this.layoutManager.select.selectedAtoms = [ item ];
         }
       } else {
-        const selectedAtoms = this.layoutManager.container.params.selectedAtoms;
+        const selectedAtoms = this.layoutManager.select.selectedAtoms;
         const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
         if (event.target.checked && index === -1) {
           selectedAtoms.push(item);

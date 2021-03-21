@@ -30,8 +30,12 @@ export default {
     };
   },
   created() {
-    this.layout_prepareConfig().then(() => {
-      this.base.ready = true;
+    this.$nextTick(() => {
+      this.select_prepareSelectedAtoms().then(() => {
+        this.layout_prepareConfig().then(() => {
+          this.base.ready = true;
+        });
+      });
     });
   },
   beforeDestroy() {
