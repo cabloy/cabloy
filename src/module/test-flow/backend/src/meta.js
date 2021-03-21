@@ -96,7 +96,9 @@ module.exports = app => {
       },
       index: {
         indexes: {
+          testFlowProduct: 'createdAt,updatedAt,atomId,productCode',
           testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
+          testFlowPurchaseOrderDetail: 'createdAt,updatedAt,atomId,detailId',
         },
       },
     });

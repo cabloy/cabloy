@@ -53,6 +53,10 @@ module.exports = appInfo => {
       aDashboardContent: 'createdAt,updatedAt,atomId,itemId',
       aDashboardUser: 'createdAt,updatedAt,userId,dashboardAtomId',
     },
+    'a-detail': {
+      aDetail: 'createdAt,updatedAt,atomId,detailItemId,detailClassId,detailStaticKey',
+      aDetailClass: 'createdAt,updatedAt,module+detailClassName',
+    },
     'a-dingtalk': {
       aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
       aDingtalkMember: 'createdAt,updatedAt,userId,memberId',
