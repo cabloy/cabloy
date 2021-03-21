@@ -54,6 +54,15 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
+
+        // alter table: testFlowPurchaseOrder
+        sql = `
+          ALTER TABLE testFlowPurchaseOrder
+            ADD COLUMN detailsCount int(11) DEFAULT '0',
+            ADD COLUMN detailsAmount int(11) DEFAULT '0'
+        `;
+        await this.ctx.model.query(sql);
+
       }
     }
 

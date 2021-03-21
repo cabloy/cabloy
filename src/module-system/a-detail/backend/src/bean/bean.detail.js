@@ -402,7 +402,11 @@ module.exports = ctx => {
       } else if (target === 'clone') {
         userIdUpdated = user.id;
         userIdCreated = user.id;
-        detailName = `${srcItem.detailName}-${ctx.text('CloneCopyText')}`;
+        if (srcKeyAtom.atomId === destKeyAtom.atomId) {
+          detailName = `${srcItem.detailName}-${ctx.text('CloneCopyText')}`;
+        } else {
+          detailName = srcItem.detailName;
+        }
         detailStatic = 0;
         if (detailStaticKey) {
           detailStaticKey = uuid.v4().replace(/-/g, '');
