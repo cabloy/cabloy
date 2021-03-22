@@ -48,17 +48,14 @@ export default {
   computed: {
     pageTitle() {
       const tabName = this.tabName;
-      if (tabName === 'mine') {
-        return `${this.$text('Initiateds')}`;
-      } else if (tabName === 'others') {
-        return `${this.$text('Participateds')}`;
-      } else if (tabName === 'history') {
-        return `${this.$text('Ends')}`;
+      if (tabName === 'stars') {
+        return `${this.$text('Stars')}`;
       }
-      return this.$text('Flow');
+      const labelId = this.tabName.split('_')[2];
+      return this.userLabels[labelId].text;
     },
     userLabels() {
-      return this.$store.getState('a/base/userLabels');
+      return this.$store.getters['a/base/userLabels'];
     },
   },
   created() {
@@ -78,8 +75,12 @@ export default {
         layout: this.layout,
       };
     },
-    onStatsChange(event, mode) {
-      this.stats[mode] = event;
+    onStatsChange(event, mode, labelId) {
+      if (mode === 'stars') {
+        this.stats[mode] = event;
+      } else {
+        this.$set(this.stats.labels, labelId, event);
+      }
     },
   },
 };
