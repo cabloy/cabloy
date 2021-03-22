@@ -102,6 +102,11 @@ export default {
       const resourceConfig = JSON.parse(mineItem.resourceConfig);
       const stats = resourceConfig.stats;
       if (!stats) return;
+      if (stats.color === 'auto') {
+        return (
+          <eb-stats-color stats_params={stats.params}></eb-stats-color>
+        );
+      }
       return (
         <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>
       );
