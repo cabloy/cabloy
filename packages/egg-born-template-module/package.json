@@ -3,10 +3,6 @@
   "version": "4.0.7",
   "description": "egg-born-template-module",
   "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zhennann/egg-born-template-module.git"
-  },
   "keywords": [
     "egg",
     "egg-born",
@@ -16,9 +12,5 @@
     "module"
   ],
   "author": "zhennann",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zhennann/egg-born-template-module/issues"
-  },
-  "homepage": "https://github.com/zhennann/egg-born-template-module#readme"
+  "license": "MIT"
 }

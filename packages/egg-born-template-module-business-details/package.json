@@ -1,0 +1,17 @@
+{
+  "name": "egg-born-template-module-business-details",
+  "version": "4.0.0",
+  "description": "egg-born-template-module-business-details",
+  "scripts": {},
+  "keywords": [
+    "egg",
+    "egg-born",
+    "fullstack",
+    "boilerplate",
+    "template",
+    "module",
+    "details"
+  ],
+  "author": "zhennann",
+  "license": "MIT"
+}
