@@ -7,4 +7,5 @@ module.exports = {
   KeyForAtom: 'Key',
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
+  StarsLabels: 'Stars & Labels',
 };

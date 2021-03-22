@@ -57,10 +57,10 @@ export default {
       colors: [
         { name: 'Red', value: '#FC6360' },
         { name: 'Orange', value: '#FDA951' },
+        { name: 'Purple', value: '#D592E5' },
         { name: 'Yellow', value: '#FED558' },
         { name: 'Blue', value: '#54BEF7' },
         { name: 'Green', value: '#86DF6A' },
-        { name: 'Purple', value: '#D592E5' },
       ],
     };
   },
@@ -147,7 +147,7 @@ export default {
 
 </script>
 <style lang="less" scoped>
-.label-edit-list{
+.label-edit-list {
   .label-media {
     width: 16px;
     height: 16px;
@@ -155,7 +155,7 @@ export default {
   }
 }
 
-.label-edit{
+.label-edit {
   .label-prompt {
     position: absolute;
     width: 100%;
@@ -163,7 +163,7 @@ export default {
     text-align: center;
   }
 
-  .label-form{
+  .label-form {
     margin-top: 40px;
   }
 

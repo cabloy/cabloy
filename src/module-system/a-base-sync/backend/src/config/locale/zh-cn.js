@@ -98,4 +98,5 @@ module.exports = {
   WorkFlow: '工作流',
   Detail: '明细',
   Details: '明细',
+  StarsLabels: '星标',
 };

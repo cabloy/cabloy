@@ -1,16 +1,12 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // actionPath
-  const options = {
-    stage: 'formal',
-    star: 1,
-  };
-  const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;
+  const actionPath = '/a/basefront/atom/starTabs';
   // resource
   const resource = {
-    atomName: 'Stars',
+    atomName: 'StarsLabels',
     atomStaticKey: 'mineAtomStars',
-    atomRevision: 1,
+    atomRevision: 4,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -18,9 +14,8 @@ module.exports = app => {
       stats: {
         params: {
           module: moduleInfo.relativeName,
-          name: 'stars',
+          name: 'starslabels',
         },
-        color: 'gray',
       },
     }),
     resourceRoles: 'root',

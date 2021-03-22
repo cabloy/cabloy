@@ -14,6 +14,7 @@ export default [
   { path: 'atom/select', component: loadjsx('atom/select') },
   { path: 'atom/selecting', component: loadjsx('atom/selecting') },
   { path: 'atom/autoStar', component: load('atom/autoStar'), meta: { auth: true } },
+  { path: 'atom/starTabs', component: load('atom/starTabs') },
   { path: 'comment/list', component: load('comment/list') },
   { path: 'comment/item', component: load('comment/item'), meta: { auth: true } },
   { path: 'comment/all', component: load('comment/all') },
