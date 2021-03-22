@@ -42,6 +42,11 @@ module.exports = app => {
       keywords: {},
       schemas,
     },
+    index: {
+      indexes: {
+        {{providerId}}{{atomClassNameCapitalize}}: 'createdAt,updatedAt,atomId',
+      },
+    },
   };
   return meta;
 };
