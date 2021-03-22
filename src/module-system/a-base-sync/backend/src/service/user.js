@@ -3,10 +3,25 @@ module.exports = app => {
   class User extends app.Service {
 
     async getLabels({ user }) {
-      const res = await this.ctx.model.label.get({
+      const data = await this.ctx.model.label.get({
         userId: user.id,
       });
-      return res ? JSON.parse(res.labels) : null;
+      let labels = data ? JSON.parse(data.labels) : null;
+      if (!labels || Object.keys(labels).length === 0) {
+        // append default labels
+        labels = {
+          1: {
+            color: '#FC6360',
+            text: this.ctx.text('Red'),
+          },
+          2: {
+            color: '#FDA951',
+            text: this.ctx.text('Orange'),
+          },
+        };
+        await this.setLabels({ labels, user });
+      }
+      return labels;
     }
 
     async setLabels({ labels, user }) {
