@@ -21,6 +21,7 @@ module.exports = ctx => {
         });
         await ctx.bean.stats._set({
           module: moduleInfo.relativeName,
+          name: 'labels',
           fullName: `labels.${labelId}`,
           value: count,
           user,
