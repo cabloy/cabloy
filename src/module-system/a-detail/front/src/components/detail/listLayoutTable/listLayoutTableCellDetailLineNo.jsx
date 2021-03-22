@@ -23,9 +23,6 @@ export default {
   created() {
   },
   methods: {
-    onItemClick(event) {
-      return this.layoutItems.onItemClick(event, this.info.record);
-    },
   },
   render() {
     const index = this.info.index;

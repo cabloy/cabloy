@@ -272,7 +272,7 @@ export default {
         return <div class="eb-antdv-table-cell" title={text}>{text}</div>;
       }
       // component
-      const options = {
+      let options = {
         props: {
           layoutManager: this.layoutManager,
           layout: this.layout,
@@ -280,6 +280,9 @@ export default {
           info: { text, record, index, column },
         },
       };
+      if (column.component.options) {
+        options = this.$meta.util.extend({}, column.component.options, options);
+      }
       return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
     },
     _customRow(record) {

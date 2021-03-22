@@ -46,6 +46,15 @@ export default {
                       dataIndex: 'price',
                       title: 'Price',
                       align: 'left',
+                      component: {
+                        module: 'a-basefront',
+                        name: 'renderTableCellComputed',
+                        options: {
+                          props: {
+                            expression: '(text / 100).toFixed(2)',
+                          },
+                        },
+                      },
                     },
                   ],
                 },
