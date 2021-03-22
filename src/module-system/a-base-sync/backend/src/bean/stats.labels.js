@@ -26,9 +26,9 @@ module.exports = ctx => {
           user,
         });
         // root
-        if (userLabel.color === '#FC6360') {
+        if (userLabel.color === 'red') {
           statsRoot.red = count;
-        } else if (userLabel.color === '#FDA951') {
+        } else if (userLabel.color === 'orange') {
           statsRoot.orange = count;
         }
       }

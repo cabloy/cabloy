@@ -799,11 +799,11 @@ module.exports = ctx => {
         // append default labels
         labels = {
           1: {
-            color: '#FC6360',
+            color: 'red',
             text: this.ctx.text('Red'),
           },
           2: {
-            color: '#FDA951',
+            color: 'orange',
             text: this.ctx.text('Orange'),
           },
         };
