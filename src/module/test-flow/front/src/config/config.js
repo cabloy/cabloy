@@ -6,7 +6,6 @@ export default {
           layouts: {
             list: {
               blocks: {
-                // title: false,
               },
             },
           },

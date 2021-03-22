@@ -15,6 +15,7 @@ module.exports = app => {
             language: false,
             category: true,
             tag: true,
+            details: [ 'default' ],
           },
           actions: {
           },
@@ -30,13 +31,32 @@ module.exports = app => {
         },
       },
     },
+    detail: {
+      details: {
+        default: {
+          info: {
+            bean: '{{atomClassName}}',
+            title: 'Details',
+            tableName: '{{providerId}}{{atomClassNameCapitalize}}Detail',
+          },
+          actions: {
+          },
+          validator: '{{atomClassName}}Detail',
+        },
+      },
+    },
     validation: {
       validators: {
+        // {{atomClassName}}
         {{atomClassName}}: {
           schemas: '{{atomClassName}}',
         },
         {{atomClassName}}Search: {
           schemas: '{{atomClassName}}Search',
+        },
+        // {{atomClassName}}Detail
+        {{atomClassName}}Detail: {
+          schemas: '{{atomClassName}}Detail',
         },
       },
       keywords: {},
@@ -45,6 +65,7 @@ module.exports = app => {
     index: {
       indexes: {
         {{providerId}}{{atomClassNameCapitalize}}: 'createdAt,updatedAt,atomId',
+        {{providerId}}{{atomClassNameCapitalize}}Detail: 'createdAt,updatedAt,atomId,detailId',
       },
     },
   };
