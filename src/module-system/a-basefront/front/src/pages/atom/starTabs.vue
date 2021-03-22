@@ -3,9 +3,9 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar :scrollable="userLabels && Object.keys(userLabels).length>1">
-          <eb-link :tab-link="`#${tabId.stars}`" :tabLinkActive="tabName==='stars'" icon-only icon-material="star_rate" badge-color="gray" :icon-badge="stats.stars" :stats_params="{module: 'a-base',name: 'stars'}" @stats_change="onStatsChange($event,'stars')"></eb-link>
+          <eb-link :tab-link="`#${tabId.stars}`" :tabLinkActive="tabName==='stars'" :text="$text('Stars')" badge-color="gray" :badge="stats.stars" :stats_params="{module: 'a-base',name: 'stars'}" @stats_change="onStatsChange($event,'stars')"></eb-link>
           <template v-if="userLabels">
-            <eb-link v-for="key of Object.keys(userLabels)" :key="key" :tab-link="`#${tabId.labels}_${key}`" :tabLinkActive="tabName===`${tabId.labels}_${key}`" :icon-badge="stats.labels[key]" :stats_params="{module: 'a-base',name: 'labels',nameSub: key}" @stats_change="onStatsChange($event,'labels',key)">{{userLabels[key].text}}</eb-link>
+            <eb-link v-for="key of Object.keys(userLabels)" :key="key" :tab-link="`#${tabId.labels}_${key}`" :tabLinkActive="tabName===`${tabId.labels}_${key}`" :text="userLabels[key].text" :badge-color="userLabels[key].color" :badge="stats.labels[key]" :stats_params="{module: 'a-base',name: 'labels',nameSub: key}" @stats_change="onStatsChange($event,'labels',key)"></eb-link>
           </template>
         </f7-toolbar>
       </f7-subnavbar>

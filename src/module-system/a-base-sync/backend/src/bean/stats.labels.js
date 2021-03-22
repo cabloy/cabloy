@@ -6,18 +6,34 @@ module.exports = ctx => {
       const { user } = context;
       const modelAtomLabelRef = ctx.model.module(moduleInfo.relativeName).atomLabelRef;
       // root stats
-      const statsRoot = { };
+      const statsRoot = {
+        red: 0,
+        orange: 0,
+      };
       // userLabels
       const userLabels = await ctx.bean.atom.getLabels({ user });
       for (const labelId of Object.keys(userLabels)) {
         const userLabel = userLabels[labelId];
+        // sub
         const count = await modelAtomLabelRef.count({
           userId: user.id,
           labelId,
         });
+        await ctx.bean.stats._set({
+          module: moduleInfo.relativeName,
+          fullName: `labels.${labelId}`,
+          value: count,
+          user,
+        });
+        // root
+        if (userLabel.color === '#FC6360') {
+          statsRoot.red = count;
+        } else if (userLabel.color === '#FDA951') {
+          statsRoot.orange = count;
+        }
       }
-
-      return count;
+      // ok
+      return statsRoot;
     }
 
   }
