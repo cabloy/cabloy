@@ -79,9 +79,22 @@ export default {
         });
     },
     onStarChanged(data) {
+      const items = this.layout.items;
+      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+      const star = params.options.star;
       const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].star = data.star;
+      if (star) {
+        // switch
+        if (data.star === 0 && index !== -1) {
+          items.splice(index, 1);
+        } else if (data.star === 1 && index === -1) {
+          this.layout.onPageRefresh();
+        }
+      } else {
+        // just change
+        if (index !== -1) {
+          items[index].star = data.star;
+        }
       }
     },
     onLabelsChanged(data) {
