@@ -15,6 +15,10 @@
       "module-business": {
         "package": "egg-born-template-module-business",
         "description": "cabloy business module template"
+      },
+      "module-business-details": {
+        "package": "egg-born-template-module-business-details",
+        "description": "cabloy business module template with details"
       }
     }
   },
