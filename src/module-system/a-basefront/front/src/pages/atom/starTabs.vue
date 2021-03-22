@@ -51,7 +51,8 @@ export default {
       if (tabName === 'stars') {
         return `${this.$text('Stars')}`;
       }
-      const labelId = this.tabName.split('_')[2];
+      const arr = this.tabName.split('_');
+      const labelId = arr[arr.length - 1];
       return this.userLabels[labelId].text;
     },
     userLabels() {
