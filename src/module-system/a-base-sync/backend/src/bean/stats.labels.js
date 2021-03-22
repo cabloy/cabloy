@@ -4,7 +4,7 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
+      const modelAtomLabelRef = ctx.model.module(moduleInfo.relativeName).atomLabelRef;
       const count = await modelStar.count({
         userId: user.id,
         star: 1,

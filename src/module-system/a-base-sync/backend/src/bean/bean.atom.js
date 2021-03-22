@@ -23,6 +23,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).atomStar;
     }
 
+    get modelLabel() {
+      return ctx.model.module(moduleInfo.relativeName).label;
+    }
+
     get modelAtomLabel() {
       return ctx.model.module(moduleInfo.relativeName).atomLabel;
     }
@@ -782,6 +786,48 @@ module.exports = ctx => {
           });
         }
       }
+      // notify
+      this._notifyLabels();
+    }
+
+    async getLabels({ user }) {
+      const data = await this.modelLabel.get({
+        userId: user.id,
+      });
+      let labels = data ? JSON.parse(data.labels) : null;
+      if (!labels || Object.keys(labels).length === 0) {
+        // append default labels
+        labels = {
+          1: {
+            color: '#FC6360',
+            text: this.ctx.text('Red'),
+          },
+          2: {
+            color: '#FDA951',
+            text: this.ctx.text('Orange'),
+          },
+        };
+        await this.setLabels({ labels, user });
+      }
+      return labels;
+    }
+
+    async setLabels({ labels, user }) {
+      const labels2 = JSON.stringify(labels);
+      const res = await this.modelLabel.get({
+        userId: user.id,
+      });
+      if (!res) {
+        await this.modelLabel.insert({
+          userId: user.id,
+          labels: labels2,
+        });
+      } else {
+        await this.modelLabel.update({
+          id: res.id,
+          labels: labels2,
+        });
+      }
     }
 
     async schema({ atomClass, schema }) {
@@ -1127,6 +1173,13 @@ module.exports = ctx => {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'stars',
+      });
+    }
+
+    _notifyLabels() {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'labels',
       });
     }
 
