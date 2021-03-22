@@ -4,12 +4,29 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
-      const count = await modelStar.count({
-        userId: user.id,
-        star: 1,
+      // stats
+      let stats;
+      // labels
+      stats = await ctx.bean.stats._get({
+        module: moduleInfo.relativeName,
+        fullName: 'labels',
+        user,
       });
-      return count;
+      if (!stats) {
+        stats = {
+          red: 0,
+          orange: 0,
+        };
+      }
+      // stars
+      const stars = await ctx.bean.stats._get({
+        module: moduleInfo.relativeName,
+        fullName: 'stars',
+        user,
+      });
+      stats.gray = stars || 0;
+      // ok
+      return stats;
     }
 
   }

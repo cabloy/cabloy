@@ -36,6 +36,7 @@ module.exports = app => {
             'a-user:userRed',
             'a-user:userOrange',
             'a-message:message',
+            'a-base:starsLabels',
           ],
         },
       },
