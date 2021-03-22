@@ -111,6 +111,15 @@ module.exports = app => {
           user: true,
           bean: 'stars',
         },
+        labels: {
+          user: true,
+          bean: 'labels',
+        },
+        starsLabels: {
+          user: true,
+          bean: 'starsLabels',
+          dependencies: [ 'stars', 'labels' ],
+        },
       },
     },
     socketio: {

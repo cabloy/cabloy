@@ -28,8 +28,10 @@ const beanUser = require('./bean/bean.user.js');
 const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
-const statsStars = require('./bean/stats.stars.js');
 const statsDrafts = require('./bean/stats.drafts.js');
+const statsStars = require('./bean/stats.stars.js');
+const statsLabels = require('./bean/stats.labels.js');
+const statsStarsLabels = require('./bean/stats.starsLabels.js');
 
 module.exports = app => {
   const beans = {
@@ -173,13 +175,21 @@ module.exports = app => {
       global: true,
     },
     // stats
+    'stats.drafts': {
+      mode: 'ctx',
+      bean: statsDrafts,
+    },
     'stats.stars': {
       mode: 'ctx',
       bean: statsStars,
     },
-    'stats.drafts': {
+    'stats.labels': {
       mode: 'ctx',
-      bean: statsDrafts,
+      bean: statsLabels,
+    },
+    'stats.starsLabels': {
+      mode: 'ctx',
+      bean: statsStarsLabels,
     },
   };
   return beans;

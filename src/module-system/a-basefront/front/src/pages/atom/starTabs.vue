@@ -66,12 +66,12 @@ export default {
     this.$store.dispatch('a/base/getLabels');
   },
   methods: {
-    getContainer(mode) {
-      const options = { mode };
-      if (mode === 'history') {
-        options.where = {
-          'a.flowStatus': 1,
-        };
+    getContainer(mode, labelId) {
+      const options = { stage: 'formal' };
+      if (mode === 'stars') {
+        options.star = 1;
+      } else {
+        options.label = parseInt(labelId);
       }
       return {
         options,

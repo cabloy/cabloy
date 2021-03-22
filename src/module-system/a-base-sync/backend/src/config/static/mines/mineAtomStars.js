@@ -6,7 +6,7 @@ module.exports = app => {
   const resource = {
     atomName: 'StarsLabels',
     atomStaticKey: 'mineAtomStars',
-    atomRevision: 4,
+    atomRevision: 5,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -14,7 +14,7 @@ module.exports = app => {
       stats: {
         params: {
           module: moduleInfo.relativeName,
-          name: 'starslabels',
+          name: 'starsLabels',
         },
       },
     }),
