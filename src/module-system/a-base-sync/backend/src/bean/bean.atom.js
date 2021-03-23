@@ -800,11 +800,11 @@ module.exports = ctx => {
         labels = {
           1: {
             color: 'red',
-            text: this.ctx.text('Red'),
+            text: ctx.text('Red'),
           },
           2: {
             color: 'orange',
-            text: this.ctx.text('Orange'),
+            text: ctx.text('Orange'),
           },
         };
         await this.setLabels({ labels, user });
