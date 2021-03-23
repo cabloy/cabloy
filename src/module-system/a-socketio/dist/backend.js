@@ -30,13 +30,20 @@ module.exports = ctx => {
       return this._redis;
     }
 
+    _getSocketsOnline() {
+      if (!ctx.app[SOCKETSONLINE]) {
+        ctx.app[SOCKETSONLINE] = {};
+      }
+      return ctx.app[SOCKETSONLINE];
+    }
+
     _registerSocket(socketId, socket) {
-      const socketsOnline = ctx.app.geto(SOCKETSONLINE);
+      const socketsOnline = this._getSocketsOnline();
       socketsOnline[socketId] = socket;
     }
 
     _unRegisterSocket(socketId) {
-      const socketsOnline = ctx.app.geto(SOCKETSONLINE);
+      const socketsOnline = this._getSocketsOnline();
       delete socketsOnline[socketId];
     }
 
@@ -696,8 +703,8 @@ module.exports = app => {
     async execute(context) {
       const data = context.data;
       if (app.meta.workerId === data.workerId) {
-        const socketsOnline = app.geto(SOCKETSONLINE);
-        const socket = socketsOnline[data.socketId];
+        const socketsOnline = app[SOCKETSONLINE];
+        const socket = socketsOnline && socketsOnline[data.socketId];
         if (socket) {
           socket.emit('message', {
             path: data.path,

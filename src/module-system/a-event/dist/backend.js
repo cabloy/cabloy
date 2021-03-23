@@ -46,7 +46,7 @@ module.exports = ctx => {
     _getEventArray({ module, name }) {
       module = module || this.moduleName;
       const key = `${module}:${name}`;
-      const events = ctx.app.meta.geto('events');
+      const events = ctx.bean.util.getPropertyObject(ctx.app.meta, 'events');
       if (events[key]) return events[key];
       events[key] = this._collectEventArray(key);
       return events[key];

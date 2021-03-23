@@ -70,30 +70,11 @@ module.exports = ctx => {
         });
         // set
         await this._set({
-          module,
+          module, name,
           fullName: fullNameSub,
           value,
           user: provider.user ? user : null,
         });
-        // push
-        if (provider.user && user) {
-          const message = {
-            userIdTo: user.id,
-            content: {
-              module, name,
-              fullName: fullNameSub,
-              value,
-            },
-          };
-          await ctx.bean.io.publish({
-            path: `/a/stats/stats/${module}/${fullNameSub}`,
-            message,
-            messageClass: {
-              module: 'a-stats',
-              messageClassName: 'stats',
-            },
-          });
-        }
       }
     }
 
@@ -129,7 +110,7 @@ module.exports = ctx => {
       return item ? JSON.parse(item.value) : undefined;
     }
 
-    async _set({ module, fullName, value, user }) {
+    async _set({ module, name, fullName, value, user }) {
       const where = { module, name: fullName };
       if (user) { where.userId = user.id; }
       const item = await this.modelStats.get(where);
@@ -142,6 +123,25 @@ module.exports = ctx => {
         const data = { module, name: fullName, value: JSON.stringify(value) };
         if (user) { data.userId = user.id; }
         await this.modelStats.insert(data);
+      }
+      // push
+      if (user) {
+        const message = {
+          userIdTo: user.id,
+          content: {
+            module, name,
+            fullName,
+            value,
+          },
+        };
+        await ctx.bean.io.publish({
+          path: `/a/stats/stats/${module}/${fullName}`,
+          message,
+          messageClass: {
+            module: 'a-stats',
+            messageClassName: 'stats',
+          },
+        });
       }
     }
 

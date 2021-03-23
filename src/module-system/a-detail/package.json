@@ -1,12 +1,10 @@
 {
   "name": "egg-born-module-a-detail",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "title": "a-detail",
-  "eggBornModule":
-  {
+  "eggBornModule": {
     "fileVersion": 1,
-    "dependencies":
-    {
+    "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0"
     }
@@ -15,20 +13,16 @@
   "keywords": [
     "Cabloy Module"
   ],
-  "scripts":
-  {
+  "scripts": {
     "build:front": "npx ../../../packages/egg-born-bin/bin/egg-born-bin.js front-build-module",
     "build:backend": "npx ../../../packages/egg-born-bin/bin/egg-born-bin.js backend-build-module",
     "lint": "npx ../../../node_modules/.bin/eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
-  "devDependencies":
-  {},
-  "dependencies":
-  {
+  "dependencies": {
     "egg-born-mock": "^2.1.1",
-    "require3": "^2.0.7",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^2.0.7"
   }
 }

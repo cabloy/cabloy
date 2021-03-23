@@ -1107,8 +1107,13 @@ module.exports = ctx => {
       const flowTaskId = flowTask.flowTaskId;
       // must be the same user
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // must be the same flowId
+      // must be the same flowId, means not outdated
       if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
+      // special for write
+      if (mode === 'write') {
+        // check handled
+        if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      }
       // schema
       let schema = await this._getSchema({ mode });
       if (!schema) return null;

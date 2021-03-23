@@ -119,6 +119,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).atomStar;
     }
 
+    get modelLabel() {
+      return ctx.model.module(moduleInfo.relativeName).label;
+    }
+
     get modelAtomLabel() {
       return ctx.model.module(moduleInfo.relativeName).atomLabel;
     }
@@ -707,6 +711,8 @@ module.exports = ctx => {
       });
       // copy attachments
       await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
+      // copy details
+      await ctx.bean.detail._copyDetails({ atomClass, target, srcKeyAtom: srcKey, destKeyAtom: destKey, destAtom: destItem, options, user });
       // ok
       return destKey;
     }
@@ -876,6 +882,48 @@ module.exports = ctx => {
           });
         }
       }
+      // notify
+      this._notifyLabels();
+    }
+
+    async getLabels({ user }) {
+      const data = await this.modelLabel.get({
+        userId: user.id,
+      });
+      let labels = data ? JSON.parse(data.labels) : null;
+      if (!labels || Object.keys(labels).length === 0) {
+        // append default labels
+        labels = {
+          1: {
+            color: 'red',
+            text: this.ctx.text('Red'),
+          },
+          2: {
+            color: 'orange',
+            text: this.ctx.text('Orange'),
+          },
+        };
+        await this.setLabels({ labels, user });
+      }
+      return labels;
+    }
+
+    async setLabels({ labels, user }) {
+      const labels2 = JSON.stringify(labels);
+      const res = await this.modelLabel.get({
+        userId: user.id,
+      });
+      if (!res) {
+        await this.modelLabel.insert({
+          userId: user.id,
+          labels: labels2,
+        });
+      } else {
+        await this.modelLabel.update({
+          id: res.id,
+          labels: labels2,
+        });
+      }
     }
 
     async schema({ atomClass, schema }) {
@@ -928,13 +976,47 @@ module.exports = ctx => {
     }
 
     async _delete({
+      atomClass,
       atom,
-      /* user,*/
+      user,
     }) {
-      // aAtom
-      await this.modelAtom.delete(atom);
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atom.id });
+      }
+      // stars
+      await this._delete_stars({ atomId: atom.id });
+      // labels
+      await this._delete_labels({ atomId: atom.id });
       // aFile
       await this.modelFile.delete({ atomId: atom.id });
+      // details
+      await ctx.bean.detail._deleteDetails({ atomClass, atomKey: { atomId: atom.id }, user });
+      // aAtom
+      await this.modelAtom.delete(atom);
+    }
+
+    async _delete_stars({ atomId }) {
+      const items = await this.modelAtomStar.select({
+        where: { atomId, star: 1 },
+      });
+      for (const item of items) {
+        this._notifyStars({ id: item.userId });
+      }
+      if (items.length > 0) {
+        await this.modelAtomStar.delete({ atomId });
+      }
+    }
+
+    async _delete_labels({ atomId }) {
+      const items = await this.modelAtomLabel.select({
+        where: { atomId },
+      });
+      for (const item of items) {
+        this._notifyLabels({ id: item.userId });
+      }
+      if (items.length > 0) {
+        await this.modelAtomLabel.delete({ atomId });
+      }
     }
 
     async _get({ atomClass, options, key, mode, user }) {
@@ -1204,17 +1286,27 @@ module.exports = ctx => {
       return tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
     }
 
-    _notifyDrafts() {
+    _notifyDrafts(user) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'drafts',
+        user,
       });
     }
 
-    _notifyStars() {
+    _notifyStars(user) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'stars',
+        user,
+      });
+    }
+
+    _notifyLabels(user) {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'labels',
+        user,
       });
     }
 
@@ -4142,12 +4234,12 @@ const require3 = __webpack_require__(6718);
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
 
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Util {
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Util extends app.meta.BeanBase {
 
     page(_page, force = true) {
-      const pageSize = ctx.config.module(moduleInfo.relativeName).pageSize;
+      const pageSize = this.ctx.config.module(moduleInfo.relativeName).pageSize;
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
@@ -4156,7 +4248,7 @@ module.exports = ctx => {
     }
 
     user(_user) {
-      return _user || ctx.state.user.op;
+      return _user || this.ctx.state.user.op;
     }
 
     now() {
@@ -4175,13 +4267,13 @@ module.exports = ctx => {
     }
 
     formatDate(date, sep) {
-      if (this.isUndefined(sep)) sep = '-';
+      if (sep === undefined) sep = '-';
       const fmt = `YYYY${sep}MM${sep}DD`;
       return this.formatDateTime(date, fmt);
     }
 
     formatTime(date, sep) {
-      if (this.isUndefined(sep)) sep = ':';
+      if (sep === undefined) sep = ':';
       const fmt = `HH${sep}mm${sep}ss`;
       return this.formatDateTime(date, fmt);
     }
@@ -4214,14 +4306,28 @@ module.exports = ctx => {
       }
     }
 
-    getProperty(obj, name) {
+    getProperty(obj, name, sep) {
+      return this._getProperty(obj, name, sep, false);
+    }
+
+    getPropertyObject(obj, name, sep) {
+      return this._getProperty(obj, name, sep, true);
+    }
+
+    _getProperty(obj, name, sep, forceObject) {
       if (!obj) return undefined;
-      const names = name.split('.');
-      if (names.length === 1) return obj[name];
+      const names = name.split(sep || '.');
       // loop
       for (const name of names) {
+        if (obj[name] === undefined || obj[name] === null) {
+          if (forceObject) {
+            obj[name] = {};
+          } else {
+            obj = obj[name];
+            break;
+          }
+        }
         obj = obj[name];
-        if (!obj) break;
       }
       return obj;
     }
@@ -5487,6 +5593,9 @@ async function checkRight(type, moduleInfo, options, ctx) {
 
   // resource
   if (type === 'resource') await checkResource(moduleInfo, options, ctx);
+
+  // detail
+  if (type === 'detail') await checkDetail(moduleInfo, options, ctx);
 }
 
 async function checkAtom(moduleInfo, options, ctx) {
@@ -5592,6 +5701,10 @@ async function checkResource(moduleInfo, options, ctx) {
   });
   if (!res) ctx.throw(403);
   ctx.meta._resource = res;
+}
+
+async function checkDetail(moduleInfo, options, ctx) {
+  await ctx.bean.detail._checkRightForMiddleware({ options });
 }
 
 
@@ -6017,6 +6130,56 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 6318:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Stats {
+
+    async execute(context) {
+      const { user } = context;
+      const modelAtomLabelRef = ctx.model.module(moduleInfo.relativeName).atomLabelRef;
+      // root stats
+      const statsRoot = {
+        red: 0,
+        orange: 0,
+      };
+      // userLabels
+      const userLabels = await ctx.bean.atom.getLabels({ user });
+      for (const labelId of Object.keys(userLabels)) {
+        const userLabel = userLabels[labelId];
+        // sub
+        const count = await modelAtomLabelRef.count({
+          userId: user.id,
+          labelId,
+        });
+        await ctx.bean.stats._set({
+          module: moduleInfo.relativeName,
+          name: 'labels',
+          fullName: `labels.${labelId}`,
+          value: count,
+          user,
+        });
+        // root
+        if (userLabel.color === 'red') {
+          statsRoot.red += count;
+        } else if (userLabel.color === 'orange') {
+          statsRoot.orange += count;
+        }
+      }
+      // ok
+      return statsRoot;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
 /***/ 8999:
 /***/ ((module) => {
 
@@ -6032,6 +6195,48 @@ module.exports = ctx => {
         star: 1,
       });
       return count;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 442:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Stats {
+
+    async execute(context) {
+      const { user } = context;
+      // stats
+      let stats;
+      // labels
+      stats = await ctx.bean.stats._get({
+        module: moduleInfo.relativeName,
+        fullName: 'labels',
+        user,
+      });
+      if (!stats) {
+        stats = {
+          red: 0,
+          orange: 0,
+        };
+      }
+      // stars
+      const stars = await ctx.bean.stats._get({
+        module: moduleInfo.relativeName,
+        fullName: 'stars',
+        user,
+      });
+      stats.gray = stars || 0;
+      // ok
+      return stats;
     }
 
   }
@@ -7478,8 +7683,10 @@ const beanUser = __webpack_require__(5728);
 const beanUtil = __webpack_require__(4368);
 const beanCategory = __webpack_require__(30);
 const beanTag = __webpack_require__(8636);
-const statsStars = __webpack_require__(8999);
 const statsDrafts = __webpack_require__(4571);
+const statsStars = __webpack_require__(8999);
+const statsLabels = __webpack_require__(6318);
+const statsStarsLabels = __webpack_require__(442);
 
 module.exports = app => {
   const beans = {
@@ -7608,7 +7815,7 @@ module.exports = app => {
       global: true,
     },
     util: {
-      mode: 'ctx',
+      mode: 'app',
       bean: beanUtil,
       global: true,
     },
@@ -7623,13 +7830,21 @@ module.exports = app => {
       global: true,
     },
     // stats
+    'stats.drafts': {
+      mode: 'ctx',
+      bean: statsDrafts,
+    },
     'stats.stars': {
       mode: 'ctx',
       bean: statsStars,
     },
-    'stats.drafts': {
+    'stats.labels': {
       mode: 'ctx',
-      bean: statsDrafts,
+      bean: statsLabels,
+    },
+    'stats.starsLabels': {
+      mode: 'ctx',
+      bean: statsStarsLabels,
     },
   };
   return beans;
@@ -7696,6 +7911,7 @@ module.exports = app => {
       }
       // delete
       await this.ctx.bean.atom._delete({
+        atomClass,
         atom: { id: key.atomId },
         user,
       });
@@ -7775,7 +7991,7 @@ module.exports = app => {
     }
 
     async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
-      // donothing
+      // do nothing
     }
 
     async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {
@@ -8154,16 +8370,6 @@ module.exports = app => {
         },
       },
     },
-    function: {
-      scene: {
-      // default: 0,
-        create: 1,
-        list: 2,
-        // report: 20,
-        tools: 50,
-      // custom: 100,
-      },
-    },
   };
 };
 
@@ -8205,6 +8411,7 @@ module.exports = {
   KeyForAtom: 'Key',
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
+  StarsLabels: 'Stars & Labels',
 };
 
 
@@ -8237,6 +8444,8 @@ module.exports = {
   'Cannot delete if has children': '有子元素时不允许删除',
   'Create Resource': '新建资源',
   'Resource List': '资源列表',
+  'Move Up': '上移',
+  'Move Down': '下移',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
@@ -8309,6 +8518,15 @@ module.exports = {
   Theme: '主题',
   ViewLayout: '视图',
   WorkFlow: '工作流',
+  Detail: '明细',
+  Details: '明细',
+  StarsLabels: '星标',
+  Red: '红色',
+  Orange: '橘色',
+  Yellow: '黄色',
+  Blue: '蓝色',
+  Green: '绿色',
+  Purple: '紫色',
 };
 
 
@@ -8545,16 +8763,12 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // actionPath
-  const options = {
-    stage: 'formal',
-    star: 1,
-  };
-  const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;
+  const actionPath = '/a/basefront/atom/starTabs';
   // resource
   const resource = {
-    atomName: 'Stars',
+    atomName: 'StarsLabels',
     atomStaticKey: 'mineAtomStars',
-    atomRevision: 1,
+    atomRevision: 6,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -8562,9 +8776,9 @@ module.exports = app => {
       stats: {
         params: {
           module: moduleInfo.relativeName,
-          name: 'stars',
+          name: 'starsLabels',
         },
-        color: 'gray',
+        color: 'auto',
       },
     }),
     resourceRoles: 'root',
@@ -10204,6 +10418,15 @@ module.exports = app => {
           user: true,
           bean: 'stars',
         },
+        labels: {
+          user: true,
+          bean: 'labels',
+        },
+        starsLabels: {
+          user: true,
+          bean: 'starsLabels',
+          dependencies: [ 'stars', 'labels' ],
+        },
       },
     },
     socketio: {
@@ -11668,28 +11891,11 @@ module.exports = app => {
   class User extends app.Service {
 
     async getLabels({ user }) {
-      const res = await this.ctx.model.label.get({
-        userId: user.id,
-      });
-      return res ? JSON.parse(res.labels) : null;
+      return await this.ctx.bean.atom.getLabels({ user });
     }
 
     async setLabels({ labels, user }) {
-      const labels2 = JSON.stringify(labels);
-      const res = await this.ctx.model.label.get({
-        userId: user.id,
-      });
-      if (!res) {
-        await this.ctx.model.label.insert({
-          userId: user.id,
-          labels: labels2,
-        });
-      } else {
-        await this.ctx.model.label.update({
-          id: res.id,
-          labels: labels2,
-        });
-      }
+      return await this.ctx.bean.atom.setLabels({ labels, user });
     }
 
   }

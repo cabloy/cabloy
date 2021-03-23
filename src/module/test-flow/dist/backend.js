@@ -12,6 +12,83 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 915:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Atom extends app.meta.AtomBase {
+
+    async create({ atomClass, item, user }) {
+      // super
+      const key = await super.create({ atomClass, item, user });
+      // add product
+      const res = await this.ctx.model.product.insert({
+        atomId: key.atomId,
+      });
+      // return key
+      return { atomId: key.atomId, itemId: res.insertId };
+    }
+
+    async read({ atomClass, options, key, user }) {
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // meta
+      this._getMeta(item);
+      // ok
+      return item;
+    }
+
+    async select({ atomClass, options, items, user }) {
+      // super
+      await super.select({ atomClass, options, items, user });
+      // meta
+      for (const item of items) {
+        this._getMeta(item);
+      }
+    }
+
+    async write({ atomClass, target, key, item, options, user }) {
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
+      // update product
+      const data = await this.ctx.model.product.prepareData(item);
+      data.id = key.itemId;
+      await this.ctx.model.product.update(data);
+    }
+
+    async delete({ atomClass, key, user }) {
+      // delete product
+      await this.ctx.model.product.delete({
+        id: key.itemId,
+      });
+      // super
+      await super.delete({ atomClass, key, user });
+    }
+
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      const price = (item.productPrice / 100).toFixed(2);
+      flags.push(price);
+      // meta
+      const meta = {
+        summary: item.productCode,
+        flags,
+      };
+      // ok
+      item._meta = meta;
+    }
+
+  }
+
+  return Atom;
+};
+
+
+/***/ }),
+
 /***/ 211:
 /***/ ((module) => {
 
@@ -34,6 +111,8 @@ module.exports = app => {
       // super
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
+      // meta
+      this._getMeta(item);
       // ok
       return item;
     }
@@ -41,6 +120,10 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
+      // meta
+      for (const item of items) {
+        this._getMeta(item);
+      }
     }
 
     async write({ atomClass, target, key, item, options, user }) {
@@ -61,9 +144,107 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      if (item.detailsCount > 0) {
+        flags.push(item.detailsCount);
+      }
+      const detailsAmount = (item.detailsAmount / 100).toFixed(2);
+      flags.push(detailsAmount);
+      // meta
+      const meta = {
+        flags,
+      };
+      // ok
+      item._meta = meta;
+    }
+
   }
 
   return Atom;
+};
+
+
+/***/ }),
+
+/***/ 760:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class Detail extends app.meta.DetailBase {
+
+    async create({ atomKey, detailClass, item, user }) {
+      // super
+      const key = await super.create({ atomKey, detailClass, item, user });
+      // add purchaseOrder detail
+      const res = await this.ctx.model.purchaseOrderDetail.insert({
+        atomId: atomKey.atomId,
+        detailId: key.detailId,
+      });
+      // return key
+      return { detailId: key.detailId, detailItemId: res.insertId };
+    }
+
+    async read({ detailClass, options, key, user }) {
+      // super
+      const item = await super.read({ detailClass, options, key, user });
+      if (!item) return null;
+      // meta
+      this._getMeta(item);
+      // ok
+      return item;
+    }
+
+    async select({ atomKey, detailClass, options, items, user }) {
+      // super
+      await super.select({ atomKey, detailClass, options, items, user });
+      // meta
+      for (const item of items) {
+        this._getMeta(item);
+      }
+    }
+
+    async write({ detailClass, target, key, item, options, user }) {
+      // super
+      await super.write({ detailClass, target, key, item, options, user });
+      // update purchaseOrder detail
+      const data = await this.ctx.model.purchaseOrderDetail.prepareData(item);
+      data.id = key.detailItemId;
+      // update
+      await this.ctx.model.purchaseOrderDetail.update(data);
+    }
+
+    async delete({ detailClass, target, key, user }) {
+      // delete purchaseOrder detail
+      await this.ctx.model.purchaseOrderDetail.delete({
+        id: key.detailItemId,
+      });
+      // super
+      await super.delete({ detailClass, target, key, user });
+    }
+
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      if (item.quantity > 1) {
+        flags.push(item.quantity);
+      }
+      const amount = (item.amount / 100).toFixed(2);
+      flags.push(amount);
+      // meta
+      const meta = {
+        summary: item.detailCode,
+        flags,
+      };
+      // ok
+      item._meta = meta;
+    }
+
+  }
+
+  return Detail;
 };
 
 
@@ -136,6 +317,51 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        // create table: testFlowProduct
+        let sql = `
+          CREATE TABLE testFlowProduct (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            productCode varchar(50) DEFAULT NULL,
+            productPrice int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: testFlowPurchaseOrderDetail
+        sql = `
+          CREATE TABLE testFlowPurchaseOrderDetail (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            detailId int(11) DEFAULT '0',
+            price int(11) DEFAULT '0',
+            quantity int(11) DEFAULT '0',
+            amount int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter table: testFlowPurchaseOrder
+        sql = `
+          ALTER TABLE testFlowPurchaseOrder
+            ADD COLUMN detailsCount int(11) DEFAULT '0',
+            ADD COLUMN detailsAmount int(11) DEFAULT '0'
+        `;
+        await this.ctx.model.query(sql);
+
+      }
     }
 
     async init(options) {
@@ -152,6 +378,20 @@ module.exports = app => {
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'purchaseOrder', roleRights });
+      }
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'authenticated', action: 'create' },
+          { roleName: 'authenticated', action: 'read', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'write', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'clone', scopeNames: 0 },
+          { roleName: 'authenticated', action: 'deleteBulk' },
+          { roleName: 'authenticated', action: 'exportBulk' },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'product', roleRights });
       }
     }
 
@@ -171,6 +411,8 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const atomPurchaseOrder = __webpack_require__(211);
+const atomProduct = __webpack_require__(915);
+const detailPurchaseOrder = __webpack_require__(760);
 const flowServiceTest = __webpack_require__(966);
 const flowServiceStartEventTimer = __webpack_require__(416);
 
@@ -185,6 +427,15 @@ module.exports = app => {
     'atom.purchaseOrder': {
       mode: 'app',
       bean: atomPurchaseOrder,
+    },
+    'atom.product': {
+      mode: 'app',
+      bean: atomProduct,
+    },
+    // detail
+    'detail.purchaseOrder': {
+      mode: 'app',
+      bean: detailPurchaseOrder,
     },
     // flow
     'flow.service.test': {
@@ -228,9 +479,13 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  Product: '产品',
+  'Create Product': '新建产品',
+  'Product List': '产品列表',
   'Purchase Order': '采购订单',
   'Create Purchase Order': '新建采购订单',
   'Purchase Order List': '采购订单列表',
+  'Product Code Exists': '产品编码已存在',
   Test_Set00_Simple: '测试_分组00_简单流程',
 };
 
@@ -928,13 +1183,50 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 728:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const products = [
+    // Apple
+    {
+      atomName: 'Apple',
+      atomStaticKey: 'apple',
+      atomRevision: 0,
+      productCode: 'test-001',
+      productPrice: 1200,
+    },
+    // Pear
+    {
+      atomName: 'Pear',
+      atomStaticKey: 'pear',
+      atomRevision: 0,
+      productCode: 'test-002',
+      productPrice: 1000,
+    },
+    // Banana
+    {
+      atomName: 'Banana',
+      atomStaticKey: 'banana',
+      atomRevision: 0,
+      productCode: 'test-003',
+      productPrice: 1300,
+    },
+  ];
+  return products;
+};
+
+
+/***/ }),
+
 /***/ 429:
 /***/ ((module) => {
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
-    // menu
+    // menu: purchase order
     {
       atomName: 'Create Purchase Order',
       atomStaticKey: 'createPurchaseOrder',
@@ -961,6 +1253,33 @@ module.exports = app => {
       }),
       resourceRoles: 'authenticated',
     },
+    // menu: product
+    {
+      atomName: 'Create Product',
+      atomStaticKey: 'createProduct',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Create',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'product',
+        atomAction: 'create',
+      }),
+      resourceRoles: 'authenticated',
+    },
+    {
+      atomName: 'Product List',
+      atomStaticKey: 'listProduct',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'product',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'authenticated',
+    },
   ];
   return resources;
 };
@@ -968,15 +1287,106 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 415:
 /***/ ((module) => {
 
 module.exports = app => {
+  const keywords = {};
+  keywords.productCode = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData/* , name*/) {
+        // ignore if empty
+        if (!data) return true;
+        // ctx
+        const ctx = this;
+        const item = await ctx.model.queryOne(`
+          select a.id from aAtom a
+            left join testFlowProduct b on a.id=b.atomId
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and b.productCode=?
+          `, [ ctx.instance.id, data ]);
+        if (item && item.id !== rootData.atomId) {
+          const errors = [{ keyword: 'x-productCode', params: [], message: ctx.text('Product Code Exists') }];
+          throw new app.meta.ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};
+
+
+/***/ }),
+
+/***/ 837:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // product
+  schemas.product = {
+    type: 'object',
+    properties: {
+      atomId: {
+        type: 'number',
+      },
+      atomName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Product Name',
+        notEmpty: true,
+      },
+      productCode: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Product Code',
+        notEmpty: true,
+        'x-productCode': true,
+      },
+      productPrice: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Product Price',
+        ebCurrency: true,
+        // notEmpty: true,
+      },
+    },
+  };
+  // product
+  schemas.productSearch = {
+    type: 'object',
+    properties: {
+      productCode: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Product Code',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 317:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // purchase order
   schemas.purchaseOrder = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -999,6 +1409,74 @@ module.exports = app => {
           { title: 'Test_Set01_Atom_AssigneesConfirmation', value: 'set01_atomAssigneesConfirmation' },
         ],
       },
+      // Stats
+      __groupStats: {
+        ebType: 'group-flatten',
+        ebTitle: 'Stats',
+      },
+      detailsCount: {
+        type: 'number',
+        ebType: 'detailsStat',
+        ebTitle: 'Quantity',
+        ebParams: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+          expression: 'details.length',
+        },
+        ebReadOnly: true,
+      },
+      detailsAmount: {
+        type: 'number',
+        ebType: 'detailsStat',
+        ebTitle: 'Amount',
+        ebParams: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+          expression: 'details.reduce(function(a,b){return a+b.amount;},0)',
+        },
+        ebAutoSubmit: true,
+        ebCurrency: true,
+        ebReadOnly: true,
+      },
+      // Details
+      __groupDetails: {
+        ebType: 'group-flatten',
+        ebGroupWhole: true,
+        ebParams: {
+          titleHidden: true,
+        },
+      },
+      details: {
+        ebType: 'details',
+        ebTitle: 'Details',
+        ebParams: {
+          detailClass: {
+            module: moduleInfo.relativeName,
+            detailClassName: 'default',
+          },
+        },
+      },
+      // __groupDetails2: {
+      //   ebType: 'group-flatten',
+      //   ebGroupWhole: true,
+      //   ebParams: {
+      //     titleHidden: true,
+      //   },
+      // },
+      // details_2: {
+      //   ebType: 'details',
+      //   ebTitle: 'Details 2',
+      //   ebParams: {
+      //     detailClass: {
+      //       module: moduleInfo.relativeName,
+      //       detailClassName: 'default',
+      //     },
+      //   },
+      // },
     },
   };
   // purchase order search
@@ -1012,6 +1490,99 @@ module.exports = app => {
       },
     },
   };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 267:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // detail
+  const __atomParams = {
+    target: '_self',
+    atomClass: {
+      module: 'test-flow',
+      atomClassName: 'product',
+    },
+    selectOptions: {},
+    atomId: 'detailCodeId',
+    mapper: {
+      detailCodeId: 'atomId',
+      detailCode: 'productCode',
+      detailName: 'atomName',
+      price: 'productPrice',
+    },
+  };
+  schemas.purchaseOrderDetail = {
+    type: 'object',
+    properties: {
+      detailCodeId: {
+        type: 'number',
+      },
+      detailCode: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Product Code',
+        ebReadOnly: true,
+        notEmpty: true,
+      },
+      detailName: {
+        type: 'string',
+        ebType: 'atom',
+        ebTitle: 'Product Name',
+        ebParams: __atomParams,
+        notEmpty: true,
+      },
+      price: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Price',
+        ebCurrency: true,
+      },
+      quantity: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Quantity',
+      },
+      amount: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Amount',
+        ebComputed: {
+          expression: 'price * quantity',
+          dependencies: 'price,quantity',
+        },
+        ebCurrency: true,
+        ebReadOnly: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const product = __webpack_require__(837);
+const purchaseOrder = __webpack_require__(317);
+const purchaseOrderDetail = __webpack_require__(267);
+
+module.exports = app => {
+  const schemas = {};
+  // product
+  Object.assign(schemas, product(app));
+  // purchase order
+  Object.assign(schemas, purchaseOrder(app));
+  // purchase order detail
+  Object.assign(schemas, purchaseOrderDetail(app));
+  // ok
   return schemas;
 };
 
@@ -1111,9 +1682,11 @@ module.exports = app => {
   const meta = {
   };
   if (app.meta.isTest || app.meta.isLocal) {
+    const keywords = __webpack_require__(415)(app);
     const schemas = __webpack_require__(232)(app);
     const staticFlowDefs = __webpack_require__(772)(app);
     const staticResources = __webpack_require__(429)(app);
+    const staticProducts = __webpack_require__(728)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -1123,12 +1696,26 @@ module.exports = app => {
               bean: 'purchaseOrder',
               title: 'Purchase Order',
               tableName: 'testFlowPurchaseOrder',
+              details: [ 'default' ],
             },
             actions: {
             },
             validator: 'purchaseOrder',
             search: {
               validator: 'purchaseOrderSearch',
+            },
+          },
+          product: {
+            info: {
+              bean: 'product',
+              title: 'Product',
+              tableName: 'testFlowProduct',
+            },
+            actions: {
+            },
+            validator: 'product',
+            search: {
+              validator: 'productSearch',
             },
           },
         },
@@ -1139,31 +1726,76 @@ module.exports = app => {
           'a-base.resource': {
             items: staticResources,
           },
+          'test-flow.product': {
+            items: staticProducts,
+          },
+        },
+      },
+      detail: {
+        details: {
+          default: {
+            info: {
+              bean: 'purchaseOrder',
+              title: 'Details',
+              tableName: 'testFlowPurchaseOrderDetail',
+            },
+            actions: {
+            },
+            validator: 'purchaseOrderDetail',
+          },
         },
       },
       validation: {
         validators: {
+          // purchaseOrder
           purchaseOrder: {
             schemas: 'purchaseOrder',
           },
           purchaseOrderSearch: {
             schemas: 'purchaseOrderSearch',
           },
+          // product
+          product: {
+            schemas: 'product',
+          },
+          productSearch: {
+            schemas: 'productSearch',
+          },
+          // purchaseOrderDetail
+          purchaseOrderDetail: {
+            schemas: 'purchaseOrderDetail',
+          },
         },
-        keywords: {},
-        schemas: {
-          purchaseOrder: schemas.purchaseOrder,
-          purchaseOrderSearch: schemas.purchaseOrderSearch,
+        keywords: {
+          'x-productCode': keywords.productCode,
         },
+        schemas,
       },
       index: {
         indexes: {
+          testFlowProduct: 'createdAt,updatedAt,atomId,productCode',
           testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
+          testFlowPurchaseOrderDetail: 'createdAt,updatedAt,atomId,detailId',
         },
       },
     });
   }
   return meta;
+};
+
+
+/***/ }),
+
+/***/ 499:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Product extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'testFlowProduct', options: { disableDeleted: false } });
+    }
+  }
+  return Product;
 };
 
 
@@ -1184,14 +1816,33 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 171:
+/***/ ((module) => {
+
+module.exports = app => {
+  class PurchaseOrderDetail extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'testFlowPurchaseOrderDetail', options: { disableDeleted: false } });
+    }
+  }
+  return PurchaseOrderDetail;
+};
+
+
+/***/ }),
+
 /***/ 230:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const product = __webpack_require__(499);
 const purchaseOrder = __webpack_require__(241);
+const purchaseOrderDetail = __webpack_require__(171);
 
 module.exports = app => {
   const models = {
+    product,
     purchaseOrder,
+    purchaseOrderDetail,
   };
   return models;
 };

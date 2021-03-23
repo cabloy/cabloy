@@ -65,6 +65,7 @@ function createValidate(schemaRoot) {
       const res = await validate.call(ctx, data);
       return res;
     } catch (e) {
+      if (!Array.isArray(e.errors)) throw e;
       const locale = ctx.locale.split('-')[0];
       if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
       // need not output error
@@ -255,7 +256,7 @@ module.exports = ctx => {
       return schemas;
     }
 
-    async _validate({ atomClass, data, options }) {
+    async _validate({ atomClass, detailClass, data, options }) {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
@@ -277,6 +278,17 @@ module.exports = ctx => {
         }
       } else if (atomClass) {
         const validator = await ctx.bean.atom.validator({ atomClass });
+        if (validator) {
+          // if error throw 422
+          await this.validate({
+            module: validator.module,
+            validator: validator.validator,
+            schema: validator.schema,
+            data,
+          });
+        }
+      } else if (detailClass) {
+        const validator = await ctx.bean.detail.validator({ detailClass });
         if (validator) {
           // if error throw 422
           await this.validate({
@@ -505,6 +517,7 @@ module.exports = app => {
         ebTitle: 'Extra Group',
         properties: {
           extra: {
+            type: 'object',
             ebType: 'panel',
             $ref: 'extra',
           },
