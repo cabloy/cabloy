@@ -29,10 +29,15 @@ module.exports = function(loader) {
       url,
     });
     const ctx = loader.app.createAnonymousContext(_req);
-    if (loader.app.meta.util.isSafeDomain(ctx, origin)) {
-      return fn(null, true);
-    }
-    return fn(null, false);
+    ctx.bean.instance.checkAppReadyInstance({ startup: true }).then(res => {
+      if (!res) return fn(null, false);
+      if (loader.app.meta.util.isSafeDomain(ctx, origin)) {
+        return fn(null, true);
+      }
+      return fn(null, false);
+    }).catch(() => {
+      return fn(null, false);
+    });
   }
 
 };
