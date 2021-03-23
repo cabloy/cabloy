@@ -20,10 +20,11 @@ module.exports = function(loader) {
 
     // check
     const url = '/api/a/base/';
-    const ctx = loader.app.createAnonymousContext({
+    const _req = Object.assign({}, req, {
       method: 'SOCKETIO',
       url,
     });
+    const ctx = loader.app.createAnonymousContext(_req);
     if (loader.app.meta.util.isSafeDomain(ctx, origin)) {
       return fn(null, true);
     }
