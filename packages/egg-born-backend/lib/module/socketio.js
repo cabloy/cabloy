@@ -1,3 +1,5 @@
+const URL = require('url').URL;
+
 module.exports = function(loader) {
 
   loader.app.beforeStart(() => {
@@ -16,7 +18,9 @@ module.exports = function(loader) {
     if (!origin || origin === '*') return fn(null, true);
 
     const host = req.headers['x-forwarded-host'] || req.headers.host;
-    if (host && origin.indexOf(host) > -1) return fn(null, true);
+    if ((new URL(origin)).host === host) {
+      return fn(null, true);
+    }
 
     // check
     const url = '/api/a/base/';

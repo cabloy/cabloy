@@ -1,3 +1,4 @@
+const URL = require('url').URL;
 const require3 = require('require3');
 const extend = require3('extend2');
 const koaCors = require3('@koa/cors');
@@ -16,7 +17,7 @@ module.exports = ctx => {
   class Middleware {
     async execute(options, next) {
       // not cors (safari not send sec-fetch-mode)
-    // if (ctx.headers['sec-fetch-mode'] !== 'cors') return await next();
+      // if (ctx.headers['sec-fetch-mode'] !== 'cors') return await next();
       if (ctx.innerAccess) return await next();
 
       let origin = ctx.get('origin');
@@ -24,7 +25,9 @@ module.exports = ctx => {
       if (!origin || origin === 'null') origin = 'null';
 
       const host = ctx.host;
-      if (host && origin.indexOf(host) > -1) return await next();
+      if (origin !== 'null' && (new URL(origin)).host === host) {
+        return await next();
+      }
 
       // options
       const optionsCors = extend(true, {}, optionsDefault, options);
