@@ -1,3 +1,4 @@
+const __watchNames = [ 'info.record', 'info.index' ];
 export default {
   meta: {
     global: false,
@@ -26,6 +27,21 @@ export default {
   },
   created() {
     this.evaluate();
+    this._unwatches = [];
+    for (const name of __watchNames) {
+      const unwatch = this.$watch(name, () => {
+        this.evaluate();
+      });
+      this._unwatches.push(unwatch);
+    }
+  },
+  beforeDestroy() {
+    if (this._unwatches) {
+      for (const unwatch of this._unwatches) {
+        unwatch();
+      }
+      this._unwatches = null;
+    }
   },
   methods: {
     evaluate() {
