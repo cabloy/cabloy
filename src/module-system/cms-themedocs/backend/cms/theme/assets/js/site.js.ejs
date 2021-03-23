@@ -58,6 +58,7 @@ function categoryTreeToggle($toggle, $container) {
 
 function categoryTree($treeContainer) {
   if (!env.article) return;
+  const articleCategoryId = env.article.atomCategoryId;
 
   const $title = $('.title', $treeContainer);
   const $tree = $('.tree', $treeContainer);
@@ -67,22 +68,22 @@ function categoryTree($treeContainer) {
     const node = data.node;
     if (!node) return e.preventDefault();
     if (node.type === 'folder') return e.preventDefault();
-    if (node.type === 'file' && node.id === `${env.article.atomCategoryId}:${env.article.atomId}`) {
+    if (node.type === 'file' && node.id === `${articleCategoryId}:${env.article.atomId}`) {
       return window.location.href = '#';
     }
     window.location.href = node.a_attr.href;
   }).on('load_node.jstree', function(e, data) {
     if (data.status) {
       const node = data.node;
-      if (String(node._id) === String(env.article.atomCategoryId)) {
+      if (String(node._id) === String(articleCategoryId) || String(node.id) === String(articleCategoryId)) {
         // fill article's h2es
         _fillArticleH2es($tree);
         // open article
-        $tree.jstree(true).select_node(`${env.article.atomCategoryId}:${env.article.atomId}`, true);
-        $tree.jstree(true).open_node(`${env.article.atomCategoryId}:${env.article.atomId}`);
+        $tree.jstree(true).select_node(`${articleCategoryId}:${env.article.atomId}`, true);
+        $tree.jstree(true).open_node(`${articleCategoryId}:${env.article.atomId}`);
       } else if (node.id === '#') {
         // open article's parent category
-        $tree.jstree(true).open_node(env.article.atomCategoryId);
+        $tree.jstree(true).open_node(articleCategoryId);
       }
     }
   });
