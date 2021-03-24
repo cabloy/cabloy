@@ -3,8 +3,8 @@ module.exports = ctx => {
 
     selectDetails({ iid, tableName, where, orders, page, count, stage }) {
       // -- tables
-      // -- a: aAtom
-      // -- b: aAtomClass
+      // -- a: aDetail
+      // -- b: aDetailClass
       // -- f: {item}
       // -- g: aUser
       // -- g2: aUser
