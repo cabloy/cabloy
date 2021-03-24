@@ -610,7 +610,7 @@ module.exports = ctx => {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
-      // todo: special check for flow
+      // special check for flow
       if (atom.atomStage === 0 && atom.atomFlowId > 0) {
         if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
         const viewAtom = await ctx.bean.flowTask.viewAtom({ flowTaskId, user });
