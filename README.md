@@ -58,7 +58,7 @@
 - [PC布局](https://cabloy.com/zh-cn/articles/28f14f839af5457b9243c9e9210d5324.html)
 - [统一数据管理](https://cabloy.com/zh-cn/articles/atom-basic.html)
 - [统一用户角色权限管理](https://cabloy.com/zh-cn/articles/535f42e8fb8c487fb33b88c9a9e56a7e.html)
-- [明细数据管理](https://cabloy.com/zh-cn/articles/515982daea2444bf9e29ad88c27dc67e.html)
+- [明细数据管理](https://cabloy.com/zh-cn/articles/detail-basic.html)
 - Socket IO
   - 统计值自动更新、自动推送机制
   - [进度条](https://cabloy.com/zh-cn/articles/10327f8fdae44d87b7604ba3fa9c1a89.html)
