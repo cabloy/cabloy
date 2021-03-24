@@ -18,6 +18,8 @@ module.exports = app => {
       // super
       const item = await super.read({ detailClass, options, key, user });
       if (!item) return null;
+      // meta
+      this._getMeta(item);
       // ok
       return item;
     }
@@ -25,6 +27,10 @@ module.exports = app => {
     async select({ atomKey, detailClass, options, items, user }) {
       // super
       await super.select({ atomKey, detailClass, options, items, user });
+      // meta
+      for (const item of items) {
+        this._getMeta(item);
+      }
     }
 
     async write({ detailClass, target, key, item, options, user }) {
@@ -44,6 +50,18 @@ module.exports = app => {
       });
       // super
       await super.delete({ detailClass, target, key, user });
+    }
+
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      // meta
+      const meta = {
+        summary: item.description,
+        flags,
+      };
+      // ok
+      item._meta = meta;
     }
 
   }

@@ -58,6 +58,7 @@ module.exports = app => {
       }
       // meta
       const meta = {
+        summary: item.description,
         flags,
       };
       // ok
