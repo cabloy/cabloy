@@ -74,6 +74,10 @@ export default {
   beforeDestroy() {
     const self = this;
     this.$emit('view:destroy', self);
+    //
+    this.calendar = null;
+    this.toast = null;
+    this.dialog = null;
   },
 };
 
