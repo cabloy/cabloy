@@ -30,7 +30,8 @@ export default {
   methods: {
   },
   render() {
-    const text = this.formatText();
-    return <div class="eb-antdv-table-cell" title={text}>{text}</div>;
+    const { text, column } = this.info;
+    const value = this.formatText({ text, column });
+    return <div class="eb-antdv-table-cell" title={value}>{value}</div>;
   },
 };

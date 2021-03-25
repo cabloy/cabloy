@@ -1,9 +1,7 @@
 export default {
   methods: {
-    formatText() {
-      //
-      let text = this.info.text;
-      const column = this.info.column;
+    formatText({ text, column }) {
+      // params
       const params = column.params || {};
       // null
       if (text === null || text === undefined) {
