@@ -616,11 +616,12 @@ module.exports = ctx => {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
-      // todo: special check for flow
+      // special check for flow
       if (atom.atomStage === 0 && atom.atomFlowId > 0) {
         if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
         const viewAtom = await ctx.bean.flowTask.viewAtom({ flowTaskId, user });
-        if (!viewAtom) ctx.throw(403);
+        if (!viewAtom) return false;
+        if (viewAtom.item.atomId !== atomId) return false;
         if (this._checkSchemaValid({ schema: viewAtom.schema.schema, detailClass })) return true;
         // default is false
         return false;
@@ -647,7 +648,8 @@ module.exports = ctx => {
         if (atom.atomStage === 0 && atom.atomFlowId > 0) {
           if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
           const editAtom = await ctx.bean.flowTask.editAtom({ flowTaskId, user });
-          if (!editAtom) ctx.throw(403);
+          if (!editAtom) return false;
+          if (editAtom.item.atomId !== atomId) return false;
           if (this._checkSchemaValid({ schema: editAtom.schema.schema, detailClass })) return true;
           // default is false
           return false;
@@ -947,8 +949,8 @@ module.exports = ctx => {
 
     selectDetails({ iid, tableName, where, orders, page, count, stage }) {
       // -- tables
-      // -- a: aAtom
-      // -- b: aAtomClass
+      // -- a: aDetail
+      // -- b: aDetailClass
       // -- f: {item}
       // -- g: aUser
       // -- g2: aUser
