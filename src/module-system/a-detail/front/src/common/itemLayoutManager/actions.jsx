@@ -43,14 +43,18 @@ export default {
     actions_onSubmit() {
       this.$refs.buttonSave.onClick();
     },
-    actions_submit(event, action) {
+    async actions_submit(event, action) {
       const validateInstance = this.validate_getInstance();
       if (!validateInstance) return;
-      return validateInstance.perform(event, { action });
+      return await validateInstance.perform(event, { action });
     },
-    actions_onAction(event, action) {
+    async actions_onSaveDone(event) {
+      await this.actions_onAction(event, 'save');
+      this.$f7router.back();
+    },
+    async actions_onAction(event, action) {
       if (action === 'save') {
-        return this.actions_submit(event, action);
+        return await this.actions_submit(event, action);
       }
       if (typeof action === 'string') {
         action = {
@@ -61,7 +65,7 @@ export default {
       }
       // action
       const _action = this.getDetailAction(action);
-      return this.$meta.util.performAction({
+      return await this.$meta.util.performAction({
         ctx: this,
         action: _action,
         item: {
@@ -82,6 +86,9 @@ export default {
         const actionName = 'save';
         children.push(
           <eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>
+        );
+        children.push(
+          <eb-link key='saveDone' ref="buttonSaveDone" iconMaterial='done' propsOnPerform={event => this.actions_onSaveDone(event)}></eb-link>
         );
       }
       //
