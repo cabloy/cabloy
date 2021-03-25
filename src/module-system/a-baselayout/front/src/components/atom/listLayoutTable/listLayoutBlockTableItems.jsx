@@ -260,18 +260,7 @@ export default {
       return false;
     },
     _customRender(text, record, index, column) {
-      if (!column.component) {
-        if (text === null || text === undefined) {
-          text = '';
-        } else if (typeof text === 'object' && text instanceof Date) {
-          text = this.$meta.util.formatDateTime(text, column.dateFormat);
-        }
-        if (column.textLocale) {
-          text = this.$text(text);
-        }
-        return <div class="eb-antdv-table-cell" title={text}>{text}</div>;
-      }
-      // component
+      // options
       let options = {
         props: {
           layoutManager: this.layoutManager,
@@ -280,6 +269,11 @@ export default {
           info: { text, record, index, column },
         },
       };
+      // default
+      if (!column.component) {
+        return <eb-component module='a-basefront' name='renderTableCellDefault' options={options}></eb-component>;
+      }
+      // component
       if (column.component.options) {
         options = this.$meta.util.extend({}, column.component.options, options);
       }
