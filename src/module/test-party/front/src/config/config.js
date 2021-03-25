@@ -34,7 +34,9 @@ export default {
                       dataIndex: 'partyTypeName',
                       title: 'Party Type',
                       align: 'left',
-                      textLocale: true,
+                      params: {
+                        locale: true,
+                      },
                     },
                     {
                       dataIndex: 'personCount',
