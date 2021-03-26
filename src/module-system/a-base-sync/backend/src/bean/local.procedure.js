@@ -1,7 +1,18 @@
 module.exports = ctx => {
   class Procedure {
 
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale }) {
+    selectAtoms({
+      iid, userIdWho, tableName,
+      where, orders, page,
+      star, label,
+      comment, file,
+      count,
+      stage,
+      language, category, tag,
+      mine,
+      resource, resourceLocale,
+      mode, cms,
+    }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -38,6 +49,8 @@ module.exports = ctx => {
       // -- i: aFile
       // -- j: aCategory
       // -- k: aTagRef
+      // -- m: aCmsArticle
+      // -- n: aCmsContent
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;

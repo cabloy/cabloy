@@ -145,10 +145,13 @@ module.exports = ctx => {
         if (!options.where) options.where = {};
         options.where['a.atomClassId'] = atomClass.id;
       }
+      // cms
+      const cms = _atomClass && _atomClass.cms;
       // select
       const items = await this._list({
         tableName,
         options,
+        cms,
         user,
         pageForce,
         count,
@@ -927,19 +930,41 @@ module.exports = ctx => {
       if (!options) options = {};
       const resource = options.resource || 0;
       const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
-      //
+      // atomClass
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // tableName
       const tableName = this._getTableName({ atomClass: _atomClass, mode });
+      // cms
+      const cms = _atomClass && _atomClass.cms;
+      // sql
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName, atomId: key.atomId,
         resource, resourceLocale,
+        mode, cms,
       });
+      // query
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+    async _list({
+      tableName,
+      options: {
+        where, orders, page,
+        star = 0, label = 0,
+        comment = 0, file = 0,
+        stage = 'formal',
+        language, category = 0, tag = 0,
+        mine = 0,
+        resource = 0, resourceLocale,
+        mode,
+      },
+      cms,
+      user,
+      pageForce = true,
+      count = 0,
+    }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
       const sql = this.sqlProcedure.selectAtoms({
@@ -951,6 +976,7 @@ module.exports = ctx => {
         language, category, tag,
         mine,
         resource, resourceLocale,
+        mode, cms,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
