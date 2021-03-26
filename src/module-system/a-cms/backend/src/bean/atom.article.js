@@ -6,31 +6,12 @@ const uuid = require3('uuid');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom extends app.meta.AtomBase {
+  class Atom extends app.meta.AtomCmsBase {
 
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // article
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = site.edit.mode;
-      // add article
-      const params = {
-        atomId: key.atomId,
-        editMode,
-      };
-      // uuid
-      params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
-      // insert
-      const res = await this.ctx.model.article.insert(params);
-      const itemId = res.insertId;
-      // add content
-      await this.ctx.model.content.insert({
-        atomId: key.atomId,
-        itemId,
-        content: '',
-      });
-      return { atomId: key.atomId, itemId };
+      return { atomId: key.atomId };
     }
 
     async read({ atomClass, options, key, user }) {

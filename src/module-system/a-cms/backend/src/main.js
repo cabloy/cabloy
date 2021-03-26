@@ -2,6 +2,7 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const WatcherFn = require('./common/watcher.js');
+const AtomCmsBaseFn = require('./common/atomCmsBase.js');
 
 module.exports = app => {
 
@@ -9,6 +10,9 @@ module.exports = app => {
   if (app.meta.isLocal) {
     app.meta['a-cms:watcher'] = new (WatcherFn(app))();
   }
+
+  // atomCmsBase
+  app.meta.AtomCmsBase = AtomCmsBaseFn(app);
 
   // beans
   const beans = require('./beans.js')(app);

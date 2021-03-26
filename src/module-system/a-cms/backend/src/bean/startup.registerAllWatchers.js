@@ -8,8 +8,10 @@ module.exports = app => {
       // loop modules
       for (const module of app.meta.modulesArray) {
         // loop atomClasses
-        for (const key in module.main.meta.base.atoms) {
-          if (module.main.meta.base.atoms[key].info.cms !== true) continue;
+        const atoms = this.ctx.bean.util.getProperty(module, 'main.meta.base.atoms');
+        if (!atoms) continue;
+        for (const key in atoms) {
+          if (atoms[key].info.cms !== true) continue;
           // atomClass
           const atomClass = {
             module: module.info.relativeName,
