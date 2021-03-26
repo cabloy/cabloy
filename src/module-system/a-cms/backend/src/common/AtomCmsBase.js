@@ -16,6 +16,10 @@ module.exports = app => {
       return this.ctx.model.module(moduleInfo.relativeName).content;
     }
 
+    get moduleConfig() {
+      return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -40,157 +44,220 @@ module.exports = app => {
     }
 
     async read({ atomClass, options, key, user }) {
-      // get
-      return await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // read: showSorting=true
+      this._getMeta(item, true);
+      // ok
+      return item;
     }
 
-    async select(/* {  atomClass, options, items, user }*/) {
-      // donothing
-    }
-
-    async delete({ atomClass, key, user }) {
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      if (_atomClass.tag) {
-        const _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-        if (_atomOld.atomTags) {
-          // stage
-          const atomStage = _atomOld.atomStage;
-          await this.ctx.bean.tag.deleteTagRefs({ atomId: key.atomId });
-          if (atomStage === 1) {
-            await this.ctx.bean.tag.setTagAtomCount({ tagsNew: null, tagsOld: _atomOld.atomTags });
-          }
-        }
+    async select({ atomClass, options, items, user }) {
+      // super
+      await super.select({ atomClass, options, items, user });
+      // select
+      const showSorting = options && options.category;
+      for (const item of items) {
+        this._getMeta(item, showSorting);
       }
-      // delete
-      await this.ctx.bean.atom._delete({
-        atomClass,
-        atom: { id: key.atomId },
-        user,
-      });
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      if (!item) return;
-      // force delete atomDisabled
-      delete item.atomDisabled;
-      // stage
       const atomStage = item.atomStage;
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      let _atomOld;
-      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
-        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-      }
-      // validate
-      const ignoreValidate = options && options.ignoreValidate;
-      if (atomStage === 0 && !target && !ignoreValidate) {
-        await this.ctx.bean.validation._validate({ atomClass, data: item, options });
-      }
-      // write atom
-      await this._writeAtom({ key, item, user, atomStage });
-      // tag
-      if (_atomClass.tag && item.atomTags !== undefined) {
-        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
-        if (atomStage === 1) {
-          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
-        }
-      }
-    }
-
-    async _writeAtom({ key, item, user, atomStage }) {
-      // write atom
-      const atom = { };
-      for (const field of __atomBasicFields) {
-        if (item[field] !== undefined) atom[field] = item[field];
-      }
-      if (atomStage === 0) {
-        atom.updatedAt = new Date();
-      }
-      // update
-      atom.id = key.atomId;
-      await this.ctx.bean.atom._update({ atom, user });
-    }
-
-    async submit({ /* atomClass,*/ key, options, user }) {
-      const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.read({ key, user });
-      if (_atom.atomStage > 0) this.ctx.throw(403);
-      // check atom flow
-      if (!ignoreFlow) {
-        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
-        if (flowInstance) {
-          // set atom flow
-          const atomFlowId = flowInstance.context._flowId;
-          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
-          // ok
-          return { flow: { id: atomFlowId } };
-        }
-      }
-      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
-    }
-
-    async enable({ /* atomClass,*/ key/* , user*/ }) {
-      await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 0,
-      });
-    }
-
-    async disable({ /* atomClass,*/ key/* , user*/ }) {
-      await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 1,
-      });
-    }
-
-    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
-      // do nothing
-    }
-
-    async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {
-      // workbook
-      const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'CabloyJS';
-      workbook.created = new Date();
-      // worksheet
-      const worksheet = workbook.addWorksheet('Sheet');
-      // columns
-      const columns = [];
+      // get atom for safety
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
+      // if undefined then old
+      const fields = [ 'atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
-        columns.push({
-          header: this.ctx.text(field.title),
-          key: field.name,
-        });
+        if (item[field] === undefined) item[field] = atomOld[field];
       }
-      worksheet.columns = columns;
-      // rows
-      const rows = [];
-      for (const item of items) {
-        const row = {};
-        for (const field of fields) {
-          row[field.name] = item[field.name];
+      // clone
+      if (target === 'clone') {
+        item.slug = null; // clear slug
+      }
+      // url
+      let url;
+      const draftExt = atomStage === 0 ? '.draft' : '';
+      if (item.slug) {
+        url = `articles/${item.slug}${draftExt}.html`;
+      } else {
+        url = `articles/${atomOld.uuid}${draftExt}.html`;
+      }
+      // image first
+      let imageFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
+        imageFirst = (matches && matches[1]) || '';
+      }
+      // audio first
+      let audioFirst = '';
+      let audioCoverFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:blockAudio([\s\S]*?)\$\$\$/);
+        let options = matches && matches[1];
+        if (options) {
+          options = global.JSON5.parse(options);
+          if (options && options.audio) {
+            if (Array.isArray(options.audio)) {
+              audioFirst = options.audio[0].url;
+              audioCoverFirst = options.audio[0].cover;
+            } else {
+              audioFirst = options.audio.url;
+              audioCoverFirst = options.audio.cover;
+            }
+          }
         }
-        rows.push(row);
       }
-      worksheet.addRows(rows);
-      // write
-      const buffer = await workbook.xlsx.writeBuffer();
+      // markdown
+      const md = markdown.create();
+      // markdown-it-block
+      const blocks = this.ctx.bean.cms.site.getBlocks();
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text.locale(item.atomLanguage, ...args);
+          },
+        },
+        blocks,
+      };
+      md.use(markdonw_it_block, blockOptions);
+      // html
+      let html;
+      if (item.editMode === 1) {
+        html = item.content ? md.render(item.content) : '';
+      } else {
+        html = item.content || '';
+      }
+      // summary
+      const summary = trimHtml(html, this.moduleConfig.article.trim);
+      // update article
+      await this.modelArticle.update({
+        id: key.itemId,
+        sticky: item.sticky,
+        keywords: item.keywords,
+        description: item.description,
+        summary: summary.html,
+        url,
+        editMode: item.editMode,
+        slug: item.slug,
+        sorting: item.sorting,
+        flag: item.flag,
+        extra: item.extra || '{}',
+        imageFirst,
+        audioFirst,
+        audioCoverFirst,
+      });
+      // update content
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
+        [ item.content, html, this.ctx.instance.id, key.atomId ]);
+
+      // render
+      const ignoreRender = options && options.ignoreRender;
+      if (!ignoreRender) {
+        if (atomStage === 0) {
+          await this._renderArticle({ atomClass, key, inner: true });
+        }
+        if (atomStage === 1) {
+          await this._renderArticle({ atomClass, key, inner: false });
+        }
+      }
+    }
+
+    async delete({ atomClass, key, user }) {
+      // get atom for safety
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
+
+      // delete article
+      await this.modelArticle.delete({
+        id: key.itemId,
+      });
+      // delete content
+      await this.modelContent.delete({
+        itemId: key.itemId,
+      });
+
+      // delete article
+      if (atomOld.atomStage === 0) {
+        await this._deleteArticle({ atomClass, key, article: atomOld, inner: true });
+      }
+      if (atomOld.atomStage === 1) {
+        await this._deleteArticle({ atomClass, key, article: atomOld, inner: false });
+      }
+
+      // super
+      await super.delete({ atomClass, key, user });
+    }
+
+    _getMeta(item, showSorting) {
+      // flags
+      const flags = [];
+      if (item.sticky) flags.push(this.ctx.text('Sticky'));
+      if (item.sorting && showSorting) flags.push(item.sorting);
       // meta
       const meta = {
-        filename: `${this.ctx.bean.util.now()}.xlsx`,
-        encoding: '7bit',
-        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        fields: {
-          mode: 2,
-          flag: 'atom-bulk-export',
-        },
+        summary: item.summary,
+        flags,
       };
       // ok
-      return { type: 'buffer', data: buffer, meta };
+      item._meta = meta;
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
-      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+    async _deleteArticle({ atomClass, key, article, inner }) {
+      this.ctx.tail(async () => {
+        // queue
+        await this.ctx.app.meta.queue.pushAsync({
+          locale: this.ctx.locale,
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
+        });
+      });
+    }
+
+    async _renderArticle({ atomClass, key, inner }) {
+      this.ctx.tail(async () => {
+        // queue
+        await this.ctx.app.meta.queue.pushAsync({
+          locale: this.ctx.locale,
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
+        });
+      });
+    }
+
+    async _getArticle({ key, inner }) {
+      if (!inner) {
+        // check right
+        const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        if (!right) return null;
+      }
+      // article
+      const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
+      if (!article) return null;
+      // todo:
+      // check atomLanguage
+      if (!article.atomLanguage) {
+        article.atomLanguage = this.ctx.locale;
+        // return null;
+        // this.ctx.throw(1001);
+      }
+      return article;
     }
 
   }
