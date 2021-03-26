@@ -53,19 +53,7 @@ module.exports = app => {
     }
 
     async blockSave({ blockName, item }) {
-      // block
-      const blocks = this.getBlocks();
-      const block = blocks[blockName];
-      // validate
-      await this.ctx.bean.validation.validate({
-        module: block.validator.module,
-        validator: block.validator.validator,
-        schema: null,
-        data: item,
-      });
-      // output
-      if (!block.output) return item;
-      return await block.output({ ctx: this.ctx, block, data: item });
+      return await this.ctx.bean.cms.site.blockSave({ blockName, item });
     }
 
     getBlocks() {
