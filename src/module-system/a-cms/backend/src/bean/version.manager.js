@@ -341,6 +341,15 @@ module.exports = app => {
         await this._update7Migration_schemas(options);
       }
 
+      if (options.version === 9) {
+        // drop column: aCmsContent.itemId
+        const sql = `
+          ALTER TABLE aCmsContent
+            DROP COLUMN itemId
+        `;
+        await this.ctx.db.query(sql);
+      }
+
     }
 
     async init(options) {
