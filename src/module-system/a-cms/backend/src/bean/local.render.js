@@ -5,13 +5,14 @@ module.exports = ctx => {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       }
-      const build = ctx.build.cms.build({ atomClass });
+      const build = ctx.bean.cms.build({ atomClass });
       return await build.getArticleUrl({ key });
     }
 
     // site<plugin<theme<site(db)<language(db)
     async combineSiteBase({ atomClass, mergeConfigSite }) {
-      const build = ctx.build.cms.build({ atomClass });
+      const build = ctx.bean.cms.build({ atomClass });
+      console.log('-----------', build);
       return await build.combineSiteBase({ mergeConfigSite });
     }
   }

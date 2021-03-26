@@ -11,7 +11,7 @@ module.exports = ctx => {
     }
 
     build({ atomClass }) {
-      return ctx.bean._newBean(moduleInfo.relativeName, 'local.build', atomClass);
+      return ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
     }
 
   }
