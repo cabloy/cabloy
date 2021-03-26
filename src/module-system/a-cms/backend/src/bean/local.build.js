@@ -1170,35 +1170,33 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     async getFrontEnvs({ language }) {
       const envs = {};
       for (const module of this.ctx.app.meta.modulesArray) {
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
-          // may be more atoms
-          for (const key in module.main.meta.base.atoms) {
-            if (module.main.meta.base.atoms[key].info.cms !== true) continue;
-            // atomClass
-            const atomClass = {
-              module: module.info.relativeName,
-              atomClassName: key,
-              atomClassIdParent: 0,
-            };
-            const atomClassFullName = this.getAtomClassFullName(atomClass);
-            if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
-              // getSite
-              let site;
-              try {
-                site = await this.ctx.service.site.getSite({
-                  atomClass,
-                  language,
-                  options: {
-                    envs: false,
-                  },
-                });
-              } catch (e) {
+        // may be more atoms
+        for (const key in module.main.meta.base.atoms) {
+          if (module.main.meta.base.atoms[key].info.cms !== true) continue;
+          // atomClass
+          const atomClass = {
+            module: module.info.relativeName,
+            atomClassName: key,
+            atomClassIdParent: 0,
+          };
+          const atomClassFullName = this.getAtomClassFullName(atomClass);
+          if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
+            // getSite
+            let site;
+            try {
+              site = await this.ctx.service.site.getSite({
+                atomClass,
+                language,
+                options: {
+                  envs: false,
+                },
+              });
+            } catch (e) {
               // nothing
-              }
-              // set
-              if (site) {
-                envs[atomClassFullName] = site.front.env;
-              }
+            }
+            // set
+            if (site) {
+              envs[atomClassFullName] = site.front.env;
             }
           }
         }
