@@ -85,7 +85,7 @@ module.exports = app => {
       // markdown
       const md = markdown.create();
       // markdown-it-block
-      const blocks = this.ctx.service.site.getBlocks();
+      const blocks = this.ctx.bean.cms.site.getBlocks();
       // block options
       const blockOptions = {
         utils: {

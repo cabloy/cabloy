@@ -1186,7 +1186,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
             // getSite
             let site;
             try {
-              site = await this.ctx.service.site.getSite({
+              site = await this.ctx.bean.cms.site.getSite({
                 atomClass,
                 language,
                 options: {
