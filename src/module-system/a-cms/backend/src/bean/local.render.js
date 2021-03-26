@@ -12,7 +12,6 @@ module.exports = ctx => {
     // site<plugin<theme<site(db)<language(db)
     async combineSiteBase({ atomClass, mergeConfigSite }) {
       const build = ctx.bean.cms.build({ atomClass });
-      console.log('-----------', build);
       return await build.combineSiteBase({ mergeConfigSite });
     }
   }

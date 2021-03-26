@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Startup extends app.meta.BeanBase {
 
     async execute() {
@@ -18,7 +18,7 @@ module.exports = app => {
             atomClassName: key,
             atomClassIdParent: 0,
           };
-          const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+          const build = this.ctx.bean.cms.build({ atomClass });
           await build.registerWatchers();
         }
       }

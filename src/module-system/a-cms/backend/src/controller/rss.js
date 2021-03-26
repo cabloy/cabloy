@@ -29,7 +29,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
@@ -101,7 +101,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
@@ -174,7 +174,7 @@ module.exports = app => {
       // atomClass
       const atomClass = await this.ctx.bean.atomClass.get({ id: article.atomClassId });
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
