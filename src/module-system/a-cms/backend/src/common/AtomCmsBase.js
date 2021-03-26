@@ -20,7 +20,7 @@ module.exports = app => {
       // super
       const key = await super.create({ atomClass, item, user });
       // article
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
+      const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
       const editMode = site.edit.mode;
       // add article
       const params = {
