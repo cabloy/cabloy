@@ -1,10 +1,5 @@
-const require3 = require('require3');
-const fse = require3('fs-extra');
-
-const __blocks = null;
-
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Site extends app.Service {
 
     async getSite({ atomClass, language, options }) {
