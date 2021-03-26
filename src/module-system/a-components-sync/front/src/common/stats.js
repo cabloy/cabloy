@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     stats_user() {
-      return this.$store.state.auth.user.op;
+      return this.$store.state.auth.user && this.$store.state.auth.user.op;
     },
   },
   created() {
@@ -40,7 +40,7 @@ export default {
   methods: {
     async stats_init() {
       this.stats_unsubscribe();
-      if (!this.stats_user.anonymous && this.stats_params) {
+      if (this.stats_user && !this.stats_user.anonymous && this.stats_params) {
         await this.stats_subscribe();
       }
     },

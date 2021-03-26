@@ -11,11 +11,11 @@ module.exports = app => {
           info: {
             bean: 'article',
             title: 'Article',
-            tableName: 'aCmsArticle',
+            tableName: '',
             tableNameModes: {
-              default: 'aCmsArticle',
-              full: 'aCmsArticleViewFull',
-              search: 'aCmsArticleViewSearch',
+              default: '',
+              full: '',
+              search: '',
             },
             language: true,
             category: true,
