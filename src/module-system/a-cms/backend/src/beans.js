@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const localBuild = require('./bean/local.build.js');
 const localRender = require('./bean/local.render.js');
+const localSite = require('./bean/local.site.js');
 const queueRender = require('./bean/queue.render.js');
 const startupRegisterAllWatchers = require('./bean/startup.registerAllWatchers.js');
 const atomArticle = require('./bean/atom.article.js');
@@ -22,6 +23,10 @@ module.exports = app => {
     'local.render': {
       mode: 'ctx',
       bean: localRender,
+    },
+    'local.site': {
+      mode: 'ctx',
+      bean: localSite,
     },
     // queue
     'queue.render': {
