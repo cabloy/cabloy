@@ -348,6 +348,12 @@ module.exports = app => {
             DROP COLUMN itemId
         `;
         await this.ctx.db.query(sql);
+
+        // drop view: aCmsArticleViewFull
+        await this.ctx.model.query('drop view aCmsArticleViewFull');
+
+        // drop view: aCmsArticleViewSearch
+        await this.ctx.model.query('drop view aCmsArticleViewSearch');
       }
 
     }
