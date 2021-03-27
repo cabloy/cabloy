@@ -1,10 +1,4 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const atomClass = {
-    module: moduleInfo.relativeName,
-    atomClassName: 'post',
-  };
-  const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = require('./config/validation/schemas.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
@@ -56,11 +50,6 @@ module.exports = app => {
       schemas: {
         post: schemas.post,
         postSearch: schemas.postSearch,
-      },
-    },
-    settings: {
-      instance: {
-        actionPath: `/a/cms/config/list?${atomClassQuery}`,
       },
     },
   };

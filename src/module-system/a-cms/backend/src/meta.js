@@ -61,11 +61,6 @@ module.exports = app => {
         articleSearch: schemas.articleSearch,
       },
     },
-    settings: {
-      instance: {
-        actionPath: 'config/list',
-      },
-    },
     event: {
       implementations: {
       },
