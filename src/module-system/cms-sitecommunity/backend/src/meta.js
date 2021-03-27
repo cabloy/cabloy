@@ -15,11 +15,11 @@ module.exports = app => {
           info: {
             bean: 'post',
             title: 'Post2',
-            tableName: 'aCmsArticle',
+            tableName: '',
             tableNameModes: {
-              default: 'aCmsArticle',
-              full: 'aCmsArticleViewFull',
-              search: 'aCmsArticleViewSearch',
+              default: '',
+              full: '',
+              search: '',
             },
             language: true,
             category: true,

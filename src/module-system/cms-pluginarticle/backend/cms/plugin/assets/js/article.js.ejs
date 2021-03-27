@@ -297,9 +297,9 @@ util.article = {
       ];
     } else {
       // asc/desc for createdAt
-      options.where['p.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt };
+      options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.atomCreatedAt };
       options.orders = [
-        [ 'p.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
+        [ 'a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
       ];
     }
     // select
