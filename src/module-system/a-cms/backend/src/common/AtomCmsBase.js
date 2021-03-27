@@ -139,10 +139,10 @@ module.exports = app => {
       const ignoreRender = options && options.ignoreRender;
       if (!ignoreRender) {
         if (atomStage === 0) {
-          await this._renderArticle({ atomClass, key, inner: true });
+          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: true });
         }
         if (atomStage === 1) {
-          await this._renderArticle({ atomClass, key, inner: false });
+          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: false });
         }
       }
     }
@@ -218,10 +218,10 @@ module.exports = app => {
 
       // delete article
       if (atomOld.atomStage === 0) {
-        await this._deleteArticle({ atomClass, key, article: atomOld, inner: true });
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
       }
       if (atomOld.atomStage === 1) {
-        await this._deleteArticle({ atomClass, key, article: atomOld, inner: false });
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
       }
 
       // super
@@ -240,60 +240,6 @@ module.exports = app => {
       };
       // ok
       item._meta = meta;
-    }
-
-    async _deleteArticle({ atomClass, key, article, inner }) {
-      this.ctx.tail(async () => {
-        // queue
-        await this.ctx.app.meta.queue.pushAsync({
-          locale: this.ctx.locale,
-          subdomain: this.ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-          data: {
-            queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
-          },
-        });
-      });
-    }
-
-    async _renderArticle({ atomClass, key, inner }) {
-      this.ctx.tail(async () => {
-        // queue
-        await this.ctx.app.meta.queue.pushAsync({
-          locale: this.ctx.locale,
-          subdomain: this.ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-          data: {
-            queueAction: 'renderArticle',
-            atomClass, key, inner,
-          },
-        });
-      });
-    }
-
-    async _getArticle({ key, inner }) {
-      if (!inner) {
-        // check right
-        const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
-        const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-        if (!right) return null;
-      }
-      // article
-      const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
-      if (!article) return null;
-      // todo:
-      // check atomLanguage
-      if (!article.atomLanguage) {
-        article.atomLanguage = this.ctx.locale;
-        // return null;
-        // this.ctx.throw(1001);
-      }
-      return article;
     }
 
   }

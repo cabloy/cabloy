@@ -262,7 +262,7 @@ module.exports = app => {
 
     async renderArticle({ key, inner }) {
       // article
-      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner });
+      const article = await this.ctx.bean.cms.render.getArticle({ key, inner });
       if (!article) return;
       // clearCache
       ejs.clearCache();
@@ -1143,7 +1143,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 
     async getArticleUrl({ key }) {
       // article
-      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
+      const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
       // site
       const site = await this.getSite({ language: article.atomLanguage });
