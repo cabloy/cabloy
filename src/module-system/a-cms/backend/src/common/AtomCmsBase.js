@@ -155,18 +155,22 @@ module.exports = app => {
       const editMode = item.editMode;
       // html
       let html = '';
-      if (editMode === 0) {
-        // 0: custom
-        html = item.html || '';
-      } else if (editMode === 1) {
-        // 1: markdown
-        html = this._renderMarkdown({ item });
-      } else if (editMode === 2) {
-        // 2: html
-        html = item.content || '';
+      if (item.html) {
+        html = item.html;
       } else {
-        // not supported
-        // do nothing
+        if (editMode === 0) {
+          // 0: custom
+          html = item.html || '';
+        } else if (editMode === 1) {
+          // 1: markdown
+          html = this._renderMarkdown({ item });
+        } else if (editMode === 2) {
+          // 2: html
+          html = item.content || '';
+        } else {
+          // not supported
+          // do nothing
+        }
       }
       // summary
       let summary;
