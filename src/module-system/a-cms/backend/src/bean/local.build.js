@@ -48,6 +48,14 @@ module.exports = app => {
       // site
       const site = extend(true, {}, configSite);
 
+      // language
+      if (!site.language) {
+        site.language = {
+          default: 'default',
+          items: 'default',
+        };
+      }
+
       // plugins
       site.plugins = {};
       for (const relativeName in this.app.meta.modules) {

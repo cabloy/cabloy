@@ -30,6 +30,7 @@ module.exports = app => {
               language: false,
               category: true,
               tag: true,
+              cms: true,
             },
             actions: {
               partyOver: {
