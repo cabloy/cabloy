@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="title" eb-back-link="Back"> </eb-navbar>
     <f7-list>
       <eb-list-item :title="$text('Site')">
         <div slot="after">
@@ -59,8 +59,10 @@ import utils from '../../common/utils.js';
 export default {
   mixins: [ ebModules ],
   data() {
+    const title = this.$f7route.query.title;
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      title,
       atomClass,
       stats: null,
     };
@@ -68,11 +70,6 @@ export default {
   computed: {
     languages() {
       return this.$local.state.languages[this.atomClass.module];
-    },
-    pageTitle() {
-      const module = this.getModule(this.atomClass.module);
-      if (module) return module.titleLocale;
-      return '';
     },
   },
   watch: {
