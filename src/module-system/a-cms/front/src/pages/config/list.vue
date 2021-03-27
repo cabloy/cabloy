@@ -6,14 +6,15 @@
         <div slot="after">
           <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
           <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
+          <eb-link v-if="!!$device.desktop && !languageEnable" iconMaterial="visibility" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
         </div>
       </eb-list-item>
-      <f7-list-group>
+      <f7-list-group v-if="languageEnable">
         <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
       </f7-list-group>
     </f7-list>
     <div v-for="item of languages" :key="item.value">
-      <f7-block-title medium>{{item.title}}</f7-block-title>
+      <f7-block-title medium v-if="languageEnable">{{item.title}}</f7-block-title>
       <f7-card>
         <f7-card-content>
           <f7-row>
@@ -43,7 +44,7 @@
             </f7-col>
           </f7-row>
         </f7-card-content>
-        <f7-card-footer>
+        <f7-card-footer v-if="languageEnable">
           <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
           <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
           <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
@@ -65,6 +66,7 @@ export default {
       title,
       atomClass,
       stats: null,
+      languageEnable: true,
     };
   },
   computed: {
@@ -74,17 +76,21 @@ export default {
   },
   watch: {
     languages(value) {
-      this.getStats(value);
+      this.onLanguagesChanged(value);
     },
   },
   created() {
     this.$local.dispatch('getLanguages', {
       atomClass: this.atomClass,
     }).then(value => {
-      this.getStats(value);
+      this.onLanguagesChanged(value);
     });
   },
   methods: {
+    onLanguagesChanged(languages) {
+      this.languageEnable = languages[0].value !== 'default';
+      this.getStats(languages);
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
