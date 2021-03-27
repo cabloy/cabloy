@@ -29,7 +29,8 @@ module.exports = appInfo => {
   };
 
   // site
-  config.site = {
+  config.cms = {};
+  config.cms.site = {
     base: {
       title: 'my blog',
       subTitle: 'gone with the wind',

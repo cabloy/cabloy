@@ -25,12 +25,24 @@ module.exports = app => {
       this.default = this.atomClass.module === 'a-cms';
     }
 
+    get moduleConfig() {
+      return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get beanStatus() {
+      return this.ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
     async getConfigSiteBase() {
       // config
       //    try other then default
-      let configSite = this.ctx.config.module(this.atomClass.module).site;
+      const configModule = this.ctx.config.module(this.atomClass.module);
+      let configSite = this.ctx.bean.util.getProperty(configModule, `cms.sites.${this.atomClass.atomClassName}`);
       if (!configSite) {
-        configSite = this.ctx.config.site;
+        configSite = this.ctx.bean.util.getProperty(configModule, 'cms.site');
+      }
+      if (!configSite) {
+        configSite = this.moduleConfig.cms.site;
       }
 
       // site
@@ -40,7 +52,8 @@ module.exports = app => {
       site.plugins = {};
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (plugin) {
           site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
         }
       }
@@ -48,24 +61,24 @@ module.exports = app => {
     }
 
     async getConfigSite() {
-      const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-      return await this.ctx.bean.status.get(name);
+      const name = `config-site:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      return await this.beanStatus.get(name);
     }
 
     async setConfigSite({ data }) {
-      const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-      await this.ctx.bean.status.set(name, data);
+      const name = `config-site:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      await this.beanStatus.set(name, data);
     }
 
     async getConfigLanguage({ language }) {
-      const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
-      return await this.ctx.bean.status.get(name);
+      const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      return await this.beanStatus.get(name);
     }
 
     async setConfigLanguage({ language, data }) {
-      const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
+      const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
       this._adjustConfigLanguange(data);
-      await this.ctx.bean.status.set(name, data);
+      await this.beanStatus.set(name, data);
     }
 
     async getConfigLanguagePreview({ language }) {

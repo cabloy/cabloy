@@ -3,7 +3,8 @@ module.exports = appInfo => {
   const config = {};
 
   // site
-  config.site = {
+  config.cms = {};
+  config.cms.site = {
     base: {
       title: 'Community',
       subTitle: 'Everything About CabloyJS',

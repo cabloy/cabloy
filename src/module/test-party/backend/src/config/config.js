@@ -98,6 +98,55 @@ module.exports = appInfo => {
       },
     };
 
+    // cms site
+    config.cms = {};
+    config.cms.sites = {};
+    config.cms.sites.party = {
+      base: {
+        title: 'Party',
+        subTitle: 'Test',
+        description: '',
+        keywords: '',
+      },
+      host: {
+        url: 'http://example.com',
+        rootPath: '',
+      },
+      language: false,
+      themes: {
+        default: 'cms-themeblog',
+      },
+      edit: {
+        mode: 0, // custom
+      },
+      env: {
+        format: {
+          date: 'YYYY-MM-DD',
+          time: 'HH:mm:ss',
+        },
+        article2: {
+          recentNum: 5,
+        },
+        comment: {
+          order: 'asc',
+          recentNum: 5,
+        },
+        brother: {
+          order: 'desc',
+        },
+        loadMore: {
+          loadOnScroll: false,
+        },
+      },
+      profile: {
+        userName: 'zhennann',
+        motto: 'Less is more, while more is less.',
+        avatar: 'assets/images/avatar.jpg',
+        url: 'index.html',
+        extra: '',
+      },
+    };
+
   }
 
 
