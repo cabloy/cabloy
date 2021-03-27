@@ -109,12 +109,12 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Extra Attributes',
       },
-      editMode: {
-        type: 'number',
-        // ebType: 'text',
-        ebTitle: 'Edit Mode',
-        notEmpty: true,
-      },
+      // editMode: {
+      //   type: 'number',
+      //   // ebType: 'text',
+      //   ebTitle: 'Edit Mode',
+      //   notEmpty: true,
+      // },
     },
   };
 

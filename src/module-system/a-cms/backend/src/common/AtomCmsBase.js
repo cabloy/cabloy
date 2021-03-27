@@ -26,7 +26,7 @@ module.exports = app => {
       const key = await super.create({ atomClass, item, user });
       // article
       const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = this.ctx.util.getProperty(site, 'edit.mode') || 0;
+      const editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
       // add article
       const params = {
         atomId: key.atomId,
@@ -116,7 +116,6 @@ module.exports = app => {
       const { html, summary } = this._renderContent({ item });
       // update article
       await this.modelArticle.update({
-        id: key.itemId,
         sticky: item.sticky,
         keywords: item.keywords,
         description: item.description,
@@ -130,6 +129,10 @@ module.exports = app => {
         imageFirst,
         audioFirst,
         audioCoverFirst,
+      }, {
+        where: {
+          atomId: key.atomId,
+        },
       });
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
@@ -209,11 +212,11 @@ module.exports = app => {
 
       // delete article
       await this.modelArticle.delete({
-        id: key.itemId,
+        atomId: key.atomId,
       });
       // delete content
       await this.modelContent.delete({
-        itemId: key.itemId,
+        atomId: key.atomId,
       });
 
       // delete article
