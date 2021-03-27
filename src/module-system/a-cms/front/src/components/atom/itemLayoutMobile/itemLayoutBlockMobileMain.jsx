@@ -37,7 +37,7 @@ export default {
         const data = await this.$api.post('render/getArticleUrl', {
           key: { atomId: this.layoutManager.container.atomId },
         });
-        this.articleUrl = data.url;
+        this.articleUrl = (data && data.url) || '';
       } catch (err) {
         this.articleUrl = '';
       }

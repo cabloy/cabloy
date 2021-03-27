@@ -134,6 +134,7 @@ export default {
         atomClass: this.atomClass,
         key: { atomId: this.item.atomId },
       }).then(data => {
+        if (!data) return;
         window.open(data.url, `cms_article_${this.atomClass.module}_${this.item.atomId}`);
       });
     },
@@ -211,6 +212,7 @@ export default {
   },
 };
 // data: {name,content}
+
 </script>
 <style lang="less" scoped>
 </style>
