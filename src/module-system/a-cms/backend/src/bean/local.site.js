@@ -177,9 +177,9 @@ module.exports = ctx => {
       const blocks = {};
       // (X) modulesArray for block override
       for (const module of ctx.app.meta.modulesArray) {
-        if (module.main.meta && module.main.meta.cms &&
-          module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
-          const blocksModule = this._prepareBlocksModule({ module, blocks: module.main.meta.cms.plugin.blocks });
+        const _blocksModule = ctx.bean.util.getProperty(module, 'main.meta.cms.plugin.blocks');
+        if (_blocksModule) {
+          const blocksModule = this._prepareBlocksModule({ module, blocks: _blocksModule });
           Object.assign(blocks, blocksModule);
         }
       }
