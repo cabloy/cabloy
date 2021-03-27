@@ -154,7 +154,7 @@ module.exports = app => {
       // module
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
       return extend(true, {},
         this._combineThemes(moduleExtend),
@@ -211,7 +211,7 @@ module.exports = app => {
     // ////////////////////////////// url or path
 
     getCMSPathName() {
-      return this.default ? 'cms' : `cms.${this.atomClass.module}`;
+      return `cms.${this.atomClass.module}.${this.atomClass.atomClassName}`;
     }
 
     getUrlRawRoot(site) {
@@ -559,9 +559,8 @@ module.exports = app => {
       // modulesArray
       let pluginIncludes = '';
       for (const module of this.app.meta.modulesArray) {
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin
-        && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })
-        ) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (plugin && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })) {
           // path intermediate
           const pathIntermediate = await this.getPathIntermediate(language);
           let incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
@@ -888,7 +887,8 @@ var env=${JSON.stringify(env, null, 2)};
         // plugins
         for (const relativeName in this.app.meta.modules) {
           const module = this.app.meta.modules[relativeName];
-          if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+          const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+          if (plugin) {
             const pluginPath = path.join(module.root, 'backend/cms/plugin');
             const pluginFiles = await bb.fromCallback(cb => {
               glob(`${pluginPath}/\*`, cb);
@@ -1044,9 +1044,10 @@ var env=${JSON.stringify(env, null, 2)};
       // plugins
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
-        if (!module.info.public && module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (!module.info.public && plugin) {
           site._watchers.push(path.join(module.root, 'backend/cms'));
-        // site._watchers.push(path.join(module.root, 'backend/src'));
+          // site._watchers.push(path.join(module.root, 'backend/src'));
         }
       }
 
@@ -1111,7 +1112,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
       // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (moduleExtend) {
         await this._copyThemes(pathIntermediate, moduleExtend);
       }
@@ -1135,14 +1136,14 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
       // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (moduleExtend) {
         this._watcherThemes(site, moduleExtend);
       }
       // current
       if (!module.info.public) {
         site._watchers.push(path.join(module.root, 'backend/cms'));
-      // site._watchers.push(path.join(module.root, 'backend/src'));
+        // site._watchers.push(path.join(module.root, 'backend/src'));
       }
     }
 
@@ -1179,7 +1180,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     getAtomClassFullName(atomClass) {
-      return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
+      return `${atomClass.module}:${atomClass.atomClassName}`;
     }
 
     async getFrontEnvs({ language }) {
