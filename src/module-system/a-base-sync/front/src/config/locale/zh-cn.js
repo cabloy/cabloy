@@ -129,6 +129,7 @@ export default {
   Price: '价格',
   Quantity: '数量',
   Amount: '金额',
+  General: '通用',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

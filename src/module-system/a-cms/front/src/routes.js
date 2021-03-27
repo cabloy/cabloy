@@ -3,6 +3,7 @@ function load(name) {
 }
 
 export default [
+  { path: 'config/atomClasses', component: load('config/atomClasses') },
   { path: 'config/list', component: load('config/list') },
   { path: 'config/site', component: load('config/site') },
   { path: 'config/siteBase', component: load('config/siteBase') },
