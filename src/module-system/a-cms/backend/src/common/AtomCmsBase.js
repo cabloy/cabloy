@@ -3,6 +3,7 @@ const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
+const utils = require('./utils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -111,36 +112,15 @@ module.exports = app => {
           }
         }
       }
-      // markdown
-      const md = markdown.create();
-      // markdown-it-block
-      const blocks = this.ctx.bean.cms.site.getBlocks();
-      // block options
-      const blockOptions = {
-        utils: {
-          text: (...args) => {
-            return this.ctx.text.locale(item.atomLanguage, ...args);
-          },
-        },
-        blocks,
-      };
-      md.use(markdonw_it_block, blockOptions);
       // html
-      let html;
-      if (item.editMode === 1) {
-        html = item.content ? md.render(item.content) : '';
-      } else {
-        html = item.content || '';
-      }
-      // summary
-      const summary = trimHtml(html, this.moduleConfig.article.trim);
+      const { html, summary } = this._renderContent({ item });
       // update article
       await this.modelArticle.update({
         id: key.itemId,
         sticky: item.sticky,
         keywords: item.keywords,
         description: item.description,
-        summary: summary.html,
+        summary,
         url,
         editMode: item.editMode,
         slug: item.slug,
@@ -165,6 +145,49 @@ module.exports = app => {
           await this._renderArticle({ atomClass, key, inner: false });
         }
       }
+    }
+
+    _renderContent({ item }) {
+      let html;
+      if (item.editMode === 1) {
+        html = this._renderMarkdown({ item });
+      } else {
+        // always edit item.content
+        html = item.content || '';
+      }
+      // summary
+      let summary;
+      if (item.summary) {
+        summary = item.summary;
+      } else {
+        const res = trimHtml(html, this.moduleConfig.article.trim);
+        summary = res.html;
+      }
+      // title
+      const title = utils.escapeHtml(item.atomName);
+      html = `<!-- ${title} -->\r\n` + html;
+      // ok
+      return { html, summary };
+    }
+
+    _renderMarkdown({ item }) {
+      if (!item.content) return '';
+      // markdown
+      const md = markdown.create();
+      // markdown-it-block
+      const blocks = this.ctx.bean.cms.site.getBlocks();
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text.locale(item.atomLanguage, ...args);
+          },
+        },
+        blocks,
+      };
+      md.use(markdonw_it_block, blockOptions);
+      // render
+      return md.render(item.content);
     }
 
     async delete({ atomClass, key, user }) {
