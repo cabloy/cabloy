@@ -291,15 +291,15 @@ util.article = {
     };
     if (article.sorting > 0) {
       // asc for sorting
-      options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
+      options.where['p.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
       options.orders = [
-        [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
+        [ 'p.sorting', type === 'prev' ? 'desc' : 'asc' ],
       ];
     } else {
       // asc/desc for createdAt
-      options.where['f.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt };
+      options.where['p.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt };
       options.orders = [
-        [ 'f.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
+        [ 'p.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
       ];
     }
     // select

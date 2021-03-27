@@ -166,12 +166,15 @@ module.exports = app => {
         // do nothing
       }
       // summary
-      let summary = '';
+      let summary;
       if (item.summary) {
         summary = item.summary;
       } else if (html) {
         const res = trimHtml(html, this.moduleConfig.article.trim);
         summary = res.html;
+      }
+      if (!summary) {
+        summary = item.description || '';
       }
       // title
       const title = utils.escapeHtml(item.atomName);

@@ -92,7 +92,7 @@ function _loadMore({ categoryId, tagId, search }) {
         where: {
         },
         orders: [
-          [ 'f.sticky', 'desc' ],
+          [ 'p.sticky', 'desc' ],
           [ 'a.createdAt', 'desc' ],
         ],
         page: { index },
@@ -102,8 +102,8 @@ function _loadMore({ categoryId, tagId, search }) {
       if (categoryId) {
         options.category = categoryId;
         options.orders = [
-          [ 'f.sticky', 'desc' ],
-          [ 'f.sorting', 'asc' ],
+          [ 'p.sticky', 'desc' ],
+          [ 'p.sorting', 'asc' ],
           [ 'a.createdAt', 'desc' ],
         ];
       }
@@ -111,13 +111,13 @@ function _loadMore({ categoryId, tagId, search }) {
       if (tagId) {
         options.tag = tagId;
         options.orders = [
-          [ 'f.sticky', 'desc' ],
+          [ 'p.sticky', 'desc' ],
           [ 'a.createdAt', 'desc' ],
         ];
       }
       // search
       if (search) {
-        options.where['f.contentSearch'] = { val: search, op: 'like' };
+        options.where['q.html'] = { val: search, op: 'like' };
         options.mode = 'search';
       }
       // select
