@@ -26,7 +26,7 @@ module.exports = app => {
       const key = await super.create({ atomClass, item, user });
       // article
       const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = site.edit.mode;
+      const editMode = this.ctx.util.getProperty(site, 'edit.mode') || 0;
       // add article
       const params = {
         atomId: key.atomId,
@@ -148,18 +148,28 @@ module.exports = app => {
     }
 
     _renderContent({ item }) {
-      let html;
-      if (item.editMode === 1) {
+      // editMode
+      const editMode = item.editMode;
+      // html
+      let html = '';
+      if (editMode === 0) {
+        // 0: custom
+        html = item.html || '';
+      } else if (editMode === 1) {
+        // 1: markdown
         html = this._renderMarkdown({ item });
-      } else {
-        // always edit item.content
+      } else if (editMode === 2) {
+        // 2: html
         html = item.content || '';
+      } else {
+        // not supported
+        // do nothing
       }
       // summary
-      let summary;
+      let summary = '';
       if (item.summary) {
         summary = item.summary;
-      } else {
+      } else if (html) {
         const res = trimHtml(html, this.moduleConfig.article.trim);
         summary = res.html;
       }
