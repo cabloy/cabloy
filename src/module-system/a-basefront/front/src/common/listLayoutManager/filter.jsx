@@ -45,14 +45,17 @@ export default {
       const formAtomClass = this.filter.data.formAtomClass;
       if (formAtomClass) {
         let hasValue = false;
+        const schema = this.filter_getSchemaSearch();
         for (const key in formAtomClass) {
           const value = formAtomClass[key];
           // undefined/null/'', except 0/false
           if (value !== undefined && value !== null && value !== '') {
+            const property = this.filter_getSchemaSearchProperty({ schema, key });
+            const tableAlias = this.$meta.util.getProperty(property, 'ebSearch.tableAlias') || 'f';
             if (typeof value === 'string') {
-              options.where[`f.${key}`] = { val: value, op: 'like' };
+              options.where[`${tableAlias}.${key}`] = { val: value, op: 'like' };
             } else {
-              options.where[`f.${key}`] = value;
+              options.where[`${tableAlias}.${key}`] = value;
             }
             hasValue = true;
           }
@@ -63,6 +66,12 @@ export default {
       }
       // ok
       return params;
+    },
+    filter_getSchemaSearch() {
+      return this.$meta.util.getProperty(this.filter, 'data.schemaSearch');
+    },
+    filter_getSchemaSearchProperty({ schema, key }) {
+      return this.$meta.util.getProperty(schema, `properties.${key}`);
     },
     filter_getConfig() {
       return this.$meta.util.getProperty(this.base.config, 'render.list.info.filter');

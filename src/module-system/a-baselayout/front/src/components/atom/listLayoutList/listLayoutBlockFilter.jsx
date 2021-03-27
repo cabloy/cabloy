@@ -36,6 +36,7 @@ export default {
       categoriesAll: null,
       tagsAll: null,
       ready: false,
+      schemaSearch: null,
     };
   },
   computed: {
@@ -172,7 +173,9 @@ export default {
     },
     onFilterDebounce: Vue.prototype.$meta.util.debounce(function() {
       this.layoutManager.filter_onChanged({
-        form: this.form, formAtomClass: this.formAtomClass,
+        form: this.form,
+        formAtomClass: this.formAtomClass,
+        schemaSearch: this.schemaSearch,
       });
     }, 300),
     onPerformSearch() {
@@ -185,6 +188,9 @@ export default {
       } else {
         this.onPerformSearch();
       }
+    },
+    onSchemaReady(schema) {
+      this.schemaSearch = schema;
     },
     getCategoryName(categoryId) {
       if (!this.categoriesAll || !categoryId) return '';
@@ -359,7 +365,7 @@ export default {
     _renderFormAtomClass() {
       if (!this.validateParams) return null;
       return (
-        <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit}>
+        <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit} onSchemaReady={this.onSchemaReady}>
         </eb-validate>
       );
     },

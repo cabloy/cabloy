@@ -122,10 +122,13 @@ module.exports = app => {
   schemas.articleSearch = {
     type: 'object',
     properties: {
-      content: {
+      html: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Content',
+        ebSearch: {
+          tableAlias: 'q',
+        },
       },
     },
   };

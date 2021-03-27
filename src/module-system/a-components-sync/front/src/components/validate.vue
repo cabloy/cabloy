@@ -200,6 +200,7 @@ export default {
       if (this.errors) this.verrors = this.errors;
       // event
       this.$emit('schema:ready', this.schema);
+      this.$emit('schemaReady', this.schema);
     },
     renderSchema(c) {
       return c('validateItem', {

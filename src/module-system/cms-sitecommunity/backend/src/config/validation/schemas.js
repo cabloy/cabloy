@@ -65,10 +65,13 @@ module.exports = app => {
   schemas.postSearch = {
     type: 'object',
     properties: {
-      content: {
+      html: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Content',
+        ebSearch: {
+          tableAlias: 'q',
+        },
       },
     },
   };

@@ -675,7 +675,6 @@ module.exports = app => {
         env.article.summary = undefined;
         env.article.content = undefined;
         env.article.html = undefined;
-        env.article.contentSearch = undefined;
       }
       // replace
       const text = `

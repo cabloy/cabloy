@@ -46,7 +46,7 @@ module.exports = appInfo => {
     },
     'a-cms': {
       aCmsArticle: 'createdAt,updatedAt,atomId,sticky,slug,sorting',
-      aCmsContent: 'createdAt,updatedAt,atomId,content:fulltext',
+      aCmsContent: 'createdAt,updatedAt,atomId,html:fulltext',
     },
     'a-dashboard': {
       aDashboard: 'createdAt,updatedAt,atomId',
