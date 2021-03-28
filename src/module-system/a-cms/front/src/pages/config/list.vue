@@ -14,7 +14,7 @@
           <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
         </f7-list-group>
       </f7-list>
-      <div v-for="item of languages" :key="item.value">
+      <div v-for="item of languages2" :key="item.value">
         <f7-block-title medium v-if="languageEnable">{{item.title}}</f7-block-title>
         <f7-card>
           <f7-card-content>
@@ -80,6 +80,9 @@ export default {
       const atomClassNameFull = `${this.atomClass.module}:${this.atomClass.atomClassName}`;
       return this.$local.state.languages[atomClassNameFull];
     },
+    languages2() {
+      return this.languageEnable ? this.languages : [{ title: '', value: '' }];
+    },
     atomClassBase() {
       return this.getAtomClass(this.atomClass);
     },
@@ -101,8 +104,8 @@ export default {
   methods: {
     onLanguagesChanged(languages) {
       if (!languages) return;
-      this.languageEnable = languages[0].value !== 'default';
-      this.getStats(languages);
+      this.languageEnable = languages.length > 0;
+      this.getStats(this.languages2);
     },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
@@ -113,7 +116,7 @@ export default {
           atomClass: this.atomClass,
         }).then(data => {
           const progressId = data.progressId;
-          this.$view.dialog.progressbar({ progressId, title: this.$text('Build All Languages') });
+          this.$view.dialog.progressbar({ progressId, title: this.$text(this.languageEnable ? 'Build All Languages' : 'Build') });
         });
       });
     },

@@ -48,14 +48,6 @@ module.exports = app => {
       // site
       const site = extend(true, {}, configSite);
 
-      // language
-      if (!site.language) {
-        site.language = {
-          default: 'default',
-          items: 'default',
-        };
-      }
-
       // plugins
       site.plugins = {};
       for (const relativeName in this.app.meta.modules) {
@@ -79,11 +71,13 @@ module.exports = app => {
     }
 
     async getConfigLanguage({ language }) {
+      language = language || 'default';
       const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
       return await this.beanStatus.get(name);
     }
 
     async setConfigLanguage({ language, data }) {
+      language = language || 'default';
       const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
       this._adjustConfigLanguange(data);
       await this.beanStatus.set(name, data);
@@ -105,6 +99,7 @@ module.exports = app => {
 
     async getLanguages() {
       const siteBase = await this.combineSiteBase();
+      if (!siteBase.language) return [];
       const languages = [];
       for (const item of siteBase.language.items.split(',')) {
         languages.push({
@@ -136,7 +131,7 @@ module.exports = app => {
     // site<plugin<theme<site(db)<language(db)
     async combineSite({ siteBase, language }) {
       // themeModuleName
-      const themeModuleName = siteBase.themes[language];
+      const themeModuleName = siteBase.themes[language || 'default'];
       if (!themeModuleName) {
         this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language);
       }
@@ -149,7 +144,9 @@ module.exports = app => {
       // combine
       return extend(true, {},
         siteBase, theme, configSite, configLanguage,
-        { language: { current: language } }
+        {
+          language: language ? { current: language } : false,
+        }
       );
     }
 
@@ -184,12 +181,14 @@ module.exports = app => {
       site.atomClass = this.atomClass;
       // languages
       site.languages = [];
-      for (const item of site.language.items.split(',')) {
-        site.languages.push({
-          name: item,
-          title: this.ctx.text.locale(item, item),
-          url: this.getUrl(site, item, 'index.html'),
-        });
+      if (site.language) {
+        for (const item of site.language.items.split(',')) {
+          site.languages.push({
+            name: item,
+            title: this.ctx.text.locale(item, item),
+            url: this.getUrl(site, item, 'index.html'),
+          });
+        }
       }
       // front
       site.front = {};
@@ -245,6 +244,7 @@ module.exports = app => {
     }
 
     async getPathCustom(language) {
+      language = language || 'default';
       const cms = await this.getPathCms();
       return path.join(cms, language, 'custom');
     }
@@ -908,8 +908,8 @@ var env=${JSON.stringify(env, null, 2)};
         }
 
         // theme
-        if (!site.themes[language]) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language);
-        await this.copyThemes(pathIntermediate, site.themes[language]);
+        if (!site.themes[language || 'default']) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language || 'default');
+        await this.copyThemes(pathIntermediate, site.themes[language || 'default']);
 
         // custom
         const customPath = await this.getPathCustom(language);
@@ -1015,10 +1015,10 @@ var env=${JSON.stringify(env, null, 2)};
       const watcherInfos = [];
       // site
       const site = await this.combineSiteBase();
-      const languages = site.language.items.split(',');
+      const languages = site.language ? site.language.items.split(',') : [ null ];
       // loop languages
       for (const language of languages) {
-      // info
+        // info
         const watcherInfo = await this._collectWatcher({ language });
         watcherInfos.push(watcherInfo);
       }
@@ -1060,8 +1060,8 @@ var env=${JSON.stringify(env, null, 2)};
       }
 
       // theme
-      if (!site.themes[language]) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language);
-      this.watcherThemes(site, site.themes[language]);
+      if (!site.themes[language || 'default']) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language || 'default');
+      this.watcherThemes(site, site.themes[language || 'default']);
 
       // custom
       const customPath = await this.getPathCustom(language);
