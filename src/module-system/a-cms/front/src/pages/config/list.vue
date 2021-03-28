@@ -96,6 +96,7 @@ export default {
   },
   methods: {
     onLanguagesChanged(languages) {
+      if (!languages) return;
       this.languageEnable = languages[0].value !== 'default';
       this.getStats(languages);
     },
