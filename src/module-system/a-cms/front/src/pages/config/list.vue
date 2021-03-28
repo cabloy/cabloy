@@ -77,7 +77,8 @@ export default {
       return this.modulesAll && this.atomClassesAll && this.languages;
     },
     languages() {
-      return this.$local.state.languages[this.atomClass.module];
+      const atomClassNameFull = `${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      return this.$local.state.languages[atomClassNameFull];
     },
     atomClassBase() {
       return this.getAtomClass(this.atomClass);
@@ -91,8 +92,6 @@ export default {
   created() {
     this.$local.dispatch('getLanguages', {
       atomClass: this.atomClass,
-    }).then(value => {
-      this.onLanguagesChanged(value);
     });
   },
   methods: {
