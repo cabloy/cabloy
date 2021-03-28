@@ -233,7 +233,7 @@ module.exports = app => {
     }
     getUrlRoot(site, language) {
       const rawRoot = this.getUrlRawRoot(site);
-      return `${rawRoot}${language === site.language.default ? '' : '/' + language}`;
+      return `${rawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}`;
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
@@ -249,12 +249,13 @@ module.exports = app => {
       return path.join(cms, language, 'custom');
     }
     async getPathIntermediate(language) {
+      language = language || 'default';
       const cms = await this.getPathCms();
       return path.join(cms, language, 'intermediate');
     }
     async getPathDist(site, language) {
       const rawDist = await this.getPathRawDist();
-      return path.join(rawDist, language === site.language.default ? '' : '/' + language);
+      return path.join(rawDist, (!site.language || language === site.language.default) ? '' : '/' + language);
     }
     async getPathCms() {
       // cms
@@ -340,7 +341,7 @@ module.exports = app => {
       const articles = await this.ctx.bean.atom.select({
         atomClass: this.atomClass,
         options: {
-          language: site.language.current,
+          language: site.language ? site.language.current : null,
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
           mode: 'search',
@@ -389,7 +390,7 @@ module.exports = app => {
 
     async _renderIndex({ site }) {
       // index
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const indexFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
       });
@@ -417,7 +418,7 @@ module.exports = app => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
       for (const article of articles) {
-        const loc = this.getUrl(site, site.language.current, article.url);
+        const loc = this.getUrl(site, site.language && site.language.current, article.url);
         const lastmod = moment(article.updatedAt).format();
         xml +=
 `  <url>
@@ -428,16 +429,16 @@ module.exports = app => {
       }
       xml += '</urlset>';
       // save
-      const pathDist = await this.getPathDist(site, site.language.current);
+      const pathDist = await this.getPathDist(site, site.language && site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       await fse.writeFile(fileName, xml);
     }
 
     async _writeSitemap({ site, article }) {
-      const loc = this.getUrl(site, site.language.current, article.url);
+      const loc = this.getUrl(site, site.language && site.language.current, article.url);
       const lastmod = moment(article.updatedAt).format();
       // load
-      const pathDist = await this.getPathDist(site, site.language.current);
+      const pathDist = await this.getPathDist(site, site.language && site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       let xml;
       const exists = await fse.pathExists(fileName);
@@ -471,7 +472,7 @@ module.exports = app => {
 
     async _renderStatic({ site }) {
       // static
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const staticFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
       });
@@ -496,7 +497,7 @@ module.exports = app => {
       // site
       const site = data.site;
       // language
-      const language = site.language.current;
+      const language = site.language && site.language.current;
       // src
       const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
@@ -654,12 +655,12 @@ module.exports = app => {
         const sha = shajs('sha256').update(result).digest('hex');
         // dest
         const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
-        const pathDist = await this.getPathDist(site, site.language.current);
+        const pathDist = await this.getPathDist(site, site.language && site.language.current);
         const fileWrite = path.join(pathDist, fileDest);
         // write
         await fse.outputFile(fileWrite, result);
         // url
-        urlDest = this.getUrl(site, site.language.current, fileDest);
+        urlDest = this.getUrl(site, site.language && site.language.current, fileDest);
         // cache
         site._cache[type][cacheSha] = urlDest;
       }
@@ -732,7 +733,7 @@ var env=${JSON.stringify(env, null, 2)};
       const _csses = [];
       const _jses = [];
       const _envs = {};
-      let _pathIntermediate = await this.getPathIntermediate(site.language.current);
+      let _pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       _pathIntermediate = path.join(_pathIntermediate, '/');
       return {
         ctx: self.ctx,
@@ -748,7 +749,7 @@ var env=${JSON.stringify(env, null, 2)};
           if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return utils.escapeURL(fileName);
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
-          const _url = self.getUrl(site, language || site.language.current, _path);
+          const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
           return utils.escapeURL(_url);
         },
         css(fileName) {
@@ -761,7 +762,7 @@ var env=${JSON.stringify(env, null, 2)};
           _envs[name] = value;
         },
         text(...args) {
-          return this.ctx.text.locale(site.language.current, ...args);
+          return this.ctx.text.locale(site.language ? site.language.current : self.ctx.locale, ...args);
         },
         util: {
           time,
@@ -791,7 +792,7 @@ var env=${JSON.stringify(env, null, 2)};
         const timeStart = new Date();
         // site
         const site = await this.combineSiteBase();
-        const languages = site.language.items.split(',');
+        const languages = site.language ? site.language.items.split(',') : [ null ];
 
         // progress
         const progress0_Total = languages.length;
@@ -805,7 +806,7 @@ var env=${JSON.stringify(env, null, 2)};
               progressNo,
               total: progress0_Total,
               progress: progress0_progress++,
-              text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
+              text: site.language ? `${this.ctx.text('Build')} ${this.ctx.text(language)}` : this.ctx.text('Build'),
             });
           }
 
@@ -882,9 +883,9 @@ var env=${JSON.stringify(env, null, 2)};
         const distFiles = await bb.fromCallback(cb => {
           glob(`${pathDist}/\*`, cb);
         });
-        const languages = site.language.items.split(',');
+        const languages = site.language ? site.language.items.split(',') : null;
         for (const item of distFiles) {
-          if (languages.indexOf(path.basename(item)) === -1) {
+          if (!site.language || languages.indexOf(path.basename(item)) === -1) {
             await fse.remove(item);
           }
         }
@@ -1080,10 +1081,11 @@ var env=${JSON.stringify(env, null, 2)};
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
       let items = '';
-      for (const language of site.language.items.split(',')) {
+      const languages = site.language ? site.language.items.split(',') : [ null ];
+      for (const language of languages) {
         items +=
 `  <sitemap>
-    <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
+    <loc>${urlRawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}/sitemap.xml</loc>
   </sitemap>
 `;
       }
@@ -1157,7 +1159,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 
     async _checkIfSiteBuilt({ site }) {
       // check if build site first
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const fileName = path.join(pathIntermediate, 'main/article.ejs');
       return await fse.pathExists(fileName);
     }
@@ -1180,7 +1182,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
         // this.ctx.throw.module('a-base', 1002);
       }
       // ok
-      const url = this.getUrl(site, site.language.current, article.url);
+      const url = this.getUrl(site, site.language && site.language.current, article.url);
       return {
         relativeUrl: article.url,
         url,
