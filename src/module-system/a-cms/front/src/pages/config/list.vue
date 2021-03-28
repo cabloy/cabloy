@@ -33,13 +33,13 @@
               </f7-col>
               <f7-col v-if="!!atomClassBase.category" class="flex-direction-column text-align-center">
                 <div>
-                  <eb-link :eb-href="combineAtomClass(`/a/baseadmin/category/tree?language=${item.value}&languageTitle=${item.title}`)">{{$text('Category')}}</eb-link>
+                  <eb-link :eb-href="combineLinkCategoriesTags(item,'/a/baseadmin/category/tree')">{{$text('Category')}}</eb-link>
                 </div>
                 <div>{{getStat(item.value,'categories')}}</div>
               </f7-col>
               <f7-col v-if="!!atomClassBase.tag" class="flex-direction-column text-align-center">
                 <div>
-                  <eb-link :eb-href="combineAtomClass(`/a/baseadmin/tag/list?language=${item.value}&languageTitle=${item.title}`)">{{$text('Tag')}}</eb-link>
+                  <eb-link :eb-href="combineLinkCategoriesTags(item,'/a/baseadmin/tag/list')">{{$text('Tag')}}</eb-link>
                 </div>
                 <div>{{getStat(item.value,'tags')}}</div>
               </f7-col>
@@ -86,12 +86,16 @@ export default {
   },
   watch: {
     languages(value) {
+      // should invoke on change
       this.onLanguagesChanged(value);
     },
   },
   created() {
     this.$local.dispatch('getLanguages', {
       atomClass: this.atomClass,
+    }).then(value => {
+      // should invoke on init
+      this.onLanguagesChanged(value);
     });
   },
   methods: {
@@ -125,25 +129,34 @@ export default {
       });
     },
     onPerformPreview(event, context) {
+      const language = context ? context.value : 'default';
       return this.$api.post('site/getUrl', {
         atomClass: this.atomClass,
-        language: context.value,
+        language,
         path: 'index.html',
       }).then(data => {
         window.open(data, `cms_site_${this.atomClass.module}_${context.value}`);
       });
     },
     combineLinkArticles(language) {
-      const options = {
-        language,
-      };
+      const options = {};
+      if (this.languageEnable) {
+        options.language = language;
+      }
       return this.combineAtomClass(`/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`);
     },
     combineLinkComments(language) {
-      const where = {
-        'a.atomLanguage': language,
-      };
+      const where = {};
+      if (this.languageEnable) {
+        where['a.atomLanguage'] = language;
+      }
       return this.combineAtomClass(`/a/basefront/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
+    },
+    combineLinkCategoriesTags(item, link) {
+      if (this.languageEnable) {
+        link = `${link}?language=${item.value}&languageTitle=${item.title}`;
+      }
+      return this.combineAtomClass(link);
     },
     getStats(languages) {
       if (!languages) {

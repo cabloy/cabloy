@@ -17,7 +17,7 @@ module.exports = app => {
       const tagId = await this.ctx.bean.tag.add({
         atomClass,
         data: {
-          language: 'en-us',
+          // language: 'en-us', // neednot set language
           tagName: 'tagOne',
         },
       });
@@ -26,7 +26,7 @@ module.exports = app => {
       // parseTags: 'tagOne,tagTwo,tagThree'
       const tagIds = await this.ctx.bean.tag.parseTags({
         atomClass,
-        language: 'en-us',
+        // language: 'en-us',// neednot set language
         tagName: 'tagOne,tagTwo,tagThree',
         force: true,
       });

@@ -6,7 +6,7 @@ module.exports = app => {
     Garden: '🏡',
   };
 
-  class Atom extends app.meta.AtomBase {
+  class Atom extends app.meta.AtomCmsBase {
 
     async create({ atomClass, item, user }) {
       // super

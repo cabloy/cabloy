@@ -119,11 +119,13 @@ module.exports = ctx => {
 
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
 
+      const _language = language === 'default' ? undefined : language;
+
       // atoms
       stats.atoms = await ctx.bean.atom.count({
         atomClass,
         options: {
-          language,
+          language: _language,
           mode: 'default',
         },
       });
@@ -132,7 +134,7 @@ module.exports = ctx => {
       stats.comments = await ctx.bean.atom.count({
         atomClass,
         options: {
-          language,
+          language: _language,
           mode: 'default',
           comment: 1,
         },
@@ -141,14 +143,14 @@ module.exports = ctx => {
       // categories
       if (atomClassBase.category) {
         stats.categories = await ctx.bean.category.count({
-          atomClass, language,
+          atomClass, language: _language,
         });
       }
 
       // tags
       if (atomClassBase.tag) {
         stats.tags = await ctx.bean.tag.count({
-          atomClass, language,
+          atomClass, language: _language,
         });
       }
 
