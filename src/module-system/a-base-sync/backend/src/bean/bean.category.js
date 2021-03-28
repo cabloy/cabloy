@@ -45,7 +45,7 @@ module.exports = ctx => {
         where.atomClassId = atomClass.id;
       }
       //
-      if (language !== undefined) where.language = language;
+      if (language) where.language = language; // not check !== undefined
       if (categoryName !== undefined) where.categoryName = categoryName;
       if (categoryHidden !== undefined) where.categoryHidden = categoryHidden;
       if (categoryFlag !== undefined) where.categoryFlag = categoryFlag;
