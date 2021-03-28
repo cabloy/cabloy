@@ -1,64 +1,67 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back"> </eb-navbar>
-    <f7-list>
-      <eb-list-item :title="$text('Site')">
-        <div slot="after">
-          <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
-          <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
-          <eb-link v-if="!!$device.desktop && !languageEnable" iconMaterial="visibility" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
-        </div>
-      </eb-list-item>
-      <f7-list-group v-if="languageEnable">
-        <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
-      </f7-list-group>
-    </f7-list>
-    <div v-for="item of languages" :key="item.value">
-      <f7-block-title medium v-if="languageEnable">{{item.title}}</f7-block-title>
-      <f7-card>
-        <f7-card-content>
-          <f7-row>
-            <f7-col class="flex-direction-column text-align-center">
-              <div>
-                <eb-link :eb-href="combineLinkArticles(item.value)">{{$text('Articles')}}</eb-link>
-              </div>
-              <div>{{getStat(item.value,'articles')}}</div>
-            </f7-col>
-            <f7-col class="flex-direction-column text-align-center">
-              <div>
-                <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comments')}}</eb-link>
-              </div>
-              <div>{{getStat(item.value,'comments')}}</div>
-            </f7-col>
-            <f7-col class="flex-direction-column text-align-center">
-              <div>
-                <eb-link :eb-href="combineAtomClass(`/a/baseadmin/category/tree?language=${item.value}&languageTitle=${item.title}`)">{{$text('Categories')}}</eb-link>
-              </div>
-              <div>{{getStat(item.value,'categories')}}</div>
-            </f7-col>
-            <f7-col class="flex-direction-column text-align-center">
-              <div>
-                <eb-link :eb-href="combineAtomClass(`/a/baseadmin/tag/list?language=${item.value}&languageTitle=${item.title}`)">{{$text('Tags')}}</eb-link>
-              </div>
-              <div>{{getStat(item.value,'tags')}}</div>
-            </f7-col>
-          </f7-row>
-        </f7-card-content>
-        <f7-card-footer v-if="languageEnable">
-          <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
-          <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-          <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
-        </f7-card-footer>
-      </f7-card>
+    <div v-if="ready">
+      <f7-list>
+        <eb-list-item :title="$text('Site')">
+          <div slot="after">
+            <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
+            <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
+            <eb-link v-if="!!$device.desktop && !languageEnable" iconMaterial="visibility" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+          </div>
+        </eb-list-item>
+        <f7-list-group v-if="languageEnable">
+          <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
+        </f7-list-group>
+      </f7-list>
+      <div v-for="item of languages" :key="item.value">
+        <f7-block-title medium v-if="languageEnable">{{item.title}}</f7-block-title>
+        <f7-card>
+          <f7-card-content>
+            <f7-row>
+              <f7-col class="flex-direction-column text-align-center">
+                <div>
+                  <eb-link :eb-href="combineLinkArticles(item.value)">{{atomClassBase.titleLocale}}</eb-link>
+                </div>
+                <div>{{getStat(item.value,'atoms')}}</div>
+              </f7-col>
+              <f7-col class="flex-direction-column text-align-center">
+                <div>
+                  <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comment')}}</eb-link>
+                </div>
+                <div>{{getStat(item.value,'comments')}}</div>
+              </f7-col>
+              <f7-col v-if="!!atomClassBase.category" class="flex-direction-column text-align-center">
+                <div>
+                  <eb-link :eb-href="combineAtomClass(`/a/baseadmin/category/tree?language=${item.value}&languageTitle=${item.title}`)">{{$text('Category')}}</eb-link>
+                </div>
+                <div>{{getStat(item.value,'categories')}}</div>
+              </f7-col>
+              <f7-col v-if="!!atomClassBase.tag" class="flex-direction-column text-align-center">
+                <div>
+                  <eb-link :eb-href="combineAtomClass(`/a/baseadmin/tag/list?language=${item.value}&languageTitle=${item.title}`)">{{$text('Tag')}}</eb-link>
+                </div>
+                <div>{{getStat(item.value,'tags')}}</div>
+              </f7-col>
+            </f7-row>
+          </f7-card-content>
+          <f7-card-footer v-if="languageEnable">
+            <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
+            <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+            <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+          </f7-card-footer>
+        </f7-card>
+      </div>
     </div>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebModules ],
+  mixins: [ ebModules, ebAtomClasses ],
   data() {
     const title = this.$f7route.query.title;
     const atomClass = utils.parseAtomClass(this.$f7route.query);
@@ -70,8 +73,14 @@ export default {
     };
   },
   computed: {
+    ready() {
+      return this.modulesAll && this.atomClassesAll && this.languages;
+    },
     languages() {
       return this.$local.state.languages[this.atomClass.module];
+    },
+    atomClassBase() {
+      return this.getAtomClass(this.atomClass);
     },
   },
   watch: {

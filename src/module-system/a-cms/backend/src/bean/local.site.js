@@ -117,8 +117,10 @@ module.exports = ctx => {
     async _getStatsLanguange({ atomClass, language }) {
       const stats = {};
 
-      // articles
-      stats.articles = await ctx.bean.atom.count({
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+
+      // atoms
+      stats.atoms = await ctx.bean.atom.count({
         atomClass,
         options: {
           language,
@@ -137,14 +139,18 @@ module.exports = ctx => {
       });
 
       // categories
-      stats.categories = await ctx.bean.category.count({
-        atomClass, language,
-      });
+      if (atomClassBase.category) {
+        stats.categories = await ctx.bean.category.count({
+          atomClass, language,
+        });
+      }
 
       // tags
-      stats.tags = await ctx.bean.tag.count({
-        atomClass, language,
-      });
+      if (atomClassBase.tag) {
+        stats.tags = await ctx.bean.tag.count({
+          atomClass, language,
+        });
+      }
 
       // ok
       return stats;

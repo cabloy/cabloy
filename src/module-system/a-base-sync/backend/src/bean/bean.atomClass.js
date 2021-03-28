@@ -18,7 +18,7 @@ module.exports = ctx => {
 
     async top(atomClass) {
       while (true) {
-        if (atomClass.atomClassIdParent === 0) break;
+        if (!atomClass.atomClassIdParent) break;
         atomClass = await this.get({ id: atomClass.atomClassIdParent });
       }
       return atomClass;
