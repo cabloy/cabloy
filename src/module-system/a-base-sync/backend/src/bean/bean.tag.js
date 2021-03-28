@@ -12,10 +12,13 @@ module.exports = ctx => {
 
     async count({ atomClass, language }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await this.modelTag.count({
+      const where = {
         atomClassId: atomClass.id,
-        language,
-      });
+      };
+      if (language) {
+        where.language = language;
+      }
+      return await this.modelTag.count(where);
     }
 
     async get({ tagId }) {
@@ -23,10 +26,14 @@ module.exports = ctx => {
     }
 
     async item({ atomClass, language, tagName }) {
+      const where = {
+        tagName,
+      };
+      if (language) {
+        where.language = language;
+      }
       const options = {
-        where: {
-          language, tagName,
-        },
+        where,
       };
       const list = await this.list({ atomClass, options });
       return list[0];
@@ -36,6 +43,9 @@ module.exports = ctx => {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       if (!options.where) options.where = {};
       options.where.atomClassId = atomClass.id;
+      if (!options.where.language) {
+        delete options.where.language;
+      }
       return await this.modelTag.select(options);
     }
 
