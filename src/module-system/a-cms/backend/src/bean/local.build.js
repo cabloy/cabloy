@@ -308,10 +308,11 @@ module.exports = app => {
     async deleteArticle({ key, article, inner }) {
       // maybe not rendered
       if (!article.url) return;
-      // same logic with renderArticle
-      if (!article.atomLanguage) {
-        article.atomLanguage = this.ctx.locale;
-      }
+      // maybe site.language is false
+      // // same logic with renderArticle
+      // if (!article.atomLanguage) {
+      //   article.atomLanguage = this.ctx.locale;
+      // }
       // clearCache
       ejs.clearCache();
       // site

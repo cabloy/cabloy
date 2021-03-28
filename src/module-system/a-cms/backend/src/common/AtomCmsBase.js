@@ -200,7 +200,7 @@ module.exports = app => {
       const blockOptions = {
         utils: {
           text: (...args) => {
-            return this.ctx.text.locale(item.atomLanguage, ...args);
+            return this.ctx.text.locale(item.atomLanguage || this.ctx.locale, ...args);
           },
         },
         blocks,

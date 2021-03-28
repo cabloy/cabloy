@@ -16,8 +16,8 @@ module.exports = app => {
         const items = await ctx.model.query(`
           select a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomLanguage=? and b.slug=?
-          `, [ ctx.instance.id, atomClass.id, rootData.atomLanguage, data ]);
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+          `, [ ctx.instance.id, atomClass.id, data, rootData.atomLanguage ]);
         if (items[0] && items[0].id !== rootData.atomId) {
           const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
           throw new app.meta.ajv.ValidationError(errors);

@@ -25,13 +25,13 @@ module.exports = ctx => {
       // article
       const article = await ctx.bean.atom.read({ key, user: { id: 0 } });
       if (!article) return null;
-      // todo:
-      // check atomLanguage
-      if (!article.atomLanguage) {
-        article.atomLanguage = ctx.locale;
-        // return null;
-        // ctx.throw(1001);
-      }
+      // maybe site.language is false
+      // // check atomLanguage
+      // if (!article.atomLanguage) {
+      //   article.atomLanguage = ctx.locale;
+      //   // return null;
+      //   // ctx.throw(1001);
+      // }
       return article;
     }
 
