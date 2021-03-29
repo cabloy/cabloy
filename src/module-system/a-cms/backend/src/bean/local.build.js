@@ -284,8 +284,14 @@ module.exports = app => {
 
     async renderArticle({ key, inner }) {
       // article
-      const article = await this.ctx.bean.cms.render.getArticle({ key, inner });
-      if (!article) return;
+      let article = await this.ctx.bean.cms.render.getArticle({ key, inner });
+      if (!article) {
+        if (inner) return;
+        // check for inner
+        article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
+        if (!article) return;
+        inner = true;
+      }
       // clearCache
       ejs.clearCache();
       // site
@@ -1184,7 +1190,11 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const fileName = path.join(pathDist, article.url);
       const exists = await fse.pathExists(fileName);
       if (!exists) {
-        return null;
+        // force render as inner
+        //   need not use queue for inner:true
+        const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
+        await build.renderArticle({ key: { atomId: article.atomId }, inner: true });
+        // return null;
         // this.ctx.throw.module('a-base', 1002);
       }
       // ok
