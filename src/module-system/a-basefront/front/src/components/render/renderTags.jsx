@@ -60,7 +60,7 @@ export default {
       if (parcel.data.atomLanguage) {
         language = parcel.data.atomLanguage;
       } else {
-        const locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
+        const locale = await this.$meta.util.performAction({ ctx: this, action, item: parcel.data });
         if (locale) {
           language = locale.value;
           this.context.setValue(locale.value, 'atomLanguage');
