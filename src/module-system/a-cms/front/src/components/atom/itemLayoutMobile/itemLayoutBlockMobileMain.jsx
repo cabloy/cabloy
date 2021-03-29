@@ -29,7 +29,7 @@ export default {
       });
     },
     async _getArticleUrl() {
-      if (this.layoutManager.container.mode === 'edit') {
+      if (this.blockConfig.iframe === false || this.layoutManager.container.mode === 'edit') {
         this.articleUrl = '';
         return;
       }

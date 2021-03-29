@@ -291,7 +291,7 @@ module.exports = app => {
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: true });
       if (!siteBuilt) return; // not throw error
       // render scene
       site.render = { scene: 'single', inner };
@@ -318,7 +318,7 @@ module.exports = app => {
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: false });
       if (!siteBuilt) return; // not throw error
       // remove file
       const pathDist = await this.getPathDist(site, article.atomLanguage);
@@ -1158,11 +1158,15 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
     }
 
-    async _checkIfSiteBuilt({ site }) {
+    async _checkIfSiteBuilt({ site, force }) {
       // check if build site first
       const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const fileName = path.join(pathIntermediate, 'main/article.ejs');
-      return await fse.pathExists(fileName);
+      const exists = await fse.pathExists(fileName);
+      if (exists || !force) return exists;
+      // force build
+
+      return true;
     }
 
     async getArticleUrl({ key }) {
@@ -1172,7 +1176,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: true });
       if (!siteBuilt) this.ctx.throw.module(moduleInfo.relativeName, 1006);
       // fileName
       const pathDist = await this.getPathDist(site, article.atomLanguage);

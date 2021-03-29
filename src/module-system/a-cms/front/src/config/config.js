@@ -19,6 +19,7 @@ export default {
                     module: 'a-cms',
                     name: 'itemLayoutBlockMobileMain',
                   },
+                  // iframe: false,
                 },
               },
             },
