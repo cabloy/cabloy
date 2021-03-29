@@ -11,16 +11,15 @@ module.exports = app => {
       const options = this.ctx.request.body.options;
       // stage
       options.stage = 'formal';
+      // anonymous user
+      const user = await this.ctx.bean.user.anonymous();
+      // comment
+      options.comment = 1;
       // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: '/a/base/comment/all',
-        body: {
-          atomClass,
-          options,
-        },
-      });
-      this.ctx.success(res);
+      options.page = this.ctx.bean.util.page(options.page);
+      const items = await this.ctx.bean.atom.select({ atomClass, options, user });
+      // ok
+      this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
   }
