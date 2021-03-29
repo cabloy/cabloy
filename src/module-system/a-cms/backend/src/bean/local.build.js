@@ -761,6 +761,7 @@ var env=${JSON.stringify(env, null, 2)};
       const _envs = {};
       let _pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       _pathIntermediate = path.join(_pathIntermediate, '/');
+      const _textLocale = site.language ? site.language.current : self.ctx.app.config.i18n.defaultLocale;
       return {
         ctx: self.ctx,
         site,
@@ -788,7 +789,7 @@ var env=${JSON.stringify(env, null, 2)};
           _envs[name] = value;
         },
         text(...args) {
-          return this.ctx.text.locale(site.language ? site.language.current : self.ctx.locale, ...args);
+          return this.ctx.text.locale(_textLocale, ...args);
         },
         util: {
           time,
