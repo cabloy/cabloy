@@ -97,6 +97,28 @@ module.exports = app => {
       }
     }
 
+    _getThemeName({ site, language }) {
+      const atomClass = site.atomClass || this.atomClass;
+      let themeName = site.themes[language || 'default'];
+      if (!themeName) {
+        // // log info
+        // const error = this.ctx.parseFail.module(moduleInfo.relativeName, 1002, atomClass.module, atomClass.atomClassName, language);
+        // this.ctx.logger.info(error.message);
+        // use default
+        if (site.language) {
+          themeName = site.themes[site.language.default];
+        } else {
+          themeName = site.themes.default;
+        }
+      }
+      // throw error if empty either
+      if (!themeName) {
+        this.ctx.throw.module(moduleInfo.relativeName, 1002, atomClass.module, atomClass.atomClassName, language);
+      }
+      // ok
+      return themeName;
+    }
+
     async getLanguages() {
       const siteBase = await this.combineSiteBase();
       if (!siteBase.language) return [];
@@ -130,13 +152,10 @@ module.exports = app => {
 
     // site<plugin<theme<site(db)<language(db)
     async combineSite({ siteBase, language }) {
-      // themeModuleName
-      const themeModuleName = siteBase.themes[language || 'default'];
-      if (!themeModuleName) {
-        this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language);
-      }
+      // themeName
+      const themeName = this._getThemeName({ site: siteBase, language });
       // theme
-      const theme = this.combineThemes(themeModuleName);
+      const theme = this.combineThemes(themeName);
       // site(db)
       const configSite = await this.getConfigSite();
       // language(db)
@@ -916,8 +935,8 @@ var env=${JSON.stringify(env, null, 2)};
         }
 
         // theme
-        if (!site.themes[language || 'default']) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language || 'default');
-        await this.copyThemes(pathIntermediate, site.themes[language || 'default']);
+        const themeName = this._getThemeName({ site, language });
+        await this.copyThemes(pathIntermediate, themeName);
 
         // custom
         const customPath = await this.getPathCustom(language);
@@ -1068,8 +1087,8 @@ var env=${JSON.stringify(env, null, 2)};
       }
 
       // theme
-      if (!site.themes[language || 'default']) this.ctx.throw.module(moduleInfo.relativeName, 1002, this.atomClass.module, this.atomClass.atomClassName, language || 'default');
-      this.watcherThemes(site, site.themes[language || 'default']);
+      const themeName = this._getThemeName({ site, language });
+      this.watcherThemes(site, themeName);
 
       // custom
       const customPath = await this.getPathCustom(language);
