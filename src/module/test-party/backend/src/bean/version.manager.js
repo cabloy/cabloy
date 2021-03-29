@@ -69,6 +69,8 @@ module.exports = app => {
           { roleName: 'system', action: 'clone', scopeNames: 0 },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
+          // special for cms
+          { roleName: 'anonymous', action: 'read', scopeNames: 'authenticated' },
           // custom
           { roleName: 'system', action: 'partyOver', scopeNames: 0 },
           { roleName: 'system', action: 'partyOverBulk' },
