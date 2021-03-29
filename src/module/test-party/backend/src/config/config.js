@@ -114,7 +114,7 @@ module.exports = appInfo => {
       },
       language: false,
       themes: {
-        default: 'cms-themeblog',
+        default: 'test-party',
       },
       edit: {
         mode: 0, // custom
@@ -137,13 +137,6 @@ module.exports = appInfo => {
         loadMore: {
           loadOnScroll: false,
         },
-      },
-      profile: {
-        userName: 'zhennann',
-        motto: 'Less is more, while more is less.',
-        avatar: 'assets/images/avatar.jpg',
-        url: 'index.html',
-        extra: '',
       },
     };
 

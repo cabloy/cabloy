@@ -132,13 +132,13 @@ export default {
       });
     },
     onPerformPreview(event, context) {
-      const language = context ? context.value : 'default';
+      const language = context && context.value;
       return this.$api.post('site/getUrl', {
         atomClass: this.atomClass,
         language,
         path: 'index.html',
       }).then(data => {
-        window.open(data, `cms_site_${this.atomClass.module}_${context.value}`);
+        window.open(data, `cms_site_${this.atomClass.module}_${this.atomClass.atomClassName}_${language || 'default'}`);
       });
     },
     combineLinkArticles(language) {
