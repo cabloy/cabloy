@@ -1165,7 +1165,8 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const exists = await fse.pathExists(fileName);
       if (exists || !force) return exists;
       // force build
-
+      const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
+      await build.buildLanguage({ language: site.language && site.language.current });
       return true;
     }
 

@@ -14,8 +14,8 @@ module.exports = app => {
       const options = this.ctx.request.body.options;
       // stage
       options.stage = 'formal';
-      // user
-      const user = this.ctx.state.user.op;
+      // anonymous user
+      const user = await this.ctx.bean.user.anonymous();
       // select
       options.page = this.ctx.bean.util.page(options.page, false);
       const items = await this.ctx.bean.atom.select({ atomClass, options, user, pageForce: false });
