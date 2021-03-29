@@ -27,7 +27,7 @@ if (!site._categories) {
     url: '/a/base/category/tree',
     body: {
       atomClass: site.atomClass,
-      language: site.language.current,
+      language: site.language && site.language.current,
       categoryHidden: 0,
     },
   });

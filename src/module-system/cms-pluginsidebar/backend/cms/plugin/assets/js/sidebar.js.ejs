@@ -95,8 +95,10 @@ util.sidebar = {
         module: env.site.atomClass.module,
         atomClassName: env.site.atomClass.atomClassName,
         atomClassIdParent: env.site.atomClass.atomClassIdParent,
-        language: env.language.current,
       };
+      if (env.language) {
+        item.language = env.language.current;
+      }
       const url = `${env.site.serverUrl}/#!/a/cms/article/post?item=${encodeURIComponent(JSON.stringify(item))}`;
       location.assign(url);
     });
@@ -123,7 +125,7 @@ util.sidebar = {
     }
     // options
     const options = {
-      language: env.language.current,
+      language: env.language && env.language.current,
       where: {
       },
       orders: [

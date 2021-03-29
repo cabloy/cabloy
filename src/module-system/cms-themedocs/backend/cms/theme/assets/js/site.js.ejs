@@ -352,7 +352,7 @@ function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = 
   }
   // options
   const options = {
-    language: env.language.current,
+    language: env.language && env.language.current,
     where: {
     },
     orders: [

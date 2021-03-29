@@ -1,7 +1,7 @@
 <%
 // options
 const options = {
-  where: { language: site.language.current },
+  where: { language: site.language && site.language.current },
   orders: [
     [ 'tagAtomCount', 'desc' ],
   ],

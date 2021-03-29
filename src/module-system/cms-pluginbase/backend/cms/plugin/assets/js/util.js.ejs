@@ -198,8 +198,8 @@ const util = {
       _env = env.envs && env.envs[this.getAtomClassFullName(atomClass)];
       if (!_env) return null;
     }
-    language = language || _env.language.current;
-    return `${_env.site.rawRootUrl}${language === _env.language.default ? '' : '/' + language}`;
+    language = language || (_env.language && _env.language.current);
+    return `${_env.site.rawRootUrl}${(!_env.language || language === _env.language.default) ? '' : '/' + language}`;
   },
   url(path, language, atomClass) {
     if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
