@@ -152,6 +152,7 @@ util.article = {
     return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
   },
   articleEdit(options) {
+    if(window.self !== window.top) return;
     const $container = $(options.container);
     if ($container.length === 0) return;
     if (env.article.userIdCreated === util.user.op.id || env.article.userIdUpdated === util.user.op.id) {
