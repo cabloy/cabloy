@@ -12,6 +12,8 @@ const _atomClasses = {};
 const _actions = {};
 const _authProvidersLocales = {};
 
+let _hostText = null;
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Base extends ctx.app.meta.BeanModuleBase {
@@ -22,6 +24,16 @@ module.exports = ctx => {
     }
 
     get host() {
+      // test
+      if (ctx.app.meta.isTest) {
+        if (_hostText) return _hostText;
+        const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
+        const hostname = buildConfig.front.dev.hostname || 'localhost';
+        const port = buildConfig.front.dev.port;
+        _hostText = `${hostname}:${port}`;
+        return _hostText;
+      }
+      // others
       const config = ctx.config.module(moduleInfo.relativeName);
       return config.host || ctx.host;
     }
@@ -33,7 +45,7 @@ module.exports = ctx => {
 
     getAbsoluteUrl(path) {
       const prefix = this.host ? `${this.protocol}://${this.host}` : '';
-      return `${prefix}${path}`;
+      return `${prefix}${path || ''}`;
     }
 
     // get forward url

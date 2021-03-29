@@ -226,7 +226,7 @@ module.exports = app => {
         // cms or cms.moduleName
         const cmsPathName = this.getCMSPathName();
         const publicDir = this.ctx.app.config.static.prefix + 'public/';
-        const prefix = this.ctx.bean.base.host ? `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}` : '';
+        const prefix = this.ctx.bean.base.getAbsoluteUrl('');
         return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
       }
       return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
