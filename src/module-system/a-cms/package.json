@@ -4,9 +4,7 @@
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 9,
-    "cms": {
-      "name": "cms"
-    },
+    "cms": {},
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0"
