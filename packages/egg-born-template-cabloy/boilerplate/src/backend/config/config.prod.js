@@ -21,7 +21,7 @@ module.exports = appInfo => {
     { subdomain: '', password: '', title: '',
       config: {
         'a-base': {
-          cors: { whiteList: '' },
+          cors: { whiteList: 'http://localhost' },
         },
       },
     },
