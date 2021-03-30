@@ -2,49 +2,22 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 43:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(718);
-const trimHtml = require3('@zhennann/trim-html');
-const markdown = require3('@zhennann/markdown');
-const markdonw_it_block = require3('@zhennann/markdown-it-block');
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom extends app.meta.AtomBase {
+
+  class Atom extends app.meta.AtomCmsBase {
 
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // article
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = site.edit.mode;
-      // add article
-      const params = {
-        atomId: key.atomId,
-        editMode,
-      };
-      // uuid
-      params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
-      // insert
-      const res = await this.ctx.model.article.insert(params);
-      const itemId = res.insertId;
-      // add content
-      await this.ctx.model.content.insert({
-        atomId: key.atomId,
-        itemId,
-        content: '',
-      });
-      return { atomId: key.atomId, itemId };
+      return { atomId: key.atomId };
     }
 
     async read({ atomClass, options, key, user }) {
       // super
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
-      // read: showSorting=true
-      this._getMeta(item, true);
       // ok
       return item;
     }
@@ -52,217 +25,48 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
-      // select
-      const showSorting = options && options.category;
-      for (const item of items) {
-        this._getMeta(item, showSorting);
-      }
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      const atomStage = item.atomStage;
-      // get atom for safety
-      const atomOld = await this.ctx.bean.atom.read({ key, user });
       // super
       await super.write({ atomClass, target, key, item, options, user });
-      // if undefined then old
-      const fields = [ 'atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
-      for (const field of fields) {
-        if (item[field] === undefined) item[field] = atomOld[field];
-      }
-      // clone
-      if (target === 'clone') {
-        item.slug = null; // clear slug
-      }
-      // url
-      let url;
-      const draftExt = atomStage === 0 ? '.draft' : '';
-      if (item.slug) {
-        url = `articles/${item.slug}${draftExt}.html`;
-      } else {
-        url = `articles/${atomOld.uuid}${draftExt}.html`;
-      }
-      // image first
-      let imageFirst = '';
-      if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
-        imageFirst = (matches && matches[1]) || '';
-      }
-      // audio first
-      let audioFirst = '';
-      let audioCoverFirst = '';
-      if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:blockAudio([\s\S]*?)\$\$\$/);
-        let options = matches && matches[1];
-        if (options) {
-          options = global.JSON5.parse(options);
-          if (options && options.audio) {
-            if (Array.isArray(options.audio)) {
-              audioFirst = options.audio[0].url;
-              audioCoverFirst = options.audio[0].cover;
-            } else {
-              audioFirst = options.audio.url;
-              audioCoverFirst = options.audio.cover;
-            }
-          }
-        }
-      }
-      // markdown
-      const md = markdown.create();
-      // markdown-it-block
-      const blocks = this.ctx.service.site.getBlocks();
-      // block options
-      const blockOptions = {
-        utils: {
-          text: (...args) => {
-            return this.ctx.text.locale(item.atomLanguage, ...args);
-          },
-        },
-        blocks,
-      };
-      md.use(markdonw_it_block, blockOptions);
-      // html
-      let html;
-      if (item.editMode === 1) {
-        html = item.content ? md.render(item.content) : '';
-      } else {
-        html = item.content || '';
-      }
-      // summary
-      const summary = trimHtml(html, this.ctx.config.article.trim);
-      // update article
-      await this.ctx.model.article.update({
-        id: key.itemId,
-        sticky: item.sticky,
-        keywords: item.keywords,
-        description: item.description,
-        summary: summary.html,
-        url,
-        editMode: item.editMode,
-        slug: item.slug,
-        sorting: item.sorting,
-        flag: item.flag,
-        extra: item.extra || '{}',
-        imageFirst,
-        audioFirst,
-        audioCoverFirst,
-      });
-      // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
-        [ item.content, html, this.ctx.instance.id, key.atomId ]);
-
-      // render
-      const ignoreRender = options && options.ignoreRender;
-      if (!ignoreRender) {
-        if (atomStage === 0) {
-          await this._renderArticle({ atomClass, key, inner: true });
-        }
-        if (atomStage === 1) {
-          await this._renderArticle({ atomClass, key, inner: false });
-        }
-      }
     }
 
     async delete({ atomClass, key, user }) {
-      // get atom for safety
-      const atomOld = await this.ctx.bean.atom.read({ key, user });
-
-      // delete article
-      await this.ctx.model.article.delete({
-        id: key.itemId,
-      });
-      // delete content
-      await this.ctx.model.content.delete({
-        itemId: key.itemId,
-      });
-
-      // delete article
-      if (atomOld.atomStage === 0) {
-        await this._deleteArticle({ atomClass, key, article: atomOld, inner: true });
-      }
-      if (atomOld.atomStage === 1) {
-        await this._deleteArticle({ atomClass, key, article: atomOld, inner: false });
-      }
-
       // super
       await super.delete({ atomClass, key, user });
-    }
-
-    async submit({ atomClass, key, options, user }) {
-      // super
-      return await super.submit({ atomClass, key, options, user });
-    }
-
-    _getMeta(item, showSorting) {
-      // flags
-      const flags = [];
-      if (item.sticky) flags.push(this.ctx.text('Sticky'));
-      if (item.sorting && showSorting) flags.push(item.sorting);
-      // meta
-      const meta = {
-        summary: item.summary,
-        flags,
-      };
-      // ok
-      item._meta = meta;
-    }
-
-    async _deleteArticle({ atomClass, key, article, inner }) {
-      this.ctx.tail(async () => {
-        // queue
-        await this.ctx.app.meta.queue.pushAsync({
-          locale: this.ctx.locale,
-          subdomain: this.ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-          data: {
-            queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
-          },
-        });
-      });
-    }
-
-    async _renderArticle({ atomClass, key, inner }) {
-      this.ctx.tail(async () => {
-        // queue
-        await this.ctx.app.meta.queue.pushAsync({
-          locale: this.ctx.locale,
-          subdomain: this.ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-          data: {
-            queueAction: 'renderArticle',
-            atomClass, key, inner,
-          },
-        });
-      });
-    }
-
-    async _getArticle({ key, inner }) {
-      if (!inner) {
-        // check right
-        const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
-        const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-        if (!right) return null;
-      }
-      // article
-      const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
-      if (!article) return null;
-      // check atomLanguage
-      if (!article.atomLanguage) {
-        article.atomLanguage = this.ctx.locale;
-        // return null;
-        // this.ctx.throw(1001);
-      }
-      return article;
     }
 
   }
 
   return Atom;
+};
+
+
+/***/ }),
+
+/***/ 618:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cms {
+
+    get render() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.render');
+    }
+
+    get site() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.site');
+    }
+
+    build({ atomClass }) {
+      return ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+    }
+
+  }
+
+  return Cms;
 };
 
 
@@ -310,12 +114,24 @@ module.exports = app => {
       this.default = this.atomClass.module === 'a-cms';
     }
 
+    get moduleConfig() {
+      return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get beanStatus() {
+      return this.ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
     async getConfigSiteBase() {
       // config
       //    try other then default
-      let configSite = this.ctx.config.module(this.atomClass.module).site;
+      const configModule = this.ctx.config.module(this.atomClass.module);
+      let configSite = this.ctx.bean.util.getProperty(configModule, `cms.sites.${this.atomClass.atomClassName}`);
       if (!configSite) {
-        configSite = this.ctx.config.site;
+        configSite = this.ctx.bean.util.getProperty(configModule, 'cms.site');
+      }
+      if (!configSite) {
+        configSite = this.moduleConfig.cms.site;
       }
 
       // site
@@ -325,7 +141,8 @@ module.exports = app => {
       site.plugins = {};
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (plugin) {
           site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
         }
       }
@@ -333,24 +150,26 @@ module.exports = app => {
     }
 
     async getConfigSite() {
-      const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-      return await this.ctx.bean.status.get(name);
+      const name = `config-site:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      return await this.beanStatus.get(name);
     }
 
     async setConfigSite({ data }) {
-      const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-      await this.ctx.bean.status.set(name, data);
+      const name = `config-site:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      await this.beanStatus.set(name, data);
     }
 
     async getConfigLanguage({ language }) {
-      const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
-      return await this.ctx.bean.status.get(name);
+      language = language || 'default';
+      const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
+      return await this.beanStatus.get(name);
     }
 
     async setConfigLanguage({ language, data }) {
-      const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
+      language = language || 'default';
+      const name = `config-${language}:${this.atomClass.module}:${this.atomClass.atomClassName}`;
       this._adjustConfigLanguange(data);
-      await this.ctx.bean.status.set(name, data);
+      await this.beanStatus.set(name, data);
     }
 
     async getConfigLanguagePreview({ language }) {
@@ -367,8 +186,31 @@ module.exports = app => {
       }
     }
 
+    _getThemeName({ site, language }) {
+      const atomClass = site.atomClass || this.atomClass;
+      let themeName = site.themes[language || 'default'];
+      if (!themeName) {
+        // // log info
+        // const error = this.ctx.parseFail.module(moduleInfo.relativeName, 1002, atomClass.module, atomClass.atomClassName, language);
+        // this.ctx.logger.info(error.message);
+        // use default
+        if (site.language) {
+          themeName = site.themes[site.language.default];
+        } else {
+          themeName = site.themes.default;
+        }
+      }
+      // throw error if empty either
+      if (!themeName) {
+        this.ctx.throw.module(moduleInfo.relativeName, 1002, atomClass.module, atomClass.atomClassName, language);
+      }
+      // ok
+      return themeName;
+    }
+
     async getLanguages() {
       const siteBase = await this.combineSiteBase();
+      if (!siteBase.language) return [];
       const languages = [];
       for (const item of siteBase.language.items.split(',')) {
         languages.push({
@@ -399,13 +241,10 @@ module.exports = app => {
 
     // site<plugin<theme<site(db)<language(db)
     async combineSite({ siteBase, language }) {
-      // themeModuleName
-      const themeModuleName = siteBase.themes[language];
-      if (!themeModuleName) {
-        this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
-      }
+      // themeName
+      const themeName = this._getThemeName({ site: siteBase, language });
       // theme
-      const theme = this.combineThemes(themeModuleName);
+      const theme = this.combineThemes(themeName);
       // site(db)
       const configSite = await this.getConfigSite();
       // language(db)
@@ -413,7 +252,9 @@ module.exports = app => {
       // combine
       return extend(true, {},
         siteBase, theme, configSite, configLanguage,
-        { language: { current: language } }
+        {
+          language: language ? { current: language } : false,
+        }
       );
     }
 
@@ -425,8 +266,8 @@ module.exports = app => {
     _combineThemes(themeModuleName) {
       // module
       const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003, themeModuleName);
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
       return extend(true, {},
         this._combineThemes(moduleExtend),
@@ -448,12 +289,14 @@ module.exports = app => {
       site.atomClass = this.atomClass;
       // languages
       site.languages = [];
-      for (const item of site.language.items.split(',')) {
-        site.languages.push({
-          name: item,
-          title: this.ctx.text.locale(item, item),
-          url: this.getUrl(site, item, 'index.html'),
-        });
+      if (site.language) {
+        for (const item of site.language.items.split(',')) {
+          site.languages.push({
+            name: item,
+            title: this.ctx.text.locale(item, item),
+            url: this.getUrl(site, item, 'index.html'),
+          });
+        }
       }
       // front
       site.front = {};
@@ -483,22 +326,22 @@ module.exports = app => {
     // ////////////////////////////// url or path
 
     getCMSPathName() {
-      return this.default ? 'cms' : `cms.${this.atomClass.module}`;
+      return this.default ? 'cms' : `cms.${this.atomClass.module}.${this.atomClass.atomClassName}`;
     }
 
     getUrlRawRoot(site) {
       if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
         // cms or cms.moduleName
         const cmsPathName = this.getCMSPathName();
-        const publicDir = this.ctx.app.config.static.prefix + 'public/';
-        const prefix = this.ctx.bean.base.host ? `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}` : '';
-        return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
+        const forwardUrl = this.ctx.bean.base.getForwardUrl(`${cmsPathName}/dist`);
+        const absoluteUrl = this.ctx.bean.base.getAbsoluteUrl(forwardUrl);
+        return absoluteUrl;
       }
       return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
     }
     getUrlRoot(site, language) {
       const rawRoot = this.getUrlRawRoot(site);
-      return `${rawRoot}${language === site.language.default ? '' : '/' + language}`;
+      return `${rawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}`;
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
@@ -509,16 +352,18 @@ module.exports = app => {
     }
 
     async getPathCustom(language) {
+      language = language || 'default';
       const cms = await this.getPathCms();
       return path.join(cms, language, 'custom');
     }
     async getPathIntermediate(language) {
+      language = language || 'default';
       const cms = await this.getPathCms();
       return path.join(cms, language, 'intermediate');
     }
     async getPathDist(site, language) {
       const rawDist = await this.getPathRawDist();
-      return path.join(rawDist, language === site.language.default ? '' : '/' + language);
+      return path.join(rawDist, (!site.language || language === site.language.default) ? '' : '/' + language);
     }
     async getPathCms() {
       // cms
@@ -547,14 +392,20 @@ module.exports = app => {
 
     async renderArticle({ key, inner }) {
       // article
-      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner });
-      if (!article) return;
+      let article = await this.ctx.bean.cms.render.getArticle({ key, inner });
+      if (!article) {
+        if (inner) return;
+        // check for inner
+        article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
+        if (!article) return;
+        inner = true;
+      }
       // clearCache
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: true });
       if (!siteBuilt) return; // not throw error
       // render scene
       site.render = { scene: 'single', inner };
@@ -571,16 +422,17 @@ module.exports = app => {
     async deleteArticle({ key, article, inner }) {
       // maybe not rendered
       if (!article.url) return;
-      // same logic with renderArticle
-      if (!article.atomLanguage) {
-        article.atomLanguage = this.ctx.locale;
-      }
+      // maybe site.language is false
+      // // same logic with renderArticle
+      // if (!article.atomLanguage) {
+      //   article.atomLanguage = this.ctx.locale;
+      // }
       // clearCache
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: false });
       if (!siteBuilt) return; // not throw error
       // remove file
       const pathDist = await this.getPathDist(site, article.atomLanguage);
@@ -604,7 +456,7 @@ module.exports = app => {
       const articles = await this.ctx.bean.atom.select({
         atomClass: this.atomClass,
         options: {
-          language: site.language.current,
+          language: site.language ? site.language.current : null,
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
           mode: 'search',
@@ -653,7 +505,7 @@ module.exports = app => {
 
     async _renderIndex({ site }) {
       // index
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const indexFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
       });
@@ -681,7 +533,7 @@ module.exports = app => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
       for (const article of articles) {
-        const loc = this.getUrl(site, site.language.current, article.url);
+        const loc = this.getUrl(site, site.language && site.language.current, article.url);
         const lastmod = moment(article.updatedAt).format();
         xml +=
 `  <url>
@@ -692,16 +544,16 @@ module.exports = app => {
       }
       xml += '</urlset>';
       // save
-      const pathDist = await this.getPathDist(site, site.language.current);
+      const pathDist = await this.getPathDist(site, site.language && site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       await fse.writeFile(fileName, xml);
     }
 
     async _writeSitemap({ site, article }) {
-      const loc = this.getUrl(site, site.language.current, article.url);
+      const loc = this.getUrl(site, site.language && site.language.current, article.url);
       const lastmod = moment(article.updatedAt).format();
       // load
-      const pathDist = await this.getPathDist(site, site.language.current);
+      const pathDist = await this.getPathDist(site, site.language && site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       let xml;
       const exists = await fse.pathExists(fileName);
@@ -735,7 +587,7 @@ module.exports = app => {
 
     async _renderStatic({ site }) {
       // static
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const staticFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
       });
@@ -760,7 +612,7 @@ module.exports = app => {
       // site
       const site = data.site;
       // language
-      const language = site.language.current;
+      const language = site.language && site.language.current;
       // src
       const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
@@ -831,9 +683,8 @@ module.exports = app => {
       // modulesArray
       let pluginIncludes = '';
       for (const module of this.app.meta.modulesArray) {
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin
-        && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })
-        ) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (plugin && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })) {
           // path intermediate
           const pathIntermediate = await this.getPathIntermediate(language);
           let incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
@@ -919,12 +770,12 @@ module.exports = app => {
         const sha = shajs('sha256').update(result).digest('hex');
         // dest
         const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
-        const pathDist = await this.getPathDist(site, site.language.current);
+        const pathDist = await this.getPathDist(site, site.language && site.language.current);
         const fileWrite = path.join(pathDist, fileDest);
         // write
         await fse.outputFile(fileWrite, result);
         // url
-        urlDest = this.getUrl(site, site.language.current, fileDest);
+        urlDest = this.getUrl(site, site.language && site.language.current, fileDest);
         // cache
         site._cache[type][cacheSha] = urlDest;
       }
@@ -960,7 +811,6 @@ module.exports = app => {
         env.article.summary = undefined;
         env.article.content = undefined;
         env.article.html = undefined;
-        env.article.contentSearch = undefined;
       }
       // replace
       const text = `
@@ -998,8 +848,9 @@ var env=${JSON.stringify(env, null, 2)};
       const _csses = [];
       const _jses = [];
       const _envs = {};
-      let _pathIntermediate = await this.getPathIntermediate(site.language.current);
+      let _pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       _pathIntermediate = path.join(_pathIntermediate, '/');
+      const _textLocale = site.language ? site.language.current : self.ctx.app.config.i18n.defaultLocale;
       return {
         ctx: self.ctx,
         site,
@@ -1014,7 +865,7 @@ var env=${JSON.stringify(env, null, 2)};
           if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return utils.escapeURL(fileName);
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
-          const _url = self.getUrl(site, language || site.language.current, _path);
+          const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
           return utils.escapeURL(_url);
         },
         css(fileName) {
@@ -1027,7 +878,7 @@ var env=${JSON.stringify(env, null, 2)};
           _envs[name] = value;
         },
         text(...args) {
-          return this.ctx.text.locale(site.language.current, ...args);
+          return this.ctx.text.locale(_textLocale, ...args);
         },
         util: {
           time,
@@ -1057,7 +908,7 @@ var env=${JSON.stringify(env, null, 2)};
         const timeStart = new Date();
         // site
         const site = await this.combineSiteBase();
-        const languages = site.language.items.split(',');
+        const languages = site.language ? site.language.items.split(',') : [ null ];
 
         // progress
         const progress0_Total = languages.length;
@@ -1071,7 +922,7 @@ var env=${JSON.stringify(env, null, 2)};
               progressNo,
               total: progress0_Total,
               progress: progress0_progress++,
-              text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
+              text: site.language ? `${this.ctx.text('Build')} ${this.ctx.text(language)}` : this.ctx.text('Build'),
             });
           }
 
@@ -1148,9 +999,9 @@ var env=${JSON.stringify(env, null, 2)};
         const distFiles = await bb.fromCallback(cb => {
           glob(`${pathDist}/\*`, cb);
         });
-        const languages = site.language.items.split(',');
+        const languages = site.language ? site.language.items.split(',') : null;
         for (const item of distFiles) {
-          if (languages.indexOf(path.basename(item)) === -1) {
+          if (!site.language || languages.indexOf(path.basename(item)) === -1) {
             await fse.remove(item);
           }
         }
@@ -1161,7 +1012,8 @@ var env=${JSON.stringify(env, null, 2)};
         // plugins
         for (const relativeName in this.app.meta.modules) {
           const module = this.app.meta.modules[relativeName];
-          if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+          const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+          if (plugin) {
             const pluginPath = path.join(module.root, 'backend/cms/plugin');
             const pluginFiles = await bb.fromCallback(cb => {
               glob(`${pluginPath}/\*`, cb);
@@ -1173,8 +1025,8 @@ var env=${JSON.stringify(env, null, 2)};
         }
 
         // theme
-        if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
-        await this.copyThemes(pathIntermediate, site.themes[language]);
+        const themeName = this._getThemeName({ site, language });
+        await this.copyThemes(pathIntermediate, themeName);
 
         // custom
         const customPath = await this.getPathCustom(language);
@@ -1280,10 +1132,10 @@ var env=${JSON.stringify(env, null, 2)};
       const watcherInfos = [];
       // site
       const site = await this.combineSiteBase();
-      const languages = site.language.items.split(',');
+      const languages = site.language ? site.language.items.split(',') : [ null ];
       // loop languages
       for (const language of languages) {
-      // info
+        // info
         const watcherInfo = await this._collectWatcher({ language });
         watcherInfos.push(watcherInfo);
       }
@@ -1317,15 +1169,16 @@ var env=${JSON.stringify(env, null, 2)};
       // plugins
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
-        if (!module.info.public && module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
+        if (!module.info.public && plugin) {
           site._watchers.push(path.join(module.root, 'backend/cms'));
-        // site._watchers.push(path.join(module.root, 'backend/src'));
+          // site._watchers.push(path.join(module.root, 'backend/src'));
         }
       }
 
       // theme
-      if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
-      this.watcherThemes(site, site.themes[language]);
+      const themeName = this._getThemeName({ site, language });
+      this.watcherThemes(site, themeName);
 
       // custom
       const customPath = await this.getPathCustom(language);
@@ -1344,10 +1197,11 @@ var env=${JSON.stringify(env, null, 2)};
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
       let items = '';
-      for (const language of site.language.items.split(',')) {
+      const languages = site.language ? site.language.items.split(',') : [ null ];
+      for (const language of languages) {
         items +=
 `  <sitemap>
-    <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
+    <loc>${urlRawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}/sitemap.xml</loc>
   </sitemap>
 `;
       }
@@ -1382,9 +1236,9 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     async _copyThemes(pathIntermediate, themeModuleName) {
       // module
       const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003, themeModuleName);
+      if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
       // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (moduleExtend) {
         await this._copyThemes(pathIntermediate, moduleExtend);
       }
@@ -1406,42 +1260,54 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     _watcherThemes(site, themeModuleName) {
       // module
       const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003, themeModuleName);
+      if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
       // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (moduleExtend) {
         this._watcherThemes(site, moduleExtend);
       }
       // current
       if (!module.info.public) {
         site._watchers.push(path.join(module.root, 'backend/cms'));
-      // site._watchers.push(path.join(module.root, 'backend/src'));
+        // site._watchers.push(path.join(module.root, 'backend/src'));
       }
     }
 
-    async _checkIfSiteBuilt({ site }) {
+    async _checkIfSiteBuilt({ site, force }) {
       // check if build site first
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       const fileName = path.join(pathIntermediate, 'main/article.ejs');
-      return await fse.pathExists(fileName);
+      const exists = await fse.pathExists(fileName);
+      if (exists || !force) return exists;
+      // force build
+      const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
+      await build.buildLanguage({ language: site.language && site.language.current });
+      return true;
     }
 
     async getArticleUrl({ key }) {
       // article
-      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
+      const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site });
-      if (!siteBuilt) this.ctx.throw(1006);
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: true });
+      if (!siteBuilt) this.ctx.throw.module(moduleInfo.relativeName, 1006);
       // fileName
       const pathDist = await this.getPathDist(site, article.atomLanguage);
       const fileName = path.join(pathDist, article.url);
       const exists = await fse.pathExists(fileName);
-      if (!exists) this.ctx.throw.module('a-base', 1002);
+      if (!exists) {
+        // force render as inner
+        //   need not use queue for inner:true
+        const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
+        await build.renderArticle({ key: { atomId: article.atomId }, inner: true });
+        // return null;
+        // this.ctx.throw.module('a-base', 1002);
+      }
       // ok
-      const url = this.getUrl(site, site.language.current, article.url);
+      const url = this.getUrl(site, site.language && site.language.current, article.url);
       return {
         relativeUrl: article.url,
         url,
@@ -1449,41 +1315,41 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     getAtomClassFullName(atomClass) {
-      return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
+      return `${atomClass.module}:${atomClass.atomClassName}`;
     }
 
     async getFrontEnvs({ language }) {
       const envs = {};
       for (const module of this.ctx.app.meta.modulesArray) {
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
-          // may be more atoms
-          for (const key in module.main.meta.base.atoms) {
-            if (module.main.meta.base.atoms[key].info.cms !== true) continue;
-            // atomClass
-            const atomClass = {
-              module: module.info.relativeName,
-              atomClassName: key,
-              atomClassIdParent: 0,
-            };
-            const atomClassFullName = this.getAtomClassFullName(atomClass);
-            if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
-              // getSite
-              let site;
-              try {
-                site = await this.ctx.service.site.getSite({
-                  atomClass,
-                  language,
-                  options: {
-                    envs: false,
-                  },
-                });
-              } catch (e) {
+        // may be more atoms
+        const atoms = this.ctx.bean.util.getProperty(module, 'main.meta.base.atoms');
+        if (!atoms) continue;
+        for (const key in atoms) {
+          if (atoms[key].info.cms !== true) continue;
+          // atomClass
+          const atomClass = {
+            module: module.info.relativeName,
+            atomClassName: key,
+            atomClassIdParent: 0,
+          };
+          const atomClassFullName = this.getAtomClassFullName(atomClass);
+          if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
+            // getSite
+            let site;
+            try {
+              site = await this.ctx.bean.cms.site.getSite({
+                atomClass,
+                language,
+                options: {
+                  envs: false,
+                },
+              });
+            } catch (e) {
               // nothing
-              }
-              // set
-              if (site) {
-                envs[atomClassFullName] = site.front.env;
-              }
+            }
+            // set
+            if (site) {
+              envs[atomClassFullName] = site.front.env;
             }
           }
         }
@@ -1500,11 +1366,328 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 
 /***/ }),
 
+/***/ 806:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Render {
+    async getArticleUrl({ atomClass, key }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getArticleUrl({ key });
+    }
+
+    // site<plugin<theme<site(db)<language(db)
+    async combineSiteBase({ atomClass, mergeConfigSite }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.combineSiteBase({ mergeConfigSite });
+    }
+
+    async getArticle({ key, inner }) {
+      if (!inner) {
+        // check right
+        const roleAnonymous = await ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        if (!right) return null;
+      }
+      // article
+      const article = await ctx.bean.atom.read({ key, user: { id: 0 } });
+      if (!article) return null;
+      // maybe site.language is false
+      // // check atomLanguage
+      // if (!article.atomLanguage) {
+      //   article.atomLanguage = ctx.locale;
+      //   // return null;
+      //   // ctx.throw(1001);
+      // }
+      return article;
+    }
+
+    async _deleteArticlePush({ atomClass, key, article, inner }) {
+      ctx.tail(async () => {
+        // queue
+        await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
+        });
+      });
+    }
+
+    async _renderArticlePush({ atomClass, key, inner }) {
+      ctx.tail(async () => {
+        // queue
+        await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
+        });
+      });
+    }
+
+  }
+
+  return Render;
+};
+
+
+/***/ }),
+
+/***/ 698:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const fse = require3('fs-extra');
+
+let __blocks = null;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Site {
+
+    async getSite({ atomClass, language, options }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getSite({ language, options });
+    }
+
+    async getConfigSiteBase({ atomClass }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getConfigSiteBase();
+    }
+
+    async getConfigSite({ atomClass }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getConfigSite();
+    }
+
+    // save site config
+    async setConfigSite({ atomClass, data }) {
+      // build
+      const build = ctx.bean.cms.build({ atomClass });
+      // save
+      await build.setConfigSite({ data });
+      // only in development
+      if (ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguagesQueue({ atomClass });
+        // register watchers
+        await build.registerWatchers();
+      }
+    }
+
+    async getConfigLanguagePreview({ atomClass, language }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getConfigLanguagePreview({ language });
+    }
+
+    async getConfigLanguage({ atomClass, language }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getConfigLanguage({ language });
+    }
+
+    // save language config
+    async setConfigLanguage({ atomClass, language, data }) {
+      // build
+      const build = ctx.bean.cms.build({ atomClass });
+      // save
+      await build.setConfigLanguage({ language, data });
+      // only in development
+      if (ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguageQueue({ atomClass, language });
+        // register watcher
+        await build.registerWatcher({ language });
+      }
+    }
+
+    async getLanguages({ atomClass }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      return await build.getLanguages();
+    }
+
+    async getUrl({ atomClass, language, path }) {
+      const build = ctx.bean.cms.build({ atomClass });
+      const site = await build.getSite({ language });
+      return build.getUrl(site, language, path);
+    }
+
+    buildLanguagesQueue({ atomClass, progressId }) {
+      // queue
+      ctx.app.meta.queue.push({
+        locale: ctx.locale,
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguages',
+          atomClass,
+          progressId,
+        },
+      });
+    }
+
+    buildLanguageQueue({ atomClass, language, progressId }) {
+      // queue
+      ctx.app.meta.queue.push({
+        locale: ctx.locale,
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+          progressId,
+        },
+      });
+    }
+
+    async getStats({ atomClass, languages }) {
+      const res = {};
+      for (const language of languages) {
+        res[language] = await this._getStatsLanguange({ atomClass, language });
+      }
+      return res;
+    }
+
+    async _getStatsLanguange({ atomClass, language }) {
+      const stats = {};
+
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+
+      const _language = language === 'default' ? undefined : language;
+
+      // atoms
+      stats.atoms = await ctx.bean.atom.count({
+        atomClass,
+        options: {
+          language: _language,
+          mode: 'default',
+        },
+      });
+
+      // comments
+      stats.comments = await ctx.bean.atom.count({
+        atomClass,
+        options: {
+          language: _language,
+          mode: 'default',
+          comment: 1,
+        },
+      });
+
+      // categories
+      if (atomClassBase.category) {
+        stats.categories = await ctx.bean.category.count({
+          atomClass, language: _language,
+        });
+      }
+
+      // tags
+      if (atomClassBase.tag) {
+        stats.tags = await ctx.bean.tag.count({
+          atomClass, language: _language,
+        });
+      }
+
+      // ok
+      return stats;
+    }
+
+    async blockSave({ blockName, item }) {
+      // block
+      const blocks = this.getBlocks();
+      const block = blocks[blockName];
+      // validate
+      await ctx.bean.validation.validate({
+        module: block.validator.module,
+        validator: block.validator.validator,
+        schema: null,
+        data: item,
+      });
+      // output
+      if (!block.output) return item;
+      return await block.output({ ctx, block, data: item });
+    }
+
+    getBlocks() {
+      if (!__blocks) {
+        __blocks = this._prepareBlocks();
+      }
+      return __blocks;
+    }
+
+    _prepareBlocks() {
+      const blocks = {};
+      // (X) modulesArray for block override
+      for (const module of ctx.app.meta.modulesArray) {
+        const _blocksModule = ctx.bean.util.getProperty(module, 'main.meta.cms.plugin.blocks');
+        if (_blocksModule) {
+          const blocksModule = this._prepareBlocksModule({ module, blocks: _blocksModule });
+          Object.assign(blocks, blocksModule);
+        }
+      }
+      return blocks;
+    }
+
+    _prepareBlocksModule({ module, blocks }) {
+      const blocksModule = {};
+      const moduleName = module.info.relativeName;
+      for (const key in blocks) {
+        const fullName = `${moduleName}:${key}`;
+        blocksModule[fullName] = blocks[key];
+      }
+      return blocksModule;
+    }
+
+    async checkFile({ file, mtime }) {
+      // exists
+      const exists = await fse.pathExists(file);
+      if (!exists) {
+        // deleted
+        return null;
+      }
+      // stat
+      const stat = await fse.stat(file);
+      const mtimeCurrent = stat.mtime.valueOf();
+      if (mtime !== mtimeCurrent) {
+        // different
+        return { mtime: mtimeCurrent };
+      }
+      // default
+      return null;
+    }
+
+  }
+
+  return Site;
+};
+
+
+/***/ }),
+
 /***/ 83:
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Queue extends app.meta.BeanBase {
 
     async execute(context) {
@@ -1514,22 +1697,22 @@ module.exports = app => {
     }
 
     async buildLanguage({ atomClass, language, progressId }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       return await build.buildLanguage({ language, progressId });
     }
 
     async buildLanguages({ atomClass, progressId }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       return await build.buildLanguages({ progressId });
     }
 
     async renderArticle({ atomClass, key, inner }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       return await build.renderArticle({ key, inner });
     }
 
     async deleteArticle({ atomClass, key, article, inner }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       return await build.deleteArticle({ key, article, inner });
     }
 
@@ -1545,7 +1728,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Startup extends app.meta.BeanBase {
 
     async execute() {
@@ -1553,20 +1736,19 @@ module.exports = app => {
       if (!app.meta.isLocal) return;
       // loop modules
       for (const module of app.meta.modulesArray) {
-        // cms.site=true
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
-          // loop atomClasses
-          for (const key in module.main.meta.base.atoms) {
-            if (module.main.meta.base.atoms[key].info.cms === false) continue;
-            // atomClass
-            const atomClass = {
-              module: module.info.relativeName,
-              atomClassName: key,
-              atomClassIdParent: 0,
-            };
-            const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-            await build.registerWatchers();
-          }
+        // loop atomClasses
+        const atoms = this.ctx.bean.util.getProperty(module, 'main.meta.base.atoms');
+        if (!atoms) continue;
+        for (const key in atoms) {
+          if (atoms[key].info.cms !== true) continue;
+          // atomClass
+          const atomClass = {
+            module: module.info.relativeName,
+            atomClassName: key,
+            atomClassIdParent: 0,
+          };
+          const build = this.ctx.bean.cms.build({ atomClass });
+          await build.registerWatchers();
         }
       }
     }
@@ -1925,6 +2107,21 @@ module.exports = app => {
         await this._update7Migration_schemas(options);
       }
 
+      if (options.version === 9) {
+        // drop column: aCmsContent.itemId
+        const sql = `
+          ALTER TABLE aCmsContent
+            DROP COLUMN itemId
+        `;
+        await this.ctx.db.query(sql);
+
+        // drop view: aCmsArticleViewFull
+        await this.ctx.model.query('drop view aCmsArticleViewFull');
+
+        // drop view: aCmsArticleViewSearch
+        await this.ctx.model.query('drop view aCmsArticleViewSearch');
+      }
+
     }
 
     async init(options) {
@@ -2263,9 +2460,12 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const localBuild = __webpack_require__(375);
+const localRender = __webpack_require__(806);
+const localSite = __webpack_require__(698);
 const queueRender = __webpack_require__(83);
 const startupRegisterAllWatchers = __webpack_require__(502);
 const atomArticle = __webpack_require__(43);
+const beanCms = __webpack_require__(618);
 const ioMessageHotloadFile = __webpack_require__(762);
 
 module.exports = app => {
@@ -2279,6 +2479,14 @@ module.exports = app => {
     'local.build': {
       mode: 'app',
       bean: localBuild,
+    },
+    'local.render': {
+      mode: 'ctx',
+      bean: localRender,
+    },
+    'local.site': {
+      mode: 'ctx',
+      bean: localSite,
     },
     // queue
     'queue.render': {
@@ -2295,6 +2503,12 @@ module.exports = app => {
       mode: 'app',
       bean: atomArticle,
     },
+    // global
+    cms: {
+      mode: 'ctx',
+      bean: beanCms,
+      global: true,
+    },
     // io
     'io.message.hotloadFile': {
       mode: 'ctx',
@@ -2302,6 +2516,267 @@ module.exports = app => {
     },
   };
   return beans;
+};
+
+
+/***/ }),
+
+/***/ 828:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(718);
+const trimHtml = require3('@zhennann/trim-html');
+const markdown = require3('@zhennann/markdown');
+const markdonw_it_block = require3('@zhennann/markdown-it-block');
+const uuid = require3('uuid');
+const utils = __webpack_require__(294);
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomCmsBase extends app.meta.AtomBase {
+
+    get modelArticle() {
+      return this.ctx.model.module(moduleInfo.relativeName).article;
+    }
+
+    get modelContent() {
+      return this.ctx.model.module(moduleInfo.relativeName).content;
+    }
+
+    get moduleConfig() {
+      return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
+    async create({ atomClass, item, user }) {
+      // super
+      const key = await super.create({ atomClass, item, user });
+      // article
+      const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
+      const editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+      // add article
+      const params = {
+        atomId: key.atomId,
+        editMode,
+      };
+      // uuid
+      params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
+      // insert
+      await this.modelArticle.insert(params);
+      // add content
+      await this.modelContent.insert({
+        atomId: key.atomId,
+        content: '',
+      });
+      return { atomId: key.atomId };
+    }
+
+    async read({ atomClass, options, key, user }) {
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // read: showSorting=true
+      this._getMeta(item, true);
+      // ok
+      return item;
+    }
+
+    async select({ atomClass, options, items, user }) {
+      // super
+      await super.select({ atomClass, options, items, user });
+      // select
+      const showSorting = options && options.category;
+      for (const item of items) {
+        this._getMeta(item, showSorting);
+      }
+    }
+
+    async write({ atomClass, target, key, item, options, user }) {
+      const atomStage = item.atomStage;
+      // get atom for safety
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
+      // if undefined then old
+      const fields = [ 'atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
+      for (const field of fields) {
+        if (item[field] === undefined) item[field] = atomOld[field];
+      }
+      // clone
+      if (target === 'clone') {
+        item.slug = null; // clear slug
+      }
+      // url
+      let url;
+      const draftExt = atomStage === 0 ? '.draft' : '';
+      if (item.slug) {
+        url = `articles/${item.slug}${draftExt}.html`;
+      } else {
+        url = `articles/${atomOld.uuid}${draftExt}.html`;
+      }
+      // image first
+      let imageFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
+        imageFirst = (matches && matches[1]) || '';
+      }
+      // audio first
+      let audioFirst = '';
+      let audioCoverFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:blockAudio([\s\S]*?)\$\$\$/);
+        let options = matches && matches[1];
+        if (options) {
+          options = global.JSON5.parse(options);
+          if (options && options.audio) {
+            if (Array.isArray(options.audio)) {
+              audioFirst = options.audio[0].url;
+              audioCoverFirst = options.audio[0].cover;
+            } else {
+              audioFirst = options.audio.url;
+              audioCoverFirst = options.audio.cover;
+            }
+          }
+        }
+      }
+      // html
+      const { html, summary } = this._renderContent({ item });
+      // update article
+      await this.modelArticle.update({
+        sticky: item.sticky,
+        keywords: item.keywords,
+        description: item.description,
+        summary,
+        url,
+        editMode: item.editMode,
+        slug: item.slug,
+        sorting: item.sorting,
+        flag: item.flag,
+        extra: item.extra || '{}',
+        imageFirst,
+        audioFirst,
+        audioCoverFirst,
+      }, {
+        where: {
+          atomId: key.atomId,
+        },
+      });
+      // update content
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
+        [ item.content, html, this.ctx.instance.id, key.atomId ]);
+
+      // render
+      const ignoreRender = options && options.ignoreRender;
+      if (!ignoreRender) {
+        if (atomStage === 0) {
+          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: true });
+        }
+        if (atomStage === 1) {
+          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: false });
+        }
+      }
+    }
+
+    _renderContent({ item }) {
+      // editMode
+      const editMode = item.editMode;
+      // html
+      let html = '';
+      if (item.html) {
+        html = item.html;
+      } else {
+        if (editMode === 0) {
+          // 0: custom
+          html = item.html || '';
+        } else if (editMode === 1) {
+          // 1: markdown
+          html = this._renderMarkdown({ item });
+        } else if (editMode === 2) {
+          // 2: html
+          html = item.content || '';
+        } else {
+          // not supported
+          // do nothing
+        }
+      }
+      // summary
+      let summary;
+      if (item.summary) {
+        summary = item.summary;
+      } else if (html) {
+        const res = trimHtml(html, this.moduleConfig.article.trim);
+        summary = res.html;
+      }
+      if (!summary) {
+        summary = item.description || '';
+      }
+      // title
+      const title = utils.escapeHtml(item.atomName);
+      html = `<!-- ${title} -->\r\n` + html;
+      // ok
+      return { html, summary };
+    }
+
+    _renderMarkdown({ item }) {
+      if (!item.content) return '';
+      // markdown
+      const md = markdown.create();
+      // markdown-it-block
+      const blocks = this.ctx.bean.cms.site.getBlocks();
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
+          },
+        },
+        blocks,
+      };
+      md.use(markdonw_it_block, blockOptions);
+      // render
+      return md.render(item.content);
+    }
+
+    async delete({ atomClass, key, user }) {
+      // get atom for safety
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
+
+      // delete article
+      await this.modelArticle.delete({
+        atomId: key.atomId,
+      });
+      // delete content
+      await this.modelContent.delete({
+        atomId: key.atomId,
+      });
+
+      // delete article
+      if (atomOld.atomStage === 0) {
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
+      }
+      if (atomOld.atomStage === 1) {
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
+      }
+
+      // super
+      await super.delete({ atomClass, key, user });
+    }
+
+    _getMeta(item, showSorting) {
+      // flags
+      const flags = [];
+      if (item.sticky) flags.push(this.ctx.text('Sticky'));
+      if (item.sorting && showSorting) flags.push(item.sorting);
+      // meta
+      const meta = {
+        summary: item.summary,
+        flags,
+      };
+      // ok
+      item._meta = meta;
+    }
+
+  }
+  return AtomCmsBase;
 };
 
 
@@ -2621,7 +3096,8 @@ module.exports = appInfo => {
   };
 
   // site
-  config.site = {
+  config.cms = {};
+  config.cms.site = {
     base: {
       title: 'my blog',
       subTitle: 'gone with the wind',
@@ -2629,8 +3105,8 @@ module.exports = appInfo => {
       keywords: '',
     },
     host: {
-      url: 'http://example.com',
-      rootPath: '',
+      url: 'http://localhost',
+      rootPath: 'cms-test',
     },
     language: {
       default: 'en-us',
@@ -2944,8 +3420,8 @@ module.exports = app => {
         const items = await ctx.model.query(`
           select a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomLanguage=? and b.slug=?
-          `, [ ctx.instance.id, atomClass.id, rootData.atomLanguage, data ]);
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+          `, [ ctx.instance.id, atomClass.id, data, rootData.atomLanguage ]);
         if (items[0] && items[0].id !== rootData.atomId) {
           const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
@@ -3074,12 +3550,12 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Extra Attributes',
       },
-      editMode: {
-        type: 'number',
-        // ebType: 'text',
-        ebTitle: 'Edit Mode',
-        notEmpty: true,
-      },
+      // editMode: {
+      //   type: 'number',
+      //   // ebType: 'text',
+      //   ebTitle: 'Edit Mode',
+      //   notEmpty: true,
+      // },
     },
   };
 
@@ -3087,10 +3563,13 @@ module.exports = app => {
   schemas.articleSearch = {
     type: 'object',
     properties: {
-      content: {
+      html: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Content',
+        ebSearch: {
+          tableAlias: 'q',
+        },
       },
     },
   };
@@ -3120,8 +3599,8 @@ module.exports = app => {
       const options = this.ctx.request.body.options;
       // stage
       options.stage = 'formal';
-      // user
-      const user = this.ctx.state.user.op;
+      // anonymous user
+      const user = await this.ctx.bean.user.anonymous();
       // select
       options.page = this.ctx.bean.util.page(options.page, false);
       const items = await this.ctx.bean.atom.select({ atomClass, options, user, pageForce: false });
@@ -3181,16 +3660,15 @@ module.exports = app => {
       const options = this.ctx.request.body.options;
       // stage
       options.stage = 'formal';
+      // anonymous user
+      const user = await this.ctx.bean.user.anonymous();
+      // comment
+      options.comment = 1;
       // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: '/a/base/comment/all',
-        body: {
-          atomClass,
-          options,
-        },
-      });
-      this.ctx.success(res);
+      options.page = this.ctx.bean.util.page(options.page);
+      const items = await this.ctx.bean.atom.select({ atomClass, options, user });
+      // ok
+      this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
   }
@@ -3257,7 +3735,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
@@ -3329,7 +3807,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
@@ -3379,7 +3857,7 @@ module.exports = app => {
       // atomId
       const atomId = this.ctx.params.atomId;
       // article
-      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key: { atomId }, inner: false });
+      const article = await this.ctx.bean.cms.render.getArticle({ key: { atomId }, inner: false });
       if (!article) this.ctx.throw.module('a-base', 1002);
       // language
       const language = article.atomLanguage;
@@ -3402,7 +3880,7 @@ module.exports = app => {
       // atomClass
       const atomClass = await this.ctx.bean.atomClass.get({ id: article.atomClassId });
       // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
+      const build = this.ctx.bean.cms.build({ atomClass });
       // site
       const site = await build.getSite({ language });
       // feed
@@ -3614,6 +4092,7 @@ const config = __webpack_require__(76);
 const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 const WatcherFn = __webpack_require__(985);
+const AtomCmsBaseFn = __webpack_require__(828);
 
 module.exports = app => {
 
@@ -3621,6 +4100,9 @@ module.exports = app => {
   if (app.meta.isLocal) {
     app.meta['a-cms:watcher'] = new (WatcherFn(app))();
   }
+
+  // atomCmsBase
+  app.meta.AtomCmsBase = AtomCmsBaseFn(app);
 
   // beans
   const beans = __webpack_require__(187)(app);
@@ -3668,11 +4150,11 @@ module.exports = app => {
           info: {
             bean: 'article',
             title: 'Article',
-            tableName: 'aCmsArticle',
+            tableName: '',
             tableNameModes: {
-              default: 'aCmsArticle',
-              full: 'aCmsArticleViewFull',
-              search: 'aCmsArticleViewSearch',
+              default: '',
+              full: '',
+              search: '',
             },
             language: true,
             category: true,
@@ -3720,7 +4202,7 @@ module.exports = app => {
     },
     settings: {
       instance: {
-        actionPath: 'config/list',
+        actionPath: 'config/atomClasses',
       },
     },
     event: {
@@ -3834,21 +4316,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Render extends app.Service {
 
     async getArticleUrl({ atomClass, key }) {
-      if (!atomClass) {
-        atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      }
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getArticleUrl({ key });
+      return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key });
     }
 
     // site<plugin<theme<site(db)<language(db)
     async combineSiteBase({ atomClass, mergeConfigSite }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.combineSiteBase({ mergeConfigSite });
+      return await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite });
     }
 
   }
@@ -3860,222 +4337,72 @@ module.exports = app => {
 /***/ }),
 
 /***/ 724:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(718);
-const fse = require3('fs-extra');
-
-let __blocks = null;
+/***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Site extends app.Service {
 
     async getSite({ atomClass, language, options }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getSite({ language, options });
+      return await this.ctx.bean.cms.site.getSite({ atomClass, language, options });
     }
 
     async getConfigSiteBase({ atomClass }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getConfigSiteBase();
+      return await this.ctx.bean.cms.site.getConfigSiteBase({ atomClass });
     }
 
     async getConfigSite({ atomClass }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getConfigSite();
+      return await this.ctx.bean.cms.site.getConfigSite({ atomClass });
     }
 
     // save site config
     async setConfigSite({ atomClass, data }) {
-      // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      // save
-      await build.setConfigSite({ data });
-      // only in development
-      if (this.ctx.app.meta.isLocal) {
-        // build site
-        this.buildLanguagesQueue({ atomClass });
-        // register watchers
-        await build.registerWatchers();
-      }
+      return await this.ctx.bean.cms.site.setConfigSite({ atomClass, data });
     }
 
     async getConfigLanguagePreview({ atomClass, language }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getConfigLanguagePreview({ language });
+      return await this.ctx.bean.cms.site.getConfigLanguagePreview({ atomClass, language });
     }
 
     async getConfigLanguage({ atomClass, language }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getConfigLanguage({ language });
+      return await this.ctx.bean.cms.site.getConfigLanguage({ atomClass, language });
     }
 
     // save language config
     async setConfigLanguage({ atomClass, language, data }) {
-      // build
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      // save
-      await build.setConfigLanguage({ language, data });
-      // only in development
-      if (this.ctx.app.meta.isLocal) {
-        // build site
-        this.buildLanguageQueue({ atomClass, language });
-        // register watcher
-        await build.registerWatcher({ language });
-      }
+      return await this.ctx.bean.cms.site.setConfigLanguage({ atomClass, language, data });
     }
 
     async getLanguages({ atomClass }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.getLanguages();
+      return await this.ctx.bean.cms.site.getLanguages({ atomClass });
     }
 
     async getUrl({ atomClass, language, path }) {
-      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      const site = await build.getSite({ language });
-      return build.getUrl(site, language, path);
+      return await this.ctx.bean.cms.site.getUrl({ atomClass, language, path });
     }
 
     buildLanguagesQueue({ atomClass, progressId }) {
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguages',
-          atomClass,
-          progressId,
-        },
-      });
+      this.ctx.bean.cms.site.buildLanguagesQueue({ atomClass, progressId });
     }
 
     buildLanguageQueue({ atomClass, language, progressId }) {
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguage',
-          atomClass,
-          language,
-          progressId,
-        },
-      });
+      this.ctx.bean.cms.site.buildLanguageQueue({ atomClass, language, progressId });
     }
 
     async getStats({ atomClass, languages }) {
-      const res = {};
-      for (const language of languages) {
-        res[language] = await this._getStatsLanguange({ atomClass, language });
-      }
-      return res;
-    }
-
-    async _getStatsLanguange({ atomClass, language }) {
-      const stats = {};
-
-      // articles
-      stats.articles = await this.ctx.bean.atom.count({
-        atomClass,
-        options: {
-          language,
-          mode: 'default',
-        },
-      });
-
-      // comments
-      stats.comments = await this.ctx.bean.atom.count({
-        atomClass,
-        options: {
-          language,
-          mode: 'default',
-          comment: 1,
-        },
-      });
-
-      // categories
-      stats.categories = await this.ctx.bean.category.count({
-        atomClass, language,
-      });
-
-      // tags
-      stats.tags = await this.ctx.bean.tag.count({
-        atomClass, language,
-      });
-
-      // ok
-      return stats;
+      return await this.ctx.bean.cms.site.getStats({ atomClass, languages });
     }
 
     async blockSave({ blockName, item }) {
-      // block
-      const blocks = this.getBlocks();
-      const block = blocks[blockName];
-      // validate
-      await this.ctx.bean.validation.validate({
-        module: block.validator.module,
-        validator: block.validator.validator,
-        schema: null,
-        data: item,
-      });
-      // output
-      if (!block.output) return item;
-      return await block.output({ ctx: this.ctx, block, data: item });
+      return await this.ctx.bean.cms.site.blockSave({ blockName, item });
     }
 
     getBlocks() {
-      if (!__blocks) {
-        __blocks = this._prepareBlocks();
-      }
-      return __blocks;
-    }
-
-    _prepareBlocks() {
-      const blocks = {};
-      // (X) modulesArray for block override
-      for (const module of this.app.meta.modulesArray) {
-        if (module.main.meta && module.main.meta.cms &&
-          module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
-          const blocksModule = this._prepareBlocksModule({ module, blocks: module.main.meta.cms.plugin.blocks });
-          Object.assign(blocks, blocksModule);
-        }
-      }
-      return blocks;
-    }
-
-    _prepareBlocksModule({ module, blocks }) {
-      const blocksModule = {};
-      const moduleName = module.info.relativeName;
-      for (const key in blocks) {
-        const fullName = `${moduleName}:${key}`;
-        blocksModule[fullName] = blocks[key];
-      }
-      return blocksModule;
+      return this.ctx.bean.cms.site.getBlocks();
     }
 
     async checkFile({ file, mtime }) {
-      // exists
-      const exists = await fse.pathExists(file);
-      if (!exists) {
-        // deleted
-        return null;
-      }
-      // stat
-      const stat = await fse.stat(file);
-      const mtimeCurrent = stat.mtime.valueOf();
-      if (mtime !== mtimeCurrent) {
-        // different
-        return { mtime: mtimeCurrent };
-      }
-      // default
-      return null;
+      return await this.ctx.bean.cms.site.checkFile({ file, mtime });
     }
 
   }

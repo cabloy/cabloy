@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-layoutpc",
-  "version": "4.1.5",
+  "version": "4.1.6",
   "eggBornModule": {
     "fileVersion": 3,
     "dependencies": {

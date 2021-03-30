@@ -1527,7 +1527,8 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Product Code',
-        ebReadOnly: true,
+        ebReadOnly: false,
+        ebDisabled: true,
         notEmpty: true,
       },
       detailName: {

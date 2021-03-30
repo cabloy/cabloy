@@ -5,66 +5,36 @@
 /***/ ((module) => {
 
 module.exports = app => {
-  // this module
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  // article bean
-  const articleBeanModule = 'a-cms';
-  const articleBeanFullName = 'a-cms.atom.article';
 
-  class Atom extends app.meta.AtomBase {
+  class Atom extends app.meta.AtomCmsBase {
 
     async create({ atomClass, item, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, item, user },
-        fn: 'create',
-      });
+      // super
+      const key = await super.create({ atomClass, item, user });
+      return { atomId: key.atomId };
     }
 
     async read({ atomClass, options, key, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, options, key, user },
-        fn: 'read',
-      });
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // ok
+      return item;
     }
 
     async select({ atomClass, options, items, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, options, items, user },
-        fn: 'select',
-      });
+      // super
+      await super.select({ atomClass, options, items, user });
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, target, key, item, options, user },
-        fn: 'write',
-      });
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
     }
 
     async delete({ atomClass, key, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, key, user },
-        fn: 'delete',
-      });
-    }
-
-    async submit({ atomClass, key, options, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, key, options, user },
-        fn: 'submit',
-      });
+      // super
+      await super.delete({ atomClass, key, user });
     }
 
   }
@@ -197,7 +167,8 @@ module.exports = appInfo => {
   const config = {};
 
   // site
-  config.site = {
+  config.cms = {};
+  config.cms.site = {
     base: {
       title: 'Community',
       subTitle: 'Everything About CabloyJS',
@@ -205,8 +176,8 @@ module.exports = appInfo => {
       keywords: '',
     },
     host: {
-      url: 'http://community.example.com',
-      rootPath: '',
+      url: 'http://localhost',
+      rootPath: 'cms-test-community',
     },
     language: {
       default: 'en-us',
@@ -493,10 +464,13 @@ module.exports = app => {
   schemas.postSearch = {
     type: 'object',
     properties: {
-      content: {
+      html: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Content',
+        ebSearch: {
+          tableAlias: 'q',
+        },
       },
     },
   };
@@ -561,12 +535,6 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const atomClass = {
-    module: moduleInfo.relativeName,
-    atomClassName: 'post',
-  };
-  const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = __webpack_require__(232)(app);
   const staticFlowDefs = __webpack_require__(772)(app);
   const staticResources = __webpack_require__(429)(app);
@@ -577,11 +545,11 @@ module.exports = app => {
           info: {
             bean: 'post',
             title: 'Post2',
-            tableName: 'aCmsArticle',
+            tableName: '',
             tableNameModes: {
-              default: 'aCmsArticle',
-              full: 'aCmsArticleViewFull',
-              search: 'aCmsArticleViewSearch',
+              default: '',
+              full: '',
+              search: '',
             },
             language: true,
             category: true,
@@ -618,11 +586,6 @@ module.exports = app => {
       schemas: {
         post: schemas.post,
         postSearch: schemas.postSearch,
-      },
-    },
-    settings: {
-      instance: {
-        actionPath: `/a/cms/config/list?${atomClassQuery}`,
       },
     },
   };

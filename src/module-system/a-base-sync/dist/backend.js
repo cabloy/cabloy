@@ -241,10 +241,13 @@ module.exports = ctx => {
         if (!options.where) options.where = {};
         options.where['a.atomClassId'] = atomClass.id;
       }
+      // cms
+      const cms = _atomClass && _atomClass.cms;
       // select
       const items = await this._list({
         tableName,
         options,
+        cms,
         user,
         pageForce,
         count,
@@ -1023,19 +1026,41 @@ module.exports = ctx => {
       if (!options) options = {};
       const resource = options.resource || 0;
       const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
-      //
+      // atomClass
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // tableName
       const tableName = this._getTableName({ atomClass: _atomClass, mode });
+      // cms
+      const cms = _atomClass && _atomClass.cms;
+      // sql
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName, atomId: key.atomId,
         resource, resourceLocale,
+        mode, cms,
       });
+      // query
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
+    async _list({
+      tableName,
+      options: {
+        where, orders, page,
+        star = 0, label = 0,
+        comment = 0, file = 0,
+        stage = 'formal',
+        language, category = 0, tag = 0,
+        mine = 0,
+        resource = 0, resourceLocale,
+        mode,
+      },
+      cms,
+      user,
+      pageForce = true,
+      count = 0,
+    }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
       const sql = this.sqlProcedure.selectAtoms({
@@ -1047,6 +1072,7 @@ module.exports = ctx => {
         language, category, tag,
         mine,
         resource, resourceLocale,
+        mode, cms,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
@@ -1403,7 +1429,7 @@ module.exports = ctx => {
 
     async top(atomClass) {
       while (true) {
-        if (atomClass.atomClassIdParent === 0) break;
+        if (!atomClass.atomClassIdParent) break;
         atomClass = await this.get({ id: atomClass.atomClassIdParent });
       }
       return atomClass;
@@ -1758,6 +1784,8 @@ const _atomClasses = {};
 const _actions = {};
 const _authProvidersLocales = {};
 
+let _hostText = null;
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Base extends ctx.app.meta.BeanModuleBase {
@@ -1768,6 +1796,16 @@ module.exports = ctx => {
     }
 
     get host() {
+      // test
+      if (ctx.app.meta.isTest) {
+        if (_hostText) return _hostText;
+        const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
+        const hostname = buildConfig.front.dev.hostname || 'localhost';
+        const port = buildConfig.front.dev.port;
+        _hostText = `${hostname}:${port}`;
+        return _hostText;
+      }
+      // others
       const config = ctx.config.module(moduleInfo.relativeName);
       return config.host || ctx.host;
     }
@@ -1779,7 +1817,7 @@ module.exports = ctx => {
 
     getAbsoluteUrl(path) {
       const prefix = this.host ? `${this.protocol}://${this.host}` : '';
-      return `${prefix}${path}`;
+      return `${prefix}${path || ''}`;
     }
 
     // get forward url
@@ -1801,6 +1839,7 @@ module.exports = ctx => {
     // get path
     async getPath(subdir, ensure) {
       const rootPath = await this.getRootPath();
+      // use instance.id, not subdomain
       const dir = path.join(rootPath, ctx.instance.id.toString(), subdir || '');
       if (ensure) {
         await fse.ensureDir(dir);
@@ -2128,7 +2167,7 @@ module.exports = ctx => {
         where.atomClassId = atomClass.id;
       }
       //
-      if (language !== undefined) where.language = language;
+      if (language) where.language = language; // not check !== undefined
       if (categoryName !== undefined) where.categoryName = categoryName;
       if (categoryHidden !== undefined) where.categoryHidden = categoryHidden;
       if (categoryFlag !== undefined) where.categoryFlag = categoryFlag;
@@ -3325,10 +3364,13 @@ module.exports = ctx => {
 
     async count({ atomClass, language }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await this.modelTag.count({
+      const where = {
         atomClassId: atomClass.id,
-        language,
-      });
+      };
+      if (language) {
+        where.language = language;
+      }
+      return await this.modelTag.count(where);
     }
 
     async get({ tagId }) {
@@ -3336,10 +3378,14 @@ module.exports = ctx => {
     }
 
     async item({ atomClass, language, tagName }) {
+      const where = {
+        tagName,
+      };
+      if (language) {
+        where.language = language;
+      }
       const options = {
-        where: {
-          language, tagName,
-        },
+        where,
       };
       const list = await this.list({ atomClass, options });
       return list[0];
@@ -3349,6 +3395,9 @@ module.exports = ctx => {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       if (!options.where) options.where = {};
       options.where.atomClassId = atomClass.id;
+      if (!options.where.language) {
+        delete options.where.language;
+      }
       return await this.modelTag.select(options);
     }
 
@@ -4377,7 +4426,18 @@ module.exports = app => {
 module.exports = ctx => {
   class Procedure {
 
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale }) {
+    selectAtoms({
+      iid, userIdWho, tableName,
+      where, orders, page,
+      star, label,
+      comment, file,
+      count,
+      stage,
+      language, category, tag,
+      mine,
+      resource, resourceLocale,
+      mode, cms,
+    }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -4393,14 +4453,39 @@ module.exports = ctx => {
       // draft
       if (stage === 0) {
         // userIdWho must be set
-        return this._selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag });
+        return this._selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mode, cms });
       }
-      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale });
+      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale, mode, cms });
       // formal/history
-      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale });
+      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms });
     }
 
-    _selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag }) {
+    _prepare_cms({ iid, mode, cms }) {
+      let _cmsField,
+        _cmsJoin,
+        _cmsWhere;
+
+      // cms
+      if (cms) {
+        _cmsField = ',p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid';
+        _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
+        _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
+        if (mode && mode !== 'default') {
+          // full/search/others
+          _cmsField += ',q.content,q.html';
+          _cmsJoin += ' inner join aCmsContent q on q.atomId=a.id';
+          _cmsWhere += ` and q.iid=${iid} and q.deleted=0`;
+        }
+      } else {
+        _cmsField = '';
+        _cmsJoin = '';
+        _cmsWhere = '';
+      }
+
+      return { _cmsField, _cmsJoin, _cmsWhere };
+    }
+
+    _selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mode, cms }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -4414,6 +4499,8 @@ module.exports = ctx => {
       // -- i: aFile
       // -- j: aCategory
       // -- k: aTagRef
+      // -- p: aCmsArticle
+      // -- q: aCmsContent
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -4445,6 +4532,9 @@ module.exports = ctx => {
         _fileWhere;
       let _itemField,
         _itemJoin;
+
+      // cms
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -4540,7 +4630,7 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
+                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_cmsField}`;
       }
 
       // sql
@@ -4556,6 +4646,7 @@ module.exports = ctx => {
             ${_labelJoin}
             ${_commentJoin}
             ${_fileJoin}
+            ${_cmsJoin}
 
           ${_where}
            (
@@ -4568,6 +4659,7 @@ module.exports = ctx => {
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
+             ${_cmsWhere}
            )
 
           ${count ? '' : _orders}
@@ -4578,7 +4670,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale }) {
+    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale, mode, cms }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -4593,6 +4685,8 @@ module.exports = ctx => {
       // -- j: aCategory
       // -- k: aTagRef
       // -- m: aResourceLocale
+      // -- p: aCmsArticle
+      // -- q: aCmsContent
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -4621,6 +4715,9 @@ module.exports = ctx => {
       let _resourceField,
         _resourceJoin,
         _resourceWhere;
+
+      // cms
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -4705,7 +4802,7 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_commentField} ${_fileField} ${_resourceField}`;
+                ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
       // sql
@@ -4720,6 +4817,7 @@ module.exports = ctx => {
             ${_commentJoin}
             ${_fileJoin}
             ${_resourceJoin}
+            ${_cmsJoin}
 
           ${_where}
            (
@@ -4730,6 +4828,7 @@ module.exports = ctx => {
              ${_commentWhere}
              ${_fileWhere}
              ${_resourceWhere}
+             ${_cmsWhere}
            )
 
           ${count ? '' : _orders}
@@ -4740,7 +4839,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale }) {
+    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -4755,6 +4854,8 @@ module.exports = ctx => {
       // -- j: aCategory
       // -- k: aTagRef
       // -- m: aResourceLocale
+      // -- p: aCmsArticle
+      // -- q: aCmsContent
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -4790,6 +4891,9 @@ module.exports = ctx => {
       let _resourceField,
         _resourceJoin,
         _resourceWhere;
+
+      // cms
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -4896,7 +5000,7 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
+                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
       // mine
@@ -4933,6 +5037,7 @@ module.exports = ctx => {
             ${_commentJoin}
             ${_fileJoin}
             ${_resourceJoin}
+            ${_cmsJoin}
 
           ${_where}
            (
@@ -4945,6 +5050,7 @@ module.exports = ctx => {
              ${_commentWhere}
              ${_fileWhere}
              ${_resourceWhere}
+             ${_cmsWhere}
              and ( ${_rightWhere} )
            )
 
@@ -4956,7 +5062,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale }) {
+    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -4967,6 +5073,8 @@ module.exports = ctx => {
       // -- g2: aUser
       // -- j: aCategory
       // -- m: aResourceLocale
+      // -- p: aCmsArticle
+      // -- q: aCmsContent
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -5023,6 +5131,9 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // cms
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
+
       // sql
       const _sql =
         `select ${_itemField}
@@ -5035,6 +5146,7 @@ module.exports = ctx => {
                 ${_starField}
                 ${_labelField}
                 ${_resourceField}
+                ${_cmsField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
@@ -5043,10 +5155,12 @@ module.exports = ctx => {
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
             ${_resourceJoin}
+            ${_cmsJoin}
 
           where a.id=${atomId}
             and a.deleted=0 and a.iid=${iid}
             ${_resourceWhere}
+            ${_cmsWhere}
         `;
 
       // ok
@@ -8149,6 +8263,10 @@ module.exports = appInfo => {
   config.locales = {
     'en-us': 'English',
     'zh-cn': 'Chinese',
+  };
+
+  config.cors = {
+    whiteList: 'http://localhost',
   };
 
   // anonymous
