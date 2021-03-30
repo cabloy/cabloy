@@ -11,7 +11,7 @@ services:
       dockerfile: docker-compose-dockerfile-app
     restart: always
     ports:
-      - "7002:7002"
+      - "7202:7102"
     volumes:
       - ./docker-compose/output/app/dist:/root/output/app/dist
       - ./docker-compose/output/app/cabloy:/root/cabloy
@@ -45,11 +45,11 @@ services:
       - --log-queries-not-using-indexes=1
     restart: always
     ports:
-      - "3306:3306"
+      - "33306:3306"
     volumes:
       - ./docker-compose/data/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "C,f#lV+q5I1RB2KR"
+      MYSQL_ROOT_PASSWORD: "CDf#lV+q5I1RB2KR"
       MYSQL_DATABASE: cabloy
       MYSQL_USER: web_user
       MYSQL_PASSWORD: "!%{9mov.Tw3LmcYP"
@@ -61,6 +61,6 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     restart: always
     ports:
-      - "6379:6379"
+      - "36379:6379"
     volumes:
       - ./docker-compose/data/redis:/data

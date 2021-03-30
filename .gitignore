@@ -12,6 +12,15 @@ miniprogram_npm
 *.tmp
 *.rdb
 
+/docker-compose
+!/docker-compose/config
+!/docker-compose/data/mysql/.gitkeep
+!/docker-compose/data/redis/.gitkeep
+!/docker-compose/logs/app/.gitkeep
+!/docker-compose/logs/nginx/.gitkeep
+!/docker-compose/output/app/cabloy/.gitkeep
+!/docker-compose/output/app/dist/.gitkeep
+
 /src/backend/app
 /src/backend/config
 /src/backend/logs

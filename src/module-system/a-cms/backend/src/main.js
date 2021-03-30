@@ -2,7 +2,7 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const WatcherFn = require('./common/watcher.js');
-const AtomCmsBaseFn = require('./common/atomCmsBase.js');
+const AtomCmsBaseFn = require('./common/AtomCmsBase.js');
 
 module.exports = app => {
 
