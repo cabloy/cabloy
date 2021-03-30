@@ -237,7 +237,7 @@ module.exports = app => {
     // ////////////////////////////// url or path
 
     getCMSPathName() {
-      return `cms.${this.atomClass.module}.${this.atomClass.atomClassName}`;
+      return this.default ? 'cms' : `cms.${this.atomClass.module}.${this.atomClass.atomClassName}`;
     }
 
     getUrlRawRoot(site) {
