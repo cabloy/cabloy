@@ -51,7 +51,7 @@ module.exports = ctx => {
     // get forward url
     getForwardUrl(path) {
       const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix + 'public/' : '/public/';
-      return `${prefix}${ctx.subdomain || 'default'}/${path}`;
+      return `${prefix}${ctx.instance.id}/${path}`;
     }
 
     // get root path
@@ -67,8 +67,8 @@ module.exports = ctx => {
     // get path
     async getPath(subdir, ensure) {
       const rootPath = await this.getRootPath();
-      // use subdomain, not instance.id
-      const dir = path.join(rootPath, ctx.subdomain || 'default', subdir || '');
+      // use instance.id, not subdomain
+      const dir = path.join(rootPath, ctx.instance.id.toString(), subdir || '');
       if (ensure) {
         await fse.ensureDir(dir);
       }
