@@ -1,5 +1,5 @@
 <template>
-  <eb-page>
+  <eb-page ptr @ptr:refresh="onRefresh">
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back"> </eb-navbar>
     <div v-if="ready">
       <f7-list>
@@ -102,6 +102,10 @@ export default {
     });
   },
   methods: {
+    onRefresh(done) {
+      done();
+      this.getStats(this.languages2);
+    },
     onLanguagesChanged(languages) {
       if (!languages) return;
       this.languageEnable = languages.length > 0;
