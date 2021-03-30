@@ -22,15 +22,15 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "scripts": {
-    "dev:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
-    "build:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
-    "dev:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-dev",
-    "debug:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-debug",
+    "dev:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
+    "build:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
+    "dev:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-dev",
+    "debug:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-debug",
     "lint": "eslint src",
-    "test:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-test",
-    "cov:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
-    "start:backend": "npx ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start",
-    "stop:backend": "npx ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop"
+    "test:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-test",
+    "cov:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
+    "start:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start",
+    "stop:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
