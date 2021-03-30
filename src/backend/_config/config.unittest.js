@@ -14,7 +14,7 @@ module.exports = appInfo => {
       // donnot change the name
       __ebdb: {
         host: '127.0.0.1',
-        port: '33060',
+        port: '33060', // for github actions
         user: 'root',
         password: 'root',
         database: 'mysql', // donnot change the name
