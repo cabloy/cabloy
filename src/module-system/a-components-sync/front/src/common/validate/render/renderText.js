@@ -52,10 +52,10 @@ export default {
           placeholder,
           info,
           resizable: property.ebTextarea,
-          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
           dataPath,
           value,
-          disabled: this.validate.readOnly || property.ebReadOnly,
+          disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         on: {
           input: valueNew => {
