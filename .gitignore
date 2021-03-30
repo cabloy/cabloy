@@ -2,6 +2,8 @@ node_modules
 miniprogram_npm
 /coverage
 /dist
+/docker-compose
+
 
 .idea
 .DS_Store
