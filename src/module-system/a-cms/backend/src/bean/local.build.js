@@ -244,9 +244,9 @@ module.exports = app => {
       if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
         // cms or cms.moduleName
         const cmsPathName = this.getCMSPathName();
-        const publicDir = this.ctx.app.config.static.prefix + 'public/';
-        const prefix = this.ctx.bean.base.getAbsoluteUrl('');
-        return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
+        const forwardUrl = this.ctx.bean.base.getForwardUrl(`${cmsPathName}/dist`);
+        const absoluteUrl = this.ctx.bean.base.getAbsoluteUrl(forwardUrl);
+        return absoluteUrl;
       }
       return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
     }
