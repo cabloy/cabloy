@@ -1,5 +1,14 @@
 # History
 
+## 2020-03-30, Version 4.7.0
+
+* **特性**
+  * CMS通用渲染机制: 对CMS渲染机制进行了进一步提炼，形成通用的渲染机制。也就是说，任何原子类型均可以根据业务的实际需求，便捷的配置`静态渲染机制`，比如`商品`、`订单`，等等
+    * 参见：[通用渲染机制](https://cabloy.com/zh-cn/articles/cms-advanced-general.html)
+
+* **优化**
+  * docker-compose: 对配置文件进行了调整
+
 ## 2020-03-23, Version 4.6.0
 
 * **特性**
