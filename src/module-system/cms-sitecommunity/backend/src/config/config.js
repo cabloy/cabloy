@@ -12,8 +12,8 @@ module.exports = appInfo => {
       keywords: '',
     },
     host: {
-      url: 'http://community.example.com',
-      rootPath: '',
+      url: 'http://localhost',
+      rootPath: 'cms-test-community',
     },
     language: {
       default: 'en-us',

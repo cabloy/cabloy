@@ -38,8 +38,8 @@ module.exports = appInfo => {
       keywords: '',
     },
     host: {
-      url: 'http://example.com',
-      rootPath: '',
+      url: 'http://localhost',
+      rootPath: 'cms-test',
     },
     language: {
       default: 'en-us',
