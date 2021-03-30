@@ -14,9 +14,9 @@ module.exports = appInfo => {
       // donnot change the name
       __ebdb: {
         host: '127.0.0.1',
-        port: '33060',
+        port: '3306',
         user: 'root',
-        password: 'root',
+        password: '',
         database: 'mysql', // donnot change the name
         charset: 'utf8mb4_general_ci',
         hook: {
