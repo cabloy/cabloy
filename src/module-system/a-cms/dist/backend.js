@@ -1285,7 +1285,8 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       return true;
     }
 
-    async getArticleUrl({ key }) {
+    async getArticleUrl({ key, options }) {
+      const renderForce = options && options.renderForce;
       // article
       const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
@@ -1298,7 +1299,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const pathDist = await this.getPathDist(site, article.atomLanguage);
       const fileName = path.join(pathDist, article.url);
       const exists = await fse.pathExists(fileName);
-      if (!exists) {
+      if (!exists || renderForce) {
         // force render as inner
         //   need not use queue for inner:true
         const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
@@ -1372,12 +1373,12 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Render {
-    async getArticleUrl({ atomClass, key }) {
+    async getArticleUrl({ atomClass, key, options }) {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       }
       const build = ctx.bean.cms.build({ atomClass });
-      return await build.getArticleUrl({ key });
+      return await build.getArticleUrl({ key, options });
     }
 
     // site<plugin<theme<site(db)<language(db)
@@ -1406,7 +1407,10 @@ module.exports = ctx => {
       return article;
     }
 
-    async _deleteArticlePush({ atomClass, key, article, inner }) {
+    async _deleteArticlePushAsync({ atomClass, key, article, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
@@ -1423,10 +1427,53 @@ module.exports = ctx => {
       });
     }
 
-    async _renderArticlePush({ atomClass, key, inner }) {
+    async _deleteArticlePush({ atomClass, key, article, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
+      ctx.tail(() => {
+        // queue
+        ctx.app.meta.queue.push({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
+        });
+      });
+    }
+
+    async _renderArticlePushAsync({ atomClass, key, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
+        });
+      });
+    }
+
+    async _renderArticlePush({ atomClass, key, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
+      ctx.tail(() => {
+        // queue
+        ctx.app.meta.queue.push({
           locale: ctx.locale,
           subdomain: ctx.subdomain,
           module: moduleInfo.relativeName,
@@ -2666,12 +2713,15 @@ module.exports = app => {
 
       // render
       const ignoreRender = options && options.ignoreRender;
+      const renderSync = options && options.renderSync;
       if (!ignoreRender) {
-        if (atomStage === 0) {
-          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: true });
-        }
-        if (atomStage === 1) {
-          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: false });
+        if (atomStage === 0 || atomStage === 1) {
+          const inner = atomStage === 0;
+          if (renderSync) {
+            await this.ctx.bean.cms.render._renderArticlePushAsync({ atomClass, key, inner });
+          } else {
+            await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
+          }
         }
       }
     }
@@ -2750,6 +2800,7 @@ module.exports = app => {
       });
 
       // delete article
+      //   always renderSync=false
       if (atomOld.atomStage === 0) {
         await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
       }
@@ -3689,6 +3740,7 @@ module.exports = app => {
       const res = await this.ctx.service.render.getArticleUrl({
         atomClass: this.ctx.request.body.atomClass,
         key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
       });
       this.ctx.success(res);
     }
@@ -4319,8 +4371,8 @@ module.exports = app => {
 
   class Render extends app.Service {
 
-    async getArticleUrl({ atomClass, key }) {
-      return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key });
+    async getArticleUrl({ atomClass, key, options }) {
+      return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key, options });
     }
 
     // site<plugin<theme<site(db)<language(db)
