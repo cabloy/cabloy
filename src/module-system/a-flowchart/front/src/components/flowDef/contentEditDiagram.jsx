@@ -44,7 +44,11 @@ export default {
           container: this.$refs.container.$el,
           width: this.size.width,
           height: this.size.height,
+          fitView: true,
+          fitViewPadding: 10,
         });
+        this.__adjustNode();
+        this.__adjustEdge();
         this.graph.data(this.contentProcess);
         this.graph.render();
       }
@@ -56,6 +60,29 @@ export default {
         this.graph.changeData(this.contentProcess);
         this.graph.refresh();
       }
+    },
+    __adjustNode() {
+      this.graph.node(node => {
+        return {
+          id: node.id,
+          type: 'rect',
+          label: node.name,
+          style: {
+            fill: 'blue',
+          },
+        };
+      });
+    },
+    __adjustEdge() {
+      this.graph.edge(edge => {
+        return {
+          id: edge.id,
+          type: 'cubic-horizontal',
+          style: {
+            stroke: 'green',
+          },
+        };
+      });
     },
     onSize(size) {
       this.size.height = size.height;
