@@ -1,12 +1,12 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Render {
-    async getArticleUrl({ atomClass, key }) {
+    async getArticleUrl({ atomClass, key, options }) {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       }
       const build = ctx.bean.cms.build({ atomClass });
-      return await build.getArticleUrl({ key });
+      return await build.getArticleUrl({ key, options });
     }
 
     // site<plugin<theme<site(db)<language(db)
@@ -35,7 +35,7 @@ module.exports = ctx => {
       return article;
     }
 
-    async _deleteArticlePush({ atomClass, key, article, inner }) {
+    async _deleteArticlePushAsync({ atomClass, key, article, inner }) {
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
@@ -52,10 +52,44 @@ module.exports = ctx => {
       });
     }
 
-    async _renderArticlePush({ atomClass, key, inner }) {
+    _deleteArticlePush({ atomClass, key, article, inner }) {
+      ctx.tail(() => {
+        // queue
+        ctx.app.meta.queue.push({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
+        });
+      });
+    }
+
+    async _renderArticlePushAsync({ atomClass, key, inner }) {
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
+        });
+      });
+    }
+
+    _renderArticlePush({ atomClass, key, inner }) {
+      ctx.tail(() => {
+        // queue
+        ctx.app.meta.queue.push({
           locale: ctx.locale,
           subdomain: ctx.subdomain,
           module: moduleInfo.relativeName,

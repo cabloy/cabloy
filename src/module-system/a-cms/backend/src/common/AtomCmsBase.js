@@ -140,12 +140,15 @@ module.exports = app => {
 
       // render
       const ignoreRender = options && options.ignoreRender;
+      const renderSync = options && options.renderSync;
       if (!ignoreRender) {
-        if (atomStage === 0) {
-          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: true });
-        }
-        if (atomStage === 1) {
-          await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner: false });
+        if (atomStage === 0 || atomStage === 1) {
+          const inner = atomStage === 0;
+          if (renderSync) {
+            await this.ctx.bean.cms.render._renderArticlePushAsync({ atomClass, key, inner });
+          } else {
+            this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
+          }
         }
       }
     }
@@ -224,11 +227,12 @@ module.exports = app => {
       });
 
       // delete article
+      //   always renderSync=false
       if (atomOld.atomStage === 0) {
-        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
+        this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
       }
       if (atomOld.atomStage === 1) {
-        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
+        this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
       }
 
       // super

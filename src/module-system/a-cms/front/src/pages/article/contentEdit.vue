@@ -133,6 +133,9 @@ export default {
       return this.$api.post('render/getArticleUrl', {
         atomClass: this.atomClass,
         key: { atomId: this.item.atomId },
+        options: {
+          renderForce: !this.readOnly,
+        },
       }).then(data => {
         if (!data) return;
         window.open(data.url, `cms_article_${this.atomClass.module}_${this.item.atomId}`);

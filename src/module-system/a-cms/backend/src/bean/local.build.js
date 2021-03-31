@@ -1196,7 +1196,8 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       return true;
     }
 
-    async getArticleUrl({ key }) {
+    async getArticleUrl({ key, options }) {
+      const renderForce = options && options.renderForce;
       // article
       const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
@@ -1209,7 +1210,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const pathDist = await this.getPathDist(site, article.atomLanguage);
       const fileName = path.join(pathDist, article.url);
       const exists = await fse.pathExists(fileName);
-      if (!exists) {
+      if (!exists || renderForce) {
         // force render as inner
         //   need not use queue for inner:true
         const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });

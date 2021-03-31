@@ -2,8 +2,8 @@ module.exports = app => {
 
   class Render extends app.Service {
 
-    async getArticleUrl({ atomClass, key }) {
-      return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key });
+    async getArticleUrl({ atomClass, key, options }) {
+      return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key, options });
     }
 
     // site<plugin<theme<site(db)<language(db)
