@@ -55,7 +55,18 @@ export default {
             ranksep: 30,
             controlPoints: true,
           },
+          modes: {
+            default: [ 'drag-canvas', 'zoom-canvas' ],
+            edit: [
+              'drag-canvas', 'zoom-canvas', 'click-select',
+              {
+                type: 'create-edge',
+                trigger: 'drag',
+              },
+            ],
+          },
         });
+        this.graph.setMode(this.readOnly ? 'default' : 'edit');
         this.__adjustNode();
         this.__adjustEdge();
         this.graph.data(this.contentProcess);
