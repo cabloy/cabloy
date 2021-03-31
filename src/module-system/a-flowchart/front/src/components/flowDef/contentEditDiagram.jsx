@@ -46,6 +46,15 @@ export default {
           height: this.size.height,
           fitView: true,
           fitViewPadding: 10,
+          layout: {
+            type: 'dagre',
+            // rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
+            rankdir: 'TB', // always top->bottom
+            // align: undefined, // center
+            nodesep: 20,
+            ranksep: 30,
+            controlPoints: true,
+          },
         });
         this.__adjustNode();
         this.__adjustEdge();
@@ -67,9 +76,6 @@ export default {
           id: node.id,
           type: 'rect',
           label: node.name,
-          style: {
-            fill: 'blue',
-          },
         };
       });
     },
@@ -78,9 +84,6 @@ export default {
         return {
           id: edge.id,
           type: 'cubic-horizontal',
-          style: {
-            stroke: 'green',
-          },
         };
       });
     },
