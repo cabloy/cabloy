@@ -3,4 +3,5 @@ function load(name) {
 }
 
 export default [
+  { path: 'flowDef/contentEdit', component: load('flowDef/contentEdit') },
 ];

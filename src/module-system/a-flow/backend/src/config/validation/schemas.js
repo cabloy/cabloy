@@ -22,9 +22,12 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'json',
-        ebTextarea: true,
+        ebType: 'component',
         ebTitle: 'Content',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderFlowDefContent',
+        },
       },
       // Basic Info
       __groupBasicInfo: {
