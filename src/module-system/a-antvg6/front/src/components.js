@@ -1,5 +1,5 @@
-import antvg6 from './components/antvg6.js';
+import g6 from './components/g6.js';
 
 export default {
-  antvg6,
+  g6,
 };

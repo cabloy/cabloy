@@ -12,18 +12,61 @@ export default {
   },
   data() {
     return {
+      g6: null,
+      graph: null,
+      size: {
+        height: 0,
+        width: 0,
+      },
     };
   },
   created() {
   },
+  mounted() {
+    this.__init();
+  },
   methods: {
-    reload() {
-      console.log('-----reload');
+    __init() {
+      const action = {
+        actionModule: 'a-antvg6',
+        actionComponent: 'g6',
+        name: 'instance',
+      };
+      this.$meta.util.performAction({ ctx: this, action }).then(g6 => {
+        this.g6 = g6;
+        this.__updateChart({});
+      });
+    },
+    __updateChart({ changeSize, changeData }) {
+      if (!this.g6) return;
+      if (!this.graph) {
+        this.graph = new this.g6.Graph({
+          container: this.$refs.container.$el,
+          width: this.size.width,
+          height: this.size.height,
+        });
+        this.graph.data(this.contentProcess);
+        this.graph.render();
+      }
+      if (changeSize) {
+        this.graph.changeSize(this.size.width, this.size.height);
+        this.graph.fitView();
+      }
+      if (changeData) {
+        this.graph.changeData(this.contentProcess);
+        this.graph.refresh();
+      }
+    },
+    onSize(size) {
+      this.size.height = size.height;
+      this.size.width = size.width;
+      this.__updateChart({ changeSize: true });
     },
   },
   render() {
     return (
-      <div>test</div>
+      <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-iframe-box">
+      </eb-box>
     );
   },
 };

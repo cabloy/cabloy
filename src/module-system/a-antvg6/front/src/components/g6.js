@@ -1,4 +1,4 @@
-import G6 from '@antv/g6';
+import g6 from '@antv/g6';
 
 export default {
   meta: {
@@ -6,7 +6,7 @@ export default {
   },
   methods: {
     onAction({ action }) {
-      if (action.name === 'instance') return G6;
+      if (action.name === 'instance') return g6;
     },
   },
 };

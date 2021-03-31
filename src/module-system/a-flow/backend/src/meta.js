@@ -16,6 +16,11 @@ module.exports = app => {
             category: true,
             tag: true,
           },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'flowDef',
           search: {
             validator: 'flowDefSearch',
