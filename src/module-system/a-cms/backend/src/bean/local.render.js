@@ -36,6 +36,9 @@ module.exports = ctx => {
     }
 
     async _deleteArticlePushAsync({ atomClass, key, article, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
@@ -52,7 +55,10 @@ module.exports = ctx => {
       });
     }
 
-    _deleteArticlePush({ atomClass, key, article, inner }) {
+    async _deleteArticlePush({ atomClass, key, article, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(() => {
         // queue
         ctx.app.meta.queue.push({
@@ -70,6 +76,9 @@ module.exports = ctx => {
     }
 
     async _renderArticlePushAsync({ atomClass, key, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(async () => {
         // queue
         await ctx.app.meta.queue.pushAsync({
@@ -86,7 +95,10 @@ module.exports = ctx => {
       });
     }
 
-    _renderArticlePush({ atomClass, key, inner }) {
+    async _renderArticlePush({ atomClass, key, inner }) {
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      }
       ctx.tail(() => {
         // queue
         ctx.app.meta.queue.push({

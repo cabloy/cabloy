@@ -17,6 +17,7 @@ module.exports = app => {
         id: key.itemId,
         partyOver: 1,
       });
+      await this.ctx.bean.cms.render._renderArticlePush({ key, inner: false });
     }
 
     async overBulk({ keys, user }) {

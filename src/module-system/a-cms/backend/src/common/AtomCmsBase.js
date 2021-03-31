@@ -147,7 +147,7 @@ module.exports = app => {
           if (renderSync) {
             await this.ctx.bean.cms.render._renderArticlePushAsync({ atomClass, key, inner });
           } else {
-            this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
+            await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
           }
         }
       }
@@ -229,10 +229,10 @@ module.exports = app => {
       // delete article
       //   always renderSync=false
       if (atomOld.atomStage === 0) {
-        this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
       }
       if (atomOld.atomStage === 1) {
-        this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
+        await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: false });
       }
 
       // super
