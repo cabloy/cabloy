@@ -1,5 +1,5 @@
 <template>
-  <f7-page-content :id="id" :tab="tab" :tab-active="tabActive" ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite" @tab:show="onTabShow">
+  <f7-page-content :id="id" :tab="tab" :tab-active="tabActive" :ptr="ptr" @ptr:refresh="onRefresh" :infinite="infinite" :infinitePreloader="false" @infinite="onInfinite" @tab:show="onTabShow">
     <slot ref="list" name="list"></slot>
     <slot></slot>
   </f7-page-content>
@@ -21,6 +21,14 @@ export default {
     },
     id: {
       type: String,
+    },
+    ptr: {
+      type: Boolean,
+      default: true,
+    },
+    infinite: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

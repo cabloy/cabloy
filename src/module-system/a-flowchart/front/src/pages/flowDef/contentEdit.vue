@@ -1,29 +1,51 @@
 <template>
-  <eb-page>
+  <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
+      <f7-subnavbar>
+        <f7-toolbar top tabbar>
+          <eb-link :tab-link="`#${tabId.diagram}`" :tabLinkActive="tabName==='diagram'" :text="$text('flowDefDiagramTitle')"></eb-link>
+          <eb-link :tab-link="`#${tabId.source}`" :tabLinkActive="tabName==='source'" :text="$text('flowDefSourceTitle')"></eb-link>
+          <eb-link :tab-link="`#${tabId.listener}`" :tabLinkActive="tabName==='listener'" :text="$text('flowDefListenerTitle')"></eb-link>
+        </f7-toolbar>
+      </f7-subnavbar>
     </eb-navbar>
-    <template v-if="module">
-      <eb-box>
-        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :onBlockAdd="onBlockAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
-      </eb-box>
-    </template>
+    <f7-tabs ref="tabs">
+      <eb-tab-page-content :id="tabId.diagram" :ptr="false" :infinite="false" :tabActive="tabName==='diagram'" data-ref="diagram" @tab:show="tabName='diagram'">
+        <content-edit-diagram :readOnly="readOnly" :contentProcess="contentProcess"></content-edit-diagram>
+      </eb-tab-page-content>
+      <eb-tab-page-content :id="tabId.source" :tabActive="tabName==='source'" data-ref="source" @tab:show="tabName='source'">
+      </eb-tab-page-content>
+      <eb-tab-page-content :id="tabId.listener" :tabActive="tabName==='listener'" data-ref="listener" @tab:show="tabName='listener'">
+      </eb-tab-page-content>
+    </f7-tabs>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
+import contentEditDiagram from '../../components/flowDef/contentEditDiagram.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   meta: {
     size: 'large',
   },
   mixins: [ ebPageContext ],
+  components: {
+    contentEditDiagram,
+  },
   data() {
     return {
       dirty: false,
-      module: null,
+      contentProcess: null,
+      contentListener: null,
+      tabId: {
+        diagram: Vue.prototype.$meta.util.nextId('tab'),
+        source: Vue.prototype.$meta.util.nextId('tab'),
+        listener: Vue.prototype.$meta.util.nextId('tab'),
+      },
+      tabName: 'diagram',
     };
   },
   computed: {
@@ -36,11 +58,12 @@ export default {
     item() {
       return this.contextParams.item;
     },
-    editable() {
-      return !this.readOnly;
-    },
   },
-  created() {},
+  created() {
+    const content = JSON.parse(this.item.content);
+    this.contentProcess = content.process;
+    this.contentListener = content.listener;
+  },
   methods: {
     onChange(data) {
       if (this.readOnly) return;
