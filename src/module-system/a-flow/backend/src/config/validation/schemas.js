@@ -5,8 +5,7 @@ module.exports = app => {
     type: 'object',
     properties: {
       // title
-      groupTitle: {
-        type: 'null',
+      __groupTitle: {
         ebType: 'group-flatten',
         ebTitle: 'Title',
       },
@@ -17,8 +16,7 @@ module.exports = app => {
         notEmpty: true,
       },
       // content
-      groupContent: {
-        type: 'null',
+      __groupContent: {
         ebType: 'group-flatten',
         ebTitle: 'Content',
       },
@@ -29,8 +27,7 @@ module.exports = app => {
         ebTitle: 'Content',
       },
       // Basic Info
-      groupBasicInfo: {
-        type: 'null',
+      __groupBasicInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
@@ -50,8 +47,7 @@ module.exports = app => {
         ebTitle: 'Tags',
       },
       // Extra
-      groupExtra: {
-        type: 'null',
+      __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
       },

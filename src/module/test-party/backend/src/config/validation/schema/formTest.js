@@ -5,8 +5,7 @@ module.exports = app => {
   schemas.formTest = {
     type: 'object',
     properties: {
-      groupInfo: {
-        type: 'null',
+      __groupInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Info Group',
       },
@@ -55,8 +54,7 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'Remember Me',
       },
-      groupExtra: {
-        type: 'null',
+      __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra Group',
       },

@@ -9,8 +9,7 @@ module.exports = app => {
         type: 'number',
       },
       // title
-      groupTitle: {
-        type: 'null',
+      __groupTitle: {
         ebType: 'group-flatten',
         ebTitle: 'Title',
       },
@@ -21,8 +20,7 @@ module.exports = app => {
         notEmpty: true,
       },
       // content
-      groupContent: {
-        type: 'null',
+      __groupContent: {
         ebType: 'group-flatten',
         ebTitle: 'Content',
       },
@@ -36,8 +34,7 @@ module.exports = app => {
         },
       },
       // Basic Info
-      groupBasicInfo: {
-        type: 'null',
+      __groupBasicInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
         ebGroupWhole: true,
