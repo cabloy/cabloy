@@ -59,7 +59,7 @@
         const stat=`
 <div class="title stat" data-article-id="${item.atomId}">
 <a target="_blank" href="${url('static/articles.html')}?categoryId=${item.atomCategoryId}&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(item.atomCategoryName)}</span></a>
-<span class="num date">${util.formatDateTime(item.createdAt)}</span>
+<span class="num date">${util.formatDateTime(item.atomCreatedAt)}</span>
 <i class="fas fa-eye"></i><span class="num readCount"></span>
 <i class="fas fa-heart"></i><span class="num starCount"></span>
 <a target="_blank" href="${url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount"></span></a>

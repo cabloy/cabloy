@@ -324,7 +324,7 @@ function _loadMore({ categoryId, tagId, search }) {
       const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
 ${category}
-<span class="num date">${util.formatDateTime(item.createdAt)}</span>
+<span class="num date">${util.formatDateTime(item.atomCreatedAt)}</span>
 <i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
 <i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
 <a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
