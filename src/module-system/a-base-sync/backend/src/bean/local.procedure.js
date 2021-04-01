@@ -35,14 +35,14 @@ module.exports = ctx => {
       return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms });
     }
 
-    _prepare_cms({ iid, mode, cms }) {
+    _prepare_cms({ tableName, iid, mode, cms }) {
       let _cmsField,
         _cmsJoin,
         _cmsWhere;
 
       // cms
       if (cms) {
-        _cmsField = ',p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid';
+        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {
@@ -109,7 +109,7 @@ module.exports = ctx => {
         _itemJoin;
 
       // cms
-      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -292,7 +292,7 @@ module.exports = ctx => {
         _resourceWhere;
 
       // cms
-      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -468,7 +468,7 @@ module.exports = ctx => {
         _resourceWhere;
 
       // cms
-      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -707,7 +707,7 @@ module.exports = ctx => {
       }
 
       // cms
-      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ iid, mode, cms });
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       // sql
       const _sql =
