@@ -106,7 +106,8 @@ module.exports = app => {
         // this.ctx.logger.info(error.message);
         // use default
         if (site.language) {
-          themeName = site.themes[site.language.default];
+          language = site.language.default;
+          themeName = site.themes[language];
         } else {
           themeName = site.themes.default;
         }
@@ -116,7 +117,7 @@ module.exports = app => {
         this.ctx.throw.module(moduleInfo.relativeName, 1002, atomClass.module, atomClass.atomClassName, language);
       }
       // ok
-      return themeName;
+      return { themeName, language };
     }
 
     async getLanguages() {
@@ -153,7 +154,9 @@ module.exports = app => {
     // site<plugin<theme<site(db)<language(db)
     async combineSite({ siteBase, language }) {
       // themeName
-      const themeName = this._getThemeName({ site: siteBase, language });
+      const __themeName = this._getThemeName({ site: siteBase, language });
+      const themeName = __themeName.themeName;
+      language = __themeName.language;
       // theme
       const theme = this.combineThemes(themeName);
       // site(db)
@@ -936,7 +939,9 @@ var env=${JSON.stringify(env, null, 2)};
         }
 
         // theme
-        const themeName = this._getThemeName({ site, language });
+        const __themeName = this._getThemeName({ site, language });
+        const themeName = __themeName.themeName;
+        language = __themeName.language;
         await this.copyThemes(pathIntermediate, themeName);
 
         // custom
@@ -1088,7 +1093,9 @@ var env=${JSON.stringify(env, null, 2)};
       }
 
       // theme
-      const themeName = this._getThemeName({ site, language });
+      const __themeName = this._getThemeName({ site, language });
+      const themeName = __themeName.themeName;
+      language = __themeName.language;
       this.watcherThemes(site, themeName);
 
       // custom
@@ -1201,6 +1208,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       // article
       const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
+      if (!article.url) return null; // not throw error
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
