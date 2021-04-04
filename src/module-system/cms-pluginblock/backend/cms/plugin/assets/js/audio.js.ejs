@@ -4,8 +4,8 @@ $(document).ready(function() {
 
 function _renderAudioLoadResource(callback) {
   if (window.APlayer) return callback();
-  util.loadLink('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css', function() {
-    util.loadScript('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js', function() {
+  util.loadLink(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer.min.css'), function() {
+    util.loadScript(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer.min.js'), function() {
       return callback();
     });
   });
