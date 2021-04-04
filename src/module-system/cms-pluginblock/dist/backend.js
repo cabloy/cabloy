@@ -252,8 +252,7 @@ module.exports = app => {
         },
       },
       // options
-      groupOptions: {
-        type: 'null',
+      __groupOptions: {
         ebType: 'group-flatten',
         ebTitle: 'Options',
       },

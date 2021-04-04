@@ -677,7 +677,7 @@ module.exports = app => {
 
     _checkIfPluginEnable({ site, moduleName }) {
       const config = site.plugins[moduleName];
-      return !config || config.enable !== false;
+      return !config || !config.disabled;
     }
 
     async _loadPluginIncludes({ site, language }) {
