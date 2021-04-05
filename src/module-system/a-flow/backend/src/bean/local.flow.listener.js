@@ -27,7 +27,9 @@ module.exports = ctx => {
         sandbox.console = console;
       } else {
         sandbox.assert = () => {};
-        sandbox.console = () => {};
+        sandbox.console = (...args) => {
+          console.log(...args);
+        };
       }
       sandbox = vm.createContext(sandbox);
       // class
