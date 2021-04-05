@@ -41,6 +41,8 @@ export default {
   data() {
     return {
       dirty: false,
+      contentProcess: null,
+      contentListener: null,
       tabId: {
         diagram: Vue.prototype.$meta.util.nextId('tab'),
         source: Vue.prototype.$meta.util.nextId('tab'),
@@ -59,21 +61,27 @@ export default {
     item() {
       return this.contextParams.item;
     },
-    content2() {
+    contentObj() {
       return this.item.content ? JSON.parse(this.item.content) : {};
     },
-    contentProcess() {
-      return this.content2.process || this.$config.flowDef.default.process;
-    },
-    contentListener() {
-      return this.content2.listener;
-    },
   },
-  created() {},
+  created() {
+    const content = this.contentObj;
+    this.contentProcess = content.process || this.$config.flowDef.default.process;
+    this.contentListener = content.listener;
+  },
   methods: {
     onContentChange(data) {
       if (this.readOnly) return;
-      const content = JSON.stringify(this.$meta.util.extend({}, this.content2, data));
+      const contentNew = {};
+      if (data.type === 'process') {
+        this.contentProcess = data.value;
+        contentNew.process = data.value;
+      } else if (data.type === 'listener') {
+        this.contentListener = data.value;
+        contentNew.listener = data.value;
+      }
+      const content = JSON.stringify(this.$meta.util.extend({}, this.contentObj, contentNew));
       this.dirty = true;
       this.contextCallback(200, { content });
     },

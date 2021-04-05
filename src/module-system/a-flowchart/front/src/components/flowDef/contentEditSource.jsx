@@ -39,8 +39,8 @@ export default {
     },
     _onInputDelay: Vue.prototype.$meta.util.debounce(function(data) {
       try {
-        const process = JSON5.parse(data);
-        this.$emit('contentChange', { process });
+        const value = JSON5.parse(data);
+        this.$emit('contentChange', { type: 'process', value });
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
