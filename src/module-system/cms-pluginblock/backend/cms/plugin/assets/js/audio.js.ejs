@@ -4,8 +4,8 @@ $(document).ready(function() {
 
 function _renderAudioLoadResource(callback) {
   if (window.APlayer) return callback();
-  util.loadLink(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer.min.css'), function() {
-    util.loadScript(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer.min.js'), function() {
+  util.loadLink(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer-1.10.1.min.css'), function() {
+    util.loadScript(util.url('plugins/cms-pluginblock/assets/lib/aplayer/aplayer-1.10.1.min.js'), function() {
       return callback();
     });
   });
