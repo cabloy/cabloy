@@ -38,8 +38,6 @@ export default {
   data() {
     return {
       dirty: false,
-      contentProcess: null,
-      contentListener: null,
       tabId: {
         diagram: Vue.prototype.$meta.util.nextId('tab'),
         source: Vue.prototype.$meta.util.nextId('tab'),
@@ -58,12 +56,17 @@ export default {
     item() {
       return this.contextParams.item;
     },
+    content2() {
+      return this.item.content ? JSON.parse(this.item.content) : {};
+    },
+    contentProcess() {
+      return this.content2.process || this.$config.flowDef.default.process;
+    },
+    contentListener() {
+      return this.content2.listener;
+    },
   },
-  created() {
-    const content = JSON.parse(this.item.content);
-    this.contentProcess = content.process || this.$config.flowDef.default.process;
-    this.contentListener = content.listener;
-  },
+  created() {},
   methods: {
     onChange(data) {
       if (this.readOnly) return;
