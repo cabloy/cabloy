@@ -20,6 +20,7 @@
         <content-edit-source :readOnly="readOnly" :contentProcess="contentProcess" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName==='listener'" data-ref="listener" @tab:show="tabName='listener'">
+        <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" @contentChange="onContentChange"></content-edit-listener>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
@@ -28,6 +29,7 @@
 import Vue from 'vue';
 import contentEditDiagram from '../../components/flowDef/contentEditDiagram.jsx';
 import contentEditSource from '../../components/flowDef/contentEditSource.jsx';
+import contentEditListener from '../../components/flowDef/contentEditListener.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   meta: {
@@ -37,6 +39,7 @@ export default {
   components: {
     contentEditDiagram,
     contentEditSource,
+    contentEditListener,
   },
   data() {
     return {
@@ -68,7 +71,7 @@ export default {
   created() {
     const content = this.contentObj;
     this.contentProcess = content.process || this.$config.flowDef.default.process;
-    this.contentListener = content.listener;
+    this.contentListener = content.listener || this.$config.flowDef.default.listener;
   },
   methods: {
     onContentChange(data) {
