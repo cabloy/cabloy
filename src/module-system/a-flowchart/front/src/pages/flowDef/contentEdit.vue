@@ -61,7 +61,7 @@ export default {
   },
   created() {
     const content = JSON.parse(this.item.content);
-    this.contentProcess = content.process;
+    this.contentProcess = content.process || this.$config.flowDef.default.process;
     this.contentListener = content.listener;
   },
   methods: {
