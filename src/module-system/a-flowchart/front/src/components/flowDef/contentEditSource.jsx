@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -34,13 +35,16 @@ export default {
       });
     },
     onInput(event) {
+      this._onInputDelay(event.target.value);
+    },
+    _onInputDelay: Vue.prototype.$meta.util.debounce(function(data) {
       try {
-        const process = JSON5.parse(event.target.value);
+        const process = JSON5.parse(data);
         this.$emit('contentChange', { process });
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
-    },
+    }, 500),
   },
   render() {
     return (
