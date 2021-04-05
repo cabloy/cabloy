@@ -16,9 +16,10 @@
       <eb-tab-page-content :id="tabId.diagram" :ptr="false" :infinite="false" :tabActive="tabName==='diagram'" data-ref="diagram" @tab:show="tabName='diagram'">
         <content-edit-diagram :readOnly="readOnly" :contentProcess="contentProcess"></content-edit-diagram>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.source" :tabActive="tabName==='source'" data-ref="source" @tab:show="tabName='source'">
+      <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName==='source'" data-ref="source" @tab:show="tabName='source'">
+        <content-edit-source :readOnly="readOnly" :contentProcess="contentProcess" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.listener" :tabActive="tabName==='listener'" data-ref="listener" @tab:show="tabName='listener'">
+      <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName==='listener'" data-ref="listener" @tab:show="tabName='listener'">
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
@@ -26,6 +27,7 @@
 <script>
 import Vue from 'vue';
 import contentEditDiagram from '../../components/flowDef/contentEditDiagram.jsx';
+import contentEditSource from '../../components/flowDef/contentEditSource.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   meta: {
@@ -34,6 +36,7 @@ export default {
   mixins: [ ebPageContext ],
   components: {
     contentEditDiagram,
+    contentEditSource,
   },
   data() {
     return {
@@ -68,11 +71,11 @@ export default {
   },
   created() {},
   methods: {
-    onChange(data) {
+    onContentChange(data) {
       if (this.readOnly) return;
-      if (this.item.content === data) return;
+      const content = JSON.stringify(this.$meta.util.extend({}, this.content2, data));
       this.dirty = true;
-      this.contextCallback(200, { content: data });
+      this.contextCallback(200, { content });
     },
     onSave() {
       this.onPerformSave().then(text => {
