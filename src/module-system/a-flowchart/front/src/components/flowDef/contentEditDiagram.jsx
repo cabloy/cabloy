@@ -100,7 +100,8 @@ export default {
       }
       if (changeData) {
         this.graph.changeData(this.contentProcess);
-        this.graph.refresh();
+        this.graph.render();
+        // this.graph.refresh();
       }
     },
     __adjustNode() {
@@ -128,7 +129,7 @@ export default {
   },
   render() {
     return (
-      <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-iframe-box">
+      <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-box-iframe">
       </eb-box>
     );
   },

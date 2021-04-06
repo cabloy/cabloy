@@ -44,7 +44,7 @@ export default {
     },
     _renderIFrame() {
       return (
-        <eb-box onSize={this.onSize} header subnavbar class="eb-iframe-box">
+        <eb-box onSize={this.onSize} header subnavbar class="eb-box-iframe">
           <iframe ref="iframe" src={this.articleUrl} seamless={true}></iframe>
         </eb-box>
       );
