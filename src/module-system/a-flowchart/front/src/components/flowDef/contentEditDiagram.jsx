@@ -6,19 +6,40 @@ export default {
     readOnly: {
       type: Boolean,
     },
-    contentProcess: {
-      type: Object,
+    contentProcessStr: {
+      type: String,
+    },
+    tabActive: {
+      type: Boolean,
     },
   },
   data() {
     return {
+      contentProcess: null,
       g6: null,
       graph: null,
       size: {
         height: 0,
         width: 0,
       },
+      dirty: false,
     };
+  },
+  watch: {
+    contentProcessStr() {
+      this.contentProcess = JSON5.parse(this.contentProcessStr);
+      if (this.tabActive) {
+        this.__updateChart({ changeData: true });
+      } else {
+        this.dirty = true;
+      }
+    },
+    tabActive() {
+      if (this.tabActive && this.dirty) {
+        this.dirty = false;
+        this.__updateChart({ changeData: true });
+      }
+    },
   },
   created() {
   },
@@ -27,6 +48,7 @@ export default {
   },
   methods: {
     __init() {
+      this.contentProcess = JSON5.parse(this.contentProcessStr);
       const action = {
         actionModule: 'a-antvg6',
         actionComponent: 'g6',
