@@ -1,4 +1,3 @@
-import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -7,18 +6,13 @@ export default {
     readOnly: {
       type: Boolean,
     },
-    contentProcess: {
-      type: Object,
+    contentProcessStr: {
+      type: String,
     },
   },
   data() {
     return {
     };
-  },
-  computed: {
-    contentProcess2() {
-      return JSON5.stringify(this.contentProcess, null, 2);
-    },
   },
   created() {
   },
@@ -30,21 +24,19 @@ export default {
       });
     },
     onInput(event) {
-      this._onInputDelay(event.target.value);
-    },
-    _onInputDelay: Vue.prototype.$meta.util.debounce(function(data) {
+      const data = event.target.value;
       try {
         const value = JSON5.parse(data);
-        this.$emit('contentChange', { type: 'process', value });
+        this.$emit('contentChange', { type: 'process', value, valueStr: data });
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
-    }, 500),
+    },
   },
   render() {
     return (
       <eb-box onSize={this.onSize} header subnavbar>
-        <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.contentProcess2} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>
+        <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.contentProcessStr} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>
       </eb-box>
     );
   },

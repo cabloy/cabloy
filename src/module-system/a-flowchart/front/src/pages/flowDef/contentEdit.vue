@@ -17,7 +17,7 @@
         <content-edit-diagram :readOnly="readOnly" :contentProcess="contentProcess"></content-edit-diagram>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName==='source'" data-ref="source" @tab:show="tabName='source'">
-        <content-edit-source :readOnly="readOnly" :contentProcess="contentProcess" @contentChange="onContentChange"></content-edit-source>
+        <content-edit-source :readOnly="readOnly" :contentProcessStr="contentProcessStr" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName==='listener'" data-ref="listener" @tab:show="tabName='listener'">
         <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" @contentChange="onContentChange"></content-edit-listener>
@@ -45,6 +45,7 @@ export default {
     return {
       dirty: false,
       contentProcess: null,
+      contentProcessStr: null,
       contentListener: null,
       tabId: {
         diagram: Vue.prototype.$meta.util.nextId('tab'),
@@ -71,6 +72,7 @@ export default {
   created() {
     const content = this.contentObj;
     this.contentProcess = content.process || this.$config.flowDef.default.process;
+    this.contentProcessStr = JSON5.stringify(this.contentProcess, null, 2);
     this.contentListener = content.listener || this.$config.flowDef.default.listener;
   },
   methods: {
@@ -80,6 +82,11 @@ export default {
       if (data.type === 'process') {
         this.contentProcess = data.value;
         contentNew.process = data.value;
+        if (data.valueStr) {
+          this.contentProcessStr = data.valueStr;
+        } else {
+          this.contentProcessStr = JSON5.stringify(this.contentProcess, null, 2);
+        }
       } else if (data.type === 'listener') {
         this.contentListener = data.value;
         contentNew.listener = data.value;
