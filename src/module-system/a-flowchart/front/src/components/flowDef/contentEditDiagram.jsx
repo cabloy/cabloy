@@ -26,6 +26,30 @@ export default {
       dirty: false,
     };
   },
+  computed: {
+    contentProcessRender() {
+      if (!this.contentProcess) return;
+      const nodes = this.contentProcess.nodes.map(item => {
+        const node = {
+          id: item.id,
+          label: item.nameLocale || item.name,
+          width: 80,
+          height: 40,
+        };
+        return node;
+      });
+      const edges = this.contentProcess.edges.map(item => {
+        const edge = {
+          id: item.id,
+          source: item.source,
+          target: item.target,
+          label: item.nameLocale || item.name,
+        };
+        return edge;
+      });
+      return { nodes, edges };
+    },
+  },
   watch: {
     contentProcessStr() {
       this.contentProcess = JSON5.parse(this.contentProcessStr);
@@ -78,64 +102,13 @@ export default {
     __updateChart({ changeSize, changeData }) {
       if (!this.x6 || !this.xlayout) return;
       if (!this.graph) {
-        this.graph = new this.g6.Graph({
+        this.graph = new this.x6.Graph({
           container: this.$refs.container.$el,
           width: this.size.width,
           height: this.size.height,
-          fitView: true,
-          fitViewPadding: 10,
-          layout: {
-            type: 'dagre',
-            // rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
-            rankdir: 'TB', // always top->bottom
-            // align: undefined, // center
-            nodesep: 20,
-            ranksep: 30,
-            controlPoints: true,
-          },
-          modes: {
-            default: [ 'drag-canvas', 'zoom-canvas' ],
-            edit: [
-              'drag-canvas', 'zoom-canvas', 'click-select',
-              {
-                type: 'create-edge',
-                trigger: 'drag',
-              },
-            ],
-          },
         });
-        this.graph.setMode(this.readOnly ? 'default' : 'edit');
-        this.__adjustNode();
-        this.__adjustEdge();
-        this.graph.data(this.contentProcess);
-        this.graph.render();
+        this.graph.fromJSON(this.contentProcessRender);
       }
-      if (changeSize) {
-        this.graph.changeSize(this.size.width, this.size.height);
-        this.graph.fitView();
-      }
-      if (changeData) {
-        this.graph.changeData(this.contentProcess);
-        this.graph.render();
-        // this.graph.refresh();
-      }
-    },
-    __adjustNode() {
-      this.graph.node(node => {
-        return {
-          id: node.id,
-          type: 'rect',
-          label: node.name,
-        };
-      });
-    },
-    __adjustEdge() {
-      this.graph.edge(edge => {
-        return {
-          id: edge.id,
-          type: 'cubic-horizontal',
-        };
-      });
     },
     onSize(size) {
       this.size.height = size.height;
