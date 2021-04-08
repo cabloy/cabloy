@@ -144,6 +144,31 @@ export default {
           enabled: true,
           modifiers: [ 'ctrl', 'meta' ],
         },
+        connecting: {
+          snap: true,
+          allowBlank: false,
+          allowMulti: false,
+          allowLoop: false,
+          allowNode: true,
+          allowEdge: false,
+          allowPort: false,
+          highlight: false,
+          // connector: 'jumpover',
+          // router: 'orth',
+        },
+        interacting() {
+          if (this.readOnly) return false;
+          return {
+            nodeMovable: true,
+            magnetConnectable: true,
+            edgeMovable: false,
+            edgeLabelMovable: false,
+            arrowheadMovable: false,
+            vertexMovable: false,
+            vertexAddable: false,
+            vertexDeletable: false,
+          };
+        },
       });
       // model
       const model = this.__createLayoutModel();
