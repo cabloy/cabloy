@@ -24,6 +24,7 @@ module.exports = app => {
       edges: [
         {
           id: 'edge_1',
+          name: 'x=1',
           source: 'startEvent_1',
           target: 'endEvent_1',
           options: {
@@ -32,6 +33,7 @@ module.exports = app => {
         },
         {
           id: 'edge_2',
+          name: 'x=2',
           source: 'startEvent_1',
           target: 'endEvent_2',
           options: {
@@ -47,7 +49,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Test_Set00_Edge_Sequence',
     atomStaticKey: 'set00_edgeSequence',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     content: JSON.stringify(content),
   };
