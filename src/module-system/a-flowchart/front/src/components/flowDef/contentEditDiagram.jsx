@@ -104,6 +104,15 @@ export default {
       if (!this.graph) {
         this.__createChart();
       }
+      if (changeSize) {
+        this.graph.resize(this.size.width, this.size.height);
+        this.graph.centerContent();
+      }
+      if (changeData) {
+        const model = this.__createLayoutModel();
+        this.graph.fromJSON(model);
+        this.graph.centerContent();
+      }
     },
     __createChart() {
       // graph
@@ -111,19 +120,33 @@ export default {
         container: this.$refs.container.$el,
         width: this.size.width,
         height: this.size.height,
+        scroller: {
+          enabled: true,
+          pannable: true,
+          autoResize: true,
+        },
+        mousewheel: {
+          enabled: true,
+          modifiers: [ 'ctrl', 'meta' ],
+        },
       });
+      // model
+      const model = this.__createLayoutModel();
+      // render
+      this.graph.fromJSON(model);
+      this.graph.centerContent();
+    },
+    __createLayoutModel() {
       // layout
       const dagreLayout = new this.xlayout.DagreLayout({
         type: 'dagre',
-        rankdir: 'TB', // "LR",
+        rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
         align: undefined, // "UL",
-        ranksep: 30,
         nodesep: 15,
+        ranksep: 30,
         controlPoints: true,
       });
-      // model
-      const model = dagreLayout.layout(this.contentProcessRender);
-      this.graph.fromJSON(model);
+      return dagreLayout.layout(this.contentProcessRender);
     },
     onSize(size) {
       this.size.height = size.height;
