@@ -19,6 +19,7 @@ export default {
       x6: null,
       xlayout: null,
       graph: null,
+      dagreLayout: null,
       size: {
         height: 0,
         width: 0,
@@ -70,6 +71,16 @@ export default {
   },
   mounted() {
     this.__init();
+  },
+  beforeDestroy() {
+    if (this.graph) {
+      this.graph.dispose();
+      this.graph = null;
+    }
+    if (this.dagreLayout) {
+      this.dagreLayout.destroy();
+      this.dagreLayout = null;
+    }
   },
   methods: {
     async __init() {
@@ -138,15 +149,17 @@ export default {
     },
     __createLayoutModel() {
       // layout
-      const dagreLayout = new this.xlayout.DagreLayout({
-        type: 'dagre',
-        rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
-        align: undefined, // "UL",
-        nodesep: 15,
-        ranksep: 30,
-        controlPoints: true,
-      });
-      return dagreLayout.layout(this.contentProcessRender);
+      if (!this.dagreLayout) {
+        this.dagreLayout = new this.xlayout.DagreLayout({
+          type: 'dagre',
+          rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
+          align: undefined, // "UL",
+          nodesep: 15,
+          ranksep: 30,
+          controlPoints: true,
+        });
+      }
+      return this.dagreLayout.layout(this.contentProcessRender);
     },
     onSize(size) {
       this.size.height = size.height;
