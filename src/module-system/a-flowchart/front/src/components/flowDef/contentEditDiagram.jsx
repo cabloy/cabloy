@@ -16,6 +16,8 @@ export default {
   data() {
     return {
       contentProcess: null,
+      nodeBases: null,
+      edgeBases: null,
       x6: null,
       xlayout: null,
       graph: null,
@@ -28,6 +30,9 @@ export default {
     };
   },
   computed: {
+    ready() {
+      return this.x6 && this.xlayout && this.nodeBases && this.edgeBases;
+    },
     contentProcessRender() {
       if (!this.contentProcess) return;
       const nodes = this.contentProcess.nodes.map(item => {
@@ -89,6 +94,8 @@ export default {
   methods: {
     async __init() {
       this.contentProcess = JSON5.parse(this.contentProcessStr);
+      this.nodeBases = await this.$local.dispatch('getNodeBases');
+      this.edgeBases = await this.$local.dispatch('getEdgeBases');
       await this.__prepareInstances();
       this.__updateChart({});
     },
@@ -115,14 +122,17 @@ export default {
       return await this.$meta.util.performAction({ ctx: this, action });
     },
     __updateChart({ changeSize, changeData }) {
-      if (!this.x6 || !this.xlayout) return;
+      if (!this.ready) return;
+      // graph
       if (!this.graph) {
         this.__createChart();
       }
+      // changeSize
       if (changeSize) {
         this.graph.resize(this.size.width, this.size.height);
         this.graph.centerContent();
       }
+      // changeData
       if (changeData) {
         const model = this.__createLayoutModel();
         this.graph.fromJSON(model);

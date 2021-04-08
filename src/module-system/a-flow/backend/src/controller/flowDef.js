@@ -3,11 +3,13 @@ module.exports = app => {
   class FlowDefController extends app.Controller {
 
     nodeBases() {
-      return this.ctx.service.flowDef.nodeBases();
+      const res = this.ctx.service.flowDef.nodeBases();
+      this.ctx.success(res);
     }
 
     edgeBases() {
-      return this.ctx.service.flowDef.edgeBases();
+      const res = this.ctx.service.flowDef.edgeBases();
+      this.ctx.success(res);
     }
 
   }
