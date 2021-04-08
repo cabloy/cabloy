@@ -102,13 +102,28 @@ export default {
     __updateChart({ changeSize, changeData }) {
       if (!this.x6 || !this.xlayout) return;
       if (!this.graph) {
-        this.graph = new this.x6.Graph({
-          container: this.$refs.container.$el,
-          width: this.size.width,
-          height: this.size.height,
-        });
-        this.graph.fromJSON(this.contentProcessRender);
+        this.__createChart();
       }
+    },
+    __createChart() {
+      // graph
+      this.graph = new this.x6.Graph({
+        container: this.$refs.container.$el,
+        width: this.size.width,
+        height: this.size.height,
+      });
+      // layout
+      const dagreLayout = new this.xlayout.DagreLayout({
+        type: 'dagre',
+        rankdir: 'TB', // "LR",
+        align: undefined, // "UL",
+        ranksep: 30,
+        nodesep: 15,
+        controlPoints: true,
+      });
+      // model
+      const model = dagreLayout.layout(this.contentProcessRender);
+      this.graph.fromJSON(model);
     },
     onSize(size) {
       this.size.height = size.height;
