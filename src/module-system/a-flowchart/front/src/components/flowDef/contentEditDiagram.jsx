@@ -16,7 +16,8 @@ export default {
   data() {
     return {
       contentProcess: null,
-      g6: null,
+      x6: null,
+      xlayout: null,
       graph: null,
       size: {
         height: 0,
@@ -47,20 +48,35 @@ export default {
     this.__init();
   },
   methods: {
-    __init() {
+    async __init() {
       this.contentProcess = JSON5.parse(this.contentProcessStr);
-      const action = {
-        actionModule: 'a-antvg6',
-        actionComponent: 'g6',
+      await this.__prepareInstances();
+      this.__updateChart({});
+    },
+    async __prepareInstances() {
+      const promises = [];
+      let action = {
+        actionModule: 'a-antvx6',
+        actionComponent: 'x6',
         name: 'instance',
       };
-      this.$meta.util.performAction({ ctx: this, action }).then(g6 => {
-        this.g6 = g6;
-        this.__updateChart({});
-      });
+      promises.push(this.__prepareInstance({ action }));
+      action = {
+        actionModule: 'a-antvlayout',
+        actionComponent: 'layout',
+        name: 'instance',
+      };
+      promises.push(this.__prepareInstance({ action }));
+      const res = await Promise.all(promises);
+      // ok
+      this.x6 = res[0];
+      this.xlayout = res[1];
+    },
+    async __prepareInstance({ action }) {
+      return await this.$meta.util.performAction({ ctx: this, action });
     },
     __updateChart({ changeSize, changeData }) {
-      if (!this.g6) return;
+      if (!this.x6 || !this.xlayout) return;
       if (!this.graph) {
         this.graph = new this.g6.Graph({
           container: this.$refs.container.$el,

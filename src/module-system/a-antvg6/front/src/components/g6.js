@@ -1,4 +1,4 @@
-import g6 from '@antv/g6';
+import * as g6 from '@antv/g6';
 
 export default {
   meta: {

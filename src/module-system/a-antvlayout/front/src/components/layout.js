@@ -1,4 +1,4 @@
-import layout from '@antv/layout';
+import * as layout from '@antv/layout';
 
 export default {
   meta: {
