@@ -92,6 +92,14 @@ module.exports = ctx => {
       });
     }
 
+    nodeBases() {
+      return this._getFlowNodeBases();
+    }
+
+    edgeBases() {
+      return this._getFlowEdgeBases();
+    }
+
     _getFlowNodeBases() {
       if (!__flowNodeBases[ctx.locale]) {
         __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();

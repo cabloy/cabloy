@@ -33,8 +33,8 @@ export default {
       const nodes = this.contentProcess.nodes.map(item => {
         const node = {
           id: item.id,
-          width: 80,
-          height: 40,
+          width: 100,
+          height: 80,
           attrs: {
             label: {
               text: item.nameLocale || item.name,
