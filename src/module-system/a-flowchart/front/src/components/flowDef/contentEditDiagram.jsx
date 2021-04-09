@@ -142,9 +142,11 @@ export default {
       }
     },
     __createChart() {
+      // container
+      const container = this.$refs.container.$el;
       // graph
       this.graph = new this.x6.Graph({
-        container: this.$refs.container.$el,
+        container,
         width: this.size.width,
         height: this.size.height,
         selecting: {
@@ -182,14 +184,29 @@ export default {
           return {
             nodeMovable: true,
             magnetConnectable: true,
-            edgeMovable: false,
+            edgeMovable: true,
             edgeLabelMovable: false,
-            arrowheadMovable: false,
+            arrowheadMovable: true,
             vertexMovable: false,
             vertexAddable: false,
             vertexDeletable: false,
           };
         },
+      });
+      // event
+      this.graph.on(
+        'node:mouseenter', () => {
+          const ports = container.querySelectorAll(
+            '.x6-port-body'
+          );
+          this.__showPorts(ports, true);
+        }
+      );
+      this.graph.on('node:mouseleave', () => {
+        const ports = container.querySelectorAll(
+          '.x6-port-body'
+        );
+        this.__showPorts(ports, false);
       });
       // model
       const model = this.__createLayoutModel();
@@ -354,8 +371,11 @@ export default {
                 r: 8,
                 magnet: true,
                 stroke: 'orange',
-                strokeWidth: 1,
+                strokeWidth: 2,
                 fill: 'transparent',
+                style: {
+                  visibility: 'hidden',
+                },
               },
             },
           },
@@ -366,6 +386,11 @@ export default {
           },
         ],
       };
+    },
+    __showPorts(ports, show) {
+      for (let i = 0, len = ports.length; i < len; i = i + 1) {
+        ports[i].style.visibility = show ? 'visible' : 'hidden';
+      }
     },
     onSize(size) {
       this.size.height = size.height;
