@@ -1,99 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="2000"
-   height="2000"
-   viewBox="0 0 2000 2000"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.91 r"
-   sodipodi:docname="user-task.svg">
-  <defs
-     id="defs4" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.4345"
-     inkscape:cx="660.52934"
-     inkscape:cy="1000"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="px"
-     showguides="false"
-     inkscape:window-width="1878"
-     inkscape:window-height="1028"
-     inkscape:window-x="40"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4008"
-       empspacing="20"
-       dotted="false" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="https://github.com/bpmn-io/bpmn-font/blob/master/LICENSE" />
-        <dc:creator>
-          <cc:Agent>
-            <dc:title>Jörg Dotzki</dc:title>
-          </cc:Agent>
-        </dc:creator>
-        <dc:subject>
-          <rdf:Bag>
-            <rdf:li>BPMN</rdf:li>
-            <rdf:li>bpmn-io</rdf:li>
-            <rdf:li>bpmn.io</rdf:li>
-            <rdf:li>Font</rdf:li>
-          </rdf:Bag>
-        </dc:subject>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Ebene 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,947.63784)">
-    <rect
-       style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:119.99999237;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4187"
-       width="1800"
-       height="1460"
-       x="100"
-       y="-677.63782"
-       rx="329.65115"
-       ry="328.5" />
-    <g
-       id="layer9"
-       style="display:inline"
-       transform="matrix(0.57449664,0,0,0.57449664,86.0082,-679.23703)">
-      <path
-         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:70;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:2.29999995;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-         d="M 991.75,365 C 814.47261,365 687.65259,501.28069 687.29688,656.51367 l 0,0.0449 0,0.043 c 0.0112,46.94485 12.71406,96.48986 32.56054,141.17774 14.33025,32.26709 32.14702,61.93151 53.85742,85.69531 C 644.68593,927.61788 493.52222,1000.2699 417.11719,1143.5293 L 413,1151.25 l 0,463.75 1157.5,0 0,-463.75 -4.1172,-7.7207 c -75.3061,-141.1989 -223.1988,-213.74978 -350.9805,-258.07618 62.3794,-63.43263 80.7808,-145.30578 80.8008,-228.85156 l 0,-0.043 0,-0.0449 C 1295.8474,501.2807 1169.0274,365 991.75,365 Z M 870.70898,530.29883 c 8.19443,0.0206 17.19117,0.29432 27.10938,0.8789 79.02308,4.65771 105.61894,18.88222 126.06254,32.37305 20.4435,13.49083 34.8553,26.33317 88.8828,27.9082 l 0.016,0 0.018,0 c 42.1017,-1.5748 62.3491,-9.0811 76.8691,-17.58398 5.8837,-3.44545 10.8241,-7.02722 15.8867,-10.44727 13.3814,28.68227 20.5671,60.38893 20.6485,93.20313 -0.028,93.43999 -16.0919,158.87652 -101.7676,212.42383 l 8.3809,63.16992 c 17.8327,5.41537 36.2658,11.35733 54.9746,17.87305 2.6128,10.90011 5.6316,25.19633 7.6621,40.39453 2.1271,15.92241 2.9637,32.48881 1.6523,44.92771 -1.3114,12.4389 -5.1734,19.1539 -5.8515,19.8321 -43.5469,43.5468 -120.8464,68.9433 -199.252,68.9433 -78.40557,0 -155.70507,-25.3965 -199.25195,-68.9433 -0.67811,-0.6782 -4.54017,-7.3932 -5.85157,-19.8321 -1.31139,-12.4389 -0.47481,-29.0053 1.65235,-44.92771 2.04162,-15.28211 5.08445,-29.66261 7.70703,-40.58399 18.52194,-6.44112 36.76978,-12.32071 54.42969,-17.68359 l 4.99609,-67.6875 c -4.068,-5.21708 -8.21297,-8.67324 -13.16016,-12.38477 -19.12128,-14.34532 -42.30994,-45.90379 -58.68945,-82.78515 -16.37367,-36.86821 -26.51791,-79.00946 -26.5332,-112.74414 0.10174,-40.44431 10.98577,-79.211 30.97656,-112.69727 3.57689,-1.33139 7.34871,-2.73853 11.58789,-4.13281 14.90781,-4.90324 35.33655,-9.58342 70.8457,-9.49414 z M 719.36133,979.85547 c -0.0629,0.45883 -0.13379,0.90664 -0.19531,1.36719 -2.58689,19.36354 -4.10696,40.44054 -1.88282,61.53714 2.22414,21.0966 7.79068,43.8102 25.96875,61.9882 62.04773,62.0478 155.95092,89.4473 248.74805,89.4473 92.7971,0 186.7003,-27.3995 248.748,-89.4473 18.1781,-18.178 23.7447,-40.8916 25.9688,-61.9882 2.2241,-21.0967 0.7041,-42.1736 -1.8828,-61.53714 -0.051,-0.38161 -0.1102,-0.75238 -0.1621,-1.13282 94.3337,41.36896 185.5148,100.61546 235.8281,189.07426 l 0,375.8359 -167.5,0 0,-265 -70,0 0,265 -544,0 0,-265 -70,0 0,265 -166,0 0,-375.8359 c 50.40811,-88.6256 141.83798,-147.9292 236.36133,-189.30863 z"
-         id="path8979-3"
-         inkscape:connector-curvature="0" />
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="40.000004 210.00002 1920 1580" width="1920" height="1580">
+  <defs/>
+  <metadata> Produced by OmniGraffle 7.18.5\n2021-04-09 07:42:27 +0000</metadata>
+  <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Group_2">
+        <title>layer1</title>
+        <g id="Graphic_5">
+          <title>rect4187</title>
+          <path d="M 429.65115 270.00002 L 1570.3488 270.00002 C 1752.4102 270.00002 1900 417.58987 1900 599.6512 L 1900 1400.3489 C 1900 1582.4102 1752.4102 1730 1570.3488 1730 L 429.65115 1730 C 247.58985 1730 100 1582.4102 100 1400.3489 L 100 599.6512 C 100 417.58987 247.58985 270.00002 429.65115 270.00002 Z" fill="white"/>
+          <path d="M 429.65115 270.00002 L 1570.3488 270.00002 C 1752.4102 270.00002 1900 417.58987 1900 599.6512 L 1900 1400.3489 C 1900 1582.4102 1752.4102 1730 1570.3488 1730 L 429.65115 1730 C 247.58985 1730 100 1582.4102 100 1400.3489 L 100 599.6512 C 100 417.58987 247.58985 270.00002 429.65115 270.00002 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="119.99999"/>
+        </g>
+        <g id="Group_3">
+          <title>layer9</title>
+          <g id="Graphic_4">
+            <title>path8979-3</title>
+            <path d="M 655.76524 478.0921 C 553.92 478.0921 481.0623 556.3849 480.85795 645.5657 L 480.85795 645.5915 L 480.85795 645.6162 C 480.8644 672.5859 488.16213 701.0493 499.56387 726.7223 C 507.79655 745.2597 518.0322 762.3018 530.5048 775.954 C 456.3781 801.3142 369.53506 843.0525 325.64062 925.3546 L 323.2753 929.7901 L 323.2753 1196.2129 L 988.2552 1196.2129 L 988.2552 929.7901 L 985.8899 925.3546 C 942.6268 844.2363 857.6629 802.556 784.2527 777.09065 C 820.0895 740.6488 830.661 693.613 830.6725 645.6162 L 830.6725 645.5915 L 830.6725 645.5657 C 830.4682 556.3849 757.6105 478.0921 655.76524 478.0921 Z M 586.2276 573.0557 C 590.93526 573.06754 596.10385 573.2248 601.8018 573.5606 C 647.2003 576.2365 662.47956 584.4084 674.2243 592.15884 C 685.96906 599.9093 694.2486 607.28716 725.2872 608.192 L 725.2964 608.192 L 725.3067 608.192 C 749.494 607.2873 761.1261 602.97495 769.4678 598.0901 C 772.8479 596.1107 775.6862 594.05296 778.5946 592.08815 C 786.2822 608.566 790.4104 626.7814 790.4571 645.633 C 790.441 699.314 781.2124 736.9071 731.992 767.6698 L 736.8068 803.9607 C 747.0516 807.0718 757.6414 810.4855 768.3895 814.2287 C 769.89055 820.4908 771.6248 828.7039 772.7914 837.4352 C 774.0134 846.5826 774.494 856.1 773.7406 863.2461 C 772.9872 870.3922 770.7685 874.2499 770.3789 874.6395 C 745.3614 899.657 700.9531 914.2472 655.9093 914.2472 C 610.8656 914.2472 566.4573 899.657 541.43975 874.6395 C 541.0502 874.2499 538.83144 870.3922 538.07804 863.2461 C 537.32465 856.1 537.80527 846.5826 539.0273 837.4352 C 540.2002 828.6557 541.9483 820.3942 543.455 814.1199 C 554.0958 810.4195 564.5791 807.0417 574.72465 803.9607 L 577.5949 765.0745 C 575.25783 762.0773 572.87656 760.0917 570.0344 757.9595 C 559.0493 749.7181 545.7275 731.5879 536.3175 710.3997 C 526.9109 689.219 521.0831 665.009 521.0743 645.62855 C 521.13274 622.3934 527.3856 600.1221 538.8702 580.88434 C 540.92513 580.11946 543.092 579.3111 545.5274 578.51006 C 554.0919 575.69316 565.82816 573.0044 586.22804 573.0557 Z M 499.27887 831.3245 C 499.24273 831.5881 499.202 831.8453 499.16666 832.1099 C 497.6805 843.2342 496.8072 855.3429 498.085 867.4628 C 499.36275 879.5827 502.5607 892.6316 513.00395 903.0748 C 548.65016 938.7211 602.5972 954.462 655.9089 954.462 C 709.2205 954.462 763.1676 938.7211 798.8138 903.0748 C 809.257 892.6316 812.455 879.5827 813.7327 867.4628 C 815.0105 855.3428 814.1372 843.2342 812.6511 832.1099 C 812.6218 831.8907 812.5878 831.6777 812.558 831.4591 C 866.7524 855.2255 919.1356 889.2624 948.0404 940.0817 L 948.0404 1155.9981 L 851.8122 1155.9981 L 851.8122 1003.7565 L 811.5975 1003.7565 L 811.5975 1155.9981 L 499.0713 1155.9981 L 499.0713 1003.7565 L 458.8565 1003.7565 L 458.8565 1155.9981 L 363.49008 1155.9981 L 363.49008 940.0817 C 392.44937 889.1665 444.9755 855.0968 499.27887 831.3245 Z" fill="black"/>
+          </g>
+        </g>
+      </g>
     </g>
   </g>
 </svg>

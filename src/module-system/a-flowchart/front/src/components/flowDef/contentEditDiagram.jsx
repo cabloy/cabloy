@@ -50,6 +50,7 @@ export default {
       const edges = this.contentProcess.edges.map(item => {
         const edge = {
           id: item.id,
+          shape: 'sequence',
           source: item.source,
           target: item.target,
           label: item.nameLocale || item.name,
@@ -97,6 +98,7 @@ export default {
       this.edgeBases = await this.$local.dispatch('getEdgeBases');
       await this.__prepareInstances();
       this.__registerNodes();
+      this.__registerEdges();
       this.__updateChart({});
     },
     async __prepareInstances() {
@@ -209,56 +211,133 @@ export default {
       }
       return this.dagreLayout.layout(this.contentProcessRender);
     },
+    __registerEdges() {
+      if (this.x6.Graph.__registerEdges) return;
+      this.x6.Graph.__registerEdges = true;
+      for (const edgeType in this.edgeBases) {
+        const edgeBase = this.edgeBases[edgeType];
+        const options = this.__registerEdge(edgeBase);
+        this.x6.Graph.registerEdge(edgeType, options);
+      }
+    },
     __registerNodes() {
       if (this.x6.Graph.__registerNodes) return;
       this.x6.Graph.__registerNodes = true;
       for (const nodeType in this.nodeBases) {
         const nodeBase = this.nodeBases[nodeType];
-        const options = {
-          width: 125,
-          height: 100,
-          markup: [
-            {
-              tagName: 'rect',
-              selector: 'body',
-            },
-            {
-              tagName: 'image',
-              selector: 'image',
-            },
-            {
-              tagName: 'text',
-              selector: 'label',
-            },
-          ],
-          attrs: {
-            body: {
-              fill: '#ffffff',
-              stroke: '#000',
-              strokeWidth: 0,
-              refWidth: '100%',
-              refHeight: '100%',
-              pointerEvents: 'visiblePainted',
-            },
-            image: {
-              refWidth: '100%',
-              refHeight: '100%',
-              opacity: 0.4,
-              pointerEvents: 'none',
-              href: this.$meta.util.combineFetchStaticPath(nodeBase.icon),
-            },
-            label: {
-              fontSize: 12,
-              fill: '#333333',
-              refX: '50%',
-              refY: '50%',
-              textAnchor: 'middle',
-              textVerticalAnchor: 'middle',
-            },
-          },
-        };
+        let options;
+        if (nodeBase.group === 'startEvent' || nodeBase.group === 'endEvent') {
+          options = this.__registerNodeCircle(nodeBase);
+        } else {
+          options = this.__registerNodeRect(nodeBase);
+        }
         this.x6.Graph.registerNode(nodeType, options);
       }
+    },
+    __registerEdge(edgeBase) {
+      const options = {
+        inherit: 'edge',
+        attrs: {
+          line: {
+            stroke: '#000',
+            opacity: 0.4,
+          },
+        },
+      };
+      return options;
+    },
+    __registerNodeCircle(nodeBase) {
+      const options = {
+        width: 80,
+        height: 80,
+        markup: [
+          {
+            tagName: 'circle',
+            selector: 'body',
+          },
+          {
+            tagName: 'image',
+            selector: 'image',
+          },
+          {
+            tagName: 'text',
+            selector: 'label',
+          },
+        ],
+        attrs: {
+          body: {
+            fill: '#ffffff',
+            stroke: '#000',
+            strokeWidth: 0,
+            r: 40,
+            refX: '50%',
+            refY: '50%',
+            pointerEvents: 'visiblePainted',
+          },
+          image: {
+            refWidth: '100%',
+            refHeight: '100%',
+            opacity: 0.4,
+            pointerEvents: 'none',
+            href: this.$meta.util.combineFetchStaticPath(nodeBase.icon),
+          },
+          label: {
+            fontSize: 14,
+            fill: '#333333',
+            refX: '50%',
+            refY: '50%',
+            textAnchor: 'middle',
+            textVerticalAnchor: 'middle',
+          },
+        },
+      };
+      return options;
+    },
+    __registerNodeRect(nodeBase) {
+      const options = {
+        width: 125,
+        height: 100,
+        markup: [
+          {
+            tagName: 'rect',
+            selector: 'body',
+          },
+          {
+            tagName: 'image',
+            selector: 'image',
+          },
+          {
+            tagName: 'text',
+            selector: 'label',
+          },
+        ],
+        attrs: {
+          body: {
+            fill: '#ffffff',
+            stroke: '#000',
+            strokeWidth: 0,
+            refWidth: '100%',
+            refHeight: '100%',
+            pointerEvents: 'visiblePainted',
+          },
+          image: {
+            refWidth: '100%',
+            refHeight: '100%',
+            opacity: 0.4,
+            pointerEvents: 'none',
+            href: this.$meta.util.combineFetchStaticPath(nodeBase.icon),
+          },
+          label: {
+            fontSize: 14,
+            fill: '#333333',
+            refX: '50%',
+            refY: '50%',
+            textAnchor: 'middle',
+            textVerticalAnchor: 'middle',
+          },
+        },
+      };
+      return options;
     },
     onSize(size) {
       this.size.height = size.height;
