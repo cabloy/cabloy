@@ -90,6 +90,7 @@ export default {
       this.dagreLayout.destroy();
       this.dagreLayout = null;
     }
+    this.$emit('diagram:destroy');
   },
   methods: {
     async __init() {
@@ -407,11 +408,42 @@ export default {
       this.size.width = size.width;
       this.__updateChart({ changeSize: true });
     },
+    onPerformPlus() {
+      this.$view.navigate(`/a/flowchart/flowDef/nodes?_t=${Date.now()}`, {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'flowChart', title: 'Flow Chart' },
+        context: {
+          params: {
+            diagram: this,
+          },
+        },
+      });
+    },
+    renderActions() {
+      if (this.readOnly) return null;
+      const children = [];
+      // add
+      children.push(
+        <eb-link key="diagram-action-plus" class="diagram-action-plus" iconMaterial="add_circle" propsOnPerform={event => this.onPerformPlus(event)}></eb-link>
+      );
+      return (
+        <div class="diagram-actions">
+          {children}
+        </div>
+      );
+    },
   },
   render() {
+    let domActions;
+    if (this.ready) {
+      domActions = this.renderActions();
+    }
     return (
-      <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-box-iframe">
-      </eb-box>
+      <div>
+        <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-box-iframe">
+        </eb-box>
+        {domActions}
+      </div>
     );
   },
 };
