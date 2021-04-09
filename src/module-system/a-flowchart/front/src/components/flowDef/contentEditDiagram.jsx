@@ -250,6 +250,7 @@ export default {
       const options = {
         width: 80,
         height: 80,
+        ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'circle',
@@ -297,6 +298,7 @@ export default {
       const options = {
         width: 125,
         height: 100,
+        ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'rect',
@@ -331,13 +333,39 @@ export default {
             fontSize: 14,
             fill: '#333333',
             refX: '50%',
-            refY: '50%',
+            refY: '75%',
             textAnchor: 'middle',
             textVerticalAnchor: 'middle',
           },
         },
       };
       return options;
+    },
+    __registerConnectionPorts() {
+      return {
+        groups: {
+          group1: {
+            position: {
+              name: 'absolute',
+              args: { x: '50%', y: '50%' },
+            },
+            attrs: {
+              circle: {
+                r: 8,
+                magnet: true,
+                stroke: 'orange',
+                strokeWidth: 1,
+                fill: 'transparent',
+              },
+            },
+          },
+        },
+        items: [
+          {
+            group: 'group1',
+          },
+        ],
+      };
     },
     onSize(size) {
       this.size.height = size.height;
