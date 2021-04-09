@@ -130,7 +130,7 @@ module.exports = ctx => {
           flowNodeBases[fullKey] = {
             ...node,
             beanFullName,
-            title: ctx.text(node.title),
+            titleLocale: ctx.text(node.title),
           };
         }
       }
@@ -167,7 +167,7 @@ module.exports = ctx => {
           flowEdgeBases[fullKey] = {
             ...edge,
             beanFullName,
-            title: ctx.text(edge.title),
+            titleLocale: ctx.text(edge.title),
           };
         }
       }

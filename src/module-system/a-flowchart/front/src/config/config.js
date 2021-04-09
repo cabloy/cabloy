@@ -43,5 +43,10 @@ export default {
         edges: [],
       },
     },
+    groups: [
+      { name: 'startEvent', title: 'Start Event' },
+      { name: 'endEvent', title: 'End Event' },
+      { name: 'activity', title: 'Activity' },
+    ],
   },
 };

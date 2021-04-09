@@ -2,9 +2,15 @@
   <eb-page>
     <eb-navbar :title="$text('Flow Chart')" eb-back-link="Back">
     </eb-navbar>
-    <f7-list>
-      <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id===dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
-      </eb-list-item>
+    <f7-list v-if="ready">
+      <f7-list-group v-for="group of nodeBasesGroups" :key="group.name">
+        <f7-list-item group-title :title="group.titleLocale"></f7-list-item>
+        <eb-list-item v-for="item of group.items" :key="item.type" :title="item.titleLocale" link="#" :context="item" :onPerform="onPerformNode">
+          <div slot="media">
+            <img class="media-node-base-icon" :src="getNodeMedia(item)">
+          </div>
+        </eb-list-item>
+      </f7-list-group>
     </f7-list>
   </eb-page>
 </template>
@@ -16,15 +22,32 @@ export default {
   data() {
     return {
       nodeBases: null,
-      edgeBases: null,
     };
   },
   computed: {
     ready() {
-      return this.nodeBases && this.edgeBases;
+      return this.nodeBases;
     },
     diagram() {
       return this.contextParams.diagram;
+    },
+    nodeBasesGroups() {
+      const configGroups = this.$config.flowDef.groups;
+      const groups = this.$meta.util.extend([], configGroups);
+      for (const group of groups) {
+        group.titleLocale = this.$text(group.title);
+        group.items = [];
+        for (const nodeType in this.nodeBases) {
+          const nodeBase = this.nodeBases[nodeType];
+          if (nodeBase.group === group.name) {
+            group.items.push({
+              type: nodeType,
+              ...nodeBase,
+            });
+          }
+        }
+      }
+      return groups;
     },
   },
   created() {
@@ -39,10 +62,15 @@ export default {
   methods: {
     async __load() {
       this.nodeBases = await this.$local.dispatch('getNodeBases');
-      this.edgeBases = await this.$local.dispatch('getEdgeBases');
     },
     onDiagramDestroy() {
       this.$view.close();
+    },
+    getNodeMedia(item) {
+      return this.$meta.util.combineFetchStaticPath(item.icon);
+    },
+    onPerformNode(event, nodeBase) {
+      console.log(nodeBase);
     },
   },
 };
