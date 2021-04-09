@@ -176,7 +176,17 @@ export default {
           highlight: false,
           // connector: 'jumpover',
           router: {
-            name: 'orth',
+            name: 'manhattan', // 'orth',
+          },
+          createEdge: () => {
+            return new this.x6.Shape.Edge({
+              attrs: {
+                line: {
+                  stroke: '#000',
+                  opacity: 0.4,
+                },
+              },
+            });
           },
         },
         interacting() {
