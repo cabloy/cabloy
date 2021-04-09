@@ -38,8 +38,7 @@ export default {
       const nodes = this.contentProcess.nodes.map(item => {
         const node = {
           id: item.id,
-          width: 100,
-          height: 80,
+          shape: item.type,
           attrs: {
             label: {
               text: item.nameLocale || item.name,
@@ -97,6 +96,7 @@ export default {
       this.nodeBases = await this.$local.dispatch('getNodeBases');
       this.edgeBases = await this.$local.dispatch('getEdgeBases');
       await this.__prepareInstances();
+      this.__registerNodes();
       this.__updateChart({});
     },
     async __prepareInstances() {
@@ -145,6 +145,13 @@ export default {
         container: this.$refs.container.$el,
         width: this.size.width,
         height: this.size.height,
+        selecting: {
+          enabled: !this.readOnly,
+          multiple: false,
+          rubberband: false,
+          showNodeSelectionBox: true,
+          showEdgeSelectionBox: true,
+        },
         scroller: {
           enabled: true,
           pannable: true,
@@ -164,7 +171,9 @@ export default {
           allowPort: false,
           highlight: false,
           // connector: 'jumpover',
-          // router: 'orth',
+          router: {
+            name: 'orth',
+          },
         },
         interacting() {
           if (this.readOnly) return false;
@@ -193,12 +202,63 @@ export default {
           type: 'dagre',
           rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
           align: undefined, // "UL",
-          nodesep: 15,
-          ranksep: 30,
+          nodesep: 30,
+          ranksep: 60,
           controlPoints: true,
         });
       }
       return this.dagreLayout.layout(this.contentProcessRender);
+    },
+    __registerNodes() {
+      if (this.x6.Graph.__registerNodes) return;
+      this.x6.Graph.__registerNodes = true;
+      for (const nodeType in this.nodeBases) {
+        const nodeBase = this.nodeBases[nodeType];
+        const options = {
+          width: 125,
+          height: 100,
+          markup: [
+            {
+              tagName: 'rect',
+              selector: 'body',
+            },
+            {
+              tagName: 'image',
+              selector: 'image',
+            },
+            {
+              tagName: 'text',
+              selector: 'label',
+            },
+          ],
+          attrs: {
+            body: {
+              fill: '#ffffff',
+              stroke: '#000',
+              strokeWidth: 0,
+              refWidth: '100%',
+              refHeight: '100%',
+              pointerEvents: 'visiblePainted',
+            },
+            image: {
+              refWidth: '100%',
+              refHeight: '100%',
+              opacity: 0.4,
+              pointerEvents: 'none',
+              href: this.$meta.util.combineFetchStaticPath(nodeBase.icon),
+            },
+            label: {
+              fontSize: 12,
+              fill: '#333333',
+              refX: '50%',
+              refY: '50%',
+              textAnchor: 'middle',
+              textVerticalAnchor: 'middle',
+            },
+          },
+        };
+        this.x6.Graph.registerNode(nodeType, options);
+      }
     },
     onSize(size) {
       this.size.height = size.height;

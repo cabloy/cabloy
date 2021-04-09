@@ -160,6 +160,9 @@ export default function(Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
     },
+    combineFetchStaticPath(arg) {
+      return this.combineFetchPath(null, '/' + arg);
+    },
     combineFetchPath(moduleName, arg) {
       let url = this._combineFetchPath(moduleName, arg);
       if (Vue.prototype.$meta.config.api.baseURL) {
