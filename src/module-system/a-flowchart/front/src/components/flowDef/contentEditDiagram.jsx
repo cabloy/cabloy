@@ -221,20 +221,20 @@ export default {
       this.graph.centerContent();
     },
     __graphEvents(container) {
-      // mouseenter
-      this.graph.on('node:mouseenter', () => {
-        const ports = container.querySelectorAll(
-          '.x6-port-body'
-        );
-        this.__showPorts(ports, true);
-      });
-      // mouseleave
-      this.graph.on('node:mouseleave', () => {
-        const ports = container.querySelectorAll(
-          '.x6-port-body'
-        );
-        this.__showPorts(ports, false);
-      });
+      // // mouseenter
+      // this.graph.on('node:mouseenter', () => {
+      //   const ports = container.querySelectorAll(
+      //     '.x6-port-body'
+      //   );
+      //   this.__showPorts(ports, true);
+      // });
+      // // mouseleave
+      // this.graph.on('node:mouseleave', () => {
+      //   const ports = container.querySelectorAll(
+      //     '.x6-port-body'
+      //   );
+      //   this.__showPorts(ports, false);
+      // });
       // connected
       this.graph.on('edge:connected', ({ isNew, edge }) => {
         if (!isNew) return;
@@ -328,6 +328,7 @@ export default {
             refX: '50%',
             refY: '50%',
             pointerEvents: 'visiblePainted',
+            magnet: true,
           },
           image: {
             refWidth: '100%',
@@ -375,6 +376,7 @@ export default {
             refWidth: '100%',
             refHeight: '100%',
             pointerEvents: 'visiblePainted',
+            magnet: true,
           },
           image: {
             refWidth: '100%',
