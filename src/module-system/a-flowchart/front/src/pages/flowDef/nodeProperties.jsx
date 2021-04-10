@@ -20,6 +20,9 @@ export default {
     diagram() {
       return this.contextParams.diagram;
     },
+    readOnly() {
+      return this.diagram.readOnly;
+    },
   },
   created() {
     this.__load();
@@ -83,11 +86,19 @@ export default {
         </f7-list-item>
       );
       // name
-      children.push(
-        <f7-list-item title={this.$text('Name')} key="name">
-          <div slot="after">{this.data.nameLocale || this.data.name}</div>
-        </f7-list-item>
-      );
+      if (this.readOnly) {
+        children.push(
+          <f7-list-item title={this.$text('Name')} key="name">
+            <div slot="after">{this.data.nameLocale || this.data.name}</div>
+          </f7-list-item>
+        );
+      } else {
+        children.push(
+          <eb-list-input key="name" type="text" clearButton value={this.data.name} onInput={value => { this.data.name = value; } }>
+            <div slot="label">{this.$text('Name')}</div>
+          </eb-list-input>
+        );
+      }
       // group options
       let groupOptions = null;
       if (this.optionsValidator) {
@@ -99,7 +110,7 @@ export default {
       }
       // list
       return (
-        <f7-list>
+        <f7-list form inline-labels no-hairlines-md>
           <f7-list-group>
             <f7-list-item group-title title={this.$text('Basic')}></f7-list-item>
             {children}
@@ -111,7 +122,7 @@ export default {
     renderOptions() {
       if (!this.ready) return;
       return (
-        <eb-validate ref="validate" auto data={this.data.options} params={this.optionsValidator}>
+        <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data.options} params={this.optionsValidator}>
         </eb-validate>
       );
     },
