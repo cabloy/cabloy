@@ -131,6 +131,7 @@ export default {
   Quantity: '数量',
   Amount: '金额',
   General: '通用',
+  Properties: '属性',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

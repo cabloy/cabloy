@@ -152,7 +152,7 @@ export default {
     },
     __createChart() {
       // container
-      const container = this.$refs.container.$el;
+      const container = this.$refs.container;
       // graph
       this.graph = new this.x6.Graph({
         container,
@@ -541,7 +541,8 @@ export default {
     }
     return (
       <div>
-        <eb-box ref="container" onSize={this.onSize} header subnavbar class="eb-box-iframe">
+        <eb-box ref="box" onSize={this.onSize} header subnavbar class="eb-box-iframe">
+          <div ref="container"></div>
         </eb-box>
         {domActions}
       </div>
