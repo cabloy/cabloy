@@ -1,8 +1,7 @@
-const flowNodes = require('./config/flow/nodes.js');
-const flowEdges = require('./config/flow/edges.js');
-
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./config/validation/schemas.js')(app);
+  const flowNodes = require('./config/flow/nodes.js')(app);
+  const flowEdges = require('./config/flow/edges.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -10,10 +9,12 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        // sequence
+        sequence: {
+          schemas: 'sequence',
+        },
       },
-      keywords: {},
-      schemas: {
-      },
+      schemas,
     },
     flow: {
       nodes: flowNodes,
