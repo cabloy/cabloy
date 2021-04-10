@@ -12,6 +12,9 @@ export default {
     tabActive: {
       type: Boolean,
     },
+    flowDef: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -238,6 +241,10 @@ export default {
         const target = edge.getTargetCell();
         this.addEdge(source.id, target.id);
       });
+      this.graph.on('node:click', ({ node }) => {
+        console.log(node);
+
+      });
     },
     __createLayoutModel() {
       // layout
@@ -423,7 +430,7 @@ export default {
       this.__updateChart({ changeSize: true });
     },
     onPerformPlus() {
-      this.$view.navigate(`/a/flowchart/flowDef/nodes?_t=${Date.now()}`, {
+      this.$view.navigate(`/a/flowchart/flowDef/nodes?flowDefId=${this.flowDef.atomId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'flowChart', title: 'Flow Chart' },
         context: {

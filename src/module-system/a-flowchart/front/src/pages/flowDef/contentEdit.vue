@@ -14,7 +14,7 @@
     </eb-navbar>
     <f7-tabs ref="tabs">
       <eb-tab-page-content :id="tabId.diagram" :ptr="false" :infinite="false" :tabActive="tabName==='diagram'" data-ref="diagram" @tab:show="tabName='diagram'">
-        <content-edit-diagram :readOnly="readOnly" :tabActive="tabName==='diagram'" :contentProcessStr="contentProcessStr" @contentChange="onContentChange"></content-edit-diagram>
+        <content-edit-diagram :readOnly="readOnly" :tabActive="tabName==='diagram'" :flowDef="flowDef" :contentProcessStr="contentProcessStr" @contentChange="onContentChange"></content-edit-diagram>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName==='source'" data-ref="source" @tab:show="tabName='source'">
         <content-edit-source :readOnly="readOnly" :contentProcessStr="contentProcessStr" @contentChange="onContentChange"></content-edit-source>
@@ -57,16 +57,19 @@ export default {
   },
   computed: {
     title() {
-      return `${this.dirty ? '* ' : ''}${this.item.atomName}`;
+      return `${this.dirty ? '* ' : ''}${this.flowDef.atomName}`;
     },
     readOnly() {
       return this.contextParams.readOnly;
     },
-    item() {
+    flowDef() {
       return this.contextParams.item;
     },
+    flowDefId() {
+      return this.flowDef.atomId;
+    },
     contentObj() {
-      return this.item.content ? JSON.parse(this.item.content) : {};
+      return this.flowDef.content ? JSON.parse(this.flowDef.content) : {};
     },
   },
   created() {
