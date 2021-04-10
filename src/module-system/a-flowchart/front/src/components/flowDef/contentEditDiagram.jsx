@@ -424,6 +424,32 @@ export default {
         },
       });
     },
+    addNode(nodeBase) {
+      // id
+      const id = this.__getAvailableId(nodeBase);
+      // node
+      const node = {
+        id,
+        name: nodeBase.type,
+        type: nodeBase.type,
+      };
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      value.nodes.push(node);
+      this.$emit('contentChange', { type: 'process', value });
+    },
+    __getAvailableId(nodeBase) {
+      let id = 0;
+      const cells = nodeBase ? this.contentProcess.nodes : this.contentProcess.edges;
+      for (const cell of cells) {
+        if (!cell.id) continue;
+        const _id = parseInt(cell.id.split('_')[1] || 0);
+        if (_id > id) {
+          id = _id;
+        }
+      }
+      return nodeBase ? `${nodeBase.type}_${id + 1}` : `edge_${id + 1}`;
+    },
     renderActions() {
       if (this.readOnly) return null;
       const children = [];

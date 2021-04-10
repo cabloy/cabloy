@@ -70,7 +70,13 @@ export default {
       return this.$meta.util.combineFetchStaticPath(item.icon);
     },
     onPerformNode(event, nodeBase) {
-      console.log(nodeBase);
+      // addNode
+      this.diagram.addNode(nodeBase);
+      // back
+      const inPanel = this.$view.inPanel();
+      if (!inPanel) {
+        this.$f7router.back();
+      }
     },
   },
 };
