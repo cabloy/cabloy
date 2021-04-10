@@ -221,29 +221,34 @@ export default {
       this.graph.centerContent();
     },
     __graphEvents(container) {
-      // event
+      // mouseenter
       this.graph.on('node:mouseenter', () => {
         const ports = container.querySelectorAll(
           '.x6-port-body'
         );
         this.__showPorts(ports, true);
-      }
-      );
+      });
+      // mouseleave
       this.graph.on('node:mouseleave', () => {
         const ports = container.querySelectorAll(
           '.x6-port-body'
         );
         this.__showPorts(ports, false);
       });
+      // connected
       this.graph.on('edge:connected', ({ isNew, edge }) => {
         if (!isNew) return;
         const source = edge.getSourceCell();
         const target = edge.getTargetCell();
         this.addEdge(source.id, target.id);
       });
+      // node:click
       this.graph.on('node:click', ({ node }) => {
-        console.log(node);
-
+        this.showProperties({ node });
+      });
+      // edge:click
+      this.graph.on('edge:click', ({ edge }) => {
+        this.showProperties({ edge });
       });
     },
     __createLayoutModel() {
@@ -436,6 +441,35 @@ export default {
         context: {
           params: {
             diagram: this,
+          },
+        },
+      });
+    },
+    __findNode(id) {
+      return this.contentProcess.nodes.find(item => item.id === id);
+    },
+    __findEdge(id) {
+      return this.contentProcess.edges.find(item => item.id === id);
+    },
+    showProperties({ node, edge }) {
+      // queries
+      const queries = {
+        flowDefId: this.flowDef.atomId,
+        type: node ? 'node' : 'edge',
+        id: node ? node.id : edge.id,
+      };
+      // url
+      const url = this.$meta.util.combineQueries('/a/flowchart/flowDef/nodeProperties', queries);
+      // data
+      const data = node ? this.__findNode(node.id) : this.__findEdge(edge.id);
+      // navigate
+      this.$view.navigate(url, {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'properties', title: 'Properties' },
+        context: {
+          params: {
+            diagram: this,
+            data,
           },
         },
       });
