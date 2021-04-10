@@ -83,11 +83,11 @@ export default {
   },
   mounted() {
     this.__init();
-    if (!this.readOnly && !this.$device.desktop) {
-      this.$nextTick(() => {
-        this.$view.toast.show({ text: this.$text('EditInPCTip') });
-      });
-    }
+    // if (!this.readOnly && !this.$device.desktop) {
+    //   this.$nextTick(() => {
+    //     this.$view.toast.show({ text: this.$text('EditInPCTip') });
+    //   });
+    // }
   },
   beforeDestroy() {
     if (this.graph) {
