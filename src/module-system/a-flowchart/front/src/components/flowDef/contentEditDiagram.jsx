@@ -209,14 +209,22 @@ export default {
           };
         },
       });
+      // events
+      this.__graphEvents(container);
+      // model
+      const model = this.__createLayoutModel();
+      // render
+      this.graph.fromJSON(model);
+      this.graph.centerContent();
+    },
+    __graphEvents(container) {
       // event
-      this.graph.on(
-        'node:mouseenter', () => {
-          const ports = container.querySelectorAll(
-            '.x6-port-body'
-          );
-          this.__showPorts(ports, true);
-        }
+      this.graph.on('node:mouseenter', () => {
+        const ports = container.querySelectorAll(
+          '.x6-port-body'
+        );
+        this.__showPorts(ports, true);
+      }
       );
       this.graph.on('node:mouseleave', () => {
         const ports = container.querySelectorAll(
@@ -224,11 +232,12 @@ export default {
         );
         this.__showPorts(ports, false);
       });
-      // model
-      const model = this.__createLayoutModel();
-      // render
-      this.graph.fromJSON(model);
-      this.graph.centerContent();
+      this.graph.on('edge:connected', ({ isNew, edge }) => {
+        if (!isNew) return;
+        const source = edge.getSourceCell();
+        const target = edge.getTargetCell();
+        this.addEdge(source.id, target.id);
+      });
     },
     __createLayoutModel() {
       // layout
@@ -423,6 +432,16 @@ export default {
           },
         },
       });
+    },
+    addEdge(source, target) {
+      // id
+      const id = this.__getAvailableId(null);
+      // edge
+      const edge = { id, source, target };
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      value.edges.push(edge);
+      this.$emit('contentChange', { type: 'process', value });
     },
     addNode(nodeBase) {
       // id
