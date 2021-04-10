@@ -57,10 +57,10 @@ export default {
       // options validator
       this.optionsValidator = base.validator;
       // data
-      this.data = this.$meta.util.extend(dataMeta, data);
+      this.data = this.$meta.util.extend({}, dataMeta, data);
       // watch
       this._unwatch = this.$watch('data', () => {
-        this._dataChange();
+        this.__dataChange();
       }, { deep: true });
     },
     onDiagramDestroy() {
@@ -70,8 +70,8 @@ export default {
       if (!this.data) return this.$text('Properties');
       return `${this.$text('Properties')}: ${this.data.nameLocale || this.data.name || this.data.id}`;
     },
-    _dataChange() {
-
+    __dataChange() {
+      this.diagram.__dataChange(this.type, this.id, this.data);
     },
     renderBasic() {
       if (!this.ready) return;

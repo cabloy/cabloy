@@ -495,6 +495,17 @@ export default {
       value.nodes.push(node);
       this.$emit('contentChange', { type: 'process', value });
     },
+    __dataChange(type, id, data) {
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      if (type === 'node') {
+        const index = value.nodes.findIndex(item => item.id === id);
+        value.nodes.splice(index, 1, data);
+      } else {
+        const index = value.edges.findIndex(item => item.id === id);
+        value.edges.splice(index, 1, data);
+      }
+      this.$emit('contentChange', { type: 'process', value });
+    },
     __getAvailableId(nodeBase) {
       let id = 0;
       const cells = nodeBase ? this.contentProcess.nodes : this.contentProcess.edges;
