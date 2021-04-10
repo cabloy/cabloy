@@ -8,17 +8,17 @@ export default {
       type: this.$f7route.query.type,
       id: this.$f7route.query.id,
       nodeBases: null,
+      edgeBases: null,
+      data: null,
+      optionsValidator: null,
     };
   },
   computed: {
     ready() {
-      return this.nodeBases;
+      return this.nodeBases && this.edgeBases && this.data;
     },
     diagram() {
       return this.contextParams.diagram;
-    },
-    data() {
-      return this.contextParams.data;
     },
   },
   created() {
@@ -29,16 +29,91 @@ export default {
   },
   beforeDestroy() {
     this.diagram.$off('diagram:destroy', this.onDiagramDestroy);
+    if (this._unwatch) {
+      this._unwatch();
+      this._unwatch = null;
+    }
   },
   methods: {
     async __load() {
+      // nodeBases/edgeBases
       this.nodeBases = await this.$local.dispatch('getNodeBases');
+      this.edgeBases = await this.$local.dispatch('getEdgeBases');
+      // data
+      this.__initData();
+    },
+    __initData() {
+      // data
+      const data = this.type === 'node' ? this.diagram.__findNode(this.id) : this.diagram.__findEdge(this.id);
+      // data meta
+      const dataMeta = this.$meta.util.extend({}, this.type === 'node' ? this.$config.meta.node : this.$config.meta.edge);
+      // base
+      const base = this.type === 'node' ? this.nodeBases[data.type] : this.edgeBases.sequence;
+      // default
+      const optionsDefault = base.options.default;
+      if (optionsDefault) {
+        dataMeta.options = optionsDefault;
+      }
+      // options validator
+      this.optionsValidator = base.validator;
+      // data
+      this.data = this.$meta.util.extend(dataMeta, data);
+      // watch
+      this._unwatch = this.$watch('data', () => {
+        this._dataChange();
+      }, { deep: true });
     },
     onDiagramDestroy() {
       this.$view.close();
     },
     __getPageTitle() {
+      if (!this.data) return this.$text('Properties');
       return `${this.$text('Properties')}: ${this.data.nameLocale || this.data.name || this.data.id}`;
+    },
+    _dataChange() {
+
+    },
+    renderBasic() {
+      if (!this.ready) return;
+      const children = [];
+      // id
+      children.push(
+        <f7-list-item title='ID' key="id">
+          <div slot="after">{this.data.id}</div>
+        </f7-list-item>
+      );
+      // name
+      children.push(
+        <f7-list-item title={this.$text('Name')} key="name">
+          <div slot="after">{this.data.nameLocale || this.data.name}</div>
+        </f7-list-item>
+      );
+      // group options
+      let groupOptions = null;
+      if (this.optionsValidator) {
+        groupOptions = (
+          <f7-list-group>
+            <f7-list-item group-title title={this.$text('Options')}></f7-list-item>
+          </f7-list-group>
+        );
+      }
+      // list
+      return (
+        <f7-list>
+          <f7-list-group>
+            <f7-list-item group-title title={this.$text('Basic')}></f7-list-item>
+            {children}
+          </f7-list-group>
+          {groupOptions}
+        </f7-list>
+      );
+    },
+    renderOptions() {
+      if (!this.ready) return;
+      return (
+        <eb-validate ref="validate" auto data={this.data.options} params={this.optionsValidator}>
+        </eb-validate>
+      );
     },
   },
   render() {
@@ -46,9 +121,8 @@ export default {
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
         </eb-navbar>
-        <f7-list>
-
-        </f7-list>
+        {this.renderBasic()}
+        {this.renderOptions()}
       </eb-page>
     );
   },

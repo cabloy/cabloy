@@ -1,4 +1,5 @@
 export default {
+  Basic: '基本',
   Name: '名称',
   Description: '描述',
   Menu: '菜单',

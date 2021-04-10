@@ -460,8 +460,6 @@ export default {
       };
       // url
       const url = this.$meta.util.combineQueries('/a/flowchart/flowDef/nodeProperties', queries);
-      // data
-      const data = node ? this.__findNode(node.id) : this.__findEdge(edge.id);
       // navigate
       this.$view.navigate(url, {
         scene: 'sidebar',
@@ -469,7 +467,6 @@ export default {
         context: {
           params: {
             diagram: this,
-            data,
           },
         },
       });
