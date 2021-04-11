@@ -5,6 +5,7 @@ module.exports = {
   startEventTimer: {
     repeat: {
       every: 0,
+      cron: null,
     },
     bean: {
       module: null,

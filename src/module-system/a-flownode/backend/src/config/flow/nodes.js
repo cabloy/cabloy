@@ -15,6 +15,10 @@ module.exports = app => {
       group: 'startEvent',
       bean: 'startEventTimer',
       icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'startEventTimer',
+      },
     },
     endEventNone: {
       title: 'EndEventNone',

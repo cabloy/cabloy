@@ -13,6 +13,10 @@ module.exports = app => {
         sequence: {
           schemas: 'sequence',
         },
+        // startEventTimer
+        startEventTimer: {
+          schemas: 'startEventTimer',
+        },
       },
       schemas,
     },
