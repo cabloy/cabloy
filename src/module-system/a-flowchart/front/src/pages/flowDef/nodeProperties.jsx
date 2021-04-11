@@ -120,7 +120,7 @@ export default {
       );
     },
     renderOptions() {
-      if (!this.ready) return;
+      if (!this.ready || !this.optionsValidator) return;
       return (
         <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data.options} params={this.optionsValidator}>
         </eb-validate>
