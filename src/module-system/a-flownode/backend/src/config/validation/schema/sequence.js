@@ -8,6 +8,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Condition Expression',
+        ebTextarea: true,
       },
     },
   };

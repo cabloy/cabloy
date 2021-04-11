@@ -32,6 +32,9 @@ export default {
     context() {
       return this.contextParams.context;
     },
+    valueType() {
+      return this.context.property.type || 'string';
+    },
   },
   created() {
     if (!this.value) {
@@ -55,7 +58,12 @@ export default {
       this.content = event.target.value;
     },
     getValue() {
-      return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
+      // string
+      if (this.valueType === 'string') {
+        return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
+      }
+      // object
+      return this.content ? window.JSON5.parse(this.content) : null;
     },
     onPerformDone() {
       const value = this.getValue();
