@@ -4,17 +4,68 @@ module.exports = app => {
   schemas.activityUserTask = {
     type: 'object',
     properties: {
-      bean: {
+      assignees: {
         type: 'object',
         ebType: 'json',
-        ebTitle: 'Bean',
+        ebTitle: 'Assignees',
         notEmpty: true,
       },
-      parameterExpression: {
+      showAssignees: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Show Assignees',
+      },
+      confirmation: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Confirmation Assignees',
+      },
+      confirmationAllowAppend: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'ConfirmationAllowAppend',
+      },
+      bidding: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Bidding',
+      },
+      completionCondition: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Completion Condition',
+        notEmpty: true,
+      },
+      rejectedNode: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Parameter Expression',
-        ebTextarea: true,
+        ebTitle: 'Rejected Node',
+      },
+      allowPassTask: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Pass Task',
+      },
+      allowRejectTask: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Reject Task',
+      },
+      allowCancelFlow: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Cancel Flow',
+      },
+      allowRecall: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Recall',
+      },
+      schema: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Schema',
+        notEmpty: true,
       },
     },
   };
