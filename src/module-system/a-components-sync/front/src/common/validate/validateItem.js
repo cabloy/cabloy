@@ -204,13 +204,29 @@ export default {
     renderItem(c) {
       if (!this.validate.ready) return c('div');
       // context
+      const parcel = this.getParcel();
+      const key = this.dataKey;
+      const property = this.property || parcel.properties[key];
+      const dataPath = parcel.pathParent + key;
       const context = {
-        parcel: this.getParcel(),
-        key: this.dataKey,
+        validate: this.validate,
+        validateItem: this,
+        parcel,
+        key,
+        property,
+        dataPath,
         meta: this.meta,
+        getTitle: notHint => {
+          return this.getTitle(context, notHint);
+        },
+        getValue: name => {
+          return this.getValue(parcel, name || key);
+        },
+        setValue: (value, name) => {
+          this.setValue(parcel, name || key, value);
+        },
       };
-      context.property = this.property || context.parcel.properties[context.key];
-      context.dataPath = context.parcel.pathParent + context.key;
+      // renderItem
       return this._renderItem(c, context);
     },
     _renderItem(c, context) {
