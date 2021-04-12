@@ -48,7 +48,6 @@ module.exports = app => {
   };
   schemas.settingsUserExtra = {
     type: 'object',
-    ebTitle: 'Extra',
     properties: {
       groupInfo: {
         type: 'object',
