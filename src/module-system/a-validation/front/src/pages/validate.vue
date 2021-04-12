@@ -5,7 +5,7 @@
         <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @submit="onFormSubmit">
+    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" :meta="meta" @submit="onFormSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -18,11 +18,11 @@ export default {
     return {};
   },
   computed: {
-    context() {
-      return this.contextParams.context;
-    },
     params() {
       return this.contextParams.params;
+    },
+    meta() {
+      return this.contextParams.meta;
     },
     title() {
       return this.contextParams.title;

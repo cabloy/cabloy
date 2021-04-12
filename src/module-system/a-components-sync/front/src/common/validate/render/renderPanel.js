@@ -1,10 +1,13 @@
 export default {
   methods: {
     renderPanel(c, context) {
-      let { parcel, key, property, dataPath } = context;
-      dataPath = dataPath + '/';
+      let { parcel, key, property, dataPath, meta } = context;
+      // panelMeta
+      const panelMeta = this.getMetaValue(meta, 'meta', dataPath);
       const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
+      // dataPath
+      dataPath = dataPath + '/';
       return c('eb-list-item-panel', {
         key,
         attrs: {
@@ -22,12 +25,12 @@ export default {
               target,
               context: {
                 params: {
-                  context,
                   params: {
                     module: params.module,
                     validator: params.validator,
                     schema: property.$ref,
                   },
+                  meta: panelMeta,
                   title,
                   data: value,
                   dataPathRoot: this.adjustDataPath(dataPath),
