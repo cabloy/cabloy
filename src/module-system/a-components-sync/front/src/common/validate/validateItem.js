@@ -64,17 +64,17 @@ export default {
       }
       return parent;
     },
-    getMetaValue(meta, key, dataPath) {
+    getMetaValue(meta, metaKey, dataPath) {
       // 1. item
-      const value = meta ? meta[key] : undefined;
+      const value = meta ? meta[metaKey] : undefined;
       if (value !== undefined) return value;
       // 2. validate
-      const validateMeta = this.validate.meta;
+      const validateMeta = this.validate.meta && this.validate.meta.properties;
       if (!validateMeta) return undefined;
       // dataPath is empty
-      if (!dataPath) return validateMeta[key];
-      // dataPath is not empty
-      return (validateMeta[dataPath] && validateMeta[dataPath][key]) || validateMeta[key];
+      if (!dataPath || !validateMeta[dataPath]) return undefined;
+      // ok
+      return validateMeta[dataPath][metaKey];
     },
     _handleComputed(parcel, key, property) {
       const ebComputed = property.ebComputed;
@@ -202,11 +202,8 @@ export default {
         setValue: (value, name) => {
           this.setValue(parcel, name || key, value);
         },
-        getMetaValue: name => {
-          const _key = name || key;
-          const _meta = _key === key ? meta : null;
-          const _dataPath = _key === key ? dataPath : parcel.pathParent + _key;
-          return this.getMetaValue(_meta, _key, _dataPath);
+        getMetaValue: metaKey => {
+          return this.getMetaValue(meta, metaKey, dataPath);
         },
       };
       return context;
