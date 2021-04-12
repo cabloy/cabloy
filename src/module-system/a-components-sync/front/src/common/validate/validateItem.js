@@ -187,8 +187,17 @@ export default {
     getParcel() {
       return this.parcel || this.validate.parcel;
     },
+    _combinePropertyMeta({ property, meta, dataPath }) {
+      const metaValidateProperty = this.$meta.util.getProperty(this.validate, `meta.properties.${dataPath}`);
+      if (!metaValidateProperty && !meta) return property;
+      return this.$meta.util.extend({}, property, metaValidateProperty, meta);
+    },
     getContext({ parcel, key, property, meta }) {
+      // dataPath
       const dataPath = parcel.pathParent + key;
+      // property
+      property = this._combinePropertyMeta({ property, meta, dataPath });
+      // context
       const context = {
         validate: this.validate,
         validateItem: this,
@@ -246,6 +255,7 @@ export default {
       return this._renderItem(c, context);
     },
     _renderItem(c, context) {
+      // ebType
       const ebType = context.property.ebType;
       // ignore if not specified
       if (!ebType) return null;
