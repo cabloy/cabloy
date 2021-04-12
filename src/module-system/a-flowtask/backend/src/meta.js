@@ -1,7 +1,6 @@
-const flowNodes = require('./config/flow/nodes.js');
-
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./config/validation/schemas.js')(app);
+  const flowNodes = require('./config/flow/nodes.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -9,10 +8,13 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        // activityUserTask
+        activityUserTask: {
+          schemas: 'activityUserTask',
+        },
       },
       keywords: {},
-      schemas: {
-      },
+      schemas,
     },
     flow: {
       nodes: flowNodes,
