@@ -17,6 +17,7 @@ export default {
       if (!this.base_ready) return null;
       const host = {
         mode: this.container.mode,
+        atomId: this.container_data.item.atomId,
         flowTaskId: this.container.flowTaskId,
       };
       const meta = {
