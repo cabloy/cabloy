@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-test-party",
   "version": "4.3.12",
-  "title": "Party",
+  "title": "Party Test",
   "eggBornModule": {
     "fileVersion": 1,
     "cms": {

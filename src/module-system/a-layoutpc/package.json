@@ -1,6 +1,7 @@
 {
   "name": "egg-born-module-a-layoutpc",
   "version": "4.1.6",
+  "title": "PC Layout",
   "eggBornModule": {
     "fileVersion": 3,
     "dependencies": {

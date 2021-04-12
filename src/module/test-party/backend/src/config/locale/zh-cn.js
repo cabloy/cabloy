@@ -13,6 +13,7 @@ module.exports = {
   Demonstration: '演示',
   PartyOver: '宴会结束',
   PartyOverFlag: '结束',
+  'Party Test': '宴会测试',
   'Party Name': '宴会名称',
   'Person Count': '人数',
   'Party Type': '宴会类型',

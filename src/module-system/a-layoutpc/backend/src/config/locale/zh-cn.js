@@ -13,4 +13,5 @@ module.exports = {
   'Sidebar Panel': '边栏面板',
   'Create Layout': '新建布局',
   'Layout List': '布局列表',
+  'PC Layout': 'PC布局',
 };
