@@ -38,6 +38,10 @@ module.exports = app => {
       group: 'activity',
       bean: 'activityService',
       icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'activityService',
+      },
     },
   };
 

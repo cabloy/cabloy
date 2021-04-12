@@ -17,6 +17,10 @@ module.exports = app => {
         startEventTimer: {
           schemas: 'startEventTimer',
         },
+        // activityService
+        activityService: {
+          schemas: 'activityService',
+        },
       },
       schemas,
     },
