@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       flowDefId: this.$f7route.query.flowDefId,
-      type: this.$f7route.query.type,
+      type: this.$f7route.query.type, // node/edge
       id: this.$f7route.query.id,
       nodeBases: null,
       edgeBases: null,
@@ -75,6 +75,13 @@ export default {
     },
     __dataChange() {
       this.diagram.__dataChange(this.type, this.id, this.data);
+    },
+    __getHost() {
+      const host = {
+        flowDefId: this.flowDefId,
+        diagram: this.diagram,
+      };
+      return host;
     },
     renderBasic() {
       if (!this.ready) return;

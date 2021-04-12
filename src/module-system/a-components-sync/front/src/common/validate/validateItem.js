@@ -183,20 +183,16 @@ export default {
     getParcel() {
       return this.parcel || this.validate.parcel;
     },
-    getContext(options) {
-      options = options || {};
-      const parcel = this.getParcel();
-      const key = options.key || this.dataKey;
-      const property = key === this.dataKey ? (this.property || parcel.properties[key]) : parcel.properties[key];
+    getContext({ parcel, key, property, meta }) {
       const dataPath = parcel.pathParent + key;
       const context = {
         validate: this.validate,
         validateItem: this,
         parcel,
-        meta: this.meta,
         key,
         property,
         dataPath,
+        meta,
         getTitle: notHint => {
           return this.getTitle(context, notHint);
         },
@@ -206,13 +202,21 @@ export default {
         setValue: (value, name) => {
           this.setValue(parcel, name || key, value);
         },
+        getMetaValue: name => {
+          const _key = name || key;
+          const _meta = _key === key ? meta : null;
+          const _dataPath = _key === key ? dataPath : parcel.pathParent + _key;
+          return this.getMetaValue(_meta, _key, _dataPath);
+        },
       };
       return context;
     },
     renderRoot(c) {
       if (!this.validate.ready) return c('div');
       // context
-      const context = this.getContext();
+      const context = {
+        parcel: this.getParcel(),
+      };
       // renderProperties
       const children = this.renderProperties(c, context);
       const attrs = {
@@ -229,7 +233,14 @@ export default {
     renderItem(c) {
       if (!this.validate.ready) return c('div');
       // context
-      const context = this.getContext();
+      const parcel = this.getParcel();
+      const key = this.dataKey;
+      const context = this.getContext({
+        parcel,
+        key,
+        property: this.property || parcel.properties[key],
+        meta: this.meta,
+      });
       // renderItem
       return this._renderItem(c, context);
     },

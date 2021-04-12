@@ -50,7 +50,11 @@ export default {
         } else {
           // others
           // context
-          const context2 = this.getContext({ key });
+          const context2 = this.getContext({
+            parcel,
+            key,
+            property,
+          });
           // render
           const item = this._renderItem(c, context2);
           if (item) {
