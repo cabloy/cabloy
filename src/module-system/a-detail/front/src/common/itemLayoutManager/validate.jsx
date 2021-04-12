@@ -27,9 +27,12 @@ export default {
     },
     validate_render() {
       if (!this.base_ready) return null;
+      const host = {
+        mode: this.container.mode,
+      };
       return (
         <eb-validate ref="validate"
-          containerMode={this.container.mode}
+          host={host}
           readOnly={this.container.mode !== 'edit'}
           auto data={this.base.item}
           params={this.base.validateParams}

@@ -10,13 +10,15 @@ export default {
   },
   mounted() {
     const { validate } = this.context;
-    if (validate.containerMode === 'edit') {
+    const mode = validate.host && validate.host.mode;
+    if (mode === 'edit') {
       this.$meta.eventHub.$on('details:change', this.onActionChanged);
     }
   },
   beforeDestroy() {
     const { validate } = this.context;
-    if (validate.containerMode === 'edit') {
+    const mode = validate.host && validate.host.mode;
+    if (mode === 'edit') {
       this.$meta.eventHub.$off('details:change', this.onActionChanged);
     }
   },

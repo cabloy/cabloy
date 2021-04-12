@@ -12,7 +12,7 @@ export default {
     return {
       container: {
         title: this.context.getTitle(true),
-        mode: validate.containerMode,
+        mode: validate.host && validate.host.mode,
         flowTaskId: (validate.meta && validate.meta.flowTaskId) || 0,
         atomId: parcel.data.atomId,
         atom: parcel.data,
