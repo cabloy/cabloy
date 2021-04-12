@@ -486,10 +486,12 @@ export default {
     addNode(nodeBase) {
       // id
       const id = this.__getAvailableId(nodeBase);
+      // name
+      const name = nodeBase.titleLocale || nodeBase.title;
       // node
       const node = {
         id,
-        name: nodeBase.type,
+        name,
         type: nodeBase.type,
       };
       // contentChange
