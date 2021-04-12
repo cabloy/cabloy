@@ -18,4 +18,8 @@ export default {
       this.pageContext.callback(this._callbackCalled ? null : false);
     }
   },
+  destroyed() {
+    this.pageContext = null;
+    this.contextParams = null;
+  },
 };
