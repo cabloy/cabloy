@@ -22,6 +22,7 @@ export default {
               target,
               context: {
                 params: {
+                  context,
                   params: {
                     module: params.module,
                     validator: params.validator,

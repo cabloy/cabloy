@@ -18,6 +18,9 @@ export default {
     return {};
   },
   computed: {
+    context() {
+      return this.contextParams.context;
+    },
     params() {
       return this.contextParams.params;
     },
