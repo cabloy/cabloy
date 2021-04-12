@@ -1,9 +1,9 @@
 export default {
   methods: {
     renderPanel(c, context) {
-      let { parcel, key, property, dataPath, meta } = context;
+      let { parcel, key, property, dataPath } = context;
       // panelMeta
-      const panelMeta = this.getMetaValue(meta, 'meta', dataPath);
+      const panelMeta = this.$meta.util.getProperty(property, 'ebParams.meta');
       const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
       // dataPath

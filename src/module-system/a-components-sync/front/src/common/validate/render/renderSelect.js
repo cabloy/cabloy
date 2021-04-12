@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderSelect(c, context) {
-      const { parcel, key, property, dataPath, meta } = context;
+      const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const valueCurrent = this.getValue(parcel, key);
       const attrs = {
@@ -10,9 +10,7 @@ export default {
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
-      const metaOptions = this.getMetaValue(meta, 'options', dataPath);
-      if (metaOptions) attrs.options = metaOptions;
-      if (!metaOptions && property.ebOptions) attrs.options = property.ebOptions;
+      if (property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) {
         attrs.optionsUrl = property.ebOptionsUrl;
         attrs.optionsUrlParams = property.ebOptionsUrlParams;

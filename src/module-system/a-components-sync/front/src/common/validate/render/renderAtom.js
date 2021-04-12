@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderAtom(c, context) {
-      const { parcel, key, property, dataPath, meta } = context;
+      const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
@@ -30,20 +30,20 @@ export default {
         type = 'text';
       }
       // target
-      const target = this.getMetaValue(meta, 'target', dataPath) || property.ebParams.target;
+      const target = property.ebParams.target;
       // atomClass
-      const atomClass = this.getMetaValue(meta, 'atomClass', dataPath) || property.ebParams.atomClass;
+      const atomClass = property.ebParams.atomClass;
       // selectOptions
-      const selectOptions = this.getMetaValue(meta, 'selectOptions', dataPath) || property.ebParams.selectOptions;
+      const selectOptions = property.ebParams.selectOptions;
       // atomId
-      let atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId;
+      let atomId = property.ebParams.atomId;
       if (typeof atomId === 'string') {
         atomId = parcel.data[atomId] || 0;
       } else {
         atomId = atomId || 0;
       }
       // mapper
-      const mapper = this.getMetaValue(meta, 'mapper', dataPath) || property.ebParams.mapper;
+      const mapper = property.ebParams.mapper;
       // render
       return c('eb-list-input', {
         key,

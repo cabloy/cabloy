@@ -64,22 +64,6 @@ export default {
       }
       return parent;
     },
-    getMetaValue(meta, metaKey, dataPath) {
-      // 1. item
-      const value = meta ? meta[metaKey] : undefined;
-      if (value !== undefined) return value;
-      // check
-      if (!this.validate.meta) return undefined;
-      // 2. dataPath is empty
-      if (!dataPath) return this.validate.meta[metaKey];
-      // 3. validate.meta.properties
-      const validateMeta = this.validate.meta && this.validate.meta.properties;
-      if (!validateMeta) return undefined;
-      // check
-      if (!validateMeta[dataPath]) return undefined;
-      // ok
-      return validateMeta[dataPath][metaKey];
-    },
     _handleComputed(parcel, key, property) {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
@@ -151,7 +135,7 @@ export default {
       return dataPath;
     },
     getTitle(context, notHint) {
-      const { meta, key, property } = context;
+      const { key, property } = context;
       const title = this.$text(property.ebTitle || key);
       // ignore panel/group/toggle
       const ebType = property.ebType;
@@ -161,7 +145,7 @@ export default {
       // hint
       if (!notHint) {
         // config
-        const hint = this.getMetaValue(meta, 'hint') || this.$config.validate.hint;
+        const hint = (this.validate.meta && this.validate.meta.hint) || this.$config.validate.hint;
         const hintOptional = hint.optional;
         const hintMust = hint.must;
         // check optional
@@ -214,9 +198,6 @@ export default {
         },
         setValue: (value, name) => {
           this.setValue(parcel, name || key, value);
-        },
-        getMetaValue: metaKey => {
-          return this.getMetaValue(meta, metaKey, dataPath);
         },
       };
       return context;

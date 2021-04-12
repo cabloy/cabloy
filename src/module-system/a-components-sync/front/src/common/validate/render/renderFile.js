@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderFile(c, context) {
-      const { parcel, key, property, dataPath, meta } = context;
+      const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
@@ -30,22 +30,22 @@ export default {
         type = 'text';
       }
       // mode
-      const mode = this.getMetaValue(meta, 'mode', dataPath) || property.ebParams.mode;
+      const mode = property.ebParams.mode;
       // atomId
-      let atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId;
+      let atomId = property.ebParams.atomId;
       if (typeof atomId === 'string') {
         atomId = parcel.data[atomId] || 0;
       } else {
         atomId = atomId || 0;
       }
       // attachment
-      const attachment = this.getMetaValue(meta, 'attachment', dataPath) || property.ebParams.attachment;
+      const attachment = property.ebParams.attachment;
       // flag
-      const flag = this.getMetaValue(meta, 'flag', dataPath) || property.ebParams.flag;
+      const flag = property.ebParams.flag;
       // accept
-      const accept = this.getMetaValue(meta, 'accept', dataPath) || property.ebParams.accept;
+      const accept = property.ebParams.accept;
       // fixed
-      const fixed = this.getMetaValue(meta, 'fixed', dataPath) || property.ebParams.fixed;
+      const fixed = property.ebParams.fixed;
       // render
       return c('eb-list-input', {
         key,
