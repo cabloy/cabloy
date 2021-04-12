@@ -13,7 +13,7 @@ export default {
       container: {
         title: this.context.getTitle(true),
         mode: validate.host && validate.host.mode,
-        flowTaskId: (validate.meta && validate.meta.flowTaskId) || 0,
+        flowTaskId: (validate.host && validate.host.flowTaskId) || 0,
         atomId: parcel.data.atomId,
         atom: parcel.data,
         detailClass: property.ebParams.detailClass,
