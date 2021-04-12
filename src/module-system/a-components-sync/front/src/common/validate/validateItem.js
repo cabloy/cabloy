@@ -68,11 +68,15 @@ export default {
       // 1. item
       const value = meta ? meta[metaKey] : undefined;
       if (value !== undefined) return value;
-      // 2. validate
+      // check
+      if (!this.validate.meta) return undefined;
+      // 2. dataPath is empty
+      if (!dataPath) return this.validate.meta[metaKey];
+      // 3. validate.meta.properties
       const validateMeta = this.validate.meta && this.validate.meta.properties;
       if (!validateMeta) return undefined;
-      // dataPath is empty
-      if (!dataPath || !validateMeta[dataPath]) return undefined;
+      // check
+      if (!validateMeta[dataPath]) return undefined;
       // ok
       return validateMeta[dataPath][metaKey];
     },
