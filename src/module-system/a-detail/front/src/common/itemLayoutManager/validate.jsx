@@ -29,6 +29,8 @@ export default {
       if (!this.base_ready) return null;
       const host = {
         mode: this.container.mode,
+        flowTaskId: this.container.flowTaskId,
+        detailId: this.container.detailId,
       };
       return (
         <eb-validate ref="validate"
