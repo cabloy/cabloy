@@ -9,6 +9,10 @@ module.exports = app => {
       group: 'startEvent',
       bean: 'startEventAtom',
       icon: '/api/static/a/flowtask/bpmn/events/start-event-atom.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'startEventAtom',
+      },
     },
     // activities
     activityUserTask: {

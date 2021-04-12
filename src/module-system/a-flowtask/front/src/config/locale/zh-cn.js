@@ -34,4 +34,6 @@ export default {
   'Allow Reject Task': '允许驳回任务',
   'Allow Cancel Flow': '允许取消流程',
   'Allow Recall': '允许撤回',
+  'User Task Options': '用户任务选项',
+  'Condition Expression': '条件表达式',
 };

@@ -8,6 +8,10 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        // startEventAtom
+        startEventAtom: {
+          schemas: 'startEventAtom,activityUserTask',
+        },
         // activityUserTask
         activityUserTask: {
           schemas: 'activityUserTask',

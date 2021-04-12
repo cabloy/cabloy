@@ -3,12 +3,13 @@ export default {
     renderPanel(c, context) {
       let { parcel, key, property, dataPath } = context;
       dataPath = dataPath + '/';
+      const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
       return c('eb-list-item-panel', {
         key,
         attrs: {
           link: '#',
-          title: this.getTitle(context),
+          title,
           dataPath,
         },
         on: {
@@ -26,6 +27,7 @@ export default {
                     validator: params.validator,
                     schema: property.$ref,
                   },
+                  title,
                   data: value,
                   dataPathRoot: this.adjustDataPath(dataPath),
                   errors: verrors ? verrors.slice(0) : null,
