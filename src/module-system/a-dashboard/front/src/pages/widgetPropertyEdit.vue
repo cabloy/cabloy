@@ -232,14 +232,16 @@ export default {
           auto: true,
           readOnly: false,
           data,
+          host: {
+            hint: {
+              optional: '',
+              must: '',
+            },
+          },
           meta: {
             schema: {
               module: 'a-dashboard',
               schema,
-            },
-            hint: {
-              optional: '',
-              must: '',
             },
           },
         },

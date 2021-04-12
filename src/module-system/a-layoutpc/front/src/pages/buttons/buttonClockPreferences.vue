@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Clock')" eb-back-link="Back">
     </eb-navbar>
-    <eb-validate v-if="item" ref="validate" auto :data="item" :meta="validateMeta" @validateItem:change="onValidateItemChange">
+    <eb-validate v-if="item" ref="validate" auto :data="item" :host="validateHost" :meta="validateMeta" @validateItem:change="onValidateItemChange">
     </eb-validate>
   </eb-page>
 </template>
@@ -24,13 +24,17 @@ export default {
     item() {
       return this.contextParams.item;
     },
-    validateMeta() {
+    validateHost() {
       return {
-        schema: this.schema,
         hint: {
           optional: '',
           must: '',
         },
+      };
+    },
+    validateMeta() {
+      return {
+        schema: this.schema,
       };
     },
   },

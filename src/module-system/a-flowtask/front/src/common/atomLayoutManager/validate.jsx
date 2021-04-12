@@ -17,18 +17,17 @@ export default {
       if (!this.base_ready) return null;
       const host = {
         mode: this.container.mode,
+        flowTaskId: this.container.flowTaskId,
+      };
+      const meta = {
+        schema: this.container_data.schema,
       };
       return (
         <eb-validate ref="validate"
           host={host}
           readOnly={this.container.mode !== 'edit'}
           auto data={this.container_data.item}
-          meta={
-            {
-              schema: this.container_data.schema,
-              flowTaskId: this.container.flowTaskId,
-            }
-          }
+          meta={meta}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}>
         </eb-validate>

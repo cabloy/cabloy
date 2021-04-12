@@ -35,8 +35,8 @@ export default {
       const atomClass = property.ebParams.atomClass;
       // selectOptions
       const selectOptions = property.ebParams.selectOptions;
-      // atomId
-      let atomId = property.ebParams.atomId;
+      // atomId: maybe from host
+      let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
       if (typeof atomId === 'string') {
         atomId = parcel.data[atomId] || 0;
       } else {

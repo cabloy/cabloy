@@ -5,7 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate v-if="item" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit="onSubmit">
+    <eb-validate v-if="item" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :host="host" :onPerform="onPerformValidate" @submit="onSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -32,7 +32,7 @@ export default {
     resourceConfig() {
       return JSON.parse(this.block.resourceConfig);
     },
-    meta() {
+    host() {
       return { atomId: this.atomId };
     },
     validateParams() {
