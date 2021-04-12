@@ -110,13 +110,13 @@ export default {
       }
       // list
       return (
-        <f7-list form inline-labels no-hairlines-md>
+        <eb-list form inline-labels no-hairlines-md>
           <f7-list-group>
             <f7-list-item group-title title={this.$text('Basic')}></f7-list-item>
             {children}
           </f7-list-group>
           {groupOptions}
-        </f7-list>
+        </eb-list>
       );
     },
     renderOptions() {
