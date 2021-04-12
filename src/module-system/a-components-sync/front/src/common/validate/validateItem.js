@@ -183,12 +183,37 @@ export default {
     getParcel() {
       return this.parcel || this.validate.parcel;
     },
+    getContext(options) {
+      options = options || {};
+      const parcel = this.getParcel();
+      const key = options.key || this.dataKey;
+      const property = key === this.dataKey ? (this.property || parcel.properties[key]) : parcel.properties[key];
+      const dataPath = parcel.pathParent + key;
+      const context = {
+        validate: this.validate,
+        validateItem: this,
+        parcel,
+        meta: this.meta,
+        key,
+        property,
+        dataPath,
+        getTitle: notHint => {
+          return this.getTitle(context, notHint);
+        },
+        getValue: name => {
+          return this.getValue(parcel, name || key);
+        },
+        setValue: (value, name) => {
+          this.setValue(parcel, name || key, value);
+        },
+      };
+      return context;
+    },
     renderRoot(c) {
       if (!this.validate.ready) return c('div');
       // context
-      const context = {
-        parcel: this.getParcel(),
-      };
+      const context = this.getContext();
+      // renderProperties
       const children = this.renderProperties(c, context);
       const attrs = {
         form: true,
@@ -204,28 +229,7 @@ export default {
     renderItem(c) {
       if (!this.validate.ready) return c('div');
       // context
-      const parcel = this.getParcel();
-      const key = this.dataKey;
-      const property = this.property || parcel.properties[key];
-      const dataPath = parcel.pathParent + key;
-      const context = {
-        validate: this.validate,
-        validateItem: this,
-        parcel,
-        key,
-        property,
-        dataPath,
-        meta: this.meta,
-        getTitle: notHint => {
-          return this.getTitle(context, notHint);
-        },
-        getValue: name => {
-          return this.getValue(parcel, name || key);
-        },
-        setValue: (value, name) => {
-          this.setValue(parcel, name || key, value);
-        },
-      };
+      const context = this.getContext();
       // renderItem
       return this._renderItem(c, context);
     },

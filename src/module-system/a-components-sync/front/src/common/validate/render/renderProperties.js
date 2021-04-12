@@ -50,12 +50,7 @@ export default {
         } else {
           // others
           // context
-          const context2 = {
-            parcel,
-            key,
-          };
-          context2.property = context2.parcel.properties[context2.key];
-          context2.dataPath = context2.parcel.pathParent + context2.key;
+          const context2 = this.getContext({ key });
           // render
           const item = this._renderItem(c, context2);
           if (item) {
