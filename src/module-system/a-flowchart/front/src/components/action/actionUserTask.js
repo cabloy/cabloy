@@ -8,7 +8,21 @@ export default {
         return await this.onAction_schemaReference({ ctx, action, item });
       }
     },
-    async onAction_schemaReference({ ctx, action }) {
+    async onAction_schemaReference({ ctx, action, item }) {
+      // validate
+      const { validate } = item;
+      // container
+      const container = validate.host.container;
+      // diagram
+      const diagram = container.diagram;
+      // nodeId
+      const nodeId = container.id;
+      // find node
+      const nodeStartEventAtom = this.__findNode_startEventAtom({ diagram, nodeId });
+      if (!nodeStartEventAtom) {
+        ctx.$view.toast.show({ text: this.$text('NotFoundStartEventAtom') });
+        return;
+      }
       // value
       const res = await ctx.$api.post('/a/instance/instance/getConfigsPreview');
       // taget
@@ -25,6 +39,9 @@ export default {
           },
         },
       });
+    },
+    __findNode_startEventAtom({ diagram, nodeId }) {
+
     },
   },
 };

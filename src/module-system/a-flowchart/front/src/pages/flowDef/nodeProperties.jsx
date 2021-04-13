@@ -128,8 +128,11 @@ export default {
     },
     renderOptions() {
       if (!this.ready || !this.optionsValidator) return;
+      const host = {
+        container: this,
+      };
       return (
-        <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data.options} params={this.optionsValidator}>
+        <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data.options} params={this.optionsValidator} host={host}>
         </eb-validate>
       );
     },
