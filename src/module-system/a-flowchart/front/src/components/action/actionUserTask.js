@@ -20,7 +20,7 @@ export default {
         context: {
           params: {
             value: res.data,
-            title: ctx.$text('Reference'),
+            title: ctx.$text('ReferenceForHelp'),
             readOnly: true,
           },
         },

@@ -10,4 +10,6 @@ export default {
   SelectLanguageTip: 'Select Language',
   RevertToThisRevision: 'Revert To This Revision',
   DeleteBulkNotAllDone: 'Some Items Cannot be Deleted',
+  ReferenceForHelp: 'Reference',
+  ReferenceForFunction: 'Reference',
 };
