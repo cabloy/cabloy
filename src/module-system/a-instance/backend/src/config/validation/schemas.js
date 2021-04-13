@@ -22,7 +22,8 @@ module.exports = app => {
         ebTitle: 'Config',
         ebParams: {
           target: '',
-          immediate: true,
+          actionSave: true,
+          actionDone: true,
           actions: [{
             name: 'preview',
             actionModule: moduleInfo.relativeName,

@@ -12,8 +12,10 @@ export default {
             // target
             let target = this.$meta.util.getProperty(property, 'ebParams.target');
             if (target === undefined) target = '_self';
-            // immediate
-            const immediate = this.$meta.util.getProperty(property, 'ebParams.immediate') === true;
+            // actionSave
+            const actionSave = this.$meta.util.getProperty(property, 'ebParams.actionSave') === true;
+            // actionDone
+            const actionDone = this.$meta.util.getProperty(property, 'ebParams.actionDone') !== false;
             // actions
             const actions = this.$meta.util.getProperty(property, 'ebParams.actions');
             // navigate
@@ -24,7 +26,8 @@ export default {
                   value: this.getValue(parcel, key),
                   title,
                   readOnly: this.validate.readOnly || property.ebReadOnly,
-                  immediate,
+                  actionSave,
+                  actionDone,
                   onSave: value => {
                     this.setValue(parcel, key, value);
                     return this.validate.perform(null);

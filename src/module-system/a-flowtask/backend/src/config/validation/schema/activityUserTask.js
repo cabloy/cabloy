@@ -68,6 +68,8 @@ module.exports = app => {
         ebTitle: 'Schema',
         notEmpty: true,
         ebParams: {
+          actionSave: true,
+          actionDone: true,
           actions: [{
             name: 'schemaReference',
             actionModule: 'a-flowchart',

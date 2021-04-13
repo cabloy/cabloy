@@ -20,8 +20,11 @@ export default {
     readOnly() {
       return this.contextParams.readOnly;
     },
-    immediate() {
-      return this.contextParams.immediate;
+    actionSave() {
+      return this.contextParams.actionSave;
+    },
+    actionDone() {
+      return this.contextParams.actionDone;
     },
     onSave() {
       return this.contextParams.onSave;
@@ -84,34 +87,40 @@ export default {
       await this.$meta.util.performAction({ ctx: this, action, item: this.context });
     },
     renderActions() {
-      if (!this.actions) return;
       const children = [];
-      for (const action of this.actions) {
-        children.push(
-          <eb-link iconMaterial={action.icon && action.icon.material} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>
-        );
+      // save/done
+      if (!this.readOnly) {
+        if (this.actionSave) {
+          children.push(
+            <eb-link key="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>
+          );
+        }
+        if (this.actionDone) {
+          children.push(
+            <eb-link key="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
+          );
+        }
       }
+      // actions
+      if (!this.actions) return children;
+      for (const action of this.actions) {
+        if (action.readOnly === undefined || action.readOnly === this.readOnly) {
+          const icon = action.icon && action.icon.material;
+          const title = action.title ? this.$text(action.title) : null;
+          children.push(
+            <eb-link key={action.name} iconMaterial={icon} text={title} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>
+          );
+        }
+      }
+      // ok
       return children;
     },
   },
   render() {
-    let domDone;
-    if (!this.readOnly) {
-      if (this.immediate) {
-        domDone = (
-          <eb-link iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>
-        );
-      } else {
-        domDone = (
-          <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
-        );
-      }
-    }
     return (
       <eb-page>
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
           <f7-nav-right>
-            {domDone}
             {this.renderActions()}
           </f7-nav-right>
         </eb-navbar>

@@ -119,20 +119,20 @@ export default {
     reset() {
       this.verrors = null;
     },
-    perform(event, context) {
+    async perform(event, context) {
       if (this.auto && !this.ready) return null;
-      return this.onPerform(event, context)
-        .then(data => {
-          this.reset();
-          return data;
-        })
-        .catch(err => {
-          if (err) {
-            if (err.code !== 422) throw err;
-            this.verrors = err.message;
-            throw new Error(this.$text('Data Validation Error'));
-          }
-        });
+      if (!this.onPerform) return null;
+      try {
+        const data = await this.onPerform(event, context);
+        this.reset();
+        return data;
+      } catch (err) {
+        if (err) {
+          if (err.code !== 422) throw err;
+          this.verrors = err.message;
+          throw new Error(this.$text('Data Validation Error'));
+        }
+      }
     },
     getError(dataPath) {
       if (!this.verrors || !dataPath) return '';
