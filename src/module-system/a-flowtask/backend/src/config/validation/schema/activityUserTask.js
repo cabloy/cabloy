@@ -68,7 +68,7 @@ module.exports = app => {
         ebTitle: 'Schema',
         notEmpty: true,
         ebParams: {
-          actionSave: true,
+          actionSave: false,
           actionDone: true,
           actions: [{
             name: 'schemaReference',

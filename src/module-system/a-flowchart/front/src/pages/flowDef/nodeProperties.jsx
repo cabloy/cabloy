@@ -69,6 +69,9 @@ export default {
     onDiagramDestroy() {
       this.$view.close();
     },
+    onPerformDelete() {
+
+    },
     __getPageTitle() {
       if (!this.data) return this.$text('Properties');
       return `${this.$text('Properties')}: ${this.data.nameLocale || this.data.name || this.data.id}`;
@@ -141,6 +144,9 @@ export default {
     return (
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
+          <f7-nav-right>
+            <eb-link iconMaterial="delete" onPerform={this.onPerformDelete}></eb-link>
+          </f7-nav-right>
         </eb-navbar>
         {this.renderBasic()}
         {this.renderOptions()}
