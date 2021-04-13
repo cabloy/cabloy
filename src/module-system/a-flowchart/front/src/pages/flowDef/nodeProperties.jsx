@@ -69,8 +69,14 @@ export default {
     onDiagramDestroy() {
       this.$view.close();
     },
-    onPerformDelete() {
-
+    async onPerformDelete() {
+      await this.$view.dialog.confirm();
+      if (this.type === 'node') {
+        this.diagram.deleteNode(this.id);
+      } else {
+        this.diagram.deleteEdge(this.id);
+      }
+      this.$view.close();
     },
     __getPageTitle() {
       if (!this.data) return this.$text('Properties');
@@ -145,7 +151,7 @@ export default {
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconMaterial="delete" onPerform={this.onPerformDelete}></eb-link>
+            <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>
           </f7-nav-right>
         </eb-navbar>
         {this.renderBasic()}

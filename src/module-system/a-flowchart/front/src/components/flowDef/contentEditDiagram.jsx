@@ -499,6 +499,33 @@ export default {
       value.nodes.push(node);
       this.$emit('contentChange', { type: 'process', value });
     },
+    deleteNode(id) {
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      // delete edge
+      const edgeIndex = value.edges.findIndex(item => item.target === id);
+      if (edgeIndex > -1) {
+        value.edges.splice(edgeIndex, 1);
+      }
+      // delete node
+      const nodeIndex = value.nodes.findIndex(item => item.id === id);
+      if (nodeIndex > -1) {
+        value.nodes.splice(nodeIndex, 1);
+      }
+      // emit
+      this.$emit('contentChange', { type: 'process', value });
+    },
+    deleteEdge(id) {
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      // delete edge: should not delete target node
+      const edgeIndex = value.edges.findIndex(item => item.id === id);
+      if (edgeIndex > -1) {
+        value.edges.splice(edgeIndex, 1);
+      }
+      // emit
+      this.$emit('contentChange', { type: 'process', value });
+    },
     __dataChange(type, id, data) {
       const value = this.$meta.util.extend({}, this.contentProcess);
       if (type === 'node') {
