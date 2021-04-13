@@ -1,4 +1,5 @@
 module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // activityUserTask
   schemas.activityUserTask = {
@@ -66,6 +67,15 @@ module.exports = app => {
         ebType: 'json',
         ebTitle: 'Schema',
         notEmpty: true,
+        ebParams: {
+          actions: [{
+            name: 'schemaReference',
+            actionModule: 'a-flowchart',
+            actionComponent: 'actionUserTask',
+            icon: { material: 'info' },
+            navigateOptions: { target: '_self' },
+          }],
+        },
       },
     },
   };
