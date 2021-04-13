@@ -53,7 +53,11 @@ module.exports = ctx => {
 
     async _addCondition({ flowDefId, node }) {
       const atom = node.options && node.options.atom;
-      if (!atom || !atom.module || !atom.atomClassName) throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
+      if (!atom || !atom.module || !atom.atomClassName) {
+        // donot delete condition
+        // throw error
+        throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
+      }
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({
         module: atom.module,

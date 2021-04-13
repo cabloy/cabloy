@@ -23,6 +23,7 @@ export default {
         ctx.$view.toast.show({ text: this.$text('NotFoundStartEventAtom') });
         return;
       }
+      // atomClass
       const atomClass = nodeStartEventAtom.options.atom;
       if (!atomClass || !atomClass.module || !atomClass.atomClassName) {
         ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
