@@ -29,8 +29,17 @@ export default {
         ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
         return;
       }
-      // value
-      const res = await ctx.$api.post('/a/instance/instance/getConfigsPreview');
+      // validator
+      const validator = await ctx.$api.post('/a/base/atom/validator', {
+        atomClass,
+      });
+      // schema
+      const schemaRes = await ctx.$api.post('/a/validation/validation/schema', {
+        module: validator.module,
+        validator: validator.validator,
+        schema: null,
+      });
+      const schema = schemaRes.schema;
       // taget
       let target = ctx.$meta.util.getProperty(action, 'navigateOptions.target');
       if (target === undefined) target = '_self';
@@ -39,7 +48,7 @@ export default {
         target,
         context: {
           params: {
-            value: res.data,
+            value: schema,
             title: ctx.$text('ReferenceForHelp'),
             readOnly: true,
           },

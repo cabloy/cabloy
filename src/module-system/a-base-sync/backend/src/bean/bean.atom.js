@@ -839,8 +839,8 @@ module.exports = ctx => {
       return ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
     }
 
-    async validator({ atomClass: { id } }) {
-      let atomClass = await this.atomClass.get({ id });
+    async validator({ atomClass }) {
+      atomClass = await this.atomClass.get(atomClass);
       atomClass = await this.atomClass.top(atomClass);
       return await this.atomClass.validator({ atomClass });
     }
