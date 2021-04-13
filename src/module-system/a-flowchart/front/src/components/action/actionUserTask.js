@@ -23,6 +23,11 @@ export default {
         ctx.$view.toast.show({ text: this.$text('NotFoundStartEventAtom') });
         return;
       }
+      const atomClass = nodeStartEventAtom.options.atom;
+      if (!atomClass || !atomClass.module || !atomClass.atomClassName) {
+        ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
+        return;
+      }
       // value
       const res = await ctx.$api.post('/a/instance/instance/getConfigsPreview');
       // taget
@@ -41,7 +46,22 @@ export default {
       });
     },
     __findNode_startEventAtom({ diagram, nodeId }) {
-
+      const nodeIdCaches = {};
+      while (true) {
+        nodeIdCaches[nodeId] = true;
+        const nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });
+        if (!nodePrevious) return null;
+        if (nodePrevious.type === 'startEventAtom') return nodePrevious;
+        // previous
+        nodeId = nodePrevious.id;
+      }
+    },
+    __findNode_previous({ diagram, nodeId, nodeIdCaches }) {
+      const edge = diagram.contentProcess.edges.find(item => {
+        return item.target === nodeId && !nodeIdCaches[item.source];
+      });
+      if (!edge) return null;
+      return diagram.contentProcess.nodes.find(item => item.id === edge.source);
     },
   },
 };
