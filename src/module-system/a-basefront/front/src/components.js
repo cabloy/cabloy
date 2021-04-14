@@ -1,3 +1,4 @@
+import renderAtomClass from './components/render/renderAtomClass.jsx';
 import renderLanguage from './components/render/renderLanguage.jsx';
 import renderCategory from './components/render/renderCategory.jsx';
 import renderTags from './components/render/renderTags.jsx';
@@ -8,6 +9,7 @@ import renderTableCellComputed from './components/render/renderTableCellComputed
 import starTab from './components/tab/starTab.jsx';
 
 export default {
+  renderAtomClass,
   renderLanguage,
   renderCategory,
   renderTags,

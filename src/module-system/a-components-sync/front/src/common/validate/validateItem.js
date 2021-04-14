@@ -19,11 +19,8 @@ import renderDetailsStat from './render/renderDetailsStat.js';
 import renderAtom from './render/renderAtom.js';
 import renderAtomClass from './render/renderAtomClass.js';
 
-import Vue from 'vue';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
   mixins: [
-    ebAtomClasses,
     validateComputed,
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,

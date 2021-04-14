@@ -38,10 +38,10 @@ export default {
                 callback: (code, value) => {
                   if (code === 200) {
                     this.setValue(parcel, key, value);
-                    // submit
-                    if (property.ebAutoSubmit !== false) {
-                      this.validate.onSubmit();
-                    }
+                    // // submit
+                    // if (property.ebAutoSubmit !== false) {
+                    //   this.validate.onSubmit();
+                    // }
                   }
                 },
               },
