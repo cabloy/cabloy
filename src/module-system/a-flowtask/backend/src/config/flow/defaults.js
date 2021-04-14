@@ -1,9 +1,6 @@
 module.exports = {
   startEventAtom: {
-    atom: {
-      module: null,
-      atomClassName: null,
-    },
+    atom: null,
     conditionExpression: null,
     task: {
       assignees: {
