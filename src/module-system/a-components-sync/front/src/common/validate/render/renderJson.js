@@ -30,7 +30,7 @@ export default {
                   actionDone,
                   onSave: value => {
                     this.setValue(parcel, key, value);
-                    return this.validate.perform(null);
+                    return this.validate.perform(null, { action: 'save' });
                   },
                   actions,
                   context,
