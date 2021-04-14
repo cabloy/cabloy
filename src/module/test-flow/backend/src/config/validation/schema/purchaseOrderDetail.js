@@ -24,17 +24,15 @@ module.exports = app => {
       },
       detailCode: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'atom',
         ebTitle: 'Product Code',
-        ebReadOnly: false,
-        ebDisabled: true,
+        ebParams: __atomParams,
         notEmpty: true,
       },
       detailName: {
         type: 'string',
-        ebType: 'atom',
+        ebType: 'text',
         ebTitle: 'Product Name',
-        ebParams: __atomParams,
         notEmpty: true,
       },
       price: {

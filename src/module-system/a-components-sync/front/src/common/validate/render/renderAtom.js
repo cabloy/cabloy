@@ -56,12 +56,13 @@ export default {
           clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
           value,
+          readonly: true, // always
           disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         on: {
-          input: value => {
-            this.setValue(parcel, key, value);
-          },
+          // input: value => {
+          //   this.setValue(parcel, key, value);
+          // },
           focus: event => {
             const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
             const timeoutId = upload.data('timeoutId');
