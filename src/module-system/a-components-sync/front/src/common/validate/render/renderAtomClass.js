@@ -1,15 +1,21 @@
 export default {
   methods: {
-    renderAtom(c, context) {
+    renderAtomClass(c, context) {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = this.getValue(parcel, key);
+      // atomClass
+      const atomClass = (value && typeof value === 'string') ? window.JSON5.parse(value) : value;
+      // atomClassTitle
+      const atomClassBase = this.getAtomClass(atomClass);
+      const atomClassTitle = atomClassBase ? atomClassBase.titleLocale : null;
+      // readOnly
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           attrs: {
-            after: value,
+            after: atomClassTitle,
           },
         }, [
           c('div', {
@@ -19,6 +25,7 @@ export default {
           }),
         ]);
       }
+      // edit
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
@@ -30,20 +37,10 @@ export default {
         type = 'text';
       }
       // target
-      const target = property.ebParams.target;
-      // atomClass
-      const atomClass = property.ebParams.atomClass;
-      // selectOptions
-      const selectOptions = property.ebParams.selectOptions;
-      // atomId: maybe from host
-      let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
-      if (typeof atomId === 'string') {
-        atomId = parcel.data[atomId] || 0;
-      } else {
-        atomId = atomId || 0;
-      }
-      // mapper
-      const mapper = property.ebParams.mapper;
+      let target = this.$meta.util.getProperty(property, 'ebParams.target');
+      if (target === undefined) target = '_self';
+      // optional
+      const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
       // render
       return c('eb-list-input', {
         key,
@@ -55,13 +52,13 @@ export default {
           resizable: property.ebTextarea,
           clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
-          value,
+          value: atomClassTitle,
           disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         on: {
-          input: value => {
-            this.setValue(parcel, key, value);
-          },
+          // input: value => {
+          //   this.setValue(parcel, key, value);
+          // },
           focus: event => {
             const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
             const timeoutId = upload.data('timeoutId');
@@ -92,22 +89,28 @@ export default {
           domProps: { innerText: this.$text('Select') },
           props: {
             onPerform: () => {
-              const url = '/a/basefront/atom/select';
+              const url = '/a/basefront/atom/selectAtomClass';
               this.$view.navigate(url, {
                 target,
                 context: {
                   params: {
-                    selectMode: 'single',
-                    selectedAtomId: atomId,
                     atomClass,
-                    options: selectOptions,
+                    optional,
                   },
-                  callback: (code, selectedAtom) => {
+                  callback: (code, data) => {
                     if (code === 200) {
-                      // mapper
-                      for (const key in mapper) {
-                        const value = selectedAtom[mapper[key]];
-                        this.setValue(parcel, key, value);
+                      // string
+                      let value;
+                      if (property.type === 'string') {
+                        value = data ? JSON.stringify(data) : null;
+                      } else {
+                        value = data;
+                      }
+                      // setValue
+                      this.setValue(parcel, key, value);
+                      // submit
+                      if (property.ebAutoSubmit !== false) {
+                        this.validate.onSubmit();
                       }
                     }
                   },

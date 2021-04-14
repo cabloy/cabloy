@@ -58,7 +58,7 @@ export default {
           clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
           value,
-          disabled: this.validate.readOnly || property.ebReadOnly,
+          disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         on: {
           input: value => {

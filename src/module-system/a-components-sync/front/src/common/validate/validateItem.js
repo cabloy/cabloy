@@ -17,14 +17,19 @@ import renderJson from './render/renderJson.js';
 import renderDetails from './render/renderDetails.js';
 import renderDetailsStat from './render/renderDetailsStat.js';
 import renderAtom from './render/renderAtom.js';
+import renderAtomClass from './render/renderAtomClass.js';
 
+import Vue from 'vue';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
   mixins: [
+    ebAtomClasses,
     validateComputed,
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson, renderDetails, renderDetailsStat, renderAtom,
+    renderJson, renderDetails, renderDetailsStat,
+    renderAtom, renderAtomClass,
   ],
   props: {
     parcel: {
@@ -292,6 +297,9 @@ export default {
       } else if (ebType === 'atom') {
         // atom
         return this.renderAtom(c, context);
+      } else if (ebType === 'atomClass') {
+        // atomClass
+        return this.renderAtomClass(c, context);
       }
       // not support
       return c('div', {

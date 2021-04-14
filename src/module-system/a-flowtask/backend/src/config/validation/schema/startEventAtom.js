@@ -6,7 +6,7 @@ module.exports = app => {
     properties: {
       atom: {
         type: 'object',
-        ebType: 'json',
+        ebType: 'atomClass',
         ebTitle: 'Atom Class',
         notEmpty: true,
       },
