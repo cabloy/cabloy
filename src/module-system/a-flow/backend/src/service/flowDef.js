@@ -10,6 +10,10 @@ module.exports = app => {
       return this.ctx.bean.flowDef.edgeBases();
     }
 
+    flowServiceBases() {
+      return this.ctx.bean.flowDef.flowServiceBases();
+    }
+
   }
   return FlowDef;
 };

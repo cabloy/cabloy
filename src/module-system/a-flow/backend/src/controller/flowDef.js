@@ -12,6 +12,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    flowServiceBases() {
+      const res = this.ctx.service.flowDef.flowServiceBases();
+      this.ctx.success(res);
+    }
+
   }
   return FlowDefController;
 };

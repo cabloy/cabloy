@@ -1,6 +1,7 @@
 
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
+const __flowServiceBases = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -100,6 +101,17 @@ module.exports = ctx => {
       return this._getFlowEdgeBases();
     }
 
+    flowServiceBases() {
+      return this._getFlowServiceBases();
+    }
+
+    _getFlowServiceBases() {
+      if (!__flowServiceBases[ctx.locale]) {
+        __flowServiceBases[ctx.locale] = this._prepareFlowServiceBases();
+      }
+      return __flowServiceBases[ctx.locale];
+    }
+
     _getFlowNodeBases() {
       if (!__flowNodeBases[ctx.locale]) {
         __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
@@ -109,6 +121,40 @@ module.exports = ctx => {
 
     _getFlowNodeBase(nodeType) {
       return this._getFlowNodeBases()[nodeType];
+    }
+
+    _prepareFlowServiceBases() {
+      const flowServiceBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const relativeName = module.info.relativeName;
+        const beans = module.main.beans;
+        if (!beans) continue;
+        const res = this._prepareFlowServiceBasesModule(relativeName, beans);
+        if (Object.keys(res).length > 0) {
+          flowServiceBases[relativeName] = res;
+        }
+      }
+      return flowServiceBases;
+    }
+
+    _prepareFlowServiceBasesModule(relativeName, beans) {
+      const flowServiceBases = {};
+      for (const beanName in beans) {
+        // info
+        const bean = beans[beanName];
+        const serviceBase = {
+          title: bean.title,
+        };
+        if (bean.title) {
+          serviceBase.titleLocale = ctx.text(bean.title);
+        } else {
+          // prompt
+          ctx.logger.info('title of flow service bean should not be empty: ', `${relativeName}:${beanName}`);
+        }
+        // ok
+        flowServiceBases[beanName] = serviceBase;
+      }
+      return flowServiceBases;
     }
 
     _prepareFlowNodeBases() {

@@ -28,10 +28,12 @@ module.exports = app => {
     },
     // flow
     'flow.service.test': {
+      title: 'Test',
       mode: 'ctx',
       bean: flowServiceTest,
     },
     'flow.service.startEventTimer': {
+      title: 'StartTestFlow',
       mode: 'ctx',
       bean: flowServiceStartEventTimer,
     },

@@ -8,4 +8,5 @@ module.exports = {
   'Product Code Exists': '产品编码已存在',
   'WorkFlow Test': '工作流测试',
   Test_Set00_Simple: '测试_分组00_简单流程',
+  StartTestFlow: '启动测试工作流',
 };
