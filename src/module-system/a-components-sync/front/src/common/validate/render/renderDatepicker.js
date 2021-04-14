@@ -33,11 +33,11 @@ export default {
           placeholder,
           info,
           resizable: false,
-          clearButton: !this.validate.readOnly && !property.ebDisabled,
+          clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
           dataPath,
           value,
           readonly: true, // always
-          disabled: this.validate.readOnly || property.ebDisabled,
+          disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         props: {
           calendarParams: property.ebParams,

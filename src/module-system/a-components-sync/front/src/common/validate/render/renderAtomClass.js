@@ -53,6 +53,7 @@ export default {
           clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
           dataPath,
           value: atomClassTitle,
+          readonly: true, // always
           disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         },
         on: {
