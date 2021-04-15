@@ -10,7 +10,6 @@ export default {
   data() {
     return {
       flowServiceBases: null,
-      options: [],
     };
   },
   computed: {
