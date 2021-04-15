@@ -4,13 +4,14 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
-      flowDefId: this.$f7route.query.flowDefId,
+      flowDefId: parseInt(this.$f7route.query.flowDefId),
       nodeId: this.$f7route.query.nodeId,
+      assignees: null,
     };
   },
   computed: {
     ready() {
-      return false;
+      return !!this.assignees;
     },
     context() {
       return this.contextParams.context;
@@ -30,8 +31,12 @@ export default {
       // data
       await this.__parseAssignees();
     },
-    __parseAssignees() {
-
+    async __parseAssignees() {
+      this.assignees = await this.$api.post('/a/flowchart/flowDef/parseAssignees', {
+        flowDefId: this.flowDefId,
+        nodeId: this.nodeId,
+        assignees: this.value,
+      });
     },
     __getPageTitle() {
       return this.$text('Assignees');

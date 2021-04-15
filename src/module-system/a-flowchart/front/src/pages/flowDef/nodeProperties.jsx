@@ -4,7 +4,7 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
-      flowDefId: this.$f7route.query.flowDefId,
+      flowDefId: parseInt(this.$f7route.query.flowDefId),
       type: this.$f7route.query.type, // node/edge
       id: this.$f7route.query.id,
       nodeBases: null,
