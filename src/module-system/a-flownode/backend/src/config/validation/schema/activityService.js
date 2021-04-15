@@ -1,4 +1,5 @@
 module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // activityService
   schemas.activityService = {
@@ -6,8 +7,12 @@ module.exports = app => {
     properties: {
       bean: {
         type: 'object',
-        ebType: 'json',
+        ebType: 'component',
         ebTitle: 'Bean',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderBeanFlowService',
+        },
         notEmpty: true,
       },
       parameterExpression: {

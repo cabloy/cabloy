@@ -51,6 +51,7 @@ module.exports = ctx => {
     }
 
     async _executeServiceInner({ bean, parameter, globals }) {
+      if (!bean) throw new Error('flow service bean is not set');
       // bean
       const beanFullName = `${bean.module}.flow.service.${bean.name}`;
       const beanInstance = ctx.bean._getBean(beanFullName);

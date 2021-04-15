@@ -7,17 +7,11 @@ module.exports = {
       every: 0,
       cron: null,
     },
-    bean: {
-      module: null,
-      name: null,
-    },
+    bean: null,
     parameterExpression: null,
   },
   activityService: {
-    bean: {
-      module: null,
-      name: null,
-    },
+    bean: null,
     parameterExpression: null,
   },
 };
