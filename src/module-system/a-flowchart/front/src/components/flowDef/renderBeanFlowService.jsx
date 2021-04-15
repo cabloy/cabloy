@@ -51,25 +51,18 @@ export default {
     const { parcel, key, property } = this.context;
     const meta = {
       ebPatch: {
-        getValue: () => {
-          const value = this.context.getValue(name);
+        getValue: value => {
           return value ? `${value.module}:${value.name}` : '';
         },
         setValue: value => {
-          if (!value) {
-            this.context.setValue(null);
-            return;
-          }
+          if (!value) return null;
           const arr = value.split(':');
-          if (!arr[0] || !arr[1]) {
-            this.context.setValue(null);
-            return;
-          }
+          if (!arr[0] || !arr[1]) return null;
           // ok
-          this.context.setValue({
+          return {
             module: arr[0],
             name: arr[1],
-          });
+          };
         },
       },
     };

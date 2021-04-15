@@ -183,6 +183,9 @@ export default {
       const dataPath = parcel.pathParent + key;
       // property
       property = this._combinePropertyMeta({ property, meta, dataPath });
+      // patch getValue/setValue
+      const patchGetValue = this.$meta.util.getProperty(property, 'ebPatch.getValue');
+      const patchSetValue = this.$meta.util.getProperty(property, 'ebPatch.setValue');
       // context
       const context = {
         validate: this.validate,
@@ -196,9 +199,18 @@ export default {
           return this.getTitle(context, notHint);
         },
         getValue: name => {
-          return this.getValue(parcel, name || key);
+          let value = this.getValue(parcel, name || key);
+          if (patchGetValue && (!name || name === key)) {
+            // only patch this
+            value = patchGetValue(value);
+          }
+          return value;
         },
         setValue: (value, name) => {
+          if (patchSetValue && (!name || name === key)) {
+            // only patch this
+            value = patchSetValue(value);
+          }
           this.setValue(parcel, name || key, value);
         },
       };

@@ -2,13 +2,10 @@ export default {
   methods: {
     renderSelect(c, context) {
       const { key, property, dataPath } = context;
-      // patch getValue/setValue
-      const patchGetValue = this.$meta.util.getProperty(property, 'ebPatch.getValue');
-      const patchSetValue = this.$meta.util.getProperty(property, 'ebPatch.setValue');
       // title
       const title = context.getTitle();
       // value
-      const valueCurrent = patchGetValue ? patchGetValue() : context.getValue();
+      const valueCurrent = context.getValue();
       // attrs
       const attrs = {
         name: key,
@@ -54,7 +51,7 @@ export default {
           attrs,
           on: {
             input: value => {
-              patchSetValue ? patchSetValue(value) : context.setValue(value);
+              context.setValue(value);
             },
           },
         }),
