@@ -120,6 +120,11 @@ module.exports = ctx => {
       return flowNodeInstance;
     }
 
+    async normalizeAssignees({ users, roles, vars }) {
+      const assignees = {};
+      return assignees;
+    }
+
     async count({ options, user }) {
       return await this.select({ options, user, count: 1 });
     }

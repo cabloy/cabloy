@@ -29,12 +29,12 @@ export default {
   methods: {
     async __load() {
       // data
-      await this.__parseAssignees();
+      await this.__normalizeAssignees();
     },
-    async __parseAssignees() {
-      this.assignees = await this.$api.post('/a/flowchart/flowDef/parseAssignees', {
+    async __normalizeAssignees() {
+      this.assignees = await this.$api.post('/a/flowchart/flowDef/normalizeAssignees', {
         flowDefId: this.flowDefId,
-        nodeId: this.nodeId,
+        nodeDefId: this.nodeId,
         assignees: this.value,
       });
     },

@@ -2,8 +2,12 @@ module.exports = app => {
 
   class FlowDefController extends app.Controller {
 
-    parseAssignees() {
-      const res = this.ctx.service.flowDef.parseAssignees();
+    async normalizeAssignees() {
+      const { flowDefId, nodeDefId, assignees } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const res = this.ctx.service.flowDef.normalizeAssignees({
+        flowDefId, nodeDefId, assignees, user,
+      });
       this.ctx.success(res);
     }
 
