@@ -68,6 +68,7 @@ module.exports = app => {
       // Details
       __groupDetails: {
         ebType: 'group-flatten',
+        ebTitle: 'Details',
         ebGroupWhole: true,
         ebParams: {
           titleHidden: true,
@@ -85,6 +86,7 @@ module.exports = app => {
       },
       // __groupDetails2: {
       //   ebType: 'group-flatten',
+      //   ebTitle: 'Details',
       //   ebGroupWhole: true,
       //   ebParams: {
       //     titleHidden: true,
