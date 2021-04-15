@@ -23,8 +23,9 @@ export default {
       if (property.notEmpty && !this.checkIfEmptyForSelect(valueCurrent)) {
         attrs.optionsBlankAuto = false;
         if (attrs.options && attrs.options.length > 0) {
+          // not check group
           const opt = attrs.options[0];
-          if (!opt || this.checkIfEmptyForSelect(opt.value)) {
+          if (opt && !opt.options && this.checkIfEmptyForSelect(opt.value)) {
             attrs.options.shift();
           }
         }

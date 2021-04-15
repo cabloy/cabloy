@@ -27,9 +27,11 @@ export default {
         groups.push(group);
         for (const beanName in flowServiceBasesModule) {
           const flowServiceBase = flowServiceBasesModule[beanName];
+          const title = flowServiceBase.titleLocale;
+          const value = `${moduleName}:${beanName}`;
           group.options.push({
-            title: flowServiceBase.titleLocale,
-            value: flowServiceBase,
+            title,
+            value,
           });
         }
       }
