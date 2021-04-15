@@ -502,10 +502,15 @@ export default {
     deleteNode(id) {
       // contentChange
       const value = this.$meta.util.extend({}, this.contentProcess);
-      // delete edge
-      const edgeIndex = value.edges.findIndex(item => item.target === id);
-      if (edgeIndex > -1) {
-        value.edges.splice(edgeIndex, 1);
+      // delete in/out edge
+      const edgesIn = value.edges.filter(item => item.target === id);
+      const edgesOut = value.edges.filter(item => item.source === id);
+      const edges = edgesIn.concat(edgesOut);
+      for (const edge of edges) {
+        const edgeIndex = value.edges.findIndex(item => item.id === edge.id);
+        if (edgeIndex > -1) {
+          value.edges.splice(edgeIndex, 1);
+        }
       }
       // delete node
       const nodeIndex = value.nodes.findIndex(item => item.id === id);

@@ -7,8 +7,12 @@ module.exports = app => {
     properties: {
       assignees: {
         type: 'object',
-        ebType: 'json',
+        ebType: 'component',
         ebTitle: 'Assignees',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderAssignees',
+        },
         notEmpty: true,
       },
       showAssignees: {
