@@ -15,7 +15,15 @@ export default {
   methods: {
     onChooseAssignees() {
       const { validate } = this.context;
-      const url = '/a/flowchart/flowDef/assigneesEdit';
+      // container
+      const container = validate.host.container;
+      // queries
+      const queries = {
+        flowDefId: container.flowDefId,
+        nodeId: container.id,
+      };
+      // url
+      const url = this.$meta.util.combineQueries('/a/flowchart/flowDef/assigneesEdit', queries);
       this.$view.navigate(url, {
         target: '_self',
         context: {
