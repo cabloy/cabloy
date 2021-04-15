@@ -56,13 +56,18 @@ export default {
       });
     },
     __findNode_startEventAtom({ diagram, nodeId }) {
+      // maybe this node is startEventAtom
+      let nodePrevious = diagram.contentProcess.nodes.find(item => item.id === nodeId);
+      if (!nodePrevious) return null;
+      // loop
       const nodeIdCaches = {};
       while (true) {
-        nodeIdCaches[nodeId] = true;
-        const nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });
-        if (!nodePrevious) return null;
+        // check first
         if (nodePrevious.type === 'startEventAtom') return nodePrevious;
         // previous
+        nodeIdCaches[nodeId] = true;
+        nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });
+        if (!nodePrevious) return null;
         nodeId = nodePrevious.id;
       }
     },
