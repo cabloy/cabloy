@@ -36,7 +36,7 @@ export default {
       if (this.optional) {
         atomClasses.push({ title: null, module: null, atomClassName: null });
       }
-      for (const moduleName in this.modulesAll) {
+      for (const moduleName in this.atomClassesAll) {
         const module = this.modulesAll[moduleName];
         const atomClassesModule = this.atomClassesAll[moduleName];
         for (const atomClassName in atomClassesModule) {

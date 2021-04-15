@@ -107,9 +107,21 @@ export default {
 
       // optionsBlankAuto
       if (this.optionsBlankAuto) {
-        const opt = _options[0];
-        if (!opt || !this.equal(this.optionValue(opt), '')) {
-          _options.unshift({ [this.optionTitleKey]: '', [this.optionValueKey]: '' });
+        const optEmpty = {
+          [this.optionTitleKey]: '',
+          [this.optionValueKey]: '',
+        };
+        if (_options[0] && _options[0].options) {
+          // group
+          _options.unshift({
+            title: 'Empty',
+            options: [ optEmpty ],
+          });
+        } else {
+          const opt = _options[0];
+          if (!opt || !this.equal(this.optionValue(opt), '')) {
+            _options.unshift(optEmpty);
+          }
         }
       }
 
@@ -208,7 +220,8 @@ export default {
       return opt[this.optionTitleKey];
     },
     optionDisplay(opt) {
-      return this.$text(this.optionTitle(opt) || this.optionValue(opt));
+      const text = this.optionTitle(opt) || this.optionValue(opt);
+      return text ? this.$text(text) : null;
     },
     checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;

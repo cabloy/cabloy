@@ -134,6 +134,7 @@ export default {
   Properties: '属性',
   ReferenceForHelp: '参考',
   ReferenceForFunction: '引用',
+  Empty: '空',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

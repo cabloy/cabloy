@@ -5,6 +5,7 @@ export default function(Vue) {
     state: {
       nodeBases: null,
       edgeBases: null,
+      flowServiceBases: null,
     },
     getters: {
     },
@@ -14,6 +15,9 @@ export default function(Vue) {
       },
       setEdgeBases(state, edgeBases) {
         state.edgeBases = edgeBases;
+      },
+      setFlowServiceBases(state, flowServiceBases) {
+        state.flowServiceBases = flowServiceBases;
       },
     },
     actions: {
@@ -35,6 +39,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/flow/flowDef/edgeBases').then(data => {
             data = data || {};
             commit('setEdgeBases', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getFlowServiceBases({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.flowServiceBases) return resolve(state.flowServiceBases);
+          Vue.prototype.$meta.api.post('/a/flow/flowDef/flowServiceBases').then(data => {
+            data = data || {};
+            commit('setFlowServiceBases', data);
             resolve(data);
           }).catch(err => {
             reject(err);

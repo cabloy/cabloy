@@ -140,6 +140,7 @@ module.exports = ctx => {
     _prepareFlowServiceBasesModule(relativeName, beans) {
       const flowServiceBases = {};
       for (const beanName in beans) {
+        if (beanName.indexOf('flow.service.') !== 0) continue;
         // info
         const bean = beans[beanName];
         const serviceBase = {
