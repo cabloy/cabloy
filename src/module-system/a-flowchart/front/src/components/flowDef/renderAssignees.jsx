@@ -13,24 +13,20 @@ export default {
   created() {
   },
   methods: {
-    save() {
+    onChooseAssignees() {
       const { validate } = this.context;
-      return validate.perform(null, { action: 'save' });
-    },
-    onChooseEditContent() {
-      const { parcel, validate } = this.context;
-      const url = '/a/flowchart/flowDef/contentEdit';
+      const url = '/a/flowchart/flowDef/assigneesEdit';
       this.$view.navigate(url, {
-        target: validate.readOnly ? '_self' : undefined,
+        target: '_self',
         context: {
           params: {
-            ctx: this,
-            item: parcel.data,
+            context: this.context,
             readOnly: validate.readOnly,
+            value: this.context.getValue(),
           },
-          callback: (code, res) => {
+          callback: (code, data) => {
             if (code === 200) {
-              this.context.setValue(res.content);
+              this.context.setValue(data);
             }
           },
         },
@@ -42,7 +38,7 @@ export default {
     const title = this.context.getTitle();
     return (
       <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseEditContent}>
+        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAssignees}>
       </eb-list-item-choose>
     );
   },
