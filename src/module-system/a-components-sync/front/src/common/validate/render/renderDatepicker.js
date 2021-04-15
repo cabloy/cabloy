@@ -1,10 +1,10 @@
 export default {
   methods: {
     renderDatepicker(c, context) {
-      const { parcel, key, property, dataPath } = context;
+      const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value
-      let value = this.getValue(parcel, key);
+      let value = context.getValue();
       if (!value) {
         value = [];
       } else if (!Array.isArray(value)) {
@@ -46,9 +46,9 @@ export default {
           'calendar:change': values => {
             // date or array of date
             if (property.type === 'array') {
-              this.setValue(parcel, key, values);
+              context.setValue(values);
             } else {
-              this.setValue(parcel, key, values[0] || null);
+              context.setValue(values[0] || null);
             }
           },
         },

@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderToggle(c, context) {
-      const { parcel, key, property, dataPath } = context;
+      const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       return c('f7-list-item', {
         key,
@@ -15,12 +15,12 @@ export default {
           slot: 'after',
           attrs: {
             dataPath,
-            value: this.getValue(parcel, key),
+            value: context.getValue(),
             disabled: this.validate.readOnly || property.ebReadOnly,
           },
           on: {
             input: value => {
-              this.setValue(parcel, key, value);
+              context.setValue(value);
             },
           },
         }),

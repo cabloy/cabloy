@@ -2,7 +2,7 @@ export default {
   methods: {
     renderGroup(c, context) {
       const { parcel, key, property, dataPath } = context;
-      const value = this.getValue(parcel, key);
+      const value = context.getValue();
       // parcel2
       const parcel2 = {
         data: value,

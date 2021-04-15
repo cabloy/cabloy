@@ -1,11 +1,11 @@
 export default {
   methods: {
     renderPanel(c, context) {
-      let { parcel, key, property, dataPath } = context;
+      let { key, property, dataPath } = context;
       // panelMeta
       const panelMeta = this.$meta.util.getProperty(property, 'ebParams.meta');
       const title = this.getTitle(context);
-      const value = this.getValue(parcel, key);
+      const value = context.getValue();
       // dataPath
       dataPath = dataPath + '/';
       return c('eb-list-item-panel', {
@@ -40,7 +40,7 @@ export default {
                 },
                 callback: (code, res) => {
                   if (code === 200) {
-                    this.setValue(parcel, key, res.data);
+                    context.setValue(res.data);
                     this.validate.verrors = res.errors;
                     // submit
                     if (property.ebAutoSubmit !== false) {

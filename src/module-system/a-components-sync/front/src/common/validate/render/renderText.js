@@ -9,9 +9,9 @@ export default {
       return Number((Number(value) * 100).toFixed(0));
     },
     renderText(c, context) {
-      const { parcel, key, property, dataPath } = context;
+      const { key, property, dataPath } = context;
       const title = this.getTitle(context);
-      let value = this.getValue(parcel, key);
+      let value = context.getValue();
       // currency
       if (property.ebCurrency) {
         value = this._formatValueCurrency(value);
@@ -62,7 +62,7 @@ export default {
             if (property.ebCurrency) {
               valueNew = this._updateValueCurrency(valueNew);
             }
-            this.setValue(parcel, key, valueNew);
+            context.setValue(valueNew);
           },
         },
       }, [
