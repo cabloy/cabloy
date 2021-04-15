@@ -12,8 +12,12 @@ module.exports = app => {
       },
       bean: {
         type: 'object',
-        ebType: 'json',
+        ebType: 'component',
         ebTitle: 'Bean',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderBeanFlowService',
+        },
         notEmpty: true,
       },
       parameterExpression: {
