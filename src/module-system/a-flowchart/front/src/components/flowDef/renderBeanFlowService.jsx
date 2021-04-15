@@ -43,11 +43,36 @@ export default {
   },
   methods: {
     async __init() {
+      // flowServiceBases
       this.flowServiceBases = await this.$local.dispatch('getFlowServiceBases');
     },
   },
   render() {
     const { parcel, key, property } = this.context;
+    const meta = {
+      ebPatch: {
+        getValue: () => {
+          const value = this.context.getValue(name);
+          return value ? `${value.module}:${value.name}` : '';
+        },
+        setValue: value => {
+          if (!value) {
+            this.context.setValue(null);
+            return;
+          }
+          const arr = value.split(':');
+          if (!arr[0] || !arr[1]) {
+            this.context.setValue(null);
+            return;
+          }
+          // ok
+          this.context.setValue({
+            module: arr[0],
+            name: arr[1],
+          });
+        },
+      },
+    };
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.ebOptions,
@@ -55,7 +80,7 @@ export default {
     return (
       <eb-list-item-validate
         parcel={parcel}
-        dataKey={key} property={propertyNew}>
+        dataKey={key} property={propertyNew} meta={meta}>
       </eb-list-item-validate>
     );
   },

@@ -153,7 +153,8 @@ module.exports = ctx => {
           ctx.logger.info('title of flow service bean should not be empty: ', `${relativeName}:${beanName}`);
         }
         // ok
-        flowServiceBases[beanName] = serviceBase;
+        const beanNameShort = beanName.substr('flow.service.'.length);
+        flowServiceBases[beanNameShort] = serviceBase;
       }
       return flowServiceBases;
     }

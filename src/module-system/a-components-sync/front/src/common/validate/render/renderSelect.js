@@ -1,9 +1,15 @@
 export default {
   methods: {
     renderSelect(c, context) {
-      const { parcel, key, property, dataPath } = context;
-      const title = this.getTitle(context);
-      const valueCurrent = this.getValue(parcel, key);
+      const { key, property, dataPath } = context;
+      // patch getValue/setValue
+      const patchGetValue = this.$meta.util.getProperty(property, 'ebPatch.getValue');
+      const patchSetValue = this.$meta.util.getProperty(property, 'ebPatch.setValue');
+      // title
+      const title = context.getTitle();
+      // value
+      const valueCurrent = patchGetValue ? patchGetValue() : context.getValue();
+      // attrs
       const attrs = {
         name: key,
         dataPath,
@@ -48,7 +54,7 @@ export default {
           attrs,
           on: {
             input: value => {
-              this.setValue(parcel, key, value);
+              patchSetValue ? patchSetValue(value) : context.setValue(value);
             },
           },
         }),
