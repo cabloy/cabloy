@@ -39,8 +39,12 @@ module.exports = app => {
       },
       rejectedNode: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'component',
         ebTitle: 'Rejected Node',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderRejectedNode',
+        },
       },
       allowPassTask: {
         type: 'boolean',
