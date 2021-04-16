@@ -319,34 +319,21 @@ module.exports = ctx => {
       let assignees = [];
 
       // 1. users
-      const _users = this._ensureIntArray(users);
+      const _users = await this._parseAssignees_users(users);
       if (_users) {
         assignees = assignees.concat(_users);
       }
 
       // 2. roles
-      const _roles = this._ensureArray(roles);
+      const _roles = await this._parseAssignees_roles(roles);
       if (_roles) {
-        for (let roleId of _roles) {
-          if (isNaN(roleId)) {
-            const role = await ctx.bean.role.get({ roleName: roleId });
-            if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, roleId);
-            roleId = role.id;
-          }
-          const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
-          assignees = assignees.concat(list.map(item => item.id));
-        }
+        assignees = assignees.concat(_roles);
       }
 
       // 3. vars
-      const _vars = this._ensureArray(vars);
+      const _vars = await this._parseAssignees_vars(vars);
       if (_vars) {
-        for (const _var of _vars) {
-          const userId = await this._parseUserVar({ _var });
-          if (userId) {
-            assignees.push(userId);
-          }
-        }
+        assignees = assignees.concat(_vars);
       }
 
       // unique
@@ -354,6 +341,75 @@ module.exports = ctx => {
 
       // ok
       return assignees;
+    }
+
+    async _parseAssignees_users(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str.map(item => {
+        return typeof item === 'object' ? item.id : parseInt(item);
+      });
+    }
+
+    async _parseAssignees_roles(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      const arr = [];
+      for (const item of str) {
+        if (typeof item === 'object') {
+          // object
+          arr.push(item.id);
+        } else if (isNaN(item)) {
+          // string
+          const role = await ctx.bean.role.get({ roleName: item });
+          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
+          arr.push(role.id);
+        } else {
+          // number
+          arr.push(item);
+        }
+      }
+      // users
+      let users = [];
+      for (const roleId of arr) {
+        const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
+        users = users.concat(list.map(item => item.id));
+      }
+      // ok
+      return users;
+    }
+
+    async _parseAssignees_vars(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      // users
+      let users = [];
+      for (const _var of str) {
+        const userId = await this._parseUserVar({ _var });
+        if (userId) {
+          if (Array.isArray(userId)) {
+            users = users.concat(userId);
+          } else {
+            users.push(userId);
+          }
+        }
+      }
+      // ok
+      return users;
+    }
+
+    _ensureArray(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str;
     }
 
     async _parseUserVar({ _var }) {
@@ -369,22 +425,6 @@ module.exports = ctx => {
         // user = { id: this.context._flow.flowUserId };
       }
       return user;
-    }
-
-    _ensureIntArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => parseInt(item));
-    }
-
-    _ensureArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str;
     }
 
     _notifyFlowInitiateds(flowUserId) {

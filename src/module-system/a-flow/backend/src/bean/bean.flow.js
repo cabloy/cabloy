@@ -122,7 +122,15 @@ module.exports = ctx => {
 
     async normalizeAssignees({ users, roles, vars }) {
       const assignees = {};
+      assignees.users = await this._normalizeAssignees_users(users);
+      assignees.roles = await this._normalizeAssignees_users(roles);
+      assignees.vars = await this._normalizeAssignees_users(vars);
       return assignees;
+    }
+
+    async _normalizeAssignees_users(users) {
+      if (!users) return null;
+
     }
 
     async count({ options, user }) {
