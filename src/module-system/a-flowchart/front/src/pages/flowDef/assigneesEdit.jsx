@@ -39,8 +39,10 @@ export default {
     },
     async __normalizeAssignees() {
       this.assignees = await this.$api.post('/a/flowchart/flowDef/normalizeAssignees', {
-        flowDefId: this.flowDefId,
-        nodeDefId: this.nodeId,
+        host: {
+          flowDefId: this.flowDefId,
+          nodeDefId: this.nodeId,
+        },
         assignees: this.value,
       });
     },

@@ -2,15 +2,16 @@ module.exports = app => {
 
   class FlowDef extends app.Service {
 
-    async normalizeAssignees({ flowDefId, nodeDefId, assignees, user }) {
+    async normalizeAssignees({ host, assignees, user }) {
       // check right
-      assignees = await this.__checkRightNormalizeAssignees({ flowDefId, nodeDefId, assignees, user });
+      assignees = await this.__checkRightNormalizeAssignees({ host, assignees, user });
       if (!assignees) this.ctx.throw(403);
       //  normalize
       return await this.ctx.bean.flow.normalizeAssignees(assignees);
     }
 
-    async __checkRightNormalizeAssignees({ flowDefId, nodeDefId, assignees, user }) {
+    async __checkRightNormalizeAssignees({ host, assignees, user }) {
+      const { flowDefId, nodeDefId } = host;
       // check write right
       const rightWrite = await this.ctx.bean.atom.checkRightAction({
         atom: { id: flowDefId },
