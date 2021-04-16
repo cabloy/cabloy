@@ -11,6 +11,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async roleChildren() {
+      const { flowDefId, nodeDefId, assignees } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const res = await this.ctx.service.flowDef.normalizeAssignees({
+        flowDefId, nodeDefId, assignees, user,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowDefController;
 };

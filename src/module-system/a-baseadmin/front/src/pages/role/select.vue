@@ -36,6 +36,9 @@ export default {
     resourceAtomId() {
       return this.contextParams.resourceAtomId;
     },
+    onFetchChildren() {
+      return this.contextParams.onFetchChildren;
+    },
     root() {
       return {
         attrs: {
@@ -49,40 +52,48 @@ export default {
     },
   },
   methods: {
-    onLoadChildren(node) {
-      const roleId = node.root ? this.roleIdStart : node.id;
-      return this.$api.post('role/children', {
-        roleId,
-        page: { size: 0 },
-        key: { atomId: this.resourceAtomId },
-      })
-        .then(data => {
-          let list = data.list.map(item => {
-            const checkbox = !this.leafOnly || item.catalog === 0;
-            const node = {
-              id: item.id,
-              attrs: {
-                label: item.roleName,
-                toggle: item.catalog === 1,
-                loadChildren: item.catalog === 1,
-                checkbox,
-                checkOnLabel: checkbox,
-                selectable: checkbox,
-                itemToggle: !checkbox,
-              },
-              data: item,
-            };
-            return node;
+    async onLoadChildren(node) {
+      try {
+        // roleId
+        const roleId = node.root ? this.roleIdStart : node.id;
+        // promise
+        let promise;
+        if (this.onFetchChildren) {
+          promise = this.onFetchChildren({ roleId });
+        } else {
+          promise = this.$api.post('role/children', {
+            roleId,
+            page: { size: 0 },
+            key: { atomId: this.resourceAtomId },
           });
-          if (this.catalogOnly) {
-            list = list.filter(item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id));
-          }
-          return list;
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-          throw err;
+        }
+        // then
+        const data = await promise;
+        let list = data.list.map(item => {
+          const checkbox = !this.leafOnly || item.catalog === 0;
+          const node = {
+            id: item.id,
+            attrs: {
+              label: item.roleName,
+              toggle: item.catalog === 1,
+              loadChildren: item.catalog === 1,
+              checkbox,
+              checkOnLabel: checkbox,
+              selectable: checkbox,
+              itemToggle: !checkbox,
+            },
+            data: item,
+          };
+          return node;
         });
+        if (this.catalogOnly) {
+          list = list.filter(item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id));
+        }
+        return list;
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+        throw err;
+      }
     },
     onDone() {
       const checked = this.$refs.tree.checked();
