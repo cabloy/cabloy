@@ -129,10 +129,10 @@ module.exports = ctx => {
     }
 
     async _normalizeAssignees_users(str) {
-      if (!str) return null;
+      if (!str) return [];
       // userIds
       const userIds = await this._parseAssignees_userIds(str);
-      if (userIds.length === 0) return null;
+      if (userIds.length === 0) return [];
       // select
       return await ctx.bean.user.select({
         options: {
@@ -146,10 +146,10 @@ module.exports = ctx => {
     }
 
     async _normalizeAssignees_roles(str) {
-      if (!str) return null;
+      if (!str) return [];
       // roleIds
       const roleIds = await this._parseAssignees_roleIds(str);
-      if (roleIds.length === 0) return null;
+      if (roleIds.length === 0) return [];
       // select
       return await ctx.bean.role.model.select({
         where: {
@@ -159,7 +159,7 @@ module.exports = ctx => {
     }
 
     async _normalizeAssignees_vars(str) {
-      if (!str) return null;
+      if (!str) return [];
       // vars
       const _vars = await this._parseAssignees_vars(str);
       // title
