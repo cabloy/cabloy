@@ -319,7 +319,7 @@ module.exports = ctx => {
       let assignees = [];
 
       // 1. users
-      const _users = await ctx.bean.flow._parseAssignees_userIds(users);
+      const _users = await this._parseAssignees_users(users);
       if (_users) {
         assignees = assignees.concat(_users);
       }
@@ -345,12 +345,7 @@ module.exports = ctx => {
 
     async _parseAssignees_users(str) {
       if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => {
-        return typeof item === 'object' ? item.id : parseInt(item);
-      });
+      return await ctx.bean.flow._parseAssignees_userIds(str);
     }
 
     async _parseAssignees_roles(str) {
