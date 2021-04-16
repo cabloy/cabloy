@@ -128,23 +128,16 @@ module.exports = ctx => {
       return assignees;
     }
 
-    async _normalizeAssignees_users(users) {
-      if (!users) return null;
-      if (!Array.isArray(users)) {
-        users = users.toString().split(',');
-      }
-      if (users.length === 0) return null;
-      // object
-      if (typeof users[0] === 'object') return users;
+    async _normalizeAssignees_users(str) {
+      if (!str) return null;
       // userIds
-      const userIds = users.map(item => {
-        return parseInt(item);
-      });
-      users = await ctx.bean.user.select({
+      const userIds = await this._parseAssignees_userIds(str);
+      // select
+      return await ctx.bean.user.select({
         options: {
           where: {
             'a.disabled': 0,
-            'a.id': assignees,
+            'a.id': userIds,
           },
           removePrivacy: true,
         },
