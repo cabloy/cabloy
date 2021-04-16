@@ -130,7 +130,67 @@ module.exports = ctx => {
 
     async _normalizeAssignees_users(users) {
       if (!users) return null;
+      if (!Array.isArray(users)) {
+        users = users.toString().split(',');
+      }
+      if (users.length === 0) return null;
+      // object
+      if (typeof users[0] === 'object') return users;
+      // userIds
+      const userIds = users.map(item => {
+        return parseInt(item);
+      });
+      users = await ctx.bean.user.select({
+        options: {
+          where: {
+            'a.disabled': 0,
+            'a.id': assignees,
+          },
+          removePrivacy: true,
+        },
+      });
+    }
 
+    async _parseAssignees_userIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str.map(item => {
+        return typeof item === 'object' ? item.id : parseInt(item);
+      });
+    }
+
+    async _parseAssignees_roleIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      const arr = [];
+      for (const item of str) {
+        if (typeof item === 'object') {
+          // object
+          arr.push(item.id);
+        } else if (isNaN(item)) {
+          // string
+          const role = await ctx.bean.role.parseRoleName({ roleName: item });
+          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
+          arr.push(role.id);
+        } else {
+          // number
+          arr.push(item);
+        }
+      }
+      // ok
+      return arr;
+    }
+
+    async _parseAssignees_vars(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str;
     }
 
     async count({ options, user }) {

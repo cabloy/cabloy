@@ -145,7 +145,7 @@ module.exports = ctx => {
       let roleNames = this.config.account.needActivation ? 'registered' : this.config.account.activatedRoles;
       roleNames = roleNames.split(',');
       for (const roleName of roleNames) {
-        const role = await ctx.bean.role.get({ roleName });
+        const role = await ctx.bean.role.parseRoleName({ roleName });
         await ctx.bean.role.addUserRole({ userId, roleId: role.id });
       }
     }

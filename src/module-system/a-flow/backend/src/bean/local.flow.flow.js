@@ -319,7 +319,7 @@ module.exports = ctx => {
       let assignees = [];
 
       // 1. users
-      const _users = await this._parseAssignees_users(users);
+      const _users = await ctx.bean.flow._parseAssignees_userIds(users);
       if (_users) {
         assignees = assignees.concat(_users);
       }
@@ -355,27 +355,11 @@ module.exports = ctx => {
 
     async _parseAssignees_roles(str) {
       if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      const arr = [];
-      for (const item of str) {
-        if (typeof item === 'object') {
-          // object
-          arr.push(item.id);
-        } else if (isNaN(item)) {
-          // string
-          const role = await ctx.bean.role.get({ roleName: item });
-          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
-          arr.push(role.id);
-        } else {
-          // number
-          arr.push(item);
-        }
-      }
+      // roleIds
+      const roleIds = await ctx.bean.flow._parseAssignees_roleIds(str);
       // users
       let users = [];
-      for (const roleId of arr) {
+      for (const roleId of roleIds) {
         const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
         users = users.concat(list.map(item => item.id));
       }
@@ -385,12 +369,11 @@ module.exports = ctx => {
 
     async _parseAssignees_vars(str) {
       if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
+      // vars
+      const _vars = await ctx.bean.flow._parseAssignees_vars(str);
       // users
       let users = [];
-      for (const _var of str) {
+      for (const _var of _vars) {
         const userId = await this._parseUserVar({ _var });
         if (userId) {
           if (Array.isArray(userId)) {
