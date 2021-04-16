@@ -1,6 +1,15 @@
 module.exports = app => {
   class UserController extends app.Controller {
 
+    async select() {
+      const page = this.ctx.bean.util.page(this.ctx.request.body.page);
+      const items = await this.service.user.select({
+        query: this.ctx.request.body.query,
+        page,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
     async list() {
       const page = this.ctx.bean.util.page(this.ctx.request.body.page);
       const items = await this.service.user.list({

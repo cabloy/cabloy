@@ -1,13 +1,21 @@
 <template>
   <eb-search-page :title="$text('Select User')" @search="onSearch" @loadMore="onLoadMore" @disable="onDisable">
-    <users ref="list"></users>
+    <users ref="list" :onFetchUsers="onFetchUsers"></users>
   </eb-search-page>
 </template>
 <script>
+import Vue from 'vue';
 import users from '../../components/user/select.vue';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
+  mixins: [ ebPageContext ],
   components: {
     users,
+  },
+  computed: {
+    onFetchUsers() {
+      return this.contextParams.onFetchUsers;
+    },
   },
   methods: {
     onSearch(query) {

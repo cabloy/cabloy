@@ -286,6 +286,7 @@ module.exports = ctx => {
               'a.disabled': 0,
               'a.id': assignees,
             },
+            orders: [[ 'a.userName', 'asc' ]],
             removePrivacy: true,
           },
         });

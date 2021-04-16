@@ -13,18 +13,16 @@ export default {
   },
   methods: {
     onPerformAdd() {
-      this.$view.navigate('/a/baseadmin/role/select', {
+      this.$view.navigate('/a/baseadmin/user/select', {
         target: '_self',
         context: {
           params: {
-            roleIdStart: null,
-            multiple: true,
-            onFetchChildren: ({ roleId }) => {
-              return this.$api.post('/a/flowchart/flowDef/roleChildren', {
+            _onFetchUsers: ({ query, page }) => {
+              return this.$api.post('/a/flowchart/flowDef/users', {
                 host: this.host,
                 params: {
-                  roleId,
-                  page: { size: 0 },
+                  query,
+                  page,
                 },
               });
             },

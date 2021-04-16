@@ -12,6 +12,7 @@ export default [
   { path: 'user/list', component: load('user/list') },
   { path: 'user/view', component: load('user/view') },
   { path: 'user/search', component: load('user/search') },
+  { path: 'user/select', component: load('user/select') },
   { path: 'user/rights', component: load('user/rights') },
   { path: 'atomRight/list', component: load('atomRight/list') },
   { path: 'atomRight/edit', component: load('atomRight/edit') },
