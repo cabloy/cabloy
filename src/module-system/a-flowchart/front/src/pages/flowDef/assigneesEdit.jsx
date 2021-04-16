@@ -28,6 +28,12 @@ export default {
     value() {
       return this.contextParams.value;
     },
+    host() {
+      return {
+        flowDefId: this.flowDefId,
+        nodeDefId: this.nodeId,
+      };
+    },
   },
   created() {
     this.__load();
@@ -39,10 +45,7 @@ export default {
     },
     async __normalizeAssignees() {
       this.assignees = await this.$api.post('/a/flowchart/flowDef/normalizeAssignees', {
-        host: {
-          flowDefId: this.flowDefId,
-          nodeDefId: this.nodeId,
-        },
+        host: this.host,
         assignees: this.value,
       });
     },
@@ -58,7 +61,7 @@ export default {
       return (
         <eb-list form inline-labels no-hairlines-md>
           <assignees-vars assignees={this.assignees}></assignees-vars>
-          <assignees-roles assignees={this.assignees}></assignees-roles>
+          <assignees-roles assignees={this.assignees} host={this.host}></assignees-roles>
         </eb-list>
       );
     },

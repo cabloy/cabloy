@@ -10,24 +10,43 @@ module.exports = app => {
       return await this.ctx.bean.flow.normalizeAssignees(assignees);
     }
 
-    async __checkRightNormalizeAssignees({ host, assignees, user }) {
-      const { flowDefId, nodeDefId } = host;
+    async roleChildren({ host, params, user }) {
       // check write right
-      const rightWrite = await this.ctx.bean.atom.checkRightAction({
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (!rightWrite) this.ctx.throw(403);
+      // roles
+      const { roleId, page } = params;
+      return await this.ctx.bean.role.children({ roleId, page });
+    }
+
+    async __checkRightWrite({ host, user }) {
+      const { flowDefId } = host;
+      return await this.ctx.bean.atom.checkRightAction({
         atom: { id: flowDefId },
         action: 3,
         stage: 'draft',
         user,
         checkFlow: true,
       });
-      if (rightWrite) return assignees;
-      // check read right
-      const rightRead = await this.ctx.bean.atom.checkRightRead({
+    }
+
+    async __checkRightRead({ host, user }) {
+      const { flowDefId } = host;
+      return await this.ctx.bean.atom.checkRightRead({
         atom: { id: flowDefId },
         user,
         checkFlow: true,
       });
-        // no right
+    }
+
+    async __checkRightNormalizeAssignees({ host, assignees, user }) {
+      const { flowDefId, nodeDefId } = host;
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (rightWrite) return assignees;
+      // check read right
+      const rightRead = await this.__checkRightRead({ host, user });
+      // no right
       if (!rightRead) return null;
       // get assignees from flowDef
       const flowDef = await this.ctx.bean.flowDef.getById({ flowDefId });

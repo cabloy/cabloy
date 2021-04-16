@@ -10,12 +10,15 @@ export default {
   },
   methods: {
     onPerformAdd() {
-      const flowUser = {
-        name: 'flowUser',
-        title: 'FlowInitiator',
-        titleLocale: this.$text('FlowInitiator'),
-      };
-      this.assignees.vars.push(flowUser);
+      const _var = this.assignees.vars.find(item => item.name === 'flowUser');
+      if (!_var) {
+        const flowUser = {
+          name: 'flowUser',
+          title: 'FlowInitiator',
+          titleLocale: this.$text('FlowInitiator'),
+        };
+        this.assignees.vars.push(flowUser);
+      }
     },
     onPerformRemove(event, item, index) {
       this.assignees.vars.splice(index, 1);

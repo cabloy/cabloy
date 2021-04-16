@@ -12,12 +12,13 @@ module.exports = app => {
     }
 
     async roleChildren() {
-      const { flowDefId, nodeDefId, assignees } = this.ctx.request.body;
+      const { host, params } = this.ctx.request.body;
       const user = this.ctx.state.user.op;
-      const res = await this.ctx.service.flowDef.normalizeAssignees({
-        flowDefId, nodeDefId, assignees, user,
+      const page = params.page;
+      const items = await this.ctx.service.flowDef.roleChildren({
+        host, params, user,
       });
-      this.ctx.success(res);
+      this.ctx.successMore(items, page.index, page.size);
     }
 
   }

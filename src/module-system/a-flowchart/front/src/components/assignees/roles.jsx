@@ -3,6 +3,9 @@ export default {
     assignees: {
       type: Object,
     },
+    host: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -10,22 +13,47 @@ export default {
   },
   methods: {
     onPerformAdd() {
-      const flowUser = {
-        name: 'flowUser',
-        title: 'FlowInitiator',
-        titleLocale: this.$text('FlowInitiator'),
-      };
-      this.assignees.vars.push(flowUser);
+      this.$view.navigate('/a/baseadmin/role/select', {
+        target: '_self',
+        context: {
+          params: {
+            roleIdStart: null,
+            multiple: true,
+            onFetchChildren: ({ roleId }) => {
+              return this.$api.post('/a/flowchart/flowDef/roleChildren', {
+                host: this.host,
+                params: {
+                  roleId,
+                  page: { size: 0 },
+                },
+              });
+            },
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              if (data) {
+                const roles = data.map(item => item.data);
+                for (const role of roles) {
+                  const _role = this.assignees.roles.find(item => item.id === role.id);
+                  if (!_role) {
+                    this.assignees.roles.push(role);
+                  }
+                }
+              }
+            }
+          },
+        },
+      });
     },
     onPerformRemove(event, item, index) {
-      this.assignees.vars.splice(index, 1);
+      this.assignees.roles.splice(index, 1);
       this.$meta.util.swipeoutClose(event.target);
     },
     _renderAssignee(item, index) {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.titleLocale}</div>
+          <div>{item.roleName}</div>
         </div>
       );
       // ok
@@ -60,7 +88,7 @@ export default {
     },
     renderAssignees() {
       const children = [];
-      const items = this.assignees.vars;
+      const items = this.assignees.roles;
       for (let index = 0; index < items.length; index++) {
         children.push(this._renderAssignee(items[index], index));
       }
