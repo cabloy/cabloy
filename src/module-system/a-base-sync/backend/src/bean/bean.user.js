@@ -324,6 +324,7 @@ module.exports = ctx => {
                   ${anonymousWhere}
                   ${roleWhere}
                   ${queryWhere}
+            order by a.userName asc
             ${_limit}
       `;
       return await ctx.model.query(sql, [ ctx.instance.id ]);
