@@ -28,6 +28,7 @@ export default {
   'Role Name': '角色名称',
   'Select Roles': '选择角色',
   'Search User': '搜索用户',
+  'Select User': '选择用户',
   'User Management': '用户管理',
   'Login URL': '登录URL',
   'Callback URL': '回调URL',
