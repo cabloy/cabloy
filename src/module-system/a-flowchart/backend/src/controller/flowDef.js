@@ -21,6 +21,16 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
+    async userSelect() {
+      const { host, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowDef.userSelect({
+        host, params, user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
   }
   return FlowDefController;
 };

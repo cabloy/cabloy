@@ -17,8 +17,8 @@ export default {
         target: '_self',
         context: {
           params: {
-            _onFetchUsers: ({ query, page }) => {
-              return this.$api.post('/a/flowchart/flowDef/users', {
+            onFetchUsers: ({ query, page }) => {
+              return this.$api.post('/a/flowchart/flowDef/userSelect', {
                 host: this.host,
                 params: {
                   query,
@@ -29,14 +29,9 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              if (data) {
-                const users = data.map(item => item.data);
-                for (const user of users) {
-                  const _user = this.assignees.users.find(item => item.id === user.id);
-                  if (!_user) {
-                    this.assignees.users.push(user);
-                  }
-                }
+              const _user = this.assignees.users.find(item => item.id === data.id);
+              if (!_user) {
+                this.assignees.users.push(data);
               }
             }
           },
@@ -47,18 +42,49 @@ export default {
       this.assignees.users.splice(index, 1);
       this.$meta.util.swipeoutClose(event.target);
     },
+    getItemMedia(item) {
+      const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 32);
+    },
     _renderAssignee(item, index) {
+      // domMedia
+      const domMedia = (
+        <div slot="media">
+          <img class="avatar avatar32" src={this.getItemMedia(item)} />
+        </div>
+      );
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.roleName}</div>
+          <div>{item.userName}</div>
+        </div>
+      );
+      // domAfter
+      let domAfterRealName;
+      if (item.realName && item.realName !== item.userName) {
+        domAfterRealName = (
+          <f7-badge>{item.realName}</f7-badge>
+        );
+      }
+      let domAfterMobile;
+      if (item.mobile) {
+        domAfterMobile = (
+          <f7-badge>{item.mobile}</f7-badge>
+        );
+      }
+      const domAfter = (
+        <div slot="after">
+          {domAfterRealName}
+          {domAfterMobile}
         </div>
       );
       // ok
       //   key: not use item.name
       return (
         <eb-list-item class="item" key={index} swipeout>
+          {domMedia}
           {domTitle}
+          {domAfter}
           {this._renderAssigneeContextMenu(item, index)}
         </eb-list-item>
       );

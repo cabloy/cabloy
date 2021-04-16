@@ -23,6 +23,9 @@ export default {
     onFetchUsers: {
       type: Function,
     },
+    onSelect: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -68,7 +71,7 @@ export default {
       return data;
     },
     onPerformItem(event, item) {
-
+      return this.onSelect(event, item);
     },
     getItemMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;

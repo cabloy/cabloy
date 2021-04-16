@@ -19,6 +19,30 @@ module.exports = app => {
       return await this.ctx.bean.role.children({ roleId, page });
     }
 
+    async userSelect({ host, params, user }) {
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (!rightWrite) this.ctx.throw(403);
+      // users
+      const { query, page } = params;
+      return await this.ctx.bean.user.select({
+        options: {
+          where: {
+            'a.anonymous': 0,
+            'a.disabled': 0,
+            __or__: [
+              { 'a.userName': { op: 'like', val: query } },
+              { 'a.realName': { op: 'like', val: query } },
+              { 'a.mobile': { op: 'like', val: query } },
+            ],
+          },
+          orders: [[ 'a.userName', 'asc' ]],
+          page,
+          removePrivacy: true,
+        },
+      });
+    }
+
     async __checkRightWrite({ host, user }) {
       const { flowDefId } = host;
       return await this.ctx.bean.atom.checkRightAction({

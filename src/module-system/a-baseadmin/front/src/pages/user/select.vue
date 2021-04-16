@@ -1,6 +1,6 @@
 <template>
   <eb-search-page :title="$text('Select User')" @search="onSearch" @loadMore="onLoadMore" @disable="onDisable">
-    <users ref="list" :onFetchUsers="onFetchUsers"></users>
+    <users ref="list" :onFetchUsers="onFetchUsers" :onSelect="onSelect"></users>
   </eb-search-page>
 </template>
 <script>
@@ -25,6 +25,10 @@ export default {
       this.$refs.list.loadMore();
     },
     onDisable() {
+      this.$f7router.back();
+    },
+    onSelect(event, item) {
+      this.contextCallback(200, item);
       this.$f7router.back();
     },
   },
