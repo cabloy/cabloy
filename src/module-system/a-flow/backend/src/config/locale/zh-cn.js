@@ -12,6 +12,7 @@ module.exports = {
   Passed: '已通过',
   Rejected: '已驳回',
   Cancelled: '已取消',
+  FlowInitiator: '流程发起人',
   'Create FlowDefinition': '新建流程定义',
   'FlowDefinition List': '流程定义列表',
   'Flow definition not Found: %s': '流程定义未发现: %s',

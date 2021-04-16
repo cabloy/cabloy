@@ -123,8 +123,8 @@ module.exports = ctx => {
     async normalizeAssignees({ users, roles, vars }) {
       const assignees = {};
       assignees.users = await this._normalizeAssignees_users(users);
-      assignees.roles = await this._normalizeAssignees_users(roles);
-      assignees.vars = await this._normalizeAssignees_users(vars);
+      assignees.roles = await this._normalizeAssignees_roles(roles);
+      assignees.vars = await this._normalizeAssignees_vars(vars);
       return assignees;
     }
 
@@ -132,6 +132,7 @@ module.exports = ctx => {
       if (!str) return null;
       // userIds
       const userIds = await this._parseAssignees_userIds(str);
+      if (userIds.length === 0) return null;
       // select
       return await ctx.bean.user.select({
         options: {
@@ -141,6 +142,40 @@ module.exports = ctx => {
           },
           removePrivacy: true,
         },
+      });
+    }
+
+    async _normalizeAssignees_roles(str) {
+      if (!str) return null;
+      // roleIds
+      const roleIds = await this._parseAssignees_roleIds(str);
+      if (roleIds.length === 0) return null;
+      // select
+      return await ctx.bean.role.model.select({
+        where: {
+          id: roleIds,
+        },
+      });
+    }
+
+    async _normalizeAssignees_vars(str) {
+      if (!str) return null;
+      // vars
+      const _vars = await this._parseAssignees_vars(str);
+      // title
+      return _vars.map(item => {
+        let title;
+        if (item === 'flowUser') {
+          title = 'FlowInitiator';
+        } else {
+          title = item;
+        }
+        // others
+        return {
+          name: item,
+          title,
+          titleLocale: ctx.text(title),
+        };
       });
     }
 
@@ -183,7 +218,9 @@ module.exports = ctx => {
       if (!Array.isArray(str)) {
         str = str.toString().split(',');
       }
-      return str;
+      return str.map(item => {
+        return typeof item === 'object' ? item.name : item;
+      });
     }
 
     async count({ options, user }) {
