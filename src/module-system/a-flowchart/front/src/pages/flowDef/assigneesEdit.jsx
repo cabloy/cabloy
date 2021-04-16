@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import assigneesVars from '../../components/assignees/vars.jsx';
+import assigneesRoles from '../../components/assignees/roles.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ ebPageContext ],
   components: {
     assigneesVars,
+    assigneesRoles,
   },
   data() {
     return {
@@ -54,6 +56,7 @@ export default {
       return (
         <eb-list form inline-labels no-hairlines-md>
           <assignees-vars assignees={this.assignees}></assignees-vars>
+          <assignees-roles assignees={this.assignees}></assignees-roles>
         </eb-list>
       );
     },
