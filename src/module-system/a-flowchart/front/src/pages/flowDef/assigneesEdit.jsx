@@ -56,7 +56,35 @@ export default {
       return this.$text('Assignees');
     },
     onPerformDone() {
-
+      const assignees = {
+      };
+      // users
+      if (this.assignees.users.length > 0) {
+        assignees.users = this.assignees.users.map(item => {
+          return {
+            id: item.id,
+            userName: item.userName,
+          };
+        });
+      }
+      // roles
+      if (this.assignees.roles.length > 0) {
+        assignees.roles = this.assignees.roles.map(item => {
+          return {
+            id: item.id,
+            roleName: item.roleName,
+          };
+        });
+      }
+      // vars
+      if (this.assignees.vars.length > 0) {
+        assignees.vars = this.assignees.vars.map(item => {
+          return item.name;
+        });
+      }
+      // ok
+      this.context.setValue(assignees);
+      this.$f7router.back();
     },
     renderAssignees() {
       if (!this.ready) return;
