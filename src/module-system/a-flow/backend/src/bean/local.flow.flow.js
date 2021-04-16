@@ -404,14 +404,6 @@ module.exports = ctx => {
       return users;
     }
 
-    _ensureArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str;
-    }
-
     async _parseUserVar({ _var }) {
       if (_var === 'flowUser') {
         return this.context._flow.flowUserId;
