@@ -144,7 +144,8 @@ export default {
       }
       // ok
       this.schema = {
-        module: schemaOptions ? schemaOptions.module : 'a-flowchart',
+        module: base.validator ? base.validator.module : 'a-flowchart',
+        validator: base.validator ? base.validator.validator : null,
         schema: schemaBase,
       };
     },

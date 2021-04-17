@@ -17,20 +17,29 @@ export default {
         },
         on: {
           click: () => {
-            const params = this.validate.params;
+            // schemaSub
+            const metaSchema = this.validate.meta && this.validate.meta.schema;
+            const schemaSub = metaSchema ? {
+              module: metaSchema.module,
+              validator: metaSchema.validator,
+              schema: property.$ref,
+            } : {
+              module: this.validate.params.module,
+              validator: this.validate.params.validator,
+              schema: property.$ref,
+            };
+            // errors
             const verrors = this.validate.verrors;
+            // target
             let target = this.$meta.util.getProperty(property, 'ebParams.target');
             if (target === undefined) target = '_self';
+            // navigate
             this.$view.navigate('/a/validation/validate', {
               target,
               context: {
                 params: {
                   host: this.validate.host,
-                  params: {
-                    module: params.module,
-                    validator: params.validator,
-                    schema: property.$ref,
-                  },
+                  params: schemaSub,
                   meta: panelMeta,
                   title,
                   data: value,
