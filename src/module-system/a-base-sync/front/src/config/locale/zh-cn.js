@@ -138,6 +138,8 @@ export default {
   ReferenceForHelp: '参考',
   ReferenceForFunction: '引用',
   Empty: '空',
+  Source: '源',
+  Target: '目标',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

@@ -50,6 +50,26 @@ const __schemaEdge = {
       ebTitle: 'Name',
       notEmpty: true,
     },
+    source: {
+      type: 'string',
+      ebType: 'component',
+      ebTitle: 'Source',
+      ebRender: {
+        module: 'a-flowchart',
+        name: 'renderSelectNode',
+      },
+      notEmpty: true,
+    },
+    target: {
+      type: 'string',
+      ebType: 'component',
+      ebTitle: 'Target',
+      ebRender: {
+        module: 'a-flowchart',
+        name: 'renderSelectNode',
+      },
+      notEmpty: true,
+    },
   },
 };
 
