@@ -21,6 +21,12 @@ const __schemaNode = {
       ebTitle: 'Name',
       notEmpty: true,
     },
+    type: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Type',
+      ebReadOnly: true,
+    },
   },
 };
 
@@ -182,6 +188,17 @@ export default {
       };
       const meta = {
         schema: this.schema,
+        properties: {
+          type: {
+            ebPatch: {
+              getValue: type => {
+                // base
+                const base = this.type === 'node' ? this.nodeBases[type] : this.edgeBases.sequence;
+                return base.titleLocale;
+              },
+            },
+          },
+        },
       };
       return (
         <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data} meta={meta} host={host}>
