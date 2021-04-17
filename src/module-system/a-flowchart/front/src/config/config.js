@@ -49,17 +49,21 @@ export default {
       { name: 'activity', title: 'Activity' },
     ],
   },
-  meta: {
-    node: {
-      id: '',
-      name: '',
-      type: '',
-    },
-    edge: {
-      id: '',
-      name: '',
-      source: '',
-      target: '',
+  schema: {
+    default: {
+      base: {
+        node: {
+          id: '',
+          name: '',
+          type: '',
+        },
+        edge: {
+          id: '',
+          name: '',
+          source: '',
+          target: '',
+        },
+      },
     },
   },
 };
