@@ -5,9 +5,6 @@ module.exports = app => {
   schemas.article = {
     type: 'object',
     properties: {
-      atomId: {
-        type: 'number',
-      },
       // title
       __groupTitle: {
         ebType: 'group-flatten',

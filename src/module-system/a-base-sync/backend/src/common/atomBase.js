@@ -74,7 +74,12 @@ module.exports = app => {
       // validate
       const ignoreValidate = options && options.ignoreValidate;
       if (atomStage === 0 && !target && !ignoreValidate) {
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+        });
         await this.ctx.bean.validation._validate({ atomClass, data: item, options });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
       // write atom
       await this._writeAtom({ key, item, user, atomStage });

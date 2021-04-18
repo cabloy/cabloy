@@ -68,7 +68,12 @@ module.exports = app => {
         obj[name] = value;
       } else {
         for (let i = 0; i < names.length - 1; i++) {
-          obj = obj[names[i]];
+          const _obj = obj[names[i]];
+          if (_obj) {
+            obj = _obj;
+          } else {
+            obj = obj[names[i]] = {};
+          }
         }
         obj[names[names.length - 1]] = value;
       }
