@@ -11,7 +11,7 @@ module.exports = app => {
         // ctx
         const ctx = this;
         // validateHost
-        if (!ctx.meta.validateHost) {
+        if (!ctx.meta || !ctx.meta.validateHost) {
           // not check
           return true;
         }

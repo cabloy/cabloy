@@ -11,7 +11,7 @@ module.exports = app => {
         // unique slug for atomLanguage and atomClass
         const ctx = this;
         // validateHost
-        if (!ctx.meta.validateHost) {
+        if (!ctx.meta || !ctx.meta.validateHost) {
           // not check
           return true;
         }
