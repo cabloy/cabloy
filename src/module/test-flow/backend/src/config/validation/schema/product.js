@@ -4,9 +4,6 @@ module.exports = app => {
   schemas.product = {
     type: 'object',
     properties: {
-      atomId: {
-        type: 'number',
-      },
       atomName: {
         type: 'string',
         ebType: 'text',
