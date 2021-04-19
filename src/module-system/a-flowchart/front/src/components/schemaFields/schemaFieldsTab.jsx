@@ -43,7 +43,7 @@ export default {
       if (!value) {
         this.valueMode = 2;
       } else if (value === true) {
-        this.valueMode === 1;
+        this.valueMode = 1;
       } else if (Array.isArray(value)) {
         this.valueMode = 3;
       } else {
@@ -59,7 +59,7 @@ export default {
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
           <f7-list-item smartSelect title={this.$text('Mode')} smartSelectParams={ { openIn: 'sheet', closeOnSelect: true } }>
-            <eb-select name="mode" vModel={this.valueMode} multiple={false} options={this.valueModes}></eb-select>
+            <eb-select name="mode" v-model={this.valueMode} multiple={false} options={this.valueModes}></eb-select>
           </f7-list-item>
         </f7-list-group>
         <f7-list-group>
