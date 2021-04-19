@@ -3,6 +3,7 @@
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!readOnly" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
+        <eb-link v-if="!!schemaReference" iconMaterial="info" :onPerform="onPerformInfo"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar>
@@ -67,6 +68,19 @@ export default {
       // ok
       this.contextCallback(200, this.valueSchema);
       this.$f7router.back();
+    },
+    onPerformInfo() {
+      // navigate
+      this.$view.navigate(`/a/basefront/json/editor?t=${Date.now()}`, {
+        target: '_self',
+        context: {
+          params: {
+            value: this.schemaReference.schema,
+            title: this.$text('ReferenceForHelp'),
+            readOnly: true,
+          },
+        },
+      });
     },
   },
 };
