@@ -142,6 +142,8 @@ export default {
   Target: '目标',
   Field: '字段',
   Fields: '字段',
+  Read: '读',
+  Write: '写',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
