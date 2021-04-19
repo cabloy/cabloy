@@ -72,20 +72,13 @@ module.exports = app => {
       },
       schema: {
         type: 'object',
-        ebType: 'json',
-        ebTitle: 'Schema',
-        notEmpty: true,
-        ebParams: {
-          actionSave: false,
-          actionDone: true,
-          actions: [{
-            name: 'schemaReference',
-            actionModule: 'a-flowchart',
-            actionComponent: 'actionUserTask',
-            icon: { material: 'info' },
-            navigateOptions: { target: '_self' },
-          }],
+        ebType: 'component',
+        ebTitle: 'Field Permissions',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderSchemaFields',
         },
+        notEmpty: true,
       },
     },
   };

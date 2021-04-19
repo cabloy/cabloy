@@ -3,6 +3,7 @@ import renderAssignees from './components/flowDef/renderAssignees.jsx';
 import renderBeanFlowService from './components/flowDef/renderBeanFlowService.jsx';
 import renderFlowDefContent from './components/flowDef/renderFlowDefContent.jsx';
 import renderRejectedNode from './components/flowDef/renderRejectedNode.jsx';
+import renderSchemaFields from './components/flowDef/renderSchemaFields.jsx';
 import renderSelectNode from './components/flowDef/renderSelectNode.jsx';
 import contentEditDiagram from './components/flowDef/contentEditDiagram.jsx';
 import contentEditSource from './components/flowDef/contentEditSource.jsx';
@@ -14,6 +15,7 @@ export default {
   renderBeanFlowService,
   renderFlowDefContent,
   renderRejectedNode,
+  renderSchemaFields,
   renderSelectNode,
   contentEditDiagram,
   contentEditSource,

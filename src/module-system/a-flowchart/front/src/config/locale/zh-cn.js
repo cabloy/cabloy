@@ -12,4 +12,5 @@ export default {
   'Flow Chart': '流程图',
   'Start Event': '开始事件',
   'End Event': '结束事件',
+  'Field Permissions': '字段权限',
 };
