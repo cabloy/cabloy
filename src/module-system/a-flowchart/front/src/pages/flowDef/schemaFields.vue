@@ -13,10 +13,10 @@
     </eb-navbar>
     <f7-tabs ref="tabs">
       <eb-tab-page-content :id="tabId.read" :ptr="false" :infinite="false" :tabActive="tabName==='read'" data-ref="read" @tab:show="tabName='read'">
-        <schema-fields-tab :context="context" :readOnly="readOnly" :mode="read" :valueSchema="valueSchema"></schema-fields-tab>
+        <schema-fields-tab :context="context" :readOnly="readOnly" mode="read" :valueSchema="valueSchema" :schemaReference="schemaReference"></schema-fields-tab>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.write" :ptr="false" :infinite="false" :tabActive="tabName==='write'" data-ref="write" @tab:show="tabName='write'">
-        <schema-fields-tab :context="context" :readOnly="readOnly" :mode="write" :valueSchema="valueSchema"></schema-fields-tab>
+        <schema-fields-tab :context="context" :readOnly="readOnly" mode="write" :valueSchema="valueSchema" :schemaReference="schemaReference"></schema-fields-tab>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
@@ -54,6 +54,9 @@ export default {
     },
     value() {
       return this.contextParams.value;
+    },
+    schemaReference() {
+      return this.contextParams.schemaReference;
     },
   },
   created() {

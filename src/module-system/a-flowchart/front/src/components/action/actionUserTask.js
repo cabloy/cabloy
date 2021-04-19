@@ -4,11 +4,13 @@ export default {
   },
   methods: {
     async onAction({ ctx, action, item }) {
-      if (action.name === 'schemaReference') {
+      if (action.name === 'getSchemaReference') {
+        return await this.onAction_getSchemaReference({ ctx, item });
+      } else if (action.name === 'schemaReference') {
         return await this.onAction_schemaReference({ ctx, action, item });
       }
     },
-    async onAction_schemaReference({ ctx, action, item }) {
+    async onAction_getSchemaReference({ ctx, item }) {
       // validate
       const { validate } = item;
       // container
@@ -24,7 +26,7 @@ export default {
         return;
       }
       // atomClass
-      const atomClass = nodeStartEventAtom.options.atom;
+      const atomClass = nodeStartEventAtom.options && nodeStartEventAtom.options.atom;
       if (!atomClass || !atomClass.module || !atomClass.atomClassName) {
         ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
         return;
@@ -39,6 +41,12 @@ export default {
         validator: validator.validator,
         schema: null,
       });
+      // ok
+      return schemaRes;
+    },
+    async onAction_schemaReference({ ctx, action, item }) {
+      const schemaRes = await this.onAction_getSchemaReference({ ctx, action, item });
+      if (!schemaRes) return;
       const schema = schemaRes.schema;
       // taget
       let target = ctx.$meta.util.getProperty(action, 'navigateOptions.target');

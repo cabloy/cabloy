@@ -13,7 +13,18 @@ export default {
   created() {
   },
   methods: {
-    onChooseSchemaFields() {
+    async getSchemaReference() {
+      const action = {
+        name: 'getSchemaReference',
+        actionModule: 'a-flowchart',
+        actionComponent: 'actionUserTask',
+      };
+      return await this.$meta.util.performAction({ ctx: this, action, item: this.context });
+    },
+    async onChooseSchemaFields() {
+      const schemaReference = await this.getSchemaReference();
+      if (!schemaReference) return;
+      // validate
       const { validate } = this.context;
       // container
       const container = validate.host.container;
@@ -31,6 +42,7 @@ export default {
             context: this.context,
             readOnly: validate.readOnly,
             value: this.context.getValue(),
+            schemaReference,
           },
           callback: (code, data) => {
             if (code === 200) {

@@ -13,4 +13,7 @@ export default {
   'Start Event': '开始事件',
   'End Event': '结束事件',
   'Field Permissions': '字段权限',
+  'Allow All Fields': '允许所有字段',
+  'Disable All Fields': '禁止所有字段',
+  'Allow Specific Fields': '允许指定字段',
 };
