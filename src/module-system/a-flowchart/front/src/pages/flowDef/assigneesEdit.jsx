@@ -83,7 +83,7 @@ export default {
         });
       }
       // ok
-      this.context.setValue(assignees);
+      this.contextCallback(200, assignees);
       this.$f7router.back();
     },
     renderAssignees() {

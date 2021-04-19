@@ -50,6 +50,28 @@ export default {
         this.valueMode = 4;
       }
     },
+    onInputMode(valueMode) {
+      // valueMode
+      valueMode = parseInt(valueMode);
+      this.valueMode = valueMode;
+      // value new
+      let value;
+      if (valueMode === 1) {
+        value = true;
+      } else if (valueMode === 2) {
+        value = false;
+      } else if (valueMode === 3) {
+        if (!Array.isArray(this.valueSchema[this.mode])) {
+          value = [];
+        }
+      } else {
+        // do nothing
+      }
+      // change
+      if (value !== undefined) {
+        this.valueSchema[this.mode] = value;
+      }
+    },
     onPerformAdd() {
 
     },
@@ -59,7 +81,7 @@ export default {
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
           <f7-list-item smartSelect title={this.$text('Mode')} smartSelectParams={ { openIn: 'sheet', closeOnSelect: true } }>
-            <eb-select name="mode" v-model={this.valueMode} multiple={false} options={this.valueModes}></eb-select>
+            <eb-select name="mode" value={this.valueMode} onInput={this.onInputMode} multiple={false} options={this.valueModes}></eb-select>
           </f7-list-item>
         </f7-list-group>
         <f7-list-group>

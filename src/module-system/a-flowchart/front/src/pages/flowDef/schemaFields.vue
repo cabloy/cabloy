@@ -65,7 +65,7 @@ export default {
   methods: {
     onPerformDone() {
       // ok
-      // this.context.setValue(assignees);
+      this.contextCallback(200, this.valueSchema);
       this.$f7router.back();
     },
   },
