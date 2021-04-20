@@ -139,10 +139,14 @@ export default {
     },
     onInputMode3(keys) {
       const value = this.valueSchema[this.mode];
-      for (const key of keys) {
+      const properties = this.schemaReference.schema.properties;
+      for (const key in properties) {
+        const indexSelected = keys.indexOf(key);
         const [ index, property ] = this.__findProperty({ key });
-        if (index === -1) {
+        if (indexSelected > -1 && index === -1) {
           value.push(key);
+        } else if (indexSelected === -1 && index > -1) {
+          value.splice(index, 1);
         }
       }
     },
@@ -184,8 +188,8 @@ export default {
       return (
         <f7-list-group>
           <f7-list-item group-title>
-            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false } }>
-              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions}></eb-select>
+            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false, formatValueText: () => { return null; } } }>
+              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions} propsOnGetDisplays={() => { return null; }}></eb-select>
             </f7-list-item>
           </f7-list-item>
           {children}

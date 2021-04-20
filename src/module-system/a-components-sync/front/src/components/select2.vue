@@ -37,6 +37,9 @@ export default {
       default: false,
     },
     value: {},
+    onGetDisplays: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -210,6 +213,9 @@ export default {
     getDisplays() {
       const options = this.getSelectedOptions();
       if (!options) return null;
+      if (this.onGetDisplays) {
+        return this.onGetDisplays({ options });
+      }
       if (!this.multiple) return this.optionDisplay(options);
       return options.map(opt => this.optionDisplay(opt)).join(',');
     },
