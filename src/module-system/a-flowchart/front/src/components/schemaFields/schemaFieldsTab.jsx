@@ -32,6 +32,53 @@ export default {
       valueMode4: null,
     };
   },
+  computed: {
+    mode3SelectValue() {
+      if (this.valueMode !== 3) return null;
+      const value = this.valueSchema[this.mode];
+      return value.map(item => {
+        const key = (item && typeof item === 'Object') ? item.name : item;
+        return key;
+      });
+    },
+    mode3Items() {
+      if (this.valueMode !== 3) return null;
+      const value = this.valueSchema[this.mode];
+      const properties = this.schemaReference.schema.properties;
+      return value.map(item => {
+        let key;
+        let title;
+        if (item && typeof item === 'Object') {
+          key = item.name;
+          if (item.ebTitle) {
+            title = this.__getPropertyTitle({ key, property: item });
+          } else {
+            const property = properties[key];
+            title = property ? this.__getPropertyTitle({ key, property }) : key;
+          }
+        } else {
+          key = item;
+          const property = properties[key];
+          title = property ? this.__getPropertyTitle({ key, property }) : key;
+        }
+        // ok
+        return { key, title };
+      });
+    },
+    mode3SelectOptions() {
+      const options = [];
+      const properties = this.schemaReference.schema.properties;
+      for (const key in properties) {
+        const property = properties[key];
+        const title = this.__getPropertyTitle({ key, property });
+        options.push({
+          title,
+          value: key,
+        });
+      }
+      return options;
+    },
+  },
   created() {
     this.__init();
   },
@@ -76,30 +123,72 @@ export default {
         this.valueSchema[this.mode] = value;
       }
     },
-    onPerformAdd() {
-
+    __getPropertyTitle({ key, property }) {
+      const title = property.ebTitle ? this.$text(property.ebTitle) : key;
+      if (property.ebType === 'group-flatten' || property.ebType === 'group') {
+        return `-- ${title} --`;
+      }
+      return title;
+    },
+    __findProperty({ key }) {
+      const value = this.valueSchema[this.mode];
+      const index = value.findIndex(item => {
+        return (item === key || (item && item.name === key));
+      });
+      return [ index, index === -1 ? null : value[index] ];
+    },
+    onInputMode3(keys) {
+      const value = this.valueSchema[this.mode];
+      for (const key of keys) {
+        const [ index, property ] = this.__findProperty({ key });
+        if (index === -1) {
+          value.push(key);
+        }
+      }
     },
     onInputValueMode4(data) {
       this.valueMode4 = data;
-      this._onInputValueMode4Delay(data);
+      this.__onInputValueMode4Delay(data);
     },
-    _onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function(data) {
+    __onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function(data) {
       try {
         this.valueSchema[this.mode] = window.JSON5.parse(data);
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
     }, 1000),
+    renderMode_3_item(mode3Item, index) {
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{mode3Item.title}</div>
+        </div>
+      );
+      // ok
+      return (
+        <eb-list-item class="item" key={index} swipeout>
+          {domTitle}
+          {this.renderMode_3_itemContextMenu(mode3Item, index)}
+        </eb-list-item>
+      );
+    },
+    renderMode_3_itemContextMenu(mode3Item, index) {
+      return null;
+    },
     renderMode_3() {
       if (this.valueMode !== 3) return null;
+      const children = [];
+      for (let index = 0; index < this.mode3Items.length; index++) {
+        children.push(this.renderMode_3_item(this.mode3Items[index], index));
+      }
       return (
         <f7-list-group>
           <f7-list-item group-title>
-            <div class="display-flex justify-content-space-between">
-              <div></div>
-              <eb-link iconMaterial='add' propsOnPerform={this.onPerformAdd}></eb-link>
-            </div>
+            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false } }>
+              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions}></eb-select>
+            </f7-list-item>
           </f7-list-item>
+          {children}
         </f7-list-group>
       );
     },

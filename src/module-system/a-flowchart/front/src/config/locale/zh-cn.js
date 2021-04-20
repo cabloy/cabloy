@@ -16,4 +16,5 @@ export default {
   'Allow All Fields': '允许所有字段',
   'Disable All Fields': '禁止所有字段',
   'Allow Specific Fields': '允许指定字段',
+  'Select Fields': '选择字段',
 };
