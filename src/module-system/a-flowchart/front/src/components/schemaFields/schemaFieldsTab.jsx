@@ -37,7 +37,8 @@ export default {
       if (this.valueMode !== 3) return null;
       const value = this.valueSchema[this.mode];
       return value.map(item => {
-        const key = (item && typeof item === 'Object') ? item.name : item;
+        const isCustom = (item && typeof item === 'object');
+        const key = isCustom ? item.name : item;
         return key;
       });
     },
@@ -46,23 +47,27 @@ export default {
       const value = this.valueSchema[this.mode];
       const properties = this.schemaReference.schema.properties;
       return value.map(item => {
-        let key;
+        const isCustom = (item && typeof item === 'object');
+        // key
+        const key = isCustom ? item.name : item;
+        // property
+        const property = properties[key];
+        // title
         let title;
-        if (item && typeof item === 'Object') {
-          key = item.name;
-          if (item.ebTitle) {
-            title = this.__getPropertyTitle({ key, property: item });
-          } else {
-            const property = properties[key];
-            title = property ? this.__getPropertyTitle({ key, property }) : key;
-          }
+        if (isCustom && item.property.ebTitle) {
+          title = this.__getPropertyTitle({ key, property: item.property });
         } else {
-          key = item;
-          const property = properties[key];
           title = property ? this.__getPropertyTitle({ key, property }) : key;
         }
+        // icon
+        let icon;
+        if (isCustom && item.property.ebType) {
+          icon = (item.property.ebType === 'group-flatten' || item.property.ebType === 'group') ? 'menu' : 'radio_button_unchecked';
+        } else {
+          icon = property ? ((property.ebType === 'group-flatten' || property.ebType === 'group') ? 'menu' : 'radio_button_unchecked') : 'radio_button_unchecked';
+        }
         // ok
-        return { key, title };
+        return { key, title, icon };
       });
     },
     mode3SelectOptions() {
@@ -142,7 +147,7 @@ export default {
       const properties = this.schemaReference.schema.properties;
       for (const key in properties) {
         const indexSelected = keys.indexOf(key);
-        const [ index, property ] = this.__findProperty({ key });
+        const [ index ] = this.__findProperty({ key });
         if (indexSelected > -1 && index === -1) {
           value.push(key);
         } else if (indexSelected === -1 && index > -1) {
@@ -162,6 +167,10 @@ export default {
       }
     }, 1000),
     renderMode_3_item(mode3Item, index) {
+      // domMedia
+      const domMedia = (
+        <f7-icon material={mode3Item.icon} slot="media"></f7-icon>
+      );
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -171,6 +180,7 @@ export default {
       // ok
       return (
         <eb-list-item class="item" key={index} swipeout>
+          {domMedia}
           {domTitle}
           {this.renderMode_3_itemContextMenu(mode3Item, index)}
         </eb-list-item>
