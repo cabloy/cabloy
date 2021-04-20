@@ -75,7 +75,7 @@ export default {
   created() {
     const content = this.contentObj;
     this.contentProcess = content.process || this.$config.flowDef.default.process;
-    this.contentProcessStr = JSON5.stringify(this.contentProcess, null, 2);
+    this.contentProcessStr = window.JSON5.stringify(this.contentProcess, null, 2);
     this.contentListener = content.listener || this.$config.flowDef.default.listener;
   },
   methods: {
@@ -88,7 +88,7 @@ export default {
         if (data.valueStr) {
           this.contentProcessStr = data.valueStr;
         } else {
-          this.contentProcessStr = JSON5.stringify(this.contentProcess, null, 2);
+          this.contentProcessStr = window.JSON5.stringify(this.contentProcess, null, 2);
         }
       } else if (data.type === 'listener') {
         this.contentListener = data.value;

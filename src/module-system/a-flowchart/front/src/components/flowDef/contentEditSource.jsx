@@ -26,7 +26,7 @@ export default {
     onInput(event) {
       const data = event.target.value;
       try {
-        const value = JSON5.parse(data);
+        const value = window.JSON5.parse(data);
         this.$emit('contentChange', { type: 'process', value, valueStr: data });
       } catch (err) {
         this.$view.toast.show({ text: err.message });

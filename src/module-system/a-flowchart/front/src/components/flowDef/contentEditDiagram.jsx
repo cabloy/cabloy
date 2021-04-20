@@ -65,7 +65,7 @@ export default {
   },
   watch: {
     contentProcessStr() {
-      this.contentProcess = JSON5.parse(this.contentProcessStr);
+      this.contentProcess = window.JSON5.parse(this.contentProcessStr);
       if (this.tabActive) {
         this.__updateChart({ changeData: true });
       } else {
@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     async __init() {
-      this.contentProcess = JSON5.parse(this.contentProcessStr);
+      this.contentProcess = window.JSON5.parse(this.contentProcessStr);
       this.nodeBases = await this.$local.dispatch('getNodeBases');
       this.edgeBases = await this.$local.dispatch('getEdgeBases');
       await this.__prepareInstances();
