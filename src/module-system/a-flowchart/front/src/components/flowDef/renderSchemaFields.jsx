@@ -24,6 +24,8 @@ export default {
     async onChooseSchemaFields() {
       const schemaReference = await this.getSchemaReference();
       if (!schemaReference) return;
+      // module
+      await this.$meta.module.use(schemaReference.module);
       // validate
       const { validate } = this.context;
       // container
