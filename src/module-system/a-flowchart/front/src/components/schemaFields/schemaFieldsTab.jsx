@@ -155,6 +155,27 @@ export default {
         }
       }
     },
+    onPerformRemoveMode3(event, mode3Item, index) {
+      const value = this.valueSchema[this.mode];
+      value.splice(index, 1);
+      this.$meta.util.swipeoutClose(event.target);
+    },
+    onPerformMoveUpMode3(event, mode3Item, index) {
+      const value = this.valueSchema[this.mode];
+      if (index > 0) {
+        const item = value.splice(index, 1);
+        value.splice(index - 1, 0, item[0]);
+      }
+      this.$meta.util.swipeoutClose(event.target);
+    },
+    onPerformMoveDownMode3(event, mode3Item, index) {
+      const value = this.valueSchema[this.mode];
+      if (index < value.length - 1) {
+        const item = value.splice(index + 1, 1);
+        value.splice(index, 0, item[0]);
+      }
+      this.$meta.util.swipeoutClose(event.target);
+    },
     onInputValueMode4(data) {
       this.valueMode4 = data;
       this.__onInputValueMode4Delay(data);
@@ -186,8 +207,49 @@ export default {
         </eb-list-item>
       );
     },
+    renderMode_3_itemContextMenu_left(mode3Item, index) {
+      // domRight
+      const domActions = [];
+      domActions.push(
+        <div key='moveUp' color='teal' propsOnPerform={event => this.onPerformMoveUpMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material='arrow_upward'></f7-icon>
+          {this.$device.desktop && <div slot="title">{this.$text('Move Up')}</div>}
+        </div>
+      );
+      domActions.push(
+        <div key='moveDown' color='blue' propsOnPerform={event => this.onPerformMoveDownMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material='arrow_downward'></f7-icon>
+          {this.$device.desktop && <div slot="title">{this.$text('Move Down')}</div>}
+        </div>
+      );
+      return (
+        <div slot="left">
+          {domActions}
+        </div>
+      );
+    },
+    renderMode_3_itemContextMenu_right(mode3Item, index) {
+      // domRight
+      const domActions = [];
+      domActions.push(
+        <div key='remove' color='red' propsOnPerform={event => this.onPerformRemoveMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material='delete'></f7-icon>
+          {this.$device.desktop && <div slot="title">{this.$text('Remove')}</div>}
+        </div>
+      );
+      return (
+        <div slot="right">
+          {domActions}
+        </div>
+      );
+    },
     renderMode_3_itemContextMenu(mode3Item, index) {
-      return null;
+      return (
+        <eb-context-menu>
+          {this.renderMode_3_itemContextMenu_left(mode3Item, index)}
+          {this.renderMode_3_itemContextMenu_right(mode3Item, index)}
+        </eb-context-menu>
+      );
     },
     renderMode_3() {
       if (this.valueMode !== 3) return null;

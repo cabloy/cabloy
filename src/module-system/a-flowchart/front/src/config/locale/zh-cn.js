@@ -17,4 +17,6 @@ export default {
   'Disable All Fields': '禁止所有字段',
   'Allow Specific Fields': '允许指定字段',
   'Select Fields': '选择字段',
+  'Move Up': '上移',
+  'Move Down': '下移',
 };
