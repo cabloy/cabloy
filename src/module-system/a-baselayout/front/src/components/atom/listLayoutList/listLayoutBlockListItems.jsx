@@ -43,13 +43,7 @@ export default {
       });
     },
     onSwipeoutOpened(event, item) {
-      if (item._actions) return;
-      this.$api.post('/a/base/atom/actions', {
-        key: { atomId: item.atomId },
-        basic: !this.$device.desktop,
-      }).then(data => {
-        Vue.set(item, '_actions', data);
-      });
+      this.layoutManager.actions_fetchActions(item);
     },
     onLabel(event, item) {
       // anonymous

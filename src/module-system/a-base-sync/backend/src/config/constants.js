@@ -27,6 +27,7 @@ module.exports = app => {
         history: 53,
         formal: 54,
         draft: 55,
+        workflow: 56,
         custom: 100, // custom action start from custom
       },
       actionMeta: {
@@ -147,6 +148,13 @@ module.exports = app => {
           actionComponent: 'action',
           authorize: false,
           icon: { material: 'content_paste' },
+        },
+        workflow: {
+          title: 'WorkFlow',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          authorize: false,
+          icon: { material: 'account_tree' },
         },
         custom: {
           title: 'Custom',

@@ -9,6 +9,7 @@ import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
+import Actions from './actions.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
@@ -23,7 +24,7 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 export default {
   mixins: [
     ebAtomClasses, ebAtomActions,
-    Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar,
+    Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar, Actions,
   ],
   data() {
     return {
