@@ -91,19 +91,25 @@ export default {
       // list
       return (
         <eb-list form inline-labels no-hairlines-md>
-          <assignees-vars assignees={this.assignees}></assignees-vars>
-          <assignees-roles assignees={this.assignees} host={this.host}></assignees-roles>
-          <assignees-users assignees={this.assignees} host={this.host}></assignees-users>
+          <assignees-vars readOnly={this.readOnly} assignees={this.assignees}></assignees-vars>
+          <assignees-roles readOnly={this.readOnly} assignees={this.assignees} host={this.host}></assignees-roles>
+          <assignees-users readOnly={this.readOnly} assignees={this.assignees} host={this.host}></assignees-users>
         </eb-list>
       );
     },
   },
   render() {
+    let domDone;
+    if (!this.readOnly) {
+      domDone = (
+        <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
+      );
+    }
     return (
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
+            {domDone}
           </f7-nav-right>
         </eb-navbar>
         {this.renderAssignees()}

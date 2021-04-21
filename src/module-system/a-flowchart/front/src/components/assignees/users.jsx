@@ -1,5 +1,8 @@
 export default {
   props: {
+    readOnly: {
+      type: Boolean,
+    },
     assignees: {
       type: Object,
     },
@@ -81,7 +84,7 @@ export default {
       // ok
       //   key: not use item.name
       return (
-        <eb-list-item class="item" key={index} swipeout>
+        <eb-list-item class="item" key={index} swipeout={!this.readOnly}>
           {domMedia}
           {domTitle}
           {domAfter}
@@ -90,6 +93,7 @@ export default {
       );
     },
     _renderAssigneeContextMenu(item, index) {
+      if (this.readOnly) return null;
       // domRight
       const domActions = [];
       domActions.push(
@@ -120,12 +124,18 @@ export default {
     },
   },
   render() {
+    let domAdd;
+    if (!this.readOnly) {
+      domAdd = (
+        <eb-link iconMaterial='add' propsOnPerform={this.onPerformAdd}></eb-link>
+      );
+    }
     return (
       <f7-list-group>
         <f7-list-item group-title>
           <div class="display-flex justify-content-space-between">
             <div>{this.$text('Users')}</div>
-            <eb-link iconMaterial='add' propsOnPerform={this.onPerformAdd}></eb-link>
+            {domAdd}
           </div>
         </f7-list-item>
         {this.renderAssignees()}
