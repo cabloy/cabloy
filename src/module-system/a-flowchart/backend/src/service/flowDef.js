@@ -82,7 +82,7 @@ module.exports = app => {
       const node = content.process.nodes.find(item => item.id === nodeDefId);
       if (!node) return null;
       // ok
-      return node.options.assignees;
+      return node.options.task ? node.options.task.assignees : node.options.assignees;
     }
 
   }
