@@ -6,7 +6,7 @@ export default {
   methods: {
     async info_onPerformFlowChart() {
       // flowChartProcess
-      const flowChartProcess = await this.$api.post('/a/flowchart/flowDef/flowChartProcess', {
+      const flowChartProcess = await this.$api.post('/a/flowchart/flow/flowChartProcess', {
         host: {
           flowId: this.container.flowId,
         },
