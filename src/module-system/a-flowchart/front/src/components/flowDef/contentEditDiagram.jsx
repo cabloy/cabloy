@@ -171,6 +171,9 @@ export default {
         container,
         width: this.size.width,
         height: this.size.height,
+        background: {
+          color: '#FFFFFF',
+        },
         selecting: {
           enabled: !this.readOnly,
           multiple: false,
