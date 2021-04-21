@@ -227,11 +227,17 @@ export default {
     },
   },
   render() {
+    let domDelete;
+    if (!this.readOnly) {
+      domDelete = (
+        <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>
+      );
+    }
     return (
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>
+            {domDelete}
           </f7-nav-right>
         </eb-navbar>
         {this.renderList()}
