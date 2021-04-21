@@ -347,7 +347,7 @@ module.exports = ctx => {
       const remark = 'Cancelled';// handle.remark;
       await this.nodeInstance._clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
       // end flow
-      await this.flowInstance._endFlow({ flowRemark: remark });
+      await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
     }
 
     async _recall() {

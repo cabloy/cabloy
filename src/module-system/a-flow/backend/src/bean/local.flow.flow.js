@@ -126,9 +126,11 @@ module.exports = ctx => {
     }
 
     async _endFlow(options) {
+      options = options || {};
+      const flowHandleStatus = options.flowHandleStatus || 1;
+      const flowRemark = options.flowRemark || null;
       const flowId = this.context._flowId;
       const flowStatus = this.constant.flow.status.end;
-      const flowRemark = (options && options.flowRemark) || null;
       const timeEnd = new Date();
       // check if end
       if (this.context._flow.flowStatus === flowStatus) {
@@ -138,11 +140,13 @@ module.exports = ctx => {
         // need not in transaction
         // flow: update fields for onFlowEnd
         this.context._flow.flowStatus = flowStatus;
+        this.context._flow.flowHandleStatus = flowHandleStatus;
         this.context._flow.flowRemark = flowRemark;
         this.context._flow.timeEnd = timeEnd;
         await this.modelFlow.delete({ id: flowId });
         // flow history
         this.context._flowHistory.flowStatus = flowStatus;
+        this.context._flowHistory.flowHandleStatus = flowHandleStatus;
         this.context._flowHistory.flowRemark = flowRemark;
         this.context._flowHistory.timeEnd = timeEnd;
         await this.modelFlowHistory.update(this.context._flowHistory);
