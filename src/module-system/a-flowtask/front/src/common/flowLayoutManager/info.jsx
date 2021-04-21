@@ -4,6 +4,33 @@ export default {
     };
   },
   methods: {
+    async info_onPerformFlowChart() {
+      // flowChartProcess
+      const flowChartProcess = await this.$api.post('/a/flowchart/flowDef/flowChartProcess', {
+        host: {
+          flowId: this.container.flowId,
+        },
+      });
+
+
+      const { parcel, validate } = this.context;
+      const url = '/a/flowchart/flowDef/contentEdit';
+      this.$view.navigate(url, {
+        target: undefined,
+        context: {
+          params: {
+            ctx: this,
+            item: parcel.data,
+            readOnly: true,
+          },
+          callback: (code, res) => {
+            if (code === 200) {
+              this.context.setValue(res.content);
+            }
+          },
+        },
+      });
+    },
     info_getItemMetaMedia(avatar) {
       const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 16);
@@ -29,6 +56,10 @@ export default {
             <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={atom.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${atom.id}`}></eb-link>
           );
         }
+        // flowChart
+        children.push(
+          <eb-link key="actionsLeft:flowChart" iconMaterial="account_tree" propsOnPerform={this.info_onPerformFlowChart}></eb-link>
+        );
       }
       // ok
       return children;

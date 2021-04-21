@@ -31,6 +31,15 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
+    async flowChartProcess() {
+      const { host } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const res = await this.ctx.service.flowDef.flowChartProcess({
+        host, user,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowDefController;
 };
