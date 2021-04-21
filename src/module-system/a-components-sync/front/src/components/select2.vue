@@ -204,7 +204,8 @@ export default {
     },
     getSelectedOptions() {
       if (!this.voptions) return null;
-      if (this.checkIfEmptyForSelect(this.value)) return null;
+      // only check empty for multiple
+      if (this.multiple && this.checkIfEmptyForSelect(this.value)) return null;
       if (!this.multiple) {
         return this.findOption(this.value);
       }
