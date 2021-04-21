@@ -135,6 +135,11 @@ export default {
       } else if (action.name === 'disable') {
         const key = { atomId: item.atomId, itemId: item.itemId };
         return await this._onActionDisable({ ctx, key });
+      } else if (action.name === 'workflow') {
+        const flowId = item.atomFlowId;
+        const url = `/a/flowtask/flow?flowId=${flowId}`;
+        ctx.$view.navigate(url, {
+        });
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
