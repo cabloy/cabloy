@@ -266,17 +266,19 @@ export default {
       return this.dagreLayout.layout(this.contentProcessRender);
     },
     __registerEdges() {
-      if (this.x6.Graph.__registerEdges) return;
-      this.x6.Graph.__registerEdges = true;
+      // always register for readOnly maybe changed
+      // if (this.x6.Graph.__registerEdges) return;
+      // this.x6.Graph.__registerEdges = true;
       for (const edgeType in this.edgeBases) {
         const edgeBase = this.edgeBases[edgeType];
         const options = this.__registerEdge(edgeBase);
-        this.x6.Graph.registerEdge(edgeType, options);
+        this.x6.Graph.registerEdge(edgeType, options, true);
       }
     },
     __registerNodes() {
-      if (this.x6.Graph.__registerNodes) return;
-      this.x6.Graph.__registerNodes = true;
+      // always register for readOnly maybe changed
+      // if (this.x6.Graph.__registerNodes) return;
+      // this.x6.Graph.__registerNodes = true;
       for (const nodeType in this.nodeBases) {
         const nodeBase = this.nodeBases[nodeType];
         let options;
@@ -285,7 +287,7 @@ export default {
         } else {
           options = this.__registerNodeRect(nodeBase);
         }
-        this.x6.Graph.registerNode(nodeType, options);
+        this.x6.Graph.registerNode(nodeType, options, true);
       }
     },
     __registerEdge(edgeBase) {
@@ -304,7 +306,7 @@ export default {
       const options = {
         width: 80,
         height: 80,
-        ports: this.__registerConnectionPorts(),
+        // ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'circle',
@@ -328,7 +330,7 @@ export default {
             refX: '50%',
             refY: '50%',
             pointerEvents: 'visiblePainted',
-            magnet: true,
+            magnet: !this.readOnly,
           },
           image: {
             refWidth: '100%',
@@ -353,7 +355,7 @@ export default {
       const options = {
         width: 125,
         height: 100,
-        ports: this.__registerConnectionPorts(),
+        // ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'rect',
@@ -376,7 +378,7 @@ export default {
             refWidth: '100%',
             refHeight: '100%',
             pointerEvents: 'visiblePainted',
-            magnet: true,
+            magnet: !this.readOnly,
           },
           image: {
             refWidth: '100%',
