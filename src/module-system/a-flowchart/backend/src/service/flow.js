@@ -6,7 +6,7 @@ module.exports = app => {
       // check right
       const flowChartProcess = await this.__checkRightFlowChartProcess({ host, user });
       if (!flowChartProcess) this.ctx.throw(403);
-      // filter/locale
+      // filter options / locale
       if (flowChartProcess.nodes) {
         flowChartProcess.nodes = flowChartProcess.nodes.map(node => {
           return {
@@ -47,28 +47,6 @@ module.exports = app => {
       if (!content) return null;
       // ok
       return content.process;
-    }
-
-    async __checkRightNormalizeAssignees({ host, assignees, user }) {
-      const { flowDefId, nodeDefId } = host;
-      // check write right
-      const rightWrite = await this.__checkRightWrite({ host, user });
-      if (rightWrite) return assignees;
-      // check read right
-      const rightRead = await this.__checkRightRead({ host, user });
-      // no right
-      if (!rightRead) return null;
-      // get assignees from flowDef
-      const flowDef = await this.ctx.bean.flowDef.getById({ flowDefId });
-      if (!flowDef) return null;
-      // content
-      const content = flowDef.content ? JSON.parse(flowDef.content) : null;
-      if (!content) return null;
-      // find
-      const node = content.process.nodes.find(item => item.id === nodeDefId);
-      if (!node) return null;
-      // ok
-      return node.options.task ? node.options.task.assignees : node.options.assignees;
     }
 
   }
