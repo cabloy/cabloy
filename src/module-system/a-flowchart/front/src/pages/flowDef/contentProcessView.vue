@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
     </eb-navbar>
-    <content-edit-diagram :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr"></content-edit-diagram>
+    <content-edit-diagram viewOnly="true" :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr"></content-edit-diagram>
   </eb-page>
 </template>
 <script>

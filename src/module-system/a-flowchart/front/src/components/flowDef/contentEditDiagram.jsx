@@ -3,6 +3,10 @@ export default {
     global: false,
   },
   props: {
+    viewOnly: {
+      type: Boolean,
+      default: false,
+    },
     readOnly: {
       type: Boolean,
     },
@@ -221,6 +225,7 @@ export default {
       this.graph.centerContent();
     },
     __graphEvents(container) {
+      if (this.viewOnly) return;
       // // mouseenter
       // this.graph.on('node:mouseenter', () => {
       //   const ports = container.querySelectorAll(
