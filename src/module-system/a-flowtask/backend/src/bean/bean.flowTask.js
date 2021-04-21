@@ -170,7 +170,7 @@ module.exports = ctx => {
       // delete tasks
       await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeRemark });
+      await nodeInstance._clear({ flowNodeHandleStatus: 2, flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 

@@ -108,7 +108,9 @@ module.exports = ctx => {
     }
 
     async _clear(options) {
-      const flowNodeRemark = (options && options.flowNodeRemark) || null;
+      options = options || {};
+      const flowNodeHandleStatus = options.flowNodeHandleStatus || 1;
+      const flowNodeRemark = options.flowNodeRemark || null;
       const timeDone = new Date();
       // clear
       await this._setCurrent(true);
@@ -116,6 +118,7 @@ module.exports = ctx => {
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
+      this.contextNode._flowNodeHistory.flowNodeHandleStatus = flowNodeHandleStatus;
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
