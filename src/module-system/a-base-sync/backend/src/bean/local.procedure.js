@@ -666,6 +666,7 @@ module.exports = ctx => {
       // -- m: aResourceLocale
       // -- p: aCmsArticle
       // -- q: aCmsContent
+      // -- r: aFlow
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -684,6 +685,10 @@ module.exports = ctx => {
       let _resourceField,
         _resourceJoin,
         _resourceWhere;
+
+      let _flowField,
+        _flowJoin,
+        _flowWhere;
 
       // star
       if (userIdWho) {
@@ -713,6 +718,11 @@ module.exports = ctx => {
         _resourceWhere = '';
       }
 
+      // flow
+      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      _flowWhere = '';
+
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -737,6 +747,7 @@ module.exports = ctx => {
                 ${_starField}
                 ${_labelField}
                 ${_resourceField}
+                ${_flowField}
                 ${_cmsField}
           from aAtom a
 
@@ -746,11 +757,13 @@ module.exports = ctx => {
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
             ${_resourceJoin}
+            ${_flowJoin}
             ${_cmsJoin}
 
           where a.id=${atomId}
             and a.deleted=0 and a.iid=${iid}
             ${_resourceWhere}
+            ${_flowWhere}
             ${_cmsWhere}
         `;
 

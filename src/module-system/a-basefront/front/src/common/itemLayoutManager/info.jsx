@@ -154,7 +154,14 @@ export default {
     },
     info_renderActionsRight() {
       if (!this.base_ready) return;
+      const item = this.base.item;
       const children = [];
+      // flow
+      if (item.atomStage === 0 && item.flowNodeNameCurrentLocale) {
+        children.push(
+          <f7-badge key="flowNodeNameCurrent" color="orange">{item.flowNodeNameCurrentLocale}</f7-badge>
+        );
+      }
       // avatar
       children.push(this.info_renderAvatar());
       // date

@@ -104,6 +104,10 @@ module.exports = ctx => {
       if (item) {
         this._appendRevisionToHistory({ item });
       }
+      // flow
+      if (item && item.flowNodeNameCurrent) {
+        item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+      }
       // ok
       return item;
     }
@@ -1016,8 +1020,8 @@ module.exports = ctx => {
         }
         // 1. closed
         if (_atom.atomClosed) return null;
-        // 2. flow
-        if (_atom.atomFlowId > 0) return null;
+        // // 2. flow
+        // if (_atom.atomFlowId > 0) return null;
         // 3. self
         if (_atom.userIdUpdated === user.id) return _atom;
         // others

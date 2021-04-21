@@ -61,6 +61,14 @@ export default {
           name: 'history',
         });
       }
+      //    workflow
+      if (this.base.item.atomStage === 0 && this.base.item.atomFlowId > 0) {
+        actions.push({
+          module: this.base.atomClass.module,
+          atomClassName: this.base.atomClass.atomClassName,
+          name: 'workflow',
+        });
+      }
       // ok
       return actions.length > 0 ? actions : null;
     },
