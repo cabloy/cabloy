@@ -12,8 +12,8 @@ export default {
     tabActive: {
       type: Boolean,
     },
-    flowDef: {
-      type: Object,
+    flowDefId: {
+      type: Number,
     },
   },
   data() {
@@ -439,7 +439,7 @@ export default {
       this.__updateChart({ changeSize: true });
     },
     onPerformPlus() {
-      this.$view.navigate(`/a/flowchart/flowDef/nodes?flowDefId=${this.flowDef.atomId}`, {
+      this.$view.navigate(`/a/flowchart/flowDef/nodes?flowDefId=${this.flowDefId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'flowChart', title: 'Flow Chart' },
         context: {
@@ -458,7 +458,7 @@ export default {
     showProperties({ node, edge }) {
       // queries
       const queries = {
-        flowDefId: this.flowDef.atomId,
+        flowDefId: this.flowDefId,
         type: node ? 'node' : 'edge',
         id: node ? node.id : edge.id,
       };

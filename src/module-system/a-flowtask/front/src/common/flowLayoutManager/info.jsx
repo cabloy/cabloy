@@ -5,28 +5,20 @@ export default {
   },
   methods: {
     async info_onPerformFlowChart() {
+      const flowId = this.container.flowId;
       // flowChartProcess
       const flowChartProcess = await this.$api.post('/a/flowchart/flow/flowChartProcess', {
         host: {
-          flowId: this.container.flowId,
+          flowId,
         },
       });
-
-
-      const { parcel, validate } = this.context;
-      const url = '/a/flowchart/flowDef/contentEdit';
+      // view
+      const url = `/a/flowchart/flowDef/contentProcessView?flowId=${flowId}`;
       this.$view.navigate(url, {
         target: undefined,
         context: {
           params: {
-            ctx: this,
-            item: parcel.data,
-            readOnly: true,
-          },
-          callback: (code, res) => {
-            if (code === 200) {
-              this.context.setValue(res.content);
-            }
+            contentProcess: flowChartProcess,
           },
         },
       });
