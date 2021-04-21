@@ -76,6 +76,7 @@ module.exports = ctx => {
       // -- k: aTagRef
       // -- p: aCmsArticle
       // -- q: aCmsContent
+      // -- r: aFlow
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -102,9 +103,15 @@ module.exports = ctx => {
       let _commentField,
         _commentJoin,
         _commentWhere;
+
       let _fileField,
         _fileJoin,
         _fileWhere;
+
+      let _flowField,
+        _flowJoin,
+        _flowWhere;
+
       let _itemField,
         _itemJoin;
 
@@ -184,6 +191,11 @@ module.exports = ctx => {
         _fileWhere = '';
       }
 
+      // flow
+      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      _flowWhere = '';
+
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -205,7 +217,10 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_cmsField}`;
+                ${_starField} ${_labelField} ${_commentField}
+                ${_fileField} ${_flowField}
+                ${_cmsField}
+              `;
       }
 
       // sql
@@ -221,12 +236,12 @@ module.exports = ctx => {
             ${_labelJoin}
             ${_commentJoin}
             ${_fileJoin}
+            ${_flowJoin}
             ${_cmsJoin}
 
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
-             and a.atomFlowId=0
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -234,6 +249,7 @@ module.exports = ctx => {
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
+             ${_flowWhere}
              ${_cmsWhere}
            )
 

@@ -173,6 +173,14 @@ module.exports = ctx => {
           this._appendRevisionToHistory({ item });
         }
       }
+      // flow
+      if (!count && options.stage === 'draft') {
+        for (const item of items) {
+          if (item.flowNodeNameCurrent) {
+            item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+          }
+        }
+      }
       // ok
       return items;
     }

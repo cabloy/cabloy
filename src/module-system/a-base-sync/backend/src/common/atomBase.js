@@ -33,7 +33,7 @@ module.exports = app => {
       return await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
     }
 
-    async select(/* {  atomClass, options, items, user }*/) {
+    async select(/* { atomClass, options, items, user } */) {
       // donothing
     }
 

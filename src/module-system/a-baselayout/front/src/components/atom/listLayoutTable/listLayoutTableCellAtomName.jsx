@@ -31,6 +31,13 @@ export default {
     const item = this.info.record;
     // domAfter
     const domAfterMetaFlags = [];
+    // flow
+    if (item.flowNodeNameCurrentLocale) {
+      domAfterMetaFlags.push(
+        <f7-badge key="flowNodeNameCurrent" color="orange">{item.flowNodeNameCurrentLocale}</f7-badge>
+      );
+    }
+    // flags
     for (const flag of this.layoutItems._getItemMetaFlags(item)) {
       domAfterMetaFlags.push(
         <f7-badge key={flag}>{flag}</f7-badge>
