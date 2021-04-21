@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
     </eb-navbar>
-    <content-edit-diagram viewOnly="true" :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr"></content-edit-diagram>
+    <content-edit-diagram :viewOnly="true" :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr" :flowNodeDefIds="flowNodeDefIds"></content-edit-diagram>
   </eb-page>
 </template>
 <script>
@@ -26,6 +26,9 @@ export default {
     },
     contentProcessStr() {
       return window.JSON5.stringify(this.contentProcess, null, 2);
+    },
+    flowNodeDefIds() {
+      return this.contextParams.flowNodeDefIds;
     },
   },
   created() {},

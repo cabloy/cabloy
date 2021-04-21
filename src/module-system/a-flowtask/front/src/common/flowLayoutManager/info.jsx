@@ -12,6 +12,9 @@ export default {
           flowId,
         },
       });
+      // flowNodes current
+      const tasks = this.base.data.tasks;
+      const flowNodeDefIds = tasks.filter(task => task.flowTaskStatus === 0).map(task => task.flowNodeDefId);
       // view
       const url = `/a/flowchart/flowDef/contentProcessView?flowId=${flowId}`;
       this.$view.navigate(url, {
@@ -19,6 +22,7 @@ export default {
         context: {
           params: {
             contentProcess: flowChartProcess,
+            flowNodeDefIds,
           },
         },
       });

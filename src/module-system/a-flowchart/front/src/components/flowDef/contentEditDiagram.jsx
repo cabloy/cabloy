@@ -19,6 +19,9 @@ export default {
     flowDefId: {
       type: Number,
     },
+    flowNodeDefIds: {
+      type: Array,
+    },
   },
   data() {
     return {
@@ -52,6 +55,12 @@ export default {
             },
           },
         };
+        if (this.flowNodeDefIds && this.flowNodeDefIds.indexOf(item.id) > -1) {
+          node.attrs.body = {
+            stroke: 'orange',
+            strokeWidth: 4,
+          };
+        }
         return node;
       });
       const edges = this.contentProcess.edges.map(item => {
