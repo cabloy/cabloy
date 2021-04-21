@@ -119,12 +119,14 @@ export default {
     info_renderFlowStatus() {
       if (!this.base_ready) return null;
       const flow = this.base.data.flow;
+      const flowHandleStatuses = this.$meta.config.modules['a-flowtask'].flowHandleStatuses;
+      const status = flowHandleStatuses[flow.flowHandleStatus];
       const children = [];
       // flowStatus
       if (flow.flowStatus === 1) {
-        const endText = `${flow.flowRemarkLocale || this.$text('End')}`;
+        const endText = `${flow.flowRemarkLocale || this.$text(status.text)}`;
         children.push(
-          <f7-badge class="eb-flowStatus" key="flowStatus" color="teal">{endText}</f7-badge>
+          <f7-badge class="eb-flowStatus" key="flowStatus" color={status.color}>{endText}</f7-badge>
         );
       } else {
         const currentText = `${this.$text('Current')}: ${flow.flowNodeNameCurrentLocale}`;

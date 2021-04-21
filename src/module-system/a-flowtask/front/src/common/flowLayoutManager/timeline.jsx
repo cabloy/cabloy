@@ -1,17 +1,3 @@
-const __flowTaskStatuses = {
-  1: {
-    color: 'teal',
-    text: 'Passed',
-  },
-  2: {
-    color: 'gray',
-    text: 'Rejected',
-  },
-  3: {
-    color: 'gray',
-    text: 'Cancelled',
-  },
-};
 export default {
   data() {
     return {
@@ -107,7 +93,8 @@ export default {
     },
     _timeline_renderFlowTaskStatus({ task }) {
       if (task.handleStatus === 0) return;
-      const status = __flowTaskStatuses[task.handleStatus];
+      const flowTaskHandleStatuses = this.$meta.config.modules['a-flowtask'].flowTaskHandleStatuses;
+      const status = flowTaskHandleStatuses[task.handleStatus];
       let text;
       if (task.flowNodeType === 'startEventAtom') {
         text = this.$text('Submitted');
