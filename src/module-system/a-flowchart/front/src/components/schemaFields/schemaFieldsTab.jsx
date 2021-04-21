@@ -200,7 +200,7 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={index} swipeout>
+        <eb-list-item class="item" key={index} swipeout={!this.readOnly}>
           {domMedia}
           {domTitle}
           {this.renderMode_3_itemContextMenu(mode3Item, index)}
@@ -244,6 +244,7 @@ export default {
       );
     },
     renderMode_3_itemContextMenu(mode3Item, index) {
+      if (this.readOnly) return null;
       return (
         <eb-context-menu>
           {this.renderMode_3_itemContextMenu_left(mode3Item, index)}
@@ -253,17 +254,25 @@ export default {
     },
     renderMode_3() {
       if (this.valueMode !== 3) return null;
+      // group
+      let domGroup;
+      if (!this.readOnly) {
+        domGroup = (
+          <f7-list-item group-title>
+            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false, formatValueText: () => { return null; } } }>
+              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions} propsOnGetDisplays={() => { return null; }}></eb-select>
+            </f7-list-item>
+          </f7-list-item>
+        );
+      }
+      // children
       const children = [];
       for (let index = 0; index < this.mode3Items.length; index++) {
         children.push(this.renderMode_3_item(this.mode3Items[index], index));
       }
       return (
         <f7-list-group>
-          <f7-list-item group-title>
-            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false, formatValueText: () => { return null; } } }>
-              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions} propsOnGetDisplays={() => { return null; }}></eb-select>
-            </f7-list-item>
-          </f7-list-item>
+          {domGroup}
           {children}
         </f7-list-group>
       );
@@ -273,7 +282,7 @@ export default {
       return (
         <f7-list-group>
           <f7-list-item>
-            <eb-input slot="inner" type="textarea" resizable style={ { width: '100%' } } class="json-textarea" value={this.valueMode4} onInput={this.onInputValueMode4}></eb-input>
+            <eb-input slot="inner" type="textarea" readonly={this.readOnly} resizable style={ { width: '100%' } } class="json-textarea" value={this.valueMode4} onInput={this.onInputValueMode4}></eb-input>
           </f7-list-item>
         </f7-list-group>
       );
@@ -283,8 +292,8 @@ export default {
     return (
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
-          <f7-list-item smartSelect title={this.$text('Mode')} smartSelectParams={ { openIn: 'sheet', closeOnSelect: true } }>
-            <eb-select name="mode" value={this.valueMode} onInput={this.onInputMode} multiple={false} options={this.valueModes}></eb-select>
+          <f7-list-item smartSelect={!this.readOnly} title={this.$text('Mode')} smartSelectParams={ { openIn: 'sheet', closeOnSelect: true } }>
+            <eb-select readOnly={this.readOnly} name="mode" value={this.valueMode} onInput={this.onInputMode} multiple={false} options={this.valueModes}></eb-select>
           </f7-list-item>
         </f7-list-group>
         {this.renderMode_3()}
