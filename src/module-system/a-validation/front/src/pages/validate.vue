@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onSave"></eb-link>
+        <eb-link v-if="!readOnly" ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" :host="host" :meta="meta" @submit="onFormSubmit">
@@ -47,7 +47,7 @@ export default {
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
-    onSave() {
+    onPerformDone() {
       this.contextCallback(200, {
         data: this.data,
         errors: this.errors,
