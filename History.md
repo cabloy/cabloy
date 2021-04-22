@@ -4,6 +4,7 @@
 
 * **特性**
   * 工作流可视化编辑器
+    * 参见：[演示：CMS审批工作流(可视化编辑)](https://cabloy.com/zh-cn/articles/flowchart-demo.html)
 
 ## 2020-03-30, Version 4.7.0
 
