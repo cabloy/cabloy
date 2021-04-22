@@ -13,6 +13,7 @@ export default {
   Done: '完成',
   Cancel: '取消',
   Close: '关闭',
+  Closed: '已关闭',
   Create: '新建',
   Others: '其他',
   List: '列表',

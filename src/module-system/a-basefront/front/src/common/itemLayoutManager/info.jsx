@@ -156,6 +156,12 @@ export default {
       if (!this.base_ready) return;
       const item = this.base.item;
       const children = [];
+      // atom closed
+      if (item.atomStage === 0 && item.atomClosed === 1) {
+        children.push(
+          <f7-badge key="atomClosed" color="orange">{this.$text('Closed')}</f7-badge>
+        );
+      }
       // flow
       if (item.atomStage === 0 && item.flowNodeNameCurrentLocale) {
         children.push(

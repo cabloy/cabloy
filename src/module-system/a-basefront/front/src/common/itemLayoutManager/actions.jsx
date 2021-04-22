@@ -12,8 +12,9 @@ export default {
     actions_listPopover() {
       if (!this.base_ready) return null;
       const actions = [];
+      const atomClosed = this.base.item.atomClosed === 1;
       // submit
-      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0;
+      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0 && !atomClosed;
       if (submit) {
         actions.push({
           module: this.base.atomClass.module,
@@ -117,8 +118,9 @@ export default {
       if (!this.base_ready) return null;
       const children = [];
       // only show on draft
+      const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
-      if (actionWrite && this.base.item.atomStage === 0) {
+      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
         children.push(
