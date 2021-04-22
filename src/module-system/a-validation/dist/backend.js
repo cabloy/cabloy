@@ -446,112 +446,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ 415:
-/***/ ((module) => {
-
-module.exports = app => {
-  const keywords = {};
-  keywords.languages = {
-    async: true,
-    type: 'string',
-    errors: true,
-    compile() {
-      return async function(data) {
-        const ctx = this;
-        return new Promise((resolve, reject) => {
-          const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
-          if (!res) {
-            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not Expected Value') }];
-            return reject(new app.meta.ajv.ValidationError(errors));
-          }
-          return resolve(res);
-        });
-      };
-    },
-  };
-  return keywords;
-};
-
-
-/***/ }),
-
-/***/ 232:
-/***/ ((module) => {
-
-module.exports = app => {
-  const schemas = {};
-  schemas.root = {
-    type: 'object',
-    ebTitle: 'test',
-    properties: {
-      info: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          username: {
-            type: 'string',
-            ebType: 'text',
-            ebTitle: 'User Name',
-            ebDescription: 'Your name',
-            notEmpty: true,
-          },
-          password: {
-            type: 'string',
-            ebType: 'text',
-            ebSecure: true,
-          },
-          sex: {
-            type: 'number',
-            ebType: 'select',
-            ebOptions: [
-              { title: 'Male', value: 1 },
-              { title: 'Female', value: 2 },
-            ],
-          },
-        },
-      },
-      extra: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Extra Group',
-        properties: {
-          extra: {
-            type: 'object',
-            ebType: 'panel',
-            $ref: 'extra',
-          },
-        },
-      },
-    },
-  };
-  schemas.extra = {
-    type: 'object',
-    ebTitle: 'extra',
-    properties: {
-      info: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          language: {
-            type: 'string',
-            ebType: 'select',
-            ebOptionsUrl: 'test/languages',
-            notEmpty: true,
-            'x-languages': true,
-          },
-        },
-        required: [ 'language' ],
-      },
-    },
-  };
-  return schemas;
-};
-
-
-/***/ }),
-
 /***/ 42:
 /***/ ((module) => {
 
@@ -629,33 +523,10 @@ module.exports = app => {
 /***/ }),
 
 /***/ 458:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
 module.exports = app => {
   const meta = {};
-  if (app.meta.isTest || app.meta.isLocal) {
-    // schemas
-    const schemas = __webpack_require__(232)(app);
-    // keywords
-    const keywords = __webpack_require__(415)(app);
-    // meta
-    Object.assign(meta, {
-      validation: {
-        validators: {
-          test: {
-            schemas: 'root,extra',
-          },
-        },
-        keywords: {
-          'x-languages': keywords.languages,
-        },
-        schemas: {
-          root: schemas.root,
-          extra: schemas.extra,
-        },
-      },
-    });
-  }
   return meta;
 };
 
@@ -731,8 +602,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

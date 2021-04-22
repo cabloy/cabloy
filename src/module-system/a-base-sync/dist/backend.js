@@ -200,6 +200,10 @@ module.exports = ctx => {
       if (item) {
         this._appendRevisionToHistory({ item });
       }
+      // flow
+      if (item && item.flowNodeNameCurrent) {
+        item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+      }
       // ok
       return item;
     }
@@ -267,6 +271,14 @@ module.exports = ctx => {
       if (!count && options.stage === 'history') {
         for (const item of items) {
           this._appendRevisionToHistory({ item });
+        }
+      }
+      // flow
+      if (!count && options.stage === 'draft') {
+        for (const item of items) {
+          if (item.flowNodeNameCurrent) {
+            item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+          }
         }
       }
       // ok
@@ -935,8 +947,8 @@ module.exports = ctx => {
       return ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
     }
 
-    async validator({ atomClass: { id } }) {
-      let atomClass = await this.atomClass.get({ id });
+    async validator({ atomClass }) {
+      atomClass = await this.atomClass.get(atomClass);
       atomClass = await this.atomClass.top(atomClass);
       return await this.atomClass.validator({ atomClass });
     }
@@ -1096,6 +1108,8 @@ module.exports = ctx => {
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (_atom.atomStage === 0) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
         // checkFlow
         if (_atom.atomFlowId > 0 && checkFlow) {
           const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
@@ -1103,11 +1117,14 @@ module.exports = ctx => {
           return _atom;
         }
         // 1. closed
-        if (_atom.atomClosed) return null;
-        // 2. flow
-        if (_atom.atomFlowId > 0) return null;
+        if (_atom.atomClosed) {
+          if (bSelf) return _atom;
+          return null;
+        }
+        // // 2. flow
+        // if (_atom.atomFlowId > 0) return null;
         // 3. self
-        if (_atom.userIdUpdated === user.id) return _atom;
+        if (bSelf) return _atom;
         // others
         return null;
       }
@@ -1161,6 +1178,8 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
         // checkFlow
         if (_atom.atomFlowId > 0 && checkFlow) {
           const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
@@ -1168,11 +1187,17 @@ module.exports = ctx => {
           return _atom;
         }
         // 1. closed
-        if (_atom.atomClosed) return null;
+        if (_atom.atomClosed) {
+          // enable on 'self and write', not including 'delete'
+          if (bSelf && action === 3) {
+            return _atom;
+          }
+          return null;
+        }
         // 2. flow
         if (_atom.atomFlowId > 0) return null;
         // 3. self
-        if (_atom.userIdUpdated === user.id) return _atom;
+        if (bSelf) return _atom;
         // others
         return null;
       }
@@ -3697,7 +3722,7 @@ module.exports = ctx => {
       let roleNames = this.config.account.needActivation ? 'registered' : this.config.account.activatedRoles;
       roleNames = roleNames.split(',');
       for (const roleName of roleNames) {
-        const role = await ctx.bean.role.get({ roleName });
+        const role = await ctx.bean.role.parseRoleName({ roleName });
         await ctx.bean.role.addUserRole({ userId, roleId: role.id });
       }
     }
@@ -3876,6 +3901,7 @@ module.exports = ctx => {
                   ${anonymousWhere}
                   ${roleWhere}
                   ${queryWhere}
+            order by a.userName asc
             ${_limit}
       `;
       return await ctx.model.query(sql, [ ctx.instance.id ]);
@@ -4349,7 +4375,12 @@ module.exports = app => {
         obj[name] = value;
       } else {
         for (let i = 0; i < names.length - 1; i++) {
-          obj = obj[names[i]];
+          const _obj = obj[names[i]];
+          if (_obj) {
+            obj = _obj;
+          } else {
+            obj = obj[names[i]] = {};
+          }
         }
         obj[names[names.length - 1]] = value;
       }
@@ -4501,6 +4532,7 @@ module.exports = ctx => {
       // -- k: aTagRef
       // -- p: aCmsArticle
       // -- q: aCmsContent
+      // -- r: aFlow
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -4527,9 +4559,15 @@ module.exports = ctx => {
       let _commentField,
         _commentJoin,
         _commentWhere;
+
       let _fileField,
         _fileJoin,
         _fileWhere;
+
+      let _flowField,
+        _flowJoin,
+        _flowWhere;
+
       let _itemField,
         _itemJoin;
 
@@ -4609,6 +4647,11 @@ module.exports = ctx => {
         _fileWhere = '';
       }
 
+      // flow
+      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      _flowWhere = '';
+
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -4630,7 +4673,10 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_cmsField}`;
+                ${_starField} ${_labelField} ${_commentField}
+                ${_fileField} ${_flowField}
+                ${_cmsField}
+              `;
       }
 
       // sql
@@ -4646,12 +4692,12 @@ module.exports = ctx => {
             ${_labelJoin}
             ${_commentJoin}
             ${_fileJoin}
+            ${_flowJoin}
             ${_cmsJoin}
 
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
-             and a.atomFlowId=0
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -4659,6 +4705,7 @@ module.exports = ctx => {
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
+             ${_flowWhere}
              ${_cmsWhere}
            )
 
@@ -5075,6 +5122,7 @@ module.exports = ctx => {
       // -- m: aResourceLocale
       // -- p: aCmsArticle
       // -- q: aCmsContent
+      // -- r: aFlow
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -5093,6 +5141,10 @@ module.exports = ctx => {
       let _resourceField,
         _resourceJoin,
         _resourceWhere;
+
+      let _flowField,
+        _flowJoin,
+        _flowWhere;
 
       // star
       if (userIdWho) {
@@ -5122,6 +5174,11 @@ module.exports = ctx => {
         _resourceWhere = '';
       }
 
+      // flow
+      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      _flowWhere = '';
+
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -5146,6 +5203,7 @@ module.exports = ctx => {
                 ${_starField}
                 ${_labelField}
                 ${_resourceField}
+                ${_flowField}
                 ${_cmsField}
           from aAtom a
 
@@ -5155,11 +5213,13 @@ module.exports = ctx => {
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
             ${_resourceJoin}
+            ${_flowJoin}
             ${_cmsJoin}
 
           where a.id=${atomId}
             and a.deleted=0 and a.iid=${iid}
             ${_resourceWhere}
+            ${_flowWhere}
             ${_cmsWhere}
         `;
 
@@ -8008,7 +8068,7 @@ module.exports = app => {
       return await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
     }
 
-    async select(/* {  atomClass, options, items, user }*/) {
+    async select(/* { atomClass, options, items, user } */) {
       // donothing
     }
 
@@ -8049,7 +8109,12 @@ module.exports = app => {
       // validate
       const ignoreValidate = options && options.ignoreValidate;
       if (atomStage === 0 && !target && !ignoreValidate) {
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+        });
         await this.ctx.bean.validation._validate({ atomClass, data: item, options });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
       // write atom
       await this._writeAtom({ key, item, user, atomStage });
@@ -8365,6 +8430,7 @@ module.exports = app => {
         history: 53,
         formal: 54,
         draft: 55,
+        workflow: 56,
         custom: 100, // custom action start from custom
       },
       actionMeta: {
@@ -8485,6 +8551,13 @@ module.exports = app => {
           actionComponent: 'action',
           authorize: false,
           icon: { material: 'content_paste' },
+        },
+        workflow: {
+          title: 'WorkFlow',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          authorize: false,
+          icon: { material: 'account_tree' },
         },
         custom: {
           title: 'Custom',
@@ -12145,8 +12218,9 @@ module.exports = require("url");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

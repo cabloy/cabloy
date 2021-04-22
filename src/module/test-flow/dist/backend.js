@@ -439,10 +439,12 @@ module.exports = app => {
     },
     // flow
     'flow.service.test': {
+      title: 'Test',
       mode: 'ctx',
       bean: flowServiceTest,
     },
     'flow.service.startEventTimer': {
+      title: 'StartTestFlow',
       mode: 'ctx',
       bean: flowServiceStartEventTimer,
     },
@@ -475,6 +477,16 @@ module.exports = {
 
 /***/ }),
 
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {
+  StartTestFlow: 'Start Test Flow',
+};
+
+
+/***/ }),
+
 /***/ 72:
 /***/ ((module) => {
 
@@ -486,7 +498,9 @@ module.exports = {
   'Create Purchase Order': '新建采购订单',
   'Purchase Order List': '采购订单列表',
   'Product Code Exists': '产品编码已存在',
+  'WorkFlow Test': '工作流测试',
   Test_Set00_Simple: '测试_分组00_简单流程',
+  StartTestFlow: '启动测试工作流',
 };
 
 
@@ -496,6 +510,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
 };
 
@@ -861,6 +876,7 @@ module.exports = app => {
       edges: [
         {
           id: 'edge_1',
+          name: 'x=1',
           source: 'startEvent_1',
           target: 'endEvent_1',
           options: {
@@ -869,6 +885,7 @@ module.exports = app => {
         },
         {
           id: 'edge_2',
+          name: 'x=2',
           source: 'startEvent_1',
           target: 'endEvent_2',
           options: {
@@ -884,7 +901,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Test_Set00_Edge_Sequence',
     atomStaticKey: 'set00_edgeSequence',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     content: JSON.stringify(content),
   };
@@ -1297,17 +1314,23 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData/* , name*/) {
+      return async function(data/* , path, rootData , name*/) {
         // ignore if empty
         if (!data) return true;
         // ctx
         const ctx = this;
+        // validateHost
+        if (!ctx.meta || !ctx.meta.validateHost) {
+          // not check
+          return true;
+        }
+        const atomId = ctx.meta.validateHost.key.atomId;
         const item = await ctx.model.queryOne(`
           select a.id from aAtom a
             left join testFlowProduct b on a.id=b.atomId
               where a.atomStage=0 and a.iid=? and a.deleted=0 and b.productCode=?
           `, [ ctx.instance.id, data ]);
-        if (item && item.id !== rootData.atomId) {
+        if (item && item.id !== atomId) {
           const errors = [{ keyword: 'x-productCode', params: [], message: ctx.text('Product Code Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
@@ -1330,9 +1353,6 @@ module.exports = app => {
   schemas.product = {
     type: 'object',
     properties: {
-      atomId: {
-        type: 'number',
-      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -1445,6 +1465,7 @@ module.exports = app => {
       // Details
       __groupDetails: {
         ebType: 'group-flatten',
+        ebTitle: 'Details',
         ebGroupWhole: true,
         ebParams: {
           titleHidden: true,
@@ -1462,6 +1483,7 @@ module.exports = app => {
       },
       // __groupDetails2: {
       //   ebType: 'group-flatten',
+      //   ebTitle: 'Details',
       //   ebGroupWhole: true,
       //   ebParams: {
       //     titleHidden: true,
@@ -1525,17 +1547,15 @@ module.exports = app => {
       },
       detailCode: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'atom',
         ebTitle: 'Product Code',
-        ebReadOnly: false,
-        ebDisabled: true,
+        ebParams: __atomParams,
         notEmpty: true,
       },
       detailName: {
         type: 'string',
-        ebType: 'atom',
+        ebType: 'text',
         ebTitle: 'Product Name',
-        ebParams: __atomParams,
         notEmpty: true,
       },
       price: {
@@ -1897,8 +1917,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

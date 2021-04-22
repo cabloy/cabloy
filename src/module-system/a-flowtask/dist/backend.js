@@ -187,7 +187,7 @@ module.exports = ctx => {
       // delete tasks
       await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeRemark });
+      await nodeInstance._clear({ flowNodeHandleStatus: 2, flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 
@@ -393,7 +393,11 @@ module.exports = ctx => {
 
     async _addCondition({ flowDefId, node }) {
       const atom = node.options && node.options.atom;
-      if (!atom) throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
+      if (!atom || !atom.module || !atom.atomClassName) {
+        // donot delete condition
+        // throw error
+        throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
+      }
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({
         module: atom.module,
@@ -838,6 +842,7 @@ module.exports = ctx => {
               'a.disabled': 0,
               'a.id': assignees,
             },
+            orders: [[ 'a.userName', 'asc' ]],
             removePrivacy: true,
           },
         });
@@ -896,9 +901,9 @@ module.exports = ctx => {
       // node clear
       //    not use handle.remark
       const remark = 'Cancelled';// handle.remark;
-      await this.nodeInstance._clear({ flowNodeRemark: remark });
+      await this.nodeInstance._clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
       // end flow
-      await this.flowInstance._endFlow({ flowRemark: remark });
+      await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
     }
 
     async _recall() {
@@ -1948,32 +1953,43 @@ module.exports = {
 
 const defaults = __webpack_require__(614);
 
-const nodes = {
-  // events
-  startEventAtom: {
-    title: 'StartEventAtom',
-    group: 'startEvent',
-    bean: 'startEventAtom',
-    icon: '/api/static/a/flowtask/bpmn/events/start-event-atom.svg',
-  },
-  // activities
-  activityUserTask: {
-    title: 'ActivityUserTask',
-    group: 'activity',
-    bean: 'activityUserTask',
-    icon: '/api/static/a/flowtask/bpmn/activities/activity-user-task.svg',
-  },
-};
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const nodes = {
+    // events
+    startEventAtom: {
+      title: 'StartEventAtom',
+      group: 'startEvent',
+      bean: 'startEventAtom',
+      icon: '/api/static/a/flowtask/bpmn/events/start-event-atom.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'startEventAtom',
+      },
+    },
+    // activities
+    activityUserTask: {
+      title: 'ActivityUserTask',
+      group: 'activity',
+      bean: 'activityUserTask',
+      icon: '/api/static/a/flowtask/bpmn/activities/activity-user-task.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'activityUserTask',
+      },
+    },
+  };
 
-for (const key in nodes) {
-  const node = nodes[key];
-  node.options = {};
-  if (defaults[key]) {
-    node.options.default = defaults[key];
+  for (const key in nodes) {
+    const node = nodes[key];
+    node.options = {};
+    if (defaults[key]) {
+      node.options.default = defaults[key];
+    }
   }
-}
 
-module.exports = nodes;
+  return nodes;
+};
 
 
 /***/ }),
@@ -2016,6 +2032,153 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 526:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const schemas = {};
+  // activityUserTask
+  schemas.activityUserTask = {
+    type: 'object',
+    properties: {
+      assignees: {
+        type: 'object',
+        ebType: 'component',
+        ebTitle: 'Assignees',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderAssignees',
+        },
+        notEmpty: true,
+      },
+      showAssignees: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Show Assignees',
+      },
+      confirmation: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Confirmation Assignees',
+      },
+      confirmationAllowAppend: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'ConfirmationAllowAppend',
+      },
+      bidding: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Bidding',
+      },
+      completionCondition: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Completion Condition',
+        notEmpty: true,
+      },
+      rejectedNode: {
+        type: 'string',
+        ebType: 'component',
+        ebTitle: 'Rejected Node',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderRejectedNode',
+        },
+      },
+      allowPassTask: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Pass Task',
+      },
+      allowRejectTask: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Reject Task',
+      },
+      allowCancelFlow: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Cancel Flow',
+      },
+      allowRecall: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Recall',
+      },
+      schema: {
+        type: 'object',
+        ebType: 'component',
+        ebTitle: 'Field Permissions',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderSchemaFields',
+        },
+        notEmpty: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 818:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // startEventAtom
+  schemas.startEventAtom = {
+    type: 'object',
+    properties: {
+      atom: {
+        type: 'object',
+        ebType: 'atomClass',
+        ebTitle: 'Atom Class',
+        notEmpty: true,
+      },
+      conditionExpression: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Condition Expression',
+        ebTextarea: true,
+      },
+      task: {
+        type: 'object',
+        ebType: 'panel',
+        ebTitle: 'User Task Options',
+        $ref: 'activityUserTask',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const startEventAtom = __webpack_require__(818);
+const activityUserTask = __webpack_require__(526);
+
+module.exports = app => {
+  const schemas = {};
+  // startEventAtom
+  Object.assign(schemas, startEventAtom(app));
+  // activityUserTask
+  Object.assign(schemas, activityUserTask(app));
+  // ok
+  return schemas;
 };
 
 
@@ -2217,10 +2380,9 @@ module.exports = app => {
 /***/ 458:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flowNodes = __webpack_require__(587);
-
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = __webpack_require__(232)(app);
+  const flowNodes = __webpack_require__(587)(app);
   const meta = {
     base: {
       atoms: {
@@ -2228,10 +2390,17 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        // startEventAtom
+        startEventAtom: {
+          schemas: 'startEventAtom,activityUserTask',
+        },
+        // activityUserTask
+        activityUserTask: {
+          schemas: 'activityUserTask',
+        },
       },
       keywords: {},
-      schemas: {
-      },
+      schemas,
     },
     flow: {
       nodes: flowNodes,
@@ -2526,8 +2695,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

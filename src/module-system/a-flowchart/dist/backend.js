@@ -53,12 +53,82 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 623:
 /***/ ((module) => {
 
+module.exports = app => {
+
+  class FlowDefController extends app.Controller {
+
+    async flowChartProcess() {
+      const { host } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const res = await this.ctx.service.flow.flowChartProcess({
+        host, user,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return FlowDefController;
+};
+
+
+/***/ }),
+
+/***/ 836:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class FlowDefController extends app.Controller {
+
+    async normalizeAssignees() {
+      const { host, assignees } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const res = await this.ctx.service.flowDef.normalizeAssignees({
+        host, assignees, user,
+      });
+      this.ctx.success(res);
+    }
+
+    async roleChildren() {
+      const { host, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowDef.roleChildren({
+        host, params, user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async userSelect() {
+      const { host, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowDef.userSelect({
+        host, params, user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+  }
+  return FlowDefController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const flow = __webpack_require__(623);
+const flowDef = __webpack_require__(836);
 
 module.exports = app => {
   const controllers = {
+    flow,
+    flowDef,
   };
   return controllers;
 };
@@ -143,6 +213,12 @@ module.exports = app => {
 
 module.exports = app => {
   const routes = [
+    // flow
+    { method: 'post', path: 'flow/flowChartProcess', controller: 'flow' },
+    // flowDef
+    { method: 'post', path: 'flowDef/normalizeAssignees', controller: 'flowDef' },
+    { method: 'post', path: 'flowDef/roleChildren', controller: 'flowDef' },
+    { method: 'post', path: 'flowDef/userSelect', controller: 'flowDef' },
   ];
   return routes;
 };
@@ -150,12 +226,176 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 214:
+/***/ 934:
 /***/ ((module) => {
 
+module.exports = app => {
+
+  class Flow extends app.Service {
+
+    async flowChartProcess({ host, user }) {
+      // check right
+      const flowChartProcess = await this.__checkRightFlowChartProcess({ host, user });
+      if (!flowChartProcess) this.ctx.throw(403);
+      // filter options / locale
+      if (flowChartProcess.nodes) {
+        flowChartProcess.nodes = flowChartProcess.nodes.map(node => {
+          return {
+            ... node,
+            options: undefined,
+            nameLocale: this.ctx.text(node.name),
+          };
+        });
+      }
+      if (flowChartProcess.edges) {
+        flowChartProcess.edges = flowChartProcess.edges.map(edge => {
+          return {
+            ... edge,
+            options: undefined,
+          };
+        });
+      }
+      // ok
+      return flowChartProcess;
+    }
+
+    async __checkRightFlowChartProcess({ host, user }) {
+      const { flowId } = host;
+      // check right
+      let flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
+      if (!flow) return null;
+      // get flow
+      flow = await this.ctx.bean.flow.modelFlowHistory.get({ flowId });
+      if (!flow) return null;
+      // flowDef
+      const flowDef = await this.ctx.bean.flowDef.getByKeyAndRevision({
+        flowDefKey: flow.flowDefKey,
+        flowDefRevision: flow.flowDefRevision,
+      });
+      if (!flowDef) return null;
+      // content
+      const content = flowDef.content ? JSON.parse(flowDef.content) : null;
+      if (!content) return null;
+      // ok
+      return content.process;
+    }
+
+  }
+  return Flow;
+};
+
+
+
+/***/ }),
+
+/***/ 875:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class FlowDef extends app.Service {
+
+    async normalizeAssignees({ host, assignees, user }) {
+      // check right
+      assignees = await this.__checkRightNormalizeAssignees({ host, assignees, user });
+      if (!assignees) this.ctx.throw(403);
+      //  normalize
+      return await this.ctx.bean.flow.normalizeAssignees(assignees);
+    }
+
+    async roleChildren({ host, params, user }) {
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (!rightWrite) this.ctx.throw(403);
+      // roles
+      const { roleId, page } = params;
+      return await this.ctx.bean.role.children({ roleId, page });
+    }
+
+    async userSelect({ host, params, user }) {
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (!rightWrite) this.ctx.throw(403);
+      // users
+      const { query, page } = params;
+      return await this.ctx.bean.user.select({
+        options: {
+          where: {
+            'a.anonymous': 0,
+            'a.disabled': 0,
+            __or__: [
+              { 'a.userName': { op: 'like', val: query } },
+              { 'a.realName': { op: 'like', val: query } },
+              { 'a.mobile': { op: 'like', val: query } },
+            ],
+          },
+          orders: [[ 'a.userName', 'asc' ]],
+          page,
+          removePrivacy: true,
+        },
+      });
+    }
+
+    async __checkRightWrite({ host, user }) {
+      const { flowDefId } = host;
+      return await this.ctx.bean.atom.checkRightAction({
+        atom: { id: flowDefId },
+        action: 3,
+        stage: 'draft',
+        user,
+        checkFlow: true,
+      });
+    }
+
+    async __checkRightRead({ host, user }) {
+      const { flowDefId } = host;
+      return await this.ctx.bean.atom.checkRightRead({
+        atom: { id: flowDefId },
+        user,
+        checkFlow: true,
+      });
+    }
+
+    async __checkRightNormalizeAssignees({ host, assignees, user }) {
+      const { flowDefId, nodeDefId } = host;
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (rightWrite) return assignees;
+      // check read right
+      const rightRead = await this.__checkRightRead({ host, user });
+      // no right
+      if (!rightRead) return null;
+      // get assignees from flowDef
+      const flowDef = await this.ctx.bean.flowDef.getById({ flowDefId });
+      if (!flowDef) return null;
+      // content
+      const content = flowDef.content ? JSON.parse(flowDef.content) : null;
+      if (!content) return null;
+      // find
+      const node = content.process.nodes.find(item => item.id === nodeDefId);
+      if (!node) return null;
+      // ok
+      return node.options.task ? node.options.task.assignees : node.options.assignees;
+    }
+
+  }
+  return FlowDef;
+};
+
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const flow = __webpack_require__(934);
+const flowDef = __webpack_require__(875);
 
 module.exports = app => {
   const services = {
+    flow,
+    flowDef,
   };
   return services;
 };
@@ -171,8 +411,9 @@ module.exports = app => {
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

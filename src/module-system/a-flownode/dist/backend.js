@@ -26,8 +26,9 @@ module.exports = ctx => {
       await super.onEdgeEnter();
       // check conditionExpression
       const conditionExpression = this.contextEdge._edgeDef.options && this.contextEdge._edgeDef.options.conditionExpression;
-      if (conditionExpression === undefined) return true;
-      if (!conditionExpression) return false;
+      // return true on empty/null/undefined
+      if (!conditionExpression && conditionExpression !== false) return true;
+      if (conditionExpression === false) return false;
       const res = ctx.bean.flow.evaluateExpression({
         expression: conditionExpression,
         globals: {
@@ -78,6 +79,11 @@ module.exports = ctx => {
       // bean/parameters
       const bean = this.contextNode._nodeDef.options.bean;
       const parameterExpression = this.contextNode._nodeDef.options.parameterExpression;
+      // check
+      if (!bean) {
+        throw new Error(`flow service bean is not set: flow:${this.context._flowDef.atomName}, node:${this.contextNode._nodeDef.name}`);
+      }
+      // executeService
       await ctx.bean.flow.executeService({
         bean,
         parameterExpression,
@@ -403,19 +409,53 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  sequence: {
+    conditionExpression: null,
+  },
+  startEventTimer: {
+    repeat: {
+      every: 0,
+      cron: null,
+    },
+    bean: null,
+    parameterExpression: null,
+  },
+  activityService: {
+    bean: null,
+    parameterExpression: null,
+  },
 };
 
 
 /***/ }),
 
 /***/ 719:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = {
-  sequence: {
-    title: 'Sequence',
-    bean: 'sequence',
-  },
+const defaults = __webpack_require__(614);
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const edges = {
+    sequence: {
+      title: 'Sequence',
+      bean: 'sequence',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'sequence',
+      },
+    },
+  };
+
+  for (const key in edges) {
+    const node = edges[key];
+    node.options = {};
+    if (defaults[key]) {
+      node.options.default = defaults[key];
+    }
+  }
+
+  return edges;
 };
 
 
@@ -426,50 +466,61 @@ module.exports = {
 
 const defaults = __webpack_require__(614);
 
-const nodes = {
-  // events
-  startEventNone: {
-    title: 'StartEventNone',
-    group: 'startEvent',
-    bean: 'startEventNone',
-    icon: '/api/static/a/flownode/bpmn/events/start-event-none.svg',
-  },
-  startEventTimer: {
-    title: 'StartEventTimer',
-    group: 'startEvent',
-    bean: 'startEventTimer',
-    icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
-  },
-  endEventNone: {
-    title: 'EndEventNone',
-    group: 'endEvent',
-    bean: 'endEventNone',
-    icon: '/api/static/a/flownode/bpmn/events/end-event-none.svg',
-  },
-  // activities
-  activityNone: {
-    title: 'ActivityNone',
-    group: 'activity',
-    bean: 'activityNone',
-    icon: '/api/static/a/flownode/bpmn/activities/activity-none.svg',
-  },
-  activityService: {
-    title: 'ActivityService',
-    group: 'activity',
-    bean: 'activityService',
-    icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
-  },
-};
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const nodes = {
+    // events
+    startEventNone: {
+      title: 'StartEventNone',
+      group: 'startEvent',
+      bean: 'startEventNone',
+      icon: '/api/static/a/flownode/bpmn/events/start-event-none.svg',
+    },
+    startEventTimer: {
+      title: 'StartEventTimer',
+      group: 'startEvent',
+      bean: 'startEventTimer',
+      icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'startEventTimer',
+      },
+    },
+    endEventNone: {
+      title: 'EndEventNone',
+      group: 'endEvent',
+      bean: 'endEventNone',
+      icon: '/api/static/a/flownode/bpmn/events/end-event-none.svg',
+    },
+    // activities
+    activityNone: {
+      title: 'ActivityNone',
+      group: 'activity',
+      bean: 'activityNone',
+      icon: '/api/static/a/flownode/bpmn/activities/activity-none.svg',
+    },
+    activityService: {
+      title: 'ActivityService',
+      group: 'activity',
+      bean: 'activityService',
+      icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
+      validator: {
+        module: moduleInfo.relativeName,
+        validator: 'activityService',
+      },
+    },
+  };
 
-for (const key in nodes) {
-  const node = nodes[key];
-  node.options = {};
-  if (defaults[key]) {
-    node.options.default = defaults[key];
+  for (const key in nodes) {
+    const node = nodes[key];
+    node.options = {};
+    if (defaults[key]) {
+      node.options.default = defaults[key];
+    }
   }
-}
 
-module.exports = nodes;
+  return nodes;
+};
 
 
 /***/ }),
@@ -508,6 +559,124 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 483:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const schemas = {};
+  // activityService
+  schemas.activityService = {
+    type: 'object',
+    properties: {
+      bean: {
+        type: 'object',
+        ebType: 'component',
+        ebTitle: 'Bean',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderBeanFlowService',
+        },
+        notEmpty: true,
+      },
+      parameterExpression: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Parameter Expression',
+        ebTextarea: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 833:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // sequence
+  schemas.sequence = {
+    type: 'object',
+    properties: {
+      conditionExpression: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Condition Expression',
+        ebTextarea: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 440:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // startEventTimer
+  schemas.startEventTimer = {
+    type: 'object',
+    properties: {
+      repeat: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Repeat',
+        notEmpty: true,
+      },
+      bean: {
+        type: 'object',
+        ebType: 'component',
+        ebTitle: 'Bean',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderBeanFlowService',
+        },
+        notEmpty: true,
+      },
+      parameterExpression: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Parameter Expression',
+        ebTextarea: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const sequence = __webpack_require__(833);
+const startEventTimer = __webpack_require__(440);
+const activityService = __webpack_require__(483);
+
+module.exports = app => {
+  const schemas = {};
+  // sequence
+  Object.assign(schemas, sequence(app));
+  // startEventTimer
+  Object.assign(schemas, startEventTimer(app));
+  // activityService
+  Object.assign(schemas, activityService(app));
+  // ok
+  return schemas;
 };
 
 
@@ -574,11 +743,10 @@ module.exports = app => {
 /***/ 458:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flowNodes = __webpack_require__(587);
-const flowEdges = __webpack_require__(719);
-
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = __webpack_require__(232)(app);
+  const flowNodes = __webpack_require__(587)(app);
+  const flowEdges = __webpack_require__(719)(app);
   const meta = {
     base: {
       atoms: {
@@ -586,10 +754,20 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        // sequence
+        sequence: {
+          schemas: 'sequence',
+        },
+        // startEventTimer
+        startEventTimer: {
+          schemas: 'startEventTimer',
+        },
+        // activityService
+        activityService: {
+          schemas: 'activityService',
+        },
       },
-      keywords: {},
-      schemas: {
-      },
+      schemas,
     },
     flow: {
       nodes: flowNodes,
@@ -646,8 +824,9 @@ module.exports = app => {
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

@@ -415,6 +415,15 @@ module.exports = app => {
 module.exports = app => {
   class UserController extends app.Controller {
 
+    async select() {
+      const page = this.ctx.bean.util.page(this.ctx.request.body.page);
+      const items = await this.service.user.select({
+        query: this.ctx.request.body.query,
+        page,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
     async list() {
       const page = this.ctx.bean.util.page(this.ctx.request.body.page);
       const items = await this.service.user.list({
@@ -650,6 +659,7 @@ module.exports = app => {
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     // user
+    { method: 'post', path: 'user/select', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/list', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/item', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/disable', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
@@ -879,6 +889,25 @@ module.exports = app => {
 
   class User extends app.Service {
 
+    async select({ query, page }) {
+      return await this.ctx.bean.user.select({
+        options: {
+          where: {
+            'a.anonymous': 0,
+            'a.disabled': 0,
+            __or__: [
+              { 'a.userName': { op: 'like', val: query } },
+              { 'a.realName': { op: 'like', val: query } },
+              { 'a.mobile': { op: 'like', val: query } },
+            ],
+          },
+          orders: [[ 'a.userName', 'asc' ]],
+          page,
+          removePrivacy: true,
+        },
+      });
+    }
+
     async list({ roleId, query, anonymous, page }) {
       return await this.ctx.bean.user.list({ roleId, query, anonymous, page });
     }
@@ -956,8 +985,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

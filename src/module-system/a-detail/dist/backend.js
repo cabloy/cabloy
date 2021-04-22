@@ -1247,7 +1247,12 @@ module.exports = app => {
       // validate
       const ignoreValidate = options && options.ignoreValidate;
       if (atomStage === 0 && !target && !ignoreValidate) {
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          detailClass,
+          key,
+        });
         await this.ctx.bean.validation._validate({ detailClass, data: item, options });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
       // write detail
       await this._writeDetail({ key, item, user, atomStage });
@@ -1929,8 +1934,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

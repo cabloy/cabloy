@@ -178,6 +178,7 @@ module.exports = ctx => {
     }
 
     async _executeServiceInner({ bean, parameter, globals }) {
+      if (!bean) throw new Error('flow service bean is not set');
       // bean
       const beanFullName = `${bean.module}.flow.service.${bean.name}`;
       const beanInstance = ctx.bean._getBean(beanFullName);
@@ -246,6 +247,110 @@ module.exports = ctx => {
       return flowNodeInstance;
     }
 
+    async normalizeAssignees({ users, roles, vars }) {
+      const assignees = {};
+      assignees.users = await this._normalizeAssignees_users(users);
+      assignees.roles = await this._normalizeAssignees_roles(roles);
+      assignees.vars = await this._normalizeAssignees_vars(vars);
+      return assignees;
+    }
+
+    async _normalizeAssignees_users(str) {
+      if (!str) return [];
+      // userIds
+      const userIds = await this._parseAssignees_userIds(str);
+      if (userIds.length === 0) return [];
+      // select
+      return await ctx.bean.user.select({
+        options: {
+          where: {
+            'a.disabled': 0,
+            'a.id': userIds,
+          },
+          orders: [[ 'a.userName', 'asc' ]],
+          removePrivacy: true,
+        },
+      });
+    }
+
+    async _normalizeAssignees_roles(str) {
+      if (!str) return [];
+      // roleIds
+      const roleIds = await this._parseAssignees_roleIds(str);
+      if (roleIds.length === 0) return [];
+      // select
+      return await ctx.bean.role.model.select({
+        where: {
+          id: roleIds,
+        },
+      });
+    }
+
+    async _normalizeAssignees_vars(str) {
+      if (!str) return [];
+      // vars
+      const _vars = await this._parseAssignees_vars(str);
+      // title
+      return _vars.map(item => {
+        let title;
+        if (item === 'flowUser') {
+          title = 'FlowInitiator';
+        } else {
+          title = item;
+        }
+        // others
+        return {
+          name: item,
+          title,
+          titleLocale: ctx.text(title),
+        };
+      });
+    }
+
+    async _parseAssignees_userIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str.map(item => {
+        return typeof item === 'object' ? item.id : parseInt(item);
+      });
+    }
+
+    async _parseAssignees_roleIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      const arr = [];
+      for (const item of str) {
+        if (typeof item === 'object') {
+          // object
+          arr.push(item.id);
+        } else if (isNaN(item)) {
+          // string
+          const role = await ctx.bean.role.parseRoleName({ roleName: item });
+          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
+          arr.push(role.id);
+        } else {
+          // number
+          arr.push(item);
+        }
+      }
+      // ok
+      return arr;
+    }
+
+    async _parseAssignees_vars(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str.map(item => {
+        return typeof item === 'object' ? item.name : item;
+      });
+    }
+
     async count({ options, user }) {
       return await this.select({ options, user, count: 1 });
     }
@@ -304,6 +409,7 @@ module.exports = ctx => {
 
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
+const __flowServiceBases = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -395,6 +501,25 @@ module.exports = ctx => {
       });
     }
 
+    nodeBases() {
+      return this._getFlowNodeBases();
+    }
+
+    edgeBases() {
+      return this._getFlowEdgeBases();
+    }
+
+    flowServiceBases() {
+      return this._getFlowServiceBases();
+    }
+
+    _getFlowServiceBases() {
+      if (!__flowServiceBases[ctx.locale]) {
+        __flowServiceBases[ctx.locale] = this._prepareFlowServiceBases();
+      }
+      return __flowServiceBases[ctx.locale];
+    }
+
     _getFlowNodeBases() {
       if (!__flowNodeBases[ctx.locale]) {
         __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
@@ -404,6 +529,42 @@ module.exports = ctx => {
 
     _getFlowNodeBase(nodeType) {
       return this._getFlowNodeBases()[nodeType];
+    }
+
+    _prepareFlowServiceBases() {
+      const flowServiceBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const relativeName = module.info.relativeName;
+        const beans = module.main.beans;
+        if (!beans) continue;
+        const res = this._prepareFlowServiceBasesModule(relativeName, beans);
+        if (Object.keys(res).length > 0) {
+          flowServiceBases[relativeName] = res;
+        }
+      }
+      return flowServiceBases;
+    }
+
+    _prepareFlowServiceBasesModule(relativeName, beans) {
+      const flowServiceBases = {};
+      for (const beanName in beans) {
+        if (beanName.indexOf('flow.service.') !== 0) continue;
+        // info
+        const bean = beans[beanName];
+        const serviceBase = {
+          title: bean.title,
+        };
+        if (bean.title) {
+          serviceBase.titleLocale = ctx.text(bean.title);
+        } else {
+          // prompt
+          ctx.logger.info('title of flow service bean should not be empty: ', `${relativeName}:${beanName}`);
+        }
+        // ok
+        const beanNameShort = beanName.substr('flow.service.'.length);
+        flowServiceBases[beanNameShort] = serviceBase;
+      }
+      return flowServiceBases;
     }
 
     _prepareFlowNodeBases() {
@@ -425,7 +586,7 @@ module.exports = ctx => {
           flowNodeBases[fullKey] = {
             ...node,
             beanFullName,
-            title: ctx.text(node.title),
+            titleLocale: ctx.text(node.title),
           };
         }
       }
@@ -462,7 +623,7 @@ module.exports = ctx => {
           flowEdgeBases[fullKey] = {
             ...edge,
             beanFullName,
-            title: ctx.text(edge.title),
+            titleLocale: ctx.text(edge.title),
           };
         }
       }
@@ -809,9 +970,11 @@ module.exports = ctx => {
     }
 
     async _endFlow(options) {
+      options = options || {};
+      const flowHandleStatus = options.flowHandleStatus || 1;
+      const flowRemark = options.flowRemark || null;
       const flowId = this.context._flowId;
       const flowStatus = this.constant.flow.status.end;
-      const flowRemark = (options && options.flowRemark) || null;
       const timeEnd = new Date();
       // check if end
       if (this.context._flow.flowStatus === flowStatus) {
@@ -821,11 +984,13 @@ module.exports = ctx => {
         // need not in transaction
         // flow: update fields for onFlowEnd
         this.context._flow.flowStatus = flowStatus;
+        this.context._flow.flowHandleStatus = flowHandleStatus;
         this.context._flow.flowRemark = flowRemark;
         this.context._flow.timeEnd = timeEnd;
         await this.modelFlow.delete({ id: flowId });
         // flow history
         this.context._flowHistory.flowStatus = flowStatus;
+        this.context._flowHistory.flowHandleStatus = flowHandleStatus;
         this.context._flowHistory.flowRemark = flowRemark;
         this.context._flowHistory.timeEnd = timeEnd;
         await this.modelFlowHistory.update(this.context._flowHistory);
@@ -1002,34 +1167,21 @@ module.exports = ctx => {
       let assignees = [];
 
       // 1. users
-      const _users = this._ensureIntArray(users);
+      const _users = await this._parseAssignees_users(users);
       if (_users) {
         assignees = assignees.concat(_users);
       }
 
       // 2. roles
-      const _roles = this._ensureArray(roles);
+      const _roles = await this._parseAssignees_roles(roles);
       if (_roles) {
-        for (let roleId of _roles) {
-          if (isNaN(roleId)) {
-            const role = await ctx.bean.role.get({ roleName: roleId });
-            if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, roleId);
-            roleId = role.id;
-          }
-          const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
-          assignees = assignees.concat(list.map(item => item.id));
-        }
+        assignees = assignees.concat(_roles);
       }
 
       // 3. vars
-      const _vars = this._ensureArray(vars);
+      const _vars = await this._parseAssignees_vars(vars);
       if (_vars) {
-        for (const _var of _vars) {
-          const userId = await this._parseUserVar({ _var });
-          if (userId) {
-            assignees.push(userId);
-          }
-        }
+        assignees = assignees.concat(_vars);
       }
 
       // unique
@@ -1037,6 +1189,45 @@ module.exports = ctx => {
 
       // ok
       return assignees;
+    }
+
+    async _parseAssignees_users(str) {
+      if (!str) return null;
+      return await ctx.bean.flow._parseAssignees_userIds(str);
+    }
+
+    async _parseAssignees_roles(str) {
+      if (!str) return null;
+      // roleIds
+      const roleIds = await ctx.bean.flow._parseAssignees_roleIds(str);
+      // users
+      let users = [];
+      for (const roleId of roleIds) {
+        const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
+        users = users.concat(list.map(item => item.id));
+      }
+      // ok
+      return users;
+    }
+
+    async _parseAssignees_vars(str) {
+      if (!str) return null;
+      // vars
+      const _vars = await ctx.bean.flow._parseAssignees_vars(str);
+      // users
+      let users = [];
+      for (const _var of _vars) {
+        const userId = await this._parseUserVar({ _var });
+        if (userId) {
+          if (Array.isArray(userId)) {
+            users = users.concat(userId);
+          } else {
+            users.push(userId);
+          }
+        }
+      }
+      // ok
+      return users;
     }
 
     async _parseUserVar({ _var }) {
@@ -1052,22 +1243,6 @@ module.exports = ctx => {
         // user = { id: this.context._flow.flowUserId };
       }
       return user;
-    }
-
-    _ensureIntArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => parseInt(item));
-    }
-
-    _ensureArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str;
     }
 
     _notifyFlowInitiateds(flowUserId) {
@@ -1120,7 +1295,9 @@ module.exports = ctx => {
         sandbox.console = console;
       } else {
         sandbox.assert = () => {};
-        sandbox.console = () => {};
+        sandbox.console = (...args) => {
+          console.log(...args);
+        };
       }
       sandbox = vm.createContext(sandbox);
       // class
@@ -1347,7 +1524,9 @@ module.exports = ctx => {
     }
 
     async _clear(options) {
-      const flowNodeRemark = (options && options.flowNodeRemark) || null;
+      options = options || {};
+      const flowNodeHandleStatus = options.flowNodeHandleStatus || 1;
+      const flowNodeRemark = options.flowNodeRemark || null;
       const timeDone = new Date();
       // clear
       await this._setCurrent(true);
@@ -1355,6 +1534,7 @@ module.exports = ctx => {
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
+      this.contextNode._flowNodeHistory.flowNodeHandleStatus = flowNodeHandleStatus;
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
@@ -1616,7 +1796,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,a.timeEnd,a.flowRemark,
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,a.timeEnd,a.flowHandleStatus,a.flowRemark,
             c.userName,c.avatar
           `;
       }
@@ -1837,6 +2017,40 @@ module.exports = app => {
         await this.ctx.model.query(sql);
 
       }
+
+      if (options.version === 2) {
+        let sql;
+
+        // alter table: aFlow
+        sql = `
+        ALTER TABLE aFlow
+          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+
+        // alter table: aFlowHistory
+        sql = `
+        ALTER TABLE aFlowHistory
+          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+
+        // alter table: aFlowNode
+        sql = `
+        ALTER TABLE aFlowNode
+          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+
+        // alter table: aFlowNodeHistory
+        sql = `
+        ALTER TABLE aFlowNodeHistory
+          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+
+      }
+
     }
 
     async init(options) {
@@ -2200,6 +2414,7 @@ module.exports = {
   FlowTitle: 'Flow',
   WorkFlow: 'Work Flow',
   WorkFlows: 'Work Flows',
+  FlowInitiator: 'Flow Initiator',
 };
 
 
@@ -2222,6 +2437,7 @@ module.exports = {
   Passed: '已通过',
   Rejected: '已驳回',
   Cancelled: '已取消',
+  FlowInitiator: '流程发起人',
   'Create FlowDefinition': '新建流程定义',
   'FlowDefinition List': '流程定义列表',
   'Flow definition not Found: %s': '流程定义未发现: %s',
@@ -2326,8 +2542,7 @@ module.exports = app => {
     type: 'object',
     properties: {
       // title
-      groupTitle: {
-        type: 'null',
+      __groupTitle: {
         ebType: 'group-flatten',
         ebTitle: 'Title',
       },
@@ -2338,20 +2553,21 @@ module.exports = app => {
         notEmpty: true,
       },
       // content
-      groupContent: {
-        type: 'null',
+      __groupContent: {
         ebType: 'group-flatten',
         ebTitle: 'Content',
       },
       content: {
         type: 'string',
-        ebType: 'json',
-        ebTextarea: true,
+        ebType: 'component',
         ebTitle: 'Content',
+        ebRender: {
+          module: 'a-flowchart',
+          name: 'renderFlowDefContent',
+        },
       },
       // Basic Info
-      groupBasicInfo: {
-        type: 'null',
+      __groupBasicInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
@@ -2371,8 +2587,7 @@ module.exports = app => {
         ebTitle: 'Tags',
       },
       // Extra
-      groupExtra: {
-        type: 'null',
+      __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
       },
@@ -2449,6 +2664,21 @@ module.exports = app => {
 module.exports = app => {
 
   class FlowDefController extends app.Controller {
+
+    nodeBases() {
+      const res = this.ctx.service.flowDef.nodeBases();
+      this.ctx.success(res);
+    }
+
+    edgeBases() {
+      const res = this.ctx.service.flowDef.edgeBases();
+      this.ctx.success(res);
+    }
+
+    flowServiceBases() {
+      const res = this.ctx.service.flowDef.flowServiceBases();
+      this.ctx.success(res);
+    }
 
   }
   return FlowDefController;
@@ -2544,6 +2774,11 @@ module.exports = app => {
             },
             category: true,
             tag: true,
+          },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
           },
           validator: 'flowDef',
           search: {
@@ -2732,6 +2967,10 @@ module.exports = app => {
     // flow
     { method: 'post', path: 'flow/select', controller: 'flow' },
     { method: 'post', path: 'flow/count', controller: 'flow' },
+    // flowDef
+    { method: 'post', path: 'flowDef/nodeBases', controller: 'flowDef' },
+    { method: 'post', path: 'flowDef/edgeBases', controller: 'flowDef' },
+    { method: 'post', path: 'flowDef/flowServiceBases', controller: 'flowDef' },
   ];
   return routes;
 };
@@ -2768,6 +3007,18 @@ module.exports = app => {
 module.exports = app => {
 
   class FlowDef extends app.Service {
+
+    nodeBases() {
+      return this.ctx.bean.flowDef.nodeBases();
+    }
+
+    edgeBases() {
+      return this.ctx.bean.flowDef.edgeBases();
+    }
+
+    flowServiceBases() {
+      return this.ctx.bean.flowDef.flowServiceBases();
+    }
 
   }
   return FlowDef;
@@ -2818,8 +3069,9 @@ module.exports = require("vm");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

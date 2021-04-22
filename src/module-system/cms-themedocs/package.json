@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themedocs",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "title": "cms:theme:docs",
   "eggBornModule": {
     "cms": {
