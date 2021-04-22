@@ -1012,6 +1012,8 @@ module.exports = ctx => {
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (_atom.atomStage === 0) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
         // checkFlow
         if (_atom.atomFlowId > 0 && checkFlow) {
           const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
@@ -1019,11 +1021,14 @@ module.exports = ctx => {
           return _atom;
         }
         // 1. closed
-        if (_atom.atomClosed) return null;
+        if (_atom.atomClosed) {
+          if (bSelf) return _atom;
+          return null;
+        }
         // // 2. flow
         // if (_atom.atomFlowId > 0) return null;
         // 3. self
-        if (_atom.userIdUpdated === user.id) return _atom;
+        if (bSelf) return _atom;
         // others
         return null;
       }
@@ -1077,6 +1082,8 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
         // checkFlow
         if (_atom.atomFlowId > 0 && checkFlow) {
           const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
@@ -1084,11 +1091,17 @@ module.exports = ctx => {
           return _atom;
         }
         // 1. closed
-        if (_atom.atomClosed) return null;
+        if (_atom.atomClosed) {
+          // enable on 'self and write', not including 'delete'
+          if (bSelf && action === 3) {
+            return _atom;
+          }
+          return null;
+        }
         // 2. flow
         if (_atom.atomFlowId > 0) return null;
         // 3. self
-        if (_atom.userIdUpdated === user.id) return _atom;
+        if (bSelf) return _atom;
         // others
         return null;
       }

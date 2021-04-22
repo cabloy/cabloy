@@ -1,5 +1,6 @@
 export default {
   FlowTitle: 'Flow',
+  DraftingAgain: 'Drafting Again',
   ConfirmationAllowAppend: 'Allow Append Assignees',
   AssigneesConfirmationPrompt: 'Please confirm the assignees',
   CancelFlowPrompt: 'Are you sure to cancel this flow?',

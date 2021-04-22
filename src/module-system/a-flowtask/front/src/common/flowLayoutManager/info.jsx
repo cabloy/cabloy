@@ -27,12 +27,31 @@ export default {
         },
       });
     },
+    info_onPerformDraftingAgain() {
+      const atom = this.base.data.atom;
+      // action
+      let _action = this.getAction({
+        module: atom.module,
+        atomClassName: atom.atomClassName,
+        name: 'write',
+      });
+      if (!_action) return;
+      _action = this.$utils.extend({}, _action, {
+        navigateOptions: {
+          target: '_self',
+          reloadCurrent: true,
+        },
+      });
+      // performAction
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: atom });
+    },
     info_getItemMetaMedia(avatar) {
       const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 16);
     },
     info_renderActionsLeft() {
       if (!this.base_ready) return;
+      const flow = this.base.data.flow;
       const atom = this.base.data.atom;
       const children = [];
       if (!atom) {
@@ -56,6 +75,12 @@ export default {
         children.push(
           <eb-link key="actionsLeft:flowChart" iconMaterial="account_tree" propsOnPerform={this.info_onPerformFlowChart}></eb-link>
         );
+        // drafting again
+        if (flow.flowStatus === 1 && flow.flowUserId === this.base_user.id) {
+          children.push(
+            <eb-button key="actionsLeft:draftingAgain" color="orange" small outline propsOnPerform={this.info_onPerformDraftingAgain}>{this.$text('DraftingAgain')}</eb-button>
+          );
+        }
       }
       // ok
       return children;
