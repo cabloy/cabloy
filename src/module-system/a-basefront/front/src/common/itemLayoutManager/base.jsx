@@ -110,13 +110,15 @@ export default {
         // do nothing
         return;
       }
-      // delete
-      if (action.name === 'delete') {
-        this.base.item = null;
-        this.base.notfound = true;
-        this.base.ready = false;
-        return;
-      }
+      // not check delete
+      //    for: delete on atom list but not delete on atom when atomClosed=1
+      // // delete
+      // if (action.name === 'delete') {
+      //   this.base.item = null;
+      //   this.base.notfound = true;
+      //   this.base.ready = false;
+      //   return;
+      // }
       // others
       await this.base_loadItem();
     },
