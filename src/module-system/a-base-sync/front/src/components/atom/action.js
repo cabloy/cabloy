@@ -49,20 +49,10 @@ export default {
         }
       } else if (action.name === 'write') {
         const key = { atomId: item.atomId, itemId: item.itemId };
-        let keyDraft;
-        try {
-          // openDraft
-          const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
-          keyDraft = data.draft.key;
-        } catch (err) {
-          let atomIdDraft = item.atomIdDraft;
-          if (atomIdDraft === undefined) {
-            const _item = await ctx.$api.post('/a/base/atom/read', { key });
-            atomIdDraft = _item.atomIdDraft;
-          }
-          if (atomIdDraft === 0) throw err;
-          keyDraft = { atomId: atomIdDraft, itemId: null };
-        }
+        // openDraft
+        const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
+        const keyDraft = data.draft.key;
+        // navigate
         const _item = {
           ...item,
           atomId: keyDraft.atomId,
