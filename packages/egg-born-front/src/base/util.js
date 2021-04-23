@@ -6,6 +6,7 @@ import extend from '@zhennann/extend';
 import sandboxFn from './sandbox.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
+import _escape from './escape.js';
 
 export default function(Vue) {
   const _ids = { };
@@ -439,6 +440,8 @@ export default function(Vue) {
     extend(...args) {
       return extend(true, ...args);
     },
+    escapeHtml: _escape.escapeHtml,
+    escapeURL: _escape.escapeURL,
   });
 
   return util;

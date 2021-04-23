@@ -45,34 +45,18 @@ export default {
     },
     contentProcessRender() {
       if (!this.contentProcess) return;
-      const nodes = this.contentProcess.nodes.map(item => {
-        const node = {
-          id: item.id,
-          shape: item.type,
-          attrs: {
-            label: {
-              text: item.nameLocale || item.name,
-            },
-          },
-        };
-        if (this.flowNodeDefIds && this.flowNodeDefIds.indexOf(item.id) > -1) {
-          node.attrs.body = {
-            stroke: 'orange',
-            strokeWidth: 4,
-          };
-        }
-        return node;
-      });
-      const edges = this.contentProcess.edges.map(item => {
-        const edge = {
-          id: item.id,
-          shape: 'sequence',
-          source: item.source,
-          target: item.target,
-          label: item.nameLocale || item.name,
-        };
-        return edge;
-      });
+      // nodes
+      const nodes = [];
+      for (const item of this.contentProcess.nodes) {
+        const node = this.__createNode(item);
+        nodes.push(node);
+      }
+      // edges
+      const edges = [];
+      for (const item of this.contentProcess.edges) {
+        const edge = this.__createEdge(item);
+        edges.push(edge);
+      }
       return { nodes, edges };
     },
   },
@@ -282,6 +266,52 @@ export default {
       }
       return this.dagreLayout.layout(this.contentProcessRender);
     },
+    __createNode(item) {
+      // nodeBase
+      const nodeBase = this.nodeBases[item.type];
+      // icons
+      const icon = this.$meta.util.combineFetchStaticPath(nodeBase.icon);
+      const iconSrc = this.$meta.util.escapeURL(icon);
+      const icons = `<div class="eb-flowchart-node-icons">
+                      <img src="${iconSrc}" />
+                    </div>`;
+      // label
+      const labelText = this.$meta.util.escapeHtml(item.nameLocale || item.name);
+      const label = `<div class="eb-flowchart-node-label">
+                      <span>${labelText}</span>
+                    </div>`;
+      // node
+      const node = {
+        id: item.id,
+        shape: 'eb-flowchart-node',
+        attrs: {
+          icons: {
+            html: icons,
+          },
+          label: {
+            html: label,
+          },
+        },
+      };
+      // highlight current node
+      if (this.flowNodeDefIds && this.flowNodeDefIds.indexOf(item.id) > -1) {
+        node.attrs.body = {
+          stroke: 'orange',
+          strokeWidth: 4,
+        };
+      }
+      return node;
+    },
+    __createEdge(item) {
+      const edge = {
+        id: item.id,
+        shape: 'sequence',
+        source: item.source,
+        target: item.target,
+        label: item.nameLocale || item.name,
+      };
+      return edge;
+    },
     __registerEdges() {
       // always register for readOnly maybe changed
       // if (this.x6.Graph.__registerEdges) return;
@@ -296,24 +326,59 @@ export default {
       // always register for readOnly maybe changed
       // if (this.x6.Graph.__registerNodes) return;
       // this.x6.Graph.__registerNodes = true;
-      for (const nodeType in this.nodeBases) {
-        const nodeBase = this.nodeBases[nodeType];
-        let options;
-        if (nodeBase.group === 'startEvent' || nodeBase.group === 'endEvent') {
-          options = this.__registerNodeCircle(nodeBase);
-        } else {
-          options = this.__registerNodeRect(nodeBase);
-        }
-        this.x6.Graph.registerNode(nodeType, options, true);
-      }
+      const options = this.__registerNode();
+      this.x6.Graph.registerNode('eb-flowchart-node', options, true);
     },
     __registerEdge(edgeBase) {
       const options = {
         inherit: 'edge',
         attrs: {
           line: {
-            stroke: '#000',
-            opacity: 0.4,
+            stroke: '#333333',
+          },
+        },
+      };
+      return options;
+    },
+    __registerNode() {
+      const options = {
+        width: 120,
+        height: 80,
+        // ports: this.__registerConnectionPorts(),
+        markup: [
+          {
+            tagName: 'rect',
+            selector: 'body',
+          },
+          {
+            tagName: 'foreignObject',
+            selector: 'icons',
+          },
+          {
+            tagName: 'foreignObject',
+            selector: 'label',
+          },
+        ],
+        attrs: {
+          body: {
+            fill: '#ffffff',
+            stroke: '#333333',
+            strokeWidth: 1,
+            rx: 6,
+            ry: 6,
+            refWidth: '100%',
+            refHeight: '100%',
+            pointerEvents: 'visiblePainted',
+          },
+          icons: {
+            refWidth: '100%',
+            height: 32,
+            pointerEvents: 'visiblePainted',
+            magnet: !this.readOnly,
+          },
+          label: {
+            y: 24,
+            refWidth: '100%',
           },
         },
       };
