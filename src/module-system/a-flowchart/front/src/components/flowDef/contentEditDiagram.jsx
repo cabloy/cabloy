@@ -246,7 +246,7 @@ export default {
           rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
           align: undefined, // "UL",
           nodesep: 30,
-          ranksep: 60,
+          ranksep: 50,
           controlPoints: true,
         });
       }
