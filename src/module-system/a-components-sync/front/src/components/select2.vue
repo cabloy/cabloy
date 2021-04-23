@@ -258,7 +258,7 @@ export default {
           }
         }
         options.push(c('option', {
-          key: String(this.optionValue(opt)),
+          key: this.optionValue(opt),
           attrs: {
             value: this.optionValue(opt),
             selected,
