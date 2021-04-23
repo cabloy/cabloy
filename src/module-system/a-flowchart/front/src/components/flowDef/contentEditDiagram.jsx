@@ -222,20 +222,6 @@ export default {
     },
     __graphEvents(container) {
       if (this.viewOnly) return;
-      // // mouseenter
-      // this.graph.on('node:mouseenter', () => {
-      //   const ports = container.querySelectorAll(
-      //     '.x6-port-body'
-      //   );
-      //   this.__showPorts(ports, true);
-      // });
-      // // mouseleave
-      // this.graph.on('node:mouseleave', () => {
-      //   const ports = container.querySelectorAll(
-      //     '.x6-port-body'
-      //   );
-      //   this.__showPorts(ports, false);
-      // });
       // connected
       this.graph.on('edge:connected', ({ isNew, edge }) => {
         if (!isNew) return;
@@ -344,7 +330,6 @@ export default {
       const options = {
         width: 120,
         height: 80,
-        // ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'rect',
@@ -388,7 +373,6 @@ export default {
       const options = {
         width: 80,
         height: 80,
-        // ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'circle',
@@ -437,7 +421,6 @@ export default {
       const options = {
         width: 125,
         height: 100,
-        // ports: this.__registerConnectionPorts(),
         markup: [
           {
             tagName: 'rect',
@@ -480,40 +463,6 @@ export default {
         },
       };
       return options;
-    },
-    __registerConnectionPorts() {
-      return {
-        groups: {
-          group1: {
-            position: {
-              name: 'absolute',
-              args: { x: '50%', y: '50%' },
-            },
-            attrs: {
-              circle: {
-                r: 8,
-                magnet: true,
-                stroke: 'orange',
-                strokeWidth: 2,
-                fill: 'transparent',
-                style: {
-                  visibility: 'hidden',
-                },
-              },
-            },
-          },
-        },
-        items: [
-          {
-            group: 'group1',
-          },
-        ],
-      };
-    },
-    __showPorts(ports, show) {
-      for (let i = 0, len = ports.length; i < len; i = i + 1) {
-        ports[i].style.visibility = show ? 'visible' : 'hidden';
-      }
     },
     onSize(size) {
       this.size.height = size.height;
