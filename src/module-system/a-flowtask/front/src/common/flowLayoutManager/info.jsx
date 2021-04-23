@@ -27,7 +27,10 @@ export default {
         },
       });
     },
-    info_onPerformDraftingAgain() {
+    async info_onPerformDraftingAgain() {
+      // confirm
+      await this.$view.dialog.confirm();
+      // atom
       const atom = this.base.data.atom;
       // action
       let _action = this.getAction({
@@ -43,7 +46,7 @@ export default {
         },
       });
       // performAction
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: atom });
+      return await this.$meta.util.performAction({ ctx: this, action: _action, item: atom });
     },
     info_getItemMetaMedia(avatar) {
       const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
