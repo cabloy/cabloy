@@ -24,6 +24,7 @@ export default {
   TaskPassPrompt: '您确认要通过本任务吗？',
   TaskRejectPrompt: '您确认要驳回本任务吗？',
   RecallPrompt: '您确认要撤回本任务吗？',
+  FlowOrTaskNotExists: '流程或任务已经不存在',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
   'Recall Available': '可撤回',

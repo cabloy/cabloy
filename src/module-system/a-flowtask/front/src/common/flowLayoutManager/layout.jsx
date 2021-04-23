@@ -67,7 +67,7 @@ export default {
           <f7-card>
             <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
             <f7-card-content>
-              {this.$text('Not Found')}
+              {this.$text('FlowOrTaskNotExists')}
             </f7-card-content>
           </f7-card>
         );

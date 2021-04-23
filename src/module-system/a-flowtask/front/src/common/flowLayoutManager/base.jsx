@@ -78,6 +78,10 @@ export default {
         this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.container.flowId,
         });
+        if (!this.base.data) {
+          this.base.notfound = true;
+          return false;
+        }
         const flowNew = this.base_flow;
         const atomNew = this.base_atom;
         if (atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {

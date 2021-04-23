@@ -5,6 +5,7 @@ module.exports = app => {
     async data({ flowId, user }) {
       // flow
       const flow = await this._data_flow({ flowId, user });
+      if (!flow) return null;
       // atom
       const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
       // tasks
@@ -16,7 +17,8 @@ module.exports = app => {
     async _data_flow({ flowId, user }) {
       // select flow
       const flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
-      if (!flow) this.ctx.throw(404);
+      // not throw error
+      // if (!flow) this.ctx.throw(404);
       // ok
       return flow;
     }

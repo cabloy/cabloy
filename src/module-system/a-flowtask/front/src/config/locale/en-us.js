@@ -7,4 +7,5 @@ export default {
   TaskPassPrompt: 'Are you sure to pass this task?',
   TaskRejectPrompt: 'Are you sure to reject this task?',
   RecallPrompt: 'Are you sure to recall this task?',
+  FlowOrTaskNotExists: 'Work Flow or Task does not exist',
 };
