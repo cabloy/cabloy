@@ -237,6 +237,13 @@ export default {
       this.graph.on('edge:click', ({ edge }) => {
         this.showProperties({ edge });
       });
+      // node:move
+      this.graph.on('node:move', () => {
+        this.graph.disablePanning();
+      });
+      this.graph.on('node:moved', () => {
+        this.graph.enablePanning();
+      });
     },
     __createLayoutModel() {
       // layout
