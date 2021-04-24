@@ -6,18 +6,13 @@ module.exports = ctx => {
 
     async onNodeLeave() {
       await super.onNodeLeave();
-      // atom
-      const atomId = this.context._flow.flowAtomId;
-      if (atomId) {
-        // close draft
-        await ctx.bean.atom.closeDraft({
-          key: { atomId },
-        });
-      }
       // end
       await this.flowInstance._endFlow({
         flowHandleStatus: 1,
         flowRemark: null,
+        atom: {
+          close: true,
+        },
       });
       // also true
       return true;
