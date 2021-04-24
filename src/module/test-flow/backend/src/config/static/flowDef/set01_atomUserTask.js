@@ -55,7 +55,7 @@ module.exports = app => {
         {
           id: 'endEvent_1',
           name: 'End',
-          type: 'endEventNone',
+          type: 'endEventAtom',
         },
       ],
       edges: [

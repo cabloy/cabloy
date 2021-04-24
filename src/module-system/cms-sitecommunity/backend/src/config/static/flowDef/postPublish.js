@@ -37,7 +37,7 @@ module.exports = app => {
         {
           id: 'endEvent_1',
           name: 'End',
-          type: 'endEventNone',
+          type: 'endEventAtom',
         },
       ],
       edges: [
@@ -57,7 +57,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Community Post Publish',
     atomStaticKey: 'flowPostPublish',
-    atomRevision: 0,
+    atomRevision: 100,
     description: '',
     content: JSON.stringify(content),
   };
