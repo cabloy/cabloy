@@ -335,6 +335,37 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 895:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class FlowNode extends ctx.app.meta.FlowNodeBase {
+    constructor(options) {
+      super(ctx, options);
+    }
+
+    async onNodeLeave() {
+      await super.onNodeLeave();
+      // end
+      await this.flowInstance._endFlow({
+        flowHandleStatus: 1,
+        flowRemark: 'Submitted',
+        atom: {
+          submit: true,
+        },
+      });
+      // also true
+      return true;
+    }
+
+  }
+
+  return FlowNode;
+};
+
+
+/***/ }),
+
 /***/ 252:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -551,7 +582,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 895:
+/***/ 962:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(718);
@@ -1576,9 +1607,10 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const flowNodeStartEventAtom = __webpack_require__(252);
+const flowNodeEndEventAtom = __webpack_require__(895);
 const flowNodeActivityUserTask = __webpack_require__(892);
 const localContextTask = __webpack_require__(288);
-const localFlowTask = __webpack_require__(895);
+const localFlowTask = __webpack_require__(962);
 const localProcedure = __webpack_require__(716);
 const beanFlowTask = __webpack_require__(302);
 const statsTaskClaimings = __webpack_require__(951);
@@ -1596,6 +1628,10 @@ module.exports = app => {
     'flow.node.startEventAtom': {
       mode: 'ctx',
       bean: flowNodeStartEventAtom,
+    },
+    'flow.node.endEventAtom': {
+      mode: 'ctx',
+      bean: flowNodeEndEventAtom,
     },
     'flow.node.activityUserTask': {
       mode: 'ctx',
@@ -1967,6 +2003,12 @@ module.exports = app => {
         validator: 'startEventAtom',
       },
     },
+    endEventAtom: {
+      title: 'EndEventAtom',
+      group: 'endEvent',
+      bean: 'endEventAtom',
+      icon: '/api/static/a/flowtask/bpmn/events/end-event-atom.svg',
+    },
     // activities
     activityUserTask: {
       title: 'ActivityUserTask',
@@ -1999,6 +2041,7 @@ module.exports = app => {
 
 module.exports = {
   StartEventAtom: 'StartEvent: Atom Draft',
+  EndEventAtom: 'EndEvent: Atom Submit',
   ActivityUserTask: 'Activity: User Task',
 };
 
@@ -2009,7 +2052,9 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  Submitted: '已提交',
   StartEventAtom: '原子起草开始事件',
+  EndEventAtom: '原子提交结束事件',
   ActivityUserTask: '用户任务活动',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
@@ -2535,6 +2580,7 @@ module.exports = app => {
     async data({ flowId, user }) {
       // flow
       const flow = await this._data_flow({ flowId, user });
+      if (!flow) return null;
       // atom
       const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
       // tasks
@@ -2546,7 +2592,8 @@ module.exports = app => {
     async _data_flow({ flowId, user }) {
       // select flow
       const flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
-      if (!flow) this.ctx.throw(404);
+      // not throw error
+      // if (!flow) this.ctx.throw(404);
       // ok
       return flow;
     }

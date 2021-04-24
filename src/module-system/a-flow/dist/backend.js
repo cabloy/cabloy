@@ -969,6 +969,25 @@ module.exports = ctx => {
       this.context._flowVars._dirty = false;
     }
 
+    async _endFlow_handleAtom(options) {
+      if (!options.atom) return;
+      const atomId = this.context._flow.flowAtomId;
+      if (!atomId) return;
+      if (options.atom.submit) {
+        // submit: _submitDirect
+        await ctx.bean.atom._submitDirect({
+          key: { atomId },
+          item: this.context._atom,
+          user: { id: this.context._atom.userIdUpdated },
+        });
+      } else if (options.atom.close) {
+        // close draft
+        await ctx.bean.atom.closeDraft({
+          key: { atomId },
+        });
+      }
+    }
+
     async _endFlow(options) {
       options = options || {};
       const flowHandleStatus = options.flowHandleStatus || 1;
@@ -980,6 +999,9 @@ module.exports = ctx => {
       if (this.context._flow.flowStatus === flowStatus) {
         ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
       }
+      // handle atom
+      await this._endFlow_handleAtom(options);
+      // tail
       ctx.tail(async () => {
         // need not in transaction
         // flow: update fields for onFlowEnd
