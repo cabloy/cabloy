@@ -7,16 +7,20 @@ module.exports = ctx => {
     async onNodeLeave() {
       await super.onNodeLeave();
       // atom
-      if (this.context._flow.flowAtomId) {
+      const atomId = this.context._flow.flowAtomId;
+      if (atomId) {
         // _submitDirect
         await ctx.bean.atom._submitDirect({
-          key: { atomId: this.context._flow.flowAtomId },
+          key: { atomId },
           item: this.context._atom,
           user: { id: this.context._atom.userIdUpdated },
         });
       }
       // end
-      await this.flowInstance._endFlow();
+      await this.flowInstance._endFlow({
+        flowHandleStatus: 1,
+        flowRemark: 'Submitted',
+      });
       // also true
       return true;
     }
