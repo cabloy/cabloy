@@ -14,6 +14,12 @@ module.exports = app => {
         validator: 'startEventAtom',
       },
     },
+    endEventAtom: {
+      title: 'EndEventAtom',
+      group: 'endEvent',
+      bean: 'endEventAtom',
+      icon: '/api/static/a/flowtask/bpmn/events/end-event-atom.svg',
+    },
     // activities
     activityUserTask: {
       title: 'ActivityUserTask',

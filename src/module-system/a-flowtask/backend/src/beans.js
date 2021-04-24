@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const flowNodeStartEventAtom = require('./bean/flow.node.startEventAtom.js');
+const flowNodeEndEventAtom = require('./bean/flow.node.endEventAtom.js');
 const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js');
 const localContextTask = require('./bean/local.context.task.js');
 const localFlowTask = require('./bean/local.flow.task.js');
@@ -20,6 +21,10 @@ module.exports = app => {
     'flow.node.startEventAtom': {
       mode: 'ctx',
       bean: flowNodeStartEventAtom,
+    },
+    'flow.node.endEventAtom': {
+      mode: 'ctx',
+      bean: flowNodeEndEventAtom,
     },
     'flow.node.activityUserTask': {
       mode: 'ctx',

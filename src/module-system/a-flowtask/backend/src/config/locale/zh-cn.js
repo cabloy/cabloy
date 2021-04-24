@@ -1,5 +1,6 @@
 module.exports = {
   StartEventAtom: '原子起草开始事件',
+  EndEventAtom: '原子结束事件',
   ActivityUserTask: '用户任务活动',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
