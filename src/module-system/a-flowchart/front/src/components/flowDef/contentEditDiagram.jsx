@@ -231,11 +231,15 @@ export default {
       });
       // node:click
       this.graph.on('node:click', ({ node }) => {
-        this.showProperties({ node });
+        window.setTimeout(() => {
+          this.showProperties({ node });
+        }, 300);
       });
       // edge:click
       this.graph.on('edge:click', ({ edge }) => {
-        this.showProperties({ edge });
+        window.setTimeout(() => {
+          this.showProperties({ edge });
+        }, 300);
       });
     },
     __createLayoutModel() {
