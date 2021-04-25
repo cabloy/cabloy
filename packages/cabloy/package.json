@@ -49,6 +49,7 @@
     "egg-born-module-a-flowchart": "^4.0.3",
     "egg-born-module-a-flownode": "^4.1.1",
     "egg-born-module-a-flowtask": "^4.2.1",
+    "egg-born-module-a-host": "^4.0.0",
     "egg-born-module-a-index": "^4.0.12",
     "egg-born-module-a-instance": "^4.1.5",
     "egg-born-module-a-layoutmobile": "^4.1.7",
