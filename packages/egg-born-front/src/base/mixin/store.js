@@ -31,7 +31,7 @@ export default function(Vue) {
     Object.defineProperty(ctx.$local, 'state', {
       get() {
         const moduleInfo = ctx.$module.info;
-        return ctx.$store.state[moduleInfo.pid][moduleInfo.name];
+        return store.state[moduleInfo.pid][moduleInfo.name];
       },
     });
 
@@ -39,7 +39,7 @@ export default function(Vue) {
       get() {
         return function() {
           const moduleInfo = ctx.$module.info;
-          return ctx.$store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
+          return store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
         };
       },
     });
@@ -48,7 +48,7 @@ export default function(Vue) {
       Vue.prototype.$meta.util.overrideProperty({
         obj: ctx.$local,
         key,
-        objBase: ctx.$store,
+        objBase: store,
         vueComponent: ctx,
         combinePath: (moduleInfo, arg) => {
           return Vue.prototype.$meta.util.combineStorePath(moduleInfo, arg);

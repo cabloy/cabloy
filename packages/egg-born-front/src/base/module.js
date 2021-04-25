@@ -100,6 +100,10 @@ export default function(Vue) {
         }
         // register resources
         this._registerResources(module);
+        // invoke onLoaded
+        if (module.options.onLoaded) {
+          module.options.onLoaded();
+        }
         // ready
         return cb && cb(module);
       });

@@ -8,6 +8,10 @@ export default function(Vue) {
     getters: {
     },
     mutations: {
+      register(state, capability) {
+        const name = capability.name;
+        state.capabilities[name] = capability;
+      },
     },
     actions: {
     },

@@ -14,7 +14,28 @@ function install(_Vue, cb) {
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: require('./components.js').default,
+    onLoaded: __onLoaded,
   });
+}
+
+async function __onLoaded() {
+  // in localhost
+  const hostname = window.location.hostname;
+  if (hostname !== 'localhost' && hostname !== '127.0.0.1') return;
+  // capability: share link
+  const action = {
+    actionModule: 'a-host',
+    actionComponent: 'capabilities',
+    name: 'register',
+  };
+  const item = {
+    name: 'shareLink',
+    action: {
+      module: 'test-hostsimple',
+      component: 'capabilities',
+    },
+  };
+  await Vue.prototype.$meta.util.performAction({ action, item });
 }
 
 // export
