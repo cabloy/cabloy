@@ -48,7 +48,7 @@ function _wechatsdkinit() {
 
 function _wechatwxinit(params){
   if(window.wx) return;
-  util.loadScript('https://res.wx.qq.com/open/js/jweixin-1.4.0.js', function() {
+  util.loadScript('https://res.wx.qq.com/open/js/jweixin-1.6.0.js', function() {
     window.wx.config(params);
     window.wx.error(e => {
       console.error(e);
