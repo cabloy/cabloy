@@ -31,6 +31,7 @@ miniprogram_npm
 !/src/module/test-party
 !/src/module/test-partymonkey-monkey
 !/src/module/test-flow
+!/src/module/test-hostsimple-sync
 !/src/module/test-localeone
 !/src/module/test-localetwo
 !/src/module/test-dingtalk
