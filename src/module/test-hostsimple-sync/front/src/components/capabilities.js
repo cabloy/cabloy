@@ -8,6 +8,9 @@ export default {
     },
     _shareLink({ item }) {
       console.log(item);
+      if (item.success) {
+        item.success();
+      }
     },
 
   },

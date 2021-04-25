@@ -26,6 +26,9 @@ export default {
             desc,
             link,
             imgUrl,
+            success: () => {
+              this.$view.toast.show({ text: this.$text('SharingCompleted') });
+            },
           },
         };
         await this.$meta.util.performAction({ ctx: this, action, item });
