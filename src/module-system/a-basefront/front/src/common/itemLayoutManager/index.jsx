@@ -6,6 +6,7 @@ import Subnavbar from './subnavbar.jsx';
 import Info from './info.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
+import Share from './share.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
@@ -17,21 +18,29 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate ],
+  mixins: [
+    ebAtomClasses, ebAtomActions,
+    Base, Page, Layout, Subnavbar, Info, Actions, Validate,
+    Share,
+  ],
   data() {
     return {
     };
   },
   created() {
-    this.base_loadItem().then(res => {
-      if (!res) return;
-      this.layout_prepareConfig().then(() => {
-        this.base.ready = true;
-      });
-    });
+    this.index_load();
   },
   beforeDestroy() {
     this.layout.instance = null;
     this.$emit('layoutManager:destroy');
+  },
+  methods: {
+    async index_load() {
+      const res = await this.base_loadItem();
+      if (!res) return;
+      await this.layout_prepareConfig();
+      await this.share_updateLink();
+      this.base.ready = true;
+    },
   },
 };
