@@ -1,18 +1,17 @@
 {
-  "name": "egg-born-module-a-wechat",
-  "version": "5.0.12",
-  "title": "Wechat",
+  "name": "egg-born-module-a-hostwechat-sync",
+  "version": "4.0.0",
+  "title": "a-hostwechat-sync",
   "eggBornModule": {
-    "fileVersion": 2,
+    "fileVersion": 0,
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0"
     }
   },
-  "description": "wechat api for CabloyJS",
+  "description": "",
   "keywords": [
-    "Cabloy Module",
-    "Wechat"
+    "Cabloy Module"
   ],
   "scripts": {
     "build:front": "node ../../../packages/egg-born-bin/bin/egg-born-bin.js front-build-module",
@@ -21,14 +20,10 @@
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
+  "devDependencies": {},
   "dependencies": {
-    "@zhennann/co-wechat-api": "^3.10.6",
-    "@zhennann/passport-wechat": "^3.0.3",
-    "egg-born-module-a-hostwechat-sync": "^4.0.0",
     "egg-born-mock": "^2.1.1",
-    "extend2": "^1.0.0",
     "require3": "^2.0.7",
-    "wechat-crypto": "^0.0.2",
-    "xml2js": "^0.4.23"
+    "extend2": "^1.0.0"
   }
 }
