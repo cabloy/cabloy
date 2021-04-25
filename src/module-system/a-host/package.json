@@ -14,8 +14,8 @@
     "Cabloy Module"
   ],
   "scripts": {
-    "build:front": "node ../../../node_modules/.bin/egg-born-bin front-build-module",
-    "build:backend": "node ../../../node_modules/.bin/egg-born-bin backend-build-module",
+    "build:front": "node ../../../packages/egg-born-bin/bin/egg-born-bin.js front-build-module",
+    "build:backend": "node ../../../packages/egg-born-bin/bin/egg-born-bin.js backend-build-module",
     "lint": "node ../../../node_modules/.bin/eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
