@@ -19,11 +19,8 @@ function install(_Vue, cb) {
 }
 
 async function __onLoaded() {
-  const config = Vue.prototype.$meta.config.modules['test-hostsimple'];
-  if (!config.enableTest) return;
-  // in localhost
-  const hostname = window.location.hostname;
-  if (hostname !== 'localhost' && hostname !== '127.0.0.1') return;
+  // in wechat
+  if (!Vue.prototype.$device.wechat) return;
   // capability: share link
   const action = {
     actionModule: 'a-host',
@@ -33,7 +30,7 @@ async function __onLoaded() {
   const item = {
     name: 'shareLink',
     action: {
-      module: 'test-hostsimple',
+      module: 'a-hostwechat',
       component: 'capabilities',
     },
   };
