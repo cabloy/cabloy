@@ -8,10 +8,11 @@ module.exports = appInfo => {
   config.disabledModules = [
     'test-dingtalk',
     'test-flow',
+    'test-hostsimple',
     'test-localeone',
     'test-localetwo',
     'test-party',
-    'test-partymonkey-monkey',
+    'test-partymonkey',
     'test-wechat',
     'test-wxwork',
   ];
