@@ -7,7 +7,7 @@ export default {
       if (action.name === 'shareLink') return this._shareLink({ ctx, action, item });
     },
     _shareLink({ item }) {
-      // console.log(item);
+      console.log(item);
     },
 
   },

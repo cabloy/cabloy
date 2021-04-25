@@ -19,6 +19,8 @@ function install(_Vue, cb) {
 }
 
 async function __onLoaded() {
+  const config = Vue.prototype.$meta.config.modules['test-hostsimple'];
+  if (!config.enableTest) return;
   // in localhost
   const hostname = window.location.hostname;
   if (hostname !== 'localhost' && hostname !== '127.0.0.1') return;
