@@ -1,8 +1,8 @@
 module.exports = app => {
   class ShareController extends app.Controller {
 
-    async createLink() {
-      const res = await this.service.share.createLink({
+    async create() {
+      const res = await this.service.share.create({
         host: this.ctx.request.body.host,
         atomId: this.ctx.request.body.atomId,
         user: this.ctx.state.user.op,
