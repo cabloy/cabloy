@@ -17,8 +17,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
             host varchar(255) DEFAULT NULL,
-            pv int(11) DEFAULT '0',
-            uv int(11) DEFAULT '0',
+            url varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -47,8 +46,9 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
-            shareId int(11) DEFAULT '0',
-            userId int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            userIdSource int(11) DEFAULT '0',
+            userIdTarget int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

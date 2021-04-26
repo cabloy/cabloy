@@ -5,7 +5,12 @@ export default {
   },
   methods: {
     async share_createLink({ capability }) {
-
+      const res = await this.$api.post('/a/share/share/generate', {
+        host: capability.host,
+        atomId: this.container.atomId,
+        url: this.$pageRoute.url,
+      });
+      return res.link;
     },
     async share_updateLink() {
       // only stage:formal
