@@ -4,9 +4,12 @@ export default {
     };
   },
   methods: {
+    async share_createLink({ capability }) {
+
+    },
     async share_updateLink() {
       // only stage:formal
-      if (this.base.item.atomStage !== 1) return;
+      if (this.base.item.atomStage !== 1 || this.base_user.anonymous) return;
       try {
         // lookup
         let action = {
@@ -28,7 +31,7 @@ export default {
         // item
         const title = this.base.item.atomName;
         const desc = this.base.item.description;
-        const link = '';
+        const link = await this.share_createLink({ capability });
         const imgUrl = this.base.item.imageFirst;
         const item = {
           name: 'shareLink',
