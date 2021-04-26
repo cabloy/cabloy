@@ -1,6 +1,6 @@
 module.exports = app => {
   const routes = [
-    { method: 'post', path: 'share/generate', controller: 'user',
+    { method: 'post', path: 'share/generate', controller: 'share',
       meta: {
         auth: { user: true },
       },
