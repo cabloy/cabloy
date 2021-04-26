@@ -21,21 +21,40 @@ function install(_Vue, cb) {
 async function __onLoaded() {
   // in wechat
   if (!Vue.prototype.$device.wechat) return;
-  // capability: share link
-  const action = {
-    actionModule: 'a-host',
-    actionComponent: 'capabilities',
-    name: 'register',
-  };
-  const item = {
-    name: 'shareLink',
-    host: 'wechat',
+  // register
+  await __register();
+}
+
+async function __register() {
+  const hostName = 'wechat';
+  const capabilityName = 'shareLink';
+  // register host
+  await Vue.prototype.$meta.util.performAction({
     action: {
-      module: 'a-hostwechat',
-      component: 'capabilities',
+      actionModule: 'a-host',
+      actionComponent: 'hosts',
+      name: 'register',
     },
-  };
-  await Vue.prototype.$meta.util.performAction({ action, item });
+    item: {
+      name: hostName,
+      action: {
+        module: 'a-hostwechat',
+        component: 'capabilities',
+      },
+    },
+  });
+  // register capability
+  await Vue.prototype.$meta.util.performAction({
+    action: {
+      actionModule: 'a-host',
+      actionComponent: 'capabilities',
+      name: 'register',
+    },
+    item: {
+      name: capabilityName,
+      host: hostName,
+    },
+  });
 }
 
 // export

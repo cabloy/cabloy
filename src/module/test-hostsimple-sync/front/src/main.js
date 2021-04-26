@@ -31,7 +31,7 @@ async function __onLoaded() {
 async function __register() {
   const hostName = 'test-simple';
   const capabilityName = 'shareLink';
-  // register host: test-simple
+  // register host
   await Vue.prototype.$meta.util.performAction({
     action: {
       actionModule: 'a-host',
@@ -46,7 +46,7 @@ async function __register() {
       },
     },
   });
-  // register capability: share link
+  // register capability
   await Vue.prototype.$meta.util.performAction({
     action: {
       actionModule: 'a-host',
