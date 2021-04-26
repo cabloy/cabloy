@@ -8,8 +8,19 @@ export default {
       // only stage:formal
       if (this.base.item.atomStage !== 1) return;
       try {
+        // lookup
+        let action = {
+          actionModule: 'a-host',
+          actionComponent: 'capabilities',
+          name: 'lookup',
+        };
+        const capability = await this.$meta.util.performAction({ ctx: this, action, item: {
+          name: 'shareLink',
+        },
+        });
+        if (!capability) return;
         // action
-        const action = {
+        action = {
           actionModule: 'a-host',
           actionComponent: 'capabilities',
           name: 'invoke',

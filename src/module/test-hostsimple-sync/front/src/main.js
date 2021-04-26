@@ -32,6 +32,7 @@ async function __onLoaded() {
   };
   const item = {
     name: 'shareLink',
+    host: 'test-simple',
     action: {
       module: 'test-hostsimple',
       component: 'capabilities',

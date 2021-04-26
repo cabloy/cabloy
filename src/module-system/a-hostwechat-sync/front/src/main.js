@@ -29,6 +29,7 @@ async function __onLoaded() {
   };
   const item = {
     name: 'shareLink',
+    host: 'wechat',
     action: {
       module: 'a-hostwechat',
       component: 'capabilities',
