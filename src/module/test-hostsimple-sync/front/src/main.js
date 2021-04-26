@@ -24,21 +24,40 @@ async function __onLoaded() {
   // in localhost
   const hostname = window.location.hostname;
   if (hostname !== 'localhost' && hostname !== '127.0.0.1') return;
-  // capability: share link
-  const action = {
-    actionModule: 'a-host',
-    actionComponent: 'capabilities',
-    name: 'register',
-  };
-  const item = {
-    name: 'shareLink',
-    host: 'test-simple',
+  // register
+  await __register();
+}
+
+async function __register() {
+  const hostName = 'test-simple';
+  const capabilityName = 'shareLink';
+  // register host: test-simple
+  await Vue.prototype.$meta.util.performAction({
     action: {
-      module: 'test-hostsimple',
-      component: 'capabilities',
+      actionModule: 'a-host',
+      actionComponent: 'hosts',
+      name: 'register',
     },
-  };
-  await Vue.prototype.$meta.util.performAction({ action, item });
+    item: {
+      name: hostName,
+      action: {
+        module: 'test-hostsimple',
+        component: 'capabilities',
+      },
+    },
+  });
+  // register capability: share link
+  await Vue.prototype.$meta.util.performAction({
+    action: {
+      actionModule: 'a-host',
+      actionComponent: 'capabilities',
+      name: 'register',
+    },
+    item: {
+      name: capabilityName,
+      host: hostName,
+    },
+  });
 }
 
 // export

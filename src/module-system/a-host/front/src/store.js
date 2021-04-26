@@ -3,12 +3,17 @@ export default function(Vue) {
 
   return {
     state: {
+      hosts: {},
       capabilities: {},
     },
     getters: {
     },
     mutations: {
-      register(state, capability) {
+      registerHost(state, host) {
+        const name = host.name;
+        state.hosts[name] = host;
+      },
+      registerCapability(state, capability) {
         const name = capability.name;
         state.capabilities[name] = capability;
       },
