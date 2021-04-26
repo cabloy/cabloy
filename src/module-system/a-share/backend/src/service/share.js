@@ -6,6 +6,10 @@ module.exports = app => {
       return await this.ctx.bean.share.generate({ host, atomId, url, user });
     }
 
+    async shareGo({ uuid, user }) {
+      return await this.ctx.bean.share.shareGo({ uuid, user });
+    }
+
   }
 
   return Share;

@@ -28,9 +28,20 @@ module.exports = ctx => {
         item.id = res.insertId;
       }
       // link
-      const link = item.id;
+      const link = ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${item.uuid}`);
       // ok
       return { link };
+    }
+
+    async shareGo({ uuid, user }) {
+      const userId = user.id;
+      // get
+      const item = await this.modelShare.get({ uuid });
+      if (!item) ctx.throw(404);
+      // url
+      const url = ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
+      // redirect
+      ctx.redirect(url);
     }
 
   }

@@ -5,6 +5,7 @@ module.exports = app => {
         auth: { user: true },
       },
     },
+    { method: 'get', path: 'go/:uuid', controller: 'share', action: 'shareGo' },
   ];
   return routes;
 };

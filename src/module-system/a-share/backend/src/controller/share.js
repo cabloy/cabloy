@@ -11,6 +11,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async shareGo() {
+      await this.service.share.shareGo({
+        uuid: this.ctx.params.uuid,
+        user: this.ctx.state.user.op,
+      });
+    }
+
   }
   return ShareController;
 };
