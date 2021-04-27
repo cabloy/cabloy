@@ -67,6 +67,7 @@ module.exports = appInfo => {
       },
     },
     jssdk: {
+      // debug: true,
       debug: false,
       jsApiList,
     },

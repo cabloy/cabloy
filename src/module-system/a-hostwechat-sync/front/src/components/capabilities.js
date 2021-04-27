@@ -24,14 +24,14 @@ export default {
         desc: item.desc,
         link: item.link,
         imgUrl: item.imgUrl,
-        success: item.success,
+        // success: item.success,
       });
       // 分享给朋友圈
       wx.updateTimelineShareData({
         title: item.title,
         link: item.link,
         imgUrl: item.imgUrl,
-        success: item.success,
+        // success: item.success,
       });
     },
   },
