@@ -93,6 +93,11 @@ module.exports = appInfo => {
       aSettings: 'createdAt,updatedAt,module+scene+userId',
       aSettingsRef: 'createdAt,updatedAt,module+scene+userId+name',
     },
+    'a-share': {
+      aShare: 'createdAt,updatedAt,uuid,atomId,userId,host',
+      aShareRecordPV: 'createdAt,updatedAt,shareId,userId',
+      aShareRecordUV: 'createdAt,updatedAt,atomId,userIdSource,userIdTarget',
+    },
     'a-socketio': {
       aSocketIOMessage: 'createdAt,updatedAt,messageClassId,messageFilter,sessionId',
       aSocketIOMessageClass: 'createdAt,updatedAt,module+messageClassName',
