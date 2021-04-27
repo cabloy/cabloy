@@ -156,6 +156,9 @@ export default function(Vue) {
     parseModuleInfo(moduleName) {
       return mparse.parseInfo(moduleName);
     },
+    getBaseURL() {
+      return Vue.prototype.$meta.config.api.baseURL || window.location.origin;
+    },
     combineApiPath(moduleName, arg) {
       if (arg.charAt(0) === '/') return arg;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
@@ -166,9 +169,7 @@ export default function(Vue) {
     },
     combineFetchPath(moduleName, arg) {
       let url = this._combineFetchPath(moduleName, arg);
-      if (Vue.prototype.$meta.config.api.baseURL) {
-        url = `${Vue.prototype.$meta.config.api.baseURL}${url}`;
-      }
+      url = `${this.getBaseURL()}${url}`;
       return url;
     },
     _combineFetchPath(moduleName, arg) {
@@ -179,9 +180,7 @@ export default function(Vue) {
     },
     combineStaticPath(moduleName, arg) {
       let url = this._combineStaticPath(moduleName, arg);
-      if (Vue.prototype.$meta.config.api.baseURL) {
-        url = `${Vue.prototype.$meta.config.api.baseURL}${url}`;
-      }
+      url = `${this.getBaseURL()}${url}`;
       return url;
     },
     _combineStaticPath(moduleName, arg) {

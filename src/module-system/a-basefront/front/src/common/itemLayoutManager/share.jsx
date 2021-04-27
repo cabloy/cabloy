@@ -37,7 +37,11 @@ export default {
         const title = this.base.item.atomName || '';
         const desc = this.base.item.description || this.base.item.summary || '';
         const link = await this.share_createLink({ capability });
-        const imgUrl = this.base.item.imageCover || this.base.item.imageFirst;
+        let imgUrl = this.base.item.imageCover || this.base.item.imageFirst;
+        if (!imgUrl) {
+          const configBase = this.$meta.config.modules['a-base'];
+          imgUrl = this.$meta.util.combineFetchStaticPath(configBase.site.cover);
+        }
         const item = {
           name: 'shareLink',
           options: {

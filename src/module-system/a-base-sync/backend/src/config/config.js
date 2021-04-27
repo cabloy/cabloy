@@ -158,5 +158,12 @@ module.exports = appInfo => {
     privacyFields: 'createdAt,updatedAt,realName,locale,email,mobile,activated,emailConfirmed,mobileVerified',
   };
 
+  // configFront
+  config.configFront = {
+    site: {
+      cover: '/api/static/a/base/img/cabloy.png',
+    },
+  };
+
   return config;
 };

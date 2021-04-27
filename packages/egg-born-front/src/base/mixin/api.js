@@ -147,8 +147,9 @@ function apiDebounce({ Vue }) {
   // actions
   const actions = invokes.map(item => {
     let url = item.args[0];
-    if (Vue.prototype.$meta.config.api.baseURL) {
-      url = url.substr(Vue.prototype.$meta.config.api.baseURL.length);
+    const baseURL = Vue.prototype.$meta.util.getBaseURL();
+    if (url.indexOf(baseURL) === 0) {
+      url = url.substr(baseURL.length);
     }
     url = url.substr('/api'.length);
     const params = {
