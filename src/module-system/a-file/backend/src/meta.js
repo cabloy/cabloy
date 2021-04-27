@@ -9,7 +9,12 @@ module.exports = app => {
       validators: {
       },
       keywords: {},
-      schemas: {
+      schemas,
+    },
+    event: {
+      declarations: {
+        fileUpdateCheck: 'File Update Check',
+        fileDownloadCheck: 'File Download Check',
       },
     },
   };
