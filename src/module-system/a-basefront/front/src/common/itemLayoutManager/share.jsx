@@ -34,10 +34,10 @@ export default {
           name: 'invoke',
         };
         // item
-        const title = this.base.item.atomName;
-        const desc = this.base.item.description;
+        const title = this.base.item.atomName || '';
+        const desc = this.base.item.description || this.base.item.summary || '';
         const link = await this.share_createLink({ capability });
-        const imgUrl = this.base.item.imageFirst;
+        const imgUrl = this.base.item.imageCover || this.base.item.imageFirst;
         const item = {
           name: 'shareLink',
           options: {
