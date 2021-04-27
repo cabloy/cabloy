@@ -56,7 +56,7 @@ module.exports = ctx => {
       }
       // not self
       if (item.userId !== userId) {
-        await this._share_record({ item, userId });
+        await this._share_record({ item, user });
       }
       // redirect to original url
       const url = ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
@@ -68,11 +68,22 @@ module.exports = ctx => {
       return ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${uuid}`);
     }
 
-    async _share_record({ item, userId }) {
+    async _share_record({ item, user }) {
+      const userId = user.id;
       // aShareRecordPV
-      await this.modelShareRecordPV.insert({
-        shareId: item.id,
-        userId,
+      await ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'shareRecordPV',
+        data: { share: item, user },
+        next: async (context, next) => {
+          // record
+          await this.modelShareRecordPV.insert({
+            shareId: item.id,
+            userId,
+          });
+          // next
+          await next();
+        },
       });
       // aShareRecordUV
       const uvData = {
@@ -82,7 +93,17 @@ module.exports = ctx => {
       };
       const uv = await this.modelShareRecordUV.get(uvData);
       if (!uv) {
-        await this.modelShareRecordUV.insert(uvData);
+        await ctx.bean.event.invoke({
+          module: moduleInfo.relativeName,
+          name: 'shareRecordUV',
+          data: { share: item, user },
+          next: async (context, next) => {
+            // record
+            await this.modelShareRecordUV.insert(uvData);
+            // next
+            await next();
+          },
+        });
       }
     }
 

@@ -13,6 +13,12 @@ module.exports = app => {
       keywords: {},
       schemas,
     },
+    event: {
+      declarations: {
+        shareRecordPV: 'Share Record PV',
+        shareRecordUV: 'Share Record UV',
+      },
+    },
   };
   return meta;
 };
