@@ -9,6 +9,14 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).share;
     }
 
+    get modelShareRecordPV() {
+      return ctx.model.module(moduleInfo.relativeName).shareRecordPV;
+    }
+
+    get modelShareRecordUV() {
+      return ctx.model.module(moduleInfo.relativeName).shareRecordUV;
+    }
+
     async generate({ host, atomId, url, user }) {
       const userId = user.id;
       // get
@@ -28,20 +36,54 @@ module.exports = ctx => {
         item.id = res.insertId;
       }
       // link
-      const link = ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${item.uuid}`);
+      const link = this._combine_shareLink(item.uuid);
       // ok
       return { link };
     }
 
     async shareGo({ uuid, user }) {
       const userId = user.id;
-      // get
+      // get share
       const item = await this.modelShare.get({ uuid });
       if (!item) ctx.throw(404);
-      // url
+      // anonymous
+      if (user.anonymous) {
+        // redirect to login
+        const shareLink = this._combine_shareLink(uuid);
+        const url = ctx.bean.base.getAbsoluteUrl(`/#!${shareLink}`);
+        ctx.redirect(url);
+        return;
+      }
+      // not self
+      if (item.userId !== userId) {
+        await this._share_record({ item, userId });
+      }
+      // redirect to original url
       const url = ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
       // redirect
       ctx.redirect(url);
+    }
+
+    _combine_shareLink(uuid) {
+      return ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${uuid}`);
+    }
+
+    async _share_record({ item, userId }) {
+      // aShareRecordPV
+      await this.modelShareRecordPV.insert({
+        shareId: item.id,
+        userId,
+      });
+      // aShareRecordUV
+      const uvData = {
+        atomId: item.atomId,
+        userIdSource: item.userId,
+        userIdTarget: userId,
+      };
+      const uv = await this.modelShareRecordUV.get(uvData);
+      if (!uv) {
+        await this.modelShareRecordUV.insert(uvData);
+      }
     }
 
   }
