@@ -356,6 +356,15 @@ module.exports = app => {
         await this.ctx.model.query('drop view aCmsArticleViewSearch');
       }
 
+      if (options.version === 10) {
+        // alter table: aCmsArticle
+        const sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN imageCover varchar(255) DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {

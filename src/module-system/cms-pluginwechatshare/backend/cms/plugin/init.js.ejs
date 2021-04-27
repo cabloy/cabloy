@@ -11,7 +11,7 @@ function _wechatshareinit(wx) {
     title: _article.atomName,
     desc: _article.description || _article._meta.summary || '',
     link: util.url(_article.url),
-    imgUrl: _article.imageFirst || '',
+    imgUrl: _article.imageCover || _article.imageFirst || '',
     success() {
       // 设置成功
     },
@@ -20,7 +20,7 @@ function _wechatshareinit(wx) {
   wx.updateTimelineShareData({
     title: _article.atomName,
     link: util.url(_article.url),
-    imgUrl: _article.imageFirst || '',
+    imgUrl: _article.imageCover || _article.imageFirst || '',
     success() {
       // 设置成功
     },

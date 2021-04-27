@@ -134,7 +134,7 @@ function _loadMore({ categoryId, tagId, search }) {
       const sticky = !item.sticky ? '' : '<i class="fas fa-thumbtack"></i> ';
       const audio = !item.audioFirst ? '' : '<i class="fas fa-music"></i> ';
       const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
-      const mediaUrl = item.imageFirst || item.audioCoverFirst;
+      const mediaUrl = item.imageCover || item.imageFirst || item.audioCoverFirst;
       const media = !mediaUrl ? '' : `
 <div class="media-right">
       <a target="_blank" href="${util.url(item.url)}">

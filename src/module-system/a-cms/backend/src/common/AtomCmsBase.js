@@ -112,6 +112,9 @@ module.exports = app => {
           }
         }
       }
+      if (audioCoverFirst && !imageFirst) {
+        imageFirst = audioCoverFirst;
+      }
       // html
       const { html, summary } = this._renderContent({ item });
       // update article
@@ -126,6 +129,7 @@ module.exports = app => {
         sorting: item.sorting,
         flag: item.flag,
         extra: item.extra || '{}',
+        imageCover: item.imageCover,
         imageFirst,
         audioFirst,
         audioCoverFirst,

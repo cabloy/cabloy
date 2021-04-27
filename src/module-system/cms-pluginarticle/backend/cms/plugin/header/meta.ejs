@@ -18,8 +18,8 @@
   <meta property="og:title" content="<%=title%>" />
   <meta property='og:description' content="<%=article.description || article.summary%>" />
   <meta property="og:url" content="<%=url(article.url)%>" />
-  <% if(article.imageFirst){ %>
-  <meta property="og:image" content="<%=article.imageFirst%>" />
+  <% if(article.imageCover || article.imageFirst){ %>
+  <meta property="og:image" content="<%=article.imageCover || article.imageFirst%>" />
   <% } %>
 <% }else{ %>
   <% if(title){ %>

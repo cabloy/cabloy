@@ -1,6 +1,6 @@
 <div class="social-share"
   data-url="<%=url(article.url)%>"
-  data-image="<%=article.imageFirst%>"
+  data-image="<%=article.imageCover || article.imageFirst%>"
   data-sites="<%=site.plugins['cms-pluginsocialshare'].sites%>"
   data-mobile-sites="<%=site.plugins['cms-pluginsocialshare'].mobileSites%>"
   data-disabled="<%=site.plugins['cms-pluginsocialshare'].disabled%>"
