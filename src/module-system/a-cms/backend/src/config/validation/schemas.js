@@ -63,22 +63,22 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Description',
       },
-      slug: {
+      imageCover: {
         type: 'string',
-        ebType: 'text',
-        ebTitle: 'Slug',
-        'x-slug': true,
-      },
-      allowComment: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Allow Comment',
-        default: true,
+        ebType: 'file',
+        ebTitle: 'ArticleCover',
+        ebParams: { mode: 1 },
       },
       // Extra
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
+      },
+      slug: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Slug',
+        'x-slug': true,
       },
       sticky: {
         type: 'boolean',
@@ -90,6 +90,12 @@ module.exports = app => {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Sorting',
+      },
+      allowComment: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Comment',
+        default: true,
       },
       flag: {
         type: 'string',
