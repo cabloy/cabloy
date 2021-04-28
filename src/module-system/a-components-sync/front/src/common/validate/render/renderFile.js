@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   methods: {
     renderFile(c, context) {
@@ -46,6 +47,72 @@ export default {
       const accept = property.ebParams.accept;
       // fixed
       const fixed = property.ebParams.fixed;
+      // buttons
+      const buttons = [];
+      // view
+      if (mode === 1 && value) {
+        const photoBrowserId = Vue.prototype.$meta.util.nextId('photoBrowser');
+        buttons.push(c('eb-button', {
+          key: 'button-view',
+          domProps: { innerText: this.$text('View') },
+          props: {
+            onPerform: () => {
+              this.$refs[photoBrowserId].open();
+            },
+          },
+        }));
+        const photos = [{
+          url: value,
+          caption: title,
+        }];
+        buttons.push(c('f7-photo-browser', {
+          key: 'photo-browser',
+          ref: photoBrowserId,
+          props: {
+            photos,
+            type: 'page',
+          },
+        }));
+      }
+      buttons.push(c('eb-button', {
+        key: 'button-upload',
+        domProps: { innerText: this.$text('Upload') },
+        props: {
+          onPerform: () => {
+            this.$view.navigate('/a/file/file/upload', {
+              target: '_self',
+              context: {
+                params: {
+                  mode,
+                  atomId,
+                  attachment,
+                  flag,
+                  accept,
+                  fixed,
+                },
+                callback: (code, value) => {
+                  if (code === 200) {
+                    context.setValue(value.downloadUrl);
+                  }
+                },
+              },
+            });
+          },
+        },
+      }));
+      // children
+      const children = [];
+      children.push(c('div', {
+        key: 'label',
+        slot: 'label',
+        staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+        domProps: { innerText: title },
+      }));
+      children.push(c('div', {
+        key: 'buttons',
+        slot: 'root-end',
+        staticClass: 'eb-input-file-upload',
+      }, buttons));
       // render
       return c('eb-list-input', {
         key,
@@ -71,7 +138,8 @@ export default {
               window.clearTimeout(timeoutId);
               upload.data('timeoutId', 0);
             }
-            upload.show();
+            upload.css('display', 'flex');
+            // upload.show();
           },
           blur: () => {
             const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
@@ -82,40 +150,7 @@ export default {
             upload.data('timeoutId', timeoutId);
           },
         },
-      }, [
-        c('div', {
-          slot: 'label',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          domProps: { innerText: title },
-        }),
-        c('eb-button', {
-          slot: 'root-end',
-          staticClass: 'eb-input-file-upload',
-          domProps: { innerText: this.$text('Upload') },
-          props: {
-            onPerform: () => {
-              this.$view.navigate('/a/file/file/upload', {
-                target: '_self',
-                context: {
-                  params: {
-                    mode,
-                    atomId,
-                    attachment,
-                    flag,
-                    accept,
-                    fixed,
-                  },
-                  callback: (code, value) => {
-                    if (code === 200) {
-                      context.setValue(value.downloadUrl);
-                    }
-                  },
-                },
-              });
-            },
-          },
-        }),
-      ]);
+      }, children);
     },
   },
 };
