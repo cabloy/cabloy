@@ -3,7 +3,7 @@ let Vue;
 import './assets/css/module.less';
 
 // install
-function install(_Vue, cb) {
+function install(_Vue, cb, { moduleInfo }) {
   if (Vue) return console.error('already installed.');
 
   Vue = _Vue;
@@ -14,21 +14,23 @@ function install(_Vue, cb) {
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: require('./components.js').default,
-    onLoaded: __onLoaded,
+    onLoaded: () => {
+      __onLoaded({ moduleInfo });
+    },
   });
 }
 
-async function __onLoaded() {
-  const config = Vue.prototype.$meta.config.modules['test-hostsimple'];
+async function __onLoaded({ moduleInfo }) {
+  const config = Vue.prototype.$meta.config.modules[moduleInfo.relativeName];
   if (!config.enableTest) return;
   // in localhost
   const hostname = window.location.hostname;
   if (hostname !== 'localhost' && hostname !== '127.0.0.1') return;
   // register
-  await __register();
+  await __register({ moduleInfo });
 }
 
-async function __register() {
+async function __register({ moduleInfo }) {
   const hostName = 'test-simple';
   const capabilityName = 'shareLink';
   // register host
@@ -41,7 +43,7 @@ async function __register() {
     item: {
       name: hostName,
       action: {
-        module: 'test-hostsimple',
+        module: moduleInfo.relativeName,
         component: 'capabilities',
       },
     },

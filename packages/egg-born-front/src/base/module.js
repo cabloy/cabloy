@@ -79,8 +79,8 @@ export default function(Vue) {
       }
     },
     install(instance, moduleInfo, cb) {
-      // install
-      Vue.use(instance.default, options => {
+      // callback
+      const callback = options => {
         // module
         const module = {
           name: moduleInfo.relativeName,
@@ -106,7 +106,9 @@ export default function(Vue) {
         }
         // ready
         return cb && cb(module);
-      });
+      };
+      // install
+      Vue.use(instance.default, callback, { moduleInfo });
     },
     _import(relativeName, cb) {
       const moduleRepo = modulesRepo.modules[relativeName];
