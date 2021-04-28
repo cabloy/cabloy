@@ -77,10 +77,13 @@ module.exports = ctx => {
         data: { share: item, user },
         next: async (context, next) => {
           // record
-          await this.modelShareRecordPV.insert({
+          const res = await this.modelShareRecordPV.insert({
             shareId: item.id,
             userId,
           });
+          context.result = {
+            recordId: res.insertId,
+          };
           // next
           await next();
         },
@@ -99,7 +102,10 @@ module.exports = ctx => {
           data: { share: item, user },
           next: async (context, next) => {
             // record
-            await this.modelShareRecordUV.insert(uvData);
+            const res = await this.modelShareRecordUV.insert(uvData);
+            context.result = {
+              recordId: res.insertId,
+            };
             // next
             await next();
           },
