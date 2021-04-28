@@ -88,9 +88,12 @@ export default {
       this.$refs.buttonSave.onClick();
     },
     actions_submit(event, action) {
+      const options = { action };
       const validateInstance = this.validate_getInstance();
-      if (!validateInstance) return;
-      return validateInstance.perform(event, { action });
+      if (!validateInstance) {
+        return this.validate_onPerformValidate(event, options);
+      }
+      return validateInstance.perform(event, options);
     },
     actions_onAction(event, action) {
       if (action === 'save' || action === 'submit') {
