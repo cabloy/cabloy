@@ -196,6 +196,11 @@ module.exports = appInfo => {
       aSettings: 'createdAt,updatedAt,module+scene+userId',
       aSettingsRef: 'createdAt,updatedAt,module+scene+userId+name',
     },
+    'a-share': {
+      aShare: 'createdAt,updatedAt,uuid,atomId,userId,host',
+      aShareRecordPV: 'createdAt,updatedAt,shareId,userId',
+      aShareRecordUV: 'createdAt,updatedAt,atomId,userIdSource,userIdTarget',
+    },
     'a-socketio': {
       aSocketIOMessage: 'createdAt,updatedAt,messageClassId,messageFilter,sessionId',
       aSocketIOMessageClass: 'createdAt,updatedAt,module+messageClassName',
@@ -395,8 +400,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

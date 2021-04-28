@@ -2177,6 +2177,15 @@ module.exports = app => {
         await this.ctx.model.query('drop view aCmsArticleViewSearch');
       }
 
+      if (options.version === 10) {
+        // alter table: aCmsArticle
+        const sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN imageCover varchar(255) DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
@@ -2693,6 +2702,9 @@ module.exports = app => {
           }
         }
       }
+      if (audioCoverFirst && !imageFirst) {
+        imageFirst = audioCoverFirst;
+      }
       // html
       const { html, summary } = this._renderContent({ item });
       // update article
@@ -2707,6 +2719,7 @@ module.exports = app => {
         sorting: item.sorting,
         flag: item.flag,
         extra: item.extra || '{}',
+        imageCover: item.imageCover,
         imageFirst,
         audioFirst,
         audioCoverFirst,
@@ -3568,22 +3581,22 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Description',
       },
-      slug: {
+      imageCover: {
         type: 'string',
-        ebType: 'text',
-        ebTitle: 'Slug',
-        'x-slug': true,
-      },
-      allowComment: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Allow Comment',
-        default: true,
+        ebType: 'file',
+        ebTitle: 'ArticleCover',
+        ebParams: { mode: 1 },
       },
       // Extra
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
+      },
+      slug: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Slug',
+        'x-slug': true,
       },
       sticky: {
         type: 'boolean',
@@ -3595,6 +3608,12 @@ module.exports = app => {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Sorting',
+      },
+      allowComment: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Comment',
+        default: true,
       },
       flag: {
         type: 'string',
