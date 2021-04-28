@@ -7,8 +7,9 @@ const configExists=config.appID && config.appSecret;
 $(document).on('echo-ready', function() {
   // wechat
   if(_wechatcheckenv()) {
-    _wechatsdkinit();
-    _wechatautologin();
+    if(_wechatautologin()){
+      _wechatsdkinit();
+    }
   }
 });
 
@@ -26,10 +27,12 @@ function _wechatautologin(){
     // auto login
     const url=`${env.site.serverUrl}/#!${location.href}`;
     window.location.assign(url);
+    return false;
   }else{
     window.setTimeout(function(){
       $('.navbar-user .user-logout').remove();
     },0);
+    return true;
   }
 }
 
