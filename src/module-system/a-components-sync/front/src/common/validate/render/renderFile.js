@@ -5,20 +5,56 @@ export default {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = context.getValue();
+      const mode = property.ebParams.mode;
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
+        const children = [];
+        children.push(c('div', {
+          key: 'title',
+          slot: 'title',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          domProps: { innerText: title },
+        }));
+        if (mode === 1 && value) {
+          const buttons = [];
+          const photoBrowserId = Vue.prototype.$meta.util.nextId('photoBrowser');
+          buttons.push(c('eb-button', {
+            key: 'button-view',
+            domProps: { innerText: this.$text('View') },
+            props: {
+              onPerform: () => {
+                this.$refs[photoBrowserId].open();
+              },
+            },
+          }));
+          const photos = [{
+            url: value,
+            caption: title,
+          }];
+          buttons.push(c('f7-photo-browser', {
+            key: 'photo-browser',
+            ref: photoBrowserId,
+            props: {
+              photos,
+              type: 'page',
+              exposition: false,
+            },
+          }));
+          children.push(c('div', {
+            key: 'value',
+            slot: 'after',
+          }, buttons));
+        } else {
+          children.push(c('div', {
+            key: 'value',
+            slot: 'after',
+            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+            domProps: { innerText: value },
+          }));
+        }
         return c('f7-list-item', {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          attrs: {
-            after: value,
-          },
-        }, [
-          c('div', {
-            slot: 'title',
-            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-            domProps: { innerText: title },
-          }),
-        ]);
+        }, children);
       }
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -30,8 +66,6 @@ export default {
       } else {
         type = 'text';
       }
-      // mode
-      const mode = property.ebParams.mode;
       // atomId: maybe from host
       let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
       if (typeof atomId === 'string') {
@@ -71,6 +105,7 @@ export default {
           props: {
             photos,
             type: 'page',
+            exposition: false,
           },
         }));
       }
