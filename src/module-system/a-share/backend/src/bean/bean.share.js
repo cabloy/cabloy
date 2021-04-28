@@ -59,7 +59,7 @@ module.exports = ctx => {
         await this._share_record({ item, user });
       }
       // redirect to original url
-      const url = ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
+      const url = item.url.indexOf('http') === 0 ? item.url : ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
       // redirect
       ctx.redirect(url);
     }
