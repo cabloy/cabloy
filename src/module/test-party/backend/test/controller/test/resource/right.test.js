@@ -7,7 +7,7 @@ describe('test/controller/test/function/right.test.js', () => {
 
     const checkRightResources = [
       [ 'Root', true ],
-      [ 'Tomson', false ],
+      [ 'Tomson', true ],
     ];
     for (const [ userName, right ] of checkRightResources) {
       // login

@@ -13,7 +13,7 @@ module.exports = app => {
         atomClassName: 'party',
         atomAction: 'create',
       }),
-      resourceRoles: 'template.system',
+      resourceRoles: 'template.system,family',
     },
     {
       atomName: 'Party List',
@@ -26,7 +26,7 @@ module.exports = app => {
         atomClassName: 'party',
         atomAction: 'read',
       }),
-      resourceRoles: 'template.system',
+      resourceRoles: 'template.system,authenticated',
     },
     {
       atomName: 'Kitchen-sink',

@@ -26,7 +26,7 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, resourceCount - 2);
+      assert.equal(list.length, resourceCount);
       assert.equal(!!list[0].atomNameLocale, true);
 
       // hold first
