@@ -29,12 +29,16 @@ module.exports = app => {
     }
 
     async passwordForgot() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { email } = this.ctx.request.body.data;
       await this.service.auth.passwordForgot({ email });
       this.ctx.success();
     }
 
     async passwordReset() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { passwordNew } = this.ctx.request.body.data;
       const token = this.ctx.request.body.token;
       await this.service.auth.passwordReset({ passwordNew, token });
