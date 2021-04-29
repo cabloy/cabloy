@@ -804,18 +804,24 @@ module.exports = app => {
     }
 
     async passwordChange() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { passwordOld, passwordNew } = this.ctx.request.body.data;
       await this.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.state.user.agent.id });
       this.ctx.success();
     }
 
     async passwordForgot() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { email } = this.ctx.request.body.data;
       await this.service.auth.passwordForgot({ email });
       this.ctx.success();
     }
 
     async passwordReset() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { passwordNew } = this.ctx.request.body.data;
       const token = this.ctx.request.body.token;
       await this.service.auth.passwordReset({ passwordNew, token });
@@ -1371,8 +1377,9 @@ module.exports = require("util");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

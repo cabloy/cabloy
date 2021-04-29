@@ -1428,6 +1428,7 @@ module.exports = app => {
           { title: 'Test_Set01_Atom_UserTask', value: 'set01_atomUserTask' },
           { title: 'Test_Set01_Atom_AssigneesConfirmation', value: 'set01_atomAssigneesConfirmation' },
         ],
+        notEmpty: true,
       },
       // Stats
       __groupStats: {
@@ -1702,105 +1703,103 @@ const extend = require3('extend2');
 module.exports = app => {
   const meta = {
   };
-  if (app.meta.isTest || app.meta.isLocal) {
-    const keywords = __webpack_require__(415)(app);
-    const schemas = __webpack_require__(232)(app);
-    const staticFlowDefs = __webpack_require__(772)(app);
-    const staticResources = __webpack_require__(429)(app);
-    const staticProducts = __webpack_require__(728)(app);
-    // meta
-    extend(true, meta, {
-      base: {
-        atoms: {
-          purchaseOrder: {
-            info: {
-              bean: 'purchaseOrder',
-              title: 'Purchase Order',
-              tableName: 'testFlowPurchaseOrder',
-              details: [ 'default' ],
-            },
-            actions: {
-            },
-            validator: 'purchaseOrder',
-            search: {
-              validator: 'purchaseOrderSearch',
-            },
+  const keywords = __webpack_require__(415)(app);
+  const schemas = __webpack_require__(232)(app);
+  const staticFlowDefs = __webpack_require__(772)(app);
+  const staticResources = __webpack_require__(429)(app);
+  const staticProducts = __webpack_require__(728)(app);
+  // meta
+  extend(true, meta, {
+    base: {
+      atoms: {
+        purchaseOrder: {
+          info: {
+            bean: 'purchaseOrder',
+            title: 'Purchase Order',
+            tableName: 'testFlowPurchaseOrder',
+            details: [ 'default' ],
           },
-          product: {
-            info: {
-              bean: 'product',
-              title: 'Product',
-              tableName: 'testFlowProduct',
-            },
-            actions: {
-            },
-            validator: 'product',
-            search: {
-              validator: 'productSearch',
-            },
+          actions: {
+          },
+          validator: 'purchaseOrder',
+          search: {
+            validator: 'purchaseOrderSearch',
           },
         },
-        statics: {
-          'a-flow.flowDef': {
-            items: staticFlowDefs,
+        product: {
+          info: {
+            bean: 'product',
+            title: 'Product',
+            tableName: 'testFlowProduct',
           },
-          'a-base.resource': {
-            items: staticResources,
+          actions: {
           },
-          'test-flow.product': {
-            items: staticProducts,
+          validator: 'product',
+          search: {
+            validator: 'productSearch',
           },
         },
       },
-      detail: {
-        details: {
-          default: {
-            info: {
-              bean: 'purchaseOrder',
-              title: 'Details',
-              tableName: 'testFlowPurchaseOrderDetail',
-            },
-            actions: {
-            },
-            validator: 'purchaseOrderDetail',
-          },
+      statics: {
+        'a-flow.flowDef': {
+          items: staticFlowDefs,
+        },
+        'a-base.resource': {
+          items: staticResources,
+        },
+        'test-flow.product': {
+          items: staticProducts,
         },
       },
-      validation: {
-        validators: {
-          // purchaseOrder
-          purchaseOrder: {
-            schemas: 'purchaseOrder',
+    },
+    detail: {
+      details: {
+        default: {
+          info: {
+            bean: 'purchaseOrder',
+            title: 'Details',
+            tableName: 'testFlowPurchaseOrderDetail',
           },
-          purchaseOrderSearch: {
-            schemas: 'purchaseOrderSearch',
+          actions: {
           },
-          // product
-          product: {
-            schemas: 'product',
-          },
-          productSearch: {
-            schemas: 'productSearch',
-          },
-          // purchaseOrderDetail
-          purchaseOrderDetail: {
-            schemas: 'purchaseOrderDetail',
-          },
-        },
-        keywords: {
-          'x-productCode': keywords.productCode,
-        },
-        schemas,
-      },
-      index: {
-        indexes: {
-          testFlowProduct: 'createdAt,updatedAt,atomId,productCode',
-          testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
-          testFlowPurchaseOrderDetail: 'createdAt,updatedAt,atomId,detailId',
+          validator: 'purchaseOrderDetail',
         },
       },
-    });
-  }
+    },
+    validation: {
+      validators: {
+        // purchaseOrder
+        purchaseOrder: {
+          schemas: 'purchaseOrder',
+        },
+        purchaseOrderSearch: {
+          schemas: 'purchaseOrderSearch',
+        },
+        // product
+        product: {
+          schemas: 'product',
+        },
+        productSearch: {
+          schemas: 'productSearch',
+        },
+        // purchaseOrderDetail
+        purchaseOrderDetail: {
+          schemas: 'purchaseOrderDetail',
+        },
+      },
+      keywords: {
+        'x-productCode': keywords.productCode,
+      },
+      schemas,
+    },
+    index: {
+      indexes: {
+        testFlowProduct: 'createdAt,updatedAt,atomId,productCode',
+        testFlowPurchaseOrder: 'createdAt,updatedAt,atomId',
+        testFlowPurchaseOrderDetail: 'createdAt,updatedAt,atomId,detailId',
+      },
+    },
+  });
   return meta;
 };
 
@@ -1877,12 +1876,10 @@ module.exports = app => {
 module.exports = app => {
   let routes = [
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      // flow/start
-      { method: 'post', path: 'flow/start', controller: 'flow' /* , middlewares: 'test' */ },
-    ]);
-  }
+  routes = routes.concat([
+    // flow/start
+    { method: 'post', path: 'flow/start', controller: 'flow', middlewares: 'test' },
+  ]);
   return routes;
 };
 

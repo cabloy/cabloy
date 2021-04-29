@@ -349,7 +349,7 @@ module.exports = ctx => {
       // end
       await this.flowInstance._endFlow({
         flowHandleStatus: 1,
-        flowRemark: 'Submitted',
+        flowRemark: 'End',
         atom: {
           submit: true,
         },
@@ -1961,7 +1961,7 @@ module.exports = {
       roles: null,
       vars: null,
     },
-    showAssignees: false,
+    showAssignees: true,
     confirmation: false,
     confirmationAllowAppend: false,
     bidding: false,

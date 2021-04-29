@@ -4424,6 +4424,13 @@ module.exports = app => {
       return `/${moduleInfo.url}/${arg}`;
     }
 
+    checkDemo() {
+      const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
+      if (demo.enable) {
+        this.ctx.throw.module(moduleInfo.relativeName, 1014);
+      }
+    }
+
   }
 
   return Util;
@@ -8397,6 +8404,9 @@ module.exports = appInfo => {
     site: {
       cover: '/api/static/a/base/img/cabloy.png',
     },
+    demo: {
+      enable: false,
+    },
   };
 
   return config;
@@ -8595,6 +8605,7 @@ module.exports = {
   1011: 'Invalid Arguments',
   1012: 'Cannot delete if has atoms',
   1013: 'Cannot delete if has children',
+  1014: 'DisabledOnDemoMode',
 };
 
 
@@ -8608,6 +8619,7 @@ module.exports = {
   CommentPublishTitleEditComment: 'Modified the comment',
   CommentPublishTitleReplyComment: 'Replied to your comment',
   CommentPublishTitleEditReplyComment: 'Modified the comment replied before',
+  DisabledOnDemoMode: 'Disabled on Demo Mode',
   CloneCopyText: 'Copy',
   KeyForAtom: 'Key',
   ViewLayout: 'View',
@@ -8651,6 +8663,7 @@ module.exports = {
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
   CommentPublishTitleEditReplyComment: '修改了回复的评论',
+  DisabledOnDemoMode: '演示模式中禁用',
   Draft: '草稿',
   Drafts: '草稿',
   Formal: '正式',
@@ -10279,6 +10292,8 @@ module.exports = app => {
     }
 
     async resourceRoleRemove() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.ctx.service.resource.resourceRoleRemove({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
@@ -10288,6 +10303,8 @@ module.exports = app => {
     }
 
     async resourceRoleAdd() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.ctx.service.resource.resourceRoleAdd({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,

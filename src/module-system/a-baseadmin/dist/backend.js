@@ -242,6 +242,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.add({
         roleId: this.ctx.request.body.roleId,
         atomClass: this.ctx.request.body.atomClass,
@@ -253,6 +255,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.delete({
         id: this.ctx.request.body.id,
       });
@@ -287,6 +291,8 @@ module.exports = app => {
     }
 
     async disable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.disable({
         id: this.ctx.request.body.id,
         disabled: this.ctx.request.body.disabled,
@@ -302,6 +308,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.save({
         id: this.ctx.request.body.id,
         config: this.ctx.request.body.data,
@@ -339,6 +347,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       await this.service.role.save({
         roleId: this.ctx.request.body.roleId,
         data: this.ctx.request.body.data,
@@ -347,6 +357,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.add({
         roleIdParent: this.ctx.request.body.roleIdParent,
       });
@@ -354,6 +366,8 @@ module.exports = app => {
     }
 
     async move() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.move({
         roleId: this.ctx.request.body.roleId,
         roleIdParent: this.ctx.request.body.roleIdParent,
@@ -362,6 +376,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.delete({
         roleId: this.ctx.request.body.roleId,
       });
@@ -378,6 +394,8 @@ module.exports = app => {
     }
 
     async addRoleInc() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.addRoleInc({
         roleId: this.ctx.request.body.roleId,
         roleIdInc: this.ctx.request.body.roleIdInc,
@@ -386,6 +404,8 @@ module.exports = app => {
     }
 
     async removeRoleInc() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.removeRoleInc({
         id: this.ctx.request.body.id,
       });
@@ -398,6 +418,8 @@ module.exports = app => {
     }
 
     async build() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.build();
       this.ctx.success(res);
     }
@@ -443,6 +465,8 @@ module.exports = app => {
     }
 
     async disable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.disable({
         userId: this.ctx.request.body.userId,
         disabled: this.ctx.request.body.disabled,
@@ -451,6 +475,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.delete({
         userId: this.ctx.request.body.userId,
       });
@@ -467,6 +493,8 @@ module.exports = app => {
     }
 
     async addRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.addRole({
         userId: this.ctx.request.body.userId,
         roleId: this.ctx.request.body.roleId,
@@ -475,6 +503,8 @@ module.exports = app => {
     }
 
     async removeRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.removeRole({
         id: this.ctx.request.body.id,
       });

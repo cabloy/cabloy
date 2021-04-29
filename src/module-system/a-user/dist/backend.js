@@ -148,6 +148,8 @@ module.exports = app => {
     }
 
     async saveLocale() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.saveLocale({
         data: this.ctx.request.body.data,
         user: this.ctx.state.user.agent,
@@ -171,6 +173,8 @@ module.exports = app => {
     }
 
     async addAgent() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.addAgent({
         userIdAgent: this.ctx.request.body.userIdAgent,
         userId: this.ctx.state.user.agent.id,
@@ -179,6 +183,8 @@ module.exports = app => {
     }
 
     async removeAgent() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.removeAgent({
         userIdAgent: this.ctx.request.body.userIdAgent,
         userId: this.ctx.state.user.agent.id,
@@ -187,6 +193,8 @@ module.exports = app => {
     }
 
     async switchAgent() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.switchAgent({
         userIdAgent: this.ctx.request.body.userIdAgent,
       });
@@ -194,6 +202,8 @@ module.exports = app => {
     }
 
     async switchOffAgent() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.switchOffAgent();
       this.ctx.success(res);
     }
@@ -206,6 +216,8 @@ module.exports = app => {
     }
 
     async authenticationDisable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.authenticationDisable({
         authId: this.ctx.request.body.authId,
         user: this.ctx.state.user.agent,
@@ -546,8 +558,9 @@ module.exports = app => {
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
