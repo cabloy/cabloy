@@ -22,15 +22,16 @@ module.exports = ctx => {
       }
       // sandbox
       let sandbox = {};
-      if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
-        sandbox.assert = assert;
-        sandbox.console = console;
-      } else {
-        sandbox.assert = () => {};
-        sandbox.console = (...args) => {
+      sandbox.assert = {
+        equal: (...args) => {
+          assert.equal(...args);
+        },
+      };
+      sandbox.console = {
+        log: (...args) => {
           console.log(...args);
-        };
-      }
+        },
+      };
       sandbox = vm.createContext(sandbox);
       // class
       const FlowListenerFn = vm.compileFunction(`return ${listenerContent}`, [], { parsingContext: sandbox });
