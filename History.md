@@ -1,5 +1,10 @@
 # History
 
+## 2020-04-29, Version 4.9.2
+
+* **重构**
+  * test-party和test-flow重构，支持在prod环境中运行
+
 ## 2020-04-28, Version 4.9.0
 
 * **特性**
