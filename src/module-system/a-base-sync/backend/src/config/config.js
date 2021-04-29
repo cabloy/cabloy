@@ -163,6 +163,9 @@ module.exports = appInfo => {
     site: {
       cover: '/api/static/a/base/img/cabloy.png',
     },
+    demo: {
+      enable: false,
+    },
   };
 
   return config;
