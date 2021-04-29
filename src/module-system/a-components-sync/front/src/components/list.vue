@@ -13,7 +13,7 @@ export default {
       // append input[type=submit] after the ul element if not found
       let input = this.getInputSubmit();
       if (input.length === 0) {
-        input = this.$$('<input type="submit" value="" style="width:0;height:0;border:0;padding:0;display:none;" />');
+        input = this.$$('<input class="eb-form-button-submit-hidden" type="submit" value="" />');
         form.append(input);
       }
       // on

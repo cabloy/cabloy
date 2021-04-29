@@ -270,4 +270,19 @@ input[type="search"]::-webkit-search-decoration {
     background-color: var(--f7-page-bg-color);
   }
 
+  input:matches([type="submit"]).eb-form-button-submit-hidden {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+    -webkit-appearance: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    line-height: 0;
+    height: 0;
+    width: 0;
+    border: 0;
+  }
+
 }
