@@ -31,6 +31,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.category.add({
         atomClass,
@@ -40,6 +42,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.delete({
         categoryId: this.ctx.request.body.categoryId,
@@ -48,6 +52,8 @@ module.exports = app => {
     }
 
     async move() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.move({
         categoryId: this.ctx.request.body.categoryId,
@@ -66,6 +72,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.save({
         categoryId: this.ctx.request.body.categoryId,
