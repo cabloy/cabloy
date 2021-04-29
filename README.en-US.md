@@ -72,7 +72,7 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 |Website Type|Website Link|
 |--|--|
 |Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile Layout)|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+|Admin System(Mobile Layout)|![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)|
 |||
 |Blog|[https://zhennann.com](https://zhennann.com)|
 |Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|

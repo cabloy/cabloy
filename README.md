@@ -26,6 +26,38 @@
 
 - [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
 
+## 文档
+
+- [官网 && 文档](https://cabloy.com)
+
+## 在线演示
+
+|场景|链接/二维码|
+|--|--|
+|PC端|https://test.cabloy.com/|
+|Mobile端|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+
+|账号类型|名称|密码|
+|--|--|--|
+|管理员|admin|123456|
+|普通用户|tom|123456|
+|普通用户|jane|123456|
+
+## CabloyJS开发的正式系统
+
+|网站类型|网站链接|
+|--|--|
+|后台管理系统（PC布局）|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|后台管理系统（Mobile布局）|![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)|
+|||
+|博客|[https://zhennann.com](https://zhennann.com)|
+|技术文档（英文）|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
+|技术文档（中文）|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
+|社区（英文）|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
+|社区（中文）|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|Cabloy商店（英文）|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
+|Cabloy商店（中文）|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
+
 ## 特性
 
 ### - 第一部分: 基础功能
@@ -78,25 +110,6 @@
 |[Cabloy-企业微信](https://cabloy.com/zh-cn/articles/wxwork-introduce.html)|`企业微信接口模块`，当前整合了`自建应用`和`企业微信小程序`的接口，达到`开箱即用`的使用效果。在`Cabloy-企业微信`的基础上，可以很方便的开发各类企业微信业务系统|
 |[Cabloy-钉钉](https://cabloy.com/zh-cn/articles/dingtalk-introduce.html)|`钉钉接口模块`，当前整合了`H5微应用`和`钉钉小程序`的接口，达到`开箱即用`的使用效果。在`Cabloy-钉钉`的基础上，可以很方便的开发各类钉钉业务系统|
 |[Cabloy-Uniapp](https://cabloy.com/zh-cn/articles/uniapp-introduce.html)|`Cabloy-Uniapp`专门为`Uniapp`应用提供了一套量身定制的`前端SDK`，用于便捷的访问CabloyJS提供的所有API接口，让`Uniapp`前端开发再无`后顾之忧`|
-
-## 文档
-
-- [官网 && 文档](https://cabloy.com)
-
-## 在线演示
-
-|网站类型|网站链接|
-|--|--|
-|管理系统（PC布局）|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|管理系统（Mobile布局）|![](./docs/assets/images/cabloy-demo-qrcode.png)|
-|||
-|博客|[https://zhennann.com](https://zhennann.com)|
-|技术文档（英文）|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
-|技术文档（中文）|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
-|社区（英文）|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
-|社区（中文）|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
-|Cabloy商店（英文）|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
-|Cabloy商店（中文）|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
 ## 资源
 
