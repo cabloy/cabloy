@@ -7,6 +7,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       await this.service.instance.save({
         data: this.ctx.request.body.data,
       });
@@ -19,6 +21,8 @@ module.exports = app => {
     }
 
     async reload() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       await this.service.instance.reload();
       this.ctx.success();
     }

@@ -40,6 +40,8 @@ module.exports = app => {
     }
 
     async resourceRoleRemove() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.ctx.service.resource.resourceRoleRemove({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
@@ -49,6 +51,8 @@ module.exports = app => {
     }
 
     async resourceRoleAdd() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.ctx.service.resource.resourceRoleAdd({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
