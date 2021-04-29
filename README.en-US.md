@@ -26,6 +26,38 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 
 - [About CabloyJS](https://cabloy.com/articles/introduce.html)
 
+## Documentations
+
+- [Website && Documentations](https://cabloy.com)
+
+## Demonstration
+
+|Scene|Link/Qrcode|
+|--|--|
+|PC|https://test.cabloy.com/|
+|Mobile|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+
+|Account Type|Name|Password|
+|--|--|--|
+|Admin User|admin|123456|
+|Normal User|tom|123456|
+|Normal User|jane|123456|
+
+## More Websites Powered by CabloyJS
+
+|Website Type|Website Link|
+|--|--|
+|Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|Admin System(Mobile Layout)|![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)|
+|||
+|Blog|[https://zhennann.com](https://zhennann.com)|
+|Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
+|Technical Documentations(Chinese)|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
+|Community(English)|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
+|Community(Chinese)|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|Cabloy Store(English)|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
+|Cabloy Store(Chinese)|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
+
 ## Features
 
 ### - Part One: Basic
@@ -62,25 +94,6 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
   - Stats Value Update and Push Automatically
   - [Progress Bar](https://cabloy.com/articles/progress-bar.html)
 - [Built-in many core modules](https://cabloy.com/articles/ce7ea65e7c5240ca88daf6aa849baaed.html)
-
-## Documentations
-
-- [Website && Documentations](https://cabloy.com)
-
-## Demonstration
-
-|Website Type|Website Link|
-|--|--|
-|Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile Layout)|![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)|
-|||
-|Blog|[https://zhennann.com](https://zhennann.com)|
-|Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
-|Technical Documentations(Chinese)|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
-|Community(English)|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
-|Community(Chinese)|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
-|Cabloy Store(English)|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
-|Cabloy Store(Chinese)|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
 ## Resources
 
