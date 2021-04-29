@@ -28,6 +28,7 @@ module.exports = {
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
   CommentPublishTitleEditReplyComment: '修改了回复的评论',
+  DisabledOnDemoMode: '演示模式中禁用',
   Draft: '草稿',
   Drafts: '草稿',
   Formal: '正式',

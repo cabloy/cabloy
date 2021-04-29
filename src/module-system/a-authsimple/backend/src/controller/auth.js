@@ -21,6 +21,8 @@ module.exports = app => {
     }
 
     async passwordChange() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const { passwordOld, passwordNew } = this.ctx.request.body.data;
       await this.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.state.user.agent.id });
       this.ctx.success();

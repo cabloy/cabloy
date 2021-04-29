@@ -117,6 +117,13 @@ module.exports = app => {
       return `/${moduleInfo.url}/${arg}`;
     }
 
+    checkDemo() {
+      const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
+      if (demo.enable) {
+        this.ctx.throw.module(moduleInfo.relativeName, 1014);
+      }
+    }
+
   }
 
   return Util;

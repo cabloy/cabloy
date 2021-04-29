@@ -13,4 +13,5 @@ module.exports = {
   1011: 'Invalid Arguments',
   1012: 'Cannot delete if has atoms',
   1013: 'Cannot delete if has children',
+  1014: 'DisabledOnDemoMode',
 };
