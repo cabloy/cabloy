@@ -27,98 +27,96 @@ module.exports = app => {
       bean: versionManager,
     },
   };
-  if (app.meta.isTest || app.meta.isLocal) {
-    Object.assign(beans, {
-      // test
-      'test.app': {
-        mode: 'app',
-        bean: testApp,
-      },
-      'test.class': {
-        mode: 'app',
-        bean: testClass,
-      },
-      testctx: {
-        mode: 'ctx',
-        bean: testCtx,
-        global: true,
-      },
-      // event
-      'event.helloEcho': {
-        mode: 'ctx',
-        bean: eventHelloEcho,
-      },
-      'event.userVerify': {
-        mode: 'ctx',
-        bean: eventUserVerify,
-      },
-      'event.loginInfo': {
-        mode: 'ctx',
-        bean: eventLoginInfo,
-      },
-      'event.loginInfoDashboard': {
-        mode: 'ctx',
-        bean: eventLoginInfoDashboard,
-      },
-      // broadcast
-      'broadcast.test': {
-        mode: 'app',
-        bean: broadcastTest,
-      },
-      // queue
-      'queue.test': {
-        mode: 'app',
-        bean: queueTest,
-      },
-      // schedule
-      'schedule.test': {
-        mode: 'app',
-        bean: scheduleTest,
-      },
-      // startup
-      'startup.startupAll': {
-        mode: 'app',
-        bean: startupStartupAll,
-      },
-      'startup.startupInstance': {
-        mode: 'app',
-        bean: startupStartupInstance,
-      },
-      // middleware
-      'middleware.testInterception': {
-        mode: 'ctx',
-        bean: middlewareTestInterception,
-      },
-      'middleware.testRestructuring': {
-        mode: 'ctx',
-        bean: middlewareTestRestructuring,
-      },
-      // atom
-      'atom.party': {
-        mode: 'app',
-        bean: atomParty,
-      },
-      // io
-      'io.message.test': {
-        mode: 'ctx',
-        bean: ioMessageTest,
-      },
-      // sequence
-      'sequence.test': {
-        mode: 'ctx',
-        bean: sequenceTest,
-      },
-      // stats
-      'stats.tasksUser': {
-        mode: 'ctx',
-        bean: statsTasksUser,
-      },
-      'stats.tasksInstance': {
-        mode: 'ctx',
-        bean: statsTasksInstance,
-      },
-    });
-  }
+  Object.assign(beans, {
+    // test
+    'test.app': {
+      mode: 'app',
+      bean: testApp,
+    },
+    'test.class': {
+      mode: 'app',
+      bean: testClass,
+    },
+    testctx: {
+      mode: 'ctx',
+      bean: testCtx,
+      global: true,
+    },
+    // event
+    'event.helloEcho': {
+      mode: 'ctx',
+      bean: eventHelloEcho,
+    },
+    'event.userVerify': {
+      mode: 'ctx',
+      bean: eventUserVerify,
+    },
+    'event.loginInfo': {
+      mode: 'ctx',
+      bean: eventLoginInfo,
+    },
+    'event.loginInfoDashboard': {
+      mode: 'ctx',
+      bean: eventLoginInfoDashboard,
+    },
+    // broadcast
+    'broadcast.test': {
+      mode: 'app',
+      bean: broadcastTest,
+    },
+    // queue
+    'queue.test': {
+      mode: 'app',
+      bean: queueTest,
+    },
+    // schedule
+    'schedule.test': {
+      mode: 'app',
+      bean: scheduleTest,
+    },
+    // startup
+    'startup.startupAll': {
+      mode: 'app',
+      bean: startupStartupAll,
+    },
+    'startup.startupInstance': {
+      mode: 'app',
+      bean: startupStartupInstance,
+    },
+    // middleware
+    'middleware.testInterception': {
+      mode: 'ctx',
+      bean: middlewareTestInterception,
+    },
+    'middleware.testRestructuring': {
+      mode: 'ctx',
+      bean: middlewareTestRestructuring,
+    },
+    // atom
+    'atom.party': {
+      mode: 'app',
+      bean: atomParty,
+    },
+    // io
+    'io.message.test': {
+      mode: 'ctx',
+      bean: ioMessageTest,
+    },
+    // sequence
+    'sequence.test': {
+      mode: 'ctx',
+      bean: sequenceTest,
+    },
+    // stats
+    'stats.tasksUser': {
+      mode: 'ctx',
+      bean: statsTasksUser,
+    },
+    'stats.tasksInstance': {
+      mode: 'ctx',
+      bean: statsTasksInstance,
+    },
+  });
 
   return beans;
 };

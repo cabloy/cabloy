@@ -29,119 +29,114 @@ module.exports = appInfo => {
     config.monkeyed = false;
   }
 
-  if (appInfo.env === 'unittest' || appInfo.env === 'local') {
+  // config
+  config.message = 'Hello World';
 
-    // config
-    config.message = 'Hello World';
+  // middlewares
+  config.middlewares = {
+    testInterception: {
+      bean: 'testInterception',
+      global: false,
+      dependencies: 'instance',
+    },
+    testRestructuring: {
+      bean: 'testRestructuring',
+      global: false,
+      dependencies: 'instance',
+    },
+  };
 
-    // middlewares
-    config.middlewares = {
-      testInterception: {
-        bean: 'testInterception',
-        global: false,
-        dependencies: 'instance',
+  // schedules
+  config.schedules = {
+    test: {
+      bean: 'test',
+      repeat: {
+        every: 3000,
       },
-      testRestructuring: {
-        bean: 'testRestructuring',
-        global: false,
-        dependencies: 'instance',
-      },
-    };
+      disable: true,
+    },
+  };
 
-    // schedules
-    config.schedules = {
-      test: {
-        bean: 'test',
-        repeat: {
-          every: 3000,
-        },
-        disable: true,
+  // settings
+  config.settings = {
+    instance: {
+      groupInfo: {
+        slogan: '',
       },
-    };
-
-    // settings
-    config.settings = {
-      instance: {
-        groupInfo: {
-          slogan: '',
-        },
+    },
+    user: {
+      groupInfo: {
+        username: 'zhennann',
       },
-      user: {
-        groupInfo: {
-          username: 'zhennann',
-        },
-        groupExtra: {
-          panelExtra: {
-            groupInfo: {
-              mobile: '123',
-              sex: 1,
-              language: 'en-us',
-            },
+      groupExtra: {
+        panelExtra: {
+          groupInfo: {
+            mobile: '123',
+            sex: 1,
+            language: 'en-us',
           },
         },
       },
-    };
+    },
+  };
 
-    // captcha scenes
-    const _captchaSMS = {
-      module: 'a-authsms',
-      name: 'captcha',
-    };
-    config.captcha = {
-      scenes: {
-        formMobileVerifyTest: _captchaSMS,
-        formCaptchaTest: null, // means using default
+  // captcha scenes
+  const _captchaSMS = {
+    module: 'a-authsms',
+    name: 'captcha',
+  };
+  config.captcha = {
+    scenes: {
+      formMobileVerifyTest: _captchaSMS,
+      formCaptchaTest: null, // means using default
       // formCaptchaTest: {
       //   module: 'a-captchasimple',
       //   name: 'captcha',
       // },
-      },
-    };
+    },
+  };
 
-    // cms site
-    config.cms = {};
-    config.cms.sites = {};
-    config.cms.sites.party = {
-      base: {
-        title: 'Party',
-        subTitle: 'Test',
-        description: '',
-        keywords: '',
+  // cms site
+  config.cms = {};
+  config.cms.sites = {};
+  config.cms.sites.party = {
+    base: {
+      title: 'Party',
+      subTitle: 'Test',
+      description: '',
+      keywords: '',
+    },
+    host: {
+      url: 'http://example.com',
+      rootPath: '',
+    },
+    language: false,
+    themes: {
+      default: 'test-party',
+    },
+    edit: {
+      mode: 0, // custom
+    },
+    env: {
+      format: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
       },
-      host: {
-        url: 'http://example.com',
-        rootPath: '',
+      article2: {
+        recentNum: 5,
       },
-      language: false,
-      themes: {
-        default: 'test-party',
+      comment: {
+        order: 'asc',
+        recentNum: 5,
       },
-      edit: {
-        mode: 0, // custom
+      brother: {
+        order: 'desc',
       },
-      env: {
-        format: {
-          date: 'YYYY-MM-DD',
-          time: 'HH:mm:ss',
-        },
-        article2: {
-          recentNum: 5,
-        },
-        comment: {
-          order: 'asc',
-          recentNum: 5,
-        },
-        brother: {
-          order: 'desc',
-        },
-        loadMore: {
-          loadOnScroll: false,
-        },
+      loadMore: {
+        loadOnScroll: false,
       },
-    };
-
-  }
-
+    },
+  };
 
   return config;
 };

@@ -5,9 +5,6 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
 
     async update(options) {
-      // only in test/local
-      if (!app.meta.isTest && !app.meta.isLocal) return;
-
       // update
       if (options.version === 1) {
         let sql = `
@@ -50,9 +47,6 @@ module.exports = app => {
     }
 
     async init(options) {
-      // only in test/local
-      if (!app.meta.isTest && !app.meta.isLocal) return;
-
       // init
       if (options.version === 1) {
         // types
