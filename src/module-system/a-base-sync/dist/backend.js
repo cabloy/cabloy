@@ -4426,9 +4426,9 @@ module.exports = app => {
 
     checkDemo() {
       const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
-      if (demo.enable) {
-        this.ctx.throw.module(moduleInfo.relativeName, 1014);
-      }
+      if (!demo.enable) return;
+      if (this.ctx.state.user.op.userName === 'root') return;
+      this.ctx.throw.module(moduleInfo.relativeName, 1014);
     }
 
   }
@@ -10037,6 +10037,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.category.add({
         atomClass,
@@ -10046,6 +10048,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.delete({
         categoryId: this.ctx.request.body.categoryId,
@@ -10054,6 +10058,8 @@ module.exports = app => {
     }
 
     async move() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.move({
         categoryId: this.ctx.request.body.categoryId,
@@ -10072,6 +10078,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.category.save({
         categoryId: this.ctx.request.body.categoryId,
@@ -10338,6 +10346,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.tag.add({
         atomClass,
@@ -10347,6 +10357,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.tag.save({
         tagId: this.ctx.request.body.tagId,
@@ -10356,6 +10368,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // need not param:atomClass
       const res = await this.ctx.service.tag.delete({
         tagId: this.ctx.request.body.tagId,
