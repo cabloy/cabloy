@@ -7,6 +7,8 @@ module.exports = app => {
     }
 
     async disable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.disable({
         id: this.ctx.request.body.id,
         disabled: this.ctx.request.body.disabled,
@@ -22,6 +24,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.save({
         id: this.ctx.request.body.id,
         config: this.ctx.request.body.data,

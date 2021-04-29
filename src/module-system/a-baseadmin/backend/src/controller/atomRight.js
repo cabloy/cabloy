@@ -11,6 +11,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.add({
         roleId: this.ctx.request.body.roleId,
         atomClass: this.ctx.request.body.atomClass,
@@ -22,6 +24,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.delete({
         id: this.ctx.request.body.id,
       });

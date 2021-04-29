@@ -18,6 +18,8 @@ module.exports = app => {
     }
 
     async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       await this.service.role.save({
         roleId: this.ctx.request.body.roleId,
         data: this.ctx.request.body.data,
@@ -26,6 +28,8 @@ module.exports = app => {
     }
 
     async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.add({
         roleIdParent: this.ctx.request.body.roleIdParent,
       });
@@ -33,6 +37,8 @@ module.exports = app => {
     }
 
     async move() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.move({
         roleId: this.ctx.request.body.roleId,
         roleIdParent: this.ctx.request.body.roleIdParent,
@@ -41,6 +47,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.delete({
         roleId: this.ctx.request.body.roleId,
       });
@@ -57,6 +65,8 @@ module.exports = app => {
     }
 
     async addRoleInc() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.addRoleInc({
         roleId: this.ctx.request.body.roleId,
         roleIdInc: this.ctx.request.body.roleIdInc,
@@ -65,6 +75,8 @@ module.exports = app => {
     }
 
     async removeRoleInc() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.removeRoleInc({
         id: this.ctx.request.body.id,
       });
@@ -77,6 +89,8 @@ module.exports = app => {
     }
 
     async build() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.role.build();
       this.ctx.success(res);
     }

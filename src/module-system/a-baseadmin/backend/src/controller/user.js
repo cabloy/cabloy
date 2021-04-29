@@ -29,6 +29,8 @@ module.exports = app => {
     }
 
     async disable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.disable({
         userId: this.ctx.request.body.userId,
         disabled: this.ctx.request.body.disabled,
@@ -37,6 +39,8 @@ module.exports = app => {
     }
 
     async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.delete({
         userId: this.ctx.request.body.userId,
       });
@@ -53,6 +57,8 @@ module.exports = app => {
     }
 
     async addRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.addRole({
         userId: this.ctx.request.body.userId,
         roleId: this.ctx.request.body.roleId,
@@ -61,6 +67,8 @@ module.exports = app => {
     }
 
     async removeRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.user.removeRole({
         id: this.ctx.request.body.id,
       });
