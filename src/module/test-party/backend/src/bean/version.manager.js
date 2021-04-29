@@ -70,13 +70,17 @@ module.exports = app => {
           { roleName: 'system', action: 'partyOverBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
+
+        // test data
+        const versionTest = new (VersionTestFn(this.ctx))();
+        await versionTest.run();
       }
 
     }
 
     async test() {
-      const versionTest = new (VersionTestFn(this.ctx))();
-      await versionTest.run();
+      // const versionTest = new (VersionTestFn(this.ctx))();
+      // await versionTest.run();
     }
 
   }

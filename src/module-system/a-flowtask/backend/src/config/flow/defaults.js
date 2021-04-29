@@ -33,7 +33,7 @@ module.exports = {
       roles: null,
       vars: null,
     },
-    showAssignees: false,
+    showAssignees: true,
     confirmation: false,
     confirmationAllowAppend: false,
     bidding: false,
