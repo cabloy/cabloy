@@ -17,6 +17,8 @@ module.exports = app => {
     }
 
     async setConfigSite() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigSite({
         atomClass,
@@ -44,6 +46,8 @@ module.exports = app => {
     }
 
     async setConfigLanguage() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigLanguage({
         atomClass,
@@ -54,6 +58,8 @@ module.exports = app => {
     }
 
     async buildLanguage() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       const language = this.ctx.request.body.language;
@@ -65,6 +71,8 @@ module.exports = app => {
     }
 
     async buildLanguages() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // progress
