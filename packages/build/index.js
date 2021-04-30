@@ -3,6 +3,8 @@ const projectFrontDev = require('./lib/project/front/build/dev-server.js');
 const moduleFrontBuild = require('./lib/module/front/build.js');
 const moduleBackendBuild = require('./lib/module/backend/build.js');
 
+// process.traceDeprecation = true;
+
 module.exports = {
   project: {
     front: {
