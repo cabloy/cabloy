@@ -183,9 +183,9 @@ export default {
           allowEdge: false,
           allowPort: false,
           highlight: false,
-          // connector: 'jumpover',
+          connector: 'smooth', // 'rounded',
           router: {
-            name: 'manhattan', // 'orth',
+            name: 'normal', // 'orth', // 'manhattan'
           },
           createEdge: () => {
             return new this.x6.Shape.Edge({
