@@ -378,7 +378,8 @@ export default {
       this.size.width = size.width;
       this.__updateChart({ changeSize: true });
     },
-    onPerformPlus() {
+    onPerformAddNode() {
+      if (!this.ready) return;
       this.$view.navigate(`/a/flowchart/flowDef/nodes?flowDefId=${this.flowDefId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'flowChart', title: 'Flow Chart' },
@@ -496,31 +497,13 @@ export default {
       }
       return nodeBase ? `${nodeBase.type}_${id + 1}` : `edge_${id + 1}`;
     },
-    renderActions() {
-      if (this.readOnly) return null;
-      const children = [];
-      // add
-      children.push(
-        <eb-link key="diagram-action-plus" class="diagram-action-plus" iconMaterial="add_circle" propsOnPerform={event => this.onPerformPlus(event)}></eb-link>
-      );
-      return (
-        <div class="diagram-actions">
-          {children}
-        </div>
-      );
-    },
   },
   render() {
-    let domActions;
-    if (this.ready) {
-      domActions = this.renderActions();
-    }
     return (
       <div>
         <eb-box ref="box" onSize={this.onSize} header subnavbar class="eb-box-iframe">
           <div ref="container"></div>
         </eb-box>
-        {domActions}
       </div>
     );
   },
