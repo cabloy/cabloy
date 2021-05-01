@@ -1,4 +1,5 @@
-class Listener {
+const __listenerDefault =
+`class Listener {
   constructor(context) {
     this.context = context;
   }
@@ -33,11 +34,12 @@ class Listener {
   async onEdgeLeave(contextEdge, contextNode) {
   }
 }
+`;
 
 export default {
   flowDef: {
     default: {
-      listener: Listener.toString(),
+      listener: __listenerDefault,
       process: {
         nodes: [],
         edges: [],
