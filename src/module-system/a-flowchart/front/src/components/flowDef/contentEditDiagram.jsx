@@ -245,12 +245,13 @@ export default {
     __createLayoutModel() {
       // layout
       if (!this.dagreLayout) {
+        const directionHorizontal = this.size.width > this.size.height;
         this.dagreLayout = new this.xlayout.DagreLayout({
           type: 'dagre',
-          rankdir: this.size.width < this.size.height ? 'TB' : 'LR',
+          rankdir: directionHorizontal ? 'LR' : 'TB',
           align: undefined, // "UL",
-          nodesep: 30,
-          ranksep: 50,
+          nodesep: directionHorizontal ? 30 : 50,
+          ranksep: directionHorizontal ? 70 : 50,
           controlPoints: true,
         });
       }
