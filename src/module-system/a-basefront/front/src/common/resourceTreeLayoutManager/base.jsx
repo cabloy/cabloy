@@ -5,46 +5,23 @@ export default {
         ready: false,
         configResourceBase: null,
         config: null,
+        treeData: null,
+        resourcesArrayAll: null,
       },
     };
   },
   computed: {
-    base_user() {
-      return this.$store.state.auth.user.op;
+    base_ready() {
+      return this.ready && this.actionsAll;
     },
   },
   created() {
   },
   methods: {
-    base_prepareSelectOptions() {
-      // options
-      let options = {
-        where: { },
-      };
-      // layout
-      options.layout = this.layout.current;
-      // order
-      options.orders = [
-        [ 'a.updatedAt', 'desc' ],
-      ];
-      // extend 1
-      if (this.container.options) {
-        options = this.$utils.extend({}, options, this.container.options);
-      }
-      // options
-      return options;
-    },
-    base_prepareSelectParams() {
-      // options
-      const options = this.base_prepareSelectOptions();
-      // params
-      const params = {
-        options,
-      };
-      return params;
-    },
-    base_getItems() {
-      return this.layout.instance ? this.layout.instance.getItems() : [];
+    async base_load() {
+      this.$store.dispatch('a/base/getResourceTypes');
+      this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });
+      this.base.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.container.resourceType });
     },
   },
 };
