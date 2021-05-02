@@ -27,6 +27,10 @@ import itemLayoutBlockPCTitle from './components/atom/itemLayoutPC/itemLayoutBlo
 import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLayoutTree.jsx';
 import resourceTreeLayoutBlockTreeTitle from './components/resource/treeLayoutTree/treeLayoutBlockTreeTitle.jsx';
 import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
+// resourceTreeLayoutAccordion
+import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
+import resourceTreeLayoutBlockAccordionTitle from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionTitle.jsx';
+import resourceTreeLayoutBlockAccordionItems from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionItems.jsx';
 
 export default {
   // listLayoutList
@@ -58,4 +62,8 @@ export default {
   resourceTreeLayoutTree,
   resourceTreeLayoutBlockTreeTitle,
   resourceTreeLayoutBlockTreeItems,
+  // resourceTreeLayoutAccordion
+  resourceTreeLayoutAccordion,
+  resourceTreeLayoutBlockAccordionTitle,
+  resourceTreeLayoutBlockAccordionItems,
 };

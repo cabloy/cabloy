@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     layout_get() {
-      return 'tree';// 'accordion';
+      return 'accordion'; // 'tree';
     },
     async layout_prepareConfig() {
       // configResourceBase
