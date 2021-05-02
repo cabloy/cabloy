@@ -8,9 +8,14 @@ export default {
     ebHeaderButtons: HeaderButtons,
   },
   render(c) {
-    const title = c('div', {
+    const title = c('eb-link', {
       staticClass: 'title',
       domProps: { innerText: this.title },
+      props: {
+        onPerform: () => {
+          return this.onPerformClickTitle();
+        },
+      },
     });
     const tabs = c('eb-tabs', {
       ref: 'tabs',
@@ -36,6 +41,20 @@ export default {
   methods: {
     isTabActive(groupId) {
       return this.$refs.tabs.isTabActive(groupId);
+    },
+    onPerformClickTitle() {
+      const action = {
+        actionPath: null,
+        navigateOptions: {
+          scene: 'sidebar',
+          sceneOptions: {
+            side: 'left',
+            module: 'a-layoutpc',
+            name: 'panelMenu',
+          },
+        },
+      };
+      this.$meta.util.performAction({ ctx: this, action, item: null });
     },
   },
 };
