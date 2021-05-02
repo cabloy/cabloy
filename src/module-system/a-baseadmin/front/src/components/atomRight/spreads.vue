@@ -15,7 +15,7 @@
             </template>
           </div>
           <div slot="root-end" class="summary-no-media">
-            <div v-if="item.actionBulk===1">{{$text('Bulk')}}</div>
+            <div v-if="item.actionBulk===1 && item.actionCode!==1">{{$text('Bulk')}}</div>
           </div>
         </eb-list-item>
       </f7-list-group>
