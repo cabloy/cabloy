@@ -5059,22 +5059,34 @@ module.exports = ctx => {
 
       // mine
       let _rightWhere;
-      if (mine) {
-        _rightWhere = `
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `;
-      } else if (resource) {
+      if (resource) {
         _rightWhere = `
           exists(
             select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and a.id=c.resourceAtomId and c.userIdWho=${userIdWho}
           )
         `;
       } else {
-        _rightWhere = `
+        const _mine = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+        `;
+        const _others = `
           exists(
             select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
           )
         `;
+        if (mine) {
+          _rightWhere = _mine;
+        } else if (star || label) {
+          _rightWhere = `
+            (
+              ${_mine}
+              or
+              ${_others}
+            )
+          `;
+        } else {
+          _rightWhere = _others;
+        }
       }
 
       // sql
