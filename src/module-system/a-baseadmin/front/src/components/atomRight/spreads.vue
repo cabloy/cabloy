@@ -3,7 +3,7 @@
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title> </f7-list-item>
-        <eb-list-item class="item" v-for="item of group.items" :key="`${item.roleExpandId}:${item.roleRightId}`" :title="item.titleLocale">
+        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.titleLocale">
           <div slot="root-start" class="header">
             <div></div>
             <div>{{$text('from')}}: {{item.roleName}}</div>
@@ -13,6 +13,9 @@
             <template v-if="item.scopeRoles">
               <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
             </template>
+          </div>
+          <div slot="root-end" class="summary-no-media">
+            <div v-if="item.actionBulk===1">{{$text('Bulk')}}</div>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -49,6 +52,7 @@ export default {
     },
     itemGroups() {
       if (!this.items) return [];
+      const _keys = {};
       const groups = [];
       let group = null;
       for (const item of this.items) {
@@ -66,15 +70,22 @@ export default {
           groups.push(group);
         }
         // item
-        const action = this.getAction({
-          module: item.module,
-          atomClassName: item.atomClassName,
-          name: item.actionName,
-        });
-        item.title = action.title;
-        item.titleLocale = action.titleLocale;
-        // push
-        group.items.push(item);
+        const _key = `${item.roleExpandId}:${item.roleRightId}`;
+        if (!_keys[_key]) {
+          _keys[_key] = true;
+          const action = this.getAction({
+            module: item.module,
+            atomClassName: item.atomClassName,
+            name: item.actionName,
+          });
+          // push
+          group.items.push({
+            _key,
+            title: action.title,
+            titleLocale: action.titleLocale,
+            ...item,
+          });
+        }
       }
       return groups;
     },

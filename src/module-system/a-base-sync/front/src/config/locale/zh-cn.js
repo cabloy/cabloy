@@ -148,6 +148,7 @@ export default {
   Mode: '模式',
   Modes: '模式',
   Custom: '自定义',
+  Bulk: '批量',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
