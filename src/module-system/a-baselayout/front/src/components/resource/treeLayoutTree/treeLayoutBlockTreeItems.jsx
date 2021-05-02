@@ -15,6 +15,12 @@ export default {
   },
   data() {
     return {
+      root: {
+        attrs: {
+          itemToggle: false,
+          selectable: true,
+        },
+      },
     };
   },
   mounted() {
@@ -22,105 +28,107 @@ export default {
   beforeDestroy() {
   },
   methods: {
-    onItemClick(event, item) {
-      const url = `/a/flowtask/flow?flowId=${item.flowId}`;
-      this.$view.navigate(url);
-    },
-    _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 24);
-    },
-    _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
-    _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      return summary;
-    },
-    _getItemMetaFlags(item) {
-      const flags = [];
-      if (item.flowNodeNameCurrentLocale) {
-        flags.push(item.flowNodeNameCurrentLocale);
+    async _loadNodeCategories(node) {
+      const levelCurrent = (node.data && node.data.__level) || 0;
+      const level = levelCurrent + 1;
+      let treeChildren;
+      if (node.root) {
+        treeChildren = this.layoutManager.base.treeData;
+      } else {
+        treeChildren = node.data.children;
       }
-      if (item.flowRemarkLocale) {
-        flags.push(item.flowRemarkLocale);
+      const list = [];
+      for (const item of treeChildren) {
+        const node = {
+          id: item.id,
+          attrs: {
+            // link: '#',
+            label: item.categoryNameLocale,
+            toggle: true,
+            itemToggle: true,
+            loadChildren: true,
+          },
+          data: {
+            ...item,
+            __level: level,
+          },
+        };
+        if (level <= this.layoutManager.container.maxLevelAutoOpened || this.layoutManager.container.maxLevelAutoOpened === -1) {
+          const children = await this.onLoadChildren(node);
+          this.$refs.tree.childrenLoaded(node, children);
+          node.attrs.loadChildren = false;
+          node.attrs.opened = true;
+        }
+        list.push(node);
       }
-      return flags;
+      return list;
     },
-    _renderListItem(item) {
-      // media
-      const domMedia = (
-        <div slot="media">
-          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
-        </div>
-      );
-      // domHeader
-      const domHeader = (
-        <div slot="root-start" class="header">
-          <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
-          </div>
-          <div class="date">
-            <span>{this.$meta.util.formatDateTimeRelative(item.timeEnd || item.updatedAt)}</span>
-          </div>
-        </div>
-      );
-      // domTitle
-      const domTitle = (
-        <div slot="title" class="title">
-          <div>{item.flowName}</div>
-        </div>
-      );
-      // domSummary
-      const domSummary = (
-        <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
-        </div>
-      );
-      // domAfter
-      const domAfterMetaFlags = [];
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
+    async _loadNodeResources(node) {
+      const resources = this.layoutManager.base.resourcesArrayAll.filter(item => item.atomCategoryId === node.id);
+      return resources.map(item => {
+        const node = {
+          id: item.atomId,
+          attrs: {
+            link: '#',
+            label: item.atomNameLocale,
+            toggle: false,
+            loadChildren: false,
+          },
+          data: item,
+        };
+        return node;
+      });
+    },
+    async onLoadChildren(node) {
+      if (node.root || node.data.categoryCatalog === 1) {
+        return await this._loadNodeCategories(node);
       }
-      const domAfter = (
-        <div slot="after" class="after">
-          {domAfterMetaFlags}
-        </div>
-      );
-      // ok
+      return await this._loadNodeResources(node);
+    },
+    onNodePerformClick(event, context, node) {
+      const resourceConfig = JSON.parse(node.data.resourceConfig);
+      // special for action
+      let action;
+      let item;
+      if (resourceConfig.atomAction === 'create') {
+        //
+        action = this.layoutManager.getAction({
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+          name: resourceConfig.atomAction,
+        });
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else if (resourceConfig.atomAction === 'read') {
+        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
+          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        }
+        action = resourceConfig;
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else {
+        action = resourceConfig;
+      }
+      action = this.$utils.extend({}, action, { targetEl: event.target });
+      return this.$meta.util.performAction({ ctx: this, action, item });
+    },
+    _renderTree() {
+      if (!this.layoutManager.base_ready) return;
       return (
-        <eb-list-item class="item" key={item.flowId}
-          link='#'
-          propsOnPerform={event => this.onItemClick(event, item)}
-        >
-          {domMedia}
-          {domHeader}
-          {domTitle}
-          {domSummary}
-          {domAfter}
-        </eb-list-item>
-      );
-    },
-    _renderList() {
-      const items = this.layout.items;
-      const children = [];
-      for (const item of items) {
-        children.push(this._renderListItem(item));
-      }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
+        <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren} propsOnNodePerform={this.onNodePerformClick}>
+        </eb-treeview>
       );
     },
   },
   render() {
     return (
       <div>
-        {this._renderList()}
+        {this._renderTree()}
+        <f7-block></f7-block>
       </div>
     );
   },

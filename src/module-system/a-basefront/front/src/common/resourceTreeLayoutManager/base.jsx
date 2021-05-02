@@ -12,7 +12,7 @@ export default {
   },
   computed: {
     base_ready() {
-      return this.ready && this.actionsAll;
+      return this.base.ready && this.actionsAll;
     },
   },
   created() {
@@ -22,6 +22,7 @@ export default {
       this.$store.dispatch('a/base/getResourceTypes');
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });
       this.base.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.container.resourceType });
+      return true;
     },
   },
 };
