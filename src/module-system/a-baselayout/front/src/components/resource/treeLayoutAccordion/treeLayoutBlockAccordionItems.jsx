@@ -15,12 +15,6 @@ export default {
   },
   data() {
     return {
-      root: {
-        attrs: {
-          itemToggle: false,
-          selectable: true,
-        },
-      },
     };
   },
   mounted() {
