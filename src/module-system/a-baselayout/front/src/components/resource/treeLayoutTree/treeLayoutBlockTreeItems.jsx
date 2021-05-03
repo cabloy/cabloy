@@ -86,35 +86,7 @@ export default {
       return await this._loadNodeResources(node);
     },
     onNodePerformClick(event, context, node) {
-      const resourceConfig = JSON.parse(node.data.resourceConfig);
-      // special for action
-      let action;
-      let item;
-      if (resourceConfig.atomAction === 'create') {
-        //
-        action = this.layoutManager.getAction({
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-          name: resourceConfig.atomAction,
-        });
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else if (resourceConfig.atomAction === 'read') {
-        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
-          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
-        }
-        action = resourceConfig;
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else {
-        action = resourceConfig;
-      }
-      action = this.$utils.extend({}, action, { targetEl: event.target });
-      return this.$meta.util.performAction({ ctx: this, action, item });
+      return this.layoutManager.base_onPerformResource(event, node.data);
     },
     _renderTree() {
       if (!this.layoutManager.base_ready) return;

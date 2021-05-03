@@ -28,107 +28,88 @@ export default {
   beforeDestroy() {
   },
   methods: {
-    async _loadNodeCategories(node) {
-      const levelCurrent = (node.data && node.data.__level) || 0;
-      const level = levelCurrent + 1;
-      let treeChildren;
-      if (node.root) {
-        treeChildren = this.layoutManager.base.treeData;
-      } else {
-        treeChildren = node.data.children;
-      }
-      const list = [];
-      for (const item of treeChildren) {
-        const node = {
-          id: item.id,
-          attrs: {
-            // link: '#',
-            label: item.categoryNameLocale,
-            toggle: true,
-            itemToggle: true,
-            loadChildren: true,
-          },
-          data: {
-            ...item,
-            __level: level,
-          },
-        };
-        if (level <= this.layoutManager.container.maxLevelAutoOpened || this.layoutManager.container.maxLevelAutoOpened === -1) {
-          const children = await this.onLoadChildren(node);
-          this.$refs.tree.childrenLoaded(node, children);
-          node.attrs.loadChildren = false;
-          node.attrs.opened = true;
-        }
-        list.push(node);
-      }
-      return list;
+    onItemClick(event, resource) {
+      return this.layoutManager.base_onPerformResource(event, resource);
     },
-    async _loadNodeResources(node) {
-      const resources = this.layoutManager.base.resourcesArrayAll.filter(item => item.atomCategoryId === node.id);
-      return resources.map(item => {
-        const node = {
-          id: item.atomId,
-          attrs: {
-            link: '#',
-            label: item.atomNameLocale,
-            toggle: false,
-            loadChildren: false,
-          },
-          data: item,
-        };
-        return node;
-      });
-    },
-    async onLoadChildren(node) {
-      if (node.root || node.data.categoryCatalog === 1) {
-        return await this._loadNodeCategories(node);
+    _renderCategories(categoryParent) {
+      const children = [];
+      if (!categoryParent.children) return children;
+      for (const category of categoryParent.children) {
+        const domListItems = this._renderListItems(category);
+        const domCategory = (
+          <f7-list-group key={category.id}>
+            <f7-list-item group-title title={category.categoryNameLocale}></f7-list-item>
+            {domListItems}
+          </f7-list-group>
+        );
+        children.push(domCategory);
       }
-      return await this._loadNodeResources(node);
+      return children;
     },
-    onNodePerformClick(event, context, node) {
-      const resourceConfig = JSON.parse(node.data.resourceConfig);
-      // special for action
-      let action;
-      let item;
-      if (resourceConfig.atomAction === 'create') {
-        //
-        action = this.layoutManager.getAction({
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-          name: resourceConfig.atomAction,
-        });
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else if (resourceConfig.atomAction === 'read') {
-        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
-          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
-        }
-        action = resourceConfig;
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else {
-        action = resourceConfig;
+    _renderResources(categoryParent) {
+      const children = [];
+      const resources = this.layoutManager.base.resourcesArrayAll.filter(item => item.atomCategoryId === categoryParent.id);
+      for (const resource of resources) {
+        const domResource = (
+          <eb-list-item class="item" key={resource.atomId}
+            link="#"
+            title={resource.atomNameLocale}
+            propsOnPerform={event => this.onItemClick(event, resource)}
+          >
+          </eb-list-item>
+        );
+        children.push(domResource);
       }
-      action = this.$utils.extend({}, action, { targetEl: event.target });
-      return this.$meta.util.performAction({ ctx: this, action, item });
+      return children;
     },
-    _renderTree() {
-      if (!this.layoutManager.base_ready) return;
+    _renderListItems(categoryParent) {
+      if (categoryParent.categoryCatalog === 1) {
+        return this._renderCategories(categoryParent);
+      }
+      return this._renderResources(categoryParent);
+    },
+    _renderAccordion(item) {
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{item.categoryNameLocale}</div>
+        </div>
+      );
+      // domAccordionContent
+      const domListItems = this._renderListItems(item);
+      const domAccordionContent = (
+        <f7-accordion-content>
+          <eb-list inset>
+            {domListItems}
+          </eb-list>
+        </f7-accordion-content>
+      );
+      // ok
       return (
-        <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren} propsOnNodePerform={this.onNodePerformClick}>
-        </eb-treeview>
+        <eb-list-item key={item.id} accordion-item>
+          {domTitle}
+          {domAccordionContent}
+        </eb-list-item>
+      );
+    },
+    _renderAccordions() {
+      if (!this.layoutManager.base_ready) return;
+      const items = this.layoutManager.base.treeData;
+      const children = [];
+      for (const item of items) {
+        children.push(this._renderAccordion(item));
+      }
+      return (
+        <eb-list accordion-list>
+          {children}
+        </eb-list>
       );
     },
   },
   render() {
     return (
       <div>
-        {this._renderTree()}
-        <f7-block></f7-block>
+        {this._renderAccordions()}
       </div>
     );
   },
