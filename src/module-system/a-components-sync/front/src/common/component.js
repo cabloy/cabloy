@@ -17,8 +17,19 @@ export default {
       errorMessage: null,
     };
   },
+  watch: {
+    module() {
+      this.prepareComponent();
+    },
+    name() {
+      this.prepareComponent();
+    },
+  },
   render(c) {
     if (this.ready && !this.errorMessage) {
+      // check again
+      const fullName = this.__getFullName();
+      if (!this.$options.components[fullName]) return c('div');
       // options: not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
       const options = Object.assign({}, this.options, { ref: 'component', scopedSlots: this.$scopedSlots });
       const children = [];
@@ -39,7 +50,15 @@ export default {
     return c('div');
   },
   created() {
-    this.$meta.module.use(this.module, moduleInstance => {
+    this.prepareComponent();
+  },
+  methods: {
+    async prepareComponent() {
+      // clear
+      this.ready = false;
+      this.errorMessage = null;
+      //
+      const moduleInstance = await this.$meta.module.use(this.module);
       this.moduleInstance = moduleInstance;
       const fullName = this.__getFullName();
       let component = moduleInstance.options.components[this.name];
@@ -52,9 +71,7 @@ export default {
         this.ready = true;
         this.errorMessage = null;
       }
-    });
-  },
-  methods: {
+    },
     getComponentInstance() {
       return this.$refs.component;
     },

@@ -9,8 +9,9 @@ export default {
     };
   },
   methods: {
-    actions_onActionLayout(event, layout) {
-      this.layout.current = layout.name;
+    async actions_onActionLayout(event, layout) {
+      // change layout
+      await this.layout_prepareConfig(layout.name);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
         module: 'a-basefront', key: 'resource.tree.layout', value: layout.name,

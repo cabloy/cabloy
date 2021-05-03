@@ -14,9 +14,9 @@ export default {
     layout_get() {
       return this.base.layoutConfig['resource.tree.layout'] || 'accordion';
     },
-    async layout_prepareConfig() {
+    async layout_prepareConfig(layoutCurrent) {
       // current
-      this.layout.current = this.container.layout || this.layout_get();
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
       // configResourceBase
       this.base.configResourceBase = this.$meta.config.modules['a-basefront'].resource;
       // config
