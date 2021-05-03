@@ -14,7 +14,7 @@ export default {
       await this.layout_prepareConfig(layout.name);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-basefront', key: 'resource.tree.layout', value: layout.name,
+        module: 'a-basefront', key: 'resource.tree.layout.current', value: layout.name,
       });
     },
     actions_render() {

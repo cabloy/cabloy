@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     layout_get() {
-      return this.base.layoutConfig['resource.tree.layout'] || 'accordion';
+      return this.base.layoutConfig['resource.tree.layout.current'] || 'accordion';
     },
     async layout_prepareConfig(layoutCurrent) {
       // current

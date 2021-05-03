@@ -15,7 +15,11 @@ export default {
   },
   data() {
     return {
+      accordionItemOpened: 0,
     };
+  },
+  created() {
+    this.accordionItemOpened = this.layoutManager.base.layoutConfig['resource.tree.layouts.accordion.opened'] || 0;
   },
   mounted() {
   },
@@ -24,6 +28,13 @@ export default {
   methods: {
     onItemClick(event, resource) {
       return this.layoutManager.base_onPerformResource(event, resource);
+    },
+    onAccordionOpen(event, item) {
+      this.accordionItemOpened = item.id;
+      // save
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-basefront', key: 'resource.tree.layouts.accordion.opened', value: item.id,
+      });
     },
     _renderCategories(categoryParent) {
       const children = [];
@@ -62,7 +73,7 @@ export default {
       }
       return this._renderResources(categoryParent);
     },
-    _renderAccordion(item) {
+    _renderAccordion(item, index) {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -78,9 +89,13 @@ export default {
           </eb-list>
         </f7-accordion-content>
       );
+      const accordionItemOpened = (this.accordionItemOpened === item.id) || (this.accordionItemOpened === 0 && index === 0);
       // ok
       return (
-        <eb-list-item key={item.id} accordion-item>
+        <eb-list-item key={item.id}
+          accordion-item accordion-item-opened={accordionItemOpened}
+          onAccordionOpen={event => this.onAccordionOpen(event, item)}
+        >
           {domTitle}
           {domAccordionContent}
         </eb-list-item>
@@ -90,8 +105,8 @@ export default {
       if (!this.layoutManager.base_ready) return;
       const items = this.layoutManager.base.treeData;
       const children = [];
-      for (const item of items) {
-        children.push(this._renderAccordion(item));
+      for (let index = 0; index < items.length; index++) {
+        children.push(this._renderAccordion(items[index], index));
       }
       return (
         <eb-list accordion-list>
