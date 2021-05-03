@@ -16,10 +16,12 @@ export default {
   data() {
     return {
       accordionItemOpened: 0,
+      layoutConfigKeyOpened: null,
     };
   },
   created() {
-    this.accordionItemOpened = this.layoutManager.base.layoutConfig['resource.tree.layouts.accordion.opened'] || 0;
+    this.layoutConfigKeyOpened = `resource.${this.layoutManager.container.resourceType}.tree.layouts.accordion.opened`;
+    this.accordionItemOpened = this.layoutManager.base.layoutConfig[this.layoutConfigKeyOpened] || 0;
   },
   mounted() {
   },
@@ -33,7 +35,7 @@ export default {
       this.accordionItemOpened = item.id;
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-basefront', key: 'resource.tree.layouts.accordion.opened', value: item.id,
+        module: 'a-basefront', key: this.layoutConfigKeyOpened, value: item.id,
       });
     },
     _renderCategories(categoryParent) {
