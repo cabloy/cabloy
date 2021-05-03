@@ -7,6 +7,7 @@ export default {
         config: null,
         treeData: null,
         resourcesArrayAll: null,
+        layoutConfig: null,
       },
     };
   },
@@ -19,7 +20,10 @@ export default {
   },
   methods: {
     async base_load() {
-      this.$store.dispatch('a/base/getResourceTypes');
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+      // resurce
+      await this.$store.dispatch('a/base/getResourceTypes');
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });
       this.base.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.container.resourceType });
       return true;

@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     async __init() {
-      this.$store.dispatch('a/base/getResourceTypes');
+      await this.$store.dispatch('a/base/getResourceTypes');
       this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.resourceType });
       this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
     },
@@ -163,5 +163,4 @@ export default {
 
 </script>
 <style lang="less" scoped>
-
 </style>

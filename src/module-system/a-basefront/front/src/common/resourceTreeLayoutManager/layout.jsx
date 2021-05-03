@@ -9,14 +9,14 @@ export default {
     };
   },
   created() {
-    this.layout.current = this.container.layout || this.layout_get();
   },
   methods: {
     layout_get() {
-      return 'accordion';
-      // return 'tree';
+      return this.base.layoutConfig['resource.tree.layout'] || 'accordion';
     },
     async layout_prepareConfig() {
+      // current
+      this.layout.current = this.container.layout || this.layout_get();
       // configResourceBase
       this.base.configResourceBase = this.$meta.config.modules['a-basefront'].resource;
       // config
