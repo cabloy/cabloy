@@ -21,6 +21,7 @@ export default {
   render() {
     return (
       <f7-nav-right>
+        {this.layoutManager.actions_render()}
       </f7-nav-right>
     );
   },

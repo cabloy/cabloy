@@ -58,6 +58,7 @@ export default {
       return (
         <div>
           {this.layout_renderComponent()}
+          {this.actions_renderPopover()}
         </div>
       );
     },

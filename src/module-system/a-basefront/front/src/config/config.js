@@ -207,6 +207,12 @@ export default {
   resource: {
     render: {
       tree: {
+        info: {
+          layouts: [
+            { name: 'accordion', title: 'LayoutAccordion' },
+            { name: 'tree', title: 'LayoutTree' },
+          ],
+        },
         layouts: {
           accordion: {
             component: {
