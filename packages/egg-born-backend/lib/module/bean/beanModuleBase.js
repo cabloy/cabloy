@@ -7,7 +7,7 @@ class BeanModuleBase {
     this.__beanClassName = beanClassName;
   }
 
-  // other module's atom
+  // other module's bean
   module(moduleName) {
     if (!this[BeanModuleCaches]) this[BeanModuleCaches] = new Map();
     let beanInstance = this[BeanModuleCaches].get(moduleName);

@@ -2,7 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class BeanController extends app.Controller {
 
     async bean() {
@@ -51,6 +51,25 @@ module.exports = app => {
 
       res = await this.ctx.bean['test-party.test.class'].actionAsync({ a, b });
       assert.equal(res, `${a + b}:regexpaop`);
+
+      // ok
+      this.ctx.success();
+    }
+
+    async local() {
+      let res;
+
+      // general way
+      res = this.ctx.bean._getBean(moduleInfo.relativeName, 'local.test').name;
+      assert.equal(res, 'localTest');
+
+      // this module
+      res = this.ctx.bean.local.test.name;
+      assert.equal(res, 'localTest');
+
+      // other module
+      res = this.ctx.bean.local.module(moduleInfo.relativeName).test.name;
+      assert.equal(res, 'localTest');
 
       // ok
       this.ctx.success();
