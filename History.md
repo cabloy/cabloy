@@ -1,5 +1,11 @@
 # History
 
+## 2020-05-04, Version 4.9.14
+
+* **特性**
+  * bean.local: 更便利的获取`local场景`的`本地Bean实例`
+    * 参见：[Bean.local](https://cabloy.com/zh-cn/articles/bean-local.html)
+
 ## 2020-05-03, Version 4.9.13
 
 * **特性**
