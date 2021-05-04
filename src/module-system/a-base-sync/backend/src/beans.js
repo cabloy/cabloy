@@ -17,6 +17,7 @@ const middlewareAuth = require('./bean/middleware.auth.js');
 const middlewareRight = require('./bean/middleware.right.js');
 const middlewareJsonp = require('./bean/middleware.jsonp.js');
 const middlewareHttpLog = require('./bean/middleware.httpLog.js');
+const beanLocal = require('./bean/bean.local.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
@@ -119,6 +120,11 @@ module.exports = app => {
       bean: middlewareHttpLog,
     },
     // global
+    local: {
+      mode: 'ctx',
+      bean: beanLocal,
+      global: true,
+    },
     atom: {
       mode: 'ctx',
       bean: beanAtom,

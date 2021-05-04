@@ -10,6 +10,15 @@ class simpleAopBase {
 module.exports = ctx => {
   class simpleAop extends simpleAopBase {
 
+    // magic
+    get__magic__(context, next) {
+      next();
+      const prop = context.prop;
+      if (prop === 'magic') {
+        context.value = 'magic:simpleaop';
+      }
+    }
+
     get__name(context, next) {
       next();
       context.value = `${context.value}:simpleaop`;

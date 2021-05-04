@@ -89,10 +89,9 @@ module.exports = (app, ctx) => {
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
           const descriptor = __getPropertyDescriptor(target, prop);
-          if (!descriptor) throw new Error(`property not found: ${beanFullName}.${prop}`);
           // get prop
-          if (descriptor.get) {
-            const methodName = `get__${prop}`;
+          if (!descriptor || descriptor.get) {
+            const methodName = descriptor ? `get__${prop}` : 'get__magic__';
             const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
             if (_aopChainsProp.length === 0) return target[prop];
             // context

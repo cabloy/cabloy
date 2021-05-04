@@ -22,6 +22,11 @@ module.exports = app => {
       // ctx.bean: global
       assert.equal(this.ctx.bean.testctx, this.ctx.bean.testctx);
 
+      // magic
+      res = this.ctx.bean.testctx.magic;
+      assert.equal(res, 'magic:simpleaop');
+
+      // name
       this.ctx.bean.testctx.name = 'test-party:regexpaop:simpleaop';
       res = this.ctx.bean.testctx.name;
       assert.equal(res, 'test-party:regexpaop:simpleaop');
