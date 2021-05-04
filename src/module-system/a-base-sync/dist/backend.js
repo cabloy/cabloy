@@ -1,6 +1,50 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 5449:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class localAop {
+
+    // magic
+    get__magic__(context, next) {
+      next();
+      const prop = context.prop;
+      const moduleName = context.target.moduleName;
+      if (context.value === undefined) {
+        context.value = ctx.bean._getBean(moduleName, `local.${prop}`);
+      }
+    }
+
+  }
+
+  return localAop;
+};
+
+
+/***/ }),
+
+/***/ 5224:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const local = __webpack_require__(5449);
+
+module.exports = app => {
+  const aops = {};
+  Object.assign(aops, {
+    local: {
+      match: 'local',
+      mode: 'ctx',
+      bean: local,
+    },
+  });
+  return aops;
+};
+
+
+/***/ }),
+
 /***/ 2709:
 /***/ ((module) => {
 
@@ -2373,6 +2417,25 @@ module.exports = ctx => {
 
   }
   return Category;
+};
+
+
+/***/ }),
+
+/***/ 2978:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Local extends ctx.app.meta.BeanModuleBase {
+
+    constructor(moduleName) {
+      super(ctx, 'local');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+  }
+
+  return Local;
 };
 
 
@@ -7868,6 +7931,7 @@ const middlewareAuth = __webpack_require__(3899);
 const middlewareRight = __webpack_require__(4087);
 const middlewareJsonp = __webpack_require__(9856);
 const middlewareHttpLog = __webpack_require__(4973);
+const beanLocal = __webpack_require__(2978);
 const beanAtom = __webpack_require__(5528);
 const beanAtomAction = __webpack_require__(3127);
 const beanAtomClass = __webpack_require__(9546);
@@ -7970,6 +8034,11 @@ module.exports = app => {
       bean: middlewareHttpLog,
     },
     // global
+    local: {
+      mode: 'ctx',
+      bean: beanLocal,
+      global: true,
+    },
     atom: {
       mode: 'ctx',
       bean: beanAtom,
@@ -10509,6 +10578,8 @@ module.exports = app => {
   // atomBase
   app.meta.AtomBase = AtomBaseFn(app);
 
+  // aops
+  const aops = __webpack_require__(5224)(app);
   // beans
   const beans = __webpack_require__(5187)(app);
   // routes
@@ -10525,6 +10596,7 @@ module.exports = app => {
   const meta = __webpack_require__(458)(app);
 
   return {
+    aops,
     beans,
     routes,
     controllers,
