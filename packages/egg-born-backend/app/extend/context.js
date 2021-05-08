@@ -262,12 +262,17 @@ function appCallback() {
     // call
     fn(ctx).then(function handleResponse() {
       respond.call(ctx);
-      if (ctx.status === 200 && ctx.body) {
-        if (ctx.body.code === 0) {
-          resolve(ctx.body.data);
+      if (ctx.status === 200) {
+        if (!ctx.body || ctx.body.code === undefined) {
+          // not check code, e.g. text/xml
+          resolve(ctx.body);
         } else {
-          const error = ctx.createError(ctx.body);
-          reject(error);
+          if (ctx.body.code === 0) {
+            resolve(ctx.body.data);
+          } else {
+            const error = ctx.createError(ctx.body);
+            reject(error);
+          }
         }
       } else {
         const error = ctx.createError({
