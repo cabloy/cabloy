@@ -167,7 +167,9 @@ module.exports = (app, ctx) => {
           // aop
           if (methodType === 'Function') {
             __composeForProp(_aopChainsProp)(context, (context, next) => {
-              context.result = target.apply(thisArg, args);
+              if (context.result === undefined) {
+                context.result = target.apply(thisArg, args);
+              }
               next();
             });
             // ok
@@ -176,7 +178,9 @@ module.exports = (app, ctx) => {
           if (methodType === 'AsyncFunction') {
             return new Promise((resolve, reject) => {
               __composeForPropAsync(_aopChainsProp)(context, async (context, next) => {
-                context.result = await target.apply(thisArg, args);
+                if (context.result === undefined) {
+                  context.result = await target.apply(thisArg, args);
+                }
                 await next();
               }).then(() => {
                 resolve(context.result);
