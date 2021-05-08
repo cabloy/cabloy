@@ -107,7 +107,9 @@ module.exports = (app, ctx) => {
             };
             // aop
             __composeForProp(_aopChainsProp)(context, (context, next) => {
-              context.value = target[prop];
+              if (context.value === undefined) {
+                context.value = target[prop];
+              }
               next();
             });
             // ok
