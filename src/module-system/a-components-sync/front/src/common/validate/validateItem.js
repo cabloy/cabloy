@@ -328,12 +328,16 @@ export default {
       });
     },
     _handleComputedDisplay(parcel, key, property) {
-      // return true if not specify ebDisplay
+      // check if specify ebDisplay
       const ebDisplay = property.ebDisplay;
       if (!ebDisplay) return true;
       // check host.mode
       if (!this._handleComputedDisplay_checkHostMode(ebDisplay)) {
         return false;
+      }
+      // check if specify expression
+      if (!ebDisplay.expression) {
+        return true;
       }
       // check current value
       const value = this.__computed_display_getValue(parcel, key);
