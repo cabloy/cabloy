@@ -1,4 +1,5 @@
 import validateComputedValue from './validateComputedValue.js';
+import validateComputedDisplay from './validateComputedDisplay.js';
 import renderProperties from './render/renderProperties.js';
 import renderComponent from './render/renderComponent.js';
 import renderGroup from './render/renderGroup.js';
@@ -22,6 +23,7 @@ import renderAtomClass from './render/renderAtomClass.js';
 export default {
   mixins: [
     validateComputedValue,
+    validateComputedDisplay,
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
@@ -66,7 +68,7 @@ export default {
       }
       return parent;
     },
-    _handleComputed(parcel, key, property) {
+    _handleComputedValue(parcel, key, property) {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
       this.__computed_value.register({
@@ -82,7 +84,7 @@ export default {
       if (!property) {
         return _value;
       }
-      this._handleComputed(parcel, key, property);
+      this._handleComputedValue(parcel, key, property);
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;
       return property.default;
@@ -253,10 +255,15 @@ export default {
       return this._renderItem(c, context);
     },
     _renderItem(c, context) {
+      const { parcel, key, property } = context;
       // ebType
-      const ebType = context.property.ebType;
+      const ebType = property.ebType;
       // ignore if not specified
       if (!ebType) return null;
+      // ebDisplay
+      if (!this._handleComputedDisplay(parcel, key, property)) {
+        return null;
+      }
       // render
       if (ebType === 'group') {
         // group
@@ -319,6 +326,21 @@ export default {
           innerText: `not support: ${ebType}`,
         },
       });
+    },
+    _handleComputedDisplay(parcel, key, property) {
+      const ebDisplay = property.ebDisplay;
+      if (!ebDisplay) return true;
+      const value = this.__computed_display_getValue(parcel, key);
+      if (value) return true;
+      if (value === undefined) {
+        this.__computed_display.register({
+          parcel, name: key,
+          expression: ebDisplay.expression,
+          dependencies: ebDisplay.dependencies,
+          immediate: true, // always
+        });
+      }
+      return false;
     },
   },
 };

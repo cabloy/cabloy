@@ -16,6 +16,10 @@ module.exports = app => {
       price: 'productPrice',
     },
   };
+  const __display = {
+    expression: '!!detailCodeId',
+    dependencies: [ 'detailCodeId' ],
+  };
   schemas.purchaseOrderDetail = {
     type: 'object',
     properties: {
@@ -34,17 +38,20 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Product Name',
         notEmpty: true,
+        ebDisplay: __display,
       },
       price: {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Price',
         ebCurrency: true,
+        ebDisplay: __display,
       },
       quantity: {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Quantity',
+        ebDisplay: __display,
       },
       amount: {
         type: 'number',
@@ -56,6 +63,7 @@ module.exports = app => {
         },
         ebCurrency: true,
         ebReadOnly: true,
+        ebDisplay: __display,
       },
     },
   };
