@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-flow",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "title": "WorkFlow Test",
   "eggBornModule": {
     "fileVersion": 2,
