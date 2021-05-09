@@ -19,6 +19,9 @@ module.exports = app => {
   const __display = {
     expression: '!!detailCodeId',
     dependencies: [ 'detailCodeId' ],
+    // host: {
+    //   mode: 'edit', // view
+    // },
   };
   schemas.purchaseOrderDetail = {
     type: 'object',

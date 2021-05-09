@@ -328,8 +328,14 @@ export default {
       });
     },
     _handleComputedDisplay(parcel, key, property) {
+      // return true if not specify ebDisplay
       const ebDisplay = property.ebDisplay;
       if (!ebDisplay) return true;
+      // check host.mode
+      if (!this._handleComputedDisplay_checkHostMode(ebDisplay)) {
+        return false;
+      }
+      // check current value
       const value = this.__computed_display_getValue(parcel, key);
       if (value) return true;
       if (value === undefined) {
@@ -341,6 +347,12 @@ export default {
         });
       }
       return false;
+    },
+    _handleComputedDisplay_checkHostMode(ebDisplay) {
+      const hostMode = ebDisplay.host && ebDisplay.host.mode;
+      if (!hostMode) return true;
+      const modeCurrent = this.validate.host && this.validate.host.mode;
+      return modeCurrent === hostMode;
     },
   },
 };
