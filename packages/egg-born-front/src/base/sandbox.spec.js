@@ -14,7 +14,8 @@ export default function() {
       'XMLHttpRequest,XMLHttpRequestEventTarget,XMLHttpRequestUpload',
     ];
     for (const _keys of keywords) {
-      for (const _key of _keys.split(',')) {
+      const _keys2 = _keys.split(',');
+      for (const _key of _keys2) {
         Object.defineProperty(self, _key, {
           get() {
             return null;
