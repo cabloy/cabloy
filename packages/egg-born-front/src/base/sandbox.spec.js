@@ -13,9 +13,11 @@ export default function() {
       'UserActivation,WebAssembly,WebSocket,Worker,WorkerGlobalScope,WorkerLocation,WorkerNavigator,WritableStream,WritableStreamDefaultWriter',
       'XMLHttpRequest,XMLHttpRequestEventTarget,XMLHttpRequestUpload',
     ];
-    for (const _keys of keywords) {
+    for (let i = 0; i < keywords.length; i++) {
+      const _keys = keywords[i];
       const _keys2 = _keys.split(',');
-      for (const _key of _keys2) {
+      for (let j = 0; j < _keys2.length; j++) {
+        const _key = _keys2[j];
         Object.defineProperty(self, _key, {
           get() {
             return null;
@@ -32,7 +34,8 @@ export default function() {
     try {
       const scopeKeys = Object.keys(scope);
       const scopeParams = [];
-      for (const key of scopeKeys) {
+      for (let i = 0; i < scopeKeys.length; i++) {
+        const key = scopeKeys[i];
         scopeParams.push(scope[key]);
       }
       const js = `return (${expression})`;

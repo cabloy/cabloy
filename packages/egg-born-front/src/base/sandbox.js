@@ -6,7 +6,7 @@ export default function(Vue) {
     _worker: null,
     getWorker() {
       if (this._worker) return this._worker;
-      const blobURL = Vue.prototype.$meta.util.fn2workerURL(workerJS);
+      const blobURL = Vue.prototype.$meta.util.fn2workerURL(workerJS.toString());
       this._worker = new Worker(blobURL);
       this._worker.onmessage = event => {
         const { id, err, value } = event.data;

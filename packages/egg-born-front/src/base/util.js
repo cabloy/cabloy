@@ -422,7 +422,7 @@ export default function(Vue) {
       return urlNew === urlCurrent;
     },
     fn2workerURL(fn) {
-      const blob = new Blob([ '(' + fn.toString() + ')()' ], { type: 'text/javascript' });
+      const blob = new Blob([ '(' + fn + ')()' ], { type: 'text/javascript' });
       return URL.createObjectURL(blob);
     },
   };
