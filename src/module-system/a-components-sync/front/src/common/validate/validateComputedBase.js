@@ -1,19 +1,19 @@
-export default {
-  data() {
-    return {
-    };
-  },
-  created() {
-    this.__computed_dynamics = {};
-  },
-  beforeDestroy() {
-    for (const dataPath in this.__computed_dynamics) {
-      this.computed_unRegister(dataPath);
+export default ({ ctx, dataRoot, onChange }) => {
+  class ValidateComputedBase {
+    constructor() {
+      this.__computed_dynamics = {};
     }
-    this.__computed_dynamics = null;
-  },
-  methods: {
-    computed_register(parcel, name, expression, deps, immediate) {
+
+    dispose() {
+      for (const dataPath in this.__computed_dynamics) {
+        this.unRegister(dataPath);
+      }
+      this.__computed_dynamics = null;
+    }
+
+    register({ parcel, name, expression, dependencies, immediate }) {
+      const deps = dependencies ? (Array.isArray(dependencies) ? dependencies : dependencies.split(',')) : [];
+      // dataPath
       const dataPath = parcel.pathParent + name;
       // check if exists
       let info = this.__computed_dynamics[dataPath];
@@ -25,21 +25,22 @@ export default {
         watchers: {},
       };
       for (const depName of deps) {
-        info.watchers[depName] = this.$watch(`parcel.data.${depName}`, () => {
+        info.watchers[depName] = ctx.$watch(`parcel.data.${depName}`, () => {
           // changed
-          this.computed_onChange(dataPath);
+          this.onChangeDeps(dataPath);
         });
       }
       // hold
       this.__computed_dynamics[dataPath] = info;
       // immediate
       if (immediate) {
-        this.computed_onChange(dataPath);
+        this.onChangeDeps(dataPath);
       }
       // ok
       return info;
-    },
-    computed_fillScope(scope, data, depName) {
+    }
+
+    fillScope(scope, data, depName) {
       const depNames = depName.split('.');
       if (depNames.length === 1) {
         scope[depName] = data[depName];
@@ -55,23 +56,29 @@ export default {
       }
       const depNameLast = depNames[depNames.length - 1];
       scope[depNameLast] = data[depNameLast];
-    },
-    computed_onChange(dataPath) {
+    }
+
+    onChangeDeps(dataPath) {
       const info = this.__computed_dynamics[dataPath];
       if (!info) return;
       // scope
       const scope = {};
       for (const depName of info.deps) {
-        this.computed_fillScope(scope, this.parcel.data, depName);
+        this.fillScope(scope, dataRoot, depName);
       }
       // evaluate
-      this.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
-        this.setValue(info.parcel, info.name, value);
+      ctx.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
+        onChange({
+          parcel: info.parcel,
+          name: info.name,
+          value,
+        });
       }).catch(err => {
         throw err;
       });
-    },
-    computed_unRegister(dataPath) {
+    }
+
+    unRegister(dataPath) {
       const info = this.__computed_dynamics[dataPath];
       if (!info) return;
       delete this.__computed_dynamics[dataPath];
@@ -79,6 +86,9 @@ export default {
         const unwatch = info.watchers[depName];
         unwatch();
       }
-    },
-  },
+    }
+
+  }
+
+  return ValidateComputedBase;
 };

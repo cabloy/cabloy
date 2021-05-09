@@ -1,4 +1,4 @@
-import validateComputed from './validateComputed.js';
+import validateComputedValue from './validateComputedValue.js';
 import renderProperties from './render/renderProperties.js';
 import renderComponent from './render/renderComponent.js';
 import renderGroup from './render/renderGroup.js';
@@ -21,7 +21,7 @@ import renderAtomClass from './render/renderAtomClass.js';
 
 export default {
   mixins: [
-    validateComputed,
+    validateComputedValue,
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
@@ -69,9 +69,12 @@ export default {
     _handleComputed(parcel, key, property) {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
-      const deps = Array.isArray(ebComputed.dependencies) ? ebComputed.dependencies : ebComputed.dependencies.split(',');
-      const immediate = !!ebComputed.immediate;
-      this.computed_register(parcel, key, ebComputed.expression, deps, immediate);
+      this.__computed_value.register({
+        parcel, name: key,
+        expression: ebComputed.expression,
+        dependencies: ebComputed.dependencies,
+        immediate: ebComputed.immediate,
+      });
     },
     getValue(parcel, key) {
       const property = parcel.properties[key];
