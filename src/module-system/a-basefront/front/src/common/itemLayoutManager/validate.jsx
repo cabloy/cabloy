@@ -3,6 +3,14 @@ export default {
     return {
     };
   },
+  computed: {
+    validate_host() {
+      return {
+        mode: this.container.mode,
+        atomId: this.container.atomId,
+      };
+    },
+  },
   methods: {
     validate_getInstance() {
       return this.$refs.validate;
@@ -18,13 +26,9 @@ export default {
     },
     validate_render() {
       if (!this.base_ready) return null;
-      const host = {
-        mode: this.container.mode,
-        atomId: this.container.atomId,
-      };
       return (
         <eb-validate ref="validate"
-          host={host}
+          host={this.validate_host}
           readOnly={this.container.mode !== 'edit'}
           auto data={this.base.item}
           params={this.base.validateParams}
