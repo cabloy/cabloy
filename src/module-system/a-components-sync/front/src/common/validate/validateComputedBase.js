@@ -1,4 +1,4 @@
-export default ({ ctx, dataRoot, onChange }) => {
+export default ({ ctx, dataRootName, dataRoot, onChange }) => {
   class ValidateComputedBase {
     constructor() {
       this.__computed_dynamics = {};
@@ -25,7 +25,7 @@ export default ({ ctx, dataRoot, onChange }) => {
         watchers: {},
       };
       for (const depName of deps) {
-        info.watchers[depName] = ctx.$watch(`parcel.data.${depName}`, () => {
+        info.watchers[depName] = ctx.$watch(`${dataRootName}.${depName}`, () => {
           // changed
           this.onChangeDeps(dataPath);
         });

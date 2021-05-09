@@ -7,6 +7,7 @@ export default {
   created() {
     const _Class = ValidateComputedBaseFn({
       ctx: this,
+      dataRootName: 'parcel.data',
       dataRoot: this.parcel.data,
       onChange: ({ parcel, name, value }) => {
         this.setValue(parcel, name, value);
