@@ -8,7 +8,7 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
       for (const dataPath in this.__computed_dynamics) {
         this.unRegister(dataPath);
       }
-      this.__computed_dynamics = null;
+      this.__computed_dynamics = {};
     }
 
     register({ parcel, name, expression, dependencies, immediate }) {

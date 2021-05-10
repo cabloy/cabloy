@@ -53,6 +53,11 @@ export default {
       validate: null,
     };
   },
+  watch: {
+    parcel() {
+      this.parcelChanged();
+    },
+  },
   created() {
     this.validate = this.getValidate();
   },
@@ -60,6 +65,10 @@ export default {
     this.validate = null;
   },
   methods: {
+    parcelChanged() {
+      this.__computed_value_init();
+      this.__computed_display_init();
+    },
     getValidate() {
       let parent = this.$parent;
       while (parent) {

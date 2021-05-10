@@ -1,30 +1,32 @@
-import ValidateComputedBaseFn from './validateComputedBase.js';
+import ValidateComputedBase2Fn from './validateComputedBase2.js';
 export default {
   data() {
     return {
     };
   },
   created() {
-    const _Class = ValidateComputedBaseFn({
+    // create
+    this.__computed_value = ValidateComputedBase2Fn({
       ctx: this,
-      dataRootName: 'parcel.data',
-      dataRoot: this.parcel.data,
-      onDataMeta: () => {
-        return {
-          host: this.validate.host,
-          user: this.$store.state.auth.user.op,
-        };
-      },
       onChange: ({ parcel, name, value }) => {
         this.setValue(parcel, name, value);
       },
     });
-    this.__computed_value = new _Class();
+    // init
+    this.__computed_value_init();
   },
   beforeDestroy() {
-    this.__computed_value.dispose();
-    this.__computed_value = null;
+    this.__computed_value_dispose();
   },
   methods: {
+    __computed_value_init() {
+      this.__computed_value.initialize();
+    },
+    __computed_value_dispose() {
+      if (this.__computed_value) {
+        this.__computed_value.dispose();
+        this.__computed_value = null;
+      }
+    },
   },
 };
