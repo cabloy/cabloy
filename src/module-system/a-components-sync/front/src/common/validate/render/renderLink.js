@@ -7,12 +7,19 @@ export default {
         this.validate.renderModuleName,
         this.$meta.util.replaceTemplate(property.ebParams.href, parcel.data)
       );
-      return c('eb-list-item', {
-        props: {
-          link: '#',
-          ebHref: href,
-          title,
-        },
+      const props = {
+        // link: '#',
+        link: href,
+        title,
+      };
+      if (property.ebParams.external !== undefined) {
+        props.external = property.ebParams.external;
+      }
+      if (property.ebParams.target !== undefined) {
+        props.target = property.ebParams.target;
+      }
+      return c('f7-list-item', {
+        props,
       });
     },
   },

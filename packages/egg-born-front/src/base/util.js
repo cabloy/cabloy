@@ -196,6 +196,7 @@ export default function(Vue) {
     },
     combinePagePath(moduleName, arg) {
       if (!arg || typeof arg !== 'string') return arg;
+      if (arg.indexOf('https://') === 0 || arg.indexOf('http://') === 0) return arg;
       const first = arg.charAt(0);
       if (first === '/' || first === '#') return arg;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;

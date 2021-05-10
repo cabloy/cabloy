@@ -16,6 +16,10 @@ export default {
       if (property.ebCurrency) {
         value = this._formatValueCurrency(value);
       }
+      // locale
+      if (property.ebLocale) {
+        value = this.$text(value);
+      }
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
