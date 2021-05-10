@@ -151,8 +151,12 @@ export default {
       return dataPath;
     },
     getTitle(context, notHint) {
-      const { key, property } = context;
-      const title = this.$text(property.ebTitle || key);
+      const { property } = context;
+      // not use 'key' as default title
+      let title = property.ebTitle || '';
+      if (title) {
+        title = this.$text(title);
+      }
       // ignore panel/group/toggle
       const ebType = property.ebType;
       if (ebType === 'panel' || ebType === 'group' || ebType === 'group-flatten' || ebType === 'toggle') return title;
