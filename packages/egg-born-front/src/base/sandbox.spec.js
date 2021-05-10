@@ -38,8 +38,7 @@ export default function() {
         const key = scopeKeys[i];
         scopeParams.push(scope[key]);
       }
-      const js = `return (${expression})`;
-      const fn = new Function(scopeKeys.join(','), js);
+      const fn = createFunction(scopeKeys, expression);
       const value = fn.apply(null, scopeParams);
       // ok
       self.postMessage({ id, value });
@@ -47,4 +46,15 @@ export default function() {
       self.postMessage({ id, err: { message: err.message } });
     }
   };
+  // function
+  function createFunction(scopeKeys, expression) {
+    let fn;
+    try {
+      const js = `return (${expression})`;
+      fn = new Function(scopeKeys.join(','), js);
+    } catch (err) {
+      fn = new Function(scopeKeys.join(','), expression);
+    }
+    return fn;
+  }
 }

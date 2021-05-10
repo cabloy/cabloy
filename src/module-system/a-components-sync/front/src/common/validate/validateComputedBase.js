@@ -1,4 +1,4 @@
-export default ({ ctx, dataRootName, dataRoot, onChange }) => {
+export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
   class ValidateComputedBase {
     constructor() {
       this.__computed_dynamics = {};
@@ -62,10 +62,14 @@ export default ({ ctx, dataRootName, dataRoot, onChange }) => {
       const info = this.__computed_dynamics[dataPath];
       if (!info) return;
       // scope
-      const scope = {};
-      for (const depName of info.deps) {
-        this.fillScope(scope, dataRoot, depName);
-      }
+      const scope = {
+        ... dataRoot,
+        _meta: onDataMeta(),
+      };
+      // const scope = {};
+      // for (const depName of info.deps) {
+      //   this.fillScope(scope, dataRoot, depName);
+      // }
       // evaluate
       ctx.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
         onChange({

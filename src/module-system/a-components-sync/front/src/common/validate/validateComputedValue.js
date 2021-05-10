@@ -9,6 +9,12 @@ export default {
       ctx: this,
       dataRootName: 'parcel.data',
       dataRoot: this.parcel.data,
+      onDataMeta: () => {
+        return {
+          host: this.validate.host,
+          user: this.$store.state.auth.user.op,
+        };
+      },
       onChange: ({ parcel, name, value }) => {
         this.setValue(parcel, name, value);
       },
