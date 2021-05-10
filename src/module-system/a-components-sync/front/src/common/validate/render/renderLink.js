@@ -1,12 +1,13 @@
 export default {
   methods: {
     renderLink(c, context) {
-      const { parcel, property } = context;
+      const { property } = context;
       const title = this.getTitle(context, true);
-      const href = this.$meta.util.combinePagePath(
-        this.validate.renderModuleName,
-        this.$meta.util.replaceTemplate(property.ebParams.href, parcel.data)
-      );
+      // not use parcel.data
+      let href = this.$meta.util.replaceTemplate(property.ebParams.href, this.parcel.data);
+      if (!property.ebParams.external) {
+        href = this.$meta.util.combinePagePath(this.validate.renderModuleName, href);
+      }
       const props = {
         // link: '#',
         link: href,
