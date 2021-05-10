@@ -42,7 +42,10 @@ export default {
       // should twice
       this.$nextTick(() => {
         this.$nextTick(() => {
-          this.onValidateError(this._validate.getError(this.getDataPath()));
+          // maybe null
+          if (this._validate) {
+            this.onValidateError(this._validate.getError(this.getDataPath()));
+          }
         });
       });
     },

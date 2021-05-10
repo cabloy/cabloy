@@ -20,6 +20,10 @@ export default {
       if (property.ebLocale) {
         value = this.$text(value);
       }
+      // date
+      if (property.ebDateFormat) {
+        value = this.$meta.util.formatDateTime(value, property.ebDateFormat);
+      }
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
