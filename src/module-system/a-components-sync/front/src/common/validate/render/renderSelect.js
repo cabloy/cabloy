@@ -7,11 +7,12 @@ export default {
       // value
       const valueCurrent = context.getValue();
       // attrs
+      const readOnly = this.validate.readOnly || property.ebReadOnly;
       const attrs = {
         name: key,
         dataPath,
         value: valueCurrent,
-        readOnly: this.validate.readOnly || property.ebReadOnly,
+        readOnly,
       };
       if (property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) {
@@ -36,8 +37,8 @@ export default {
       // render
       return c('eb-list-item', {
         key,
-        attrs: {
-          smartSelect: !this.validate.readOnly && !property.ebReadOnly,
+        props: {
+          smartSelect: !readOnly,
           // title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
         },
@@ -48,6 +49,7 @@ export default {
           domProps: { innerText: title },
         }),
         c('eb-select', {
+          slot: readOnly ? 'after' : null,
           attrs,
           on: {
             input: value => {

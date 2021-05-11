@@ -82,9 +82,8 @@ export default {
         const f7Select = $select[0].f7SmartSelect;
         f7Select.setValue(this.value);
       } else {
-        const option = this.findOption(this.value);
-        const title = option ? option.title : '';
-        this.$$(this.$el).text(title);
+        const text = this.getDisplays();
+        this.$$(this.$el).text(text);
       }
       //
       this.valueSetting = false;
@@ -284,9 +283,9 @@ export default {
   },
   render(c) {
     if (this.readOnly) {
+      const text = this.getDisplays();
       return c('div', {
-        staticClass: 'item-after',
-        domProps: { innerText: this.getDisplays() },
+        domProps: { innerText: text },
       });
     }
     // options
