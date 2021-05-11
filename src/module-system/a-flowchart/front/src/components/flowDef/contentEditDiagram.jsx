@@ -502,7 +502,7 @@ export default {
   render() {
     return (
       <div>
-        <eb-box ref="box" onSize={this.onSize} header subnavbar class="eb-box-iframe">
+        <eb-box ref="box" onSize={this.onSize} header subnavbar={!this.viewOnly} class="eb-box-iframe">
           <div ref="container"></div>
         </eb-box>
       </div>
