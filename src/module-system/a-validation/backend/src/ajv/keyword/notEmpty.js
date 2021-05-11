@@ -36,7 +36,7 @@ function evaluateExpression({ expression, rootData, ctx }) {
 function checkIfEmpty(schemaProperty, value) {
   const type = schemaProperty.type;
   // number
-  if (type === 'number') return !value;
+  if (type === 'number' || type === 'integer') return !value;
   // except 0
   return value === '' || value === undefined || value === null;
 }
