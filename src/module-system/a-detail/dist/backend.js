@@ -617,8 +617,7 @@ module.exports = ctx => {
         if (!stages.some(item => ctx.constant.module('a-base').atom.stage[item] === atom.atomStage)) return false;
       }
       // special check for flow
-      if (atom.atomStage === 0 && atom.atomFlowId > 0) {
-        if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
+      if (atom.atomStage === 0 && atom.atomFlowId > 0 && flowTaskId) {
         const viewAtom = await ctx.bean.flowTask.viewAtom({ flowTaskId, user });
         if (!viewAtom) return false;
         if (viewAtom.item.atomId !== atomId) return false;
@@ -645,8 +644,7 @@ module.exports = ctx => {
       }
       // special check write for flow
       if (actionBase.inherit === 'write') {
-        if (atom.atomStage === 0 && atom.atomFlowId > 0) {
-          if (!flowTaskId) throw new Error('should specify the flowTaskId of detail');
+        if (atom.atomStage === 0 && atom.atomFlowId > 0 && flowTaskId) {
           const editAtom = await ctx.bean.flowTask.editAtom({ flowTaskId, user });
           if (!editAtom) return false;
           if (editAtom.item.atomId !== atomId) return false;
