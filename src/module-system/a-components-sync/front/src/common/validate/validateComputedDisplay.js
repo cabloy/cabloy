@@ -23,7 +23,6 @@ export default {
   },
   methods: {
     __computed_display_init() {
-      this.computed_display_values = {};
       this.__computed_display.initialize();
     },
     __computed_display_dispose() {

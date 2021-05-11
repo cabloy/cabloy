@@ -352,18 +352,15 @@ export default {
       if (!ebDisplay.expression) {
         return true;
       }
+      // try to register always, for maybe disposed when parcel changed
+      this.__computed_display.register({
+        parcel, name: key,
+        expression: ebDisplay.expression,
+        dependencies: ebDisplay.dependencies,
+        immediate: true, // always
+      });
       // check current value
-      const value = this.__computed_display_getValue(parcel, key);
-      if (value) return true;
-      if (value === undefined) {
-        this.__computed_display.register({
-          parcel, name: key,
-          expression: ebDisplay.expression,
-          dependencies: ebDisplay.dependencies,
-          immediate: true, // always
-        });
-      }
-      return false;
+      return !!this.__computed_display_getValue(parcel, key);
     },
     _handleComputedDisplay_checkHostMode(ebDisplay) {
       const hostMode = ebDisplay.host && ebDisplay.host.mode;
