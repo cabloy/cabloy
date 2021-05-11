@@ -126,13 +126,23 @@ function transformDate(fun, ctx, data) {
 /***/ }),
 
 /***/ 629:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const vm = __webpack_require__(184);
 
 module.exports = {
   errors: true,
   compile(schema, schemaProperty) {
-    const fun = function(data) {
-      if (schema && checkIfEmpty(schemaProperty, data)) {
+    const fun = function(data, path, rootData) {
+      // notEmpty=false
+      if (!schema) return true;
+      // expression
+      const expression = schema && schema.expression;
+      if (expression) {
+        const res = evaluateExpression({ expression, rootData, ctx: this });
+        if (!res) return true;
+      }
+      if (checkIfEmpty(schemaProperty, data)) {
         fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('RequiredField') }];
         return false;
       }
@@ -141,6 +151,17 @@ module.exports = {
     return fun;
   },
 };
+
+function evaluateExpression({ expression, rootData, ctx }) {
+  const scope = {
+    ... rootData,
+    _meta: {
+      host: ctx.meta && ctx.meta.validateHost,
+      user: ctx.state.user && ctx.state.user.op,
+    },
+  };
+  return vm.runInContext(expression, vm.createContext(scope));
+}
 
 function checkIfEmpty(schemaProperty, value) {
   const type = schemaProperty.type;
@@ -591,6 +612,14 @@ module.exports = {
 
 "use strict";
 module.exports = require("require3");;
+
+/***/ }),
+
+/***/ 184:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("vm");;
 
 /***/ })
 
