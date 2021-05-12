@@ -9,7 +9,7 @@ module.exports = app => {
       atoms: {
         {{atomClassName}}: {
           info: {
-            bean:'{{atomClassName}}',
+            bean: '{{atomClassName}}',
             title: '{{atomClassNameCapitalize}}',
             tableName: '{{providerId}}{{atomClassNameCapitalize}}',
             language: false,
