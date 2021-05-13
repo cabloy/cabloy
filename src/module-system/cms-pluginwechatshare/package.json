@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginwechatshare",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "title": "cms:plugin:wechatshare",
   "eggBornModule": {
     "cms": {
