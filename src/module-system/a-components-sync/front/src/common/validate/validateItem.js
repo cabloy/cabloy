@@ -119,6 +119,12 @@ export default {
             } else {
               _value = Number(value);
             }
+          } else if (property.type === 'integer') {
+            if (isNaN(value)) {
+              _value = value;
+            } else {
+              _value = parseInt(value);
+            }
           } else if (property.type === 'boolean') {
             _value = Boolean(value);
           } else {
