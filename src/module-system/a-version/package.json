@@ -12,10 +12,6 @@
     "lint": "node ../../../node_modules/.bin/eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zhennann/egg-born-module-a-version.git"
-  },
   "keywords": [
     "egg",
     "egg-born",
@@ -24,10 +20,6 @@
   ],
   "author": "zhennann",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zhennann/egg-born-module-a-version/issues"
-  },
-  "homepage": "https://github.com/zhennann/egg-born-module-a-version#readme",
   "dependencies": {
     "chalk": "^3.0.0",
     "egg-born-mock": "^2.1.1",

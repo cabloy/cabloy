@@ -15,7 +15,7 @@ module.exports = appInfo => {
     },
     _theme: {
       name: 'cms-themedocs',
-      url: 'https://github.com/zhennann/egg-born-module-cms-themedocs',
+      url: 'https://www.npmjs.com/package/egg-born-module-cms-themedocs',
     },
     _github: {
       user: 'zhennann',

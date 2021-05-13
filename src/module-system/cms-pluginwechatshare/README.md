@@ -14,6 +14,6 @@
 $ npm i egg-born-module-cms-pluginwechatshare
 ```
 
-> 此插件依赖于另一个插件`cms-pluginwechatsdk`，请参见：[GitHub仓库](https://github.com/zhennann/egg-born-module-cms-pluginwechatsdk)
+> 此插件依赖于另一个插件`cms-pluginwechatsdk`，请参见：[WechatSDK插件](https://www.npmjs.com/package/egg-born-module-cms-pluginwechatsdk)
 
 > 关于CabloyJS微信开发的更多信息，请参见：[Cabloy-微信](https://cabloy.com/zh-cn/articles/wechat-introduce.html)

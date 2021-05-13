@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.theme = {
     _theme: {
       name: 'cms-themecommunity',
-      url: 'https://github.com/zhennann/egg-born-module-cms-themecommunity',
+      url: 'https://www.npmjs.com/package/egg-born-module-cms-themecommunity',
     },
   };
 
