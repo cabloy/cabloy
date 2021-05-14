@@ -2668,6 +2668,8 @@ module.exports = app => {
       // clone
       if (target === 'clone') {
         item.slug = null; // clear slug
+      } else if (item.slug) {
+        item.slug = item.slug.trim();
       }
       // url
       let url;
@@ -3310,7 +3312,6 @@ module.exports = {
   second2: '秒',
   Build: '构建',
   Block: '区块',
-  'Slug Exists': 'Slug已存在',
   'Build Site First': '请先构建站点',
   'Cannot delete if has children': '有子元素时不允许删除',
   'Cannot delete if has articles': '有文章时不允许删除',
@@ -3476,37 +3477,6 @@ module.exports = app => {
 
 module.exports = app => {
   const keywords = {};
-  keywords.slug = {
-    async: true,
-    type: 'string',
-    errors: true,
-    compile() {
-      return async function(data, path, rootData, name) {
-        // ignore if empty
-        if (!data) return true;
-        // unique slug for atomLanguage and atomClass
-        const ctx = this;
-        // validateHost
-        if (!ctx.meta || !ctx.meta.validateHost) {
-          // not check
-          return true;
-        }
-        const atomId = ctx.meta.validateHost.key.atomId;
-        const atomClass = ctx.meta.validateHost.atomClass;
-        //   read by atomClass, atomLanguage, slug
-        const items = await ctx.model.query(`
-          select a.id from aAtom a
-            left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
-          `, [ ctx.instance.id, atomClass.id, data, rootData.atomLanguage ]);
-        if (items[0] && items[0].id !== atomId) {
-          const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
-          throw new app.meta.ajv.ValidationError(errors);
-        }
-        return true;
-      };
-    },
-  };
   return keywords;
 };
 
@@ -4277,9 +4247,7 @@ module.exports = app => {
           schemas: 'articleSearch',
         },
       },
-      keywords: {
-        'x-slug': keywords.slug,
-      },
+      keywords,
       schemas: {
         article: schemas.article,
         articleSearch: schemas.articleSearch,

@@ -8224,6 +8224,9 @@ module.exports = app => {
       if (atomStage === 0) {
         atom.updatedAt = new Date();
       }
+      if (atom.atomName) {
+        atom.atomName = atom.atomName.trim();
+      }
       // update
       atom.id = key.atomId;
       await this.ctx.bean.atom._update({ atom, user });
@@ -8517,11 +8520,16 @@ module.exports = app => {
         clone: 5,
         enable: 6,
         disable: 7,
+        // report: 8,
+        // layout: 9,
 
         authorize: 25,
 
         deleteBulk: 35,
         exportBulk: 36,
+        // importBulk: 37,
+        // reportBulk: 38,
+        // layoutBulk: 39,
 
         save: 51,
         submit: 52,

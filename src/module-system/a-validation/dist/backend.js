@@ -82,6 +82,45 @@ function createValidate(schemaRoot) {
 
 /***/ }),
 
+/***/ 946:
+/***/ ((module) => {
+
+module.exports = {
+  async: true,
+  type: 'string',
+  errors: true,
+  compile(schema, schemaProperty) {
+    return async function(data, path, rootData, name) {
+      // ignore if empty
+      if (!data) return true;
+      const atomName = data.trim();
+      const ctx = this;
+      // validateHost
+      if (!ctx.meta || !ctx.meta.validateHost) {
+        // not check
+        return true;
+      }
+      const atomId = ctx.meta.validateHost.key.atomId;
+      const atomClass = ctx.meta.validateHost.atomClass;
+      //   read by atomClass, atomLanguage, atomName
+      const items = await ctx.model.query(`
+          select a.id from aAtom a
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+          `, [ ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage ]);
+      if (items[0] && items[0].id !== atomId) {
+        const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
+        const message = `${_title} ${ctx.text('ExistsValidation')}`;
+        const errors = [{ keyword: 'x-atomName', params: [], message }];
+        throw new ctx.app.meta.ajv.ValidationError(errors);
+      }
+      return true;
+    };
+  },
+};
+
+
+/***/ }),
+
 /***/ 528:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -174,14 +213,57 @@ function checkIfEmpty(schemaProperty, value) {
 
 /***/ }),
 
+/***/ 10:
+/***/ ((module) => {
+
+module.exports = {
+  async: true,
+  type: 'string',
+  errors: true,
+  compile() {
+    return async function(data, path, rootData, name) {
+      // ignore if empty
+      if (!data) return true;
+      const slug = data.trim();
+      // unique slug for atomLanguage and atomClass
+      const ctx = this;
+      // validateHost
+      if (!ctx.meta || !ctx.meta.validateHost) {
+        // not check
+        return true;
+      }
+      const atomId = ctx.meta.validateHost.key.atomId;
+      const atomClass = ctx.meta.validateHost.atomClass;
+      //   read by atomClass, atomLanguage, slug
+      const items = await ctx.model.query(`
+          select a.id from aAtom a
+            left join aCmsArticle b on a.id=b.atomId
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+          `, [ ctx.instance.id, atomClass.id, slug, rootData.atomLanguage ]);
+      if (items[0] && items[0].id !== atomId) {
+        const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
+        throw new ctx.app.meta.ajv.ValidationError(errors);
+      }
+      return true;
+    };
+  },
+};
+
+
+/***/ }),
+
 /***/ 915:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const notEmpty = __webpack_require__(629);
 const date = __webpack_require__(528);
+const atomName = __webpack_require__(946);
+const slug = __webpack_require__(10);
 module.exports = {
   notEmpty,
   'x-date': date,
+  'x-atomName': atomName,
+  'x-slug': slug,
 };
 
 
@@ -436,6 +518,7 @@ module.exports = {
 
 module.exports = {
   RequiredField: 'Required',
+  ExistsValidation: 'Exists',
 };
 
 
@@ -448,9 +531,12 @@ module.exports = {
   test: '测试',
   Required: '必需的',
   RequiredField: '不允许为空',
+  ExistsValidation: '已存在',
+  'Atom Name': '原子名称',
   'Invalid Date': '无效的日期',
   'Not Expected Value': '不是期望的值',
   'Validator Not Specified': '没有指定validator',
+  'Slug Exists': 'Slug已存在',
 };
 
 
