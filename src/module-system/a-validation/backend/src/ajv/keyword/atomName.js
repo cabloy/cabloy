@@ -2,7 +2,7 @@ module.exports = {
   async: true,
   type: 'string',
   errors: true,
-  compile() {
+  compile(schema, schemaProperty) {
     return async function(data, path, rootData, name) {
       // ignore if empty
       if (!data) return true;
@@ -21,7 +21,9 @@ module.exports = {
               where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
           `, [ ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage ]);
       if (items[0] && items[0].id !== atomId) {
-        const errors = [{ keyword: 'x-atomName', params: [], message: ctx.text('Module Exists') }];
+        const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
+        const message = `${_title} ${ctx.text('ExistsValidation')}`;
+        const errors = [{ keyword: 'x-atomName', params: [], message }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
       }
       return true;
