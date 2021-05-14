@@ -45,7 +45,6 @@ module.exports = {
   second2: '秒',
   Build: '构建',
   Block: '区块',
-  'Slug Exists': 'Slug已存在',
   'Build Site First': '请先构建站点',
   'Cannot delete if has children': '有子元素时不允许删除',
   'Cannot delete if has articles': '有文章时不允许删除',

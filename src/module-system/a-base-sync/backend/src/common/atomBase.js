@@ -101,6 +101,9 @@ module.exports = app => {
       if (atomStage === 0) {
         atom.updatedAt = new Date();
       }
+      if (atom.atomName) {
+        atom.atomName = atom.atomName.trim();
+      }
       // update
       atom.id = key.atomId;
       await this.ctx.bean.atom._update({ atom, user });

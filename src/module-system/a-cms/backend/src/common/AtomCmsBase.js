@@ -78,6 +78,8 @@ module.exports = app => {
       // clone
       if (target === 'clone') {
         item.slug = null; // clear slug
+      } else if (item.slug) {
+        item.slug = item.slug.trim();
       }
       // url
       let url;
