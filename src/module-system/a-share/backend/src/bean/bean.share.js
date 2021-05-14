@@ -38,7 +38,7 @@ module.exports = ctx => {
       // link
       const link = this._combine_shareLink(item.uuid);
       // ok
-      return { link };
+      return { link, uuid: item.uuid };
     }
 
     async shareGo({ uuid, user }) {
