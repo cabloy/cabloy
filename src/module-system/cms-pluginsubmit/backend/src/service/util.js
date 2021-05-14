@@ -19,7 +19,7 @@ module.exports = app => {
       // host
       const parts = url.parse(links[0]);
       const hostname = parts.hostname;
-      if (!hostname || hostname === 'localhost') return;
+      if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') return;
       // queue
       this.ctx.tail(() => {
         this.ctx.app.meta.queue.push({
