@@ -79,7 +79,7 @@ module.exports = ctx => {
       // -- r: aFlow
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -280,7 +280,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -449,7 +449,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -681,7 +681,7 @@ module.exports = ctx => {
       // -- r: aFlow
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
 
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);

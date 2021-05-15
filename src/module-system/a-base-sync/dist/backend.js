@@ -284,7 +284,14 @@ module.exports = ctx => {
       // tableName
       let tableName = '';
       if (_atomClass) {
-        tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
+        tableName = await this.getTableName({
+          atomClass: _atomClass,
+          options,
+          mode: options.mode,
+          user,
+          action: 'select',
+          count,
+        });
         // 'where' should append atomClassId, such as article/post using the same table
         if (!options.where) options.where = {};
         options.where['a.atomClassId'] = atomClass.id;
@@ -1085,7 +1092,14 @@ module.exports = ctx => {
       // atomClass
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
-      const tableName = this._getTableName({ atomClass: _atomClass, mode });
+      const tableName = await this.getTableName({
+        atomClass: _atomClass,
+        options,
+        mode,
+        user,
+        action: 'read',
+        key,
+      });
       // cms
       const cms = _atomClass && _atomClass.cms;
       // sql
@@ -1373,12 +1387,19 @@ module.exports = ctx => {
       return roles;
     }
 
-    _getTableName({ atomClass, mode }) {
+    async getTableName({ atomClass, options, mode, user, action, key, count }) {
       const tableNameModes = atomClass.tableNameModes || {};
+      let tableName;
       if (mode === 'search') {
-        return tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClass.tableName;
+        tableName = tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClass.tableName;
+      } else {
+        tableName = tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
       }
-      return tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
+      if (!tableName) ctx.throw(`should specify the tableName of atomClass: ${atomClass.module}:${atomClass.atomClassName}`);
+      if (typeof tableName !== 'string') {
+        tableName = await tableName({ atomClass, options, mode, user, action, key, count });
+      }
+      return tableName;
     }
 
     _notifyDrafts(user) {
@@ -4605,7 +4626,7 @@ module.exports = ctx => {
       // -- r: aFlow
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -4806,7 +4827,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -4975,7 +4996,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
@@ -5207,7 +5228,7 @@ module.exports = ctx => {
       // -- r: aFlow
 
       // for safe
-      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
 
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
