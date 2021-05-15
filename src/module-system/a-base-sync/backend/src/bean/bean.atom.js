@@ -145,7 +145,8 @@ module.exports = ctx => {
       let tableName = '';
       if (_atomClass) {
         tableName = await this.getTableName({
-          atomClass: _atomClass,
+          atomClass,
+          atomClassBase: _atomClass,
           options,
           mode: options.mode,
           user,
@@ -953,7 +954,8 @@ module.exports = ctx => {
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
       const tableName = await this.getTableName({
-        atomClass: _atomClass,
+        atomClass,
+        atomClassBase: _atomClass,
         options,
         mode,
         user,
@@ -1247,17 +1249,17 @@ module.exports = ctx => {
       return roles;
     }
 
-    async getTableName({ atomClass, options, mode, user, action, key, count }) {
-      const tableNameModes = atomClass.tableNameModes || {};
+    async getTableName({ atomClass, atomClassBase, options, mode, user, action, key, count }) {
+      const tableNameModes = atomClassBase.tableNameModes || {};
       let tableName;
       if (mode === 'search') {
-        tableName = tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClass.tableName;
+        tableName = tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClassBase.tableName;
       } else {
-        tableName = tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
+        tableName = tableNameModes[mode] || tableNameModes.default || atomClassBase.tableName;
       }
-      if (!tableName) ctx.throw(`should specify the tableName of atomClass: ${atomClass.module}:${atomClass.atomClassName}`);
+      if (!tableName) return tableName;
       if (typeof tableName !== 'string') {
-        tableName = await tableName({ atomClass, options, mode, user, action, key, count });
+        tableName = await tableName({ atomClass, atomClassBase, options, mode, user, action, key, count });
       }
       return tableName;
     }
