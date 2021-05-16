@@ -77,6 +77,8 @@ module.exports = app => {
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
           atomClass,
           key,
+          options,
+          user,
         });
         await this.ctx.bean.validation._validate({ atomClass, data: item, options });
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
