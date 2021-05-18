@@ -869,7 +869,7 @@ var env=${JSON.stringify(env, null, 2)};
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
-          return utils.escapeURL(_url);
+          return self.ctx.bean.util.escapeURL(_url);
         },
         css(fileName) {
           _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
@@ -881,7 +881,7 @@ var env=${JSON.stringify(env, null, 2)};
           _envs[name] = value;
         },
         text(...args) {
-          return this.ctx.text.locale(_textLocale, ...args);
+          return self.ctx.text.locale(_textLocale, ...args);
         },
         util: {
           time,
@@ -892,10 +892,10 @@ var env=${JSON.stringify(env, null, 2)};
             return self.ctx.helper.shtml(str);
           },
           escapeHtml(str) {
-            return utils.escapeHtml(str);
+            return self.ctx.bean.util.escapeHtml(str);
           },
           escapeURL(str) {
-            return utils.escapeURL(str);
+            return self.ctx.bean.util.escapeURL(str);
           },
         },
       };
@@ -2593,7 +2593,6 @@ const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
-const utils = __webpack_require__(294);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2783,7 +2782,7 @@ module.exports = app => {
         summary = item.description || '';
       }
       // title
-      const title = utils.escapeHtml(item.atomName);
+      const title = this.ctx.bean.util.escapeHtml(item.atomName);
       html = `<!-- ${title} -->\r\n` + html;
       // ok
       return { html, summary };
@@ -2903,52 +2902,6 @@ module.exports = {
 /***/ 294:
 /***/ ((module) => {
 
-
-/**
-  escapeHtml: based on markdown-it
-**/
-
-const HTML_ESCAPE_TEST_RE = /[&<>"']/;
-const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
-const HTML_REPLACEMENTS = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  '\'': '&#039;',
-};
-
-function replaceUnsafeChar(ch) {
-  return HTML_REPLACEMENTS[ch];
-}
-
-function escapeHtml(str) {
-  if (HTML_ESCAPE_TEST_RE.test(str)) {
-    return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar);
-  }
-  return str;
-}
-
-const URL_ESCAPE_TEST_RE = /[<>"']/;
-const URL_ESCAPE_REPLACE_RE = /[<>"']/g;
-const URL_REPLACEMENTS = {
-  '<': '%3C',
-  '>': '%3E',
-  '"': '%22',
-  '\'': '%27',
-};
-
-function replaceUnsafeCharURL(ch) {
-  return URL_REPLACEMENTS[ch];
-}
-
-function escapeURL(str) {
-  if (URL_ESCAPE_TEST_RE.test(str)) {
-    return str.replace(URL_ESCAPE_REPLACE_RE, replaceUnsafeCharURL);
-  }
-  return str;
-}
-
 module.exports = {
   atomClass(atomClass) {
     let _atomClass;
@@ -2975,12 +2928,6 @@ module.exports = {
       _atomClass.id = res.id;
     }
     return _atomClass;
-  },
-  escapeHtml(str) {
-    return escapeHtml(str);
-  },
-  escapeURL(str) {
-    return escapeURL(str);
   },
 };
 

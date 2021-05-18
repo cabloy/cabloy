@@ -4394,6 +4394,7 @@ module.exports = ctx => {
 const require3 = __webpack_require__(6718);
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
+const utils = __webpack_require__(9294);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -4515,6 +4516,14 @@ module.exports = app => {
       if (!demo.enable) return;
       if (this.ctx.state.user.op.userName === 'root') return;
       this.ctx.throw.module(moduleInfo.relativeName, 1014);
+    }
+
+    escapeHtml(str) {
+      return utils.escapeHtml(str);
+    }
+
+    escapeURL(str) {
+      return utils.escapeURL(str);
     }
 
   }
@@ -8340,6 +8349,67 @@ module.exports = app => {
 
   }
   return AtomBase;
+};
+
+
+/***/ }),
+
+/***/ 9294:
+/***/ ((module) => {
+
+
+/**
+  escapeHtml: based on markdown-it
+**/
+
+const HTML_ESCAPE_TEST_RE = /[&<>"']/;
+const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
+const HTML_REPLACEMENTS = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#039;',
+};
+
+function replaceUnsafeChar(ch) {
+  return HTML_REPLACEMENTS[ch];
+}
+
+function escapeHtml(str) {
+  if (HTML_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar);
+  }
+  return str;
+}
+
+const URL_ESCAPE_TEST_RE = /[<>"']/;
+const URL_ESCAPE_REPLACE_RE = /[<>"']/g;
+const URL_REPLACEMENTS = {
+  '<': '%3C',
+  '>': '%3E',
+  '"': '%22',
+  '\'': '%27',
+};
+
+function replaceUnsafeCharURL(ch) {
+  return URL_REPLACEMENTS[ch];
+}
+
+function escapeURL(str) {
+  if (URL_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(URL_ESCAPE_REPLACE_RE, replaceUnsafeCharURL);
+  }
+  return str;
+}
+
+module.exports = {
+  escapeHtml(str) {
+    return escapeHtml(str);
+  },
+  escapeURL(str) {
+    return escapeURL(str);
+  },
 };
 
 
