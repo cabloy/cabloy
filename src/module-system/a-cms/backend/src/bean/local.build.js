@@ -780,7 +780,7 @@ var env=${JSON.stringify(env, null, 2)};
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
-          return utils.escapeURL(_url);
+          return self.ctx.bean.util.escapeURL(_url);
         },
         css(fileName) {
           _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
@@ -792,7 +792,7 @@ var env=${JSON.stringify(env, null, 2)};
           _envs[name] = value;
         },
         text(...args) {
-          return this.ctx.text.locale(_textLocale, ...args);
+          return self.ctx.text.locale(_textLocale, ...args);
         },
         util: {
           time,
@@ -803,10 +803,10 @@ var env=${JSON.stringify(env, null, 2)};
             return self.ctx.helper.shtml(str);
           },
           escapeHtml(str) {
-            return utils.escapeHtml(str);
+            return self.ctx.bean.util.escapeHtml(str);
           },
           escapeURL(str) {
-            return utils.escapeURL(str);
+            return self.ctx.bean.util.escapeURL(str);
           },
         },
       };

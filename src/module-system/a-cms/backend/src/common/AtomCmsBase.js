@@ -3,7 +3,6 @@ const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
-const utils = require('./utils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -193,7 +192,7 @@ module.exports = app => {
         summary = item.description || '';
       }
       // title
-      const title = utils.escapeHtml(item.atomName);
+      const title = this.ctx.bean.util.escapeHtml(item.atomName);
       html = `<!-- ${title} -->\r\n` + html;
       // ok
       return { html, summary };

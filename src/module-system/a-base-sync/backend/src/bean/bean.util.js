@@ -1,6 +1,7 @@
 const require3 = require('require3');
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
+const utils = require('../common/utils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -122,6 +123,14 @@ module.exports = app => {
       if (!demo.enable) return;
       if (this.ctx.state.user.op.userName === 'root') return;
       this.ctx.throw.module(moduleInfo.relativeName, 1014);
+    }
+
+    escapeHtml(str) {
+      return utils.escapeHtml(str);
+    }
+
+    escapeURL(str) {
+      return utils.escapeURL(str);
     }
 
   }
