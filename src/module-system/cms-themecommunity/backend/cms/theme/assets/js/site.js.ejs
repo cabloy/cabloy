@@ -194,8 +194,8 @@ function _fixContainerSite($navbar, $containerSite, $footer) {
   // onScroll
   const _onScroll = function() {
     // min-height
-    const diff = parseInt($window.height() - ($footer.offset().top + $footer.outerHeight(true)));
-    const height = parseInt($containerSite.outerHeight());
+    const diff = $window.height() - ($footer.offset().top + $footer.outerHeight(true));
+    const height = $containerSite.outerHeight();
     $containerSite.css('min-height', height + diff);
   };
 
