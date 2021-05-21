@@ -23,14 +23,19 @@ module.exports = {
 };
 
 function evaluateExpression({ expression, rootData, ctx }) {
-  const scope = {
-    ... rootData,
-    _meta: {
-      host: ctx.meta && ctx.meta.validateHost,
-      user: ctx.state.user && ctx.state.user.op,
-    },
-  };
-  return vm.runInContext(expression, vm.createContext(scope));
+  try {
+    const scope = {
+      ... rootData,
+      _meta: {
+        host: ctx.meta && ctx.meta.validateHost,
+        user: ctx.state.user && ctx.state.user.op,
+      },
+    };
+    return vm.runInContext(expression, vm.createContext(scope));
+  } catch (err) {
+    console.log(expression, rootData);
+    throw err;
+  }
 }
 
 function checkIfEmpty(schemaProperty, value) {
