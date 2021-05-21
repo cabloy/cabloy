@@ -5,6 +5,7 @@ const extend = require('extend2');
 const os = require('os');
 const webpack = require('webpack');
 const fse = require('fs-extra');
+const chalk = require('chalk');
 
 module.exports = (context, cb) => {
 
@@ -37,12 +38,22 @@ module.exports = (context, cb) => {
   // dist
   const distPath = path.resolve(__dirname, `../dist${sceneValue ? '/' + sceneValue : ''}`);
 
+  // entry
+  const entryDefault = path.join(context.projectPath, 'src/front/config/config.default.js');
+  const entryScene = path.join(context.projectPath, `src/front/config/config.${sceneValue}.js`);
+  if (!fse.existsSync(entryScene)) {
+    console.log(chalk.red(
+      `  Scene Config File Not Found:\n  ${entryScene}\n`
+    ));
+    process.exit(0);
+  }
+
   // configProject
   const tmpdir = os.tmpdir();
   const files = {
     entry: {
-      default: path.join(context.projectPath, 'src/front/config/config.default.js'),
-      [sceneValue]: path.join(context.projectPath, `src/front/config/config.${sceneValue}.js`),
+      default: entryDefault,
+      [sceneValue]: entryScene,
     },
     output: {
       path: tmpdir,
