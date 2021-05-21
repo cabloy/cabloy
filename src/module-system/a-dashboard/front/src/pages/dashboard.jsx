@@ -14,7 +14,7 @@ export default {
     let domNavbar;
     if (this.scene === 'manager' || this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
       domNavbar = (
-        <eb-navbar large largeTransparent title={this.pageTitle} ebBackLink='Back'>
+        <eb-navbar title={this.pageTitle} ebBackLink='Back'>
         </eb-navbar>
       );
     }
