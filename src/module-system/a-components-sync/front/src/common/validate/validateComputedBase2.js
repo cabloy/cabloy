@@ -8,6 +8,8 @@ export default ({ ctx, onChange }) => {
     initialize() {
       // clear
       this.dispose();
+      // check parcel
+      if (!ctx.parcel || !ctx.parcel.data) return;
       // class
       const _Class = ValidateComputedBaseFn({
         ctx,
