@@ -247,7 +247,6 @@ export default {
     },
     _columnSorterCurrent(columnName) {
       const atomOrderCurrent = this.layoutManager.order_current;
-      const key = this.layoutManager.order_getKey(atomOrderCurrent);
       if (this._checkColumnNameEqualOrder(atomOrderCurrent, columnName)) {
         return atomOrderCurrent.by === 'desc' ? 'descend' : 'ascend';
       }
