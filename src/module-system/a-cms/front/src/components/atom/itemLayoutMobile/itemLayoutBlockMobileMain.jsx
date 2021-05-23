@@ -43,8 +43,9 @@ export default {
       }
     },
     _renderIFrame() {
+      const subnavbar = this.layoutManager.subnavbar.enable;
       return (
-        <eb-box onSize={this.onSize} header subnavbar class="eb-box-iframe">
+        <eb-box onSize={this.onSize} header subnavbar={subnavbar} class="eb-box-iframe">
           <iframe ref="iframe" src={this.articleUrl} seamless={true}></iframe>
         </eb-box>
       );
