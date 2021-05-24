@@ -117,7 +117,8 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const { html, summary } = this._renderContent({ item });
+      const html = this._renderContent({ item });
+      const summary = this._parseSummary({ item, html });
       // update article
       await this.modelArticle.update({
         sticky: item.sticky,
@@ -163,39 +164,46 @@ module.exports = app => {
       const editMode = item.editMode;
       // html
       let html = '';
-      if (item.html) {
-        html = item.html;
+      // not use item.html directly, for maybe handled twice
+      // if (item.html) {
+      //  html = item.html;
+      // } else {
+      if (editMode === 0) {
+        // 0: custom
+        //   same as plain text
+        // html = item.html || '';
+        html = item.content || '';
+      } else if (editMode === 1) {
+        // 1: markdown
+        //   always renderMarkdown, for html maybe different for stage:0/1
+        html = this._renderMarkdown({ item });
+      } else if (editMode === 2) {
+        // 2: html
+        html = item.content || '';
       } else {
-        if (editMode === 0) {
-          // 0: custom
-          html = item.html || '';
-        } else if (editMode === 1) {
-          // 1: markdown
-          html = this._renderMarkdown({ item });
-        } else if (editMode === 2) {
-          // 2: html
-          html = item.content || '';
-        } else {
-          // not supported
-          // do nothing
-        }
+        // not supported
+        // do nothing
       }
+      // }
+      // title
+      const title = this.ctx.bean.util.escapeHtml(item.atomName);
+      html = `<!-- ${title} -->\r\n` + html;
+      // ok
+      return html;
+    }
+
+    _parseSummary({ item, html }) {
       // summary
       let summary;
-      if (item.summary) {
-        summary = item.summary;
-      } else if (html) {
+      if (html) {
         const res = trimHtml(html, this.moduleConfig.article.trim);
         summary = res.html;
       }
       if (!summary) {
         summary = item.description || '';
       }
-      // title
-      const title = this.ctx.bean.util.escapeHtml(item.atomName);
-      html = `<!-- ${title} -->\r\n` + html;
       // ok
-      return { html, summary };
+      return summary;
     }
 
     _renderMarkdown({ item }) {
