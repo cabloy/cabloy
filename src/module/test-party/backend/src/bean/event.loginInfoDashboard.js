@@ -12,7 +12,14 @@ module.exports = ctx => {
         modules: {
           'a-dashboard': {
             dashboard: {
-              home: 'test-party:dashboardTest',
+              presets: {
+                anonymous: {
+                  home: 'test-party:dashboardTest',
+                },
+                authenticated: {
+                  home: 'test-party:dashboardTest',
+                },
+              },
             },
           },
         },

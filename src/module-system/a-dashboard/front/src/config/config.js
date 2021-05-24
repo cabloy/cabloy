@@ -2,8 +2,16 @@
 export default function(Vue) {
   return {
     dashboard: {
-      default: 'a-dashboard:dashboardDefault',
-      home: 'a-dashboard:dashboardHome',
+      presets: {
+        anonymous: {
+          default: 'a-dashboard:dashboardDefault',
+          home: 'a-dashboard:dashboardHome',
+        },
+        authenticated: {
+          default: 'a-dashboard:dashboardDefault',
+          home: 'a-dashboard:dashboardHome',
+        },
+      },
     },
     profile: {
       meta: {

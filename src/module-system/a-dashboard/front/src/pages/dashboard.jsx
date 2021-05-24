@@ -155,10 +155,12 @@ export default {
       this.$refs.page.setPageTitle(this.pageTitle);
     },
     __adjustDashboardKey(atomStaticKey) {
+      const presets = this.$config.dashboard.presets;
+      const dashboardConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
       if (!atomStaticKey || atomStaticKey === 'default') {
-        return this.$config.dashboard.default;
+        return dashboardConfig.default;
       } else if (atomStaticKey === 'home') {
-        return this.$config.dashboard.home;
+        return dashboardConfig.home;
       }
       return atomStaticKey;
     },
