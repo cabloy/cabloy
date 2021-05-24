@@ -120,10 +120,10 @@ module.exports = (context, cb) => {
         assetsSubDirectory: 'static',
         assetsPublicPath: '',
         proxyTable: {
-          '/favicon.ico': {
-            target: proxyTarget,
-            xfwd: true,
-          },
+          // '/favicon.ico': {
+          //   target: proxyTarget,
+          //   xfwd: true,
+          // },
           '/api': {
             target: proxyTarget,
             xfwd: true,

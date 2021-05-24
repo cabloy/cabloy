@@ -69,6 +69,8 @@ module.exports = context => {
     copyModules() {
       // runtime path
       const runtimePath = path.join(context.config.frontPath, '__runtime');
+      // static path
+      const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 
       // modules
       const { modules, modulesGlobal } = mglob.glob(
@@ -97,8 +99,7 @@ module.exports = context => {
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
         // copy static
         fileSrc = `${module.root}/dist/static`;
-        fileDest = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
-        if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+        if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, staticPath);
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/static');
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
       }
@@ -155,11 +156,15 @@ export default {
 
       fse.outputFileSync(path.join(runtimePath, 'modules.js'), modulesJS);
 
+      // favicon
+      const favicon = this.getIndexPath('favicon.ico');
+      fse.copySync(favicon, path.join(context.config.build.assetsRoot, 'favicon.ico'));
     },
-    getIndexPath() {
-      const index = path.join(context.config.projectPath, 'src/front/index.ejs');
+    getIndexPath(filename) {
+      filename = filename || 'index.ejs';
+      const index = path.join(context.config.projectPath, 'src/front/', filename);
       if (fse.existsSync(index)) return index;
-      return path.join(__dirname, '../index.ejs');
+      return path.join(__dirname, '../', filename);
     },
     babelLoaderOptions() {
       return {

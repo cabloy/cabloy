@@ -45,6 +45,7 @@ module.exports = ({ projectPath, frontPath, scene }) => {
       const sceneValue = JSON.parse(context.config.build.env.SCENE);
       const dest = path.join(context.config.projectPath, `dist${sceneValue ? '/' + sceneValue : ''}`);
       fse.removeSync(path.join(dest, 'index.html'));
+      fse.removeSync(path.join(dest, 'favicon.ico'));
       fse.removeSync(path.join(dest, 'static'));
       fse.copySync(context.config.build.assetsRoot, dest);
 
