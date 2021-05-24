@@ -139,7 +139,8 @@ export default {
       if (!title) {
         title = titleBase;
       } else {
-        title = this.$text(title);
+        // need not $text
+        // title = this.$text(title);
         if (title === this.$text('Default')) {
           title = titleBase;
         }
@@ -186,7 +187,7 @@ export default {
             this.dashboardAtomId = this.dashboardSystem.atomId;
             this.dashboardUserId = 0;
             this.profile = JSON.parse(this.dashboardSystem.content);
-            title = this.dashboardSystem.atomName;
+            title = this.dashboardSystem.atomNameLocale;
           }
         }
         this.__checkProfile(this.profile);
