@@ -197,7 +197,7 @@ module.exports = app => {
       let summary;
       if (html) {
         const res = trimHtml(html, this.moduleConfig.article.trim);
-        summary = res.html;
+        summary = res.html.trim();
       }
       if (!summary) {
         summary = item.description || '';
