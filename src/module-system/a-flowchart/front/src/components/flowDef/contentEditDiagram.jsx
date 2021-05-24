@@ -153,6 +153,10 @@ export default {
       // graph
       this.graph = new this.x6.Graph({
         container,
+        grid: {
+          size: 10,
+          visible: true,
+        },
         width: this.size.width,
         height: this.size.height,
         background: {
