@@ -21,7 +21,14 @@ export default {
       const form = this.filter.data.form;
       if (form) {
         if (form.atomName) {
-          options.where['a.atomName'] = { val: form.atomName, op: 'like' };
+          if (form.atomClass && form.atomClass.module === 'a-base' && form.atomClass.atomClassName === 'resource') {
+            options.where.__or__atomNameResource = [
+              { 'a.atomName': { val: form.atomName, op: 'like' } },
+              { 'f.atomNameLocale': { val: form.atomName, op: 'like' } },
+            ];
+          } else {
+            options.where['a.atomName'] = { val: form.atomName, op: 'like' };
+          }
         }
         options.mine = Number(form.mine);
         options.stage = form.stage;
