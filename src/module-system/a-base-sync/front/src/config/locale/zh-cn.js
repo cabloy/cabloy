@@ -57,6 +57,7 @@ export default {
   Hearted: '已点赞',
   AtomClassSelectRoleTip: '选择角色',
   SelectLanguageTip: '选择语言',
+  SelectResourceTypeTip: '选择资源类型',
   Filter: '筛选',
   Clone: '克隆',
   Export: '导出',

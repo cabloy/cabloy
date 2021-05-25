@@ -8,6 +8,15 @@ export default {
     return {
     };
   },
+  computed: {
+    atomClass() {
+      const { parcel } = this.context;
+      return {
+        module: parcel.data.module,
+        atomClassName: parcel.data.atomClassName,
+      };
+    },
+  },
   created() {
   },
   methods: {
@@ -39,14 +48,20 @@ export default {
         }
       }
       // get categoryId from resourceType
-
+      const categoryRoot = await this.$api.post('/a/base/category/child', {
+        atomClass: this.atomClass,
+        categoryId: 0,
+        categoryName: resourceType,
+      });
+      const categoryIdStart = categoryRoot.id;
+      // select
       return new Promise(resolve => {
-        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(language));
+        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.atomClass);
         this.$view.navigate(url, {
           target: '_self',
           context: {
             params: {
-              categoryIdStart: 0,
+              categoryIdStart,
               leafOnly: true,
             },
             callback: (code, node) => {

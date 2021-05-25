@@ -8,6 +8,7 @@ export default {
   WorkFlows: 'Work Flows',
   AtomClassSelectRoleTip: 'Select Role',
   SelectLanguageTip: 'Select Language',
+  SelectResourceTypeTip: 'Select Resource Type',
   RevertToThisRevision: 'Revert To This Revision',
   DeleteBulkNotAllDone: 'Some Items Cannot be Deleted',
   ReferenceForHelp: 'Reference',

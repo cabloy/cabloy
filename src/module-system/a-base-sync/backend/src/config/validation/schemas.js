@@ -113,6 +113,11 @@ module.exports = app => {
         ebTitle: 'Name',
         notEmpty: true,
       },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
       // config
       __groupConfig: {
         ebType: 'group-flatten',
@@ -127,11 +132,6 @@ module.exports = app => {
       __groupBasicInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
-      },
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
       },
       resourceType: {
         type: 'string',

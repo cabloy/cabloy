@@ -120,6 +120,8 @@ export default {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
       } else if (action.name === 'selectLocale') {
         return await this._onActionSelectLocale({ ctx, action, item });
+      } else if (action.name === 'selectResourceType') {
+        return await this._onActionSelectResourceType({ ctx, action, item });
       } else if (action.name === 'enable') {
         const key = { atomId: item.atomId, itemId: item.itemId };
         return await this._onActionEnable({ ctx, key });
@@ -271,6 +273,43 @@ export default {
             text: locale.title,
             onClick: () => {
               onButtonClick(locale);
+            },
+          });
+        }
+        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
+        function onActionsClosed() {
+          actions.destroy();
+          if (!resolved) {
+            resolved = true;
+            reject();
+          }
+        }
+        actions.open()
+          .once('actionsClosed', onActionsClosed)
+          .once('popoverClosed', onActionsClosed);
+      });
+    },
+    async _onActionSelectResourceType({ ctx, action, item }) {
+      const resourceTypes = await ctx.$store.dispatch('a/base/getResourceTypes');
+      // choose
+      return new Promise((resolve, reject) => {
+        const hostEl = ctx.$view.getHostEl();
+        const targetEl = action.targetEl;
+        const buttons = [{
+          text: ctx.$text('SelectResourceTypeTip'),
+          label: true,
+        }];
+        let resolved = false;
+        function onButtonClick(locale) {
+          resolved = true;
+          resolve(locale);
+        }
+        for (const key in resourceTypes) {
+          const resourceType = resourceTypes[key];
+          buttons.push({
+            text: resourceType.titleLocale,
+            onClick: () => {
+              onButtonClick(key);
             },
           });
         }
