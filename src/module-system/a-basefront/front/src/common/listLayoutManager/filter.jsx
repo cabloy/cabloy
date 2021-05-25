@@ -21,7 +21,8 @@ export default {
       const form = this.filter.data.form;
       if (form) {
         if (form.atomName) {
-          if (form.atomClass && form.atomClass.module === 'a-base' && form.atomClass.atomClassName === 'resource') {
+          const atomClass = form.atomClass ? this.getAtomClass(form.atomClass) : null;
+          if (atomClass && atomClass.resource) {
             options.where.__or__atomNameResource = [
               { 'a.atomName': { val: form.atomName, op: 'like' } },
               { 'f.atomNameLocale': { val: form.atomName, op: 'like' } },
