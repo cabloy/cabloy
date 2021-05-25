@@ -63,6 +63,7 @@ export default {
             params: {
               categoryIdStart,
               leafOnly: true,
+              setLocale: true,
             },
             callback: (code, node) => {
               if (code === 200) {

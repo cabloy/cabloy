@@ -42,6 +42,9 @@ export default {
     categoryIdDisable() {
       return this.contextParams.categoryIdDisable;
     },
+    setLocale() {
+      return this.contextParams.setLocale;
+    },
     root() {
       return {
         attrs: {
@@ -82,6 +85,7 @@ export default {
         atomClass: this.atomClass,
         language: this.language,
         categoryId,
+        setLocale: this.setLocale,
       });
       let list = data.list.map(item => {
         const checkbox = !this.leafOnly || item.categoryCatalog === 0;
