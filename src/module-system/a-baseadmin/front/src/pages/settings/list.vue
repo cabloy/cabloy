@@ -41,6 +41,7 @@ export default {
         { module: 'a-baseadmin', name: 'user' },
         { module: 'a-baseadmin', name: 'role' },
         { module: 'a-baseadmin', name: 'atomRight' },
+        { module: 'a-baseadmin', name: 'resourceRight' },
         { module: 'a-baseadmin', name: 'auth' },
         { module: 'a-baseadmin', name: 'category' },
         { module: 'a-baseadmin', name: 'tag' },

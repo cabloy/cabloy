@@ -5,6 +5,7 @@ export default {
   'Atom Class': '原子类型',
   'Atom Right': '原子权限',
   'Atom Right Management': '原子权限管理',
+  'Resource Right Management': '资源权限管理',
   'Auth Management': '认证管理',
   'Basic Admin': '基础管理',
   'Function Right Management': '功能权限管理',

@@ -36,6 +36,17 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
+      atomName: 'Resource Right Management',
+      atomStaticKey: 'resourceRight',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Basic',
+      resourceType: 'a-base:function',
+      resourceConfig: JSON.stringify({
+        actionPath: '/a/baseadmin/resourceRight/list',
+      }),
+      resourceRoles: 'template.system',
+    },
+    {
       atomName: 'Auth Management',
       atomStaticKey: 'auth',
       atomRevision: 0,
