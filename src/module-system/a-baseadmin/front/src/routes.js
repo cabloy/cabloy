@@ -17,6 +17,8 @@ export default [
   { path: 'atomRight/list', component: load('atomRight/list') },
   { path: 'atomRight/edit', component: load('atomRight/edit') },
   { path: 'atomRight/add', component: load('atomRight/add') },
+  { path: 'resourceRight/list', component: load('resourceRight/list') },
+  { path: 'resourceRight/edit', component: load('resourceRight/edit') },
   { path: 'auth/list', component: load('auth/list') },
   { path: 'auth/info', component: load('auth/info') },
   { path: 'settings/list', component: load('settings/list') },

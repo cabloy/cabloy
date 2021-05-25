@@ -1,0 +1,153 @@
+<template>
+  <div>
+    <f7-list v-if="ready">
+      <f7-list-group v-for="group of itemGroups" :key="group.id">
+        <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title> </f7-list-item>
+        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.titleLocale">
+          <div slot="root-start" class="header">
+            <div></div>
+            <div>{{$text('from')}}: {{item.roleName}}</div>
+          </div>
+          <div slot="after">
+            <f7-badge v-if="item.actionBulk===0 && item.scope==='0'">{{$text('Self')}}</f7-badge>
+            <template v-if="item.scopeRoles">
+              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
+            </template>
+          </div>
+          <div slot="root-end" class="summary-no-media">
+            <div v-if="item.actionBulk===1 && item.actionCode!==1">{{$text('Bulk')}}</div>
+          </div>
+        </eb-list-item>
+      </f7-list-group>
+    </f7-list>
+    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+  </div>
+</template>
+<script>
+import Vue from 'vue';
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+export default {
+  meta: {
+    global: false,
+  },
+  mixins: [ ebModules, ebAtomClasses, ebAtomActions ],
+  props: {
+    role: {
+      type: Object,
+    },
+    user: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      items: [],
+    };
+  },
+  computed: {
+    ready() {
+      return this.modulesAll && this.atomClassesAll && this.actionsAll;
+    },
+    itemGroups() {
+      if (!this.items) return [];
+      const _keys = {};
+      const groups = [];
+      let group = null;
+      for (const item of this.items) {
+        // group
+        const groupName = `${item.module}.${item.atomClassName}`;
+        if (!group || group.id !== groupName) {
+          const module = this.getModule(item.module);
+          const atomClass = this.getAtomClass(item);
+          group = {
+            id: groupName,
+            atomClassTitle: atomClass.titleLocale,
+            moduleTitle: module.titleLocale,
+            items: [],
+          };
+          groups.push(group);
+        }
+        // item
+        const _key = `${item.roleExpandId}:${item.roleRightId}`;
+        if (!_keys[_key]) {
+          _keys[_key] = true;
+          const action = this.getAction({
+            module: item.module,
+            atomClassName: item.atomClassName,
+            name: item.actionName,
+          });
+          // push
+          group.items.push({
+            _key,
+            title: action.title,
+            titleLocale: action.titleLocale,
+            ...item,
+          });
+        }
+      }
+      return groups;
+    },
+  },
+  mounted() {
+    this.$meta.eventHub.$on('atomRight:add', this.onAtomRightAdd);
+    this.$meta.eventHub.$on('atomRight:delete', this.onAtomRightDelete);
+  },
+  beforeDestroy() {
+    this.$meta.eventHub.$off('atomRight:add', this.onAtomRightAdd);
+    this.$meta.eventHub.$off('atomRight:delete', this.onAtomRightDelete);
+  },
+  methods: {
+    reload(force) {
+      this.$refs.loadMore.reload(force);
+    },
+    loadMore() {
+      this.$refs.loadMore.loadMore();
+    },
+    onLoadClear(done) {
+      this.items = [];
+      done();
+    },
+    onLoadMore({ index }) {
+      if (this.role) {
+        // role
+        return this.$api.post('atomRight/spreads', { roleId: this.role.id, page: { index } })
+          .then(data => {
+            this.items = this.items.concat(data.list);
+            return data;
+          });
+      }
+      // user
+      return this.$api.post('user/atomRights', { userId: this.user.id, page: { index } })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
+
+    },
+    onAtomRightAdd(data) {
+      this.reload();
+    },
+    onAtomRightDelete(data) {
+      this.reload();
+    },
+  },
+};
+
+</script>
+<style lang="less" scoped>
+.item {
+  .header {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2px 8px -8px 16px;
+    font-size: 12px;
+    color: var(--f7-block-header-text-color);
+  }
+}
+
+</style>
