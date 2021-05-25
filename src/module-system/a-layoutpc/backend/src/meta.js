@@ -14,6 +14,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aLayoutViewFull',
             },
+            resource: true,
           },
           actions: {
             write: {

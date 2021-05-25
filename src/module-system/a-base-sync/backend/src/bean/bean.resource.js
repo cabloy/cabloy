@@ -6,6 +6,8 @@ module.exports = ctx => {
     atomClassName: 'resource',
   };
 
+  let __atomClassesResource = null;
+
   class Resource extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
@@ -121,9 +123,12 @@ module.exports = ctx => {
     }
 
     async _checkResourceLocales({ locale }) {
+      const atomClasses = await this._getAtomClassesResource();
+      const atomClassIds = atomClasses.map(item => item.id);
       const sql = this.sqlProcedure._checkResourceLocales({
         iid: ctx.instance.id,
         locale,
+        atomClassIds,
       });
       return await ctx.model.query(sql);
     }
@@ -192,6 +197,24 @@ module.exports = ctx => {
     // delete resource role
     async deleteResourceRole({ id }) {
       await this.modelResourceRole.delete({ id });
+    }
+
+    async _getAtomClassesResource() {
+      if (__atomClassesResource) return __atomClassesResource;
+      const atomClassesResource = [];
+      const atomClasses = ctx.bean.base.atomClasses();
+      for (const module in atomClasses) {
+        const atomClassesModule = atomClasses[module];
+        for (const atomClassName in atomClassesModule) {
+          const atomClass = atomClassesModule[atomClassName];
+          if (atomClass.resource) {
+            const item = await ctx.bean.atomClass.get({ module, atomClassName });
+            atomClassesResource.push(item);
+          }
+        }
+      }
+      __atomClassesResource = atomClassesResource;
+      return __atomClassesResource;
     }
 
     // /* backup */

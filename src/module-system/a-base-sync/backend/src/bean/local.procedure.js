@@ -914,18 +914,17 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _checkResourceLocales({ iid, locale }) {
+    _checkResourceLocales({ iid, locale, atomClassIds }) {
       // for safe
       iid = parseInt(iid);
       locale = ctx.model.format('?', locale);
       // sql
       const _sql =
-        `select a.id,a.atomId,c.atomName from aResource a
-          inner join aAtom c on c.id=a.atomId
-            where a.iid=${iid} and a.deleted=0 and c.atomStage=1
+        `select a.id as atomId,a.atomName from aAtom a
+            where a.iid=${iid} and a.deleted=0 and a.atomStage=1 and a.atomClassId in (${atomClassIds.join(',')})
               and not exists(
                 select b.id from aResourceLocale b
-                  where b.iid=${iid} and b.locale=${locale} and b.atomId=a.atomId
+                  where b.iid=${iid} and b.locale=${locale} and b.atomId=a.id
                     and (b.atomNameLocale is not null and b.atomNameLocale<>'')
                 )
         `;
