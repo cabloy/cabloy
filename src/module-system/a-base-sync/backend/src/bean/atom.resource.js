@@ -19,7 +19,7 @@ module.exports = app => {
       if (!item) return null;
       // meta
       item.atomNameLocale = this.ctx.text(item.atomName);
-      this._getMeta(item, true);
+      this._getMeta(options, item, true);
       // ok
       return item;
     }
@@ -31,7 +31,7 @@ module.exports = app => {
       const showSorting = options && options.category;
       for (const item of items) {
         item.atomNameLocale = this.ctx.text(item.atomName);
-        this._getMeta(item, showSorting);
+        this._getMeta(options, item, showSorting);
       }
     }
 
@@ -64,12 +64,24 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item, showSorting) {
+    _getMeta(options, item, showSorting) {
+      // resourceTypes
+      const resourceTypes = this.ctx.bean.base.resourceTypes();
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
       const flags = [];
       if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
+      // layout
+      const layout = options && options.layout;
+      if (layout === 'list') {
+        // type/categary
+        const resourceType = resourceTypes[item.resourceType];
+        if (resourceType) {
+          const typeCategory = `${resourceType.titleLocale} / ${item.atomCategoryNameLocale}`;
+          flags.push(typeCategory);
+        }
+      }
       // meta
       const meta = {
         summary: item.description,
