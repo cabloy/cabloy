@@ -11,7 +11,6 @@ module.exports = ctx => {
       if (atomClass.module !== 'a-base' || atomClass.atomClassName !== 'resource') return;
       // resourceTypes
       const resourceTypes = ctx.bean.base.resourceTypes();
-      console.log(resourceTypes);
       // locale
       const list = context.result;
       for (const item of list) {

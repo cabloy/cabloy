@@ -67,6 +67,7 @@ module.exports = app => {
     _getMeta(options, item, showSorting) {
       // resourceTypes
       const resourceTypes = this.ctx.bean.base.resourceTypes();
+      const resourceType = resourceTypes[item.resourceType];
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
@@ -76,10 +77,13 @@ module.exports = app => {
       const layout = options && options.layout;
       if (layout === 'list') {
         // type/categary
-        const resourceType = resourceTypes[item.resourceType];
         if (resourceType) {
           const typeCategory = `${resourceType.titleLocale} / ${item.atomCategoryNameLocale}`;
           flags.push(typeCategory);
+        }
+      } else if (layout === 'table') {
+        if (resourceType) {
+          item.resourceTypeLocale = this.ctx.text(resourceType.titleLocale);
         }
       }
       // meta
