@@ -92,6 +92,13 @@ module.exports = app => {
           await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
         }
       }
+      // resource: update locales
+      if (_atomClass.resource && item.atomStage === 1) {
+        await this.ctx.bean.resource.setLocales({
+          atomId: key.atomId,
+          atomName: item.atomName,
+        });
+      }
     }
 
     async _writeAtom({ key, item, user, atomStage }) {

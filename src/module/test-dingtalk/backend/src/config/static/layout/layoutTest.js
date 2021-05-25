@@ -12,7 +12,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Test Layout(Dingtalk)',
     atomStaticKey: 'layoutTest',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',

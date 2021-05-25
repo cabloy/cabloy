@@ -40,13 +40,6 @@ module.exports = app => {
       const data = await this.ctx.model.resource.prepareData(item);
       data.id = key.itemId;
       await this.ctx.model.resource.update(data);
-      // update locales
-      if (item.atomStage === 1) {
-        await this.ctx.bean.resource.setLocales({
-          atomId: key.atomId,
-          atomName: item.atomName,
-        });
-      }
     }
 
     async delete({ atomClass, key, user }) {
