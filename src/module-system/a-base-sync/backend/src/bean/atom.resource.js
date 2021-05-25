@@ -28,7 +28,7 @@ module.exports = app => {
       // super
       await super.select({ atomClass, options, items, user });
       // meta
-      const showSorting = options && options.category;
+      const showSorting = !!(options && options.category);
       for (const item of items) {
         item.atomNameLocale = this.ctx.text(item.atomName);
         this._getMeta(options, item, showSorting);
@@ -72,7 +72,9 @@ module.exports = app => {
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
       const flags = [];
-      if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
+      if (showSorting) {
+        flags.push(item.resourceSorting);
+      }
       // layout
       const layout = options && options.layout;
       if (layout === 'list') {
