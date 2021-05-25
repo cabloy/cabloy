@@ -78,12 +78,12 @@ export default {
     },
   },
   mounted() {
-    this.$meta.eventHub.$on('atomRight:add', this.onAtomRightAdd);
-    this.$meta.eventHub.$on('atomRight:delete', this.onAtomRightDelete);
+    this.$meta.eventHub.$on('resourceRight:add', this.onResourceRightAdd);
+    this.$meta.eventHub.$on('resourceRight:delete', this.onResourceRightDelete);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atomRight:add', this.onAtomRightAdd);
-    this.$meta.eventHub.$off('atomRight:delete', this.onAtomRightDelete);
+    this.$meta.eventHub.$off('resourceRight:add', this.onResourceRightAdd);
+    this.$meta.eventHub.$off('resourceRight:delete', this.onResourceRightDelete);
   },
   methods: {
     reload(force) {
@@ -97,7 +97,7 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('atomRight/rights', { roleId: this.role.id, page: { index } })
+      return this.$api.post('resourceRight/rights', { roleId: this.role.id, page: { index } })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;
@@ -117,10 +117,10 @@ export default {
             });
         });
     },
-    onAtomRightAdd(data) {
+    onResourceRightAdd(data) {
       this.reload();
     },
-    onAtomRightDelete(data) {
+    onResourceRightDelete(data) {
       const index = this.items.findIndex(item => item.id === data.id);
       if (index > -1) this.items.splice(index, 1);
     },
