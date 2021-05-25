@@ -238,9 +238,21 @@ module.exports = ctx => {
             left join aResource e on a.atomId=e.atomId
             left join aCategory f on b.atomCategoryId=f.id
           where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0
-            order by c.module,b.atomClassId,b.atomName
+            order by c.module,b.atomClassId,e.resourceType
             ${_limit}
         `, [ locale, ctx.instance.id, roleId ]);
+      // resourceTypes for a-base:resource
+      const resourceTypes = ctx.bean.base.resourceTypes();
+      // locale
+      for (const item of list) {
+        // resource type
+        const resourceType = resourceTypes[item.resourceType];
+        if (resourceType) {
+          item.resourceTypeLocale = resourceType.titleLocale;
+        }
+        // category name
+        item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
+      }
       return list;
     }
 

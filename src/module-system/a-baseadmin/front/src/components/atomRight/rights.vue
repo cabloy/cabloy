@@ -19,6 +19,7 @@
       </f7-list-group>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <f7-block></f7-block>
   </div>
 </template>
 <script>

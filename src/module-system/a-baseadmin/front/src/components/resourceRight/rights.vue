@@ -5,7 +5,7 @@
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.atomNameLocale || item.atomName" swipeout>
           <div slot="after">
-            <f7-badge v-if="item.actionBulk===0 && item.scope==='0'">{{$text('Self')}}</f7-badge>
+            <f7-badge v-if="item.resourceType">{{getTypeCategory(item)}}</f7-badge>
           </div>
           <eb-context-menu>
             <div slot="right">
@@ -16,6 +16,7 @@
       </f7-list-group>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <f7-block></f7-block>
   </div>
 </template>
 <script>
@@ -111,6 +112,9 @@ export default {
     onResourceRightDelete(data) {
       const index = this.items.findIndex(item => item.id === data.id);
       if (index > -1) this.items.splice(index, 1);
+    },
+    getTypeCategory(item) {
+      return `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
     },
   },
 };
