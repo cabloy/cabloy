@@ -62,9 +62,11 @@ export default {
                 if (node) {
                   this.context.setValue(node.id, 'atomCategoryId');
                   this.context.setValue(node.data.categoryName, 'atomCategoryName');
+                  this.context.setValue(node.data.categoryNameLocale, 'atomCategoryNameLocale');
                 } else {
                   this.context.setValue(0, 'atomCategoryId');
                   this.context.setValue('', 'atomCategoryName');
+                  this.context.setValue('', 'atomCategoryNameLocale');
                 }
                 resolve(true);
               } else if (code === false) {
@@ -79,17 +81,18 @@ export default {
   render() {
     const { parcel, dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
+    const categoryName = parcel.data.atomCategoryNameLocale || parcel.data.atomCategoryName;
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{parcel.data.atomCategoryName}</div>
+          <div slot="after">{categoryName}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose
         link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
-        <div slot="after">{parcel.data.atomCategoryName}</div>
+        <div slot="after">{categoryName}</div>
       </eb-list-item-choose>
     );
   },
