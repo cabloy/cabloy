@@ -238,7 +238,7 @@ module.exports = ctx => {
             left join aResource e on a.atomId=e.atomId
             left join aCategory f on b.atomCategoryId=f.id
           where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
-            order by c.module,b.atomClassId,e.resourceType
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
         `, [ locale, ctx.instance.id, roleId ]);
       // locale
@@ -269,9 +269,39 @@ module.exports = ctx => {
             left join aRoleExpand g on a.roleId=g.roleIdBase
             left join aRole h on g.roleIdBase=h.id
           where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
-            order by c.module,b.atomClassId,e.resourceType
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
         `, [ locale, ctx.instance.id, roleId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async resourceRightsOfUser({ userId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // items
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(`
+        select a.*,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType,
+               h.roleName
+          from aViewUserRightResource a
+            inner join aAtom b on a.resourceAtomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.resourceAtomId=d.atomId and d.locale=?
+            left join aResource e on a.resourceAtomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+            left join aRole h on a.roleIdBase=h.id
+          where a.iid=? and a.userIdWho=? and b.deleted=0 and b.atomStage=1
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
+            ${_limit}
+        `, [ locale, ctx.instance.id, userId ]);
       // locale
       this._resourceRightsLocale({ items });
       // ok

@@ -41,6 +41,7 @@ export default {
   'Tag Management': '标签管理',
   'Please Reload App': '请重新加载App',
   Atoms: '原子',
+  Resources: '资源',
   Build: '构建',
   Catalog: '目录',
   Children: '子项',

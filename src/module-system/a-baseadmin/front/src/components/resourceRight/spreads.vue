@@ -110,7 +110,6 @@ export default {
           this.items = this.items.concat(data.list);
           return data;
         });
-
     },
     onResourceRightAdd(data) {
       this.reload();

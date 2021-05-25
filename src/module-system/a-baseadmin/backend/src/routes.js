@@ -26,6 +26,7 @@ module.exports = app => {
     { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/removeRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/atomRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    { method: 'post', path: 'user/resourceRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     // atomRight
     { method: 'post', path: 'atomRight/rights', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/add', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
