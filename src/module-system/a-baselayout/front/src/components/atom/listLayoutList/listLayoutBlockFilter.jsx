@@ -195,7 +195,7 @@ export default {
     getCategoryName(categoryId) {
       if (!this.categoriesAll || !categoryId) return '';
       const category = this.categoriesAll.find(_item => _item.id === categoryId);
-      return category ? category.categoryName : '';
+      return category ? (category.categoryNameLocale || category.categoryName) : '';
     },
     getTagName(tagId) {
       if (!this.tagsAll || !tagId) return '';
