@@ -18,6 +18,16 @@ module.exports = app => {
             title: 'Resource',
             tableName: 'aResource',
             tableNameModes: {
+              default: ({ ctx, options }) => {
+                const resource = options && options.resource;
+                if (resource) return 'aResource';
+                return `(
+                  select __a.*,
+                    __c.atomNameLocale
+                    from aResource __a
+                    left join aResourceLocale __c on __a.atomId=__c.atomId and __c.locale='${ctx.locale}'
+                )`;
+              },
             },
             category: true,
             tag: true,

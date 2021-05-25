@@ -1259,7 +1259,7 @@ module.exports = ctx => {
       }
       if (!tableName) return tableName;
       if (typeof tableName !== 'string') {
-        tableName = await tableName({ atomClass, atomClassBase, options, mode, user, action, key, count });
+        tableName = await tableName({ ctx, atomClass, atomClassBase, options, mode, user, action, key, count });
       }
       return tableName;
     }

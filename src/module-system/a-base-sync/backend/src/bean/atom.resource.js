@@ -18,7 +18,6 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      item.atomNameLocale = this.ctx.text(item.atomName);
       this._getMeta(options, item, true);
       // ok
       return item;
@@ -30,7 +29,6 @@ module.exports = app => {
       // meta
       const showSorting = !!(options && options.category);
       for (const item of items) {
-        item.atomNameLocale = this.ctx.text(item.atomName);
         this._getMeta(options, item, showSorting);
       }
     }
