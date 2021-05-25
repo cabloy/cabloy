@@ -15,7 +15,7 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.resourceRight.add({
         roleId: this.ctx.request.body.roleId,
-        resourceAtomIds: this.ctx.request.body.resourceAtomIds,
+        atomIds: this.ctx.request.body.atomIds,
       });
       this.ctx.success(res);
     }

@@ -59,6 +59,9 @@ module.exports = app => {
       // resourceTypes
       const resourceTypes = this.ctx.bean.base.resourceTypes();
       const resourceType = resourceTypes[item.resourceType];
+      if (resourceType) {
+        item.resourceTypeLocale = resourceType.titleLocale;
+      }
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
@@ -68,16 +71,14 @@ module.exports = app => {
       }
       // layout
       const layout = options && options.layout;
-      if (layout === 'list') {
+      if (layout === 'list' || layout === 'select' || layout === 'selecting') {
         // type/categary
         if (resourceType) {
-          const typeCategory = `${resourceType.titleLocale} / ${item.atomCategoryNameLocale}`;
+          const typeCategory = `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
           flags.push(typeCategory);
         }
       } else if (layout === 'table') {
-        if (resourceType) {
-          item.resourceTypeLocale = this.ctx.text(resourceType.titleLocale);
-        }
+        // donothing
       }
       // meta
       const meta = {

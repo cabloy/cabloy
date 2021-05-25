@@ -93,14 +93,14 @@ export default {
         });
     },
     onPerformAdd() {
-      this.$view.navigate(`/a/baseadmin/atomRight/add?roleId=${this.role.id}`);
+      this.$view.navigate(`/a/baseadmin/resourceRight/add?roleId=${this.role.id}`);
     },
     onPerformDelete(event, item) {
       return this.$view.dialog.confirm()
         .then(() => {
-          return this.$api.post('atomRight/delete', { id: item.id })
+          return this.$api.post('resourceRight/delete', { id: item.id })
             .then(() => {
-              this.$meta.eventHub.$emit('atomRight:delete', { id: item.id, roleId: this.role.id });
+              this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
               this.$meta.util.swipeoutDelete(event.target);
               return true;
             });

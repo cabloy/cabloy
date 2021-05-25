@@ -194,6 +194,13 @@ module.exports = ctx => {
       });
     }
 
+    // add resource roles
+    async addResourceRoles({ atomIds, roleId }) {
+      for (const atomId of atomIds) {
+        await this.addResourceRole({ atomId, roleId });
+      }
+    }
+
     // delete resource role
     async deleteResourceRole({ id }) {
       await this.modelResourceRole.delete({ id });

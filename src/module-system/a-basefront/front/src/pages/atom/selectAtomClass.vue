@@ -31,6 +31,9 @@ export default {
     optional() {
       return this.contextParams.optional;
     },
+    resource() {
+      return this.contextParams.resource;
+    },
     atomClasses() {
       const atomClasses = [];
       if (this.optional) {
@@ -41,14 +44,16 @@ export default {
         const atomClassesModule = this.atomClassesAll[moduleName];
         for (const atomClassName in atomClassesModule) {
           const atomClass = atomClassesModule[atomClassName];
-          const title = atomClass.titleLocale;
-          const after = module.titleLocale;
-          atomClasses.push({
-            title,
-            module: moduleName,
-            atomClassName,
-            after,
-          });
+          if (!this.resource || atomClass.resource) {
+            const title = atomClass.titleLocale;
+            const after = module.titleLocale;
+            atomClasses.push({
+              title,
+              module: moduleName,
+              atomClassName,
+              after,
+            });
+          }
         }
       }
       return atomClasses;
