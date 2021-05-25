@@ -8,6 +8,8 @@ import userRoles from './components/user/roles.vue';
 import userSelect from './components/user/select.vue';
 import atomRightRights from './components/atomRight/rights.vue';
 import atomRightSpreads from './components/atomRight/spreads.vue';
+import resourceRightRights from './components/resourceRight/rights.vue';
+import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
   roleList,
@@ -20,4 +22,6 @@ export default {
   userSelect,
   atomRightRights,
   atomRightSpreads,
+  resourceRightRights,
+  resourceRightSpreads,
 };

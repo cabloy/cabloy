@@ -217,6 +217,33 @@ module.exports = ctx => {
       return __atomClassesResource;
     }
 
+    // admin
+
+    async resourceRights({ roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // list
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.*,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType
+          from aResourceRole a
+            inner join aAtom b on a.atomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.atomId=d.atomId and d.locale=?
+            left join aResource e on a.atomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+          where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0
+            order by c.module,b.atomClassId,b.atomName
+            ${_limit}
+        `, [ locale, ctx.instance.id, roleId ]);
+      return list;
+    }
+
     // /* backup */
 
     // // const roleFunctions = [
