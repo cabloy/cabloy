@@ -88,7 +88,7 @@ export default {
         const node = {
           id: item.id,
           attrs: {
-            label: item.categoryName || `[${this.$text('New Category')}]`,
+            label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
             loadChildren: item.categoryCatalog === 1,
             checkbox,
@@ -102,7 +102,7 @@ export default {
       });
       list = list.filter(item => {
         return (!this.catalogOnly || item.data.categoryCatalog === 1) &&
-              (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
+          (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
       });
       return list;
     },

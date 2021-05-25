@@ -106,4 +106,5 @@ module.exports = {
   Blue: '蓝色',
   Green: '绿色',
   Purple: '紫色',
+  Basic: '基本',
 };

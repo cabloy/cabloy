@@ -65,6 +65,8 @@ module.exports = app => {
     }
 
     _getMeta(item, showSorting) {
+      // locale of atomCategoryName
+      item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
       const flags = [];
       if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
