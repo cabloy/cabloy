@@ -222,10 +222,10 @@ module.exports = ctx => {
     async resourceRights({ roleId, page }) {
       // check locale
       const locale = ctx.locale;
-      // list
+      // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const items = await ctx.model.query(`
         select a.*,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -237,14 +237,52 @@ module.exports = ctx => {
             left join aResourceLocale d on a.atomId=d.atomId and d.locale=?
             left join aResource e on a.atomId=e.atomId
             left join aCategory f on b.atomCategoryId=f.id
-          where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0
+          where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType
             ${_limit}
         `, [ locale, ctx.instance.id, roleId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async resourceSpreads({ roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // items
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(`
+        select g.*,g.id as roleExpandId, a.id as resourceRoleId,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType,
+               h.roleName
+          from aResourceRole a
+            inner join aAtom b on a.atomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.atomId=d.atomId and d.locale=?
+            left join aResource e on a.atomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+            left join aRoleExpand g on a.roleId=g.roleIdBase
+            left join aRole h on g.roleIdBase=h.id
+          where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
+            order by c.module,b.atomClassId,e.resourceType
+            ${_limit}
+        `, [ locale, ctx.instance.id, roleId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    _resourceRightsLocale({ items }) {
       // resourceTypes for a-base:resource
       const resourceTypes = ctx.bean.base.resourceTypes();
       // locale
-      for (const item of list) {
+      for (const item of items) {
         // resource type
         const resourceType = resourceTypes[item.resourceType];
         if (resourceType) {
@@ -253,7 +291,6 @@ module.exports = ctx => {
         // category name
         item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
       }
-      return list;
     }
 
     // /* backup */

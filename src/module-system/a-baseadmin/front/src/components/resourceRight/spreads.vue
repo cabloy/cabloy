@@ -3,19 +3,13 @@
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title> </f7-list-item>
-        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.titleLocale">
+        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.atomNameLocale || item.atomName">
           <div slot="root-start" class="header">
             <div></div>
             <div>{{$text('from')}}: {{item.roleName}}</div>
           </div>
           <div slot="after">
-            <f7-badge v-if="item.actionBulk===0 && item.scope==='0'">{{$text('Self')}}</f7-badge>
-            <template v-if="item.scopeRoles">
-              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
-            </template>
-          </div>
-          <div slot="root-end" class="summary-no-media">
-            <div v-if="item.actionBulk===1 && item.actionCode!==1">{{$text('Bulk')}}</div>
+            <f7-badge v-if="item.resourceType">{{getTypeCategory(item)}}</f7-badge>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -27,12 +21,11 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses, ebAtomActions ],
+  mixins: [ ebModules, ebAtomClasses ],
   props: {
     role: {
       type: Object,
@@ -48,7 +41,7 @@ export default {
   },
   computed: {
     ready() {
-      return this.modulesAll && this.atomClassesAll && this.actionsAll;
+      return this.modulesAll && this.atomClassesAll;
     },
     itemGroups() {
       if (!this.items) return [];
@@ -70,19 +63,12 @@ export default {
           groups.push(group);
         }
         // item
-        const _key = `${item.roleExpandId}:${item.roleRightId}`;
+        const _key = `${item.roleExpandId}:${item.resourceRoleId}`;
         if (!_keys[_key]) {
           _keys[_key] = true;
-          const action = this.getAction({
-            module: item.module,
-            atomClassName: item.atomClassName,
-            name: item.actionName,
-          });
           // push
           group.items.push({
             _key,
-            title: action.title,
-            titleLocale: action.titleLocale,
             ...item,
           });
         }
@@ -91,12 +77,12 @@ export default {
     },
   },
   mounted() {
-    this.$meta.eventHub.$on('atomRight:add', this.onAtomRightAdd);
-    this.$meta.eventHub.$on('atomRight:delete', this.onAtomRightDelete);
+    this.$meta.eventHub.$on('resourceRight:add', this.onResourceRightAdd);
+    this.$meta.eventHub.$on('resourceRight:delete', this.onResourceRightDelete);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atomRight:add', this.onAtomRightAdd);
-    this.$meta.eventHub.$off('atomRight:delete', this.onAtomRightDelete);
+    this.$meta.eventHub.$off('resourceRight:add', this.onResourceRightAdd);
+    this.$meta.eventHub.$off('resourceRight:delete', this.onResourceRightDelete);
   },
   methods: {
     reload(force) {
@@ -112,25 +98,28 @@ export default {
     onLoadMore({ index }) {
       if (this.role) {
         // role
-        return this.$api.post('atomRight/spreads', { roleId: this.role.id, page: { index } })
+        return this.$api.post('resourceRight/spreads', { roleId: this.role.id, page: { index } })
           .then(data => {
             this.items = this.items.concat(data.list);
             return data;
           });
       }
       // user
-      return this.$api.post('user/atomRights', { userId: this.user.id, page: { index } })
+      return this.$api.post('user/resourceRights', { userId: this.user.id, page: { index } })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;
         });
 
     },
-    onAtomRightAdd(data) {
+    onResourceRightAdd(data) {
       this.reload();
     },
-    onAtomRightDelete(data) {
+    onResourceRightDelete(data) {
       this.reload();
+    },
+    getTypeCategory(item) {
+      return `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
     },
   },
 };

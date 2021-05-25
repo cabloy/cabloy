@@ -33,6 +33,7 @@ module.exports = app => {
     { method: 'post', path: 'atomRight/spreads', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
     // resourceRight
     { method: 'post', path: 'resourceRight/rights', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
+    { method: 'post', path: 'resourceRight/spreads', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
     // functionRight
     { method: 'post', path: 'functionRight/rights', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
     { method: 'post', path: 'functionRight/add', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },

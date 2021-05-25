@@ -24,7 +24,7 @@ module.exports = app => {
     }
 
     async spreads({ roleId, page }) {
-      return await this.ctx.bean.role.roleSpreads({ roleId, page });
+      return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
     }
 
   }
