@@ -133,10 +133,21 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      resourceType: {
+        type: 'string',
+        ebType: 'resourceType',
+        ebTitle: 'Resource Type',
+        ebOptionsBlankAuto: true,
+        notEmpty: true,
+      },
       atomCategoryId: {
         type: 'number',
-        ebType: 'category',
+        ebType: 'component',
         ebTitle: 'Category',
+        ebRender: {
+          module: 'a-basefront',
+          name: 'renderCategoryResource',
+        },
       },
       atomTags: {
         type: [ 'string', 'null' ],
@@ -147,13 +158,6 @@ module.exports = app => {
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
-      },
-      resourceType: {
-        type: 'string',
-        ebType: 'resourceType',
-        ebTitle: 'Resource Type',
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
       },
       resourceSorting: {
         type: 'number',
