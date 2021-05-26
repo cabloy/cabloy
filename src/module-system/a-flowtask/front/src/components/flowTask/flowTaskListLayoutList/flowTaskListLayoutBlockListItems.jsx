@@ -35,17 +35,13 @@ export default {
       return mediaLabel;
     },
     _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      return summary;
+      const handleRemark = this._getHandleRemark(item);
+      return handleRemark || '';
     },
     _getItemMetaFlags(item) {
       const flags = [];
       if (item.flowNodeNameLocale) {
         flags.push(item.flowNodeNameLocale);
-      }
-      const handleRemark = this._getHandleRemark(item);
-      if (handleRemark) {
-        flags.push(handleRemark);
       }
       return flags;
     },
