@@ -28,8 +28,10 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  'Mobile Layout': 'Mobile布局',
   'Tabbar Button': '选项卡按钮',
+  'Mobile Layout': 'Mobile布局',
+  'Mobile Layout(Authenticated)': 'Mobile布局（认证用户）',
+  'Mobile Layout(Anonymous)': 'Mobile布局（匿名用户）',
 };
 
 
@@ -60,9 +62,37 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'Mobile Layout',
+    atomName: 'Mobile Layout(Authenticated)',
     atomStaticKey: 'layoutMobile',
-    atomRevision: 0,
+    atomRevision: 2,
+    description: '',
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 912:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    toolbar: {
+      buttons: [
+        { module: 'a-layoutmobile', name: 'buttonHome' },
+        { module: 'a-layoutmobile', name: 'buttonAtom' },
+        { module: 'a-layoutmobile', name: 'buttonMine' },
+      ],
+    },
+  };
+  const layout = {
+    atomName: 'Mobile Layout(Anonymous)',
+    atomStaticKey: 'layoutMobileAnonymous',
+    atomRevision: 1,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',
@@ -77,10 +107,12 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const layoutMobile = __webpack_require__(215);
+const layoutMobileAnonymous = __webpack_require__(912);
 
 module.exports = app => {
   const layouts = [
     layoutMobile(app),
+    layoutMobileAnonymous(app),
   ];
   return layouts;
 };

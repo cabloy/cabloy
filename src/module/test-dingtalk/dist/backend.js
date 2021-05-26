@@ -41,8 +41,12 @@ module.exports = ctx => {
           modules: {
             'a-layoutmobile': {
               layout: {
-                scene: {
-                  web: 'test-dingtalk:layoutTest',
+                presets: {
+                  authenticated: {
+                    scene: {
+                      web: 'test-dingtalk:layoutTest',
+                    },
+                  },
                 },
               },
             },
@@ -111,6 +115,7 @@ module.exports = {
 
 module.exports = {
   Reply: '回复',
+  'Test Layout(Dingtalk)': '测试布局（钉钉）',
 };
 
 
@@ -143,7 +148,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Test Layout(Dingtalk)',
     atomStaticKey: 'layoutTest',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',
@@ -432,8 +437,9 @@ module.exports = require("require3");;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {

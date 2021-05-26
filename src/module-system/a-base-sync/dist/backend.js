@@ -1,6 +1,48 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 6211:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class localAop {
+
+    async children(context, next) {
+      // next
+      await next();
+      // check atomClass
+      const params = context.arguments[0];
+      const atomClass = params.atomClass;
+      if (!atomClass) return;
+      // check if resource
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      if (!atomClassBase.resource) return;
+      // resourceTypes for a-base:resource
+      const resourceTypes = ctx.bean.base.resourceTypes();
+      // locale
+      const list = context.result;
+      for (const item of list) {
+        if (item.categoryIdParent === 0 && atomClass.module === 'a-base' && atomClass.atomClassName === 'resource') {
+          // resource type
+          const resourceType = resourceTypes[item.categoryName];
+          if (resourceType) {
+            item.categoryNameLocale = resourceType.titleLocale;
+          }
+        } else {
+          // general name
+          item.categoryNameLocale = ctx.text(item.categoryName);
+        }
+      }
+    }
+
+  }
+
+  return localAop;
+};
+
+
+/***/ }),
+
 /***/ 5449:
 /***/ ((module) => {
 
@@ -28,11 +70,17 @@ module.exports = ctx => {
 /***/ 5224:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const category = __webpack_require__(6211);
 const local = __webpack_require__(5449);
 
 module.exports = app => {
   const aops = {};
   Object.assign(aops, {
+    category: {
+      match: 'category',
+      mode: 'ctx',
+      bean: category,
+    },
     local: {
       match: 'local',
       mode: 'ctx',
@@ -68,8 +116,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      item.atomNameLocale = this.ctx.text(item.atomName);
-      this._getMeta(item, true);
+      this._getMeta(options, item, true);
       // ok
       return item;
     }
@@ -78,10 +125,9 @@ module.exports = app => {
       // super
       await super.select({ atomClass, options, items, user });
       // meta
-      const showSorting = options && options.category;
+      const showSorting = !!(options && options.category);
       for (const item of items) {
-        item.atomNameLocale = this.ctx.text(item.atomName);
-        this._getMeta(item, showSorting);
+        this._getMeta(options, item, showSorting);
       }
     }
 
@@ -92,13 +138,6 @@ module.exports = app => {
       const data = await this.ctx.model.resource.prepareData(item);
       data.id = key.itemId;
       await this.ctx.model.resource.update(data);
-      // update locales
-      if (item.atomStage === 1) {
-        await this.ctx.bean.resource.setLocales({
-          atomId: key.atomId,
-          atomName: item.atomName,
-        });
-      }
     }
 
     async delete({ atomClass, key, user }) {
@@ -114,10 +153,31 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item, showSorting) {
+    _getMeta(options, item, showSorting) {
+      // resourceTypes
+      const resourceTypes = this.ctx.bean.base.resourceTypes();
+      const resourceType = resourceTypes[item.resourceType];
+      if (resourceType) {
+        item.resourceTypeLocale = resourceType.titleLocale;
+      }
+      // locale of atomCategoryName
+      item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // flags
       const flags = [];
-      if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
+      if (showSorting) {
+        flags.push(item.resourceSorting);
+      }
+      // layout
+      const layout = options && options.layout;
+      if (layout === 'list' || layout === 'select' || layout === 'selecting') {
+        // type/categary
+        if (resourceType) {
+          const typeCategory = `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
+          flags.push(typeCategory);
+        }
+      } else if (layout === 'table') {
+        // donothing
+      }
       // meta
       const meta = {
         summary: item.description,
@@ -505,7 +565,8 @@ module.exports = ctx => {
         atomIdFormal: keyFormal.atomId,
       });
       // notify
-      this._notifyDrafts();
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
       // return keyFormal
       return { formal: { key: keyFormal } };
     }
@@ -516,7 +577,10 @@ module.exports = ctx => {
         atomClosed: 1,
       });
       // notify
-      this._notifyDrafts();
+      const item = await this.modelAtom.get({ id: key.atomId });
+      const user = { id: item.userIdUpdated };
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
     }
 
     async openDraft({ key, user }) {
@@ -846,7 +910,10 @@ module.exports = ctx => {
         atomFlowId,
       });
       // notify
-      this._notifyDrafts();
+      const item = await this.modelAtom.get({ id: key.atomId });
+      const user = { id: item.userIdUpdated };
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
     }
 
     async star({ key, atom: { star = 1 }, user }) {
@@ -1398,9 +1465,24 @@ module.exports = ctx => {
         tableName = tableNameModes[mode] || tableNameModes.default || atomClassBase.tableName;
       }
       if (!tableName) return tableName;
+      // if function
       if (typeof tableName !== 'string') {
-        tableName = await tableName({ atomClass, atomClassBase, options, mode, user, action, key, count });
+        tableName = await tableName({ ctx, atomClass, atomClassBase, options, mode, user, action, key, count });
+      } else {
+        // check if resource
+        if (atomClassBase.resource) {
+          const optionsResource = options && options.resource;
+          if (!optionsResource) {
+            tableName = `(
+                  select ___a.*,
+                    ___c.atomNameLocale
+                    from ${tableName} ___a
+                    left join aResourceLocale ___c on ___a.atomId=___c.atomId and ___c.locale='${ctx.locale}'
+                )`;
+          }
+        }
       }
+      // ok
       return tableName;
     }
 
@@ -1408,6 +1490,14 @@ module.exports = ctx => {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'drafts',
+        user,
+      });
+    }
+
+    _notifyDraftsFlowing(user) {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'draftsFlowing',
         user,
       });
     }
@@ -2475,6 +2565,8 @@ module.exports = ctx => {
     atomClassName: 'resource',
   };
 
+  let __atomClassesResource = null;
+
   class Resource extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
@@ -2590,9 +2682,12 @@ module.exports = ctx => {
     }
 
     async _checkResourceLocales({ locale }) {
+      const atomClasses = await this._getAtomClassesResource();
+      const atomClassIds = atomClasses.map(item => item.id);
       const sql = this.sqlProcedure._checkResourceLocales({
         iid: ctx.instance.id,
         locale,
+        atomClassIds,
       });
       return await ctx.model.query(sql);
     }
@@ -2658,9 +2753,140 @@ module.exports = ctx => {
       });
     }
 
+    // add resource roles
+    async addResourceRoles({ atomIds, roleId }) {
+      for (const atomId of atomIds) {
+        await this.addResourceRole({ atomId, roleId });
+      }
+    }
+
     // delete resource role
     async deleteResourceRole({ id }) {
       await this.modelResourceRole.delete({ id });
+    }
+
+    async _getAtomClassesResource() {
+      if (__atomClassesResource) return __atomClassesResource;
+      const atomClassesResource = [];
+      const atomClasses = ctx.bean.base.atomClasses();
+      for (const module in atomClasses) {
+        const atomClassesModule = atomClasses[module];
+        for (const atomClassName in atomClassesModule) {
+          const atomClass = atomClassesModule[atomClassName];
+          if (atomClass.resource) {
+            const item = await ctx.bean.atomClass.get({ module, atomClassName });
+            atomClassesResource.push(item);
+          }
+        }
+      }
+      __atomClassesResource = atomClassesResource;
+      return __atomClassesResource;
+    }
+
+    // admin
+
+    async resourceRights({ roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // items
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(`
+        select a.*,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType
+          from aResourceRole a
+            inner join aAtom b on a.atomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.atomId=d.atomId and d.locale=?
+            left join aResource e on a.atomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+          where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
+            ${_limit}
+        `, [ locale, ctx.instance.id, roleId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async resourceSpreads({ roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // items
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(`
+        select g.*,g.id as roleExpandId, a.id as resourceRoleId,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType,
+               h.roleName
+          from aResourceRole a
+            inner join aAtom b on a.atomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.atomId=d.atomId and d.locale=?
+            left join aResource e on a.atomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+            left join aRoleExpand g on a.roleId=g.roleIdBase
+            left join aRole h on g.roleIdBase=h.id
+          where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
+            ${_limit}
+        `, [ locale, ctx.instance.id, roleId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async resourceRightsOfUser({ userId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // items
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(`
+        select a.*,
+               b.atomName,b.atomDisabled,b.atomCategoryId,
+               f.categoryName as atomCategoryName,
+               c.module,c.atomClassName,
+               d.atomNameLocale,e.resourceType,
+               h.roleName
+          from aViewUserRightResource a
+            inner join aAtom b on a.resourceAtomId=b.id
+            inner join aAtomClass c on b.atomClassId=c.id
+            left join aResourceLocale d on a.resourceAtomId=d.atomId and d.locale=?
+            left join aResource e on a.resourceAtomId=e.atomId
+            left join aCategory f on b.atomCategoryId=f.id
+            left join aRole h on a.roleIdBase=h.id
+          where a.iid=? and a.userIdWho=? and b.deleted=0 and b.atomStage=1
+            order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
+            ${_limit}
+        `, [ locale, ctx.instance.id, userId ]);
+      // locale
+      this._resourceRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    _resourceRightsLocale({ items }) {
+      // resourceTypes for a-base:resource
+      const resourceTypes = ctx.bean.base.resourceTypes();
+      // locale
+      for (const item of items) {
+        // resource type
+        const resourceType = resourceTypes[item.resourceType];
+        if (resourceType) {
+          item.resourceTypeLocale = resourceType.titleLocale;
+        }
+        // category name
+        item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
+      }
     }
 
     // /* backup */
@@ -5472,18 +5698,17 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _checkResourceLocales({ iid, locale }) {
+    _checkResourceLocales({ iid, locale, atomClassIds }) {
       // for safe
       iid = parseInt(iid);
       locale = ctx.model.format('?', locale);
       // sql
       const _sql =
-        `select a.id,a.atomId,c.atomName from aResource a
-          inner join aAtom c on c.id=a.atomId
-            where a.iid=${iid} and a.deleted=0 and c.atomStage=1
+        `select a.id as atomId,a.atomName from aAtom a
+            where a.iid=${iid} and a.deleted=0 and a.atomStage=1 and a.atomClassId in (${atomClassIds.join(',')})
               and not exists(
                 select b.id from aResourceLocale b
-                  where b.iid=${iid} and b.locale=${locale} and b.atomId=a.atomId
+                  where b.iid=${iid} and b.locale=${locale} and b.atomId=a.id
                     and (b.atomNameLocale is not null and b.atomNameLocale<>'')
                 )
         `;
@@ -6409,6 +6634,35 @@ module.exports = ctx => {
         atomStage: 0,
         atomClosed: 0,
         atomFlowId: 0,
+      });
+      return count;
+    }
+
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
+/***/ 6431:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Stats {
+
+    async execute(context) {
+      const { user } = context;
+      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
+      const count = await modelAtom.count({
+        userIdUpdated: user.id,
+        atomStage: 0,
+        atomClosed: 0,
+        atomFlowId: {
+          op: '>', val: 0,
+        },
       });
       return count;
     }
@@ -7976,6 +8230,7 @@ const beanUtil = __webpack_require__(4368);
 const beanCategory = __webpack_require__(30);
 const beanTag = __webpack_require__(8636);
 const statsDrafts = __webpack_require__(4571);
+const statsDraftsFlowing = __webpack_require__(6431);
 const statsStars = __webpack_require__(8999);
 const statsLabels = __webpack_require__(6318);
 const statsStarsLabels = __webpack_require__(442);
@@ -8131,6 +8386,10 @@ module.exports = app => {
       mode: 'ctx',
       bean: statsDrafts,
     },
+    'stats.draftsFlowing': {
+      mode: 'ctx',
+      bean: statsDraftsFlowing,
+    },
     'stats.stars': {
       mode: 'ctx',
       bean: statsStars,
@@ -8246,6 +8505,13 @@ module.exports = app => {
         if (atomStage === 1) {
           await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
         }
+      }
+      // resource: update locales
+      if (_atomClass.resource && item.atomStage === 1) {
+        await this.ctx.bean.resource.setLocales({
+          atomId: key.atomId,
+          atomName: item.atomName,
+        });
       }
     }
 
@@ -8925,6 +9191,7 @@ module.exports = {
   Blue: '蓝色',
   Green: '绿色',
   Purple: '紫色',
+  Basic: '基本',
 };
 
 
@@ -9095,16 +9362,12 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // actionPath
-  const options = {
-    stage: 'draft',
-    mine: 1,
-  };
-  const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;
+  const actionPath = '/a/basefront/atom/draftTabs';
   // resource
   const resource = {
     atomName: 'Drafts',
     atomStaticKey: 'mineAtomDrafts',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -9730,6 +9993,11 @@ module.exports = app => {
         ebTitle: 'Name',
         notEmpty: true,
       },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
       // config
       __groupConfig: {
         ebType: 'group-flatten',
@@ -9745,15 +10013,21 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
-      description: {
+      resourceType: {
         type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
+        ebType: 'resourceType',
+        ebTitle: 'Resource Type',
+        ebOptionsBlankAuto: true,
+        notEmpty: true,
       },
       atomCategoryId: {
         type: 'number',
-        ebType: 'category',
+        ebType: 'component',
         ebTitle: 'Category',
+        ebRender: {
+          module: 'a-basefront',
+          name: 'renderCategoryResource',
+        },
       },
       atomTags: {
         type: [ 'string', 'null' ],
@@ -9764,13 +10038,6 @@ module.exports = app => {
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
-      },
-      resourceType: {
-        type: 'string',
-        ebType: 'resourceType',
-        ebTitle: 'Resource Type',
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
       },
       resourceSorting: {
         type: 'number',
@@ -10743,6 +11010,7 @@ module.exports = app => {
             },
             category: true,
             tag: true,
+            resource: true,
           },
           actions: {
             write: {
@@ -10828,6 +11096,10 @@ module.exports = app => {
         drafts: {
           user: true,
           bean: 'drafts',
+        },
+        draftsFlowing: {
+          user: true,
+          bean: 'draftsFlowing',
         },
         stars: {
           user: true,

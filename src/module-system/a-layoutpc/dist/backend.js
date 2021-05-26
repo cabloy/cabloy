@@ -244,6 +244,8 @@ module.exports = {
   'Create Layout': '新建布局',
   'Layout List': '布局列表',
   'PC Layout': 'PC布局',
+  'PC Layout(Authenticated)': 'PC布局（认证用户）',
+  'PC Layout(Anonymous)': 'PC布局（匿名用户）',
 };
 
 
@@ -295,9 +297,56 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'PC Layout',
+    atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 0,
+    atomRevision: 1,
+    description: '',
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 674:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    sidebar: {
+      top: {
+        buttons: [
+          { module: 'a-layoutpc', name: 'buttonHome' },
+          { module: 'a-layoutpc', name: 'buttonFullscreen' },
+          { module: 'a-layoutpc', name: 'buttonMine' },
+        ],
+      },
+      left: {
+        panels: [
+          { module: 'a-layoutpc', name: 'panelMenu' },
+          { module: 'a-layoutpc', name: 'panelAtom' },
+          { module: 'a-layoutpc', name: 'panelSearch' },
+        ],
+      },
+      right: {
+        panels: [],
+      },
+      bottom: {
+        panels: [],
+        buttons: [
+          { module: 'a-layoutpc', name: 'buttonClock' },
+          { module: 'a-layoutpc', name: 'buttonCopyright' },
+        ],
+      },
+    },
+  };
+  const layout = {
+    atomName: 'PC Layout(Anonymous)',
+    atomStaticKey: 'layoutPCAnonymous',
+    atomRevision: 1,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',
@@ -312,10 +361,12 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const layoutPC = __webpack_require__(456);
+const layoutPCAnonymous = __webpack_require__(674);
 
 module.exports = app => {
   const layouts = [
     layoutPC(app),
+    layoutPCAnonymous(app),
   ];
   return layouts;
 };
@@ -627,6 +678,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aLayoutViewFull',
             },
+            resource: true,
           },
           actions: {
             write: {

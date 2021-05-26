@@ -78,6 +78,7 @@ module.exports = {
   'User Management': '用户管理',
   'Role Management': '角色管理',
   'Atom Right Management': '原子权限管理',
+  'Resource Right Management': '资源权限管理',
   'Menu Right Management': '菜单权限管理',
   'Function Right Management': '功能权限管理',
   'Auth Management': '认证管理',
@@ -136,6 +137,17 @@ module.exports = app => {
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
         actionPath: '/a/baseadmin/atomRight/list',
+      }),
+      resourceRoles: 'template.system',
+    },
+    {
+      atomName: 'Resource Right Management',
+      atomStaticKey: 'resourceRight',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Basic',
+      resourceType: 'a-base:function',
+      resourceConfig: JSON.stringify({
+        actionPath: '/a/baseadmin/resourceRight/list',
       }),
       resourceRoles: 'template.system',
     },
@@ -319,6 +331,56 @@ module.exports = app => {
 
   }
   return AuthController;
+};
+
+
+/***/ }),
+
+/***/ 595:
+/***/ ((module) => {
+
+module.exports = app => {
+  class ResourceRightController extends app.Controller {
+
+    async rights() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.resourceRight.rights({
+        roleId: this.ctx.request.body.roleId,
+        page,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.resourceRight.add({
+        roleId: this.ctx.request.body.roleId,
+        atomIds: this.ctx.request.body.atomIds,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.resourceRight.delete({
+        id: this.ctx.request.body.id,
+      });
+      this.ctx.success(res);
+    }
+
+    async spreads() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.resourceRight.spreads({
+        roleId: this.ctx.request.body.roleId,
+        page,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+  }
+  return ResourceRightController;
 };
 
 
@@ -520,6 +582,15 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
+    async resourceRights() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.user.resourceRights({
+        userId: this.ctx.request.body.userId,
+        page,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
   }
   return UserController;
 };
@@ -533,6 +604,7 @@ module.exports = app => {
 const role = __webpack_require__(479);
 const user = __webpack_require__(37);
 const atomRight = __webpack_require__(457);
+const resourceRight = __webpack_require__(595);
 const auth = __webpack_require__(523);
 
 module.exports = app => {
@@ -540,6 +612,7 @@ module.exports = app => {
     role,
     user,
     atomRight,
+    resourceRight,
     auth,
   };
   return controllers;
@@ -698,11 +771,17 @@ module.exports = app => {
     { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/removeRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/atomRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    { method: 'post', path: 'user/resourceRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     // atomRight
     { method: 'post', path: 'atomRight/rights', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/add', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/delete', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/spreads', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
+    // resourceRight
+    { method: 'post', path: 'resourceRight/rights', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
+    { method: 'post', path: 'resourceRight/add', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
+    { method: 'post', path: 'resourceRight/delete', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
+    { method: 'post', path: 'resourceRight/spreads', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
     // functionRight
     { method: 'post', path: 'functionRight/rights', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
     { method: 'post', path: 'functionRight/add', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
@@ -845,6 +924,37 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 510:
+/***/ ((module) => {
+
+module.exports = app => {
+
+  class ResourceRight extends app.Service {
+
+    async rights({ roleId, page }) {
+      return await this.ctx.bean.resource.resourceRights({ roleId, page });
+    }
+
+    async add({ roleId, atomIds }) {
+      return await this.ctx.bean.resource.addResourceRoles({ roleId, atomIds });
+    }
+
+    async delete({ id }) {
+      return await this.ctx.bean.resource.deleteResourceRole({ id });
+    }
+
+    async spreads({ roleId, page }) {
+      return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
+    }
+
+  }
+
+  return ResourceRight;
+};
+
+
+/***/ }),
+
 /***/ 889:
 /***/ ((module) => {
 
@@ -970,6 +1080,10 @@ module.exports = app => {
       return await this.ctx.bean.role.atomRightsOfUser({ userId, page });
     }
 
+    async resourceRights({ userId, page }) {
+      return await this.ctx.bean.resource.resourceRightsOfUser({ userId, page });
+    }
+
   }
 
   return User;
@@ -984,6 +1098,7 @@ module.exports = app => {
 const role = __webpack_require__(889);
 const user = __webpack_require__(323);
 const atomRight = __webpack_require__(580);
+const resourceRight = __webpack_require__(510);
 const auth = __webpack_require__(300);
 
 module.exports = app => {
@@ -991,6 +1106,7 @@ module.exports = app => {
     role,
     user,
     atomRight,
+    resourceRight,
     auth,
   };
   return services;
