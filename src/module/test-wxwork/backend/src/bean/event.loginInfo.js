@@ -12,8 +12,12 @@ module.exports = ctx => {
           modules: {
             'a-layoutmobile': {
               layout: {
-                scene: {
-                  web: 'test-wxwork:layoutTest',
+                presets: {
+                  authenticated: {
+                    scene: {
+                      web: 'test-wxwork:layoutTest',
+                    },
+                  },
                 },
               },
             },
