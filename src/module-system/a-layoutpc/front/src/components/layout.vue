@@ -69,6 +69,7 @@ export default {
       layoutConfig: null,
       panelsAll: null,
       buttonsAll: null,
+      layoutAtomStaticKey: null,
     };
   },
   computed: {
@@ -378,12 +379,14 @@ export default {
       return Promise.all(promises);
     },
     __getLayoutKey() {
+      if (this.layoutAtomStaticKey) return this.layoutAtomStaticKey;
       const presets = this.$config.layout.presets;
       const layoutConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
       let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
       if (!atomStaticKey) {
         atomStaticKey = layoutConfig.scene.web;
       }
+      this.layoutAtomStaticKey = atomStaticKey;
       return atomStaticKey;
     },
     async __init() {
