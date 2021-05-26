@@ -6,6 +6,9 @@ export default function(Vue) {
       locale: 'en-us',
       jwt: false,
     },
+    nprogress: {
+      debounce: 500,
+    },
     api: {
       baseURL: '',
       debounce: 200,

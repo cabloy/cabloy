@@ -1,5 +1,6 @@
 import mparse from 'egg-born-mparse';
 import modulesRepo from '../../__runtime/modules.js';
+import nprogressFn from './nprogress.js';
 
 export default function(Vue) {
   const loadingQueue = {
@@ -17,6 +18,8 @@ export default function(Vue) {
       delete this._queue[relativeName];
     },
   };
+
+  const nprogress = nprogressFn(Vue);
 
   const module = {
     _get(relativeName) {
@@ -113,13 +116,18 @@ export default function(Vue) {
     _import(relativeName, cb) {
       const moduleRepo = modulesRepo.modules[relativeName];
       if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+      nprogress.start();
       moduleRepo.instance().then(instance => {
+        nprogress.done();
         if (!instance || !instance.default || !instance.default.install) {
           instance = window[relativeName];
         }
         this.install(instance, moduleRepo.info, module => {
           cb(module);
         });
+      }).catch(err => {
+        nprogress.done();
+        throw err;
       });
     },
     requireAllMonkeys() {
