@@ -8,7 +8,7 @@ import renderResourceType from './components/render/renderResourceType.jsx';
 import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
 // tab
-import starTab from './components/tab/starTab.jsx';
+import atomTab from './components/tab/atomTab.jsx';
 
 export default {
   renderAtom,
@@ -21,5 +21,5 @@ export default {
   renderTableCellDefault,
   renderTableCellComputed,
   // tab
-  starTab,
+  atomTab,
 };

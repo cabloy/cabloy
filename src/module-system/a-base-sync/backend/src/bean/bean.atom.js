@@ -366,6 +366,7 @@ module.exports = ctx => {
       });
       // notify
       this._notifyDrafts();
+      this._notifyDraftsFlowing();
       // return keyFormal
       return { formal: { key: keyFormal } };
     }
@@ -377,6 +378,7 @@ module.exports = ctx => {
       });
       // notify
       this._notifyDrafts();
+      this._notifyDraftsFlowing();
     }
 
     async openDraft({ key, user }) {
@@ -707,6 +709,7 @@ module.exports = ctx => {
       });
       // notify
       this._notifyDrafts();
+      this._notifyDraftsFlowing();
     }
 
     async star({ key, atom: { star = 1 }, user }) {
@@ -1283,6 +1286,14 @@ module.exports = ctx => {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'drafts',
+        user,
+      });
+    }
+
+    _notifyDraftsFlowing(user) {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'draftsFlowing',
         user,
       });
     }

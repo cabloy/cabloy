@@ -1,16 +1,12 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // actionPath
-  const options = {
-    stage: 'draft',
-    mine: 1,
-  };
-  const actionPath = `/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`;
+  const actionPath = '/a/basefront/atom/draftTabs';
   // resource
   const resource = {
     atomName: 'Drafts',
     atomStaticKey: 'mineAtomDrafts',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({

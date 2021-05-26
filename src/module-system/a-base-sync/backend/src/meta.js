@@ -108,6 +108,10 @@ module.exports = app => {
           user: true,
           bean: 'drafts',
         },
+        draftsFlowing: {
+          user: true,
+          bean: 'draftsFlowing',
+        },
         stars: {
           user: true,
           bean: 'stars',

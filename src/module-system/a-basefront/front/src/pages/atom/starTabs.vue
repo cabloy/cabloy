@@ -12,11 +12,11 @@
     </eb-navbar>
     <f7-tabs ref="tabs">
       <eb-tab-page-content :id="tabId.stars" :tabActive="tabName==='stars'" data-ref="stars" @tab:show="tabName='stars'">
-        <starTab ref="stars" slot="list" :container="getContainer('stars')"></starTab>
+        <atomTab ref="stars" slot="list" :container="getContainer('stars')"></atomTab>
       </eb-tab-page-content>
       <template v-if="userLabels">
         <eb-tab-page-content v-for="key of Object.keys(userLabels)" :key="key" :id="`${tabId.labels}_${key}`" :tabActive="tabName===`${tabId.labels}_${key}`" :data-ref="`${tabId.labels}_${key}`" @tab:show="tabName=`${tabId.labels}_${key}`">
-          <starTab :ref="`${tabId.labels}_${key}`" slot="list" :container="getContainer('labels',key)"></starTab>
+          <atomTab :ref="`${tabId.labels}_${key}`" slot="list" :container="getContainer('labels',key)"></atomTab>
         </eb-tab-page-content>
       </template>
     </f7-tabs>
@@ -24,10 +24,10 @@
 </template>
 <script>
 import Vue from 'vue';
-import starTab from '../../components/tab/starTab.jsx';
+import atomTab from '../../components/tab/atomTab.jsx';
 export default {
   components: {
-    starTab,
+    atomTab,
   },
   data() {
     const query = this.$f7route.query;
