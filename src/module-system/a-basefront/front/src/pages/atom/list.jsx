@@ -21,6 +21,14 @@ export default {
     };
   },
   render() {
+    let domToolbar;
+    if (this.bottombar.enable) {
+      domToolbar = (
+        <f7-toolbar position="bottom">
+          {this.layout.instance && this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}
+        </f7-toolbar>
+      );
+    }
     return (
       <eb-page withSubnavbar={this.subnavbar.enable}
         ptr onPtrRefresh={this.page_onRefresh}
@@ -29,9 +37,7 @@ export default {
           {this.layout_renderBlock({ blockName: 'title' })}
           {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
-        <f7-toolbar position="bottom" hidden={!this.bottombar.enable}>
-          {this.layout.instance && this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}
-        </f7-toolbar>
+        {domToolbar}
         {this.layout_renderLayout()}
       </eb-page>
     );
