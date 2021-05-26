@@ -87,13 +87,15 @@ export default {
     sidebarCoverBottom() {
       return this.sidebar.bottom.cover;
     },
+    user() {
+      return this.$store.state.auth.user;
+    },
   },
   beforeDestroy() {
     // click
     this.$f7.off('click', this._handleClicks);
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.$f7ready(() => {
       this.__init().then(() => {
@@ -376,9 +378,11 @@ export default {
       return Promise.all(promises);
     },
     __getLayoutKey() {
-      let atomStaticKey = this.$config.layout.scene[this.$meta.config.scene];
+      const presets = this.$config.layout.presets;
+      const layoutConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
+      let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
       if (!atomStaticKey) {
-        atomStaticKey = this.$config.layout.scene.web;
+        atomStaticKey = layoutConfig.scene.web;
       }
       return atomStaticKey;
     },
@@ -441,9 +445,7 @@ export default {
         if (!resource.atomStaticKey && !resource.module) {
           resources.splice(index, 1);
         } else {
-          resources[index] = resource.atomStaticKey ?
-            { atomStaticKey: resource.atomStaticKey } :
-            { module: resource.module, name: resource.name };
+          resources[index] = resource.atomStaticKey ? { atomStaticKey: resource.atomStaticKey } : { module: resource.module, name: resource.name };
         }
       }
     },

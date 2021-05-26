@@ -1,7 +1,16 @@
 export default {
   layout: {
-    scene: {
-      web: 'a-layoutpc:layoutPC',
+    presets: {
+      anonymous: {
+        scene: {
+          web: 'a-layoutpc:layoutPCAnonymous',
+        },
+      },
+      authenticated: {
+        scene: {
+          web: 'a-layoutpc:layoutPC',
+        },
+      },
     },
     default: {
       login: '/a/login/login',
