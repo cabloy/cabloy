@@ -1,7 +1,16 @@
 export default {
   layout: {
-    scene: {
-      web: 'a-layoutmobile:layoutMobile',
+    presets: {
+      anonymous: {
+        scene: {
+          web: 'a-layoutmobile:layoutMobileAnonymous',
+        },
+      },
+      authenticated: {
+        scene: {
+          web: 'a-layoutmobile:layoutMobile',
+        },
+      },
     },
     default: {
       login: '/a/login/login',

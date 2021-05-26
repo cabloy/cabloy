@@ -18,7 +18,8 @@ export default {
     // tab views
     if (this.tabShowed) {
       children.push(c('eb-tab-views', {
-        key: 'tabViews', ref: 'tabViews',
+        key: 'tabViews',
+        ref: 'tabViews',
         props: {
           toolbarConfig: this.layoutConfig.toolbar,
         },
@@ -43,6 +44,11 @@ export default {
       layoutConfig: null,
       buttonsAll: null,
     };
+  },
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
   },
   created() {},
   mounted() {
@@ -191,9 +197,7 @@ export default {
         if (!resource.atomStaticKey && !resource.module) {
           resources.splice(index, 1);
         } else {
-          resources[index] = resource.atomStaticKey ?
-            { atomStaticKey: resource.atomStaticKey } :
-            { module: resource.module, name: resource.name };
+          resources[index] = resource.atomStaticKey ? { atomStaticKey: resource.atomStaticKey } : { module: resource.module, name: resource.name };
         }
       }
     },
@@ -204,9 +208,11 @@ export default {
       }
     },
     __getLayoutKey() {
-      let atomStaticKey = this.$config.layout.scene[this.$meta.config.scene];
+      const presets = this.$config.layout.presets;
+      const layoutConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
+      let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
       if (!atomStaticKey) {
-        atomStaticKey = this.$config.layout.scene.web;
+        atomStaticKey = layoutConfig.scene.web;
       }
       return atomStaticKey;
     },

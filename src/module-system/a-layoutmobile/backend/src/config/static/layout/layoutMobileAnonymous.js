@@ -10,9 +10,9 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'Mobile Layout(Authenticated)',
-    atomStaticKey: 'layoutMobile',
-    atomRevision: 2,
+    atomName: 'Mobile Layout(Anonymous)',
+    atomStaticKey: 'layoutMobileAnonymous',
+    atomRevision: 1,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',
