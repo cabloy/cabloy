@@ -44,11 +44,9 @@ module.exports = app => {
         }
       }
       // get system
-      const dashboardSystem = await this.ctx.bean.atom.read({
+      const dashboardSystem = await this.ctx.bean.resource.read({
         key: { atomId: dashboardAtomId }, user,
       });
-      // locale
-      dashboardSystem.atomNameLocale = this.ctx.text(dashboardSystem.atomName);
       // ok
       return { dashboardSystem };
     }
