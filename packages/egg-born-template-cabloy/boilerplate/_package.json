@@ -24,6 +24,6 @@
   {},
   "dependencies":
   {
-    "cabloy": "^4.9.45"
+    "cabloy": "^4.10.0"
   }
 }
