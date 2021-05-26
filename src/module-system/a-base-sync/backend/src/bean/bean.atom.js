@@ -365,8 +365,8 @@ module.exports = ctx => {
         atomIdFormal: keyFormal.atomId,
       });
       // notify
-      this._notifyDrafts();
-      this._notifyDraftsFlowing();
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
       // return keyFormal
       return { formal: { key: keyFormal } };
     }
@@ -377,8 +377,10 @@ module.exports = ctx => {
         atomClosed: 1,
       });
       // notify
-      this._notifyDrafts();
-      this._notifyDraftsFlowing();
+      const item = await this.modelAtom.get({ id: key.atomId });
+      const user = { id: item.userIdUpdated };
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
     }
 
     async openDraft({ key, user }) {
@@ -708,8 +710,10 @@ module.exports = ctx => {
         atomFlowId,
       });
       // notify
-      this._notifyDrafts();
-      this._notifyDraftsFlowing();
+      const item = await this.modelAtom.get({ id: key.atomId });
+      const user = { id: item.userIdUpdated };
+      this._notifyDrafts(user);
+      this._notifyDraftsFlowing(user);
     }
 
     async star({ key, atom: { star = 1 }, user }) {
