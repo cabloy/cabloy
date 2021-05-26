@@ -147,11 +147,12 @@ export default {
     info_renderFlowStatus() {
       if (!this.base_ready) return null;
       const flow = this.base.data.flow;
-      const flowHandleStatuses = this.$meta.config.modules['a-flowtask'].flowHandleStatuses;
-      const status = flowHandleStatuses[flow.flowHandleStatus];
       const children = [];
       // flowStatus
       if (flow.flowStatus === 1) {
+        const flowHandleStatuses = this.$meta.config.modules['a-flowtask'].flowHandleStatuses;
+        // flowHandleStatus maybe 0 for old data
+        const status = flowHandleStatuses[flow.flowHandleStatus || 1];
         const endText = `${flow.flowRemarkLocale || this.$text(status.text)}`;
         children.push(
           <f7-badge class="eb-flowStatus" key="flowStatus" color={status.color}>{endText}</f7-badge>
