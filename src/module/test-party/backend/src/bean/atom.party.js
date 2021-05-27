@@ -43,6 +43,8 @@ module.exports = app => {
       // update party
       const data = await this.ctx.model.party.prepareData(item);
       data.id = key.itemId;
+      // delete field: partyOver
+      delete data.partyOver;
       await this.ctx.model.party.update(data);
     }
 
