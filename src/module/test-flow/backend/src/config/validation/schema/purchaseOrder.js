@@ -2,6 +2,14 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // purchase order
+  const __display = {
+    expression: '!!_flowDefKey',
+    dependencies: [ '_flowDefKey' ],
+    // host: {
+    //   stage: 'draft', // draft/formal/history
+    //   mode: 'edit', // view
+    // },
+  };
   schemas.purchaseOrder = {
     type: 'object',
     properties: {
@@ -84,6 +92,7 @@ module.exports = app => {
             detailClassName: 'default',
           },
         },
+        ebDisplay: __display,
       },
       // __groupDetails2: {
       //   ebType: 'group-flatten',

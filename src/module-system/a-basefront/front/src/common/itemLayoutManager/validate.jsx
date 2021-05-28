@@ -5,7 +5,9 @@ export default {
   },
   computed: {
     validate_host() {
+      const stage = this.base_getCurrentStage();
       return {
+        stage,
         mode: this.container.mode,
         atomId: this.container.atomId,
       };
