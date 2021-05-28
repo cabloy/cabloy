@@ -27,7 +27,9 @@ export default {
     },
     validate_render() {
       if (!this.base_ready) return null;
+      const stage = this.base_getCurrentStage();
       const host = {
+        stage,
         mode: this.container.mode,
         flowTaskId: this.container.flowTaskId,
         detailId: this.container.detailId,

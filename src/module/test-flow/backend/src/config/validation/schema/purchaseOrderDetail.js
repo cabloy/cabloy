@@ -20,6 +20,7 @@ module.exports = app => {
     expression: '!!detailCodeId',
     dependencies: [ 'detailCodeId' ],
     // host: {
+    //   stage: 'draft', // draft/formal/history
     //   mode: 'edit', // view
     // },
   };

@@ -350,8 +350,12 @@ export default {
       // check if specify ebDisplay
       const ebDisplay = property.ebDisplay;
       if (!ebDisplay) return true;
+      // check host.stage
+      if (!this._handleComputedDisplay_checkHost(ebDisplay, 'stage')) {
+        return false;
+      }
       // check host.mode
-      if (!this._handleComputedDisplay_checkHostMode(ebDisplay)) {
+      if (!this._handleComputedDisplay_checkHost(ebDisplay, 'mode')) {
         return false;
       }
       // check if specify expression
@@ -368,11 +372,11 @@ export default {
       // check current value
       return !!this.__computed_display_getValue(parcel, key);
     },
-    _handleComputedDisplay_checkHostMode(ebDisplay) {
-      const hostMode = ebDisplay.host && ebDisplay.host.mode;
-      if (!hostMode) return true;
-      const modeCurrent = this.validate.host && this.validate.host.mode;
-      return modeCurrent === hostMode;
+    _handleComputedDisplay_checkHost(ebDisplay, attr) {
+      const hostAttr = ebDisplay.host && ebDisplay.host[attr];
+      if (!hostAttr) return true;
+      const current = this.validate.host && this.validate.host[attr];
+      return current === hostAttr;
     },
   },
 };
