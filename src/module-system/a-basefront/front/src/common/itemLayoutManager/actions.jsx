@@ -117,6 +117,12 @@ export default {
       }
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
     },
+    actions_getActionTitle(action) {
+      if (action.name === 'delete') {
+        if (this.base.item.atomStage === 0 && this.base.item.atomIdFormal > 0) return this.$text('Close Draft');
+      }
+      return this.getActionTitle(action, this.base.item.atomStage);
+    },
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
@@ -149,7 +155,7 @@ export default {
           children.push(
             <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
               <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
-              <div slot="title">{this.getActionTitle(action, this.base.item.atomStage)}</div>
+              <div slot="title">{this.actions_getActionTitle(action)}</div>
             </eb-list-item>
           );
         }
