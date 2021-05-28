@@ -865,7 +865,7 @@ var env=${JSON.stringify(env, null, 2)};
           return require3(_path);
         },
         url(fileName, language) {
-          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return utils.escapeURL(fileName);
+          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return self.ctx.bean.util.escapeURL(fileName);
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
