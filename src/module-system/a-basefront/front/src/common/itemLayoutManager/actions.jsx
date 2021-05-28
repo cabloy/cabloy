@@ -118,10 +118,7 @@ export default {
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
     },
     actions_getActionTitle(action) {
-      if (action.name === 'delete') {
-        if (this.base.item.atomStage === 0 && this.base.item.atomIdFormal > 0) return this.$text('Close Draft');
-      }
-      return this.getActionTitle(action, this.base.item.atomStage);
+      return this.getActionTitle(action, this.base.item);
     },
     actions_render() {
       if (!this.base_ready) return null;

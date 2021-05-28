@@ -189,4 +189,5 @@ export default {
   'Extra Attributes': '额外属性',
   'Resource Type': '资源类型',
   'Resource Sorting': '资源排序',
+  'Close Draft': '关闭草稿',
 };

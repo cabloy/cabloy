@@ -213,7 +213,7 @@ export default {
       return 'blue';
     },
     _getActionTitle(action, item) {
-      return this.getActionTitle(action, item.atomStage);
+      return this.getActionTitle(action, item);
     },
     _getItemChecked(item) {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);

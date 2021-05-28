@@ -234,7 +234,7 @@ export default {
       return 'blue';
     },
     _getActionTitle(action, item) {
-      return this.getActionTitle(action, item.atomStage);
+      return this.getActionTitle(action, item);
     },
     _checkColumnNameEqualOrder(atomOrder, columnName) {
       const key = this.layoutManager.order_getKey(atomOrder);

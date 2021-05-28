@@ -13,5 +13,4 @@ export default {
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
   CabloyAboutTip4: '在横向上，提炼出“业务模块化”的代码组织模式，通过不同的模块组合实现业务开发，也为大型Web应用不断增长的业务需求提供有力的基础架构',
   'Welcome to CabloyJS': '欢迎使用CabloyJS',
-  'Close Draft': '关闭草稿',
 };
