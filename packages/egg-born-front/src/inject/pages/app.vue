@@ -174,6 +174,8 @@ export default {
           closeTimeout: 3000,
         });
         notification.open();
+        // should throw error
+        throw err;
       }
     },
     _reloadLayout() {
