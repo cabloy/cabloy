@@ -64,7 +64,7 @@ export default {
     },
     fileNameTip() {
       if (!this.fileName) return this.$text('UploadFileDragTip');
-      return this.$config.upload.showFileName ? this.fileName : null;
+      return (this.mode === 1 && !this.$config.upload.showFileName) ? null : this.fileName;
     },
   },
   mounted() {},
@@ -84,8 +84,7 @@ export default {
           crop: () => {
             this.cropped = true;
           },
-          ready: () => {
-          },
+          ready: () => {},
         };
         if (this.fixed && this.fixed.width && this.fixed.height) {
           options.aspectRatio = this.fixed.width / this.fixed.height;
@@ -197,7 +196,7 @@ export default {
   user-select: none;
 }
 
-.fileDropPrompt{
+.fileDropPrompt {
   background: hsla(0, 0%, 100%, .32);
 }
 
