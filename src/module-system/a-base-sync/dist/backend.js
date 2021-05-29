@@ -566,7 +566,9 @@ module.exports = ctx => {
       });
       // notify
       this._notifyDrafts(user);
-      this._notifyDraftsFlowing(user);
+      if (item.atomFlowId > 0) {
+        this._notifyDraftsFlowing(user);
+      }
       // return keyFormal
       return { formal: { key: keyFormal } };
     }
