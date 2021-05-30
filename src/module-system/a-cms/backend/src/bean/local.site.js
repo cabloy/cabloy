@@ -70,6 +70,9 @@ module.exports = ctx => {
     async getUrl({ atomClass, language, path }) {
       const build = ctx.bean.cms.build({ atomClass });
       const site = await build.getSite({ language });
+      // check if build site first
+      const siteBuilt = await build._checkIfSiteBuilt({ site, force: false });
+      if (!siteBuilt) ctx.throw.module(moduleInfo.relativeName, 1006);
       return build.getUrl(site, language, path);
     }
 
