@@ -52,6 +52,7 @@ export default {
         // openDraft
         const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
         const keyDraft = data.draft.key;
+        const changed = data.changed;
         // navigate
         const _item = {
           ...item,
@@ -64,7 +65,9 @@ export default {
         // if (item.atomStage > 0) {
         //   ctx.$meta.eventHub.$emit('atom:actions', { key });
         // }
-        ctx.$meta.eventHub.$emit('atom:actions', { key });
+        if (changed) {
+          ctx.$meta.eventHub.$emit('atom:actions', { key });
+        }
       } else if (action.name === 'clone') {
         // clone
         await ctx.$view.dialog.confirm();

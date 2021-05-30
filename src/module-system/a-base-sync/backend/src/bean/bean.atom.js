@@ -389,6 +389,7 @@ module.exports = ctx => {
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // draft
+      let changed = true;
       if (_atom.atomStage === 0) {
         if (_atom.atomClosed === 1) {
           // open
@@ -397,8 +398,10 @@ module.exports = ctx => {
             atomRevision: _atom.atomRevision + 1,
             user,
           });
+        } else {
+          changed = false;
         }
-        return { draft: { key } };
+        return { draft: { key }, changed };
       }
       // formal
       if (_atom.atomStage === 1) {
@@ -409,7 +412,7 @@ module.exports = ctx => {
             atomRevision: _atom.atomRevision + 1,
             user,
           });
-          return { draft: { key: { atomId: _atom.atomIdDraft } } };
+          return { draft: { key: { atomId: _atom.atomIdDraft } }, changed };
         }
         // ** create draft from formal
         const keyDraft = await this._copy({
@@ -425,7 +428,7 @@ module.exports = ctx => {
           user,
         });
         // ok
-        return { draft: { key: keyDraft } };
+        return { draft: { key: keyDraft }, changed };
       }
       // history
       if (_atom.atomStage === 2) {
@@ -443,7 +446,7 @@ module.exports = ctx => {
           user,
         });
         // ok
-        return { draft: { key: keyDraft } };
+        return { draft: { key: keyDraft }, changed };
       }
     }
 
