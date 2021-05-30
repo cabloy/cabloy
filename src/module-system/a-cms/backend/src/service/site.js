@@ -60,8 +60,8 @@ module.exports = app => {
       return this.ctx.bean.cms.site.getBlocks();
     }
 
-    async checkFile({ file, mtime }) {
-      return await this.ctx.bean.cms.site.checkFile({ file, mtime });
+    async checkFile({ atomId, file, mtime, user }) {
+      return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }
 
   }

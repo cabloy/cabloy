@@ -117,8 +117,10 @@ module.exports = app => {
 
     async checkFile() {
       const res = await this.ctx.service.site.checkFile({
+        atomId: this.ctx.request.body.atomId,
         file: this.ctx.request.body.file,
         mtime: this.ctx.request.body.mtime,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

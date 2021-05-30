@@ -13,30 +13,47 @@ $(document).ready(function() {
 });
 
 $(document).on('echo-ready', function() {
+  if (util.user.op.anonymous) return;
   // hotload file
-  if (env.site.hotloadFile && !util.user.op.anonymous) {
-    let __hotloadFileTime = 0;
-    window.setTimeout(() => {
-      const subscribePath = `/a/cms/hotloadFile/${env.site.hotloadFile}`;
-      util.io.subscribe(subscribePath, () => {
-        location.reload(true);
-      }, () => {
-        util.performAction({
-          method: 'post',
-          url: '/a/cms/site/checkFile',
-          body: { file: env.site.hotloadFile, mtime: __hotloadFileTime },
-        }).then(data => {
-          if (!__hotloadFileTime) {
-            if (data && data.mtime) {
-              __hotloadFileTime = data.mtime;
-            }
-          } else {
-            if (data && data.mtime !== __hotloadFileTime) {
-              location.reload(true);
-            }
-          }
-        });
-      });
-    }, 0);
+  let atomId;
+  let file;
+  let hotloadFile;
+  if (env.article) {
+    if (env.article.userIdUpdated === util.user.op.id) {
+      atomId = env.article.atomId;
+      hotloadFile = `atom/${env.article.userIdUpdated}/${atomId}`;
+    }
+  } else {
+    file = env.site.hotloadFile;
+    hotloadFile = file;
   }
+  if (!hotloadFile) return;
+  // subcribe
+  let __hotloadFileTime = 0;
+  window.setTimeout(() => {
+    const subscribePath = `/a/cms/hotloadFile/${hotloadFile}`;
+    util.io.subscribe(subscribePath, () => {
+      location.reload(true);
+    }, () => {
+      util.performAction({
+        method: 'post',
+        url: '/a/cms/site/checkFile',
+        body: {
+          atomId,
+          file,
+          mtime: __hotloadFileTime,
+        },
+      }).then(data => {
+        if (!__hotloadFileTime) {
+          if (data && data.mtime) {
+            __hotloadFileTime = data.mtime;
+          }
+        } else {
+          if (data && data.mtime !== __hotloadFileTime) {
+            location.reload(true);
+          }
+        }
+      });
+    });
+  }, 0);
 });

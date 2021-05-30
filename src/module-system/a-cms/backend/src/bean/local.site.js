@@ -204,7 +204,21 @@ module.exports = ctx => {
       return blocksModule;
     }
 
-    async checkFile({ file, mtime }) {
+    async checkFile({ atomId, file, mtime, user }) {
+      // check right
+      if (file) {
+        if (!ctx.app.meta.isTest && !ctx.app.meta.isLocal) ctx.throw(403);
+      } else {
+        const article = await ctx.bean.cms.render.getArticle({ key: { atomId }, inner: true });
+        if (!article) ctx.throw.module('a-base', 1002);
+        // only author
+        if (article.userIdUpdated !== user.id) ctx.throw(403);
+        const atomClass = { module: article.module, atomClassName: article.atomClassName };
+        const build = ctx.bean.cms.build({ atomClass });
+        const res = await build.getArticleUrl({ key: { atomId }, options: { returnPhysicalPath: true } });
+        if (!res) ctx.throw(403);
+        file = res.physicalPath;
+      }
       // exists
       const exists = await fse.pathExists(file);
       if (!exists) {

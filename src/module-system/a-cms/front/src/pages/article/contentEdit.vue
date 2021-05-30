@@ -134,7 +134,7 @@ export default {
         atomClass: this.atomClass,
         key: { atomId: this.item.atomId },
         options: {
-          renderForce: !this.readOnly,
+          returnWaitingPath: true,
         },
       }).then(data => {
         if (!data) return;

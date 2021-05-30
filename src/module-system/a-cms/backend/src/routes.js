@@ -1,5 +1,5 @@
 module.exports = app => {
-  let routes = [
+  const routes = [
     // article
     { method: 'post', path: 'article/list', controller: 'article' },
     { method: 'post', path: 'article/attachments', controller: 'article' },
@@ -26,12 +26,8 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: 'rss', action: 'feedComments' },
     { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: 'rss', action: 'feed' },
+    // site
+    { method: 'post', path: 'site/checkFile', controller: 'site' },
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      // site
-      { method: 'post', path: 'site/checkFile', controller: 'site' },
-    ]);
-  }
   return routes;
 };
