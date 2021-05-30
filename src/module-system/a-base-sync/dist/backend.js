@@ -4631,8 +4631,12 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util extends app.meta.BeanBase {
 
+    get localConfig() {
+      return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
     page(_page, force = true) {
-      const pageSize = this.ctx.config.module(moduleInfo.relativeName).pageSize;
+      const pageSize = this.localConfig.pageSize;
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
@@ -4644,34 +4648,40 @@ module.exports = app => {
       return _user || this.ctx.state.user.op;
     }
 
-    now() {
-      return moment().format('YYYY-MM-DD HH:mm:ss');
+    now(fmt, locale) {
+      return this.formatDateTime(null, fmt, locale);
     }
 
-    today() {
-      return moment().format('YYYY-MM-DD');
+    today(fmt, locale) {
+      return this.formatDate(null, fmt, locale);
     }
 
-    formatDateTime(date, fmt) {
+    formatDateTime(date, fmt, locale) {
+      locale = locale || app.config.i18n.defaultLocale;
+      let timezone = this.localConfig.timezones[locale];
+      if (timezone === undefined) {
+        timezone = this.localConfig.timezones[app.config.i18n.defaultLocale];
+      }
       date = date || new Date();
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
       if (typeof (date) !== 'object') date = new Date(date);
-      return moment(date).format(fmt);
+      return moment(date).utcOffset(timezone).format(fmt);
     }
 
-    formatDate(date, sep) {
+    formatDate(date, sep, locale) {
       if (sep === undefined) sep = '-';
       const fmt = `YYYY${sep}MM${sep}DD`;
-      return this.formatDateTime(date, fmt);
+      return this.formatDateTime(date, fmt, locale);
     }
 
-    formatTime(date, sep) {
+    formatTime(date, sep, locale) {
       if (sep === undefined) sep = ':';
       const fmt = `HH${sep}mm${sep}ss`;
-      return this.formatDateTime(date, fmt);
+      return this.formatDateTime(date, fmt, locale);
     }
 
-    fromNow(date) {
+    // todo: load locales resources and then format
+    fromNow(date, locale) {
       if (typeof (date) !== 'object') date = new Date(date);
       return moment(date).fromNow();
     }
@@ -8785,6 +8795,12 @@ module.exports = appInfo => {
   config.locales = {
     'en-us': 'English',
     'zh-cn': 'Chinese',
+  };
+
+  // timezones
+  config.timezones = {
+    'en-us': -8,
+    'zh-cn': 8,
   };
 
   config.cors = {

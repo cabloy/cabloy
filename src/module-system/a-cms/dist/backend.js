@@ -101,7 +101,6 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const less = require3('less');
-const time = __webpack_require__(798);
 const utils = __webpack_require__(294);
 
 module.exports = app => {
@@ -849,6 +848,32 @@ var env=${JSON.stringify(env, null, 2)};
       };
     }
 
+    getCurrentLocale({ site }) {
+      return site.language ? site.language.current : this.ctx.app.config.i18n.defaultLocale;
+    }
+
+    createUtilTime({ site }) {
+      const self = this;
+      const _textLocale = this.getCurrentLocale({ site });
+      return {
+        now(fmt, locale) {
+          return self.ctx.bean.util.now(fmt, locale || _textLocale);
+        },
+        today(fmt, locale) {
+          return self.ctx.bean.util.today(fmt, locale || _textLocale);
+        },
+        formatDateTime(date, fmt, locale) {
+          return self.ctx.bean.util.formatDateTime(date, fmt, locale || _textLocale);
+        },
+        formatDate(date, sep, locale) {
+          return self.ctx.bean.util.formatDate(date, sep, locale || _textLocale);
+        },
+        formatTime(date, sep, locale) {
+          return self.ctx.bean.util.formatTime(date, sep, locale || _textLocale);
+        },
+      };
+    }
+
     async getData({ site }) {
       // data
       const self = this;
@@ -857,7 +882,8 @@ var env=${JSON.stringify(env, null, 2)};
       const _envs = {};
       let _pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       _pathIntermediate = path.join(_pathIntermediate, '/');
-      const _textLocale = site.language ? site.language.current : self.ctx.app.config.i18n.defaultLocale;
+      const _textLocale = this.getCurrentLocale({ site });
+      const time = this.createUtilTime({ site });
       return {
         ctx: self.ctx,
         site,
@@ -1319,6 +1345,13 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
         return null; // not throw error
       }
       if (!exists && returnWaitingPath) {
+        // force to post a render task: special for draft and private articles
+        const inner = article.atomStage === 0;
+        await this.ctx.bean.cms.render._renderArticlePush({
+          atomClass: this.atomClass,
+          key: { atomId: article.atomId },
+          inner,
+        });
         // waiting path
         articleUrl = `static/waiting.html?atomId=${article.atomId}`;
       }
@@ -2257,6 +2290,7 @@ module.exports = app => {
         atomClassName: 'article',
       };
       const categories = [
+        // en-us
         { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
         { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
         { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
@@ -2264,6 +2298,14 @@ module.exports = app => {
         { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
         { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
         { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
+        // zh-cn
+        { categoryName: '目录1', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2-1', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录2-2', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录3', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: '隐藏目录', language: 'zh-cn', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: '加标记的目录', language: 'zh-cn', categoryIdParent: 0, categoryFlag: 'Flag' },
       ];
       const categoryIds = {};
       for (const item of categories) {
@@ -2884,50 +2926,6 @@ module.exports = app => {
 
   }
   return AtomCmsBase;
-};
-
-
-/***/ }),
-
-/***/ 798:
-/***/ ((module) => {
-
-const _formatDateTime = function(date, fmt) { // original author: meizz
-  const o = {
-    'M+': date.getMonth() + 1, // month
-    'D+': date.getDate(), // day
-    'H+': date.getHours(), // hour
-    'm+': date.getMinutes(), // minute
-    's+': date.getSeconds(), // second
-    'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
-    S: date.getMilliseconds(), // millisecond
-  };
-  if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-  for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
-  return fmt;
-};
-
-module.exports = {
-  now() {
-    return this.formatDateTime(null);
-  },
-  today() {
-    return this.formatDate(null);
-  },
-  formatDateTime(date, fmt) {
-    date = date || new Date();
-    if (typeof (date) !== 'object') date = new Date(date);
-    fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-    return _formatDateTime(date, fmt);
-  },
-  formatDate(date, sep) {
-    sep = sep || '-';
-    return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
-  },
-  formatTime(date, sep) {
-    sep = sep || ':';
-    return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
-  },
 };
 
 
