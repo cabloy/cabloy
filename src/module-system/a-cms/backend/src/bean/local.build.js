@@ -541,7 +541,7 @@ module.exports = app => {
       // destFile for hot load
       let hotloadFile;
       if (data.article) {
-        hotloadFile = `atom/${data.article.userIdUpdated}/${data.article.atomId}`;
+        hotloadFile = `atom/${data.article.atomId}`;
       } else {
         if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
           hotloadFile = fileWrite;
@@ -1231,7 +1231,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
       if (!exists && returnWaitingPath) {
         // waiting path
-        articleUrl = 'static/waiting.html';
+        articleUrl = `static/waiting.html?atomId=${article.atomId}`;
       }
       // ok
       const url = this.getUrl(site, site.language && site.language.current, articleUrl);

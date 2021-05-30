@@ -18,10 +18,15 @@ $(document).on('echo-ready', function() {
   let atomId;
   let file;
   let hotloadFile;
-  if (env.article) {
+  if (env.site.path === 'static/waiting') {
+    // query
+    const query = util.parseUrlQuery();
+    atomId = parseInt(query.atomId);
+    hotloadFile = `atom/${atomId}`;
+  } else if (env.article) {
     if (env.article.userIdUpdated === util.user.op.id) {
       atomId = env.article.atomId;
-      hotloadFile = `atom/${env.article.userIdUpdated}/${atomId}`;
+      hotloadFile = `atom/${atomId}`;
     }
   } else {
     file = env.site.hotloadFile;
@@ -44,7 +49,13 @@ $(document).on('echo-ready', function() {
           mtime: __hotloadFileTime,
         },
       }).then(data => {
-        if (atomId) {
+        if (env.site.path === 'static/waiting') {
+          if (data && data.mtime) {
+            getArticleUrl(atomId, url => {
+              location.replace(url);
+            });
+          }
+        } else if (atomId) {
           if (data && data.mtime !== new Date(env.article.atomUpdatedAt).getTime()) {
             location.reload(true);
           }
@@ -62,4 +73,18 @@ $(document).on('echo-ready', function() {
       });
     });
   }, 0);
+
+  function getArticleUrl(atomId, cb) {
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/render/getArticleUrl',
+      body: {
+        key: { atomId },
+      },
+    }).then(data => {
+      if (data && data.url) {
+        cb(data.url);
+      }
+    });
+  }
 });
