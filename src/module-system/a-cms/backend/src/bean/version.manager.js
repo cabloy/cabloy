@@ -410,6 +410,7 @@ module.exports = app => {
         atomClassName: 'article',
       };
       const categories = [
+        // en-us
         { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
         { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
         { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
@@ -417,6 +418,14 @@ module.exports = app => {
         { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
         { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
         { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
+        // zh-cn
+        { categoryName: '目录1', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2-1', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录2-2', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录3', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: '隐藏目录', language: 'zh-cn', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: '加标记的目录', language: 'zh-cn', categoryIdParent: 0, categoryFlag: 'Flag' },
       ];
       const categoryIds = {};
       for (const item of categories) {
