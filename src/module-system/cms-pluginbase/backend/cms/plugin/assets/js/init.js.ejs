@@ -44,13 +44,19 @@ $(document).on('echo-ready', function() {
           mtime: __hotloadFileTime,
         },
       }).then(data => {
-        if (!__hotloadFileTime) {
-          if (data && data.mtime) {
-            __hotloadFileTime = data.mtime;
+        if (atomId) {
+          if (data && data.mtime !== new Date(env.article.atomUpdatedAt).getTime()) {
+            location.reload(true);
           }
         } else {
-          if (data && data.mtime !== __hotloadFileTime) {
-            location.reload(true);
+          if (!__hotloadFileTime) {
+            if (data && data.mtime) {
+              __hotloadFileTime = data.mtime;
+            }
+          } else {
+            if (data && data.mtime !== __hotloadFileTime) {
+              location.reload(true);
+            }
           }
         }
       });

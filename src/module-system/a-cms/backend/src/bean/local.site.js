@@ -209,28 +209,26 @@ module.exports = ctx => {
 
     async checkFile({ atomId, file, mtime, user }) {
       // check right
+      let mtimeCurrent;
       if (file) {
         if (!ctx.app.meta.isTest && !ctx.app.meta.isLocal) ctx.throw(403);
+        // exists
+        const exists = await fse.pathExists(file);
+        if (!exists) {
+          // deleted
+          return null;
+        }
+        // stat
+        const stat = await fse.stat(file);
+        mtimeCurrent = stat.mtime.valueOf();
       } else {
         const article = await ctx.bean.cms.render.getArticle({ key: { atomId }, inner: true });
         if (!article) ctx.throw.module('a-base', 1002);
         // only author
         if (article.userIdUpdated !== user.id) ctx.throw(403);
-        const atomClass = { module: article.module, atomClassName: article.atomClassName };
-        const build = ctx.bean.cms.build({ atomClass });
-        const res = await build.getArticleUrl({ key: { atomId }, options: { returnPhysicalPath: true } });
-        if (!res) ctx.throw(403);
-        file = res.physicalPath;
+        mtimeCurrent = article.atomUpdatedAt.getTime();
       }
-      // exists
-      const exists = await fse.pathExists(file);
-      if (!exists) {
-        // deleted
-        return null;
-      }
-      // stat
-      const stat = await fse.stat(file);
-      const mtimeCurrent = stat.mtime.valueOf();
+
       if (mtime !== mtimeCurrent) {
         // different
         return { mtime: mtimeCurrent };
