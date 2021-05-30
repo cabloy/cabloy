@@ -629,9 +629,13 @@ module.exports = app => {
       data.env('site.path', data._path);
       // destFile for hot load
       let hotloadFile;
-      if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
-        hotloadFile = fileWrite;
-        data.env('site.hotloadFile', hotloadFile);
+      if (data.article) {
+        hotloadFile = `atom/${data.article.atomId}`;
+      } else {
+        if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
+          hotloadFile = fileWrite;
+          data.env('site.hotloadFile', hotloadFile);
+        }
       }
       // load src
       let contentSrc = await fse.readFile(fileName);
@@ -1293,34 +1297,41 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     async getArticleUrl({ key, options }) {
-      const renderForce = options && options.renderForce;
+      // options
+      const returnPhysicalPath = options && options.returnPhysicalPath;
+      const returnWaitingPath = options && options.returnWaitingPath;
       // article
       const article = await this.ctx.bean.cms.render.getArticle({ key, inner: true });
       if (!article) this.ctx.throw.module('a-base', 1002);
       if (!article.url) return null; // not throw error
+      // articleUrl
+      let articleUrl = article.url;
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const siteBuilt = await this._checkIfSiteBuilt({ site, force: true });
+      const siteBuilt = await this._checkIfSiteBuilt({ site, force: false });
       if (!siteBuilt) this.ctx.throw.module(moduleInfo.relativeName, 1006);
       // fileName
       const pathDist = await this.getPathDist(site, article.atomLanguage);
-      const fileName = path.join(pathDist, article.url);
+      const fileName = path.join(pathDist, articleUrl);
       const exists = await fse.pathExists(fileName);
-      if (!exists || renderForce) {
-        // force render as inner
-        //   need not use queue for inner:true
-        const build = this.ctx.bean.cms.build({ atomClass: site.atomClass });
-        await build.renderArticle({ key: { atomId: article.atomId }, inner: true });
-        // return null;
-        // this.ctx.throw.module('a-base', 1002);
+      if (!exists && !returnWaitingPath) {
+        return null; // not throw error
+      }
+      if (!exists && returnWaitingPath) {
+        // waiting path
+        articleUrl = `static/waiting.html?atomId=${article.atomId}`;
       }
       // ok
-      const url = this.getUrl(site, site.language && site.language.current, article.url);
-      return {
-        relativeUrl: article.url,
+      const url = this.getUrl(site, site.language && site.language.current, articleUrl);
+      const res = {
+        relativeUrl: articleUrl,
         url,
       };
+      if (returnPhysicalPath) {
+        res.physicalPath = fileName;
+      }
+      return res;
     }
 
     getAtomClassFullName(atomClass) {
@@ -1578,6 +1589,9 @@ module.exports = ctx => {
     async getUrl({ atomClass, language, path }) {
       const build = ctx.bean.cms.build({ atomClass });
       const site = await build.getSite({ language });
+      // check if build site first
+      const siteBuilt = await build._checkIfSiteBuilt({ site, force: false });
+      if (!siteBuilt) ctx.throw.module(moduleInfo.relativeName, 1006);
       return build.getUrl(site, language, path);
     }
 
@@ -1712,16 +1726,28 @@ module.exports = ctx => {
       return blocksModule;
     }
 
-    async checkFile({ file, mtime }) {
-      // exists
-      const exists = await fse.pathExists(file);
-      if (!exists) {
-        // deleted
-        return null;
+    async checkFile({ atomId, file, mtime, user }) {
+      // check right
+      let mtimeCurrent;
+      if (file) {
+        if (!ctx.app.meta.isTest && !ctx.app.meta.isLocal) ctx.throw(403);
+        // exists
+        const exists = await fse.pathExists(file);
+        if (!exists) {
+          // deleted
+          return null;
+        }
+        // stat
+        const stat = await fse.stat(file);
+        mtimeCurrent = stat.mtime.valueOf();
+      } else {
+        const article = await ctx.bean.cms.render.getArticle({ key: { atomId }, inner: true });
+        if (!article) ctx.throw.module('a-base', 1002);
+        // only author
+        if (article.userIdUpdated !== user.id) ctx.throw(403);
+        mtimeCurrent = article.atomUpdatedAt.getTime();
       }
-      // stat
-      const stat = await fse.stat(file);
-      const mtimeCurrent = stat.mtime.valueOf();
+
       if (mtime !== mtimeCurrent) {
         // different
         return { mtime: mtimeCurrent };
@@ -4058,8 +4084,10 @@ module.exports = app => {
 
     async checkFile() {
       const res = await this.ctx.service.site.checkFile({
+        atomId: this.ctx.request.body.atomId,
         file: this.ctx.request.body.file,
         mtime: this.ctx.request.body.mtime,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -4280,7 +4308,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     // article
     { method: 'post', path: 'article/list', controller: 'article' },
     { method: 'post', path: 'article/attachments', controller: 'article' },
@@ -4307,13 +4335,9 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: 'rss', action: 'feedComments' },
     { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: 'rss', action: 'feed' },
+    // site
+    { method: 'post', path: 'site/checkFile', controller: 'site' },
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      // site
-      { method: 'post', path: 'site/checkFile', controller: 'site' },
-    ]);
-  }
   return routes;
 };
 
@@ -4409,8 +4433,8 @@ module.exports = app => {
       return this.ctx.bean.cms.site.getBlocks();
     }
 
-    async checkFile({ file, mtime }) {
-      return await this.ctx.bean.cms.site.checkFile({ file, mtime });
+    async checkFile({ atomId, file, mtime, user }) {
+      return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }
 
   }

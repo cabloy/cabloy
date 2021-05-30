@@ -28,10 +28,21 @@ module.exports = {
 
 /***/ }),
 
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {
+  CMSWaitingForRendering: 'Please waiting for rendering ...',
+};
+
+
+/***/ }),
+
 /***/ 72:
 /***/ ((module) => {
 
 module.exports = {
+  CMSWaitingForRendering: '正在渲染，请耐心等待...',
   'Load More': '加载更多',
   'Load Error, Try Again': '加载失败，请重试',
   'Load Completed': '加载完毕',
@@ -44,6 +55,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
 };
 
@@ -179,8 +191,9 @@ module.exports = app => {
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
