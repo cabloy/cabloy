@@ -20,6 +20,15 @@ export default {
   },
   created() {
     this._getArticleUrl();
+    this._unwatch = this.$watch('layoutManager.base.item', () => {
+      this._getArticleUrl();
+    });
+  },
+  beforeDestroy() {
+    if (this._unwatch) {
+      this._unwatch();
+      this._unwatch = null;
+    }
   },
   methods: {
     onSize(size) {
