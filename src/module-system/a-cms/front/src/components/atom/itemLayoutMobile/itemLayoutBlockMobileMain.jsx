@@ -44,9 +44,12 @@ export default {
     },
     _renderIFrame() {
       const subnavbar = this.layoutManager.subnavbar.enable;
+      const frameSrc = this.$meta.util.combineQueries(this.articleUrl, {
+        __cms_iframe_random: new Date().getTime(),
+      });
       return (
         <eb-box onSize={this.onSize} header subnavbar={subnavbar} class="eb-box-iframe">
-          <iframe ref="iframe" src={this.articleUrl} seamless={true}></iframe>
+          <iframe ref="iframe" src={frameSrc} seamless={true}></iframe>
         </eb-box>
       );
     },
