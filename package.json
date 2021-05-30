@@ -30,6 +30,7 @@
     "test:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-test",
     "cov:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
     "start:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start",
+    "start:backend-daemon": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start --daemon",
     "stop:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop"
   },
   "devDependencies": {
