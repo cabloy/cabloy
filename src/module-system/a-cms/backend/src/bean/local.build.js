@@ -1230,6 +1230,13 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
         return null; // not throw error
       }
       if (!exists && returnWaitingPath) {
+        // force to post a render task: special for draft and private articles
+        const inner = article.atomStage === 0;
+        await this.ctx.bean.cms.render._renderArticlePush({
+          atomClass: this.atomClass,
+          key: { atomId: article.atomId },
+          inner,
+        });
         // waiting path
         articleUrl = `static/waiting.html?atomId=${article.atomId}`;
       }
