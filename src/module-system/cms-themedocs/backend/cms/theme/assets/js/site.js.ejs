@@ -20,11 +20,12 @@ $(document).on('echo-ready', function() {
   const query = util.parseUrlQuery();
   // load more
   loadMore(query);
-  // category tree toggle
-  categoryTreeToggle($('.category-sidebar-toggle'), $('.doc-container'));
   // category tree
   categoryTree($('.category-sidebar'));
 });
+
+// immediatly: category tree toggle
+categoryTreeToggle($('.category-sidebar-toggle'), $('.doc-container'));
 
 function categoryTreeToggle($toggle, $container) {
   const _breakpointMd = 768;
@@ -48,6 +49,9 @@ function categoryTreeToggle($toggle, $container) {
     _toggle();
   });
   $window.resize(() => {
+    window.categoryTree_initOrSet();
+  });
+  window.categoryTree_initOrSet = function() {
     const category = _getRelativeTop();
     if (!category) {
       _initOrSet(true);
@@ -58,10 +62,8 @@ function categoryTreeToggle($toggle, $container) {
     } else {
       _initOrSet(false);
     }
-  });
-  window.categoryTree_initOrSet = function(collapse) {
-    _initOrSet(collapse);
   };
+  window.categoryTree_initOrSet();
 }
 
 function categoryTree($treeContainer) {
@@ -112,8 +114,6 @@ function categoryTree($treeContainer) {
           // articleCategoryTop
           const category = _getRelativeTop();
           if (!category) {
-            // collapse
-            window.categoryTree_initOrSet(true);
             return cb.call(self, []);
           }
           // node._id
