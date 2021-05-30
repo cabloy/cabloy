@@ -96,6 +96,12 @@ module.exports = appInfo => {
     'zh-cn': 'Chinese',
   };
 
+  // timezones
+  config.timezones = {
+    'en-us': -8,
+    'zh-cn': 8,
+  };
+
   config.cors = {
     whiteList: 'http://localhost',
   };

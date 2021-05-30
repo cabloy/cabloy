@@ -12,7 +12,6 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const less = require3('less');
-const time = require('../common/time.js');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
@@ -760,6 +759,32 @@ var env=${JSON.stringify(env, null, 2)};
       };
     }
 
+    getCurrentLocale({ site }) {
+      return site.language ? site.language.current : this.ctx.app.config.i18n.defaultLocale;
+    }
+
+    createUtilTime({ site }) {
+      const self = this;
+      const _textLocale = this.getCurrentLocale({ site });
+      return {
+        now(fmt, locale) {
+          return self.ctx.bean.util.now(fmt, locale || _textLocale);
+        },
+        today(fmt, locale) {
+          return self.ctx.bean.util.today(fmt, locale || _textLocale);
+        },
+        formatDateTime(date, fmt, locale) {
+          return self.ctx.bean.util.formatDateTime(date, fmt, locale || _textLocale);
+        },
+        formatDate(date, sep, locale) {
+          return self.ctx.bean.util.formatDate(date, sep, locale || _textLocale);
+        },
+        formatTime(date, sep, locale) {
+          return self.ctx.bean.util.formatTime(date, sep, locale || _textLocale);
+        },
+      };
+    }
+
     async getData({ site }) {
       // data
       const self = this;
@@ -768,7 +793,8 @@ var env=${JSON.stringify(env, null, 2)};
       const _envs = {};
       let _pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
       _pathIntermediate = path.join(_pathIntermediate, '/');
-      const _textLocale = site.language ? site.language.current : self.ctx.app.config.i18n.defaultLocale;
+      const _textLocale = this.getCurrentLocale({ site });
+      const time = this.createUtilTime({ site });
       return {
         ctx: self.ctx,
         site,
