@@ -51,14 +51,15 @@ export default {
             returnWaitingPath: true,
           },
         });
-        const url = data && data.url;
-        if (!url) {
-          this.articleUrl = '';
-        } else {
-          this.articleUrl = this.$meta.util.combineQueries(url, {
-            __cms_iframe_random: new Date().getTime(),
-          });
-        }
+        this.articleUrl = (data && data.url) || '';
+        // const url = data && data.url;
+        // if (!url) {
+        //   this.articleUrl = '';
+        // } else {
+        //   this.articleUrl = this.$meta.util.combineQueries(url, {
+        //     __cms_iframe_random: new Date().getTime(),
+        //   });
+        // }
       } catch (err) {
         this.articleUrl = '';
       }
