@@ -4648,6 +4648,10 @@ module.exports = app => {
       return _user || this.ctx.state.user.op;
     }
 
+    moment(date) {
+      return moment(date);
+    }
+
     now(fmt, locale) {
       return this.formatDateTime(null, fmt, locale);
     }
@@ -4657,7 +4661,7 @@ module.exports = app => {
     }
 
     formatDateTime(date, fmt, locale) {
-      locale = locale || app.config.i18n.defaultLocale;
+      locale = locale || this.ctx.locale;
       let timezone = this.localConfig.timezones[locale];
       if (timezone === undefined) {
         timezone = this.localConfig.timezones[app.config.i18n.defaultLocale];
@@ -4841,7 +4845,7 @@ module.exports = ctx => {
 
       // cms
       if (cms) {
-        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid`;
+        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {
