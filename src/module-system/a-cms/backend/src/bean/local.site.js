@@ -226,7 +226,7 @@ module.exports = ctx => {
         if (!article) ctx.throw.module('a-base', 1002);
         // only author
         if (article.userIdUpdated !== user.id) ctx.throw(403);
-        mtimeCurrent = article.atomUpdatedAt.getTime();
+        mtimeCurrent = article.renderAt ? article.renderAt.getTime() : 0;
       }
 
       if (mtime !== mtimeCurrent) {

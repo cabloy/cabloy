@@ -541,6 +541,12 @@ module.exports = app => {
       let hotloadFile;
       if (data.article) {
         hotloadFile = `atom/${data.article.atomId}`;
+        // update renderAt
+        data.article.renderAt = new Date(this.ctx.bean.util.moment().unix() * 1000);
+        await this.ctx.model.query(`
+          update aCmsArticle set renderAt=?
+            where iid=? and atomId=?
+          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
       } else {
         if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
           hotloadFile = fileWrite;

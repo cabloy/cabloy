@@ -42,7 +42,7 @@ module.exports = ctx => {
 
       // cms
       if (cms) {
-        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid`;
+        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {

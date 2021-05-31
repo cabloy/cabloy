@@ -24,6 +24,10 @@ module.exports = app => {
       return _user || this.ctx.state.user.op;
     }
 
+    moment(date) {
+      return moment(date);
+    }
+
     now(fmt, locale) {
       return this.formatDateTime(null, fmt, locale);
     }

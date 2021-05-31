@@ -56,7 +56,7 @@ $(document).on('echo-ready', function() {
             });
           }
         } else if (atomId) {
-          if (data && data.mtime !== new Date(env.article.atomUpdatedAt).getTime()) {
+          if (data && data.mtime !== new Date(env.article.renderAt).getTime()) {
             location.reload(true);
           }
         } else {

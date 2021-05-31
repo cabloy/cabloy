@@ -365,6 +365,15 @@ module.exports = app => {
         await this.ctx.model.query(sql);
       }
 
+      if (options.version === 11) {
+        // alter table: aCmsArticle
+        const sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN renderAt timestamp DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
