@@ -33,7 +33,7 @@ module.exports = app => {
     }
 
     formatDateTime(date, fmt, locale) {
-      locale = locale || app.config.i18n.defaultLocale;
+      locale = locale || this.ctx.locale;
       let timezone = this.localConfig.timezones[locale];
       if (timezone === undefined) {
         timezone = this.localConfig.timezones[app.config.i18n.defaultLocale];
