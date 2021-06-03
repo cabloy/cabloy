@@ -36,7 +36,9 @@ export default {
       return this.contextParams.context;
     },
     valueType() {
-      return this.context.property.type || 'string';
+      const type = this.context.property.type;
+      if (type && Array.isArray(type)) return type[0];
+      return type || 'string';
     },
   },
   created() {
