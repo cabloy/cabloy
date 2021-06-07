@@ -43,55 +43,62 @@ footer .small a:hover {
   background: #343D46;
   z-index: 2;
   padding: 0 1rem;
-}
 
-.navbar-default .navbar-brand {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  color: #C3D4E7;
-  text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
-  text-transform: uppercase;
-}
+  .navbar-brand {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    color: #C3D4E7;
+    text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
+    text-transform: uppercase;
+  }
 
-.navbar-default .navbar-brand .logo {
-  height: 32px;
-  margin-right: 5px;
+  .navbar-brand .logo {
+    height: 32px;
+    margin-right: 5px;
+  }
+
+  .navbar-nav>li.nav-item>a {
+    color: white;
+    text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
+    text-transform: uppercase;
+  }
+
+  .navbar-nav>li.nav-item.active>a,
+  .navbar-nav>li.nav-item.active>a:focus {
+    color: white;
+    background-color: #4D555C;
+  }
+
+  .navbar-nav>li.nav-item>a:focus,
+  .navbar-nav>li.nav-item>a:hover {
+    background-color: #EEE;
+  }
+
+  .navbar-nav .dropdown li.nav-item>a{
+    color: #333;
+  }
+
+  .navbar-nav .dropdown .navbar-nav{
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  form.search {
+    input {
+      width: 150px;
+    }
+  }
+
 }
 
 .navbar-nav .github img {
   height: 16px;
   margin-top: -4px;
-}
-
-.navbar-default .navbar-nav>li.nav-item>a {
-  color: white;
-  text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
-  text-transform: uppercase;
-}
-
-.navbar-default .navbar-nav>li.nav-item.active>a,
-.navbar-default .navbar-nav>li.nav-item.active>a:focus {
-  color: white;
-  background-color: #4D555C;
-}
-
-.navbar-default .navbar-nav>li.nav-item>a:focus,
-.navbar-default .navbar-nav>li.nav-item>a:hover {
-  background-color: #EEE;
-}
-
-.navbar-default .navbar-nav .dropdown li.nav-item>a{
-  color: #333;
-}
-
-.navbar-default .navbar-nav .dropdown .navbar-nav{
-  border: 1px solid rgba(0,0,0,.15);
-  border-radius: 4px;
-  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
-  box-shadow: 0 6px 12px rgba(0,0,0,.175);
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 
 .container-site {
@@ -168,7 +175,7 @@ section {
   width: 280px;
   position: fixed;
   left: 0;
-  top: 50px;
+  top: 68px;
   bottom: 0;
   padding-bottom: 60px;
   z-index: 1;

@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
   // adjust container padding-top
-  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'));
+  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'), $('.category-sidebar'));
 });
 
 $(document).on('echo-ready', function() {
@@ -407,7 +407,7 @@ function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = 
   });
 }
 
-function _fixContainerSite($navbar, $containerSite, $footer) {
+function _fixContainerSite($navbar, $containerSite, $footer, $categorySidebar) {
   if (window.self !== window.top) return;
   if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
   // init
@@ -415,10 +415,14 @@ function _fixContainerSite($navbar, $containerSite, $footer) {
 
   // onScroll
   const _onScroll = function() {
-    // min-height
+    // $containerSite: min-height
     const diff = $window.height() - ($footer.offset().top + $footer.outerHeight(true));
     const height = $containerSite.outerHeight();
     $containerSite.css('min-height', height + diff);
+    // $categorySidebar: top
+    if ($categorySidebar.length > 0 && $navbar.length > 0) {
+      $categorySidebar.css('top', $navbar.outerHeight());
+    }
   };
 
   // bind event
