@@ -420,8 +420,8 @@ function _fixContainerSite($navbar, $containerSite, $footer, $categorySidebar) {
     const height = $containerSite.outerHeight();
     $containerSite.css('min-height', height + diff);
     // $categorySidebar: top
-    if ($categorySidebar.length > 0 && $navbar.length > 0) {
-      $categorySidebar.css('top', $navbar.outerHeight());
+    if ($categorySidebar.length > 0) {
+      $categorySidebar.css('top', $navbar.outerHeight() || 0);
     }
   };
 
