@@ -17,7 +17,7 @@ module.exports = ctx => {
       },
       config: {
         client: sceneInfo.client,
-        scope: 'snsapi_userinfo',
+        scope: sceneInfo.scope,
       },
       configFunctions: {
         getConfig(ctx) {
