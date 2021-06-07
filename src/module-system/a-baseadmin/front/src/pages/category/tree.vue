@@ -84,7 +84,7 @@ export default {
           id: item.id,
           attrs: {
             link: '#',
-            label: item.categoryName || `[${this.$text('New Category')}]`,
+            label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
             loadChildren: item.categoryCatalog === 1,
           },
