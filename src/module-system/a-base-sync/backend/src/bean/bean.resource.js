@@ -189,9 +189,16 @@ module.exports = ctx => {
         if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
         atomId = atom.id;
       }
-      await this.modelResourceRole.insert({
+      // check if exists
+      const item = await this.modelResourceRole.get({
         atomId, roleId,
       });
+      if (item) return item.id;
+      // insert
+      const res = await this.modelResourceRole.insert({
+        atomId, roleId,
+      });
+      return res.insertId;
     }
 
     // add resource roles

@@ -2753,9 +2753,16 @@ module.exports = ctx => {
         if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
         atomId = atom.id;
       }
-      await this.modelResourceRole.insert({
+      // check if exists
+      const item = await this.modelResourceRole.get({
         atomId, roleId,
       });
+      if (item) return item.id;
+      // insert
+      const res = await this.modelResourceRole.insert({
+        atomId, roleId,
+      });
+      return res.insertId;
     }
 
     // add resource roles
@@ -6421,6 +6428,7 @@ module.exports = app => {
           if (atomRevision > atom.atomRevision) {
             item = await this._adjustItem({ moduleName, atomClass, item, register: false });
             await this._updateRevision({ atomClass, atomIdFormal: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+            await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
           }
         }
       } else {
@@ -6479,10 +6487,10 @@ module.exports = app => {
         const roleName = item.roleIdOwner || 'superuser';
         const role = await this.ctx.bean.role.parseRoleName({ roleName });
         item.roleIdOwner = role.id;
-        // resourceRoles
-        if (item.resourceRoles) {
-          item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles });
-        }
+      }
+      // resourceRoles
+      if (item.resourceRoles) {
+        item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles });
       }
       // ok
       return item;
