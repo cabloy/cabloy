@@ -5432,7 +5432,14 @@ module.exports = ctx => {
             )
           `;
         } else {
-          _rightWhere = _others;
+          // _rightWhere = _others;
+          _rightWhere = `
+            (
+              ${_mine}
+              or
+              ${_others}
+            )
+          `;
         }
       }
 
