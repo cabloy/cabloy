@@ -49,6 +49,15 @@ export default {
       layoutPreferSwitchButton: null,
     };
   },
+  beforeDestroy() {
+    this.$f7.off('resize', this.onResize);
+    this._clearLayoutPreferNotification();
+  },
+  mounted() {
+    this.$f7ready(() => {
+      this.ready();
+    });
+  },
   methods: {
     ready() {
       if (this.$f7.device.ie) {
@@ -379,14 +388,6 @@ export default {
       this.error = null;
       this._authEchoInit();
     },
-  },
-  beforeDestroy() {
-    this.$f7.off('resize', this.onResize);
-  },
-  mounted() {
-    this.$f7ready(() => {
-      this.ready();
-    });
   },
 };
 
