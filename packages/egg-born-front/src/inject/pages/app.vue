@@ -46,6 +46,7 @@ export default {
       error: null,
       layoutPrefer: null,
       layoutPreferNotification: null,
+      layoutPreferSwitchButton: null,
     };
   },
   methods: {
@@ -67,6 +68,10 @@ export default {
     },
     _clearLayoutPreferNotification() {
       this.layoutPrefer = null;
+      if (this.layoutPreferSwitchButton) {
+        this.layoutPreferSwitchButton.off('click');
+        this.layoutPreferSwitchButton = null;
+      }
       if (this.layoutPreferNotification) {
         if (!this.layoutPreferNotification.destroyed) {
           this.layoutPreferNotification.close();
@@ -115,11 +120,21 @@ export default {
           }
           this.layoutPreferNotification = this.$f7.notification.create(options);
           this.layoutPreferNotification.open();
-
+          this.layoutPreferSwitchButton = this.$$('.AppLayoutSwitchNow');
+          this.layoutPreferSwitchButton.on('click', () => {
+            this._switchPreferLayout();
+          });
         }
       }
       // ok
       return layoutReal;
+    },
+    _switchPreferLayout() {
+      if (!this.layoutPrefer) return;
+      // set layout
+      this.setLayout(this.layoutPrefer);
+      // force clear layoutPrefer and notification
+      this._clearLayoutPreferNotification();
     },
     _calcLayoutPrefer() {
       const breakpoint = this.$meta.config.layout.breakpoint;
@@ -134,6 +149,10 @@ export default {
     resize() {
       // layout
       const layout = this._calcLayout();
+      // set
+      this.setLayout(layout);
+    },
+    setLayout(layout) {
       // check if switch
       if (this.layout === layout) {
         const component = this.getLayout();
