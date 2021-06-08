@@ -42,8 +42,10 @@ export default {
   data() {
     return {
       layout: null,
-      sticky: false,
+      sticky: true,
       error: null,
+      layoutPrefer: null,
+      layoutPreferNotification: null,
     };
   },
   methods: {
@@ -63,8 +65,63 @@ export default {
     getLayout() {
       return this.$refs.layout;
     },
+    _clearLayoutPreferNotification() {
+      this.layoutPrefer = null;
+      if (this.layoutPreferNotification) {
+        if (!this.layoutPreferNotification.destroyed) {
+          this.layoutPreferNotification.close();
+        }
+        this.layoutPreferNotification = null;
+      }
+    },
     _calcLayout() {
-      if (this.sticky && this.layout) return this.layout;
+      // layout prefer
+      const layoutPrefer = this._calcLayoutPrefer();
+      // layout real
+      let layoutReal;
+      if (this.sticky && this.layout) {
+        layoutReal = this.layout;
+      } else {
+        layoutReal = layoutPrefer;
+      }
+      // notification
+      if (layoutPrefer === layoutReal) {
+        // force clear layoutPrefer and notification
+        this._clearLayoutPreferNotification();
+      } else {
+        if (this.layoutPrefer !== layoutPrefer) {
+          // force clear layoutPrefer and notification
+          this._clearLayoutPreferNotification();
+          this.layoutPrefer = layoutPrefer;
+          // options
+          const title = this.$text(layoutPrefer === 'pc' ? 'AppLayoutSwitchPromptPC' : 'AppLayoutSwitchPromptMobile');
+          const options = {
+            icon: '<i class="material-icons">info</i>',
+            title,
+            text: `<div><button class="button AppLayoutSwitchNow">${this.$text('Switch Now')}</button></div>`,
+            closeButton: true,
+            closeOnClick: false,
+            swipeToClose: false,
+            on: {
+              closed(notification) {
+                notification.destroy();
+              },
+            },
+          };
+          // closeTimeout
+          const closeTimeout = this.$meta.config.layout.notification.closeTimeout;
+          if (closeTimeout !== -1) {
+            options.closeTimeout = closeTimeout;
+          }
+          this.layoutPreferNotification = this.$f7.notification.create(options);
+          this.layoutPreferNotification.open();
+
+        }
+      }
+      // ok
+      return layoutReal;
+    },
+    _calcLayoutPrefer() {
       const breakpoint = this.$meta.config.layout.breakpoint;
       const windowWidth = window.document.documentElement.clientWidth;
       const windowHeight = window.document.documentElement.clientHeight;
@@ -72,7 +129,6 @@ export default {
       if (!this._getLayoutItem(layout)) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
-      this.sticky = true;
       return layout;
     },
     resize() {

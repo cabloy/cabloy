@@ -25,6 +25,9 @@ export default function(Vue) {
           component: 'layout',
         },
       },
+      notification: {
+        closeTimeout: -1,
+      },
     },
     markdown: {
       style: {

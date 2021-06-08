@@ -77,6 +77,7 @@ export default function(io) {
         swipeToClose: false,
         _message: message,
         _content: content,
+        'a-message:helper': true,
       };
       // closeTimeout
       const closeTimeout = Vue.prototype.$meta.config.modules['a-message'].notification.closeTimeout;
@@ -93,6 +94,7 @@ export default function(io) {
     };
 
     this._onNotificationClick = async function(notification) {
+      if (!notification.params['a-message:helper']) return;
       // message
       const message = notification.params._message;
       // content

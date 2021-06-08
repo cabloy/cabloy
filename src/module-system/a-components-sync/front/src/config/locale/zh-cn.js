@@ -21,4 +21,7 @@ export default {
   'Select Date': '选择日期',
   'Component Not Found': '组件未发现',
   'Data Validation Error': '数据验证错误',
+  'Switch Now': '现在切换',
+  AppLayoutSwitchPromptPC: '您需要切换到PC布局吗？',
+  AppLayoutSwitchPromptMobile: '您需要切换到Mobile布局吗？',
 };
