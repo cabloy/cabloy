@@ -78,6 +78,11 @@ export default function(io) {
         _message: message,
         _content: content,
         'a-message:helper': true,
+        on: {
+          closed(notification) {
+            notification.destroy();
+          },
+        },
       };
       // closeTimeout
       const closeTimeout = Vue.prototype.$meta.config.modules['a-message'].notification.closeTimeout;
