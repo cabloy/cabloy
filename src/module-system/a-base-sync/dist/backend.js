@@ -1279,6 +1279,12 @@ module.exports = ctx => {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass: _atomClass,
+      });
+      // check right
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       return await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -1357,11 +1363,19 @@ module.exports = ctx => {
       action, stage,
       user,
     }) {
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass,
+      });
+      // check right
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: id,
+        atomClassId: atomClass.id,
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
@@ -1565,6 +1579,20 @@ module.exports = ctx => {
           });
         },
       });
+    }
+
+    parseActionCode({ action, atomClass }) {
+      // is number
+      if (!isNaN(action)) return parseInt(action);
+      // add role right
+      const actionCode = ctx.constant.module('a-base').atom.action[action];
+      if (actionCode) return actionCode;
+      // atomClass
+      if (!atomClass) throw new Error(`should specify the atomClass of action: ${action}`);
+      const actions = ctx.bean.base.actions();
+      const _action = actions[atomClass.module][atomClass.atomClassName][action];
+      if (!_action) throw new Error(`atom action not found: ${atomClass.module}:${atomClass.atomClassName}.${action}`);
+      return _action.code;
     }
 
     async _registerLock({ atomClassId, code }) {
@@ -3597,12 +3625,12 @@ module.exports = ctx => {
           }
         }
         // add role right
-        let actionCode = ctx.constant.module('a-base').atom.action[roleRight.action];
-        if (!actionCode) {
-          const action = _module.main.meta.base.atoms[atomClassName].actions[roleRight.action];
-          if (!action) throw new Error(`atom action not found: ${atomClassName}.${roleRight.action}`);
-          actionCode = action.code;
-        }
+        const actionCode = ctx.bean.atomAction.parseActionCode({
+          action: roleRight.action,
+          atomClass: {
+            module, atomClassName,
+          },
+        });
         await this.addRoleRight({
           roleId: role.id,
           atomClassId: atomClass.id,
@@ -6152,7 +6180,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
   // create
-  if (options.action === constant.atom.action.create) {
+  if (options.action === 'create' || options.action === constant.atom.action.create) {
     // atomClassId
     let atomClassId = ctx.request.body.atomClass.id;
     if (!atomClassId) {
@@ -6192,7 +6220,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   }
 
   // read
-  if (options.action === constant.atom.action.read) {
+  if (options.action === 'read' || options.action === constant.atom.action.read) {
     const res = await ctx.bean.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
       user: ctx.state.user.op,
@@ -11749,59 +11777,59 @@ module.exports = app => {
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
     { method: 'post', path: 'atom/create', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 1 } },
+      meta: { right: { type: 'atom', action: 'create' } },
     },
     { method: 'post', path: 'atom/read', controller: 'atom',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: { right: { type: 'atom', action: 'read' } },
     },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },
     { method: 'post', path: 'atom/write', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 3, stage: 'draft' } },
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
     },
     { method: 'post', path: 'atom/openDraft', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 3 } },
+      meta: { right: { type: 'atom', action: 'write' } },
     },
     { method: 'post', path: 'atom/submit', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 3, stage: 'draft' } },
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
     },
     { method: 'post', path: 'atom/writeSubmit', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 3, stage: 'draft' } },
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
     },
     { method: 'post', path: 'atom/delete', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 4 } },
+      meta: { right: { type: 'atom', action: 'delete' } },
     },
     { method: 'post', path: 'atom/clone', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 5 } },
+      meta: { right: { type: 'atom', action: 'clone' } },
     },
     { method: 'post', path: 'atom/enable', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 6 } },
+      meta: { right: { type: 'atom', action: 'enable' } },
     },
     { method: 'post', path: 'atom/disable', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 7 } },
+      meta: { right: { type: 'atom', action: 'disable' } },
     },
     {
       method: 'post', path: 'atom/deleteBulk', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 35 } },
+      meta: { right: { type: 'atom', action: 'deleteBulk' } },
     },
     {
       method: 'post', path: 'atom/exportBulk', controller: 'atom',
-      meta: { right: { type: 'atom', action: 36 } },
+      meta: { right: { type: 'atom', action: 'exportBulk' } },
     },
     { method: 'post', path: 'atom/star', controller: 'atom',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2 },
+        right: { type: 'atom', action: 'read' },
       },
     },
     { method: 'post', path: 'atom/readCount', controller: 'atom',
-      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
     },
     { method: 'post', path: 'atom/stats', controller: 'atom' },
     { method: 'post', path: 'atom/labels', controller: 'atom',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2 },
+        right: { type: 'atom', action: 'read' },
       },
     },
     { method: 'post', path: 'atom/actions', controller: 'atom' },
@@ -11812,27 +11840,27 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
     { method: 'post', path: 'comment/list', controller: 'comment',
-      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
     },
     { method: 'post', path: 'comment/item', controller: 'comment',
-      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
     },
     { method: 'post', path: 'comment/save', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2, checkFlow: true },
+        right: { type: 'atom', action: 'read', checkFlow: true },
       },
     },
     { method: 'post', path: 'comment/delete', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2, checkFlow: true },
+        right: { type: 'atom', action: 'read', checkFlow: true },
       },
     },
     { method: 'post', path: 'comment/heart', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2, checkFlow: true },
+        right: { type: 'atom', action: 'read', checkFlow: true },
       },
     },
     // user
@@ -11843,13 +11871,13 @@ module.exports = app => {
     { method: 'post', path: 'resource/read', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
     { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
-      meta: { right: { type: 'atom', action: 25 } },
+      meta: { right: { type: 'atom', action: 'authorize' } },
     },
     { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource',
-      meta: { right: { type: 'atom', action: 25 } },
+      meta: { right: { type: 'atom', action: 'authorize' } },
     },
     { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource',
-      meta: { right: { type: 'atom', action: 25 } },
+      meta: { right: { type: 'atom', action: 'authorize' } },
     },
     // atomClass
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
