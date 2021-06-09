@@ -55,7 +55,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
   // create
-  if (options.action === constant.atom.action.create) {
+  if (options.action === 'create' || options.action === constant.atom.action.create) {
     // atomClassId
     let atomClassId = ctx.request.body.atomClass.id;
     if (!atomClassId) {
@@ -95,7 +95,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   }
 
   // read
-  if (options.action === constant.atom.action.read) {
+  if (options.action === 'read' || options.action === constant.atom.action.read) {
     const res = await ctx.bean.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
       user: ctx.state.user.op,

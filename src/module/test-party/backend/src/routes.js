@@ -6,10 +6,10 @@ module.exports = app => {
     { method: 'post', path: 'party/types', controller: 'party' },
     { method: 'post', path: 'party/over', controller: 'party' },
     { method: 'post', path: 'party/over', controller: 'party', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 101 } },
+      meta: { right: { type: 'atom', action: 'partyOver' } },
     },
     { method: 'post', path: 'party/overBulk', controller: 'party', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 201 } },
+      meta: { right: { type: 'atom', action: 'partyOverBulk' } },
     },
 
     // test/atom/starLabel

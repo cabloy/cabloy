@@ -31,6 +31,20 @@ module.exports = ctx => {
       });
     }
 
+    parseActionCode({ action, atomClass }) {
+      // is number
+      if (!isNaN(action)) return parseInt(action);
+      // add role right
+      const actionCode = ctx.constant.module('a-base').atom.action[action];
+      if (actionCode) return actionCode;
+      // atomClass
+      if (!atomClass) throw new Error(`should specify the atomClass of action: ${action}`);
+      const actions = ctx.bean.base.actions();
+      const _action = actions[atomClass.module][atomClass.atomClassName][action];
+      if (!_action) throw new Error(`atom action not found: ${atomClass.module}:${atomClass.atomClassName}.${action}`);
+      return _action.code;
+    }
+
     async _registerLock({ atomClassId, code }) {
       // get
       const res = await this.model.get({ atomClassId, code });

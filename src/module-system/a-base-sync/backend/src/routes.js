@@ -11,10 +11,10 @@ module.exports = app => {
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
     { method: 'post', path: 'atom/create', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 1 } },
+      meta: { right: { type: 'atom', action: 'create' } },
     },
     { method: 'post', path: 'atom/read', controller: 'atom',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: { right: { type: 'atom', action: 'read' } },
     },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },

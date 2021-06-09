@@ -1079,6 +1079,12 @@ module.exports = ctx => {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass: _atomClass,
+      });
+      // check right
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       return await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -1157,11 +1163,19 @@ module.exports = ctx => {
       action, stage,
       user,
     }) {
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass,
+      });
+      // check right
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: id,
+        atomClassId: atomClass.id,
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
