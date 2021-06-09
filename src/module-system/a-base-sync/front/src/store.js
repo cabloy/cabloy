@@ -45,6 +45,9 @@ export default function(Vue) {
       userLabels(state) {
         return state.labels;
       },
+      demoEnable() {
+        return Vue.prototype.$meta.config.modules['a-base'].demo.enable;
+      },
     },
     mutations: {
       authLogin(state) {

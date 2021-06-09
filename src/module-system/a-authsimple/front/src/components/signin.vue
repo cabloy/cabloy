@@ -29,6 +29,36 @@
         <div></div>
         <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign Up')}}</eb-link>
       </f7-card-footer>
+      <div v-if="demoEnable" class="alert-info">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>{{$text('Account Type')}}</th>
+                <th>{{$text('Username')}}</th>
+                <th>{{$text('Password')}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{$text('Admin User')}}</td>
+                <td>admin</td>
+                <td>123456</td>
+              </tr>
+              <tr>
+                <td>{{$text('Normal User')}}</td>
+                <td>tom</td>
+                <td>123456</td>
+              </tr>
+              <tr>
+                <td>{{$text('Normal User')}}</td>
+                <td>jane</td>
+                <td>123456</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </f7-card>
   </div>
 </template>
@@ -68,6 +98,11 @@ export default {
         },
       },
     };
+  },
+  computed: {
+    demoEnable() {
+      return this.$store.getters['a/base/demoEnable'];
+    },
   },
   created() {},
   methods: {
