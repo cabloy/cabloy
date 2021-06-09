@@ -110,7 +110,7 @@ module.exports = app => {
       for (const [ userName, atomId, right ] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
-          action: this.ctx.constant.module('a-base').atom.action.write,
+          action: 'write',
           user: { id: userIds[userName] },
         });
         assert.equal(!!res, right, userName);
@@ -121,7 +121,7 @@ module.exports = app => {
       for (const [ userName, atomId, right ] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
-          action: this.ctx.constant.module('a-base').atom.action.delete,
+          action: 'delete',
           user: { id: userIds[userName] },
         });
         assert.equal(!!res, right, userName);
