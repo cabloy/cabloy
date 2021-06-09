@@ -1,8 +1,9 @@
 function _onParseCommentRecent(item, atomClass) {
+  const itemURL = util.url(item.url, item.atomLanguage, atomClass);
   return `
 <li class="media">
     <div class="media-body">
-      <h5 class="media-heading"><a href="${util.url(item.url, item.atomLanguage, atomClass)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
+      <h5 class="media-heading"><a target="_blank" href="${itemURL}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
       <div class="body">${item.h_summary}</div>
       <div class="user">-- ${util.escapeHtml(item.h_userName)}</div>
     </div>
@@ -39,6 +40,7 @@ function _onParseArticleRecent(item, atomClass) {
   const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
   // avatar
   const userAvatar = item.avatar || util.url('plugins/cms-pluginsidebar/assets/images/user.png');
+  const itemURL = util.url(item.url, item.atomLanguage, atomClass);
   const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
 <img class="avatar avatar16" src="${util.combineImageUrl(userAvatar, 16, 16)}">
@@ -46,13 +48,13 @@ function _onParseArticleRecent(item, atomClass) {
 <span class="num date">${util.time.formatDateTime(item.updatedAt, 'MM-DD HH:mm')}</span>
 <i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
 <i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
-<a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
+<a target="_blank" href="${itemURL}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
 </div>
         `;
   return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${audio}${attachment}<a target="_blank" href="${util.url(item.url, item.atomLanguage, atomClass)}">${util.escapeHtml(item.atomName)}</a></h4>
+      <h4 class="media-heading">${audio}${attachment}<a target="_blank" href="${itemURL}">${util.escapeHtml(item.atomName)}</a></h4>
       ${util.escapeHtml(item.description) || item.summary}
       ${stat}
     </div>

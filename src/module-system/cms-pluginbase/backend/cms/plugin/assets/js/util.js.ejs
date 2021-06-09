@@ -184,7 +184,7 @@ const util = {
     return window.Promise ? new Promise(handler) : _createPromise(handler);
   },
   getAtomClassFullName(atomClass) {
-    return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
+    return `${atomClass.module}:${atomClass.atomClassName}`;
   },
   atomClassEqual(atomClass1, atomClass2) {
     if (!atomClass1 || !atomClass2) return false;
