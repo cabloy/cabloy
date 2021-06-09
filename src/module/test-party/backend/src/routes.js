@@ -18,16 +18,16 @@ module.exports = app => {
     { method: 'post', path: 'test/atom/all', controller: 'testAtomAll', middlewares: 'test', meta: { auth: { enable: false } } },
     // test/atom/right(checked by middleware)
     { method: 'post', path: 'test/atom/checkRightCreate', controller: 'testAtomRight', middlewares: 'test',
-      meta: { right: { type: 'atom', action: 1 } },
+      meta: { right: { type: 'atom', action: 'create' } },
     },
     { method: 'post', path: 'test/atom/checkRightRead', controller: 'testAtomRight', middlewares: 'test',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: { right: { type: 'atom', action: 'read' } },
     },
     { method: 'post', path: 'test/atom/checkRightWrite', controller: 'testAtomRight', middlewares: 'test',
-      meta: { right: { type: 'atom', action: 3 } },
+      meta: { right: { type: 'atom', action: 'write' } },
     },
     { method: 'post', path: 'test/atom/checkRightAction', controller: 'testAtomRight', middlewares: 'test',
-      meta: { right: { type: 'atom', action: 101 } },
+      meta: { right: { type: 'atom', action: 'partyOver' } },
     },
 
     // test/resource/right
