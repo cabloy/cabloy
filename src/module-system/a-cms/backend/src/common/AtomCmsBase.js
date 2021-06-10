@@ -117,7 +117,7 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const html = this._renderContent({ item });
+      const html = await this._renderContent({ item });
       const summary = this._parseSummary({ item, html });
       // update article
       await this.modelArticle.update({
@@ -159,7 +159,7 @@ module.exports = app => {
       }
     }
 
-    _renderContent({ item }) {
+    async _renderContent({ item }) {
       // editMode
       const editMode = item.editMode;
       // html
@@ -176,7 +176,7 @@ module.exports = app => {
       } else if (editMode === 1) {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
-        html = this._renderMarkdown({ item });
+        html = await this._renderMarkdown({ item });
       } else if (editMode === 2) {
         // 2: html
         html = item.content || '';
@@ -206,12 +206,14 @@ module.exports = app => {
       return summary;
     }
 
-    _renderMarkdown({ item }) {
+    async _renderMarkdown({ item }) {
       if (!item.content) return '';
       // markdown
       const md = markdown.create();
       // markdown-it-block
       const blocks = this.ctx.bean.cms.site.getBlocks();
+      // asyncs
+      const asyncs = {};
       // block options
       const blockOptions = {
         utils: {
@@ -223,7 +225,8 @@ module.exports = app => {
       };
       md.use(markdonw_it_block, blockOptions);
       // render
-      return md.render(item.content);
+      const content = md.render(item.content);
+      return content;
     }
 
     async delete({ atomClass, key, user }) {

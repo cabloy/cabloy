@@ -202,7 +202,34 @@ module.exports = ctx => {
       const moduleName = module.info.relativeName;
       for (const key in blocks) {
         const fullName = `${moduleName}:${key}`;
-        blocksModule[fullName] = blocks[key];
+        const block = blocks[key];
+        // validator
+        let validator = block.validator;
+        if (typeof validator === 'string') {
+          validator = {
+            module: moduleName,
+            validator,
+          };
+        } else {
+          validator = {
+            module: validator.module || moduleName,
+            validator: validator.validator,
+          };
+        }
+        // beanFullName
+        const beanName = block.bean;
+        let beanFullName;
+        if (typeof beanName === 'string') {
+          beanFullName = `${moduleName}.cms.block.${beanName}`;
+        } else {
+          beanFullName = `${beanName.module || moduleName}.cms.block.${beanName.name}`;
+        }
+        // ok
+        blocksModule[fullName] = {
+          ... block,
+          validator,
+          beanFullName,
+        };
       }
       return blocksModule;
     }
