@@ -1760,7 +1760,34 @@ module.exports = ctx => {
       const moduleName = module.info.relativeName;
       for (const key in blocks) {
         const fullName = `${moduleName}:${key}`;
-        blocksModule[fullName] = blocks[key];
+        const block = blocks[key];
+        // validator
+        let validator = block.validator;
+        if (typeof validator === 'string') {
+          validator = {
+            module: moduleName,
+            validator,
+          };
+        } else {
+          validator = {
+            module: validator.module || moduleName,
+            validator: validator.validator,
+          };
+        }
+        // beanFullName
+        const beanName = block.bean;
+        let beanFullName;
+        if (typeof beanName === 'string') {
+          beanFullName = `${moduleName}.cms.block.${beanName}`;
+        } else {
+          beanFullName = `${beanName.module || moduleName}.cms.block.${beanName.name}`;
+        }
+        // ok
+        blocksModule[fullName] = {
+          ... block,
+          validator,
+          beanFullName,
+        };
       }
       return blocksModule;
     }
@@ -2790,7 +2817,7 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const html = this._renderContent({ item });
+      const html = await this._renderContent({ item });
       const summary = this._parseSummary({ item, html });
       // update article
       await this.modelArticle.update({
@@ -2832,7 +2859,7 @@ module.exports = app => {
       }
     }
 
-    _renderContent({ item }) {
+    async _renderContent({ item }) {
       // editMode
       const editMode = item.editMode;
       // html
@@ -2849,7 +2876,7 @@ module.exports = app => {
       } else if (editMode === 1) {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
-        html = this._renderMarkdown({ item });
+        html = await this._renderMarkdown({ item });
       } else if (editMode === 2) {
         // 2: html
         html = item.content || '';
@@ -2879,24 +2906,52 @@ module.exports = app => {
       return summary;
     }
 
-    _renderMarkdown({ item }) {
+    async _renderMarkdown({ item }) {
       if (!item.content) return '';
       // markdown
       const md = markdown.create();
       // markdown-it-block
       const blocks = this.ctx.bean.cms.site.getBlocks();
+      // asyncs
+      const asyncs = {};
       // block options
       const blockOptions = {
+        ctx: this.ctx,
+        article: item,
         utils: {
           text: (...args) => {
             return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
+          },
+          async: ({ block, content }) => {
+            const placeholder = `__cmsblockplaceholder__${uuid.v4().replace(/-/g, '')}`;
+            asyncs[placeholder] = { block, content };
+            return placeholder;
           },
         },
         blocks,
       };
       md.use(markdonw_it_block, blockOptions);
       // render
-      return md.render(item.content);
+      let itemContent = md.render(item.content);
+      // render async
+      for (const placeholder in asyncs) {
+        const { block, content } = asyncs[placeholder];
+        // bean
+        const beanInstance = this.ctx.bean._getBean(block.beanFullName);
+        if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
+        // render
+        const res = await beanInstance.renderAsync({
+          md,
+          options: blockOptions,
+          block,
+          content,
+        });
+        // replace
+        const regexp = new RegExp(placeholder);
+        itemContent = itemContent.replace(regexp, res);
+      }
+      // ok
+      return itemContent;
     }
 
     async delete({ atomClass, key, user }) {

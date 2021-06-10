@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-flow",
-  "version": "4.1.9",
+  "version": "4.1.10",
   "title": "FlowTitle",
   "eggBornModule": {
     "fileVersion": 2,
@@ -23,6 +23,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.1",
     "extend2": "^1.0.0",
-    "require3": "^2.0.7"
+    "require3": "^2.0.8"
   }
 }

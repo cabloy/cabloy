@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-antdv",
-  "version": "4.0.12",
+  "version": "4.0.13",
   "title": "a-antdv",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,7 +23,7 @@
   "dependencies": {
     "egg-born-mock": "^2.1.1",
     "extend2": "^1.0.0",
-    "require3": "^2.0.7"
+    "require3": "^2.0.8"
   },
   "devDependencies": {
     "ant-design-vue": "^1.6.5"

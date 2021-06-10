@@ -1,19 +1,11 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 888:
+/***/ 248:
 /***/ ((module) => {
 
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const block = {
-    validator: {
-      module: moduleInfo.relativeName,
-      validator: 'blockAudio',
-    },
-    // async output({ ctx, block, data }) {
-    //   return data;
-    // },
+module.exports = ctx => {
+  class CMSBlock {
     render({ md, options, block, token, index, content }) {
       content = content || {};
       content.audio = content.audio || {};
@@ -34,7 +26,74 @@ module.exports = app => {
     </script>
     <div class="aplayer"></div></div>
     `;
+    }
+  }
+
+  return CMSBlock;
+};
+
+
+/***/ }),
+
+/***/ 747:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class CMSBlock {
+    render({ md, options, block, token, index, content }) {
+      const url = md.utils.escapeHtml(content.url);
+      const width = md.utils.escapeHtml(content.width || '100%');
+      const height = md.utils.escapeHtml(content.height || '300px');
+      return `<div class="block block-iframe" style="width:${width};height:${height};"><iframe width="100%" height="100%" scrolling="auto" frameborder="0" src="${url}"></iframe></div>\n`;
+    }
+    // render({ md, options, block, token, index, content }) {
+    //   return options.utils.async({ block, content });
+    // }
+    // async renderAsync({ md, options, block, content }) {
+    //   const url = md.utils.escapeHtml(content.url);
+    //   const width = md.utils.escapeHtml(content.width || '100%');
+    //   const height = md.utils.escapeHtml(content.height || '300px');
+    //   return `<div class="block block-iframe" style="width:${width};height:${height};"><iframe width="100%" height="100%" scrolling="auto" frameborder="0" src="${url}"></iframe></div>\n`;
+    // }
+  }
+
+  return CMSBlock;
+};
+
+
+/***/ }),
+
+/***/ 187:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const cmsBlockAudio = __webpack_require__(248);
+const cmsBlockIFrame = __webpack_require__(747);
+
+module.exports = app => {
+  const beans = {
+    // block
+    'cms.block.audio': {
+      mode: 'ctx',
+      bean: cmsBlockAudio,
     },
+    'cms.block.iframe': {
+      mode: 'ctx',
+      bean: cmsBlockIFrame,
+    },
+  };
+  return beans;
+};
+
+
+/***/ }),
+
+/***/ 888:
+/***/ ((module) => {
+
+module.exports = app => {
+  const block = {
+    validator: 'blockAudio',
+    bean: 'audio',
   };
   return block;
 };
@@ -46,18 +105,9 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const block = {
-    validator: {
-      module: moduleInfo.relativeName,
-      validator: 'blockIFrame',
-    },
-    render({ md, options, block, token, index, content }) {
-      const url = md.utils.escapeHtml(content.url);
-      const width = md.utils.escapeHtml(content.width || '100%');
-      const height = md.utils.escapeHtml(content.height || '300px');
-      return `<div class="block block-iframe" style="width:${width};height:${height};"><iframe width="100%" height="100%" scrolling="auto" frameborder="0" src="${url}"></iframe></div>\n`;
-    },
+    validator: 'blockIFrame',
+    bean: 'iframe',
   };
   return block;
 };
@@ -297,6 +347,8 @@ const errors = __webpack_require__(624);
 
 module.exports = app => {
 
+  // beans
+  const beans = __webpack_require__(187)(app);
   // routes
   const routes = __webpack_require__(825)(app);
   // controllers
@@ -309,6 +361,7 @@ module.exports = app => {
   const meta = __webpack_require__(458)(app);
 
   return {
+    beans,
     routes,
     controllers,
     services,

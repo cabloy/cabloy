@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-hostwechat-sync",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "title": "a-hostwechat-sync",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,6 +23,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.1",
     "extend2": "^1.0.0",
-    "require3": "^2.0.7"
+    "require3": "^2.0.8"
   }
 }
