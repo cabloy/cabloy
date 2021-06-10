@@ -216,6 +216,8 @@ module.exports = app => {
       const asyncs = {};
       // block options
       const blockOptions = {
+        ctx: this.ctx,
+        article: item,
         utils: {
           text: (...args) => {
             return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
