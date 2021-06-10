@@ -222,13 +222,36 @@ module.exports = app => {
           text: (...args) => {
             return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
           },
+          async: ({ block, content }) => {
+            const placeholder = `__cmsblockplaceholder__${uuid.v4().replace(/-/g, '')}`;
+            asyncs[placeholder] = { block, content };
+            return placeholder;
+          },
         },
         blocks,
       };
       md.use(markdonw_it_block, blockOptions);
       // render
-      const content = md.render(item.content);
-      return content;
+      let itemContent = md.render(item.content);
+      // render async
+      for (const placeholder in asyncs) {
+        const { block, content } = asyncs[placeholder];
+        // bean
+        const beanInstance = this.ctx.bean._getBean(block.beanFullName);
+        if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
+        // render
+        const res = await beanInstance.renderAsync({
+          md,
+          options: blockOptions,
+          block,
+          content,
+        });
+        // replace
+        const regexp = new RegExp(placeholder);
+        itemContent = itemContent.replace(regexp, res);
+      }
+      // ok
+      return itemContent;
     }
 
     async delete({ atomClass, key, user }) {
