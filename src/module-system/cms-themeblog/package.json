@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeblog",
-  "version": "4.1.14",
+  "version": "4.1.15",
   "title": "cms:theme:blog",
   "eggBornModule": {
     "cms": {
