@@ -67,6 +67,7 @@
   2. Bean支持AOP
   3. AOP也是一种Bean
 - 基于`Redis`的分布式集群框架
+  CabloyJS通过`Redis`从框架底层就开始原生支持分布式，因此当系统起量后，可以轻松做集群扩展
   - [Broadcast](https://cabloy.com/zh-cn/articles/broadcast.html)
   - [Queue](https://cabloy.com/zh-cn/articles/queue.html)
   - [Schedule](https://cabloy.com/zh-cn/articles/schedule.html)
@@ -82,7 +83,9 @@
 ### - 第二部分: 业务功能
 
 - [NodeJS工作流引擎](https://cabloy.com/zh-cn/articles/flow-introduce.html)
+  众所周知，NodeJS作为后端开发语言和运行环境，样样都好，就差一个`NodeJS工作流引擎`。CabloyJS 4.0重点开发了`NodeJS工作流引擎`，并作为内置的基础核心模块，近一步拓展了NodeJS在后端的应用场景，为深入研发各类商业业务逻辑，提供了基础支撑
 - [自适应布局: pc = mobile + pad](https://cabloy.com/zh-cn/articles/adaptive-layout.html)
+  CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代码，`mobile端`达到原生效果，同时将`mobile端`的操控体验和开发模式无缝带入`pc端`
 - 拖拽
   - [移动](https://cabloy.com/zh-cn/articles/dragdrop-move.html)
   - [调整尺寸](https://cabloy.com/zh-cn/articles/dragdrop-resize.html)
