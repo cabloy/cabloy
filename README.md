@@ -22,6 +22,23 @@
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
+## 文档
+
+- [官网 && 文档](https://cabloy.com)
+
+## 在线演示
+
+|场景|链接/二维码|
+|--|--|
+|PC端|https://test.cabloy.com/|
+|Mobile端|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+
+|账号类型|名称|密码|
+|--|--|--|
+|管理员|admin|123456|
+|普通用户|tom|123456|
+|普通用户|jane|123456|
+
 ## 谁会用这款Node全栈框架？
 
 ### 1. 外包接单
@@ -66,23 +83,6 @@ CabloyJS先期制作了一套视频课程，导入了相同的`二级分销`的�
 ## 目标、历史、信念
 
 - [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
-
-## 文档
-
-- [官网 && 文档](https://cabloy.com)
-
-## 在线演示
-
-|场景|链接/二维码|
-|--|--|
-|PC端|https://test.cabloy.com/|
-|Mobile端|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
-
-|账号类型|名称|密码|
-|--|--|--|
-|管理员|admin|123456|
-|普通用户|tom|123456|
-|普通用户|jane|123456|
 
 ## CabloyJS开发的正式系统
 
