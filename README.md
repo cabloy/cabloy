@@ -305,11 +305,11 @@ Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神�
 
 - 显示侧边栏
 
-![显示侧边栏](./docs/assets/images/zh-cn/theme-brilliant-panel.png)
+![显示侧边栏](./docs/assets/images/zh-cn/theme-light-panel.png)
 
 - 移动端风格
 
-![移动端风格](./docs/assets/images/zh-cn/theme-mobile.png)
+![移动端风格](./docs/assets/images/zh-cn/theme-light-mobile.png)
 
 ## License
 
