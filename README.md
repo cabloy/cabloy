@@ -137,9 +137,49 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 
 究其根源，NodeJS作为业务开发平台，还缺少许多核心的基础构件，`NodeJS工作流引擎`便是其一。CabloyJS 4.0重点开发了NodeJS工作流引擎，并作为内置的基础核心模块（同样是开源、免费），近一步拓展了NodeJS在后端的应用场景，为深入研发各类商业业务逻辑，提供了基础支撑
 
-## 目标、历史、信念
+## CabloyJS的开发历程
 
-- [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
+CabloyJS从2016年启动开发，主要历经两个开发阶段：
+
+### 1. 第一阶段：EggBornJS
+
+EggBornJS关注的核心就是`模块化体系`与`模块隔离`，并以此实现一套完整的全栈开发框架
+
+比如模块`egg-born-front`是框架前端的核心模块，模块`egg-born-backend`是框架后端的核心模块，模块`egg-born`是框架的命令行工具，用于创建项目骨架
+
+> 这也是为什么所有业务模块都是以`egg-born-module-`为命名前缀的原因
+
+### 2. 第二阶段：CabloyJS
+
+EggBornJS只是一个基础的全栈开发框架，如果要进行业务开发，还需要考虑许多与业务相关的支撑特性，如：`工作流引擎`、`用户管理`、`角色管理`、`权限管理`、`菜单管理`、`参数设置管理`、`表单验证`、`登录机制`，等等。特别是在前后端分离的场景下，对`权限管理`的要求就提升到一个更高的水平
+
+CabloyJS在EggBornJS的基础上，提供了一套核心业务模块，从而实现了一系列业务支撑特性，并将这些特性进行有机的组合，形成完整而灵活的上层生态架构，从而支持具体的业务开发进程
+
+> 有了EggBornJS，从此可复用的不仅仅是组件，还有业务模块
+
+> 有了CabloyJS，您就可以快速开发各类业务应用
+
+## CabloyJS架构图
+
+![cabloy-2x](./docs/assets/images/cabloy-2x.png)
+
+## 信念
+
+> 凡是可以用JavaScript来写的应用，最终都会用JavaScript来写 | Atwood定律
+
+相信，Javascript的深度探索者都会被这句名言激发，共同努力，为Javascript生态添砖加瓦，构建更繁荣的应用生态
+
+CabloyJS正是对这一名言的探索之作。欢迎您也加入CabloyJS的社区生态，一起促进Javascript的繁荣与应用
+
+## 名称的由来
+
+### 1. EggBorn
+
+这个名称的由来比较简单，因为有了Egg(后端框架)，所以就有了EggBorn。有一部动画片叫《天书奇谭》，里面的萌主就叫“蛋生”，我很喜欢看（不小心暴露了年龄😅）
+
+### 2. Cabloy
+
+Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于模块的组合与生化反应，您将实现您想要的任何东西
 
 ## CabloyJS开发的正式系统
 
@@ -153,12 +193,14 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 |技术文档（中文）|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
 |社区（英文）|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
 |社区（中文）|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|课程（英文）|[https://course.cabloy.com/index.html](https://course.cabloy.com/index.html)|
+|课程（中文）|[https://course.cabloy.com/zh-cn/index.html](https://course.cabloy.com/zh-cn/index.html)|
 |Cabloy商店（英文）|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
 |Cabloy商店（中文）|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
-## 特性
+## 部分特性摘要
 
-### - 第一部分: 基础功能
+### >>>>> 第一部分: 基础功能
 
 - [Bean & AOP](https://cabloy.com/zh-cn/articles/bean.html)
   1. 几乎所有事物都是Bean
@@ -179,7 +221,7 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 - [多租户/多域名/多实例](https://cabloy.com/zh-cn/articles/44e45b3928ca4c6cb63809558145e000.html)
 - [测试驱动开发](https://cabloy.com/zh-cn/articles/990962d4e3604fc099c27806de6d6be8.html)
 
-### - 第二部分: 业务功能
+### >>>>> 第二部分: 业务功能
 
 - [NodeJS工作流引擎](https://cabloy.com/zh-cn/articles/flow-introduce.html)
 
@@ -200,7 +242,7 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
   - [进度条](https://cabloy.com/zh-cn/articles/10327f8fdae44d87b7604ba3fa9c1a89.html)
 - [内置大量核心模块](https://cabloy.com/zh-cn/articles/e678d328cb5b4efdaf5d60c8df1ca691.html)
 
-### - 第三部分: 解决方案
+### >>>>> 第三部分: 解决方案
 
 由于CabloyJS提供了大量的前端组件和后端特性，使得开发具体场景的业务也变得非常方便、流畅。CabloyJS仍然通过提供不同的`业务模块`来支援不同的业务场景开发
 
@@ -220,12 +262,14 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 ### - 英文版
 
 - [CabloyJS Store](https://store.cabloy.com/index.html)
+- [CabloyJS Courses](https://course.cabloy.com/index.html)
 - [CabloyJS Community](https://community.cabloy.com/index.html)
 - [CabloyJS Awesome](./docs/awesome.md)
 
 ### - 中文版
 
 - [CabloyJS 商店](https://store.cabloy.com/zh-cn/index.html)
+- [CabloyJS 课程](https://course.cabloy.com/zh-cn/index.html)
 - [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
@@ -235,21 +279,13 @@ CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 
   ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
 
-### - 文章
-
-- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
-
-### - 视频
-
-- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
-
 ### - 图片
 
 一图胜千言: [如何阅读本文档](https://cabloy.com/zh-cn/articles/how-to-read.html)
 
   ![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
 
-### - 预览
+## 预览
 
 - 白色主题
 
