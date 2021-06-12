@@ -80,6 +80,40 @@ CabloyJS先期制作了一套视频课程，导入了相同的`二级分销`的�
 - [关于框架](https://course.cabloy.com/zh-cn/articles/about-cabloyjs.html)
 - [关于二级分销](https://course.cabloy.com/zh-cn/articles/about-fenxiao.html)
 
+## CabloyJS的四大亮点
+
+### 亮点1：自适应布局：`pc = mobile + pad`
+
+1. 背景说明
+
+> 对于前端开发而言，有一个很现实的问题：如何同时进行pc端和mobile端的开发？
+
+传统的做法一般而言有两个：
+
+1) 采用`css自适应媒体查询`
+
+由于原生mobile端的布局和pc端的布局是不同的。`css自适应媒体查询`只是让pc端的页面在mobile端可用，但达不到`原生mobile端`的效果
+
+比如，许多使用`bootstrap`实现的博客；再比如，市面上绝大多数`后台管理系统模版`。往往优先处理pc端的显示效果，然后使用`css自适应媒体查询`来适配mobile端，从而在mobile端仅仅达到能看的程度，但绝对不好用
+
+2）采用两套代码
+
+由于采用`css自适应媒体查询`有很大的局限性，很多项目采用`两套代码`来分别处理`pc端`和`mobile端`的布局显示。这样虽然解决了问题，但是同样的业务逻辑需要做两套代码，成本、时间、精力都是加倍
+
+2. 解决之道：`pc = mobile + pad`自适应布局
+
+CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代码，`mobile端`达到原生效果，同时将`mobile端`的操控体验和开发模式无缝带入`pc端`
+
+> 效果演示：进入演示网站[https://test.cabloy.com/](https://test.cabloy.com/)，然后调整窗口尺寸分别体验pc端和mobile端的效果
+
+### 亮点2：模块化开发体系
+
+### 亮点3：前后端分离，全场景开发
+
+### 亮点4：内置NodeJS工作流引擎
+
+
+
 ## 目标、历史、信念
 
 - [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
