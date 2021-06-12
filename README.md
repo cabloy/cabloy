@@ -22,6 +22,25 @@
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
+## 谁会用这款Node全栈框架？
+
+### 1. 外包接单
+
+`痛点`：
+
+客户希望项目按质如期完工、价格低、风险小；服务商希望毛利高、投入少、进度快、客户满意。如何实现二者的平衡呢？
+
+如果接到项目，从零开始代码开发，就会放大客户与服务商之间的矛盾，增大项目的实施风险。因此，一款高质、高效、灵活的全栈框架，可以让`外包接单`之路走的更顺一些，更远一些
+
+`优点`：
+
+1. CabloyJS历时5年打造的Node全栈框架，内置大量特性功能，开箱即用，同时又具有强大的可扩展性，便于定制开发
+2. CabloyJS完善的基础建设，不仅让开发效率更高，而且可以引导客户，衍生出更多的业务需求和合作机会
+
+### 2. 初创企业
+
+## CabloyJS的商业模式
+
 ## 目标、历史、信念
 
 - [关于CabloyJS](https://cabloy.com/zh-cn/articles/introduce.html)
