@@ -1,6 +1,6 @@
 简体中文 | [English](./README.en-US.md)
 
-# CabloyJS
+# CabloyJS：接单快手、创业神器
 
 一款自带工作流引擎的Node.js全栈框架, `接单快手、创业神器`, 基于koa + egg + vue + framework7 + mysql
 
