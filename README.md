@@ -160,9 +160,51 @@ CabloyJS在EggBornJS的基础上，提供了一套核心业务模块，从而实
 
 > 有了CabloyJS，您就可以快速开发各类业务应用
 
-## CabloyJS架构图
+## CabloyJS架构图与技术栈
 
 ![cabloy-2x](./docs/assets/images/cabloy-2x.png)
+
+### 1. 第一层：NodeJS
+
+基于NodeJS，从而使得前后端均可以采用Javascript语言进行全栈开发，从而显著提升开发效率
+
+### 2. 第二层：VueJS、KoaJS
+
+### 3. 第三层：Framework7、EggJS
+
+* `前端`：采用Framework7作为主体的UI组件库，同时根据业务需要搭配其他UI组件库，如AntD Vue的表格组件、AntV X6工作流绘制组件、ChartJS图表组件，等等
+* `后端`：采用EggJS作为底层框架，从而沿用了EggJS成熟的基础建设和丰富的插件生态
+
+### 4. 第四层：egg-born-front、egg-born-backend
+
+* `egg-born-front`：是前端的核心模块，主要进行了以下几方面的工作：
+
+1. **模块前端隔离**：对模块前端的页面、数据、逻辑、路由、配置等元素进行了命名空间隔离处理，避免模块之间的变量污染与冲突
+2. **模块加载机制**：只需给模块名称增加一个`sync`后缀，即可实现模块的`同步加载`和`异步加载`，参见：[加载机制](https://cabloy.com/zh-cn/articles/3b1a0aeb1440499bac33a9823e425d57.html#_43)
+3. **pc=mobile+pad自适应布局**：对Framework7进行了改造，只需要一套代码，`mobile端`达到原生效果，同时将`mobile端`的操控体验和开发模式无缝带入`pc端`，参见[自适应布局：pc = mobile + pad](https://cabloy.com/zh-cn/articles/adaptive-layout.html)
+4. **组件环境对象**：向Vue组件实例注入了大量环境对象，方便开发，参见：[Component](https://cabloy.com/zh-cn/articles/6234d0ad3bbe4c1cb83d4b556f894eb5.html)
+
+* `egg-born-backend`：是后端的核心模块，主要进行了以下几方面的工作：
+
+1. **模块化开发体系**：EggJS原有的目录结构并不适合模块化的开发风格。但是EggJS提供了强大的扩展机制，允许提供自定义的Loader加载器。通过开发自定义的Loader加载器，实现了以业务模块为单元的目录结构。每个业务模块可以定义与自身业务相关的资源，如：`Routes、Controllers、Services、Models、Middlewares、Config、i18n语言资源`，等等。而且这些元素可以`编译打包`成一个js文件，同时也可以进行`丑化`，从而`保护商业代码`。由于这种模块化的开发体系，也方便把编译打包的模块直接发布到`NPM仓库`或者`模块市场`，与社区分享，参见：[模块编译与发布](https://cabloy.com/zh-cn/articles/beef7cd0ab0a495284797a5af933a155.html)
+2. **模块后端隔离**：以自定义的Loader加载器为基础，对模块后端的`Routes、Controllers、Services、Models、Config`等元素进行了命名空间隔离处理，避免模块之间的变量污染与冲突
+3. **Bean容器与AOP编程**：基于原生JS（Vanilla JS）实现了更轻量、更灵活的Bean容器，并可以通过AOP机制进行扩展，参见：[Bean](https://cabloy.com/zh-cn/articles/bean.html)
+3. **原生分布式架构**：EggJS原有的`Worker + Agent`进程模型，对于单机而言非常便利。但是面对多机集群，特别是基于`docker`的集群部署而言，`Agent进程`就失去了用武之地。更重要的是，如果一开始基于`Agent进程`进行开发，后续很难平滑的过渡到分布式场景。因此，`egg-born-backend`采用`Redis`，从框架底层就开始原生分布式的架构设计，并衍生出了`Broadcast、Queue、Schedule、Startup`等一系列分布式的开发组件，方便我们从一开始就进行分布式的开发。因此当系统起量后，可以轻松做集群扩展，参见：[Broadcast](https://cabloy.com/zh-cn/articles/broadcast.html), [Queue](https://cabloy.com/zh-cn/articles/queue.html), [Schedule](https://cabloy.com/zh-cn/articles/schedule.html), [Startup](https://cabloy.com/zh-cn/articles/startup.html)
+
+### 5. 第五层：EggBornJS
+
+`egg-born-front`和`egg-born-backend`，再加上一些周边工具，共同构成了EggBornJS，也就是CabloyJS研发历程的第一阶段
+
+### 6. 第六层：CabloyJS
+
+CabloyJS在EggBornJS的基础上，研发了一套`核心全局模块`，实现了一系列业务支撑特性，并将这些特性进行有机的组合，形成完整而灵活的上层生态架构，从而支持具体的业务开发进程
+
+### 7. 第七层：Project（项目）
+
+实际的项目由`全局模块`和`局部模块`构成
+
+* `全局模块`：CabloyJS内置的核心模块、来自`NPM仓库`或者`模块市场`的第三方模块，统称为`全局模块`，一般安装在`node_modules`目录
+* `局部模块`：项目实际的开发工作一般在`局部模块`中展开。`局部模块`位于项目目录内，参见：[新建模块](https://cabloy.com/zh-cn/articles/module-create.html)
 
 ## 信念
 
