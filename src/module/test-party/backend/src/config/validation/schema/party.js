@@ -11,7 +11,7 @@ module.exports = app => {
         notEmpty: true,
       },
       personCount: {
-        type: 'number',
+        type: 'integer',
         ebType: 'text',
         ebTitle: 'Person Count',
         minimum: 1,

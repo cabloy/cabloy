@@ -123,7 +123,7 @@ export default {
             if (isNaN(value)) {
               _value = value;
             } else {
-              _value = parseInt(value);
+              _value = parseInt(Number(value));
             }
           } else if (property.type === 'boolean') {
             _value = Boolean(value);
