@@ -68,13 +68,15 @@ ${tagsText}
         `;
 
         const html= `
-<li class="media">
+<li>
+  <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+  <div class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
-      ${util.escapeHtml(item.description) || item.summary}
-      ${stat}
+          ${util.escapeHtml(item.description) || item.summary}
+          ${stat}
     </div>
     ${media}
+  </div>
 </li>
         `;
           echo(html);
