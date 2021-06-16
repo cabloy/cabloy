@@ -136,11 +136,9 @@ function _loadMore({ categoryId, tagId, search }) {
       const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
       const mediaUrl = item.imageCover || item.imageFirst;
       const media = !mediaUrl ? '' : `
-<div class="media-right">
-      <a target="_blank" href="${util.url(item.url)}">
+      <a class="media-right" target="_blank" href="${util.url(item.url)}">
         <img class="media-object" src="${util.combineImageUrl(mediaUrl, 125, 100)}">
       </a>
-</div>
         `;
       const category = (categoryId === undefined) ?
         `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.atomCategoryId}&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(item.atomCategoryName)}</span></a>` : '';
@@ -168,9 +166,9 @@ ${tagsText}
         `;
       return `
   <li>
-    <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
-      <div class="media">
-        <div class="media-body">
+      <div class="article-list-section">
+        <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+        <div class="article-list-content">
           ${util.escapeHtml(item.description) || item.summary}
           ${stat}
         </div>
