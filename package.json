@@ -31,7 +31,9 @@
     "cov:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
     "start:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start",
     "start:backend-daemon": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start --daemon",
-    "stop:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop"
+    "stop:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop",
+    "commits": "./scripts/commits.sh",
+    "commits-all": "./scripts/commits-all.sh"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

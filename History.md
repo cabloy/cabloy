@@ -1,5 +1,14 @@
 # History
 
+## 2021-06-16, Version 4.10.22
+
+* **重构**
+  * CMS 文章列表：优化图文混排样式
+
+### Commits
+
+* [[`d16bbe66f`](http://github.com/zhennann/cabloy/commit/d16bbe66f06784a4def19025adf7a70703c8e8a3)] - fix: CMS主题中图片位置优化 #16 https://github.com/zhennann/cabloy/issues/16 (ehitco <<2649426350@qq.com>>)
+
 ## 2021-06-10, Version 4.10.18
 
 * **重构**
