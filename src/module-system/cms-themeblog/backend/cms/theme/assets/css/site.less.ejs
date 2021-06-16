@@ -1,18 +1,17 @@
-
 body {
-  color:#666;
-  background: url(<%=url('assets/images/background.png')%>); /* #eae6d1 */
+  color: #666;
+  background: url(<%=url("assets/images/background.png")%>); /* #eae6d1 */
   overflow-y: scroll;
 }
 
-@media (max-width: 991px){
-  header{
+@media (max-width: 991px) {
+  header {
     margin: 0 0 10px 0;
   }
 }
 
-@media (min-width: 992px){
-  header{
+@media (min-width: 992px) {
+  header {
     margin: 0 0 40px 0;
   }
 }
@@ -72,36 +71,38 @@ footer {
 .navbar-default {
   background: #fc0;
   border: 1px solid #cca300;
-  margin-top:-16px;
-  z-index:1;
+  margin-top: -16px;
+  z-index: 1;
   padding: 0 1rem;
 
-  .navbar-brand{
+  .navbar-brand {
     color: #9d7f0d;
     text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
     text-transform: uppercase;
   }
 
-  .navbar-nav>li.nav-item>a{
+  .navbar-nav > li.nav-item > a {
     color: #9d7f0d;
     text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
     text-transform: uppercase;
   }
 
-  .navbar-nav>li.nav-item.active>a, .navbar-nav>li.nav-item.active>a:focus {
+  .navbar-nav > li.nav-item.active > a,
+  .navbar-nav > li.nav-item.active > a:focus {
     color: #9d7f0d;
-    background-color: #FFE788;
+    background-color: #ffe788;
   }
 
-  .navbar-nav>li.nav-item>a:focus, .navbar-nav>li.nav-item>a:hover {
-    background-color: #EEE;
+  .navbar-nav > li.nav-item > a:focus,
+  .navbar-nav > li.nav-item > a:hover {
+    background-color: #eee;
   }
 
-  .navbar-nav .dropdown .navbar-nav{
-    border: 1px solid rgba(0,0,0,.15);
+  .navbar-nav .dropdown .navbar-nav {
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
-    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
@@ -111,37 +112,40 @@ footer {
       width: 150px;
     }
   }
-
 }
 
-.navbar{
-  form.search{
-    button[type=submit]{
-      display:none;
+.navbar {
+  form.search {
+    button[type="submit"] {
+      display: none;
     }
   }
 }
 
-.container-site{
+.container-site {
 }
 
-.btn-default,.btn-default:focus{
+.btn-default,
+.btn-default:focus {
   color: #777;
-  background-color: #FFE788;
+  background-color: #ffe788;
   border: 1px solid #dba500;
-  background: linear-gradient(#ffe788,#ffce38);
+  background: linear-gradient(#ffe788, #ffce38);
   border-radius: 2px;
-  box-shadow: inset 0px 1px 0px rgba(255,255,255,0.4), 0px 1px 1px rgba(0,0,0,0.1);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4),
+    0px 1px 1px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in;
   outline: 0;
 }
 
-.btn-warning,.btn-warning:focus{
+.btn-warning,
+.btn-warning:focus {
   color: #777;
   outline: 0;
 }
 
-section, article {
+section,
+article {
   width: 100%;
   padding: 30px 30px 10px 30px;
   margin: 20px 0;
@@ -153,9 +157,15 @@ section, article {
   -o-border-radius: 2px;
   border-radius: 2px;
   border: 1px solid #cbcbcb;
-  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
-  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.09),inset 0px 0px 2px 2px rgba(255,255,255,0.5),inset 0 0 5px 5px rgba(255,255,255,0.4);
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09),
+    inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5),
+    inset 0 0 5px 5px rgba(255, 255, 255, 0.4);
+  -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09),
+    inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5),
+    inset 0 0 5px 5px rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09),
+    inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5),
+    inset 0 0 5px 5px rgba(255, 255, 255, 0.4);
 }
 
 .sidebar {
@@ -165,11 +175,25 @@ section, article {
 .article-list {
   .media {
     border-bottom: 1px solid #f0f0f0;
-    padding:10px 0;
+    padding: 10px 0;
+  }
+  .article-list-content {
+    .article-list-title {
+      margin-bottom: 4px;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+
+  .media-right {
+    float: right;
   }
   .media-object {
-    width:125px;
-    height:100px;
+    width: 125px;
+    height: 100px;
     border-radius: 4px;
     border: 1px solid #f0f0f0;
   }
@@ -184,4 +208,3 @@ section, article {
   padding-left: 0;
   list-style: none;
 }
-

@@ -37,11 +37,9 @@
              const attachment = item.attachmentCount===0 ? '' : '<i class="fas fa-paperclip"></i> ';
              const mediaUrl = item.imageFirst || item.audioCoverFirst;
              const media = !mediaUrl ? '' : `
-<div class="media-right">
-      <a target="_blank" href="${url(item.url)}">
+      <a class="media-right" target="_blank" href="${url(item.url)}">
         <img class="media-object img-delay" data-src="${util.escapeURL(mediaUrl)}" data-width="125" data-height="100">
       </a>
-</div>
         `;
         // tags
         let tagsText='';
@@ -68,14 +66,16 @@ ${tagsText}
         `;
 
         const html= `
-<li class="media">
-    <div class="media-body">
-      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
-      ${util.escapeHtml(item.description) || item.summary}
-      ${stat}
-    </div>
-    ${media}
-</li>
+        <li>
+          <div class="article-list-section">
+            <div class="article-list-content">
+              ${media}
+              <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+              <p>${util.escapeHtml(item.description) || item.summary}</p>
+            </div>
+            ${stat}
+          </div>
+      </li>
         `;
           echo(html);
           }
