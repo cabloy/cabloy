@@ -1,5 +1,14 @@
 # History
 
+## 2021-06-17, Version 4.10.26
+
+* **修复**
+  * 用户标签的统计值与实际不一致
+
+### Commits
+
+* [[`aa926a879`](http://github.com/zhennann/cabloy/commit/aa926a879325d1e31e1c2f10ffd52aa078dbbead)] - fix: stats error of userLabels (zhennann <<zhen.nann@icloud.com>>)
+
 ## 2021-06-16, Version 4.10.22
 
 * **重构**
