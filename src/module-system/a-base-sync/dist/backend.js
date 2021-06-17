@@ -1155,6 +1155,7 @@ module.exports = ctx => {
       }
       if (items.length > 0) {
         await this.modelAtomLabel.delete({ atomId });
+        await this.modelAtomLabelRef.delete({ atomId });
       }
     }
 
@@ -6746,7 +6747,6 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelAtomLabelRef = ctx.model.module(moduleInfo.relativeName).atomLabelRef;
       // root stats
       const statsRoot = {
         red: 0,
@@ -6757,9 +6757,11 @@ module.exports = ctx => {
       for (const labelId of Object.keys(userLabels)) {
         const userLabel = userLabels[labelId];
         // sub
-        const count = await modelAtomLabelRef.count({
-          userId: user.id,
-          labelId,
+        const count = await ctx.bean.atom.count({
+          options: {
+            label: labelId,
+          },
+          user,
         });
         await ctx.bean.stats._set({
           module: moduleInfo.relativeName,
@@ -6796,10 +6798,11 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
-      const count = await modelStar.count({
-        userId: user.id,
-        star: 1,
+      const count = await ctx.bean.atom.count({
+        options: {
+          star: 1,
+        },
+        user,
       });
       return count;
     }
