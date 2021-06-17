@@ -955,6 +955,7 @@ module.exports = ctx => {
       }
       if (items.length > 0) {
         await this.modelAtomLabel.delete({ atomId });
+        await this.modelAtomLabelRef.delete({ atomId });
       }
     }
 

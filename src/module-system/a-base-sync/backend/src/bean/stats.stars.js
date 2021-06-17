@@ -4,10 +4,11 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
-      const count = await modelStar.count({
-        userId: user.id,
-        star: 1,
+      const count = await ctx.bean.atom.count({
+        options: {
+          star: 1,
+        },
+        user,
       });
       return count;
     }

@@ -4,7 +4,6 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelAtomLabelRef = ctx.model.module(moduleInfo.relativeName).atomLabelRef;
       // root stats
       const statsRoot = {
         red: 0,
@@ -15,9 +14,11 @@ module.exports = ctx => {
       for (const labelId of Object.keys(userLabels)) {
         const userLabel = userLabels[labelId];
         // sub
-        const count = await modelAtomLabelRef.count({
-          userId: user.id,
-          labelId,
+        const count = await ctx.bean.atom.count({
+          options: {
+            label: labelId,
+          },
+          user,
         });
         await ctx.bean.stats._set({
           module: moduleInfo.relativeName,
