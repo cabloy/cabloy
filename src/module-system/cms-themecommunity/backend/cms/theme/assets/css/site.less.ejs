@@ -163,16 +163,31 @@ section,article{
   margin: 20px 0;
 }
 
-.article-list .media{
-  border-bottom: 1px solid #f0f0f0;
-  padding:10px 0;
-}
+.article-list {
+  .media {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 0;
+  }
+  .article-list-content {
+    .article-list-title {
+      margin-bottom: 4px;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
 
-.article-list .media-object{
-  width:125px;
-  height:100px;
-  border-radius: 4px;
-  border: 1px solid #f0f0f0;
+  .media-right {
+    float: right;
+  }
+  .media-object {
+    width: 125px;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px solid #f0f0f0;
+  }
 }
 
 .article-edit{
