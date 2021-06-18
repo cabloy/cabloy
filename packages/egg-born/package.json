@@ -27,6 +27,6 @@
     "egg-born-init-config": "^2.1.0",
     "fs-extra": "^8.1.0",
     "randomatic": "^3.1.1",
-    "uuid": "^3.4.0"
+    "uuid": "^8.3.2"
   }
 }
