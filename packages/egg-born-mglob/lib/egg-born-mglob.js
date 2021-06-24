@@ -151,7 +151,7 @@ function __parseModules(projectPath) {
       const pos2 = filePkg.indexOf('/', pos1);
       const name = filePkg.substr(pos1, pos2 - pos1);
       if (!__path.public && name.indexOf('egg-born-module-') > -1) {
-        throw new Error(`Should use relative name for private module: ${name}`);
+        throw new Error(`Should use relative name for local module: ${name}`);
       }
       // info
       const info = mparse.parseInfo(name);

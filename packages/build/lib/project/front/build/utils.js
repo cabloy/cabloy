@@ -92,7 +92,7 @@ module.exports = context => {
         // copy js
         let fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js');
         fse.copySync(module.js.front, fileDest);
-        module.js.front = fileDest.replace(/\\/g, '/');
+        module.js.front = fileDest;
         // copy js.map
         let fileSrc = `${module.root}/dist/front.js.map`;
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js.map');
@@ -111,12 +111,14 @@ module.exports = context => {
       let jsModulesSync = '';
       for (const relativeName in modules) {
         const module = modules[relativeName];
+        // jsFront
+        const jsFront = module.js.front.replace(/\\/g, '/');
         // js
         if (module.info.monkey || module.info.sync) {
           jsModules +=
 `
 modules['${relativeName}'] = {
-   instance: require('${module.js.front}'),
+   instance: require('${jsFront}'),
    info: ${JSON.stringify(module.info)},
 }
 `;
@@ -124,7 +126,7 @@ modules['${relativeName}'] = {
           jsModules +=
 `
 modules['${relativeName}'] = {
-   instance: () => import(/* webpackChunkName: "${relativeName}" */ '${module.js.front}'),
+   instance: () => import(/* webpackChunkName: "${relativeName}" */ '${jsFront}'),
    info: ${JSON.stringify(module.info)},
 };
 `;
