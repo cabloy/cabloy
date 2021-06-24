@@ -21,18 +21,22 @@ co(function* () {
   const command = new Command(options);
 
   command.printUsage = function() {
+    const isModule = this.targetDir.replace(/\\/gi, '/').indexOf('/src/module') > -1;
+    if (isModule) return;
     this.log(`usage:
       - cd ${this.targetDir}
       - npm install
+      - npm run test:backend
+      - npm run dev:backend
       - npm run dev:front
       - npm run build:front
-      - npm run dev:backend
-      - npm run debug:backend
-      - npm run lint
-      - npm run test:backend
-      - npm run cov:backend
       - npm run start:backend
+      - npm run start:backend-daemon
       - npm run stop:backend
+      - npm run debug:backend
+      - npm run cov:backend
+      - npm run update:test
+      - npm run lint
     `);
   };
 
