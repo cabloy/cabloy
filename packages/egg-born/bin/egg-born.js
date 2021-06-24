@@ -22,8 +22,16 @@ co(function* () {
 
   command.printUsage = function() {
     const isModule = this.targetDir.replace(/\\/gi, '/').indexOf('/src/module') > -1;
-    if (isModule) return;
-    this.log(`usage:
+    if (isModule) {
+      this.log(`usage:
+      - cd ${this.targetDir}
+      - npm run build:front
+      - npm run build:backend
+      - npm run build:all
+      - npm run lint
+    `);
+    } else {
+      this.log(`usage:
       - cd ${this.targetDir}
       - npm install
       - npm run test:backend
@@ -38,6 +46,7 @@ co(function* () {
       - npm run update:test
       - npm run lint
     `);
+    }
   };
 
   const askForVariable = command.askForVariable;
