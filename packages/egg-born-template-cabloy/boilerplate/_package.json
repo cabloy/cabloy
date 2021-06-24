@@ -25,7 +25,7 @@
   {},
   "dependencies":
   {
-    "cabloy": "^4.11.0",
+    "cabloy": "^4.11.1",
     "lerna": "^4.0.0"
   }
 }
