@@ -1,4 +1,5 @@
 const path = require('path');
+const fse = require('fs-extra');
 const glob = require('glob');
 const semver = require('semver');
 const chalk = require('chalk');
@@ -9,9 +10,37 @@ module.exports = {
 };
 
 const __paths = [
-  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/static,dist/staticBackend' },
-  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/static,dist/staticBackend' },
-  { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
+  {
+    prefix: 'src/module/', public: false,
+    fronts: [
+      { js: 'front/src/main.js' },
+      { js: 'dist/front.js' },
+    ],
+    backends: [
+      { js: 'backend/src/main.js', static: 'backend/static' },
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
+  {
+    prefix: 'src/module-system/', public: false,
+    fronts: [
+      { js: 'front/src/main.js' },
+      { js: 'dist/front.js' },
+    ],
+    backends: [
+      { js: 'backend/src/main.js', static: 'backend/static' },
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
+  {
+    prefix: 'node_modules/egg-born-module-', public: true,
+    fronts: [
+      { js: 'dist/front.js' },
+    ],
+    backends: [
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
 ];
 
 function eggBornMglob(projectPath, disabledModules, log) {
@@ -114,46 +143,59 @@ function __orderDependencies(context, modules, module) {
 function __parseModules(projectPath) {
   const modules = {};
   for (const __path of __paths) {
-    const jsFronts = __path.jsFront.split(',');
-    const jsBackends = __path.jsBackend.split(',');
-    const staticBackends = __path.staticBackend.split(',');
-    for (const index in jsFronts) {
-      const jsFront = jsFronts[index];
-      const jsBackend = jsBackends[index];
-      const staticBackend = staticBackends[index];
-      const prefix = `${projectPath}/${__path.prefix}`;
-      const files = glob.sync(`${prefix}*/${jsFront}`);
-      for (const file of files) {
-        // name
-        const pos1 = prefix.length;
-        const pos2 = file.indexOf('/', pos1);
-        const name = file.substr(pos1, pos2 - pos1);
-        if (!__path.public && name.indexOf('egg-born-module-') > -1) {
-          throw new Error(`Should use relative name for private module: ${name}`);
-        }
-        // info
-        const info = mparse.parseInfo(name);
-        info.public = __path.public;
-        if (!modules[info.relativeName]) {
-          // more info
-          const root = file.substr(0, file.length - jsFront.length - 1);
-          const pkg = `${root}/package.json`;
-          const _package = require(pkg);
-          const jsFrontPath = file;
-          const jsBackendPath = `${root}/${jsBackend}`;
-          const staticBackendPath = path.normalize(`${root}/${staticBackend}`);
-          // record
-          modules[info.relativeName] = {
-            name, info,
-            root, pkg, package: _package,
-            js: { front: jsFrontPath, backend: jsBackendPath },
-            static: { backend: staticBackendPath },
-          };
-        }
+    const prefix = `${projectPath}/${__path.prefix}`;
+    const filePkgs = glob.sync(`${prefix}*/package.json`);
+    for (const filePkg of filePkgs) {
+      // name
+      const pos1 = prefix.length;
+      const pos2 = filePkg.indexOf('/', pos1);
+      const name = filePkg.substr(pos1, pos2 - pos1);
+      if (!__path.public && name.indexOf('egg-born-module-') > -1) {
+        throw new Error(`Should use relative name for private module: ${name}`);
+      }
+      // info
+      const info = mparse.parseInfo(name);
+      info.public = __path.public;
+      // check if exists
+      if (!modules[info.relativeName]) {
+        // meta
+        const _package = require(filePkg);
+        const root = path.dirname(filePkg);
+        const moduleMeta = {
+          name, info,
+          root, pkg: filePkg, package: _package,
+          js: { },
+          static: { },
+        };
+        modules[info.relativeName] = __parseModule(__path, moduleMeta);
       }
     }
   }
   return modules;
+}
+
+function __parseModule(__path, moduleMeta) {
+  const root = moduleMeta.root;
+  // front
+  for (const item of __path.fronts) {
+    const file = path.join(root, item.js);
+    if (fse.existsSync(file)) {
+      moduleMeta.js.front = file;
+      break;
+    }
+  }
+  // backend
+  for (const item of __path.backends) {
+    const file = path.join(root, item.js);
+    if (fse.existsSync(file)) {
+      moduleMeta.js.backend = file;
+      const staticBackendPath = path.normalize(path.join(root, item.static));
+      moduleMeta.static.backend = staticBackendPath;
+      break;
+    }
+  }
+  // ok
+  return moduleMeta;
 }
 
 function __logModules(context, log) {
