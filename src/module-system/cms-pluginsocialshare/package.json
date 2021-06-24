@@ -19,7 +19,8 @@
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
     "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",
     "lint": "node ../../../node_modules/eslint/bin/eslint.js front backend",
-    "preversion": "npm run build:front && npm run build:backend && git add ."
+    "build:all": "npm run build:front && npm run build:backend",
+    "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
   "dependencies": {
