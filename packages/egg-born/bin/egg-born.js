@@ -21,8 +21,10 @@ co(function* () {
   const command = new Command(options);
 
   command.printUsage = function() {
-    const isModule = this.targetDir.replace(/\\/gi, '/').indexOf('/src/module') > -1;
-    if (isModule) {
+    if (isModule(this.targetDir)) {
+      // confirmEggBornBin
+      confirmEggBornBin();
+      // log
       this.log(`usage:
       - cd ${this.targetDir}
       - npm run build:front
@@ -140,5 +142,16 @@ co(function* () {
 
 function random(start, end) {
   return Math.floor(Math.random() * (end - start) + start);
+}
+
+function isModule(targetDir) {
+  return targetDir.replace(/\\/gi, '/').indexOf('/src/module') > -1;
+}
+
+function confirmEggBornBin() {
+  const binPath = path.join(process.cwd(), 'scripts/egg-born-bin.js');
+  if (fse.existsSync(binPath)) return;
+  const binPathSrc = path.join(__dirname, '../scripts/egg-born-bin.js');
+  fse.copySync(binPathSrc, binPath);
 }
 
