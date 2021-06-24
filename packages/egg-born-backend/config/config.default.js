@@ -87,9 +87,9 @@ module.exports = appInfo => {
   config.multipart = {
     fileSize: '30mb',
     fileExtensions: [
-      '.txt', '.ini',
-      '.apk',
-      '.rar',
+      '.txt', '.ini', '.md',
+      '.apk', '.msi',
+      '.rar', '.zip', '.tar',
       '.xls', '.xlsx',
       '.ppt', '.pptx',
       '.doc', '.docx',
