@@ -3,48 +3,23 @@ module.exports = app => {
 
     async all() {
       const options = this.ctx.request.body.options;
-      options.file = 1;
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: '/a/base/atom/select',
-        body: {
-          atomClass: this.ctx.request.body.atomClass,
-          options,
-        },
+      options.page = this.ctx.bean.util.page(options.page);
+      const items = await this.ctx.service.file.all({
+        atomClass: this.ctx.request.body.atomClass,
+        options,
+        user: this.ctx.state.user.op,
       });
-      for (const item of res.list) {
-        item.i_downloadUrl = this.ctx.service.file.getDownloadUrl({
-          downloadId: item.i_downloadId,
-          atomId: item.atomId,
-          mode: item.i_mode,
-          fileExt: item.i_fileExt,
-        });
-      }
-      this.ctx.success(res);
+      this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
     async list() {
-      const user = this.ctx.state.user.op;
       const options = this.ctx.request.body.options;
       options.page = this.ctx.bean.util.page(options.page, false);
-      // where
-      options.where = options.where || {};
-      // check right: atom.read or user's files
-      const key = this.ctx.request.body.key;
-      const atomId = key && key.atomId;
-      if (atomId) {
-        const res = await this.ctx.bean.atom.checkRightRead({
-          atom: { id: atomId },
-          user,
-          checkFlow: true,
-        });
-        if (!res) this.ctx.throw(403);
-        options.where.atomId = atomId; // add where
-      } else {
-        options.where.userId = user.id; // add where
-      }
-      //
-      const items = await this.ctx.service.file.list({ options });
+      const items = await this.ctx.service.file.list({
+        key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
