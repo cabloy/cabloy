@@ -2,15 +2,12 @@
 <ul class="attachments">
   <%
     // fetch
-    const res = await ctx.performAction({
-      method: 'post',
-      url: '/a/cms/article/attachments',
-      body: {
-        key: { atomId: article.atomId },
-      },
+    const items = await ctx.bean.file.attachments({
+      key: { atomId: article.atomId },
+      user: null,
     });
     // loop
-    for(const item of res.list){
+    for(const item of items){
   %>
   <li><i class="fas fa-paperclip"></i> <a target="_blank" href="<%=item.downloadUrl%>"><%=item.realName%></a></li>
   <% } %>

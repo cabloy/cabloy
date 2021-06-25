@@ -7,6 +7,7 @@ const gm = require3('gm');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
+const extend = require3('extend2');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -41,20 +42,24 @@ module.exports = ctx => {
 
     // key,user maybe null
     async list({ key, options, user }) {
+      // page
+      options.page = ctx.bean.util.page(options.page, false);
       // where
       options.where = options.where || {};
       // check right: atom.read or user's files
-      if (user && user.id) {
-        const atomId = key && key.atomId;
-        if (atomId) {
+      const atomId = key && key.atomId;
+      if (atomId) {
+        if (user && user.id) {
           const res = await ctx.bean.atom.checkRightRead({
             atom: { id: atomId },
             user,
             checkFlow: true,
           });
           if (!res) ctx.throw(403);
-          options.where.atomId = atomId; // add where
-        } else {
+        }
+        options.where.atomId = atomId; // add where
+      } else {
+        if (user && user.id) {
           options.where.userId = user.id; // add where
         }
       }
@@ -75,6 +80,22 @@ module.exports = ctx => {
         item.downloadUrl = this.getDownloadUrl(item);
       }
       return items;
+    }
+
+    async attachments({ key, options, user }) {
+      options = options || {};
+      // filter drafts
+      options.where = extend(true, options.where, {
+        mode: 2,
+        attachment: 1,
+      });
+      if (!options.orders) {
+        options.orders = [
+          [ 'realName', 'asc' ],
+        ];
+      }
+      // list
+      return await this.list({ key, options, user });
     }
 
     async delete({ fileId, user }) {
