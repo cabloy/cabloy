@@ -1,15 +1,25 @@
 <% if(article.attachmentCount>0){ %>
-<ul class="attachments">
-  <%
-    // fetch
-    const items = await ctx.bean.file.attachments({
-      key: { atomId: article.atomId },
-      user: null,
-    });
-    // loop
-    for(const item of items){
-  %>
-  <li><i class="fas fa-paperclip"></i> <a target="_blank" href="<%=item.downloadUrl%>"><%=item.realName%></a></li>
-  <% } %>
-</ul>
+<div class="attachments">
+  <a name="attachments"></a>
+  <div class="card">
+    <div class="card-header">
+      <%=text('Attachments')%>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <%
+          // fetch
+          const items = await ctx.bean.file.attachments({
+            key: { atomId: article.atomId },
+            user: null,
+          });
+          // loop
+          for(const item of items){
+        %>
+        <li><i class="fas fa-paperclip"></i> <a target="_blank" href="<%=item.downloadUrl%>"><%=item.realName%></a></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
 <% } %>
