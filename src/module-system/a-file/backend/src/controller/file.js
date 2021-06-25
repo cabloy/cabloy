@@ -24,32 +24,19 @@ module.exports = app => {
     }
 
     async update() {
-      //
-      const user = this.ctx.state.user.op;
-      const fileId = this.ctx.request.body.fileId;
-      const data = this.ctx.request.body.data;
-      // file
-      const file = await this.ctx.model.file.get({ id: fileId });
-      // check right
-      await this.ctx.service.file.fileUpdateCheck({ file, user });
-      // rename
-      const res = await this.ctx.service.file.update({ fileId, data });
+      const res = await this.ctx.service.file.update({
+        fileId: this.ctx.request.body.fileId,
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.op,
+      });
       this.ctx.success(res);
     }
 
     async delete() {
-      //
-      const user = this.ctx.state.user.op;
-      let fileId = this.ctx.request.body.fileId;
-      if (!fileId) {
-        fileId = this.ctx.request.body.data.fileId;
-      }
-      // file
-      const file = await this.ctx.model.file.get({ id: fileId });
-      // check right
-      await this.ctx.service.file.fileUpdateCheck({ file, user });
-      // delete
-      const res = await this.ctx.service.file.delete({ fileId });
+      const res = await this.ctx.service.file.delete({
+        fileId: this.ctx.request.body.fileId || this.ctx.request.body.data.fileId,
+        user: this.ctx.state.user.op,
+      });
       this.ctx.success(res);
     }
 
@@ -66,6 +53,7 @@ module.exports = app => {
         atomId: parseInt(this.ctx.query.atomId || 0),
         width: this.ctx.query.width,
         height: this.ctx.query.height,
+        user: this.ctx.state.user.op,
       });
     }
 

@@ -77,18 +77,30 @@ module.exports = ctx => {
       return items;
     }
 
-    async delete({ fileId }) {
+    async delete({ fileId, user }) {
       // file
-      const item = await this.modelFile.get({ id: fileId });
+      const file = await this.modelFile.get({ id: fileId });
+      // check right
+      if (user && user.id) {
+        await this.fileUpdateCheck({ file, user });
+      }
       // delete
       await this.modelFile.delete({ id: fileId });
       // attachmentCount
-      if (item.atomId && item.attachment) {
-        await ctx.bean.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
+      if (file.atomId && file.attachment) {
+        await ctx.bean.atom.attachment({ key: { atomId: file.atomId }, atom: { attachment: -1 } });
       }
     }
 
-    async update({ fileId, data }) {
+    async update({ fileId, data, user }) {
+      // check
+      if (user && user.id) {
+        // file
+        const file = await this.modelFile.get({ id: fileId });
+        // check right
+        await this.fileUpdateCheck({ file, user });
+      }
+      // update
       await this.modelFile.update({
         id: fileId,
         ...data,
@@ -217,7 +229,7 @@ module.exports = ctx => {
 
     }
 
-    async download({ downloadId, atomId, width, height }) {
+    async download({ downloadId, atomId, width, height, user }) {
       // downloadId
       if (!downloadId) ctx.throw(404);
       const extPos = downloadId.indexOf('.');
@@ -236,7 +248,7 @@ module.exports = ctx => {
         }
       } else if (file.mode === 2) {
         // check right
-        await this.fileDownloadCheck({ file });
+        await this.fileDownloadCheck({ file, user });
       } else if (file.mode === 3) {
         // do nothing
       }

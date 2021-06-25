@@ -11,20 +11,20 @@ module.exports = app => {
       return await this.ctx.bean.file.list({ key, options, user });
     }
 
-    async delete({ fileId }) {
-      return await this.ctx.bean.file.delete({ fileId });
+    async delete({ fileId, user }) {
+      return await this.ctx.bean.file.delete({ fileId, user });
     }
 
-    async update({ fileId, data }) {
-      return await this.ctx.bean.file.update({ fileId, data });
+    async update({ fileId, data, user }) {
+      return await this.ctx.bean.file.update({ fileId, data, user });
     }
 
     async upload({ user }) {
       return await this.ctx.bean.file.upload({ user });
     }
 
-    async download({ downloadId, atomId, width, height }) {
-      return await this.ctx.bean.file.download({ downloadId, atomId, width, height });
+    async download({ downloadId, atomId, width, height, user }) {
+      return await this.ctx.bean.file.download({ downloadId, atomId, width, height, user });
     }
 
     // inner invoke
