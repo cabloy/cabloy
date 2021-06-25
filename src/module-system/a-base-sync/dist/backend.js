@@ -886,11 +886,10 @@ module.exports = ctx => {
         fn: 'exportBulk',
       });
       // file
-      const resFile = await ctx.executeBean({
-        beanModule: 'a-file',
-        beanFullName: 'a-file.service.file',
-        context: { fileContent: resExport.data, meta: resExport.meta, user },
-        fn: '_upload',
+      const resFile = await ctx.bean.file._upload({
+        fileContent: resExport.data,
+        meta: resExport.meta,
+        user,
       });
       // ok
       return resFile;
@@ -4514,11 +4513,10 @@ module.exports = ctx => {
         },
       };
       // upload
-      const res2 = await ctx.executeBean({
-        beanModule: 'a-file',
-        beanFullName: 'a-file.service.file',
-        context: { fileContent: res.data, meta, user: null },
-        fn: '_upload',
+      const res2 = await ctx.bean.file._upload({
+        fileContent: res.data,
+        meta,
+        user: null,
       });
       // hold
       profile._avatar = res2.downloadUrl;

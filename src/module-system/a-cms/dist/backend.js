@@ -632,10 +632,6 @@ module.exports = app => {
         hotloadFile = `atom/${data.article.atomId}`;
         // update renderAt
         data.article.renderAt = new Date(this.ctx.bean.util.moment().unix() * 1000);
-        await this.ctx.model.query(`
-          update aCmsArticle set renderAt=?
-            where iid=? and atomId=?
-          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
       } else {
         if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
           hotloadFile = fileWrite;
@@ -660,6 +656,14 @@ module.exports = app => {
       if (fileDestAlt && fileDestAlt !== fileDest) {
         const fileWriteAlt = path.join(pathDist, fileDestAlt);
         await fse.outputFile(fileWriteAlt, content);
+      }
+      // renderAt must be updated after file rendered
+      if (data.article) {
+        // update renderAt
+        await this.ctx.model.query(`
+          update aCmsArticle set renderAt=?
+            where iid=? and atomId=?
+          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
       }
       // socketio publish
       if (hotloadFile) {
@@ -3705,30 +3709,15 @@ module.exports = app => {
 
     // attachments
     async attachments() {
-      // key
-      const key = this.ctx.request.body.key;
       // options
       const options = this.ctx.request.body.options || {};
-      // filter drafts
-      options.where = extend(true, options.where, {
-        mode: 2,
-        attachment: 1,
+      options.page = this.ctx.bean.util.page(options.page, false);
+      const items = await this.ctx.bean.file.attachments({
+        key: this.ctx.request.body.key,
+        options,
+        user: this.ctx.state.user.op,
       });
-      if (!options.orders) {
-        options.orders = [
-          [ 'realName', 'asc' ],
-        ];
-      }
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: '/a/file/file/list',
-        body: {
-          key,
-          options,
-        },
-      });
-      this.ctx.success(res);
+      this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
   }
