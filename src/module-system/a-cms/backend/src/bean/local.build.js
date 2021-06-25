@@ -543,10 +543,6 @@ module.exports = app => {
         hotloadFile = `atom/${data.article.atomId}`;
         // update renderAt
         data.article.renderAt = new Date(this.ctx.bean.util.moment().unix() * 1000);
-        await this.ctx.model.query(`
-          update aCmsArticle set renderAt=?
-            where iid=? and atomId=?
-          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
       } else {
         if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
           hotloadFile = fileWrite;
@@ -571,6 +567,14 @@ module.exports = app => {
       if (fileDestAlt && fileDestAlt !== fileDest) {
         const fileWriteAlt = path.join(pathDist, fileDestAlt);
         await fse.outputFile(fileWriteAlt, content);
+      }
+      // renderAt must be updated after file rendered
+      if (data.article) {
+        // update renderAt
+        await this.ctx.model.query(`
+          update aCmsArticle set renderAt=?
+            where iid=? and atomId=?
+          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
       }
       // socketio publish
       if (hotloadFile) {
