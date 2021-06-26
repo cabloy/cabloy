@@ -123,13 +123,13 @@ CabloyJS先期制作了一套视频课程，导入了相同的`二级分销`的�
 
 CabloyJS首创`pc = mobile + pad`的自适应布局机制：只需要一套代码，`mobile端`达到原生效果，同时将`mobile端`的操控体验和开发模式无缝带入`pc端`
 
-* 效果演示：进入演示网站[https://test.cabloy.com/](https://test.cabloy.com/)，然后调整窗口尺寸分别体验pc端和mobile端的效果
+* `效果演示`：进入演示网站[https://test.cabloy.com/](https://test.cabloy.com/)，然后调整窗口尺寸分别体验pc端和mobile端的效果
 
-* PC布局：
+* `pc端`：
 
 ![PC布局](./docs/assets/images/zh-cn/layout/layoutpc-zhcn.gif)
 
-* Mobile布局：
+* `mobile端`：
 
 ![Mobile布局](./docs/assets/images/zh-cn/layout/layoutmobile-zhcn.gif)
 
