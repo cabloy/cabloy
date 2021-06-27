@@ -14,7 +14,9 @@ export default function(ctx) {
   const toast = {
     _toastShowing: null,
     _prepareParams(params) {
-      const _params = ctx.$utils.extend({}, params, {
+      const _params = ctx.$utils.extend({
+        closeButton: true,
+      }, params, {
         hostEl: ctx.getHostEl(),
       });
       if (!_params.text) {
