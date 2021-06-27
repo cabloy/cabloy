@@ -132,9 +132,7 @@ export default function(Vue) {
       return this.formatDateTime(date, fmt);
     },
     formatDateTimeRelative(date, fmt) {
-      date = date || new Date();
-      if (typeof (date) !== 'object') date = new Date(date);
-      if (moment().diff(date, 'days') === 0) return this.formatTime(date);
+      if (this.formatDate() === this.formatDate(date)) return this.formatTime(date);
       return this.formatDateTime(date, fmt);
     },
     swipeoutClose(target) {
