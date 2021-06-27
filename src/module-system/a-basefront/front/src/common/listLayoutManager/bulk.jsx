@@ -88,7 +88,7 @@ export default {
       }
       if (this.bulk.selecting) {
         children.push(
-          <eb-link key="actionsLeft:selectChecking" iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={ selectedAtoms.length.toString()} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
+          <eb-link key="actionsLeft:selectChecking" iconMaterial={selectedAtoms.length === 0 ? 'check_box_outline_blank' : 'check_box'} iconBadge={ selectedAtoms.length.toString()} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
         );
       }
       return children;
