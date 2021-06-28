@@ -5,7 +5,7 @@ export default {
         list: {
           info: {
             orders: [
-              { name: 'sticky', title: 'Sticky', by: 'desc' },
+              { name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' },
             ],
           },
         },
