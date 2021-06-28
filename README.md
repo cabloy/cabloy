@@ -95,8 +95,6 @@ CabloyJS先期制作了一套视频课程，导入了相同的`二级分销`的�
 
 `相关链接`：
 
-- [关于课程](https://course.cabloy.com/zh-cn/articles/about-course.html)
-- [关于框架](https://course.cabloy.com/zh-cn/articles/about-cabloyjs.html)
 - [关于二级分销](https://course.cabloy.com/zh-cn/articles/about-fenxiao.html)
 
 ## CabloyJS的四大亮点
