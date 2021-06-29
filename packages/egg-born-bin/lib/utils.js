@@ -25,7 +25,7 @@ const utils = {
       const res = await httpClient.request(url, options);
       return res.data.data;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return null;
     }
   },
@@ -43,21 +43,30 @@ const utils = {
       const moduleVersionCurrent = await this.versionCheck({ moduleName: 'cabloy', moduleVersion, scene, mode });
       if (!moduleVersionCurrent) return;
       // prompt
-      this.versionPromptCabloy({ moduleName: 'cabloy', moduleVersion, moduleVersionCurrent });
-    } catch (err) { console.log(err); }
+      this.versionPromptCabloy({ mode, moduleName: 'cabloy', moduleVersion, moduleVersionCurrent });
+    } catch (err) {
+      console.log(err);
+    }
   },
-  versionPromptCabloy({ moduleName, moduleVersion, moduleVersionCurrent }) {
+  versionPromptCabloy({ mode, moduleName, moduleVersion, moduleVersionCurrent }) {
     try {
       const diffType = semverDiff(moduleVersion, moduleVersionCurrent);
       if (!diffType) return;
       setTimeout(() => {
         // log
         let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(moduleVersion)} → ${chalk.keyword('orange')(moduleVersionCurrent)}`;
-        message += `\nRun ${chalk.keyword('orange')('> npm update <')} to update cabloy!`;
-        message += `\nRun ${chalk.keyword('orange')('> npm run update:test <')} to update the test modules!`;
+        if (mode === 'lerna') {
+          message += `\nRun ${chalk.keyword('orange')('> git pull <')} to update cabloy!`;
+          message += `\nRun ${chalk.keyword('orange')('> lerna bootstrap <')} to install dependencies!`;
+        } else {
+          message += `\nRun ${chalk.keyword('orange')('> npm update <')} to update cabloy!`;
+          message += `\nRun ${chalk.keyword('orange')('> npm run update:test <')} to update the test modules!`;
+        }
         console.log('\n' + boxen(message, boxenOptions));
       }, 6000);
-    } catch (err) { console.log(err); }
+    } catch (err) {
+      console.log(err);
+    }
   },
   getModulePath(moduleName) {
     const moduleFile = require.resolve(`${moduleName}/package.json`);
