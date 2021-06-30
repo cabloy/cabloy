@@ -3,7 +3,7 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class eventBean {
+  class EventBean {
 
     async execute(context, next) {
       const data = context.data;
@@ -33,5 +33,5 @@ module.exports = ctx => {
 
   }
 
-  return eventBean;
+  return EventBean;
 };
