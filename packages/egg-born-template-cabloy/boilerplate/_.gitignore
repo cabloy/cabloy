@@ -30,6 +30,7 @@ node_modules
 # package-lock.json
 # yarn.lock
 
+.vscode/sftp.json
 .sync-config.cson
 sftp-config.json
 sftp-config-.json
