@@ -349,7 +349,7 @@ Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神�
 
 ### - 图片
 
-一图胜千言: [如何阅读本文档](https://cabloy.com/zh-cn/articles/how-to-read.html)
+一图胜千言: [如何学习使用CabloyJS](https://cabloy.com/zh-cn/articles/how-to-read.html)
 
   ![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
 
