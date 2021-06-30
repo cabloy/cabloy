@@ -1,14 +1,16 @@
-module.exports = app => {
+module.exports = (/* app */) => {
   let routes = [
   ];
   routes = routes.concat([
     // atom: party
     { method: 'post', path: 'party/types', controller: 'party' },
     { method: 'post', path: 'party/over', controller: 'party' },
-    { method: 'post', path: 'party/over', controller: 'party', middlewares: 'transaction',
+    {
+      method: 'post', path: 'party/over', controller: 'party', middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'partyOver' } },
     },
-    { method: 'post', path: 'party/overBulk', controller: 'party', middlewares: 'transaction',
+    {
+      method: 'post', path: 'party/overBulk', controller: 'party', middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'partyOverBulk' } },
     },
 
@@ -17,21 +19,26 @@ module.exports = app => {
     // test/atom/all
     { method: 'post', path: 'test/atom/all', controller: 'testAtomAll', middlewares: 'test', meta: { auth: { enable: false } } },
     // test/atom/right(checked by middleware)
-    { method: 'post', path: 'test/atom/checkRightCreate', controller: 'testAtomRight', middlewares: 'test',
+    {
+      method: 'post', path: 'test/atom/checkRightCreate', controller: 'testAtomRight', middlewares: 'test',
       meta: { right: { type: 'atom', action: 'create' } },
     },
-    { method: 'post', path: 'test/atom/checkRightRead', controller: 'testAtomRight', middlewares: 'test',
+    {
+      method: 'post', path: 'test/atom/checkRightRead', controller: 'testAtomRight', middlewares: 'test',
       meta: { right: { type: 'atom', action: 'read' } },
     },
-    { method: 'post', path: 'test/atom/checkRightWrite', controller: 'testAtomRight', middlewares: 'test',
+    {
+      method: 'post', path: 'test/atom/checkRightWrite', controller: 'testAtomRight', middlewares: 'test',
       meta: { right: { type: 'atom', action: 'write' } },
     },
-    { method: 'post', path: 'test/atom/checkRightAction', controller: 'testAtomRight', middlewares: 'test',
+    {
+      method: 'post', path: 'test/atom/checkRightAction', controller: 'testAtomRight', middlewares: 'test',
       meta: { right: { type: 'atom', action: 'partyOver' } },
     },
 
     // test/resource/right
-    { method: 'post', path: 'test/resource/checkRightResourceUser', controller: 'testResourceRight', middlewares: 'test',
+    {
+      method: 'post', path: 'test/resource/checkRightResourceUser', controller: 'testResourceRight', middlewares: 'test',
       meta: { right: { type: 'resource', module: 'test-party', name: 'createParty' } },
     },
     // test/resource/all
@@ -105,13 +112,16 @@ module.exports = app => {
     { method: 'post', path: 'test/feat/status', controller: 'testFeatStatus', middlewares: 'test', meta: { auth: { enable: false } } },
 
     // test/feat/validation
-    { method: 'post', path: 'test/feat/validation/success', controller: 'testFeatValidation', middlewares: 'test,validate',
+    {
+      method: 'post', path: 'test/feat/validation/success', controller: 'testFeatValidation', middlewares: 'test,validate',
       meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
     },
-    { method: 'post', path: 'test/feat/validation/fail', controller: 'testFeatValidation', middlewares: 'test,validate',
+    {
+      method: 'post', path: 'test/feat/validation/fail', controller: 'testFeatValidation', middlewares: 'test,validate',
       meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
     },
-    { method: 'post', path: 'test/feat/validation/schema', controller: 'testFeatValidation', middlewares: 'test,validate',
+    {
+      method: 'post', path: 'test/feat/validation/schema', controller: 'testFeatValidation', middlewares: 'test,validate',
       meta: { auth: { enable: false }, validate: { validator: 'userTest', schema: 'settingsUserExtra' } },
     },
 
@@ -145,7 +155,8 @@ module.exports = app => {
     { method: 'post', path: 'kitchen-sink/guide/echo6', controller: 'testKitchensinkGuide' },
     { method: 'post', path: 'kitchen-sink/guide/echo7', controller: 'testKitchensinkGuide' },
     { method: 'post', path: 'kitchen-sink/guide/echo8', controller: 'testKitchensinkGuide', middlewares: 'transaction' },
-    { method: 'post', path: 'kitchen-sink/guide/echo9', controller: 'testKitchensinkGuide',
+    {
+      method: 'post', path: 'kitchen-sink/guide/echo9', controller: 'testKitchensinkGuide',
       meta: {
         right: { type: 'resource', name: 'kitchenSink' },
       },
@@ -156,16 +167,19 @@ module.exports = app => {
     // kitchen-sink/form-schema-validation
     { method: 'get', path: 'kitchen-sink/form-schema-validation/load', controller: 'testKitchensinkFormSchemaValidation' },
     { method: 'post', path: 'kitchen-sink/form-schema-validation/saveSimple', controller: 'testKitchensinkFormSchemaValidation' },
-    { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'validate',
+    {
+      method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'validate',
       meta: { validate: { validator: 'formTest' } },
     },
-    { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'captchaVerify,validate',
+    {
+      method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'captchaVerify,validate',
       meta: {
         captchaVerify: { scene: { name: 'formCaptchaTest' } },
         validate: { validator: 'formCaptchaTest' },
       },
     },
-    { method: 'post', path: 'kitchen-sink/form-mobile-verify/mobileVerify', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'captchaVerify,validate',
+    {
+      method: 'post', path: 'kitchen-sink/form-mobile-verify/mobileVerify', controller: 'testKitchensinkFormSchemaValidation', middlewares: 'captchaVerify,validate',
       meta: {
         captchaVerify: { scene: { name: 'formMobileVerifyTest' } },
         validate: { validator: 'formMobileVerifyTest' },

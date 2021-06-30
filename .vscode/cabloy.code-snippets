@@ -1,3 +1,7 @@
+/**
+* supported code snippets as follows:
+*   controller service model route
+**/
 {
   "Cabloy Controller": {
     "scope": "javascript",
@@ -37,5 +41,31 @@
       ""
     ],
     "description": "Cabloy Service"
+  },
+  "Cabloy Model": {
+    "prefix": "model",
+    "body": [
+      "module.exports = app => {",
+      "",
+      "  class ${TM_FILENAME_BASE} extends app.meta.Model {",
+      "",
+      "    constructor(ctx) {",
+      "      super(ctx, { table: '${1:${TM_FILENAME_BASE}}', options: { disableDeleted: false } });",
+      "    }",
+      "",
+      "  }",
+      "",
+      "  return ${TM_FILENAME_BASE};",
+      "};",
+      ""
+    ],
+    "description": "Cabloy Model"
+  },
+  "Cabloy Route": {
+    "prefix": "route",
+    "body": [
+      "{ method: '${1:post}', path: '${2}', controller: '${3}' },"
+    ],
+    "description": "Cabloy Route"
   }
 }
