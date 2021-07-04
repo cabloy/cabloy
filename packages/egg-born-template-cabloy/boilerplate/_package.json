@@ -6,8 +6,7 @@
   "keywords": [
     "Cabloy Project"
   ],
-  "scripts":
-  {
+  "scripts": {
     "dev:front": "egg-born-bin front-dev",
     "build:front": "egg-born-bin front-build",
     "dev:backend": "egg-born-bin backend-dev",
@@ -21,11 +20,9 @@
     "update:test": "egg-born-bin test-update"
   },
   "author": "{{author}}",
-  "devDependencies":
-  {},
-  "dependencies":
-  {
-    "cabloy": "^4.11.6",
+  "devDependencies": {},
+  "dependencies": {
+    "cabloy": "^4.11.7",
     "lerna": "^4.0.0"
   }
 }
