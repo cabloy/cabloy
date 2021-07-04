@@ -2,36 +2,60 @@
   <div>
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
-        <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
+        <f7-list-item
+          :title="`${group.atomClassTitle} [${group.moduleTitle}]`"
+          group-title
+        ></f7-list-item>
+        <eb-list-item
+          v-for="item of group.items"
+          :key="item.id"
+          :title="item.titleLocale"
+          swipeout
+        >
           <div slot="after">
-            <f7-badge v-if="item.actionBulk===0 && item.scope==='0'">{{$text('Self')}}</f7-badge>
+            <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{
+              $text('Self')
+            }}</f7-badge>
             <template v-if="item.scopeRoles">
-              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
+              <f7-badge
+                v-for="scopeRole of item.scopeRoles"
+                :key="scopeRole.id"
+                >{{ scopeRole.roleName }}</f7-badge
+              >
             </template>
           </div>
           <eb-context-menu>
             <div slot="right">
-              <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+              <div color="red" :context="item" :onPerform="onPerformDelete">
+                {{ $text('Delete') }}
+              </div>
             </div>
           </eb-context-menu>
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <eb-load-more
+      ref="loadMore"
+      :onLoadClear="onLoadClear"
+      :onLoadMore="onLoadMore"
+      :autoInit="false"
+    ></eb-load-more>
     <f7-block></f7-block>
   </div>
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebModules =
+  Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebAtomClasses =
+  Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebAtomActions =
+  Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses, ebAtomActions ],
+  mixins: [ebModules, ebAtomClasses, ebAtomActions],
   props: {
     role: {
       type: Object,
@@ -70,8 +94,15 @@ export default {
           atomClassName: item.atomClassName,
           name: item.actionName,
         });
-        item.title = action.title;
-        item.titleLocale = action.titleLocale;
+        if (!action) {
+          item.title = item.actionName;
+          item.titleLocale = `${item.actionName} - ${this.$text(
+            'ActionObsoletedTitle'
+          )}`;
+        } else {
+          item.title = action.title;
+          item.titleLocale = action.titleLocale;
+        }
         // push
         group.items.push(item);
       }
@@ -98,7 +129,8 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('atomRight/rights', { roleId: this.role.id, page: { index } })
+      return this.$api
+        .post('atomRight/rights', { roleId: this.role.id, page: { index } })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;
@@ -108,15 +140,16 @@ export default {
       this.$view.navigate(`/a/baseadmin/atomRight/add?roleId=${this.role.id}`);
     },
     onPerformDelete(event, item) {
-      return this.$view.dialog.confirm()
-        .then(() => {
-          return this.$api.post('atomRight/delete', { id: item.id })
-            .then(() => {
-              this.$meta.eventHub.$emit('atomRight:delete', { id: item.id, roleId: this.role.id });
-              this.$meta.util.swipeoutDelete(event.target);
-              return true;
-            });
+      return this.$view.dialog.confirm().then(() => {
+        return this.$api.post('atomRight/delete', { id: item.id }).then(() => {
+          this.$meta.eventHub.$emit('atomRight:delete', {
+            id: item.id,
+            roleId: this.role.id,
+          });
+          this.$meta.util.swipeoutDelete(event.target);
+          return true;
         });
+      });
     },
     onAtomRightAdd(data) {
       this.reload();
@@ -127,7 +160,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

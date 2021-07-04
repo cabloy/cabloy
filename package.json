@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/eslint-parser": "^7.13.10",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
@@ -47,7 +48,6 @@
     "async": "^3.2.0",
     "autoprefixer": "^9.7.4",
     "axios": "^0.21.1",
-    "@babel/eslint-parser": "^7.13.10",
     "babel-eslint": "^10.1.0",
     "bluebird": "^3.7.2",
     "chalk": "^3.0.0",
@@ -55,6 +55,8 @@
     "copy-webpack-plugin": "^7.0.0",
     "eslint": "^7.21.0",
     "eslint-config-egg": "^9.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.7.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.15.4",
@@ -73,10 +75,10 @@
     "moment": "^2.24.0",
     "open": "^7.0.2",
     "ora": "^4.0.3",
+    "prettier": "2.3.2",
     "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2",
     "semver": "^7.1.2",
     "vue-eslint-parser": "^7.3.0"
-  },
-  "dependencies": {}
+  }
 }

@@ -43,6 +43,7 @@ export default {
   'Please Reload App': '请重新加载App',
   'Resource Class': '资源类别',
   SelectedResources: '已选择的资源',
+  ActionObsoletedTitle: '已废弃',
   Atoms: '原子',
   Resources: '资源',
   Build: '构建',
