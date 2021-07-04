@@ -28,6 +28,7 @@ module.exports = {
       },
     ],
     'array-bracket-spacing': ['error', 'never'],
+    'no-empty': ['error', 'never'],
   },
   env: {
     browser: true,
