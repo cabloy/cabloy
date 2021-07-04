@@ -31,6 +31,7 @@
     "egg-born-backend": "^6.1.14",
     "egg-born-front": "^8.3.4",
     "egg-mock": "^3.25.1",
+    "mocha": "^8.4.0",
     "nock": "^11.7.2",
     "semver-diff": "^3.1.1",
     "should": "^13.2.3",

@@ -21,7 +21,7 @@ class BackendTestCommand extends TestCommand {
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
     if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
-    if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/backend/test/**/*.test.js' ];
+    if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
 
     const testArgv = context.argv;
 
@@ -82,13 +82,13 @@ class BackendTestCommand extends TestCommand {
     // collect require
     let requireArr = testArgv.require || testArgv.r || [];
     /* istanbul ignore next */
-    if (!Array.isArray(requireArr)) requireArr = [ requireArr ];
+    if (!Array.isArray(requireArr)) requireArr = [requireArr];
 
     // clean mocha stack, inspired by https://github.com/rstacruz/mocha-clean
     // [mocha built-in](https://github.com/mochajs/mocha/blob/master/lib/utils.js#L738) don't work with `[npminstall](https://github.com/cnpm/npminstall)`, so we will override it.
     if (!testArgv.fullTrace) requireArr.unshift(require.resolve('egg-bin/lib/mocha-clean'));
 
-    requireArr.push(require.resolve('co-mocha'));
+    // requireArr.push(require.resolve('co-mocha'));
 
     if (requireArr.includes('intelli-espower-loader')) {
       console.warn('[egg-bin] don\'t need to manually require `intelli-espower-loader` anymore');
@@ -124,7 +124,7 @@ class BackendTestCommand extends TestCommand {
 
     // collect test files
     if (!pattern.length) {
-      pattern = [ `test/**/*.test.${testArgv.typescript ? 'ts' : 'js'}` ];
+      pattern = [`test/**/*.test.${testArgv.typescript ? 'ts' : 'js'}`];
     }
     // by zhennann
     // pattern = pattern.concat([ '!test/fixtures', '!test/node_modules' ]);
