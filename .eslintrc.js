@@ -37,7 +37,7 @@ module.exports = {
       'error',
       {
         varsIgnorePattern: 'app|mockUrl|mockInfo|assert|schemas|load|loadjsx',
-        argsIgnorePattern: 'app|ctx|user|state|reject',
+        argsIgnorePattern: 'app|ctx|user|state|reject|options',
       },
     ],
     'array-bracket-spacing': ['error', 'never'],
@@ -62,5 +62,9 @@ module.exports = {
     $: true,
     util: true,
     env: true,
+    App: true,
+    getApp: true,
+    Page: true,
+    wx: true,
   },
 };

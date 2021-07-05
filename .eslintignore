@@ -1,2 +1,3 @@
-dist
+**/dist/**
 *.min.js
+miniprogram_npm
