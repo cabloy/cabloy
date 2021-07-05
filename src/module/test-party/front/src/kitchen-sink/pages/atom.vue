@@ -19,8 +19,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebAtomActions =
-  Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   mixins: [ebAtomActions],
   data() {
@@ -31,9 +30,7 @@ export default {
   },
   computed: {
     atomNames() {
-      return this.atoms
-        ? this.atoms.map(item => item.atomName).join(',')
-        : null;
+      return this.atoms ? this.atoms.map(item => item.atomName).join(',') : null;
     },
   },
   methods: {
@@ -84,9 +81,7 @@ export default {
         context: {
           params: {
             selectMode: 'multiple',
-            selectedAtomIds: this.atoms
-              ? this.atoms.map(item => item.atomId)
-              : null,
+            selectedAtomIds: this.atoms ? this.atoms.map(item => item.atomId) : null,
             atomClass: null,
           },
           callback: (code, selectedAtoms) => {

@@ -15,6 +15,24 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'max-len': [
+      'error',
+      {
+        code: 200,
+        ignoreComments: true,
+        ignoreTrailingComments: true,
+        ignoreUrls: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
+      },
+    ],
+    'no-undef': [
+      'error',
+      {
+        typeof: false,
+      },
+    ],
     'no-unused-vars': [
       'error',
       {
@@ -31,18 +49,7 @@ module.exports = {
     'no-empty-function': [
       'error',
       {
-        allow: [
-          'functions',
-          'arrowFunctions',
-          'generatorFunctions',
-          'methods',
-          'generatorMethods',
-          'getters',
-          'setters',
-          'constructors',
-          'asyncFunctions',
-          'asyncMethods',
-        ],
+        allow: ['functions', 'arrowFunctions', 'generatorFunctions', 'methods', 'generatorMethods', 'getters', 'setters', 'constructors', 'asyncFunctions', 'asyncMethods'],
       },
     ],
   },
@@ -50,5 +57,9 @@ module.exports = {
     browser: true,
     node: true,
   },
-  globals: {},
+  globals: {
+    $: true,
+    util: true,
+    env: true,
+  },
 };
