@@ -762,17 +762,17 @@ module.exports = ctx => {
 
     async readCount({ key, atom: { readCount = 1 }, user }) {
       await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?',
-        [ readCount, ctx.instance.id, key.atomId ]);
+        [readCount, ctx.instance.id, key.atomId]);
     }
 
     async comment({ key, atom: { comment = 1 }, user }) {
       await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
-        [ comment, ctx.instance.id, key.atomId ]);
+        [comment, ctx.instance.id, key.atomId]);
     }
 
     async attachment({ key, atom: { attachment = 1 }, user }) {
       await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?',
-        [ attachment, ctx.instance.id, key.atomId ]);
+        [attachment, ctx.instance.id, key.atomId]);
     }
 
     async stats({ atomIds, user }) {
@@ -1231,7 +1231,7 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
               order by a.code asc
       `;
-      const actions = await ctx.model.query(sql, [ ctx.instance.id, atomClass.id ]);
+      const actions = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
       // actions res
       const actionsRes = [];
       for (const action of actions) {
@@ -1271,7 +1271,7 @@ module.exports = ctx => {
           left join aRole c on a.roleIdWho=c.id
           where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
           order by a.roleIdWho desc`,
-        [ ctx.instance.id, atomClass.id, user.id ]);
+        [ctx.instance.id, atomClass.id, user.id]);
       return roles;
     }
 

@@ -4,7 +4,7 @@ module.exports = app => {
   // purchase order
   const __display = {
     expression: '!!_flowDefKey',
-    dependencies: [ '_flowDefKey' ],
+    dependencies: ['_flowDefKey'],
     // host: {
     //   stage: 'draft', // draft/formal/history
     //   mode: 'edit', // view

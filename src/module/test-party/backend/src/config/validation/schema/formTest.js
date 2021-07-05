@@ -59,7 +59,7 @@ module.exports = app => {
         ebTitle: 'Extra Group',
       },
       birthday: {
-        type: [ 'object', 'null' ],
+        type: ['object', 'null'],
         ebType: 'datepicker',
         ebTitle: 'Birthday',
         ebParams: {

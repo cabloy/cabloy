@@ -16,7 +16,7 @@ module.exports = app => {
       const options = {
         language,
         orders: [
-          [ 'a.updatedAt', 'desc' ],
+          ['a.updatedAt', 'desc'],
         ],
         page: { index: 0 },
         mode: 'default',
@@ -89,7 +89,7 @@ module.exports = app => {
       // options
       const options = {
         orders: [
-          [ 'h_updatedAt', 'desc' ],
+          ['h_updatedAt', 'desc'],
         ],
         page: { index: 0 },
       };
@@ -158,7 +158,7 @@ module.exports = app => {
       // options
       const options = {
         orders: [
-          [ 'updatedAt', 'desc' ],
+          ['updatedAt', 'desc'],
         ],
         page: { index: 0 },
       };

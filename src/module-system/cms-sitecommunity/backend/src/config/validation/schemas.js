@@ -52,7 +52,7 @@ module.exports = app => {
         notEmpty: true,
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },

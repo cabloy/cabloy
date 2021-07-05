@@ -111,7 +111,7 @@ module.exports = ctx => {
     _registerAllRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
-        const [ moduleRelativeName, providerName ] = key.split(':');
+        const [moduleRelativeName, providerName] = key.split(':');
         this._registerProviderRouters(moduleRelativeName, providerName);
       }
     }
@@ -151,7 +151,7 @@ module.exports = ctx => {
     async _registerInstanceProviders(subdomain, iid) {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
-        const [ moduleRelativeName, providerName ] = key.split(':');
+        const [moduleRelativeName, providerName] = key.split(':');
         await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
       }
     }

@@ -43,7 +43,7 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ config.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -61,7 +61,7 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, messageIn.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ config.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt

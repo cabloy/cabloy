@@ -50,7 +50,7 @@ module.exports = function(ctx) {
       }
       // check fields
       let needUpdate = false;
-      const fields = [ 'scene', 'openid', 'unionid', 'nickname', 'subscribe', 'sex', 'language', 'city', 'province', 'country', 'headimgurl', 'subscribe_time', 'remark', 'groupid', 'subscribe_scene', 'qr_scene', 'qr_scene_str' ];
+      const fields = ['scene', 'openid', 'unionid', 'nickname', 'subscribe', 'sex', 'language', 'city', 'province', 'country', 'headimgurl', 'subscribe_time', 'remark', 'groupid', 'subscribe_scene', 'qr_scene', 'qr_scene_str'];
       userInfo.scene = scene;
       for (const field of fields) {
         if (userInfo[field] === undefined || userInfo[field] === userWechat[field]) {
@@ -79,7 +79,7 @@ module.exports = function(ctx) {
         // update all
         await ctx.model.query(
           'update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?',
-          [ userId, ctx.instance.id, unionid ]
+          [userId, ctx.instance.id, unionid]
         );
       } else {
         // update this
@@ -116,7 +116,7 @@ module.exports = function(ctx) {
       let authUserId;
       const authItems = await ctx.model.query(
         `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
-        [ ctx.instance.id, providerItem.id ]
+        [ctx.instance.id, providerItem.id]
       );
       const authItem = authItems[0];
       if (!authItem) {
@@ -148,7 +148,7 @@ module.exports = function(ctx) {
       if (unionid) {
         const _authOthers = await ctx.model.query(
           `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
-          [ ctx.instance.id, authId ]
+          [ctx.instance.id, authId]
         );
         const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {

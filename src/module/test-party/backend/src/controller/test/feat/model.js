@@ -45,18 +45,18 @@ module.exports = app => {
         readCount: 1,
       }, {
         where: { atomStaticKey },
-        columns: [ 'readCount' ],
+        columns: ['readCount'],
       });
 
       // select: in
       list = await model.select({
-        where: { atomStaticKey: [ atomStaticKey ] },
+        where: { atomStaticKey: [atomStaticKey] },
       });
       assert.equal(list.length, 3);
       list = await model.select({
         where: {
           atomStaticKey: {
-            op: 'in', val: [ atomStaticKey ],
+            op: 'in', val: [atomStaticKey],
           },
         },
       });
@@ -65,7 +65,7 @@ module.exports = app => {
       // select: is null
       list = await model.select({
         where: {
-          atomStaticKey: [ atomStaticKey ],
+          atomStaticKey: [atomStaticKey],
           atomName: null,
         },
       });
@@ -74,7 +74,7 @@ module.exports = app => {
       // select: is not null
       list = await model.select({
         where: {
-          atomStaticKey: [ atomStaticKey ],
+          atomStaticKey: [atomStaticKey],
           atomName: {
             op: 'notNull',
           },
@@ -85,7 +85,7 @@ module.exports = app => {
       // select: like
       list = await model.select({
         where: {
-          atomStaticKey: [ atomStaticKey ],
+          atomStaticKey: [atomStaticKey],
           atomName: {
             op: 'likeRight',
             val: 'atom-',
@@ -97,7 +97,7 @@ module.exports = app => {
       // select: or
       list = await model.select({
         where: {
-          atomStaticKey: [ atomStaticKey ],
+          atomStaticKey: [atomStaticKey],
           __or__: [
             { atomName: 'atom-one' },
             { atomName: 'atom-two' },

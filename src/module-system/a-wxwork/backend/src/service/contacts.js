@@ -3,29 +3,29 @@ const WxworkHelperFn = require('../common/wxworkHelper.js');
 // department
 
 const __departmentFieldMap = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
-  [ 'id', 'parentid', 'name', 'name_en', 'order' ],
-  [ 'number', 'number', 'string', 'string', 'number' ],
+  ['departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder'],
+  ['id', 'parentid', 'name', 'name_en', 'order'],
+  ['number', 'number', 'string', 'string', 'number'],
 ];
 
 const __departmentFieldMap_XML = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder' ],
-  [ 'Id', 'ParentId', 'Name', 'Order' ],
-  [ 'number', 'number', 'string', 'number' ],
+  ['departmentId', 'departmentParentId', 'departmentName', 'departmentOrder'],
+  ['Id', 'ParentId', 'Name', 'Order'],
+  ['number', 'number', 'string', 'number'],
 ];
 
 // member
 
 const __memberFieldMap = [
-  [ 'memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
+  ['memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department'],
+  ['userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department'],
+  ['string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number'],
 ];
 
 const __memberFieldMap_XML = [
-  [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
-  [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
-  [ 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string' ],
+  ['memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address'],
+  ['NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address'],
+  ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string'],
 ];
 
 module.exports = app => {
@@ -97,12 +97,12 @@ module.exports = app => {
           // upate memberId of member
           await this.ctx.model.query(
             'update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?',
-            [ member.memberIdNew, this.ctx.instance.id, member.memberId ]
+            [member.memberIdNew, this.ctx.instance.id, member.memberId]
           );
           // upate profileId of auth
           await this.ctx.model.query(
             'update aAuth a set a.profileId=? where a.iid=? and a.profileId=?',
-            [ `wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}` ]
+            [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]
           );
         }
         // get member remotely
@@ -465,7 +465,7 @@ module.exports = app => {
     async _sendLinkAccountMigration({ userId }) {
       this.ctx.tail(async () => {
         const content = {
-          userIds: [ userId ],
+          userIds: [userId],
           data: {
             msgtype: 'textcard',
             textcard: {

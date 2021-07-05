@@ -20,7 +20,7 @@ module.exports = app => {
           where: { 'a.atomStaticKey': {
             op: 'likeRight', val: 'test-party:',
           } },
-          orders: [[ 'a.id', 'asc' ]],
+          orders: [['a.id', 'asc']],
           page: { index: 0, size: 0 },
           locale: 'en-us',
         },
@@ -34,7 +34,7 @@ module.exports = app => {
 
       // check
       list = await this.ctx.bean.resource.check({
-        atomStaticKeys: [ resource_one.atomStaticKey ],
+        atomStaticKeys: [resource_one.atomStaticKey],
         user: userTom,
       });
       assert.equal(list[0].passed, true);

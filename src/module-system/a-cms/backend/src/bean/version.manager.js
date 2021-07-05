@@ -379,7 +379,7 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // create roles: cms-writer cms-publisher to template
-        const roles = [ 'cms-writer', 'cms-publisher' ];
+        const roles = ['cms-writer', 'cms-publisher'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
         for (const roleName of roles) {
@@ -474,12 +474,12 @@ module.exports = app => {
       await this.ctx.model.query(
         `update aCmsCategory set atomClassId=?
              where iid=?`,
-        [ atomClass.id, this.ctx.instance.id ]);
+        [atomClass.id, this.ctx.instance.id]);
       // update aCmsTag's atomClassId
       await this.ctx.model.query(
         `update aCmsTag set atomClassId=?
              where iid=?`,
-        [ atomClass.id, this.ctx.instance.id ]);
+        [atomClass.id, this.ctx.instance.id]);
     }
 
     async _update6Uuids(options) {
@@ -583,7 +583,7 @@ module.exports = app => {
            left join aAtom b on b.id=a.atomId
            left join aCmsArticleTag c on c.atomId=a.atomId
             where a.iid=? and a.deleted=0 and b.atomStage=1
-        `, [ this.ctx.instance.id ]);
+        `, [this.ctx.instance.id]);
       // loop
       for (const article of articles) {
         await this._update7Migration_article({ mapCagetoryIds, mapTagIds, article });

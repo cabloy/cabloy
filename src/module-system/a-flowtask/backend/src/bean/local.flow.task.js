@@ -150,18 +150,18 @@ module.exports = ctx => {
       const _taskRecall = await ctx.model.queryOne(`
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and specificFlag=2
-          `, [ ctx.instance.id, flowTask.flowNodeId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId]);
       if (_taskRecall) {
         this._notifyTaskHandlings(_taskRecall.userIdAssignee);
         // delete task
         await ctx.model.query(`
           delete from aFlowTask
             where iid=? and id=?
-          `, [ ctx.instance.id, _taskRecall.id ]);
+          `, [ctx.instance.id, _taskRecall.id]);
         await ctx.model.query(`
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowTaskId=?
-          `, [ ctx.instance.id, _taskRecall.id ]);
+          `, [ctx.instance.id, _taskRecall.id]);
       }
       // check if bidding
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
@@ -170,7 +170,7 @@ module.exports = ctx => {
         const _tasks = await ctx.model.query(`
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
         for (const _task of _tasks) {
           this._notifyTaskClaimings(_task.userIdAssignee);
         }
@@ -178,11 +178,11 @@ module.exports = ctx => {
         await ctx.model.query(`
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
         await ctx.model.query(`
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
       }
       // event: task.claimed
       await this.claimed();
@@ -286,7 +286,7 @@ module.exports = ctx => {
               'a.disabled': 0,
               'a.id': assignees,
             },
-            orders: [[ 'a.userName', 'asc' ]],
+            orders: [['a.userName', 'asc']],
             removePrivacy: true,
           },
         });
@@ -386,7 +386,7 @@ module.exports = ctx => {
       const _tasks = await ctx.model.query(`
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
       for (const _task of _tasks) {
         this._notifyTaskClaimings(_task.userIdAssignee);
       }
@@ -394,11 +394,11 @@ module.exports = ctx => {
       await ctx.model.query(`
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
       await ctx.model.query(`
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
       // recall
       return await ctx.bean.flowTask._gotoFlowNodePrevious({
         nodeInstance: this.nodeInstance, rejectedNode: null, flowNodeRemark: 'Recalled',

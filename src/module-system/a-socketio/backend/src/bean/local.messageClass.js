@@ -109,7 +109,7 @@ module.exports = ctx => {
       let module,
         channelName;
       if (typeof channelFullName === 'string') {
-        [ module, channelName ] = channelFullName.split(':');
+        [module, channelName] = channelFullName.split(':');
       } else {
         module = channelFullName.module;
         channelName = channelFullName.channelName;

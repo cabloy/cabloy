@@ -28,7 +28,7 @@ module.exports = app => {
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
          ${_where} ${_orders} ${_limit}`;
       // select
-      return await this.ctx.model.query(sql, [ this.ctx.instance.id, user.id ]);
+      return await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
     }
 
     async item({ key, data: { commentId }, user }) {
@@ -36,7 +36,7 @@ module.exports = app => {
          where a.iid=? and a.deleted=0 and a.id=?`;
       // select
       const list = await this.ctx.model.query(sql,
-        [ this.ctx.instance.id, user.id, this.ctx.instance.id, commentId ]
+        [this.ctx.instance.id, user.id, this.ctx.instance.id, commentId]
       );
       return list[0];
     }
@@ -82,7 +82,7 @@ module.exports = app => {
       // sorting
       const list = await this.ctx.model.query(
         'select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?',
-        [ this.ctx.instance.id, key.atomId ]);
+        [this.ctx.instance.id, key.atomId]);
       const sorting = (list[0].sorting || 0) + 1;
       // reply
       let reply;

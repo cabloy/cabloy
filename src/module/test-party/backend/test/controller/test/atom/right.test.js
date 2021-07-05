@@ -6,11 +6,11 @@ describe('test/controller/test/atom/right.test.js', () => {
     app.mockSession({});
 
     const checkRightCreates = [
-      [ 'Tom', true ],
-      [ 'Jimmy', true ],
-      [ 'Smith', false ],
+      ['Tom', true],
+      ['Jimmy', true],
+      ['Smith', false],
     ];
-    for (const [ userName, right ] of checkRightCreates) {
+    for (const [userName, right] of checkRightCreates) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {
@@ -49,10 +49,10 @@ describe('test/controller/test/atom/right.test.js', () => {
 
     // check right read
     const checkRightReads = [
-      [ 'Tom', true ],
-      [ 'Tomson', false ],
+      ['Tom', true],
+      ['Tomson', false],
     ];
-    for (const [ userName, right ] of checkRightReads) {
+    for (const [userName, right] of checkRightReads) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {
@@ -73,10 +73,10 @@ describe('test/controller/test/atom/right.test.js', () => {
 
     // check right write
     const checkRightWrites = [
-      [ 'Tom', true ],
-      [ 'Tomson', false ],
+      ['Tom', true],
+      ['Tomson', false],
     ];
-    for (const [ userName, right ] of checkRightWrites) {
+    for (const [userName, right] of checkRightWrites) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {

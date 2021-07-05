@@ -92,7 +92,7 @@ module.exports = ctx => {
             left join aAtom c on b.atomId=c.id
             where a.iid=? and a.atomClassId=?
             order by c.atomStatic asc, a.conditionExpression desc
-        `, [ ctx.instance.id, atom.atomClassId ]);
+        `, [ctx.instance.id, atom.atomClassId]);
       for (const _condition of list) {
         const flowInstance = await this._matchCondition({ _condition, atom, userId });
         if (flowInstance) return flowInstance;

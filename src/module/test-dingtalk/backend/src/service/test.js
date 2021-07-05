@@ -18,7 +18,7 @@ module.exports = app => {
         },
       };
       const content = {
-        userIds: [ user.id ],
+        userIds: [user.id],
         data: { msg },
       };
       await this.ctx.bean.io.pushDirect({

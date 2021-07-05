@@ -77,7 +77,7 @@ module.exports = ctx => {
       const deps = __statsDeps[fullKey];
       if (!deps || deps.length === 0) return;
       for (const dep of deps) {
-        const [ depModule, depName ] = dep.split(':');
+        const [depModule, depName] = dep.split(':');
         await this._notify_queue({ module: depModule, name: depName, user });
       }
     }

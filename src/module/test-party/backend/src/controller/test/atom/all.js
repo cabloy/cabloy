@@ -21,11 +21,11 @@ module.exports = app => {
 
       // user->atom
       await this._testCheckList('formal', userIds, [
-        [ 'Tom', 0 ],
-        [ 'Jane', 0 ],
-        [ 'Jimmy', 0 ],
-        [ 'Smith', 0 ],
-        [ '', 0 ],
+        ['Tom', 0],
+        ['Jane', 0],
+        ['Jimmy', 0],
+        ['Smith', 0],
+        ['', 0],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -44,11 +44,11 @@ module.exports = app => {
       });
 
       await this._testCheckList('draft', userIds, [
-        [ 'Tom', 1 ],
-        [ 'Jane', 0 ],
-        [ 'Jimmy', 0 ],
-        [ 'Smith', 0 ],
-        [ '', 0 ],
+        ['Tom', 1],
+        ['Jane', 0],
+        ['Jimmy', 0],
+        ['Smith', 0],
+        ['', 0],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -62,11 +62,11 @@ module.exports = app => {
       const partyKeyFormal = res.formal.key;
 
       await this._testCheckList('formal', userIds, [
-        [ 'Tom', 1 ],
-        [ 'Jane', 1 ],
-        [ 'Jimmy', 1 ],
-        [ 'Smith', 1 ],
-        [ '', 1 ],
+        ['Tom', 1],
+        ['Jane', 1],
+        ['Jimmy', 1],
+        ['Smith', 1],
+        ['', 1],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -87,7 +87,7 @@ module.exports = app => {
         atomClass,
         options: {
           where: { atomName: { val: 'test:all', op: 'likeRight' } },
-          orders: [[ 'a.createdAt', 'desc' ]],
+          orders: [['a.createdAt', 'desc']],
           page: { index: 0, size: 0 },
           stage: 'formal',
         },
@@ -96,8 +96,8 @@ module.exports = app => {
       assert.equal(parties.length, 1);
 
       // checkRightRead
-      const checkRightReads = [[ 'Tom', partyKeyFormal.atomId, true ]];
-      for (const [ userName, atomId, right ] of checkRightReads) {
+      const checkRightReads = [['Tom', partyKeyFormal.atomId, true]];
+      for (const [userName, atomId, right] of checkRightReads) {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user: { id: userIds[userName] },
@@ -106,8 +106,8 @@ module.exports = app => {
       }
 
       // checkRightWrite
-      const checkRightWrites = [[ 'Tom', partyKeyFormal.atomId, true ], [ 'Tomson', partyKeyFormal.atomId, false ]];
-      for (const [ userName, atomId, right ] of checkRightWrites) {
+      const checkRightWrites = [['Tom', partyKeyFormal.atomId, true], ['Tomson', partyKeyFormal.atomId, false]];
+      for (const [userName, atomId, right] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
           action: 'write',
@@ -117,8 +117,8 @@ module.exports = app => {
       }
 
       // checkRightDelete
-      const checkRightDeletes = [[ 'Tom', partyKeyFormal.atomId, true ], [ 'Tomson', partyKeyFormal.atomId, false ]];
-      for (const [ userName, atomId, right ] of checkRightDeletes) {
+      const checkRightDeletes = [['Tom', partyKeyFormal.atomId, true], ['Tomson', partyKeyFormal.atomId, false]];
+      for (const [userName, atomId, right] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
           action: 'delete',
@@ -128,8 +128,8 @@ module.exports = app => {
       }
 
       // checkRightCreate
-      const checkRightCreates = [[ 'Tom', true ], [ 'Jimmy', true ], [ 'Smith', false ]];
-      for (const [ userName, right ] of checkRightCreates) {
+      const checkRightCreates = [['Tom', true], ['Jimmy', true], ['Smith', false]];
+      for (const [userName, right] of checkRightCreates) {
         const res = await this.ctx.bean.atom.checkRightCreate({
           atomClass,
           user: { id: userIds[userName] },
@@ -180,11 +180,11 @@ module.exports = app => {
       });
 
       await this._testCheckList('formal', userIds, [
-        [ 'Tom', 0 ],
-        [ 'Jane', 0 ],
-        [ 'Jimmy', 0 ],
-        [ 'Smith', 0 ],
-        [ '', 0 ],
+        ['Tom', 0],
+        ['Jane', 0],
+        ['Jimmy', 0],
+        ['Smith', 0],
+        ['', 0],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -194,7 +194,7 @@ module.exports = app => {
     }
 
     async _testCheckList(stage, userIds, userAtoms, cb) {
-      for (const [ userName, atomCountExpected ] of userAtoms) {
+      for (const [userName, atomCountExpected] of userAtoms) {
         const list = await this.ctx.bean.atom.select({
           options: {
             where: {

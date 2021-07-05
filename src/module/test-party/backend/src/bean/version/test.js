@@ -41,7 +41,7 @@ module.exports = function(ctx) {
         roleIds[roleName] = role.id;
       }
       // roles
-      for (const [ roleName, leader, catalog, roleNameParent ] of testData.roles) {
+      for (const [roleName, leader, catalog, roleNameParent] of testData.roles) {
         roleIds[roleName] = await ctx.bean.role.add({
           roleName,
           leader,
@@ -55,7 +55,7 @@ module.exports = function(ctx) {
 
     // role incs
     async _testRoleIncs(roleIds) {
-      for (const [ roleId, roleIdInc ] of testData.roleIncs) {
+      for (const [roleId, roleIdInc] of testData.roleIncs) {
         await ctx.bean.role.addRoleInc({
           roleId: roleIds[roleId],
           roleIdInc: roleIds[roleIdInc],
@@ -67,7 +67,7 @@ module.exports = function(ctx) {
     async _testUsers(roleIds) {
       // userIds
       const userIds = {};
-      for (const [ userName, roleName ] of testData.users) {
+      for (const [userName, roleName] of testData.users) {
         // add
         if (!userIds[userName]) {
           userIds[userName] = await ctx.bean.user.add({

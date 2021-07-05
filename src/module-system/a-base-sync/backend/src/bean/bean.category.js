@@ -55,7 +55,7 @@ module.exports = ctx => {
       }
       const list = await this.modelCategory.select({
         where,
-        orders: [[ 'categorySorting', 'asc' ], [ 'createdAt', 'asc' ]],
+        orders: [['categorySorting', 'asc'], ['createdAt', 'asc']],
       });
       if (setLocale) {
         for (const category of list) {

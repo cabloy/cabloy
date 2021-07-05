@@ -74,7 +74,7 @@ module.exports = function(ctx) {
       let authUserId;
       const authItems = await ctx.model.query(
         'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
-        [ ctx.instance.id, providerItem.id, profileId ]
+        [ctx.instance.id, providerItem.id, profileId]
       );
       const authItem = authItems[0];
       if (!authItem) {
@@ -104,7 +104,7 @@ module.exports = function(ctx) {
       // check if has userId for memberId
       const _authOthers = await ctx.model.query(
         'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
-        [ ctx.instance.id, profileId, authId ]
+        [ctx.instance.id, profileId, authId]
       );
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {

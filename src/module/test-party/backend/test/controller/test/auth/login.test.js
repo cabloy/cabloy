@@ -7,12 +7,12 @@ describe('test/controller/test/auth/login.test.js', () => {
 
     // login
     const users = [
-      [ 'root', true ],
-      [ 'Tom', true ],
-      [ 'zhennann', false ],
+      ['root', true],
+      ['Tom', true],
+      ['zhennann', false],
     ];
 
-    for (const [ userName, success ] of users) {
+    for (const [userName, success] of users) {
       const res = await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {
           auth: userName,

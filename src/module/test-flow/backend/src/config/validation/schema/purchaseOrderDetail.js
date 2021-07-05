@@ -18,7 +18,7 @@ module.exports = app => {
   };
   const __display = {
     expression: '!!detailCodeId',
-    dependencies: [ 'detailCodeId' ],
+    dependencies: ['detailCodeId'],
     // host: {
     //   stage: 'draft', // draft/formal/history
     //   mode: 'edit', // view

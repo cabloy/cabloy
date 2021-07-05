@@ -73,7 +73,7 @@ module.exports = ctx => {
   };
 
   // wxwork/wxworkweb
-  for (const scene of [ 'wxwork', 'wxworkweb' ]) {
+  for (const scene of ['wxwork', 'wxworkweb']) {
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
   }

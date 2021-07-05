@@ -282,7 +282,7 @@ export default function(Vue) {
           const options = {
             where: { },
             orders: [
-              [ 'tagName', 'asc' ],
+              ['tagName', 'asc'],
             ],
           };
           if (language) {
@@ -323,7 +323,7 @@ export default function(Vue) {
       Vue.prototype.$meta.api.post('/a/base/resource/select', {
         options: {
           resourceType,
-          orders: [[ 'f.resourceSorting', 'asc' ], [ 'f.createdAt', 'asc' ]],
+          orders: [['f.resourceSorting', 'asc'], ['f.createdAt', 'asc']],
         },
       }).then(data => {
         const resourcesArray = data.list;

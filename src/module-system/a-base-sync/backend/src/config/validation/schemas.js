@@ -124,7 +124,7 @@ module.exports = app => {
         ebTitle: 'Config',
       },
       resourceConfig: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'json',
         ebTitle: 'Config',
       },
@@ -150,7 +150,7 @@ module.exports = app => {
         },
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },

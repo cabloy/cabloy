@@ -50,8 +50,8 @@ module.exports = ctx => {
       // offset
       const res = await ctx.db.select('aSocketIOMessageView', {
         where,
-        columns: [ 'id' ],
-        orders: [[ 'id', 'asc' ]],
+        columns: ['id'],
+        orders: [['id', 'asc']],
         limit: 1,
         offset: 0,
       });
@@ -119,7 +119,7 @@ module.exports = ctx => {
       }
       where.userId = user ? user.id : 0;
       // orders
-      const orders = (options && options.orders) || [[ 'createdAt', 'asc' ]];
+      const orders = (options && options.orders) || [['createdAt', 'asc']];
       // query
       const sql = this.sqlProcedure.selectMessages({
         iid: ctx.instance.id,

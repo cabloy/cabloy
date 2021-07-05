@@ -23,7 +23,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   if (canAbort) {
     buttons.push({
       text: ctx.$text('Abort'),
-      keyCodes: [ 27 ],
+      keyCodes: [27],
     });
   }
   //
@@ -107,7 +107,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
     } else if (item.done === 1) {
       // alert
       const progress = { total: 0, progress: 100, text: data.message || ctx.$text('Operation Succeeded') };
-      setProgresses([ progress ]);
+      setProgresses([progress]);
       // hide buttons
       dialog.$el.find('.dialog-buttons').hide();
       // close

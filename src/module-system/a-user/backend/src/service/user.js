@@ -66,7 +66,7 @@ module.exports = app => {
           left join aAuth b on a.id=b.providerId and b.userId=?
             where a.id in (${ids.join(',')})
       `;
-      const list = await this.ctx.model.query(sql, [ user.id ]);
+      const list = await this.ctx.model.query(sql, [user.id]);
       // sort
       list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
       // meta
@@ -83,7 +83,7 @@ module.exports = app => {
     async authenticationDisable({ authId, user }) {
       // must use userId in where
       await this.ctx.model.query('delete from aAuth where id=? and userId=?',
-        [ authId, user.id ]);
+        [authId, user.id]);
     }
 
     async themeLoad({ user }) {

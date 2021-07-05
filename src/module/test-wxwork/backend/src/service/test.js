@@ -12,7 +12,7 @@ module.exports = app => {
 
     async sendAppMessage({ message, user }) {
       const content = {
-        userIds: [ user.id ],
+        userIds: [user.id],
         data: {
           msgtype: 'text',
           text: {

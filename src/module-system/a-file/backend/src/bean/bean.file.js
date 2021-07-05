@@ -91,7 +91,7 @@ module.exports = ctx => {
       });
       if (!options.orders) {
         options.orders = [
-          [ 'realName', 'asc' ],
+          ['realName', 'asc'],
         ];
       }
       // list
@@ -434,7 +434,7 @@ module.exports = ctx => {
           select a.* from aFile a
             inner join aAtom b on a.atomId=b.id
               where a.iid=? and a.deleted=0 and a.mode=2 and a.downloadId=? and b.atomStage=1
-        `, [ ctx.instance.id, downloadId ]);
+        `, [ctx.instance.id, downloadId]);
       if (file) return file;
       // no matter what atomId is: maybe ===0 or !==0
       return await ctx.model.file.get({ downloadId });

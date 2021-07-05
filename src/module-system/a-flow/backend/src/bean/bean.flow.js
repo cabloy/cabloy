@@ -140,7 +140,7 @@ module.exports = ctx => {
             'a.disabled': 0,
             'a.id': userIds,
           },
-          orders: [[ 'a.userName', 'asc' ]],
+          orders: [['a.userName', 'asc']],
           removePrivacy: true,
         },
       });

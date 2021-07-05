@@ -7,7 +7,7 @@ module.exports = ctx => {
       // aWxworkMember
       await ctx.model.query(
         'update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?',
-        [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
+        [data.userIdTo, ctx.instance.id, data.userIdFrom]
       );
       // next
       await next();

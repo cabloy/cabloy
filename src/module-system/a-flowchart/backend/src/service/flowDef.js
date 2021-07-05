@@ -36,7 +36,7 @@ module.exports = app => {
               { 'a.mobile': { op: 'like', val: query } },
             ],
           },
-          orders: [[ 'a.userName', 'asc' ]],
+          orders: [['a.userName', 'asc']],
           page,
           removePrivacy: true,
         },

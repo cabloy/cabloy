@@ -87,7 +87,7 @@ module.exports = function(ctx) {
       const mapUserAtomClassRole = {};
       // atoms
       const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
-        [ ctx.instance.id ]);
+        [ctx.instance.id]);
       for (const atom of atoms) {
         const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
         let mapValue = mapUserAtomClassRole[mapKey];
@@ -95,7 +95,7 @@ module.exports = function(ctx) {
           mapValue = mapUserAtomClassRole[mapKey] = await this._getRoleIdOwner(atom.atomClassId, atom.userIdCreated);
         }
         if (mapValue > 0) {
-          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [ mapValue, atom.id ]);
+          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [mapValue, atom.id]);
         }
       }
     }

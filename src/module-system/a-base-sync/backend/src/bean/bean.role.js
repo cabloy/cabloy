@@ -240,7 +240,7 @@ module.exports = ctx => {
         if (typeof scope === 'string') {
           scope = scope.split(',');
         } else if (!Array.isArray(scope)) {
-          scope = [ scope ];
+          scope = [scope];
         }
       }
       // force action exists in db
@@ -294,7 +294,7 @@ module.exports = ctx => {
       // select
       const options = {
         where,
-        orders: [[ 'sorting', 'asc' ], [ 'roleName', 'asc' ]],
+        orders: [['sorting', 'asc'], ['roleName', 'asc']],
       };
       if (page.size !== 0) {
         options.limit = page.size;
@@ -322,7 +322,7 @@ module.exports = ctx => {
           left join aRole b on a.roleIdInc=b.id
             where a.iid=? and a.roleId=?
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
     }
 
     // role rights
@@ -336,7 +336,7 @@ module.exports = ctx => {
             where a.iid=? and a.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -358,7 +358,7 @@ module.exports = ctx => {
             where d.iid=? and d.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -379,7 +379,7 @@ module.exports = ctx => {
             where a.iid=? and a.userIdWho=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, userId ]);
+        `, [ctx.instance.id, userId]);
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -393,7 +393,7 @@ module.exports = ctx => {
       return await ctx.model.query(`
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
-            `, [ ctx.instance.id ]);
+            `, [ctx.instance.id]);
     }
 
     async getUserRolesDirect({ userId }) {
@@ -401,7 +401,7 @@ module.exports = ctx => {
         select a.* from aRole a
           left join aUserRole b on a.id=b.roleId
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `, [ctx.instance.id, userId]);
       return list;
     }
 
@@ -410,7 +410,7 @@ module.exports = ctx => {
         select a.* from aRole a
           left join aViewUserRoleRef b on a.id=b.roleIdParent
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `, [ctx.instance.id, userId]);
       return list;
     }
 
@@ -419,7 +419,7 @@ module.exports = ctx => {
         select a.* from aRole a
           left join aViewUserRoleExpand b on a.id=b.roleIdBase
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `, [ctx.instance.id, userId]);
       return list;
     }
 
@@ -427,7 +427,7 @@ module.exports = ctx => {
       const list = await ctx.model.query(`
         select count(*) as count from aUserRole a
           where a.iid=? and a.userId=? and a.roleId=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `, [ctx.instance.id, userId, roleId]);
       return list[0].count > 0;
     }
 
@@ -435,7 +435,7 @@ module.exports = ctx => {
       const list = await ctx.model.query(`
         select count(*) as count from aViewUserRoleRef a
           where a.iid=? and a.userId=? and a.roleIdParent=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `, [ctx.instance.id, userId, roleId]);
       return list[0].count > 0;
     }
 
@@ -443,7 +443,7 @@ module.exports = ctx => {
       const list = await ctx.model.query(`
         select count(*) as count from aViewUserRoleExpand a
           where a.iid=? and a.userId=? and a.roleIdBase=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `, [ctx.instance.id, userId, roleId]);
       return list[0].count > 0;
     }
 
@@ -465,7 +465,7 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleId=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
       return list;
     }
 
@@ -487,7 +487,7 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
       return list;
     }
 
@@ -509,7 +509,7 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdBase=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `, [ctx.instance.id, roleId]);
       return list;
     }
 

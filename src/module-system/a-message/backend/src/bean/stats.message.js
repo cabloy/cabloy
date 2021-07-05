@@ -6,7 +6,7 @@ module.exports = ctx => {
       const { keys, user } = context;
       if (keys.length === 2) {
         // messageClass
-        const [ module, messageClassName ] = keys[1].split('_');
+        const [module, messageClassName] = keys[1].split('_');
         const messageClass = { module, messageClassName };
         const messageClassBase = ctx.bean.io.messageClass.messageClass(messageClass);
         // options

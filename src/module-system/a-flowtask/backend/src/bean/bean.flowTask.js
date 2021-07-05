@@ -272,7 +272,7 @@ module.exports = ctx => {
       await ctx.model.query(`
         update aFlowTaskHistory set flowTaskStatus=1
           where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
-        `, [ ctx.instance.id, flowNodeId ]);
+        `, [ctx.instance.id, flowNodeId]);
     }
 
     _notifyTaskClaimings(userId) {

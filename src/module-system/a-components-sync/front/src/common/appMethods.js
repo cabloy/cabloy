@@ -56,7 +56,7 @@ export default function(ctx) {
     ctx.$f7.dialog.close();
   };
   // preloader / progress
-  for (const method of [ 'preloader', 'progress' ]) {
+  for (const method of ['preloader', 'progress']) {
     dialog[method] = function(...args) {
       return ctx.$f7.dialog[method](ctx.getHostEl(), ...args);
     };

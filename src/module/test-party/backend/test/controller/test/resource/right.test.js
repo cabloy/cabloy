@@ -6,10 +6,10 @@ describe('test/controller/test/function/right.test.js', () => {
     app.mockSession({});
 
     const checkRightResources = [
-      [ 'Root', true ],
-      [ 'Tomson', true ],
+      ['Root', true],
+      ['Tomson', true],
     ];
-    for (const [ userName, right ] of checkRightResources) {
+    for (const [userName, right] of checkRightResources) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {

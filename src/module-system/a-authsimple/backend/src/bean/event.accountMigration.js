@@ -11,12 +11,12 @@ module.exports = ctx => {
         // delete old record
         await ctx.model.query(
           'delete from aAuthSimple where deleted=0 and iid=? and userId=?',
-          [ ctx.instance.id, data.userIdTo ]
+          [ctx.instance.id, data.userIdTo]
         );
         // update
         await ctx.model.query(
           'update aAuthSimple a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
-          [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
+          [data.userIdTo, ctx.instance.id, data.userIdFrom]
         );
       }
       // next

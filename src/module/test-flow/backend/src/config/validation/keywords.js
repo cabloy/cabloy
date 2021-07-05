@@ -20,7 +20,7 @@ module.exports = app => {
           select a.id from aAtom a
             left join testFlowProduct b on a.id=b.atomId
               where a.atomStage=0 and a.iid=? and a.deleted=0 and b.productCode=?
-          `, [ ctx.instance.id, data ]);
+          `, [ctx.instance.id, data]);
         if (item && item.id !== atomId) {
           const errors = [{ keyword: 'x-productCode', params: [], message: ctx.text('Product Code Exists') }];
           throw new app.meta.ajv.ValidationError(errors);

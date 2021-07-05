@@ -370,7 +370,7 @@ module.exports = app => {
         atomClass: this.atomClass,
         options: {
           language: site.language ? site.language.current : null,
-          orders: [[ 'a.updatedAt', 'desc' ]],
+          orders: [['a.updatedAt', 'desc']],
           page: null,
           mode: 'search',
           stage: 'formal',
@@ -574,7 +574,7 @@ module.exports = app => {
         await this.ctx.model.query(`
           update aCmsArticle set renderAt=?
             where iid=? and atomId=?
-          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
+          `, [data.article.renderAt, this.ctx.instance.id, data.article.atomId]);
       }
       // socketio publish
       if (hotloadFile) {
@@ -679,7 +679,7 @@ module.exports = app => {
               _content = babel.transform(_content, {
                 ast: false,
                 babelrc: false,
-                presets: [ '@babel/preset-env' ],
+                presets: ['@babel/preset-env'],
                 plugins: [],
               }).code;
               // not minify for test/dev
@@ -862,7 +862,7 @@ var env=${JSON.stringify(env, null, 2)};
         const timeStart = new Date();
         // site
         const site = await this.combineSiteBase();
-        const languages = site.language ? site.language.items.split(',') : [ null ];
+        const languages = site.language ? site.language.items.split(',') : [null];
 
         // progress
         const progress0_Total = languages.length;
@@ -1003,7 +1003,7 @@ var env=${JSON.stringify(env, null, 2)};
 
         // / copy files to dist (ignore .ejs)
         // /  assets plugins/[plugin]/assets
-        for (const dir of [ 'assets', 'plugins' ]) {
+        for (const dir of ['assets', 'plugins']) {
           if (dir === 'assets') {
             // assets
             const _filename = path.join(pathIntermediate, 'assets');
@@ -1088,7 +1088,7 @@ var env=${JSON.stringify(env, null, 2)};
       const watcherInfos = [];
       // site
       const site = await this.combineSiteBase();
-      const languages = site.language ? site.language.items.split(',') : [ null ];
+      const languages = site.language ? site.language.items.split(',') : [null];
       // loop languages
       for (const language of languages) {
         // info
@@ -1155,7 +1155,7 @@ var env=${JSON.stringify(env, null, 2)};
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
       let items = '';
-      const languages = site.language ? site.language.items.split(',') : [ null ];
+      const languages = site.language ? site.language.items.split(',') : [null];
       for (const language of languages) {
         items +=
 `  <sitemap>

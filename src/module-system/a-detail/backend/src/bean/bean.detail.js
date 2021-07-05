@@ -116,7 +116,7 @@ module.exports = ctx => {
       // orders
       if (!options.orders || options.orders.length === 0) {
         options.orders = [
-          [ 'a.detailLineNo', 'asc' ],
+          ['a.detailLineNo', 'asc'],
         ];
       }
       // select

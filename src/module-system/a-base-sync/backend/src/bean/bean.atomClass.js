@@ -69,7 +69,7 @@ module.exports = ctx => {
         select a.*,b.id as atomId,b.itemId from aAtomClass a
           left join aAtom b on a.id=b.atomClassId
             where b.iid=? and b.id=?
-        `, [ ctx.instance.id, atomId ]);
+        `, [ctx.instance.id, atomId]);
       return res[0];
     }
 

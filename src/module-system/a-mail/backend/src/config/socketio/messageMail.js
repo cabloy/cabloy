@@ -5,7 +5,7 @@ module.exports = app => {
       title: 'Mail',
       persistence: false,
       push: {
-        channels: [ 'a-mail:mail' ],
+        channels: ['a-mail:mail'],
       },
     },
   };

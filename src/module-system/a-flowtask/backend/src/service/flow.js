@@ -31,7 +31,7 @@ module.exports = app => {
            left join aAtomClass b on a.atomClassId=b.id
              where a.deleted=0 and a.iid=? and a.id=?
                    and a.atomFlowId=?
-        `, [ this.ctx.instance.id, atomId, flowId ]);
+        `, [this.ctx.instance.id, atomId, flowId]);
       return atom;
     }
 
@@ -41,16 +41,16 @@ module.exports = app => {
         options: {
           where: {
             'a.flowId': flowId,
-            'b.flowNodeType': [ 'startEventAtom', 'activityUserTask' ],
+            'b.flowNodeType': ['startEventAtom', 'activityUserTask'],
             __or__: [
               { 'a.userIdAssignee': user.id },
               { 'a.flowTaskHidden': 0 },
             ],
           },
           orders: [
-            [ 'a.flowNodeId', 'desc' ],
-            [ 'a.specificFlag', 'desc' ],
-            [ 'a.flowTaskStatus', 'asc' ],
+            ['a.flowNodeId', 'desc'],
+            ['a.specificFlag', 'desc'],
+            ['a.flowTaskStatus', 'asc'],
           ],
           history: 1,
         },

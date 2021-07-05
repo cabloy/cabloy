@@ -1,7 +1,7 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 
-const __blackFields = [ 'startups', 'queues', 'broadcasts', 'middlewares', 'schedules' ];
+const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 
 module.exports = app => {
 

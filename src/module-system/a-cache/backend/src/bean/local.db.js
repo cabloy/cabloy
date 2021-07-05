@@ -35,7 +35,7 @@ module.exports = ctx => {
         await ctx.db.query(`
           update aCache set value=?, expired=${expired}
             where id=?
-          `, [ JSON.stringify(value), res.id ]);
+          `, [JSON.stringify(value), res.id]);
       } else {
         if (queue) {
           await ctx.app.meta.util.lock({
@@ -54,7 +54,7 @@ module.exports = ctx => {
         } else {
           await ctx.db.query(`
             insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
+            `, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value)]);
         }
       }
       // return old value
@@ -70,7 +70,7 @@ module.exports = ctx => {
 
     async _has(name) {
       const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
-      const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
+      const res = await ctx.db.queryOne(sql, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name]);
       return res;
     }
 

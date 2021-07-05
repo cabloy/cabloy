@@ -114,12 +114,12 @@ module.exports = app => {
           // fileVersionOld
           let fileVersionOld = 0; // default
           if (!options.scene) {
-            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [moduleName]);
             if (res) {
               fileVersionOld = res.version;
             }
           } else {
-            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
+            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [options.subdomain, moduleName]);
             if (res) {
               fileVersionOld = res.version;
             }

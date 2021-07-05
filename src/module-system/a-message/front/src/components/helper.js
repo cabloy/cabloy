@@ -114,7 +114,7 @@ export default function(io) {
         messageClass: {
           id: message.messageClassId,
         },
-        messageIds: [ message.id ],
+        messageIds: [message.id],
       });
       // callbacks
       const res = await this._performCallbacks({ scene: 'click', message, content });

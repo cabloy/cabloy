@@ -21,7 +21,7 @@ module.exports = {
           select a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
               where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
-          `, [ ctx.instance.id, atomClass.id, slug, rootData.atomLanguage ]);
+          `, [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]);
       if (items[0] && items[0].id !== atomId) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);

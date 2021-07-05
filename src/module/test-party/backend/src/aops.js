@@ -10,7 +10,7 @@ module.exports = app => {
       bean: simple,
     },
     regExp: {
-      match: [ /^test-party.test\.\w+$/, 'testctx' ],
+      match: [/^test-party.test\.\w+$/, 'testctx'],
       mode: 'ctx',
       bean: regExp,
     },

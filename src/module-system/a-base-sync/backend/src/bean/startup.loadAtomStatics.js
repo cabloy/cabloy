@@ -13,7 +13,7 @@ module.exports = app => {
         const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
         if (!statics) continue;
         for (const atomClassKey in statics) {
-          const [ atomClassModule, atomClassName ] = atomClassKey.split('.');
+          const [atomClassModule, atomClassName] = atomClassKey.split('.');
           const atomClass = { module: atomClassModule, atomClassName };
           const items = statics[atomClassKey].items;
           if (!items) continue;

@@ -8,7 +8,7 @@ export default {
       if (!value) {
         value = [];
       } else if (!Array.isArray(value)) {
-        value = [ value ];
+        value = [value];
       }
       // should format date
       // // the form is readOnly

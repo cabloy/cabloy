@@ -49,7 +49,7 @@ module.exports = app => {
 
       // set star/label
       await this.ctx.bean.atom.star({ key: partyKeyFormal, atom: { star: 1 }, user });
-      await this.ctx.bean.atom.labels({ key: partyKeyFormal, atom: { labels: [ 1 ] }, user });
+      await this.ctx.bean.atom.labels({ key: partyKeyFormal, atom: { labels: [1] }, user });
 
       // get party
       party = await this.ctx.bean.atom.read({ key: partyKeyFormal, user });

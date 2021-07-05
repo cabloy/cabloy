@@ -19,7 +19,7 @@ module.exports = ctx => {
           }
           options.whiteList.push(hostSelf);
         } else {
-          options.whiteList = [ hostSelf ];
+          options.whiteList = [hostSelf];
         }
       }
       // jsonp

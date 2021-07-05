@@ -191,12 +191,12 @@ module.exports = ctx => {
         return await this.model.queryOne(
           `select * from aUser
              where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ ctx.instance.id, userName, email, email, mobile, mobile ]);
+          [ctx.instance.id, userName, email, email, mobile, mobile]);
       }
       return await this.model.queryOne(
         `select * from aUser
              where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ ctx.instance.id, email, email, mobile, mobile ]);
+        [ctx.instance.id, email, email, mobile, mobile]);
     }
 
     async add({
@@ -247,7 +247,7 @@ module.exports = ctx => {
           left join aUserAgent b on a.id=b.userIdAgent
             where a.iid=? and a.deleted=0 and b.userId=?
       `;
-      return await ctx.model.queryOne(sql, [ ctx.instance.id, userId ]);
+      return await ctx.model.queryOne(sql, [ctx.instance.id, userId]);
     }
 
     async agentsBy({ userId }) {
@@ -256,7 +256,7 @@ module.exports = ctx => {
           left join aUserAgent b on a.id=b.userId
             where a.iid=? and a.deleted=0 and b.userIdAgent=?
       `;
-      return await ctx.model.query(sql, [ ctx.instance.id, userId ]);
+      return await ctx.model.query(sql, [ctx.instance.id, userId]);
     }
 
     async addAgent({ userIdAgent, userId }) {
@@ -327,7 +327,7 @@ module.exports = ctx => {
             order by a.userName asc
             ${_limit}
       `;
-      return await ctx.model.query(sql, [ ctx.instance.id ]);
+      return await ctx.model.query(sql, [ctx.instance.id]);
     }
 
     async count({ options }) {
@@ -372,7 +372,7 @@ module.exports = ctx => {
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.userId=?
             ${_limit}
-        `, [ ctx.instance.id, userId ]);
+        `, [ctx.instance.id, userId]);
     }
 
     // state: login/associate/migrate
@@ -522,24 +522,24 @@ module.exports = ctx => {
       // aAuth: delete old records
       const list = await ctx.model.query(
         'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
-        [ ctx.instance.id, userIdFrom ]
+        [ctx.instance.id, userIdFrom]
       );
       if (list.length > 0) {
         const providerIds = list.map(item => item.providerId).join(',');
         await ctx.model.query(
           `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
-          [ ctx.instance.id, userIdTo, providerIds ]
+          [ctx.instance.id, userIdTo, providerIds]
         );
       }
       // aAuth: update records
       await ctx.model.query(
         'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
+        [userIdTo, ctx.instance.id, userIdFrom]
       );
       // aUserRole
       await ctx.model.query(
         'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
+        [userIdTo, ctx.instance.id, userIdFrom]
       );
       // delete user
       await this.model.delete({ id: userIdFrom });

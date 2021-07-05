@@ -11,7 +11,7 @@ describe('test/controller/test/ctx/locale.test.js', () => {
 
   it('action:locale:zhcn:cookie', async () => {
     const result = await app.httpRequest().post(mockUrl('test/ctx/locale/zhcn'))
-      .set('Cookie', [ 'locale=zh-cn' ]);
+      .set('Cookie', ['locale=zh-cn']);
     const data = result.body.data;
     assert.equal(data.enus, 'Hello World');
     assert.equal(data.zhcn, '世界，您好');

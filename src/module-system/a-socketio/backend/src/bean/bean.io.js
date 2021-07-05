@@ -288,19 +288,19 @@ module.exports = ctx => {
       // -1
       if (message.userIdTo === -1) {
         // only delivery to the online users
-        return await onSave([ message.userIdTo ]);
+        return await onSave([message.userIdTo]);
       } else if (message.userIdTo === -2) {
         // all users
         return await this._onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSave });
       } else if (message.userIdTo === -3) {
         // unkonwn user, but also should create messageSync for push
-        return await onSave([ message.userIdTo ]);
+        return await onSave([message.userIdTo]);
       } else if (message.userIdTo === 0) {
         // system user: ignore
-        return await onSave([ ]);
+        return await onSave([]);
       }
       // normal user
-      return await onSave([ message.userIdTo ]);
+      return await onSave([message.userIdTo]);
     }
 
     async _onSaveSyncsPolicy_userIdsTo({ message, saveLimit, onSave }) {
@@ -319,7 +319,7 @@ module.exports = ctx => {
         // users
         const users = await modelUser.select({
           where: { disabled: 0 },
-          columns: [ 'id' ],
+          columns: ['id'],
           limit: saveLimit,
           offset,
         });
@@ -593,7 +593,7 @@ module.exports = ctx => {
         if (deliveryDone) return;
       }
       // to queue: push
-      await this._pushQueuePush({ options, message, messageSyncs: [ messageSync ], messageClass });
+      await this._pushQueuePush({ options, message, messageSyncs: [messageSync], messageClass });
     }
 
     // offline: return false
@@ -647,7 +647,7 @@ module.exports = ctx => {
       for (const field in values) {
         if (!isSender || field !== messageScene) {
           const value = values[field];
-          const [ workerId, socketId ] = value.split(':');
+          const [workerId, socketId] = value.split(':');
           // check workerAlive
           const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
           if (workerAlive) {

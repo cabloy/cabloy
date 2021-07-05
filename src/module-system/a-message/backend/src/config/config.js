@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.socketio = {
     message: {
       push: {
-        channels: [ 'a-mail:mail' ],
+        channels: ['a-mail:mail'],
       },
       render: {
         templates: {

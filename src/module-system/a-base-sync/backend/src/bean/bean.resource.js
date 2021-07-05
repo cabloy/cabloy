@@ -174,7 +174,7 @@ module.exports = ctx => {
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.atomId=?
             order by b.roleName
-        `, [ ctx.instance.id, key.atomId ]);
+        `, [ctx.instance.id, key.atomId]);
       return list;
     }
 
@@ -254,7 +254,7 @@ module.exports = ctx => {
           where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, roleId ]);
+        `, [locale, ctx.instance.id, roleId]);
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -285,7 +285,7 @@ module.exports = ctx => {
           where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, roleId ]);
+        `, [locale, ctx.instance.id, roleId]);
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -315,7 +315,7 @@ module.exports = ctx => {
           where a.iid=? and a.userIdWho=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, userId ]);
+        `, [locale, ctx.instance.id, userId]);
       // locale
       this._resourceRightsLocale({ items });
       // ok

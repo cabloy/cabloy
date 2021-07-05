@@ -7,7 +7,7 @@ module.exports = ctx => {
       // aDingtalkMember
       await ctx.model.query(
         'update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?',
-        [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
+        [data.userIdTo, ctx.instance.id, data.userIdFrom]
       );
       // next
       await next();

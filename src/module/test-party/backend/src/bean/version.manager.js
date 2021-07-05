@@ -50,7 +50,7 @@ module.exports = app => {
       // init
       if (options.version === 1) {
         // types
-        for (const name of [ 'Birthday', 'Dance', 'Garden' ]) {
+        for (const name of ['Birthday', 'Dance', 'Garden']) {
           await this.ctx.model.partyType.insert({ name });
         }
         // add role rights

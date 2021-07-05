@@ -19,7 +19,7 @@ module.exports = {
       const items = await ctx.model.query(`
           select a.id from aAtom a
               where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
-          `, [ ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage ]);
+          `, [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]);
       if (items[0] && items[0].id !== atomId) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;

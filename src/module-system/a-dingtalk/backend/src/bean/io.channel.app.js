@@ -23,7 +23,7 @@ module.exports = ctx => {
           const modelMember = ctx.model.module(moduleInfo.relativeName).member;
           const list = await modelMember.select({
             where: { userId: userIds },
-            columns: [ 'memberId' ],
+            columns: ['memberId'],
           });
           message.userid_list = list.map(item => item.memberId).join(',');
         }
@@ -32,7 +32,7 @@ module.exports = ctx => {
           const modelDepartment = ctx.model.module(moduleInfo.relativeName).department;
           const list = await modelDepartment.select({
             where: { roleId: roleIds },
-            columns: [ 'departmentId' ],
+            columns: ['departmentId'],
           });
           message.dept_id_list = list.map(item => item.departmentId).join(',');
         }

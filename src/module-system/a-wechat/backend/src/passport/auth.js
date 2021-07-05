@@ -84,7 +84,7 @@ module.exports = ctx => {
   };
 
   // wechat/wechatweb
-  for (const scene of [ 'wechat', 'wechatweb' ]) {
+  for (const scene of ['wechat', 'wechatweb']) {
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
   }

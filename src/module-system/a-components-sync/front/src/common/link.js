@@ -1,7 +1,7 @@
 export default {
   props: {
     ebHref: {
-      type: [ String, Boolean ],
+      type: [String, Boolean],
     },
     ebTarget: {
       type: String,

@@ -6,7 +6,7 @@ module.exports = ctx => {
       const dependencies = provider.dependencies;
       const res = { red: 0, orange: 0 };
       for (const dep of dependencies) {
-        const [ module, fullName ] = dep.split(':');
+        const [module, fullName] = dep.split(':');
         const value = await ctx.bean.stats._get({
           module, fullName, user,
         });
