@@ -18,15 +18,20 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': [
-      0,
-      {
-        vars: 'local',
-        args: 'none',
-      },
-    ],
+    'no-unused-vars': ['error', {
+      varsIgnorePattern: 'app|mockUrl|mockInfo|assert',
+    }],
     'array-bracket-spacing': ['error', 'never'],
-    'no-empty': ['error', 'never'],
+    'no-empty': ['error', {
+      allowEmptyCatch: true,
+    }],
+    'no-empty-function': ['error', {
+      allow: [
+        'functions', 'arrowFunctions', 'generatorFunctions',
+        'methods', 'generatorMethods', 'getters', 'setters',
+        'constructors', 'asyncFunctions', 'asyncMethods',
+      ],
+    }],
   },
   env: {
     browser: true,
