@@ -36,7 +36,8 @@ module.exports = {
     'no-unused-vars': [
       'error',
       {
-        varsIgnorePattern: 'app|mockUrl|mockInfo|assert',
+        varsIgnorePattern: 'app|mockUrl|mockInfo|assert|schemas|load|loadjsx',
+        argsIgnorePattern: 'app|ctx|user|state|reject',
       },
     ],
     'array-bracket-spacing': ['error', 'never'],
