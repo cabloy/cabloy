@@ -1,6 +1,6 @@
 const testData = require('./testData.js');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
 
   class VersionTest {
 

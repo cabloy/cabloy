@@ -1,4 +1,4 @@
-export default function(dragdrop) {
+export default function (dragdrop) {
 
   return {
     inserted(el, binding) {

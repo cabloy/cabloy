@@ -1,6 +1,6 @@
 const update1Data = require('./update1Data.js');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
 
   class VersionUpdate1 {
 

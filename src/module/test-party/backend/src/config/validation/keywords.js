@@ -5,7 +5,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile(/* sch, parentSchema*/) {
-      return async function(data) {
+      return async function (data) {
         const ctx = this;
         const locales = ctx.bean.base.locales();
         const index = locales.findIndex(item => item.value === data);

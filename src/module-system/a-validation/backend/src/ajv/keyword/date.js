@@ -4,7 +4,7 @@ const moment = require3('moment');
 module.exports = {
   errors: true,
   compile(schema) {
-    const fun = function(data, path, rootData, name) {
+    const fun = function (data, path, rootData, name) {
       if (!schema) return true;
       if (Array.isArray(data)) {
         const res = [];

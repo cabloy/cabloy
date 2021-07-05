@@ -5,7 +5,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (res && res.id !== ctx.state.user.agent.id) {
@@ -25,7 +25,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (!res) {

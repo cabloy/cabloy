@@ -29,12 +29,12 @@ function DingTalkStrategy(options, verify) {
 
 util.inherits(DingTalkStrategy, passport.Strategy);
 
-DingTalkStrategy.prototype.getOAuth = function(options) {
+DingTalkStrategy.prototype.getOAuth = function (options) {
   const _config = options.getConfig();
   return new OAuth(_config.appkey);
 };
 
-DingTalkStrategy.prototype.authenticate = function(req, options) {
+DingTalkStrategy.prototype.authenticate = function (req, options) {
 
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));

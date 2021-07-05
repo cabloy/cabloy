@@ -1,4 +1,4 @@
-export default function({ ctx, progressId, title, canAbort = true }) {
+export default function ({ ctx, progressId, title, canAbort = true }) {
   return new Promise((resolve, reject) => {
     const action = {
       actionModule: 'a-socketio',

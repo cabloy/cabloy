@@ -1,10 +1,10 @@
 const require3 = require('require3');
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
 const WechatAPI = require3('@zhennann/co-wechat-api');
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  return function() {
+  return function () {
     return new Proxy({}, {
       get(obj, prop) {
         if (obj[prop]) return obj[prop];
@@ -56,11 +56,11 @@ module.exports = function(ctx) {
     const configApp = mini ? config.minis[appName] : config.apps[appName];
     // api
     const api = new WxworkAPI.CorpAPI(config.corpid, configApp.secret,
-      async function() {
+      async function () {
         const cacheKey = `wxwork-token:${appName || ''}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `wxwork-token:${appName || ''}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -71,11 +71,11 @@ module.exports = function(ctx) {
     );
       // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -94,11 +94,11 @@ module.exports = function(ctx) {
     const configMini = config.minis[sceneShort];
     // api
     const api = new WechatAPI(configMini.appID, configMini.appSecret,
-      async function() {
+      async function () {
         const cacheKey = `wxworkmini-token:${sceneShort}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `wxworkmini-token:${sceneShort}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -109,11 +109,11 @@ module.exports = function(ctx) {
     );
       // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -124,11 +124,11 @@ module.exports = function(ctx) {
     );
     // registerSessionKeyHandle
     api.registerSessionKeyHandle(
-      async function() {
+      async function () {
         const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(sessionKey) {
+      async function (sessionKey) {
         const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
         await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
       }

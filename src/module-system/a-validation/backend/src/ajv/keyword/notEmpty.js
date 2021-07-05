@@ -3,7 +3,7 @@ const vm = require('vm');
 module.exports = {
   errors: true,
   compile(schema, schemaProperty) {
-    const fun = function(data, path, rootData) {
+    const fun = function (data, path, rootData) {
       // notEmpty=false
       if (!schema) return true;
       // expression

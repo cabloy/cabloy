@@ -19,7 +19,7 @@ function Strategy(options, verify) {
  */
 util.inherits(Strategy, passport.Strategy);
 
-Strategy.prototype.authenticate = function(req) {
+Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
 

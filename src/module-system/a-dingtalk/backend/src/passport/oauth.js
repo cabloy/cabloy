@@ -1,11 +1,11 @@
 const require3 = require('require3');
 const querystring = require3('querystring');
 
-const OAuth = function(appkey) {
+const OAuth = function (appkey) {
   this.appkey = appkey;
 };
 
-OAuth.prototype.getAuthorizeURLForWebsite = function(redirect, state) {
+OAuth.prototype.getAuthorizeURLForWebsite = function (redirect, state) {
   const url = 'https://oapi.dingtalk.com/connect/qrconnect';
   const info = {
     appid: this.appkey,

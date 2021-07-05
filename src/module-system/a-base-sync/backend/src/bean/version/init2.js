@@ -2,7 +2,7 @@ const require3 = require('require3');
 const extend = require3('extend2');
 const initData = require('./initData2.js');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
 
   class VersionInit {
 

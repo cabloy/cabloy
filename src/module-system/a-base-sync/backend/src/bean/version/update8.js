@@ -1,4 +1,4 @@
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate8 {
 

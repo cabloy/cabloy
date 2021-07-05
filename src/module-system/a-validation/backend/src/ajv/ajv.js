@@ -6,7 +6,7 @@ const jsBeautify = require3('js-beautify');
 const systemKeywords = require('./keywords.js');
 
 module.exports = app => {
-  Ajv.create = function({ options, keywords, schemas, schemaRoot }) {
+  Ajv.create = function ({ options, keywords, schemas, schemaRoot }) {
     // default
     const _options = {
       $data: true,
@@ -53,7 +53,7 @@ module.exports = app => {
 };
 
 function createValidate(schemaRoot) {
-  return async function({ ctx, schema, data }) {
+  return async function ({ ctx, schema, data }) {
     const validate = this.getSchema(schema || schemaRoot);
     try {
       const res = await validate.call(ctx, data);

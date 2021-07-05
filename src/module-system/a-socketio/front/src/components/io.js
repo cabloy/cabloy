@@ -24,7 +24,7 @@ export default {
       if (!_io) {
         _io = IOFn(adapter);
         const _subscribe = _io.subscribe;
-        _io.subscribe = function(path, cbMessage, cbSubscribed, options) {
+        _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
           options = options || {};
           if (options.scene === undefined) {
             options.scene = Vue.prototype.$meta.store.state.auth.clientId;

@@ -1,19 +1,19 @@
 import Vue from 'vue';
 const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 
-export default function(io) {
-  const Simple = function() {
+export default function (io) {
+  const Simple = function () {
 
     // callbacks
     this._callbackCounter = 0;
     this._callbacksAll = {};
     this._callbacksMap = {};
 
-    this.initialize = function() {
+    this.initialize = function () {
       Vue.prototype.$f7.on('notificationClick', this._onNotificationClick.bind(this));
     };
 
-    this.subscribe = function() {
+    this.subscribe = function () {
       const user = Vue.prototype.$meta.store.state.auth.user.op;
       if (user.anonymous) return;
       this.subscribeId = io.subscribe(
@@ -21,12 +21,12 @@ export default function(io) {
       );
     };
 
-    this.reset = function() {
+    this.reset = function () {
       this._callbacksAll = {};
       this._callbacksMap = {};
     };
 
-    this.register = function(messageClassName, callback) {
+    this.register = function (messageClassName, callback) {
       if (!messageClassName) throw new Error('messageClassName not empty');
       if (!this._callbacksAll[messageClassName]) {
         this._callbacksAll[messageClassName] = [];
@@ -39,7 +39,7 @@ export default function(io) {
       return callbackId;
     };
 
-    this.unRegister = function(callbackId) {
+    this.unRegister = function (callbackId) {
       const messageClassName = this._callbacksMap[callbackId];
       if (!messageClassName) return;
       // delete from map
@@ -52,7 +52,7 @@ export default function(io) {
       callbacks.splice(index, 1);
     };
 
-    this._onMessage = async function({ message }) {
+    this._onMessage = async function ({ message }) {
       // content
       const content = JSON.parse(message.content);
       // callbacks
@@ -94,11 +94,11 @@ export default function(io) {
       notification.open();
     };
 
-    this._onSubscribed = function() {
+    this._onSubscribed = function () {
       // donothing
     };
 
-    this._onNotificationClick = async function(notification) {
+    this._onNotificationClick = async function (notification) {
       if (!notification.params['a-message:helper']) return;
       // message
       const message = notification.params._message;
@@ -108,7 +108,7 @@ export default function(io) {
       await this._openMessage({ message, content });
     };
 
-    this._openMessage = async function({ message, content, options }) {
+    this._openMessage = async function ({ message, content, options }) {
       // setRead
       await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
         messageClass: {
@@ -129,7 +129,7 @@ export default function(io) {
     };
 
     // res=true: break the default handler
-    this._performCallbacks = async function({ scene, message, content }) {
+    this._performCallbacks = async function ({ scene, message, content }) {
       const messageClassName = `${message.module}:${message.messageClassName}`;
       const callbacks = this._callbacksAll[messageClassName];
       if (!callbacks) return;

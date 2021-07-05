@@ -2,7 +2,7 @@ const require3 = require('require3');
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
 
-module.exports = function(app) {
+module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
 
@@ -103,14 +103,14 @@ module.exports = function(app) {
       }
       // watcher
       const _watcher = chokidar.watch(watchers)
-        .on('change', debounce(function() {
+        .on('change', debounce(function () {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
             data: { subdomain, atomClass, language },
           });
         }, 300));
       // on ready
-      _watcher.once('ready', function() {
+      _watcher.once('ready', function () {
         _watcher.__eb_ready = true;
         if (_watcher.__eb_closing) {
           _watcher.close();

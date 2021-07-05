@@ -1,10 +1,10 @@
 const require3 = require('require3');
 const WechatAPI = require3('@zhennann/co-wechat-api');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  return function() {
+  return function () {
     return new Proxy({}, {
       get(obj, prop) {
         if (obj[prop]) return obj[prop];
@@ -35,11 +35,11 @@ module.exports = function(ctx) {
     const config = ctx.config.module(moduleInfo.relativeName).account.public;
     // api
     const api = new WechatAPI(config.appID, config.appSecret,
-      async function() {
+      async function () {
         const cacheKey = 'wechat-token';
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = 'wechat-token';
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -50,11 +50,11 @@ module.exports = function(ctx) {
     );
       // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wechat-jsticket:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wechat-jsticket:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -72,11 +72,11 @@ module.exports = function(ctx) {
     const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
     // api
     const api = new WechatAPI(config.appID, config.appSecret,
-      async function() {
+      async function () {
         const cacheKey = 'wechatmini-token';
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = 'wechatmini-token';
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -87,11 +87,11 @@ module.exports = function(ctx) {
     );
       // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wechatmini-jsticket:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wechatmini-jsticket:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -102,11 +102,11 @@ module.exports = function(ctx) {
     );
     // registerSessionKeyHandle
     api.registerSessionKeyHandle(
-      async function() {
+      async function () {
         const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(sessionKey) {
+      async function (sessionKey) {
         const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
         await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
       }

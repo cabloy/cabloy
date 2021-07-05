@@ -1,12 +1,12 @@
 const require3 = require('require3');
 const querystring = require3('querystring');
 
-const OAuth = function(appid, agentid) {
+const OAuth = function (appid, agentid) {
   this.appid = appid;
   this.agentid = agentid;
 };
 
-OAuth.prototype.getAuthorizeURL = function(redirect, state, scope) {
+OAuth.prototype.getAuthorizeURL = function (redirect, state, scope) {
   const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
   const info = {
     appid: this.appid,
@@ -19,7 +19,7 @@ OAuth.prototype.getAuthorizeURL = function(redirect, state, scope) {
   return url + '?' + querystring.stringify(info) + '#wechat_redirect';
 };
 
-OAuth.prototype.getAuthorizeURLForWebsite = function(redirect, state) {
+OAuth.prototype.getAuthorizeURLForWebsite = function (redirect, state) {
   const url = 'https://open.work.weixin.qq.com/wwopen/sso/qrConnect';
   const info = {
     appid: this.appid,

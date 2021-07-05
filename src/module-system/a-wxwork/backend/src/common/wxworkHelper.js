@@ -3,7 +3,7 @@ const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = require('./authProviderScenes.js');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WxworkHelper {
 

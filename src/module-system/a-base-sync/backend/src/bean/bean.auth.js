@@ -196,7 +196,7 @@ module.exports = ctx => {
 };
 
 function _createAuthenticate(moduleRelativeName, providerName, _config) {
-  return async function(ctx, next) {
+  return async function (ctx, next) {
     // provider of db
     const providerItem = await ctx.bean.user.getAuthProvider({
       module: moduleRelativeName,
@@ -229,7 +229,7 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     // config functions
     if (provider.configFunctions) {
       for (const key in provider.configFunctions) {
-        config[key] = function(...args) {
+        config[key] = function (...args) {
           return provider.configFunctions[key](ctx, ...args);
         };
       }

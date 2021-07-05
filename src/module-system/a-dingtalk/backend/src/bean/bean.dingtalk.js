@@ -9,7 +9,7 @@ module.exports = ctx => {
   // ctx.bean.dingtalk.web.default
   // ctx.bean.dingtalk.mini.default
   // ctx.bean.dingtalk.util
-  return function() {
+  return function () {
     return new Proxy({}, {
       get(obj, prop) {
         if (obj[prop]) return obj[prop];
@@ -60,11 +60,11 @@ module.exports = ctx => {
       {
         appkey, appsecret, corpid, sso,
       },
-      async function() {
+      async function () {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -75,11 +75,11 @@ module.exports = ctx => {
     );
       // registerTicketHandle
     api.client.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());

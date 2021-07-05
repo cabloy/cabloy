@@ -5,7 +5,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data/* , path, rootData , name*/) {
+      return async function (data/* , path, rootData , name*/) {
         // ignore if empty
         if (!data) return true;
         // ctx
