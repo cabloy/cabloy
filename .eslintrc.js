@@ -21,9 +21,7 @@ module.exports = {
     'no-unused-vars': [
       0,
       {
-        // 允许声明未使用变量
         vars: 'local',
-        // 参数不检查
         args: 'none',
       },
     ],
