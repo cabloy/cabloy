@@ -53,6 +53,12 @@ module.exports = {
         allow: ['functions', 'arrowFunctions', 'generatorFunctions', 'methods', 'generatorMethods', 'getters', 'setters', 'constructors', 'asyncFunctions', 'asyncMethods'],
       },
     ],
+    'no-constant-condition': [
+      'error',
+      {
+        checkLoops: false,
+      },
+    ],
   },
   env: {
     browser: true,

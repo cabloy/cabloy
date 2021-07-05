@@ -6,10 +6,8 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
-
     // mobile: not use
-    async signup({ user, state = 'login', userName, realName, email, mobile, password }) {
-
+    async signup({ user, state = 'login', userName, realName, email, /* mobile,*/ password }) {
       // add authsimple
       const authSimpleId = await this._addAuthSimple({ password });
 
@@ -211,11 +209,7 @@ module.exports = app => {
         },
       });
       // save
-      await this.ctx.cache.db.set(
-        `passwordReset:${token}`,
-        { userId: user.id },
-        this.ctx.config.passwordReset.timeout
-      );
+      await this.ctx.cache.db.set(`passwordReset:${token}`, { userId: user.id }, this.ctx.config.passwordReset.timeout);
     }
 
     async emailConfirm({ email, user }) {
@@ -248,11 +242,7 @@ module.exports = app => {
         },
       });
       // save
-      await this.ctx.cache.db.set(
-        `emailConfirm:${token}`,
-        { userId: user.id },
-        this.ctx.config.confirmation.timeout
-      );
+      await this.ctx.cache.db.set(`emailConfirm:${token}`, { userId: user.id }, this.ctx.config.confirmation.timeout);
     }
 
     // invoke by user clicking the link
@@ -300,7 +290,6 @@ module.exports = app => {
       const verifyFn = util.promisify(_password.verifyAgainst);
       return await verifyFn.call(_password, hash);
     }
-
   }
 
   return Auth;

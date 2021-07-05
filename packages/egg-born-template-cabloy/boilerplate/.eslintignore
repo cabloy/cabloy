@@ -1,3 +1,4 @@
 **/dist/**
 *.min.js
 miniprogram_npm
+**/assets/lib/**
