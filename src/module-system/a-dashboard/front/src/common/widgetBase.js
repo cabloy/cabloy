@@ -1,4 +1,4 @@
-export default function(Vue, bGroup) {
+export default function (Vue, bGroup) {
   // widths
   const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
   const _widthOptions = [];
@@ -95,6 +95,7 @@ export default function(Vue, bGroup) {
     },
   });
 
+  const _propHeight = bGroup ? undefined : { type: String };
   return {
     meta: {
       widget: {
@@ -120,9 +121,7 @@ export default function(Vue, bGroup) {
       widthLarge: {
         type: Number,
       },
-      height: bGroup ? undefined : {
-        type: String,
-      },
+      height: _propHeight,
     },
     data() {
       return {
@@ -146,7 +145,8 @@ export default function(Vue, bGroup) {
       widthLarge() {
         this.attrWidthLarge = this.widthLarge;
       },
-      height: bGroup ? undefined : function() {
+      height() {
+        if (bGroup) return; // do nothing
         this.attrHeight = this.height;
       },
     },
@@ -174,10 +174,9 @@ export default function(Vue, bGroup) {
       getPropsSchema() {
         return null;
       },
-      getPropSchemaExtra(propName) {
+      getPropSchemaExtra(/* propName*/) {
         return null;
       },
     },
   };
-
 }

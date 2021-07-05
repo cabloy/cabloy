@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class CMSBlock {
-    render({ md, options, block, token, index, content }) {
+    render({ md, options, /* block, token, index,*/ content }) {
       const url = md.utils.escapeHtml(content.url);
       const width = md.utils.escapeHtml(content.width || '100%');
       const height = md.utils.escapeHtml(content.height || '300px');

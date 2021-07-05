@@ -1,5 +1,4 @@
-export default function(Vue) {
-
+export default function (Vue) {
   const tooltipResizeOffset = 16;
   const tooltipOffset = 6;
   const delayTimeout = 400;
@@ -174,7 +173,6 @@ export default function(Vue) {
 
     _isMoved = true;
     e.preventDefault();
-
   }
 
   function _handeTouchResize(e) {
@@ -216,7 +214,6 @@ export default function(Vue) {
     // reset
     _touchStart = { x: touchCurrentX, y: touchCurrentY };
     e.preventDefault();
-
   }
 
   function handeTouchMove(e) {
@@ -313,7 +310,7 @@ export default function(Vue) {
     _tooltipText = '';
   }
 
-  function handeTouchEnd(e) {
+  function handeTouchEnd(/* e*/) {
     // clear delay
     if (_delayTimeoutId) {
       window.clearTimeout(_delayTimeoutId);
@@ -332,10 +329,14 @@ export default function(Vue) {
 
     // drop done
     if (_dropElement) {
-      _dragContext.onDragDone && _dragContext.onDragDone({
-        $el: _dragHandler, context: _dragContext, dragElement: _dragElement,
-        dropElement: _dropElement, dropContext: _dropContext,
-      });
+      _dragContext.onDragDone &&
+        _dragContext.onDragDone({
+          $el: _dragHandler,
+          context: _dragContext,
+          dragElement: _dragElement,
+          dropElement: _dropElement,
+          dropContext: _dropContext,
+        });
     }
 
     // clear
@@ -396,6 +397,4 @@ export default function(Vue) {
     bind,
     unbind,
   };
-
 }
-

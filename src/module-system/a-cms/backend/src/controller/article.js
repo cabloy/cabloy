@@ -1,11 +1,7 @@
-const require3 = require('require3');
-const extend = require3('extend2');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-
   class ArticleController extends app.Controller {
-
     // list
     async list() {
       // atomClass
@@ -35,8 +31,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
-
   }
   return ArticleController;
 };
-

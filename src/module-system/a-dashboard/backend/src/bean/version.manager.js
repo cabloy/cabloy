@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aDashboardProfile
@@ -84,13 +82,13 @@ module.exports = app => {
               left join aDashboardContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
-
     }
 
     async init(options) {
-      if (options.version === 1) {}
+      if (options.version === 1) {
+        // empty
+      }
 
       if (options.version === 2) {
         // add role rights
@@ -113,8 +111,7 @@ module.exports = app => {
       }
     }
 
-    async test() { }
-
+    async test() {}
   }
 
   return Version;

@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class CMSBlock {
-    render({ md, options, block, token, index, content }) {
+    render({ md, options, /* block, token, index,*/ content }) {
       content = content || {};
       content.audio = content.audio || {};
       const content2 = {

@@ -1,10 +1,9 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
+// const require3 = require('require3');
+// const uuid = require3('uuid');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
-
     constructor() {
       this._sqlProcedure = null;
     }
@@ -132,7 +131,6 @@ module.exports = ctx => {
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }
-
   }
   return MessageClass;
 };

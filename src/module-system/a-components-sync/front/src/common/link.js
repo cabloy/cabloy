@@ -39,7 +39,7 @@ export default {
       if (!module) return href;
       return this.$meta.util.combinePagePath(module.info, href);
     },
-    onLinkClick(event) {
+    onLinkClick(/* event*/) {
       if (!this.externalLink) return;
 
       const href = this.href;

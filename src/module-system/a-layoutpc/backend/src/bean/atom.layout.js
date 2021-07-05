@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -50,11 +48,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.layout.update(data);
       // update content
-      await this.ctx.model.layoutContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.layoutContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, user }) {
@@ -70,9 +73,7 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
-    }
-
+    _getMeta(/* item*/) {}
   }
 
   return Atom;

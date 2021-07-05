@@ -3,13 +3,12 @@ const _cacheMessageClassesUniform = {};
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'message');
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    async group({ /* options, user */}) {
+    async group(/* {  options, user }*/) {
       const items = this.messageClassesUniform();
       return items;
     }
@@ -39,7 +38,6 @@ module.exports = ctx => {
       }
       return items;
     }
-
   }
   return Message;
 };

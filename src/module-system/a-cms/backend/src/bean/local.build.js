@@ -17,7 +17,6 @@ const utils = require('../common/utils.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Build extends app.meta.BeanBase {
-
     constructor(ctx, atomClass) {
       super(ctx);
       this.atomClass = utils.atomClass(atomClass);
@@ -163,12 +162,9 @@ module.exports = app => {
       // language(db)
       const configLanguage = await this.getConfigLanguage({ language });
       // combine
-      return extend(true, {},
-        siteBase, theme, configSite, configLanguage,
-        {
-          language: language ? { current: language } : false,
-        }
-      );
+      return extend(true, {}, siteBase, theme, configSite, configLanguage, {
+        language: language ? { current: language } : false,
+      });
     }
 
     // theme extend
@@ -182,10 +178,7 @@ module.exports = app => {
       if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
       const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
-      return extend(true, {},
-        this._combineThemes(moduleExtend),
-        this.ctx.config.module(themeModuleName).theme
-      );
+      return extend(true, {}, this._combineThemes(moduleExtend), this.ctx.config.module(themeModuleName).theme);
     }
 
     // site<plugin<theme<site(db)<language(db)
@@ -214,16 +207,21 @@ module.exports = app => {
       // front
       site.front = {};
       // front.env
-      site.front.env = extend(true, {
-        base: site.base,
-        language: site.language,
-      }, site.env, {
-        site: {
-          serverUrl: site.serverUrl,
-          rawRootUrl: this.getUrlRawRoot(site),
-          atomClass: this.atomClass,
+      site.front.env = extend(
+        true,
+        {
+          base: site.base,
+          language: site.language,
         },
-      });
+        site.env,
+        {
+          site: {
+            serverUrl: site.serverUrl,
+            rawRootUrl: this.getUrlRawRoot(site),
+            atomClass: this.atomClass,
+          },
+        }
+      );
       // front.envs
       if (options.envs !== false) {
         const envs = await this.getFrontEnvs({ language });
@@ -254,7 +252,7 @@ module.exports = app => {
     }
     getUrlRoot(site, language) {
       const rawRoot = this.getUrlRawRoot(site);
-      return `${rawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}`;
+      return `${rawRoot}${!site.language || language === site.language.default ? '' : '/' + language}`;
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
@@ -276,7 +274,7 @@ module.exports = app => {
     }
     async getPathDist(site, language) {
       const rawDist = await this.getPathRawDist();
-      return path.join(rawDist, (!site.language || language === site.language.default) ? '' : '/' + language);
+      return path.join(rawDist, !site.language || language === site.language.default ? '' : '/' + language);
     }
     async getPathCms() {
       // cms
@@ -332,7 +330,7 @@ module.exports = app => {
       }
     }
 
-    async deleteArticle({ key, article, inner }) {
+    async deleteArticle({ /* key,*/ article, inner }) {
       // maybe not rendered
       if (!article.url) return;
       // maybe site.language is false
@@ -441,15 +439,13 @@ module.exports = app => {
 
     async _writeSitemaps({ site, articles }) {
       // xml
-      let xml =
-`<?xml version="1.0" encoding="UTF-8"?>
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
       for (const article of articles) {
         const loc = this.getUrl(site, site.language && site.language.current, article.url);
         const lastmod = moment(article.updatedAt).format();
-        xml +=
-`  <url>
+        xml += `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>
@@ -471,8 +467,7 @@ module.exports = app => {
       let xml;
       const exists = await fse.pathExists(fileName);
       if (!exists) {
-        xml =
-`<?xml version="1.0" encoding="UTF-8"?>
+        xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${loc}</loc>
@@ -486,17 +481,18 @@ module.exports = app => {
         const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
         xml = xml.replace(regexp, '');
         // append
-        xml = xml.replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        xml = xml.replace(
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
           `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
-  </url>`);
+  </url>`
+        );
       }
       // save
       await fse.writeFile(fileName, xml);
     }
-
 
     async _renderStatic({ site }) {
       // static
@@ -571,10 +567,13 @@ module.exports = app => {
       // renderAt must be updated after file rendered
       if (data.article) {
         // update renderAt
-        await this.ctx.model.query(`
+        await this.ctx.model.query(
+          `
           update aCmsArticle set renderAt=?
             where iid=? and atomId=?
-          `, [data.article.renderAt, this.ctx.instance.id, data.article.atomId]);
+          `,
+          [data.article.renderAt, this.ctx.instance.id, data.article.atomId]
+        );
       }
       // socketio publish
       if (hotloadFile) {
@@ -639,7 +638,7 @@ module.exports = app => {
       const site = data.site;
       // cache
       if (!site._cache) site._cache = {};
-      if (!site._cache[type])site._cache[type] = {};
+      if (!site._cache[type]) site._cache[type] = {};
       const cacheSha = shajs('sha256').update(items.join(',')).digest('hex');
       let urlDest;
       if (site._cache[type][cacheSha]) {
@@ -650,7 +649,7 @@ module.exports = app => {
         for (const item of items) {
           let _content;
           if (path.extname(item) === '.ejs') {
-          // data
+            // data
             data._filename = item;
             _content = await ejs.renderFile(item, data, this.getOptions());
           } else {
@@ -851,7 +850,6 @@ var env=${JSON.stringify(env, null, 2)};
         },
       };
     }
-
 
     // //////////////////////////////// build
 
@@ -1157,14 +1155,12 @@ var env=${JSON.stringify(env, null, 2)};
       let items = '';
       const languages = site.language ? site.language.items.split(',') : [null];
       for (const language of languages) {
-        items +=
-`  <sitemap>
-    <loc>${urlRawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}/sitemap.xml</loc>
+        items += `  <sitemap>
+    <loc>${urlRawRoot}${!site.language || language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
   </sitemap>
 `;
       }
-      const content =
-`<?xml version="1.0" encoding="UTF-8"?>
+      const content = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items}</sitemapindex>`;
       // write
@@ -1175,8 +1171,7 @@ ${items}</sitemapindex>`;
     async createRobots({ site }) {
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
-      const content =
-`User-agent: *
+      const content = `User-agent: *
 Allow: /
 
 Sitemap: ${urlRawRoot}/sitemapindex.xml
@@ -1330,9 +1325,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
       return envs;
     }
-
   }
 
   return Build;
 };
-

@@ -134,8 +134,7 @@ export default {
       } else if (action.name === 'workflow') {
         const flowId = item.atomFlowId;
         const url = `/a/flowtask/flow?flowId=${flowId}`;
-        ctx.$view.navigate(url, {
-        });
+        ctx.$view.navigate(url, {});
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
@@ -149,42 +148,46 @@ export default {
       return this._onActionCreateGetRoleIdOwner({ ctx, action, item }).then(roleIdOwner => {
         if (!roleIdOwner) return;
         // create
-        return ctx.$api.post('/a/base/atom/create', {
+        return ctx.$api
+          .post('/a/base/atom/create', {
+            atomClass: {
+              id: item.atomClassId,
+              module: item.module,
+              atomClassName: item.atomClassName,
+            },
+            roleIdOwner,
+            item,
+          })
+          .then(key => {
+            // event
+            ctx.$meta.eventHub.$emit('atom:action', { key, action });
+            // menu
+            if (action.menu === 1 || action.actionComponent || action.actionPath) {
+              item = ctx.$utils.extend({}, item, key);
+              // write
+              return ctx.$store.dispatch('a/base/getActions').then(actionsAll => {
+                let actionWrite = actionsAll[item.module][item.atomClassName].write;
+                actionWrite = ctx.$utils.extend({}, actionWrite);
+                return ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
+              });
+            }
+            // just return key
+            return key;
+          });
+      });
+    },
+    _onActionCreateGetAtomClassId({ ctx, /* action,*/ item }) {
+      if (item.atomClassId) return Promise.resolve(item.atomClassId);
+      return ctx.$api
+        .post('/a/base/atomClass/atomClass', {
           atomClass: {
-            id: item.atomClassId,
             module: item.module,
             atomClassName: item.atomClassName,
           },
-          roleIdOwner,
-          item,
-        }).then(key => {
-          // event
-          ctx.$meta.eventHub.$emit('atom:action', { key, action });
-          // menu
-          if (action.menu === 1 || (action.actionComponent || action.actionPath)) {
-            item = ctx.$utils.extend({}, item, key);
-            // write
-            return ctx.$store.dispatch('a/base/getActions').then(actionsAll => {
-              let actionWrite = actionsAll[item.module][item.atomClassName].write;
-              actionWrite = ctx.$utils.extend({}, actionWrite);
-              return ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
-            });
-          }
-          // just return key
-          return key;
+        })
+        .then(atomClass => {
+          return atomClass.id;
         });
-      });
-    },
-    _onActionCreateGetAtomClassId({ ctx, action, item }) {
-      if (item.atomClassId) return Promise.resolve(item.atomClassId);
-      return ctx.$api.post('/a/base/atomClass/atomClass', {
-        atomClass: {
-          module: item.module,
-          atomClassName: item.atomClassName,
-        },
-      }).then(atomClass => {
-        return atomClass.id;
-      });
     },
     _onActionCreateGetRoleIdOwner({ ctx, action, item }) {
       return this._onActionCreateGetAtomClassId({ ctx, action, item }).then(atomClassId => {
@@ -192,32 +195,36 @@ export default {
         const userAtomClassRolesPreferred = ctx.$store.getState('a/base/userAtomClassRolesPreferred');
         if (userAtomClassRolesPreferred[atomClassId]) return userAtomClassRolesPreferred[atomClassId];
         // get preferred roles
-        return ctx.$api.post('/a/base/atom/preferredRoles', {
-          atomClass: { id: atomClassId },
-        }).then(roles => {
-          if (roles.length === 0) return Promise.reject(new Error('Error'));
-          if (roles.length === 1) {
-            const roleIdOwner = roles[0].roleIdWho;
-            ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
-            return roleIdOwner;
-          }
-          return this._onActionCreateSelectPreferredRole({ ctx, action, roles }).then(roleIdOwner => {
-            if (roleIdOwner) {
+        return ctx.$api
+          .post('/a/base/atom/preferredRoles', {
+            atomClass: { id: atomClassId },
+          })
+          .then(roles => {
+            if (roles.length === 0) return Promise.reject(new Error('Error'));
+            if (roles.length === 1) {
+              const roleIdOwner = roles[0].roleIdWho;
               ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
+              return roleIdOwner;
             }
-            return roleIdOwner;
+            return this._onActionCreateSelectPreferredRole({ ctx, action, roles }).then(roleIdOwner => {
+              if (roleIdOwner) {
+                ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
+              }
+              return roleIdOwner;
+            });
           });
-        });
       });
     },
     _onActionCreateSelectPreferredRole({ ctx, action, roles }) {
       return new Promise(resolve => {
         const hostEl = ctx.$view.getHostEl();
         const targetEl = action.targetEl;
-        const buttons = [{
-          text: ctx.$text('AtomClassSelectRoleTip'),
-          label: true,
-        }];
+        const buttons = [
+          {
+            text: ctx.$text('AtomClassSelectRoleTip'),
+            label: true,
+          },
+        ];
         let resolved = false;
         function onButtonClick(roleIdOwner) {
           resolved = true;
@@ -239,9 +246,7 @@ export default {
             resolve();
           }
         }
-        actions.open()
-          .once('actionsClosed', onActionsClosed)
-          .once('popoverClosed', onActionsClosed);
+        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
       });
     },
     async _onActionSelectLocale({ ctx, action, item }) {
@@ -262,10 +267,12 @@ export default {
       return new Promise((resolve, reject) => {
         const hostEl = ctx.$view.getHostEl();
         const targetEl = action.targetEl;
-        const buttons = [{
-          text: ctx.$text('SelectLanguageTip'),
-          label: true,
-        }];
+        const buttons = [
+          {
+            text: ctx.$text('SelectLanguageTip'),
+            label: true,
+          },
+        ];
         let resolved = false;
         function onButtonClick(locale) {
           resolved = true;
@@ -284,24 +291,24 @@ export default {
           actions.destroy();
           if (!resolved) {
             resolved = true;
-            reject();
+            reject(new Error());
           }
         }
-        actions.open()
-          .once('actionsClosed', onActionsClosed)
-          .once('popoverClosed', onActionsClosed);
+        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
       });
     },
-    async _onActionSelectResourceType({ ctx, action, item }) {
+    async _onActionSelectResourceType({ ctx, action /* , item*/ }) {
       const resourceTypes = await ctx.$store.dispatch('a/base/getResourceTypes');
       // choose
       return new Promise((resolve, reject) => {
         const hostEl = ctx.$view.getHostEl();
         const targetEl = action.targetEl;
-        const buttons = [{
-          text: ctx.$text('SelectResourceTypeTip'),
-          label: true,
-        }];
+        const buttons = [
+          {
+            text: ctx.$text('SelectResourceTypeTip'),
+            label: true,
+          },
+        ];
         let resolved = false;
         function onButtonClick(locale) {
           resolved = true;
@@ -321,12 +328,10 @@ export default {
           actions.destroy();
           if (!resolved) {
             resolved = true;
-            reject();
+            reject(new Error());
           }
         }
-        actions.open()
-          .once('actionsClosed', onActionsClosed)
-          .once('popoverClosed', onActionsClosed);
+        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
       });
     },
     async _onActionEnable({ ctx, key }) {

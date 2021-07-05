@@ -1,18 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-
-    selectAtoms({
-      iid, userIdWho, tableName,
-      where, orders, page,
-      star, label,
-      comment, file,
-      count,
-      stage,
-      language, category, tag,
-      mine,
-      resource, resourceLocale,
-      mode, cms,
-    }) {
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -36,13 +24,13 @@ module.exports = ctx => {
     }
 
     _prepare_cms({ tableName, iid, mode, cms }) {
-      let _cmsField,
-        _cmsJoin,
-        _cmsWhere;
+      let _cmsField, _cmsJoin, _cmsWhere;
 
       // cms
       if (cms) {
-        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
+        _cmsField = `,${
+          tableName ? '' : 'p.createdAt,p.updatedAt,'
+        }p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {
@@ -85,35 +73,18 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let
-        _starJoin,
-        _starWhere;
+      let _starJoin, _starWhere;
 
-      let
-        _labelJoin,
-        _labelWhere;
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
+      let _labelJoin, _labelWhere;
+      let _commentField, _commentJoin, _commentWhere;
 
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
+      let _fileField, _fileJoin, _fileWhere;
 
-      let _flowField,
-        _flowJoin,
-        _flowWhere;
-
-      let _itemField,
-        _itemJoin;
+      let _itemField, _itemJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -168,8 +139,7 @@ module.exports = ctx => {
 
       // comment
       if (comment) {
-        _commentField =
-             `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
                (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
 
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
@@ -182,7 +152,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -192,9 +163,9 @@ module.exports = ctx => {
       }
 
       // flow
-      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      _flowWhere = '';
+      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      const _flowWhere = '';
 
       // tableName
       if (tableName) {
@@ -224,8 +195,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -286,26 +256,15 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
-      let _itemField,
-        _itemJoin;
+      let _commentField, _commentJoin, _commentWhere;
+      let _fileField, _fileJoin, _fileWhere;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -341,7 +300,7 @@ module.exports = ctx => {
       // comment
       if (comment) {
         _commentField =
-             ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
+          ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
         _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
       } else {
@@ -352,7 +311,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -397,8 +357,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -455,33 +414,18 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let
-        _starJoin,
-        _starWhere;
+      let _starJoin, _starWhere;
 
-      let
-        _labelJoin,
-        _labelWhere;
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
-      let _itemField,
-        _itemJoin;
+      let _labelJoin, _labelWhere;
+      let _commentField, _commentJoin, _commentWhere;
+      let _fileField, _fileJoin, _fileWhere;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -536,8 +480,7 @@ module.exports = ctx => {
 
       // comment
       if (comment) {
-        _commentField =
-             `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
                (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
 
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
@@ -550,7 +493,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -634,8 +578,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -696,31 +639,21 @@ module.exports = ctx => {
       resource = parseInt(resource);
 
       // vars
-      let _starField,
-        _labelField;
-      let _itemField,
-        _itemJoin;
+      let _starField, _labelField;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
-
-      let _flowField,
-        _flowJoin,
-        _flowWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // star
       if (userIdWho) {
-        _starField =
-          `,(select d.star from aAtomStar d where d.iid=${iid} and d.atomId=a.id and d.userId=${userIdWho}) as star`;
+        _starField = `,(select d.star from aAtomStar d where d.iid=${iid} and d.atomId=a.id and d.userId=${userIdWho}) as star`;
       } else {
         _starField = '';
       }
 
       // label
       if (userIdWho) {
-        _labelField =
-          `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
+        _labelField = `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
       } else {
         _labelField = '';
       }
@@ -738,9 +671,9 @@ module.exports = ctx => {
       }
 
       // flow
-      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      _flowWhere = '';
+      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      const _flowWhere = '';
 
       // tableName
       if (tableName) {
@@ -755,8 +688,7 @@ module.exports = ctx => {
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       // sql
-      const _sql =
-        `select ${_itemField}
+      const _sql = `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
@@ -796,8 +728,7 @@ module.exports = ctx => {
       roleIdWho = parseInt(roleIdWho);
       atomId = parseInt(atomId);
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
             where
             (
@@ -820,8 +751,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where
              (
@@ -847,8 +777,7 @@ module.exports = ctx => {
       action = parseInt(action);
 
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
             where
             (
               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
@@ -876,8 +805,7 @@ module.exports = ctx => {
         )
       `;
       // sql
-      const _sql =
-        `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
+      const _sql = `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
             left join aAtomClass c on a.atomClassId=c.id
               where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
         `;
@@ -897,13 +825,11 @@ module.exports = ctx => {
         )
       `;
       // sql
-      const _sql =
-        `select a.* from aAtomClass a
+      const _sql = `select a.* from aAtomClass a
             where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
         `;
       return _sql;
     }
-
 
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
@@ -911,8 +837,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       resourceAtomId = parseInt(resourceAtomId);
       // sql
-      const _sql =
-        `select a.id as atomId,a.atomName from aAtom a
+      const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomDisabled=0 and a.atomStage=1 and a.id=${resourceAtomId}
               and (
                 exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
@@ -926,8 +851,7 @@ module.exports = ctx => {
       iid = parseInt(iid);
       locale = ctx.model.format('?', locale);
       // sql
-      const _sql =
-        `select a.id as atomId,a.atomName from aAtom a
+      const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomStage=1 and a.atomClassId in (${atomClassIds.join(',')})
               and not exists(
                 select b.id from aResourceLocale b
@@ -963,8 +887,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aUser a
+      const _sql = `select ${_selectFields} from aUser a
           ${_where}
            (
              a.deleted=0 and a.iid=${iid}
@@ -977,11 +900,9 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };
 
 // /* backup */

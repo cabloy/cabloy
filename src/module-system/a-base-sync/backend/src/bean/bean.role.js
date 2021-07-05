@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'role');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -153,7 +152,8 @@ module.exports = ctx => {
         if (!roleIdParent || !force) return null;
         // create
         const roleId = await this._register({
-          roleName: _roleName, roleIdParent,
+          roleName: _roleName,
+          roleIdParent,
         });
         role = await this.get({ id: roleId });
         // next
@@ -214,7 +214,8 @@ module.exports = ctx => {
     // add user role
     async addUserRole({ userId, roleId }) {
       const res = await this.modelUserRole.insert({
-        userId, roleId,
+        userId,
+        roleId,
       });
       return res.insertId;
     }
@@ -222,7 +223,8 @@ module.exports = ctx => {
     async deleteUserRole({ id, userId, roleId }) {
       if (!id) {
         const item = await this.modelUserRole.get({
-          userId, roleId,
+          userId,
+          roleId,
         });
         if (!item) return;
         id = item.id;
@@ -294,7 +296,10 @@ module.exports = ctx => {
       // select
       const options = {
         where,
-        orders: [['sorting', 'asc'], ['roleName', 'asc']],
+        orders: [
+          ['sorting', 'asc'],
+          ['roleName', 'asc'],
+        ],
       };
       if (page.size !== 0) {
         options.limit = page.size;
@@ -317,26 +322,32 @@ module.exports = ctx => {
     async includes({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
         select a.*,b.roleName from aRoleInc a
           left join aRole b on a.roleIdInc=b.id
             where a.iid=? and a.roleId=?
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
     }
 
     // role rights
     async roleRights({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
             where a.iid=? and a.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -349,7 +360,8 @@ module.exports = ctx => {
     async roleSpreads({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
@@ -358,7 +370,9 @@ module.exports = ctx => {
             where d.iid=? and d.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -371,7 +385,8 @@ module.exports = ctx => {
     async atomRightsOfUser({ userId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aViewUserRightAtomClass a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
@@ -379,7 +394,9 @@ module.exports = ctx => {
             where a.iid=? and a.userIdWho=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ctx.instance.id, userId]);
+        `,
+        [ctx.instance.id, userId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -390,60 +407,81 @@ module.exports = ctx => {
 
     async _scopeRoles({ scope }) {
       if (!scope || scope.length === 0) return null;
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
-            `, [ctx.instance.id]);
+            `,
+        [ctx.instance.id]
+      );
     }
 
     async getUserRolesDirect({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aUserRole b on a.id=b.roleId
             where a.iid=? and b.userId=?
-        `, [ctx.instance.id, userId]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async getUserRolesParent({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aViewUserRoleRef b on a.id=b.roleIdParent
             where a.iid=? and b.userId=?
-        `, [ctx.instance.id, userId]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async getUserRolesExpand({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aViewUserRoleExpand b on a.id=b.roleIdBase
             where a.iid=? and b.userId=?
-        `, [ctx.instance.id, userId]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async userInRoleDirect({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aUserRole a
           where a.iid=? and a.userId=? and a.roleId=?
-        `, [ctx.instance.id, userId, roleId]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
     async userInRoleParent({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aViewUserRoleRef a
           where a.iid=? and a.userId=? and a.roleIdParent=?
-        `, [ctx.instance.id, userId, roleId]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
     async userInRoleExpand({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aViewUserRoleExpand a
           where a.iid=? and a.userId=? and a.roleIdBase=?
-        `, [ctx.instance.id, userId, roleId]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
@@ -459,13 +497,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aUserRole b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleId=?
             order by a.userName
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -481,13 +522,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aViewUserRoleRef b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
             order by a.userName
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -503,13 +547,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aViewUserRoleExpand b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdBase=?
             order by a.userName
             ${_limit}
-        `, [ctx.instance.id, roleId]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -578,7 +625,7 @@ module.exports = ctx => {
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
       // module
       module = module || this.moduleName;
-      const _module = ctx.app.meta.modules[module];
+      // const _module = ctx.app.meta.modules[module];
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
       // roleRights
@@ -602,7 +649,8 @@ module.exports = ctx => {
         const actionCode = ctx.bean.atomAction.parseActionCode({
           action: roleRight.action,
           atomClass: {
-            module, atomClassName,
+            module,
+            atomClassName,
           },
         });
         await this.addRoleRight({
@@ -621,9 +669,7 @@ module.exports = ctx => {
     }
 
     async _buildRolesAdd({ iid, roleIdParent }, progress) {
-      const list = await ctx.model.query(
-        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
-      );
+      const list = await ctx.model.query(`select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`);
       for (const item of list) {
         // info
         const roleId = item.id;
@@ -639,8 +685,10 @@ module.exports = ctx => {
         // progress
         if (progress.progressId) {
           await ctx.bean.progress.update({
-            progressId: progress.progressId, progressNo: 0,
-            total: progress.total, progress: progress.progress++,
+            progressId: progress.progressId,
+            progressNo: 0,
+            total: progress.total,
+            progress: progress.progress++,
             text: item.roleName,
           });
         }
@@ -657,9 +705,7 @@ module.exports = ctx => {
              values(${iid},${roleId},${roleIdParent},${level})
           `
         );
-        const item = await ctx.model.queryOne(
-          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
-        );
+        const item = await ctx.model.queryOne(`select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`);
         if (!item || !item.roleIdParent) {
           level = -1;
         } else {
@@ -674,7 +720,8 @@ module.exports = ctx => {
         `insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
             select ${iid},${roleId},a.roleIdInc,a.roleId from aRoleInc a
               where a.iid=${iid} and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=${iid} and b.roleId=${roleId})
-        `);
+        `
+      );
     }
 
     async _buildRoleExpand({ iid, roleId }) {
@@ -682,14 +729,15 @@ module.exports = ctx => {
         `insert into aRoleExpand(iid,roleId,roleIdBase)
             select a.iid,a.roleId,a.roleIdParent from aRoleRef a
               where a.iid=${iid} and a.roleId=${roleId}
-        `);
+        `
+      );
       await ctx.model.query(
         `insert into aRoleExpand(iid,roleId,roleIdBase)
             select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
               where a.iid=${iid} and a.roleId=${roleId}
-        `);
+        `
+      );
     }
-
   }
 
   return Role;

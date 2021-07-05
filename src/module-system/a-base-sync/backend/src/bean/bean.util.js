@@ -6,7 +6,6 @@ const utils = require('../common/utils.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util extends app.meta.BeanBase {
-
     get localConfig() {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
@@ -44,7 +43,7 @@ module.exports = app => {
       }
       date = date || new Date();
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-      if (typeof (date) !== 'object') date = new Date(date);
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).utcOffset(timezone).format(fmt);
     }
 
@@ -61,8 +60,8 @@ module.exports = app => {
     }
 
     // todo: load locales resources and then format
-    fromNow(date, locale) {
-      if (typeof (date) !== 'object') date = new Date(date);
+    fromNow(date /* , locale*/) {
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).fromNow();
     }
 
@@ -146,7 +145,6 @@ module.exports = app => {
     escapeURL(str) {
       return utils.escapeURL(str);
     }
-
   }
 
   return Util;

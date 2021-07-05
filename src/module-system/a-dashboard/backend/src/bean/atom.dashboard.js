@@ -2,9 +2,7 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -55,11 +53,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.dashboard.update(data);
       // update content
-      await this.ctx.model.dashboardContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.dashboardContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, user }) {
@@ -75,9 +78,7 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
-    }
-
+    _getMeta(/* item*/) {}
   }
 
   return Atom;

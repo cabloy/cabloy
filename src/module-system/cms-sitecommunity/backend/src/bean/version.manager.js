@@ -1,9 +1,9 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
+        // empty
       }
     }
 
@@ -44,7 +44,6 @@ module.exports = app => {
           { roleName: 'root', action: 'read', scopeNames: 0 },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
-
       }
     }
 
@@ -75,7 +74,6 @@ module.exports = app => {
         categoryIds[item.categoryName] = categoryId;
       }
     }
-
   }
 
   return Version;

@@ -4,9 +4,7 @@ const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 
 module.exports = app => {
-
   class Comment extends app.Service {
-
     async list({ key, options, user }) {
       const _options = {};
       // where
@@ -31,13 +29,11 @@ module.exports = app => {
       return await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
     }
 
-    async item({ key, data: { commentId }, user }) {
+    async item({ /* key,*/ data: { commentId }, user }) {
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
          where a.iid=? and a.deleted=0 and a.id=?`;
       // select
-      const list = await this.ctx.model.query(sql,
-        [this.ctx.instance.id, user.id, this.ctx.instance.id, commentId]
-      );
+      const list = await this.ctx.model.query(sql, [this.ctx.instance.id, user.id, this.ctx.instance.id, commentId]);
       return list[0];
     }
 
@@ -80,9 +76,7 @@ module.exports = app => {
 
     async save_add({ key, data: { replyId, content }, user }) {
       // sorting
-      const list = await this.ctx.model.query(
-        'select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?',
-        [this.ctx.instance.id, key.atomId]);
+      const list = await this.ctx.model.query('select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?', [this.ctx.instance.id, key.atomId]);
       const sorting = (list[0].sorting || 0) + 1;
       // reply
       let reply;
@@ -92,8 +86,7 @@ module.exports = app => {
       // replyUserId
       const replyUserId = reply ? reply.userId : 0;
       // replyContent
-      const replyContent = !reply ? '' :
-        this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
+      const replyContent = !reply ? '' : this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
       // html
       const html = this._renderContent({
         content,
@@ -132,7 +125,7 @@ module.exports = app => {
       // comment
       const item = await this.ctx.model.comment.get({ id: commentId });
       // check right
-      let canDeleted = (key.atomId === item.atomId && item.userId === user.id);
+      let canDeleted = key.atomId === item.atomId && item.userId === user.id;
       if (!canDeleted) {
         canDeleted = await this.ctx.bean.function.checkRightFunction({
           function: { module: 'a-base', name: 'deleteComment' },
@@ -193,7 +186,8 @@ module.exports = app => {
         action: 'heart',
         atomId: key.atomId,
         commentId,
-        heart, heartCount,
+        heart,
+        heartCount,
       };
     }
 
@@ -308,7 +302,6 @@ ${sep}
     _trimHtml(html) {
       return trimHtml(html, this.ctx.config.comment.trim);
     }
-
   }
 
   return Comment;

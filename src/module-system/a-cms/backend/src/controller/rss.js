@@ -1,7 +1,6 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class RSSController extends app.Controller {
-
     async feed() {
       // params
       //   module
@@ -15,9 +14,7 @@ module.exports = app => {
       // options
       const options = {
         language,
-        orders: [
-          ['a.updatedAt', 'desc'],
-        ],
+        orders: [['a.updatedAt', 'desc']],
         page: { index: 0 },
         mode: 'default',
       };
@@ -33,8 +30,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[${site.base.title}]]></title>
     <link>${build.getUrl(site, language, 'index.html')}</link>
@@ -43,8 +39,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const article of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -65,8 +60,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -88,9 +82,7 @@ module.exports = app => {
       const atomClass = { module, atomClassName };
       // options
       const options = {
-        orders: [
-          ['h_updatedAt', 'desc'],
-        ],
+        orders: [['h_updatedAt', 'desc']],
         page: { index: 0 },
       };
       // select
@@ -105,8 +97,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments for ${site.base.title}]]></title>
     <link>${build.getUrl(site, language, 'index.html')}</link>
@@ -115,8 +106,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -136,8 +126,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -157,9 +146,7 @@ module.exports = app => {
       const language = article.atomLanguage;
       // options
       const options = {
-        orders: [
-          ['updatedAt', 'desc'],
-        ],
+        orders: [['updatedAt', 'desc']],
         page: { index: 0 },
       };
       const res = await this.ctx.performAction({
@@ -178,8 +165,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments on: ${article.atomName}]]></title>
     <link>${build.getUrl(site, language, article.url)}</link>
@@ -188,8 +174,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -209,8 +194,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -219,8 +203,6 @@ module.exports = app => {
       this.ctx.body = feed;
       this.ctx.set('content-type', 'application/rss+xml; charset=UTF-8');
     }
-
   }
   return RSSController;
 };
-
