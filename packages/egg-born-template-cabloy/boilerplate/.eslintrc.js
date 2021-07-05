@@ -59,6 +59,15 @@ module.exports = {
         checkLoops: false,
       },
     ],
+    'one-var-declaration-per-line': [0],
+    'space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always',
+      },
+    ],
   },
   env: {
     browser: true,
