@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -64,7 +62,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;
