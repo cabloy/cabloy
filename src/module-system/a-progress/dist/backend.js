@@ -10,7 +10,6 @@ const uuid = require3('uuid');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Progress extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'progress');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -117,7 +116,6 @@ module.exports = ctx => {
         },
       });
     }
-
   }
   return Progress;
 };
@@ -129,9 +127,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // aProgress
@@ -161,15 +157,11 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
-
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -212,8 +204,7 @@ module.exports = appInfo => {
   const config = {};
 
   // middlewares
-  config.middlewares = {
-  };
+  config.middlewares = {};
 
   return config;
 };
@@ -273,7 +264,6 @@ module.exports = app => {
 
 module.exports = app => {
   class ProgressController extends app.Controller {
-
     async check() {
       const res = await this.service.progress.check({
         progressId: this.ctx.request.body.progressId,
@@ -298,7 +288,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return ProgressController;
 };
@@ -329,7 +318,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -354,7 +342,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -369,15 +356,12 @@ module.exports = app => {
   const socketioProgress = __webpack_require__(962)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     socketio: {
       messages: {
@@ -441,30 +425,36 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Progress extends app.Service {
-
     async check({ progressId, counter, user }) {
-      return await this.ctx.model.queryOne(`
+      return await this.ctx.model.queryOne(
+        `
         select * from aProgress a
           where a.iid=? and a.progressId=? and a.counter>? and a.userId=?
-        `, [ this.ctx.instance.id, progressId, counter, user.id ]);
+        `,
+        [this.ctx.instance.id, progressId, counter, user.id]
+      );
     }
 
     async abort({ progressId, user }) {
-      await this.ctx.model.query(`
+      await this.ctx.model.query(
+        `
         update aProgress set abort=1
           where iid=? and progressId=? and userId=?
-        `, [ this.ctx.instance.id, progressId, user.id ]);
+        `,
+        [this.ctx.instance.id, progressId, user.id]
+      );
     }
 
     async delete({ progressId, user }) {
-      await this.ctx.model.query(`
+      await this.ctx.model.query(
+        `
         delete from aProgress
           where iid=? and progressId=? and userId=?
-        `, [ this.ctx.instance.id, progressId, user.id ]);
+        `,
+        [this.ctx.instance.id, progressId, user.id]
+      );
     }
-
   }
 
   return Progress;
@@ -492,7 +482,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

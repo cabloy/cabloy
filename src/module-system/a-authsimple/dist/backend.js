@@ -149,7 +149,6 @@ module.exports = password;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       const modelAuthSimple = ctx.model.module(moduleInfo.relativeName).authSimple;
@@ -157,20 +156,13 @@ module.exports = ctx => {
       const authSimple = await modelAuthSimple.get({ userId: data.userIdFrom });
       if (authSimple) {
         // delete old record
-        await ctx.model.query(
-          'delete from aAuthSimple where deleted=0 and iid=? and userId=?',
-          [ ctx.instance.id, data.userIdTo ]
-        );
+        await ctx.model.query('delete from aAuthSimple where deleted=0 and iid=? and userId=?', [ctx.instance.id, data.userIdTo]);
         // update
-        await ctx.model.query(
-          'update aAuthSimple a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
-          [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
-        );
+        await ctx.model.query('update aAuthSimple a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
       }
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -184,7 +176,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aStatus
@@ -215,10 +206,7 @@ module.exports = app => {
       }
     }
 
-    async test() {
-
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -257,8 +245,7 @@ module.exports = app => {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
-  const config = {
-  };
+  const config = {};
 
   // defaultPassword
   config.defaultPassword = '123456';
@@ -336,8 +323,7 @@ module.exports = {
 //   subject
 const confirmationEmailSubject = '[{{siteName}}] Account Confirmation';
 //   body
-const confirmationEmailBody =
-`
+const confirmationEmailBody = `
 Hi {{userName}},
 
 Welcome to join us. Please click this link to confirm your email:
@@ -352,8 +338,7 @@ Regards,
 //   subject
 const passwordResetEmailSubject = '[{{siteName}}] Password Reset';
 //   body
-const passwordResetEmailBody =
-`
+const passwordResetEmailBody = `
 Hi {{userName}},
 
 To reset your password, visit the following address:
@@ -385,8 +370,7 @@ module.exports = {
 //   subject
 const confirmationEmailSubject = '[{{siteName}}] 账号确认';
 //   body
-const confirmationEmailBody =
-`
+const confirmationEmailBody = `
 您好，{{userName}}，
 
 欢迎加入我们。请点击以下链接验证您的邮件：
@@ -401,8 +385,7 @@ const confirmationEmailBody =
 //   subject
 const passwordResetEmailSubject = '[{{siteName}}] 重置密码';
 //   body
-const passwordResetEmailBody =
-`
+const passwordResetEmailBody = `
 您好，{{userName}}，
 
 请点击以下链接重置密码：
@@ -487,15 +470,18 @@ module.exports = app => {
           mode: 'direct',
           component: 'signin',
         },
-        config: {
-        },
+        config: {},
         handler: app => {
           return {
             strategy,
             callback: (req, body, done) => {
-              verify(req.ctx, body).then(user => {
-                app.passport.doVerify(req, user, done);
-              }).catch(err => { done(err); });
+              verify(req.ctx, body)
+                .then(user => {
+                  app.passport.doVerify(req, user, done);
+                })
+                .catch(err => {
+                  done(err);
+                });
             },
           };
         },
@@ -518,7 +504,9 @@ function Strategy(options, verify) {
     verify = options;
     options = {};
   }
-  if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
+  if (!verify) {
+    throw new TypeError('LocalStrategy requires a verify callback');
+  }
 
   passport.Strategy.call(this);
   this.name = 'simple';
@@ -531,7 +519,7 @@ function Strategy(options, verify) {
  */
 util.inherits(Strategy, passport.Strategy);
 
-Strategy.prototype.authenticate = function(req) {
+Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
 
@@ -543,8 +531,12 @@ Strategy.prototype.authenticate = function(req) {
 
   // verified
   function verified(err, user, info) {
-    if (err) { return self.error(err); }
-    if (!user) { return self.fail(info); }
+    if (err) {
+      return self.error(err);
+    }
+    if (!user) {
+      return self.fail(info);
+    }
     req.ctx.success(user);
     self.success(user, info);
   }
@@ -575,7 +567,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (res && res.id !== ctx.state.user.agent.id) {
@@ -595,7 +587,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (!res) {
@@ -783,7 +775,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async signin() {
       // data: { auth, password, rememberMe }
       const data = this.ctx.request.body.data;
@@ -798,7 +789,11 @@ module.exports = app => {
       const res = await this.service.auth.signup({
         user: this.ctx.state.user.agent,
         state,
-        userName, realName, email, mobile, password,
+        userName,
+        realName,
+        email,
+        mobile,
+        password,
       });
       this.ctx.success(res);
     }
@@ -839,8 +834,6 @@ module.exports = app => {
       await this.service.auth.emailConfirmation({ token });
       // this.ctx.success();
     }
-
-
   }
   return AuthController;
 };
@@ -956,13 +949,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AuthSimple extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAuthSimple', options: { disableDeleted: true } });
     }
-
   }
 
   return AuthSimple;
@@ -987,34 +977,39 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = [
-  { method: 'post', path: 'auth/signin', controller: 'auth', middlewares: 'captchaVerify',
+  {
+    method: 'post',
+    path: 'auth/signin',
+    controller: 'auth',
+    middlewares: 'captchaVerify',
     meta: {
       captchaVerify: { scene: { name: 'signin' } },
     },
   },
-  { method: 'post', path: 'auth/signup', controller: 'auth', middlewares: 'captchaVerify,validate',
+  {
+    method: 'post',
+    path: 'auth/signup',
+    controller: 'auth',
+    middlewares: 'captchaVerify,validate',
     meta: {
       captchaVerify: { scene: { name: 'signup' } },
       validate: { validator: 'signup' },
     },
   },
-  { method: 'post', path: 'auth/passwordChange', controller: 'auth', middlewares: 'captchaVerify,validate',
+  {
+    method: 'post',
+    path: 'auth/passwordChange',
+    controller: 'auth',
+    middlewares: 'captchaVerify,validate',
     meta: {
       captchaVerify: { scene: { name: 'passwordChange' } },
       validate: { validator: 'passwordChange' },
     },
   },
-  { method: 'post', path: 'auth/passwordForgot', controller: 'auth', middlewares: 'validate',
-    meta: { validate: { validator: 'passwordForgot' } },
-  },
-  { method: 'post', path: 'auth/passwordReset', controller: 'auth', middlewares: 'validate',
-    meta: { validate: { validator: 'passwordReset' } },
-  },
-  { method: 'post', path: 'auth/emailConfirm', controller: 'auth', middlewares: 'validate',
-    meta: { validate: { validator: 'emailConfirm' } },
-  },
+  { method: 'post', path: 'auth/passwordForgot', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'passwordForgot' } } },
+  { method: 'post', path: 'auth/passwordReset', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'passwordReset' } } },
+  { method: 'post', path: 'auth/emailConfirm', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'emailConfirm' } } },
   { method: 'get', path: 'auth/emailConfirmation', controller: 'auth' },
-
 ];
 
 
@@ -1031,10 +1026,8 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
-
     // mobile: not use
-    async signup({ user, state = 'login', userName, realName, email, mobile, password }) {
-
+    async signup({ user, state = 'login', userName, realName, email, /* mobile,*/ password }) {
       // add authsimple
       const authSimpleId = await this._addAuthSimple({ password });
 
@@ -1236,11 +1229,7 @@ module.exports = app => {
         },
       });
       // save
-      await this.ctx.cache.db.set(
-        `passwordReset:${token}`,
-        { userId: user.id },
-        this.ctx.config.passwordReset.timeout
-      );
+      await this.ctx.cache.db.set(`passwordReset:${token}`, { userId: user.id }, this.ctx.config.passwordReset.timeout);
     }
 
     async emailConfirm({ email, user }) {
@@ -1273,11 +1262,7 @@ module.exports = app => {
         },
       });
       // save
-      await this.ctx.cache.db.set(
-        `emailConfirm:${token}`,
-        { userId: user.id },
-        this.ctx.config.confirmation.timeout
-      );
+      await this.ctx.cache.db.set(`emailConfirm:${token}`, { userId: user.id }, this.ctx.config.confirmation.timeout);
     }
 
     // invoke by user clicking the link
@@ -1325,7 +1310,6 @@ module.exports = app => {
       const verifyFn = util.promisify(_password.verifyAgainst);
       return await verifyFn.call(_password, hash);
     }
-
   }
 
   return Auth;
@@ -1349,7 +1333,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("crypto");;
+module.exports = require("crypto");
 
 /***/ }),
 
@@ -1357,7 +1341,7 @@ module.exports = require("crypto");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ }),
 
@@ -1365,7 +1349,7 @@ module.exports = require("require3");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("util");;
+module.exports = require("util");
 
 /***/ })
 

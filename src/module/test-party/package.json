@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "4.4.17",
+  "version": "4.4.18",
   "title": "Party Test",
   "eggBornModule": {
     "fileVersion": 1,
@@ -23,9 +23,9 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.1",
+    "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
     "p-map": "^3.0.0",
-    "require3": "^2.0.8"
+    "require3": "^2.0.9"
   }
 }

@@ -35,8 +35,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -44,8 +43,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -65,12 +63,10 @@ module.exports = {
 
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async list() {
       const res = await this.service.auth.list();
       this.ctx.success(res);
     }
-
   }
   return AuthController;
 };
@@ -103,7 +99,7 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
-module.exports = (app,module) => {
+module.exports = (app, module) => {
   // controllers
   const controllers = __webpack_require__(95)(app);
   return {
@@ -114,7 +110,6 @@ module.exports = (app,module) => {
     locales,
     errors,
   };
-
 };
 
 
@@ -135,15 +130,16 @@ module.exports = [
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async list() {
       // list
-      const list = await this.ctx.model.query(`
+      const list = await this.ctx.model.query(
+        `
         select a.id, a.module,a.providerName from aAuthProvider a
           where a.iid=? and a.disabled=0
-        `, [ this.ctx.instance.id ]);
+        `,
+        [this.ctx.instance.id]
+      );
       // list map
       const listMap = {};
       // meta
@@ -174,7 +170,6 @@ module.exports = app => {
       // ok
       return res;
     }
-
   }
 
   return Auth;

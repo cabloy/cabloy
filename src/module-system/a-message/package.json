@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-message",
-  "version": "4.0.15",
+  "version": "4.0.16",
   "title": "Messages",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,8 +23,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.1",
+    "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
-    "require3": "^2.0.8"
+    "require3": "^2.0.9"
   }
 }

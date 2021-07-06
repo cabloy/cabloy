@@ -8,9 +8,7 @@ const require3 = __webpack_require__(718);
 const uuid = require3('uuid');
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -61,11 +59,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.dashboard.update(data);
       // update content
-      await this.ctx.model.dashboardContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.dashboardContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, user }) {
@@ -81,9 +84,7 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
-    }
-
+    _getMeta(/* item*/) {}
   }
 
   return Atom;
@@ -96,9 +97,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aDashboardProfile
@@ -181,13 +180,13 @@ module.exports = app => {
               left join aDashboardContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
-
     }
 
     async init(options) {
-      if (options.version === 1) {}
+      if (options.version === 1) {
+        // empty
+      }
 
       if (options.version === 2) {
         // add role rights
@@ -210,8 +209,7 @@ module.exports = app => {
       }
     }
 
-    async test() { }
-
+    async test() {}
   }
 
   return Version;
@@ -261,8 +259,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -368,10 +365,7 @@ const dashboardDefault = __webpack_require__(237);
 const dashboardHome = __webpack_require__(224);
 
 module.exports = app => {
-  const dashboards = [
-    dashboardDefault(app),
-    dashboardHome(app),
-  ];
+  const dashboards = [dashboardDefault(app), dashboardHome(app)];
   return dashboards;
 };
 
@@ -493,7 +487,6 @@ module.exports = app => {
 
 module.exports = app => {
   class DashboardController extends app.Controller {
-
     async itemByKey() {
       const res = await this.service.dashboard.itemByKey({
         atomStaticKey: this.ctx.request.body.atomStaticKey,
@@ -569,7 +562,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return DashboardController;
 };
@@ -600,7 +592,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -625,7 +616,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -797,22 +787,14 @@ module.exports = app => {
   const routes = [
     // dashboard
     { method: 'post', path: 'dashboard/itemByKey', controller: 'dashboard' },
-    { method: 'post', path: 'dashboard/item', controller: 'dashboard',
-      meta: { right: { type: 'resource', useKey: true } },
-    },
+    { method: 'post', path: 'dashboard/item', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
     { method: 'post', path: 'dashboard/loadItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/saveItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/changeItemUserName', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/deleteItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
-    { method: 'post', path: 'dashboard/createItemUser', controller: 'dashboard',
-      meta: { right: { type: 'resource', useKey: true } },
-    },
-    { method: 'post', path: 'dashboard/itemUsers', controller: 'dashboard',
-      meta: { right: { type: 'resource', useKey: true } },
-    },
-    { method: 'post', path: 'dashboard/changeItemUserDefault', controller: 'dashboard',
-      meta: { right: { type: 'resource', useKey: true } },
-    },
+    { method: 'post', path: 'dashboard/createItemUser', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
+    { method: 'post', path: 'dashboard/itemUsers', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
+    { method: 'post', path: 'dashboard/changeItemUserDefault', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
   ];
   return routes;
 };
@@ -826,7 +808,6 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Dashboard extends app.Service {
-
     get atomClass() {
       return {
         module: moduleInfo.relativeName,
@@ -870,7 +851,8 @@ module.exports = app => {
       }
       // get system
       const dashboardSystem = await this.ctx.bean.resource.read({
-        key: { atomId: dashboardAtomId }, user,
+        key: { atomId: dashboardAtomId },
+        user,
       });
       // ok
       return { dashboardSystem };
@@ -884,21 +866,31 @@ module.exports = app => {
     }
 
     async saveItemUser({ dashboardUserId, content, user }) {
-      await this.ctx.model.dashboardUser.update({
-        content,
-      }, { where: {
-        id: dashboardUserId,
-        userId: user.id,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          content,
+        },
+        {
+          where: {
+            id: dashboardUserId,
+            userId: user.id,
+          },
+        }
+      );
     }
 
     async changeItemUserName({ dashboardUserId, dashboardName, user }) {
-      await this.ctx.model.dashboardUser.update({
-        dashboardName,
-      }, { where: {
-        id: dashboardUserId,
-        userId: user.id,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardName,
+        },
+        {
+          where: {
+            id: dashboardUserId,
+            userId: user.id,
+          },
+        }
+      );
     }
 
     async deleteItemUser({ dashboardUserId, user }) {
@@ -915,12 +907,17 @@ module.exports = app => {
       // content
       const dashboardContent = await this.ctx.model.dashboardContent.get({ atomId: dashboardAtomId });
       // update old default
-      await this.ctx.model.dashboardUser.update({
-        dashboardDefault: 0,
-      }, { where: {
-        userId: user.id,
-        dashboardAtomId,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardDefault: 0,
+        },
+        {
+          where: {
+            userId: user.id,
+            dashboardAtomId,
+          },
+        }
+      );
       // insert
       const res = await this.ctx.model.dashboardUser.insert({
         userId: user.id,
@@ -937,28 +934,32 @@ module.exports = app => {
 
     async itemUsers({ dashboardAtomId, user }) {
       return await this.ctx.model.dashboardUser.select({
-        columns: [ 'id', 'createdAt', 'updatedAt', 'deleted', 'iid', 'userId', 'dashboardDefault', 'dashboardAtomId', 'dashboardName' ],
+        columns: ['id', 'createdAt', 'updatedAt', 'deleted', 'iid', 'userId', 'dashboardDefault', 'dashboardAtomId', 'dashboardName'],
         where: {
           userId: user.id,
           dashboardAtomId,
         },
-        orders: [[ 'dashboardName', 'asc' ]],
+        orders: [['dashboardName', 'asc']],
       });
     }
 
     async changeItemUserDefault({ dashboardAtomId, dashboardUserId, user }) {
-      await this.ctx.model.dashboardUser.update({
-        dashboardDefault: 0,
-      }, { where: {
-        userId: user.id,
-        dashboardAtomId,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardDefault: 0,
+        },
+        {
+          where: {
+            userId: user.id,
+            dashboardAtomId,
+          },
+        }
+      );
       await this.ctx.model.dashboardUser.update({
         id: dashboardUserId,
         dashboardDefault: 1,
       });
     }
-
   }
 
   return Dashboard;
@@ -986,7 +987,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

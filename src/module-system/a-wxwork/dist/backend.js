@@ -7,53 +7,65 @@
 const require3 = __webpack_require__(718);
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
 const WechatAPI = require3('@zhennann/co-wechat-api');
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  return function() {
-    return new Proxy({}, {
-      get(obj, prop) {
-        if (obj[prop]) return obj[prop];
-        if (prop === 'app') {
-          // app
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                if (prop === 'mini') {
-                  // app.mini
-                  obj[prop] = new Proxy({}, {
-                    get(obj, prop) {
-                      if (!obj[prop]) {
-                        obj[prop] = _createWxworkApiApp({ appName: prop, mini: true });
-                      }
-                      return obj[prop];
-                    },
-                  });
-                } else {
-                  // others
-                  obj[prop] = _createWxworkApiApp({ appName: prop });
-                }
+  return function () {
+    return new Proxy(
+      {},
+      {
+        get(obj, prop) {
+          if (obj[prop]) return obj[prop];
+          if (prop === 'app') {
+            // app
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    if (prop === 'mini') {
+                      // app.mini
+                      obj[prop] = new Proxy(
+                        {},
+                        {
+                          get(obj, prop) {
+                            if (!obj[prop]) {
+                              obj[prop] = _createWxworkApiApp({ appName: prop, mini: true });
+                            }
+                            return obj[prop];
+                          },
+                        }
+                      );
+                    } else {
+                      // others
+                      obj[prop] = _createWxworkApiApp({ appName: prop });
+                    }
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'mini') {
-          // mini
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createWxworkApiMini({ sceneShort: prop });
+            );
+          } else if (prop === 'mini') {
+            // mini
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createWxworkApiMini({ sceneShort: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'util') {
-          // util
-          obj[prop] = _createWxworkApiUtil();
-        }
-        return obj[prop];
-      },
-    });
+            );
+          } else if (prop === 'util') {
+            // util
+            obj[prop] = _createWxworkApiUtil();
+          }
+          return obj[prop];
+        },
+      }
+    );
   };
 
   function _createWxworkApiApp({ appName, mini }) {
@@ -61,12 +73,14 @@ module.exports = function(ctx) {
     const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
     const configApp = mini ? config.minis[appName] : config.apps[appName];
     // api
-    const api = new WxworkAPI.CorpAPI(config.corpid, configApp.secret,
-      async function() {
+    const api = new WxworkAPI.CorpAPI(
+      config.corpid,
+      configApp.secret,
+      async function () {
         const cacheKey = `wxwork-token:${appName || ''}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `wxwork-token:${appName || ''}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -75,13 +89,13 @@ module.exports = function(ctx) {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -99,12 +113,14 @@ module.exports = function(ctx) {
     const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
     const configMini = config.minis[sceneShort];
     // api
-    const api = new WechatAPI(configMini.appID, configMini.appSecret,
-      async function() {
+    const api = new WechatAPI(
+      configMini.appID,
+      configMini.appSecret,
+      async function () {
         const cacheKey = `wxworkmini-token:${sceneShort}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `wxworkmini-token:${sceneShort}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -113,13 +129,13 @@ module.exports = function(ctx) {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -130,11 +146,11 @@ module.exports = function(ctx) {
     );
     // registerSessionKeyHandle
     api.registerSessionKeyHandle(
-      async function() {
+      async function () {
         const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(sessionKey) {
+      async function (sessionKey) {
         const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
         await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
       }
@@ -155,7 +171,7 @@ module.exports = function(ctx) {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = (provider.providerName === item) || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
+          const ok = provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -163,7 +179,6 @@ module.exports = function(ctx) {
       },
     };
   }
-
 };
 
 
@@ -175,18 +190,13 @@ module.exports = function(ctx) {
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       // aWxworkMember
-      await ctx.model.query(
-        'update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?',
-        [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
-      );
+      await ctx.model.query('update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -203,7 +213,6 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   class eventBean {
-
     async execute(context, next) {
       const info = context.data.info;
       const provider = info.user && info.user.provider;
@@ -221,7 +230,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -236,14 +244,13 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // userIds / roleIds
       const userIds = content.userIds;
       const roleIds = content.roleIds;
       // message
       const message = {
-        ... content.data,
+        ...content.data,
       };
       // agentid
       const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
@@ -253,7 +260,7 @@ module.exports = ctx => {
         const modelMember = ctx.model.module(moduleInfo.relativeName).member;
         const list = await modelMember.select({
           where: { userId: userIds },
-          columns: [ 'memberId' ],
+          columns: ['memberId'],
         });
         message.touser = list.map(item => item.memberId).join('|');
       }
@@ -262,7 +269,7 @@ module.exports = ctx => {
         const modelDepartment = ctx.model.module(moduleInfo.relativeName).department;
         const list = await modelDepartment.select({
           where: { roleId: roleIds },
-          columns: [ 'departmentId' ],
+          columns: ['departmentId'],
         });
         message.toparty = list.map(item => item.departmentId).join('|');
       }
@@ -271,7 +278,6 @@ module.exports = ctx => {
       // done
       return true;
     }
-
   }
   return IOChannel;
 };
@@ -302,7 +308,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       const queueAction = data.queueAction;
@@ -312,7 +317,6 @@ module.exports = app => {
         await this.ctx.service.contacts.queueChangeContact(data);
       }
     }
-
   }
 
   return Queue;
@@ -325,12 +329,9 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
-
         let sql;
 
         // create table: aWxworkDepartment
@@ -388,16 +389,12 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -466,13 +463,24 @@ module.exports = app => {
 
 const _scenes = {
   wxwork: {
-    scene: 'wxwork', authProvider: 'wxwork', title: 'Wechat Work', client: 'wxwork', disableAssociate: false,
+    scene: 'wxwork',
+    authProvider: 'wxwork',
+    title: 'Wechat Work',
+    client: 'wxwork',
+    disableAssociate: false,
   },
   wxworkweb: {
-    scene: 'wxworkweb', authProvider: 'wxworkweb', title: 'Wechat Work Web', client: 'wxworkweb', disableAssociate: false,
+    scene: 'wxworkweb',
+    authProvider: 'wxworkweb',
+    title: 'Wechat Work Web',
+    client: 'wxworkweb',
+    disableAssociate: false,
   },
   wxworkmini: {
-    scene: 'wxworkmini', authProvider: 'wxworkmini', title: 'Wechat Work Miniprogram', disableAssociate: true,
+    scene: 'wxworkmini',
+    authProvider: 'wxworkmini',
+    title: 'Wechat Work Miniprogram',
+    disableAssociate: true,
   },
 };
 
@@ -529,7 +537,7 @@ module.exports = {
     });
   },
   buildXML({ xml, cdata = true, headless = true, rootName = 'xml' }) {
-    return (new xml2js.Builder({ cdata, headless, rootName })).buildObject(xml);
+    return new xml2js.Builder({ cdata, headless, rootName }).buildObject(xml);
   },
 };
 
@@ -544,10 +552,9 @@ const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = __webpack_require__(591);
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WxworkHelper {
-
     getSceneInfo(scene) {
       return authProviderScenes.getScene(scene);
     }
@@ -613,10 +620,7 @@ module.exports = function(ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
-        [ ctx.instance.id, providerItem.id, profileId ]
-      );
+      const authItems = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?', [ctx.instance.id, providerItem.id, profileId]);
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -643,10 +647,7 @@ module.exports = function(ctx) {
         authUserId = authItem.userId;
       }
       // check if has userId for memberId
-      const _authOthers = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
-        [ ctx.instance.id, profileId, authId ]
-      );
+      const _authOthers = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?', [ctx.instance.id, profileId, authId]);
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
@@ -655,7 +656,6 @@ module.exports = function(ctx) {
       // ready
       return profileUser;
     }
-
   }
 
   return WxworkHelper;
@@ -666,7 +666,6 @@ module.exports = function(ctx) {
 
 /***/ 76:
 /***/ ((module) => {
-
 
 const jsApiList = [
   'checkJsApi',
@@ -1010,7 +1009,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AuthMiniController extends app.Controller {
-
     async login() {
       const res = await this.service.authMini.login({
         scene: this.ctx.request.body.scene,
@@ -1018,7 +1016,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AuthMiniController;
 };
@@ -1035,7 +1032,6 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class ContactsController extends app.Controller {
-
     async sync() {
       // progress
       const progressId = uuid.v4().replace(/-/g, '');
@@ -1059,7 +1055,6 @@ module.exports = app => {
       const res = await this.service.contacts.syncStatus();
       this.ctx.success(res);
     }
-
   }
   return ContactsController;
 };
@@ -1072,7 +1067,6 @@ module.exports = app => {
 
 module.exports = app => {
   class JSSDKController extends app.Controller {
-
     async jsconfig() {
       const res = await this.service.jssdk.jsconfig({
         url: this.ctx.request.body.url,
@@ -1086,7 +1080,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return JSSDKController;
 };
@@ -1103,7 +1096,6 @@ const wechatUtils = __webpack_require__(290);
 
 module.exports = app => {
   class MessageController extends app.Controller {
-
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
         return await this.ctx.service.message.index({ message });
@@ -1165,7 +1157,7 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -1192,7 +1184,7 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -1202,11 +1194,9 @@ module.exports = app => {
       }
       return xml;
     }
-
   }
   return MessageController;
 };
-
 
 
 /***/ }),
@@ -1241,7 +1231,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -1266,7 +1255,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -1284,8 +1272,7 @@ module.exports = app => {
   const socketioChannelApp = __webpack_require__(466)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -1414,18 +1401,26 @@ module.exports = ctx => {
             const state = ctx.request.query.state || 'login';
             // code/memberId
             const wxworkHelper = new (WxworkHelperFn(ctx))();
-            ctx.bean.wxwork.app.selfBuilt.getUserIdByCode(code).then(res => {
-              if (res.errcode) throw new Error(res.errmsg);
-              const memberId = res.UserId;
-              wxworkHelper.verifyAuthUser({
-                scene: sceneInfo.scene,
-                memberId,
-                state,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-            }).catch(done);
+            ctx.bean.wxwork.app.selfBuilt
+              .getUserIdByCode(code)
+              .then(res => {
+                if (res.errcode) throw new Error(res.errmsg);
+                const memberId = res.UserId;
+                wxworkHelper
+                  .verifyAuthUser({
+                    scene: sceneInfo.scene,
+                    memberId,
+                    state,
+                    cbVerify: (profileUser, cb) => {
+                      app.passport.doVerify(req, profileUser, cb);
+                    },
+                  })
+                  .then(verifyUser => {
+                    done(null, verifyUser);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -1441,19 +1436,17 @@ module.exports = ctx => {
         mode: 'direct',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
 
   const metaAuth = {
-    providers: {
-    },
+    providers: {},
   };
 
   // wxwork/wxworkweb
-  for (const scene of [ 'wxwork', 'wxworkweb' ]) {
+  for (const scene of ['wxwork', 'wxworkweb']) {
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
   }
@@ -1479,12 +1472,12 @@ module.exports = ctx => {
 const require3 = __webpack_require__(718);
 const querystring = require3('querystring');
 
-const OAuth = function(appid, agentid) {
+const OAuth = function (appid, agentid) {
   this.appid = appid;
   this.agentid = agentid;
 };
 
-OAuth.prototype.getAuthorizeURL = function(redirect, state, scope) {
+OAuth.prototype.getAuthorizeURL = function (redirect, state, scope) {
   const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
   const info = {
     appid: this.appid,
@@ -1497,7 +1490,7 @@ OAuth.prototype.getAuthorizeURL = function(redirect, state, scope) {
   return url + '?' + querystring.stringify(info) + '#wechat_redirect';
 };
 
-OAuth.prototype.getAuthorizeURLForWebsite = function(redirect, state) {
+OAuth.prototype.getAuthorizeURLForWebsite = function (redirect, state) {
   const url = 'https://open.work.weixin.qq.com/wwopen/sso/qrConnect';
   const info = {
     appid: this.appid,
@@ -1543,18 +1536,16 @@ function WxworkStrategy(options, verify) {
   this._state = options.state;
   this._scope = options.scope || 'snsapi_base';
   this._passReqToCallback = options.passReqToCallback;
-
 }
 
 util.inherits(WxworkStrategy, passport.Strategy);
 
-WxworkStrategy.prototype.getOAuth = function(options) {
+WxworkStrategy.prototype.getOAuth = function (options) {
   const _config = options.getConfig();
   return new OAuth(_config.corpid, _config.agentid);
 };
 
-WxworkStrategy.prototype.authenticate = function(req, options) {
-
+WxworkStrategy.prototype.authenticate = function (req, options) {
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
   }
@@ -1579,7 +1570,6 @@ WxworkStrategy.prototype.authenticate = function(req, options) {
 
   // 获取code授权成功
   if (req.url.indexOf('/callback') > -1) {
-
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
     if (req.query && req.query.state && !req.query.code) {
@@ -1603,13 +1593,12 @@ WxworkStrategy.prototype.authenticate = function(req, options) {
     } catch (ex) {
       return self.error(ex);
     }
-
   } else {
     const state = options.state || self._state;
     const callbackURL = options.callbackURL || self._callbackURL;
     const scope = options.scope || self._scope;
 
-    const methodName = (this._client === 'wxwork') ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
+    const methodName = this._client === 'wxwork' ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
     const location = _oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
@@ -1641,7 +1630,6 @@ module.exports = app => {
 
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
-
   ];
   return routes;
 };
@@ -1655,9 +1643,7 @@ module.exports = app => {
 const WxworkHelperFn = __webpack_require__(546);
 
 module.exports = app => {
-
   class AuthMini extends app.Service {
-
     async login({ scene, code }) {
       if (!code) return this.ctx.throw(403);
       const res = await this.ctx.bean.wxwork.app.mini[scene].code2Session(code);
@@ -1673,7 +1659,6 @@ module.exports = app => {
       // echo
       return await this.ctx.bean.auth.echo();
     }
-
   }
 
   return AuthMini;
@@ -1690,35 +1675,106 @@ const WxworkHelperFn = __webpack_require__(546);
 // department
 
 const __departmentFieldMap = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
-  [ 'id', 'parentid', 'name', 'name_en', 'order' ],
-  [ 'number', 'number', 'string', 'string', 'number' ],
+  ['departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder'],
+  ['id', 'parentid', 'name', 'name_en', 'order'],
+  ['number', 'number', 'string', 'string', 'number'],
 ];
 
 const __departmentFieldMap_XML = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder' ],
-  [ 'Id', 'ParentId', 'Name', 'Order' ],
-  [ 'number', 'number', 'string', 'number' ],
+  ['departmentId', 'departmentParentId', 'departmentName', 'departmentOrder'],
+  ['Id', 'ParentId', 'Name', 'Order'],
+  ['number', 'number', 'string', 'number'],
 ];
 
 // member
 
 const __memberFieldMap = [
-  [ 'memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
+  [
+    'memberId',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'sorting',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'thumb_avatar',
+    'qr_code',
+    'status',
+    'extattr',
+    'external_profile',
+    'external_position',
+    'address',
+    'hide_mobile',
+    'english_name',
+    'open_userid',
+    'main_department',
+  ],
+  [
+    'userid',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'order',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'thumb_avatar',
+    'qr_code',
+    'status',
+    'extattr',
+    'external_profile',
+    'external_position',
+    'address',
+    'hide_mobile',
+    'english_name',
+    'open_userid',
+    'main_department',
+  ],
+  [
+    'string',
+    'string',
+    'string',
+    'string',
+    'array',
+    'array',
+    'string',
+    'number',
+    'string',
+    'string',
+    'array',
+    'string',
+    'string',
+    'string',
+    'number',
+    'json',
+    'json',
+    'string',
+    'string',
+    'number',
+    'string',
+    'string',
+    'number',
+  ],
 ];
 
 const __memberFieldMap_XML = [
-  [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
-  [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
-  [ 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string' ],
+  ['memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address'],
+  ['NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address'],
+  ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string'],
 ];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
-
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -1782,15 +1838,9 @@ module.exports = app => {
         // check if memberId changed
         if (member.memberIdNew) {
           // upate memberId of member
-          await this.ctx.model.query(
-            'update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?',
-            [ member.memberIdNew, this.ctx.instance.id, member.memberId ]
-          );
+          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [member.memberIdNew, this.ctx.instance.id, member.memberId]);
           // upate profileId of auth
-          await this.ctx.model.query(
-            'update aAuth a set a.profileId=? where a.iid=? and a.profileId=?',
-            [ `wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}` ]
-          );
+          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]);
         }
         // get member remotely
         const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
@@ -2080,7 +2130,7 @@ module.exports = app => {
         sorting: department.departmentOrder,
         roleIdParent: roleParent.id,
       });
-        // force change parent role to catalog=1
+      // force change parent role to catalog=1
       await this.ctx.bean.role.save({
         roleId: roleParent.id,
         data: { catalog: 1 },
@@ -2152,7 +2202,7 @@ module.exports = app => {
     async _sendLinkAccountMigration({ userId }) {
       this.ctx.tail(async () => {
         const content = {
-          userIds: [ userId ],
+          userIds: [userId],
           data: {
             msgtype: 'textcard',
             textcard: {
@@ -2213,7 +2263,6 @@ module.exports = app => {
       else if (type === 'json') return JSON.stringify(value);
       return value;
     }
-
   }
 
   return Contacts;
@@ -2226,9 +2275,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class JSSDK extends app.Service {
-
     async jsconfig({ url }) {
       // config
       const config = this.ctx.config.account.wxwork;
@@ -2254,7 +2301,6 @@ module.exports = app => {
       };
       return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfigAgent(params);
     }
-
   }
 
   return JSSDK;
@@ -2269,7 +2315,6 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
-
     async index({ message }) {
       // config
       const config = this.ctx.config.account.wxwork;
@@ -2325,7 +2370,6 @@ module.exports = app => {
       // ok
       return null;
     }
-
   }
 
   return Message;
@@ -2359,7 +2403,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("crypto");;
+module.exports = require("crypto");
 
 /***/ }),
 
@@ -2367,7 +2411,7 @@ module.exports = require("crypto");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

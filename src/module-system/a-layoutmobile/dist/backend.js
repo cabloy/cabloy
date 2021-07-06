@@ -18,8 +18,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -110,10 +109,7 @@ const layoutMobile = __webpack_require__(215);
 const layoutMobileAnonymous = __webpack_require__(912);
 
 module.exports = app => {
-  const layouts = [
-    layoutMobile(app),
-    layoutMobileAnonymous(app),
-  ];
+  const layouts = [layoutMobile(app), layoutMobileAnonymous(app)];
   return layouts;
 };
 
@@ -180,10 +176,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -214,7 +208,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -253,8 +246,7 @@ module.exports = app => {
 /***/ 825:
 /***/ ((module) => {
 
-module.exports = [
-];
+module.exports = [];
 
 
 /***/ }),
@@ -262,9 +254,7 @@ module.exports = [
 /***/ 214:
 /***/ ((module) => {
 
-
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ })

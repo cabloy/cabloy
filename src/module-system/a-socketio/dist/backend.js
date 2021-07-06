@@ -12,7 +12,6 @@ const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IO {
-
     constructor() {
       this._redis = null;
     }
@@ -248,37 +247,43 @@ module.exports = ctx => {
         messageSyncs.push(messageSync);
       }
       // receiver
-      await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave: async userIds => {
-        // over limit
-        if (messageSyncs && messageSyncs.length > 1) {
-          // means enter this callback again
-          messageSyncs = null;
-        }
-        // syncs
-        for (const userIdTo of userIds) {
-          if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
-            // save
-            const messageSync = {
-              messageClassId,
-              messageId,
-              userId: userIdTo,
-              messageDirection: 2, // receive
-              messageRead: 0,
-            };
-            if (persistence) {
-              messageSync.id = await this.message.saveSync({ messageSync });
-            } else {
-              messageSync.id = uuid.v4();
-            }
-            // extensible
-            await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
-            // push
-            if (messageSyncs) {
-              messageSyncs.push(messageSync);
+      await beanMessage.onSaveSyncsPolicy({
+        path,
+        options,
+        message,
+        messageClass,
+        saveLimit,
+        onSave: async userIds => {
+          // over limit
+          if (messageSyncs && messageSyncs.length > 1) {
+            // means enter this callback again
+            messageSyncs = null;
+          }
+          // syncs
+          for (const userIdTo of userIds) {
+            if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
+              // save
+              const messageSync = {
+                messageClassId,
+                messageId,
+                userId: userIdTo,
+                messageDirection: 2, // receive
+                messageRead: 0,
+              };
+              if (persistence) {
+                messageSync.id = await this.message.saveSync({ messageSync });
+              } else {
+                messageSync.id = uuid.v4();
+              }
+              // extensible
+              await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
+              // push
+              if (messageSyncs) {
+                messageSyncs.push(messageSync);
+              }
             }
           }
-        }
-      },
+        },
       });
       // array / null
       return messageSyncs;
@@ -294,19 +299,19 @@ module.exports = ctx => {
       // -1
       if (message.userIdTo === -1) {
         // only delivery to the online users
-        return await onSave([ message.userIdTo ]);
+        return await onSave([message.userIdTo]);
       } else if (message.userIdTo === -2) {
         // all users
         return await this._onSaveSyncsPolicy_userIdsAll({ path, options, message, messageClass, saveLimit, onSave });
       } else if (message.userIdTo === -3) {
         // unkonwn user, but also should create messageSync for push
-        return await onSave([ message.userIdTo ]);
+        return await onSave([message.userIdTo]);
       } else if (message.userIdTo === 0) {
         // system user: ignore
-        return await onSave([ ]);
+        return await onSave([]);
       }
       // normal user
-      return await onSave([ message.userIdTo ]);
+      return await onSave([message.userIdTo]);
     }
 
     async _onSaveSyncsPolicy_userIdsTo({ message, saveLimit, onSave }) {
@@ -325,7 +330,7 @@ module.exports = ctx => {
         // users
         const users = await modelUser.select({
           where: { disabled: 0 },
-          columns: [ 'id' ],
+          columns: ['id'],
           limit: saveLimit,
           offset,
         });
@@ -368,25 +373,30 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
       // loop
-      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
-        if (messageSync.userId === -1) {
-          // must be set path
-          if (path) {
-            // broadcast to online users
-            const userIds = await this._getPathUsersOnline({ path });
-            for (const userId of userIds) {
-              const _messageSync = {
-                ...messageSync,
-                userId,
-              };
-              await beanMessage.onDelivery({ path, options, message, messageSync: _messageSync, messageClass });
+      await this._loopMessageSyncs({
+        options,
+        message,
+        messageSyncs,
+        messageClass,
+        onHandle: async messageSync => {
+          if (messageSync.userId === -1) {
+            // must be set path
+            if (path) {
+              // broadcast to online users
+              const userIds = await this._getPathUsersOnline({ path });
+              for (const userId of userIds) {
+                const _messageSync = {
+                  ...messageSync,
+                  userId,
+                };
+                await beanMessage.onDelivery({ path, options, message, messageSync: _messageSync, messageClass });
+              }
             }
+          } else {
+            // normal
+            await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
           }
-        } else {
-          // normal
-          await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
-        }
-      },
+        },
       });
     }
 
@@ -451,9 +461,14 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
       // loop
-      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
-        await beanMessage.onPush({ options, message, messageSync, messageClass });
-      },
+      await this._loopMessageSyncs({
+        options,
+        message,
+        messageSyncs,
+        messageClass,
+        onHandle: async messageSync => {
+          await beanMessage.onPush({ options, message, messageSync, messageClass });
+        },
       });
     }
 
@@ -599,13 +614,13 @@ module.exports = ctx => {
         if (deliveryDone) return;
       }
       // to queue: push
-      await this._pushQueuePush({ options, message, messageSyncs: [ messageSync ], messageClass });
+      await this._pushQueuePush({ options, message, messageSyncs: [messageSync], messageClass });
     }
 
     // offline: return false
     //    hash key: userId:path
     //    hash value: scene -> workerId:socketId
-    async emit({ path, options, message, messageSync/* , messageClass*/ }) {
+    async emit({ path, options, message, messageSync /* , messageClass*/ }) {
       // userId
       const userId = messageSync.userId;
       if (!userId) return true;
@@ -653,7 +668,7 @@ module.exports = ctx => {
       for (const field in values) {
         if (!isSender || field !== messageScene) {
           const value = values[field];
-          const [ workerId, socketId ] = value.split(':');
+          const [workerId, socketId] = value.split(':');
           // check workerAlive
           const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
           if (workerAlive) {
@@ -685,7 +700,6 @@ module.exports = ctx => {
         data: { path, message, workerId, socketId },
       });
     }
-
   }
   return IO;
 };
@@ -699,7 +713,6 @@ module.exports = ctx => {
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       if (app.meta.workerId === data.workerId) {
@@ -713,7 +726,6 @@ module.exports = app => {
         }
       }
     }
-
   }
 
   return Broadcast;
@@ -727,7 +739,6 @@ module.exports = app => {
 
 module.exports = ctx => {
   class IOMessageBase {
-
     async onSessionId({ /* path,*/ message /* options*/ }) {
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
@@ -785,7 +796,6 @@ module.exports = ctx => {
       if (userIdFrom === userIdTo) return userIdFrom;
       return `${userIdFrom > userIdTo ? userIdFrom : userIdTo}:${userIdFrom < userIdTo ? userIdFrom : userIdTo}`;
     }
-
   }
   return IOMessageBase;
 };
@@ -794,15 +804,14 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 834:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
-const require3 = __webpack_require__(718);
-const uuid = require3('uuid');
+// const require3 = require('require3');
+// const uuid = require3('uuid');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
-
     constructor() {
       this._sqlProcedure = null;
     }
@@ -848,8 +857,8 @@ module.exports = ctx => {
       // offset
       const res = await ctx.db.select('aSocketIOMessageView', {
         where,
-        columns: [ 'id' ],
-        orders: [[ 'id', 'asc' ]],
+        columns: ['id'],
+        orders: [['id', 'asc']],
         limit: 1,
         offset: 0,
       });
@@ -917,7 +926,7 @@ module.exports = ctx => {
       }
       where.userId = user ? user.id : 0;
       // orders
-      const orders = (options && options.orders) || [[ 'createdAt', 'asc' ]];
+      const orders = (options && options.orders) || [['createdAt', 'asc']];
       // query
       const sql = this.sqlProcedure.selectMessages({
         iid: ctx.instance.id,
@@ -930,7 +939,6 @@ module.exports = ctx => {
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }
-
   }
   return MessageClass;
 };
@@ -1009,7 +1017,6 @@ const _cacheChannels = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
-
     get modelMessageClass() {
       return ctx.model.module(moduleInfo.relativeName).messageClass;
     }
@@ -1108,10 +1115,9 @@ module.exports = ctx => {
 
     // string/object
     channel(channelFullName) {
-      let module,
-        channelName;
+      let module, channelName;
       if (typeof channelFullName === 'string') {
-        [ module, channelName ] = channelFullName.split(':');
+        [module, channelName] = channelFullName.split(':');
       } else {
         module = channelFullName.module;
         channelName = channelFullName.channelName;
@@ -1147,8 +1153,6 @@ module.exports = ctx => {
       }
       return channels;
     }
-
-
   }
   return MessageClass;
 };
@@ -1161,9 +1165,7 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class Procedure {
-
     selectMessages({ iid, where, orders, page, offset, count }) {
-
       // for safe
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
@@ -1191,8 +1193,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aSocketIOMessageView a
+      const _sql = `select ${_selectFields} from aSocketIOMessageView a
           ${_where}
            (
              a.deleted=0 and a.syncDeleted=0 and a.iid=${iid}
@@ -1211,8 +1212,7 @@ module.exports = ctx => {
         const _messageIds = messageIds.map(item => parseInt(item)).join(',');
 
         // sql
-        const _sql =
-        `update aSocketIOMessageSync set messageRead=1
+        const _sql = `update aSocketIOMessageSync set messageRead=1
           where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
@@ -1220,8 +1220,7 @@ module.exports = ctx => {
         return _sql;
       } else if (messageClassId > 0 && all) {
         // sql
-        const _sql =
-        `update aSocketIOMessageSync set messageRead=1
+        const _sql = `update aSocketIOMessageSync set messageRead=1
           where iid=${iid} and userId=${userId} and messageClassId=${messageClassId}
         `;
 
@@ -1232,23 +1231,19 @@ module.exports = ctx => {
     }
 
     delete({ iid, messageIds, userId }) {
-
       const _messageIds = messageIds.map(item => parseInt(item)).join(',');
 
       // sql
-      const _sql =
-        `update aSocketIOMessageSync set deleted=1
+      const _sql = `update aSocketIOMessageSync set deleted=1
           where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };
 
 
@@ -1307,12 +1302,10 @@ module.exports = () => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { path, options, message, messageSyncs, messageClass } = context.data;
       return await this.ctx.bean.io.queueDelivery({ path, options, message, messageSyncs, messageClass });
     }
-
   }
 
   return Queue;
@@ -1326,12 +1319,10 @@ module.exports = app => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { path, options, message, messageClass } = context.data;
       return await this.ctx.bean.io.queueProcess({ path, options, message, messageClass });
     }
-
   }
 
   return Queue;
@@ -1345,12 +1336,10 @@ module.exports = app => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { options, message, messageSyncs, messageClass } = context.data;
       return await this.ctx.bean.io.queuePush({ options, message, messageSyncs, messageClass });
     }
-
   }
 
   return Queue;
@@ -1364,12 +1353,10 @@ module.exports = app => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { options, content, channel } = context.data;
       return await this.ctx.bean.io.queuePushDirect({ options, content, channel });
     }
-
   }
 
   return Queue;
@@ -1382,11 +1369,8 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
-
       if (options.version === 3) {
         // aSocketIOMessageSync
         const sql = `
@@ -1469,16 +1453,12 @@ module.exports = app => {
               left join aSocketIOMessageSync b on a.id=b.messageId
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -1577,11 +1557,9 @@ module.exports = app => {
 
 module.exports = (/* ctx*/) => {
   class IOChannelBase {
-
     async onPush(/* { content, options, message, messageSync, messageClass }*/) {
       return false;
     }
-
   }
   return IOChannelBase;
 };
@@ -1655,8 +1633,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -1664,8 +1641,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -1696,7 +1672,6 @@ module.exports = app => {
 
 module.exports = app => {
   class IOController extends app.Controller {
-
     async subscribe() {
       const res = await this.service.io.subscribe({
         subscribes: this.ctx.request.body.subscribes,
@@ -1713,7 +1688,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return IOController;
 };
@@ -1726,7 +1700,6 @@ module.exports = app => {
 
 module.exports = app => {
   class MessageController extends app.Controller {
-
     async offset() {
       const res = await this.ctx.service.message.offset({
         messageClass: this.ctx.request.body.messageClass,
@@ -1774,7 +1747,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return MessageController;
 };
@@ -1787,14 +1759,12 @@ module.exports = app => {
 
 module.exports = app => {
   class MessageClassController extends app.Controller {
-
     async messageClass() {
       const res = await this.ctx.service.messageClass.messageClass({
         messageClass: this.ctx.request.body.messageClass,
       });
       this.ctx.success(res);
     }
-
   }
   return MessageClassController;
 };
@@ -1831,7 +1801,6 @@ const IOMessageBaseFn = __webpack_require__(60);
 const IOChannelBaseFn = __webpack_require__(134);
 
 module.exports = app => {
-
   // base
   app.meta.IOMessageBase = IOMessageBaseFn;
   app.meta.IOChannelBase = IOChannelBaseFn;
@@ -1860,7 +1829,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -1873,15 +1841,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -1981,9 +1946,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class IO extends app.Service {
-
     async subscribe({ subscribes, socketId, user }) {
       return await this.ctx.bean.io.subscribe({ subscribes, socketId, user });
     }
@@ -1991,7 +1954,6 @@ module.exports = app => {
     async unsubscribe({ subscribes, user }) {
       return await this.ctx.bean.io.unsubscribe({ subscribes, user });
     }
-
   }
 
   return IO;
@@ -2004,9 +1966,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Message extends app.Service {
-
     async offset({ messageClass, options, user }) {
       return await this.ctx.bean.io.message.offset({ messageClass, options, user });
     }
@@ -2026,7 +1986,6 @@ module.exports = app => {
     async delete({ messageIds, user }) {
       return await this.ctx.bean.io.message.delete({ messageIds, user });
     }
-
   }
 
   return Message;
@@ -2039,13 +1998,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class MessageClass extends app.Service {
-
     async messageClass({ messageClass }) {
       return await this.ctx.bean.io.messageClass.get(messageClass);
     }
-
   }
 
   return MessageClass;
@@ -2077,7 +2033,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

@@ -6,15 +6,16 @@
 
 module.exports = ctx => {
   class Stats {
-
     async execute(context) {
       const { provider, user } = context;
       const dependencies = provider.dependencies;
       const res = { red: 0, orange: 0 };
       for (const dep of dependencies) {
-        const [ module, fullName ] = dep.split(':');
+        const [module, fullName] = dep.split(':');
         const value = await ctx.bean.stats._get({
-          module, fullName, user,
+          module,
+          fullName,
+          user,
         });
         // value maybe undefined
         if (!value) continue;
@@ -34,7 +35,6 @@ module.exports = ctx => {
       }
       return res;
     }
-
   }
 
   return Stats;
@@ -77,8 +77,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -110,14 +109,12 @@ module.exports = {
 
 module.exports = app => {
   class PublicController extends app.Controller {
-
     async profile() {
       const res = await this.service.public.profile({
         userId: this.ctx.request.body.userId,
       });
       this.ctx.success(res);
     }
-
   }
   return PublicController;
 };
@@ -130,7 +127,6 @@ module.exports = app => {
 
 module.exports = app => {
   class UserController extends app.Controller {
-
     async save() {
       const res = await this.service.user.save({
         data: this.ctx.request.body.data,
@@ -239,7 +235,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return UserController;
 };
@@ -273,7 +268,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -298,7 +292,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -318,10 +311,7 @@ module.exports = app => {
             module: 'a-stats',
             name: 'deps',
           },
-          dependencies: [
-            'a-flowtask:taskClaimings',
-            'a-flowtask:taskHandlings',
-          ],
+          dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
         },
         userOrange: {
           user: true,
@@ -341,12 +331,7 @@ module.exports = app => {
             module: 'a-user',
             name: 'user',
           },
-          dependencies: [
-            'a-user:userRed',
-            'a-user:userOrange',
-            'a-message:message',
-            'a-base:starsLabels',
-          ],
+          dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
         },
       },
     },
@@ -361,8 +346,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -375,9 +359,7 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // user
-    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate',
-      meta: { validate: { module: 'a-base', validator: 'user' } },
-    },
+    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate', meta: { validate: { module: 'a-base', validator: 'user' } } },
     { method: 'post', path: 'user/saveAvatar', controller: 'user' },
     { method: 'post', path: 'user/saveLocale', controller: 'user' },
     { method: 'post', path: 'user/agent', controller: 'user' },
@@ -404,9 +386,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Public2 extends app.Service {
-
     async profile({ userId }) {
       const item = await this.ctx.bean.user.get({ id: userId });
       const user = {
@@ -416,7 +396,6 @@ module.exports = app => {
       };
       return { user };
     }
-
   }
   return Public2;
 };
@@ -428,9 +407,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class User extends app.Service {
-
     async save({ data, user }) {
       // id
       data.id = user.id;
@@ -495,7 +472,7 @@ module.exports = app => {
           left join aAuth b on a.id=b.providerId and b.userId=?
             where a.id in (${ids.join(',')})
       `;
-      const list = await this.ctx.model.query(sql, [ user.id ]);
+      const list = await this.ctx.model.query(sql, [user.id]);
       // sort
       list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
       // meta
@@ -511,8 +488,7 @@ module.exports = app => {
 
     async authenticationDisable({ authId, user }) {
       // must use userId in where
-      await this.ctx.model.query('delete from aAuth where id=? and userId=?',
-        [ authId, user.id ]);
+      await this.ctx.model.query('delete from aAuth where id=? and userId=?', [authId, user.id]);
     }
 
     async themeLoad({ user }) {
@@ -524,7 +500,6 @@ module.exports = app => {
       const name = `user-theme:${user.id}`;
       await this.ctx.bean.status.set(name, theme);
     }
-
   }
 
   return User;

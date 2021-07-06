@@ -17,16 +17,11 @@ module.exports = app => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
+    async update(options) {}
 
-    async update(options) {
-    }
+    async init(options) {}
 
-    async init(options) {
-    }
-
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -70,8 +65,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -79,8 +73,7 @@ module.exports = {
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -88,8 +81,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -120,8 +112,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -136,7 +127,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // aops
   const aops = __webpack_require__(224)(app);
   // beans
@@ -164,7 +154,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -177,14 +166,11 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
-      functions: {
-      },
+      atoms: {},
+      functions: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
       schemas,
     },
@@ -199,8 +185,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -211,8 +196,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -223,8 +207,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

@@ -6,7 +6,6 @@
 
 module.exports = ctx => {
   class localAop {
-
     async children(context, next) {
       // next
       await next();
@@ -34,7 +33,6 @@ module.exports = ctx => {
         }
       }
     }
-
   }
 
   return localAop;
@@ -48,7 +46,6 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class localAop {
-
     // magic
     get__magic__(context, next) {
       next();
@@ -58,7 +55,6 @@ module.exports = ctx => {
         context.value = ctx.bean._getBean(moduleName, `local.${prop}`);
       }
     }
-
   }
 
   return localAop;
@@ -97,9 +93,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -186,7 +180,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;
@@ -205,7 +198,6 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atom');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -262,7 +254,7 @@ module.exports = ctx => {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
-      item = item || { };
+      item = item || {};
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -436,7 +428,9 @@ module.exports = ctx => {
     async _deleteBulk_item({ key, user }) {
       // check right
       const res = await ctx.bean.atom.checkRightAction({
-        atom: { id: key.atomId }, action: 4, user,
+        atom: { id: key.atomId },
+        action: 4,
+        user,
       });
       if (!res) return false;
       // delete
@@ -544,7 +538,8 @@ module.exports = ctx => {
       if (item.atomIdFormal) {
         await this._copy({
           target: 'history',
-          srcKey: { atomId: item.atomIdFormal }, srcItem: null,
+          srcKey: { atomId: item.atomIdFormal },
+          srcItem: null,
           destKey: null,
           options,
           user,
@@ -553,7 +548,8 @@ module.exports = ctx => {
       // draft -> formal
       const keyFormal = await this._copy({
         target: 'formal',
-        srcKey: { atomId: item.atomId }, srcItem: item,
+        srcKey: { atomId: item.atomId },
+        srcItem: item,
         destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
         options,
         user,
@@ -617,7 +613,8 @@ module.exports = ctx => {
         // ** create draft from formal
         const keyDraft = await this._copy({
           target: 'draft',
-          srcKey: { atomId: key.atomId }, srcItem: null,
+          srcKey: { atomId: key.atomId },
+          srcItem: null,
           destKey: null,
           user,
         });
@@ -635,7 +632,8 @@ module.exports = ctx => {
         // ** create draft from history
         const keyDraft = await this._copy({
           target: 'draft',
-          srcKey: { atomId: key.atomId }, srcItem: null,
+          srcKey: { atomId: key.atomId },
+          srcItem: null,
           destKey: _atom.atomIdDraft ? { atomId: _atom.atomIdDraft } : null,
           user,
         });
@@ -713,7 +711,8 @@ module.exports = ctx => {
     async clone({ key, user }) {
       const keyDraft = await this._copy({
         target: 'clone',
-        srcKey: { atomId: key.atomId }, srcItem: null,
+        srcKey: { atomId: key.atomId },
+        srcItem: null,
         destKey: null,
         user,
       });
@@ -961,18 +960,15 @@ module.exports = ctx => {
     }
 
     async readCount({ key, atom: { readCount = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?',
-        [ readCount, ctx.instance.id, key.atomId ]);
+      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [readCount, ctx.instance.id, key.atomId]);
     }
 
     async comment({ key, atom: { comment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
-        [ comment, ctx.instance.id, key.atomId ]);
+      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?', [comment, ctx.instance.id, key.atomId]);
     }
 
     async attachment({ key, atom: { attachment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?',
-        [ attachment, ctx.instance.id, key.atomId ]);
+      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?', [attachment, ctx.instance.id, key.atomId]);
     }
 
     async stats({ atomIds, user }) {
@@ -1080,12 +1076,7 @@ module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: {
-        itemId, atomName, roleIdOwner = 0,
-        atomStatic = 0, atomStaticKey = null, atomRevision = 0,
-        atomLanguage = null, atomCategoryId = 0, atomTags = null,
-        allowComment = 1,
-      },
+      atom: { itemId, atomName, roleIdOwner = 0, atomStatic = 0, atomStaticKey = null, atomRevision = 0, atomLanguage = null, atomCategoryId = 0, atomTags = null, allowComment = 1 },
       user,
     }) {
       let atomClassId = id;
@@ -1109,15 +1100,11 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async _update({ atom/* , user,*/ }) {
+    async _update({ atom /* , user,*/ }) {
       await this.modelAtom.update(atom);
     }
 
-    async _delete({
-      atomClass,
-      atom,
-      user,
-    }) {
+    async _delete({ atomClass, atom, user }) {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atom.id });
       }
@@ -1161,7 +1148,7 @@ module.exports = ctx => {
     async _get({ atomClass, options, key, mode, user }) {
       if (!options) options = {};
       const resource = options.resource || 0;
-      const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
+      const resourceLocale = options.resourceLocale === false ? false : options.resourceLocale || ctx.locale;
       // atomClass
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
@@ -1180,9 +1167,12 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        tableName, atomId: key.atomId,
-        resource, resourceLocale,
-        mode, cms,
+        tableName,
+        atomId: key.atomId,
+        resource,
+        resourceLocale,
+        mode,
+        cms,
       });
       // query
       return await ctx.model.queryOne(sql);
@@ -1190,16 +1180,7 @@ module.exports = ctx => {
 
     async _list({
       tableName,
-      options: {
-        where, orders, page,
-        star = 0, label = 0,
-        comment = 0, file = 0,
-        stage = 'formal',
-        language, category = 0, tag = 0,
-        mine = 0,
-        resource = 0, resourceLocale,
-        mode,
-      },
+      options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale, mode },
       cms,
       user,
       pageForce = true,
@@ -1210,13 +1191,24 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        tableName, where, orders, page,
-        star, label, comment, file, count,
+        tableName,
+        where,
+        orders,
+        page,
+        star,
+        label,
+        comment,
+        file,
+        count,
         stage,
-        language, category, tag,
+        language,
+        category,
+        tag,
         mine,
-        resource, resourceLocale,
-        mode, cms,
+        resource,
+        resourceLocale,
+        mode,
+        cms,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
@@ -1358,11 +1350,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightActionBulk({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action, stage,
-      user,
-    }) {
+    async checkRightActionBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, action, stage, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -1402,11 +1390,7 @@ module.exports = ctx => {
       return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
 
-    async checkRightCreateRole({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      roleIdOwner,
-      user,
-    }) {
+    async checkRightCreateRole({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, roleIdOwner, user }) {
       if (!roleIdOwner) return null;
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const sql = this.sqlProcedure.checkRightCreateRole({
@@ -1431,7 +1415,7 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
               order by a.code asc
       `;
-      const actions = await ctx.model.query(sql, [ ctx.instance.id, atomClass.id ]);
+      const actions = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
       // actions res
       const actionsRes = [];
       for (const action of actions) {
@@ -1471,7 +1455,8 @@ module.exports = ctx => {
           left join aRole c on a.roleIdWho=c.id
           where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
           order by a.roleIdWho desc`,
-        [ ctx.instance.id, atomClass.id, user.id ]);
+        [ctx.instance.id, atomClass.id, user.id]
+      );
       return roles;
     }
 
@@ -1536,7 +1521,6 @@ module.exports = ctx => {
         user,
       });
     }
-
   }
 
   return Atom;
@@ -1551,7 +1535,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomAction extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atomAction');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -1612,7 +1595,6 @@ module.exports = ctx => {
       data.id = res2.insertId;
       return data;
     }
-
   }
 
   return AtomAction;
@@ -1627,7 +1609,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomClass extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atomClass');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -1691,11 +1672,14 @@ module.exports = ctx => {
     }
 
     async getByAtomId({ atomId }) {
-      const res = await this.model.query(`
+      const res = await this.model.query(
+        `
         select a.*,b.id as atomId,b.itemId from aAtomClass a
           left join aAtom b on a.id=b.atomClassId
             where b.iid=? and b.id=?
-        `, [ ctx.instance.id, atomId ]);
+        `,
+        [ctx.instance.id, atomId]
+      );
       return res[0];
     }
 
@@ -1708,21 +1692,24 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      return validator ? {
-        module: atomClass.module,
-        validator,
-      } : null;
+      return validator
+        ? {
+            module: atomClass.module,
+            validator,
+          }
+        : null;
     }
 
     async validatorSearch({ atomClass }) {
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
-      return validator ? {
-        module: atomClass.module,
-        validator,
-      } : null;
+      return validator
+        ? {
+            module: atomClass.module,
+            validator,
+          }
+        : null;
     }
-
   }
 
   return AtomClass;
@@ -1740,7 +1727,6 @@ const extend = require3('extend2');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
-
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class Auth {
@@ -1783,7 +1769,8 @@ module.exports = ctx => {
       }
       // login info event
       await ctx.bean.event.invoke({
-        name: 'loginInfo', data: { info },
+        name: 'loginInfo',
+        data: { info },
       });
       return info;
     }
@@ -1847,7 +1834,7 @@ module.exports = ctx => {
     _registerAllRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
-        const [ moduleRelativeName, providerName ] = key.split(':');
+        const [moduleRelativeName, providerName] = key.split(':');
         this._registerProviderRouters(moduleRelativeName, providerName);
       }
     }
@@ -1887,7 +1874,7 @@ module.exports = ctx => {
     async _registerInstanceProviders(subdomain, iid) {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
-        const [ moduleRelativeName, providerName ] = key.split(':');
+        const [moduleRelativeName, providerName] = key.split(':');
         await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
       }
     }
@@ -1913,7 +1900,7 @@ module.exports = ctx => {
           const config = provider.config;
           config.passReqToCallback = true;
           config.failWithError = false;
-          config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
+          config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
           // handler
           const handler = provider.handler(ctx.app);
           // use strategy
@@ -1925,14 +1912,13 @@ module.exports = ctx => {
         ctx.app.passport.unuse(strategyName);
       }
     }
-
   }
 
   return Auth;
 };
 
 function _createAuthenticate(moduleRelativeName, providerName, _config) {
-  return async function(ctx, next) {
+  return async function (ctx, next) {
     // provider of db
     const providerItem = await ctx.bean.user.getAuthProvider({
       module: moduleRelativeName,
@@ -1960,12 +1946,12 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     config.loginURL = ctx.bean.base.getAbsoluteUrl(_config.loginURL);
     config.callbackURL = ctx.bean.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
-    config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
+    config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
 
     // config functions
     if (provider.configFunctions) {
       for (const key in provider.configFunctions) {
-        config[key] = function(...args) {
+        config[key] = function (...args) {
           return provider.configFunctions[key](ctx, ...args);
         };
       }
@@ -1977,7 +1963,6 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     await authenticate(ctx, next);
   };
 }
-
 
 
 /***/ }),
@@ -2004,7 +1989,6 @@ let _hostText = null;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Base extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'base');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -2037,7 +2021,7 @@ module.exports = ctx => {
 
     // get forward url
     getForwardUrl(path) {
-      const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix + 'public/' : '/public/';
+      const prefix = ctx.app.meta.isTest || ctx.app.meta.isLocal ? ctx.app.config.static.prefix + 'public/' : '/public/';
       return `${prefix}${ctx.instance.id}/${path}`;
     }
 
@@ -2323,7 +2307,6 @@ module.exports = ctx => {
       }
       return authProviders;
     }
-
   }
 
   return Base;
@@ -2338,7 +2321,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Category {
-
     get modelCategory() {
       return ctx.model.module(moduleInfo.relativeName).category;
     }
@@ -2373,7 +2355,7 @@ module.exports = ctx => {
 
     async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale, count = 0 }) {
       //
-      const where = { };
+      const where = {};
       if (categoryId !== undefined) where.categoryIdParent = categoryId;
       // atomClassId
       if (!where.categoryIdParent) {
@@ -2392,7 +2374,10 @@ module.exports = ctx => {
       }
       const list = await this.modelCategory.select({
         where,
-        orders: [[ 'categorySorting', 'asc' ], [ 'createdAt', 'asc' ]],
+        orders: [
+          ['categorySorting', 'asc'],
+          ['createdAt', 'asc'],
+        ],
       });
       if (setLocale) {
         for (const category of list) {
@@ -2500,7 +2485,8 @@ module.exports = ctx => {
       let category;
       for (const _categoryName of categoryNames) {
         category = await this.child({
-          atomClass, language,
+          atomClass,
+          language,
           categoryId: categoryIdParent,
           categoryName: _categoryName,
         });
@@ -2513,7 +2499,8 @@ module.exports = ctx => {
         if (!force) return null;
         // create
         const categoryId = await this._register({
-          atomClass, language,
+          atomClass,
+          language,
           categoryName: _categoryName,
           categoryIdParent,
         });
@@ -2560,7 +2547,6 @@ module.exports = ctx => {
         },
       });
     }
-
   }
   return Category;
 };
@@ -2573,12 +2559,10 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class Local extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'local');
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
-
   }
 
   return Local;
@@ -2601,7 +2585,6 @@ module.exports = ctx => {
   let __atomClassesResource = null;
 
   class Resource extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'resource');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -2644,10 +2627,23 @@ module.exports = ctx => {
       }
       // options
       const options = {
-        where, orders, page, star, label, stage, category, tag, resource: 1, resourceLocale: locale,
+        where,
+        orders,
+        page,
+        star,
+        label,
+        stage,
+        category,
+        tag,
+        resource: 1,
+        resourceLocale: locale,
       };
       return await ctx.bean.atom.select({
-        atomClass, options, user, pageForce, count,
+        atomClass,
+        options,
+        user,
+        pageForce,
+        count,
       });
     }
 
@@ -2760,13 +2756,16 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async resourceRoles({ key/* , user */ }) {
-      const list = await ctx.model.query(`
+    async resourceRoles({ key /* , user */ }) {
+      const list = await ctx.model.query(
+        `
         select a.*,b.roleName from aResourceRole a
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.atomId=?
             order by b.roleName
-        `, [ ctx.instance.id, key.atomId ]);
+        `,
+        [ctx.instance.id, key.atomId]
+      );
       return list;
     }
 
@@ -2783,12 +2782,14 @@ module.exports = ctx => {
       }
       // check if exists
       const item = await this.modelResourceRole.get({
-        atomId, roleId,
+        atomId,
+        roleId,
       });
       if (item) return item.id;
       // insert
       const res = await this.modelResourceRole.insert({
-        atomId, roleId,
+        atomId,
+        roleId,
       });
       return res.insertId;
     }
@@ -2831,7 +2832,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select a.*,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -2846,7 +2848,9 @@ module.exports = ctx => {
           where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, roleId ]);
+        `,
+        [locale, ctx.instance.id, roleId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -2859,7 +2863,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select g.*,g.id as roleExpandId, a.id as resourceRoleId,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -2877,7 +2882,9 @@ module.exports = ctx => {
           where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, roleId ]);
+        `,
+        [locale, ctx.instance.id, roleId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -2890,7 +2897,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select a.*,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -2907,7 +2915,9 @@ module.exports = ctx => {
           where a.iid=? and a.userIdWho=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [ locale, ctx.instance.id, userId ]);
+        `,
+        [locale, ctx.instance.id, userId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -3012,7 +3022,6 @@ module.exports = ctx => {
 
     //   return list;
     // }
-
   }
 
   return Resource;
@@ -3027,7 +3036,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'role');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -3179,7 +3187,8 @@ module.exports = ctx => {
         if (!roleIdParent || !force) return null;
         // create
         const roleId = await this._register({
-          roleName: _roleName, roleIdParent,
+          roleName: _roleName,
+          roleIdParent,
         });
         role = await this.get({ id: roleId });
         // next
@@ -3240,7 +3249,8 @@ module.exports = ctx => {
     // add user role
     async addUserRole({ userId, roleId }) {
       const res = await this.modelUserRole.insert({
-        userId, roleId,
+        userId,
+        roleId,
       });
       return res.insertId;
     }
@@ -3248,7 +3258,8 @@ module.exports = ctx => {
     async deleteUserRole({ id, userId, roleId }) {
       if (!id) {
         const item = await this.modelUserRole.get({
-          userId, roleId,
+          userId,
+          roleId,
         });
         if (!item) return;
         id = item.id;
@@ -3266,7 +3277,7 @@ module.exports = ctx => {
         if (typeof scope === 'string') {
           scope = scope.split(',');
         } else if (!Array.isArray(scope)) {
-          scope = [ scope ];
+          scope = [scope];
         }
       }
       // force action exists in db
@@ -3320,7 +3331,10 @@ module.exports = ctx => {
       // select
       const options = {
         where,
-        orders: [[ 'sorting', 'asc' ], [ 'roleName', 'asc' ]],
+        orders: [
+          ['sorting', 'asc'],
+          ['roleName', 'asc'],
+        ],
       };
       if (page.size !== 0) {
         options.limit = page.size;
@@ -3343,26 +3357,32 @@ module.exports = ctx => {
     async includes({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
         select a.*,b.roleName from aRoleInc a
           left join aRole b on a.roleIdInc=b.id
             where a.iid=? and a.roleId=?
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
     }
 
     // role rights
     async roleRights({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
             where a.iid=? and a.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -3375,7 +3395,8 @@ module.exports = ctx => {
     async roleSpreads({ roleId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
@@ -3384,7 +3405,9 @@ module.exports = ctx => {
             where d.iid=? and d.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -3397,7 +3420,8 @@ module.exports = ctx => {
     async atomRightsOfUser({ userId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aViewUserRightAtomClass a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
@@ -3405,7 +3429,9 @@ module.exports = ctx => {
             where a.iid=? and a.userIdWho=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
-        `, [ ctx.instance.id, userId ]);
+        `,
+        [ctx.instance.id, userId]
+      );
       // scope
       for (const item of list) {
         const scope = JSON.parse(item.scope);
@@ -3416,60 +3442,81 @@ module.exports = ctx => {
 
     async _scopeRoles({ scope }) {
       if (!scope || scope.length === 0) return null;
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
-            `, [ ctx.instance.id ]);
+            `,
+        [ctx.instance.id]
+      );
     }
 
     async getUserRolesDirect({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aUserRole b on a.id=b.roleId
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async getUserRolesParent({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aViewUserRoleRef b on a.id=b.roleIdParent
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async getUserRolesExpand({ userId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select a.* from aRole a
           left join aViewUserRoleExpand b on a.id=b.roleIdBase
             where a.iid=? and b.userId=?
-        `, [ ctx.instance.id, userId ]);
+        `,
+        [ctx.instance.id, userId]
+      );
       return list;
     }
 
     async userInRoleDirect({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aUserRole a
           where a.iid=? and a.userId=? and a.roleId=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
     async userInRoleParent({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aViewUserRoleRef a
           where a.iid=? and a.userId=? and a.roleIdParent=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
     async userInRoleExpand({ userId, roleId }) {
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select count(*) as count from aViewUserRoleExpand a
           where a.iid=? and a.userId=? and a.roleIdBase=?
-        `, [ ctx.instance.id, userId, roleId ]);
+        `,
+        [ctx.instance.id, userId, roleId]
+      );
       return list[0].count > 0;
     }
 
@@ -3485,13 +3532,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aUserRole b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleId=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -3507,13 +3557,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aViewUserRoleRef b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -3529,13 +3582,16 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
         select ${fields} from aUser a
           inner join aViewUserRoleExpand b on a.id=b.userId
             where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdBase=?
             order by a.userName
             ${_limit}
-        `, [ ctx.instance.id, roleId ]);
+        `,
+        [ctx.instance.id, roleId]
+      );
       return list;
     }
 
@@ -3604,7 +3660,7 @@ module.exports = ctx => {
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
       // module
       module = module || this.moduleName;
-      const _module = ctx.app.meta.modules[module];
+      // const _module = ctx.app.meta.modules[module];
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
       // roleRights
@@ -3628,7 +3684,8 @@ module.exports = ctx => {
         const actionCode = ctx.bean.atomAction.parseActionCode({
           action: roleRight.action,
           atomClass: {
-            module, atomClassName,
+            module,
+            atomClassName,
           },
         });
         await this.addRoleRight({
@@ -3647,9 +3704,7 @@ module.exports = ctx => {
     }
 
     async _buildRolesAdd({ iid, roleIdParent }, progress) {
-      const list = await ctx.model.query(
-        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
-      );
+      const list = await ctx.model.query(`select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`);
       for (const item of list) {
         // info
         const roleId = item.id;
@@ -3665,8 +3720,10 @@ module.exports = ctx => {
         // progress
         if (progress.progressId) {
           await ctx.bean.progress.update({
-            progressId: progress.progressId, progressNo: 0,
-            total: progress.total, progress: progress.progress++,
+            progressId: progress.progressId,
+            progressNo: 0,
+            total: progress.total,
+            progress: progress.progress++,
             text: item.roleName,
           });
         }
@@ -3683,9 +3740,7 @@ module.exports = ctx => {
              values(${iid},${roleId},${roleIdParent},${level})
           `
         );
-        const item = await ctx.model.queryOne(
-          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
-        );
+        const item = await ctx.model.queryOne(`select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`);
         if (!item || !item.roleIdParent) {
           level = -1;
         } else {
@@ -3700,7 +3755,8 @@ module.exports = ctx => {
         `insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
             select ${iid},${roleId},a.roleIdInc,a.roleId from aRoleInc a
               where a.iid=${iid} and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=${iid} and b.roleId=${roleId})
-        `);
+        `
+      );
     }
 
     async _buildRoleExpand({ iid, roleId }) {
@@ -3708,14 +3764,15 @@ module.exports = ctx => {
         `insert into aRoleExpand(iid,roleId,roleIdBase)
             select a.iid,a.roleId,a.roleIdParent from aRoleRef a
               where a.iid=${iid} and a.roleId=${roleId}
-        `);
+        `
+      );
       await ctx.model.query(
         `insert into aRoleExpand(iid,roleId,roleIdBase)
             select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
               where a.iid=${iid} and a.roleId=${roleId}
-        `);
+        `
+      );
     }
-
   }
 
   return Role;
@@ -3730,7 +3787,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Tag {
-
     get modelTag() {
       return ctx.model.module(moduleInfo.relativeName).tag;
     }
@@ -3856,12 +3912,14 @@ module.exports = ctx => {
     }
 
     async calcAtomCount({ tagId }) {
-      const res = await ctx.model.query(`
+      const res = await ctx.model.query(
+        `
         select count(*) atomCount from aTagRef a
           inner join aAtom b on a.atomId=b.id
           where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomStage=1
         `,
-      [ ctx.instance.id, tagId, ctx.instance.id ]);
+        [ctx.instance.id, tagId, ctx.instance.id]
+      );
       return res[0].atomCount;
     }
 
@@ -3879,7 +3937,9 @@ module.exports = ctx => {
         if (!force) continue;
         // create
         const tagId = await this._register({
-          atomClass, language, tagName: _tagName,
+          atomClass,
+          language,
+          tagName: _tagName,
         });
         tagIds.push(tagId);
       }
@@ -3916,7 +3976,6 @@ module.exports = ctx => {
         },
       });
     }
-
   }
   return Tag;
 };
@@ -3933,11 +3992,9 @@ const uuid = require3('uuid');
 const _usersAnonymous = {};
 
 module.exports = ctx => {
-
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class User {
-
     constructor() {
       this._sequence = null;
       this._config = null;
@@ -4120,17 +4177,17 @@ module.exports = ctx => {
         return await this.model.queryOne(
           `select * from aUser
              where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ ctx.instance.id, userName, email, email, mobile, mobile ]);
+          [ctx.instance.id, userName, email, email, mobile, mobile]
+        );
       }
       return await this.model.queryOne(
         `select * from aUser
              where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ ctx.instance.id, email, email, mobile, mobile ]);
+        [ctx.instance.id, email, email, mobile, mobile]
+      );
     }
 
-    async add({
-      disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0,
-    }) {
+    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
       // check if incomplete information
       let needCheck;
       if (anonymous) {
@@ -4176,7 +4233,7 @@ module.exports = ctx => {
           left join aUserAgent b on a.id=b.userIdAgent
             where a.iid=? and a.deleted=0 and b.userId=?
       `;
-      return await ctx.model.queryOne(sql, [ ctx.instance.id, userId ]);
+      return await ctx.model.queryOne(sql, [ctx.instance.id, userId]);
     }
 
     async agentsBy({ userId }) {
@@ -4185,7 +4242,7 @@ module.exports = ctx => {
           left join aUserAgent b on a.id=b.userId
             where a.iid=? and a.deleted=0 and b.userIdAgent=?
       `;
-      return await ctx.model.query(sql, [ ctx.instance.id, userId ]);
+      return await ctx.model.query(sql, [ctx.instance.id, userId]);
     }
 
     async addAgent({ userIdAgent, userId }) {
@@ -4233,7 +4290,9 @@ module.exports = ctx => {
 
     async getFieldsSelect({ removePrivacy, alias }) {
       const fields = await this.getFields({ removePrivacy });
-      return Object.keys(fields).map(item => (alias ? `${alias}.${item}` : item)).join(',');
+      return Object.keys(fields)
+        .map(item => (alias ? `${alias}.${item}` : item))
+        .join(',');
     }
 
     async list({ roleId, query, anonymous, page, removePrivacy }) {
@@ -4256,7 +4315,7 @@ module.exports = ctx => {
             order by a.userName asc
             ${_limit}
       `;
-      return await ctx.model.query(sql, [ ctx.instance.id ]);
+      return await ctx.model.query(sql, [ctx.instance.id]);
     }
 
     async count({ options }) {
@@ -4274,7 +4333,9 @@ module.exports = ctx => {
       // sql
       const sql = this.sqlProcedure.selectUsers({
         iid: ctx.instance.id,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         fields,
       });
@@ -4296,12 +4357,15 @@ module.exports = ctx => {
     async roles({ userId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
         select a.*,b.roleName from aUserRole a
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.userId=?
             ${_limit}
-        `, [ ctx.instance.id, userId ]);
+        `,
+        [ctx.instance.id, userId]
+      );
     }
 
     // state: login/associate/migrate
@@ -4350,9 +4414,7 @@ module.exports = ctx => {
       };
 
       // columns
-      const columns = [
-        'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale',
-      ];
+      const columns = ['userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale'];
 
       //
       let userId;
@@ -4436,7 +4498,9 @@ module.exports = ctx => {
 
       // user verify event
       await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName, name: 'userVerify', data: { verifyUser, profileUser },
+        module: moduleInfo.relativeName,
+        name: 'userVerify',
+        data: { verifyUser, profileUser },
       });
 
       // ok
@@ -4446,30 +4510,20 @@ module.exports = ctx => {
     async accountMigration({ userIdFrom, userIdTo }) {
       // accountMigration event
       await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
+        module: moduleInfo.relativeName,
+        name: 'accountMigration',
+        data: { userIdFrom, userIdTo },
       });
       // aAuth: delete old records
-      const list = await ctx.model.query(
-        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
-        [ ctx.instance.id, userIdFrom ]
-      );
+      const list = await ctx.model.query('select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?', [ctx.instance.id, userIdFrom]);
       if (list.length > 0) {
         const providerIds = list.map(item => item.providerId).join(',');
-        await ctx.model.query(
-          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
-          [ ctx.instance.id, userIdTo, providerIds ]
-        );
+        await ctx.model.query(`delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`, [ctx.instance.id, userIdTo, providerIds]);
       }
       // aAuth: update records
-      await ctx.model.query(
-        'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
-      );
+      await ctx.model.query('update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
       // aUserRole
-      await ctx.model.query(
-        'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
-      );
+      await ctx.model.query('update aUserRole a set a.userId=? where a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
       // delete user
       await this.model.delete({ id: userIdFrom });
     }
@@ -4597,14 +4651,16 @@ module.exports = ctx => {
 
     async getAuthProvider({ subdomain, iid, id, module, providerName }) {
       // ctx.instance maybe not exists
-      const data = id ? {
-        iid: iid || ctx.instance.id,
-        id,
-      } : {
-        iid: iid || ctx.instance.id,
-        module,
-        providerName,
-      };
+      const data = id
+        ? {
+            iid: iid || ctx.instance.id,
+            id,
+          }
+        : {
+            iid: iid || ctx.instance.id,
+            module,
+            providerName,
+          };
       const res = await ctx.db.get('aAuthProvider', data);
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
@@ -4644,7 +4700,6 @@ module.exports = ctx => {
       data.id = res2.insertId;
       return data;
     }
-
   }
 
   return User;
@@ -4664,7 +4719,6 @@ const utils = __webpack_require__(9294);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util extends app.meta.BeanBase {
-
     get localConfig() {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
@@ -4702,7 +4756,7 @@ module.exports = app => {
       }
       date = date || new Date();
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-      if (typeof (date) !== 'object') date = new Date(date);
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).utcOffset(timezone).format(fmt);
     }
 
@@ -4719,8 +4773,8 @@ module.exports = app => {
     }
 
     // todo: load locales resources and then format
-    fromNow(date, locale) {
-      if (typeof (date) !== 'object') date = new Date(date);
+    fromNow(date /* , locale*/) {
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).fromNow();
     }
 
@@ -4804,7 +4858,6 @@ module.exports = app => {
     escapeURL(str) {
       return utils.escapeURL(str);
     }
-
   }
 
   return Util;
@@ -4818,12 +4871,10 @@ module.exports = app => {
 
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       await this.ctx.bean.auth._registerInstanceProvider(this.ctx.subdomain, this.ctx.instance.id, data.module, data.providerName);
     }
-
   }
 
   return Broadcast;
@@ -4837,19 +4888,7 @@ module.exports = app => {
 
 module.exports = ctx => {
   class Procedure {
-
-    selectAtoms({
-      iid, userIdWho, tableName,
-      where, orders, page,
-      star, label,
-      comment, file,
-      count,
-      stage,
-      language, category, tag,
-      mine,
-      resource, resourceLocale,
-      mode, cms,
-    }) {
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -4873,13 +4912,13 @@ module.exports = ctx => {
     }
 
     _prepare_cms({ tableName, iid, mode, cms }) {
-      let _cmsField,
-        _cmsJoin,
-        _cmsWhere;
+      let _cmsField, _cmsJoin, _cmsWhere;
 
       // cms
       if (cms) {
-        _cmsField = `,${tableName ? '' : 'p.createdAt,p.updatedAt,'}p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
+        _cmsField = `,${
+          tableName ? '' : 'p.createdAt,p.updatedAt,'
+        }p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {
@@ -4922,35 +4961,18 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let
-        _starJoin,
-        _starWhere;
+      let _starJoin, _starWhere;
 
-      let
-        _labelJoin,
-        _labelWhere;
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
+      let _labelJoin, _labelWhere;
+      let _commentField, _commentJoin, _commentWhere;
 
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
+      let _fileField, _fileJoin, _fileWhere;
 
-      let _flowField,
-        _flowJoin,
-        _flowWhere;
-
-      let _itemField,
-        _itemJoin;
+      let _itemField, _itemJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -5005,8 +5027,7 @@ module.exports = ctx => {
 
       // comment
       if (comment) {
-        _commentField =
-             `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
                (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
 
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
@@ -5019,7 +5040,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -5029,9 +5051,9 @@ module.exports = ctx => {
       }
 
       // flow
-      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      _flowWhere = '';
+      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      const _flowWhere = '';
 
       // tableName
       if (tableName) {
@@ -5061,8 +5083,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -5123,26 +5144,15 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
-      let _itemField,
-        _itemJoin;
+      let _commentField, _commentJoin, _commentWhere;
+      let _fileField, _fileJoin, _fileWhere;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -5178,7 +5188,7 @@ module.exports = ctx => {
       // comment
       if (comment) {
         _commentField =
-             ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
+          ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
         _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
       } else {
@@ -5189,7 +5199,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -5234,8 +5245,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -5292,33 +5302,18 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let
-        _languageWhere;
-      let
-        _categoryWhere;
-      let
-        _tagJoin,
-        _tagWhere;
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
 
-      let
-        _starJoin,
-        _starWhere;
+      let _starJoin, _starWhere;
 
-      let
-        _labelJoin,
-        _labelWhere;
-      let _commentField,
-        _commentJoin,
-        _commentWhere;
-      let _fileField,
-        _fileJoin,
-        _fileWhere;
-      let _itemField,
-        _itemJoin;
+      let _labelJoin, _labelWhere;
+      let _commentField, _commentJoin, _commentWhere;
+      let _fileField, _fileJoin, _fileWhere;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -5373,8 +5368,7 @@ module.exports = ctx => {
 
       // comment
       if (comment) {
-        _commentField =
-             `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
                (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
 
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
@@ -5387,7 +5381,8 @@ module.exports = ctx => {
 
       // file
       if (file) {
-        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
         _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
       } else {
@@ -5471,8 +5466,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -5533,31 +5527,21 @@ module.exports = ctx => {
       resource = parseInt(resource);
 
       // vars
-      let _starField,
-        _labelField;
-      let _itemField,
-        _itemJoin;
+      let _starField, _labelField;
+      let _itemField, _itemJoin;
 
-      let _resourceField,
-        _resourceJoin,
-        _resourceWhere;
-
-      let _flowField,
-        _flowJoin,
-        _flowWhere;
+      let _resourceField, _resourceJoin, _resourceWhere;
 
       // star
       if (userIdWho) {
-        _starField =
-          `,(select d.star from aAtomStar d where d.iid=${iid} and d.atomId=a.id and d.userId=${userIdWho}) as star`;
+        _starField = `,(select d.star from aAtomStar d where d.iid=${iid} and d.atomId=a.id and d.userId=${userIdWho}) as star`;
       } else {
         _starField = '';
       }
 
       // label
       if (userIdWho) {
-        _labelField =
-          `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
+        _labelField = `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
       } else {
         _labelField = '';
       }
@@ -5575,9 +5559,9 @@ module.exports = ctx => {
       }
 
       // flow
-      _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      _flowWhere = '';
+      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      const _flowWhere = '';
 
       // tableName
       if (tableName) {
@@ -5592,8 +5576,7 @@ module.exports = ctx => {
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
       // sql
-      const _sql =
-        `select ${_itemField}
+      const _sql = `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
@@ -5633,8 +5616,7 @@ module.exports = ctx => {
       roleIdWho = parseInt(roleIdWho);
       atomId = parseInt(atomId);
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
             where
             (
@@ -5657,8 +5639,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where
              (
@@ -5684,8 +5665,7 @@ module.exports = ctx => {
       action = parseInt(action);
 
       // sql
-      const _sql =
-        `select a.* from aAtom a
+      const _sql = `select a.* from aAtom a
             where
             (
               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
@@ -5713,8 +5693,7 @@ module.exports = ctx => {
         )
       `;
       // sql
-      const _sql =
-        `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
+      const _sql = `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
             left join aAtomClass c on a.atomClassId=c.id
               where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
         `;
@@ -5734,13 +5713,11 @@ module.exports = ctx => {
         )
       `;
       // sql
-      const _sql =
-        `select a.* from aAtomClass a
+      const _sql = `select a.* from aAtomClass a
             where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
         `;
       return _sql;
     }
-
 
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
@@ -5748,8 +5725,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       resourceAtomId = parseInt(resourceAtomId);
       // sql
-      const _sql =
-        `select a.id as atomId,a.atomName from aAtom a
+      const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomDisabled=0 and a.atomStage=1 and a.id=${resourceAtomId}
               and (
                 exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
@@ -5763,8 +5739,7 @@ module.exports = ctx => {
       iid = parseInt(iid);
       locale = ctx.model.format('?', locale);
       // sql
-      const _sql =
-        `select a.id as atomId,a.atomName from aAtom a
+      const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomStage=1 and a.atomClassId in (${atomClassIds.join(',')})
               and not exists(
                 select b.id from aResourceLocale b
@@ -5800,8 +5775,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aUser a
+      const _sql = `select ${_selectFields} from aUser a
           ${_where}
            (
              a.deleted=0 and a.iid=${iid}
@@ -5814,11 +5788,9 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };
 
 // /* backup */
@@ -5982,7 +5954,7 @@ module.exports = ctx => {
       if (!origin || origin === 'null') origin = 'null';
 
       const host = ctx.host;
-      if (origin !== 'null' && (new URL(origin)).host === host) {
+      if (origin !== 'null' && new URL(origin).host === host) {
         return await next();
       }
 
@@ -5991,13 +5963,15 @@ module.exports = ctx => {
 
       // origin
       // if security plugin enabled, and origin config is not provided, will only allow safe domains support CORS.
-      optionsCors.origin = optionsCors.origin || function corsOrigin(ctx) {
-      // origin is {protocol}{hostname}{port}...
-        if (ctx.app.meta.util.isSafeDomain(ctx, origin)) {
-          return origin;
-        }
-        return '';
-      };
+      optionsCors.origin =
+        optionsCors.origin ||
+        function corsOrigin(ctx) {
+          // origin is {protocol}{hostname}{port}...
+          if (ctx.app.meta.util.isSafeDomain(ctx, origin)) {
+            return origin;
+          }
+          return '';
+        };
 
       // cors
       const fn = koaCors(optionsCors);
@@ -6105,7 +6079,7 @@ module.exports = ctx => {
           }
           options.whiteList.push(hostSelf);
         } else {
-          options.whiteList = [ hostSelf ];
+          options.whiteList = [hostSelf];
         }
       }
       // jsonp
@@ -6238,7 +6212,8 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
       atomClass: ctx.request.body.atomClass,
-      action: actionOther, stage: options.stage,
+      action: actionOther,
+      stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
@@ -6246,7 +6221,8 @@ async function checkAtom(moduleInfo, options, ctx) {
   } else {
     const res = await ctx.bean.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId },
-      action: actionOther, stage: options.stage,
+      action: actionOther,
+      stage: options.stage,
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
@@ -6254,7 +6230,6 @@ async function checkAtom(moduleInfo, options, ctx) {
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
   }
-
 }
 
 async function checkResource(moduleInfo, options, ctx) {
@@ -6339,12 +6314,10 @@ function checkIfSuccess(ctx) {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { options } = context.data;
       await this.ctx.bean.role._buildQueue(options);
     }
-
   }
 
   return Queue;
@@ -6358,11 +6331,9 @@ module.exports = app => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       await app.meta._runSchedule(context);
     }
-
   }
 
   return Queue;
@@ -6376,11 +6347,9 @@ module.exports = app => {
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       await this.ctx.bean.resource.checkLocales();
     }
-
   }
 
   return Startup;
@@ -6394,7 +6363,6 @@ module.exports = app => {
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute(context) {
       const options = context.options;
       // reset auth providers
@@ -6404,7 +6372,6 @@ module.exports = app => {
       // register all authProviders
       await this.ctx.bean.auth._installAuthProviders();
     }
-
   }
 
   return Startup;
@@ -6416,11 +6383,9 @@ module.exports = app => {
 /***/ 8477:
 /***/ ((module) => {
 
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       await this._loadAtomStatics();
     }
@@ -6431,7 +6396,7 @@ module.exports = app => {
         const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
         if (!statics) continue;
         for (const atomClassKey in statics) {
-          const [ atomClassModule, atomClassName ] = atomClassKey.split('.');
+          const [atomClassModule, atomClassName] = atomClassKey.split('.');
           const atomClass = { module: atomClassModule, atomClassName };
           const items = statics[atomClassKey].items;
           if (!items) continue;
@@ -6480,7 +6445,8 @@ module.exports = app => {
       for (const role of roles) {
         if (!role) continue;
         await this.ctx.bean.resource.addResourceRole({
-          atomId, roleId: role.id,
+          atomId,
+          roleId: role.id,
         });
       }
     }
@@ -6551,7 +6517,8 @@ module.exports = app => {
       const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomIdDraft });
       if (item.atomRevision === atom.atomRevision) return;
       const atomKey = {
-        atomId: atomIdDraft, itemId: atom.itemId,
+        atomId: atomIdDraft,
+        itemId: atom.itemId,
       };
       // update
       await this.ctx.bean.atom.modelAtom.update({
@@ -6561,7 +6528,9 @@ module.exports = app => {
       });
       // write
       await this.ctx.bean.atom.write({
-        key: atomKey, item, user: { id: 0 },
+        key: atomKey,
+        item,
+        user: { id: 0 },
       });
       // submit
       await this.ctx.bean.atom.submit({
@@ -6604,7 +6573,9 @@ module.exports = app => {
       });
       // write
       await this.ctx.bean.atom.write({
-        key: atomKey, item, user: { id: 0 },
+        key: atomKey,
+        item,
+        user: { id: 0 },
       });
       // submit
       const res = await this.ctx.bean.atom.submit({
@@ -6614,7 +6585,6 @@ module.exports = app => {
       });
       return res.formal.key.atomId;
     }
-
   }
 
   return Startup;
@@ -6628,11 +6598,9 @@ module.exports = app => {
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       await app.meta._loadSchedules({ subdomain: this.ctx.subdomain });
     }
-
   }
 
   return Startup;
@@ -6646,7 +6614,6 @@ module.exports = app => {
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // verify
       app.passport.verify(async (ctx, profileUser) => {
@@ -6686,7 +6653,6 @@ module.exports = app => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
@@ -6698,7 +6664,6 @@ module.exports = ctx => {
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -6713,7 +6678,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
@@ -6722,12 +6686,12 @@ module.exports = ctx => {
         atomStage: 0,
         atomClosed: 0,
         atomFlowId: {
-          op: '>', val: 0,
+          op: '>',
+          val: 0,
         },
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -6742,7 +6706,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       // root stats
@@ -6778,7 +6741,6 @@ module.exports = ctx => {
       // ok
       return statsRoot;
     }
-
   }
 
   return Stats;
@@ -6791,9 +6753,8 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const count = await ctx.bean.atom.count({
@@ -6804,7 +6765,6 @@ module.exports = ctx => {
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -6819,7 +6779,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       // stats
@@ -6846,7 +6805,6 @@ module.exports = ctx => {
       // ok
       return stats;
     }
-
   }
 
   return Stats;
@@ -6874,11 +6832,8 @@ const VersionInit8Fn = __webpack_require__(6846);
 const VersionInit9Fn = __webpack_require__(3460);
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
-
       if (options.version === 10) {
         const versionUpdate10 = new (VersionUpdate10Fn(this.ctx))();
         await versionUpdate10.run();
@@ -6921,7 +6876,6 @@ module.exports = app => {
     }
 
     async init(options) {
-
       if (options.version === 2) {
         const versionInit2 = new (VersionInit2Fn(this.ctx))();
         await versionInit2.run(options);
@@ -6952,7 +6906,6 @@ module.exports = app => {
       const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
       await versionUpdate8._updateAtomsInstance(options);
     }
-
   }
 
   return Version;
@@ -6968,10 +6921,8 @@ const require3 = __webpack_require__(6718);
 const extend = require3('extend2');
 const initData = __webpack_require__(7714);
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
     async run(options) {
       // roles
       const roleIds = await this._initRoles();
@@ -7020,7 +6971,6 @@ module.exports = function(ctx) {
         roleId: roleIds[userRoot.roleId],
       });
     }
-
   }
 
   return VersionInit;
@@ -7032,13 +6982,9 @@ module.exports = function(ctx) {
 /***/ 6967:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
-    async run(options) {
-    }
-
+    async run(options) {}
   }
 
   return VersionInit;
@@ -7050,19 +6996,27 @@ module.exports = function(ctx) {
 /***/ 6069:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
     async run(options) {
       // add role:template to authenticated
       // add role:system to template
       const items = [
         {
-          roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 0, roleIdParent: 'authenticated',
+          roleName: 'template',
+          leader: 0,
+          catalog: 1,
+          system: 1,
+          sorting: 0,
+          roleIdParent: 'authenticated',
         },
         {
-          roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+          roleName: 'system',
+          leader: 0,
+          catalog: 0,
+          system: 1,
+          sorting: 1,
+          roleIdParent: 'template',
         },
       ];
       let needBuild = false;
@@ -7090,9 +7044,7 @@ module.exports = function(ctx) {
       if (needBuild) {
         await ctx.bean.role.setDirty(true);
       }
-
     }
-
   }
 
   return VersionInit;
@@ -7104,13 +7056,9 @@ module.exports = function(ctx) {
 /***/ 5749:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
-    async run(options) {
-    }
-
+    async run(options) {}
   }
 
   return VersionInit;
@@ -7122,13 +7070,9 @@ module.exports = function(ctx) {
 /***/ 6846:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
-    async run() {
-    }
-
+    async run() {}
   }
 
   return VersionInit;
@@ -7140,10 +7084,8 @@ module.exports = function(ctx) {
 /***/ 3460:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionInit {
-
     async run() {
       // add role rights
       const roleRights = [
@@ -7166,9 +7108,7 @@ module.exports = function(ctx) {
         { roleName: 'system', action: 'exportBulk' },
       ];
       await ctx.bean.role.addRoleRightBatch({ atomClassName: 'resource', roleRights });
-
     }
-
   }
 
   return VersionInit;
@@ -7183,43 +7123,85 @@ module.exports = function(ctx) {
 // roles
 const roles = {
   root: {
-    roleName: 'root', leader: 0, system: 1, sorting: 0, roleIdParent: 'system',
+    roleName: 'root',
+    leader: 0,
+    system: 1,
+    sorting: 0,
+    roleIdParent: 'system',
   },
   anonymous: {
-    roleName: 'anonymous', leader: 0, system: 1, sorting: 1, roleIdParent: 'root',
+    roleName: 'anonymous',
+    leader: 0,
+    system: 1,
+    sorting: 1,
+    roleIdParent: 'root',
   },
   authenticated: {
-    roleName: 'authenticated', leader: 0, system: 1, sorting: 2, roleIdParent: 'root',
+    roleName: 'authenticated',
+    leader: 0,
+    system: 1,
+    sorting: 2,
+    roleIdParent: 'root',
   },
   template: {
-    roleName: 'template', leader: 0, system: 1, sorting: 1, roleIdParent: 'authenticated',
+    roleName: 'template',
+    leader: 0,
+    system: 1,
+    sorting: 1,
+    roleIdParent: 'authenticated',
   },
   system: {
-    roleName: 'system', leader: 0, system: 1, sorting: 1, roleIdParent: 'template',
+    roleName: 'system',
+    leader: 0,
+    system: 1,
+    sorting: 1,
+    roleIdParent: 'template',
   },
   registered: {
-    roleName: 'registered', leader: 0, system: 1, sorting: 2, roleIdParent: 'authenticated',
+    roleName: 'registered',
+    leader: 0,
+    system: 1,
+    sorting: 2,
+    roleIdParent: 'authenticated',
   },
   activated: {
-    roleName: 'activated', leader: 0, system: 1, sorting: 3, roleIdParent: 'authenticated',
+    roleName: 'activated',
+    leader: 0,
+    system: 1,
+    sorting: 3,
+    roleIdParent: 'authenticated',
   },
   superuser: {
-    roleName: 'superuser', leader: 0, system: 1, sorting: 4, roleIdParent: 'authenticated',
+    roleName: 'superuser',
+    leader: 0,
+    system: 1,
+    sorting: 4,
+    roleIdParent: 'authenticated',
   },
   organization: {
-    roleName: 'organization', leader: 0, system: 1, sorting: 5, roleIdParent: 'authenticated',
+    roleName: 'organization',
+    leader: 0,
+    system: 1,
+    sorting: 5,
+    roleIdParent: 'authenticated',
   },
   internal: {
-    roleName: 'internal', leader: 0, system: 1, sorting: 1, roleIdParent: 'organization',
+    roleName: 'internal',
+    leader: 0,
+    system: 1,
+    sorting: 1,
+    roleIdParent: 'organization',
   },
   external: {
-    roleName: 'external', leader: 0, system: 1, sorting: 2, roleIdParent: 'organization',
+    roleName: 'external',
+    leader: 0,
+    system: 1,
+    sorting: 2,
+    roleIdParent: 'organization',
   },
 };
 
-const includes = [
-  { from: 'superuser', to: 'system' },
-];
+const includes = [{ from: 'superuser', to: 'system' }];
 
 const users = {
   root: {
@@ -7250,18 +7232,34 @@ module.exports = {
 
 const update1Data = __webpack_require__(999);
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionUpdate1 {
-
     async run() {
       // tables
       const tableNames = [
-        'aUser', 'aUserAgent', 'aAuthProvider', 'aAuth', 'aRole', 'aRoleInc', 'aUserRole', 'aRoleRight',
-        'aAtomClass', 'aAtom', 'aAtomAction',
-        'aLabel', 'aAtomLabel', 'aAtomLabelRef', 'aAtomStar',
-        'aRoleRef', 'aRoleIncRef', 'aRoleExpand', 'aRoleRightRef',
-        'aFunction', 'aFunctionStar', 'aFunctionLocale', 'aRoleFunction',
+        'aUser',
+        'aUserAgent',
+        'aAuthProvider',
+        'aAuth',
+        'aRole',
+        'aRoleInc',
+        'aUserRole',
+        'aRoleRight',
+        'aAtomClass',
+        'aAtom',
+        'aAtomAction',
+        'aLabel',
+        'aAtomLabel',
+        'aAtomLabelRef',
+        'aAtomStar',
+        'aRoleRef',
+        'aRoleIncRef',
+        'aRoleExpand',
+        'aRoleRightRef',
+        'aFunction',
+        'aFunctionStar',
+        'aFunctionLocale',
+        'aRoleFunction',
       ];
 
       for (const tableName of tableNames) {
@@ -7269,27 +7267,17 @@ module.exports = function(ctx) {
       }
 
       // views
-      const viewNames = [
-        'aViewUserRoleRef',
-        'aViewUserRoleExpand',
-        'aViewUserRightAtomClass',
-        'aViewUserRightAtomClassUser',
-        'aViewUserRightAtom',
-        'aViewUserRightFunction',
-      ];
+      const viewNames = ['aViewUserRoleRef', 'aViewUserRoleExpand', 'aViewUserRightAtomClass', 'aViewUserRightAtomClassUser', 'aViewUserRightAtom', 'aViewUserRightFunction'];
       for (const viewName of viewNames) {
         await ctx.model.query(update1Data.views[viewName]);
       }
 
       // functions
-      const functionNames = [
-      ];
+      const functionNames = [];
       for (const functionName of functionNames) {
         await ctx.model.query(update1Data.functions[functionName]);
       }
-
     }
-
   }
 
   return VersionUpdate1;
@@ -7301,20 +7289,16 @@ module.exports = function(ctx) {
 /***/ 1626:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   class VersionUpdate10 {
-
     async run() {
-
       // aAtom: atomIdArchive -> atomIdFormal
       const sql = `
         ALTER TABLE aAtom
           CHANGE COLUMN atomIdArchive atomIdFormal int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
     }
-
   }
 
   return VersionUpdate10;
@@ -7684,8 +7668,7 @@ create view aViewUserRightFunction as
   `,
 };
 
-const functions = {
-};
+const functions = {};
 
 module.exports = {
   tables,
@@ -7699,13 +7682,11 @@ module.exports = {
 /***/ 3568:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionUpdate2 {
-
     async run() {
       // enable 0
-      await ctx.model.query('SET SESSION sql_mode=\'NO_AUTO_VALUE_ON_ZERO\'');
+      await ctx.model.query("SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO'");
       // add userId 0
       await ctx.db.insert('aUser', {
         id: 0,
@@ -7723,9 +7704,8 @@ module.exports = function(ctx) {
         roleIdParent: -1,
       });
       // disable 0
-      await ctx.model.query('SET SESSION sql_mode=\'\'');
+      await ctx.model.query("SET SESSION sql_mode=''");
     }
-
   }
 
   return VersionUpdate2;
@@ -7737,10 +7717,8 @@ module.exports = function(ctx) {
 /***/ 2901:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionUpdate3 {
-
     async run() {
       // aViewRoleRightAtomClassUser
       let sql = `
@@ -7761,7 +7739,6 @@ module.exports = function(ctx) {
           `;
       await ctx.model.query(sql);
     }
-
   }
 
   return VersionUpdate3;
@@ -7773,12 +7750,9 @@ module.exports = function(ctx) {
 /***/ 3009:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionUpdate4 {
-
     async run() {
-
       // aComment
       let sql = `
           CREATE TABLE aComment (
@@ -7839,9 +7813,7 @@ module.exports = function(ctx) {
           ADD COLUMN readCount int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
     }
-
   }
 
   return VersionUpdate4;
@@ -7853,12 +7825,9 @@ module.exports = function(ctx) {
 /***/ 9505:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
-
+module.exports = function (ctx) {
   class VersionUpdate6 {
-
     async run() {
-
       // aUser
       const sql = `
         ALTER TABLE aUser
@@ -7867,9 +7836,7 @@ module.exports = function(ctx) {
           ADD COLUMN mobileVerified int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
     }
-
   }
 
   return VersionUpdate6;
@@ -7881,12 +7848,10 @@ module.exports = function(ctx) {
 /***/ 8984:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate8 {
-
     async run(options) {
-
       let sql;
 
       // aFunctionScene
@@ -7911,7 +7876,6 @@ module.exports = function(ctx) {
           CHANGE COLUMN scene sceneId int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
 
       // aAtom: add field roleIdOwner
       sql = `
@@ -7969,8 +7933,7 @@ module.exports = function(ctx) {
       // cache
       const mapUserAtomClassRole = {};
       // atoms
-      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
-        [ ctx.instance.id ]);
+      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0', [ctx.instance.id]);
       for (const atom of atoms) {
         const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
         let mapValue = mapUserAtomClassRole[mapKey];
@@ -7978,7 +7941,7 @@ module.exports = function(ctx) {
           mapValue = mapUserAtomClassRole[mapKey] = await this._getRoleIdOwner(atom.atomClassId, atom.userIdCreated);
         }
         if (mapValue > 0) {
-          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [ mapValue, atom.id ]);
+          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [mapValue, atom.id]);
         }
       }
     }
@@ -7991,8 +7954,6 @@ module.exports = function(ctx) {
       if (roles.length === 0) return 0;
       return roles[0].roleIdWho;
     }
-
-
   }
 
   return VersionUpdate8;
@@ -8004,10 +7965,9 @@ module.exports = function(ctx) {
 /***/ 8963:
 /***/ ((module) => {
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate9 {
-
     async run() {
       await this.run_atom();
       await this.run_categorytag();
@@ -8016,7 +7976,6 @@ module.exports = function(ctx) {
     }
 
     async run_atom() {
-
       let sql;
 
       // aAtom: atomEnabled->atomStage
@@ -8102,11 +8061,9 @@ module.exports = function(ctx) {
         update aAtomAction set bulk=1 where code=1
         `;
       await ctx.model.query(sql);
-
     }
 
     async run_categorytag() {
-
       let sql;
       // aAtom: add field atomLanguage\atomCategoryId
       sql = `
@@ -8170,7 +8127,6 @@ module.exports = function(ctx) {
           )
         `;
       await ctx.model.query(sql);
-
     }
 
     async run_resource() {
@@ -8232,7 +8188,6 @@ module.exports = function(ctx) {
                 inner join aResourceRole b on a.roleIdBase=b.roleId
             `;
       await ctx.model.query(sql);
-
     }
 
     async run_function() {
@@ -8249,7 +8204,6 @@ module.exports = function(ctx) {
       // drop view: aViewUserRightFunction
       await ctx.model.query('drop view aViewUserRightFunction');
     }
-
   }
 
   return VersionUpdate9;
@@ -8479,15 +8433,11 @@ const require3 = __webpack_require__(6718);
 const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
-const __atomBasicFields = [
-  'atomName', 'atomStatic', 'atomStaticKey', 'atomRevision',
-  'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment',
-];
+const __atomBasicFields = ['atomName', 'atomStatic', 'atomStaticKey', 'atomRevision', 'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment'];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
-
     async create({ atomClass, item, user }) {
       // atomName
       if (!item.atomName) {
@@ -8580,7 +8530,7 @@ module.exports = app => {
 
     async _writeAtom({ key, item, user, atomStage }) {
       // write atom
-      const atom = { };
+      const atom = {};
       for (const field of __atomBasicFields) {
         if (item[field] !== undefined) atom[field] = item[field];
       }
@@ -8614,15 +8564,17 @@ module.exports = app => {
       return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
     }
 
-    async enable({ /* atomClass,*/ key/* , user*/ }) {
+    async enable({ /* atomClass,*/ key /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 0,
+        id: key.atomId,
+        atomDisabled: 0,
       });
     }
 
-    async disable({ /* atomClass,*/ key/* , user*/ }) {
+    async disable({ /* atomClass,*/ key /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 1,
+        id: key.atomId,
+        atomDisabled: 1,
       });
     }
 
@@ -8630,7 +8582,7 @@ module.exports = app => {
       // do nothing
     }
 
-    async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {
+    async exportBulk({ /* atomClass, options,*/ fields, items /* , user*/ }) {
       // workbook
       const workbook = new ExcelJS.Workbook();
       workbook.creator = 'CabloyJS';
@@ -8675,7 +8627,6 @@ module.exports = app => {
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
     }
-
   }
   return AtomBase;
 };
@@ -8685,7 +8636,6 @@ module.exports = app => {
 
 /***/ 9294:
 /***/ ((module) => {
-
 
 /**
   escapeHtml: based on markdown-it
@@ -8698,7 +8648,7 @@ const HTML_REPLACEMENTS = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  '\'': '&#039;',
+  "'": '&#039;',
 };
 
 function replaceUnsafeChar(ch) {
@@ -8718,7 +8668,7 @@ const URL_REPLACEMENTS = {
   '<': '%3C',
   '>': '%3E',
   '"': '%22',
-  '\'': '%27',
+  "'": '%27',
 };
 
 function replaceUnsafeCharURL(ch) {
@@ -8935,7 +8885,7 @@ module.exports = appInfo => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return {
-    systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
+    systemRoles: ['root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external'],
     atom: {
       stage: {
         draft: 0,
@@ -9926,7 +9876,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (res && res.id !== ctx.state.user.agent.id) {
@@ -10076,7 +10026,7 @@ module.exports = app => {
         ebTitle: 'Config',
       },
       resourceConfig: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'json',
         ebTitle: 'Config',
       },
@@ -10102,7 +10052,7 @@ module.exports = app => {
         },
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },
@@ -10129,8 +10079,7 @@ module.exports = app => {
   // resource search
   schemas.resourceSearch = {
     type: 'object',
-    properties: {
-    },
+    properties: {},
   };
 
   return schemas;
@@ -10143,9 +10092,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomController extends app.Controller {
-
     async preferredRoles() {
       const res = await this.ctx.service.atom.preferredRoles({
         atomClass: this.ctx.request.body.atomClass,
@@ -10370,11 +10317,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AtomController;
 };
-
 
 
 /***/ }),
@@ -10383,9 +10328,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class AtomActionController extends app.Controller {
-  }
+  class AtomActionController extends app.Controller {}
 
   return AtomActionController;
 };
@@ -10397,9 +10340,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomClassController extends app.Controller {
-
     async validatorSearch() {
       const res = await this.ctx.service.atomClass.validatorSearch({
         atomClass: this.ctx.request.body.atomClass,
@@ -10421,7 +10362,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
 
   return AtomClassController;
@@ -10434,9 +10374,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AuthController extends app.Controller {
-
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
@@ -10453,7 +10391,6 @@ module.exports = app => {
       const info = await this.ctx.bean.auth.logout();
       this.ctx.success(info);
     }
-
   }
 
   return AuthController;
@@ -10469,9 +10406,7 @@ const require3 = __webpack_require__(6718);
 const qr = require3('qr-image');
 
 module.exports = app => {
-
   class BaseController extends app.Controller {
-
     modules() {
       const res = this.ctx.service.base.modules();
       this.ctx.success(res);
@@ -10515,7 +10450,6 @@ module.exports = app => {
       this.ctx.type = 'image/png';
       this.ctx.body = img;
     }
-
   }
 
   return BaseController;
@@ -10528,9 +10462,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class CategoryController extends app.Controller {
-
     async child() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.category.child({
@@ -10632,11 +10564,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return CategoryController;
 };
-
 
 
 /***/ }),
@@ -10645,9 +10575,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class CommentController extends app.Controller {
-
     async all() {
       const options = this.ctx.request.body.options;
       options.comment = 1;
@@ -10708,7 +10636,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return CommentController;
 };
@@ -10720,20 +10647,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class JwtController extends app.Controller {
-
     async create() {
       const res = await this.ctx.service.jwt.create({
         scene: this.ctx.request.body.scene,
       });
       this.ctx.success(res);
     }
-
   }
   return JwtController;
 };
-
 
 
 /***/ }),
@@ -10743,7 +10666,6 @@ module.exports = app => {
 
 module.exports = app => {
   class LayoutConfigController extends app.Controller {
-
     async load() {
       const res = await this.service.layoutConfig.load({
         module: this.ctx.request.body.module,
@@ -10770,7 +10692,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return LayoutConfigController;
 };
@@ -10782,9 +10703,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class ResourceController extends app.Controller {
-
     // options
     //   where, orders, page, star, label, resourceType, locale
     async select() {
@@ -10843,7 +10762,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
 
   return ResourceController;
@@ -10856,9 +10774,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class TagController extends app.Controller {
-
     async list() {
       const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.tag.list({
@@ -10899,11 +10815,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return TagController;
 };
-
 
 
 /***/ }),
@@ -10912,9 +10826,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class UserController extends app.Controller {
-
     async getLabels() {
       const res = await this.ctx.service.user.getLabels({
         user: this.ctx.state.user.op,
@@ -10929,11 +10841,9 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return UserController;
 };
-
 
 
 /***/ }),
@@ -10942,9 +10852,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class UtilController extends app.Controller {
-
     async performAction() {
       const res = await this.ctx.service.util.performAction({
         params: JSON.parse(this.ctx.request.query.params),
@@ -10958,11 +10866,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return UtilController;
 };
-
 
 
 /***/ }),
@@ -11016,7 +10922,6 @@ const AtomBaseFn = __webpack_require__(8747);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // atomBase
   app.meta.AtomBase = AtomBaseFn(app);
 
@@ -11050,7 +10955,6 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };
 
 
@@ -11078,8 +10982,7 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {
-            },
+            tableNameModes: {},
             category: true,
             tag: true,
             resource: true,
@@ -11184,7 +11087,7 @@ module.exports = app => {
         starsLabels: {
           user: true,
           bean: 'starsLabels',
-          dependencies: [ 'stars', 'labels' ],
+          dependencies: ['stars', 'labels'],
         },
       },
     },
@@ -11204,13 +11107,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtom', options: { disableDeleted: false } });
     }
-
   }
 
   return Atom;
@@ -11223,13 +11123,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomAction extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtomAction', options: { disableDeleted: false } });
     }
-
   }
 
   return AtomAction;
@@ -11242,13 +11139,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomClass extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtomClass', options: { disableDeleted: false } });
     }
-
   }
 
   return AtomClass;
@@ -11261,13 +11155,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomLabel extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtomLabel', options: { disableDeleted: true } });
     }
-
   }
 
   return AtomLabel;
@@ -11280,13 +11171,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomLabelRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtomLabelRef', options: { disableDeleted: true } });
     }
-
   }
 
   return AtomLabelRef;
@@ -11299,13 +11187,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomStar extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAtomStar', options: { disableDeleted: true } });
     }
-
   }
 
   return AtomStar;
@@ -11318,13 +11203,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Auth extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAuth', options: { disableDeleted: true } });
     }
-
   }
 
   return Auth;
@@ -11337,13 +11219,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AuthProvider extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAuthProvider', options: { disableDeleted: true } });
     }
-
   }
 
   return AuthProvider;
@@ -11371,13 +11250,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Comment extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aComment', options: { disableDeleted: false } });
     }
-
   }
 
   return Comment;
@@ -11390,13 +11266,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class CommentHeart extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aCommentHeart', options: { disableDeleted: true } });
     }
-
   }
 
   return CommentHeart;
@@ -11409,13 +11282,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class CommentView extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aViewComment', options: { disableDeleted: false } });
     }
-
   }
 
   return CommentView;
@@ -11428,13 +11298,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Label extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aLabel', options: { disableDeleted: true } });
     }
-
   }
 
   return Label;
@@ -11492,13 +11359,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Role extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRole', options: { disableDeleted: true } });
     }
-
   }
 
   return Role;
@@ -11511,13 +11375,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RoleInc extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleInc', options: { disableDeleted: true } });
     }
-
   }
 
   return RoleInc;
@@ -11530,13 +11391,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RoleIncRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleIncRef', options: { disableDeleted: true } });
     }
-
   }
 
   return RoleIncRef;
@@ -11549,9 +11407,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RoleRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleRef', options: { disableDeleted: true } });
     }
@@ -11563,7 +11419,6 @@ module.exports = app => {
       });
       return roleRef;
     }
-
   }
 
   return RoleRef;
@@ -11576,13 +11431,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RoleRight extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleRight', options: { disableDeleted: true } });
     }
-
   }
 
   return RoleRight;
@@ -11595,13 +11447,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RoleRightRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleRightRef', options: { disableDeleted: true } });
     }
-
   }
 
   return RoleRightRef;
@@ -11644,13 +11493,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class User extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aUser', options: { disableDeleted: false } });
     }
-
   }
 
   return User;
@@ -11663,13 +11509,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class UserAgent extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aUserAgent', options: { disableDeleted: true } });
     }
-
   }
 
   return UserAgent;
@@ -11682,13 +11525,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class UserRole extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aUserRole', options: { disableDeleted: true } });
     }
-
   }
 
   return UserRole;
@@ -11727,7 +11567,6 @@ const tagRef = __webpack_require__(2446);
 const resource = __webpack_require__(8434);
 const resourceLocale = __webpack_require__(6997);
 const resourceRole = __webpack_require__(3808);
-
 
 module.exports = app => {
   const models = {
@@ -11780,57 +11619,46 @@ module.exports = app => {
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
-    { method: 'post', path: 'atom/create', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'create' } },
-    },
-    { method: 'post', path: 'atom/read', controller: 'atom',
-      meta: { right: { type: 'atom', action: 'read' } },
-    },
+    { method: 'post', path: 'atom/create', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'create' } } },
+    { method: 'post', path: 'atom/read', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },
-    { method: 'post', path: 'atom/write', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
-    },
-    { method: 'post', path: 'atom/openDraft', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'write' } },
-    },
-    { method: 'post', path: 'atom/submit', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
-    },
-    { method: 'post', path: 'atom/writeSubmit', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
-    },
-    { method: 'post', path: 'atom/delete', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'delete' } },
-    },
-    { method: 'post', path: 'atom/clone', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'clone' } },
-    },
-    { method: 'post', path: 'atom/enable', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'enable' } },
-    },
-    { method: 'post', path: 'atom/disable', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 'disable' } },
-    },
+    { method: 'post', path: 'atom/write', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
+    { method: 'post', path: 'atom/openDraft', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write' } } },
+    { method: 'post', path: 'atom/submit', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
+    { method: 'post', path: 'atom/writeSubmit', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
+    { method: 'post', path: 'atom/delete', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'delete' } } },
+    { method: 'post', path: 'atom/clone', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'clone' } } },
+    { method: 'post', path: 'atom/enable', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'enable' } } },
+    { method: 'post', path: 'atom/disable', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'disable' } } },
     {
-      method: 'post', path: 'atom/deleteBulk', controller: 'atom', middlewares: 'transaction',
+      method: 'post',
+      path: 'atom/deleteBulk',
+      controller: 'atom',
+      middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'deleteBulk' } },
     },
     {
-      method: 'post', path: 'atom/exportBulk', controller: 'atom',
+      method: 'post',
+      path: 'atom/exportBulk',
+      controller: 'atom',
       meta: { right: { type: 'atom', action: 'exportBulk' } },
     },
-    { method: 'post', path: 'atom/star', controller: 'atom',
+    {
+      method: 'post',
+      path: 'atom/star',
+      controller: 'atom',
       meta: {
         auth: { user: true },
         right: { type: 'atom', action: 'read' },
       },
     },
-    { method: 'post', path: 'atom/readCount', controller: 'atom',
-      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
-    },
+    { method: 'post', path: 'atom/readCount', controller: 'atom', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
     { method: 'post', path: 'atom/stats', controller: 'atom' },
-    { method: 'post', path: 'atom/labels', controller: 'atom',
+    {
+      method: 'post',
+      path: 'atom/labels',
+      controller: 'atom',
       meta: {
         auth: { user: true },
         right: { type: 'atom', action: 'read' },
@@ -11843,25 +11671,33 @@ module.exports = app => {
     { method: 'post', path: 'atom/checkRightAction', controller: 'atom' },
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
-    { method: 'post', path: 'comment/list', controller: 'comment',
-      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
-    },
-    { method: 'post', path: 'comment/item', controller: 'comment',
-      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
-    },
-    { method: 'post', path: 'comment/save', controller: 'comment', middlewares: 'transaction',
+    { method: 'post', path: 'comment/list', controller: 'comment', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
+    { method: 'post', path: 'comment/item', controller: 'comment', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
+    {
+      method: 'post',
+      path: 'comment/save',
+      controller: 'comment',
+      middlewares: 'transaction',
       meta: {
         auth: { user: true },
         right: { type: 'atom', action: 'read', checkFlow: true },
       },
     },
-    { method: 'post', path: 'comment/delete', controller: 'comment', middlewares: 'transaction',
+    {
+      method: 'post',
+      path: 'comment/delete',
+      controller: 'comment',
+      middlewares: 'transaction',
       meta: {
         auth: { user: true },
         right: { type: 'atom', action: 'read', checkFlow: true },
       },
     },
-    { method: 'post', path: 'comment/heart', controller: 'comment', middlewares: 'transaction',
+    {
+      method: 'post',
+      path: 'comment/heart',
+      controller: 'comment',
+      middlewares: 'transaction',
       meta: {
         auth: { user: true },
         right: { type: 'atom', action: 'read', checkFlow: true },
@@ -11874,15 +11710,9 @@ module.exports = app => {
     { method: 'post', path: 'resource/select', controller: 'resource' },
     { method: 'post', path: 'resource/read', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
-    { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
-      meta: { right: { type: 'atom', action: 'authorize' } },
-    },
-    { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource',
-      meta: { right: { type: 'atom', action: 'authorize' } },
-    },
-    { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource',
-      meta: { right: { type: 'atom', action: 'authorize' } },
-    },
+    { method: 'post', path: 'resource/resourceRoles', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
+    { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
+    { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
     // atomClass
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },
@@ -11909,10 +11739,16 @@ module.exports = app => {
     { method: 'post', path: 'category/delete', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/item', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/save', controller: 'category', middlewares: 'validate', meta: {
-      validate: { module: 'a-base', validator: 'category' },
-      right: { type: 'resource', module: 'a-settings', name: 'settings' },
-    } },
+    {
+      method: 'post',
+      path: 'category/save',
+      controller: 'category',
+      middlewares: 'validate',
+      meta: {
+        validate: { module: 'a-base', validator: 'category' },
+        right: { type: 'resource', module: 'a-settings', name: 'settings' },
+      },
+    },
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
     // tag
@@ -11920,7 +11756,6 @@ module.exports = app => {
     { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-
   ];
   return routes;
 };
@@ -11932,9 +11767,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.Service {
-
     async preferredRoles({ atomClass, user }) {
       return await this.ctx.bean.atom.preferredRoles({ atomClass, user });
     }
@@ -12026,7 +11859,6 @@ module.exports = app => {
     async validator({ atomClass }) {
       return await this.ctx.bean.atom.validator({ atomClass });
     }
-
   }
 
   return Atom;
@@ -12039,9 +11871,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class AtomAction extends app.Service {
-  }
+  class AtomAction extends app.Service {}
 
   return AtomAction;
 };
@@ -12053,9 +11883,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomClass extends app.Service {
-
     async validatorSearch({ atomClass }) {
       return await this.ctx.bean.atomClass.validatorSearch({ atomClass });
     }
@@ -12067,7 +11895,6 @@ module.exports = app => {
     async atomClass({ atomClass }) {
       return await this.ctx.bean.atomClass.get(atomClass);
     }
-
   }
 
   return AtomClass;
@@ -12080,9 +11907,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class Auth extends app.Service {
-  }
+  class Auth extends app.Service {}
 
   return Auth;
 };
@@ -12094,9 +11919,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Base extends app.Service {
-
     modules() {
       return this.ctx.bean.base.modules();
     }
@@ -12120,7 +11943,6 @@ module.exports = app => {
     themes() {
       return this.ctx.bean.base.themes();
     }
-
   }
 
   return Base;
@@ -12133,9 +11955,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Category extends app.Service {
-
     async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
       return await this.ctx.bean.category.child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
     }
@@ -12171,7 +11991,6 @@ module.exports = app => {
     async relativeTop({ categoryId, setLocale }) {
       return await this.ctx.bean.category.relativeTop({ categoryId, setLocale });
     }
-
   }
 
   return Category;
@@ -12189,9 +12008,7 @@ const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 
 module.exports = app => {
-
   class Comment extends app.Service {
-
     async list({ key, options, user }) {
       const _options = {};
       // where
@@ -12213,16 +12030,14 @@ module.exports = app => {
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
          ${_where} ${_orders} ${_limit}`;
       // select
-      return await this.ctx.model.query(sql, [ this.ctx.instance.id, user.id ]);
+      return await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
     }
 
-    async item({ key, data: { commentId }, user }) {
+    async item({ /* key,*/ data: { commentId }, user }) {
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
          where a.iid=? and a.deleted=0 and a.id=?`;
       // select
-      const list = await this.ctx.model.query(sql,
-        [ this.ctx.instance.id, user.id, this.ctx.instance.id, commentId ]
-      );
+      const list = await this.ctx.model.query(sql, [this.ctx.instance.id, user.id, this.ctx.instance.id, commentId]);
       return list[0];
     }
 
@@ -12265,9 +12080,7 @@ module.exports = app => {
 
     async save_add({ key, data: { replyId, content }, user }) {
       // sorting
-      const list = await this.ctx.model.query(
-        'select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?',
-        [ this.ctx.instance.id, key.atomId ]);
+      const list = await this.ctx.model.query('select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?', [this.ctx.instance.id, key.atomId]);
       const sorting = (list[0].sorting || 0) + 1;
       // reply
       let reply;
@@ -12277,8 +12090,7 @@ module.exports = app => {
       // replyUserId
       const replyUserId = reply ? reply.userId : 0;
       // replyContent
-      const replyContent = !reply ? '' :
-        this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
+      const replyContent = !reply ? '' : this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
       // html
       const html = this._renderContent({
         content,
@@ -12317,7 +12129,7 @@ module.exports = app => {
       // comment
       const item = await this.ctx.model.comment.get({ id: commentId });
       // check right
-      let canDeleted = (key.atomId === item.atomId && item.userId === user.id);
+      let canDeleted = key.atomId === item.atomId && item.userId === user.id;
       if (!canDeleted) {
         canDeleted = await this.ctx.bean.function.checkRightFunction({
           function: { module: 'a-base', name: 'deleteComment' },
@@ -12378,7 +12190,8 @@ module.exports = app => {
         action: 'heart',
         atomId: key.atomId,
         commentId,
-        heart, heartCount,
+        heart,
+        heartCount,
       };
     }
 
@@ -12493,7 +12306,6 @@ ${sep}
     _trimHtml(html) {
       return trimHtml(html, this.ctx.config.comment.trim);
     }
-
   }
 
   return Comment;
@@ -12509,12 +12321,10 @@ const require3 = __webpack_require__(6718);
 const jsonwebtoken = require3('jsonwebtoken');
 
 module.exports = app => {
-
   class Jwt extends app.Service {
-
     async create({ scene = 'query' }) {
       // check
-      if (!this.ctx.state.jwt) ctx.throw(403);
+      if (!this.ctx.state.jwt) this.ctx.throw(403);
       // token
       const token = this.ctx.state.jwt.token;
       // jwt payload
@@ -12527,7 +12337,6 @@ module.exports = app => {
       const jwt = jsonwebtoken.sign(payload, secret);
       return { jwt };
     }
-
   }
 
   return Jwt;
@@ -12543,9 +12352,7 @@ const require3 = __webpack_require__(6718);
 const extend = require3('extend2');
 
 module.exports = app => {
-
   class Settings extends app.Service {
-
     async load({ module, user }) {
       const name = `user-layoutConfig:${module}:${user.id}`;
       return await this.ctx.bean.status.get(name);
@@ -12561,7 +12368,6 @@ module.exports = app => {
       const data = extend(true, {}, layoutConfig || {}, { [key]: value });
       await this.save({ module, data, user });
     }
-
   }
 
   return Settings;
@@ -12574,9 +12380,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Resource extends app.Service {
-
     async select({ options, user }) {
       return await this.ctx.bean.resource.select({ options, user });
     }
@@ -12593,16 +12397,15 @@ module.exports = app => {
       return await this.ctx.bean.resource.resourceRoles({ key, user });
     }
 
-    async resourceRoleRemove({ /* key,*/ data/* , user*/ }) {
+    async resourceRoleRemove({ /* key,*/ data /* , user*/ }) {
       return await this.ctx.bean.resource.deleteResourceRole({ id: data.resourceRoleId });
     }
 
-    async resourceRoleAdd({ key, data/* , user*/ }) {
+    async resourceRoleAdd({ key, data /* , user*/ }) {
       for (const roleId of data.roles) {
         await this.ctx.bean.resource.addResourceRole({ atomId: key.atomId, roleId });
       }
     }
-
   }
 
   return Resource;
@@ -12615,9 +12418,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Tag extends app.Service {
-
     async list({ atomClass, options }) {
       return await this.ctx.bean.tag.list({ atomClass, options });
     }
@@ -12633,7 +12434,6 @@ module.exports = app => {
     async save({ tagId, data }) {
       return await this.ctx.bean.tag.save({ tagId, data });
     }
-
   }
 
   return Tag;
@@ -12646,9 +12446,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class User extends app.Service {
-
     async getLabels({ user }) {
       return await this.ctx.bean.atom.getLabels({ user });
     }
@@ -12656,7 +12454,6 @@ module.exports = app => {
     async setLabels({ labels, user }) {
       return await this.ctx.bean.atom.setLabels({ labels, user });
     }
-
   }
 
   return User;
@@ -12672,9 +12469,7 @@ const require3 = __webpack_require__(6718);
 const pMap = require3('p-map');
 
 module.exports = app => {
-
   class Util extends app.Service {
-
     async performAction({ params }) {
       // force innerAccess as false
       params.innerAccess = false;
@@ -12699,7 +12494,6 @@ module.exports = app => {
       };
       return await pMap(actions, mapper, { concurrency: 10 });
     }
-
   }
 
   return Util;
@@ -12751,7 +12545,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("os");;
+module.exports = require("os");
 
 /***/ }),
 
@@ -12759,7 +12553,7 @@ module.exports = require("os");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
@@ -12767,7 +12561,7 @@ module.exports = require("path");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ }),
 
@@ -12775,7 +12569,7 @@ module.exports = require("require3");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("url");;
+module.exports = require("url");
 
 /***/ })
 

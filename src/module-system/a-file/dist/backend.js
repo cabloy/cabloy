@@ -18,7 +18,6 @@ const extend = require3('extend2');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class File {
-
     get modelFile() {
       return ctx.model.module(moduleInfo.relativeName).file;
     }
@@ -31,7 +30,9 @@ module.exports = ctx => {
       options.file = 1;
       // select
       const items = await ctx.bean.atom.select({
-        atomClass, options, user,
+        atomClass,
+        options,
+        user,
       });
       // downloadUrl
       for (const item of items) {
@@ -96,9 +97,7 @@ module.exports = ctx => {
         attachment: 1,
       });
       if (!options.orders) {
-        options.orders = [
-          [ 'realName', 'asc' ],
-        ];
+        options.orders = [['realName', 'asc']];
       }
       // list
       return await this.list({ key, options, user });
@@ -168,7 +167,7 @@ module.exports = ctx => {
 
       // dest
       const downloadId = uuid.v4().replace(/-/g, '');
-      const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${ctx.bean.util.today()}`;
+      const _filePath = `file/${mode === 1 ? 'image' : mode === 2 ? 'file' : 'audio'}/${ctx.bean.util.today()}`;
       const _fileName = uuid.v4().replace(/-/g, '');
       const destDir = await ctx.bean.base.getPath(_filePath, true);
       const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
@@ -253,7 +252,6 @@ module.exports = ctx => {
         downloadId,
         downloadUrl,
       };
-
     }
 
     async download({ downloadId, atomId, width, height, user }) {
@@ -281,9 +279,7 @@ module.exports = ctx => {
       }
 
       // forward url
-      const forwardUrl = ctx.bean.base.getForwardUrl(
-        `${file.filePath}/${fileName}${file.fileExt}`
-      );
+      const forwardUrl = ctx.bean.base.getForwardUrl(`${file.filePath}/${fileName}${file.fileExt}`);
 
       // send
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
@@ -299,7 +295,6 @@ module.exports = ctx => {
         ctx.response.status = 200;
         ctx.response.type = file.mime;
       }
-
     }
 
     // inner invoke
@@ -408,24 +403,17 @@ module.exports = ctx => {
 
       // cannot use * in path on windows
       const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
-      const destFile = await ctx.bean.base.getPath(
-        `${file.filePath}/${fileName}${file.fileExt}`, false
-      );
+      const destFile = await ctx.bean.base.getPath(`${file.filePath}/${fileName}${file.fileExt}`, false);
 
       const bExists = await fse.pathExists(destFile);
       if (bExists) return fileName;
 
-      const width = widthRequire || parseInt(file.width * heightRequire / file.height);
-      const height = heightRequire || parseInt(file.height * widthRequire / file.width);
+      const width = widthRequire || parseInt((file.width * heightRequire) / file.height);
+      const height = heightRequire || parseInt((file.height * widthRequire) / file.width);
 
-      const srcFile = await ctx.bean.base.getPath(
-        `${file.filePath}/${file.fileName}${file.fileExt}`, false
-      );
+      const srcFile = await ctx.bean.base.getPath(`${file.filePath}/${file.fileName}${file.fileExt}`, false);
       await bb.fromCallback(cb => {
-        gm(srcFile)
-          .resize(width, height, '!')
-          .quality(100)
-          .write(destFile, cb);
+        gm(srcFile).resize(width, height, '!').quality(100).write(destFile, cb);
       });
 
       return fileName;
@@ -436,11 +424,14 @@ module.exports = ctx => {
         return await this.modelFile.get({ downloadId, atomId });
       }
       // try to get formal
-      const file = await ctx.model.queryOne(`
+      const file = await ctx.model.queryOne(
+        `
           select a.* from aFile a
             inner join aAtom b on a.atomId=b.id
               where a.iid=? and a.deleted=0 and a.mode=2 and a.downloadId=? and b.atomStage=1
-        `, [ ctx.instance.id, downloadId ]);
+        `,
+        [ctx.instance.id, downloadId]
+      );
       if (file) return file;
       // no matter what atomId is: maybe ===0 or !==0
       return await ctx.model.file.get({ downloadId });
@@ -474,13 +465,12 @@ module.exports = ctx => {
     }
 
     getDownloadUrl({ downloadId, atomId, mode, fileExt }) {
-      let url = `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`;
+      let url = `/api/a/file/file/download/${downloadId}${mode === 1 || mode === 3 ? fileExt : ''}`;
       if (atomId) {
         url = `${url}?atomId=${atomId}`;
       }
       return ctx.bean.base.getAbsoluteUrl(url);
     }
-
   }
   return File;
 };
@@ -492,9 +482,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aFile
@@ -542,15 +530,11 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
-
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -601,8 +585,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -643,7 +626,6 @@ module.exports = app => {
 
 module.exports = app => {
   class FileController extends app.Controller {
-
     async all() {
       const options = this.ctx.request.body.options;
       options.page = this.ctx.bean.util.page(options.page);
@@ -699,7 +681,6 @@ module.exports = app => {
         user: this.ctx.state.user.op,
       });
     }
-
   }
   return FileController;
 };
@@ -711,7 +692,6 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const file = __webpack_require__(697);
-
 
 module.exports = app => {
   const controllers = {
@@ -731,7 +711,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -756,7 +735,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -769,12 +747,10 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
       schemas,
     },
@@ -863,7 +839,6 @@ module.exports = app => {
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class File extends app.Service {
-
     async all({ atomClass, options, user }) {
       return await this.ctx.bean.file.all({ atomClass, options, user });
     }
@@ -901,7 +876,6 @@ module.exports = app => {
     async fileDownloadCheck({ file, user }) {
       return await this.ctx.bean.file.fileDownloadCheck({ file, user });
     }
-
   }
 
   return File;
@@ -929,7 +903,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("fs");;
+module.exports = require("fs");
 
 /***/ }),
 
@@ -937,7 +911,7 @@ module.exports = require("fs");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
@@ -945,7 +919,7 @@ module.exports = require("path");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

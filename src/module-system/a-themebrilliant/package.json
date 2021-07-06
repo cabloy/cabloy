@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-themebrilliant",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "title": "BrilliantThemeTitle",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,8 +23,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.1",
+    "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
-    "require3": "^2.0.8"
+    "require3": "^2.0.9"
   }
 }

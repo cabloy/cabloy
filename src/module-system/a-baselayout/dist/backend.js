@@ -18,8 +18,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -27,8 +26,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -47,8 +45,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -76,7 +73,6 @@ module.exports = app => {
     locales,
     errors,
   };
-
 };
 
 
@@ -85,8 +81,7 @@ module.exports = app => {
 /***/ 825:
 /***/ ((module) => {
 
-module.exports = [
-];
+module.exports = [];
 
 
 /***/ }),
@@ -94,9 +89,7 @@ module.exports = [
 /***/ 214:
 /***/ ((module) => {
 
-
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ })

@@ -16,9 +16,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -80,7 +78,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;
@@ -93,9 +90,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -159,7 +154,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;
@@ -172,9 +166,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Detail extends app.meta.DetailBase {
-
     async create({ atomKey, detailClass, item, user }) {
       // super
       const key = await super.create({ atomKey, detailClass, item, user });
@@ -241,7 +233,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Detail;
@@ -298,7 +289,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: testFlowPurchaseOrder
@@ -360,7 +350,6 @@ module.exports = app => {
             ADD COLUMN detailsAmount int(11) DEFAULT '0'
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
@@ -395,9 +384,7 @@ module.exports = app => {
       }
     }
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -471,8 +458,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -554,7 +540,6 @@ module.exports = class Listener {
       assert.equal(echo, 'hello');
     }
   }
-
 };
 
 
@@ -575,7 +560,6 @@ module.exports = class Listener {
       contextNode.vars.set('x', x);
     }
   }
-
 };
 
 
@@ -649,7 +633,6 @@ module.exports = class Listener {
   getNodeDefOptions(contextNode /* { options }*/) {
     console.log('getNodeDefOptions: ', contextNode._nodeDef.id);
   }
-
 };
 
 
@@ -686,18 +669,17 @@ module.exports = class Listener {
     console.log('handleStatus: %d, handleRemark: %s', contextTask._flowTask.handleStatus, contextTask._flowTask.handleRemark);
   }
 
-  async getSchemaRead(contextTask, contextNode/* { schemaBase, schema }*/) {
+  async getSchemaRead(contextTask, contextNode /* { schemaBase, schema }*/) {
     console.log('getSchemaRead: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
-  async getSchemaWrite(contextTask, contextNode/* { schemaBase, schema }*/) {
+  async getSchemaWrite(contextTask, contextNode /* { schemaBase, schema }*/) {
     console.log('getSchemaWrite: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
   getNodeDefOptions(contextNode /* { options }*/) {
     console.log('getNodeDefOptions: ', contextNode._nodeDef.id);
   }
-
 };
 
 
@@ -720,7 +702,6 @@ module.exports = class Listener {
       assert.equal(_flowDefKey, 'set01_startEventAtom');
     }
   }
-
 };
 
 
@@ -801,7 +782,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               name: 'test',
             },
-            parameterExpression: 'context.vars.get(\`echo\`)',
+            parameterExpression: 'context.vars.get(`echo`)',
           },
         },
         {
@@ -880,7 +861,7 @@ module.exports = app => {
           source: 'startEvent_1',
           target: 'endEvent_1',
           options: {
-            conditionExpression: 'context.vars.get(\'x\')===1',
+            conditionExpression: "context.vars.get('x')===1",
           },
         },
         {
@@ -972,7 +953,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom._flowDefKey===\'set01_atomAssigneesConfirmation\'',
+            conditionExpression: "atom._flowDefKey==='set01_atomAssigneesConfirmation'",
           },
         },
         {
@@ -1040,7 +1021,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom._flowDefKey===\'set01_atomUserTask\'',
+            conditionExpression: "atom._flowDefKey==='set01_atomUserTask'",
           },
         },
         {
@@ -1130,7 +1111,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom._flowDefKey===\'set01_startEventAtom\'',
+            conditionExpression: "atom._flowDefKey==='set01_startEventAtom'",
           },
         },
         {
@@ -1314,7 +1295,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data/* , path, rootData , name*/) {
+      return async function (data /* , path, rootData , name*/) {
         // ignore if empty
         if (!data) return true;
         // ctx
@@ -1325,11 +1306,14 @@ module.exports = app => {
           return true;
         }
         const atomId = ctx.meta.validateHost.key.atomId;
-        const item = await ctx.model.queryOne(`
+        const item = await ctx.model.queryOne(
+          `
           select a.id from aAtom a
             left join testFlowProduct b on a.id=b.atomId
               where a.atomStage=0 and a.iid=? and a.deleted=0 and b.productCode=?
-          `, [ ctx.instance.id, data ]);
+          `,
+          [ctx.instance.id, data]
+        );
         if (item && item.id !== atomId) {
           const errors = [{ keyword: 'x-productCode', params: [], message: ctx.text('Product Code Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
@@ -1401,7 +1385,7 @@ module.exports = app => {
   // purchase order
   const __display = {
     expression: '!!_flowDefKey',
-    dependencies: [ '_flowDefKey' ],
+    dependencies: ['_flowDefKey'],
     // host: {
     //   stage: 'draft', // draft/formal/history
     //   mode: 'edit', // view
@@ -1551,7 +1535,7 @@ module.exports = app => {
   };
   const __display = {
     expression: '!!detailCodeId',
-    dependencies: [ 'detailCodeId' ],
+    dependencies: ['detailCodeId'],
     // host: {
     //   stage: 'draft', // draft/formal/history
     //   mode: 'edit', // view
@@ -1636,9 +1620,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     async start() {
       // start
       await this.ctx.bean.flow.startByKey({
@@ -1648,12 +1630,10 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
 
   return FlowController;
 };
-
 
 
 /***/ }),
@@ -1681,7 +1661,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // aops
   const aops = __webpack_require__(224)(app);
   // beans
@@ -1709,7 +1688,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -1722,8 +1700,7 @@ const require3 = __webpack_require__(718);
 const extend = require3('extend2');
 
 module.exports = app => {
-  const meta = {
-  };
+  const meta = {};
   const keywords = __webpack_require__(415)(app);
   const schemas = __webpack_require__(232)(app);
   const staticFlowDefs = __webpack_require__(772)(app);
@@ -1738,10 +1715,9 @@ module.exports = app => {
             bean: 'purchaseOrder',
             title: 'Purchase Order',
             tableName: 'testFlowPurchaseOrder',
-            details: [ 'default' ],
+            details: ['default'],
           },
-          actions: {
-          },
+          actions: {},
           validator: 'purchaseOrder',
           search: {
             validator: 'purchaseOrderSearch',
@@ -1753,8 +1729,7 @@ module.exports = app => {
             title: 'Product',
             tableName: 'testFlowProduct',
           },
-          actions: {
-          },
+          actions: {},
           validator: 'product',
           search: {
             validator: 'productSearch',
@@ -1781,8 +1756,7 @@ module.exports = app => {
             title: 'Details',
             tableName: 'testFlowPurchaseOrderDetail',
           },
-          actions: {
-          },
+          actions: {},
           validator: 'purchaseOrderDetail',
         },
       },
@@ -1895,8 +1869,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  let routes = [
-  ];
+  let routes = [];
   routes = routes.concat([
     // flow/start
     { method: 'post', path: 'flow/start', controller: 'flow', middlewares: 'test' },
@@ -1911,8 +1884,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 
@@ -1923,7 +1895,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

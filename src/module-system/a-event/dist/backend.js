@@ -18,7 +18,6 @@ module.exports = ctx => {
   };
 
   class Event extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'event');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -70,7 +69,6 @@ module.exports = ctx => {
       }
       return eventArray;
     }
-
   }
 
   return Event;
@@ -107,8 +105,7 @@ module.exports = appInfo => {
   const config = {};
 
   // middlewares
-  config.middlewares = {
-  };
+  config.middlewares = {};
 
   return config;
 };
@@ -120,8 +117,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -129,8 +125,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -149,8 +144,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -167,7 +161,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // meta
@@ -187,7 +180,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -208,8 +200,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -219,8 +210,7 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ })

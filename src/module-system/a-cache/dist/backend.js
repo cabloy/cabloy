@@ -7,7 +7,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cache {
-
     get db() {
       const config = ctx.config.module(moduleInfo.relativeName);
       if (config.db.redis) {
@@ -27,7 +26,6 @@ module.exports = ctx => {
     get redis() {
       return ctx.bean._getBean(moduleInfo, 'local.redis');
     }
-
   }
 
   return Cache;
@@ -41,7 +39,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const sameAsCaller = context.sameAsCaller;
       const data = context.data;
@@ -50,7 +47,6 @@ module.exports = app => {
         moduleCache._clear();
       }
     }
-
   }
 
   return Broadcast;
@@ -64,7 +60,6 @@ module.exports = app => {
 
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const sameAsCaller = context.sameAsCaller;
       const data = context.data;
@@ -73,7 +68,6 @@ module.exports = app => {
         moduleCache._remove(data.name);
       }
     }
-
   }
 
   return Broadcast;
@@ -88,7 +82,6 @@ module.exports = app => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CacheDb extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.db`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -119,10 +112,13 @@ module.exports = ctx => {
         name,
       });
       if (res) {
-        await ctx.db.query(`
+        await ctx.db.query(
+          `
           update aCache set value=?, expired=${expired}
             where id=?
-          `, [ JSON.stringify(value), res.id ]);
+          `,
+          [JSON.stringify(value), res.id]
+        );
       } else {
         if (queue) {
           await ctx.app.meta.util.lock({
@@ -139,9 +135,12 @@ module.exports = ctx => {
             },
           });
         } else {
-          await ctx.db.query(`
+          await ctx.db.query(
+            `
             insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
+            `,
+            [ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value)]
+          );
         }
       }
       // return old value
@@ -157,7 +156,7 @@ module.exports = ctx => {
 
     async _has(name) {
       const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
-      const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
+      const res = await ctx.db.queryOne(sql, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name]);
       return res;
     }
 
@@ -175,7 +174,6 @@ module.exports = ctx => {
         module: this.moduleName,
       });
     }
-
   }
 
   return CacheDb;
@@ -192,7 +190,6 @@ const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CacheMem extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.mem`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -231,7 +228,7 @@ module.exports = ctx => {
     has(name) {
       const res = this.memory[name];
       if (!res) return null;
-      return (res.timeout === 0 || (new Date() - res.timestamp) < res.timeout) ? res : null;
+      return res.timeout === 0 || new Date() - res.timestamp < res.timeout ? res : null;
     }
 
     remove(name) {
@@ -269,7 +266,6 @@ module.exports = ctx => {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }
-
   }
 
   return CacheMem;
@@ -284,7 +280,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class RedisDb extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.redis`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -316,16 +311,10 @@ module.exports = ctx => {
       const key = this._getKey(name);
       let valuePrev;
       if (timeout) {
-        const res = await redis.multi()
-          .get(key)
-          .set(key, JSON.stringify(value), 'PX', timeout)
-          .exec();
+        const res = await redis.multi().get(key).set(key, JSON.stringify(value), 'PX', timeout).exec();
         valuePrev = res[0][1];
       } else {
-        const res = await redis.multi()
-          .get(key)
-          .set(key, JSON.stringify(value))
-          .exec();
+        const res = await redis.multi().get(key).set(key, JSON.stringify(value)).exec();
         valuePrev = res[0][1];
       }
       return valuePrev ? JSON.parse(valuePrev) : undefined;
@@ -334,7 +323,7 @@ module.exports = ctx => {
     async has(name) {
       const redis = ctx.app.redis.get('cache');
       const key = this._getKey(name);
-      return await redis.exists(key) > 0;
+      return (await redis.exists(key)) > 0;
     }
 
     async remove(name) {
@@ -342,7 +331,6 @@ module.exports = ctx => {
       const key = this._getKey(name);
       await redis.del(key);
     }
-
   }
 
   return RedisDb;
@@ -355,9 +343,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aCache
@@ -394,7 +380,6 @@ module.exports = app => {
         await this.ctx.db.query(sql);
       }
     }
-
   }
 
   return Version;
@@ -489,8 +474,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -498,8 +482,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -518,9 +501,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class DbController extends app.Controller {
-  }
+  class DbController extends app.Controller {}
 
   return DbController;
 };
@@ -553,7 +534,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -570,7 +550,6 @@ module.exports = app => {
     locales,
     errors,
   };
-
 };
 
 
@@ -580,8 +559,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -592,9 +570,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class Db extends app.Service {
-  }
+  class Db extends app.Service {}
 
   return Db;
 };

@@ -11,7 +11,6 @@ const constants = __webpack_require__(479);
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Settings extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'settings');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -35,16 +34,15 @@ module.exports = ctx => {
       return await this._get({ scene: 'instance', module, name });
     }
 
-
     // user
 
     async loadSettingsUser(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return await this._loadSettings({ scene: 'user', module: ops.module });
     }
 
     async loadValidatorUser(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return this._getValidator({ scene: 'user', module: ops.module });
     }
 
@@ -55,12 +53,12 @@ module.exports = ctx => {
     // instance
 
     async loadSettingsInstance(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return await this._loadSettings({ scene: 'instance', module: ops.module });
     }
 
     async loadValidatorInstance(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return this._getValidator({ scene: 'instance', module: ops.module });
     }
 
@@ -108,7 +106,8 @@ module.exports = ctx => {
         module: validator.module,
         validator: validator.validator,
         schema: null,
-        data });
+        data,
+      });
       // update aSettings
       const _data = await this.modelSettings.get({
         module,
@@ -183,7 +182,6 @@ module.exports = ctx => {
       const schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
       return extend(true, {}, schema);
     }
-
   }
 
   return Settings;
@@ -196,9 +194,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aSettings
@@ -239,9 +235,10 @@ module.exports = app => {
     }
 
     async init(options) {
-      if (options.version === 1) {}
+      if (options.version === 1) {
+        // empty
+      }
     }
-
   }
 
   return Version;
@@ -284,8 +281,7 @@ module.exports = appInfo => {
   const config = {};
 
   // middlewares
-  config.middlewares = {
-  };
+  config.middlewares = {};
 
   return config;
 };
@@ -310,8 +306,7 @@ module.exports = {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -366,7 +361,6 @@ module.exports = app => {
 
 module.exports = app => {
   class SettingsController extends app.Controller {
-
     // instance
 
     instanceList() {
@@ -400,7 +394,6 @@ module.exports = app => {
       const res = await this.service.settings.userSave(this.ctx.request.body);
       this.ctx.success(res);
     }
-
   }
   return SettingsController;
 };
@@ -435,7 +428,6 @@ const constants = __webpack_require__(479);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // meta
@@ -457,7 +449,6 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };
 
 
@@ -488,13 +479,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Settings extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aSettings', options: { disableDeleted: true } });
     }
-
   }
 
   return Settings;
@@ -507,13 +495,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class SettingsRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aSettingsRef', options: { disableDeleted: true } });
     }
-
   }
 
   return SettingsRef;
@@ -542,15 +527,9 @@ module.exports = {
 module.exports = app => {
   const routes = [
     // settings:instance
-    { method: 'post', path: 'settings/instance/list', controller: 'settings', action: 'instanceList',
-      meta: { right: { type: 'resource', name: 'settings' } },
-    },
-    { method: 'post', path: 'settings/instance/load', controller: 'settings', action: 'instanceLoad',
-      meta: { right: { type: 'resource', name: 'settings' } },
-    },
-    { method: 'post', path: 'settings/instance/save', controller: 'settings', action: 'instanceSave',
-      meta: { right: { type: 'resource', name: 'settings' } },
-    },
+    { method: 'post', path: 'settings/instance/list', controller: 'settings', action: 'instanceList', meta: { right: { type: 'resource', name: 'settings' } } },
+    { method: 'post', path: 'settings/instance/load', controller: 'settings', action: 'instanceLoad', meta: { right: { type: 'resource', name: 'settings' } } },
+    { method: 'post', path: 'settings/instance/save', controller: 'settings', action: 'instanceSave', meta: { right: { type: 'resource', name: 'settings' } } },
     // settings:user
     { method: 'post', path: 'settings/user/list', controller: 'settings', action: 'userList' },
     { method: 'post', path: 'settings/user/load', controller: 'settings', action: 'userLoad' },
@@ -566,12 +545,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   let _instanceList = null;
   let _userList = null;
 
   class Settings extends app.Service {
-
     // instance
 
     instanceList() {
@@ -640,7 +617,6 @@ module.exports = app => {
       }
       return list;
     }
-
   }
 
   return Settings;
@@ -665,7 +641,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

@@ -18,7 +18,6 @@ module.exports = app => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
-
     get modelFlowTask() {
       return ctx.model.module(moduleInfo.relativeName).flowTask;
     }
@@ -125,10 +124,14 @@ module.exports = ctx => {
         return;
       }
       const taskCountPassed = await this.modelFlowTask.count({
-        flowNodeId, flowTaskStatus: 1, handleStatus: 1,
+        flowNodeId,
+        flowTaskStatus: 1,
+        handleStatus: 1,
       });
       const taskCountRejected = await this.modelFlowTask.count({
-        flowNodeId, flowTaskStatus: 1, handleStatus: 2,
+        flowNodeId,
+        flowTaskStatus: 1,
+        handleStatus: 2,
       });
       // check passed
       if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {
@@ -195,7 +198,8 @@ module.exports = ctx => {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
-        flowNodeId, cb: ({ /* flowNode*/ nodeDef }) => {
+        flowNodeId,
+        cb: ({ /* flowNode*/ nodeDef }) => {
           return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
         },
       });
@@ -225,7 +229,9 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectTasks({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         history,
       });
@@ -286,10 +292,13 @@ module.exports = ctx => {
       // flowTaskHistory close
       //    flowTaskStatus:1
       //    handleStatus: not changed
-      await ctx.model.query(`
+      await ctx.model.query(
+        `
         update aFlowTaskHistory set flowTaskStatus=1
           where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
-        `, [ ctx.instance.id, flowNodeId ]);
+        `,
+        [ctx.instance.id, flowNodeId]
+      );
     }
 
     _notifyTaskClaimings(userId) {
@@ -311,7 +320,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return FlowTask;
@@ -326,8 +334,7 @@ module.exports = ctx => {
 const FlowNodeActivityUserTaskBase = __webpack_require__(271);
 
 module.exports = ctx => {
-  class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {
-  }
+  class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {}
 
   return FlowNode;
 };
@@ -357,7 +364,6 @@ module.exports = ctx => {
       // also true
       return true;
     }
-
   }
 
   return FlowNode;
@@ -374,7 +380,6 @@ const FlowNodeActivityUserTaskBase = __webpack_require__(271);
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {
-
     get modelCondition() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeStartEventAtomCondition;
     }
@@ -406,7 +411,8 @@ module.exports = ctx => {
             'a.flowTaskStatus': 0,
           },
           history: 0,
-        } });
+        },
+      });
       const task = tasks[0];
       const flowTaskId = task.id;
       const user = { id: task.userIdAssignee };
@@ -439,7 +445,8 @@ module.exports = ctx => {
       // get condition
       const startEventId = node.id;
       const _condition = await this.modelCondition.get({
-        flowDefId, startEventId,
+        flowDefId,
+        startEventId,
       });
       if (_condition) {
         // update
@@ -449,21 +456,26 @@ module.exports = ctx => {
       } else {
         // insert
         await this.modelCondition.insert({
-          flowDefId, startEventId,
-          atomClassId: atomClass.id, conditionExpression,
+          flowDefId,
+          startEventId,
+          atomClassId: atomClass.id,
+          conditionExpression,
         });
       }
     }
 
     async _match({ atom, userId }) {
       // order by atomStatic/conditionExpression
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
           select a.* from aFlowNodeStartEventAtomCondition a
             left join aFlowDef b on a.flowDefId=b.id
             left join aAtom c on b.atomId=c.id
             where a.iid=? and a.atomClassId=?
             order by c.atomStatic asc, a.conditionExpression desc
-        `, [ ctx.instance.id, atom.atomClassId ]);
+        `,
+        [ctx.instance.id, atom.atomClassId]
+      );
       for (const _condition of list) {
         const flowInstance = await this._matchCondition({ _condition, atom, userId });
         if (flowInstance) return flowInstance;
@@ -522,12 +534,10 @@ module.exports = ctx => {
       const { _condition } = context;
       await this.modelCondition.delete({ id: _condition.id });
     }
-
   }
 
   return FlowNode;
 };
-
 
 
 /***/ }),
@@ -536,8 +546,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-  }
+  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {}
   return IOMessage;
 };
 
@@ -548,9 +557,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-
   class ContextTask {
-
     constructor({ context, contextNode, nodeDef }) {
       this.context = context;
       this.contextNode = contextNode;
@@ -573,7 +580,6 @@ module.exports = ctx => {
     get utils() {
       return this._utils;
     }
-
   }
 
   return ContextTask;
@@ -734,42 +740,60 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.flowTaskHidden = 0; // show
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // delete recall task: (specificFlag=2)
-      const _taskRecall = await ctx.model.queryOne(`
+      const _taskRecall = await ctx.model.queryOne(
+        `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and specificFlag=2
-          `, [ ctx.instance.id, flowTask.flowNodeId ]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId]
+      );
       if (_taskRecall) {
         this._notifyTaskHandlings(_taskRecall.userIdAssignee);
         // delete task
-        await ctx.model.query(`
+        await ctx.model.query(
+          `
           delete from aFlowTask
             where iid=? and id=?
-          `, [ ctx.instance.id, _taskRecall.id ]);
-        await ctx.model.query(`
+          `,
+          [ctx.instance.id, _taskRecall.id]
+        );
+        await ctx.model.query(
+          `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowTaskId=?
-          `, [ ctx.instance.id, _taskRecall.id ]);
+          `,
+          [ctx.instance.id, _taskRecall.id]
+        );
       }
       // check if bidding
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (options.bidding) {
         // notify
-        const _tasks = await ctx.model.query(`
+        const _tasks = await ctx.model.query(
+          `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
         for (const _task of _tasks) {
           this._notifyTaskClaimings(_task.userIdAssignee);
         }
         // delete other tasks
-        await ctx.model.query(`
+        await ctx.model.query(
+          `
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
-        await ctx.model.query(`
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
+        await ctx.model.query(
+          `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
       }
       // event: task.claimed
       await this.claimed();
@@ -873,7 +897,7 @@ module.exports = ctx => {
               'a.disabled': 0,
               'a.id': assignees,
             },
-            orders: [[ 'a.userName', 'asc' ]],
+            orders: [['a.userName', 'asc']],
             removePrivacy: true,
           },
         });
@@ -931,7 +955,7 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // node clear
       //    not use handle.remark
-      const remark = 'Cancelled';// handle.remark;
+      const remark = 'Cancelled'; // handle.remark;
       await this.nodeInstance._clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
       // end flow
       await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
@@ -970,25 +994,36 @@ module.exports = ctx => {
       await this.modelFlowTask.delete({ id: flowTaskId });
       await this.modelFlowTaskHistory.delete({ flowTaskId });
       // notify
-      const _tasks = await ctx.model.query(`
+      const _tasks = await ctx.model.query(
+        `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
       for (const _task of _tasks) {
         this._notifyTaskClaimings(_task.userIdAssignee);
       }
       // delete other tasks
-      await ctx.model.query(`
+      await ctx.model.query(
+        `
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
-      await ctx.model.query(`
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
+      await ctx.model.query(
+        `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
       // recall
       return await ctx.bean.flowTask._gotoFlowNodePrevious({
-        nodeInstance: this.nodeInstance, rejectedNode: null, flowNodeRemark: 'Recalled',
+        nodeInstance: this.nodeInstance,
+        rejectedNode: null,
+        flowNodeRemark: 'Recalled',
       });
     }
 
@@ -1034,7 +1069,7 @@ module.exports = ctx => {
         // check confirmationAllowAppend
         if (!options.confirmationAllowAppend) {
           const assigneesOld = this.contextNode.vars.get('_assignees');
-          if (!(new Set(assigneesOld)).isSuperset(new Set(assignees))) {
+          if (!new Set(assigneesOld).isSuperset(new Set(assignees))) {
             ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
           }
         }
@@ -1046,7 +1081,8 @@ module.exports = ctx => {
       // reject
       if (handle.status === 2) {
         return await ctx.bean.flowTask._gotoFlowNodePrevious({
-          nodeInstance: this.nodeInstance, rejectedNode: null,
+          nodeInstance: this.nodeInstance,
+          rejectedNode: null,
         });
       }
     }
@@ -1059,7 +1095,8 @@ module.exports = ctx => {
       const atomId = this.context._atom.atomId;
       const user = this.contextTask._user;
       await ctx.bean.atom.write({
-        key: { atomId }, item: formAtom,
+        key: { atomId },
+        item: formAtom,
         options: { schema: schemaWrite },
         user,
       });
@@ -1296,7 +1333,6 @@ module.exports = ctx => {
     _notifyTaskHandlings(userId) {
       ctx.bean.flowTask._notifyTaskHandlings(userId);
     }
-
   }
   return FlowTask;
 };
@@ -1309,7 +1345,6 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class Procedure {
-
     selectTasks({ iid, userIdWho, where, orders, page, count, history }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -1364,8 +1399,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowTask a
+      const _sql = `select ${_selectFields} from aFlowTask a
             inner join aFlowNode b on a.flowNodeId=b.id
             inner join aFlow c on a.flowId=c.id
             left join aUser d on a.userIdAssignee=d.id
@@ -1427,8 +1461,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowTaskHistory a
+      const _sql = `select ${_selectFields} from aFlowTaskHistory a
             inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
             inner join aFlowHistory c on a.flowId=c.flowId
             left join aUser d on a.userIdAssignee=d.id
@@ -1447,11 +1480,9 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };
 
 
@@ -1463,7 +1494,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelFlowTask = ctx.model.module(moduleInfo).flowTask;
@@ -1474,7 +1504,6 @@ module.exports = ctx => {
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -1489,7 +1518,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelFlowTask = ctx.model.module(moduleInfo).flowTask;
@@ -1500,7 +1528,6 @@ module.exports = ctx => {
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -1514,7 +1541,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         let sql;
@@ -1584,16 +1610,12 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -1810,7 +1832,6 @@ module.exports = ctx => {
       taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
       taskInstance._notifyTaskHandlings(taskInstance.contextTask._flowTask.userIdAssignee);
     }
-
   }
   return FlowNodeActivityUserTaskBase;
 };
@@ -1823,7 +1844,6 @@ module.exports = ctx => {
 
 module.exports = ({ ctx /* flowInstance*/ }) => {
   class Utils {
-
     constructor({ context, contextNode, contextTask }) {
       this.context = context;
       this.contextNode = contextNode;
@@ -1836,10 +1856,11 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
       if (this.contextNode) globals.contextNode = this.contextNode;
       if (this.contextTask) globals.contextTask = this.contextTask;
       return await ctx.bean.flow.executeService({
-        bean, parameter, globals,
+        bean,
+        parameter,
+        globals,
       });
     }
-
   }
   return Utils;
 };
@@ -1852,7 +1873,6 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
 
 module.exports = () => {
   class FlowVars {
-
     constructor() {
       this._vars = null;
       this._dirty = false;
@@ -1883,7 +1903,6 @@ module.exports = () => {
       // dirty
       this._dirty = true;
     }
-
   }
   return FlowVars;
 };
@@ -2233,9 +2252,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     async data() {
       const res = await this.ctx.service.flow.data({
         flowId: this.ctx.request.body.flowId,
@@ -2243,7 +2260,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return FlowController;
 };
@@ -2255,9 +2271,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowTaskController extends app.Controller {
-
     // options
     //   where, orders, page, history
     async select() {
@@ -2354,11 +2368,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return FlowTaskController;
 };
-
 
 
 /***/ }),
@@ -2388,7 +2400,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // aops
   const aops = __webpack_require__(224)(app);
   // beans
@@ -2416,7 +2427,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -2430,8 +2440,7 @@ module.exports = app => {
   const flowNodes = __webpack_require__(587)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -2466,10 +2475,7 @@ module.exports = app => {
             module: 'a-stats',
             name: 'deps',
           },
-          dependencies: [
-            'a-flowtask:taskClaimings',
-            'a-flowtask:taskHandlings',
-          ],
+          dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
         },
       },
     },
@@ -2574,9 +2580,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Flow extends app.Service {
-
     async data({ flowId, user }) {
       // flow
       const flow = await this._data_flow({ flowId, user });
@@ -2601,12 +2605,15 @@ module.exports = app => {
     async _data_atom({ flowId, atomId }) {
       // only read basic info
       //   a.atomFlowId = {flowId}
-      const atom = await this.ctx.model.queryOne(`
+      const atom = await this.ctx.model.queryOne(
+        `
         select a.*,a.id as atomId,b.module,b.atomClassName from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where a.deleted=0 and a.iid=? and a.id=?
                    and a.atomFlowId=?
-        `, [ this.ctx.instance.id, atomId, flowId ]);
+        `,
+        [this.ctx.instance.id, atomId, flowId]
+      );
       return atom;
     }
 
@@ -2616,16 +2623,13 @@ module.exports = app => {
         options: {
           where: {
             'a.flowId': flowId,
-            'b.flowNodeType': [ 'startEventAtom', 'activityUserTask' ],
-            __or__: [
-              { 'a.userIdAssignee': user.id },
-              { 'a.flowTaskHidden': 0 },
-            ],
+            'b.flowNodeType': ['startEventAtom', 'activityUserTask'],
+            __or__: [{ 'a.userIdAssignee': user.id }, { 'a.flowTaskHidden': 0 }],
           },
           orders: [
-            [ 'a.flowNodeId', 'desc' ],
-            [ 'a.specificFlag', 'desc' ],
-            [ 'a.flowTaskStatus', 'asc' ],
+            ['a.flowNodeId', 'desc'],
+            ['a.specificFlag', 'desc'],
+            ['a.flowTaskStatus', 'asc'],
           ],
           history: 1,
         },
@@ -2641,11 +2645,9 @@ module.exports = app => {
       }
       return tasks;
     }
-
   }
   return Flow;
 };
-
 
 
 /***/ }),
@@ -2654,9 +2656,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowTask extends app.Service {
-
     async select({ options, user }) {
       return await this.ctx.bean.flowTask.select({ options, user });
     }
@@ -2700,11 +2700,9 @@ module.exports = app => {
     async editAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.editAtom({ flowTaskId, user });
     }
-
   }
   return FlowTask;
 };
-
 
 
 /***/ }),
@@ -2730,7 +2728,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

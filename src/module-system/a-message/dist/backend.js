@@ -9,13 +9,12 @@ const _cacheMessageClassesUniform = {};
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'message');
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    async group({ /* options, user */}) {
+    async group(/* {  options, user }*/) {
       const items = this.messageClassesUniform();
       return items;
     }
@@ -45,7 +44,6 @@ module.exports = ctx => {
       }
       return items;
     }
-
   }
   return Message;
 };
@@ -61,7 +59,6 @@ const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessageUniformBase extends ctx.app.meta.IOMessageBase(ctx) {
-
     async onPublish({ /* path,*/ message, messageClass, options }) {
       // onPublish
       return await super.onPublish({ path: __PATH_MESSAGE_UNIFORM, message, messageClass, options });
@@ -164,7 +161,6 @@ module.exports = ctx => {
         user,
       });
     }
-
   }
   return IOMessageUniformBase;
 };
@@ -178,12 +174,11 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { keys, user } = context;
       if (keys.length === 2) {
         // messageClass
-        const [ module, messageClassName ] = keys[1].split('_');
+        const [module, messageClassName] = keys[1].split('_');
         const messageClass = { module, messageClassName };
         const messageClassBase = ctx.bean.io.messageClass.messageClass(messageClass);
         // options
@@ -227,7 +222,6 @@ module.exports = ctx => {
         return stat;
       }
     }
-
   }
 
   return Stats;
@@ -241,16 +235,11 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
+    async update(options) {}
 
-    async update(options) {
-    }
+    async init(options) {}
 
-    async init(options) {
-    }
-
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -308,7 +297,7 @@ module.exports = appInfo => {
   config.socketio = {
     message: {
       push: {
-        channels: [ 'a-mail:mail' ],
+        channels: ['a-mail:mail'],
       },
       render: {
         templates: {
@@ -331,8 +320,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -344,8 +332,7 @@ module.exports = {
 //   subject
 const uniformMessageRenderTemplateMailSubject = '[{{info.siteName}}] {{content.title}}';
 //   body
-const uniformMessageRenderTemplateMailBody =
-`
+const uniformMessageRenderTemplateMailBody = `
 Hi {{user.userName}},
 
 You have received a new message. Here are the details:
@@ -374,8 +361,7 @@ module.exports = {
 //   subject
 const uniformMessageRenderTemplateMailSubject = '[{{info.siteName}}] {{content.title}}';
 //   body
-const uniformMessageRenderTemplateMailBody =
-`
+const uniformMessageRenderTemplateMailBody = `
 您好，{{user.userName}}，
 
 您收到一条新消息，详情如下：
@@ -425,9 +411,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class MessageController extends app.Controller {
-
     // options
     //   where, orders
     async group() {
@@ -438,7 +422,6 @@ module.exports = app => {
       });
       this.ctx.success(items);
     }
-
   }
   return MessageController;
 };
@@ -470,7 +453,6 @@ const errors = __webpack_require__(624);
 const IOMessageUniformBaseFn = __webpack_require__(283);
 
 module.exports = app => {
-
   // base
   app.meta.IOMessageUniformBase = IOMessageUniformBaseFn;
 
@@ -498,7 +480,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -511,17 +492,13 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
-      functions: {
-      },
+      atoms: {},
+      functions: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     stats: {
       providers: {
@@ -542,8 +519,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -554,9 +530,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-    { method: 'post', path: 'message/group', controller: 'message' },
-  ];
+  const routes = [{ method: 'post', path: 'message/group', controller: 'message' }];
   return routes;
 };
 
@@ -567,17 +541,13 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Message extends app.Service {
-
     async group({ options, user }) {
       return await this.ctx.bean.message.group({ options, user });
     }
-
   }
   return Message;
 };
-
 
 
 /***/ }),

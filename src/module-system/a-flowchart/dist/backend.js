@@ -17,8 +17,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -26,8 +25,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -57,18 +55,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowDefController extends app.Controller {
-
     async flowChartProcess() {
       const { host } = this.ctx.request.body;
       const user = this.ctx.state.user.op;
       const res = await this.ctx.service.flow.flowChartProcess({
-        host, user,
+        host,
+        user,
       });
       this.ctx.success(res);
     }
-
   }
   return FlowDefController;
 };
@@ -80,14 +76,14 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowDefController extends app.Controller {
-
     async normalizeAssignees() {
       const { host, assignees } = this.ctx.request.body;
       const user = this.ctx.state.user.op;
       const res = await this.ctx.service.flowDef.normalizeAssignees({
-        host, assignees, user,
+        host,
+        assignees,
+        user,
       });
       this.ctx.success(res);
     }
@@ -97,7 +93,9 @@ module.exports = app => {
       const user = this.ctx.state.user.op;
       const page = params.page;
       const items = await this.ctx.service.flowDef.roleChildren({
-        host, params, user,
+        host,
+        params,
+        user,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -107,11 +105,12 @@ module.exports = app => {
       const user = this.ctx.state.user.op;
       const page = params.page;
       const items = await this.ctx.service.flowDef.userSelect({
-        host, params, user,
+        host,
+        params,
+        user,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return FlowDefController;
 };
@@ -144,7 +143,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // routes
   const routes = __webpack_require__(825)(app);
   // controllers
@@ -166,7 +164,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -179,15 +176,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -200,8 +194,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -230,9 +223,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Flow extends app.Service {
-
     async flowChartProcess({ host, user }) {
       // check right
       const flowChartProcess = await this.__checkRightFlowChartProcess({ host, user });
@@ -241,7 +232,7 @@ module.exports = app => {
       if (flowChartProcess.nodes) {
         flowChartProcess.nodes = flowChartProcess.nodes.map(node => {
           return {
-            ... node,
+            ...node,
             options: undefined,
             nameLocale: this.ctx.text(node.name),
           };
@@ -250,7 +241,7 @@ module.exports = app => {
       if (flowChartProcess.edges) {
         flowChartProcess.edges = flowChartProcess.edges.map(edge => {
           return {
-            ... edge,
+            ...edge,
             options: undefined,
           };
         });
@@ -279,11 +270,9 @@ module.exports = app => {
       // ok
       return content.process;
     }
-
   }
   return Flow;
 };
-
 
 
 /***/ }),
@@ -292,9 +281,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowDef extends app.Service {
-
     async normalizeAssignees({ host, assignees, user }) {
       // check right
       assignees = await this.__checkRightNormalizeAssignees({ host, assignees, user });
@@ -323,13 +310,9 @@ module.exports = app => {
           where: {
             'a.anonymous': 0,
             'a.disabled': 0,
-            __or__: [
-              { 'a.userName': { op: 'like', val: query } },
-              { 'a.realName': { op: 'like', val: query } },
-              { 'a.mobile': { op: 'like', val: query } },
-            ],
+            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
           },
-          orders: [[ 'a.userName', 'asc' ]],
+          orders: [['a.userName', 'asc']],
           page,
           removePrivacy: true,
         },
@@ -377,11 +360,9 @@ module.exports = app => {
       // ok
       return node.options.task ? node.options.task.assignees : node.options.assignees;
     }
-
   }
   return FlowDef;
 };
-
 
 
 /***/ }),

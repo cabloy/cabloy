@@ -52,8 +52,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -113,9 +112,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class UtilController extends app.Controller {
-
     async md() {
       // atomId
       const atomId = this.ctx.params.atomId;
@@ -127,11 +124,9 @@ module.exports = app => {
       this.ctx.body = article.content;
       this.ctx.set('content-type', 'text/x-markdown; charset=UTF-8');
     }
-
   }
   return UtilController;
 };
-
 
 
 /***/ }),
@@ -159,7 +154,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // routes
   const routes = __webpack_require__(825)(app);
   // controllers
@@ -181,7 +175,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -194,15 +187,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -215,8 +205,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -240,10 +229,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

@@ -7,17 +7,14 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha {
-
     async verify(context) {
       const { data, dataInput } = context;
       if (!data) ctx.throw.module(moduleInfo.relativeName, 1001);
       if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) ctx.throw.module(moduleInfo.relativeName, 1002);
     }
-
   }
   return Captcha;
 };
-
 
 
 /***/ }),
@@ -117,7 +114,6 @@ const captcha = require3('trek-captcha');
 
 module.exports = app => {
   class CaptchaController extends app.Controller {
-
     async image() {
       // providerInstanceId
       const providerInstanceId = this.ctx.query.providerInstanceId;
@@ -125,14 +121,14 @@ module.exports = app => {
       const { token, buffer } = await captcha();
       // update
       await this.ctx.bean.captcha.update({
-        providerInstanceId, data: { token },
+        providerInstanceId,
+        data: { token },
       });
       // ok
       this.ctx.status = 200;
       this.ctx.type = 'image/gif';
       this.ctx.body = buffer;
     }
-
   }
   return CaptchaController;
 };
@@ -163,7 +159,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -188,7 +183,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -201,15 +195,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -222,8 +213,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -247,10 +237,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 
@@ -261,7 +249,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

@@ -6,7 +6,6 @@
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { target, targetConfig, hostname, links } = context.data;
       if (target === 'baidu') {
@@ -32,7 +31,6 @@ module.exports = app => {
         this.ctx.logger.info(`submit baidu: ${links.join('\n')}`);
       }
     }
-
   }
 
   return Queue;
@@ -93,8 +91,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -102,8 +99,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -133,8 +129,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -149,7 +144,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -174,7 +168,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -187,15 +180,12 @@ module.exports = app => {
   const schemas = __webpack_require__(746)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -208,8 +198,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -220,8 +209,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -236,7 +224,6 @@ const url = __webpack_require__(835);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util extends app.Service {
-
     async submit({ links, config }) {
       for (const target in config.submit) {
         const targetConfig = config.submit[target];
@@ -261,13 +248,14 @@ module.exports = app => {
           module: moduleInfo.relativeName,
           queueName: 'submit',
           data: {
-            target, targetConfig,
-            hostname, links,
+            target,
+            targetConfig,
+            hostname,
+            links,
           },
         });
       });
     }
-
   }
   return Util;
 };
@@ -294,7 +282,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("url");;
+module.exports = require("url");
 
 /***/ })
 

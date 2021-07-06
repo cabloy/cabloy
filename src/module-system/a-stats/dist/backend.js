@@ -10,7 +10,6 @@ let __statsDeps;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'stats');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -45,7 +44,10 @@ module.exports = ctx => {
         queueName: 'stats',
         queueNameSub: provider.user ? 'user' : 'instance',
         data: {
-          module, name, nameSub, user,
+          module,
+          name,
+          nameSub,
+          user,
         },
       });
     }
@@ -66,11 +68,14 @@ module.exports = ctx => {
         const fullNameSub = keys.join('.');
         // execute
         const value = await ctx.bean._getBean(provider.beanFullName).execute({
-          keys, provider, user,
+          keys,
+          provider,
+          user,
         });
         // set
         await this._set({
-          module, name,
+          module,
+          name,
           fullName: fullNameSub,
           value,
           user: provider.user ? user : null,
@@ -83,7 +88,7 @@ module.exports = ctx => {
       const deps = __statsDeps[fullKey];
       if (!deps || deps.length === 0) return;
       for (const dep of deps) {
-        const [ depModule, depName ] = dep.split(':');
+        const [depModule, depName] = dep.split(':');
         await this._notify_queue({ module: depModule, name: depName, user });
       }
     }
@@ -105,14 +110,18 @@ module.exports = ctx => {
 
     async _get({ module, fullName, user }) {
       const where = { module, name: fullName };
-      if (user) { where.userId = user.id; }
+      if (user) {
+        where.userId = user.id;
+      }
       const item = await this.modelStats.get(where);
       return item ? JSON.parse(item.value) : undefined;
     }
 
     async _set({ module, name, fullName, value, user }) {
       const where = { module, name: fullName };
-      if (user) { where.userId = user.id; }
+      if (user) {
+        where.userId = user.id;
+      }
       const item = await this.modelStats.get(where);
       if (item) {
         await this.modelStats.update({
@@ -121,7 +130,9 @@ module.exports = ctx => {
         });
       } else {
         const data = { module, name: fullName, value: JSON.stringify(value) };
-        if (user) { data.userId = user.id; }
+        if (user) {
+          data.userId = user.id;
+        }
         await this.modelStats.insert(data);
       }
       // push
@@ -129,7 +140,8 @@ module.exports = ctx => {
         const message = {
           userIdTo: user.id,
           content: {
-            module, name,
+            module,
+            name,
             fullName,
             value,
           },
@@ -201,7 +213,6 @@ module.exports = ctx => {
       }
       return dependencies;
     }
-
   }
 
   return Stats;
@@ -214,8 +225,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-  }
+  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {}
   return IOMessage;
 };
 
@@ -227,12 +237,10 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       return await this.ctx.bean.stats._notify_queue(data);
     }
-
   }
 
   return Queue;
@@ -246,15 +254,16 @@ module.exports = app => {
 
 module.exports = ctx => {
   class Stats {
-
     async execute(context) {
       const { provider, user } = context;
       const dependencies = provider.dependencies;
       let count = 0;
       for (const dep of dependencies) {
-        const [ module, fullName ] = dep.split(':');
+        const [module, fullName] = dep.split(':');
         const value = await ctx.bean.stats._get({
-          module, fullName, user,
+          module,
+          fullName,
+          user,
         });
         if (value) {
           count += value;
@@ -262,7 +271,6 @@ module.exports = ctx => {
       }
       return count;
     }
-
   }
 
   return Stats;
@@ -275,9 +283,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aStats
@@ -298,7 +304,6 @@ module.exports = app => {
         await this.ctx.model.query(sql);
       }
     }
-
   }
 
   return Version;
@@ -375,8 +380,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -384,8 +388,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -421,9 +424,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class StatsController extends app.Controller {
-
     async get() {
       const { module, name, nameSub } = this.ctx.request.body;
       // only support user stats
@@ -431,12 +432,13 @@ module.exports = app => {
       if (!provider.user) this.ctx.throw(403);
       // get
       const res = await this.service.stats.get({
-        module, name, nameSub,
+        module,
+        name,
+        nameSub,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
-
   }
 
   return StatsController;
@@ -470,7 +472,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // meta
@@ -493,7 +494,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -551,9 +551,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-    { method: 'post', path: 'stats/get', controller: 'stats' },
-  ];
+  const routes = [{ method: 'post', path: 'stats/get', controller: 'stats' }];
   return routes;
 };
 
@@ -564,9 +562,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Stats extends app.Service {
-
     async get({ module, name, nameSub, user }) {
       return await this.ctx.bean.stats.get({ module, name, nameSub, user });
     }

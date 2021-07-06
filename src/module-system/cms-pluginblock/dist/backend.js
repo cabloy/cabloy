@@ -6,7 +6,7 @@
 
 module.exports = ctx => {
   class CMSBlock {
-    render({ md, options, block, token, index, content }) {
+    render({ md, options, /* block, token, index,*/ content }) {
       content = content || {};
       content.audio = content.audio || {};
       const content2 = {
@@ -40,7 +40,7 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class CMSBlock {
-    render({ md, options, block, token, index, content }) {
+    render({ md, options, /* block, token, index,*/ content }) {
       const url = md.utils.escapeHtml(content.url);
       const width = md.utils.escapeHtml(content.width || '100%');
       const height = md.utils.escapeHtml(content.height || '300px');
@@ -138,8 +138,7 @@ module.exports = appInfo => {
   const config = {};
 
   // plugin
-  config.plugin = {
-  };
+  config.plugin = {};
 
   return config;
 };
@@ -151,8 +150,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -240,7 +238,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const schemas = { };
+  const schemas = {};
   // block iframe
   schemas.blockIFrame = {
     type: 'object',
@@ -328,10 +326,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -346,7 +342,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -371,7 +366,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -386,8 +380,7 @@ module.exports = app => {
   const staticResources = __webpack_require__(429)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
       statics: {
         'a-base.resource': {
           items: staticResources,
@@ -425,8 +418,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -437,8 +429,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -448,10 +439,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

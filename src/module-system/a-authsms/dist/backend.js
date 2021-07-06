@@ -70,7 +70,6 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha {
-
     async verify(_context) {
       const { providerInstanceId, context, data, dataInput } = _context;
       // sms provider
@@ -100,11 +99,9 @@ module.exports = ctx => {
       const config = configModule.sms.providers[providerName];
       return { provider, config };
     }
-
   }
   return Captcha;
 };
-
 
 
 /***/ }),
@@ -115,7 +112,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       // provider
@@ -133,7 +129,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -148,10 +143,9 @@ module.exports = ctx => {
 const require3 = __webpack_require__(718);
 const popCore = require3('@alicloud/pop-core');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider {
-
     async sendCode({ providerInstanceId, context, config }) {
       // get
       const providerInstance = await ctx.bean.captcha.getProviderInstance({ providerInstanceId });
@@ -193,7 +187,6 @@ module.exports = function(ctx) {
     __prefix0(num, length) {
       return (Array(length).join('0') + num).slice(-length);
     }
-
   }
 
   return Provider;
@@ -211,17 +204,14 @@ const boxen = require3('boxen');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider {
-
     async sendCode({ context }) {
       // token
       const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
       // prompt
-      const message = chalk.keyword('cyan')('Test SMS Verification Code To: ')
-                        + chalk.keyword('yellow')(context.mobile)
-                        + chalk.keyword('orange')('\n' + token);
+      const message = chalk.keyword('cyan')('Test SMS Verification Code To: ') + chalk.keyword('yellow')(context.mobile) + chalk.keyword('orange')('\n' + token);
       console.log('\n' + boxen(message, boxenOptions));
       // ok
       return { token };
@@ -235,7 +225,6 @@ module.exports = function(ctx) {
     __prefix0(num, length) {
       return (Array(length).join('0') + num).slice(-length);
     }
-
   }
 
   return Provider;
@@ -433,15 +422,18 @@ module.exports = app => {
           mode: 'direct',
           component: 'signin',
         },
-        config: {
-        },
+        config: {},
         handler: app => {
           return {
             strategy,
             callback: (req, body, done) => {
-              verify(req.ctx, body).then(user => {
-                app.passport.doVerify(req, user, done);
-              }).catch(err => { done(err); });
+              verify(req.ctx, body)
+                .then(user => {
+                  app.passport.doVerify(req, user, done);
+                })
+                .catch(err => {
+                  done(err);
+                });
             },
           };
         },
@@ -464,7 +456,9 @@ function Strategy(options, verify) {
     verify = options;
     options = {};
   }
-  if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
+  if (!verify) {
+    throw new TypeError('LocalStrategy requires a verify callback');
+  }
 
   passport.Strategy.call(this);
   this.name = 'sms';
@@ -477,7 +471,7 @@ function Strategy(options, verify) {
  */
 util.inherits(Strategy, passport.Strategy);
 
-Strategy.prototype.authenticate = function(req) {
+Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
 
@@ -489,8 +483,12 @@ Strategy.prototype.authenticate = function(req) {
 
   // verified
   function verified(err, user, info) {
-    if (err) { return self.error(err); }
-    if (!user) { return self.fail(info); }
+    if (err) {
+      return self.error(err);
+    }
+    if (!user) {
+      return self.fail(info);
+    }
     req.ctx.success(user);
     self.success(user, info);
   }
@@ -521,7 +519,7 @@ module.exports = app => {
     type: 'string',
     errors: true,
     compile() {
-      return async function(data, path, rootData, name) {
+      return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (res && res.id !== ctx.state.user.agent.id) {
@@ -614,7 +612,6 @@ module.exports = app => {
 };
 
 
-
 /***/ }),
 
 /***/ 523:
@@ -622,7 +619,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async signin() {
       // data: { mobile, rememberMe }
       const data = this.ctx.request.body.data;
@@ -637,7 +633,9 @@ module.exports = app => {
       const res = await this.service.auth.signup({
         user: this.ctx.state.user.agent,
         state,
-        userName, realName, mobile,
+        userName,
+        realName,
+        mobile,
       });
       this.ctx.success(res);
     }
@@ -650,8 +648,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
-
   }
   return AuthController;
 };
@@ -664,7 +660,6 @@ module.exports = app => {
 
 module.exports = app => {
   class CaptchaController extends app.Controller {
-
     async sendCode() {
       await this.ctx.service.captcha.sendCode({
         providerInstanceId: this.ctx.request.body.providerInstanceId,
@@ -672,7 +667,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return CaptchaController;
 };
@@ -705,7 +699,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -730,7 +723,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -784,8 +776,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -800,12 +791,20 @@ module.exports = app => {
     // captcha
     { method: 'post', path: 'captcha/sendCode', controller: 'captcha' },
     // auth
-    { method: 'post', path: 'auth/signin', controller: 'auth', middlewares: 'captchaVerify',
+    {
+      method: 'post',
+      path: 'auth/signin',
+      controller: 'auth',
+      middlewares: 'captchaVerify',
       meta: {
         captchaVerify: { scene: { name: 'signin' } },
       },
     },
-    { method: 'post', path: 'auth/signup', controller: 'auth', middlewares: 'captchaVerify,validate',
+    {
+      method: 'post',
+      path: 'auth/signup',
+      controller: 'auth',
+      middlewares: 'captchaVerify,validate',
       meta: {
         captchaVerify: {
           scenes: [
@@ -816,7 +815,11 @@ module.exports = app => {
         validate: { validator: 'signup' },
       },
     },
-    { method: 'post', path: 'auth/mobileVerify', controller: 'auth', middlewares: 'validate,captchaVerify',
+    {
+      method: 'post',
+      path: 'auth/mobileVerify',
+      controller: 'auth',
+      middlewares: 'validate,captchaVerify',
       meta: {
         validate: { validator: 'mobileVerify' },
         captchaVerify: { scene: { name: 'mobileVerify' } },
@@ -835,9 +838,7 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
-
     async signup({ user, state = 'login', userName, realName, mobile }) {
-
       // profileUser
       const profileUser = {
         module: moduleInfo.relativeName,
@@ -896,7 +897,6 @@ module.exports = app => {
     async mobileVerify({ user, mobile }) {
       await this.signup({ user, state: 'associate', userName: null, realName: null, mobile });
     }
-
   }
 
   return Auth;
@@ -908,11 +908,9 @@ module.exports = app => {
 /***/ 68:
 /***/ ((module) => {
 
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha extends app.Service {
-
     async sendCode({ providerInstanceId, context }) {
       // sms provider
       const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.captcha.provider.captcha`);
@@ -921,10 +919,11 @@ module.exports = app => {
       const data = await provider.sendCode({ providerInstanceId, context, config });
       // update
       await this.ctx.bean.captcha.update({
-        providerInstanceId, data, context,
+        providerInstanceId,
+        data,
+        context,
       });
     }
-
   }
 
   return Captcha;
@@ -954,7 +953,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ }),
 
@@ -962,7 +961,7 @@ module.exports = require("require3");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("util");;
+module.exports = require("util");
 
 /***/ })
 

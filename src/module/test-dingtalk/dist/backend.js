@@ -7,7 +7,6 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       const message = data.message;
@@ -15,7 +14,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -32,7 +30,6 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   class eventBean {
-
     async execute(context, next) {
       const info = context.data.info;
       const provider = info.user && info.user.provider;
@@ -56,7 +53,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -104,8 +100,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -165,9 +160,7 @@ module.exports = app => {
 const layoutTest = __webpack_require__(756);
 
 module.exports = app => {
-  const layouts = [
-    layoutTest(app),
-  ];
+  const layouts = [layoutTest(app)];
   return layouts;
 };
 
@@ -208,7 +201,6 @@ module.exports = app => {
 
 module.exports = app => {
   class TestController extends app.Controller {
-
     async getMemberId() {
       const res = await this.service.test.getMemberId({
         user: this.ctx.state.user.op,
@@ -223,7 +215,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return TestController;
 };
@@ -254,7 +245,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -279,7 +269,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -294,8 +283,7 @@ module.exports = app => {
   const staticResources = __webpack_require__(429)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
       statics: {
         'a-layoutpc.layout': {
           items: staticLayouts,
@@ -306,11 +294,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     event: {
       implementations: {
@@ -329,8 +315,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -345,14 +330,22 @@ const _sceneAll = 'dingtalk,dingtalkweb,dingtalkadmin,dingtalkmini';
 module.exports = app => {
   const routes = [
     // test
-    { method: 'post', path: 'test/getMemberId', controller: 'test', middlewares: 'inDingtalk',
+    {
+      method: 'post',
+      path: 'test/getMemberId',
+      controller: 'test',
+      middlewares: 'inDingtalk',
       meta: {
         inDingtalk: {
           scene: _sceneAll,
         },
       },
     },
-    { method: 'post', path: 'test/sendAppMessage', controller: 'test', middlewares: 'inDingtalk',
+    {
+      method: 'post',
+      path: 'test/sendAppMessage',
+      controller: 'test',
+      middlewares: 'inDingtalk',
       meta: {
         inDingtalk: {
           scene: _sceneAll,
@@ -370,9 +363,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Test extends app.Service {
-
     async getMemberId({ user }) {
       const modelMember = this.ctx.model.module('a-dingtalk').member;
       const member = await modelMember.get({ userId: user.id });
@@ -389,7 +380,7 @@ module.exports = app => {
         },
       };
       const content = {
-        userIds: [ user.id ],
+        userIds: [user.id],
         data: { msg },
       };
       await this.ctx.bean.io.pushDirect({
@@ -397,7 +388,6 @@ module.exports = app => {
         channel: { module: 'a-dingtalk', name: 'app' },
       });
     }
-
   }
 
   return Test;
@@ -425,7 +415,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

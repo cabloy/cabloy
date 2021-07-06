@@ -39,7 +39,6 @@ module.exports = ctx => {
       });
       return !!res;
     }
-
   }
 
   return FlowEdge;
@@ -125,7 +124,6 @@ module.exports = ctx => {
       // also true
       return true;
     }
-
   }
 
   return FlowNode;
@@ -204,7 +202,8 @@ module.exports = ctx => {
       if (bean) {
         // bean
         const parameter = ctx.bean.flow.evaluateExpression({
-          expression: parameterExpression, globals: null,
+          expression: parameterExpression,
+          globals: null,
         });
         await ctx.bean.flow.executeService({
           bean,
@@ -244,7 +243,6 @@ module.exports = ctx => {
       const repeat = await job.queue.repeat;
       await repeat.removeRepeatableByKey(jobKeyActive);
     }
-
   }
 
   return FlowNode;
@@ -259,7 +257,6 @@ function getRepeatKey(name, repeat) {
 }
 
 
-
 /***/ }),
 
 /***/ 557:
@@ -268,12 +265,10 @@ function getRepeatKey(name, repeat) {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const _nodeBaseBean = this.ctx.bean._newBean(`${moduleInfo.relativeName}.flow.node.startEventTimer`);
       await _nodeBaseBean._runSchedule(context);
     }
-
   }
 
   return Queue;
@@ -287,18 +282,15 @@ module.exports = app => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
+        // empty
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -366,8 +358,7 @@ module.exports = app => {
 /***/ 661:
 /***/ ((module) => {
 
-module.exports = class FlowServiceBase {
-};
+module.exports = class FlowServiceBase {};
 
 
 /***/ }),
@@ -396,8 +387,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -683,8 +673,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -700,7 +689,6 @@ const errors = __webpack_require__(624);
 const FlowServiceBase = __webpack_require__(661);
 
 module.exports = app => {
-
   // FlowServiceBase
   app.meta.FlowServiceBase = FlowServiceBase;
 
@@ -731,7 +719,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -746,8 +733,7 @@ module.exports = app => {
   const flowEdges = __webpack_require__(719)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -781,8 +767,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -793,8 +778,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -805,8 +789,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

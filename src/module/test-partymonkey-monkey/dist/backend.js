@@ -17,8 +17,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -26,8 +25,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -59,7 +57,6 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MonkeyerController extends app.Controller {
-
     async test() {
       const config = this.ctx.config.module('test-party');
       this.ctx.success({
@@ -67,12 +64,10 @@ module.exports = app => {
         monkeyed: config.monkeyed,
       });
     }
-
   }
 
   return MonkeyerController;
 };
-
 
 
 /***/ }),
@@ -100,7 +95,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // routes
   const routes = __webpack_require__(825)(app);
   // controllers
@@ -125,7 +119,6 @@ module.exports = app => {
     meta,
     monkey,
   };
-
 };
 
 
@@ -138,15 +131,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -159,8 +149,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -210,8 +199,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -221,10 +209,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

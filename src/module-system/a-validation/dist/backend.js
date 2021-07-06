@@ -12,7 +12,7 @@ const jsBeautify = require3('js-beautify');
 const systemKeywords = __webpack_require__(915);
 
 module.exports = app => {
-  Ajv.create = function({ options, keywords, schemas, schemaRoot }) {
+  Ajv.create = function ({ options, keywords, schemas, schemaRoot }) {
     // default
     const _options = {
       $data: true,
@@ -27,7 +27,7 @@ module.exports = app => {
       passContext: true,
       removeAdditional: 'all',
     };
-      // processCode
+    // processCode
     if (app.meta.isTest || app.meta.isLocal) {
       _options.processCode = jsBeautify.js_beautify;
     }
@@ -59,7 +59,7 @@ module.exports = app => {
 };
 
 function createValidate(schemaRoot) {
-  return async function({ ctx, schema, data }) {
+  return async function ({ ctx, schema, data }) {
     const validate = this.getSchema(schema || schemaRoot);
     try {
       const res = await validate.call(ctx, data);
@@ -73,7 +73,8 @@ function createValidate(schemaRoot) {
       // error
       throw ctx.createError({
         ...e,
-        code: 422, message: e.errors,
+        code: 422,
+        message: e.errors,
       });
     }
   };
@@ -90,7 +91,7 @@ module.exports = {
   type: 'string',
   errors: true,
   compile(schema, schemaProperty) {
-    return async function(data, path, rootData, name) {
+    return async function (data, path, rootData /* , name*/) {
       // ignore if empty
       if (!data) return true;
       const atomName = data.trim();
@@ -103,10 +104,13 @@ module.exports = {
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
       //   read by atomClass, atomLanguage, atomName
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
           select a.id from aAtom a
               where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
-          `, [ ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage ]);
+          `,
+        [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
+      );
       if (items[0] && items[0].id !== atomId) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;
@@ -130,7 +134,7 @@ const moment = require3('moment');
 module.exports = {
   errors: true,
   compile(schema) {
-    const fun = function(data, path, rootData, name) {
+    const fun = function (data, path, rootData, name) {
       if (!schema) return true;
       if (Array.isArray(data)) {
         const res = [];
@@ -172,7 +176,7 @@ const vm = __webpack_require__(184);
 module.exports = {
   errors: true,
   compile(schema, schemaProperty) {
-    const fun = function(data, path, rootData) {
+    const fun = function (data, path, rootData) {
       // notEmpty=false
       if (!schema) return true;
       // expression
@@ -194,7 +198,7 @@ module.exports = {
 function evaluateExpression({ expression, rootData, ctx }) {
   try {
     const scope = {
-      ... rootData,
+      ...rootData,
       _meta: {
         host: ctx.meta && ctx.meta.validateHost,
         user: ctx.state.user && ctx.state.user.op,
@@ -226,7 +230,7 @@ module.exports = {
   type: 'string',
   errors: true,
   compile() {
-    return async function(data, path, rootData, name) {
+    return async function (data, path, rootData /* , name*/) {
       // ignore if empty
       if (!data) return true;
       const slug = data.trim();
@@ -240,11 +244,14 @@ module.exports = {
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
       //   read by atomClass, atomLanguage, slug
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
           select a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
               where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
-          `, [ ctx.instance.id, atomClass.id, slug, rootData.atomLanguage ]);
+          `,
+        [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
+      );
       if (items[0] && items[0].id !== atomId) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
@@ -282,7 +289,6 @@ const uuid = require3('uuid');
 
 module.exports = ctx => {
   class Validation extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'validation');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -300,7 +306,8 @@ module.exports = ctx => {
         schema = schemas[0];
       }
       return {
-        module, validator,
+        module,
+        validator,
         schema: meta.validation.schemas[schema],
       };
     }
@@ -337,7 +344,7 @@ module.exports = ctx => {
       // schemas
       params.schemaRoot = uuid.v4();
       params.schemas = {
-        [params.schemaRoot]: { ... schema, $async: true },
+        [params.schemaRoot]: { ...schema, $async: true },
       };
       // create
       return ctx.app.meta.ajv.create(params);
@@ -408,7 +415,6 @@ module.exports = ctx => {
         }
       }
     }
-
   }
 
   return Validation;
@@ -501,8 +507,7 @@ module.exports = appInfo => {
 /***/ 479:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -563,12 +568,10 @@ module.exports = {
 
 module.exports = app => {
   class ValidationController extends app.Controller {
-
     schema() {
       const res = this.service.validation.schema(this.ctx.request.body);
       this.ctx.success(res);
     }
-
   }
   return ValidationController;
 };
@@ -603,7 +606,6 @@ const constants = __webpack_require__(479);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // meta
@@ -628,7 +630,6 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };
 
 
@@ -648,8 +649,7 @@ module.exports = app => {
 /***/ 230:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -658,9 +658,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-    { method: 'post', path: 'validation/schema', controller: 'validation' },
-  ];
+  const routes = [{ method: 'post', path: 'validation/schema', controller: 'validation' }];
   return routes;
 };
 
@@ -671,13 +669,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Validation extends app.Service {
-
     schema({ module, validator, schema }) {
       return this.ctx.bean.validation.getSchema({ module, validator, schema });
     }
-
   }
 
   return Validation;
@@ -702,7 +697,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ }),
 
@@ -710,7 +705,7 @@ module.exports = require("require3");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("vm");;
+module.exports = require("vm");
 
 /***/ })
 

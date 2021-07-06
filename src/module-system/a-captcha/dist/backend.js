@@ -13,7 +13,6 @@ const utils = __webpack_require__(294);
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'captcha');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -98,7 +97,6 @@ module.exports = ctx => {
       providerInstance.data = null;
       await cache.set(key, providerInstance, provider.timeout);
     }
-
   }
   return Captcha;
 };
@@ -301,7 +299,6 @@ module.exports = app => {
 
 module.exports = app => {
   class CaptchaController extends app.Controller {
-
     async createProviderInstance() {
       const res = await this.service.captcha.createProviderInstance({
         module: this.ctx.request.body.module,
@@ -310,7 +307,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return CaptchaController;
 };
@@ -341,7 +337,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -366,7 +361,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -379,15 +373,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -400,8 +391,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -426,13 +416,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Captcha extends app.Service {
-
     async createProviderInstance({ module, sceneName, context }) {
       return await this.ctx.bean.captcha.createProviderInstance({ module, sceneName, context });
     }
-
   }
 
   return Captcha;
@@ -460,7 +447,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

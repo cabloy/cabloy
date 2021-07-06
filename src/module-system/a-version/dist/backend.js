@@ -7,7 +7,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Worker extends app.meta.BeanBase {
-
     get id() {
       return app.meta.workerId;
     }
@@ -26,7 +25,6 @@ module.exports = app => {
       const value = await redis.get(key);
       return value ? JSON.parse(value) : undefined;
     }
-
   }
 
   return Worker;
@@ -45,7 +43,6 @@ const chalk = require3('chalk');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async databaseInitStartup() {
       // database
       await this.__database();
@@ -99,7 +96,7 @@ module.exports = app => {
 
       if (!options.scene) {
         // confirm table aVersion exists
-        const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
+        const res = await this.ctx.db.queryOne("show tables like 'aVersion'");
         if (!res) {
           await this.ctx.db.query(`
           CREATE TABLE aVersion (
@@ -134,7 +131,6 @@ module.exports = app => {
 
     // check module
     async __checkModule(moduleName, options) {
-
       // module
       const module = this.__getModule(moduleName);
 
@@ -154,12 +150,12 @@ module.exports = app => {
           // fileVersionOld
           let fileVersionOld = 0; // default
           if (!options.scene) {
-            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [moduleName]);
             if (res) {
               fileVersionOld = res.version;
             }
           } else {
-            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
+            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [options.subdomain, moduleName]);
             if (res) {
               fileVersionOld = res.version;
             }
@@ -172,7 +168,6 @@ module.exports = app => {
             await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
           }
         }
-
       }
 
       if (options.scene === 'test') {
@@ -186,12 +181,10 @@ module.exports = app => {
           },
         });
       }
-
     }
 
     // update module or init module
     async __updateModule(options, module, fileVersionOld, fileVersionNew) {
-
       if (fileVersionNew === -1) {
         // always
         await this.__updateModule2(options, module, -1);
@@ -210,7 +203,6 @@ module.exports = app => {
 
       // log
       options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
-
     }
 
     async __updateModule2(options, module, version) {
@@ -311,7 +303,7 @@ module.exports = app => {
           }
           // create test mysql
           mysqlConfig.database = databaseName;
-          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);// database ready
+          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig); // database ready
           this.ctx.db = null; // reset
           console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
         }
@@ -342,7 +334,6 @@ module.exports = app => {
     __getModule(moduleName) {
       return app.meta.modules[moduleName];
     }
-
   }
 
   return Version;
@@ -357,12 +348,10 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
       return await bean.databaseInitStartup();
     }
-
   }
 
   return Startup;
@@ -377,12 +366,10 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
       return await bean.databaseNameStartup();
     }
-
   }
 
   return Startup;
@@ -397,13 +384,11 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
-
     async execute(context) {
       const options = context.options;
       const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
       return await bean.instanceInitStartup({ options });
     }
-
   }
 
   return Startup;
@@ -417,7 +402,6 @@ module.exports = app => {
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       const aliveTimeout = this.ctx.config.worker.alive.timeout;
       // interval
@@ -427,7 +411,6 @@ module.exports = app => {
       // alive
       await app.bean.worker.setAlive();
     }
-
   }
 
   return Startup;
@@ -441,7 +424,6 @@ module.exports = app => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // do nothing
@@ -460,7 +442,6 @@ module.exports = app => {
           `);
       }
     }
-
   }
 
   return Version;
@@ -564,8 +545,7 @@ module.exports = appInfo => {
 /***/ 479:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -604,8 +584,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -624,7 +603,6 @@ const constants = __webpack_require__(479);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // controllers
@@ -640,7 +618,6 @@ module.exports = app => {
     errors,
     constants,
   };
-
 };
 
 
@@ -649,8 +626,7 @@ module.exports = app => {
 /***/ 825:
 /***/ ((module) => {
 
-module.exports = [
-];
+module.exports = [];
 
 
 /***/ }),
@@ -658,8 +634,7 @@ module.exports = [
 /***/ 214:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -668,7 +643,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

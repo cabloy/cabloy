@@ -7,20 +7,25 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async update(options) {
-      if (options.version === 1) { }
+      if (options.version === 1) {
+        // empty
+      }
     }
 
     async init(options) {
-      if (options.version === 1) { }
+      if (options.version === 1) {
+        // empty
+      }
 
-      if (options.version === 2) { }
+      if (options.version === 2) {
+        // empty
+      }
 
-      if (options.version === 3) { }
-
+      if (options.version === 3) {
+        // empty
+      }
     }
-
   }
 
   return Version;
@@ -64,8 +69,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -243,7 +247,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AtomRightController extends app.Controller {
-
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.atomRight.rights({
@@ -283,7 +286,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return AtomRightController;
 };
@@ -296,7 +298,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async list() {
       const res = await this.service.auth.list();
       this.ctx.success(res);
@@ -328,7 +329,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AuthController;
 };
@@ -341,7 +341,6 @@ module.exports = app => {
 
 module.exports = app => {
   class ResourceRightController extends app.Controller {
-
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.resourceRight.rights({
@@ -378,7 +377,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return ResourceRightController;
 };
@@ -391,7 +389,6 @@ module.exports = app => {
 
 module.exports = app => {
   class RoleController extends app.Controller {
-
     async children() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.children({
@@ -485,7 +482,6 @@ module.exports = app => {
       const res = await this.service.role.build();
       this.ctx.success(res);
     }
-
   }
   return RoleController;
 };
@@ -498,7 +494,6 @@ module.exports = app => {
 
 module.exports = app => {
   class UserController extends app.Controller {
-
     async select() {
       const page = this.ctx.bean.util.page(this.ctx.request.body.page);
       const items = await this.service.user.select({
@@ -590,7 +585,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return UserController;
 };
@@ -630,7 +624,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -655,7 +648,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -710,13 +702,10 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AuthProvider extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aAuthProvider', options: { disableDeleted: true } });
     }
-
   }
 
   return AuthProvider;
@@ -746,13 +735,9 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // role
-    { method: 'post', path: 'role/children', controller: 'role',
-      meta: { right: { type: 'resource,atom', name: 'role', action: 25 } },
-    },
+    { method: 'post', path: 'role/children', controller: 'role', meta: { right: { type: 'resource,atom', name: 'role', action: 25 } } },
     { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/save', controller: 'role', middlewares: 'validate',
-      meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
-    },
+    { method: 'post', path: 'role/save', controller: 'role', middlewares: 'validate', meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/add', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/move', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/delete', controller: 'role', middlewares: 'transaction', meta: { right: { type: 'resource', name: 'role' } } },
@@ -803,9 +788,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class AtomRight extends app.Service {
-
     async rights({ roleId, page }) {
       return await this.ctx.bean.role.roleRights({ roleId, page });
     }
@@ -830,7 +813,6 @@ module.exports = app => {
     async spreads({ roleId, page }) {
       return await this.ctx.bean.role.roleSpreads({ roleId, page });
     }
-
   }
 
   return AtomRight;
@@ -846,9 +828,7 @@ const require3 = __webpack_require__(718);
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async list() {
       // list
       const list = await this.ctx.model.authProvider.select();
@@ -915,7 +895,6 @@ module.exports = app => {
         },
       });
     }
-
   }
 
   return Auth;
@@ -928,9 +907,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class ResourceRight extends app.Service {
-
     async rights({ roleId, page }) {
       return await this.ctx.bean.resource.resourceRights({ roleId, page });
     }
@@ -946,7 +923,6 @@ module.exports = app => {
     async spreads({ roleId, page }) {
       return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
     }
-
   }
 
   return ResourceRight;
@@ -959,9 +935,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Role extends app.Service {
-
     async children({ roleId, page }) {
       return await this.ctx.bean.role.children({ roleId, page });
     }
@@ -1013,7 +987,6 @@ module.exports = app => {
     async _buildInBackground({ progressId }) {
       return await this.ctx.bean.role.build({ progressId });
     }
-
   }
 
   return Role;
@@ -1026,22 +999,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class User extends app.Service {
-
     async select({ query, page }) {
       return await this.ctx.bean.user.select({
         options: {
           where: {
             'a.anonymous': 0,
             'a.disabled': 0,
-            __or__: [
-              { 'a.userName': { op: 'like', val: query } },
-              { 'a.realName': { op: 'like', val: query } },
-              { 'a.mobile': { op: 'like', val: query } },
-            ],
+            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
           },
-          orders: [[ 'a.userName', 'asc' ]],
+          orders: [['a.userName', 'asc']],
           page,
           removePrivacy: true,
         },
@@ -1083,7 +1050,6 @@ module.exports = app => {
     async resourceRights({ userId, page }) {
       return await this.ctx.bean.resource.resourceRightsOfUser({ userId, page });
     }
-
   }
 
   return User;

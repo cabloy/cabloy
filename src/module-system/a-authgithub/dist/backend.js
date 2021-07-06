@@ -6,16 +6,17 @@
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
-      // eslint-disable-next-line
-      if (options.version === 1) {}
+      if (options.version === 1) {
+        // empty
+      }
     }
 
     async init(options) {
-      if (options.version === 1) {}
+      if (options.version === 1) {
+        // empty
+      }
     }
-
   }
 
   return Version;
@@ -48,8 +49,7 @@ module.exports = app => {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
-  const config = {
-  };
+  const config = {};
 
   // account
   config.account = {};
@@ -74,8 +74,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -103,10 +102,8 @@ module.exports = {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -161,8 +158,7 @@ module.exports = app => {
 /***/ 230:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -184,8 +180,7 @@ module.exports = ctx => {
         mode: 'redirect',
         component: 'buttongithub',
       },
-      config: {
-      },
+      config: {},
       configFunctions: {
         getConfig(ctx) {
           const config = ctx.config.module(moduleInfo.relativeName).account.github.apps.default;
@@ -233,8 +228,7 @@ module.exports = ctx => {
 /***/ 825:
 /***/ ((module) => {
 
-module.exports = [
-];
+module.exports = [];
 
 
 /***/ }),
@@ -242,8 +236,7 @@ module.exports = [
 /***/ 214:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -252,7 +245,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

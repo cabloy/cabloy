@@ -5,9 +5,7 @@
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomCmsBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -36,7 +34,6 @@ module.exports = app => {
       // super
       await super.delete({ atomClass, key, user });
     }
-
   }
 
   return Atom;
@@ -51,16 +48,16 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
+        // empty
       }
     }
 
     async init(options) {
       if (options.version === 1) {
         // create roles: cms-community-writer to template
-        const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
+        const roles = ['cms-community-writer', 'cms-community-publisher'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
         const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
@@ -94,7 +91,6 @@ module.exports = app => {
           { roleName: 'root', action: 'read', scopeNames: 0 },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
-
       }
     }
 
@@ -125,7 +121,6 @@ module.exports = app => {
         categoryIds[item.categoryName] = categoryId;
       }
     }
-
   }
 
   return Version;
@@ -208,9 +203,7 @@ module.exports = appInfo => {
         loadOnScroll: false,
       },
     },
-    profile: {
-
-    },
+    profile: {},
     beian: {
       icp: '',
     },
@@ -226,8 +219,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -345,9 +337,7 @@ module.exports = app => {
 const postPublish = __webpack_require__(801);
 
 module.exports = app => {
-  const flowDefs = [
-    postPublish(app),
-  ];
+  const flowDefs = [postPublish(app)];
   return flowDefs;
 };
 
@@ -398,7 +388,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // post
   schemas.post = {
@@ -451,7 +441,7 @@ module.exports = app => {
         notEmpty: true,
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },
@@ -481,8 +471,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -497,7 +486,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -522,7 +510,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -553,8 +540,7 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {
-          },
+          actions: {},
           validator: 'post',
           search: {
             validator: 'postSearch',
@@ -626,8 +612,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -638,8 +623,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

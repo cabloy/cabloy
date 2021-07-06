@@ -7,7 +7,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Mail extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'mail');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -61,7 +60,6 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // check if content.message
       // not set content.message.to dynamic for test, which must be set by business
@@ -94,9 +92,7 @@ module.exports = ctx => {
       // log
       if (sceneTest) {
         const url = nodemailer.getTestMessageUrl(res);
-        const message = chalk.keyword('cyan')('Test Mail To: ')
-                        + chalk.keyword('yellow')(content.message.to)
-                        + chalk.keyword('orange')('\n' + url);
+        const message = chalk.keyword('cyan')('Test Mail To: ') + chalk.keyword('yellow')(content.message.to) + chalk.keyword('orange')('\n' + url);
         console.log('\n' + boxen(message, boxenOptions));
       }
       // done
@@ -125,9 +121,8 @@ module.exports = ctx => {
     }
 
     _sceneValid(scene) {
-      return (scene && scene.transport && scene.transport.host);
+      return scene && scene.transport && scene.transport.host;
     }
-
   }
   return IOChannel;
 };
@@ -141,7 +136,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
       if (channelFullName === 'a-mail:mail') {
         return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
@@ -159,7 +153,6 @@ module.exports = ctx => {
         message: JSON.parse(mail.message),
       };
     }
-
   }
   return IOMessage;
 };
@@ -171,9 +164,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aMail
@@ -198,12 +189,11 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
+        // empty
       }
     }
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -257,8 +247,7 @@ module.exports = appInfo => {
   const config = {};
 
   // middlewares
-  config.middlewares = {
-  };
+  config.middlewares = {};
 
   // scenes
   config.scenes = {
@@ -290,8 +279,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -353,7 +341,7 @@ module.exports = app => {
       title: 'Mail',
       persistence: false,
       push: {
-        channels: [ 'a-mail:mail' ],
+        channels: ['a-mail:mail'],
       },
     },
   };
@@ -366,10 +354,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -384,7 +370,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -409,7 +394,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -425,15 +409,12 @@ module.exports = app => {
   const socketioChannelMail = __webpack_require__(213)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     socketio: {
       messages: {
@@ -484,8 +465,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -496,10 +476,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class Mail extends app.Service {
-
-  }
+  class Mail extends app.Service {}
   return Mail;
 };
 
@@ -525,7 +502,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

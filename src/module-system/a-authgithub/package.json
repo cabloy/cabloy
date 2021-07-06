@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authgithub",
-  "version": "4.0.13",
+  "version": "4.0.14",
   "title": "Auth-GitHub",
   "eggBornModule": {
     "fileVersion": 1,
@@ -19,8 +19,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.1",
+    "egg-born-mock": "^2.1.2",
     "passport-github": "^1.1.0",
-    "require3": "^2.0.8"
+    "require3": "^2.0.9"
   }
 }

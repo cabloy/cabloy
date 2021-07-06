@@ -9,8 +9,7 @@ module.exports = appInfo => {
   const config = {};
 
   // plugin
-  config.plugin = {
-  };
+  config.plugin = {};
 
   return config;
 };
@@ -22,8 +21,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -66,7 +64,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-  const schemas = { };
+  const schemas = {};
   return schemas;
 };
 
@@ -76,10 +74,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -94,7 +90,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // routes
   const routes = __webpack_require__(825)(app);
   // controllers
@@ -116,7 +111,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -129,15 +123,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -150,8 +141,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -162,8 +152,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -173,10 +162,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 

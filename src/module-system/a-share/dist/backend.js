@@ -21,7 +21,6 @@ const uuid = require3('uuid');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Share {
-
     get modelShare() {
       return ctx.model.module(moduleInfo.relativeName).share;
     }
@@ -38,7 +37,10 @@ module.exports = ctx => {
       const userId = user.id;
       // get
       let item = await this.modelShare.get({
-        host, atomId, url, userId,
+        host,
+        atomId,
+        url,
+        userId,
       });
       // insert
       if (!item) {
@@ -129,7 +131,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return Share;
@@ -143,7 +144,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         let sql;
@@ -196,16 +196,12 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -256,8 +252,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -265,8 +260,7 @@ module.exports = {
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -274,8 +268,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -307,7 +300,6 @@ module.exports = app => {
 
 module.exports = app => {
   class ShareController extends app.Controller {
-
     async generate() {
       const res = await this.service.share.generate({
         host: this.ctx.request.body.host,
@@ -324,7 +316,6 @@ module.exports = app => {
         user: this.ctx.state.user.op,
       });
     }
-
   }
   return ShareController;
 };
@@ -355,7 +346,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // aops
   const aops = __webpack_require__(224)(app);
   // beans
@@ -383,7 +373,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -396,14 +385,11 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
-      functions: {
-      },
+      atoms: {},
+      functions: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
       schemas,
     },
@@ -489,7 +475,10 @@ module.exports = app => {
 
 module.exports = app => {
   const routes = [
-    { method: 'post', path: 'share/generate', controller: 'share',
+    {
+      method: 'post',
+      path: 'share/generate',
+      controller: 'share',
       meta: {
         auth: { user: true },
       },
@@ -506,9 +495,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Share extends app.Service {
-
     async generate({ host, atomId, url, user }) {
       return await this.ctx.bean.share.generate({ host, atomId, url, user });
     }
@@ -516,7 +503,6 @@ module.exports = app => {
     async shareGo({ uuid, user }) {
       return await this.ctx.bean.share.shareGo({ uuid, user });
     }
-
   }
 
   return Share;
@@ -544,7 +530,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

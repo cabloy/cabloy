@@ -9,7 +9,6 @@ let __sequences;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Sequence extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'sequence');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -124,7 +123,6 @@ module.exports = ctx => {
       }
       return sequences;
     }
-
   }
 
   return Sequence;
@@ -138,12 +136,10 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class Sequence {
-
     async execute(context) {
       let value = context.value;
       return ++value;
     }
-
   }
 
   return Sequence;
@@ -156,9 +152,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aSequence
@@ -178,7 +172,6 @@ module.exports = app => {
         await this.ctx.model.query(sql);
       }
     }
-
   }
 
   return Version;
@@ -235,8 +228,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -244,8 +236,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -264,9 +255,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class SequenceController extends app.Controller {
-  }
+  class SequenceController extends app.Controller {}
 
   return SequenceController;
 };
@@ -299,7 +288,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // meta
@@ -319,7 +307,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -340,8 +327,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -352,9 +338,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
-  class Sequence extends app.Service {
-  }
+  class Sequence extends app.Service {}
 
   return Sequence;
 };

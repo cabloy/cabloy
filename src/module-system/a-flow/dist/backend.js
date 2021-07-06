@@ -16,9 +16,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -63,11 +61,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.flowDef.update(data);
       // update content
-      await this.ctx.model.flowDefContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.flowDefContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
 
       // deploy
       if (item.atomStage === 1) {
@@ -113,7 +116,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;
@@ -130,7 +132,6 @@ const vm = __webpack_require__(184);
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
-
     get modelFlow() {
       return ctx.model.module(moduleInfo.relativeName).flow;
     }
@@ -187,7 +188,7 @@ module.exports = ctx => {
         throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
       }
       // context
-      const context = Object.assign({ }, globals);
+      const context = Object.assign({}, globals);
       if (parameter !== undefined) {
         context.parameter = parameter;
       }
@@ -267,7 +268,7 @@ module.exports = ctx => {
             'a.disabled': 0,
             'a.id': userIds,
           },
-          orders: [[ 'a.userName', 'asc' ]],
+          orders: [['a.userName', 'asc']],
           removePrivacy: true,
         },
       });
@@ -387,14 +388,15 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectFlows({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         mode,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }
-
   }
 
   return Flow;
@@ -406,7 +408,6 @@ module.exports = ctx => {
 /***/ 495:
 /***/ ((module) => {
 
-
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
 const __flowServiceBases = {};
@@ -414,7 +415,6 @@ const __flowServiceBases = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowDef {
-
     get modelFlowDef() {
       return ctx.model.module(moduleInfo.relativeName).flowDef;
     }
@@ -654,9 +654,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-
   class ContextEdge {
-
     constructor({ context, contextNode, edgeDef }) {
       this.context = context;
       this.contextNode = contextNode;
@@ -668,7 +666,6 @@ module.exports = ctx => {
     get utils() {
       return this._utils;
     }
-
   }
 
   return ContextEdge;
@@ -681,9 +678,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-
   class ContextFlow {
-
     constructor({ flowDef }) {
       this._flowDef = flowDef;
       this._flowDefContent = JSON.parse(this._flowDef.content);
@@ -709,7 +704,6 @@ module.exports = ctx => {
     get utils() {
       return this._utils;
     }
-
   }
 
   return ContextFlow;
@@ -722,9 +716,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-
   class ContextNode {
-
     constructor({ context, nodeDef }) {
       this.context = context;
       this._nodeDef = nodeDef;
@@ -744,7 +736,6 @@ module.exports = ctx => {
     get utils() {
       return this._utils;
     }
-
   }
 
   return ContextNode;
@@ -769,7 +760,9 @@ module.exports = ctx => {
       this._edgeBaseBean = null;
       // context
       this.contextEdge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
-        context, contextNode, edgeDef,
+        context,
+        contextNode,
+        edgeDef,
       });
     }
 
@@ -820,8 +813,11 @@ module.exports = ctx => {
     get edgeBaseBean() {
       if (!this._edgeBaseBean) {
         this._edgeBaseBean = ctx.bean._newBean(this.edgeBase.beanFullName, {
-          flowInstance: this.flowInstance, edgeInstance: this,
-          context: this.context, contextNode: this.contextNode, contextEdge: this.contextEdge,
+          flowInstance: this.flowInstance,
+          edgeInstance: this,
+          context: this.context,
+          contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
         });
       }
       return this._edgeBaseBean;
@@ -831,7 +827,6 @@ module.exports = ctx => {
       if (!this._edgeBase) this._edgeBase = ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeDef.type);
       return this._edgeBase;
     }
-
   }
   return FlowEdge;
 };
@@ -848,7 +843,6 @@ const UtilsFn = __webpack_require__(294);
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowInstance {
-
     constructor({ flowDef }) {
       // context
       this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
@@ -856,7 +850,8 @@ module.exports = ctx => {
       });
       // listener
       this._flowListener = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
-        flowInstance: this, context: this.context,
+        flowInstance: this,
+        context: this.context,
       });
     }
 
@@ -1111,7 +1106,9 @@ module.exports = ctx => {
 
     _createNodeInstance2({ nodeDef }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
-        flowInstance: this, context: this.context, nodeDef,
+        flowInstance: this,
+        context: this.context,
+        nodeDef,
       });
       return node;
     }
@@ -1132,7 +1129,10 @@ module.exports = ctx => {
 
     async _createEdgeInstance({ edgeDef, contextNode }) {
       const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
-        flowInstance: this, context: this.context, contextNode, edgeDef,
+        flowInstance: this,
+        context: this.context,
+        contextNode,
+        edgeDef,
       });
       await edge.init();
       return edge;
@@ -1276,7 +1276,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return FlowInstance;
@@ -1293,9 +1292,7 @@ const require3 = __webpack_require__(718);
 const assert = require3('assert');
 
 module.exports = ctx => {
-
   class FlowListener {
-
     constructor({ flowInstance, context }) {
       this.flowInstance = flowInstance;
       this.context = context;
@@ -1425,7 +1422,6 @@ module.exports = ctx => {
         return await this.flowListener.getSchemaWrite(contextTask, contextNode, { schemaBase, schema });
       }
     }
-
   }
 
   return FlowListener;
@@ -1450,7 +1446,8 @@ module.exports = ctx => {
       this._nodeBaseBean = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
-        context, nodeDef,
+        context,
+        nodeDef,
       });
     }
 
@@ -1628,8 +1625,10 @@ module.exports = ctx => {
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
-          flowInstance: this.flowInstance, nodeInstance: this,
-          context: this.context, contextNode: this.contextNode,
+          flowInstance: this.flowInstance,
+          nodeInstance: this,
+          context: this.context,
+          contextNode: this.contextNode,
         });
       }
       return this._nodeBaseBean;
@@ -1642,7 +1641,6 @@ module.exports = ctx => {
       }
       return this._nodeBase;
     }
-
   }
   return FlowNode;
 };
@@ -1655,7 +1653,6 @@ module.exports = ctx => {
 
 module.exports = ctx => {
   class Procedure {
-
     // mode: mine/others/flowing/history
     selectFlows({ iid, userIdWho, where, orders, page, count, mode }) {
       iid = parseInt(iid);
@@ -1706,8 +1703,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlow a
+      const _sql = `select ${_selectFields} from aFlow a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -1769,8 +1765,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlow a
+      const _sql = `select ${_selectFields} from aFlow a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -1825,8 +1820,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowHistory a
+      const _sql = `select ${_selectFields} from aFlowHistory a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -1842,11 +1836,9 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };
 
 
@@ -1857,12 +1849,10 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { flowDefId } = context.data;
       await this.ctx.bean.flowDef._deployQueue({ flowDefId });
     }
-
   }
 
   return Queue;
@@ -1877,7 +1867,6 @@ module.exports = app => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelFlow = ctx.model.module(moduleInfo).flow;
@@ -1886,7 +1875,6 @@ module.exports = ctx => {
       });
       return count;
     }
-
   }
 
   return Stats;
@@ -1900,7 +1888,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         let sql;
@@ -2038,7 +2025,6 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 2) {
@@ -2071,9 +2057,7 @@ module.exports = app => {
           ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
                   `;
         await this.ctx.model.query(sql);
-
       }
-
     }
 
     async init(options) {
@@ -2100,8 +2084,7 @@ module.exports = app => {
       }
     }
 
-    async test() { }
-
+    async test() {}
   }
 
   return Version;
@@ -2230,9 +2213,7 @@ module.exports = class FlowEdgeBase {
     await this.flowInstance._flowListener.onEdgeLeave(this.contextEdge, this.contextNode);
     return true;
   }
-
 };
-
 
 
 /***/ }),
@@ -2296,9 +2277,7 @@ module.exports = class FlowNodeBase {
     await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     return true;
   }
-
 };
-
 
 
 /***/ }),
@@ -2308,7 +2287,6 @@ module.exports = class FlowNodeBase {
 
 module.exports = ({ ctx /* flowInstance*/ }) => {
   class Utils {
-
     constructor({ context, contextNode, contextEdge }) {
       this.context = context;
       this.contextNode = contextNode;
@@ -2321,10 +2299,11 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
       if (this.contextNode) globals.contextNode = this.contextNode;
       if (this.contextEdge) globals.contextEdge = this.contextEdge;
       return await ctx.bean.flow.executeService({
-        bean, parameter, globals,
+        bean,
+        parameter,
+        globals,
       });
     }
-
   }
   return Utils;
 };
@@ -2337,7 +2316,6 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
 
 module.exports = () => {
   class FlowVars {
-
     constructor() {
       this._vars = null;
       this._dirty = false;
@@ -2368,7 +2346,6 @@ module.exports = () => {
       // dirty
       this._dirty = true;
     }
-
   }
   return FlowVars;
 };
@@ -2605,7 +2582,7 @@ module.exports = app => {
         ebTitle: 'Category',
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },
@@ -2650,9 +2627,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     // options
     //   where, orders, page, mode: mine/others/flowing/history
     async select() {
@@ -2673,7 +2648,6 @@ module.exports = app => {
       });
       this.ctx.success(count);
     }
-
   }
   return FlowController;
 };
@@ -2685,9 +2659,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowDefController extends app.Controller {
-
     nodeBases() {
       const res = this.ctx.service.flowDef.nodeBases();
       this.ctx.success(res);
@@ -2702,7 +2674,6 @@ module.exports = app => {
       const res = this.ctx.service.flowDef.flowServiceBases();
       this.ctx.success(res);
     }
-
   }
   return FlowDefController;
 };
@@ -2738,7 +2709,6 @@ const FlowNodeBase = __webpack_require__(389);
 const FlowEdgeBase = __webpack_require__(68);
 
 module.exports = app => {
-
   // FlowNodeBase/FlowEdgeBase
   app.meta.FlowNodeBase = FlowNodeBase;
   app.meta.FlowEdgeBase = FlowEdgeBase;
@@ -2771,7 +2741,6 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };
 
 
@@ -3005,9 +2974,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Flow extends app.Service {
-
     async select({ options, user }) {
       return await this.ctx.bean.flow.select({ options, user });
     }
@@ -3015,11 +2982,9 @@ module.exports = app => {
     async count({ options, user }) {
       return await this.ctx.bean.flow.count({ options, user });
     }
-
   }
   return Flow;
 };
-
 
 
 /***/ }),
@@ -3028,9 +2993,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class FlowDef extends app.Service {
-
     nodeBases() {
       return this.ctx.bean.flowDef.nodeBases();
     }
@@ -3042,11 +3005,9 @@ module.exports = app => {
     flowServiceBases() {
       return this.ctx.bean.flowDef.flowServiceBases();
     }
-
   }
   return FlowDef;
 };
-
 
 
 /***/ }),
@@ -3072,7 +3033,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ }),
 
@@ -3080,7 +3041,7 @@ module.exports = require("require3");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("vm");;
+module.exports = require("vm");
 
 /***/ })
 

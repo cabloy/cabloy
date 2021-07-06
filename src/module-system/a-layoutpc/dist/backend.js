@@ -5,9 +5,7 @@
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -56,11 +54,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.layout.update(data);
       // update content
-      await this.ctx.model.layoutContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.layoutContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, user }) {
@@ -76,9 +79,7 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
-    }
-
+    _getMeta(/* item*/) {}
   }
 
   return Atom;
@@ -91,9 +92,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 3) {
         // create table: aLayout
@@ -134,7 +133,6 @@ module.exports = app => {
               left join aLayoutContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
@@ -159,7 +157,6 @@ module.exports = app => {
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'layout', roleRights });
       }
     }
-
   }
 
   return Version;
@@ -210,8 +207,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -219,8 +215,7 @@ module.exports = {
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -364,10 +359,7 @@ const layoutPC = __webpack_require__(456);
 const layoutPCAnonymous = __webpack_require__(674);
 
 module.exports = app => {
-  const layouts = [
-    layoutPC(app),
-    layoutPCAnonymous(app),
-  ];
+  const layouts = [layoutPC(app), layoutPCAnonymous(app)];
   return layouts;
 };
 
@@ -508,7 +500,8 @@ module.exports = app => {
         component: 'buttonMine',
         icon: { material: 'person' },
         actionPath: null,
-        scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
         showSeparator: true,
         fixed: true,
       }),
@@ -546,8 +539,6 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
-
-
   ];
   return resources;
 };
@@ -559,7 +550,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // layout
   schemas.layout = {
@@ -611,10 +602,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -632,7 +621,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // controllers
@@ -653,7 +641,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -797,8 +784,7 @@ module.exports = app => {
 /***/ 825:
 /***/ ((module) => {
 
-module.exports = [
-];
+module.exports = [];
 
 
 /***/ }),
@@ -806,9 +792,7 @@ module.exports = [
 /***/ 214:
 /***/ ((module) => {
 
-
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ })

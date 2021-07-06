@@ -9,9 +9,7 @@ const extend = require3('extend2');
 const chalk = require3('chalk');
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       // check indexes
       if (this.ctx.config.indexesCheck) {
@@ -37,11 +35,9 @@ module.exports = app => {
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
+    async test() {}
 
     async _createIndexesOnTable({ tableName, indexes }) {
       try {
@@ -70,7 +66,6 @@ module.exports = app => {
         if (e.sql) console.log(chalk.red(e.sql));
       }
     }
-
   }
 
   return Version;
@@ -103,8 +98,7 @@ module.exports = app => {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
-  const config = {
-  };
+  const config = {};
 
   // indexes
   config.indexes = {
@@ -235,8 +229,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -244,8 +237,7 @@ module.exports = {
 /***/ 72:
 /***/ ((module) => {
 
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -274,10 +266,8 @@ module.exports = app => {
 /***/ 95:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };
 
@@ -292,7 +282,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -317,7 +306,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -330,15 +318,12 @@ module.exports = app => {
   const schemas = __webpack_require__(232)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -351,8 +336,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-  };
+  const models = {};
   return models;
 };
 
@@ -363,8 +347,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };
 
@@ -374,10 +357,8 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module) => {
 
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };
 
@@ -388,7 +369,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

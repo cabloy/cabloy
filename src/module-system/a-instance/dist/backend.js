@@ -13,13 +13,12 @@ const __queueInstanceStartup = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Instance {
-
     async list(options) {
       // options
       if (!options) options = { where: null, orders: null, page: null };
       const page = ctx.bean.util.page(options.page, false);
       const orders = options.orders;
-      const where = options.where || { disabled: 0 };// allow disabled=undefined
+      const where = options.where || { disabled: 0 }; // allow disabled=undefined
       // select
       const _options = { where, orders };
       if (page.size !== 0) {
@@ -158,13 +157,16 @@ module.exports = ctx => {
             return;
           }
           // startup
-          ctx.app.meta._runStartupInstance({ subdomain: info.subdomain, options: info.options }).then(() => {
-            info.resolve();
-            cb();
-          }).catch(err => {
-            info.reject(err);
-            cb();
-          });
+          ctx.app.meta
+            ._runStartupInstance({ subdomain: info.subdomain, options: info.options })
+            .then(() => {
+              info.resolve();
+              cb();
+            })
+            .catch(err => {
+              info.reject(err);
+              cb();
+            });
         });
       }
       // promise
@@ -175,7 +177,6 @@ module.exports = ctx => {
         __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
       });
     }
-
   }
   return Instance;
 };
@@ -188,16 +189,15 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute() {
       await this.ctx.bean.instance.instanceStartup({
         subdomain: this.ctx.subdomain,
         options: {
-          force: true, instanceBase: null,
+          force: true,
+          instanceBase: null,
         },
       });
     }
-
   }
 
   return Broadcast;
@@ -211,11 +211,9 @@ module.exports = app => {
 
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute() {
       await this.ctx.bean.instance.resetCache({ subdomain: this.ctx.subdomain });
     }
-
   }
 
   return Broadcast;
@@ -301,7 +299,8 @@ module.exports = ctx => {
           const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
           await modelInstance.update({
             id: instance.id,
-            config: JSON.stringify(instance.config) });
+            config: JSON.stringify(instance.config),
+          });
           // broadcast
           ctx.app.meta.broadcast.emit({
             subdomain: ctx.subdomain,
@@ -333,9 +332,7 @@ function ctxHostValid(ctx) {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aInstance
@@ -378,8 +375,7 @@ module.exports = app => {
       }
     }
 
-    async init(options) { }
-
+    async init(options) {}
   }
 
   return Version;
@@ -476,8 +472,7 @@ module.exports = appInfo => {
 /***/ ((module) => {
 
 // error code should start from 1001
-module.exports = {
-};
+module.exports = {};
 
 
 /***/ }),
@@ -531,13 +526,15 @@ module.exports = app => {
           target: '',
           actionSave: true,
           actionDone: true,
-          actions: [{
-            name: 'preview',
-            actionModule: moduleInfo.relativeName,
-            actionComponent: 'action',
-            icon: { material: 'visibility' },
-            navigateOptions: { target: '_self' },
-          }],
+          actions: [
+            {
+              name: 'preview',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              navigateOptions: { target: '_self' },
+            },
+          ],
         },
         // notEmpty: true,
       },
@@ -555,7 +552,6 @@ module.exports = app => {
 
 module.exports = app => {
   class InstanceController extends app.Controller {
-
     async item() {
       const res = await this.service.instance.item();
       this.ctx.success(res);
@@ -581,7 +577,6 @@ module.exports = app => {
       await this.service.instance.reload();
       this.ctx.success();
     }
-
   }
   return InstanceController;
 };
@@ -615,7 +610,6 @@ const errors = __webpack_require__(624);
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // models
@@ -636,7 +630,6 @@ module.exports = app => {
     models,
     meta,
   };
-
 };
 
 
@@ -707,7 +700,11 @@ module.exports = app => {
 module.exports = [
   // instance
   { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-  { method: 'post', path: 'instance/save', controller: 'instance', middlewares: 'validate',
+  {
+    method: 'post',
+    path: 'instance/save',
+    controller: 'instance',
+    middlewares: 'validate',
     meta: {
       validate: { validator: 'instance' },
       right: { type: 'resource', module: 'a-settings', name: 'settings' },
@@ -726,12 +723,10 @@ module.exports = [
 const require3 = __webpack_require__(718);
 const extend = require3('extend2');
 
-const __blackFields = [ 'startups', 'queues', 'broadcasts', 'middlewares', 'schedules' ];
+const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 
 module.exports = app => {
-
   class Instance extends app.Service {
-
     async item() {
       return await this.ctx.model.instance.get({ id: this.ctx.instance.id });
     }
@@ -779,7 +774,6 @@ module.exports = app => {
       }
       return config;
     }
-
   }
 
   return Instance;
@@ -804,7 +798,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

@@ -5,9 +5,7 @@
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Atom extends app.meta.AtomCmsBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -36,7 +34,6 @@ module.exports = app => {
       // super
       await super.delete({ atomClass, key, user });
     }
-
   }
 
   return Atom;
@@ -51,7 +48,6 @@ module.exports = app => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cms {
-
     get render() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.render');
     }
@@ -63,7 +59,6 @@ module.exports = ctx => {
     build({ atomClass }) {
       return ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
     }
-
   }
 
   return Cms;
@@ -76,8 +71,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = ctx => {
-  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-  }
+  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {}
   return IOMessage;
 };
 
@@ -106,7 +100,6 @@ const utils = __webpack_require__(294);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Build extends app.meta.BeanBase {
-
     constructor(ctx, atomClass) {
       super(ctx);
       this.atomClass = utils.atomClass(atomClass);
@@ -252,12 +245,9 @@ module.exports = app => {
       // language(db)
       const configLanguage = await this.getConfigLanguage({ language });
       // combine
-      return extend(true, {},
-        siteBase, theme, configSite, configLanguage,
-        {
-          language: language ? { current: language } : false,
-        }
-      );
+      return extend(true, {}, siteBase, theme, configSite, configLanguage, {
+        language: language ? { current: language } : false,
+      });
     }
 
     // theme extend
@@ -271,10 +261,7 @@ module.exports = app => {
       if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
       const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
-      return extend(true, {},
-        this._combineThemes(moduleExtend),
-        this.ctx.config.module(themeModuleName).theme
-      );
+      return extend(true, {}, this._combineThemes(moduleExtend), this.ctx.config.module(themeModuleName).theme);
     }
 
     // site<plugin<theme<site(db)<language(db)
@@ -303,16 +290,21 @@ module.exports = app => {
       // front
       site.front = {};
       // front.env
-      site.front.env = extend(true, {
-        base: site.base,
-        language: site.language,
-      }, site.env, {
-        site: {
-          serverUrl: site.serverUrl,
-          rawRootUrl: this.getUrlRawRoot(site),
-          atomClass: this.atomClass,
+      site.front.env = extend(
+        true,
+        {
+          base: site.base,
+          language: site.language,
         },
-      });
+        site.env,
+        {
+          site: {
+            serverUrl: site.serverUrl,
+            rawRootUrl: this.getUrlRawRoot(site),
+            atomClass: this.atomClass,
+          },
+        }
+      );
       // front.envs
       if (options.envs !== false) {
         const envs = await this.getFrontEnvs({ language });
@@ -343,7 +335,7 @@ module.exports = app => {
     }
     getUrlRoot(site, language) {
       const rawRoot = this.getUrlRawRoot(site);
-      return `${rawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}`;
+      return `${rawRoot}${!site.language || language === site.language.default ? '' : '/' + language}`;
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
@@ -365,7 +357,7 @@ module.exports = app => {
     }
     async getPathDist(site, language) {
       const rawDist = await this.getPathRawDist();
-      return path.join(rawDist, (!site.language || language === site.language.default) ? '' : '/' + language);
+      return path.join(rawDist, !site.language || language === site.language.default ? '' : '/' + language);
     }
     async getPathCms() {
       // cms
@@ -421,7 +413,7 @@ module.exports = app => {
       }
     }
 
-    async deleteArticle({ key, article, inner }) {
+    async deleteArticle({ /* key,*/ article, inner }) {
       // maybe not rendered
       if (!article.url) return;
       // maybe site.language is false
@@ -459,7 +451,7 @@ module.exports = app => {
         atomClass: this.atomClass,
         options: {
           language: site.language ? site.language.current : null,
-          orders: [[ 'a.updatedAt', 'desc' ]],
+          orders: [['a.updatedAt', 'desc']],
           page: null,
           mode: 'search',
           stage: 'formal',
@@ -530,15 +522,13 @@ module.exports = app => {
 
     async _writeSitemaps({ site, articles }) {
       // xml
-      let xml =
-`<?xml version="1.0" encoding="UTF-8"?>
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
       for (const article of articles) {
         const loc = this.getUrl(site, site.language && site.language.current, article.url);
         const lastmod = moment(article.updatedAt).format();
-        xml +=
-`  <url>
+        xml += `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>
@@ -560,8 +550,7 @@ module.exports = app => {
       let xml;
       const exists = await fse.pathExists(fileName);
       if (!exists) {
-        xml =
-`<?xml version="1.0" encoding="UTF-8"?>
+        xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${loc}</loc>
@@ -575,17 +564,18 @@ module.exports = app => {
         const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
         xml = xml.replace(regexp, '');
         // append
-        xml = xml.replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        xml = xml.replace(
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
           `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
-  </url>`);
+  </url>`
+        );
       }
       // save
       await fse.writeFile(fileName, xml);
     }
-
 
     async _renderStatic({ site }) {
       // static
@@ -660,10 +650,13 @@ module.exports = app => {
       // renderAt must be updated after file rendered
       if (data.article) {
         // update renderAt
-        await this.ctx.model.query(`
+        await this.ctx.model.query(
+          `
           update aCmsArticle set renderAt=?
             where iid=? and atomId=?
-          `, [ data.article.renderAt, this.ctx.instance.id, data.article.atomId ]);
+          `,
+          [data.article.renderAt, this.ctx.instance.id, data.article.atomId]
+        );
       }
       // socketio publish
       if (hotloadFile) {
@@ -728,7 +721,7 @@ module.exports = app => {
       const site = data.site;
       // cache
       if (!site._cache) site._cache = {};
-      if (!site._cache[type])site._cache[type] = {};
+      if (!site._cache[type]) site._cache[type] = {};
       const cacheSha = shajs('sha256').update(items.join(',')).digest('hex');
       let urlDest;
       if (site._cache[type][cacheSha]) {
@@ -739,7 +732,7 @@ module.exports = app => {
         for (const item of items) {
           let _content;
           if (path.extname(item) === '.ejs') {
-          // data
+            // data
             data._filename = item;
             _content = await ejs.renderFile(item, data, this.getOptions());
           } else {
@@ -768,7 +761,7 @@ module.exports = app => {
               _content = babel.transform(_content, {
                 ast: false,
                 babelrc: false,
-                presets: [ '@babel/preset-env' ],
+                presets: ['@babel/preset-env'],
                 plugins: [],
               }).code;
               // not minify for test/dev
@@ -941,7 +934,6 @@ var env=${JSON.stringify(env, null, 2)};
       };
     }
 
-
     // //////////////////////////////// build
 
     // build languages
@@ -951,7 +943,7 @@ var env=${JSON.stringify(env, null, 2)};
         const timeStart = new Date();
         // site
         const site = await this.combineSiteBase();
-        const languages = site.language ? site.language.items.split(',') : [ null ];
+        const languages = site.language ? site.language.items.split(',') : [null];
 
         // progress
         const progress0_Total = languages.length;
@@ -1092,7 +1084,7 @@ var env=${JSON.stringify(env, null, 2)};
 
         // / copy files to dist (ignore .ejs)
         // /  assets plugins/[plugin]/assets
-        for (const dir of [ 'assets', 'plugins' ]) {
+        for (const dir of ['assets', 'plugins']) {
           if (dir === 'assets') {
             // assets
             const _filename = path.join(pathIntermediate, 'assets');
@@ -1177,7 +1169,7 @@ var env=${JSON.stringify(env, null, 2)};
       const watcherInfos = [];
       // site
       const site = await this.combineSiteBase();
-      const languages = site.language ? site.language.items.split(',') : [ null ];
+      const languages = site.language ? site.language.items.split(',') : [null];
       // loop languages
       for (const language of languages) {
         // info
@@ -1244,16 +1236,14 @@ var env=${JSON.stringify(env, null, 2)};
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
       let items = '';
-      const languages = site.language ? site.language.items.split(',') : [ null ];
+      const languages = site.language ? site.language.items.split(',') : [null];
       for (const language of languages) {
-        items +=
-`  <sitemap>
-    <loc>${urlRawRoot}${(!site.language || language === site.language.default) ? '' : '/' + language}/sitemap.xml</loc>
+        items += `  <sitemap>
+    <loc>${urlRawRoot}${!site.language || language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
   </sitemap>
 `;
       }
-      const content =
-`<?xml version="1.0" encoding="UTF-8"?>
+      const content = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items}</sitemapindex>`;
       // write
@@ -1264,8 +1254,7 @@ ${items}</sitemapindex>`;
     async createRobots({ site }) {
       // content
       const urlRawRoot = this.getUrlRawRoot(site);
-      const content =
-`User-agent: *
+      const content = `User-agent: *
 Allow: /
 
 Sitemap: ${urlRawRoot}/sitemapindex.xml
@@ -1419,12 +1408,10 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
       return envs;
     }
-
   }
 
   return Build;
 };
-
 
 
 /***/ }),
@@ -1483,7 +1470,10 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
+            atomClass,
+            key,
+            article,
+            inner,
           },
         });
       });
@@ -1503,7 +1493,10 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
+            atomClass,
+            key,
+            article,
+            inner,
           },
         });
       });
@@ -1523,7 +1516,9 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
-            atomClass, key, inner,
+            atomClass,
+            key,
+            inner,
           },
         });
       });
@@ -1543,12 +1538,13 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
-            atomClass, key, inner,
+            atomClass,
+            key,
+            inner,
           },
         });
       });
     }
-
   }
 
   return Render;
@@ -1568,7 +1564,6 @@ let __blocks = null;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site {
-
     async getSite({ atomClass, language, options }) {
       const build = ctx.bean.cms.build({ atomClass });
       return await build.getSite({ language, options });
@@ -1708,14 +1703,16 @@ module.exports = ctx => {
       // categories
       if (atomClassBase.category) {
         stats.categories = await ctx.bean.category.count({
-          atomClass, language: _language,
+          atomClass,
+          language: _language,
         });
       }
 
       // tags
       if (atomClassBase.tag) {
         stats.tags = await ctx.bean.tag.count({
-          atomClass, language: _language,
+          atomClass,
+          language: _language,
         });
       }
 
@@ -1788,7 +1785,7 @@ module.exports = ctx => {
         }
         // ok
         blocksModule[fullName] = {
-          ... block,
+          ...block,
           validator,
           beanFullName,
         };
@@ -1825,7 +1822,6 @@ module.exports = ctx => {
       // default
       return null;
     }
-
   }
 
   return Site;
@@ -1838,9 +1834,7 @@ module.exports = ctx => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       const queueAction = data.queueAction;
@@ -1866,7 +1860,6 @@ module.exports = app => {
       const build = this.ctx.bean.cms.build({ atomClass });
       return await build.deleteArticle({ key, article, inner });
     }
-
   }
 
   return Queue;
@@ -1879,9 +1872,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // only in development
       if (!app.meta.isLocal) return;
@@ -1903,7 +1894,6 @@ module.exports = app => {
         }
       }
     }
-
   }
 
   return Startup;
@@ -1922,7 +1912,6 @@ const utils = __webpack_require__(294);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aCmsArticle
@@ -2006,7 +1995,6 @@ module.exports = app => {
               left join aAtom d on a.atomId=d.id
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 2) {
@@ -2099,7 +2087,6 @@ module.exports = app => {
               left join aCmsArticleTagRef f on a.id=f.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 3) {
@@ -2181,7 +2168,6 @@ module.exports = app => {
 
         // atomClass
         await this._update5AtomClassIds(options);
-
       }
 
       if (options.version === 6) {
@@ -2238,7 +2224,6 @@ module.exports = app => {
 
         // uuid
         await this._update6Uuids(options);
-
       }
 
       if (options.version === 7) {
@@ -2290,13 +2275,12 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
-
     }
 
     async init(options) {
       if (options.version === 1) {
         // create roles: cms-writer cms-publisher to template
-        const roles = [ 'cms-writer', 'cms-publisher' ];
+        const roles = ['cms-writer', 'cms-publisher'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
         for (const roleName of roles) {
@@ -2325,9 +2309,7 @@ module.exports = app => {
           { roleName: 'root', action: 'read', scopeNames: 0 },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
-
       }
-
     }
 
     async test() {
@@ -2391,12 +2373,14 @@ module.exports = app => {
       await this.ctx.model.query(
         `update aCmsCategory set atomClassId=?
              where iid=?`,
-        [ atomClass.id, this.ctx.instance.id ]);
+        [atomClass.id, this.ctx.instance.id]
+      );
       // update aCmsTag's atomClassId
       await this.ctx.model.query(
         `update aCmsTag set atomClassId=?
              where iid=?`,
-        [ atomClass.id, this.ctx.instance.id ]);
+        [atomClass.id, this.ctx.instance.id]
+      );
     }
 
     async _update6Uuids(options) {
@@ -2494,13 +2478,16 @@ module.exports = app => {
 
     async _update7Migration_articles({ mapCagetoryIds, mapTagIds }) {
       // articles
-      const articles = await this.ctx.model.query(`
+      const articles = await this.ctx.model.query(
+        `
         select a.*,b.userIdCreated,c.tags
            from aCmsArticle a
            left join aAtom b on b.id=a.atomId
            left join aCmsArticleTag c on c.atomId=a.atomId
             where a.iid=? and a.deleted=0 and b.atomStage=1
-        `, [ this.ctx.instance.id ]);
+        `,
+        [this.ctx.instance.id]
+      );
       // loop
       for (const article of articles) {
         await this._update7Migration_article({ mapCagetoryIds, mapTagIds, article });
@@ -2624,7 +2611,6 @@ module.exports = app => {
     _uuid() {
       return uuid.v4().replace(/-/g, '');
     }
-
   }
 
   return Version;
@@ -2711,7 +2697,6 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomCmsBase extends app.meta.AtomBase {
-
     get modelArticle() {
       return this.ctx.model.module(moduleInfo.relativeName).article;
     }
@@ -2774,7 +2759,7 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // if undefined then old
-      const fields = [ 'atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
+      const fields = ['atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra'];
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
@@ -2824,29 +2809,31 @@ module.exports = app => {
       const html = await this._renderContent({ item });
       const summary = this._parseSummary({ item, html });
       // update article
-      await this.modelArticle.update({
-        sticky: item.sticky,
-        keywords: item.keywords,
-        description: item.description,
-        summary,
-        url,
-        editMode: item.editMode,
-        slug: item.slug,
-        sorting: item.sorting,
-        flag: item.flag,
-        extra: item.extra || '{}',
-        imageCover: item.imageCover,
-        imageFirst,
-        audioFirst,
-        audioCoverFirst,
-      }, {
-        where: {
-          atomId: key.atomId,
+      await this.modelArticle.update(
+        {
+          sticky: item.sticky,
+          keywords: item.keywords,
+          description: item.description,
+          summary,
+          url,
+          editMode: item.editMode,
+          slug: item.slug,
+          sorting: item.sorting,
+          flag: item.flag,
+          extra: item.extra || '{}',
+          imageCover: item.imageCover,
+          imageFirst,
+          audioFirst,
+          audioCoverFirst,
         },
-      });
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
       // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
-        [ item.content, html, this.ctx.instance.id, key.atomId ]);
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [item.content, html, this.ctx.instance.id, key.atomId]);
 
       // render
       const ignoreRender = options && options.ignoreRender;
@@ -2997,7 +2984,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
   return AtomCmsBase;
 };
@@ -3047,10 +3033,9 @@ const require3 = __webpack_require__(718);
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
 
-module.exports = function(app) {
+module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
-
     constructor() {
       this._watchers = {};
       this._init();
@@ -3147,15 +3132,17 @@ module.exports = function(app) {
         watcherEntry.watcher = null;
       }
       // watcher
-      const _watcher = chokidar.watch(watchers)
-        .on('change', debounce(function() {
+      const _watcher = chokidar.watch(watchers).on(
+        'change',
+        debounce(function () {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
             data: { subdomain, atomClass, language },
           });
-        }, 300));
+        }, 300)
+      );
       // on ready
-      _watcher.once('ready', function() {
+      _watcher.once('ready', function () {
         _watcher.__eb_ready = true;
         if (_watcher.__eb_closing) {
           _watcher.close();
@@ -3180,7 +3167,6 @@ module.exports = function(app) {
         },
       });
     }
-
   }
 
   return Watcher;
@@ -3476,9 +3462,7 @@ module.exports = app => {
 const articlePublish = __webpack_require__(397);
 
 module.exports = app => {
-  const flowDefs = [
-    articlePublish(app),
-  ];
+  const flowDefs = [articlePublish(app)];
   return flowDefs;
 };
 
@@ -3589,7 +3573,7 @@ module.exports = app => {
         notEmpty: true,
       },
       atomTags: {
-        type: [ 'string', 'null' ],
+        type: ['string', 'null'],
         ebType: 'tags',
         ebTitle: 'Tags',
       },
@@ -3682,14 +3666,10 @@ module.exports = app => {
 /***/ 885:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
-const extend = require3('extend2');
 const utils = __webpack_require__(294);
 
 module.exports = app => {
-
   class ArticleController extends app.Controller {
-
     // list
     async list() {
       // atomClass
@@ -3719,11 +3699,9 @@ module.exports = app => {
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
-
   }
   return ArticleController;
 };
-
 
 
 /***/ }),
@@ -3734,9 +3712,7 @@ module.exports = app => {
 const utils = __webpack_require__(294);
 
 module.exports = app => {
-
   class CommentController extends app.Controller {
-
     async all() {
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
@@ -3754,7 +3730,6 @@ module.exports = app => {
       // ok
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
-
   }
   return CommentController;
 };
@@ -3766,9 +3741,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class RenderController extends app.Controller {
-
     async getArticleUrl() {
       const res = await this.ctx.service.render.getArticleUrl({
         atomClass: this.ctx.request.body.atomClass,
@@ -3777,11 +3750,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return RenderController;
 };
-
 
 
 /***/ }),
@@ -3790,9 +3761,8 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class RSSController extends app.Controller {
-
     async feed() {
       // params
       //   module
@@ -3806,9 +3776,7 @@ module.exports = app => {
       // options
       const options = {
         language,
-        orders: [
-          [ 'a.updatedAt', 'desc' ],
-        ],
+        orders: [['a.updatedAt', 'desc']],
         page: { index: 0 },
         mode: 'default',
       };
@@ -3824,8 +3792,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[${site.base.title}]]></title>
     <link>${build.getUrl(site, language, 'index.html')}</link>
@@ -3834,8 +3801,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const article of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -3856,8 +3822,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -3879,9 +3844,7 @@ module.exports = app => {
       const atomClass = { module, atomClassName };
       // options
       const options = {
-        orders: [
-          [ 'h_updatedAt', 'desc' ],
-        ],
+        orders: [['h_updatedAt', 'desc']],
         page: { index: 0 },
       };
       // select
@@ -3896,8 +3859,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments for ${site.base.title}]]></title>
     <link>${build.getUrl(site, language, 'index.html')}</link>
@@ -3906,8 +3868,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -3927,8 +3888,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -3948,9 +3908,7 @@ module.exports = app => {
       const language = article.atomLanguage;
       // options
       const options = {
-        orders: [
-          [ 'updatedAt', 'desc' ],
-        ],
+        orders: [['updatedAt', 'desc']],
         page: { index: 0 },
       };
       const res = await this.ctx.performAction({
@@ -3969,8 +3927,7 @@ module.exports = app => {
       // site
       const site = await build.getSite({ language });
       // feed
-      let feed =
-`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+      let feed = `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments on: ${article.atomName}]]></title>
     <link>${build.getUrl(site, language, article.url)}</link>
@@ -3979,8 +3936,7 @@ module.exports = app => {
     <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
-        feed +=
-`
+        feed += `
     <item>
       <title>
         <![CDATA[
@@ -4000,8 +3956,7 @@ module.exports = app => {
     </item>
 `;
       }
-      feed +=
-`
+      feed += `
   </channel>
 </rss>
 `;
@@ -4010,11 +3965,9 @@ module.exports = app => {
       this.ctx.body = feed;
       this.ctx.set('content-type', 'application/rss+xml; charset=UTF-8');
     }
-
   }
   return RSSController;
 };
-
 
 
 /***/ }),
@@ -4027,7 +3980,6 @@ const utils = __webpack_require__(294);
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
-
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });
@@ -4148,11 +4100,9 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return SiteController;
 };
-
 
 
 /***/ }),
@@ -4190,7 +4140,6 @@ const WatcherFn = __webpack_require__(985);
 const AtomCmsBaseFn = __webpack_require__(828);
 
 module.exports = app => {
-
   // watcher: only in development
   if (app.meta.isLocal) {
     app.meta['a-cms:watcher'] = new (WatcherFn(app))();
@@ -4223,7 +4172,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -4256,8 +4204,7 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {
-          },
+          actions: {},
           validator: 'article',
           search: {
             validator: 'articleSearch',
@@ -4299,8 +4246,7 @@ module.exports = app => {
       },
     },
     event: {
-      implementations: {
-      },
+      implementations: {},
     },
     socketio: {
       messages: {
@@ -4372,9 +4318,7 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
     // render
-    { method: 'post', path: 'render/getArticleUrl', controller: 'render',
-      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
-    },
+    { method: 'post', path: 'render/getArticleUrl', controller: 'render', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
     // site
     { method: 'post', path: 'site/getConfigSiteBase', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
@@ -4405,9 +4349,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Render extends app.Service {
-
     async getArticleUrl({ atomClass, key, options }) {
       return await this.ctx.bean.cms.render.getArticleUrl({ atomClass, key, options });
     }
@@ -4416,7 +4358,6 @@ module.exports = app => {
     async combineSiteBase({ atomClass, mergeConfigSite }) {
       return await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite });
     }
-
   }
 
   return Render;
@@ -4429,9 +4370,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Site extends app.Service {
-
     async getSite({ atomClass, language, options }) {
       return await this.ctx.bean.cms.site.getSite({ atomClass, language, options });
     }
@@ -4493,7 +4432,6 @@ module.exports = app => {
     async checkFile({ atomId, file, mtime, user }) {
       return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }
-
   }
 
   return Site;
@@ -4523,7 +4461,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
@@ -4531,7 +4469,7 @@ module.exports = require("path");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 

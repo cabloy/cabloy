@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/set",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Set",
   "main": "index.js",
   "publishConfig": {

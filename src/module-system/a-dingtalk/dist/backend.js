@@ -15,62 +15,77 @@ module.exports = ctx => {
   // ctx.bean.dingtalk.web.default
   // ctx.bean.dingtalk.mini.default
   // ctx.bean.dingtalk.util
-  return function() {
-    return new Proxy({}, {
-      get(obj, prop) {
-        if (obj[prop]) return obj[prop];
-        if (prop === 'app') {
-          // app
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiApp({ appName: prop });
+  return function () {
+    return new Proxy(
+      {},
+      {
+        get(obj, prop) {
+          if (obj[prop]) return obj[prop];
+          if (prop === 'app') {
+            // app
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiApp({ appName: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'admin') {
-          obj[prop] = _createDingtalkApiAdmin();
-        } else if (prop === 'web') {
-          // web
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiWeb({ webName: prop });
+            );
+          } else if (prop === 'admin') {
+            obj[prop] = _createDingtalkApiAdmin();
+          } else if (prop === 'web') {
+            // web
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiWeb({ webName: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'mini') {
-          // mini
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiMini({ sceneShort: prop });
+            );
+          } else if (prop === 'mini') {
+            // mini
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiMini({ sceneShort: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'util') {
-          // util
-          obj[prop] = _createDingtalkApiUtil();
-        }
-        return obj[prop];
-      },
-    });
+            );
+          } else if (prop === 'util') {
+            // util
+            obj[prop] = _createDingtalkApiUtil();
+          }
+          return obj[prop];
+        },
+      }
+    );
   };
 
   function _createDingtalkApiGeneral({ category, appName, appkey, appsecret, corpid, sso }) {
     // api
     const api = new DingtalkAPI(
       {
-        appkey, appsecret, corpid, sso,
+        appkey,
+        appsecret,
+        corpid,
+        sso,
       },
-      async function() {
+      async function () {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(token) {
+      async function (token) {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -79,13 +94,13 @@ module.exports = ctx => {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.client.registerTicketHandle(
-      async function(type) {
+      async function (type) {
         const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
-      async function(type, token) {
+      async function (type, token) {
         const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
         if (token) {
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
@@ -162,7 +177,7 @@ module.exports = ctx => {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = (provider.providerName === item) || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
+          const ok = provider.providerName === item || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -181,18 +196,13 @@ module.exports = ctx => {
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       // aDingtalkMember
-      await ctx.model.query(
-        'update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?',
-        [ data.userIdTo, ctx.instance.id, data.userIdFrom ]
-      );
+      await ctx.model.query('update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -209,7 +219,6 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   class eventBean {
-
     async execute(context, next) {
       const info = context.data.info;
       const provider = info.user && info.user.provider;
@@ -227,7 +236,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;
@@ -242,7 +250,6 @@ module.exports = ctx => {
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // toAllUser
       const toAllUser = content.toAllUser || false;
@@ -251,7 +258,7 @@ module.exports = ctx => {
       const roleIds = content.roleIds;
       // message
       const message = {
-        ... content.data,
+        ...content.data,
       };
       // agentid
       const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
@@ -259,12 +266,12 @@ module.exports = ctx => {
       if (toAllUser) {
         message.to_all_user = true;
       } else {
-      // userIds
+        // userIds
         if (userIds && userIds.length > 0) {
           const modelMember = ctx.model.module(moduleInfo.relativeName).member;
           const list = await modelMember.select({
             where: { userId: userIds },
-            columns: [ 'memberId' ],
+            columns: ['memberId'],
           });
           message.userid_list = list.map(item => item.memberId).join(',');
         }
@@ -273,7 +280,7 @@ module.exports = ctx => {
           const modelDepartment = ctx.model.module(moduleInfo.relativeName).department;
           const list = await modelDepartment.select({
             where: { roleId: roleIds },
-            columns: [ 'departmentId' ],
+            columns: ['departmentId'],
           });
           message.dept_id_list = list.map(item => item.departmentId).join(',');
         }
@@ -283,7 +290,6 @@ module.exports = ctx => {
       // done
       return true;
     }
-
   }
   return IOChannel;
 };
@@ -314,7 +320,6 @@ module.exports = ctx => {
 
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       const queueAction = data.queueAction;
@@ -324,7 +329,6 @@ module.exports = app => {
         await this.ctx.service.contacts.queueChangeContact(data);
       }
     }
-
   }
 
   return Queue;
@@ -340,7 +344,6 @@ const dingtalkUtils = __webpack_require__(474);
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // config
       const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
@@ -388,7 +391,6 @@ module.exports = app => {
         throw err;
       }
     }
-
   }
 
   return Startup;
@@ -401,12 +403,9 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
-
         let sql;
 
         // create table: aDingtalkDepartment
@@ -469,16 +468,12 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;
@@ -553,16 +548,27 @@ module.exports = app => {
 
 const _scenes = {
   dingtalk: {
-    scene: 'dingtalk', authProvider: 'dingtalk', title: 'DingTalk', client: 'dingtalk',
+    scene: 'dingtalk',
+    authProvider: 'dingtalk',
+    title: 'DingTalk',
+    client: 'dingtalk',
   },
   dingtalkweb: {
-    scene: 'dingtalkweb', authProvider: 'dingtalkweb', title: 'DingTalk Web', client: 'dingtalkweb',
+    scene: 'dingtalkweb',
+    authProvider: 'dingtalkweb',
+    title: 'DingTalk Web',
+    client: 'dingtalkweb',
   },
   dingtalkadmin: {
-    scene: 'dingtalkadmin', authProvider: 'dingtalkadmin', title: 'DingTalk Admin', client: 'dingtalkadmin',
+    scene: 'dingtalkadmin',
+    authProvider: 'dingtalkadmin',
+    title: 'DingTalk Admin',
+    client: 'dingtalkadmin',
   },
   dingtalkmini: {
-    scene: 'dingtalkmini', authProvider: 'dingtalkmini', title: 'DingTalk Miniprogram',
+    scene: 'dingtalkmini',
+    authProvider: 'dingtalkmini',
+    title: 'DingTalk Miniprogram',
   },
 };
 
@@ -600,10 +606,9 @@ const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = __webpack_require__(591);
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class DingtalkHelper {
-
     getSceneInfo(scene) {
       return authProviderScenes.getScene(scene);
     }
@@ -669,10 +674,7 @@ module.exports = function(ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
-        [ ctx.instance.id, providerItem.id, profileId ]
-      );
+      const authItems = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?', [ctx.instance.id, providerItem.id, profileId]);
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -699,10 +701,7 @@ module.exports = function(ctx) {
         authUserId = authItem.userId;
       }
       // check if has userId for memberId
-      const _authOthers = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
-        [ ctx.instance.id, profileId, authId ]
-      );
+      const _authOthers = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?', [ctx.instance.id, profileId, authId]);
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
@@ -711,7 +710,6 @@ module.exports = function(ctx) {
       // ready
       return profileUser;
     }
-
   }
 
   return DingtalkHelper;
@@ -755,7 +753,6 @@ module.exports = {
 
 /***/ 76:
 /***/ ((module) => {
-
 
 const jsApiList = [
   'device.base.getUUID',
@@ -1093,7 +1090,6 @@ module.exports = app => {
 
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async login() {
       const res = await this.service.auth.login({
         scene: this.ctx.request.body.scene,
@@ -1110,7 +1106,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AuthController;
 };
@@ -1127,7 +1122,6 @@ const dingtalkUtils = __webpack_require__(474);
 
 module.exports = app => {
   class CallbackController extends app.Controller {
-
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
         return await this.ctx.service.callback.index({ message });
@@ -1154,16 +1148,12 @@ module.exports = app => {
     }
 
     async _parseMessagePost({ query, encryptor }) {
-      const plainText = encryptor.getDecryptMsg(
-        query.signature, query.timestamp, query.nonce,
-        this.ctx.request.body.encrypt);
+      const plainText = encryptor.getDecryptMsg(query.signature, query.timestamp, query.nonce, this.ctx.request.body.encrypt);
       return JSON.parse(plainText);
     }
-
   }
   return CallbackController;
 };
-
 
 
 /***/ }),
@@ -1177,7 +1167,6 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class ContactsController extends app.Controller {
-
     async sync() {
       // progress
       const progressId = uuid.v4().replace(/-/g, '');
@@ -1201,7 +1190,6 @@ module.exports = app => {
       const res = await this.service.contacts.syncStatus();
       this.ctx.success(res);
     }
-
   }
   return ContactsController;
 };
@@ -1214,14 +1202,12 @@ module.exports = app => {
 
 module.exports = app => {
   class JSSDKController extends app.Controller {
-
     async jsconfig() {
       const res = await this.service.jssdk.jsconfig({
         url: this.ctx.request.body.url,
       });
       this.ctx.success(res);
     }
-
   }
   return JSSDKController;
 };
@@ -1237,7 +1223,6 @@ const contacts = __webpack_require__(98);
 
 const jssdk = __webpack_require__(586);
 const auth = __webpack_require__(523);
-
 
 module.exports = app => {
   const controllers = {
@@ -1260,7 +1245,6 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
-
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -1285,7 +1269,6 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
 
 
@@ -1303,8 +1286,7 @@ module.exports = app => {
   const socketioChannelApp = __webpack_require__(466)(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -1323,8 +1305,7 @@ module.exports = app => {
       },
     },
     event: {
-      declarations: {
-      },
+      declarations: {},
       implementations: {
         'a-base:loginInfo': 'loginInfo',
         'a-base:accountMigration': 'accountMigration',
@@ -1413,8 +1394,7 @@ module.exports = ctx => {
         disableAssociate: false,
         component: 'buttondingtalk',
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
@@ -1449,21 +1429,32 @@ module.exports = ctx => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = ctx.bean.dingtalk;
-            api.web.default.client.getuserinfo_bycode(loginTmpCode).then(res => {
-              const unionid = res.user_info.unionid;
-              api.app.selfBuilt.user.getUseridByUnionid(unionid).then(res => {
-                if (res.contactType === 1) throw new Error('not support extcontact');
-                const memberId = res.userid;
-                dingtalkHelper.verifyAuthUser({
-                  scene: 'dingtalkweb',
-                  memberId,
-                  state,
-                  cbVerify: (profileUser, cb) => {
-                    app.passport.doVerify(req, profileUser, cb);
-                  },
-                }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-              }).catch(done);
-            }).catch(done);
+            api.web.default.client
+              .getuserinfo_bycode(loginTmpCode)
+              .then(res => {
+                const unionid = res.user_info.unionid;
+                api.app.selfBuilt.user
+                  .getUseridByUnionid(unionid)
+                  .then(res => {
+                    if (res.contactType === 1) throw new Error('not support extcontact');
+                    const memberId = res.userid;
+                    dingtalkHelper
+                      .verifyAuthUser({
+                        scene: 'dingtalkweb',
+                        memberId,
+                        state,
+                        cbVerify: (profileUser, cb) => {
+                          app.passport.doVerify(req, profileUser, cb);
+                        },
+                      })
+                      .then(verifyUser => {
+                        done(null, verifyUser);
+                      })
+                      .catch(done);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -1479,8 +1470,7 @@ module.exports = ctx => {
         mode: 'redirect',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       configFunctions: {
         getConfig(ctx) {
           const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
@@ -1497,17 +1487,25 @@ module.exports = ctx => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = ctx.bean.dingtalk;
-            api.admin.client.getSSOUserInfo(null, code).then(res => {
-              const memberId = res.user_info.userid;
-              dingtalkHelper.verifyAuthUser({
-                scene: 'dingtalkadmin',
-                memberId,
-                state,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-            }).catch(done);
+            api.admin.client
+              .getSSOUserInfo(null, code)
+              .then(res => {
+                const memberId = res.user_info.userid;
+                dingtalkHelper
+                  .verifyAuthUser({
+                    scene: 'dingtalkadmin',
+                    memberId,
+                    state,
+                    cbVerify: (profileUser, cb) => {
+                      app.passport.doVerify(req, profileUser, cb);
+                    },
+                  })
+                  .then(verifyUser => {
+                    done(null, verifyUser);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -1523,15 +1521,13 @@ module.exports = ctx => {
         mode: 'direct',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
 
   const metaAuth = {
-    providers: {
-    },
+    providers: {},
   };
 
   // dingtalk
@@ -1562,11 +1558,11 @@ module.exports = ctx => {
 const require3 = __webpack_require__(718);
 const querystring = require3('querystring');
 
-const OAuth = function(appkey) {
+const OAuth = function (appkey) {
   this.appkey = appkey;
 };
 
-OAuth.prototype.getAuthorizeURLForWebsite = function(redirect, state) {
+OAuth.prototype.getAuthorizeURLForWebsite = function (redirect, state) {
   const url = 'https://oapi.dingtalk.com/connect/qrconnect';
   const info = {
     appid: this.appkey,
@@ -1613,18 +1609,16 @@ function DingTalkStrategy(options, verify) {
   this._state = options.state;
   this._scope = options.scope || 'snsapi_login';
   this._passReqToCallback = options.passReqToCallback;
-
 }
 
 util.inherits(DingTalkStrategy, passport.Strategy);
 
-DingTalkStrategy.prototype.getOAuth = function(options) {
+DingTalkStrategy.prototype.getOAuth = function (options) {
   const _config = options.getConfig();
   return new OAuth(_config.appkey);
 };
 
-DingTalkStrategy.prototype.authenticate = function(req, options) {
-
+DingTalkStrategy.prototype.authenticate = function (req, options) {
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
   }
@@ -1649,7 +1643,6 @@ DingTalkStrategy.prototype.authenticate = function(req, options) {
 
   // 获取code授权成功
   if (req.url.indexOf('/callback') > -1) {
-
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
     if (req.query && !req.query.code) {
@@ -1673,14 +1666,13 @@ DingTalkStrategy.prototype.authenticate = function(req, options) {
     } catch (ex) {
       return self.error(ex);
     }
-
   } else {
     const state = options.state || self._state;
     const callbackURL = options.callbackURL || self._callbackURL;
     const scope = options.scope || self._scope;
 
     // only support dingtalkweb
-    const methodName = (this._client === 'dingtalkweb') ? 'getAuthorizeURLForWebsite' : '';
+    const methodName = this._client === 'dingtalkweb' ? 'getAuthorizeURLForWebsite' : '';
     const location = _oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
@@ -1709,7 +1701,6 @@ module.exports = app => {
     // auth
     { method: 'post', path: 'auth/login', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'authMini/login', controller: 'auth', action: 'loginMini', meta: { auth: { enable: false } } },
-
   ];
   return routes;
 };
@@ -1723,9 +1714,7 @@ module.exports = app => {
 const DingtalkHelperFn = __webpack_require__(154);
 
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async login({ scene, code, state }) {
       if (!scene || !code) return this.ctx.throw(403);
       // member
@@ -1737,7 +1726,6 @@ module.exports = app => {
       // echo
       return await this.ctx.bean.auth.echo();
     }
-
   }
 
   return Auth;
@@ -1752,7 +1740,6 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Callback extends app.Service {
-
     async index({ message }) {
       // event: check_url
       if (message.EventType === 'check_url') {
@@ -1785,7 +1772,6 @@ module.exports = app => {
       // ok
       return null;
     }
-
   }
 
   return Callback;
@@ -1802,23 +1788,92 @@ const DingtalkHelperFn = __webpack_require__(154);
 // department
 
 const __departmentFieldMap = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
-  [ 'id', 'parentid', 'name', 'order', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
-  [ 'number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string' ],
+  [
+    'departmentId',
+    'departmentParentId',
+    'departmentName',
+    'departmentOrder',
+    'createDeptGroup',
+    'autoAddUser',
+    'deptHiding',
+    'deptPermits',
+    'userPermits',
+    'outerDept',
+    'outerPermitDepts',
+    'outerPermitUsers',
+    'outerDeptOnlySelf',
+    'sourceIdentifier',
+    'ext',
+  ],
+  [
+    'id',
+    'parentid',
+    'name',
+    'order',
+    'createDeptGroup',
+    'autoAddUser',
+    'deptHiding',
+    'deptPermits',
+    'userPermits',
+    'outerDept',
+    'outerPermitDepts',
+    'outerPermitUsers',
+    'outerDeptOnlySelf',
+    'sourceIdentifier',
+    'ext',
+  ],
+  ['number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string'],
 ];
 
 // member
 
 const __memberFieldMap = [
-  [ 'memberId', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
-  [ 'userid', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
-  [ 'string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp' ],
+  [
+    'memberId',
+    'name',
+    'active',
+    'avatar',
+    'orderInDepts',
+    'department',
+    'position',
+    'mobile',
+    'tel',
+    'workPlace',
+    'remark',
+    'email',
+    'orgEmail',
+    'jobnumber',
+    'isHide',
+    'isSenior',
+    'extattr',
+    'hiredDate',
+  ],
+  [
+    'userid',
+    'name',
+    'active',
+    'avatar',
+    'orderInDepts',
+    'department',
+    'position',
+    'mobile',
+    'tel',
+    'workPlace',
+    'remark',
+    'email',
+    'orgEmail',
+    'jobnumber',
+    'isHide',
+    'isSenior',
+    'extattr',
+    'hiredDate',
+  ],
+  ['string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp'],
 ];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
-
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -2179,7 +2234,7 @@ module.exports = app => {
         sorting: department.departmentOrder,
         roleIdParent: roleParent.id,
       });
-        // force change parent role to catalog=1
+      // force change parent role to catalog=1
       await this.ctx.bean.role.save({
         roleId: roleParent.id,
         data: { catalog: 1 },
@@ -2260,7 +2315,7 @@ module.exports = app => {
           },
         };
         const content = {
-          userIds: [ userId ],
+          userIds: [userId],
           data: { msg },
         };
         await this.ctx.bean.io.pushDirect({
@@ -2316,7 +2371,6 @@ module.exports = app => {
       else if (type === 'timestamp') return new Date(value);
       return value;
     }
-
   }
 
   return Contacts;
@@ -2329,9 +2383,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-
   class JSSDK extends app.Service {
-
     async jsconfig({ url }) {
       // config
       const config = this.ctx.config.account.dingtalk;
@@ -2344,9 +2396,7 @@ module.exports = app => {
         type: configAppSelfBuilt.jssdk.type,
         jsApiList: configAppSelfBuilt.jssdk.jsApiList,
       };
-
     }
-
   }
 
   return JSSDK;
@@ -2380,7 +2430,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("crypto");;
+module.exports = require("crypto");
 
 /***/ }),
 
@@ -2388,7 +2438,7 @@ module.exports = require("crypto");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("require3");;
+module.exports = require("require3");
 
 /***/ })
 
