@@ -124,7 +124,7 @@ function overrideProperty({ Vue, obj, key, objBase, vueComponent, combinePath })
 
 let __fnDebounce;
 let __invokes = [];
-function checkDebounce({ Vue, key, objBase, args }) {
+function checkDebounce({ Vue, key, /* objBase,*/ args }) {
   // config
   const config = args[args.length - 1];
   if (!config || !config.debounce) return null;
