@@ -34,18 +34,26 @@ module.exports = ctx => {
             const state = ctx.request.query.state || 'login';
             // code/memberId
             const wxworkHelper = new (WxworkHelperFn(ctx))();
-            ctx.bean.wxwork.app.selfBuilt.getUserIdByCode(code).then(res => {
-              if (res.errcode) throw new Error(res.errmsg);
-              const memberId = res.UserId;
-              wxworkHelper.verifyAuthUser({
-                scene: sceneInfo.scene,
-                memberId,
-                state,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-            }).catch(done);
+            ctx.bean.wxwork.app.selfBuilt
+              .getUserIdByCode(code)
+              .then(res => {
+                if (res.errcode) throw new Error(res.errmsg);
+                const memberId = res.UserId;
+                wxworkHelper
+                  .verifyAuthUser({
+                    scene: sceneInfo.scene,
+                    memberId,
+                    state,
+                    cbVerify: (profileUser, cb) => {
+                      app.passport.doVerify(req, profileUser, cb);
+                    },
+                  })
+                  .then(verifyUser => {
+                    done(null, verifyUser);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -61,15 +69,13 @@ module.exports = ctx => {
         mode: 'direct',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
 
   const metaAuth = {
-    providers: {
-    },
+    providers: {},
   };
 
   // wxwork/wxworkweb

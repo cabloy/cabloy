@@ -1,6 +1,5 @@
 <template>
-  <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
-  </eb-treeview>
+  <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick"> </eb-treeview>
 </template>
 <script>
 export default {
@@ -30,7 +29,8 @@ export default {
   methods: {
     onLoadChildren(node) {
       const roleId = node.root ? this.roleIdStart : node.id;
-      return this.$api.post('role/children', { roleId, page: { size: 0 } })
+      return this.$api
+        .post('role/children', { roleId, page: { size: 0 } })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
@@ -56,5 +56,4 @@ export default {
     },
   },
 };
-
 </script>

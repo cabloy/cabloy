@@ -2,8 +2,8 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Page Open & Return Value')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <div class="alert-info">{{value}}</div>
-      <eb-button :onPerform="onPerformOpen">{{$text('Open Page')}}</eb-button>
+      <div class="alert-info">{{ value }}</div>
+      <eb-button :onPerform="onPerformOpen">{{ $text('Open Page') }}</eb-button>
     </f7-block>
   </eb-page>
 </template>
@@ -40,5 +40,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -14,8 +14,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   render() {
     const domValidate = this.layoutManager.validate_render();

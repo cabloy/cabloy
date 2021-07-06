@@ -7,7 +7,6 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha {
-
     async verify(_context) {
       const { providerInstanceId, context, data, dataInput } = _context;
       // sms provider
@@ -37,8 +36,6 @@ module.exports = ctx => {
       const config = configModule.sms.providers[providerName];
       return { provider, config };
     }
-
   }
   return Captcha;
 };
-

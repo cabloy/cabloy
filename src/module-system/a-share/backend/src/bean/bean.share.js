@@ -4,7 +4,6 @@ const uuid = require3('uuid');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Share {
-
     get modelShare() {
       return ctx.model.module(moduleInfo.relativeName).share;
     }
@@ -21,7 +20,10 @@ module.exports = ctx => {
       const userId = user.id;
       // get
       let item = await this.modelShare.get({
-        host, atomId, url, userId,
+        host,
+        atomId,
+        url,
+        userId,
       });
       // insert
       if (!item) {
@@ -112,7 +114,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return Share;

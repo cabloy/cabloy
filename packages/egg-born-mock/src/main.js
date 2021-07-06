@@ -11,7 +11,7 @@ before(done => {
   });
 });
 
-module.exports = function(dirname) {
+module.exports = function (dirname) {
   return {
     assert,
     app,

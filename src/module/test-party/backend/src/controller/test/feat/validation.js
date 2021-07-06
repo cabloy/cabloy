@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class ValidationController extends app.Controller {
-
     async success() {
       this.ctx.success();
     }
@@ -13,9 +11,7 @@ module.exports = app => {
     async schema() {
       this.ctx.success();
     }
-
   }
 
   return ValidationController;
 };
-

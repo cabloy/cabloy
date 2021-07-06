@@ -5,37 +5,47 @@ export default {
     const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
 
     const children = [];
-    children.push(c('f7-link', {
-      props: {
-        iconMaterial: 'delete',
-      },
-      on: {
-        click: this.onClickClose,
-      },
-    }));
-    children.push(c('f7-link', {
-      props: {
-        iconMaterial: 'remove',
-      },
-      on: {
-        click: this.onClickHide,
-      },
-    }));
-    if (!this.layout.size.verySmall) {
-      children.push(c('f7-link', {
+    children.push(
+      c('f7-link', {
         props: {
-          iconMaterial: this.layout[`sidebarCover${sideUpperCase}`] ? 'chevron_left' : 'expand_more',
+          iconMaterial: 'delete',
         },
         on: {
-          click: this.onClickCover,
+          click: this.onClickClose,
         },
-      }));
+      })
+    );
+    children.push(
+      c('f7-link', {
+        props: {
+          iconMaterial: 'remove',
+        },
+        on: {
+          click: this.onClickHide,
+        },
+      })
+    );
+    if (!this.layout.size.verySmall) {
+      children.push(
+        c('f7-link', {
+          props: {
+            iconMaterial: this.layout[`sidebarCover${sideUpperCase}`] ? 'chevron_left' : 'expand_more',
+          },
+          on: {
+            click: this.onClickCover,
+          },
+        })
+      );
     }
-    const toolbar = c('f7-toolbar', {
-      ref: 'toolbar',
-      staticClass: 'panel-toolbar',
-      attrs: {},
-    }, children);
+    const toolbar = c(
+      'f7-toolbar',
+      {
+        ref: 'toolbar',
+        staticClass: 'panel-toolbar',
+        attrs: {},
+      },
+      children
+    );
     return toolbar;
   },
   props: {
@@ -72,5 +82,4 @@ export default {
     },
   },
 };
-
 </script>

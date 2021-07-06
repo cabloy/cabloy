@@ -1,7 +1,4 @@
 module.exports = app => {
-
-  class Mail extends app.Service {
-
-  }
+  class Mail extends app.Service {}
   return Mail;
 };

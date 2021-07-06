@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Flow extends app.Service {
-
     async data({ flowId, user }) {
       // flow
       const flow = await this._data_flow({ flowId, user });
@@ -26,12 +24,15 @@ module.exports = app => {
     async _data_atom({ flowId, atomId }) {
       // only read basic info
       //   a.atomFlowId = {flowId}
-      const atom = await this.ctx.model.queryOne(`
+      const atom = await this.ctx.model.queryOne(
+        `
         select a.*,a.id as atomId,b.module,b.atomClassName from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where a.deleted=0 and a.iid=? and a.id=?
                    and a.atomFlowId=?
-        `, [this.ctx.instance.id, atomId, flowId]);
+        `,
+        [this.ctx.instance.id, atomId, flowId]
+      );
       return atom;
     }
 
@@ -42,10 +43,7 @@ module.exports = app => {
           where: {
             'a.flowId': flowId,
             'b.flowNodeType': ['startEventAtom', 'activityUserTask'],
-            __or__: [
-              { 'a.userIdAssignee': user.id },
-              { 'a.flowTaskHidden': 0 },
-            ],
+            __or__: [{ 'a.userIdAssignee': user.id }, { 'a.flowTaskHidden': 0 }],
           },
           orders: [
             ['a.flowNodeId', 'desc'],
@@ -66,8 +64,6 @@ module.exports = app => {
       }
       return tasks;
     }
-
   }
   return Flow;
 };
-

@@ -3,16 +3,16 @@
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="user" top tabbar>
-          <f7-link :tab-link="`#${tabIdAtoms}`" tab-link-active>{{$text('Atoms')}}</f7-link>
-          <f7-link :tab-link="`#${tabIdResources}`">{{$text('Resources')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdAtoms}`" tab-link-active>{{ $text('Atoms') }}</f7-link>
+          <f7-link :tab-link="`#${tabIdResources}`">{{ $text('Resources') }}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs v-if="user">
-      <eb-tab-page-content :id="tabIdAtoms" tab-active @tab:show="tabName='atoms'">
+      <eb-tab-page-content :id="tabIdAtoms" tab-active @tab:show="tabName = 'atoms'">
         <atoms-spreads ref="atoms" slot="list" :user="user"></atoms-spreads>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdResources" @tab:show="tabName='resources'">
+      <eb-tab-page-content :id="tabIdResources" @tab:show="tabName = 'resources'">
         <resources-spreads ref="resources" slot="list" :user="user"></resources-spreads>
       </eb-tab-page-content>
     </f7-tabs>
@@ -37,10 +37,9 @@ export default {
     };
   },
   created() {
-    this.$api.post('user/item', { userId: this.userId })
-      .then(data => {
-        this.user = data;
-      });
+    this.$api.post('user/item', { userId: this.userId }).then(data => {
+      this.user = data;
+    });
   },
   methods: {
     getPageTitle() {
@@ -50,5 +49,4 @@ export default {
     },
   },
 };
-
 </script>

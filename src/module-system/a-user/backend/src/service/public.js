@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Public2 extends app.Service {
-
     async profile({ userId }) {
       const item = await this.ctx.bean.user.get({ id: userId });
       const user = {
@@ -11,7 +9,6 @@ module.exports = app => {
       };
       return { user };
     }
-
   }
   return Public2;
 };

@@ -5,7 +5,6 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atom');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -62,7 +61,7 @@ module.exports = ctx => {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
-      item = item || { };
+      item = item || {};
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -236,7 +235,9 @@ module.exports = ctx => {
     async _deleteBulk_item({ key, user }) {
       // check right
       const res = await ctx.bean.atom.checkRightAction({
-        atom: { id: key.atomId }, action: 4, user,
+        atom: { id: key.atomId },
+        action: 4,
+        user,
       });
       if (!res) return false;
       // delete
@@ -344,7 +345,8 @@ module.exports = ctx => {
       if (item.atomIdFormal) {
         await this._copy({
           target: 'history',
-          srcKey: { atomId: item.atomIdFormal }, srcItem: null,
+          srcKey: { atomId: item.atomIdFormal },
+          srcItem: null,
           destKey: null,
           options,
           user,
@@ -353,7 +355,8 @@ module.exports = ctx => {
       // draft -> formal
       const keyFormal = await this._copy({
         target: 'formal',
-        srcKey: { atomId: item.atomId }, srcItem: item,
+        srcKey: { atomId: item.atomId },
+        srcItem: item,
         destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
         options,
         user,
@@ -417,7 +420,8 @@ module.exports = ctx => {
         // ** create draft from formal
         const keyDraft = await this._copy({
           target: 'draft',
-          srcKey: { atomId: key.atomId }, srcItem: null,
+          srcKey: { atomId: key.atomId },
+          srcItem: null,
           destKey: null,
           user,
         });
@@ -435,7 +439,8 @@ module.exports = ctx => {
         // ** create draft from history
         const keyDraft = await this._copy({
           target: 'draft',
-          srcKey: { atomId: key.atomId }, srcItem: null,
+          srcKey: { atomId: key.atomId },
+          srcItem: null,
           destKey: _atom.atomIdDraft ? { atomId: _atom.atomIdDraft } : null,
           user,
         });
@@ -513,7 +518,8 @@ module.exports = ctx => {
     async clone({ key, user }) {
       const keyDraft = await this._copy({
         target: 'clone',
-        srcKey: { atomId: key.atomId }, srcItem: null,
+        srcKey: { atomId: key.atomId },
+        srcItem: null,
         destKey: null,
         user,
       });
@@ -761,18 +767,15 @@ module.exports = ctx => {
     }
 
     async readCount({ key, atom: { readCount = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?',
-        [readCount, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [readCount, ctx.instance.id, key.atomId]);
     }
 
     async comment({ key, atom: { comment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
-        [comment, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?', [comment, ctx.instance.id, key.atomId]);
     }
 
     async attachment({ key, atom: { attachment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?',
-        [attachment, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?', [attachment, ctx.instance.id, key.atomId]);
     }
 
     async stats({ atomIds, user }) {
@@ -880,12 +883,7 @@ module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: {
-        itemId, atomName, roleIdOwner = 0,
-        atomStatic = 0, atomStaticKey = null, atomRevision = 0,
-        atomLanguage = null, atomCategoryId = 0, atomTags = null,
-        allowComment = 1,
-      },
+      atom: { itemId, atomName, roleIdOwner = 0, atomStatic = 0, atomStaticKey = null, atomRevision = 0, atomLanguage = null, atomCategoryId = 0, atomTags = null, allowComment = 1 },
       user,
     }) {
       let atomClassId = id;
@@ -909,15 +907,11 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async _update({ atom/* , user,*/ }) {
+    async _update({ atom /* , user,*/ }) {
       await this.modelAtom.update(atom);
     }
 
-    async _delete({
-      atomClass,
-      atom,
-      user,
-    }) {
+    async _delete({ atomClass, atom, user }) {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atom.id });
       }
@@ -961,7 +955,7 @@ module.exports = ctx => {
     async _get({ atomClass, options, key, mode, user }) {
       if (!options) options = {};
       const resource = options.resource || 0;
-      const resourceLocale = options.resourceLocale === false ? false : (options.resourceLocale || ctx.locale);
+      const resourceLocale = options.resourceLocale === false ? false : options.resourceLocale || ctx.locale;
       // atomClass
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
@@ -980,9 +974,12 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        tableName, atomId: key.atomId,
-        resource, resourceLocale,
-        mode, cms,
+        tableName,
+        atomId: key.atomId,
+        resource,
+        resourceLocale,
+        mode,
+        cms,
       });
       // query
       return await ctx.model.queryOne(sql);
@@ -990,16 +987,7 @@ module.exports = ctx => {
 
     async _list({
       tableName,
-      options: {
-        where, orders, page,
-        star = 0, label = 0,
-        comment = 0, file = 0,
-        stage = 'formal',
-        language, category = 0, tag = 0,
-        mine = 0,
-        resource = 0, resourceLocale,
-        mode,
-      },
+      options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale, mode },
       cms,
       user,
       pageForce = true,
@@ -1010,13 +998,24 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        tableName, where, orders, page,
-        star, label, comment, file, count,
+        tableName,
+        where,
+        orders,
+        page,
+        star,
+        label,
+        comment,
+        file,
+        count,
         stage,
-        language, category, tag,
+        language,
+        category,
+        tag,
         mine,
-        resource, resourceLocale,
-        mode, cms,
+        resource,
+        resourceLocale,
+        mode,
+        cms,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
@@ -1158,11 +1157,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightActionBulk({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action, stage,
-      user,
-    }) {
+    async checkRightActionBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, action, stage, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -1202,11 +1197,7 @@ module.exports = ctx => {
       return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
 
-    async checkRightCreateRole({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      roleIdOwner,
-      user,
-    }) {
+    async checkRightCreateRole({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, roleIdOwner, user }) {
       if (!roleIdOwner) return null;
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const sql = this.sqlProcedure.checkRightCreateRole({
@@ -1271,7 +1262,8 @@ module.exports = ctx => {
           left join aRole c on a.roleIdWho=c.id
           where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
           order by a.roleIdWho desc`,
-        [ctx.instance.id, atomClass.id, user.id]);
+        [ctx.instance.id, atomClass.id, user.id]
+      );
       return roles;
     }
 
@@ -1336,7 +1328,6 @@ module.exports = ctx => {
         user,
       });
     }
-
   }
 
   return Atom;

@@ -6,10 +6,10 @@
         <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.atomNameLocale || item.atomName">
           <div slot="root-start" class="header">
             <div></div>
-            <div>{{$text('from')}}: {{item.roleName}}</div>
+            <div>{{ $text('from') }}: {{ item.roleName }}</div>
           </div>
           <div slot="after">
-            <f7-badge v-if="item.resourceType">{{getTypeCategory(item)}}</f7-badge>
+            <f7-badge v-if="item.resourceType">{{ getTypeCategory(item) }}</f7-badge>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -25,7 +25,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses ],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     role: {
       type: Object,
@@ -98,18 +98,16 @@ export default {
     onLoadMore({ index }) {
       if (this.role) {
         // role
-        return this.$api.post('resourceRight/spreads', { roleId: this.role.id, page: { index } })
-          .then(data => {
-            this.items = this.items.concat(data.list);
-            return data;
-          });
-      }
-      // user
-      return this.$api.post('user/resourceRights', { userId: this.user.id, page: { index } })
-        .then(data => {
+        return this.$api.post('resourceRight/spreads', { roleId: this.role.id, page: { index } }).then(data => {
           this.items = this.items.concat(data.list);
           return data;
         });
+      }
+      // user
+      return this.$api.post('user/resourceRights', { userId: this.user.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onResourceRightAdd(data) {
       this.reload();
@@ -122,7 +120,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .item {
@@ -137,5 +134,4 @@ export default {
     color: var(--f7-block-header-text-color);
   }
 }
-
 </style>

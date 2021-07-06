@@ -5,7 +5,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebRenderTableCellFormat ],
+  mixins: [ebRenderTableCellFormat],
   props: {
     layoutManager: {
       type: Object,
@@ -24,14 +24,16 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  methods: {
-  },
+  methods: {},
   render() {
     const { text, column } = this.info;
     const value = this.formatText({ text, column });
-    return <div class="eb-antdv-table-cell" title={value}>{value}</div>;
+    return (
+      <div class="eb-antdv-table-cell" title={value}>
+        {value}
+      </div>
+    );
   },
 };

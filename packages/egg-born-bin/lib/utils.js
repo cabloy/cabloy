@@ -15,7 +15,10 @@ const utils = {
       const options = {
         method: 'POST',
         data: {
-          moduleName, moduleVersion, scene, mode,
+          moduleName,
+          moduleVersion,
+          scene,
+          mode,
         },
         dataType: 'json',
         followRedirect: true,

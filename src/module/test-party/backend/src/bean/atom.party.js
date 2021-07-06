@@ -1,5 +1,4 @@
 module.exports = app => {
-
   const gPartyTypeEmojis = {
     Birthday: '🎂',
     Dance: '💃',
@@ -7,7 +6,6 @@ module.exports = app => {
   };
 
   class Atom extends app.meta.AtomCmsBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -93,7 +91,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;

@@ -3,9 +3,7 @@ const assert = require3('assert');
 
 module.exports = app => {
   class StatsController extends app.Controller {
-
     async stats() {
-
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
       const user = { id: userIds.Tom };
@@ -51,8 +49,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return StatsController;
 };
-

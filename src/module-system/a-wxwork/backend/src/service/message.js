@@ -1,7 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
-
     async index({ message }) {
       // config
       const config = this.ctx.config.account.wxwork;
@@ -57,7 +56,6 @@ module.exports = app => {
       // ok
       return null;
     }
-
   }
 
   return Message;

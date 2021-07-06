@@ -5,15 +5,14 @@
         <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
-    </eb-treeview>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {};
   },
@@ -104,5 +103,4 @@ export default {
     },
   },
 };
-
 </script>

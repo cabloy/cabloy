@@ -4,7 +4,6 @@ const popCore = require3('@alicloud/pop-core');
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider {
-
     async sendCode({ providerInstanceId, context, config }) {
       // get
       const providerInstance = await ctx.bean.captcha.getProviderInstance({ providerInstanceId });
@@ -46,7 +45,6 @@ module.exports = function (ctx) {
     __prefix0(num, length) {
       return (Array(length).join('0') + num).slice(-length);
     }
-
   }
 
   return Provider;

@@ -19,15 +19,17 @@ export default {
           click: () => {
             // schemaSub
             const metaSchema = this.validate.meta && this.validate.meta.schema;
-            const schemaSub = metaSchema ? {
-              module: metaSchema.module,
-              validator: metaSchema.validator,
-              schema: property.$ref,
-            } : {
-              module: this.validate.params.module,
-              validator: this.validate.params.validator,
-              schema: property.$ref,
-            };
+            const schemaSub = metaSchema
+              ? {
+                  module: metaSchema.module,
+                  validator: metaSchema.validator,
+                  schema: property.$ref,
+                }
+              : {
+                  module: this.validate.params.module,
+                  validator: this.validate.params.validator,
+                  schema: property.$ref,
+                };
             // errors
             const verrors = this.validate.verrors;
             // target

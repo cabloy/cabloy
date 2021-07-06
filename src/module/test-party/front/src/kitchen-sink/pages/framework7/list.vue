@@ -2,7 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('List View')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <p>Framework7 allows you to be flexible with list views (table views). You can make them as navigation menus, you can use there icons, inputs, and any elements inside of the list, and even make them nested:</p>
+      <p>
+        Framework7 allows you to be flexible with list views (table views). You can make them as navigation menus, you can use there icons, inputs, and any elements inside of the list, and even make
+        them nested:
+      </p>
     </f7-block>
     <f7-block-title>Simple List</f7-block-title>
     <f7-list simple-list>
@@ -163,22 +166,64 @@
     </f7-block>
     <f7-block-title>Songs</f7-block-title>
     <f7-list media-list>
-      <f7-list-item link="#" title="Yellow Submarine" after="$15" subtitle="Beatles" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus.">
+      <f7-list-item
+        link="#"
+        title="Yellow Submarine"
+        after="$15"
+        subtitle="Beatles"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      >
         <img slot="media" src="https://cdn.framework7.io/placeholder/people-160x160-1.jpg" width="80" />
       </f7-list-item>
-      <f7-list-item link="#" title="Don't Stop Me Now" after="$22" subtitle="Queen" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus.">
+      <f7-list-item
+        link="#"
+        title="Don't Stop Me Now"
+        after="$22"
+        subtitle="Queen"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      >
         <img slot="media" src="https://cdn.framework7.io/placeholder/people-160x160-2.jpg" width="80" />
       </f7-list-item>
-      <f7-list-item link="#" title="Billie Jean" after="$16" subtitle="Michael Jackson" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus.">
+      <f7-list-item
+        link="#"
+        title="Billie Jean"
+        after="$16"
+        subtitle="Michael Jackson"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      >
         <img slot="media" src="https://cdn.framework7.io/placeholder/people-160x160-3.jpg" width="80" />
       </f7-list-item>
     </f7-list>
     <f7-block-title>Mail App</f7-block-title>
     <f7-list media-list>
-      <f7-list-item link="#" title="Facebook" after="17:14" subtitle="New messages from John Doe" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."></f7-list-item>
-      <f7-list-item link="#" title="John Doe (via Twitter)" after="17:11" subtitle="John Doe (@_johndoe) mentioned you on Twitter!" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."></f7-list-item>
-      <f7-list-item link="#" title="Facebook" after="16:48" subtitle="New messages from John Doe" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."></f7-list-item>
-      <f7-list-item link="#" title="John Doe (via Twitter)" after="15:32" subtitle="John Doe (@_johndoe) mentioned you on Twitter!" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."></f7-list-item>
+      <f7-list-item
+        link="#"
+        title="Facebook"
+        after="17:14"
+        subtitle="New messages from John Doe"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      ></f7-list-item>
+      <f7-list-item
+        link="#"
+        title="John Doe (via Twitter)"
+        after="17:11"
+        subtitle="John Doe (@_johndoe) mentioned you on Twitter!"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      ></f7-list-item>
+      <f7-list-item
+        link="#"
+        title="Facebook"
+        after="16:48"
+        subtitle="New messages from John Doe"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      ></f7-list-item>
+      <f7-list-item
+        link="#"
+        title="John Doe (via Twitter)"
+        after="15:32"
+        subtitle="John Doe (@_johndoe) mentioned you on Twitter!"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus."
+      ></f7-list-item>
     </f7-list>
     <f7-block-title>Something more simple</f7-block-title>
     <f7-list media-list>
@@ -221,12 +266,8 @@
             <div class="item-row">
               <div class="item-cell">Cell 3-1</div>
               <div class="item-cell">
-                <div class="item-row">
-                  Cell 3-2
-                </div>
-                <div class="item-row">
-                  Cell 3-3
-                </div>
+                <div class="item-row">Cell 3-2</div>
+                <div class="item-row">Cell 3-3</div>
               </div>
             </div>
           </div>
@@ -247,12 +288,8 @@
             <div class="item-row">
               <div class="item-cell">Cell 3-1</div>
               <div class="item-cell">
-                <div class="item-row">
-                  Cell 3-2
-                </div>
-                <div class="item-row">
-                  Cell 3-3
-                </div>
+                <div class="item-row">Cell 3-2</div>
+                <div class="item-row">Cell 3-3</div>
               </div>
             </div>
           </div>
@@ -263,5 +300,4 @@
 </template>
 <script>
 export default {};
-
 </script>

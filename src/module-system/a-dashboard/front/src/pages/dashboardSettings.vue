@@ -2,22 +2,22 @@
   <eb-page>
     <eb-navbar :title="$text('Dashboard')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="dashboard.scene!=='manager'" iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
+        <eb-link v-if="dashboard.scene !== 'manager'" iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id===dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
+      <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id === dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformChangeName">{{$text('Change Name')}}</div>
-            <div v-if="item.id!==dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" :context="item" :onPerform="onPerformChangeName">{{ $text('Change Name') }}</div>
+            <div v-if="item.id !== dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <f7-toolbar bottom-md>
-      <eb-button :onPerform="onPerformAddGroup">{{$text('Add Group')}}</eb-button>
-      <eb-button :onPerform="onPerformAddWidget">{{$text('Add Widget')}}</eb-button>
+      <eb-button :onPerform="onPerformAddGroup">{{ $text('Add Group') }}</eb-button>
+      <eb-button :onPerform="onPerformAddWidget">{{ $text('Add Widget') }}</eb-button>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -25,7 +25,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       dashboardUserIdCurrent: parseInt(this.$f7route.query.dashboardUserId || 0),
@@ -50,11 +50,13 @@ export default {
     __load() {
       if (this.dashboard.scene === 'manager') return;
       // list
-      this.$api.post('/a/dashboard/dashboard/itemUsers', {
-        key: { atomId: this.dashboard.dashboardAtomId },
-      }).then(data => {
-        this.dashboardUsers = data;
-      });
+      this.$api
+        .post('/a/dashboard/dashboard/itemUsers', {
+          key: { atomId: this.dashboard.dashboardAtomId },
+        })
+        .then(data => {
+          this.dashboardUsers = data;
+        });
     },
     __findItem(dashboardUserId) {
       const index = this.dashboardUsers.findIndex(item => item.id === dashboardUserId);
@@ -124,5 +126,4 @@ export default {
     },
   },
 };
-
 </script>

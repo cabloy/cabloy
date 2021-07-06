@@ -4,11 +4,13 @@ export default {
     const atomClassName = query && query.atomClassName;
     if (module && atomClassName) {
       return {
-        module, atomClassName,
+        module,
+        atomClassName,
       };
     }
     return {
-      module: 'a-cms', atomClassName: 'article',
+      module: 'a-cms',
+      atomClassName: 'article',
     };
   },
   combineAtomClass(atomClass, url) {

@@ -8,7 +8,6 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // check if content.message
       // not set content.message.to dynamic for test, which must be set by business
@@ -41,9 +40,7 @@ module.exports = ctx => {
       // log
       if (sceneTest) {
         const url = nodemailer.getTestMessageUrl(res);
-        const message = chalk.keyword('cyan')('Test Mail To: ')
-                        + chalk.keyword('yellow')(content.message.to)
-                        + chalk.keyword('orange')('\n' + url);
+        const message = chalk.keyword('cyan')('Test Mail To: ') + chalk.keyword('yellow')(content.message.to) + chalk.keyword('orange')('\n' + url);
         console.log('\n' + boxen(message, boxenOptions));
       }
       // done
@@ -72,9 +69,8 @@ module.exports = ctx => {
     }
 
     _sceneValid(scene) {
-      return (scene && scene.transport && scene.transport.host);
+      return scene && scene.transport && scene.transport.host;
     }
-
   }
   return IOChannel;
 };

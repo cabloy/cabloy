@@ -5,8 +5,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     ebOptions() {
@@ -18,35 +17,30 @@ export default {
       // nodeId
       const nodeId = container.id;
       // filter
-      const nodes = diagram.contentProcess.nodes.filter(item => {
-        return item.id !== nodeId && (item.type === 'startEventAtom' || item.type === 'activityUserTask');
-      }).map(item => {
-        return {
-          title: item.nameLocale || item.name,
-          value: item.id,
-        };
-      });
+      const nodes = diagram.contentProcess.nodes
+        .filter(item => {
+          return item.id !== nodeId && (item.type === 'startEventAtom' || item.type === 'activityUserTask');
+        })
+        .map(item => {
+          return {
+            title: item.nameLocale || item.name,
+            value: item.id,
+          };
+        });
       // default
       nodes.unshift({ title: 'Default', value: '' });
       // ok
       return nodes;
     },
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
   render() {
     const { parcel, key, property } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.ebOptions,
     });
-    return (
-      <eb-list-item-validate
-        parcel={parcel}
-        dataKey={key} property={propertyNew}>
-      </eb-list-item-validate>
-    );
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };

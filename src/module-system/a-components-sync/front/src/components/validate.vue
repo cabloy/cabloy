@@ -148,7 +148,11 @@ export default {
       dataPath = this.adjustDataPath(dataPath);
       while (true) {
         const index = this.verrors.findIndex(item => item.dataPath === dataPath);
-        if (index > -1) { this.verrors.splice(index, 1); } else { break; }
+        if (index > -1) {
+          this.verrors.splice(index, 1);
+        } else {
+          break;
+        }
       }
     },
     adjustDataPath(dataPath) {
@@ -168,13 +172,15 @@ export default {
       const moduleName = this.params.module || this.$page.$module.name;
       this.schemaModuleName = moduleName;
       this.$meta.module.use(moduleName, () => {
-        this.$api.post('/a/validation/validation/schema', {
-          module: moduleName,
-          validator: this.params.validator,
-          schema: this.params.schema,
-        }).then(data => {
-          this.__schemaReady(data.schema, moduleName);
-        });
+        this.$api
+          .post('/a/validation/validation/schema', {
+            module: moduleName,
+            validator: this.params.validator,
+            schema: this.params.schema,
+          })
+          .then(data => {
+            this.__schemaReady(data.schema, moduleName);
+          });
       });
     },
     __schemaReady(schema, moduleMaybe) {
@@ -218,5 +224,4 @@ export default {
     },
   },
 };
-
 </script>

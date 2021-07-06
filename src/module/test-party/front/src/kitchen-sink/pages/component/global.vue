@@ -10,7 +10,5 @@ export default {
     return {};
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

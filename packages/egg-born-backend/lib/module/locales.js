@@ -3,8 +3,7 @@ const path = require('path');
 const extend = require('extend2');
 const localeutil = require('egg-born-localeutil').default;
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // all locales
   const ebLocales = {};
 
@@ -22,10 +21,10 @@ module.exports = function(loader, modules) {
       // maybe /favicon.ico
       if (context.module) {
         const defaultLocale = loader.app.config.i18n.defaultLocale;
-        context.text = function(...args) {
+        context.text = function (...args) {
           return getText(context.locale || defaultLocale, ...args);
         };
-        context.text.locale = function(locale, ...args) {
+        context.text.locale = function (locale, ...args) {
           return getText(locale || defaultLocale, ...args);
         };
       }
@@ -35,10 +34,8 @@ module.exports = function(loader, modules) {
   }
 
   function loadLocales() {
-
     // module locales
     Object.keys(modules).forEach(key => {
-
       const module = modules[key];
       const locales = module.main.locales;
       if (locales) {
@@ -48,15 +45,14 @@ module.exports = function(loader, modules) {
           extend(false, locale, locales[key]);
         });
       }
-
     });
 
     /**
- * based on egg-i18n
- *
- * https://github.com/eggjs/egg-i18n/blob/master/app.js
- *
- */
+     * based on egg-i18n
+     *
+     * https://github.com/eggjs/egg-i18n/blob/master/app.js
+     *
+     */
     // project locales
     const localeDirs = loader.app.config.i18n.dirs;
     for (let i = 0; i < localeDirs.length; i++) {
@@ -79,15 +75,14 @@ module.exports = function(loader, modules) {
         extend(false, locale, resource);
       }
     }
-
   }
 
   /**
- * based on koa-locales
- *
- * https://github.com/koajs/locales/blob/master/index.js
- *
- */
+   * based on koa-locales
+   *
+   * https://github.com/koajs/locales/blob/master/index.js
+   *
+   */
 
   function getText(locale, ...args) {
     const key = args[0];
@@ -109,7 +104,6 @@ module.exports = function(loader, modules) {
     args[0] = text;
     return localeutil.getText.apply(localeutil, args);
   }
-
 };
 
 function formatLocale(locale) {

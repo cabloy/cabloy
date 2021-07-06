@@ -14,8 +14,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   render() {
     return this.layoutManager.validate_render();

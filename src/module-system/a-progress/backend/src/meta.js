@@ -4,15 +4,12 @@ module.exports = app => {
   const socketioProgress = require('./config/socketio/progress.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     socketio: {
       messages: {

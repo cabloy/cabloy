@@ -1,3 +1,3 @@
-module.exports = function(path) {
+module.exports = function (path) {
   return require(path);
 };

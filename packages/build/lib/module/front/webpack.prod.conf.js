@@ -6,7 +6,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 // const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = context => {
-
   const env = context.config.build.env;
 
   const plugins = [
@@ -14,12 +13,12 @@ module.exports = context => {
       'process.env': env,
     }),
     new VueLoaderPlugin(),
-  // new MiniCssExtractPlugin({
-  //   filename: '[name].css',
-  // }),
-  // new OptimizeCssAssetsPlugin({
-  //   cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
-  // }),
+    // new MiniCssExtractPlugin({
+    //   filename: '[name].css',
+    // }),
+    // new OptimizeCssAssetsPlugin({
+    //   cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+    // }),
   ];
 
   return merge(baseWebpackConfigFn(context), {

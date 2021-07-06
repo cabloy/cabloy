@@ -1,6 +1,5 @@
 module.exports = app => {
   class SettingsController extends app.Controller {
-
     // instance
 
     instanceList() {
@@ -34,7 +33,6 @@ module.exports = app => {
       const res = await this.service.settings.userSave(this.ctx.request.body);
       this.ctx.success(res);
     }
-
   }
   return SettingsController;
 };

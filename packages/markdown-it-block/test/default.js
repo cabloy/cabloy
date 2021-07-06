@@ -1,5 +1,3 @@
-
-
 const path = require('path');
 const generate = require('markdown-it-testgen');
 
@@ -22,8 +20,7 @@ const options = {
 };
 
 describe('default block', function () {
-  const md = require('markdown-it')()
-    .use(require('../'), options);
+  const md = require('markdown-it')().use(require('../'), options);
 
   generate(path.join(__dirname, 'fixtures/default.txt'), md);
 });

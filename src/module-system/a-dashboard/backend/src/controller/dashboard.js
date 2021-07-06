@@ -1,6 +1,5 @@
 module.exports = app => {
   class DashboardController extends app.Controller {
-
     async itemByKey() {
       const res = await this.service.dashboard.itemByKey({
         atomStaticKey: this.ctx.request.body.atomStaticKey,
@@ -76,7 +75,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return DashboardController;
 };

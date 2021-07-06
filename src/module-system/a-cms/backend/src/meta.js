@@ -22,8 +22,7 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {
-          },
+          actions: {},
           validator: 'article',
           search: {
             validator: 'articleSearch',
@@ -65,8 +64,7 @@ module.exports = app => {
       },
     },
     event: {
-      implementations: {
-      },
+      implementations: {},
     },
     socketio: {
       messages: {

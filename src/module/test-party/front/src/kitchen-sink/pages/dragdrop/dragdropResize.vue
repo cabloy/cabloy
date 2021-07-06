@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Dragdrop(Resize)')" eb-back-link="Back"> </eb-navbar>
-    <div class="test-dragdrop-resize-element" :style="{width:width+'px',height:height+'px'}">
+    <div class="test-dragdrop-resize-element" :style="{ width: width + 'px', height: height + 'px' }">
       <span class="resize-handler-col" v-eb-dragdrop="getDragdropContext('col')"></span>
       <span class="resize-handler-row" v-eb-dragdrop="getDragdropContext('row')"></span>
     </div>
@@ -47,14 +47,12 @@ export default {
       this.height += diffAbs;
       const tooltip = this.height;
       return { eaten: true, tooltip };
-
     },
     onDragEnd({ $el, context }) {
       // do nothing
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .test-dragdrop-resize-element {
@@ -114,5 +112,4 @@ export default {
     }
   }
 }
-
 </style>

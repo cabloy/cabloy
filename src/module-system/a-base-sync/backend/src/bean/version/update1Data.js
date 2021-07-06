@@ -356,8 +356,7 @@ create view aViewUserRightFunction as
   `,
 };
 
-const functions = {
-};
+const functions = {};
 
 module.exports = {
   tables,

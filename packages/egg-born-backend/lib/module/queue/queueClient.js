@@ -1,10 +1,8 @@
 const bull = require('bullmq');
 const uuid = require('uuid');
 
-module.exports = function(app) {
-
+module.exports = function (app) {
   class QueueClient {
-
     constructor() {
       this._scheduler = {};
       this._workers = {};
@@ -49,23 +47,27 @@ module.exports = function(app) {
       // create work
       const connectionWorker = app.redis.get('queue').duplicate();
       const _workerOptions = Object.assign({}, app.config.queue.worker, workerOptions, { prefix, connection: connectionWorker });
-      _worker.worker = new bull.Worker(queueKey, async job => {
-        // concurrency
-        if (queueConfig.concurrency) {
-          return await this._performTask(job);
-        }
-        // redlock
-        const _lockResource = `queue:${queueKey}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
-        return await app.meta.util.lock({
-          subdomain: job.data.subdomain,
-          resource: _lockResource,
-          options: _redlockOptions,
-          redlock: _worker.redlock,
-          fn: async () => {
+      _worker.worker = new bull.Worker(
+        queueKey,
+        async job => {
+          // concurrency
+          if (queueConfig.concurrency) {
             return await this._performTask(job);
-          },
-        });
-      }, _workerOptions);
+          }
+          // redlock
+          const _lockResource = `queue:${queueKey}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
+          return await app.meta.util.lock({
+            subdomain: job.data.subdomain,
+            resource: _lockResource,
+            options: _redlockOptions,
+            redlock: _worker.redlock,
+            fn: async () => {
+              return await this._performTask(job);
+            },
+          });
+        },
+        _workerOptions
+      );
 
       _worker.worker.on('failed', (job, err) => {
         app.logger.error(err);
@@ -218,7 +220,9 @@ module.exports = function(app) {
       const bean = queue.bean;
       // execute
       return await app.meta.util.executeBean({
-        locale, subdomain, context,
+        locale,
+        subdomain,
+        context,
         beanModule: bean.module,
         beanFullName: `${bean.module}.queue.${bean.name}`,
         transaction: queue.config.transaction,
@@ -229,4 +233,3 @@ module.exports = function(app) {
 
   return QueueClient;
 };
-

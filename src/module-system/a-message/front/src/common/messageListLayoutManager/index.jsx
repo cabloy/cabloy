@@ -8,12 +8,9 @@ import Notification from './notification.jsx';
 // },
 
 export default {
-  mixins: [
-    Base, Page, Layout, Notification,
-  ],
+  mixins: [Base, Page, Layout, Notification],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.layout_prepareConfig().then(() => {

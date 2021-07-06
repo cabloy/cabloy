@@ -1,6 +1,6 @@
 import resourceTreeLayoutManager from '../../common/resourceTreeLayoutManager/index.jsx';
 export default {
-  mixins: [ resourceTreeLayoutManager ],
+  mixins: [resourceTreeLayoutManager],
   data() {
     const query = this.$f7route.query;
     const maxLevelAutoOpened = parseInt(query.maxLevelAutoOpened || 1);

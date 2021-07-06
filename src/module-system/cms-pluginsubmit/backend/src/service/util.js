@@ -3,7 +3,6 @@ const url = require('url');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util extends app.Service {
-
     async submit({ links, config }) {
       for (const target in config.submit) {
         const targetConfig = config.submit[target];
@@ -28,13 +27,14 @@ module.exports = app => {
           module: moduleInfo.relativeName,
           queueName: 'submit',
           data: {
-            target, targetConfig,
-            hostname, links,
+            target,
+            targetConfig,
+            hostname,
+            links,
           },
         });
       });
     }
-
   }
   return Util;
 };

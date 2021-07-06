@@ -5,6 +5,4 @@ function loadjsx(name) {
   return require(`./pages/${name}.jsx`).default;
 }
 
-export default [
-  { path: 'listLayoutFilter', component: loadjsx('listLayoutFilter') },
-];
+export default [{ path: 'listLayoutFilter', component: loadjsx('listLayoutFilter') }];

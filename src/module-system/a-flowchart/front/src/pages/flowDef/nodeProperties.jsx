@@ -74,7 +74,7 @@ const __schemaEdge = {
 };
 
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       flowDefId: parseInt(this.$f7route.query.flowDefId),
@@ -135,9 +135,13 @@ export default {
       // data
       this.data = this.$meta.util.extend({}, defaultBase, data);
       // watch
-      this._unwatch = this.$watch('data', () => {
-        this.__dataChange();
-      }, { deep: true });
+      this._unwatch = this.$watch(
+        'data',
+        () => {
+          this.__dataChange();
+        },
+        { deep: true }
+      );
     },
     async __initSchema() {
       // base
@@ -220,29 +224,21 @@ export default {
           },
         },
       };
-      return (
-        <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data} meta={meta} host={host}>
-        </eb-validate>
-      );
+      return <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data} meta={meta} host={host}></eb-validate>;
     },
   },
   render() {
     let domDelete;
     if (!this.readOnly) {
-      domDelete = (
-        <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>
-      );
+      domDelete = <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>;
     }
     return (
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
-          <f7-nav-right>
-            {domDelete}
-          </f7-nav-right>
+          <f7-nav-right>{domDelete}</f7-nav-right>
         </eb-navbar>
         {this.renderList()}
       </eb-page>
     );
   },
 };
-

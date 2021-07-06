@@ -5,7 +5,6 @@ const AtomBaseFn = require('./common/atomBase.js');
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // atomBase
   app.meta.AtomBase = AtomBaseFn(app);
 
@@ -39,5 +38,4 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };

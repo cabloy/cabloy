@@ -31,9 +31,13 @@ export default {
       }
       // group
       const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-      return c('f7-list-group', {
-        staticClass: className,
-      }, children);
+      return c(
+        'f7-list-group',
+        {
+          staticClass: className,
+        },
+        children
+      );
     },
   },
 };

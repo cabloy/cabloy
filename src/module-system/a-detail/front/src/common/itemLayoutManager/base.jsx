@@ -23,8 +23,7 @@ export default {
       return this.$store.state.auth.user.op;
     },
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.$meta.eventHub.$on('detail:action', this.base_onActionChanged);
   },
@@ -67,8 +66,7 @@ export default {
     },
     base_prepareReadOptions() {
       // options
-      const options = {
-      };
+      const options = {};
       // layout
       options.layout = this.layout.current;
       // options

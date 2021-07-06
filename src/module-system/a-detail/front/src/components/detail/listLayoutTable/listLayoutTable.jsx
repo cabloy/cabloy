@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ Antdv ],
+  mixins: [Antdv],
   props: {
     layoutManager: {
       type: Object,
@@ -85,14 +85,14 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     _renderEmpty() {
-      if (this.loading) return (<f7-preloader></f7-preloader>);
-      return (<div>{this.$text('No Data')}</div>);
+      if (this.loading) return <f7-preloader></f7-preloader>;
+      return <div>{this.$text('No Data')}</div>;
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
       return (
         <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
-          { this._renderBlock({ blockName: 'items' })}
+          {this._renderBlock({ blockName: 'items' })}
         </a-config-provider>
       );
     },

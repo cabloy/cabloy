@@ -26,7 +26,6 @@ const resource = require('./model/resource.js');
 const resourceLocale = require('./model/resourceLocale.js');
 const resourceRole = require('./model/resourceRole.js');
 
-
 module.exports = app => {
   const models = {
     atom,

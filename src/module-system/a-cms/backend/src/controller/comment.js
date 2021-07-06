@@ -1,9 +1,7 @@
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-
   class CommentController extends app.Controller {
-
     async all() {
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
@@ -21,7 +19,6 @@ module.exports = app => {
       // ok
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
-
   }
   return CommentController;
 };

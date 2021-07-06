@@ -28,13 +28,18 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   }
   //
   function callbackBreak() {
-    ctx.dialog.confirm().then(() => {
-      return ctx.$api.post('/a/progress/progress/abort', {
-        progressId,
-      }).then(() => {});
-    }).catch(() => {
-      dialog.open();
-    });
+    ctx.dialog
+      .confirm()
+      .then(() => {
+        return ctx.$api
+          .post('/a/progress/progress/abort', {
+            progressId,
+          })
+          .then(() => {});
+      })
+      .catch(() => {
+        dialog.open();
+      });
   }
   function setProgresses(list) {
     // adjust progressbar
@@ -56,7 +61,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
     const progressbars = dialog.$el.find('.progressbar-item');
     const progressbar = ctx.$$(progressbars[progressNo]);
     // setProgress
-    const _progress = total > 0 ? parseInt(progress * 100 / total) : progress;
+    const _progress = total > 0 ? parseInt((progress * 100) / total) : progress;
     app.progressbar.set(progressbar.find('.progressbar'), _progress);
     // set text
     const _text = total > 0 ? `(${progress + 1}/${total}) ${text}` : text;
@@ -127,13 +132,16 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
       subscribeId = null;
     }
     // delete progress
-    ctx.$api.post('/a/progress/progress/delete', {
-      progressId,
-    }).then(() => {
-      // donothing
-    }).catch(() => {
-      // donothing
-    });
+    ctx.$api
+      .post('/a/progress/progress/delete', {
+        progressId,
+      })
+      .then(() => {
+        // donothing
+      })
+      .catch(() => {
+        // donothing
+      });
     // destroy
     setTimeout(() => {
       dialog.destroy();
@@ -146,13 +154,17 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   }
   //
   function onSubscribed() {
-    ctx.$api.post('/a/progress/progress/check', {
-      progressId, counter,
-    }).then(item => {
-      checking(item);
-    }).catch(() => {
-      // donothing
-    });
+    ctx.$api
+      .post('/a/progress/progress/check', {
+        progressId,
+        counter,
+      })
+      .then(item => {
+        checking(item);
+      })
+      .catch(() => {
+        // donothing
+      });
   }
   // socket io
   subscribeId = io.subscribe(subscribePath, onMessage, onSubscribed);

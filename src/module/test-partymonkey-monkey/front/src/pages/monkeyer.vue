@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Monkey Test')" eb-back-link="Back"> </eb-navbar>
     <f7-block strong>
-      <div class="alert-info">{{$text('MonkeyerTestTip1')}}</div>
+      <div class="alert-info">{{ $text('MonkeyerTestTip1') }}</div>
       <eb-component module="test-party" name="monkeyeeComponent"></eb-component>
     </f7-block>
   </eb-page>
@@ -28,7 +28,5 @@ export default {
     console.log('monkey-config monkeyed:', this.$meta.config.modules['test-party'].monkeyed);
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

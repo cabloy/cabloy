@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class ResourceController extends app.Controller {
-
     // options
     //   where, orders, page, star, label, resourceType, locale
     async select() {
@@ -60,7 +58,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
 
   return ResourceController;

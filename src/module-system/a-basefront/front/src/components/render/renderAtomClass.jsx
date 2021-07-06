@@ -1,15 +1,14 @@
 import Vue from 'vue';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
-  mixins: [ ebAtomClasses ],
+  mixins: [ebAtomClasses],
   props: {
     context: {
       type: Object,
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     value() {
@@ -18,15 +17,14 @@ export default {
     atomClass() {
       const value = this.value;
       // atomClass
-      return (value && typeof value === 'string') ? window.JSON5.parse(value) : value;
+      return value && typeof value === 'string' ? window.JSON5.parse(value) : value;
     },
     atomClassTitle() {
       const atomClassBase = this.getAtomClass(this.atomClass);
       return atomClassBase ? atomClassBase.titleLocale : null;
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     async onChooseAtomClass() {
       const { property } = this.context;
@@ -76,8 +74,7 @@ export default {
       );
     }
     return (
-      <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAtomClass}>
+      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAtomClass}>
         <div slot="after">{this.atomClassTitle}</div>
       </eb-list-item-choose>
     );

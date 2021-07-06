@@ -1,7 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/ctx/response.test.js', () => {
-
   it('action:response:success', async () => {
     const result = await app.httpRequest().post(mockUrl('test/ctx/response/success')).send();
     const body = result.body;
@@ -33,5 +32,4 @@ describe('test/controller/test/ctx/response.test.js', () => {
     const result = await app.httpRequest().post(mockUrl('test/ctx/response/throwError?locale=zh-cn')).send();
     assert.equal(result.status, 500);
   });
-
 });

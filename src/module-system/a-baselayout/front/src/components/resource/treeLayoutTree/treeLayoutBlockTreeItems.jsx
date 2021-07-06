@@ -23,10 +23,8 @@ export default {
       },
     };
   },
-  mounted() {
-  },
-  beforeDestroy() {
-  },
+  mounted() {},
+  beforeDestroy() {},
   methods: {
     async _loadNodeCategories(node) {
       const levelCurrent = (node.data && node.data.__level) || 0;
@@ -90,10 +88,7 @@ export default {
     },
     _renderTree() {
       if (!this.layoutManager.base_ready) return;
-      return (
-        <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren} propsOnNodePerform={this.onNodePerformClick}>
-        </eb-treeview>
-      );
+      return <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren} propsOnNodePerform={this.onNodePerformClick}></eb-treeview>;
     },
   },
   render() {

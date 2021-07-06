@@ -11,35 +11,28 @@ module.exports = {
 
 const __paths = [
   {
-    prefix: 'src/module/', public: false,
-    fronts: [
-      { js: 'front/src/main.js' },
-      { js: 'dist/front.js' },
-    ],
+    prefix: 'src/module/',
+    public: false,
+    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
       { js: 'backend/src/main.js', static: 'backend/static' },
       { js: 'dist/backend.js', static: 'dist/staticBackend' },
     ],
   },
   {
-    prefix: 'src/module-system/', public: false,
-    fronts: [
-      { js: 'front/src/main.js' },
-      { js: 'dist/front.js' },
-    ],
+    prefix: 'src/module-system/',
+    public: false,
+    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
       { js: 'backend/src/main.js', static: 'backend/static' },
       { js: 'dist/backend.js', static: 'dist/staticBackend' },
     ],
   },
   {
-    prefix: 'node_modules/egg-born-module-', public: true,
-    fronts: [
-      { js: 'dist/front.js' },
-    ],
-    backends: [
-      { js: 'dist/backend.js', static: 'dist/staticBackend' },
-    ],
+    prefix: 'node_modules/egg-born-module-',
+    public: true,
+    fronts: [{ js: 'dist/front.js' }],
+    backends: [{ js: 'dist/backend.js', static: 'dist/staticBackend' }],
   },
 ];
 
@@ -162,10 +155,13 @@ function __parseModules(projectPath) {
         const _package = require(filePkg);
         const root = path.dirname(filePkg);
         const moduleMeta = {
-          name, info,
-          root, pkg: filePkg, package: _package,
-          js: { },
-          static: { },
+          name,
+          info,
+          root,
+          pkg: filePkg,
+          package: _package,
+          js: {},
+          static: {},
         };
         modules[info.relativeName] = __parseModule(__path, moduleMeta);
       }

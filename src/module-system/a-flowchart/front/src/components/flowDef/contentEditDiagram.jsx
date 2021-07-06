@@ -76,8 +76,7 @@ export default {
       }
     },
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.__init();
     // if (!this.readOnly && !this.$device.desktop) {
@@ -176,7 +175,7 @@ export default {
         },
         mousewheel: {
           enabled: true,
-          modifiers: [ 'ctrl', 'meta' ],
+          modifiers: ['ctrl', 'meta'],
         },
         connecting: {
           snap: true,

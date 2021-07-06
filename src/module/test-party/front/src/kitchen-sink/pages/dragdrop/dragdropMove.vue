@@ -2,8 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Dragdrop(Move)')" eb-back-link="Back"> </eb-navbar>
     <f7-list class="test-dragdrop-move-list">
-      <eb-list-item v-for="(item,index) of items" :key="item" :title="item" :badge="getBadge(item,index)" v-eb-dragdrop="getDragdropContext(item)">
-      </eb-list-item>
+      <eb-list-item v-for="(item, index) of items" :key="item" :title="item" :badge="getBadge(item, index)" v-eb-dragdrop="getDragdropContext(item)"> </eb-list-item>
     </f7-list>
   </eb-page>
 </template>
@@ -11,7 +10,7 @@
 export default {
   data() {
     return {
-      items: [ '🍎 Apple', '🍌 Banana', '🍒 Cherry', '🍊 Orange', '🍐 Pear' ],
+      items: ['🍎 Apple', '🍌 Banana', '🍒 Cherry', '🍊 Orange', '🍐 Pear'],
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
       indexDragIndex: -1,
       indexDropIndex: -1,
@@ -77,7 +76,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .test-dragdrop-move-list {
@@ -87,5 +85,4 @@ export default {
     }
   }
 }
-
 </style>

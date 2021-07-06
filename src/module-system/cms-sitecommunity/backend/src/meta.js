@@ -20,8 +20,7 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {
-          },
+          actions: {},
           validator: 'post',
           search: {
             validator: 'postSearch',

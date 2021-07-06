@@ -129,15 +129,11 @@ export default {
       if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
-        children.push(
-          <eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>
-        );
+        children.push(<eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
       }
       //
       if (this.actions_listPopover) {
-        children.push(
-          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
-        );
+        children.push(<f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>);
       }
       //
       return children;
@@ -151,22 +147,14 @@ export default {
           const _action = this.getAction(action);
           children.push(
             <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
-              <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
+              <f7-icon slot="media" material={_action.icon && _action.icon.material}></f7-icon>
               <div slot="title">{this.actions_getActionTitle(action)}</div>
             </eb-list-item>
           );
         }
-        domList = (
-          <f7-list inset>
-            {children}
-          </f7-list>
-        );
+        domList = <f7-list inset>{children}</f7-list>;
       }
-      return (
-        <f7-popover id={this.actions.popoverId}>
-          {domList}
-        </f7-popover>
-      );
+      return <f7-popover id={this.actions.popoverId}>{domList}</f7-popover>;
     },
   },
 };

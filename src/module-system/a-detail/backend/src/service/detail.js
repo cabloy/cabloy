@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Detail extends app.Service {
-
     async create({ atomKey, detailClass, item, user }) {
       return await this.ctx.bean.detail.create({ atomKey, detailClass, item, user });
     }
@@ -49,7 +47,6 @@ module.exports = app => {
     async validator({ detailClass }) {
       return await this.ctx.bean.detail.validator({ detailClass });
     }
-
   }
 
   return Detail;

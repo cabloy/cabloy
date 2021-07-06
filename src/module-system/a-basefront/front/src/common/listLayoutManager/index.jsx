@@ -22,13 +22,9 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 // },
 
 export default {
-  mixins: [
-    ebAtomClasses, ebAtomActions,
-    Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar, Actions,
-  ],
+  mixins: [ebAtomClasses, ebAtomActions, Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar, Actions],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.$nextTick(() => {

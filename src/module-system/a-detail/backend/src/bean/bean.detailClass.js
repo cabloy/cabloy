@@ -3,7 +3,6 @@ const _detailClasses = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class DetailClass extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'detailClass');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -65,11 +64,14 @@ module.exports = ctx => {
     }
 
     async getByDetailId({ detailId }) {
-      const res = await this.model.query(`
+      const res = await this.model.query(
+        `
         select a.*,b.id as detailId,b.detailItemId from aDetailClass a
           left join aDetail b on a.id=b.detailClassId
             where b.iid=? and b.id=?
-        `, [ctx.instance.id, detailId]);
+        `,
+        [ctx.instance.id, detailId]
+      );
       return res[0];
     }
 
@@ -77,10 +79,12 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[detailClass.module];
       const validator = _module.main.meta.detail.details[detailClass.detailClassName].validator;
-      return validator ? {
-        module: detailClass.module,
-        validator,
-      } : null;
+      return validator
+        ? {
+            module: detailClass.module,
+            validator,
+          }
+        : null;
     }
 
     _prepareDetailClasses() {
@@ -113,7 +117,6 @@ module.exports = ctx => {
       }
       return detailClasses;
     }
-
   }
 
   return DetailClass;

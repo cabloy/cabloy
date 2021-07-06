@@ -1,10 +1,9 @@
 import Vue from 'vue';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
-  mixins: [ ebAtomClasses ],
+  mixins: [ebAtomClasses],
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     atomClasses() {
@@ -51,13 +50,10 @@ export default {
     renderAtomClasses() {
       const children = [];
       for (const item of this.atomClasses) {
-        children.push(
-          <eb-list-item key={`${item.module}:${item.atomClassName}`} title={item.info.titleLocale} link="#" propsOnPerform={event => this.onPerformClick(event, item)}>
-          </eb-list-item>
-        );
+        children.push(<eb-list-item key={`${item.module}:${item.atomClassName}`} title={item.info.titleLocale} link="#" propsOnPerform={event => this.onPerformClick(event, item)}></eb-list-item>);
       }
       return (
-        <eb-list inline-labels no-hairlines-md >
+        <eb-list inline-labels no-hairlines-md>
           {children}
         </eb-list>
       );
@@ -66,8 +62,7 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('Category Management')} eb-back-link="Back">
-        </eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('Category Management')} eb-back-link="Back"></eb-navbar>
         {this.renderAtomClasses()}
       </eb-page>
     );

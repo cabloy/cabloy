@@ -8,7 +8,6 @@ const webpackConfigFn = require('./webpack.prod.conf');
 const utilsFn = require('./utils.js');
 
 module.exports = ({ projectPath, frontPath, scene }) => {
-
   process.env.NODE_ENV = 'production';
 
   // context
@@ -31,16 +30,18 @@ module.exports = ({ projectPath, frontPath, scene }) => {
     const spinner = ora('building for production...');
     spinner.start();
 
-    webpack(webpackConfigFn(context), function(err, stats) {
+    webpack(webpackConfigFn(context), function (err, stats) {
       spinner.stop();
       if (err) throw err;
-      process.stdout.write(stats.toString({
-        colors: true,
-        modules: false,
-        children: false,
-        chunks: false,
-        chunkModules: false,
-      }) + '\n\n');
+      process.stdout.write(
+        stats.toString({
+          colors: true,
+          modules: false,
+          children: false,
+          chunks: false,
+          chunkModules: false,
+        }) + '\n\n'
+      );
 
       const sceneValue = JSON.parse(context.config.build.env.SCENE);
       const dest = path.join(context.config.projectPath, `dist${sceneValue ? '/' + sceneValue : ''}`);
@@ -55,6 +56,5 @@ module.exports = ({ projectPath, frontPath, scene }) => {
       //   '  Opening index.html over file:// won\'t work.\n'
       // ));
     });
-
   });
 };

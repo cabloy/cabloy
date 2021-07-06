@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowDef extends app.Service {
-
     nodeBases() {
       return this.ctx.bean.flowDef.nodeBases();
     }
@@ -13,8 +11,6 @@ module.exports = app => {
     flowServiceBases() {
       return this.ctx.bean.flowDef.flowServiceBases();
     }
-
   }
   return FlowDef;
 };
-

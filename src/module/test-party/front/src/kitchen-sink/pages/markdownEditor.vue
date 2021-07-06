@@ -3,7 +3,22 @@
     <eb-navbar :title="title" eb-back-link="Back"> </eb-navbar>
     <template v-if="module">
       <eb-box>
-        <mavon-editor ref="editor" :value="content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :onBlockAdd="onBlockAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor
+          ref="editor"
+          :value="content"
+          @change="onChange"
+          @save="onSave"
+          :onImageUpload="onImageUpload"
+          :onAudioUpload="onAudioUpload"
+          :onBlockAdd="onBlockAdd"
+          :language="language"
+          :subfield="subfield"
+          :editable="editable"
+          :defaultOpen="defaultOpen"
+          :toolbarsFlag="toolbarsFlag"
+          :navigation="navigation"
+          :toolbars="toolbars"
+        />
       </eb-box>
     </template>
   </eb-page>
@@ -215,7 +230,5 @@ Right
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

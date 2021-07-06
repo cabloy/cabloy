@@ -5,7 +5,7 @@
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取openid" link="#" :onPerform="onPerformOpenid"></eb-list-item>
       <eb-list-item title="openid">
-        <div slot="after">{{openid}}</div>
+        <div slot="after">{{ openid }}</div>
       </eb-list-item>
     </eb-list>
   </eb-page>
@@ -24,17 +24,20 @@ export default {
       actionComponent: 'jssdk',
       name: 'config',
     };
-    this.$meta.util.performAction({ ctx: this, action }).then(res => {
-      this.wx = res && res.wx;
-    }).catch(e => {
-      this.$view.toast.show({ text: e.message });
-    });
+    this.$meta.util
+      .performAction({ ctx: this, action })
+      .then(res => {
+        this.wx = res && res.wx;
+      })
+      .catch(e => {
+        this.$view.toast.show({ text: e.message });
+      });
   },
   methods: {
     onPerformScanQRCode() {
       this.wx.scanQRCode({
         needResult: 1,
-        scanType: [ 'qrCode', 'barCode' ],
+        scanType: ['qrCode', 'barCode'],
         success: res => {
           this.$view.toast.show({ text: res.resultStr });
         },
@@ -47,5 +50,4 @@ export default {
     },
   },
 };
-
 </script>

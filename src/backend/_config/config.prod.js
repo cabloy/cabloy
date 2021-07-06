@@ -5,21 +5,14 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1596889047267_3245';
 
   // disabledModules
-  config.disabledModules = [
-    'test-dingtalk',
-    'test-flow',
-    'test-hostsimple',
-    'test-localeone',
-    'test-localetwo',
-    'test-party',
-    'test-partymonkey',
-    'test-wechat',
-    'test-wxwork',
-  ];
+  config.disabledModules = ['test-dingtalk', 'test-flow', 'test-hostsimple', 'test-localeone', 'test-localetwo', 'test-party', 'test-partymonkey', 'test-wechat', 'test-wxwork'];
 
   // instances
   config.instances = [
-    { subdomain: '', password: '', title: '',
+    {
+      subdomain: '',
+      password: '',
+      title: '',
       config: {
         'a-base': {
           cors: { whiteList: 'http://localhost' },
@@ -29,8 +22,7 @@ module.exports = appInfo => {
   ];
 
   // modules
-  config.modules = {
-  };
+  config.modules = {};
 
   // mysql
   config.mysql = {

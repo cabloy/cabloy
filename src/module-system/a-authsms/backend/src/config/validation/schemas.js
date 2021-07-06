@@ -65,4 +65,3 @@ module.exports = app => {
 
   return schemas;
 };
-

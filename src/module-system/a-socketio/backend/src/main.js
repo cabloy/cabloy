@@ -5,7 +5,6 @@ const IOMessageBaseFn = require('./bean/local.ioMessageBase.js');
 const IOChannelBaseFn = require('./common/ioChannelBase.js');
 
 module.exports = app => {
-
   // base
   app.meta.IOMessageBase = IOMessageBaseFn;
   app.meta.IOChannelBase = IOChannelBaseFn;
@@ -34,5 +33,4 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };

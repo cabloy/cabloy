@@ -14,7 +14,7 @@ export default {
   methods: {
     layout_get() {
       // large/medium/small
-      return (this.$view.size === 'small') ? 'mobile' : 'pc';
+      return this.$view.size === 'small' ? 'mobile' : 'pc';
     },
     async layout_prepareConfig() {
       // configFlowBase
@@ -66,17 +66,11 @@ export default {
         return (
           <f7-card>
             <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
-            <f7-card-content>
-              {this.$text('FlowOrTaskNotExists')}
-            </f7-card-content>
+            <f7-card-content>{this.$text('FlowOrTaskNotExists')}</f7-card-content>
           </f7-card>
         );
       }
-      return (
-        <div>
-          {this.layout_renderComponent()}
-        </div>
-      );
+      return <div>{this.layout_renderComponent()}</div>;
     },
   },
 };

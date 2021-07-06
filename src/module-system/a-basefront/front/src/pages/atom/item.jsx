@@ -3,7 +3,7 @@ export default {
   meta: {
     size: 'medium',
   },
-  mixins: [ itemLayoutManager ],
+  mixins: [itemLayoutManager],
   data() {
     const query = this.$f7route.query;
     const mode = query.mode;

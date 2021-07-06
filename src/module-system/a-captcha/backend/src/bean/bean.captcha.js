@@ -7,7 +7,6 @@ const utils = require('../common/utils.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Captcha extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'captcha');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -92,7 +91,6 @@ module.exports = ctx => {
       providerInstance.data = null;
       await cache.set(key, providerInstance, provider.timeout);
     }
-
   }
   return Captcha;
 };

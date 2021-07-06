@@ -1,7 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/feat/validation.test.js', () => {
-
   it('action:validation:success', async () => {
     const data = {
       groupInfo: {
@@ -18,8 +17,7 @@ describe('test/controller/test/feat/validation.test.js', () => {
       },
     };
 
-    const result = await app.httpRequest().post(mockUrl('test/feat/validation/success'))
-      .send({ data });
+    const result = await app.httpRequest().post(mockUrl('test/feat/validation/success')).send({ data });
     assert.equal(result.body.code, 0);
   });
 
@@ -39,8 +37,7 @@ describe('test/controller/test/feat/validation.test.js', () => {
       },
     };
 
-    const result = await app.httpRequest().post(mockUrl('test/feat/validation/fail'))
-      .send({ data });
+    const result = await app.httpRequest().post(mockUrl('test/feat/validation/fail')).send({ data });
     assert.equal(result.status, 500);
   });
 
@@ -55,9 +52,7 @@ describe('test/controller/test/feat/validation.test.js', () => {
       },
     };
 
-    const result = await app.httpRequest().post(mockUrl('test/feat/validation/schema'))
-      .send({ data });
+    const result = await app.httpRequest().post(mockUrl('test/feat/validation/schema')).send({ data });
     assert.equal(result.body.code, 0);
   });
-
 });

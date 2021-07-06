@@ -7,8 +7,7 @@ export default {
       type: String,
       default: 'gray',
     },
-    stats_default: {
-    },
+    stats_default: {},
   },
   data() {
     return {
@@ -45,11 +44,15 @@ export default {
       }
     },
     async stats_loadValue() {
-      const value = await this.$api.post('/a/stats/stats/get', {
-        module: this.stats_params.module,
-        name: this.stats_params.name,
-        nameSub: this.stats_params.nameSub,
-      }, { debounce: true });
+      const value = await this.$api.post(
+        '/a/stats/stats/get',
+        {
+          module: this.stats_params.module,
+          name: this.stats_params.name,
+          nameSub: this.stats_params.nameSub,
+        },
+        { debounce: true }
+      );
       if (value === undefined) {
         this.stats_setValue(this.stats_default);
       } else {
@@ -66,9 +69,7 @@ export default {
       this.stats_io = await this.$meta.util.performAction({ ctx: this, action });
       // socket io
       const subscribePath = this.stats_getSubscribePath();
-      this.stats_subscribeId = this.stats_io.subscribe(
-        subscribePath, this.stats_onMessage, this.stats_onSubscribed
-      );
+      this.stats_subscribeId = this.stats_io.subscribe(subscribePath, this.stats_onMessage, this.stats_onSubscribed);
     },
     stats_unsubscribe() {
       if (this.stats_subscribeId) {

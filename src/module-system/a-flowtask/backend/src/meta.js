@@ -3,8 +3,7 @@ module.exports = app => {
   const flowNodes = require('./config/flow/nodes.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -39,10 +38,7 @@ module.exports = app => {
             module: 'a-stats',
             name: 'deps',
           },
-          dependencies: [
-            'a-flowtask:taskClaimings',
-            'a-flowtask:taskHandlings',
-          ],
+          dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
         },
       },
     },

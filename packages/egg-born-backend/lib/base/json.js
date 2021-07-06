@@ -16,16 +16,16 @@ function __patchJSON() {
 
   // json
   const _jsonParse = JSON.parse;
-  JSON.parse = function(source, reviver) {
-    return _jsonParse(source, function(k, v) {
+  JSON.parse = function (source, reviver) {
+    return _jsonParse(source, function (k, v) {
       return __jsonReviver(k, v, reviver);
     });
   };
 
   // json5
   const _json5Parse = json5.parse;
-  json5.parse = function(source, reviver) {
-    return _json5Parse(source, function(k, v) {
+  json5.parse = function (source, reviver) {
+    return _json5Parse(source, function (k, v) {
       return __jsonReviver(k, v, reviver);
     });
   };

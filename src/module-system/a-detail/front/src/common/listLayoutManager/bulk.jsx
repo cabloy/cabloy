@@ -36,14 +36,16 @@ export default {
     },
     bulk_loadActions() {
       if (this.bulk.actions) return;
-      this.$api.post('/a/detail/detail/actionsBulk', {
-        flowTaskId: this.container.flowTaskId,
-        atomKey: { atomId: this.container.atomId },
-        detailClass: this.container.detailClass,
-        mode: this.container.mode,
-      }).then(data => {
-        this.bulk.actions = data;
-      });
+      this.$api
+        .post('/a/detail/detail/actionsBulk', {
+          flowTaskId: this.container.flowTaskId,
+          atomKey: { atomId: this.container.atomId },
+          detailClass: this.container.detailClass,
+          mode: this.container.mode,
+        })
+        .then(data => {
+          this.bulk.actions = data;
+        });
     },
     bulk_renderActionsRight() {
       const children = [];
@@ -51,7 +53,14 @@ export default {
         for (const action of this.bulk.actions) {
           const _action = this.getDetailAction(action);
           children.push(
-            <eb-link key={`actionsRight:${_action.name}`} iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.bulk_onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
+            <eb-link
+              key={`actionsRight:${_action.name}`}
+              iconMaterial={_action.icon && _action.icon.material}
+              tooltip={_action.icon && _action.titleLocale}
+              propsOnPerform={event => this.bulk_onAction(event, action)}
+            >
+              {!_action.icon && _action.titleLocale}
+            </eb-link>
           );
         }
       }

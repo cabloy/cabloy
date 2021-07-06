@@ -5,11 +5,11 @@
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.atomNameLocale || item.atomName" swipeout>
           <div slot="after">
-            <f7-badge v-if="item.resourceType">{{getTypeCategory(item)}}</f7-badge>
+            <f7-badge v-if="item.resourceType">{{ getTypeCategory(item) }}</f7-badge>
           </div>
           <eb-context-menu>
             <div slot="right">
-              <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+              <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
             </div>
           </eb-context-menu>
         </eb-list-item>
@@ -27,7 +27,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses ],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     role: {
       type: Object,
@@ -86,25 +86,22 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('resourceRight/rights', { roleId: this.role.id, page: { index } })
-        .then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
-        });
+      return this.$api.post('resourceRight/rights', { roleId: this.role.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onPerformAdd() {
       this.$view.navigate(`/a/baseadmin/resourceRight/add?roleId=${this.role.id}`);
     },
     onPerformDelete(event, item) {
-      return this.$view.dialog.confirm()
-        .then(() => {
-          return this.$api.post('resourceRight/delete', { id: item.id })
-            .then(() => {
-              this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
-              this.$meta.util.swipeoutDelete(event.target);
-              return true;
-            });
+      return this.$view.dialog.confirm().then(() => {
+        return this.$api.post('resourceRight/delete', { id: item.id }).then(() => {
+          this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
+          this.$meta.util.swipeoutDelete(event.target);
+          return true;
         });
+      });
     },
     onResourceRightAdd(data) {
       this.reload();
@@ -118,7 +115,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

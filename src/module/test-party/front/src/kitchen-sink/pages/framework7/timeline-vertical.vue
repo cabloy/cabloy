@@ -21,7 +21,10 @@
         <div class="timeline-item-date">23 <small>DEC</small></div>
         <div class="timeline-item-divider"></div>
         <div class="timeline-item-content">
-          <div class="timeline-item-inner">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+          <div class="timeline-item-inner">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+            iure, aperiam pariatur?
+          </div>
         </div>
       </div>
       <div class="timeline-item">
@@ -135,11 +138,17 @@
             <div class="timeline-item-time">12:56</div>
             <div class="timeline-item-title">Item Title</div>
             <div class="timeline-item-subtitle">Item Subtitle</div>
-            <div class="timeline-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+            <div class="timeline-item-text">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+              iure, aperiam pariatur?
+            </div>
             <div class="timeline-item-time">15:07</div>
             <div class="timeline-item-title">Item Title</div>
             <div class="timeline-item-subtitle">Item Subtitle</div>
-            <div class="timeline-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+            <div class="timeline-item-text">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+              iure, aperiam pariatur?
+            </div>
           </div>
         </div>
       </div>
@@ -151,13 +160,19 @@
             <div class="timeline-item-time">12:56</div>
             <div class="timeline-item-title">Item Title</div>
             <div class="timeline-item-subtitle">Item Subtitle</div>
-            <div class="timeline-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+            <div class="timeline-item-text">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+              iure, aperiam pariatur?
+            </div>
           </div>
           <div class="timeline-item-inner">
             <div class="timeline-item-time">15:07</div>
             <div class="timeline-item-title">Item Title</div>
             <div class="timeline-item-subtitle">Item Subtitle</div>
-            <div class="timeline-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+            <div class="timeline-item-text">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+              iure, aperiam pariatur?
+            </div>
           </div>
         </div>
       </div>
@@ -208,7 +223,10 @@
           <div class="timeline-item-date">23 <small>DEC</small></div>
           <div class="timeline-item-divider"></div>
           <div class="timeline-item-content">
-            <div class="timeline-item-inner">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis iure, aperiam pariatur?</div>
+            <div class="timeline-item-inner">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor fugiat ipsam hic porro enim, accusamus perferendis, quas commodi alias quaerat eius nemo deleniti. Odio quasi quos quis
+              iure, aperiam pariatur?
+            </div>
           </div>
         </div>
         <div class="timeline-item">
@@ -224,5 +242,4 @@
 </template>
 <script>
 export default {};
-
 </script>

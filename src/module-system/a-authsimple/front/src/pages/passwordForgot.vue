@@ -2,13 +2,13 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Forgot Password')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <template v-if="sent">{{$text('passwordResetEmailSentAlert')}}</template>
+      <template v-if="sent">{{ $text('passwordResetEmailSentAlert') }}</template>
       <template v-else>
-        <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordForgot'}" :onPerform="onPerformValidate">
+        <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'passwordForgot' }" :onPerform="onPerformValidate">
           <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Reset Password')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{ $text('Reset Password') }}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>
@@ -35,12 +35,14 @@ export default {
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/passwordForgot', {
-        data: this.data,
-      }).then(() => {
-        this.sent = true;
-        return true;
-      });
+      return this.$api
+        .post('auth/passwordForgot', {
+          data: this.data,
+        })
+        .then(() => {
+          this.sent = true;
+          return true;
+        });
     },
     onPerformOk() {
       return this.$refs.validate.perform();
@@ -50,7 +52,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

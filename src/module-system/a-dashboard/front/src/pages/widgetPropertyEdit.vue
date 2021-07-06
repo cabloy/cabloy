@@ -4,7 +4,7 @@ import widgetPropertyEditDynamic from '../components/widgetPropertyEditDynamic.v
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     widgetPropertyEditDynamic,
   },
@@ -45,15 +45,19 @@ export default {
       children.push(this._renderValueDynamic(c, propertyReal));
     }
     // ok
-    return c('eb-page', {
-      staticClass: 'widget-property-edit',
-    }, children);
+    return c(
+      'eb-page',
+      {
+        staticClass: 'widget-property-edit',
+      },
+      children
+    );
   },
   methods: {
     _getPageTitle() {
       return `${this.$text('Property')}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
-    _setPropertyValue: Vue.prototype.$meta.util.debounce(function(data) {
+    _setPropertyValue: Vue.prototype.$meta.util.debounce(function (data) {
       this.widget.__setPropertyRealValue(this.propertyName, data);
     }, 600),
     _onChangeValueType(bDynamic) {
@@ -122,17 +126,23 @@ export default {
     _renderToolbar(c) {
       const children = [];
       children.push(c('div'));
-      children.push(c('eb-button', {
-        props: {
-          text: this.$text('Add Data Source'),
-          onPerform: this._onPerformBindAdd,
+      children.push(
+        c('eb-button', {
+          props: {
+            text: this.$text('Add Data Source'),
+            onPerform: this._onPerformBindAdd,
+          },
+        })
+      );
+      return c(
+        'f7-toolbar',
+        {
+          props: {
+            bottomMd: true,
+          },
         },
-      }));
-      return c('f7-toolbar', {
-        props: {
-          bottomMd: true,
-        },
-      }, children);
+        children
+      );
     },
     _renderValueDynamicArray(c, propertyBinds) {
       const children = [];
@@ -140,44 +150,70 @@ export default {
         for (const propertyBind of propertyBinds) {
           // buttons
           const buttons = [];
-          buttons.push(c('div', {
-            attrs: {
-              color: 'orange',
-              context: propertyBind,
-              onPerform: this._onPerformBindEdit,
-            },
-          }, [ c('span', {
-            domProps: {
-              innerText: this.$text('Edit'),
-            },
-          }) ]));
-          buttons.push(c('div', {
-            attrs: {
-              color: 'red',
-              context: propertyBind,
-              onPerform: this._onPerformBindDelete,
-            },
-          }, [ c('span', {
-            domProps: {
-              innerText: this.$text('Delete'),
-            },
-          }) ]));
+          buttons.push(
+            c(
+              'div',
+              {
+                attrs: {
+                  color: 'orange',
+                  context: propertyBind,
+                  onPerform: this._onPerformBindEdit,
+                },
+              },
+              [
+                c('span', {
+                  domProps: {
+                    innerText: this.$text('Edit'),
+                  },
+                }),
+              ]
+            )
+          );
+          buttons.push(
+            c(
+              'div',
+              {
+                attrs: {
+                  color: 'red',
+                  context: propertyBind,
+                  onPerform: this._onPerformBindDelete,
+                },
+              },
+              [
+                c('span', {
+                  domProps: {
+                    innerText: this.$text('Delete'),
+                  },
+                }),
+              ]
+            )
+          );
           // right
-          const right = c('div', {
-            slot: 'right',
-          }, buttons);
-          // context menu
-          const menu = c('eb-context-menu', {}, [ right ]);
-          // list item
-          const [ title, propertyTitle ] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
-          children.push(c('eb-list-item', {
-            key: propertyBind.id,
-            props: {
-              title: propertyTitle,
-              after: title,
-              swipeout: true,
+          const right = c(
+            'div',
+            {
+              slot: 'right',
             },
-          }, [ menu ]));
+            buttons
+          );
+          // context menu
+          const menu = c('eb-context-menu', {}, [right]);
+          // list item
+          const [title, propertyTitle] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
+          children.push(
+            c(
+              'eb-list-item',
+              {
+                key: propertyBind.id,
+                props: {
+                  title: propertyTitle,
+                  after: title,
+                  swipeout: true,
+                },
+              },
+              [menu]
+            )
+          );
         }
       }
       return c('f7-list', {}, children);
@@ -204,7 +240,6 @@ export default {
       }
       // single
       return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);
-
     },
     _preparePropSchemaExtra() {
       const widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
@@ -256,44 +291,54 @@ export default {
       const children = [];
       // static
       if (!this.propertySchema.ebBindOnly) {
-        children.push(c('f7-radio', {
-          props: {
-            name: 'valueType',
-            value: 'static',
-            checked: !isDynamic,
-          },
-          on: {
-            change: () => this._onChangeValueType(false),
-          },
-        }));
-        children.push(c('span', {
-          domProps: {
-            innerText: this.$text('Static'),
-          },
-        }));
+        children.push(
+          c('f7-radio', {
+            props: {
+              name: 'valueType',
+              value: 'static',
+              checked: !isDynamic,
+            },
+            on: {
+              change: () => this._onChangeValueType(false),
+            },
+          })
+        );
+        children.push(
+          c('span', {
+            domProps: {
+              innerText: this.$text('Static'),
+            },
+          })
+        );
       }
       // dynamic
-      children.push(c('f7-radio', {
-        props: {
-          name: 'valueType',
-          value: 'dynamic',
-          checked: isDynamic,
+      children.push(
+        c('f7-radio', {
+          props: {
+            name: 'valueType',
+            value: 'dynamic',
+            checked: isDynamic,
+          },
+          on: {
+            change: () => this._onChangeValueType(true),
+          },
+        })
+      );
+      children.push(
+        c('span', {
+          domProps: {
+            innerText: this.$text('Dynamic'),
+          },
+        })
+      );
+      return c(
+        'f7-block',
+        {
+          staticClass: 'value-types',
         },
-        on: {
-          change: () => this._onChangeValueType(true),
-        },
-      }));
-      children.push(c('span', {
-        domProps: {
-          innerText: this.$text('Dynamic'),
-        },
-      }));
-      return c('f7-block', {
-        staticClass: 'value-types',
-      }, children);
+        children
+      );
     },
   },
-
 };
-
 </script>

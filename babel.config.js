@@ -8,6 +8,6 @@ module.exports = {
       },
     ],
   ],
-  plugins: [ '@babel/plugin-syntax-dynamic-import', '@babel/plugin-syntax-jsx' ],
+  plugins: ['@babel/plugin-syntax-dynamic-import', '@babel/plugin-syntax-jsx'],
   comments: false,
 };

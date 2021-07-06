@@ -1,6 +1,5 @@
 module.exports = ({ ctx /* flowInstance*/ }) => {
   class Utils {
-
     constructor({ context, contextNode, contextTask }) {
       this.context = context;
       this.contextNode = contextNode;
@@ -13,10 +12,11 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
       if (this.contextNode) globals.contextNode = this.contextNode;
       if (this.contextTask) globals.contextTask = this.contextTask;
       return await ctx.bean.flow.executeService({
-        bean, parameter, globals,
+        bean,
+        parameter,
+        globals,
       });
     }
-
   }
   return Utils;
 };

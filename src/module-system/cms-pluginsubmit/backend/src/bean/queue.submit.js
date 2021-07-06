@@ -1,6 +1,5 @@
 module.exports = app => {
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const { target, targetConfig, hostname, links } = context.data;
       if (target === 'baidu') {
@@ -26,7 +25,6 @@ module.exports = app => {
         this.ctx.logger.info(`submit baidu: ${links.join('\n')}`);
       }
     }
-
   }
 
   return Queue;

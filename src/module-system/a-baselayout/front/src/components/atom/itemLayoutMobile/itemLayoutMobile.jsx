@@ -11,8 +11,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.layoutManager.layout.instance = this;
@@ -35,11 +34,6 @@ export default {
     },
   },
   render() {
-    return (
-      <div>
-        {this._renderBlock({ blockName: 'main' })}
-      </div>
-    );
+    return <div>{this._renderBlock({ blockName: 'main' })}</div>;
   },
 };
-

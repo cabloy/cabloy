@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class SessionController extends app.Controller {
-
     async session() {
       // key1
       this.ctx.session._key1 = 1;
@@ -41,7 +39,6 @@ module.exports = app => {
         instance: this.ctx.instance,
       });
     }
-
   }
 
   return SessionController;

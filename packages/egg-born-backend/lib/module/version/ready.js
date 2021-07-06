@@ -1,6 +1,6 @@
 const constant = require('../../base/constants.js');
 
-module.exports = async function(app) {
+module.exports = async function (app) {
   // clear keys
   if (app.meta.isTest) {
     await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
@@ -69,7 +69,6 @@ module.exports = async function(app) {
     name: 'appReady',
     data: { pid: process.pid },
   });
-
 };
 
 async function _clearRedisKeys(redis, pattern) {

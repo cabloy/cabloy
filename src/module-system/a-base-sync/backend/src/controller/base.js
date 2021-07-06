@@ -2,9 +2,7 @@ const require3 = require('require3');
 const qr = require3('qr-image');
 
 module.exports = app => {
-
   class BaseController extends app.Controller {
-
     modules() {
       const res = this.ctx.service.base.modules();
       this.ctx.success(res);
@@ -48,7 +46,6 @@ module.exports = app => {
       this.ctx.type = 'image/png';
       this.ctx.body = img;
     }
-
   }
 
   return BaseController;

@@ -46,7 +46,7 @@ function installFactory(_Vue) {
   const Vue = _Vue;
   const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
-    mixins: [ ebLayoutButtonBase ],
+    mixins: [ebLayoutButtonBase],
     data() {
       return {
         options: null,
@@ -134,7 +134,5 @@ function installFactory(_Vue) {
     },
   };
 }
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

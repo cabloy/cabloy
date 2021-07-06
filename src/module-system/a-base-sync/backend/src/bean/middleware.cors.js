@@ -25,7 +25,7 @@ module.exports = ctx => {
       if (!origin || origin === 'null') origin = 'null';
 
       const host = ctx.host;
-      if (origin !== 'null' && (new URL(origin)).host === host) {
+      if (origin !== 'null' && new URL(origin).host === host) {
         return await next();
       }
 
@@ -34,13 +34,15 @@ module.exports = ctx => {
 
       // origin
       // if security plugin enabled, and origin config is not provided, will only allow safe domains support CORS.
-      optionsCors.origin = optionsCors.origin || function corsOrigin(ctx) {
-      // origin is {protocol}{hostname}{port}...
-        if (ctx.app.meta.util.isSafeDomain(ctx, origin)) {
-          return origin;
-        }
-        return '';
-      };
+      optionsCors.origin =
+        optionsCors.origin ||
+        function corsOrigin(ctx) {
+          // origin is {protocol}{hostname}{port}...
+          if (ctx.app.meta.util.isSafeDomain(ctx, origin)) {
+            return origin;
+          }
+          return '';
+        };
 
       // cors
       const fn = koaCors(optionsCors);

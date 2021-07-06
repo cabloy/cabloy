@@ -21,8 +21,7 @@ export default {
             ],
           },
           layouts: {
-            list: {
-            },
+            list: {},
             table: {
               blocks: {
                 items: {

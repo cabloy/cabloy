@@ -1,10 +1,9 @@
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;
 
   // all middlewares
-  const ebMiddlewaresAll = loader.app.meta.middlewares = [];
+  const ebMiddlewaresAll = (loader.app.meta.middlewares = []);
   const ebMiddlewares = {};
 
   // load middlewares all
@@ -13,7 +12,7 @@ module.exports = function(loader) {
   // load middlewares
   const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, ebMiddlewaresAll);
 
-  return [ ebMiddlewares, ebMiddlewaresGlobal ];
+  return [ebMiddlewares, ebMiddlewaresGlobal];
 };
 
 function loadMiddlewares(ebMiddlewares, ebMiddlewaresAll) {

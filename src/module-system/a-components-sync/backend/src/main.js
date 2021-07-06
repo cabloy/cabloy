@@ -16,5 +16,4 @@ module.exports = app => {
     locales,
     errors,
   };
-
 };

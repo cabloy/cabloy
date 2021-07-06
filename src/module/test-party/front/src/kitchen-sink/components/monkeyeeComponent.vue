@@ -1,6 +1,6 @@
 <template>
   <f7-block strong>
-    <div class="alert-info">{{$text('MonkeyeeTestTip2')}}</div>
+    <div class="alert-info">{{ $text('MonkeyeeTestTip2') }}</div>
   </f7-block>
 </template>
 <script>
@@ -10,7 +10,5 @@ export default {
   },
   created() {},
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

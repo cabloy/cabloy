@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Message extends app.Service {
-
     async offset({ messageClass, options, user }) {
       return await this.ctx.bean.io.message.offset({ messageClass, options, user });
     }
@@ -21,7 +19,6 @@ module.exports = app => {
     async delete({ messageIds, user }) {
       return await this.ctx.bean.io.message.delete({ messageIds, user });
     }
-
   }
 
   return Message;

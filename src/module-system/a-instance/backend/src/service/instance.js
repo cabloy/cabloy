@@ -4,9 +4,7 @@ const extend = require3('extend2');
 const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 
 module.exports = app => {
-
   class Instance extends app.Service {
-
     async item() {
       return await this.ctx.model.instance.get({ id: this.ctx.instance.id });
     }
@@ -54,7 +52,6 @@ module.exports = app => {
       }
       return config;
     }
-
   }
 
   return Instance;

@@ -7,12 +7,11 @@ const __columns = {};
 
 module.exports = app => {
   class Model extends app.BaseContextClass {
-
     constructor(ctx, { table, options = {} }) {
       super(ctx);
       this.table = table;
-      this.disableDeleted = (options.disableDeleted === undefined) ? app.config.model.disableDeleted : options.disableDeleted;
-      this.disableInstance = (options.disableInstance === undefined) ? app.config.model.disableInstance : options.disableInstance;
+      this.disableDeleted = options.disableDeleted === undefined ? app.config.model.disableDeleted : options.disableDeleted;
+      this.disableInstance = options.disableInstance === undefined ? app.config.model.disableInstance : options.disableInstance;
     }
 
     async columns() {
@@ -44,7 +43,7 @@ module.exports = app => {
       if ((!this.table || !this.disableInstance) && row.iid === undefined) {
         row.iid = this.ctx.instance.id;
       }
-      if ((this.table && !this.disableDeleted) && row.deleted === undefined) {
+      if (this.table && !this.disableDeleted && row.deleted === undefined) {
         row.deleted = 0;
       }
     }
@@ -55,26 +54,13 @@ module.exports = app => {
         this._rowCheck(row);
       }
     }
-
   }
 
-  [
-    'literals',
-    'escape',
-    'escapeId',
-    'format',
-    'query',
-    'queryOne',
-    '_query',
-    '_where',
-    '_selectColumns',
-    '_orders',
-    '_limit',
-  ].forEach(method => {
+  ['literals', 'escape', 'escapeId', 'format', 'query', 'queryOne', '_query', '_where', '_selectColumns', '_orders', '_limit'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
         if (is.function(this.ctx.db[method])) {
-          return function() {
+          return function () {
             return this.ctx.db[method].apply(this.ctx.db, arguments);
           };
         }
@@ -84,13 +70,11 @@ module.exports = app => {
     });
   });
 
-  [
-    'insert',
-  ].forEach(method => {
+  ['insert'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           this._insertRowsCheck(args[1]);
@@ -100,13 +84,11 @@ module.exports = app => {
     });
   });
 
-  [
-    'update',
-  ].forEach(method => {
+  ['update'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           if (args[2] && args[2].where) {
@@ -118,20 +100,17 @@ module.exports = app => {
     });
   });
 
-  [
-    'delete',
-  ].forEach(method => {
+  ['delete'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
           this._rowCheck(args[1]);
           if (this.table && !this.disableDeleted) {
-            const sql = this.ctx.db.format('UPDATE ?? SET deleted=1 ', [ args[0] ]) +
-              this.ctx.db._where(args[1]);
+            const sql = this.ctx.db.format('UPDATE ?? SET deleted=1 ', [args[0]]) + this.ctx.db._where(args[1]);
             return this.ctx.db.query(sql);
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
@@ -140,13 +119,11 @@ module.exports = app => {
     });
   });
 
-  [
-    'count',
-  ].forEach(method => {
+  ['count'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
@@ -157,13 +134,11 @@ module.exports = app => {
     });
   });
 
-  [
-    'get',
-  ].forEach(method => {
+  ['get'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
@@ -177,13 +152,11 @@ module.exports = app => {
     });
   });
 
-  [
-    'select',
-  ].forEach(method => {
+  ['select'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
-          const args = [ ];
+        return function () {
+          const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
@@ -195,12 +168,10 @@ module.exports = app => {
     });
   });
 
-  [
-    '_format',
-  ].forEach(method => {
+  ['_format'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function() {
+        return function () {
           return _formatValue(this.ctx.db, arguments[0]);
         };
       },
@@ -208,7 +179,7 @@ module.exports = app => {
   });
 
   // replace _where
-  RDSClient.prototype._where = function(where) {
+  RDSClient.prototype._where = function (where) {
     const wheres = _formatWhere(this, where);
     if (!wheres) return '';
     return ` WHERE (${wheres})`;
@@ -248,21 +219,21 @@ function _formatWhere(db, where) {
     }
     // check value
     if (Array.isArray(value)) {
-      wheres.push(db.format('?? IN (?)', [ key, value ]));
+      wheres.push(db.format('?? IN (?)', [key, value]));
     } else if (value === null || value === undefined) {
-      wheres.push(db.format('?? IS ?', [ key, value ]));
+      wheres.push(db.format('?? IS ?', [key, value]));
     } else if (value && !(value instanceof Date) && typeof value === 'object') {
       // op
       let op = value.op || '='; // default is =
       op = op.indexOf('like') > -1 ? 'LIKE' : op;
       // op: notNull
       if (op === 'notNull') {
-        wheres.push(db.format('?? IS NOT null', [ key ]));
+        wheres.push(db.format('?? IS NOT null', [key]));
       } else {
         wheres.push(`${db.format('??', key)} ${_safeOp(op)} ${_formatValue(db, value)}`);
       }
     } else {
-      wheres.push(db.format('?? = ?', [ key, value ]));
+      wheres.push(db.format('?? = ?', [key, value]));
     }
   }
   if (wheres.length === 0) return '';
@@ -270,7 +241,7 @@ function _formatWhere(db, where) {
 }
 
 function _formatValue(db, value) {
-  if (typeof value !== 'object' || (value instanceof Date)) return db.format('?', value);
+  if (typeof value !== 'object' || value instanceof Date) return db.format('?', value);
   let val;
   if (value.type === 'Date') {
     val = db.format('?', moment(value.val).toDate());
@@ -285,7 +256,7 @@ function _formatValue(db, value) {
   // in
   if (value.op === 'in') {
     const arr = typeof value.val === 'string' ? value.val.split(',') : value.val;
-    return `(${db.format('?', [ arr ])})`;
+    return `(${db.format('?', [arr])})`;
   }
   // others
   return val;
@@ -294,4 +265,3 @@ function _formatValue(db, value) {
 function _safeOp(op) {
   return op.replace(/[\\\.*#%'"`;, ]/g, '');
 }
-

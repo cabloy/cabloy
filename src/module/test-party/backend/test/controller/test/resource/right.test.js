@@ -1,7 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/function/right.test.js', () => {
-
   it('action:checkRightResourceUser', async () => {
     app.mockSession({});
 
@@ -11,12 +10,15 @@ describe('test/controller/test/function/right.test.js', () => {
     ];
     for (const [userName, right] of checkRightResources) {
       // login
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        data: {
-          auth: userName,
-          password: '123456',
-        },
-      });
+      await app
+        .httpRequest()
+        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .send({
+          data: {
+            auth: userName,
+            password: '123456',
+          },
+        });
       // checkRightResourceUser
       const result = await app.httpRequest().post(mockUrl('test/resource/checkRightResourceUser'));
       if (right) {

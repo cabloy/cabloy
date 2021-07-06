@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class RedisDb extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.redis`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -33,16 +32,10 @@ module.exports = ctx => {
       const key = this._getKey(name);
       let valuePrev;
       if (timeout) {
-        const res = await redis.multi()
-          .get(key)
-          .set(key, JSON.stringify(value), 'PX', timeout)
-          .exec();
+        const res = await redis.multi().get(key).set(key, JSON.stringify(value), 'PX', timeout).exec();
         valuePrev = res[0][1];
       } else {
-        const res = await redis.multi()
-          .get(key)
-          .set(key, JSON.stringify(value))
-          .exec();
+        const res = await redis.multi().get(key).set(key, JSON.stringify(value)).exec();
         valuePrev = res[0][1];
       }
       return valuePrev ? JSON.parse(valuePrev) : undefined;
@@ -51,7 +44,7 @@ module.exports = ctx => {
     async has(name) {
       const redis = ctx.app.redis.get('cache');
       const key = this._getKey(name);
-      return await redis.exists(key) > 0;
+      return (await redis.exists(key)) > 0;
     }
 
     async remove(name) {
@@ -59,7 +52,6 @@ module.exports = ctx => {
       const key = this._getKey(name);
       await redis.del(key);
     }
-
   }
 
   return RedisDb;

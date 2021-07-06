@@ -8,7 +8,7 @@ import Vue from 'vue';
 import users from '../../components/user/select.vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     users,
   },
@@ -33,5 +33,4 @@ export default {
     },
   },
 };
-
 </script>

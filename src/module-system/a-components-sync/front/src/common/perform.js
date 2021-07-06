@@ -11,8 +11,7 @@ export default {
     onPerform: {
       type: Function,
     },
-    context: {
-    },
+    context: {},
   },
   data() {
     return {
@@ -27,16 +26,14 @@ export default {
 
       // only preventDefault for link
       //  not check isLink
-      if ((this.link || this.link === undefined && isLink) && event) {
+      if ((this.link || (this.link === undefined && isLink)) && event) {
         event.preventDefault();
         event.stopPropagation();
       }
 
       // Prevent Router
       if (event && event.preventF7Router) return;
-      if ($clickedLinkEl &&
-        ($clickedLinkEl.hasClass('prevent-router') || $clickedLinkEl.hasClass('router-prevent'))
-      ) return;
+      if ($clickedLinkEl && ($clickedLinkEl.hasClass('prevent-router') || $clickedLinkEl.hasClass('router-prevent'))) return;
 
       // only once
       if (this._preloader) return;
@@ -55,15 +52,17 @@ export default {
         const res = this.onPerform(event, this.context);
         if (this.$meta.util.isPromise(res)) {
           this._showPreloader();
-          res.then(res2 => {
-            this._hidePreloader();
-            this._handleResult(res2);
-          }).catch(err => {
-            this._hidePreloader();
-            if (err && err.code !== 401 && err.message) {
-              this.$view.toast.show({ text: trimMessage(this, err.message) });
-            }
-          });
+          res
+            .then(res2 => {
+              this._hidePreloader();
+              this._handleResult(res2);
+            })
+            .catch(err => {
+              this._hidePreloader();
+              if (err && err.code !== 401 && err.message) {
+                this.$view.toast.show({ text: trimMessage(this, err.message) });
+              }
+            });
         } else {
           this._handleResult(res);
         }
@@ -71,7 +70,6 @@ export default {
         console.error(err);
         this.$view.toast.show({ text: err.message });
       }
-
     },
     _handleResult(res) {
       if (res === true) {

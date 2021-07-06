@@ -1,5 +1,4 @@
 module.exports = app => {
-  const controllers = {
-  };
+  const controllers = {};
   return controllers;
 };

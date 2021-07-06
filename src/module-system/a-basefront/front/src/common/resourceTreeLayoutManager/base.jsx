@@ -17,8 +17,7 @@ export default {
       return this.base.ready && this.actionsAll;
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     async base_load() {
       // layoutConfig

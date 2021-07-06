@@ -1,6 +1,6 @@
 import patchRouter from './patch.js';
 
-export default function(Vue) {
+export default function (Vue) {
   // router
   function patch(router, root) {
     // routes

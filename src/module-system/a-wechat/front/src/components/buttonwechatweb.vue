@@ -1,5 +1,5 @@
 <template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/icon64_wx_logo.png"></eb-button>
+  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/icon64_wx_logo.png" /></eb-button>
 </template>
 <script>
 const urlLogin = '/api/a/wechat/passport/a-wechat/wechatweb';
@@ -28,7 +28,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

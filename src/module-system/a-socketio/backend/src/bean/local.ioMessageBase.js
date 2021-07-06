@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class IOMessageBase {
-
     async onSessionId({ /* path,*/ message /* options*/ }) {
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
@@ -58,7 +57,6 @@ module.exports = ctx => {
       if (userIdFrom === userIdTo) return userIdFrom;
       return `${userIdFrom > userIdTo ? userIdFrom : userIdTo}:${userIdFrom < userIdTo ? userIdFrom : userIdTo}`;
     }
-
   }
   return IOMessageBase;
 };

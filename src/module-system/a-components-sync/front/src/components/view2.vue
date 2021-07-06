@@ -56,11 +56,17 @@ export default {
     const el = self.$refs.el;
     self.$f7ready(f7Instance => {
       if (self.props.init) return;
-      self.routerData.instance = f7Instance.views.create(el, Object.assign({
-        on: {
-          init: self.onViewInit,
-        },
-      }, noUndefinedProps(self.$options.propsData || {})));
+      self.routerData.instance = f7Instance.views.create(
+        el,
+        Object.assign(
+          {
+            on: {
+              init: self.onViewInit,
+            },
+          },
+          noUndefinedProps(self.$options.propsData || {})
+        )
+      );
       self.f7View = self.routerData.instance;
       self.f7View.on('swipebackMove', self.onSwipeBackMove);
       self.f7View.on('swipebackBeforeChange', self.onSwipeBackBeforeChange);
@@ -88,7 +94,5 @@ function noUndefinedProps(obj) {
   });
   return o;
 }
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

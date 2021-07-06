@@ -17,7 +17,6 @@ module.exports = ctx => {
       // also true
       return true;
     }
-
   }
 
   return FlowNode;

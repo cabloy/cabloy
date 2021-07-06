@@ -6,7 +6,6 @@ module.exports = ebErrors => {
 
     // data,code/message,args
     success(module, data, code, ...args) {
-
       const body = this.parseSuccess(module, code, ...args);
 
       this.ctx.response.status = 200;
@@ -15,7 +14,6 @@ module.exports = ebErrors => {
     }
     // code/message,args
     fail(module, code, ...args) {
-
       const body = this.parseFail(module, code, ...args);
 
       this.ctx.response.status = 200;

@@ -1,6 +1,5 @@
 module.exports = app => {
   class AuthMiniController extends app.Controller {
-
     async login() {
       const res = await this.service.authMini.login({
         scene: this.ctx.request.body.scene,
@@ -8,7 +7,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AuthMiniController;
 };

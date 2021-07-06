@@ -12,7 +12,6 @@ const semverDiff = require('semver-diff');
 const Command = require('egg-bin').Command;
 
 class TestUpdateCommand extends Command {
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin test-update';
@@ -20,7 +19,7 @@ class TestUpdateCommand extends Command {
     this.httpClient = urllib.create();
   }
 
-  * run({ cwd, argv }) {
+  *run({ cwd, argv }) {
     this.log('update test modules at %s', cwd);
 
     // detect registry url
@@ -35,14 +34,13 @@ class TestUpdateCommand extends Command {
     } else {
       yield this.__updateCabloyModules({ projectPath });
     }
-
   }
 
   description() {
     return 'test update';
   }
 
-  * __updateCabloyModules({ projectPath }) {
+  *__updateCabloyModules({ projectPath }) {
     const prefix = `${projectPath}/src/module/`;
     const files = glob.sync(`${prefix}test-*`);
     for (const file of files) {
@@ -51,7 +49,7 @@ class TestUpdateCommand extends Command {
     }
   }
 
-  * __updateCabloyModule({ projectPath, moduleName }) {
+  *__updateCabloyModule({ projectPath, moduleName }) {
     try {
       const moduleDestDir = path.join(projectPath, 'src/module', moduleName);
       // check
@@ -73,7 +71,7 @@ class TestUpdateCommand extends Command {
     }
   }
 
-  * __checkCabloyModule({ moduleDestDir, moduleName }) {
+  *__checkCabloyModule({ moduleDestDir, moduleName }) {
     const pkgName = `egg-born-module-${moduleName}`;
     const result = yield this.getPackageInfo(pkgName, false);
     const downloadUrl = result.dist.tarball;
@@ -86,7 +84,7 @@ class TestUpdateCommand extends Command {
     return downloadUrl;
   }
 
-  * __downloadCabloyModule({ downloadUrl, moduleName }) {
+  *__downloadCabloyModule({ downloadUrl, moduleName }) {
     const pkgName = `egg-born-module-${moduleName}`;
 
     this.log(`downloading ${downloadUrl}`);
@@ -107,7 +105,7 @@ class TestUpdateCommand extends Command {
    * @param {Object} [options] - request options
    * @return {Object} response data
    */
-  * curl(url, options) {
+  *curl(url, options) {
     return yield this.httpClient.request(url, options);
   }
 
@@ -118,7 +116,7 @@ class TestUpdateCommand extends Command {
    * @param {Boolean} [withFallback] - when http request fail, whethe to require local
    * @return {Object} pkgInfo
    */
-  * getPackageInfo(pkgName, withFallback) {
+  *getPackageInfo(pkgName, withFallback) {
     this.log(`fetching npm info of ${pkgName}`);
     try {
       const result = yield this.curl(`${this.registryUrl}/${pkgName}/latest`, {
@@ -135,7 +133,6 @@ class TestUpdateCommand extends Command {
         return require(`${pkgName}/package.json`);
       }
       throw err;
-
     }
   }
 
@@ -162,7 +159,6 @@ class TestUpdateCommand extends Command {
         }
         url = url.replace(/\/$/, '');
         return url;
-
       }
     }
   }
@@ -174,7 +170,6 @@ class TestUpdateCommand extends Command {
     const args = Array.prototype.slice.call(arguments);
     console.log.apply(console, args);
   }
-
 }
 
 module.exports = TestUpdateCommand;

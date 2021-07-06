@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class JSSDK extends app.Service {
-
     async jsconfig({ url }) {
       // config
       const config = this.ctx.config.account.dingtalk;
@@ -14,9 +12,7 @@ module.exports = app => {
         type: configAppSelfBuilt.jssdk.type,
         jsApiList: configAppSelfBuilt.jssdk.jsApiList,
       };
-
     }
-
   }
 
   return JSSDK;

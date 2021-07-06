@@ -10,7 +10,7 @@ export default {
   },
   name: 'eb-list-item',
   extends: f7ListItem,
-  mixins: [ perform, link ],
+  mixins: [perform, link],
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
     if (this.externalLink) {
@@ -47,7 +47,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

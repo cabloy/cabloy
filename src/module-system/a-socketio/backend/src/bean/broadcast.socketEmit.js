@@ -1,7 +1,6 @@
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       if (app.meta.workerId === data.workerId) {
@@ -15,7 +14,6 @@ module.exports = app => {
         }
       }
     }
-
   }
 
   return Broadcast;

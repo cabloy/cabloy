@@ -1,8 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('HeartForAtom')" eb-back-link="Back"></eb-navbar>
-    <f7-block>
-    </f7-block>
+    <f7-block> </f7-block>
   </eb-page>
 </template>
 <script>
@@ -14,15 +13,17 @@ export default {
     };
   },
   created() {
-    this.$api.post('/a/base/comment/heart', {
-      key: { atomId: this.atomId },
-      atom: { star: 1 },
-      data: { commentId: this.commentId, heart: 1 },
-    }).then(() => {
-      this.$view.dialog.alert(this.$text('Hearted')).then(() => {
-        this.openAtom();
+    this.$api
+      .post('/a/base/comment/heart', {
+        key: { atomId: this.atomId },
+        atom: { star: 1 },
+        data: { commentId: this.commentId, heart: 1 },
+      })
+      .then(() => {
+        this.$view.dialog.alert(this.$text('Hearted')).then(() => {
+          this.openAtom();
+        });
       });
-    });
   },
   methods: {
     openAtom() {
@@ -30,6 +31,4 @@ export default {
     },
   },
 };
-
 </script>
-</style>

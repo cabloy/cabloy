@@ -1,5 +1,4 @@
-export default function(Vue) {
-
+export default function (Vue) {
   function _setUser(state, user) {
     state.user = Object.assign({}, state.user, user);
     // agent rather then op

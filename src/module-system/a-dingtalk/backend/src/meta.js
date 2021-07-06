@@ -7,8 +7,7 @@ module.exports = app => {
   const socketioChannelApp = require('./config/socketio/channelApp.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {
@@ -27,8 +26,7 @@ module.exports = app => {
       },
     },
     event: {
-      declarations: {
-      },
+      declarations: {},
       implementations: {
         'a-base:loginInfo': 'loginInfo',
         'a-base:accountMigration': 'accountMigration',

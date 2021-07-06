@@ -13,7 +13,17 @@
     </f7-messagebar>
     <f7-messages ref="messages">
       <f7-messages-title><b>Sunday, Feb 9,</b> 12:58</f7-messages-title>
-      <f7-message v-for="(message, index) in messagesData" :key="index" :type="message.type" :image="message.image" :name="message.name" :avatar="message.avatar" :first="isFirstMessage(message, index)" :last="isLastMessage(message, index)" :tail="isTailMessage(message, index)">
+      <f7-message
+        v-for="(message, index) in messagesData"
+        :key="index"
+        :type="message.type"
+        :image="message.image"
+        :name="message.name"
+        :avatar="message.avatar"
+        :first="isFirstMessage(message, index)"
+        :last="isLastMessage(message, index)"
+        :tail="isTailMessage(message, index)"
+      >
         <span slot="text" v-if="message.text" v-html="message.text"></span>
       </f7-message>
       <f7-message v-if="typingMessage" type="received" :typing="true" :first="true" :last="true" :tail="true" :header="`${typingMessage.name} is typing`" :avatar="typingMessage.avatar"></f7-message>
@@ -28,57 +38,57 @@ export default {
       sheetVisible: false,
       typingMessage: null,
       messageText: '',
-      messagesData: [{
-        type: 'sent',
-        text: 'Hi, Kate',
-      },
-      {
-        type: 'sent',
-        text: 'How are you?',
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Hi, I am good!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        type: 'received',
-        text: 'Hi there, I am also fine, thanks! And how are you?',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
-      {
-        type: 'sent',
-        text: 'Hey, Blue Ninja! Glad to see you ;)',
-      },
-      {
-        type: 'sent',
-        text: 'Hey, look, cutest kitten ever!',
-      },
-      {
-        type: 'sent',
-        image: 'https://cdn.framework7.io/placeholder/cats-200x260-4.jpg',
-
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Nice!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Like it very much!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        type: 'received',
-        text: 'Awesome!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
+      messagesData: [
+        {
+          type: 'sent',
+          text: 'Hi, Kate',
+        },
+        {
+          type: 'sent',
+          text: 'How are you?',
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Hi, I am good!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          type: 'received',
+          text: 'Hi there, I am also fine, thanks! And how are you?',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
+        {
+          type: 'sent',
+          text: 'Hey, Blue Ninja! Glad to see you ;)',
+        },
+        {
+          type: 'sent',
+          text: 'Hey, look, cutest kitten ever!',
+        },
+        {
+          type: 'sent',
+          image: 'https://cdn.framework7.io/placeholder/cats-200x260-4.jpg',
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Nice!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Like it very much!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          type: 'received',
+          text: 'Awesome!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
       ],
       images: [
         'https://cdn.framework7.io/placeholder/cats-300x300-1.jpg',
@@ -92,14 +102,15 @@ export default {
         'https://cdn.framework7.io/placeholder/cats-400x300-9.jpg',
         'https://cdn.framework7.io/placeholder/cats-300x150-10.jpg',
       ],
-      people: [{
-        name: 'Kate Johnson',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
+      people: [
+        {
+          name: 'Kate Johnson',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
       ],
       answers: [
         'Yes!',
@@ -227,5 +238,4 @@ export default {
     },
   },
 };
-
 </script>

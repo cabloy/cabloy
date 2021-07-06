@@ -20,29 +20,35 @@ export default {
         'data-zindex': view.zIndex,
         'data-size': this.size,
       };
-      children.push(c('eb-view', {
-        ref: view.id,
-        id: view.id,
-        key: view.id,
-        staticClass: `eb-layout-view ${this.layout._combineViewSizeClass()}`,
-        style: {
-          zIndex: view.zIndex + '',
-        },
-        attrs: _viewAttrs,
-        props: {
-          size: this.size,
-          sizeExtent: this.sizeExtent,
-        },
-        on: {
-          'view:ready': view => {
-            this.onViewReady(view);
+      children.push(
+        c('eb-view', {
+          ref: view.id,
+          id: view.id,
+          key: view.id,
+          staticClass: `eb-layout-view ${this.layout._combineViewSizeClass()}`,
+          style: {
+            zIndex: view.zIndex + '',
           },
-        },
-      }));
+          attrs: _viewAttrs,
+          props: {
+            size: this.size,
+            sizeExtent: this.sizeExtent,
+          },
+          on: {
+            'view:ready': view => {
+              this.onViewReady(view);
+            },
+          },
+        })
+      );
     }
-    return c('div', {
-      staticClass: 'eb-layout-group',
-    }, children);
+    return c(
+      'div',
+      {
+        staticClass: 'eb-layout-group',
+      },
+      children
+    );
   },
   data() {
     return {
@@ -113,7 +119,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

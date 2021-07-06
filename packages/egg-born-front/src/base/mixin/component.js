@@ -1,7 +1,6 @@
-export default function() {
-
+export default function () {
   // beforeCreate
-  const beforeCreate = function(ctx) {
+  const beforeCreate = function (ctx) {
     Object.defineProperty(ctx, '$view', {
       get() {
         return ctx.$f7router && ctx.$f7router.view.$el[0].__vue__;

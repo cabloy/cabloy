@@ -2,16 +2,19 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Layout(Adaptive)')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>
-      <span>{{$text('Current View Size')}}</span>:&nbsp;<span>{{currentViewSize}}</span>
+      <span>{{ $text('Current View Size') }}</span
+      >:&nbsp;<span>{{ currentViewSize }}</span>
     </f7-block-title>
     <f7-block>
-      <template v-if="currentViewSize==='small'">some content for small page</template>
-      <template v-if="currentViewSize==='medium'">some content for medium page</template>
-      <template v-if="currentViewSize==='large'">some content for large page</template>
+      <template v-if="currentViewSize === 'small'">some content for small page</template>
+      <template v-if="currentViewSize === 'medium'">some content for medium page</template>
+      <template v-if="currentViewSize === 'large'">some content for large page</template>
     </f7-block>
     <f7-block-title>Control content's style by class name</f7-block-title>
     <f7-block>
-      <div class="adaptive-demo"><span>adaptive content's style</span>&nbsp;-&nbsp;<span>{{currentViewSize}}</span></div>
+      <div class="adaptive-demo">
+        <span>adaptive content's style</span>&nbsp;-&nbsp;<span>{{ currentViewSize }}</span>
+      </div>
     </f7-block>
   </eb-page>
 </template>
@@ -41,7 +44,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .eb-view-size-small {
@@ -61,5 +63,4 @@ export default {
     font-size: x-large;
   }
 }
-
 </style>

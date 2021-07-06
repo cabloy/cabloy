@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class AllController extends app.Controller {
-
     async all() {
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
@@ -17,9 +15,12 @@ module.exports = app => {
       // Tom list all
       let list = await this.ctx.bean.resource.select({
         options: {
-          where: { 'a.atomStaticKey': {
-            op: 'likeRight', val: 'test-party:',
-          } },
+          where: {
+            'a.atomStaticKey': {
+              op: 'likeRight',
+              val: 'test-party:',
+            },
+          },
           orders: [['a.id', 'asc']],
           page: { index: 0, size: 0 },
           locale: 'en-us',
@@ -50,9 +51,7 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return AllController;
 };
-

@@ -2,7 +2,7 @@ import mparse from 'egg-born-mparse';
 import modulesRepo from '../../__runtime/modules.js';
 import nprogressFn from './nprogress.js';
 
-export default function(Vue) {
+export default function (Vue) {
   const loadingQueue = {
     _queue: {},
     push(relativeName, cb) {
@@ -117,18 +117,21 @@ export default function(Vue) {
       const moduleRepo = modulesRepo.modules[relativeName];
       if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
       nprogress.start();
-      moduleRepo.instance().then(instance => {
-        nprogress.done();
-        if (!instance || !instance.default || !instance.default.install) {
-          instance = window[relativeName];
-        }
-        this.install(instance, moduleRepo.info, module => {
-          cb(module);
+      moduleRepo
+        .instance()
+        .then(instance => {
+          nprogress.done();
+          if (!instance || !instance.default || !instance.default.install) {
+            instance = window[relativeName];
+          }
+          this.install(instance, moduleRepo.info, module => {
+            cb(module);
+          });
+        })
+        .catch(err => {
+          nprogress.done();
+          throw err;
         });
-      }).catch(err => {
-        nprogress.done();
-        throw err;
-      });
     },
     requireAllMonkeys() {
       for (const relativeName in modulesRepo.modulesMonkey) {
@@ -174,7 +177,7 @@ export default function(Vue) {
         }
         // meta.auth
         if (route.meta && route.meta.auth) {
-          route.async = function(routeTo, routeFrom, resolve, reject) {
+          route.async = function (routeTo, routeFrom, resolve, reject) {
             if (Vue.prototype.$meta.store.state.auth.loggedIn) {
               const _component = {};
               if (route.meta.modal) {
@@ -187,7 +190,8 @@ export default function(Vue) {
               // login
               Vue.prototype.$meta.vueLayout.openLogin({
                 view: this.view,
-                url: routeTo });
+                url: routeTo,
+              });
               reject();
             }
           };
@@ -223,7 +227,7 @@ export default function(Vue) {
         });
       }
       module.options.store.namespaced = true;
-      Vue.prototype.$meta.store.registerModule([ module.info.pid, module.info.name ], module.options.store);
+      Vue.prototype.$meta.store.registerModule([module.info.pid, module.info.name], module.options.store);
     },
     _registerConfig(module) {
       if (module.name === 'main') {
@@ -239,14 +243,16 @@ export default function(Vue) {
           Vue.prototype.$meta.axios.defaults.withCredentials = true;
         }
       } else {
-        Vue.prototype.$meta._configOriginal.modules[module.info.relativeName] =
-        Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta._configOriginal.modules[module.info.relativeName]);
+        Vue.prototype.$meta._configOriginal.modules[module.info.relativeName] = Vue.prototype.$utils.extend(
+          {},
+          module.options.config,
+          Vue.prototype.$meta._configOriginal.modules[module.info.relativeName]
+        );
       }
     },
     _registerLocales(module) {
       Object.keys(module.options.locales).forEach(key => {
-        Vue.prototype.$meta.locales[key] =
-         Vue.prototype.$utils.extend({}, module.options.locales[key], Vue.prototype.$meta.locales[key]);
+        Vue.prototype.$meta.locales[key] = Vue.prototype.$utils.extend({}, module.options.locales[key], Vue.prototype.$meta.locales[key]);
       });
     },
   };

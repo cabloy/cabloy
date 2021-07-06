@@ -46,7 +46,12 @@
     <f7-block strong class="no-padding-horizontal">
       <f7-treeview>
         <f7-treeview-item label="images" icon-f7="folder_fill">
-          <f7-checkbox slot="content-start" :checked="Object.values(checkboxes.images).indexOf(false) < 0" :indeterminate="Object.values(checkboxes.images).indexOf(false) >= 0 && Object.values(checkboxes.images).indexOf(true) >= 0" @change="(e) => Object.keys(checkboxes.images).forEach(k => checkboxes.images[k] = e.target.checked)" />
+          <f7-checkbox
+            slot="content-start"
+            :checked="Object.values(checkboxes.images).indexOf(false) < 0"
+            :indeterminate="Object.values(checkboxes.images).indexOf(false) >= 0 && Object.values(checkboxes.images).indexOf(true) >= 0"
+            @change="e => Object.keys(checkboxes.images).forEach(k => (checkboxes.images[k] = e.target.checked))"
+          />
           <f7-treeview-item label="avatar.png" icon-f7="images_fill">
             <f7-checkbox slot="content-start" :checked="checkboxes.images['avatar.png']" @change="checkboxes.images['avatar.png'] = $event.target.checked" />
           </f7-treeview-item>
@@ -55,7 +60,12 @@
           </f7-treeview-item>
         </f7-treeview-item>
         <f7-treeview-item label="documents" icon-f7="folder_fill">
-          <f7-checkbox slot="content-start" :checked="Object.values(checkboxes.documents).indexOf(false) < 0" :indeterminate="Object.values(checkboxes.documents).indexOf(false) >= 0 && Object.values(checkboxes.documents).indexOf(true) >= 0" @change="(e) => Object.keys(checkboxes.documents).forEach(k => checkboxes.documents[k] = e.target.checked)" />
+          <f7-checkbox
+            slot="content-start"
+            :checked="Object.values(checkboxes.documents).indexOf(false) < 0"
+            :indeterminate="Object.values(checkboxes.documents).indexOf(false) >= 0 && Object.values(checkboxes.documents).indexOf(true) >= 0"
+            @change="e => Object.keys(checkboxes.documents).forEach(k => (checkboxes.documents[k] = e.target.checked))"
+          />
           <f7-treeview-item label="cv.docx" icon-f7="document_text_fill">
             <f7-checkbox slot="content-start" :checked="checkboxes.documents['cv.docx']" @change="checkboxes.documents['cv.docx'] = $event.target.checked" />
           </f7-treeview-item>
@@ -152,22 +162,22 @@ export default {
     },
     loadChildren(e, done) {
       const self = this;
-      setTimeout(function() {
+      setTimeout(function () {
         // call done() to hide preloader
         done();
-        self.loadedChildren = [{
-          name: 'John Doe',
-        },
-        {
-          name: 'Jane Doe',
-        },
-        {
-          name: 'Calvin Johnson',
-        },
+        self.loadedChildren = [
+          {
+            name: 'John Doe',
+          },
+          {
+            name: 'Jane Doe',
+          },
+          {
+            name: 'Calvin Johnson',
+          },
         ];
       }, 2000);
     },
   },
 };
-
 </script>

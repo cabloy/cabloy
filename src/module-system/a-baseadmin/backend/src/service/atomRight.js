@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class AtomRight extends app.Service {
-
     async rights({ roleId, page }) {
       return await this.ctx.bean.role.roleRights({ roleId, page });
     }
@@ -26,7 +24,6 @@ module.exports = app => {
     async spreads({ roleId, page }) {
       return await this.ctx.bean.role.roleSpreads({ roleId, page });
     }
-
   }
 
   return AtomRight;

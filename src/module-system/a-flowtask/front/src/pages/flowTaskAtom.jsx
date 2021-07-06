@@ -2,7 +2,7 @@ import atomLayoutManager from '../common/atomLayoutManager/index.jsx';
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext, atomLayoutManager ],
+  mixins: [ebPageContext, atomLayoutManager],
   data() {
     const query = this.$f7route.query;
     const flowTaskId = parseInt(query.flowTaskId || 0);

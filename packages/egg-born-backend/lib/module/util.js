@@ -10,7 +10,7 @@ module.exports = app => {
     lookupPackage(dir) {
       let _dir = dir;
       // eslint-disable-next-line
-    while (true) {
+      while (true) {
         const file = path.join(_dir, 'package.json');
         if (file === '/package.json') return null;
         if (fse.existsSync(file)) return file;
@@ -110,7 +110,7 @@ module.exports = app => {
     },
     compose(chains, adapter) {
       if (!chains) chains = [];
-      return function(context, next) {
+      return function (context, next) {
         // last called middleware #
         let index = -1;
         return dispatch(0);
@@ -136,8 +136,8 @@ module.exports = app => {
     },
     composeAsync(chains, adapter) {
       if (!chains) chains = [];
-      return function(context, next) {
-      // last called middleware #
+      return function (context, next) {
+        // last called middleware #
         let index = -1;
         return dispatch(0);
         function dispatch(i) {
@@ -155,9 +155,11 @@ module.exports = app => {
           if (i === chains.length) fn = next;
           if (!fn) return Promise.resolve();
           try {
-            return Promise.resolve(fn.call(receiver, context, function next() {
-              return dispatch(i + 1);
-            }));
+            return Promise.resolve(
+              fn.call(receiver, context, function next() {
+                return dispatch(i + 1);
+              })
+            );
           } catch (err) {
             return Promise.reject(err);
           }
@@ -197,10 +199,10 @@ module.exports = app => {
       // ctxCaller
       if (ctxCaller) {
         // multipart
-        ctx.multipart = function(options) {
+        ctx.multipart = function (options) {
           return ctxCaller.multipart(options);
         };
-        for (const property of [ 'cookies', 'session', 'user', 'state' ]) {
+        for (const property of ['cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxCaller, property);
         }
         // ctxCaller
@@ -208,7 +210,7 @@ module.exports = app => {
       }
       // ctxParent
       if (ctxParent) {
-        for (const property of [ 'cookies', 'session', 'user', 'state' ]) {
+        for (const property of ['cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
       }
@@ -259,12 +261,15 @@ module.exports = app => {
         }
       };
       _lockTimer = setInterval(() => {
-        _lock.extend(_lockOptions.lockTTL).then(lock => {
-          _lock = lock;
-        }).catch(err => {
-          app.logger.error(err);
-          _lockDone();
-        });
+        _lock
+          .extend(_lockOptions.lockTTL)
+          .then(lock => {
+            _lock = lock;
+          })
+          .catch(err => {
+            app.logger.error(err);
+            _lockDone();
+          });
       }, _lockOptions.lockTTL / 2);
       try {
         const res = await fn();
@@ -291,4 +296,3 @@ function delegateProperty(ctx, ctxCaller, property) {
     },
   });
 }
-

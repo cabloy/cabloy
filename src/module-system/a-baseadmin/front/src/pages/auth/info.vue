@@ -4,10 +4,10 @@
     <f7-block>
       <f7-list form no-hairlines-md v-if="meta">
         <f7-list-input type="textarea" readonly :label="$text('Login URL')" :value="meta.loginURL">
-          <f7-link ref="loginURL" class="float-right" slot="label">{{$text('Copy')}}</f7-link>
+          <f7-link ref="loginURL" class="float-right" slot="label">{{ $text('Copy') }}</f7-link>
         </f7-list-input>
         <f7-list-input type="textarea" readonly :label="$text('Callback URL')" :value="meta.callbackURL">
-          <f7-link ref="callbackURL" class="float-right" slot="label">{{$text('Copy')}}</f7-link>
+          <f7-link ref="callbackURL" class="float-right" slot="label">{{ $text('Copy') }}</f7-link>
         </f7-list-input>
       </f7-list>
     </f7-block>
@@ -20,7 +20,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebClipboard ],
+  mixins: [ebClipboard],
   data() {
     return {
       id: parseInt(this.$f7route.query.id),
@@ -41,7 +41,7 @@ export default {
     clipboardCreate() {
       if (!this.meta) return;
       this.$nextTick(() => {
-        for (const btn of [ 'loginURL', 'callbackURL' ]) {
+        for (const btn of ['loginURL', 'callbackURL']) {
           this.addClipboardTrigger(this.$refs[btn].$el, {
             text: trigger => {
               return this.meta[btn];
@@ -52,12 +52,10 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .auth-edit {
   width: 100%;
   height: 200px;
 }
-
 </style>

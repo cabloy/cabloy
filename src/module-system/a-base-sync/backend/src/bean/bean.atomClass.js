@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomClass extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atomClass');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -65,11 +64,14 @@ module.exports = ctx => {
     }
 
     async getByAtomId({ atomId }) {
-      const res = await this.model.query(`
+      const res = await this.model.query(
+        `
         select a.*,b.id as atomId,b.itemId from aAtomClass a
           left join aAtom b on a.id=b.atomClassId
             where b.iid=? and b.id=?
-        `, [ctx.instance.id, atomId]);
+        `,
+        [ctx.instance.id, atomId]
+      );
       return res[0];
     }
 
@@ -82,21 +84,24 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      return validator ? {
-        module: atomClass.module,
-        validator,
-      } : null;
+      return validator
+        ? {
+            module: atomClass.module,
+            validator,
+          }
+        : null;
     }
 
     async validatorSearch({ atomClass }) {
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
-      return validator ? {
-        module: atomClass.module,
-        validator,
-      } : null;
+      return validator
+        ? {
+            module: atomClass.module,
+            validator,
+          }
+        : null;
     }
-
   }
 
   return AtomClass;

@@ -1,12 +1,11 @@
 const QueueClientFn = require('./queueClient.js');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // queue
   loader.app.meta.queue = new (QueueClientFn(loader.app))();
 
   // all queues
-  const ebQueues = loader.app.meta.queues = {};
+  const ebQueues = (loader.app.meta.queues = {});
 
   // load queues
   loadQueues();
@@ -54,5 +53,4 @@ module.exports = function(loader, modules) {
       loader.app.meta.queue._ensureWorker(info);
     }
   };
-
 };

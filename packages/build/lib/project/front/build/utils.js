@@ -6,9 +6,7 @@ const mglob = require('egg-born-mglob');
 module.exports = context => {
   return {
     assetsPath(_path) {
-      const assetsSubDirectory = process.env.NODE_ENV === 'production'
-        ? context.config.build.assetsSubDirectory
-        : context.config.dev.assetsSubDirectory;
+      const assetsSubDirectory = process.env.NODE_ENV === 'production' ? context.config.build.assetsSubDirectory : context.config.dev.assetsSubDirectory;
       return path.posix.join(assetsSubDirectory, _path);
     },
     cssLoaders(options) {
@@ -24,7 +22,7 @@ module.exports = context => {
 
       // generate loader string to be used with extract text plugin
       function generateLoaders(loader, loaderOptions) {
-        const loaders = [ cssLoader ];
+        const loaders = [cssLoader];
         if (loader) {
           loaders.push({
             loader: loader + '-loader',
@@ -39,7 +37,7 @@ module.exports = context => {
         // if (options.extract) {
         //   return [ MiniCssExtractPlugin.loader ].concat(loaders);
         // }
-        return [ 'vue-style-loader' ].concat(loaders);
+        return ['vue-style-loader'].concat(loaders);
       }
 
       // http://vuejs.github.io/vue-loader/en/configurations/extract-css.html
@@ -73,18 +71,14 @@ module.exports = context => {
       const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 
       // modules
-      const { modules, modulesGlobal } = mglob.glob(
-        context.config.projectPath,
-        context.config.configProject.base.disabledModules,
-        true
-      );
+      const { modules, modulesGlobal } = mglob.glob(context.config.projectPath, context.config.configProject.base.disabledModules, true);
 
       // clear
       fse.emptyDirSync(runtimePath);
       fse.emptyDirSync(path.join(runtimePath, 'modules'));
 
       // global modules
-      const __terserPluginExcludes = [ ];
+      const __terserPluginExcludes = [];
       for (const relativeName in modulesGlobal) {
         const module = modules[relativeName];
         // terser
@@ -115,16 +109,14 @@ module.exports = context => {
         const jsFront = module.js.front.replace(/\\/g, '/');
         // js
         if (module.info.monkey || module.info.sync) {
-          jsModules +=
-`
+          jsModules += `
 modules['${relativeName}'] = {
    instance: require('${jsFront}'),
    info: ${JSON.stringify(module.info)},
 }
 `;
         } else {
-          jsModules +=
-`
+          jsModules += `
 modules['${relativeName}'] = {
    instance: () => import(/* webpackChunkName: "${relativeName}" */ '${jsFront}'),
    info: ${JSON.stringify(module.info)},
@@ -141,8 +133,7 @@ modules['${relativeName}'] = {
       }
 
       // save to modules.js
-      const modulesJS =
-`
+      const modulesJS = `
 const modules = {};
 const modulesSync = {};
 const modulesMonkey = {};
@@ -181,7 +172,7 @@ export default {
             },
           ],
         ],
-        plugins: [ '@babel/plugin-syntax-dynamic-import', 'jsx-v-model' ],
+        plugins: ['@babel/plugin-syntax-dynamic-import', 'jsx-v-model'],
       };
     },
   };

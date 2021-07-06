@@ -3,11 +3,11 @@
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" link="#" :context="item" :onPerform="onPerformItem">
         <div slot="media">
-          <img class="avatar avatar32" :src="getItemMedia(item)">
+          <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
         <div slot="after">
-          <f7-badge v-if="item.realName && item.realName!==item.userName">{{item.realName}}</f7-badge>
-          <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
+          <f7-badge v-if="item.realName && item.realName !== item.userName">{{ item.realName }}</f7-badge>
+          <f7-badge v-if="item.mobile">{{ item.mobile }}</f7-badge>
         </div>
       </eb-list-item>
     </f7-list>
@@ -79,7 +79,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -12,7 +12,6 @@ const extend = require3('extend2');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class File {
-
     get modelFile() {
       return ctx.model.module(moduleInfo.relativeName).file;
     }
@@ -25,7 +24,9 @@ module.exports = ctx => {
       options.file = 1;
       // select
       const items = await ctx.bean.atom.select({
-        atomClass, options, user,
+        atomClass,
+        options,
+        user,
       });
       // downloadUrl
       for (const item of items) {
@@ -90,9 +91,7 @@ module.exports = ctx => {
         attachment: 1,
       });
       if (!options.orders) {
-        options.orders = [
-          ['realName', 'asc'],
-        ];
+        options.orders = [['realName', 'asc']];
       }
       // list
       return await this.list({ key, options, user });
@@ -162,7 +161,7 @@ module.exports = ctx => {
 
       // dest
       const downloadId = uuid.v4().replace(/-/g, '');
-      const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${ctx.bean.util.today()}`;
+      const _filePath = `file/${mode === 1 ? 'image' : mode === 2 ? 'file' : 'audio'}/${ctx.bean.util.today()}`;
       const _fileName = uuid.v4().replace(/-/g, '');
       const destDir = await ctx.bean.base.getPath(_filePath, true);
       const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
@@ -247,7 +246,6 @@ module.exports = ctx => {
         downloadId,
         downloadUrl,
       };
-
     }
 
     async download({ downloadId, atomId, width, height, user }) {
@@ -275,9 +273,7 @@ module.exports = ctx => {
       }
 
       // forward url
-      const forwardUrl = ctx.bean.base.getForwardUrl(
-        `${file.filePath}/${fileName}${file.fileExt}`
-      );
+      const forwardUrl = ctx.bean.base.getForwardUrl(`${file.filePath}/${fileName}${file.fileExt}`);
 
       // send
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
@@ -293,7 +289,6 @@ module.exports = ctx => {
         ctx.response.status = 200;
         ctx.response.type = file.mime;
       }
-
     }
 
     // inner invoke
@@ -402,24 +397,17 @@ module.exports = ctx => {
 
       // cannot use * in path on windows
       const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
-      const destFile = await ctx.bean.base.getPath(
-        `${file.filePath}/${fileName}${file.fileExt}`, false
-      );
+      const destFile = await ctx.bean.base.getPath(`${file.filePath}/${fileName}${file.fileExt}`, false);
 
       const bExists = await fse.pathExists(destFile);
       if (bExists) return fileName;
 
-      const width = widthRequire || parseInt(file.width * heightRequire / file.height);
-      const height = heightRequire || parseInt(file.height * widthRequire / file.width);
+      const width = widthRequire || parseInt((file.width * heightRequire) / file.height);
+      const height = heightRequire || parseInt((file.height * widthRequire) / file.width);
 
-      const srcFile = await ctx.bean.base.getPath(
-        `${file.filePath}/${file.fileName}${file.fileExt}`, false
-      );
+      const srcFile = await ctx.bean.base.getPath(`${file.filePath}/${file.fileName}${file.fileExt}`, false);
       await bb.fromCallback(cb => {
-        gm(srcFile)
-          .resize(width, height, '!')
-          .quality(100)
-          .write(destFile, cb);
+        gm(srcFile).resize(width, height, '!').quality(100).write(destFile, cb);
       });
 
       return fileName;
@@ -430,11 +418,14 @@ module.exports = ctx => {
         return await this.modelFile.get({ downloadId, atomId });
       }
       // try to get formal
-      const file = await ctx.model.queryOne(`
+      const file = await ctx.model.queryOne(
+        `
           select a.* from aFile a
             inner join aAtom b on a.atomId=b.id
               where a.iid=? and a.deleted=0 and a.mode=2 and a.downloadId=? and b.atomStage=1
-        `, [ctx.instance.id, downloadId]);
+        `,
+        [ctx.instance.id, downloadId]
+      );
       if (file) return file;
       // no matter what atomId is: maybe ===0 or !==0
       return await ctx.model.file.get({ downloadId });
@@ -468,13 +459,12 @@ module.exports = ctx => {
     }
 
     getDownloadUrl({ downloadId, atomId, mode, fileExt }) {
-      let url = `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`;
+      let url = `/api/a/file/file/download/${downloadId}${mode === 1 || mode === 3 ? fileExt : ''}`;
       if (atomId) {
         url = `${url}?atomId=${atomId}`;
       }
       return ctx.bean.base.getAbsoluteUrl(url);
     }
-
   }
   return File;
 };

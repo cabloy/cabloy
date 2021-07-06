@@ -5,7 +5,6 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class HelloController extends app.Controller {
-
     async hello() {
       const data = {
         text: 'hello',
@@ -26,9 +25,7 @@ module.exports = app => {
       assert.equal(result, 'echo.hello.world.echo.hello');
       this.ctx.success();
     }
-
   }
 
   return HelloController;
 };
-

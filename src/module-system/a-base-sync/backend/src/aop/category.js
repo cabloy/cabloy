@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class localAop {
-
     async children(context, next) {
       // next
       await next();
@@ -28,7 +27,6 @@ module.exports = ctx => {
         }
       }
     }
-
   }
 
   return localAop;

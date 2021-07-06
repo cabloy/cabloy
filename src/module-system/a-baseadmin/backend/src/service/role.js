@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Role extends app.Service {
-
     async children({ roleId, page }) {
       return await this.ctx.bean.role.children({ roleId, page });
     }
@@ -53,7 +51,6 @@ module.exports = app => {
     async _buildInBackground({ progressId }) {
       return await this.ctx.bean.role.build({ progressId });
     }
-
   }
 
   return Role;

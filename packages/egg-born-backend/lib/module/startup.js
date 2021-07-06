@@ -1,11 +1,10 @@
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;
 
   // all startups
-  const ebStartups = loader.app.meta.startups = {};
-  const ebStartupsArray = loader.app.meta.startupsArray = [];
+  const ebStartups = (loader.app.meta.startups = {});
+  const ebStartupsArray = (loader.app.meta.startupsArray = []);
 
   // load startups
   loadStartups();
@@ -74,7 +73,8 @@ module.exports = function(loader) {
       if (!startup.config.disable && startup.config.instance && startup.config.after !== true) {
         console.log(`---- instance startup: ${startup.key}, pid: ${process.pid}`);
         await loader.app.meta._runStartup({
-          module: startup.module, name: startup.name,
+          module: startup.module,
+          name: startup.name,
           instanceStartup: { subdomain, options },
         });
       }
@@ -86,7 +86,8 @@ module.exports = function(loader) {
       if (!startup.config.disable && startup.config.instance && startup.config.after === true) {
         console.log(`---- instance startup: ${startup.key}, pid: ${process.pid}`);
         await loader.app.meta._runStartup({
-          module: startup.module, name: startup.name,
+          module: startup.module,
+          name: startup.name,
           instanceStartup: { subdomain, options },
         });
       }
@@ -124,5 +125,4 @@ module.exports = function(loader) {
       transaction: startup.config.transaction,
     });
   }
-
 };

@@ -101,7 +101,7 @@ export default {
       // event
       ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
       // menu
-      if (action.menu === 1 || (action.actionComponent || action.actionPath)) {
+      if (action.menu === 1 || action.actionComponent || action.actionPath) {
         item = ctx.$utils.extend({}, item, key);
         // write
         const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');

@@ -7,8 +7,7 @@ export default {
     actionHandleTask,
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     actions_onSubmit() {
@@ -48,22 +47,14 @@ export default {
     },
     actions_renderActionComponents() {
       const children = [];
-      children.push(
-        <actionCancelFlow key="actionCancelFlow" ref="actionCancelFlow"></actionCancelFlow>
-      );
-      children.push(
-        <actionHandleTask key="actionHandleTask" ref="actionHandleTask"></actionHandleTask>
-      );
+      children.push(<actionCancelFlow key="actionCancelFlow" ref="actionCancelFlow"></actionCancelFlow>);
+      children.push(<actionHandleTask key="actionHandleTask" ref="actionHandleTask"></actionHandleTask>);
       return children;
     },
     actions_renderHandle() {
       const children = [];
-      children.push(
-        <eb-link key="save" ref="buttonSave" iconMaterial='save' propsOnPerform={event => this.actions_onPerformTaskHandleSave(event)}></eb-link>
-      );
-      children.push(
-        <eb-link key="submit" ref="buttonSubmit" iconMaterial='done' propsOnPerform={event => this.actions_onPerformTaskHandleSubmit(event)}></eb-link>
-      );
+      children.push(<eb-link key="save" ref="buttonSave" iconMaterial="save" propsOnPerform={event => this.actions_onPerformTaskHandleSave(event)}></eb-link>);
+      children.push(<eb-link key="submit" ref="buttonSubmit" iconMaterial="done" propsOnPerform={event => this.actions_onPerformTaskHandleSubmit(event)}></eb-link>);
       return children;
     },
     actions_render() {

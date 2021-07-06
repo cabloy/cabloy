@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class UserController extends app.Controller {
-
     async getLabels() {
       const res = await this.ctx.service.user.getLabels({
         user: this.ctx.state.user.op,
@@ -16,8 +14,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return UserController;
 };
-

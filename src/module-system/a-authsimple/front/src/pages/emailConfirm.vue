@@ -2,14 +2,14 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Email Confirmation')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <template v-if="sent">{{$text('emailConfirmSentAlert')}}</template>
+      <template v-if="sent">{{ $text('emailConfirmSentAlert') }}</template>
       <template v-else>
-        <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'emailConfirm'}" :onPerform="onPerformValidate">
+        <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'emailConfirm' }" :onPerform="onPerformValidate">
           <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send Confirmation Email')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{ $text('Send Confirmation Email') }}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>
@@ -37,12 +37,14 @@ export default {
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/emailConfirm', {
-        data: this.data,
-      }).then(() => {
-        this.sent = true;
-        return true;
-      });
+      return this.$api
+        .post('auth/emailConfirm', {
+          data: this.data,
+        })
+        .then(() => {
+          this.sent = true;
+          return true;
+        });
     },
     onPerformOk() {
       return this.$refs.validate.perform();
@@ -52,7 +54,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

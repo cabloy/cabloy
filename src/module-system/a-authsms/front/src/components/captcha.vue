@@ -1,5 +1,5 @@
 <template>
-  <eb-button class="captcha" :disabled="buttonDisabled" :onPerform="onPerformSend">{{getSendText()}}</eb-button>
+  <eb-button class="captcha" :disabled="buttonDisabled" :onPerform="onPerformSend">{{ getSendText() }}</eb-button>
 </template>
 <script>
 export default {
@@ -35,12 +35,14 @@ export default {
   methods: {
     onPerformSend() {
       if (this.sendTimer) return;
-      return this.$api.post('captcha/sendCode', {
-        providerInstanceId: this.providerInstance.providerInstanceId,
-        context: this.context,
-      }).then(() => {
-        this._setTimer(true);
-      });
+      return this.$api
+        .post('captcha/sendCode', {
+          providerInstanceId: this.providerInstance.providerInstanceId,
+          context: this.context,
+        })
+        .then(() => {
+          this._setTimer(true);
+        });
     },
     getSendText() {
       return this.sendTimer ? this.$text('Resend in %ds', this.sendTimerCounter) : this.$text('Send Code');
@@ -63,11 +65,9 @@ export default {
     },
   },
 };
-
 </script>
 <style scoped>
 .captcha {
   white-space: nowrap;
 }
-
 </style>

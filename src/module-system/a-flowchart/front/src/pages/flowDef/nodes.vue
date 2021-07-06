@@ -1,13 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Flow Chart')" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar :title="$text('Flow Chart')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
       <f7-list-group v-for="group of nodeBasesGroups" :key="group.name">
         <f7-list-item group-title :title="group.titleLocale"></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.type" :title="item.titleLocale" link="#" :context="item" :onPerform="onPerformNode">
           <div slot="media">
-            <img class="media-node-base-icon" :src="getNodeMedia(item)">
+            <img class="media-node-base-icon" :src="getNodeMedia(item)" />
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -18,7 +17,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       nodeBases: null,
@@ -80,5 +79,4 @@ export default {
     },
   },
 };
-
 </script>

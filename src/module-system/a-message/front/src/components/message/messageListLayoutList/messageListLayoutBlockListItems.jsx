@@ -14,23 +14,22 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  mounted() {
-  },
-  beforeDestroy() {
-  },
+  mounted() {},
+  beforeDestroy() {},
   methods: {
     onItemClick(event, item) {
       // setRead
-      const messageIds = [ item.id ];
-      this.$api.post('/a/socketio/message/setRead', {
-        messageClass: this.layoutManager.base_messageClass,
-        messageIds,
-      }).then(() => {
-        this.layout.messageReadSet({ message: item });
-      });
+      const messageIds = [item.id];
+      this.$api
+        .post('/a/socketio/message/setRead', {
+          messageClass: this.layoutManager.base_messageClass,
+          messageIds,
+        })
+        .then(() => {
+          this.layout.messageReadSet({ message: item });
+        });
       // content
       const content = JSON.parse(item.content);
       if (content.actionPath) {
@@ -82,20 +81,16 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(content) }
+          {this._getItemMetaSummary(content)}
         </div>
       );
       // domAfter
       const domAfterMetaFlags = [];
       for (const flag of this._getItemMetaFlags(item, content)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
+        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       if (!item.messageRead) {
-        domAfterMetaFlags.push(
-          <f7-icon key="messageRead" material="mail_outline"></f7-icon>
-        );
+        domAfterMetaFlags.push(<f7-icon key="messageRead" material="mail_outline"></f7-icon>);
       }
       const domAfter = (
         <div slot="after" class="after">
@@ -104,10 +99,7 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.id}
-          link='#'
-          propsOnPerform={event => this.onItemClick(event, item)}
-        >
+        <eb-list-item class="item" key={item.id} link="#" propsOnPerform={event => this.onItemClick(event, item)}>
           {domMedia}
           {domHeader}
           {domTitle}
@@ -122,18 +114,10 @@ export default {
       for (const item of items) {
         children.push(this._renderListItem(item));
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {
-    return (
-      <div>
-        {this._renderList()}
-      </div>
-    );
+    return <div>{this._renderList()}</div>;
   },
 };

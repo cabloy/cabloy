@@ -41,7 +41,8 @@ module.exports = ctx => {
           const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
           await modelInstance.update({
             id: instance.id,
-            config: JSON.stringify(instance.config) });
+            config: JSON.stringify(instance.config),
+          });
           // broadcast
           ctx.app.meta.broadcast.emit({
             subdomain: ctx.subdomain,

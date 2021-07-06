@@ -1,6 +1,5 @@
 module.exports = app => {
   class UserController extends app.Controller {
-
     async select() {
       const page = this.ctx.bean.util.page(this.ctx.request.body.page);
       const items = await this.service.user.select({
@@ -92,7 +91,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return UserController;
 };

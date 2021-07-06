@@ -185,7 +185,10 @@
       </f7-row>
     </f7-block>
     <f7-block-title>Autorepeat (Tap & hold)</f7-block-title>
-    <f7-block-header>Pressing and holding one of its buttons increments or decrements the stepper’s value repeatedly. With dynamic autorepeat, the rate of change depends on how long the user continues pressing the control.</f7-block-header>
+    <f7-block-header
+      >Pressing and holding one of its buttons increments or decrements the stepper’s value repeatedly. With dynamic autorepeat, the rate of change depends on how long the user continues pressing the
+      control.</f7-block-header
+    >
     <f7-block strong class="text-align-center">
       <f7-row>
         <f7-col>
@@ -223,7 +226,10 @@
       </f7-list-item>
     </f7-list>
     <f7-block-title>Manual input</f7-block-title>
-    <f7-block-header>It is possible to enter value manually from keyboard or mobile keypad. When click on input field, stepper enter into manual input mode, which allow type value from keyboar and check fractional part with defined accurancy. Click outside or enter Return key, ending manual mode.</f7-block-header>
+    <f7-block-header
+      >It is possible to enter value manually from keyboard or mobile keypad. When click on input field, stepper enter into manual input mode, which allow type value from keyboar and check fractional
+      part with defined accurancy. Click outside or enter Return key, ending manual mode.</f7-block-header
+    >
     <f7-block strong class="text-align-center">
       <f7-row>
         <f7-col>
@@ -248,7 +254,7 @@ export default {
       const value = self.meetingTime;
 
       const hours = Math.floor(value / 60);
-      const minutes = value - (hours * 60);
+      const minutes = value - hours * 60;
       const formatted = [];
       if (hours > 0) {
         formatted.push(hours + ' ' + (hours > 1 ? 'hours' : 'hour'));
@@ -271,5 +277,4 @@ export default {
     },
   },
 };
-
 </script>

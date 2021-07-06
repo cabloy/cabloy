@@ -4,7 +4,6 @@ const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
   class MessageController extends app.Controller {
-
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
         return await this.ctx.service.message.index({ message });
@@ -103,8 +102,6 @@ module.exports = app => {
       }
       return xml;
     }
-
   }
   return MessageController;
 };
-

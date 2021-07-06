@@ -11,18 +11,11 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
   render() {
-    return (
-      <f7-nav-right>
-        {this.layoutManager.actions_render()}
-      </f7-nav-right>
-    );
+    return <f7-nav-right>{this.layoutManager.actions_render()}</f7-nav-right>;
   },
 };

@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class RequestController extends app.Controller {
-
     async request() {
       // param
       assert.equal(this.ctx.params.id, '1');
@@ -30,7 +28,6 @@ module.exports = app => {
       this.ctx.type = 'text/xml';
       this.ctx.body = payload.toString();
     }
-
   }
 
   return RequestController;

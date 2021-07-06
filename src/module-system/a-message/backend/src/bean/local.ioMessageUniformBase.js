@@ -3,7 +3,6 @@ const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessageUniformBase extends ctx.app.meta.IOMessageBase(ctx) {
-
     async onPublish({ /* path,*/ message, messageClass, options }) {
       // onPublish
       return await super.onPublish({ path: __PATH_MESSAGE_UNIFORM, message, messageClass, options });
@@ -106,7 +105,6 @@ module.exports = ctx => {
         user,
       });
     }
-
   }
   return IOMessageUniformBase;
 };

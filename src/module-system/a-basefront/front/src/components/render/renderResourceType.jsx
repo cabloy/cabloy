@@ -5,8 +5,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     resourceTypes() {
@@ -23,19 +22,13 @@ export default {
   created() {
     this.$store.dispatch('a/base/getResourceTypes');
   },
-  methods: {
-  },
+  methods: {},
   render() {
     const { parcel, key, property } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.resourceTypes,
     });
-    return (
-      <eb-list-item-validate
-        parcel={parcel}
-        dataKey={key} property={propertyNew}>
-      </eb-list-item-validate>
-    );
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };

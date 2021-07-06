@@ -1,4 +1,3 @@
-
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
 const __flowServiceBases = {};
@@ -6,7 +5,6 @@ const __flowServiceBases = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowDef {
-
     get modelFlowDef() {
       return ctx.model.module(moduleInfo.relativeName).flowDef;
     }

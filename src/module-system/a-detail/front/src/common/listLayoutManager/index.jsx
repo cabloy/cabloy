@@ -18,13 +18,9 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [
-    ebDetailActions,
-    Base, Page, Layout, Bulk, Actions,
-  ],
+  mixins: [ebDetailActions, Base, Page, Layout, Bulk, Actions],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.layout_prepareConfig().then(() => {

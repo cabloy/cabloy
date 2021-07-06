@@ -1,6 +1,5 @@
 // eslint-disable-next-line
-export default function(Vue) {
-
+export default function (Vue) {
   return {
     state: {
       message: 'Hello World',
@@ -25,5 +24,4 @@ export default function(Vue) {
       },
     },
   };
-
 }

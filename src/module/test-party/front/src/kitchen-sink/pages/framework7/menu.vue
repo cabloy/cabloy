@@ -114,7 +114,7 @@ export default {
       style.href = 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.css';
       style.integrity = 'sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==';
       style.setAttribute('crossorigin', '');
-      style.onload = function() {
+      style.onload = function () {
         self.mapStyleLoaded = true;
         if (self.mapScriptLoaded) self.initMap();
       };
@@ -124,7 +124,7 @@ export default {
       script.src = 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.js';
       script.integrity = 'sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==';
       script.setAttribute('crossorigin', '');
-      script.onload = function() {
+      script.onload = function () {
         self.mapScriptLoaded = true;
         if (self.mapStyleLoaded) self.initMap();
       };
@@ -132,7 +132,7 @@ export default {
     },
     initMap() {
       const self = this;
-      const mymap = L.map(self.$refs.map, { zoomControl: false }).setView([ 51.505, -0.09 ], 10);
+      const mymap = L.map(self.$refs.map, { zoomControl: false }).setView([51.505, -0.09], 10);
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoibm9saW1pdHM0d2ViIiwiYSI6ImNqcXA4NTdmczBocm8zeG13Zm1zNTdyeDAifQ.HoJgmqQ_uH4zLyNJmiY98A', {
         maxZoom: 18,
         attribution: `Map data &copy; <a class="external" target="_blank" href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors,
@@ -144,5 +144,4 @@ export default {
     },
   },
 };
-
 </script>

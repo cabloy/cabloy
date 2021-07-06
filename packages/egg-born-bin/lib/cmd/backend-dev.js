@@ -2,7 +2,6 @@ const DevCommand = require('egg-bin').DevCommand;
 const utils = require('../utils.js');
 
 class BackendDevCommand extends DevCommand {
-
   constructor(rawArgv) {
     super(rawArgv);
 
@@ -16,7 +15,7 @@ class BackendDevCommand extends DevCommand {
       workers: {
         description: 'numbers of app workers, default to 1 at local mode',
         type: 'number',
-        alias: [ 'c', 'cluster' ],
+        alias: ['c', 'cluster'],
         default: 2,
       },
       port: {
@@ -36,24 +35,21 @@ class BackendDevCommand extends DevCommand {
     };
   }
 
-  * run(context) {
-
+  *run(context) {
     if (!context.argv.framework) {
       context.argv.framework = utils.getModulePath('egg-born-backend');
     }
 
     if (context.argv.sticky === undefined) context.argv.sticky = true;
 
-    utils.versionCheckCabloy({ scene: 'dev' }).then(() => { });
+    utils.versionCheckCabloy({ scene: 'dev' }).then(() => {});
 
     yield super.run(context);
-
   }
 
   description() {
     return 'backend dev';
   }
-
 }
 
 module.exports = BackendDevCommand;

@@ -125,7 +125,7 @@ export default {
       this.layoutHeight = layoutHeight;
 
       // verySmall
-      this.size.verySmall = (layoutWidth < layoutHeight) || (layoutWidth <= this.layoutConfig.size.small);
+      this.size.verySmall = layoutWidth < layoutHeight || layoutWidth <= this.layoutConfig.size.small;
 
       // spacing
       const spacing = this.sizeSpacing;
@@ -202,10 +202,10 @@ export default {
     },
     openHome() {
       // home
-      let [ _button ] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonHome' });
+      let [_button] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonHome' });
       if (!_button) {
         // default
-        [ _button ] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonDashboard' });
+        [_button] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonDashboard' });
       }
       if (_button) {
         const resourceConfig = _button.resourceConfig;
@@ -415,7 +415,7 @@ export default {
       // inited
       this.sidebarInited = true;
     },
-    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function () {
       this.__saveLayoutConfigNow();
     }, 1000),
     __saveLayoutConfigNow() {
@@ -453,7 +453,7 @@ export default {
       }
     },
     __removeDynamicResources(side) {
-      const types = [ 'panels', 'buttons' ];
+      const types = ['panels', 'buttons'];
       for (const type of types) {
         const resources = side[type];
         if (resources) {
@@ -564,13 +564,13 @@ export default {
       });
     },
     closeButton(side, button) {
-      const [ , _buttonIndex ] = this._findButton(side, button);
+      const [, _buttonIndex] = this._findButton(side, button);
       if (_buttonIndex === -1) return;
       this.sidebar[side].buttons.splice(_buttonIndex, 1);
       this.__saveLayoutConfig();
     },
     openButton(side, button) {
-      const [ , _buttonIndex ] = this._findButton(side, button);
+      const [, _buttonIndex] = this._findButton(side, button);
       if (_buttonIndex > -1) return;
       // prepare button
       button = this._prepareButton(button);
@@ -579,8 +579,8 @@ export default {
     },
     _findButton(side, button) {
       const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
-      if (_buttonIndex === -1) return [ null, -1 ];
-      return [ this.sidebar[side].buttons[_buttonIndex], _buttonIndex ];
+      if (_buttonIndex === -1) return [null, -1];
+      return [this.sidebar[side].buttons[_buttonIndex], _buttonIndex];
     },
     _resourceFullName(resource) {
       if (resource.atomStaticKey) return resource.atomStaticKey;
@@ -601,7 +601,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

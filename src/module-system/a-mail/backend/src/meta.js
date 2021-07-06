@@ -5,15 +5,12 @@ module.exports = app => {
   const socketioChannelMail = require('./config/socketio/channelMail.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     socketio: {
       messages: {

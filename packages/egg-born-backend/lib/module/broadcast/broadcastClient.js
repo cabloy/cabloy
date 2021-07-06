@@ -1,7 +1,5 @@
-module.exports = function(app) {
-
+module.exports = function (app) {
   class BroadcastClient {
-
     constructor() {
       this.__callerId = app.meta.workerId;
       this.channelName = null;
@@ -14,13 +12,15 @@ module.exports = function(app) {
       this.channelName = `broadcast_${app.name}:`;
       this.pub = app.redis.get('broadcast').duplicate();
       this.sub = app.redis.get('broadcast').duplicate();
-      this.sub.subscribe(this.channelName, function() {});
+      this.sub.subscribe(this.channelName, function () {});
       this.sub.on('message', (channel, info) => {
-        this._performTasks(JSON.parse(info)).then(() => {
-          // do nothing
-        }).catch(err => {
-          app.logger.error(err);
-        });
+        this._performTasks(JSON.parse(info))
+          .then(() => {
+            // do nothing
+          })
+          .catch(err => {
+            app.logger.error(err);
+          });
       });
     }
 
@@ -49,7 +49,9 @@ module.exports = function(app) {
       const bean = broadcast.bean;
       // execute
       return await app.meta.util.executeBean({
-        locale, subdomain, context,
+        locale,
+        subdomain,
+        context,
         beanModule: bean.module,
         beanFullName: `${bean.module}.broadcast.${bean.name}`,
         transaction: broadcast.config.transaction,
@@ -59,4 +61,3 @@ module.exports = function(app) {
 
   return BroadcastClient;
 };
-

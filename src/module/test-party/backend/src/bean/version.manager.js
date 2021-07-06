@@ -1,9 +1,7 @@
 const VersionTestFn = require('./version/test.js');
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       // update
       if (options.version === 1) {
@@ -42,7 +40,6 @@ module.exports = app => {
               left join testPartyType b on a.partyTypeId=b.id
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
@@ -75,14 +72,12 @@ module.exports = app => {
         const versionTest = new (VersionTestFn(this.ctx))();
         await versionTest.run();
       }
-
     }
 
     async test() {
       // const versionTest = new (VersionTestFn(this.ctx))();
       // await versionTest.run();
     }
-
   }
 
   return Version;

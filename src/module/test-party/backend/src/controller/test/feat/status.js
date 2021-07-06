@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class StatusController extends app.Controller {
-
     async status() {
-
       // name
       const name = '__test_enable';
 
@@ -36,8 +33,6 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
   return StatusController;
 };
-

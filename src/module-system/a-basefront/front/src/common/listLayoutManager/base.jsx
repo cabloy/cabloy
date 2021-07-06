@@ -23,8 +23,7 @@ export default {
   methods: {
     base_prepareReadOptions() {
       // options
-      const options = {
-      };
+      const options = {};
       // layout
       options.layout = this.layout.current;
       // options
@@ -33,7 +32,7 @@ export default {
     base_prepareSelectOptions() {
       // options
       let options = {
-        where: { },
+        where: {},
       };
       // layout
       options.layout = this.layout.current;
@@ -69,9 +68,7 @@ export default {
       // order
       if (setOrder) {
         const atomOrderCurrent = this.order.selected || this.order_default(params);
-        params.options.orders = [
-          [ this.order_getKey(atomOrderCurrent), atomOrderCurrent.by ],
-        ];
+        params.options.orders = [[this.order_getKey(atomOrderCurrent), atomOrderCurrent.by]];
       }
       // ok
       return params;

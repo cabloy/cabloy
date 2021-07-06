@@ -9,7 +9,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = context => {
-
   const env = context.config.build.env;
 
   let plugins = [
@@ -34,8 +33,8 @@ module.exports = context => {
         removeComments: true,
         collapseWhitespace: true,
         removeAttributeQuotes: true,
-      // more options:
-      // https://github.com/kangax/html-minifier#options-quick-reference
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
       },
       title: context.config.configProject.base.title,
     }),
@@ -56,13 +55,8 @@ module.exports = context => {
       rules: [
         {
           test: /\.js$/,
-          include: [
-            context.config.projectPath,
-          ],
-          exclude: [
-            /\.min\.js$/,
-            /__runtime[\\\/]modules/,
-          ],
+          include: [context.config.projectPath],
+          exclude: [/\.min\.js$/, /__runtime[\\\/]modules/],
           use: {
             loader: 'babel-loader',
             options: context.utils.babelLoaderOptions(),
@@ -71,7 +65,8 @@ module.exports = context => {
         ...context.utils.styleLoaders({
           sourceMap: context.config.build.productionSourceMap,
           extract: false,
-        }) ],
+        }),
+      ],
     },
     devtool: context.config.build.productionSourceMap ? 'source-map' : false,
     output: {

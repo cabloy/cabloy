@@ -8,7 +8,7 @@
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取MemberId" link="#" :onPerform="onPerformMemberId"></eb-list-item>
       <eb-list-item title="MemberId">
-        <div slot="after">{{memberId}}</div>
+        <div slot="after">{{ memberId }}</div>
       </eb-list-item>
     </eb-list>
   </eb-page>
@@ -27,11 +27,14 @@ export default {
       actionComponent: 'jssdk',
       name: 'config',
     };
-    this.$meta.util.performAction({ ctx: this, action }).then(res => {
-      this.wx = res && res.wx;
-    }).catch(e => {
-      this.$view.toast.show({ text: e.message });
-    });
+    this.$meta.util
+      .performAction({ ctx: this, action })
+      .then(res => {
+        this.wx = res && res.wx;
+      })
+      .catch(e => {
+        this.$view.toast.show({ text: e.message });
+      });
   },
   mounted() {
     this.messagebar = this.$refs.messagebar.f7Messagebar;
@@ -40,7 +43,7 @@ export default {
     onPerformScanQRCode() {
       this.wx.scanQRCode({
         needResult: 1,
-        scanType: [ 'qrCode', 'barCode' ],
+        scanType: ['qrCode', 'barCode'],
         success: res => {
           this.$view.toast.show({ text: res.resultStr });
         },
@@ -62,22 +65,21 @@ export default {
         this.messagebar.focus();
       }
       // send
-      this.$api.post('test/sendAppMessage', {
-        message: {
-          text: value,
-        },
-      }).then(() => {
-        // donothing
-      });
+      this.$api
+        .post('test/sendAppMessage', {
+          message: {
+            text: value,
+          },
+        })
+        .then(() => {
+          // donothing
+        });
     },
-
   },
 };
-
 </script>
 <style scoped>
 .test-messagebar {
   margin-bottom: 56px;
 }
-
 </style>

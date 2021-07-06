@@ -15,5 +15,4 @@ export default {
   },
   created() {},
 };
-
 </script>

@@ -5,7 +5,6 @@ const chalk = require3('chalk');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async databaseInitStartup() {
       // database
       await this.__database();
@@ -59,7 +58,7 @@ module.exports = app => {
 
       if (!options.scene) {
         // confirm table aVersion exists
-        const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
+        const res = await this.ctx.db.queryOne("show tables like 'aVersion'");
         if (!res) {
           await this.ctx.db.query(`
           CREATE TABLE aVersion (
@@ -94,7 +93,6 @@ module.exports = app => {
 
     // check module
     async __checkModule(moduleName, options) {
-
       // module
       const module = this.__getModule(moduleName);
 
@@ -132,7 +130,6 @@ module.exports = app => {
             await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
           }
         }
-
       }
 
       if (options.scene === 'test') {
@@ -146,12 +143,10 @@ module.exports = app => {
           },
         });
       }
-
     }
 
     // update module or init module
     async __updateModule(options, module, fileVersionOld, fileVersionNew) {
-
       if (fileVersionNew === -1) {
         // always
         await this.__updateModule2(options, module, -1);
@@ -170,7 +165,6 @@ module.exports = app => {
 
       // log
       options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
-
     }
 
     async __updateModule2(options, module, version) {
@@ -271,7 +265,7 @@ module.exports = app => {
           }
           // create test mysql
           mysqlConfig.database = databaseName;
-          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);// database ready
+          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig); // database ready
           this.ctx.db = null; // reset
           console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
         }
@@ -302,7 +296,6 @@ module.exports = app => {
     __getModule(moduleName) {
       return app.meta.modules[moduleName];
     }
-
   }
 
   return Version;

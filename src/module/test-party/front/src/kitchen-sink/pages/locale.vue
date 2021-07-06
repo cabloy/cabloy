@@ -4,14 +4,14 @@
     <eb-list no-hairlines-md>
       <eb-list-item :title="$text('en-us')">
         <div slot="after">
-          <f7-badge>{{$text.locale('en-us','EnglishTest')}}</f7-badge>
-          <f7-badge>{{$text.locale('en-us','Chinese Test')}}</f7-badge>
+          <f7-badge>{{ $text.locale('en-us', 'EnglishTest') }}</f7-badge>
+          <f7-badge>{{ $text.locale('en-us', 'Chinese Test') }}</f7-badge>
         </div>
       </eb-list-item>
-      <eb-list-item v-if="localeCurrent==='zh-cn'" :title="$text('zh-cn')">
+      <eb-list-item v-if="localeCurrent === 'zh-cn'" :title="$text('zh-cn')">
         <div slot="after">
-          <f7-badge>{{$text.locale('zh-cn','EnglishTest')}}</f7-badge>
-          <f7-badge>{{$text.locale('zh-cn','Chinese Test')}}</f7-badge>
+          <f7-badge>{{ $text.locale('zh-cn', 'EnglishTest') }}</f7-badge>
+          <f7-badge>{{ $text.locale('zh-cn', 'Chinese Test') }}</f7-badge>
         </div>
       </eb-list-item>
       <f7-list-item divider></f7-list-item>
@@ -43,5 +43,4 @@ export default {
     },
   },
 };
-
 </script>

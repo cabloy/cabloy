@@ -6,7 +6,6 @@ const FlowNodeBase = require('./common/flowNodeBase.js');
 const FlowEdgeBase = require('./common/flowEdgeBase.js');
 
 module.exports = app => {
-
   // FlowNodeBase/FlowEdgeBase
   app.meta.FlowNodeBase = FlowNodeBase;
   app.meta.FlowEdgeBase = FlowEdgeBase;
@@ -39,5 +38,4 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };

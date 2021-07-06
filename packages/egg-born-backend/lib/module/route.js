@@ -4,10 +4,9 @@ const pathMatching = require('egg-path-matching');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // load middlewares
-  const [ ebMiddlewares, ebMiddlewaresGlobal ] = loadMiddlewares(loader, modules);
+  const [ebMiddlewares, ebMiddlewaresGlobal] = loadMiddlewares(loader, modules);
 
   // patch router
   patchRouter();
@@ -108,7 +107,6 @@ module.exports = function(loader, modules) {
   function loadRoutes() {
     // load routes
     Object.keys(modules).forEach(key => {
-
       const module = modules[key];
 
       // routes and controllers
@@ -118,10 +116,8 @@ module.exports = function(loader, modules) {
           loader.app.meta.router.register(module.info, route);
         });
       }
-
     });
   }
-
 };
 
 function wrapMiddlewareApp(key, route, loader) {

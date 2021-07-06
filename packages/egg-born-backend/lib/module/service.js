@@ -1,7 +1,6 @@
 const SERVICEPROXY = Symbol('CTX#__SERVICEPROXY');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // load services
   loadServices();
 
@@ -19,12 +18,15 @@ module.exports = function(loader, modules) {
           get() {
             let service = context[SERVICEPROXY];
             if (!service) {
-              service = context[SERVICEPROXY] = new Proxy({}, {
-                get(obj, prop) {
-                  const beanName = `service.${prop}`;
-                  return context.bean._getBean(context.module.info.relativeName, beanName);
-                },
-              });
+              service = context[SERVICEPROXY] = new Proxy(
+                {},
+                {
+                  get(obj, prop) {
+                    const beanName = `service.${prop}`;
+                    return context.bean._getBean(context.module.info.relativeName, beanName);
+                  },
+                }
+              );
             }
             return service;
           },
@@ -50,5 +52,4 @@ module.exports = function(loader, modules) {
       }
     }
   }
-
 };

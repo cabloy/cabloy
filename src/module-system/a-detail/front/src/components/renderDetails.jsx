@@ -1,7 +1,7 @@
 import listLayoutManager from '../common/listLayoutManager/index.jsx';
 
 export default {
-  mixins: [ listLayoutManager ],
+  mixins: [listLayoutManager],
   props: {
     context: {
       type: Object,

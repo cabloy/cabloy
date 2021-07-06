@@ -14,7 +14,7 @@ export default {
   methods: {
     layout_get() {
       // return 'table';
-      return (this.$view.size === 'small') ? 'list' : 'table';
+      return this.$view.size === 'small' ? 'list' : 'table';
     },
     async layout_prepareConfig() {
       // configDetailBase
@@ -57,11 +57,7 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     layout_renderLayout() {
-      return (
-        <div>
-          {this.layout_renderComponent()}
-        </div>
-      );
+      return <div>{this.layout_renderComponent()}</div>;
     },
   },
 };

@@ -4,7 +4,7 @@ export default {
     global: true,
   },
   name: 'eb-stats',
-  mixins: [ stats ],
+  mixins: [stats],
   props: {
     hidden: {
       type: Boolean,
@@ -37,7 +37,9 @@ export default {
     const value = this.__adjustValue();
     const hidden = this.hidden || (!value && this.hiddenOnEmpty);
     return (
-      <f7-badge color={this.stats_color} class={hidden ? 'display-none' : ''}>{value}</f7-badge>
+      <f7-badge color={this.stats_color} class={hidden ? 'display-none' : ''}>
+        {value}
+      </f7-badge>
     );
   },
 };

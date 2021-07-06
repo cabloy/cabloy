@@ -5,36 +5,44 @@ module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   return function () {
-    return new Proxy({}, {
-      get(obj, prop) {
-        if (obj[prop]) return obj[prop];
-        if (prop === 'app') {
-          // app
-          obj[prop] = _createWechatApiApp();
-        } else if (prop === 'mini') {
-          // mini
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createWechatApiMini({ sceneShort: prop });
+    return new Proxy(
+      {},
+      {
+        get(obj, prop) {
+          if (obj[prop]) return obj[prop];
+          if (prop === 'app') {
+            // app
+            obj[prop] = _createWechatApiApp();
+          } else if (prop === 'mini') {
+            // mini
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createWechatApiMini({ sceneShort: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'util') {
-          // util
-          obj[prop] = _createWechatApiUtil();
-        }
-        return obj[prop];
-      },
-    });
+            );
+          } else if (prop === 'util') {
+            // util
+            obj[prop] = _createWechatApiUtil();
+          }
+          return obj[prop];
+        },
+      }
+    );
   };
 
   function _createWechatApiApp() {
     // config
     const config = ctx.config.module(moduleInfo.relativeName).account.public;
     // api
-    const api = new WechatAPI(config.appID, config.appSecret,
+    const api = new WechatAPI(
+      config.appID,
+      config.appSecret,
       async function () {
         const cacheKey = 'wechat-token';
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
@@ -48,7 +56,7 @@ module.exports = function (ctx) {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.registerTicketHandle(
       async function (type) {
         const cacheKey = `wechat-jsticket:${type}`;
@@ -71,7 +79,9 @@ module.exports = function (ctx) {
     // config
     const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
     // api
-    const api = new WechatAPI(config.appID, config.appSecret,
+    const api = new WechatAPI(
+      config.appID,
+      config.appSecret,
       async function () {
         const cacheKey = 'wechatmini-token';
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
@@ -85,7 +95,7 @@ module.exports = function (ctx) {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.registerTicketHandle(
       async function (type) {
         const cacheKey = `wechatmini-jsticket:${type}`;
@@ -127,7 +137,7 @@ module.exports = function (ctx) {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = (provider.providerName === item) || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
+          const ok = provider.providerName === item || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -135,5 +145,4 @@ module.exports = function (ctx) {
       },
     };
   }
-
 };

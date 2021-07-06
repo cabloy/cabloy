@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Category {
-
     get modelCategory() {
       return ctx.model.module(moduleInfo.relativeName).category;
     }
@@ -36,7 +35,7 @@ module.exports = ctx => {
 
     async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale, count = 0 }) {
       //
-      const where = { };
+      const where = {};
       if (categoryId !== undefined) where.categoryIdParent = categoryId;
       // atomClassId
       if (!where.categoryIdParent) {
@@ -55,7 +54,10 @@ module.exports = ctx => {
       }
       const list = await this.modelCategory.select({
         where,
-        orders: [['categorySorting', 'asc'], ['createdAt', 'asc']],
+        orders: [
+          ['categorySorting', 'asc'],
+          ['createdAt', 'asc'],
+        ],
       });
       if (setLocale) {
         for (const category of list) {
@@ -163,7 +165,8 @@ module.exports = ctx => {
       let category;
       for (const _categoryName of categoryNames) {
         category = await this.child({
-          atomClass, language,
+          atomClass,
+          language,
           categoryId: categoryIdParent,
           categoryName: _categoryName,
         });
@@ -176,7 +179,8 @@ module.exports = ctx => {
         if (!force) return null;
         // create
         const categoryId = await this._register({
-          atomClass, language,
+          atomClass,
+          language,
           categoryName: _categoryName,
           categoryIdParent,
         });
@@ -223,7 +227,6 @@ module.exports = ctx => {
         },
       });
     }
-
   }
   return Category;
 };

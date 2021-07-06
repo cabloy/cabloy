@@ -1,6 +1,5 @@
 module.exports = app => {
   class ShareController extends app.Controller {
-
     async generate() {
       const res = await this.service.share.generate({
         host: this.ctx.request.body.host,
@@ -17,7 +16,6 @@ module.exports = app => {
         user: this.ctx.state.user.op,
       });
     }
-
   }
   return ShareController;
 };

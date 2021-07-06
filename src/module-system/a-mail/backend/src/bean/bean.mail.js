@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Mail extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'mail');
       this.moduleName = moduleName || ctx.module.info.relativeName;

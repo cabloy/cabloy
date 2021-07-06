@@ -1,8 +1,7 @@
 export default {
   data() {
     return {
-      timeline: {
-      },
+      timeline: {},
     };
   },
   methods: {
@@ -42,21 +41,17 @@ export default {
           children.push(domTask);
         }
       }
-      return (
-        <f7-list medial-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list medial-list>{children}</f7-list>;
     },
     _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
       // index
       const domIndex = (
-        <f7-badge class="flowNodeIndex" color="teal">{flowNodeGroupIndex}</f7-badge>
+        <f7-badge class="flowNodeIndex" color="teal">
+          {flowNodeGroupIndex}
+        </f7-badge>
       );
       // title
-      const domTitle = (
-        <span>{task.flowNodeNameLocale}</span>
-      );
+      const domTitle = <span>{task.flowNodeNameLocale}</span>;
       // remark
       let domRemark;
       // if (task.flowNodeRemarkLocale) {
@@ -67,9 +62,7 @@ export default {
       // current
       let domCurrent;
       if (task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
-        domCurrent = (
-          <f7-badge color="orange">{this.$text('Current')}</f7-badge>
-        );
+        domCurrent = <f7-badge color="orange">{this.$text('Current')}</f7-badge>;
       }
       // tasks
       const items = this._timeline_renderFlowNodeItems({ tasks: task.items });
@@ -85,9 +78,7 @@ export default {
               {domCurrent}
             </div>
           </f7-card-header>
-          <f7-card-content padding={false}>
-            {items}
-          </f7-card-content>
+          <f7-card-content padding={false}>{items}</f7-card-content>
         </f7-card>
       );
     },
@@ -101,9 +92,7 @@ export default {
       } else {
         text = this.$text(status.text);
       }
-      return (
-        <f7-badge color={status.color}>{text}</f7-badge>
-      );
+      return <f7-badge color={status.color}>{text}</f7-badge>;
     },
     // also be invoked by atomLayoutManager
     _timeline_renderFlowTaskActionsChildren({ task, enableView, ctxParent }) {
@@ -122,11 +111,7 @@ export default {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const enableView = task.specificFlag === 0;
       const children = this._timeline_renderFlowTaskActionsChildren({ task, enableView });
-      return (
-        <div class="task-actions">
-          {children}
-        </div>
-      );
+      return <div class="task-actions">{children}</div>;
     },
     _timeline_getHandleRemark({ task }) {
       if (task.handleRemarkLocale) return task.handleRemarkLocale;
@@ -161,9 +146,7 @@ export default {
           <div class="mediaLabel">
             <span>{date}</span>
           </div>
-          <div class="date">
-            {domStatus}
-          </div>
+          <div class="date">{domStatus}</div>
         </div>
       );
       // domTitle
@@ -176,7 +159,7 @@ export default {
       const handleRemark = this._timeline_getHandleRemark({ task });
       const domSummary = (
         <div slot="root-end" class="summary">
-          { handleRemark }
+          {handleRemark}
         </div>
       );
       // domAfter
@@ -210,11 +193,7 @@ export default {
     },
     timeline_render() {
       const tasks = this._timeline_renderTasks();
-      return (
-        <div class="eb-flow-timeline">
-          {tasks}
-        </div>
-      );
+      return <div class="eb-flow-timeline">{tasks}</div>;
     },
   },
 };

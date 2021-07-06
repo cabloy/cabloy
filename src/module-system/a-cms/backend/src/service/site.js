@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Site extends app.Service {
-
     async getSite({ atomClass, language, options }) {
       return await this.ctx.bean.cms.site.getSite({ atomClass, language, options });
     }
@@ -63,7 +61,6 @@ module.exports = app => {
     async checkFile({ atomId, file, mtime, user }) {
       return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }
-
   }
 
   return Site;

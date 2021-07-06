@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class GuideController extends app.Controller {
-
     async echo() {
       const message = 'Hello World';
       this.ctx.success(message);
@@ -83,9 +81,7 @@ module.exports = app => {
       // ok
       this.ctx.success('ok');
     }
-
   }
 
   return GuideController;
 };
-

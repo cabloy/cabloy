@@ -5,7 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-select',
-  mixins: [ validate ],
+  mixins: [validate],
   props: {
     readOnly: {
       type: Boolean,
@@ -117,7 +117,7 @@ export default {
           // group
           _options.unshift({
             title: 'Empty',
-            options: [ optEmpty ],
+            options: [optEmpty],
           });
         } else {
           const opt = _options[0];
@@ -256,14 +256,16 @@ export default {
             selected = value.findIndex(item => this.equal(item, this.optionValue(opt))) > -1;
           }
         }
-        options.push(c('option', {
-          key: this.optionValue(opt),
-          attrs: {
-            value: this.optionValue(opt),
-            selected,
-          },
-          domProps: { innerText: this.optionDisplay(opt) },
-        }));
+        options.push(
+          c('option', {
+            key: this.optionValue(opt),
+            attrs: {
+              value: this.optionValue(opt),
+              selected,
+            },
+            domProps: { innerText: this.optionDisplay(opt) },
+          })
+        );
       }
       return options;
     },
@@ -271,12 +273,18 @@ export default {
       const options = [];
       for (const group of groups) {
         const _options = this._renderOptions(c, group.options);
-        options.push(c('optgroup', {
-          key: this.optionTitle(group),
-          attrs: {
-            label: this.optionDisplay(group),
-          },
-        }, _options));
+        options.push(
+          c(
+            'optgroup',
+            {
+              key: this.optionTitle(group),
+              attrs: {
+                label: this.optionDisplay(group),
+              },
+            },
+            _options
+          )
+        );
       }
       return options;
     },
@@ -298,17 +306,19 @@ export default {
       }
     }
     // select
-    return c('select', {
-      attrs: {
-        multiple: this.multiple ? 'multiple' : false,
+    return c(
+      'select',
+      {
+        attrs: {
+          multiple: this.multiple ? 'multiple' : false,
+        },
+        on: {
+          change: this.onChange,
+        },
       },
-      on: {
-        change: this.onChange,
-      },
-    }, options);
+      options
+    );
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

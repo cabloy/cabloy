@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class Procedure {
-
     // mode: mine/others/flowing/history
     selectFlows({ iid, userIdWho, where, orders, page, count, mode }) {
       iid = parseInt(iid);
@@ -51,8 +50,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlow a
+      const _sql = `select ${_selectFields} from aFlow a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -114,8 +112,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlow a
+      const _sql = `select ${_selectFields} from aFlow a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -170,8 +167,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowHistory a
+      const _sql = `select ${_selectFields} from aFlowHistory a
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -187,9 +183,7 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };

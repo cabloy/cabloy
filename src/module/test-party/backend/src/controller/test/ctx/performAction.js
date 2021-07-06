@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class PerformActionController extends app.Controller {
-
     async performAction() {
       // param: id
       const id = this.ctx.request.body.id;
@@ -22,9 +20,7 @@ module.exports = app => {
       // echo back
       this.ctx.success(id);
     }
-
   }
 
   return PerformActionController;
 };
-

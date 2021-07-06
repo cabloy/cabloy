@@ -5,7 +5,7 @@ import assigneesUsers from '../../components/assignees/users.jsx';
 
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     assigneesVars,
     assigneesRoles,
@@ -56,8 +56,7 @@ export default {
       return this.$text('Assignees');
     },
     onPerformDone() {
-      const assignees = {
-      };
+      const assignees = {};
       // users
       if (this.assignees.users.length > 0) {
         assignees.users = this.assignees.users.map(item => {
@@ -101,20 +100,15 @@ export default {
   render() {
     let domDone;
     if (!this.readOnly) {
-      domDone = (
-        <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
-      );
+      domDone = <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>;
     }
     return (
       <eb-page>
         <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
-          <f7-nav-right>
-            {domDone}
-          </f7-nav-right>
+          <f7-nav-right>{domDone}</f7-nav-right>
         </eb-navbar>
         {this.renderAssignees()}
       </eb-page>
     );
   },
 };
-

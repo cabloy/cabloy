@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
@@ -10,12 +9,12 @@ module.exports = ctx => {
         atomStage: 0,
         atomClosed: 0,
         atomFlowId: {
-          op: '>', val: 0,
+          op: '>',
+          val: 0,
         },
       });
       return count;
     }
-
   }
 
   return Stats;

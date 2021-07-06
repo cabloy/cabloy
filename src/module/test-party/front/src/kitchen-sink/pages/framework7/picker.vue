@@ -92,31 +92,34 @@ export default {
       // iOS Device picker
       self.pickerDevice = app.picker.create({
         inputEl: '#demo-picker-device',
-        cols: [{
-          textAlign: 'center',
-          values: [ 'iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3' ],
-        }],
+        cols: [
+          {
+            textAlign: 'center',
+            values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3'],
+          },
+        ],
       });
 
       // Describe yourself picker
       self.pickerDescribe = app.picker.create({
         inputEl: '#demo-picker-describe',
         rotateEffect: true,
-        cols: [{
-          textAlign: 'left',
-          values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
-        },
-        {
-          values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
-        },
+        cols: [
+          {
+            textAlign: 'left',
+            values: 'Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot'.split(' '),
+          },
+          {
+            values: 'Man Luthor Woman Boy Girl Person Cutie Babe Raccoon'.split(' '),
+          },
         ],
       });
 
       // Dependent values
       const carVendors = {
-        Japanese: [ 'Honda', 'Lexus', 'Mazda', 'Nissan', 'Toyota' ],
-        German: [ 'Audi', 'BMW', 'Mercedes', 'Volkswagen', 'Volvo' ],
-        American: [ 'Cadillac', 'Chrysler', 'Dodge', 'Ford' ],
+        Japanese: ['Honda', 'Lexus', 'Mazda', 'Nissan', 'Toyota'],
+        German: ['Audi', 'BMW', 'Mercedes', 'Volkswagen', 'Volvo'],
+        American: ['Cadillac', 'Chrysler', 'Dodge', 'Ford'],
       };
       self.pickerDependent = app.picker.create({
         inputEl: '#demo-picker-dependent',
@@ -124,19 +127,20 @@ export default {
         formatValue(values) {
           return values[1];
         },
-        cols: [{
-          textAlign: 'left',
-          values: [ 'Japanese', 'German', 'American' ],
-          onChange(picker, country) {
-            if (picker.cols[1].replaceValues) {
-              picker.cols[1].replaceValues(carVendors[country]);
-            }
+        cols: [
+          {
+            textAlign: 'left',
+            values: ['Japanese', 'German', 'American'],
+            onChange(picker, country) {
+              if (picker.cols[1].replaceValues) {
+                picker.cols[1].replaceValues(carVendors[country]);
+              }
+            },
           },
-        },
-        {
-          values: carVendors.Japanese,
-          width: 160,
-        },
+          {
+            values: carVendors.Japanese,
+            width: 160,
+          },
         ],
       });
 
@@ -145,7 +149,8 @@ export default {
         inputEl: '#demo-picker-custom-toolbar',
         rotateEffect: true,
         renderToolbar() {
-          return '<div class="toolbar">' +
+          return (
+            '<div class="toolbar">' +
             '<div class="toolbar-inner">' +
             '<div class="left">' +
             '<a href="#" class="link toolbar-randomize-link">Randomize</a>' +
@@ -154,18 +159,20 @@ export default {
             '<a href="#" class="link sheet-close popover-close">That\'s me</a>' +
             '</div>' +
             '</div>' +
-            '</div>';
+            '</div>'
+          );
         },
-        cols: [{
-          values: [ 'Mr', 'Ms' ],
-        },
-        {
-          textAlign: 'left',
-          values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
-        },
-        {
-          values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
-        },
+        cols: [
+          {
+            values: ['Mr', 'Ms'],
+          },
+          {
+            textAlign: 'left',
+            values: 'Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot'.split(' '),
+          },
+          {
+            values: 'Man Luthor Woman Boy Girl Person Cutie Babe Raccoon'.split(' '),
+          },
         ],
         on: {
           open(picker) {
@@ -179,7 +186,7 @@ export default {
               const col2Values = picker.cols[2].values;
               const col2Random = col2Values[Math.floor(Math.random() * col2Values.length)];
 
-              picker.setValue([ col0Random, col1Random, col2Random ]);
+              picker.setValue([col0Random, col1Random, col2Random]);
             });
           },
         },
@@ -190,34 +197,30 @@ export default {
         inputEl: '#demo-picker-date',
         toolbar: false,
         rotateEffect: true,
-        value: [
-          today.getMonth(),
-          today.getDate(),
-          today.getFullYear(),
-          today.getHours(),
-          today.getMinutes() < 10 ? `0${today.getMinutes()}` : today.getMinutes(),
-        ],
+        value: [today.getMonth(), today.getDate(), today.getFullYear(), today.getHours(), today.getMinutes() < 10 ? `0${today.getMinutes()}` : today.getMinutes()],
         formatValue(values, displayValues) {
           return `${displayValues[0]} ${values[1]}, ${values[2]} ${values[3]}:${values[4]}`;
         },
         cols: [
           // Months
           {
-            values: ('0 1 2 3 4 5 6 7 8 9 10 11').split(' '),
-            displayValues: ('January February March April May June July August September October November December').split(' '),
+            values: '0 1 2 3 4 5 6 7 8 9 10 11'.split(' '),
+            displayValues: 'January February March April May June July August September October November December'.split(' '),
             textAlign: 'left',
           },
           // Days
           {
-            values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 ],
+            values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
           },
           // Years
           {
             values: (function createValues() {
               const arr = [];
-              for (let i = 1950; i <= 2030; i += 1) { arr.push(i); }
+              for (let i = 1950; i <= 2030; i += 1) {
+                arr.push(i);
+              }
               return arr;
-            }()),
+            })(),
           },
           // Space divider
           {
@@ -228,9 +231,11 @@ export default {
           {
             values: (function createValues() {
               const arr = [];
-              for (let i = 0; i <= 23; i += 1) { arr.push(i); }
+              for (let i = 0; i <= 23; i += 1) {
+                arr.push(i);
+              }
               return arr;
-            }()),
+            })(),
           },
           // Divider
           {
@@ -241,9 +246,11 @@ export default {
           {
             values: (function createValues() {
               const arr = [];
-              for (let i = 0; i <= 59; i += 1) { arr.push(i < 10 ? `0${i}` : i); }
+              for (let i = 0; i <= 59; i += 1) {
+                arr.push(i < 10 ? `0${i}` : i);
+              }
               return arr;
-            }()),
+            })(),
           },
         ],
         on: {
@@ -265,5 +272,4 @@ export default {
     },
   },
 };
-
 </script>

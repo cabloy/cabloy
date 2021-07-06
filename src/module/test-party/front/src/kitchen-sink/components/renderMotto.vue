@@ -1,16 +1,16 @@
 <template>
   <eb-list-input type="textarea" :input="false" dataPath="context.dataPath" :label="$text('Metto')">
     <div slot="input">
-      <div v-if="errorMessage" class="item-component-invalid-input-text">{{errorMessage}}</div>
+      <div v-if="errorMessage" class="item-component-invalid-input-text">{{ errorMessage }}</div>
     </div>
-    <textarea slot="root" type="textarea" :value="context.getValue()" @input="onInput" class="json-textarea" :style="{height}" :placeholder="$text('Metto')"></textarea>
+    <textarea slot="root" type="textarea" :value="context.getValue()" @input="onInput" class="json-textarea" :style="{ height }" :placeholder="$text('Metto')"></textarea>
   </eb-list-input>
 </template>
 <script>
 import Vue from 'vue';
 const ebValidateCheck = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateCheck;
 export default {
-  mixins: [ ebValidateCheck ],
+  mixins: [ebValidateCheck],
   props: {
     context: {
       type: Object,
@@ -39,7 +39,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     // options
     //   where, orders, page, mode: mine/others/flowing/history
     async select() {
@@ -22,7 +20,6 @@ module.exports = app => {
       });
       this.ctx.success(count);
     }
-
   }
   return FlowController;
 };

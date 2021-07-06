@@ -14,14 +14,14 @@ export default {
       const actions = this.actions.list;
       // just remove read
       //    should show write/moveUp/moveDown
-      return actions.filter(item => [ 'read' ].indexOf(item.name) === -1);
+      return actions.filter(item => ['read'].indexOf(item.name) === -1);
     },
     actions_listPopover() {
       if (!this.base_ready) return null;
       let actions = this.actions_itemActions;
       if (!actions) return null;
       // just remove write
-      actions = actions.filter(item => [ 'write' ].indexOf(item.name) === -1);
+      actions = actions.filter(item => ['write'].indexOf(item.name) === -1);
       // ok
       return actions.length > 0 ? actions : null;
     },
@@ -84,18 +84,12 @@ export default {
       if (actionWrite) {
         const actionIcon = 'save';
         const actionName = 'save';
-        children.push(
-          <eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>
-        );
-        children.push(
-          <eb-link key='saveDone' ref="buttonSaveDone" iconMaterial='done' propsOnPerform={event => this.actions_onSaveDone(event)}></eb-link>
-        );
+        children.push(<eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
+        children.push(<eb-link key="saveDone" ref="buttonSaveDone" iconMaterial="done" propsOnPerform={event => this.actions_onSaveDone(event)}></eb-link>);
       }
       //
       if (this.actions_listPopover) {
-        children.push(
-          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
-        );
+        children.push(<f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>);
       }
       //
       return children;
@@ -109,22 +103,14 @@ export default {
           const _action = this.getDetailAction(action);
           children.push(
             <eb-list-item key={action.code} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
-              <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
+              <f7-icon slot="media" material={_action.icon && _action.icon.material}></f7-icon>
               <div slot="title">{this.getDetailActionTitle(action)}</div>
             </eb-list-item>
           );
         }
-        domList = (
-          <f7-list inset>
-            {children}
-          </f7-list>
-        );
+        domList = <f7-list inset>{children}</f7-list>;
       }
-      return (
-        <f7-popover id={this.actions.popoverId}>
-          {domList}
-        </f7-popover>
-      );
+      return <f7-popover id={this.actions.popoverId}>{domList}</f7-popover>;
     },
   },
 };

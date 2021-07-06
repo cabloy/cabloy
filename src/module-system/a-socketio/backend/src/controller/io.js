@@ -1,6 +1,5 @@
 module.exports = app => {
   class IOController extends app.Controller {
-
     async subscribe() {
       const res = await this.service.io.subscribe({
         subscribes: this.ctx.request.body.subscribes,
@@ -17,7 +16,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return IOController;
 };

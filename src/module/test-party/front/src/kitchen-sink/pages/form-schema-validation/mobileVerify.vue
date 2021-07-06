@@ -3,7 +3,7 @@
     <eb-navbar large largeTransparent :title="$text('Form / SMS Verification')" eb-back-link="Back"></eb-navbar>
     <template v-if="!smsInstalled">
       <f7-block>
-        <div class="alert-info">{{$text('TipInstallAuthSMS')}}</div>
+        <div class="alert-info">{{ $text('TipInstallAuthSMS') }}</div>
       </f7-block>
     </template>
     <template v-else>
@@ -18,13 +18,13 @@
               </div>
             </eb-list-input>
             <f7-list-item divider>
-              <eb-button ref="buttonSubmit" :onPerform="onPerformSignUp">{{$text('Verify Now')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformSignUp">{{ $text('Verify Now') }}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>
       </f7-block>
       <f7-block-title>Form Value</f7-block-title>
-      <pre class="form-data">{{form2}}</pre>
+      <pre class="form-data">{{ form2 }}</pre>
     </template>
   </eb-page>
 </template>
@@ -32,7 +32,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       item: {
@@ -75,16 +75,17 @@ export default {
       return this.$refs.validate.perform();
     },
     onPerformValidate() {
-      return this.$api.post('kitchen-sink/form-mobile-verify/mobileVerify', {
-        data: this.item,
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-      }).then(() => {
-        return true;
-      });
+      return this.$api
+        .post('kitchen-sink/form-mobile-verify/mobileVerify', {
+          data: this.item,
+          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        })
+        .then(() => {
+          return true;
+        });
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .form-data {
@@ -92,5 +93,4 @@ export default {
   margin: 8px;
   padding: 8px;
 }
-
 </style>

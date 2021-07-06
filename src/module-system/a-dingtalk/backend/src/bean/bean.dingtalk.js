@@ -10,55 +10,70 @@ module.exports = ctx => {
   // ctx.bean.dingtalk.mini.default
   // ctx.bean.dingtalk.util
   return function () {
-    return new Proxy({}, {
-      get(obj, prop) {
-        if (obj[prop]) return obj[prop];
-        if (prop === 'app') {
-          // app
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiApp({ appName: prop });
+    return new Proxy(
+      {},
+      {
+        get(obj, prop) {
+          if (obj[prop]) return obj[prop];
+          if (prop === 'app') {
+            // app
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiApp({ appName: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'admin') {
-          obj[prop] = _createDingtalkApiAdmin();
-        } else if (prop === 'web') {
-          // web
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiWeb({ webName: prop });
+            );
+          } else if (prop === 'admin') {
+            obj[prop] = _createDingtalkApiAdmin();
+          } else if (prop === 'web') {
+            // web
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiWeb({ webName: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'mini') {
-          // mini
-          obj[prop] = new Proxy({}, {
-            get(obj, prop) {
-              if (!obj[prop]) {
-                obj[prop] = _createDingtalkApiMini({ sceneShort: prop });
+            );
+          } else if (prop === 'mini') {
+            // mini
+            obj[prop] = new Proxy(
+              {},
+              {
+                get(obj, prop) {
+                  if (!obj[prop]) {
+                    obj[prop] = _createDingtalkApiMini({ sceneShort: prop });
+                  }
+                  return obj[prop];
+                },
               }
-              return obj[prop];
-            },
-          });
-        } else if (prop === 'util') {
-          // util
-          obj[prop] = _createDingtalkApiUtil();
-        }
-        return obj[prop];
-      },
-    });
+            );
+          } else if (prop === 'util') {
+            // util
+            obj[prop] = _createDingtalkApiUtil();
+          }
+          return obj[prop];
+        },
+      }
+    );
   };
 
   function _createDingtalkApiGeneral({ category, appName, appkey, appsecret, corpid, sso }) {
     // api
     const api = new DingtalkAPI(
       {
-        appkey, appsecret, corpid, sso,
+        appkey,
+        appsecret,
+        corpid,
+        sso,
       },
       async function () {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
@@ -73,7 +88,7 @@ module.exports = ctx => {
         }
       }
     );
-      // registerTicketHandle
+    // registerTicketHandle
     api.client.registerTicketHandle(
       async function (type) {
         const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
@@ -156,7 +171,7 @@ module.exports = ctx => {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = (provider.providerName === item) || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
+          const ok = provider.providerName === item || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found

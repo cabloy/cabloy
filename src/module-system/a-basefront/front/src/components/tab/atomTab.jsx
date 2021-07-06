@@ -3,15 +3,14 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ listLayoutManager ],
+  mixins: [listLayoutManager],
   props: {
     container: {
       type: Object,
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     reload(force) {

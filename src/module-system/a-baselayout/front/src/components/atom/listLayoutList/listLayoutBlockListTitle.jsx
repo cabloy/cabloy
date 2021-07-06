@@ -11,13 +11,10 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
   render() {
     return (
       <f7-nav-right>

@@ -12,11 +12,9 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     onSize(size) {
       this.$$(this.$refs.textarea).css({
@@ -27,7 +25,7 @@ export default {
     onInput(event) {
       this._onInputDelay(event.target.value);
     },
-    _onInputDelay: Vue.prototype.$meta.util.debounce(function(value) {
+    _onInputDelay: Vue.prototype.$meta.util.debounce(function (value) {
       try {
         this.$emit('contentChange', { type: 'listener', value });
       } catch (err) {
@@ -38,7 +36,14 @@ export default {
   render() {
     return (
       <eb-box onSize={this.onSize} header subnavbar>
-        <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.contentListener} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>
+        <textarea
+          ref="textarea"
+          readonly={this.readOnly ? 'readonly' : false}
+          type="textarea"
+          value={this.contentListener}
+          onInput={this.onInput}
+          class="json-textarea json-textarea-margin"
+        ></textarea>
       </eb-box>
     );
   },

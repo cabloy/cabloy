@@ -18,10 +18,7 @@ export default {
       const messageClass = this.base_messageClass;
       const messageClassName = `${messageClass.module}:${messageClass.messageClassName}`;
       this.notification.simple = simple;
-      this.notification.callbackId = this.notification.simple.register(
-        messageClassName,
-        this.notification_callback.bind(this)
-      );
+      this.notification.callbackId = this.notification.simple.register(messageClassName, this.notification_callback.bind(this));
     });
   },
   beforeDestroy() {

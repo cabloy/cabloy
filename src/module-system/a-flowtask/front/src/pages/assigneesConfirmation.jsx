@@ -1,7 +1,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       selectedUsers: null,
@@ -25,9 +25,12 @@ export default {
         flowTaskId: this.flowTaskId,
         handle: {
           status,
-          assignees: status === 1 ? {
-            users: this.selectedUsers,
-          } : undefined,
+          assignees:
+            status === 1
+              ? {
+                  users: this.selectedUsers,
+                }
+              : undefined,
         },
       });
       this.contextCallback(200, true);
@@ -54,9 +57,7 @@ export default {
       const children = [];
       for (const user of users) {
         children.push(
-          <eb-list-item class="item" key={user.id}
-            checkbox checked={this._getItemChecked(user)}
-            onChange={event => this.onItemChange(event, user)}>
+          <eb-list-item class="item" key={user.id} checkbox checked={this._getItemChecked(user)} onChange={event => this.onItemChange(event, user)}>
             <div slot="title" class="display-flex align-items-center">
               <img class="avatar avatar24" src={this._getItemMetaMedia(user)} />
               <span>{user.userName}</span>
@@ -64,19 +65,13 @@ export default {
           </eb-list-item>
         );
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {
     let domPass;
     if (this.selectedUsers.length > 0) {
-      domPass = (
-        <eb-link propsOnPerform={event => this.onPerform(event, 1)}>{this.$text('Pass')}</eb-link>
-      );
+      domPass = <eb-link propsOnPerform={event => this.onPerform(event, 1)}>{this.$text('Pass')}</eb-link>;
     }
     return (
       <eb-page>

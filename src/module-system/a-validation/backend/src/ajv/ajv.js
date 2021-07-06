@@ -21,7 +21,7 @@ module.exports = app => {
       passContext: true,
       removeAdditional: 'all',
     };
-      // processCode
+    // processCode
     if (app.meta.isTest || app.meta.isLocal) {
       _options.processCode = jsBeautify.js_beautify;
     }
@@ -67,7 +67,8 @@ function createValidate(schemaRoot) {
       // error
       throw ctx.createError({
         ...e,
-        code: 422, message: e.errors,
+        code: 422,
+        message: e.errors,
       });
     }
   };

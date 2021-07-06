@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-
     async onChannelRender({ channelFullName, options, message, messageSync, messageClass }) {
       if (channelFullName === 'a-mail:mail') {
         return await this._onChannelRenderMail({ options, message, messageSync, messageClass });
@@ -19,7 +18,6 @@ module.exports = ctx => {
         message: JSON.parse(mail.message),
       };
     }
-
   }
   return IOMessage;
 };

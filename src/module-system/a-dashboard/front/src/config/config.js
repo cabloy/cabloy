@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-export default function(Vue) {
+export default function (Vue) {
   return {
     dashboard: {
       presets: {

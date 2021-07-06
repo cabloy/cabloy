@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class AuthController extends app.Controller {
-
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
@@ -18,7 +16,6 @@ module.exports = app => {
       const info = await this.ctx.bean.auth.logout();
       this.ctx.success(info);
     }
-
   }
 
   return AuthController;

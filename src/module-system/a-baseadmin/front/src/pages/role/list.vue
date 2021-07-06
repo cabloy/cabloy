@@ -6,7 +6,7 @@
       <f7-icon material="add"></f7-icon>
       <f7-icon material="close"></f7-icon>
       <f7-fab-buttons>
-        <eb-fab-button color="orange" :onPerform="onPerformBuild">{{$text('Build')}}</eb-fab-button>
+        <eb-fab-button color="orange" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-fab-button>
       </f7-fab-buttons>
     </f7-fab>
   </eb-page>
@@ -62,7 +62,7 @@ export default {
       this.reloadNode(node);
     },
     onRoleMove(data) {
-      for (const roleIdParent of [ 'roleIdFrom', 'roleIdTo' ]) {
+      for (const roleIdParent of ['roleIdFrom', 'roleIdTo']) {
         const node = this.tree.find(null, node => node.id === data[roleIdParent]);
         this.reloadNode(node);
       }
@@ -77,9 +77,12 @@ export default {
     onPerformBuild() {
       return this.$api.post('role/build').then(data => {
         const progressId = data.progressId;
-        this.$view.dialog.progressbar({ progressId, title: this.$text('Build') }).then(() => {
-          this.roleDirty = false;
-        }).catch(() => {});
+        this.$view.dialog
+          .progressbar({ progressId, title: this.$text('Build') })
+          .then(() => {
+            this.roleDirty = false;
+          })
+          .catch(() => {});
       });
     },
     checkRoleDirty() {
@@ -89,5 +92,4 @@ export default {
     },
   },
 };
-
 </script>

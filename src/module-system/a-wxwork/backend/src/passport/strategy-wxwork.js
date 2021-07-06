@@ -24,7 +24,6 @@ function WxworkStrategy(options, verify) {
   this._state = options.state;
   this._scope = options.scope || 'snsapi_base';
   this._passReqToCallback = options.passReqToCallback;
-
 }
 
 util.inherits(WxworkStrategy, passport.Strategy);
@@ -35,7 +34,6 @@ WxworkStrategy.prototype.getOAuth = function (options) {
 };
 
 WxworkStrategy.prototype.authenticate = function (req, options) {
-
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
   }
@@ -60,7 +58,6 @@ WxworkStrategy.prototype.authenticate = function (req, options) {
 
   // 获取code授权成功
   if (req.url.indexOf('/callback') > -1) {
-
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
     if (req.query && req.query.state && !req.query.code) {
@@ -84,13 +81,12 @@ WxworkStrategy.prototype.authenticate = function (req, options) {
     } catch (ex) {
       return self.error(ex);
     }
-
   } else {
     const state = options.state || self._state;
     const callbackURL = options.callbackURL || self._callbackURL;
     const scope = options.scope || self._scope;
 
-    const methodName = (this._client === 'wxwork') ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
+    const methodName = this._client === 'wxwork' ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
     const location = _oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);

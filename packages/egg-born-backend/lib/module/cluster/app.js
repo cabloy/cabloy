@@ -1,6 +1,6 @@
 const versionReady = require('../version/ready.js');
 
-module.exports = function(loader) {
+module.exports = function (loader) {
   // egg-ready
   loader.app.messenger.once('egg-ready', async () => {
     // version ready

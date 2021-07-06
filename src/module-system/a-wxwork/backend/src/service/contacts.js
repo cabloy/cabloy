@@ -17,9 +17,81 @@ const __departmentFieldMap_XML = [
 // member
 
 const __memberFieldMap = [
-  ['memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department'],
-  ['userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department'],
-  ['string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number'],
+  [
+    'memberId',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'sorting',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'thumb_avatar',
+    'qr_code',
+    'status',
+    'extattr',
+    'external_profile',
+    'external_position',
+    'address',
+    'hide_mobile',
+    'english_name',
+    'open_userid',
+    'main_department',
+  ],
+  [
+    'userid',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'order',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'thumb_avatar',
+    'qr_code',
+    'status',
+    'extattr',
+    'external_profile',
+    'external_position',
+    'address',
+    'hide_mobile',
+    'english_name',
+    'open_userid',
+    'main_department',
+  ],
+  [
+    'string',
+    'string',
+    'string',
+    'string',
+    'array',
+    'array',
+    'string',
+    'number',
+    'string',
+    'string',
+    'array',
+    'string',
+    'string',
+    'string',
+    'number',
+    'json',
+    'json',
+    'string',
+    'string',
+    'number',
+    'string',
+    'string',
+    'number',
+  ],
 ];
 
 const __memberFieldMap_XML = [
@@ -31,7 +103,6 @@ const __memberFieldMap_XML = [
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
-
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -95,15 +166,9 @@ module.exports = app => {
         // check if memberId changed
         if (member.memberIdNew) {
           // upate memberId of member
-          await this.ctx.model.query(
-            'update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?',
-            [member.memberIdNew, this.ctx.instance.id, member.memberId]
-          );
+          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [member.memberIdNew, this.ctx.instance.id, member.memberId]);
           // upate profileId of auth
-          await this.ctx.model.query(
-            'update aAuth a set a.profileId=? where a.iid=? and a.profileId=?',
-            [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]
-          );
+          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]);
         }
         // get member remotely
         const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
@@ -393,7 +458,7 @@ module.exports = app => {
         sorting: department.departmentOrder,
         roleIdParent: roleParent.id,
       });
-        // force change parent role to catalog=1
+      // force change parent role to catalog=1
       await this.ctx.bean.role.save({
         roleId: roleParent.id,
         data: { catalog: 1 },
@@ -526,7 +591,6 @@ module.exports = app => {
       else if (type === 'json') return JSON.stringify(value);
       return value;
     }
-
   }
 
   return Contacts;

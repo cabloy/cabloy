@@ -1,7 +1,6 @@
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     async share_createLink({ capability }) {
@@ -22,9 +21,12 @@ export default {
           actionComponent: 'capabilities',
           name: 'lookup',
         };
-        const capability = await this.$meta.util.performAction({ ctx: this, action, item: {
-          name: 'shareLink',
-        },
+        const capability = await this.$meta.util.performAction({
+          ctx: this,
+          action,
+          item: {
+            name: 'shareLink',
+          },
         });
         if (!capability) return;
         // action

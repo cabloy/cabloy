@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class TagController extends app.Controller {
-
     async tag() {
-
       // atomClass
       const atomClass = {
         module: 'test-party',
@@ -35,9 +32,7 @@ module.exports = app => {
       // ok
       this.ctx.success();
     }
-
   }
 
   return TagController;
-
 };

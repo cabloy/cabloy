@@ -4,7 +4,7 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.roleId}`" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="red" :context="item" :onPerform="onRemove">{{$text('Remove')}}</div>
+            <div color="red" :context="item" :onPerform="onRemove">{{ $text('Remove') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -47,11 +47,10 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('user/roles', { userId: this.user.id, page: { index } })
-        .then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
-        });
+      return this.$api.post('user/roles', { userId: this.user.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
@@ -64,28 +63,25 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              this.$api.post('user/addRole', { userId: this.user.id, roleId: data.id })
-                .then(() => {
-                  this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId: data.id });
-                  this.reload();
-                  this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-                });
+              this.$api.post('user/addRole', { userId: this.user.id, roleId: data.id }).then(() => {
+                this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId: data.id });
+                this.reload();
+                this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+              });
             }
           },
         },
       });
     },
     onRemove(event, item) {
-      return this.$view.dialog.confirm()
-        .then(() => {
-          return this.$api.post('user/removeRole', { id: item.id })
-            .then(() => {
-              this.onRoleDelete({ roleId: item.roleId });
-              this.$meta.eventHub.$emit('user:removeRole', { userId: this.user.id, roleId: item.roleId });
-              this.$meta.util.swipeoutDelete(event.target);
-              return true;
-            });
+      return this.$view.dialog.confirm().then(() => {
+        return this.$api.post('user/removeRole', { id: item.id }).then(() => {
+          this.onRoleDelete({ roleId: item.roleId });
+          this.$meta.eventHub.$emit('user:removeRole', { userId: this.user.id, roleId: item.roleId });
+          this.$meta.util.swipeoutDelete(event.target);
+          return true;
         });
+      });
     },
     onRoleSave(data) {
       const index = this.items.findIndex(item => item.roleId === data.roleId);
@@ -97,7 +93,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,9 +1,8 @@
 const extend = require('extend2');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // all constants
-  const ebConstants = loader.app.meta.constants = {};
+  const ebConstants = (loader.app.meta.constants = {});
 
   // load constants
   loadConstants();
@@ -24,13 +23,12 @@ module.exports = function(loader, modules) {
 
       return context;
     };
-
   }
 
   function loadConstants() {
     Object.keys(modules).forEach(key => {
       const module = modules[key];
-      const ebConstant = ebConstants[module.info.relativeName] = {};
+      const ebConstant = (ebConstants[module.info.relativeName] = {});
 
       // module constants
       if (module.main.constants) extend(true, ebConstant, module.main.constants);
@@ -44,11 +42,10 @@ module.exports = function(loader, modules) {
     Object.defineProperty(ebConstant, 'module', {
       enumerable: false,
       get() {
-        return function(moduleName) {
+        return function (moduleName) {
           return ebConstants[moduleName];
         };
       },
     });
   }
-
 };

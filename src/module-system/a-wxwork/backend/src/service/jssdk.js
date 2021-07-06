@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class JSSDK extends app.Service {
-
     async jsconfig({ url }) {
       // config
       const config = this.ctx.config.account.wxwork;
@@ -27,7 +25,6 @@ module.exports = app => {
       };
       return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfigAgent(params);
     }
-
   }
 
   return JSSDK;

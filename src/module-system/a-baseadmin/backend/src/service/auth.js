@@ -2,9 +2,7 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async list() {
       // list
       const list = await this.ctx.model.authProvider.select();
@@ -71,7 +69,6 @@ module.exports = app => {
         },
       });
     }
-
   }
 
   return Auth;

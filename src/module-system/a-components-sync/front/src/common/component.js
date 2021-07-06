@@ -35,9 +35,15 @@ export default {
       const children = [];
       if (this.$slots) {
         for (const key of Object.keys(this.$slots)) {
-          children.push(c('template', {
-            slot: key,
-          }, this.$slots[key]));
+          children.push(
+            c(
+              'template',
+              {
+                slot: key,
+              },
+              this.$slots[key]
+            )
+          );
         }
       }
       return c(this.__getFullName(), options, children);

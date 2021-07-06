@@ -4,7 +4,6 @@ const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
   class MessageController extends app.Controller {
-
     async index() {
       // query
       const query = this.ctx.query;
@@ -90,8 +89,6 @@ module.exports = app => {
       }
       return xml;
     }
-
   }
   return MessageController;
 };
-

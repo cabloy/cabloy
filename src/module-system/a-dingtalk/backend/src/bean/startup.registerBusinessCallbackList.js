@@ -2,7 +2,6 @@ const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // config
       const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
@@ -50,7 +49,6 @@ module.exports = app => {
         throw err;
       }
     }
-
   }
 
   return Startup;

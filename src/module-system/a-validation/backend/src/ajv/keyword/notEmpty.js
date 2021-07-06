@@ -25,7 +25,7 @@ module.exports = {
 function evaluateExpression({ expression, rootData, ctx }) {
   try {
     const scope = {
-      ... rootData,
+      ...rootData,
       _meta: {
         host: ctx.meta && ctx.meta.validateHost,
         user: ctx.state.user && ctx.state.user.op,

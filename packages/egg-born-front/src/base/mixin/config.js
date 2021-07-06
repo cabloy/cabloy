@@ -1,5 +1,4 @@
-export default function(Vue) {
-
+export default function (Vue) {
   // config
   const config = {
     base: {
@@ -62,7 +61,7 @@ export default function(Vue) {
   });
 
   // beforeCreate
-  const beforeCreate = function(ctx) {
+  const beforeCreate = function (ctx) {
     Object.defineProperty(ctx, '$config', {
       get() {
         const moduleInfo = ctx.$module.info;

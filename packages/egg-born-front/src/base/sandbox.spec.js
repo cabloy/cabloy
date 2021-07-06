@@ -1,4 +1,4 @@
-export default function() {
+export default function () {
   function clear() {
     const keywords = [
       'fetch,importScripts,addEventListener,removeEventListener',
@@ -29,7 +29,7 @@ export default function() {
   // clear
   clear();
   // onmessage
-  self.onmessage = function(event) {
+  self.onmessage = function (event) {
     const { id, expression, scope } = event.data;
     try {
       const scopeKeys = Object.keys(scope);

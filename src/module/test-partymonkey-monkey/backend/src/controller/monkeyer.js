@@ -1,7 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MonkeyerController extends app.Controller {
-
     async test() {
       const config = this.ctx.config.module('test-party');
       this.ctx.success({
@@ -9,9 +8,7 @@ module.exports = app => {
         monkeyed: config.monkeyed,
       });
     }
-
   }
 
   return MonkeyerController;
 };
-

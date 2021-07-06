@@ -8,14 +8,14 @@ import sandboxFn from './sandbox.js';
 import localeZhcn from 'moment/locale/zh-cn.js';
 import _escape from './escape.js';
 
-export default function(Vue) {
-  const _ids = { };
+export default function (Vue) {
+  const _ids = {};
 
   const util = {
     overrideProperty({ obj, key, objBase, vueComponent, combinePath }) {
       Object.defineProperty(obj, key, {
         get() {
-          return function() {
+          return function () {
             const moduleInfo = vueComponent && vueComponent.$module && vueComponent.$module.info;
             const args = new Array(arguments.length);
             args[0] = combinePath(moduleInfo, arguments[0]);
@@ -28,8 +28,8 @@ export default function(Vue) {
       });
     },
     removeAppLoading() {
-    // eslint-disable-next-line
-    const loading = window.document.getElementById('app-loading');
+      // eslint-disable-next-line
+      const loading = window.document.getElementById('app-loading');
       loading && loading.parentNode.removeChild(loading);
     },
     clearRouterHistory() {
@@ -80,7 +80,7 @@ export default function(Vue) {
       const router = Vue.prototype.$f7.router;
       if (!router.params.pushStateSeparator || historyUrl.indexOf(router.params.pushStateSeparator) < 0) return false;
       historyUrl = historyUrl.split(router.params.pushStateSeparator)[1];
-      return (!historyUrl || historyUrl === '/');
+      return !historyUrl || historyUrl === '/';
     },
     isPromise(value) {
       return value && typeof value === 'object' && typeof value.then === 'function';
@@ -93,12 +93,14 @@ export default function(Vue) {
     },
     sleep(ms) {
       return new Promise(reslove => {
-        window.setTimeout(() => { reslove(); }, ms);
+        window.setTimeout(() => {
+          reslove();
+        }, ms);
       });
     },
     debounce(func, wait) {
       let i = 0;
-      return function(...args) {
+      return function (...args) {
         const ctx = this;
         if (i !== 0) window.clearTimeout(i);
         i = window.setTimeout(() => {
@@ -108,17 +110,18 @@ export default function(Vue) {
     },
     nextId(scene) {
       scene = scene || 'default';
-      if (!_ids.scene) _ids.scene = 1; else _ids.scene++;
+      if (!_ids.scene) _ids.scene = 1;
+      else _ids.scene++;
       return `${scene}_${_ids.scene}`;
     },
     fromNow(date) {
-      if (typeof (date) !== 'object') date = new Date(date);
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).fromNow();
     },
     formatDateTime(date, fmt) {
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
       date = date || new Date();
-      if (typeof (date) !== 'object') date = new Date(date);
+      if (typeof date !== 'object') date = new Date(date);
       return moment(date).format(fmt);
     },
     formatDate(date, sep) {
@@ -307,11 +310,11 @@ export default function(Vue) {
     },
     loadScript(src, callback) {
       if (!(typeof callback === 'function')) {
-        callback = function() {};
+        callback = function () {};
       }
       const check = document.querySelectorAll("script[src='" + src + "']");
       if (check.length > 0) {
-        check[0].addEventListener('load', function() {
+        check[0].addEventListener('load', function () {
           callback();
         });
         callback();
@@ -324,11 +327,15 @@ export default function(Vue) {
       script.async = true;
       script.src = src;
       if (script.addEventListener) {
-        script.addEventListener('load', function() {
-          callback();
-        }, false);
+        script.addEventListener(
+          'load',
+          function () {
+            callback();
+          },
+          false
+        );
       } else if (script.attachEvent) {
-        script.attachEvent('onreadystatechange', function() {
+        script.attachEvent('onreadystatechange', function () {
           const target = window.event.srcElement;
           if (target.readyState === 'loaded') {
             callback();
@@ -339,7 +346,7 @@ export default function(Vue) {
     },
     loadLink(src, callback) {
       if (!(typeof callback === 'function')) {
-        callback = function() {};
+        callback = function () {};
       }
       const check = document.querySelectorAll("link[href='" + src + "']");
       if (check.length > 0) {
@@ -351,11 +358,15 @@ export default function(Vue) {
       link.rel = 'stylesheet';
       link.href = src;
       if (link.addEventListener) {
-        link.addEventListener('load', function() {
-          callback();
-        }, false);
+        link.addEventListener(
+          'load',
+          function () {
+            callback();
+          },
+          false
+        );
       } else if (link.attachEvent) {
-        link.attachEvent('onreadystatechange', function() {
+        link.attachEvent('onreadystatechange', function () {
           const target = window.event.srcElement;
           if (target.readyState === 'loaded') {
             callback();
@@ -421,7 +432,7 @@ export default function(Vue) {
       return urlNew === urlCurrent;
     },
     fn2workerURL(fn) {
-      const blob = new Blob([ '(' + fn + ')()' ], { type: 'text/javascript' });
+      const blob = new Blob(['(' + fn + ')()'], { type: 'text/javascript' });
       return URL.createObjectURL(blob);
     },
   };

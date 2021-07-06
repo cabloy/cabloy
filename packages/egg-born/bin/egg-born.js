@@ -11,7 +11,6 @@ const randomize = require('randomatic');
 const uuid = require('uuid');
 
 co(function* () {
-
   const options = {
     name: 'egg-born',
     configName: 'egg-born-init-config',
@@ -20,7 +19,7 @@ co(function* () {
 
   const command = new Command(options);
 
-  command.printUsage = function() {
+  command.printUsage = function () {
     if (isModule(this.targetDir)) {
       // confirmEggBornBin
       confirmEggBornBin();
@@ -76,7 +75,7 @@ co(function* () {
     if (pkg.name === 'egg-born-template-cabloy') {
       // download
       modules = {};
-      for (const moduleName of [ 'test-party', 'test-partymonkey-monkey', 'test-flow' ]) {
+      for (const moduleName of ['test-party', 'test-partymonkey-monkey', 'test-flow']) {
         modules[moduleName] = yield this.__downloadCabloyModule(moduleName);
       }
     }
@@ -107,7 +106,7 @@ co(function* () {
     return path.join(saveDir, '/package');
   };
 
-  command.__moveCabloyModule = function(moduleName, moduleSrcDir, targetDir) {
+  command.__moveCabloyModule = function (moduleName, moduleSrcDir, targetDir) {
     const destDir = path.join(targetDir, 'src/module');
     // move
     fse.moveSync(moduleSrcDir, path.join(destDir, moduleName));
@@ -120,8 +119,8 @@ co(function* () {
     this.mergeDependencies(targetPathProject, sourcePathTest);
   };
 
-  command.mergeDependencies = function(targetPathProject, sourcePathTest) {
-    const ignores = [ 'extend2', 'require3' ];
+  command.mergeDependencies = function (targetPathProject, sourcePathTest) {
+    const ignores = ['extend2', 'require3'];
     const targetPackageProject = require(targetPathProject);
     const sourcePackageTest = require(sourcePathTest);
     for (const item of ignores) {
@@ -134,7 +133,6 @@ co(function* () {
 
   // run
   yield command.run(process.cwd(), process.argv.slice(2));
-
 }).catch(err => {
   console.error(err.stack);
   process.exit(1);
@@ -154,4 +152,3 @@ function confirmEggBornBin() {
   const binPathSrc = path.join(__dirname, '../scripts/egg-born-bin.js');
   fse.copySync(binPathSrc, binPath);
 }
-

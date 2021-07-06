@@ -2,8 +2,7 @@ const extend = require('extend2');
 
 const CTXCONFIG = Symbol.for('Context#__config');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // all configs
   loader.app.meta.configs = {};
 
@@ -35,7 +34,7 @@ module.exports = function(loader, modules) {
               useCache = true;
             }
             const _config = _configs[context.module.info.relativeName];
-            _config.module = function(moduleName) {
+            _config.module = function (moduleName) {
               return _configs[moduleName];
             };
             if (useCache) {
@@ -53,7 +52,7 @@ module.exports = function(loader, modules) {
   function loadConfigs() {
     Object.keys(modules).forEach(key => {
       const module = modules[key];
-      const ebConfig = loader.app.meta.configs[module.info.relativeName] = {};
+      const ebConfig = (loader.app.meta.configs[module.info.relativeName] = {});
 
       // module config
       if (module.main.config) {
@@ -63,8 +62,9 @@ module.exports = function(loader, modules) {
       }
 
       // application config
-      if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }
+      if (loader.config.modules && loader.config.modules[module.info.relativeName]) {
+        extend(true, ebConfig, loader.config.modules[module.info.relativeName]);
+      }
     });
   }
-
 };

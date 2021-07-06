@@ -47,5 +47,4 @@ export default {
     }
     return ioc(url, opts);
   },
-
 };

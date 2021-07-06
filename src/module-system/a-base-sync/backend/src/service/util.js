@@ -2,9 +2,7 @@ const require3 = require('require3');
 const pMap = require3('p-map');
 
 module.exports = app => {
-
   class Util extends app.Service {
-
     async performAction({ params }) {
       // force innerAccess as false
       params.innerAccess = false;
@@ -29,7 +27,6 @@ module.exports = app => {
       };
       return await pMap(actions, mapper, { concurrency: 10 });
     }
-
   }
 
   return Util;

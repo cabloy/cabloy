@@ -5,14 +5,12 @@ const CovCommand = require('egg-bin').CovCommand;
 const utils = require('../utils.js');
 
 class BackendCovCommand extends CovCommand {
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin backend-cov';
   }
 
-  * run(context) {
-
+  *run(context) {
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
     if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
@@ -21,7 +19,6 @@ class BackendCovCommand extends CovCommand {
     context.argv.x = ['src/**/backend/**/*.spec.js'];
 
     yield super.run(context);
-
   }
 
   /**
@@ -30,7 +27,7 @@ class BackendCovCommand extends CovCommand {
    * @return {Array} [ '--require=xxx', 'xx.test.js' ]
    * @protected
    */
-  * formatTestArgs({ argv, debugOptions }) {
+  *formatTestArgs({ argv, debugOptions }) {
     const testArgv = Object.assign({}, argv);
 
     /* istanbul ignore next */
@@ -59,7 +56,7 @@ class BackendCovCommand extends CovCommand {
     // requireArr.push(require.resolve('co-mocha'));
 
     if (requireArr.includes('intelli-espower-loader')) {
-      console.warn('[egg-bin] don\'t need to manually require `intelli-espower-loader` anymore');
+      console.warn("[egg-bin] don't need to manually require `intelli-espower-loader` anymore");
     } else {
       requireArr.push(require.resolve('intelli-espower-loader'));
     }
@@ -128,7 +125,6 @@ class BackendCovCommand extends CovCommand {
   description() {
     return 'backend cov';
   }
-
 }
 
 module.exports = BackendCovCommand;

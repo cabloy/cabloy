@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class UtilController extends app.Controller {
-
     async md() {
       // atomId
       const atomId = this.ctx.params.atomId;
@@ -13,8 +11,6 @@ module.exports = app => {
       this.ctx.body = article.content;
       this.ctx.set('content-type', 'text/x-markdown; charset=UTF-8');
     }
-
   }
   return UtilController;
 };
-

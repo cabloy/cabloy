@@ -5,9 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-list-item-component',
-  mixins: [ component ],
+  mixins: [component],
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,9 +1,7 @@
 const WxworkHelperFn = require('../common/wxworkHelper.js');
 
 module.exports = app => {
-
   class AuthMini extends app.Service {
-
     async login({ scene, code }) {
       if (!code) return this.ctx.throw(403);
       const res = await this.ctx.bean.wxwork.app.mini[scene].code2Session(code);
@@ -19,7 +17,6 @@ module.exports = app => {
       // echo
       return await this.ctx.bean.auth.echo();
     }
-
   }
 
   return AuthMini;

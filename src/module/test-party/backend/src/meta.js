@@ -3,9 +3,8 @@ const extend = require3('extend2');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const meta = {
-  };
-    // schemas
+  const meta = {};
+  // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // keywords
   const keywords = require('./config/validation/keywords.js')(app);
@@ -138,8 +137,7 @@ module.exports = app => {
   if (app.meta.isTest) {
     // meta
     extend(true, meta, {
-      base: {
-      },
+      base: {},
       event: {
         declarations: {
           hello: 'This is a test for event',

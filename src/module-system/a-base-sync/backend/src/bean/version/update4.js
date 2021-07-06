@@ -1,9 +1,6 @@
 module.exports = function (ctx) {
-
   class VersionUpdate4 {
-
     async run() {
-
       // aComment
       let sql = `
           CREATE TABLE aComment (
@@ -64,9 +61,7 @@ module.exports = function (ctx) {
           ADD COLUMN readCount int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
     }
-
   }
 
   return VersionUpdate4;

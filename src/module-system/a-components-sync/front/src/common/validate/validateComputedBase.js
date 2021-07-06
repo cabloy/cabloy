@@ -20,8 +20,11 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
       if (info) return info;
       // info
       info = {
-        parcel, name,
-        expression, deps, immediate,
+        parcel,
+        name,
+        expression,
+        deps,
+        immediate,
         watchers: {},
       };
       for (const depName of deps) {
@@ -63,7 +66,7 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
       if (!info) return;
       // scope
       const scope = {
-        ... dataRoot,
+        ...dataRoot,
         _meta: onDataMeta(),
       };
       // const scope = {};
@@ -71,15 +74,18 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
       //   this.fillScope(scope, dataRoot, depName);
       // }
       // evaluate
-      ctx.$meta.util.sandbox.evaluate(info.expression, scope).then(value => {
-        onChange({
-          parcel: info.parcel,
-          name: info.name,
-          value,
+      ctx.$meta.util.sandbox
+        .evaluate(info.expression, scope)
+        .then(value => {
+          onChange({
+            parcel: info.parcel,
+            name: info.name,
+            value,
+          });
+        })
+        .catch(err => {
+          throw err;
         });
-      }).catch(err => {
-        throw err;
-      });
     }
 
     unRegister(dataPath) {
@@ -91,7 +97,6 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
         unwatch();
       }
     }
-
   }
 
   return ValidateComputedBase;

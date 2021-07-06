@@ -1,7 +1,6 @@
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     validate_host() {
@@ -28,14 +27,16 @@ export default {
         schema: this.container_data.schema,
       };
       return (
-        <eb-validate ref="validate"
+        <eb-validate
+          ref="validate"
           host={this.validate_host}
           readOnly={this.container.mode !== 'edit'}
-          auto data={this.container_data.item}
+          auto
+          data={this.container_data.item}
           meta={meta}
           propsOnPerform={this.validate_onPerformValidate}
-          onSubmit={this.validate_onSubmit}>
-        </eb-validate>
+          onSubmit={this.validate_onSubmit}
+        ></eb-validate>
       );
     },
   },

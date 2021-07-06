@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class CategoryController extends app.Controller {
-
     async child() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.category.child({
@@ -103,8 +101,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return CategoryController;
 };
-

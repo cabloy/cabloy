@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CacheDb extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.db`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -32,10 +31,13 @@ module.exports = ctx => {
         name,
       });
       if (res) {
-        await ctx.db.query(`
+        await ctx.db.query(
+          `
           update aCache set value=?, expired=${expired}
             where id=?
-          `, [JSON.stringify(value), res.id]);
+          `,
+          [JSON.stringify(value), res.id]
+        );
       } else {
         if (queue) {
           await ctx.app.meta.util.lock({
@@ -52,9 +54,12 @@ module.exports = ctx => {
             },
           });
         } else {
-          await ctx.db.query(`
+          await ctx.db.query(
+            `
             insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value)]);
+            `,
+            [ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value)]
+          );
         }
       }
       // return old value
@@ -88,7 +93,6 @@ module.exports = ctx => {
         module: this.moduleName,
       });
     }
-
   }
 
   return CacheDb;

@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class ctxBean {
-
     constructor(moduleName) {
       this._name = moduleName || ctx.module.info.relativeName;
     }
@@ -30,7 +29,6 @@ module.exports = ctx => {
     async actionAsync3({ a, b }) {
       return await this.actionAsync2({ a, b });
     }
-
   }
 
   return ctxBean;

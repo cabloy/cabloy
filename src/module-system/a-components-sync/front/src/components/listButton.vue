@@ -8,9 +8,7 @@ export default {
   },
   name: 'eb-list-button',
   extends: f7ListButton,
-  mixins: [ perform ],
+  mixins: [perform],
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

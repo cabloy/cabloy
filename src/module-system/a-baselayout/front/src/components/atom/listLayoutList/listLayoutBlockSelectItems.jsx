@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   props: {
     layoutManager: {
       type: Object,
@@ -17,8 +17,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     onItemClick(event, item) {
@@ -49,10 +48,9 @@ export default {
     onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item })
-        .then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-        });
+      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
+        this.$meta.util.swipeoutClose(event.target);
+      });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -78,7 +76,7 @@ export default {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
       if (item.atomDisabled) {
-        flags = [ this.$text('Disabled') ].concat(flags);
+        flags = [this.$text('Disabled')].concat(flags);
       }
       return flags;
     },
@@ -118,7 +116,7 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
+          {this._getItemMetaSummary(item)}
         </div>
       );
       // domAfter
@@ -126,21 +124,23 @@ export default {
       // flow
       if (item.flowNodeNameCurrentLocale) {
         domAfterMetaFlags.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">{item.flowNodeNameCurrentLocale}</f7-badge>
+          <f7-badge key="flowNodeNameCurrent" color="orange">
+            {item.flowNodeNameCurrentLocale}
+          </f7-badge>
         );
       }
       // flags
       for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
+        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       const domAfterLabels = [];
       if (item.labels && this.layoutManager.base_userLabels) {
         for (const label of JSON.parse(item.labels)) {
           const _label = this._getLabel(label);
           domAfterLabels.push(
-            <f7-badge key={label} style={ { backgroundColor: _label.color } }>{ _label.text}</f7-badge>
+            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
+              {_label.text}
+            </f7-badge>
           );
         }
       }
@@ -152,11 +152,7 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.atomId} link="#"
-          propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout
-        >
-
+        <eb-list-item class="item" key={item.atomId} link="#" propsOnPerform={event => this.onItemClick(event, item)} swipeout>
           {domMedia}
           {domHeader}
           {domTitle}
@@ -170,7 +166,9 @@ export default {
       return (
         <eb-context-menu>
           <div slot="right">
-            <div color="teal" propsOnPerform={event => this.onActionSelectRemove(event, item)}>{this.$text('Remove')}</div>
+            <div color="teal" propsOnPerform={event => this.onActionSelectRemove(event, item)}>
+              {this.$text('Remove')}
+            </div>
           </div>
         </eb-context-menu>
       );
@@ -181,18 +179,10 @@ export default {
       for (const item of items) {
         children.push(this._renderListItem(item));
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {
-    return (
-      <div>
-        {this._renderList()}
-      </div>
-    );
+    return <div>{this._renderList()}</div>;
   },
 };

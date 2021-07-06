@@ -9,50 +9,61 @@ export default {
     const children = [];
     if (this.side === 'top') {
       // more
-      children.push(c('f7-link', {
-        key: 'expand_more',
-        staticClass: (this.layout.size.verySmall || this.layout.groups.length > 2) ? '' : 'display-none',
-        props: {
-          iconMaterial: 'expand_more',
-          popoverOpen: `#${this.popoverId}`,
-        },
-      }));
+      children.push(
+        c('f7-link', {
+          key: 'expand_more',
+          staticClass: this.layout.size.verySmall || this.layout.groups.length > 2 ? '' : 'display-none',
+          props: {
+            iconMaterial: 'expand_more',
+            popoverOpen: `#${this.popoverId}`,
+          },
+        })
+      );
       // popover
       const tabButtons = [];
       for (const group of this.layout.groups) {
-        tabButtons.push(c('eb-list-item', {
-          key: group.id,
-          props: {
-            link: '#',
-            popoverClose: true,
-            title: group.title,
-          },
-          on: {
-            click: event => {
-              this.groups.switchGroup(group.id);
+        tabButtons.push(
+          c('eb-list-item', {
+            key: group.id,
+            props: {
+              link: '#',
+              popoverClose: true,
+              title: group.title,
             },
-          },
-        }));
+            on: {
+              click: event => {
+                this.groups.switchGroup(group.id);
+              },
+            },
+          })
+        );
       }
       const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
-      children.push(c('f7-popover', {
-        key: 'popover',
-        attrs: { id: this.popoverId },
-      }, [ tabList ]));
+      children.push(
+        c(
+          'f7-popover',
+          {
+            key: 'popover',
+            attrs: { id: this.popoverId },
+          },
+          [tabList]
+        )
+      );
     }
     // buttons
     for (const button of this.buttons) {
-      children.push(c('eb-header-button', {
-        key: this.layout._buttonFullName(button),
-        props: {
-          options: button,
-          dragdropScene: this.dragdropScene,
-        },
-      }));
+      children.push(
+        c('eb-header-button', {
+          key: this.layout._buttonFullName(button),
+          props: {
+            options: button,
+            dragdropScene: this.dragdropScene,
+          },
+        })
+      );
     }
     // ok
-    return c('div', {
-    }, children);
+    return c('div', {}, children);
   },
   props: {
     side: {
@@ -83,12 +94,10 @@ export default {
     },
     _getButtonAndIndex(button) {
       const buttonIndex = this._getButtonIndex(button);
-      if (buttonIndex === -1) return [ null, -1 ];
-      return [ this.buttons[buttonIndex], buttonIndex ];
+      if (buttonIndex === -1) return [null, -1];
+      return [this.buttons[buttonIndex], buttonIndex];
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

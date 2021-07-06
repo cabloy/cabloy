@@ -1,5 +1,5 @@
 <template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/github.png"></eb-button>
+  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/github.png" /></eb-button>
 </template>
 <script>
 const urlLogin = '/api/a/authgithub/passport/a-authgithub/authgithub';
@@ -23,7 +23,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

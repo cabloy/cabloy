@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowTaskController extends app.Controller {
-
     // options
     //   where, orders, page, history
     async select() {
@@ -98,8 +96,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return FlowTaskController;
 };
-

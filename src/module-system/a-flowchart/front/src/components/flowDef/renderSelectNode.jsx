@@ -5,8 +5,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     ebOptions() {
@@ -26,21 +25,14 @@ export default {
       return nodes;
     },
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
   render() {
     const { parcel, key, property } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
       ebOptions: this.ebOptions,
     });
-    return (
-      <eb-list-item-validate
-        parcel={parcel}
-        dataKey={key} property={propertyNew}>
-      </eb-list-item-validate>
-    );
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };

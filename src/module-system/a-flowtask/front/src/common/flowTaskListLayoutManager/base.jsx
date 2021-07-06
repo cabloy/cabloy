@@ -13,20 +13,17 @@ export default {
       return this.$store.state.auth.user.op;
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     base_prepareSelectOptions() {
       // options
       let options = {
-        where: { },
+        where: {},
       };
       // layout
       options.layout = this.layout.current;
       // order
-      options.orders = [
-        [ 'a.updatedAt', 'desc' ],
-      ];
+      options.orders = [['a.updatedAt', 'desc']];
       // extend 1
       if (this.container.options) {
         options = this.$utils.extend({}, options, this.container.options);

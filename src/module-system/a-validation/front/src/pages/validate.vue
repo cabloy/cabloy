@@ -5,15 +5,14 @@
         <eb-link v-if="!readOnly" ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" :host="host" :meta="meta" @submit="onFormSubmit">
-    </eb-validate>
+    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" :host="host" :meta="meta" @submit="onFormSubmit"> </eb-validate>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {};
   },
@@ -56,7 +55,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

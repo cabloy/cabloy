@@ -3,7 +3,6 @@ const __PATH_MESSAGE_UNIFORM = '/a/message/uniform';
 
 export default function (io) {
   const Simple = function () {
-
     // callbacks
     this._callbackCounter = 0;
     this._callbacksAll = {};
@@ -16,9 +15,7 @@ export default function (io) {
     this.subscribe = function () {
       const user = Vue.prototype.$meta.store.state.auth.user.op;
       if (user.anonymous) return;
-      this.subscribeId = io.subscribe(
-        __PATH_MESSAGE_UNIFORM, this._onMessage.bind(this), this._onSubscribed.bind(this)
-      );
+      this.subscribeId = io.subscribe(__PATH_MESSAGE_UNIFORM, this._onMessage.bind(this), this._onSubscribed.bind(this));
     };
 
     this.reset = function () {
@@ -33,7 +30,8 @@ export default function (io) {
       }
       const callbackId = ++this._callbackCounter;
       this._callbacksAll[messageClassName].push({
-        id: callbackId, callback,
+        id: callbackId,
+        callback,
       });
       this._callbacksMap[callbackId] = messageClassName;
       return callbackId;
@@ -142,7 +140,6 @@ export default function (io) {
       }
       return res;
     };
-
   };
   return {
     simple() {

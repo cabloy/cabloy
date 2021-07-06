@@ -3,8 +3,7 @@ module.exports = appInfo => {
   const config = {};
 
   // plugin
-  config.plugin = {
-  };
+  config.plugin = {};
 
   return config;
 };

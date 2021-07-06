@@ -16,10 +16,9 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [ ebDetailActions, Base, Page, Layout, Subnavbar, Actions, Validate ],
+  mixins: [ebDetailActions, Base, Page, Layout, Subnavbar, Actions, Validate],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.base_loadItem().then(res => {

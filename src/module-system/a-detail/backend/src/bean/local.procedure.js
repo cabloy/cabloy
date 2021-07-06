@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class Procedure {
-
     selectDetails({ iid, tableName, where, orders, page, count, stage }) {
       // -- tables
       // -- a: aDetail
@@ -19,8 +18,7 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
-      let _itemField,
-        _itemJoin;
+      let _itemField, _itemJoin;
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -53,8 +51,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aDetail a
+      const _sql = `select ${_selectFields} from aDetail a
             inner join aDetailClass b on a.detailClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
@@ -88,8 +85,7 @@ module.exports = ctx => {
       detailId = parseInt(detailId);
 
       // vars
-      let _itemField,
-        _itemJoin;
+      let _itemField, _itemJoin;
 
       // tableName
       if (tableName) {
@@ -101,8 +97,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_itemField}
+      const _sql = `select ${_itemField}
                 a.id as detailId,a.atomId,a.atomStage,a.detailItemId,a.detailClassId,
                 a.detailCodeId,a.detailCode,a.detailName,a.detailLineNo,
                 a.detailStatic,a.detailStaticKey,
@@ -124,9 +119,7 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };

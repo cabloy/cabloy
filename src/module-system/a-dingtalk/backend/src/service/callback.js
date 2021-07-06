@@ -1,7 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Callback extends app.Service {
-
     async index({ message }) {
       // event: check_url
       if (message.EventType === 'check_url') {
@@ -34,7 +33,6 @@ module.exports = app => {
       // ok
       return null;
     }
-
   }
 
   return Callback;

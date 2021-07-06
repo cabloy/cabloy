@@ -2,31 +2,16 @@
   <div>
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
-        <f7-list-item
-          :title="`${group.atomClassTitle} [${group.moduleTitle}]`"
-          group-title
-        >
-        </f7-list-item>
-        <eb-list-item
-          class="item"
-          v-for="item of group.items"
-          :key="item._key"
-          :title="item.titleLocale"
-        >
+        <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title> </f7-list-item>
+        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.titleLocale">
           <div slot="root-start" class="header">
             <div></div>
             <div>{{ $text('from') }}: {{ item.roleName }}</div>
           </div>
           <div slot="after">
-            <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{
-              $text('Self')
-            }}</f7-badge>
+            <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{ $text('Self') }}</f7-badge>
             <template v-if="item.scopeRoles">
-              <f7-badge
-                v-for="scopeRole of item.scopeRoles"
-                :key="scopeRole.id"
-                >{{ scopeRole.roleName }}</f7-badge
-              >
+              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{ scopeRole.roleName }}</f7-badge>
             </template>
           </div>
           <div slot="root-end" class="summary-no-media">
@@ -37,22 +22,14 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-    <eb-load-more
-      ref="loadMore"
-      :onLoadClear="onLoadClear"
-      :onLoadMore="onLoadMore"
-      :autoInit="false"
-    ></eb-load-more>
+    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
   </div>
 </template>
 <script>
 import Vue from 'vue';
-const ebModules =
-  Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
-const ebAtomClasses =
-  Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
-const ebAtomActions =
-  Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
@@ -137,20 +114,16 @@ export default {
     onLoadMore({ index }) {
       if (this.role) {
         // role
-        return this.$api
-          .post('atomRight/spreads', { roleId: this.role.id, page: { index } })
-          .then(data => {
-            this.items = this.items.concat(data.list);
-            return data;
-          });
-      }
-      // user
-      return this.$api
-        .post('user/atomRights', { userId: this.user.id, page: { index } })
-        .then(data => {
+        return this.$api.post('atomRight/spreads', { roleId: this.role.id, page: { index } }).then(data => {
           this.items = this.items.concat(data.list);
           return data;
         });
+      }
+      // user
+      return this.$api.post('user/atomRights', { userId: this.user.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onAtomRightAdd(data) {
       this.reload();

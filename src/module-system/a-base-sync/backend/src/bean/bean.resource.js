@@ -9,7 +9,6 @@ module.exports = ctx => {
   let __atomClassesResource = null;
 
   class Resource extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'resource');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -52,10 +51,23 @@ module.exports = ctx => {
       }
       // options
       const options = {
-        where, orders, page, star, label, stage, category, tag, resource: 1, resourceLocale: locale,
+        where,
+        orders,
+        page,
+        star,
+        label,
+        stage,
+        category,
+        tag,
+        resource: 1,
+        resourceLocale: locale,
       };
       return await ctx.bean.atom.select({
-        atomClass, options, user, pageForce, count,
+        atomClass,
+        options,
+        user,
+        pageForce,
+        count,
       });
     }
 
@@ -168,13 +180,16 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async resourceRoles({ key/* , user */ }) {
-      const list = await ctx.model.query(`
+    async resourceRoles({ key /* , user */ }) {
+      const list = await ctx.model.query(
+        `
         select a.*,b.roleName from aResourceRole a
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.atomId=?
             order by b.roleName
-        `, [ctx.instance.id, key.atomId]);
+        `,
+        [ctx.instance.id, key.atomId]
+      );
       return list;
     }
 
@@ -191,12 +206,14 @@ module.exports = ctx => {
       }
       // check if exists
       const item = await this.modelResourceRole.get({
-        atomId, roleId,
+        atomId,
+        roleId,
       });
       if (item) return item.id;
       // insert
       const res = await this.modelResourceRole.insert({
-        atomId, roleId,
+        atomId,
+        roleId,
       });
       return res.insertId;
     }
@@ -239,7 +256,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select a.*,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -254,7 +272,9 @@ module.exports = ctx => {
           where a.iid=? and a.deleted=0 and a.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [locale, ctx.instance.id, roleId]);
+        `,
+        [locale, ctx.instance.id, roleId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -267,7 +287,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select g.*,g.id as roleExpandId, a.id as resourceRoleId,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -285,7 +306,9 @@ module.exports = ctx => {
           where g.iid=? and g.deleted=0 and g.roleId=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [locale, ctx.instance.id, roleId]);
+        `,
+        [locale, ctx.instance.id, roleId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -298,7 +321,8 @@ module.exports = ctx => {
       // items
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const items = await ctx.model.query(`
+      const items = await ctx.model.query(
+        `
         select a.*,
                b.atomName,b.atomDisabled,b.atomCategoryId,
                f.categoryName as atomCategoryName,
@@ -315,7 +339,9 @@ module.exports = ctx => {
           where a.iid=? and a.userIdWho=? and b.deleted=0 and b.atomStage=1
             order by c.module,b.atomClassId,e.resourceType,b.atomCategoryId
             ${_limit}
-        `, [locale, ctx.instance.id, userId]);
+        `,
+        [locale, ctx.instance.id, userId]
+      );
       // locale
       this._resourceRightsLocale({ items });
       // ok
@@ -420,7 +446,6 @@ module.exports = ctx => {
 
     //   return list;
     // }
-
   }
 
   return Resource;

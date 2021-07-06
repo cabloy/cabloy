@@ -1,10 +1,7 @@
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
-
         let sql;
 
         // create table: aDingtalkDepartment
@@ -67,16 +64,12 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;

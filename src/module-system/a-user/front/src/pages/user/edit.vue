@@ -5,24 +5,24 @@
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :auto="false" :data="user" :params="{module:'a-base',validator: 'user'}" :onPerform="onPerformValidate">
+    <eb-validate ref="validate" :auto="false" :data="user" :params="{ module: 'a-base', validator: 'user' }" :onPerform="onPerformValidate">
       <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
         <f7-list-item divider></f7-list-item>
         <eb-list-item :title="$text('Email')">
           <div slot="after">
-            <span>{{user.email}}</span>
+            <span>{{ user.email }}</span>
             <eb-link v-if="configAccount.url.emailConfirm" :eb-href="configAccount.url.emailConfirm" eb-target="_self">
-              {{emailConfirmButtonText}}
+              {{ emailConfirmButtonText }}
             </eb-link>
           </div>
         </eb-list-item>
         <eb-list-item :title="$text('Mobile')">
           <div slot="after">
-            <span>{{user.mobile}}</span>
+            <span>{{ user.mobile }}</span>
             <eb-link v-if="configAccount.url.mobileVerify" :eb-href="configAccount.url.mobileVerify" eb-target="_self">
-              {{mobileVerifyButtonText}}
+              {{ mobileVerifyButtonText }}
             </eb-link>
           </div>
         </eb-list-item>
@@ -45,10 +45,10 @@ export default {
   },
   computed: {
     emailConfirmButtonText() {
-      return (!this.user.email || this.user.emailConfirmed) ? this.$text('Change') : this.$text('Confirm');
+      return !this.user.email || this.user.emailConfirmed ? this.$text('Change') : this.$text('Confirm');
     },
     mobileVerifyButtonText() {
-      return (!this.user.mobile || this.user.mobileVerified) ? this.$text('Change') : this.$text('Verify');
+      return !this.user.mobile || this.user.mobileVerified ? this.$text('Change') : this.$text('Verify');
     },
   },
   created() {
@@ -63,21 +63,21 @@ export default {
       return this.$refs.validate.perform(event);
     },
     onPerformValidate(event) {
-      return this.$api.post('user/save', {
-        data: this.user,
-      }).then(() => {
-        // save
-        const userNew = { agent: this.user };
-        if (this.$store.state.auth.user.op.id === this.user.id) {
-          userNew.op = this.user;
-        }
-        this.$store.commit('auth/setUser', userNew);
-        this.$f7router.back();
-      });
+      return this.$api
+        .post('user/save', {
+          data: this.user,
+        })
+        .then(() => {
+          // save
+          const userNew = { agent: this.user };
+          if (this.$store.state.auth.user.op.id === this.user.id) {
+            userNew.op = this.user;
+          }
+          this.$store.commit('auth/setUser', userNew);
+          this.$f7router.back();
+        });
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

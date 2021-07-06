@@ -9,7 +9,6 @@ const configFn = require('../config');
 const utilsFn = require('./utils.js');
 
 module.exports = ({ projectPath, frontPath, scene }) => {
-
   // context
   const context = {
     projectPath,
@@ -63,7 +62,7 @@ module.exports = ({ projectPath, frontPath, scene }) => {
     });
 
     // proxy api requests
-    Object.keys(proxyTable).forEach(function(context) {
+    Object.keys(proxyTable).forEach(function (context) {
       let options = proxyTable[context];
       if (typeof options === 'string') {
         options = { target: options };
@@ -89,13 +88,13 @@ module.exports = ({ projectPath, frontPath, scene }) => {
 
     const uri = `http://${hostname || 'localhost'}:${port}`;
 
-    devMiddleware.waitUntilValid(function() {
+    devMiddleware.waitUntilValid(function () {
       console.log('> Listening at ' + uri + '\n');
     });
 
     const listenOptions = { port };
     if (hostname) listenOptions.host = hostname;
-    module.exports = app.listen(listenOptions, function(err) {
+    module.exports = app.listen(listenOptions, function (err) {
       if (err) {
         console.log(err);
         return;
@@ -106,7 +105,5 @@ module.exports = ({ projectPath, frontPath, scene }) => {
         open(uri);
       }
     });
-
   });
-
 };

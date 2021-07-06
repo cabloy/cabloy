@@ -1,6 +1,5 @@
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       const aliveTimeout = this.ctx.config.worker.alive.timeout;
       // interval
@@ -10,7 +9,6 @@ module.exports = app => {
       // alive
       await app.bean.worker.setAlive();
     }
-
   }
 
   return Startup;

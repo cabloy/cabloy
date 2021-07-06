@@ -5,8 +5,7 @@ const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
 const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // meta
   if (!loader.app.meta) loader.app.meta = {};
   const meta = loader.app.meta;

@@ -19,8 +19,7 @@ const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
 const loadBeans = require('./bean/index.js');
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // meta
   const meta = loadMeta(loader);
 
@@ -51,5 +50,4 @@ module.exports = function(loader) {
     loadConfig(loader, modules);
     loadClusterAgent(loader, modules);
   }
-
 };

@@ -1,9 +1,9 @@
 <template>
   <f7-card>
-    <f7-card-header>{{$text('Fruit Sales(Line Chart)')}}</f7-card-header>
+    <f7-card-header>{{ $text('Fruit Sales(Line Chart)') }}</f7-card-header>
     <f7-card-content>
       <canvas ref="chart"></canvas>
-      <div class="error" v-if="errorMessage">{{errorMessage}}</div>
+      <div class="error" v-if="errorMessage">{{ errorMessage }}</div>
     </f7-card-content>
   </f7-card>
 </template>
@@ -57,7 +57,7 @@ function installFactory(_Vue) {
         },
       },
     },
-    mixins: [ ebDashboardWidgetBase ],
+    mixins: [ebDashboardWidgetBase],
     props: {
       dataSource: {
         type: Object,
@@ -100,7 +100,7 @@ function installFactory(_Vue) {
         return attrs;
       },
       getPropsSchema() {
-        const props = [ 'dataSource' ];
+        const props = ['dataSource'];
         if (this.dataSource) {
           props.push('fruit');
         }
@@ -133,11 +133,13 @@ function installFactory(_Vue) {
         if (fruitIndex === -1) throw new Error();
         const chartData = {
           labels: this.dataSource.rows,
-          datasets: [{
-            fill: false,
-            backgroundColor: this.dataSource.colors[fruitIndex],
-            data: this.dataSource.dataset.map(item => item[fruitIndex]),
-          }],
+          datasets: [
+            {
+              fill: false,
+              backgroundColor: this.dataSource.colors[fruitIndex],
+              data: this.dataSource.dataset.map(item => item[fruitIndex]),
+            },
+          ],
         };
         return chartData;
       },
@@ -160,23 +162,27 @@ function installFactory(_Vue) {
             display: false,
           },
           scales: {
-            xAxes: [{
-              gridLines: {
-                display: false,
+            xAxes: [
+              {
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  fontColor: 'rgba(128, 128, 128, 0.6)',
+                },
               },
-              ticks: {
-                fontColor: 'rgba(128, 128, 128, 0.6)',
+            ],
+            yAxes: [
+              {
+                gridLines: {
+                  display: true,
+                },
+                ticks: {
+                  fontColor: 'rgba(128, 128, 128, 0.6)',
+                  stepSize: 200,
+                },
               },
-            }],
-            yAxes: [{
-              gridLines: {
-                display: true,
-              },
-              ticks: {
-                fontColor: 'rgba(128, 128, 128, 0.6)',
-                stepSize: 200,
-              },
-            }],
+            ],
           },
         };
         return chartOptions;
@@ -226,9 +232,7 @@ function installFactory(_Vue) {
       },
     },
   };
-
 }
-
 </script>
 <style lang="less" scoped>
 .error {
@@ -237,5 +241,4 @@ function installFactory(_Vue) {
   right: 6px;
   font-size: smaller;
 }
-
 </style>

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class ResponseController extends app.Controller {
-
     async success() {
       const res = {
         userName: 'zhennann',
@@ -11,10 +9,7 @@ module.exports = app => {
 
     async successMore() {
       const page = this.ctx.request.body.page;
-      const items = [
-        { userName: 'zhennann' },
-        { userName: 'root' },
-      ];
+      const items = [{ userName: 'zhennann' }, { userName: 'root' }];
       this.ctx.successMore(items, page.index, page.size);
     }
 
@@ -26,7 +21,6 @@ module.exports = app => {
     async throwError() {
       this.ctx.throw(1001);
     }
-
   }
 
   return ResponseController;

@@ -3,7 +3,6 @@ const utils = require('../common/utils.js');
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
-
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });
@@ -124,8 +123,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return SiteController;
 };
-

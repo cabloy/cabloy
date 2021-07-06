@@ -5,7 +5,6 @@ const WatcherFn = require('./common/watcher.js');
 const AtomCmsBaseFn = require('./common/AtomCmsBase.js');
 
 module.exports = app => {
-
   // watcher: only in development
   if (app.meta.isLocal) {
     app.meta['a-cms:watcher'] = new (WatcherFn(app))();
@@ -38,5 +37,4 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };

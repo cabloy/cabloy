@@ -1,5 +1,4 @@
-export default function(Vue) {
-
+export default function (Vue) {
   // stylesheet
   let _stylesheet = null;
 
@@ -74,7 +73,9 @@ export default function(Vue) {
       }
     }
     if (theme.builtIn.bars === 'fill') {
-      const colorThemeRgb = $html.css('--f7-theme-color-rgb').trim()
+      const colorThemeRgb = $html
+        .css('--f7-theme-color-rgb')
+        .trim()
         .split(',')
         .map(c => c.trim());
       styles += `

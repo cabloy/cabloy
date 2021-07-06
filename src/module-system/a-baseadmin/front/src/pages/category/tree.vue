@@ -2,10 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
-      <div class="category-node" slot="root-end" slot-scope="{node}">
-        <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{$text('Add')}}</eb-link>
-        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformMove">{{$text('Move')}}</eb-link>
-        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-link>
+      <div class="category-node" slot="root-end" slot-scope="{ node }">
+        <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{ $text('Add') }}</eb-link>
+        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{ $text('Move') }}</eb-link>
+        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{ $text('Delete') }}</eb-link>
       </div>
     </eb-treeview>
   </eb-page>
@@ -59,19 +59,21 @@ export default {
     async onLoadChildren(node) {
       // root
       if (node.root) {
-        return [{
-          id: 0,
-          attrs: {
-            link: '#',
-            label: this.$text('Root'),
-            toggle: true,
-            loadChildren: true,
-          },
-          data: {
+        return [
+          {
             id: 0,
-            categoryCatalog: 1,
+            attrs: {
+              link: '#',
+              label: this.$text('Root'),
+              toggle: true,
+              loadChildren: true,
+            },
+            data: {
+              id: 0,
+              categoryCatalog: 1,
+            },
           },
-        }];
+        ];
       }
       // children
       const data = await this.$api.post('/a/base/category/children', {
@@ -140,16 +142,15 @@ export default {
               if (!data) return;
               const categoryIdParent = data.id;
               if (node.data.categoryIdParent === categoryIdParent) return;
-              this.$api.post('/a/base/category/move', { categoryId, categoryIdParent })
-                .then(() => {
-                  this.reloadNode(this.findNode(node.data.categoryIdParent));
-                  this.reloadNode(this.findNode(categoryIdParent), {
-                    attrs: {
-                      toggle: true,
-                      loadChildren: true,
-                    },
-                  });
+              this.$api.post('/a/base/category/move', { categoryId, categoryIdParent }).then(() => {
+                this.reloadNode(this.findNode(node.data.categoryIdParent));
+                this.reloadNode(this.findNode(categoryIdParent), {
+                  attrs: {
+                    toggle: true,
+                    loadChildren: true,
+                  },
                 });
+              });
             }
           },
         },
@@ -169,7 +170,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .category-node {
@@ -177,9 +177,8 @@ export default {
   display: flex;
   justify-content: flex-end;
 
-  .category-action+.category-action {
+  .category-action + .category-action {
     margin-left: 4px;
   }
 }
-
 </style>

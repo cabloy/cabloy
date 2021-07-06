@@ -11,11 +11,9 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     onSize(size) {
       this.$$(this.$refs.textarea).css({
@@ -36,7 +34,14 @@ export default {
   render() {
     return (
       <eb-box onSize={this.onSize} header subnavbar>
-        <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.contentProcessStr} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>
+        <textarea
+          ref="textarea"
+          readonly={this.readOnly ? 'readonly' : false}
+          type="textarea"
+          value={this.contentProcessStr}
+          onInput={this.onInput}
+          class="json-textarea json-textarea-margin"
+        ></textarea>
       </eb-box>
     );
   },

@@ -6,9 +6,7 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
     // render
-    { method: 'post', path: 'render/getArticleUrl', controller: 'render',
-      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
-    },
+    { method: 'post', path: 'render/getArticleUrl', controller: 'render', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
     // site
     { method: 'post', path: 'site/getConfigSiteBase', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },

@@ -15,8 +15,7 @@ module.exports = ctx => {
         disableAssociate: false,
         component: 'buttondingtalk',
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
@@ -51,21 +50,32 @@ module.exports = ctx => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = ctx.bean.dingtalk;
-            api.web.default.client.getuserinfo_bycode(loginTmpCode).then(res => {
-              const unionid = res.user_info.unionid;
-              api.app.selfBuilt.user.getUseridByUnionid(unionid).then(res => {
-                if (res.contactType === 1) throw new Error('not support extcontact');
-                const memberId = res.userid;
-                dingtalkHelper.verifyAuthUser({
-                  scene: 'dingtalkweb',
-                  memberId,
-                  state,
-                  cbVerify: (profileUser, cb) => {
-                    app.passport.doVerify(req, profileUser, cb);
-                  },
-                }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-              }).catch(done);
-            }).catch(done);
+            api.web.default.client
+              .getuserinfo_bycode(loginTmpCode)
+              .then(res => {
+                const unionid = res.user_info.unionid;
+                api.app.selfBuilt.user
+                  .getUseridByUnionid(unionid)
+                  .then(res => {
+                    if (res.contactType === 1) throw new Error('not support extcontact');
+                    const memberId = res.userid;
+                    dingtalkHelper
+                      .verifyAuthUser({
+                        scene: 'dingtalkweb',
+                        memberId,
+                        state,
+                        cbVerify: (profileUser, cb) => {
+                          app.passport.doVerify(req, profileUser, cb);
+                        },
+                      })
+                      .then(verifyUser => {
+                        done(null, verifyUser);
+                      })
+                      .catch(done);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -81,8 +91,7 @@ module.exports = ctx => {
         mode: 'redirect',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       configFunctions: {
         getConfig(ctx) {
           const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
@@ -99,17 +108,25 @@ module.exports = ctx => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = ctx.bean.dingtalk;
-            api.admin.client.getSSOUserInfo(null, code).then(res => {
-              const memberId = res.user_info.userid;
-              dingtalkHelper.verifyAuthUser({
-                scene: 'dingtalkadmin',
-                memberId,
-                state,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-            }).catch(done);
+            api.admin.client
+              .getSSOUserInfo(null, code)
+              .then(res => {
+                const memberId = res.user_info.userid;
+                dingtalkHelper
+                  .verifyAuthUser({
+                    scene: 'dingtalkadmin',
+                    memberId,
+                    state,
+                    cbVerify: (profileUser, cb) => {
+                      app.passport.doVerify(req, profileUser, cb);
+                    },
+                  })
+                  .then(verifyUser => {
+                    done(null, verifyUser);
+                  })
+                  .catch(done);
+              })
+              .catch(done);
           },
         };
       },
@@ -125,15 +142,13 @@ module.exports = ctx => {
         mode: 'direct',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
 
   const metaAuth = {
-    providers: {
-    },
+    providers: {},
   };
 
   // dingtalk

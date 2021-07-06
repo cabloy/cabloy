@@ -1,13 +1,11 @@
 // eslint-disable-next-line
-export default function(Vue) {
-
+export default function (Vue) {
   return {
     state: {
       hosts: {},
       capabilities: {},
     },
-    getters: {
-    },
+    getters: {},
     mutations: {
       registerHost(state, host) {
         const name = host.name;
@@ -18,8 +16,6 @@ export default function(Vue) {
         state.capabilities[name] = capability;
       },
     },
-    actions: {
-    },
+    actions: {},
   };
-
 }

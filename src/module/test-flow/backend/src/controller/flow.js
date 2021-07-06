@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     async start() {
       // start
       await this.ctx.bean.flow.startByKey({
@@ -11,9 +9,7 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
 
   return FlowController;
 };
-

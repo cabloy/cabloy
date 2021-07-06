@@ -17,7 +17,7 @@
           <eb-list-item-validate dataKey="language"></eb-list-item-validate>
           <eb-list-item-validate dataKey="avatar"></eb-list-item-validate>
           <f7-list-item v-if="item.avatar">
-            <img class="avatar avatar48" :src="getAvatarUrl(item.avatar,48)">
+            <img class="avatar avatar48" :src="getAvatarUrl(item.avatar, 48)" />
           </f7-list-item>
           <eb-list-item-validate dataKey="rememberMe"></eb-list-item-validate>
           <eb-list-item-validate dataKey="motto"></eb-list-item-validate>
@@ -25,7 +25,7 @@
       </eb-validate>
     </f7-block>
     <f7-block-title>Form Value</f7-block-title>
-    <pre class="form-data">{{form2}}</pre>
+    <pre class="form-data">{{ form2 }}</pre>
   </eb-page>
 </template>
 <script>
@@ -57,11 +57,13 @@ export default {
       return this.$refs.validate.perform();
     },
     onPerformValidate() {
-      return this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
-        data: this.item,
-      }).then(() => {
-        return true;
-      });
+      return this.$api
+        .post('kitchen-sink/form-schema-validation/saveValidation', {
+          data: this.item,
+        })
+        .then(() => {
+          return true;
+        });
     },
     onPerformUpload() {
       this.$view.navigate('/a/file/file/upload', {
@@ -84,7 +86,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .form-data {
@@ -92,5 +93,4 @@ export default {
   margin: 8px;
   padding: 8px;
 }
-
 </style>

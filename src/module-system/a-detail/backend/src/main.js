@@ -4,7 +4,6 @@ const errors = require('./config/errors.js');
 const DetailBaseFn = require('./common/detailBase.js');
 
 module.exports = app => {
-
   // detailBase
   app.meta.DetailBase = DetailBaseFn(app);
 
@@ -35,5 +34,4 @@ module.exports = app => {
     constants,
     meta,
   };
-
 };

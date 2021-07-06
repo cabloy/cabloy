@@ -1,12 +1,12 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('About')" eb-back-link="Back"> </eb-navbar>
-    <f7-block-title medium>{{$text('Welcome to Framework7')}}</f7-block-title>
+    <f7-block-title medium>{{ $text('Welcome to Framework7') }}</f7-block-title>
     <f7-block strong>
-      <p>{{$text('F7AboutTip1')}}</p>
-      <p>{{$text('F7AboutTip2')}}</p>
-      <p>{{$text('F7AboutTip3')}}</p>
-      <div class="alert-info">{{$text('F7AboutTip4')}}</div>
+      <p>{{ $text('F7AboutTip1') }}</p>
+      <p>{{ $text('F7AboutTip2') }}</p>
+      <p>{{ $text('F7AboutTip3') }}</p>
+      <div class="alert-info">{{ $text('F7AboutTip4') }}</div>
     </f7-block>
   </eb-page>
 </template>
@@ -16,7 +16,5 @@ export default {
     return {};
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

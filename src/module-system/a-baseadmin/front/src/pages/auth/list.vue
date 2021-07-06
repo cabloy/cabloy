@@ -5,11 +5,11 @@
       <f7-list-group v-for="group of itemsGroups" :key="group.id">
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :link="getItemLink(item)" :eb-href="getItemHref(item)" swipeout>
-          <div slot="title" :class="{'text-color-gray':!item.meta}">{{getItemTitle(item)}}</div>
+          <div slot="title" :class="{ 'text-color-gray': !item.meta }">{{ getItemTitle(item) }}</div>
           <eb-context-menu v-if="item.meta">
             <div slot="right">
-              <div v-if="item.disabled===0" color="red" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
-              <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
+              <div v-if="item.disabled === 0" color="red" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</div>
+              <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</div>
             </div>
           </eb-context-menu>
         </eb-list-item>
@@ -21,7 +21,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       items: null,
@@ -83,5 +83,4 @@ export default {
     },
   },
 };
-
 </script>

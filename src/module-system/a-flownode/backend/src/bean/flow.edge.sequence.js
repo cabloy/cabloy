@@ -22,7 +22,6 @@ module.exports = ctx => {
       });
       return !!res;
     }
-
   }
 
   return FlowEdge;

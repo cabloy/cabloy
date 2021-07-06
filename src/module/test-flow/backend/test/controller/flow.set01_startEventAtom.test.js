@@ -9,41 +9,53 @@ describe('flow.set01_startEventAtom', () => {
     const atomClassName = 'purchaseOrder';
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     // create
-    let result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
-    });
+    let result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .send({
+        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+      });
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
 
     // submit
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-      key: keyDraft,
-      item: {
-        atomName: 'startEventAtom-test',
-        _flowDefKey: 'set01_startEventAtom',
-      },
-    });
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/writeSubmit'))
+      .send({
+        key: keyDraft,
+        item: {
+          atomName: 'startEventAtom-test',
+          _flowDefKey: 'set01_startEventAtom',
+        },
+      });
     assert(result.body.code === 0);
     const flowId = result.body.data.flow.id;
 
     // select
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
-      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
-      options: {
-        where: {
-          atomFlowId: flowId,
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/select'))
+      .send({
+        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+        options: {
+          where: {
+            atomFlowId: flowId,
+          },
+          stage: 'formal',
         },
-        stage: 'formal',
-      },
-    });
+      });
     assert(result.body.code === 0);
     const formal = result.body.data.list[0];
     const keyFormal = { atomId: formal.atomId };

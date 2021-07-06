@@ -1,9 +1,7 @@
 const WechatHelperFn = require('../common/wechatHelper.js');
 
 module.exports = app => {
-
   class AuthMini extends app.Service {
-
     async login({ scene, code, detail }) {
       let session_key;
       let openid;
@@ -50,7 +48,6 @@ module.exports = app => {
       // echo
       return await this.ctx.bean.auth.echo();
     }
-
   }
 
   return AuthMini;

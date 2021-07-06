@@ -12,7 +12,6 @@ module.exports = ctx => {
   };
 
   class Event extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'event');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -64,7 +63,6 @@ module.exports = ctx => {
       }
       return eventArray;
     }
-
   }
 
   return Event;

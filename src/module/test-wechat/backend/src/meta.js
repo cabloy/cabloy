@@ -4,8 +4,7 @@ module.exports = app => {
   const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
       statics: {
         'a-layoutpc.layout': {
           items: staticLayouts,
@@ -16,11 +15,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-      },
+      schemas: {},
     },
     event: {
       implementations: {

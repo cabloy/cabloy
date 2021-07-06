@@ -2,30 +2,26 @@ const DebugCommand = require('egg-bin').DebugCommand;
 const utils = require('../utils.js');
 
 class BackendDebugCommand extends DebugCommand {
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin backend-debug';
   }
 
-  * run(context) {
-
+  *run(context) {
     if (!context.argv.framework) {
       context.argv.framework = utils.getModulePath('egg-born-backend');
     }
 
     if (!context.argv.baseDir) context.argv.baseDir = 'src/backend';
 
-    utils.versionCheckCabloy({ scene: 'debug' }).then(() => { });
+    utils.versionCheckCabloy({ scene: 'debug' }).then(() => {});
 
     yield super.run(context);
-
   }
 
   description() {
     return 'backend debug';
   }
-
 }
 
 module.exports = BackendDebugCommand;

@@ -5,7 +5,7 @@
       <eb-list-item v-for="item of items" :key="item.id" :title="item.title" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -34,12 +34,14 @@ export default {
     },
     onLoadMore({ index }) {
       // fetch
-      return this.$api.post('kitchen-sink/ptr-is-loadmore/list', {
-        page: { index },
-      }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      return this.$api
+        .post('kitchen-sink/ptr-is-loadmore/list', {
+          page: { index },
+        })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
     },
     reload() {
       this.$refs.loadMore.reload();
@@ -62,5 +64,4 @@ export default {
     },
   },
 };
-
 </script>

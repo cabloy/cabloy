@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Tag extends app.Service {
-
     async list({ atomClass, options }) {
       return await this.ctx.bean.tag.list({ atomClass, options });
     }
@@ -17,7 +15,6 @@ module.exports = app => {
     async save({ tagId, data }) {
       return await this.ctx.bean.tag.save({ tagId, data });
     }
-
   }
 
   return Tag;

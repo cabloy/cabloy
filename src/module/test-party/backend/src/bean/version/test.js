@@ -1,11 +1,8 @@
 const testData = require('./testData.js');
 
 module.exports = function (ctx) {
-
   class VersionTest {
-
     async run() {
-
       // roles
       const roleIds = await this._testRoles();
 
@@ -115,7 +112,6 @@ module.exports = function (ctx) {
         });
       }
     }
-
   }
 
   return VersionTest;

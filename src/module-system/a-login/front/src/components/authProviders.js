@@ -43,6 +43,4 @@ export default {
       return await this.$meta.util.wrapPromise(component.meta.disable({ ctx, state, provider }));
     },
   },
-
 };
-

@@ -4,7 +4,6 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class ContactsController extends app.Controller {
-
     async sync() {
       // progress
       const progressId = uuid.v4().replace(/-/g, '');
@@ -28,7 +27,6 @@ module.exports = app => {
       const res = await this.service.contacts.syncStatus();
       this.ctx.success(res);
     }
-
   }
   return ContactsController;
 };

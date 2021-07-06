@@ -10,10 +10,7 @@ module.exports = app => {
         ebTitle: 'My Info',
         ebComputed: {
           expression: 'groupInfo.username + "(" + (groupExtra.panelExtra.groupInfo.mobile || "-") + ")"',
-          dependencies: [
-            'groupInfo.username',
-            'groupExtra.panelExtra.groupInfo.mobile',
-          ],
+          dependencies: ['groupInfo.username', 'groupExtra.panelExtra.groupInfo.mobile'],
           immediate: true,
         },
         ebReadOnly: true,

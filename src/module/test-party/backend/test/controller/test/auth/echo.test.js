@@ -1,17 +1,19 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/auth/echo.test.js', () => {
-
   it('action:auth:echo', async () => {
     app.mockSession({});
 
     // login
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     // echo
     let result = await app.httpRequest().post(mockUrl('/a/base/auth/echo'));
@@ -32,7 +34,5 @@ describe('test/controller/test/auth/echo.test.js', () => {
     const op3 = result.body.data.user.op;
     assert.notEqual(op3.id, op2.id);
     assert.equal(op3.anonymous, 1);
-
   });
-
 });

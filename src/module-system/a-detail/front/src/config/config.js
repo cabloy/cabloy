@@ -2,8 +2,7 @@ export default {
   detail: {
     render: {
       list: {
-        info: {
-        },
+        info: {},
         layouts: {
           list: {
             component: {
@@ -69,8 +68,7 @@ export default {
         },
       },
       item: {
-        info: {
-        },
+        info: {},
         layouts: {
           mobile: {
             component: {

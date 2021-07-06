@@ -13,13 +13,12 @@ export default {
       return this.$store.state.auth.user.op;
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     base_prepareSelectOptions() {
       // options
       let options = {
-        where: { },
+        where: {},
       };
       // layout
       options.layout = this.layout.current;

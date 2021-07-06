@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class AllController extends app.Controller {
-
     async getRoleIdOwner(atomClass, userId) {
       const roles = await this.ctx.bean.atom.preferredRoles({
         atomClass,
@@ -20,15 +18,20 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
 
       // user->atom
-      await this._testCheckList('formal', userIds, [
-        ['Tom', 0],
-        ['Jane', 0],
-        ['Jimmy', 0],
-        ['Smith', 0],
-        ['', 0],
-      ], (actual, expected, userName) => {
-        assert.equal(actual, expected, userName);
-      });
+      await this._testCheckList(
+        'formal',
+        userIds,
+        [
+          ['Tom', 0],
+          ['Jane', 0],
+          ['Jimmy', 0],
+          ['Smith', 0],
+          ['', 0],
+        ],
+        (actual, expected, userName) => {
+          assert.equal(actual, expected, userName);
+        }
+      );
 
       // Tom add party
       const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
@@ -43,15 +46,20 @@ module.exports = app => {
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList('draft', userIds, [
-        ['Tom', 1],
-        ['Jane', 0],
-        ['Jimmy', 0],
-        ['Smith', 0],
-        ['', 0],
-      ], (actual, expected, userName) => {
-        assert.equal(actual, expected, userName);
-      });
+      await this._testCheckList(
+        'draft',
+        userIds,
+        [
+          ['Tom', 1],
+          ['Jane', 0],
+          ['Jimmy', 0],
+          ['Smith', 0],
+          ['', 0],
+        ],
+        (actual, expected, userName) => {
+          assert.equal(actual, expected, userName);
+        }
+      );
 
       // Tom enable(submit) party
       const res = await this.ctx.bean.atom.submit({
@@ -61,15 +69,20 @@ module.exports = app => {
       });
       const partyKeyFormal = res.formal.key;
 
-      await this._testCheckList('formal', userIds, [
-        ['Tom', 1],
-        ['Jane', 1],
-        ['Jimmy', 1],
-        ['Smith', 1],
-        ['', 1],
-      ], (actual, expected, userName) => {
-        assert.equal(actual, expected, userName);
-      });
+      await this._testCheckList(
+        'formal',
+        userIds,
+        [
+          ['Tom', 1],
+          ['Jane', 1],
+          ['Jimmy', 1],
+          ['Smith', 1],
+          ['', 1],
+        ],
+        (actual, expected, userName) => {
+          assert.equal(actual, expected, userName);
+        }
+      );
 
       // Tom update party
       await this.ctx.bean.atom.write({
@@ -106,7 +119,10 @@ module.exports = app => {
       }
 
       // checkRightWrite
-      const checkRightWrites = [['Tom', partyKeyFormal.atomId, true], ['Tomson', partyKeyFormal.atomId, false]];
+      const checkRightWrites = [
+        ['Tom', partyKeyFormal.atomId, true],
+        ['Tomson', partyKeyFormal.atomId, false],
+      ];
       for (const [userName, atomId, right] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
@@ -117,7 +133,10 @@ module.exports = app => {
       }
 
       // checkRightDelete
-      const checkRightDeletes = [['Tom', partyKeyFormal.atomId, true], ['Tomson', partyKeyFormal.atomId, false]];
+      const checkRightDeletes = [
+        ['Tom', partyKeyFormal.atomId, true],
+        ['Tomson', partyKeyFormal.atomId, false],
+      ];
       for (const [userName, atomId, right] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId },
@@ -128,7 +147,11 @@ module.exports = app => {
       }
 
       // checkRightCreate
-      const checkRightCreates = [['Tom', true], ['Jimmy', true], ['Smith', false]];
+      const checkRightCreates = [
+        ['Tom', true],
+        ['Jimmy', true],
+        ['Smith', false],
+      ];
       for (const [userName, right] of checkRightCreates) {
         const res = await this.ctx.bean.atom.checkRightCreate({
           atomClass,
@@ -179,15 +202,20 @@ module.exports = app => {
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList('formal', userIds, [
-        ['Tom', 0],
-        ['Jane', 0],
-        ['Jimmy', 0],
-        ['Smith', 0],
-        ['', 0],
-      ], (actual, expected, userName) => {
-        assert.equal(actual, expected, userName);
-      });
+      await this._testCheckList(
+        'formal',
+        userIds,
+        [
+          ['Tom', 0],
+          ['Jane', 0],
+          ['Jimmy', 0],
+          ['Smith', 0],
+          ['', 0],
+        ],
+        (actual, expected, userName) => {
+          assert.equal(actual, expected, userName);
+        }
+      );
 
       // done
       this.ctx.success();
@@ -211,9 +239,7 @@ module.exports = app => {
         cb(list.length, atomCountExpected, userName);
       }
     }
-
   }
 
   return AllController;
 };
-

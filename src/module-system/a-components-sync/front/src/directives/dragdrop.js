@@ -1,5 +1,4 @@
 export default function (dragdrop) {
-
   return {
     inserted(el, binding) {
       dragdrop.bind(el, binding.value);
@@ -11,5 +10,4 @@ export default function (dragdrop) {
       dragdrop.unbind(el);
     },
   };
-
 }

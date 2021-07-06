@@ -3,7 +3,6 @@ const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CacheMem extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.mem`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -42,7 +41,7 @@ module.exports = ctx => {
     has(name) {
       const res = this.memory[name];
       if (!res) return null;
-      return (res.timeout === 0 || (new Date() - res.timestamp) < res.timeout) ? res : null;
+      return res.timeout === 0 || new Date() - res.timestamp < res.timeout ? res : null;
     }
 
     remove(name) {
@@ -80,7 +79,6 @@ module.exports = ctx => {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }
-
   }
 
   return CacheMem;

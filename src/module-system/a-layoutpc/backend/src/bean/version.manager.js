@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 3) {
         // create table: aLayout
@@ -42,7 +40,6 @@ module.exports = app => {
               left join aLayoutContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
@@ -67,7 +64,6 @@ module.exports = app => {
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'layout', roleRights });
       }
     }
-
   }
 
   return Version;

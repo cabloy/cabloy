@@ -24,7 +24,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 let CIRCULAR_ERROR_MESSAGE;
 
 function tryStringify(arg) {
@@ -34,12 +33,16 @@ function tryStringify(arg) {
     // Populate the circular error message lazily
     if (!CIRCULAR_ERROR_MESSAGE) {
       try {
-        const a = {}; a.a = a; JSON.stringify(a);
+        const a = {};
+        a.a = a;
+        JSON.stringify(a);
       } catch (err) {
         CIRCULAR_ERROR_MESSAGE = err.message;
       }
     }
-    if (err.name === 'TypeError' && err.message === CIRCULAR_ERROR_MESSAGE) { return '[Circular]'; }
+    if (err.name === 'TypeError' && err.message === CIRCULAR_ERROR_MESSAGE) {
+      return '[Circular]';
+    }
     throw err;
   }
 }
@@ -50,39 +53,54 @@ function format(f) {
   let str = '';
   let a = 1;
   let lastPos = 0;
-  for (let i = 0; i < f.length;) {
-    if (f.charCodeAt(i) === 37/* '%'*/ && i + 1 < f.length) {
-      if (f.charCodeAt(i + 1) !== 37/* '%'*/ && a >= arguments.length) {
+  for (let i = 0; i < f.length; ) {
+    if (f.charCodeAt(i) === 37 /* '%'*/ && i + 1 < f.length) {
+      if (f.charCodeAt(i + 1) !== 37 /* '%'*/ && a >= arguments.length) {
         ++i;
         continue;
       }
       switch (f.charCodeAt(i + 1)) {
         case 100: // 'd'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += Number(arguments[a++]);
           break;
         case 105: // 'i'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += parseInt(arguments[a++]);
           break;
         case 102: // 'f'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += parseFloat(arguments[a++]);
           break;
         case 106: // 'j'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += tryStringify(arguments[a++]);
           break;
         case 115: // 's'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += String(arguments[a++]);
           break;
         case 37: // '%'
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += '%';
           break;
-        default: // any other character is not a correct placeholder
-          if (lastPos < i) { str += f.slice(lastPos, i); }
+        default:
+          // any other character is not a correct placeholder
+          if (lastPos < i) {
+            str += f.slice(lastPos, i);
+          }
           str += '%';
           lastPos = i = i + 1;
           continue;
@@ -92,7 +110,11 @@ function format(f) {
     }
     ++i;
   }
-  if (lastPos === 0) { str = f; } else if (lastPos < f.length) { str += f.slice(lastPos); }
+  if (lastPos === 0) {
+    str = f;
+  } else if (lastPos < f.length) {
+    str += f.slice(lastPos);
+  }
   while (a < arguments.length) {
     const x = arguments[a++];
     if (x === null || (typeof x !== 'object' && typeof x !== 'symbol')) {
@@ -112,7 +134,6 @@ function format(f) {
  */
 
 function getText(text, value) {
-
   if (arguments.length === 0) return '';
 
   if (!text) return '';
@@ -140,14 +161,13 @@ function getText(text, value) {
   return format.apply(null, args);
 }
 
-
 function isObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 const ARRAY_INDEX_RE = /\{(\d+)\}/g;
 function formatWithArray(text, values) {
-  return text.replace(ARRAY_INDEX_RE, function(orignal, matched) {
+  return text.replace(ARRAY_INDEX_RE, function (orignal, matched) {
     const index = parseInt(matched);
     if (index < values.length) {
       return values[index];
@@ -159,7 +179,7 @@ function formatWithArray(text, values) {
 
 const Object_INDEX_RE = /\{(.+?)\}/g;
 function formatWithObject(text, values) {
-  return text.replace(Object_INDEX_RE, function(orignal, matched) {
+  return text.replace(Object_INDEX_RE, function (orignal, matched) {
     const value = values[matched];
     if (value) {
       return value;
@@ -173,4 +193,3 @@ export default {
   format,
   getText,
 };
-

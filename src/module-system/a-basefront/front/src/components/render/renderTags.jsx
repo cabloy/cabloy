@@ -101,8 +101,7 @@ export default {
       );
     }
     return (
-      <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
+      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
         <div slot="after">{this.adjustTags(parcel.data.atomTags)}</div>
       </eb-list-item-choose>
     );

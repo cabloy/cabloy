@@ -129,7 +129,8 @@ module.exports = app => {
         component: 'buttonMine',
         icon: { material: 'person' },
         actionPath: null,
-        scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
         showSeparator: true,
         fixed: true,
       }),
@@ -167,8 +168,6 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
-
-
   ];
   return resources;
 };

@@ -1,10 +1,8 @@
 module.exports = app => {
-
   let _instanceList = null;
   let _userList = null;
 
   class Settings extends app.Service {
-
     // instance
 
     instanceList() {
@@ -73,7 +71,6 @@ module.exports = app => {
       }
       return list;
     }
-
   }
 
   return Settings;

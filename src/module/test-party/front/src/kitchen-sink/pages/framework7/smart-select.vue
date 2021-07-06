@@ -1,9 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Smart Select')" eb-back-link="Back"></eb-navbar>
-    <f7-block>
-      Framework7 allows you to easily convert your usual form selects to dynamic pages with radios:
-    </f7-block>
+    <f7-block> Framework7 allows you to easily convert your usual form selects to dynamic pages with radios: </f7-block>
     <f7-list>
       <f7-list-item title="Fruit" smart-select>
         <select name="fruits">
@@ -16,7 +14,7 @@
           <option value="banana">Banana</option>
         </select>
       </f7-list-item>
-      <f7-list-item title="Car" smart-select :smart-select-params="{openIn: 'page', searchbar: true, searchbarPlaceholder: 'Search car'}">
+      <f7-list-item title="Car" smart-select :smart-select-params="{ openIn: 'page', searchbar: true, searchbarPlaceholder: 'Search car' }">
         <select name="car" multiple>
           <optgroup label="Japanese">
             <option value="honda" selected>Honda</option>
@@ -40,13 +38,13 @@
           </optgroup>
         </select>
       </f7-list-item>
-      <f7-list-item title="Mac or Windows" smart-select :smart-select-params="{openIn: 'sheet'}">
+      <f7-list-item title="Mac or Windows" smart-select :smart-select-params="{ openIn: 'sheet' }">
         <select name="mac-windows">
           <option value="mac" selected>Mac</option>
           <option value="windows">Windows</option>
         </select>
       </f7-list-item>
-      <f7-list-item title="Super Hero" smart-select :smart-select-params="{openIn: 'popover'}">
+      <f7-list-item title="Super Hero" smart-select :smart-select-params="{ openIn: 'popover' }">
         <select name="superhero" multiple>
           <option value="Batman" selected>Batman</option>
           <option value="Superman">Superman</option>
@@ -62,5 +60,4 @@
 </template>
 <script>
 export default {};
-
 </script>

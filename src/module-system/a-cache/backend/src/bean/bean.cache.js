@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cache {
-
     get db() {
       const config = ctx.config.module(moduleInfo.relativeName);
       if (config.db.redis) {
@@ -21,7 +20,6 @@ module.exports = ctx => {
     get redis() {
       return ctx.bean._getBean(moduleInfo, 'local.redis');
     }
-
   }
 
   return Cache;

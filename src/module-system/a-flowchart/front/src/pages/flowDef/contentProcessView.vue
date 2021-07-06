@@ -1,7 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="title" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar :title="title" eb-back-link="Back"> </eb-navbar>
     <content-edit-diagram :viewOnly="true" :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr" :flowNodeDefIds="flowNodeDefIds"></content-edit-diagram>
   </eb-page>
 </template>
@@ -10,7 +9,7 @@ import Vue from 'vue';
 import contentEditDiagram from '../../components/flowDef/contentEditDiagram.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     contentEditDiagram,
   },
@@ -34,5 +33,4 @@ export default {
   created() {},
   methods: {},
 };
-
 </script>

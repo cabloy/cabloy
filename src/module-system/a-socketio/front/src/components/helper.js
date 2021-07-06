@@ -2,16 +2,12 @@ import Vue from 'vue';
 
 export default function (io) {
   const Simple = function () {
-
     this.initialize = function (options) {
       // messageClass is optional
       this.messageClass = (options && options.messageClass) || null;
     };
 
-    this.subscribe = function ({
-      path, options,
-      onMessageOffset, onMessageSelect, onMessagePush,
-    }) {
+    this.subscribe = function ({ path, options, onMessageOffset, onMessageSelect, onMessagePush }) {
       this.messagesData = [];
       this.messageOffset = -1;
       this.messageOffsetPending = -1;
@@ -41,38 +37,42 @@ export default function (io) {
       if (this.messageOfflineFetching) return;
       this.messageOfflineFetching = true;
       // get offset
-      this.onMessageOffset().then(data => {
-        this.messageOffset = data.offset;
-        if (this.messageOffset === -1) {
+      this.onMessageOffset()
+        .then(data => {
+          this.messageOffset = data.offset;
+          if (this.messageOffset === -1) {
+            this._offlineFetchStop();
+          } else {
+            this._offlineFetch();
+          }
+        })
+        .catch(() => {
           this._offlineFetchStop();
-        } else {
-          this._offlineFetch();
-        }
-      }).catch(() => {
-        this._offlineFetchStop();
-      });
+        });
     };
 
     this._offlineFetch = function () {
-      this.onMessageSelect({ offset: this.messageOffset }).then(data => {
-        // push
-        const list = data.list;
-        if (list.length > 0) {
-          // offset
-          this.messageOffset = list[list.length - 1].id;
-          for (const message of list) {
-            this._pushMessage(message);
+      this.onMessageSelect({ offset: this.messageOffset })
+        .then(data => {
+          // push
+          const list = data.list;
+          if (list.length > 0) {
+            // offset
+            this.messageOffset = list[list.length - 1].id;
+            for (const message of list) {
+              this._pushMessage(message);
+            }
           }
-        }
-        // next
-        if (data.finished) {
+          // next
+          if (data.finished) {
+            this._offlineFetchStop();
+          } else {
+            this._offlineFetch();
+          }
+        })
+        .catch(() => {
           this._offlineFetchStop();
-        } else {
-          this._offlineFetch();
-        }
-      }).catch(() => {
-        this._offlineFetchStop();
-      });
+        });
     };
 
     this._offlineFetchStop = function () {
@@ -135,17 +135,20 @@ export default function (io) {
     this._performRead2 = function () {
       const messageIds = Object.keys(this.messageIdsToRead);
       this.messageIdsToRead = {};
-      Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
-        messageClass: this.messageClass,
-        messageIds,
-      }).then(() => {
-        // do nothing
-      }).catch(() => {
-        // save back
-        for (const messageId of messageIds) {
-          this.messageIdsToRead[messageId] = true;
-        }
-      });
+      Vue.prototype.$meta.api
+        .post('/a/socketio/message/setRead', {
+          messageClass: this.messageClass,
+          messageIds,
+        })
+        .then(() => {
+          // do nothing
+        })
+        .catch(() => {
+          // save back
+          for (const messageId of messageIds) {
+            this.messageIdsToRead[messageId] = true;
+          }
+        });
     };
   };
   return {

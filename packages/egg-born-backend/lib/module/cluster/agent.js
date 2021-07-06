@@ -1,7 +1,6 @@
 const constant = require('../../base/constants.js');
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // ready
   let _ready = false;
   const pids = {};
@@ -18,5 +17,4 @@ module.exports = function(loader) {
       }
     },
   });
-
 };

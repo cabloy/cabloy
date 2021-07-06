@@ -6,7 +6,7 @@
         <f7-list-item group-title :title="$text('Departments')"></f7-list-item>
         <eb-list-item link="#" eb-href="contacts/sync?type=departments" :title="$text('Sync Remote -> Local')">
           <div slot="after" class="after">
-            <f7-badge>{{syncStatus.departments?$text('Synchronized'):$text('Not Synchronized')}}</f7-badge>
+            <f7-badge>{{ syncStatus.departments ? $text('Synchronized') : $text('Not Synchronized') }}</f7-badge>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -14,7 +14,7 @@
         <f7-list-item group-title :title="$text('Members')"></f7-list-item>
         <eb-list-item link="#" eb-href="contacts/sync?type=members" :title="$text('Sync Remote -> Local')">
           <div slot="after" class="after">
-            <f7-badge>{{syncStatus.members?$text('Synchronized'):$text('Not Synchronized')}}</f7-badge>
+            <f7-badge>{{ syncStatus.members ? $text('Synchronized') : $text('Not Synchronized') }}</f7-badge>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -24,10 +24,9 @@
 <script>
 import syncStatus from '../../common/syncStatus.js';
 export default {
-  mixins: [ syncStatus ],
+  mixins: [syncStatus],
   data() {
     return {};
   },
 };
-
 </script>

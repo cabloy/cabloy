@@ -1,14 +1,8 @@
 {
   "version": "independent",
-  "packages": [
-    "packages/*",
-    "src/module/*",
-    "src/module-system/*"
-  ],
-  "command":
-  {
-    "bootstrap":
-    {
+  "packages": ["packages/*", "src/module/*", "src/module-system/*"],
+  "command": {
+    "bootstrap": {
       "hoist": "**"
     }
   }

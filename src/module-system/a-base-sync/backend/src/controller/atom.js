@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class AtomController extends app.Controller {
-
     async preferredRoles() {
       const res = await this.ctx.service.atom.preferredRoles({
         atomClass: this.ctx.request.body.atomClass,
@@ -226,8 +224,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AtomController;
 };
-

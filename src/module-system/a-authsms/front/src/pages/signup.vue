@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="getPageTitle()" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
+      <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'signup' }" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
         <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
@@ -18,7 +18,7 @@
             </div>
           </eb-list-input>
           <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="signUp">{{getButtonText()}}</eb-button>
+            <eb-button ref="buttonSubmit" :onPerform="signUp">{{ getButtonText() }}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>
@@ -91,18 +91,20 @@ export default {
       }
     },
     onPerformValidate() {
-      return this.$api.post('auth/signup', {
-        state: this.state,
-        data: this.data,
-        captchaCode: this.$refs.captchaContainerCode.getComponentInstance().captchaData({ token: this.captcha.tokenCode }),
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-      }).then(() => {
-        let hash;
-        if (this.returnTo) {
-          hash = this.$meta.util.parseHash(this.returnTo);
-        }
-        this.$meta.vueApp.reload({ echo: true, hash });
-      });
+      return this.$api
+        .post('auth/signup', {
+          state: this.state,
+          data: this.data,
+          captchaCode: this.$refs.captchaContainerCode.getComponentInstance().captchaData({ token: this.captcha.tokenCode }),
+          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        })
+        .then(() => {
+          let hash;
+          if (this.returnTo) {
+            hash = this.$meta.util.parseHash(this.returnTo);
+          }
+          this.$meta.vueApp.reload({ echo: true, hash });
+        });
     },
     signUp() {
       return this.$refs.validate.perform();
@@ -112,7 +114,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

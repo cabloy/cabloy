@@ -1,7 +1,5 @@
 module.exports = app => {
-
-  class StatusController extends app.Controller {
-  }
+  class StatusController extends app.Controller {}
 
   return StatusController;
 };

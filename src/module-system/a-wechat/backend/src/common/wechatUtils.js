@@ -22,6 +22,6 @@ module.exports = {
     });
   },
   buildXML({ xml, cdata = true, headless = true, rootName = 'xml' }) {
-    return (new xml2js.Builder({ cdata, headless, rootName })).buildObject(xml);
+    return new xml2js.Builder({ cdata, headless, rootName }).buildObject(xml);
   },
 };

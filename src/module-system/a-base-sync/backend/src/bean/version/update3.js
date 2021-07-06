@@ -1,7 +1,5 @@
 module.exports = function (ctx) {
-
   class VersionUpdate3 {
-
     async run() {
       // aViewRoleRightAtomClassUser
       let sql = `
@@ -22,7 +20,6 @@ module.exports = function (ctx) {
           `;
       await ctx.model.query(sql);
     }
-
   }
 
   return VersionUpdate3;

@@ -28,7 +28,7 @@ module.exports = app => {
           source: 'startEvent_1',
           target: 'endEvent_1',
           options: {
-            conditionExpression: 'context.vars.get(\'x\')===1',
+            conditionExpression: "context.vars.get('x')===1",
           },
         },
         {

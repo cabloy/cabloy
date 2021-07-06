@@ -4,11 +4,9 @@ const uuid = require3('uuid');
 const _usersAnonymous = {};
 
 module.exports = ctx => {
-
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class User {
-
     constructor() {
       this._sequence = null;
       this._config = null;
@@ -191,17 +189,17 @@ module.exports = ctx => {
         return await this.model.queryOne(
           `select * from aUser
              where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ctx.instance.id, userName, email, email, mobile, mobile]);
+          [ctx.instance.id, userName, email, email, mobile, mobile]
+        );
       }
       return await this.model.queryOne(
         `select * from aUser
              where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ctx.instance.id, email, email, mobile, mobile]);
+        [ctx.instance.id, email, email, mobile, mobile]
+      );
     }
 
-    async add({
-      disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0,
-    }) {
+    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
       // check if incomplete information
       let needCheck;
       if (anonymous) {
@@ -304,7 +302,9 @@ module.exports = ctx => {
 
     async getFieldsSelect({ removePrivacy, alias }) {
       const fields = await this.getFields({ removePrivacy });
-      return Object.keys(fields).map(item => (alias ? `${alias}.${item}` : item)).join(',');
+      return Object.keys(fields)
+        .map(item => (alias ? `${alias}.${item}` : item))
+        .join(',');
     }
 
     async list({ roleId, query, anonymous, page, removePrivacy }) {
@@ -345,7 +345,9 @@ module.exports = ctx => {
       // sql
       const sql = this.sqlProcedure.selectUsers({
         iid: ctx.instance.id,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         fields,
       });
@@ -367,12 +369,15 @@ module.exports = ctx => {
     async roles({ userId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(`
+      return await ctx.model.query(
+        `
         select a.*,b.roleName from aUserRole a
           left join aRole b on a.roleId=b.id
             where a.iid=? and a.userId=?
             ${_limit}
-        `, [ctx.instance.id, userId]);
+        `,
+        [ctx.instance.id, userId]
+      );
     }
 
     // state: login/associate/migrate
@@ -421,9 +426,7 @@ module.exports = ctx => {
       };
 
       // columns
-      const columns = [
-        'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale',
-      ];
+      const columns = ['userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale'];
 
       //
       let userId;
@@ -507,7 +510,9 @@ module.exports = ctx => {
 
       // user verify event
       await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName, name: 'userVerify', data: { verifyUser, profileUser },
+        module: moduleInfo.relativeName,
+        name: 'userVerify',
+        data: { verifyUser, profileUser },
       });
 
       // ok
@@ -517,30 +522,20 @@ module.exports = ctx => {
     async accountMigration({ userIdFrom, userIdTo }) {
       // accountMigration event
       await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
+        module: moduleInfo.relativeName,
+        name: 'accountMigration',
+        data: { userIdFrom, userIdTo },
       });
       // aAuth: delete old records
-      const list = await ctx.model.query(
-        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
-        [ctx.instance.id, userIdFrom]
-      );
+      const list = await ctx.model.query('select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?', [ctx.instance.id, userIdFrom]);
       if (list.length > 0) {
         const providerIds = list.map(item => item.providerId).join(',');
-        await ctx.model.query(
-          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
-          [ctx.instance.id, userIdTo, providerIds]
-        );
+        await ctx.model.query(`delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`, [ctx.instance.id, userIdTo, providerIds]);
       }
       // aAuth: update records
-      await ctx.model.query(
-        'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
-        [userIdTo, ctx.instance.id, userIdFrom]
-      );
+      await ctx.model.query('update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
       // aUserRole
-      await ctx.model.query(
-        'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
-        [userIdTo, ctx.instance.id, userIdFrom]
-      );
+      await ctx.model.query('update aUserRole a set a.userId=? where a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
       // delete user
       await this.model.delete({ id: userIdFrom });
     }
@@ -668,14 +663,16 @@ module.exports = ctx => {
 
     async getAuthProvider({ subdomain, iid, id, module, providerName }) {
       // ctx.instance maybe not exists
-      const data = id ? {
-        iid: iid || ctx.instance.id,
-        id,
-      } : {
-        iid: iid || ctx.instance.id,
-        module,
-        providerName,
-      };
+      const data = id
+        ? {
+            iid: iid || ctx.instance.id,
+            id,
+          }
+        : {
+            iid: iid || ctx.instance.id,
+            module,
+            providerName,
+          };
       const res = await ctx.db.get('aAuthProvider', data);
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
@@ -715,7 +712,6 @@ module.exports = ctx => {
       data.id = res2.insertId;
       return data;
     }
-
   }
 
   return User;

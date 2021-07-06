@@ -87,12 +87,14 @@ export default {
           },
           callback: (code, res) => {
             if (code === 200) {
-              return this.$api.post('user/saveAvatar', {
-                data: { avatar: res.downloadUrl },
-              }).then(() => {
-                const userNew = Object.assign({}, this.$store.state.auth.user.agent, { avatar: res.downloadUrl });
-                this.$store.commit('auth/setUser', { op: userNew, agent: userNew });
-              });
+              return this.$api
+                .post('user/saveAvatar', {
+                  data: { avatar: res.downloadUrl },
+                })
+                .then(() => {
+                  const userNew = Object.assign({}, this.$store.state.auth.user.agent, { avatar: res.downloadUrl });
+                  this.$store.commit('auth/setUser', { op: userNew, agent: userNew });
+                });
             }
           },
         },
@@ -103,25 +105,17 @@ export default {
       const stats = resourceConfig.stats;
       if (!stats) return;
       if (stats.color === 'auto') {
-        return (
-          <eb-stats-color stats_params={stats.params}></eb-stats-color>
-        );
+        return <eb-stats-color stats_params={stats.params}></eb-stats-color>;
       }
-      return (
-        <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>
-      );
+      return <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>;
     },
     renderMineItems(category) {
       const children = [];
       const mineItems = this.__getMineItemsOfCategory(category);
       for (const mineItem of mineItems) {
         children.push(
-          <eb-list-item key={mineItem.atomStaticKey}
-            link="#" title={mineItem.atomNameLocale}
-            propsOnPerform={event => this.onPerformMineItem(event, mineItem)}>
-            <div slot="after">
-              {this.renderStats(mineItem)}
-            </div>
+          <eb-list-item key={mineItem.atomStaticKey} link="#" title={mineItem.atomNameLocale} propsOnPerform={event => this.onPerformMineItem(event, mineItem)}>
+            <div slot="after">{this.renderStats(mineItem)}</div>
           </eb-list-item>
         );
       }
@@ -138,24 +132,16 @@ export default {
           </f7-list-group>
         );
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
     renderTitleButtons() {
       if (this.user.agent.anonymous) return;
       const children = [];
       // message
-      children.push(
-        <eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={ { module: 'a-message', name: 'message' } }></eb-link-color>
-      );
+      children.push(<eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={{ module: 'a-message', name: 'message' }}></eb-link-color>);
       // settings
       if (!this.inAgent) {
-        children.push(
-          <eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
-        );
+        children.push(<eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>);
       }
       return children;
     },
@@ -164,9 +150,7 @@ export default {
     return (
       <eb-page>
         <eb-navbar title={this.$text('Mine')} eb-back-link="Back">
-          <f7-nav-right>
-            {this.renderTitleButtons()}
-          </f7-nav-right>
+          <f7-nav-right>{this.renderTitleButtons()}</f7-nav-right>
         </eb-navbar>
         <div class="mine-user">
           <div class="mine-block">

@@ -8,7 +8,6 @@ const webpackConfigFn = require('./webpack.prod.conf');
 const utilsFn = require('./utils.js');
 
 module.exports = ({ modulePath }) => {
-
   // context
   const context = {
     modulePath,
@@ -30,22 +29,21 @@ module.exports = ({ modulePath }) => {
 
     rm(path.join(destPath, context.config.build.assetsSubDirectory), err => {
       if (err) throw err;
-      webpack(webpackConfigFn(context), function(err, stats) {
+      webpack(webpackConfigFn(context), function (err, stats) {
         spinner.stop();
         if (err) throw err;
-        process.stdout.write(stats.toString({
-          colors: true,
-          modules: false,
-          children: false,
-          chunks: false,
-          chunkModules: false,
-        }) + '\n\n');
+        process.stdout.write(
+          stats.toString({
+            colors: true,
+            modules: false,
+            children: false,
+            chunks: false,
+            chunkModules: false,
+          }) + '\n\n'
+        );
 
         console.log(chalk.cyan('  Build complete.\n'));
       });
     });
-
   });
-
 };
-

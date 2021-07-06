@@ -26,16 +26,15 @@ module.exports = class Listener {
     console.log('handleStatus: %d, handleRemark: %s', contextTask._flowTask.handleStatus, contextTask._flowTask.handleRemark);
   }
 
-  async getSchemaRead(contextTask, contextNode/* { schemaBase, schema }*/) {
+  async getSchemaRead(contextTask, contextNode /* { schemaBase, schema }*/) {
     console.log('getSchemaRead: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
-  async getSchemaWrite(contextTask, contextNode/* { schemaBase, schema }*/) {
+  async getSchemaWrite(contextTask, contextNode /* { schemaBase, schema }*/) {
     console.log('getSchemaWrite: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeDef.id);
   }
 
   getNodeDefOptions(contextNode /* { options }*/) {
     console.log('getNodeDefOptions: ', contextNode._nodeDef.id);
   }
-
 };

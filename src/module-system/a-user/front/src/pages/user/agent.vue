@@ -1,21 +1,20 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Agent')" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Agent')" eb-back-link="Back"> </eb-navbar>
     <f7-list>
       <eb-list-item :title="$text('Agent')" group-title></eb-list-item>
-      <eb-list-item v-if="!agentsBy || agentsBy.length===0" :title="$text('No Agents')"></eb-list-item>
-      <template v-if="agentsBy && agentsBy.length>0">
-        <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id===item.id" :title="item.userName">
+      <eb-list-item v-if="!agentsBy || agentsBy.length === 0" :title="$text('No Agents')"></eb-list-item>
+      <template v-if="agentsBy && agentsBy.length > 0">
+        <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id === item.id" :title="item.userName">
           <div slot="after">
-            <eb-link v-if="user.op.id!==item.id" :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-link>
+            <eb-link v-if="user.op.id !== item.id" :context="item" :onPerform="onPerformSwitch">{{ $text('Switch') }}</eb-link>
           </div>
         </eb-list-item>
       </template>
       <eb-list-item :title="$text('Agent By')" group-title></eb-list-item>
       <eb-list-item v-if="agent" :title="agent.userName">
         <div slot="after">
-          <eb-link :onPerform="onPerformRemoveAgent">{{$text('Remove')}}</eb-link>
+          <eb-link :onPerform="onPerformRemoveAgent">{{ $text('Remove') }}</eb-link>
         </div>
       </eb-list-item>
       <f7-list-item v-if="!agent" :title="$text('Specify Agent')" link="#" @click="onSelectUser"></f7-list-item>
@@ -74,7 +73,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

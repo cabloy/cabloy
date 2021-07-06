@@ -4,7 +4,6 @@ const UtilsFn = require('../common/utils.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowInstance {
-
     constructor({ flowDef }) {
       // context
       this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
@@ -12,7 +11,8 @@ module.exports = ctx => {
       });
       // listener
       this._flowListener = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
-        flowInstance: this, context: this.context,
+        flowInstance: this,
+        context: this.context,
       });
     }
 
@@ -267,7 +267,9 @@ module.exports = ctx => {
 
     _createNodeInstance2({ nodeDef }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
-        flowInstance: this, context: this.context, nodeDef,
+        flowInstance: this,
+        context: this.context,
+        nodeDef,
       });
       return node;
     }
@@ -288,7 +290,10 @@ module.exports = ctx => {
 
     async _createEdgeInstance({ edgeDef, contextNode }) {
       const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
-        flowInstance: this, context: this.context, contextNode, edgeDef,
+        flowInstance: this,
+        context: this.context,
+        contextNode,
+        edgeDef,
       });
       await edge.init();
       return edge;
@@ -432,7 +437,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return FlowInstance;

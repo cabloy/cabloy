@@ -1,22 +1,27 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/ctx/transaction.test.js', () => {
-
   it('action:transaction:fail', async () => {
     app.mockSession({});
 
     // login
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'Tom',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'Tom',
+          password: '123456',
+        },
+      });
 
     // create
-    let res = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
-    });
+    let res = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .send({
+        atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
+      });
     const atomKey = res.body.data;
 
     // try to change info
@@ -43,24 +48,29 @@ describe('test/controller/test/ctx/transaction.test.js', () => {
       key: atomKey,
     });
     assert.equal(res.body.code, 0);
-
   });
 
   it('action:transaction:success', async () => {
     app.mockSession({});
 
     // login
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'Tom',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'Tom',
+          password: '123456',
+        },
+      });
 
     // create
-    let res = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
-    });
+    let res = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .send({
+        atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
+      });
     const atomKey = res.body.data;
 
     // try to change info
@@ -87,7 +97,5 @@ describe('test/controller/test/ctx/transaction.test.js', () => {
       key: atomKey,
     });
     assert.equal(res.body.code, 0);
-
   });
-
 });

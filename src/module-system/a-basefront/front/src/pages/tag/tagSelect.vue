@@ -8,15 +8,15 @@
       <f7-searchbar ref="searchbar" expandable @searchbar:search="onSearch" @searchbar:disable="onDisable" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
       </f7-searchbar>
     </eb-navbar>
-    <f7-block-title>{{$text('Selected Tags')}}</f7-block-title>
+    <f7-block-title>{{ $text('Selected Tags') }}</f7-block-title>
     <f7-block v-if="!!tagsAll" class="selected-tags">
       <f7-chip v-for="tagId of tagsCurrent" :key="tagId" :text="getTagName(tagId)" deleteable @click="onTagRemove(tagId)"></f7-chip>
     </f7-block>
     <f7-block>
       <div class="row tags">
-        <div :class="{'chip':true, 'col-33':true, 'chip-outline':tagIndex(item.id)===-1}" v-for="item of tagsAll2" :key="item.id" @click="onTagSwitch(item)">
-          <div class="chip-media">{{item.tagAtomCount}}</div>
-          <div class="chip-label">{{item.tagName}}</div>
+        <div :class="{ chip: true, 'col-33': true, 'chip-outline': tagIndex(item.id) === -1 }" v-for="item of tagsAll2" :key="item.id" @click="onTagSwitch(item)">
+          <div class="chip-media">{{ item.tagAtomCount }}</div>
+          <div class="chip-label">{{ item.tagName }}</div>
         </div>
         <div class="col-33"></div>
         <div class="col-33"></div>
@@ -28,7 +28,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const query = this.$f7route.query;
     const atomClass = {
@@ -61,16 +61,16 @@ export default {
     // all tags
     const options = {
       where: { language: this.language },
-      orders: [
-        [ 'tagName', 'asc' ],
-      ],
+      orders: [['tagName', 'asc']],
     };
-    this.$api.post('/a/base/tag/list', {
-      atomClass: this.atomClass,
-      options,
-    }).then(res => {
-      this.tagsAll = res.list;
-    });
+    this.$api
+      .post('/a/base/tag/list', {
+        atomClass: this.atomClass,
+        options,
+      })
+      .then(res => {
+        this.tagsAll = res.list;
+      });
   },
   methods: {
     initTagsCurrent() {
@@ -112,7 +112,7 @@ export default {
           this.tagsCurrent.push(item.id);
         }
       } else {
-        this.tagsCurrent = [ item.id ];
+        this.tagsCurrent = [item.id];
       }
     },
     onPerformDone() {
@@ -128,7 +128,7 @@ export default {
     onPerformSearch() {
       this.$refs.searchbar.f7Searchbar.enable();
     },
-    onSearch: Vue.prototype.$meta.util.debounce(function(searchbar, query) {
+    onSearch: Vue.prototype.$meta.util.debounce(function (searchbar, query) {
       this.searchQuery = query;
     }, 200),
     onDisable() {
@@ -136,15 +136,13 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .selected-tags {
   min-height: 40px;
 
   .chip {
-
-    &+.chip {
+    & + .chip {
       margin-left: 6px;
     }
   }
@@ -162,9 +160,6 @@ export default {
       border: 1px solid var(--f7-block-header-text-color);
       color: var(--f7-block-header-text-color);
     }
-
   }
-
 }
-
 </style>

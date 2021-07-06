@@ -1,5 +1,4 @@
 module.exports = app => {
-  const routes = [
-  ];
+  const routes = [];
   return routes;
 };

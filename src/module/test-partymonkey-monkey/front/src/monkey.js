@@ -2,8 +2,7 @@ import monkeyerPage from './pages/monkeyer.vue';
 import monkeyerComponent from './components/monkeyerComponent.vue';
 
 // eslint-disable-next-line
-export default function(Vue) {
-
+export default function (Vue) {
   function monkeyRoute(moduleSelf, module, routePath, routeComponent) {
     const route = module.options.routes.find(item => item.path === routePath);
     if (route) {
@@ -53,5 +52,4 @@ export default function(Vue) {
       monkeyComponent(moduleSelf, module, 'monkeyeeComponent', monkeyerComponent);
     },
   };
-
 }

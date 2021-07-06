@@ -1,8 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-
     selectMessages({ iid, where, orders, page, offset, count }) {
-
       // for safe
       where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
@@ -30,8 +28,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aSocketIOMessageView a
+      const _sql = `select ${_selectFields} from aSocketIOMessageView a
           ${_where}
            (
              a.deleted=0 and a.syncDeleted=0 and a.iid=${iid}
@@ -50,8 +47,7 @@ module.exports = ctx => {
         const _messageIds = messageIds.map(item => parseInt(item)).join(',');
 
         // sql
-        const _sql =
-        `update aSocketIOMessageSync set messageRead=1
+        const _sql = `update aSocketIOMessageSync set messageRead=1
           where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
@@ -59,8 +55,7 @@ module.exports = ctx => {
         return _sql;
       } else if (messageClassId > 0 && all) {
         // sql
-        const _sql =
-        `update aSocketIOMessageSync set messageRead=1
+        const _sql = `update aSocketIOMessageSync set messageRead=1
           where iid=${iid} and userId=${userId} and messageClassId=${messageClassId}
         `;
 
@@ -71,21 +66,17 @@ module.exports = ctx => {
     }
 
     delete({ iid, messageIds, userId }) {
-
       const _messageIds = messageIds.map(item => parseInt(item)).join(',');
 
       // sql
-      const _sql =
-        `update aSocketIOMessageSync set deleted=1
+      const _sql = `update aSocketIOMessageSync set deleted=1
           where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };

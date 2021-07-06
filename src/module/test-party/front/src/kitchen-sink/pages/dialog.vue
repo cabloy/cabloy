@@ -31,7 +31,10 @@
     </f7-block>
     <f7-block-title>Dialogs Stack</f7-block-title>
     <f7-block strong>
-      <p>This feature doesn't allow to open multiple dialogs at the same time, and will automatically open next dialog when you close the current one. Such behavior is similar to browser native dialogs: </p>
+      <p>
+        This feature doesn't allow to open multiple dialogs at the same time, and will automatically open next dialog when you close the current one. Such behavior is similar to browser native
+        dialogs:
+      </p>
       <p>
         <f7-button fill @click="openAlerts">Open Multiple Alerts</f7-button>
       </p>
@@ -50,11 +53,14 @@ export default {
       });
     },
     openPrompt() {
-      return this.$view.dialog.prompt('What is your name?').then(name => {
-        return this.$view.dialog.confirm(`Are you sure that your name is ${name}?`).then(() => {
-          this.$view.dialog.alert(`Ok, your name is ${name}`);
-        });
-      }).catch(() => {});
+      return this.$view.dialog
+        .prompt('What is your name?')
+        .then(name => {
+          return this.$view.dialog.confirm(`Are you sure that your name is ${name}?`).then(() => {
+            this.$view.dialog.alert(`Ok, your name is ${name}`);
+          });
+        })
+        .catch(() => {});
     },
     openAlerts() {
       this.$view.dialog.alert('Alert 1');
@@ -64,20 +70,23 @@ export default {
       this.$view.dialog.alert('Alert 5');
     },
     openVerticalButtons() {
-      this.$view.dialog.create({
-        title: 'Vertical Buttons',
-        buttons: [{
-          text: 'Button 1',
-        },
-        {
-          text: 'Button 2',
-        },
-        {
-          text: 'Button 3',
-        },
-        ],
-        verticalButtons: true,
-      }).open();
+      this.$view.dialog
+        .create({
+          title: 'Vertical Buttons',
+          buttons: [
+            {
+              text: 'Button 1',
+            },
+            {
+              text: 'Button 2',
+            },
+            {
+              text: 'Button 3',
+            },
+          ],
+          verticalButtons: true,
+        })
+        .open();
     },
     openPreloader() {
       this.$view.dialog.preloader();
@@ -104,7 +113,7 @@ export default {
       const interval = setInterval(() => {
         progress += 10;
         dialog.setProgress(progress);
-        dialog.setText(`Image ${(progress) / 10} of 10`);
+        dialog.setText(`Image ${progress / 10} of 10`);
         if (progress === 100) {
           clearInterval(interval);
           dialog.close();
@@ -113,5 +122,4 @@ export default {
     },
   },
 };
-
 </script>

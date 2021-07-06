@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class LocaleController extends app.Controller {
-
     async enus() {
       const message = this.ctx.config.message;
       const data = {
@@ -26,7 +24,6 @@ module.exports = app => {
       // done
       this.ctx.success(data);
     }
-
   }
 
   return LocaleController;

@@ -1,6 +1,5 @@
 module.exports = () => {
   class FlowVars {
-
     constructor() {
       this._vars = null;
       this._dirty = false;
@@ -31,7 +30,6 @@ module.exports = () => {
       // dirty
       this._dirty = true;
     }
-
   }
   return FlowVars;
 };

@@ -1,6 +1,5 @@
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: testFlowPurchaseOrder
@@ -62,7 +61,6 @@ module.exports = app => {
             ADD COLUMN detailsAmount int(11) DEFAULT '0'
         `;
         await this.ctx.model.query(sql);
-
       }
     }
 
@@ -97,9 +95,7 @@ module.exports = app => {
       }
     }
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;

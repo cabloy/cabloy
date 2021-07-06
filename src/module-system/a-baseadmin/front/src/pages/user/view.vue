@@ -2,25 +2,25 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link :eb-href="`user/rights?userId=${userId}`">{{$text('Rights')}}</eb-link>
+        <eb-link :eb-href="`user/rights?userId=${userId}`">{{ $text('Rights') }}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar v-if="user" top tabbar>
-          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
-          <f7-link :tab-link="`#${tabIdRoles}`">{{$text('Roles')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{ $text('Info') }}</f7-link>
+          <f7-link :tab-link="`#${tabIdRoles}`">{{ $text('Roles') }}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs v-if="user">
-      <f7-page-content :id="tabIdInfo" tab tab-active @tab:show="tabName='info'">
+      <f7-page-content :id="tabIdInfo" tab tab-active @tab:show="tabName = 'info'">
         <info ref="info" :user="user"></info>
       </f7-page-content>
-      <eb-tab-page-content :id="tabIdRoles" @tab:show="tabName='roles'">
+      <eb-tab-page-content :id="tabIdRoles" @tab:show="tabName = 'roles'">
         <user-roles ref="roles" slot="list" :user="user"></user-roles>
       </eb-tab-page-content>
     </f7-tabs>
-    <f7-toolbar v-if="tabName==='roles'" bottom-md>
-      <eb-link :onPerform="onPerformRolesAdd">{{$text('Add Role')}}</eb-link>
+    <f7-toolbar v-if="tabName === 'roles'" bottom-md>
+      <eb-link :onPerform="onPerformRolesAdd">{{ $text('Add Role') }}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -43,10 +43,9 @@ export default {
     };
   },
   created() {
-    this.$api.post('user/item', { userId: this.userId })
-      .then(data => {
-        this.user = data;
-      });
+    this.$api.post('user/item', { userId: this.userId }).then(data => {
+      this.user = data;
+    });
   },
   methods: {
     getPageTitle() {
@@ -59,5 +58,4 @@ export default {
     },
   },
 };
-
 </script>

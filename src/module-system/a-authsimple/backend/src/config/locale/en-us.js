@@ -2,8 +2,7 @@
 //   subject
 const confirmationEmailSubject = '[{{siteName}}] Account Confirmation';
 //   body
-const confirmationEmailBody =
-`
+const confirmationEmailBody = `
 Hi {{userName}},
 
 Welcome to join us. Please click this link to confirm your email:
@@ -18,8 +17,7 @@ Regards,
 //   subject
 const passwordResetEmailSubject = '[{{siteName}}] Password Reset';
 //   body
-const passwordResetEmailBody =
-`
+const passwordResetEmailBody = `
 Hi {{userName}},
 
 To reset your password, visit the following address:

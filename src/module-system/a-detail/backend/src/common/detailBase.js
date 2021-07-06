@@ -2,15 +2,11 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 
 // detailLineNo will be changed by other way
-const __detailBasicFields = [
-  'detailCodeId', 'detailCode', 'detailName',
-  'detailStatic', 'detailStaticKey',
-];
+const __detailBasicFields = ['detailCodeId', 'detailCode', 'detailName', 'detailStatic', 'detailStaticKey'];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class DetailBase extends app.meta.BeanBase {
-
     async create({ atomKey, detailClass, item, user }) {
       // detailName
       if (!item.detailName) {
@@ -67,7 +63,7 @@ module.exports = app => {
 
     async _writeDetail({ key, item, user, atomStage }) {
       // write detail
-      const detail = { };
+      const detail = {};
       for (const field of __detailBasicFields) {
         if (item[field] !== undefined) detail[field] = item[field];
       }
@@ -88,14 +84,16 @@ module.exports = app => {
 
     async _createLineNo({ atomKey, detailClass }) {
       // need not check atomStage
-      const res = await this.ctx.model.queryOne(`
+      const res = await this.ctx.model.queryOne(
+        `
         select max(a.detailLineNo) as detailLineNo from aDetail a
           where a.iid=? and a.deleted=0 and a.atomId=? and a.detailClassId=?
-        `, [this.ctx.instance.id, atomKey.atomId, detailClass.id]);
+        `,
+        [this.ctx.instance.id, atomKey.atomId, detailClass.id]
+      );
       const detailLineNo = res.detailLineNo;
       return detailLineNo ? detailLineNo + 1 : 1;
     }
-
   }
   return DetailBase;
 };

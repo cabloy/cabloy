@@ -1,6 +1,5 @@
 module.exports = app => {
   class RoleController extends app.Controller {
-
     async children() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.children({
@@ -94,7 +93,6 @@ module.exports = app => {
       const res = await this.service.role.build();
       this.ctx.success(res);
     }
-
   }
   return RoleController;
 };

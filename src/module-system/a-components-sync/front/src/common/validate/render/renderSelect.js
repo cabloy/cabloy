@@ -35,29 +35,33 @@ export default {
         }
       }
       // render
-      return c('eb-list-item', {
-        key,
-        props: {
-          smartSelect: !readOnly,
-          // title,
-          smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
-        },
-      }, [
-        c('div', {
-          slot: 'title',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          domProps: { innerText: title },
-        }),
-        c('eb-select', {
-          slot: readOnly ? 'after' : null,
-          attrs,
-          on: {
-            input: value => {
-              context.setValue(value);
-            },
+      return c(
+        'eb-list-item',
+        {
+          key,
+          props: {
+            smartSelect: !readOnly,
+            // title,
+            smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
           },
-        }),
-      ]);
+        },
+        [
+          c('div', {
+            slot: 'title',
+            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+            domProps: { innerText: title },
+          }),
+          c('eb-select', {
+            slot: readOnly ? 'after' : null,
+            attrs,
+            on: {
+              input: value => {
+                context.setValue(value);
+              },
+            },
+          }),
+        ]
+      );
     },
   },
 };

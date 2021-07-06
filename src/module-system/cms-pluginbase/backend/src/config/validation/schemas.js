@@ -1,4 +1,4 @@
 module.exports = app => {
-  const schemas = { };
+  const schemas = {};
   return schemas;
 };

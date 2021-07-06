@@ -12,4 +12,3 @@ const Master = require('egg-cluster/lib/master.js');
 Master.prototype.onReload = require('./lib/utils/reload.js');
 
 module.exports = require('./lib/framework.js');
-

@@ -1,6 +1,5 @@
 module.exports = app => {
   class InstanceController extends app.Controller {
-
     async item() {
       const res = await this.service.instance.item();
       this.ctx.success(res);
@@ -26,7 +25,6 @@ module.exports = app => {
       await this.service.instance.reload();
       this.ctx.success();
     }
-
   }
   return InstanceController;
 };

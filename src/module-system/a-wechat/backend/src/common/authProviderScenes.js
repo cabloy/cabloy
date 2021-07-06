@@ -1,12 +1,25 @@
 const _scenes = {
   wechat: {
-    scene: 'wechat', authProvider: 'wechat', title: 'Wechat Public', client: 'wechat', configKey: 'public', scope: 'snsapi_userinfo',
+    scene: 'wechat',
+    authProvider: 'wechat',
+    title: 'Wechat Public',
+    client: 'wechat',
+    configKey: 'public',
+    scope: 'snsapi_userinfo',
   },
   wechatweb: {
-    scene: 'wechatweb', authProvider: 'wechatweb', title: 'Wechat Web', client: 'wechatweb', configKey: 'web', scope: 'snsapi_login',
+    scene: 'wechatweb',
+    authProvider: 'wechatweb',
+    title: 'Wechat Web',
+    client: 'wechatweb',
+    configKey: 'web',
+    scope: 'snsapi_login',
   },
   wechatmini: {
-    scene: 'wechatmini', authProvider: 'wechatmini', title: 'Wechat Miniprogram', scope: 'snsapi_userinfo',
+    scene: 'wechatmini',
+    authProvider: 'wechatmini',
+    title: 'Wechat Miniprogram',
+    scope: 'snsapi_userinfo',
   },
 };
 

@@ -1,6 +1,6 @@
 import mparse from 'egg-born-mparse';
 
-export default function(ctx, router) {
+export default function (ctx, router) {
   // load route
   function loadRoute(url, cb) {
     // match
@@ -20,12 +20,17 @@ export default function(ctx, router) {
     loadRoute(url, route => {
       if (!route) throw new Error(`not found route: ${url}`);
       if (!route.route.async) return cb(route.route.component);
-      route.route.async(url, null, data => {
-        return cb(data.component);
-      }, () => {
-        // do nothing
-        //   maybe need login
-      });
+      route.route.async(
+        url,
+        null,
+        data => {
+          return cb(data.component);
+        },
+        () => {
+          // do nothing
+          //   maybe need login
+        }
+      );
     });
   }
   // navigate

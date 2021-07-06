@@ -3,7 +3,6 @@ const { merge } = require('webpack-merge');
 const baseWebpackConfigFn = require('./webpack.base.conf');
 
 module.exports = context => {
-
   const env = context.config.build.env;
 
   const plugins = [
@@ -22,6 +21,4 @@ module.exports = context => {
       minimize: context.config.build.uglify,
     },
   });
-
 };
-

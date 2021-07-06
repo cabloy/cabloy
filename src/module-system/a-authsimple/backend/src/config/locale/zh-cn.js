@@ -2,8 +2,7 @@
 //   subject
 const confirmationEmailSubject = '[{{siteName}}] 账号确认';
 //   body
-const confirmationEmailBody =
-`
+const confirmationEmailBody = `
 您好，{{userName}}，
 
 欢迎加入我们。请点击以下链接验证您的邮件：
@@ -18,8 +17,7 @@ const confirmationEmailBody =
 //   subject
 const passwordResetEmailSubject = '[{{siteName}}] 重置密码';
 //   body
-const passwordResetEmailBody =
-`
+const passwordResetEmailBody = `
 您好，{{userName}}，
 
 请点击以下链接重置密码：

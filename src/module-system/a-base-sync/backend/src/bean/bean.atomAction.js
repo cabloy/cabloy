@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomAction extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'atomAction');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -62,7 +61,6 @@ module.exports = ctx => {
       data.id = res2.insertId;
       return data;
     }
-
   }
 
   return AtomAction;

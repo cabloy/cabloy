@@ -1,6 +1,5 @@
 module.exports = app => {
   class MessageController extends app.Controller {
-
     async offset() {
       const res = await this.ctx.service.message.offset({
         messageClass: this.ctx.request.body.messageClass,
@@ -48,7 +47,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return MessageController;
 };

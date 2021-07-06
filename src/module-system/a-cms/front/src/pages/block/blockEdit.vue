@@ -5,15 +5,14 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate v-if="item" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :host="host" :onPerform="onPerformValidate" @submit="onSubmit">
-    </eb-validate>
+    <eb-validate v-if="item" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :host="host" :onPerform="onPerformValidate" @submit="onSubmit"> </eb-validate>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       item: null,
@@ -48,14 +47,16 @@ export default {
   methods: {
     onPerformValidate() {
       const blockName = this.block.atomStaticKey;
-      return this.$api.post('site/blockSave', {
-        blockName,
-        item: this.item,
-      }).then(data => {
-        // callback
-        this.contextCallback(200, { name: blockName, content: data });
-        this.$f7router.back();
-      });
+      return this.$api
+        .post('site/blockSave', {
+          blockName,
+          item: this.item,
+        })
+        .then(data => {
+          // callback
+          this.contextCallback(200, { name: blockName, content: data });
+          this.$f7router.back();
+        });
     },
     onPerformDone() {
       return this.$refs.validate.perform();
@@ -65,7 +66,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

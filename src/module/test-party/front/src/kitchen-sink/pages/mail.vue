@@ -28,15 +28,15 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onPerformSend() {
-      return this.$api.post('test/feat/sendMail', {
-        data: this.item,
-      }).then(() => {
-        return true;
-      });
+      return this.$api
+        .post('test/feat/sendMail', {
+          data: this.item,
+        })
+        .then(() => {
+          return true;
+        });
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

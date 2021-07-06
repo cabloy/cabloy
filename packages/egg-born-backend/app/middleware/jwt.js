@@ -40,7 +40,8 @@ function __splitCookie(cookie) {
 
 function __parseCookiesRequest(str) {
   const cookies = {};
-  const cookiesArray = (str || '').split(';')
+  const cookiesArray = (str || '')
+    .split(';')
     .map(cookie => cookie.trim())
     .filter(cookie => !!cookie);
   for (const cookie of cookiesArray) {

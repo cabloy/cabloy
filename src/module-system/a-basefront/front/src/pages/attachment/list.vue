@@ -6,19 +6,19 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId===user.id">
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId === user.id">
         <div slot="media">
-          <img class="avatar avatar32" :src="getItemMedia(item)">
+          <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
         <div slot="root-start" class="header">
           <div class="userName">
-            <span>{{item.userName}}</span>
+            <span>{{ item.userName }}</span>
           </div>
-          <div class="date">{{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
+          <div class="date">{{ $meta.util.formatDateTimeRelative(item.createdAt) }}</div>
         </div>
         <eb-context-menu v-if="!!actionWrite">
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -62,34 +62,36 @@ export default {
           mode: 2,
           attachment: 1,
         },
-        orders: [
-          [ 'createdAt', 'asc' ],
-        ],
+        orders: [['createdAt', 'asc']],
         page: { index },
       };
       // fetch
-      return this.$api.post('/a/file/file/list', {
-        key: { atomId: this.atomId },
-        options,
-      }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      return this.$api
+        .post('/a/file/file/list', {
+          key: { atomId: this.atomId },
+          options,
+        })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
     },
     reload() {
       this.$refs.loadMore.reload();
     },
     checkActionWrite() {
-      this.$api.post('/a/base/atom/checkRightAction', {
-        key: { atomId: this.atomId },
-        action: 3,
-        stage: 'draft',
-        checkFlow: true,
-      }).then(data => {
-        if (data && data.atomClosed === 0) {
-          this.actionWrite = data;
-        }
-      });
+      this.$api
+        .post('/a/base/atom/checkRightAction', {
+          key: { atomId: this.atomId },
+          action: 3,
+          stage: 'draft',
+          checkFlow: true,
+        })
+        .then(data => {
+          if (data && data.atomClosed === 0) {
+            this.actionWrite = data;
+          }
+        });
     },
     onPerformAdd() {
       return new Promise((resolve, reject) => {
@@ -117,13 +119,15 @@ export default {
     onPerformDelete(event, item) {
       // delete
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('/a/file/file/delete', {
-          fileId: item.id,
-        }).then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-          this.$meta.eventHub.$emit('attachment:action', { action: 'delete', atomId: this.atomId, fileId: item.id });
-          this.deleteItem(item.id);
-        });
+        return this.$api
+          .post('/a/file/file/delete', {
+            fileId: item.id,
+          })
+          .then(() => {
+            this.$meta.util.swipeoutClose(event.target);
+            this.$meta.eventHub.$emit('attachment:action', { action: 'delete', atomId: this.atomId, fileId: item.id });
+            this.deleteItem(item.id);
+          });
       });
     },
     deleteItem(fileId) {
@@ -154,5 +158,4 @@ export default {
     },
   },
 };
-
 </script>

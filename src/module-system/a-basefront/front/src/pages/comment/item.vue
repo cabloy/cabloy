@@ -7,7 +7,21 @@
     </eb-navbar>
     <template v-if="ready">
       <eb-box>
-        <mavon-editor ref="editor" :value="content" :onPreRender="onPreRender" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor
+          ref="editor"
+          :value="content"
+          :onPreRender="onPreRender"
+          @change="onChange"
+          @save="onSave"
+          :onImageUpload="onImageUpload"
+          :language="language"
+          :subfield="subfield"
+          :editable="editable"
+          :defaultOpen="defaultOpen"
+          :toolbarsFlag="toolbarsFlag"
+          :navigation="navigation"
+          :toolbars="toolbars"
+        />
       </eb-box>
     </template>
   </eb-page>
@@ -85,7 +99,6 @@ export default {
         subfield: true, // 单双栏模式
       };
     },
-
   },
   created() {
     this.$meta.module.use('a-mavoneditor', module => {
@@ -97,22 +110,26 @@ export default {
   methods: {
     loadComment(commentId) {
       if (!commentId) return;
-      this.$api.post('/a/base/comment/item', {
-        key: { atomId: this.atomId },
-        data: { commentId },
-      }).then(data => {
-        this.comment = data;
-        this.content = this.comment.content;
-      });
+      this.$api
+        .post('/a/base/comment/item', {
+          key: { atomId: this.atomId },
+          data: { commentId },
+        })
+        .then(data => {
+          this.comment = data;
+          this.content = this.comment.content;
+        });
     },
     loadReply(replyId) {
       if (!replyId) return;
-      this.$api.post('/a/base/comment/item', {
-        key: { atomId: this.atomId },
-        data: { commentId: replyId },
-      }).then(data => {
-        this.reply = data;
-      });
+      this.$api
+        .post('/a/base/comment/item', {
+          key: { atomId: this.atomId },
+          data: { commentId: replyId },
+        })
+        .then(data => {
+          this.reply = data;
+        });
     },
     onChange(data) {
       this.content = data;
@@ -122,22 +139,24 @@ export default {
     },
     onPerformSave() {
       if (!this.content) return;
-      return this.$api.post('/a/base/comment/save', {
-        key: { atomId: this.atomId },
-        data: {
-          commentId: this.commentId,
-          replyId: this.replyId,
-          content: this.content,
-        },
-      }).then(data => {
-        this.$meta.eventHub.$emit('comment:action', data);
-        const returnTo = this.$f7route.query.returnTo;
-        if (returnTo) {
-          location.assign(returnTo);
-        } else {
-          this.$f7router.back();
-        }
-      });
+      return this.$api
+        .post('/a/base/comment/save', {
+          key: { atomId: this.atomId },
+          data: {
+            commentId: this.commentId,
+            replyId: this.replyId,
+            content: this.content,
+          },
+        })
+        .then(data => {
+          this.$meta.eventHub.$emit('comment:action', data);
+          const returnTo = this.$f7route.query.returnTo;
+          if (returnTo) {
+            location.assign(returnTo);
+          } else {
+            this.$f7router.back();
+          }
+        });
     },
     onImageUpload() {
       return new Promise((resolve, reject) => {
@@ -207,5 +226,4 @@ ${sep}
     },
   },
 };
-
 </script>

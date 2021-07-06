@@ -39,23 +39,23 @@ import imgMountains from '../../../assets/img/mountains.jpg';
 export default {
   data() {
     return {
-      photos: [{
-        url: imgBeach,
-        caption: 'Amazing beach in Goa, India',
-      },
-      'http://placekitten.com/1024/1024',
-      imgLock,
-      {
-        url: imgMonkey,
-        caption: 'I met this monkey in Chinese mountains',
-      },
-      {
-        url: imgMountains,
-        caption: 'Beautiful mountains in Zhangjiajie, China',
-      },
+      photos: [
+        {
+          url: imgBeach,
+          caption: 'Amazing beach in Goa, India',
+        },
+        'http://placekitten.com/1024/1024',
+        imgLock,
+        {
+          url: imgMonkey,
+          caption: 'I met this monkey in Chinese mountains',
+        },
+        {
+          url: imgMountains,
+          caption: 'Beautiful mountains in Zhangjiajie, China',
+        },
       ],
     };
   },
 };
-
 </script>

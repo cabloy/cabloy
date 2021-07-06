@@ -3,18 +3,16 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ flowListLayoutManager ],
+  mixins: [flowListLayoutManager],
   props: {
     container: {
       type: Object,
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     reload(force) {
       this.layout.instance && this.layout.instance.onPageRefresh(force);

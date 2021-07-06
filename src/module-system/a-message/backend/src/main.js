@@ -4,7 +4,6 @@ const errors = require('./config/errors.js');
 const IOMessageUniformBaseFn = require('./bean/local.ioMessageUniformBase.js');
 
 module.exports = app => {
-
   // base
   app.meta.IOMessageUniformBase = IOMessageUniformBaseFn;
 
@@ -32,5 +31,4 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };

@@ -4,7 +4,6 @@ const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
   class MessageMiniController extends app.Controller {
-
     async index() {
       // scene
       let scene = this.ctx.params.scene || 'default';
@@ -71,8 +70,6 @@ module.exports = app => {
       }
       return messageIn;
     }
-
   }
   return MessageMiniController;
 };
-

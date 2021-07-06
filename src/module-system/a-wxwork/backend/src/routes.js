@@ -15,7 +15,6 @@ module.exports = app => {
 
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
-
   ];
   return routes;
 };

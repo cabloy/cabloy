@@ -1,5 +1,5 @@
 module.exports = app => {
-  const schemas = { };
+  const schemas = {};
   // block iframe
   schemas.blockIFrame = {
     type: 'object',

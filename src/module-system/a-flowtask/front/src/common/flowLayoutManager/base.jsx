@@ -50,7 +50,7 @@ export default {
         // node as group
         if (!group || group.flowNodeId !== task.flowNodeId) {
           group = {
-            ... task,
+            ...task,
             items: [],
           };
           groups.push(group);
@@ -60,8 +60,7 @@ export default {
       return groups;
     },
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.$meta.eventHub.$on('comment:action', this.base_onCommentChanged);
     this.$meta.eventHub.$on('attachment:action', this.base_onAttachmentChanged);

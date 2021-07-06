@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class RoleRef extends app.meta.Model {
-
     constructor(ctx) {
       super(ctx, { table: 'aRoleRef', options: { disableDeleted: true } });
     }
@@ -13,7 +11,6 @@ module.exports = app => {
       });
       return roleRef;
     }
-
   }
 
   return RoleRef;

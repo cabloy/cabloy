@@ -8,7 +8,22 @@
     </eb-navbar>
     <template v-if="module">
       <eb-box>
-        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :onBlockAdd="onBlockAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor
+          ref="editor"
+          :value="item.content"
+          @change="onChange"
+          @save="onSave"
+          :onImageUpload="onImageUpload"
+          :onAudioUpload="onAudioUpload"
+          :onBlockAdd="onBlockAdd"
+          :language="language"
+          :subfield="subfield"
+          :editable="editable"
+          :defaultOpen="defaultOpen"
+          :toolbarsFlag="toolbarsFlag"
+          :navigation="navigation"
+          :toolbars="toolbars"
+        />
       </eb-box>
     </template>
   </eb-page>
@@ -21,7 +36,7 @@ export default {
   meta: {
     size: 'large',
   },
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -109,11 +124,13 @@ export default {
       this.contextCallback(200, { content: data });
     },
     onSave() {
-      this.onPerformSave().then(text => {
-        this.$view.toast.show({ text });
-      }).catch(err => {
-        this.$view.toast.show({ text: err.message });
-      });
+      this.onPerformSave()
+        .then(text => {
+          this.$view.toast.show({ text });
+        })
+        .catch(err => {
+          this.$view.toast.show({ text: err.message });
+        });
     },
     onPerformSave() {
       return this.contextParams.ctx.save().then(() => {
@@ -130,16 +147,18 @@ export default {
       });
     },
     _preview() {
-      return this.$api.post('render/getArticleUrl', {
-        atomClass: this.atomClass,
-        key: { atomId: this.item.atomId },
-        options: {
-          returnWaitingPath: true,
-        },
-      }).then(data => {
-        if (!data) return;
-        window.open(data.url, `cms_article_${this.atomClass.module}_${this.item.atomId}`);
-      });
+      return this.$api
+        .post('render/getArticleUrl', {
+          atomClass: this.atomClass,
+          key: { atomId: this.item.atomId },
+          options: {
+            returnWaitingPath: true,
+          },
+        })
+        .then(data => {
+          if (!data) return;
+          window.open(data.url, `cms_article_${this.atomClass.module}_${this.item.atomId}`);
+        });
     },
     onImageUpload() {
       return this.onUpload(1, this.item.atomId);
@@ -215,7 +234,5 @@ export default {
   },
 };
 // data: {name,content}
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

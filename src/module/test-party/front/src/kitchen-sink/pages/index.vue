@@ -64,5 +64,4 @@ export default {
     this.items = _items;
   },
 };
-
 </script>

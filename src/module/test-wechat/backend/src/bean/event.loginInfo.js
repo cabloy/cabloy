@@ -3,7 +3,6 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   class eventBean {
-
     async execute(context, next) {
       const info = context.data.info;
       const provider = info.user && info.user.provider;
@@ -27,7 +26,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;

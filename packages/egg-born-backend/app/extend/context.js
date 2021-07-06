@@ -157,7 +157,11 @@ module.exports = {
     return await this.app.meta.util.executeBean({
       locale: locale === undefined ? this.locale : locale,
       subdomain: subdomain === undefined ? this.subdomain : subdomain,
-      context, beanModule, beanFullName, transaction, fn,
+      context,
+      beanModule,
+      beanFullName,
+      transaction,
+      fn,
       ctxCaller: this,
     });
   },
@@ -182,10 +186,13 @@ module.exports = {
   performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
     return new Promise((resolve, reject) => {
       const handleRequest = appCallback.call(this.app);
-      const request = createRequest({
-        method,
-        url: this.app.meta.util.combineFetchPath(this.module && this.module.info, url),
-      }, this);
+      const request = createRequest(
+        {
+          method,
+          url: this.app.meta.util.combineFetchPath(this.module && this.module.info, url),
+        },
+        this
+      );
       const response = new http.ServerResponse(request);
       handleRequest(this, innerAccess, subdomain, request, response, resolve, reject, query, params, headers, body);
     });
@@ -214,13 +221,12 @@ module.exports = {
   },
 
   successMore(list, index, size) {
-    this.success({ list, index: index + list.length, finished: (size === -1 || size === 0) || list.length < size });
+    this.success({ list, index: index + list.length, finished: size === -1 || size === 0 || list.length < size });
   },
 
   async getPayload(options) {
     return await raw(inflate(this.req), options);
   },
-
 };
 
 function appCallback() {
@@ -246,7 +252,7 @@ function appCallback() {
     if (headers) Object.assign(ctx.headers, headers);
 
     // multipart
-    ctx.multipart = function(options) {
+    ctx.multipart = function (options) {
       return ctxCaller.multipart(options);
     };
 
@@ -260,31 +266,34 @@ function appCallback() {
     if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
 
     // call
-    fn(ctx).then(function handleResponse() {
-      respond.call(ctx);
-      if (ctx.status === 200) {
-        if (!ctx.body || ctx.body.code === undefined) {
-          // not check code, e.g. text/xml
-          resolve(ctx.body);
-        } else {
-          if (ctx.body.code === 0) {
-            resolve(ctx.body.data);
+    fn(ctx)
+      .then(function handleResponse() {
+        respond.call(ctx);
+        if (ctx.status === 200) {
+          if (!ctx.body || ctx.body.code === undefined) {
+            // not check code, e.g. text/xml
+            resolve(ctx.body);
           } else {
-            const error = ctx.createError(ctx.body);
-            reject(error);
+            if (ctx.body.code === 0) {
+              resolve(ctx.body.data);
+            } else {
+              const error = ctx.createError(ctx.body);
+              reject(error);
+            }
           }
+        } else {
+          const error = ctx.createError({
+            code: ctx.status,
+            message: ctx.message || ctx.body,
+          });
+          reject(error);
         }
-      } else {
-        const error = ctx.createError({
-          code: ctx.status, message: ctx.message || ctx.body,
-        });
+      })
+      .catch(err => {
+        const error = ctx.createError(err);
+        ctx.onerror(error);
         reject(error);
-      }
-    }).catch(err => {
-      const error = ctx.createError(err);
-      ctx.onerror(error);
-      reject(error);
-    });
+      });
   };
 }
 
@@ -370,7 +379,7 @@ function createDatabase(ctx) {
       if (value.name !== 'createPromise') return value;
       // check if use transaction
       if (!ctx.dbMeta.transaction.inTransaction) return value;
-      return function(...args) {
+      return function (...args) {
         return ctx.dbMeta.transaction.connection[prop].apply(ctx.dbMeta.transaction.connection, args);
       };
     },

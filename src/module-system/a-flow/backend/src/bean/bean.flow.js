@@ -3,7 +3,6 @@ const vm = require('vm');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
-
     get modelFlow() {
       return ctx.model.module(moduleInfo.relativeName).flow;
     }
@@ -60,7 +59,7 @@ module.exports = ctx => {
         throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
       }
       // context
-      const context = Object.assign({ }, globals);
+      const context = Object.assign({}, globals);
       if (parameter !== undefined) {
         context.parameter = parameter;
       }
@@ -260,14 +259,15 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectFlows({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         mode,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }
-
   }
 
   return Flow;

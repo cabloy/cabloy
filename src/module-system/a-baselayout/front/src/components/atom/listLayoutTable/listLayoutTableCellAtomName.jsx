@@ -17,11 +17,9 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     onItemClick(event) {
       return this.layoutItems.onItemClick(event, this.info.record);
@@ -34,37 +32,33 @@ export default {
     // flow
     if (item.flowNodeNameCurrentLocale) {
       domAfterMetaFlags.push(
-        <f7-badge key="flowNodeNameCurrent" color="orange">{item.flowNodeNameCurrentLocale}</f7-badge>
+        <f7-badge key="flowNodeNameCurrent" color="orange">
+          {item.flowNodeNameCurrentLocale}
+        </f7-badge>
       );
     }
     // flags
     for (const flag of this.layoutItems._getItemMetaFlags(item)) {
-      domAfterMetaFlags.push(
-        <f7-badge key={flag}>{flag}</f7-badge>
-      );
+      domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
     }
     const domAfterLabels = [];
     if (item.labels && this.layoutManager.base_userLabels) {
       for (const label of JSON.parse(item.labels)) {
         const _label = this.layoutItems._getLabel(label);
         domAfterLabels.push(
-          <f7-badge key={label} style={ { backgroundColor: _label.color } }>{ _label.text}</f7-badge>
+          <f7-badge key={label} style={{ backgroundColor: _label.color }}>
+            {_label.text}
+          </f7-badge>
         );
       }
     }
     // domSummary
-    const domSummary = (
-      <div class="atomName-summary">
-        {this.layoutItems._getItemMetaSummary(item)}
-      </div>
-    );
+    const domSummary = <div class="atomName-summary">{this.layoutItems._getItemMetaSummary(item)}</div>;
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
-            <eb-link propsOnPerform={event => this.onItemClick(event)}>
-              { this.info.record.atomNameLocale || this.info.record.atomName}
-            </eb-link>
+            <eb-link propsOnPerform={event => this.onItemClick(event)}>{this.info.record.atomNameLocale || this.info.record.atomName}</eb-link>
           </div>
           <div class="atomName-right">
             <span class="stats">

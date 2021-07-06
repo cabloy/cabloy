@@ -9,12 +9,14 @@ export default {
     onPageAfterIn() {
       // only once
       if (!this.done) {
-        this.autojump().then(() => {
-          this.done = true;
-        }).catch(err => {
-          this.done = true;
-          this.$view.toast.show({ text: err.message });
-        });
+        this.autojump()
+          .then(() => {
+            this.done = true;
+          })
+          .catch(err => {
+            this.done = true;
+            this.$view.toast.show({ text: err.message });
+          });
       }
     },
     async autojump() {
@@ -56,9 +58,7 @@ export default {
     return (
       <eb-page onPageAfterIn={this.onPageAfterIn}>
         <eb-navbar title={this.$text('Message')} eb-back-link="Back"></eb-navbar>
-        <f7-block class="text-align-center">
-          {!this.done && <f7-preloader></f7-preloader>}
-        </f7-block>
+        <f7-block class="text-align-center">{!this.done && <f7-preloader></f7-preloader>}</f7-block>
       </eb-page>
     );
   },

@@ -4,7 +4,6 @@ const errors = require('./config/errors.js');
 const FlowServiceBase = require('./common/flowServiceBase.js');
 
 module.exports = app => {
-
   // FlowServiceBase
   app.meta.FlowServiceBase = FlowServiceBase;
 
@@ -35,5 +34,4 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };

@@ -21,28 +21,30 @@ export default {
           'data-index': index,
           'data-size': viewSize,
         };
-        children.push(c('eb-view', {
-          ref: view.id,
-          id: view.id,
-          key: view.id,
-          staticClass: `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
-          attrs: _viewAttrs,
-          props: {
-            size: viewSize,
-            sizeExtent: viewSizeExtent,
-          },
-          style: {
-            width: `${viewSizeExtent.width}px`,
-          },
-          on: {
-            'view:ready': view => {
-              this.onViewReady(view);
+        children.push(
+          c('eb-view', {
+            ref: view.id,
+            id: view.id,
+            key: view.id,
+            staticClass: `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
+            attrs: _viewAttrs,
+            props: {
+              size: viewSize,
+              sizeExtent: viewSizeExtent,
             },
-            'view:title': data => {
-              this.onViewTitle(view.id, data);
+            style: {
+              width: `${viewSizeExtent.width}px`,
             },
-          },
-        }));
+            on: {
+              'view:ready': view => {
+                this.onViewReady(view);
+              },
+              'view:title': data => {
+                this.onViewTitle(view.id, data);
+              },
+            },
+          })
+        );
       }
     }
     return c('div', children);
@@ -106,19 +108,22 @@ export default {
       // try
       if ((sizeWill === 'small' || sizeWill === 'medium') && this.views.length === 1) {
         sizeWill = 'large';
-      } else if (sizeWill === 'small' && this.views.length === 2 && indexCurrent === 0 && this.views[indexCurrent + 1].sizeWill === 'small' &&
-        this.layout.enoughLarge
-      ) {
+      } else if (sizeWill === 'small' && this.views.length === 2 && indexCurrent === 0 && this.views[indexCurrent + 1].sizeWill === 'small' && this.layout.enoughLarge) {
         sizeWill = 'medium';
-      } else if (sizeWill === 'small' && this.views.length >= 2 && indexCurrent === this.views.length - 1 && this.views[indexCurrent - 1].sizeWill !== 'small' &&
-        !this.layout.enoughLarge && this.layout.enoughMedium
+      } else if (
+        sizeWill === 'small' &&
+        this.views.length >= 2 &&
+        indexCurrent === this.views.length - 1 &&
+        this.views[indexCurrent - 1].sizeWill !== 'small' &&
+        !this.layout.enoughLarge &&
+        this.layout.enoughMedium
       ) {
         sizeWill = 'medium';
       } else if (sizeWill === 'large' && this.views.length > indexCurrent + 1 && this.views[indexCurrent + 1].sizeWill === 'small') {
         sizeWill = 'medium';
       }
       // adjust
-      if (sizeWill === 'large') return this.layout.enoughLarge ? 'large' : (this.layout.enoughMedium ? 'medium' : 'small');
+      if (sizeWill === 'large') return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
       if (sizeWill === 'medium') return this.layout.enoughMedium ? 'medium' : 'small';
       return 'small';
     },
@@ -180,7 +185,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

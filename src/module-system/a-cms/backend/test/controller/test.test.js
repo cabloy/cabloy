@@ -1,65 +1,74 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test.test.js', () => {
-
   it('action:set config', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
-    const result = await app.httpRequest().post(mockUrl('site/setConfigSite')).send({
-      data: {
-        host: {
-          url: 'http://localhost:9080',
-          rootPath: '',
+    const result = await app
+      .httpRequest()
+      .post(mockUrl('site/setConfigSite'))
+      .send({
+        data: {
+          host: {
+            url: 'http://localhost:9080',
+            rootPath: '',
+          },
+          language: {
+            default: 'en-us',
+            items: 'en-us,zh-cn',
+          },
+          themes: {
+            'en-us': 'cms-themeblog',
+            'zh-cn': 'cms-themeblog',
+          },
         },
-        language: {
-          default: 'en-us',
-          items: 'en-us,zh-cn',
-        },
-        themes: {
-          'en-us': 'cms-themeblog',
-          'zh-cn': 'cms-themeblog',
-        },
-      },
-    });
+      });
     assert(result.body.code === 0);
-
   });
 
   it('action:build languages', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
     assert(result.body.code === 0);
     console.log('time used: ', result.body.data.time);
-
   });
 
   it('action:render article', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     const articles = [
       {
@@ -116,25 +125,31 @@ describe('test/controller/test.test.js', () => {
     for (const article of articles) {
       let result;
       // create
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-        atomClass: { module: mockInfo().relativeName, atomClassName: 'article', atomClassIdParent: 0 },
-      });
+      result = await app
+        .httpRequest()
+        .post(mockUrl('/a/base/atom/create'))
+        .send({
+          atomClass: { module: mockInfo().relativeName, atomClassName: 'article', atomClassIdParent: 0 },
+        });
       assert(result.body.code === 0);
       const keyDraft = result.body.data;
 
       // submit
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-        key: keyDraft,
-        item: {
-          atomId: keyDraft.atomId,
-          atomName: article.atomName,
-          atomLanguage: article.atomLanguage,
-          editMode: article.editMode,
-          content: article.content,
-          slug: article.slug,
-        },
-        options: { ignoreFlow: true },
-      });
+      result = await app
+        .httpRequest()
+        .post(mockUrl('/a/base/atom/writeSubmit'))
+        .send({
+          key: keyDraft,
+          item: {
+            atomId: keyDraft.atomId,
+            atomName: article.atomName,
+            atomLanguage: article.atomLanguage,
+            editMode: article.editMode,
+            content: article.content,
+            slug: article.slug,
+          },
+          options: { ignoreFlow: true },
+        });
       assert(result.body.code === 0);
       const keyFormal = result.body.data.formal.key;
 
@@ -147,7 +162,6 @@ describe('test/controller/test.test.js', () => {
         assert(result.body.code === 0);
       }
     }
-
   });
 
   // it('action:build languages', async () => {
@@ -166,5 +180,4 @@ describe('test/controller/test.test.js', () => {
   //   console.log('time used: ', result.body.data.time);
 
   // });
-
 });

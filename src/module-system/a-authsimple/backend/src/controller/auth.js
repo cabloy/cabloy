@@ -1,6 +1,5 @@
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async signin() {
       // data: { auth, password, rememberMe }
       const data = this.ctx.request.body.data;
@@ -15,7 +14,11 @@ module.exports = app => {
       const res = await this.service.auth.signup({
         user: this.ctx.state.user.agent,
         state,
-        userName, realName, email, mobile, password,
+        userName,
+        realName,
+        email,
+        mobile,
+        password,
       });
       this.ctx.success(res);
     }
@@ -56,8 +59,6 @@ module.exports = app => {
       await this.service.auth.emailConfirmation({ token });
       // this.ctx.success();
     }
-
-
   }
   return AuthController;
 };

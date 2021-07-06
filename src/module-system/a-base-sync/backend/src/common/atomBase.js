@@ -2,15 +2,11 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
-const __atomBasicFields = [
-  'atomName', 'atomStatic', 'atomStaticKey', 'atomRevision',
-  'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment',
-];
+const __atomBasicFields = ['atomName', 'atomStatic', 'atomStaticKey', 'atomRevision', 'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment'];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
-
     async create({ atomClass, item, user }) {
       // atomName
       if (!item.atomName) {
@@ -103,7 +99,7 @@ module.exports = app => {
 
     async _writeAtom({ key, item, user, atomStage }) {
       // write atom
-      const atom = { };
+      const atom = {};
       for (const field of __atomBasicFields) {
         if (item[field] !== undefined) atom[field] = item[field];
       }
@@ -137,15 +133,17 @@ module.exports = app => {
       return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
     }
 
-    async enable({ /* atomClass,*/ key/* , user*/ }) {
+    async enable({ /* atomClass,*/ key /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 0,
+        id: key.atomId,
+        atomDisabled: 0,
       });
     }
 
-    async disable({ /* atomClass,*/ key/* , user*/ }) {
+    async disable({ /* atomClass,*/ key /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId, atomDisabled: 1,
+        id: key.atomId,
+        atomDisabled: 1,
       });
     }
 
@@ -153,7 +151,7 @@ module.exports = app => {
       // do nothing
     }
 
-    async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {
+    async exportBulk({ /* atomClass, options,*/ fields, items /* , user*/ }) {
       // workbook
       const workbook = new ExcelJS.Workbook();
       workbook.creator = 'CabloyJS';
@@ -198,7 +196,6 @@ module.exports = app => {
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
     }
-
   }
   return AtomBase;
 };

@@ -1,7 +1,12 @@
 <template>
   <eb-page>
     <eb-navbar title="Slider Lazy Loading" eb-back-link="Back"></eb-navbar>
-    <div data-pagination='{"el": ".swiper-pagination"}' data-navigation='{"nextEl": ".swiper-button-next", "prevEl": ".swiper-button-prev"}' data-lazy='{"enabled": true}' class="swiper-container swiper-init demo-swiper-lazy">
+    <div
+      data-pagination='{"el": ".swiper-pagination"}'
+      data-navigation='{"nextEl": ".swiper-button-next", "prevEl": ".swiper-button-prev"}'
+      data-lazy='{"enabled": true}'
+      class="swiper-container swiper-init demo-swiper-lazy"
+    >
       <div class="swiper-wrapper">
         <div class="swiper-slide">
           <img data-src="https://cdn.framework7.io/placeholder/nature-1024x1024-1.jpg" class="swiper-lazy" />
@@ -36,5 +41,4 @@
 </template>
 <script>
 export default {};
-
 </script>

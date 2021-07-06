@@ -11,7 +11,8 @@ module.exports = ctx => {
       this._nodeBaseBean = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
-        context, nodeDef,
+        context,
+        nodeDef,
       });
     }
 
@@ -189,8 +190,10 @@ module.exports = ctx => {
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
-          flowInstance: this.flowInstance, nodeInstance: this,
-          context: this.context, contextNode: this.contextNode,
+          flowInstance: this.flowInstance,
+          nodeInstance: this,
+          context: this.context,
+          contextNode: this.contextNode,
         });
       }
       return this._nodeBaseBean;
@@ -203,7 +206,6 @@ module.exports = ctx => {
       }
       return this._nodeBase;
     }
-
   }
   return FlowNode;
 };

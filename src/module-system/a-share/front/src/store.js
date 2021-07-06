@@ -1,15 +1,9 @@
 // eslint-disable-next-line
-export default function(Vue) {
-
+export default function (Vue) {
   return {
-    state: {
-    },
-    getters: {
-    },
-    mutations: {
-    },
-    actions: {
-    },
+    state: {},
+    getters: {},
+    mutations: {},
+    actions: {},
   };
-
 }

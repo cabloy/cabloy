@@ -8,9 +8,7 @@ export default {
   },
   name: 'eb-fab-button',
   extends: f7FabButton,
-  mixins: [ perform ],
+  mixins: [perform],
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

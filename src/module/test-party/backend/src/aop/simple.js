@@ -1,15 +1,12 @@
 class simpleAopBase {
-
   actionSync(context, next) {
     next();
     context.result = `${context.result}:simpleaop`;
   }
-
 }
 
 module.exports = ctx => {
   class simpleAop extends simpleAopBase {
-
     // magic
     get__magic__(context, next) {
       next();
@@ -38,7 +35,6 @@ module.exports = ctx => {
       await next();
       context.result = `${context.result}:simpleaop`;
     }
-
   }
 
   return simpleAop;

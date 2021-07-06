@@ -1,14 +1,13 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // userIds / roleIds
       const userIds = content.userIds;
       const roleIds = content.roleIds;
       // message
       const message = {
-        ... content.data,
+        ...content.data,
       };
       // agentid
       const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
@@ -36,7 +35,6 @@ module.exports = ctx => {
       // done
       return true;
     }
-
   }
   return IOChannel;
 };

@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class localAop {
-
     // magic
     get__magic__(context, next) {
       next();
@@ -10,7 +9,6 @@ module.exports = ctx => {
         context.value = ctx.bean._getBean(moduleName, `local.${prop}`);
       }
     }
-
   }
 
   return localAop;

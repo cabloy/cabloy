@@ -1,6 +1,6 @@
 import flowLayoutManager from '../common/flowLayoutManager/index.jsx';
 export default {
-  mixins: [ flowLayoutManager ],
+  mixins: [flowLayoutManager],
   data() {
     const query = this.$f7route.query;
     const flowId = parseInt(query.flowId || 0);

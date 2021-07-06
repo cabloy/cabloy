@@ -11,11 +11,9 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     async onPerformMarkAllAsRead() {
       await this.$api.post('/a/socketio/message/setRead', {

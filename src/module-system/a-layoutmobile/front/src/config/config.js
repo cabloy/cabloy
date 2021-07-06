@@ -17,7 +17,9 @@ export default {
       loginOnStart: true,
       toolbar: {
         meta: {
-          tabbar: true, labels: true, bottom: true,
+          tabbar: true,
+          labels: true,
+          bottom: true,
         },
         buttonActive: '',
         buttons: [],

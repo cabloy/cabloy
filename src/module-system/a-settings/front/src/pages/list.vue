@@ -2,8 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Settings')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
-      <eb-list-item class="item" v-for="item of items" :key="item.module" :title="getModule(item.module).titleLocale" link="#" :context="item" :onPerform="onItemClick">
-      </eb-list-item>
+      <eb-list-item class="item" v-for="item of items" :key="item.module" :title="getModule(item.module).titleLocale" link="#" :context="item" :onPerform="onItemClick"> </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
   </eb-page>
@@ -12,7 +11,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       scene: this.$f7route.params.scene,
@@ -37,16 +36,16 @@ export default {
       });
     },
     onItemClick(event, item) {
-      const action = item.validator ? {
-        actionModule: 'a-settings',
-        actionPath: `${this.scene}/edit?module=${item.module}`,
-      } : item;
-      return this.$meta.util.performAction({ ctx: this, action, item })
-        .then(() => {
-          return;
-        });
+      const action = item.validator
+        ? {
+            actionModule: 'a-settings',
+            actionPath: `${this.scene}/edit?module=${item.module}`,
+          }
+        : item;
+      return this.$meta.util.performAction({ ctx: this, action, item }).then(() => {
+        return;
+      });
     },
   },
 };
-
 </script>

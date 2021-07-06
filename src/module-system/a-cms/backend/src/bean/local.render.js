@@ -49,7 +49,10 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
+            atomClass,
+            key,
+            article,
+            inner,
           },
         });
       });
@@ -69,7 +72,10 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
-            atomClass, key, article, inner,
+            atomClass,
+            key,
+            article,
+            inner,
           },
         });
       });
@@ -89,7 +95,9 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
-            atomClass, key, inner,
+            atomClass,
+            key,
+            inner,
           },
         });
       });
@@ -109,12 +117,13 @@ module.exports = ctx => {
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
-            atomClass, key, inner,
+            atomClass,
+            key,
+            inner,
           },
         });
       });
     }
-
   }
 
   return Render;

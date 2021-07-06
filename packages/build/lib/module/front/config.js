@@ -3,24 +3,25 @@ const { merge } = require('webpack-merge');
 const configFn = require('../config.js');
 
 module.exports = context => {
-
   // config
   const config = configFn(context);
 
   // dist
   const distPath = path.resolve(context.modulePath, 'dist');
 
-  return merge({
-    build: {
-      env: {
-        NODE_ENV: '"production"',
+  return merge(
+    {
+      build: {
+        env: {
+          NODE_ENV: '"production"',
+        },
+        assetsRoot: distPath,
+        assetsSubDirectory: 'static',
+        assetsPublicPath: '',
+        productionSourceMap: true,
+        uglify: true,
       },
-      assetsRoot: distPath,
-      assetsSubDirectory: 'static',
-      assetsPublicPath: '',
-      productionSourceMap: true,
-      uglify: true,
     },
-  }, { build: config.front });
-
+    { build: config.front }
+  );
 };

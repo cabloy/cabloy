@@ -11,8 +11,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     onPerformAdd() {
@@ -65,15 +64,11 @@ export default {
       // domAfter
       let domAfterRealName;
       if (item.realName && item.realName !== item.userName) {
-        domAfterRealName = (
-          <f7-badge>{item.realName}</f7-badge>
-        );
+        domAfterRealName = <f7-badge>{item.realName}</f7-badge>;
       }
       let domAfterMobile;
       if (item.mobile) {
-        domAfterMobile = (
-          <f7-badge>{item.mobile}</f7-badge>
-        );
+        domAfterMobile = <f7-badge>{item.mobile}</f7-badge>;
       }
       const domAfter = (
         <div slot="after">
@@ -97,22 +92,14 @@ export default {
       // domRight
       const domActions = [];
       domActions.push(
-        <div key='remove' color='red' propsOnPerform={event => this.onPerformRemove(event, item, index)}>
-          <f7-icon slot="media" material='delete'></f7-icon>
+        <div key="remove" color="red" propsOnPerform={event => this.onPerformRemove(event, item, index)}>
+          <f7-icon slot="media" material="delete"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Remove')}</div>}
         </div>
       );
-      const domRight = (
-        <div slot="right">
-          {domActions}
-        </div>
-      );
+      const domRight = <div slot="right">{domActions}</div>;
 
-      return (
-        <eb-context-menu>
-          {domRight}
-        </eb-context-menu>
-      );
+      return <eb-context-menu>{domRight}</eb-context-menu>;
     },
     renderAssignees() {
       const children = [];
@@ -126,9 +113,7 @@ export default {
   render() {
     let domAdd;
     if (!this.readOnly) {
-      domAdd = (
-        <eb-link iconMaterial='add' propsOnPerform={this.onPerformAdd}></eb-link>
-      );
+      domAdd = <eb-link iconMaterial="add" propsOnPerform={this.onPerformAdd}></eb-link>;
     }
     return (
       <f7-list-group>
@@ -143,4 +128,3 @@ export default {
     );
   },
 };
-

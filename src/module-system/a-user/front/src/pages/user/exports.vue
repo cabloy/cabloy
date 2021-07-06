@@ -2,23 +2,23 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Exports')" eb-back-link="Back"></eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId===user.id">
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId === user.id">
         <div slot="media">
-          <img class="avatar avatar32" :src="getItemMedia(item)">
+          <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
         <div slot="root-start" class="header">
           <div class="userName">
-            <span>{{item.userName}}</span>
+            <span>{{ item.userName }}</span>
           </div>
-          <div class="date">{{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
+          <div class="date">{{ $meta.util.formatDateTimeRelative(item.createdAt) }}</div>
         </div>
-        <div slot="after" v-if="item.id===recent">
-          <f7-badge>{{$text('Recent')}}</f7-badge>
+        <div slot="after" v-if="item.id === recent">
+          <f7-badge>{{ $text('Recent') }}</f7-badge>
         </div>
-        <eb-context-menu v-if="item.userId===user.id">
+        <eb-context-menu v-if="item.userId === user.id">
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformRename">{{$text('Rename')}}</div>
-            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" :context="item" :onPerform="onPerformRename">{{ $text('Rename') }}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -64,18 +64,18 @@ export default {
           mode: 2,
           flag: 'atom-bulk-export',
         },
-        orders: [
-          [ 'createdAt', 'desc' ],
-        ],
+        orders: [['createdAt', 'desc']],
         page: { index },
       };
       // fetch
-      return this.$api.post('/a/file/file/list', {
-        options,
-      }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      return this.$api
+        .post('/a/file/file/list', {
+          options,
+        })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
     },
     reload() {
       this.$refs.loadMore.reload();
@@ -150,5 +150,4 @@ export default {
     },
   },
 };
-
 </script>

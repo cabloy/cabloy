@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Atom extends app.Service {
-
     async preferredRoles({ atomClass, user }) {
       return await this.ctx.bean.atom.preferredRoles({ atomClass, user });
     }
@@ -93,7 +91,6 @@ module.exports = app => {
     async validator({ atomClass }) {
       return await this.ctx.bean.atom.validator({ atomClass });
     }
-
   }
 
   return Atom;

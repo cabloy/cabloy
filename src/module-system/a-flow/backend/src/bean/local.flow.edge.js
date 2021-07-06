@@ -11,7 +11,9 @@ module.exports = ctx => {
       this._edgeBaseBean = null;
       // context
       this.contextEdge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
-        context, contextNode, edgeDef,
+        context,
+        contextNode,
+        edgeDef,
       });
     }
 
@@ -62,8 +64,11 @@ module.exports = ctx => {
     get edgeBaseBean() {
       if (!this._edgeBaseBean) {
         this._edgeBaseBean = ctx.bean._newBean(this.edgeBase.beanFullName, {
-          flowInstance: this.flowInstance, edgeInstance: this,
-          context: this.context, contextNode: this.contextNode, contextEdge: this.contextEdge,
+          flowInstance: this.flowInstance,
+          edgeInstance: this,
+          context: this.context,
+          contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
         });
       }
       return this._edgeBaseBean;
@@ -73,7 +78,6 @@ module.exports = ctx => {
       if (!this._edgeBase) this._edgeBase = ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeDef.type);
       return this._edgeBase;
     }
-
   }
   return FlowEdge;
 };

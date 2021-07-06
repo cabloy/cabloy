@@ -12,6 +12,6 @@ const configDefault = {
   },
 };
 
-module.exports = function(cabloy, options) {
+module.exports = function (cabloy, options) {
   return cabloy.util.extend({}, configDefault, options);
 };

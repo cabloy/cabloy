@@ -1,7 +1,6 @@
 const compose = require('koa-compose');
 
 module.exports = app => {
-
   function loadMiddlewares() {
     const _middlewares = [];
 

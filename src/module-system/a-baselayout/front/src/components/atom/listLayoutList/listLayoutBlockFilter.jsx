@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomClasses ],
+  mixins: [ebAtomClasses],
   props: {
     layoutManager: {
       type: Object,
@@ -71,7 +71,7 @@ export default {
     },
     stages() {
       const stages = [];
-      for (const key of [ 'draft', 'formal', 'history' ]) {
+      for (const key of ['draft', 'formal', 'history']) {
         stages.push({ title: key.replace(key[0], key[0].toUpperCase()), value: key });
       }
       return stages;
@@ -91,8 +91,7 @@ export default {
       deep: true,
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     onAtomClassesReady() {
       this.init();
@@ -171,7 +170,7 @@ export default {
         this.onFilterDebounce();
       }
     },
-    onFilterDebounce: Vue.prototype.$meta.util.debounce(function() {
+    onFilterDebounce: Vue.prototype.$meta.util.debounce(function () {
       this.layoutManager.filter_onChanged({
         form: this.form,
         formAtomClass: this.formAtomClass,
@@ -195,7 +194,7 @@ export default {
     getCategoryName(categoryId) {
       if (!this.categoriesAll || !categoryId) return '';
       const category = this.categoriesAll.find(_item => _item.id === categoryId);
-      return category ? (category.categoryNameLocale || category.categoryName) : '';
+      return category ? category.categoryNameLocale || category.categoryName : '';
     },
     getTagName(tagId) {
       if (!this.tagsAll || !tagId) return '';
@@ -268,7 +267,7 @@ export default {
           target: '_self',
           context: {
             params: {
-              tags: this.form.tag ? [ this.form.tag ] : null,
+              tags: this.form.tag ? [this.form.tag] : null,
               multiple: false,
             },
             callback: (code, tag) => {
@@ -315,16 +314,14 @@ export default {
     },
     _renderCategory() {
       return (
-        <eb-list-item-choose key="form.category"
-          link="#" title={this.$text('Category')} propsOnChoose={this.onChooseCategory}>
+        <eb-list-item-choose key="form.category" link="#" title={this.$text('Category')} propsOnChoose={this.onChooseCategory}>
           <div slot="after">{this.getCategoryName(this.form.category)}</div>
         </eb-list-item-choose>
       );
     },
     _renderTag() {
       return (
-        <eb-list-item-choose key="form.tag"
-          link="#" title={this.$text('Tag')} propsOnChoose={this.onChooseTag}>
+        <eb-list-item-choose key="form.tag" link="#" title={this.$text('Tag')} propsOnChoose={this.onChooseTag}>
           <div slot="after">{this.getTagName(this.form.tag)}</div>
         </eb-list-item-choose>
       );
@@ -347,9 +344,7 @@ export default {
       }
       // divider
       if (children.length > 0) {
-        children.push(
-          <f7-list-item divider></f7-list-item>
-        );
+        children.push(<f7-list-item divider></f7-list-item>);
       }
       // ok
       return children;
@@ -364,10 +359,7 @@ export default {
     },
     _renderFormAtomClass() {
       if (!this.validateParams) return null;
-      return (
-        <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit} onSchemaReady={this.onSchemaReady}>
-        </eb-validate>
-      );
+      return <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit} onSchemaReady={this.onSchemaReady}></eb-validate>;
     },
   },
   render() {

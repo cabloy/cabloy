@@ -13,7 +13,7 @@ export default {
   },
   name: 'eb-link-color',
   extends: f7Link,
-  mixins: [ perform, link, stats ],
+  mixins: [perform, link, stats],
   data() {
     return {
       badgeColor: null,
@@ -46,7 +46,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

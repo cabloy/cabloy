@@ -29,16 +29,18 @@ export default {
     },
   },
   created() {
-    this.$api.post('site/getConfigLanguage', {
-      atomClass: this.atomClass,
-      language: this.language,
-    }).then(res => {
-      if (!res.data) {
-        this.content = '{}';
-      } else {
-        this.content = JSON5.stringify(res.data, null, 2);
-      }
-    });
+    this.$api
+      .post('site/getConfigLanguage', {
+        atomClass: this.atomClass,
+        language: this.language,
+      })
+      .then(res => {
+        if (!res.data) {
+          this.content = '{}';
+        } else {
+          this.content = JSON5.stringify(res.data, null, 2);
+        }
+      });
   },
   methods: {
     combineAtomClass(url) {
@@ -55,14 +57,16 @@ export default {
     },
     onPerformSave() {
       const data = JSON5.parse(this.content);
-      return this.$api.post('site/setConfigLanguage', {
-        atomClass: this.atomClass,
-        language: this.language,
-        data,
-      }).then(() => {
-        this.$emit('preview');
-        return true;
-      });
+      return this.$api
+        .post('site/setConfigLanguage', {
+          atomClass: this.atomClass,
+          language: this.language,
+          data,
+        })
+        .then(() => {
+          this.$emit('preview');
+          return true;
+        });
     },
     onPerformPreview() {
       const url = this.combineAtomClass(`/a/cms/config/languagePreview?language=${this.language}`);
@@ -76,7 +80,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -7,16 +7,16 @@
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.read}`" :tabLinkActive="tabName==='read'" :text="$text('Read')"></eb-link>
-          <eb-link :tab-link="`#${tabId.write}`" :tabLinkActive="tabName==='write'" :text="$text('Write')"></eb-link>
+          <eb-link :tab-link="`#${tabId.read}`" :tabLinkActive="tabName === 'read'" :text="$text('Read')"></eb-link>
+          <eb-link :tab-link="`#${tabId.write}`" :tabLinkActive="tabName === 'write'" :text="$text('Write')"></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.read" :ptr="false" :infinite="false" :tabActive="tabName==='read'" data-ref="read" @tab:show="tabName='read'">
+      <eb-tab-page-content :id="tabId.read" :ptr="false" :infinite="false" :tabActive="tabName === 'read'" data-ref="read" @tab:show="tabName = 'read'">
         <schema-fields-tab :context="context" :readOnly="readOnly" mode="read" :valueSchema="valueSchema" :schemaReference="schemaReference"></schema-fields-tab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.write" :ptr="false" :infinite="false" :tabActive="tabName==='write'" data-ref="write" @tab:show="tabName='write'">
+      <eb-tab-page-content :id="tabId.write" :ptr="false" :infinite="false" :tabActive="tabName === 'write'" data-ref="write" @tab:show="tabName = 'write'">
         <schema-fields-tab :context="context" :readOnly="readOnly" mode="write" :valueSchema="valueSchema" :schemaReference="schemaReference"></schema-fields-tab>
       </eb-tab-page-content>
     </f7-tabs>
@@ -27,7 +27,7 @@ import Vue from 'vue';
 import schemaFieldsTab from '../../components/schemaFields/schemaFieldsTab.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     schemaFieldsTab,
   },
@@ -84,5 +84,4 @@ export default {
     },
   },
 };
-
 </script>

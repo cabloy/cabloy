@@ -1,6 +1,5 @@
 module.exports = app => {
   class TestController extends app.Controller {
-
     async getOpenid() {
       const res = await this.service.test.getOpenid({
         user: this.ctx.state.user.op,
@@ -15,8 +14,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
-
   }
   return TestController;
 };

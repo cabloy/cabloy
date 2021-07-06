@@ -25,7 +25,6 @@ function install(_Vue, cb) {
       components: require('./components.js').default,
     });
   });
-
 }
 
 // export

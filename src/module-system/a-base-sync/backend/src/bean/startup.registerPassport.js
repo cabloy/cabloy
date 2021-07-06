@@ -1,6 +1,5 @@
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // verify
       app.passport.verify(async (ctx, profileUser) => {

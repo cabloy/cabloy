@@ -7,33 +7,43 @@ export default {
       const props = {
         button: this, // for more extensible
       };
-      children.push(c(this.layout._buttonFullName(this.options), {
-        staticClass: 'header-button-inner',
-        props,
-        on: {
-          'buttonReal:ready': this.__onButtonRealReady,
-          'buttonReal:destroy': this.__onButtonRealDestroy,
-        },
-      }));
+      children.push(
+        c(this.layout._buttonFullName(this.options), {
+          staticClass: 'header-button-inner',
+          props,
+          on: {
+            'buttonReal:ready': this.__onButtonRealReady,
+            'buttonReal:destroy': this.__onButtonRealDestroy,
+          },
+        })
+      );
     } else if (this.errorMessage) {
-      children.push(c('div', {
-        staticClass: 'header-button-inner header-button-inner-error',
-        domProps: { innerText: this.errorMessage },
-      }));
+      children.push(
+        c('div', {
+          staticClass: 'header-button-inner header-button-inner-error',
+          domProps: { innerText: this.errorMessage },
+        })
+      );
     }
-    return c('div', {
-      staticClass: `header-button ${this.showing ? '' : 'display-none'}`,
-      directives: [{
-        name: 'eb-dragdrop',
-        value: {
-          scene: this.dragdropScene,
-          button: this.options,
-          onDragStart: this.onDragStart,
-          onDropElement: this.onDropElement,
-          onDragDone: this.onDragDone,
-        },
-      }],
-    }, children);
+    return c(
+      'div',
+      {
+        staticClass: `header-button ${this.showing ? '' : 'display-none'}`,
+        directives: [
+          {
+            name: 'eb-dragdrop',
+            value: {
+              scene: this.dragdropScene,
+              button: this.options,
+              onDragStart: this.onDragStart,
+              onDropElement: this.onDropElement,
+              onDragDone: this.onDragDone,
+            },
+          },
+        ],
+      },
+      children
+    );
   },
   props: {
     options: {
@@ -95,13 +105,13 @@ export default {
       this.showing = false;
     },
     onDragStart({ $el, context, dragElement }) {
-      const [ button, buttonIndexDrag ] = this.group._getButtonAndIndex(context.button);
+      const [button, buttonIndexDrag] = this.group._getButtonAndIndex(context.button);
       const tooltip = this.__getButtonTitle(button);
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [ buttonDrop, buttonIndexDrop ] = this.group._getButtonAndIndex(context.button);
-      const [ buttonDrag, buttonIndexDrag ] = this.group._getButtonAndIndex(dragContext.button);
+      const [buttonDrop, buttonIndexDrop] = this.group._getButtonAndIndex(context.button);
+      const [buttonDrag, buttonIndexDrag] = this.group._getButtonAndIndex(dragContext.button);
       if (buttonIndexDrop === buttonIndexDrag || buttonIndexDrop == buttonIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -130,7 +140,5 @@ export default {
       delete this.group.buttonsReal[fullName];
     },
   },
-
 };
-
 </script>

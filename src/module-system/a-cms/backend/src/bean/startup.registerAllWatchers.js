@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       // only in development
       if (!app.meta.isLocal) return;
@@ -23,7 +21,6 @@ module.exports = app => {
         }
       }
     }
-
   }
 
   return Startup;

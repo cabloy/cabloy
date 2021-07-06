@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Base extends app.Service {
-
     modules() {
       return this.ctx.bean.base.modules();
     }
@@ -25,7 +23,6 @@ module.exports = app => {
     themes() {
       return this.ctx.bean.base.themes();
     }
-
   }
 
   return Base;

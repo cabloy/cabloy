@@ -1,8 +1,7 @@
 const Bottleneck = require('bottleneck');
 const Redlock = require('redlock');
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   const limiter = {
     // https://github.com/SGrondin/bottleneck#clustering
     create(options) {
@@ -36,5 +35,4 @@ module.exports = function(loader) {
   loader.app.meta.limiter = limiter;
   // redlock
   loader.app.meta.redlock = redlock;
-
 };

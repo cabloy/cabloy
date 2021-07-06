@@ -3,9 +3,7 @@ const extend = require3('extend2');
 const chalk = require3('chalk');
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       // check indexes
       if (this.ctx.config.indexesCheck) {
@@ -31,11 +29,9 @@ module.exports = app => {
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
+    async test() {}
 
     async _createIndexesOnTable({ tableName, indexes }) {
       try {
@@ -64,7 +60,6 @@ module.exports = app => {
         if (e.sql) console.log(chalk.red(e.sql));
       }
     }
-
   }
 
   return Version;

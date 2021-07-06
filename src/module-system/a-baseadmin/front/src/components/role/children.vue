@@ -2,11 +2,11 @@
   <div>
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.id}`">
-        <f7-badge slot="media">{{item.sorting}}</f7-badge>
+        <f7-badge slot="media">{{ item.sorting }}</f7-badge>
         <div slot="after">
-          <f7-badge v-if="item.leader">{{$text('Leader')}}</f7-badge>
-          <f7-badge v-if="item.catalog">{{$text('Catalog')}}</f7-badge>
-          <f7-badge v-if="item.system">{{$text('System')}}</f7-badge>
+          <f7-badge v-if="item.leader">{{ $text('Leader') }}</f7-badge>
+          <f7-badge v-if="item.catalog">{{ $text('Catalog') }}</f7-badge>
+          <f7-badge v-if="item.system">{{ $text('System') }}</f7-badge>
         </div>
       </eb-list-item>
     </f7-list>
@@ -52,22 +52,20 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('role/children', { roleId: this.role.id, page: { index } })
-        .then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
-        });
+      return this.$api.post('role/children', { roleId: this.role.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onPerformAdd() {
       return this.addRole();
     },
     addRole() {
-      return this.$api.post('role/add', { roleIdParent: this.role.id })
-        .then(data => {
-          this.$meta.eventHub.$emit('role:add', { roleIdParent: this.role.id, roleId: data });
-          this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-          this.$view.navigate(`/a/baseadmin/role/edit?roleId=${data}`);
-        });
+      return this.$api.post('role/add', { roleIdParent: this.role.id }).then(data => {
+        this.$meta.eventHub.$emit('role:add', { roleIdParent: this.role.id, roleId: data });
+        this.$meta.eventHub.$emit('role:dirty', { dirty: true });
+        this.$view.navigate(`/a/baseadmin/role/edit?roleId=${data}`);
+      });
     },
     onRoleSave(data) {
       if (data.roleIdParent !== this.role.id) return;
@@ -87,7 +85,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

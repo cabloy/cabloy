@@ -1,6 +1,5 @@
 module.exports = app => {
   class LayoutConfigController extends app.Controller {
-
     async load() {
       const res = await this.service.layoutConfig.load({
         module: this.ctx.request.body.module,
@@ -27,7 +26,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return LayoutConfigController;
 };

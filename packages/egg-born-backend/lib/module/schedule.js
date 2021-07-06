@@ -1,7 +1,6 @@
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // all schedules
-  const ebSchedules = loader.app.meta.schedules = {};
+  const ebSchedules = (loader.app.meta.schedules = {});
 
   // load schedules
   loadSchedules();
@@ -125,4 +124,3 @@ function getRepeatKey(name, repeat) {
 
   return `${name}::${endDate}:${tz}:${suffix}`;
 }
-

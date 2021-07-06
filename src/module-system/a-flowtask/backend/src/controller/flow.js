@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowController extends app.Controller {
-
     async data() {
       const res = await this.ctx.service.flow.data({
         flowId: this.ctx.request.body.flowId,
@@ -9,7 +7,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return FlowController;
 };

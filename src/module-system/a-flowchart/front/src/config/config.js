@@ -1,5 +1,4 @@
-const __listenerDefault =
-`class Listener {
+const __listenerDefault = `class Listener {
   constructor(context) {
     this.context = context;
   }

@@ -4,7 +4,6 @@ const pMap = require3('p-map');
 
 module.exports = app => {
   class SequenceController extends app.Controller {
-
     async sequence() {
       const arr = [1, 2, 3, 4, 5];
       let results;
@@ -68,8 +67,6 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
   return SequenceController;
 };
-

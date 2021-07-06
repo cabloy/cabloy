@@ -3,7 +3,7 @@ import routes from './routes.js';
 import patchDevice from './patch/device.js';
 import patchRouter from './patch/router.js';
 
-export default function(Vue, options, cb) {
+export default function (Vue, options, cb) {
   // patch device
   patchDevice(Vue);
   // patch router
@@ -71,6 +71,4 @@ export default function(Vue, options, cb) {
 
     return parametersNew;
   }
-
 }
-

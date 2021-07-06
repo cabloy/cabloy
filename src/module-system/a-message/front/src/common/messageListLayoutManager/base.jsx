@@ -20,20 +20,17 @@ export default {
       };
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     base_prepareSelectOptions() {
       // options
       let options = {
-        where: { },
+        where: {},
       };
       // layout
       options.layout = this.layout.current;
       // order
-      options.orders = [
-        [ 'a.createdAt', 'desc' ],
-      ];
+      options.orders = [['a.createdAt', 'desc']];
       // extend 1
       if (this.container.options) {
         options = this.$utils.extend({}, options, this.container.options);

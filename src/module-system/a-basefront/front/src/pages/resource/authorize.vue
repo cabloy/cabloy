@@ -9,12 +9,12 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="red" :context="item" :onPerform="onPerformRemove">{{$text('Remove')}}</div>
+            <div color="red" :context="item" :onPerform="onPerformRemove">{{ $text('Remove') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
-    <div v-if="items && items.length===0" class="text-align-center">{{$text('No Data')}}</div>
+    <div v-if="items && items.length === 0" class="text-align-center">{{ $text('No Data') }}</div>
   </eb-page>
 </template>
 <script>
@@ -46,11 +46,13 @@ export default {
       this.reload();
     },
     reload() {
-      this.$api.post('/a/base/resource/resourceRoles', {
-        key: { atomId: this.atomId },
-      }).then(res => {
-        this.items = res.list;
-      });
+      this.$api
+        .post('/a/base/resource/resourceRoles', {
+          key: { atomId: this.atomId },
+        })
+        .then(res => {
+          this.items = res.list;
+        });
     },
     async onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
@@ -111,7 +113,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

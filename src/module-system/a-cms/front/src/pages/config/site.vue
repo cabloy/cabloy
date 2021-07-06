@@ -22,15 +22,17 @@ export default {
     };
   },
   created() {
-    this.$local.dispatch('getConfigSite', {
-      atomClass: this.atomClass,
-    }).then(data => {
-      if (!data) {
-        this.content = '{}';
-      } else {
-        this.content = JSON5.stringify(data, null, 2);
-      }
-    });
+    this.$local
+      .dispatch('getConfigSite', {
+        atomClass: this.atomClass,
+      })
+      .then(data => {
+        if (!data) {
+          this.content = '{}';
+        } else {
+          this.content = JSON5.stringify(data, null, 2);
+        }
+      });
   },
   methods: {
     combineAtomClass(url) {
@@ -47,21 +49,21 @@ export default {
     },
     onPerformSave() {
       const data = JSON5.parse(this.content);
-      return this.$api.post('site/setConfigSite', {
-        atomClass: this.atomClass,
-        data,
-      }).then(() => {
-        // change
-        this.$local.commit('setConfigSite', { atomClass: this.atomClass, configSite: data });
-        // refetch languages
-        this.$local.commit('setLanguages', { atomClass: this.atomClass, languages: null });
-        this.$local.dispatch('getLanguages', { atomClass: this.atomClass });
-        return true;
-      });
+      return this.$api
+        .post('site/setConfigSite', {
+          atomClass: this.atomClass,
+          data,
+        })
+        .then(() => {
+          // change
+          this.$local.commit('setConfigSite', { atomClass: this.atomClass, configSite: data });
+          // refetch languages
+          this.$local.commit('setLanguages', { atomClass: this.atomClass, languages: null });
+          this.$local.dispatch('getLanguages', { atomClass: this.atomClass });
+          return true;
+        });
     },
   },
 };
-
 </script>
-<style>
-</style>
+<style></style>

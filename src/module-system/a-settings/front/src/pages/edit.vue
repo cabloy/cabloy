@@ -5,15 +5,14 @@
         <eb-link v-if="ready" ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit">
-    </eb-validate>
+    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit"> </eb-validate>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       scene: this.$f7route.params.scene,
@@ -36,30 +35,32 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onPerformValidate() {
-      return this.$api.post(`settings/${this.scene}/save`, {
-        module: this.module,
-        data: this.data,
-      }).then(() => {
-        return true; // toast on success
-      });
+      return this.$api
+        .post(`settings/${this.scene}/save`, {
+          module: this.module,
+          data: this.data,
+        })
+        .then(() => {
+          return true; // toast on success
+        });
     },
     onPerformSave(event) {
       return this.$refs.validate.perform(event);
     },
   },
   created() {
-    this.$api.post(`settings/${this.scene}/load`, {
-      module: this.module,
-    }).then(data => {
-      this.data = data.data;
-      this.validateParams = {
-        module: data.module,
-        validator: data.validator,
-      };
-    });
+    this.$api
+      .post(`settings/${this.scene}/load`, {
+        module: this.module,
+      })
+      .then(data => {
+        this.data = data.data;
+        this.validateParams = {
+          module: data.module,
+          validator: data.validator,
+        };
+      });
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

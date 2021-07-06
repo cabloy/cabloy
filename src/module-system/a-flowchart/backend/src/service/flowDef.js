@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowDef extends app.Service {
-
     async normalizeAssignees({ host, assignees, user }) {
       // check right
       assignees = await this.__checkRightNormalizeAssignees({ host, assignees, user });
@@ -30,11 +28,7 @@ module.exports = app => {
           where: {
             'a.anonymous': 0,
             'a.disabled': 0,
-            __or__: [
-              { 'a.userName': { op: 'like', val: query } },
-              { 'a.realName': { op: 'like', val: query } },
-              { 'a.mobile': { op: 'like', val: query } },
-            ],
+            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
           },
           orders: [['a.userName', 'asc']],
           page,
@@ -84,8 +78,6 @@ module.exports = app => {
       // ok
       return node.options.task ? node.options.task.assignees : node.options.assignees;
     }
-
   }
   return FlowDef;
 };
-

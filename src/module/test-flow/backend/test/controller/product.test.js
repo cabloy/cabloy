@@ -9,29 +9,38 @@ describe('atom:product', () => {
     const atomClassName = 'product';
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     // create
-    let result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
-    });
+    let result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .send({
+        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+      });
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
 
     // submit
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-      key: keyDraft,
-      item: {
-        atomName: 'test',
-        productCode: 'test:321',
-        productPrice: 321,
-      },
-    });
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/writeSubmit'))
+      .send({
+        key: keyDraft,
+        item: {
+          atomName: 'test',
+          productCode: 'test:321',
+          productPrice: 321,
+        },
+      });
     assert(result.body.code === 0);
     const keyFormal = result.body.data.formal.key;
 
@@ -46,6 +55,5 @@ describe('atom:product', () => {
       key: keyFormal,
     });
     assert(result.body.code === 0);
-
   });
 });

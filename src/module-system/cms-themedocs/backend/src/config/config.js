@@ -33,7 +33,7 @@ module.exports = appInfo => {
         { title: 'Demo Online', url: 'https://test.cabloy.com' },
       ],
       features: [
-        { title: 'PC = MOBILE + PAD', description: '\'Mobile First\' strategy, and perfectly adapting PC layout.' },
+        { title: 'PC = MOBILE + PAD', description: "'Mobile First' strategy, and perfectly adapting PC layout." },
         { title: 'Business Modularization', description: 'The business components and logics are arranged as modules.' },
         { title: 'Frontend and Backend Separation', description: 'Separating Frontend and Backend, so as for decoupling.' },
         { title: 'Core Business Modules', description: 'Providing many core business modules for rapid business development, such as Users, Roles, Rights, Menus, etc.' },

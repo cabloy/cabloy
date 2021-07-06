@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class ProgressController extends app.Controller {
-
     async progress() {
       // create progress
       const progressId = await this.ctx.bean.progress.create();
@@ -83,7 +81,6 @@ module.exports = app => {
         await this.ctx.bean.util.sleep(1500);
       }
     }
-
   }
   return ProgressController;
 };

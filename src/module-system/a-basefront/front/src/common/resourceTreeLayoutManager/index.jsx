@@ -13,13 +13,9 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 // },
 
 export default {
-  mixins: [
-    ebAtomActions,
-    Base, Page, Layout, Actions,
-  ],
+  mixins: [ebAtomActions, Base, Page, Layout, Actions],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.index_load();

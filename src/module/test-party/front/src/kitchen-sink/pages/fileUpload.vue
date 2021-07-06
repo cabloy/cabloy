@@ -2,31 +2,31 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('File Upload')" eb-back-link="Back"></eb-navbar>
     <f7-card>
-      <f7-card-header>{{$text('Image')}}</f7-card-header>
+      <f7-card-header>{{ $text('Image') }}</f7-card-header>
       <f7-card-content>
-        <img v-if="imageUrl" class="image" :src="imageUrl">
-        <eb-button :onPerform="onPerformImage">{{$text('Select And Upload')}}</eb-button>
+        <img v-if="imageUrl" class="image" :src="imageUrl" />
+        <eb-button :onPerform="onPerformImage">{{ $text('Select And Upload') }}</eb-button>
       </f7-card-content>
     </f7-card>
     <f7-card>
-      <f7-card-header>{{$text('Image(Fixed Size: 400*200)')}}</f7-card-header>
+      <f7-card-header>{{ $text('Image(Fixed Size: 400*200)') }}</f7-card-header>
       <f7-card-content>
-        <img v-if="imageUrlFixed" class="image" :src="imageUrlFixed">
-        <eb-button :onPerform="onPerformImageFixed">{{$text('Select And Upload')}}</eb-button>
+        <img v-if="imageUrlFixed" class="image" :src="imageUrlFixed" />
+        <eb-button :onPerform="onPerformImageFixed">{{ $text('Select And Upload') }}</eb-button>
       </f7-card-content>
     </f7-card>
     <f7-card>
-      <f7-card-header>{{$text('Audio')}}</f7-card-header>
+      <f7-card-header>{{ $text('Audio') }}</f7-card-header>
       <f7-card-content>
         <audio v-if="audioUrl" :src="audioUrl" controls autoplay></audio>
-        <eb-button :onPerform="onPerformAudio">{{$text('Select And Upload')}}</eb-button>
+        <eb-button :onPerform="onPerformAudio">{{ $text('Select And Upload') }}</eb-button>
       </f7-card-content>
     </f7-card>
     <f7-card>
-      <f7-card-header>{{$text('File')}}</f7-card-header>
+      <f7-card-header>{{ $text('File') }}</f7-card-header>
       <f7-card-content>
-        <pre v-if="file">{{getFileJSON(this.file)}}</pre>
-        <f7-button @click="onClickFile">{{$text('Select And Upload')}}</f7-button>
+        <pre v-if="file">{{ getFileJSON(this.file) }}</pre>
+        <f7-button @click="onClickFile">{{ $text('Select And Upload') }}</f7-button>
       </f7-card-content>
     </f7-card>
   </eb-page>
@@ -123,12 +123,10 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped="">
 .image {
   width: 100%;
   max-height: 300px;
 }
-
 </style>

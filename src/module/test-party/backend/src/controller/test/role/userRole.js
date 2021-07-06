@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class UserRoleController extends app.Controller {
-
     async userRole() {
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
@@ -23,26 +21,27 @@ module.exports = app => {
 
       // direct
       let res = await this.ctx.bean.role.userInRoleDirect({
-        userId: userIds.root, roleId: roleIds.superuser,
+        userId: userIds.root,
+        roleId: roleIds.superuser,
       });
       assert.equal(res, true);
       // parent
       res = await this.ctx.bean.role.userInRoleParent({
-        userId: userIds.root, roleId: roleIds.root,
+        userId: userIds.root,
+        roleId: roleIds.root,
       });
       assert.equal(res, true);
       // expand
       res = await this.ctx.bean.role.userInRoleExpand({
-        userId: userIds.root, roleId: roleIds.system,
+        userId: userIds.root,
+        roleId: roleIds.system,
       });
       assert.equal(res, true);
 
       // done
       this.ctx.success();
     }
-
   }
 
   return UserRoleController;
 };
-

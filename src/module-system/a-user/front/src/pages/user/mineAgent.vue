@@ -73,12 +73,14 @@ export default {
           },
           callback: (code, res) => {
             if (code === 200) {
-              return this.$api.post('user/saveAvatar', {
-                data: { avatar: res.downloadUrl },
-              }).then(() => {
-                const userNew = Object.assign({}, this.$store.state.auth.user.agent, { avatar: res.downloadUrl });
-                this.$store.commit('auth/setUser', { op: userNew, agent: userNew });
-              });
+              return this.$api
+                .post('user/saveAvatar', {
+                  data: { avatar: res.downloadUrl },
+                })
+                .then(() => {
+                  const userNew = Object.assign({}, this.$store.state.auth.user.agent, { avatar: res.downloadUrl });
+                  this.$store.commit('auth/setUser', { op: userNew, agent: userNew });
+                });
             }
           },
         },
@@ -86,7 +88,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .me {
@@ -118,5 +119,4 @@ export default {
     right: 12px;
   }
 }
-
 </style>

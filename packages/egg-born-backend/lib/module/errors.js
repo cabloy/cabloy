@@ -3,8 +3,7 @@ const assetErrors = require('./asset/errors.js');
 const errorClassFn = require('../base/error.js');
 const ERROR = Symbol('Context#__error');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // all errors
   const ebErrors = {};
 
@@ -21,45 +20,39 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-
         // error
         context[ERROR] = new (errorClassFn(ebErrors))(context);
 
         // methods
-        [ 'success', 'fail', 'throw', 'parseFail', 'parseSuccess', 'parseCode' ].forEach(key => {
-          context[key] = function(...args) {
+        ['success', 'fail', 'throw', 'parseFail', 'parseSuccess', 'parseCode'].forEach(key => {
+          context[key] = function (...args) {
             return context[ERROR][key](context.module.info.relativeName, ...args);
           };
-          context[key].module = function(module, ...args) {
+          context[key].module = function (module, ...args) {
             return context[ERROR][key](module, ...args);
           };
         });
-
       }
 
       // createError
-      context.createError = function(data) {
+      context.createError = function (data) {
         return loader.app.meta.util.createError(data);
       };
 
       return context;
     };
-
   }
 
   function loadErrors() {
     Object.keys(modules).forEach(key => {
-
       const module = modules[key];
-      const ebError = ebErrors[module.info.relativeName] = {};
+      const ebError = (ebErrors[module.info.relativeName] = {});
 
       // module errors
       if (module.main.errors) extend(true, ebError, module.main.errors);
 
       // asset errors
       extend(true, ebError, assetErrors);
-
     });
   }
-
 };

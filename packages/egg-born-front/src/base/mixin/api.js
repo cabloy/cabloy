@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export default function(Vue) {
-
+export default function (Vue) {
   // axios
   Vue.prototype.$meta.axios = axios;
 
@@ -12,71 +11,76 @@ export default function(Vue) {
   // add a response interceptor
   if (!axios.__ebDefaultResponseDisable) {
     // response
-    axios.interceptors.response.use(function(response) {
-      if (response.headers['content-type'].indexOf('application/json') === -1) return response;
-      if (response.data.code !== 0) {
-        const error = new Error();
-        error.code = response.data.code;
-        error.message = response.data.message;
-        error.config = response.config;
+    axios.interceptors.response.use(
+      function (response) {
+        if (response.headers['content-type'].indexOf('application/json') === -1) return response;
+        if (response.data.code !== 0) {
+          const error = new Error();
+          error.code = response.data.code;
+          error.message = response.data.message;
+          error.config = response.config;
+          return Promise.reject(error);
+        }
+        // check jwt
+        if (Vue.prototype.$meta.config.base.jwt && response.data['eb-jwt']) {
+          window.localStorage['eb-jwt'] = response.data['eb-jwt'];
+        }
+        // return data
+        return response.data.data;
+      },
+      function (error) {
+        if (error.response) {
+          error.code = (error.response.data && error.response.data.code) || error.response.status;
+          error.message = (error.response.data && error.response.data.message) || error.response.statusText;
+        }
         return Promise.reject(error);
       }
-      // check jwt
-      if (Vue.prototype.$meta.config.base.jwt && response.data['eb-jwt']) {
-        window.localStorage['eb-jwt'] = response.data['eb-jwt'];
-      }
-      // return data
-      return response.data.data;
-    }, function(error) {
-      if (error.response) {
-        error.code = (error.response.data && error.response.data.code) || error.response.status;
-        error.message = (error.response.data && error.response.data.message) || error.response.statusText;
-      }
-      return Promise.reject(error);
-    });
+    );
 
     // add a request interceptor
-    axios.interceptors.request.use(function(config) {
-      // jwt
-      if (Vue.prototype.$meta.config.base.jwt) {
-        if (!config.headers) config.headers = {};
-        config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
+    axios.interceptors.request.use(
+      function (config) {
+        // jwt
+        if (Vue.prototype.$meta.config.base.jwt) {
+          if (!config.headers) config.headers = {};
+          config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
+        }
+        // scene
+        config.headers['x-scene'] = Vue.prototype.$meta.config.scene;
+        // clientId
+        const clientId = Vue.prototype.$meta.store.state.auth.clientId;
+        if (clientId) {
+          config.headers['x-clientid'] = clientId;
+        }
+        // config
+        return config;
+      },
+      function (error) {
+        return Promise.reject(error);
       }
-      // scene
-      config.headers['x-scene'] = Vue.prototype.$meta.config.scene;
-      // clientId
-      const clientId = Vue.prototype.$meta.store.state.auth.clientId;
-      if (clientId) {
-        config.headers['x-clientid'] = clientId;
-      }
-      // config
-      return config;
-    }, function(error) {
-      return Promise.reject(error);
-    });
+    );
 
     // response
-    axios.interceptors.response.use(function(response) {
-      return response;
-    }, function(error) {
-      if (error.code === 401) {
-        // login
-        Vue.prototype.$meta.vueLayout.openLogin();
+    axios.interceptors.response.use(
+      function (response) {
+        return response;
+      },
+      function (error) {
+        if (error.code === 401) {
+          // login
+          Vue.prototype.$meta.vueLayout.openLogin();
+        }
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
-    });
+    );
   }
 
   // custom interceptor
-  axios.__ebCustomInterceptorRequest && axios.interceptors.request.use(
-    axios.__ebCustomInterceptorRequest.resolve,
-    axios.__ebCustomInterceptorRequest.reject);
-  axios.__ebCustomInterceptorResponse && axios.interceptors.response.use(
-    axios.__ebCustomInterceptorResponse.resolve,
-    axios.__ebCustomInterceptorResponse.reject);
+  axios.__ebCustomInterceptorRequest && axios.interceptors.request.use(axios.__ebCustomInterceptorRequest.resolve, axios.__ebCustomInterceptorRequest.reject);
+  axios.__ebCustomInterceptorResponse && axios.interceptors.response.use(axios.__ebCustomInterceptorResponse.resolve, axios.__ebCustomInterceptorResponse.reject);
 
   // beforeCreate
-  const beforeCreate = function(ctx) {
+  const beforeCreate = function (ctx) {
     // api
     ctx.$api = {};
     wrapApi(Vue, ctx.$api, axios, ctx);
@@ -86,7 +90,7 @@ export default function(Vue) {
 }
 
 function wrapApi(Vue, obj, objBase, vueComponent) {
-  [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
+  ['delete', 'get', 'head', 'options', 'post', 'put', 'patch'].forEach(key => {
     overrideProperty({
       Vue,
       obj,
@@ -103,7 +107,7 @@ function wrapApi(Vue, obj, objBase, vueComponent) {
 function overrideProperty({ Vue, obj, key, objBase, vueComponent, combinePath }) {
   Object.defineProperty(obj, key, {
     get() {
-      return function() {
+      return function () {
         const moduleInfo = vueComponent && vueComponent.$module && vueComponent.$module.info;
         const args = new Array(arguments.length);
         args[0] = combinePath(moduleInfo, arguments[0]);
@@ -130,7 +134,7 @@ function checkDebounce({ Vue, key, objBase, args }) {
   }
   // promise
   return new Promise((resolve, reject) => {
-    const callback = function(err, res) {
+    const callback = function (err, res) {
       if (err) return reject(err);
       return resolve(res);
     };
@@ -161,21 +165,24 @@ function apiDebounce({ Vue }) {
     }
     return params;
   });
-  Vue.prototype.$meta.api.post('/a/base/util/performActions', { actions }).then(data => {
-    for (let i = 0; i < invokes.length; i++) {
-      const item = data[i];
-      let err;
-      if (item.err) {
-        err = new Error();
-        err.code = item.err.code;
-        err.message = item.err.message;
+  Vue.prototype.$meta.api
+    .post('/a/base/util/performActions', { actions })
+    .then(data => {
+      for (let i = 0; i < invokes.length; i++) {
+        const item = data[i];
+        let err;
+        if (item.err) {
+          err = new Error();
+          err.code = item.err.code;
+          err.message = item.err.message;
+        }
+        invokes[i].callback(err, item.res);
       }
-      invokes[i].callback(err, item.res);
-    }
-  }).catch(err => {
-    // all err
-    for (const item of invokes) {
-      item.callback(err);
-    }
-  });
+    })
+    .catch(err => {
+      // all err
+      for (const item of invokes) {
+        item.callback(err);
+      }
+    });
 }

@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
-
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // toAllUser
       const toAllUser = content.toAllUser || false;
@@ -10,7 +9,7 @@ module.exports = ctx => {
       const roleIds = content.roleIds;
       // message
       const message = {
-        ... content.data,
+        ...content.data,
       };
       // agentid
       const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
@@ -18,7 +17,7 @@ module.exports = ctx => {
       if (toAllUser) {
         message.to_all_user = true;
       } else {
-      // userIds
+        // userIds
         if (userIds && userIds.length > 0) {
           const modelMember = ctx.model.module(moduleInfo.relativeName).member;
           const list = await modelMember.select({
@@ -42,7 +41,6 @@ module.exports = ctx => {
       // done
       return true;
     }
-
   }
   return IOChannel;
 };

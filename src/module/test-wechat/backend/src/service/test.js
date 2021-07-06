@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Test extends app.Service {
-
     async getOpenid({ user }) {
       const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
       const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 'wechat' });
@@ -19,7 +17,6 @@ module.exports = app => {
         unionid: wechatUser.unionid,
       };
     }
-
   }
 
   return Test;

@@ -5,7 +5,6 @@ const debounce = require3('debounce');
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
-
     constructor() {
       this._watchers = {};
       this._init();
@@ -102,13 +101,15 @@ module.exports = function (app) {
         watcherEntry.watcher = null;
       }
       // watcher
-      const _watcher = chokidar.watch(watchers)
-        .on('change', debounce(function () {
+      const _watcher = chokidar.watch(watchers).on(
+        'change',
+        debounce(function () {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
             data: { subdomain, atomClass, language },
           });
-        }, 300));
+        }, 300)
+      );
       // on ready
       _watcher.once('ready', function () {
         _watcher.__eb_ready = true;
@@ -135,7 +136,6 @@ module.exports = function (app) {
         },
       });
     }
-
   }
 
   return Watcher;

@@ -6,12 +6,9 @@ import Layout from './layout.jsx';
 // },
 
 export default {
-  mixins: [
-    Base, Page, Layout,
-  ],
+  mixins: [Base, Page, Layout],
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     this.layout_prepareConfig().then(() => {

@@ -1,16 +1,14 @@
 // eslint-disable-next-line
-export default function(Vue) {
+export default function (Vue) {
   return {
-    meta: {
-    },
+    meta: {},
     props: {
       button: {
         type: Object,
       },
     },
     data() {
-      return {
-      };
+      return {};
     },
     computed: {
       buttonConfig() {

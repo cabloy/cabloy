@@ -3,40 +3,42 @@
     <eb-navbar :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!user.anonymous" iconMaterial="add" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=0`"></eb-link>
-        <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
+        <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <div></div>
-        <eb-link v-if="atom" :onPerform="onPerformViewAtom"><span class="eb-text-overflow-ellipsis">{{atom.atomName}}</span></eb-link>
+        <eb-link v-if="atom" :onPerform="onPerformViewAtom"
+          ><span class="eb-text-overflow-ellipsis">{{ atom.atomName }}</span></eb-link
+        >
       </f7-subnavbar>
     </eb-navbar>
     <template v-if="moduleStyle">
       <f7-card class="comment" v-for="item of items" :key="item.id">
         <f7-card-header>
           <div class="title">
-            <img class="avatar avatar32" :src="getItemMedia(item)">
-            <div class="name">{{item.userName}}</div>
-            <div class="date">#{{item.sorting}} · {{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
+            <img class="avatar avatar32" :src="getItemMedia(item)" />
+            <div class="name">{{ item.userName }}</div>
+            <div class="date">#{{ item.sorting }} · {{ $meta.util.formatDateTimeRelative(item.createdAt) }}</div>
           </div>
           <div class="actions">
-            <eb-link v-if="item.userId===user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"></eb-link>
-            <eb-link v-if="item.userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-            <eb-link class="action" :iconMaterial="item.heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.heartCount}}</eb-link>
+            <eb-link v-if="item.userId === user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"></eb-link>
+            <eb-link v-if="item.userId === user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
+            <eb-link class="action" :iconMaterial="item.heart ? 'favorite' : 'favorite_border'" :context="item" :onPerform="onPerformHeart">{{ item.heartCount }}</eb-link>
             <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"></eb-link>
           </div>
         </f7-card-header>
         <f7-card-content padding class="markdown-body" v-html="item.html"></f7-card-content>
       </f7-card>
     </template>
-    <eb-load-more :class="showSingle?'display-none':''" ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
-    <eb-button v-if="showSingle" :onPerform="onPerformShowAllComments">{{$text('ShowAllComments')}}</eb-button>
+    <eb-load-more :class="showSingle ? 'display-none' : ''" ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
+    <eb-button v-if="showSingle" :onPerform="onPerformShowAllComments">{{ $text('ShowAllComments') }}</eb-button>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
@@ -89,19 +91,19 @@ export default {
       // options
       const options = {
         where,
-        orders: [
-          [ 'updatedAt', this.order ],
-        ],
+        orders: [['updatedAt', this.order]],
         page: { index },
       };
       // fetch
-      return this.$api.post('/a/base/comment/list', {
-        key: { atomId: this.atomId },
-        options,
-      }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      return this.$api
+        .post('/a/base/comment/list', {
+          key: { atomId: this.atomId },
+          options,
+        })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
     },
     reload() {
       this.$refs.loadMore.reload();
@@ -124,13 +126,15 @@ export default {
     onPerformDelete(event, item) {
       // delete
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('/a/base/comment/delete', {
-          key: { atomId: this.atomId },
-          data: { commentId: item.id },
-        }).then(data => {
-          this.$meta.eventHub.$emit('comment:action', data);
-          return true;
-        });
+        return this.$api
+          .post('/a/base/comment/delete', {
+            key: { atomId: this.atomId },
+            data: { commentId: item.id },
+          })
+          .then(data => {
+            this.$meta.eventHub.$emit('comment:action', data);
+            return true;
+          });
       });
     },
     onPerformHeart(event, item) {
@@ -143,12 +147,14 @@ export default {
         return;
       }
       //
-      return this.$api.post('/a/base/comment/heart', {
-        key: { atomId: this.atomId },
-        data: { commentId: item.id, heart: item.heart ? 0 : 1 },
-      }).then(data => {
-        this.$meta.eventHub.$emit('comment:action', data);
-      });
+      return this.$api
+        .post('/a/base/comment/heart', {
+          key: { atomId: this.atomId },
+          data: { commentId: item.id, heart: item.heart ? 0 : 1 },
+        })
+        .then(data => {
+          this.$meta.eventHub.$emit('comment:action', data);
+        });
     },
     onCommentChanged(data) {
       const action = data.action;
@@ -171,12 +177,14 @@ export default {
       }
       // others
       if (index !== -1) {
-        this.$api.post('/a/base/comment/item', {
-          key: { atomId: this.atomId },
-          data: { commentId },
-        }).then(data => {
-          Vue.set(this.items, index, data);
-        });
+        this.$api
+          .post('/a/base/comment/item', {
+            key: { atomId: this.atomId },
+            data: { commentId },
+          })
+          .then(data => {
+            Vue.set(this.items, index, data);
+          });
       }
     },
     onPerformSort() {
@@ -193,5 +201,4 @@ export default {
     },
   },
 };
-
 </script>

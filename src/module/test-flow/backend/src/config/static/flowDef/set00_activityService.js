@@ -20,7 +20,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               name: 'test',
             },
-            parameterExpression: 'context.vars.get(\`echo\`)',
+            parameterExpression: 'context.vars.get(`echo`)',
           },
         },
         {

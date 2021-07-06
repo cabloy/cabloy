@@ -15,7 +15,9 @@
     </f7-block>
     <f7-block-title>Action Sheet To Popover</f7-block-title>
     <f7-block strong>
-      <p>Action Sheet can be automatically converted to Popover (for tablets). This button will open Popover on tablets and Action Sheet on phones: <f7-button style="display:inline-block" class="button-to-popover" @click="openActionsPopover">Actions</f7-button>
+      <p>
+        Action Sheet can be automatically converted to Popover (for tablets). This button will open Popover on tablets and Action Sheet on phones:
+        <f7-button style="display: inline-block" class="button-to-popover" @click="openActionsPopover">Actions</f7-button>
       </p>
     </f7-block>
     <!-- One Group -->
@@ -90,21 +92,22 @@ export default {
         const targetEl = self.$el.querySelector('.button-to-popover');
         self.actionsToPopover = app.actions.create({
           hostEl,
-          buttons: [{
-            text: 'Do something',
-            label: true,
-          },
-          {
-            text: 'Button 1',
-            bold: true,
-          },
-          {
-            text: 'Button 2',
-          },
-          {
-            text: 'Cancel',
-            color: 'red',
-          },
+          buttons: [
+            {
+              text: 'Do something',
+              label: true,
+            },
+            {
+              text: 'Button 1',
+              bold: true,
+            },
+            {
+              text: 'Button 2',
+            },
+            {
+              text: 'Cancel',
+              color: 'red',
+            },
           ],
           // Need to specify popover target
           targetEl,
@@ -122,5 +125,4 @@ export default {
     },
   },
 };
-
 </script>

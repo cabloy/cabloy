@@ -3,9 +3,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = ctx => {
-
   class FlowListener {
-
     constructor({ flowInstance, context }) {
       this.flowInstance = flowInstance;
       this.context = context;
@@ -135,7 +133,6 @@ module.exports = ctx => {
         return await this.flowListener.getSchemaWrite(contextTask, contextNode, { schemaBase, schema });
       }
     }
-
   }
 
   return FlowListener;

@@ -45,16 +45,15 @@ const _tools = {
     }
     return _difference;
   },
-
 };
 
-const _toolNames = [ 'isSuperset', 'union', 'intersection', 'symmetricDifference', 'difference' ];
+const _toolNames = ['isSuperset', 'union', 'intersection', 'symmetricDifference', 'difference'];
 for (const _toolName of _toolNames) {
   if (!Set.prototype[_toolName]) {
     Object.defineProperty(Set.prototype, _toolName, {
       enumerable: false,
       get() {
-        return function(set) {
+        return function (set) {
           return _tools[_toolName](this, set);
         };
       },
@@ -66,7 +65,7 @@ if (!Set.unique) {
   Object.defineProperty(Set, 'unique', {
     enumerable: false,
     get() {
-      return function(array) {
+      return function (array) {
         return Array.from(new Set(array));
       };
     },

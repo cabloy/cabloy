@@ -7,7 +7,6 @@ const uuid = require3('uuid');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomCmsBase extends app.meta.AtomBase {
-
     get modelArticle() {
       return this.ctx.model.module(moduleInfo.relativeName).article;
     }
@@ -120,29 +119,31 @@ module.exports = app => {
       const html = await this._renderContent({ item });
       const summary = this._parseSummary({ item, html });
       // update article
-      await this.modelArticle.update({
-        sticky: item.sticky,
-        keywords: item.keywords,
-        description: item.description,
-        summary,
-        url,
-        editMode: item.editMode,
-        slug: item.slug,
-        sorting: item.sorting,
-        flag: item.flag,
-        extra: item.extra || '{}',
-        imageCover: item.imageCover,
-        imageFirst,
-        audioFirst,
-        audioCoverFirst,
-      }, {
-        where: {
-          atomId: key.atomId,
+      await this.modelArticle.update(
+        {
+          sticky: item.sticky,
+          keywords: item.keywords,
+          description: item.description,
+          summary,
+          url,
+          editMode: item.editMode,
+          slug: item.slug,
+          sorting: item.sorting,
+          flag: item.flag,
+          extra: item.extra || '{}',
+          imageCover: item.imageCover,
+          imageFirst,
+          audioFirst,
+          audioCoverFirst,
         },
-      });
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
       // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
-        [item.content, html, this.ctx.instance.id, key.atomId]);
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [item.content, html, this.ctx.instance.id, key.atomId]);
 
       // render
       const ignoreRender = options && options.ignoreRender;
@@ -293,7 +294,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
   return AtomCmsBase;
 };

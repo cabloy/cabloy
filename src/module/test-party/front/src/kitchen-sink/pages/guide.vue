@@ -4,94 +4,94 @@
     <!-- Basic process of frontend and backend development -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipBasicProcess')}}</div>
+        <div>{{ $text('TipBasicProcess') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('basicProcess')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('basicProcess')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
-        <div class="alert-info">{{message}}</div>
+        <div class="alert-info">{{ message }}</div>
         <p>
-          <eb-button :onPerform="onPerformClick">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick">{{ $text('Click') }}</eb-button>
         </p>
       </f7-card-content>
     </f7-card>
     <!-- Backend configuration & i18n -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipBackendConfigI18N')}}</div>
+        <div>{{ $text('TipBackendConfigI18N') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('backendConfigI18N')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('backendConfigI18N')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
-        <div class="alert-info">{{message3}}</div>
+        <div class="alert-info">{{ message3 }}</div>
         <p>
-          <eb-button :onPerform="onPerformClick3">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick3">{{ $text('Click') }}</eb-button>
         </p>
       </f7-card-content>
     </f7-card>
     <!-- Frontend configuration & i18n -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipFrontendConfigI18N')}}</div>
+        <div>{{ $text('TipFrontendConfigI18N') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('frontendConfigI18N')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('frontendConfigI18N')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
-        <div class="alert-info">{{message4}}</div>
+        <div class="alert-info">{{ message4 }}</div>
         <f7-segmented tag="p">
-          <eb-button :onPerform="onPerformClick4">{{$text('Click')}}</eb-button>
-          <eb-button :onPerform="onPerformClick5">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick4">{{ $text('Click') }}</eb-button>
+          <eb-button :onPerform="onPerformClick5">{{ $text('Click') }}</eb-button>
         </f7-segmented>
       </f7-card-content>
     </f7-card>
     <!-- Backend Database -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipBackendDatabase')}}</div>
+        <div>{{ $text('TipBackendDatabase') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('backendDatabase')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('backendDatabase')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
         <div class="alert-info">
-          <pre>{{message6}}</pre>
+          <pre>{{ message6 }}</pre>
         </div>
         <f7-segmented tag="p">
-          <eb-button :onPerform="onPerformClick6">{{$text('Click')}}</eb-button>
-          <eb-button :onPerform="onPerformClick7">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick6">{{ $text('Click') }}</eb-button>
+          <eb-button :onPerform="onPerformClick7">{{ $text('Click') }}</eb-button>
         </f7-segmented>
       </f7-card-content>
     </f7-card>
     <!-- Backend Database Transaction -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipBackendDatabaseTransaction')}}</div>
+        <div>{{ $text('TipBackendDatabaseTransaction') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('backendDatabaseTransaction')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('backendDatabaseTransaction')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
-        <div class="alert-info">{{message8}}</div>
+        <div class="alert-info">{{ message8 }}</div>
         <p>
-          <eb-button :onPerform="onPerformClick8">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick8">{{ $text('Click') }}</eb-button>
         </p>
       </f7-card-content>
     </f7-card>
     <!-- Menu Authorization -->
     <f7-card>
       <f7-card-header>
-        <div>{{$text('TipMenuAuthorization')}}</div>
+        <div>{{ $text('TipMenuAuthorization') }}</div>
         <div>
-          <f7-link :external="true" target="_blank" :href="getUrl('menuAuthorization')">{{$text('How to do ...')}}</f7-link>
+          <f7-link :external="true" target="_blank" :href="getUrl('menuAuthorization')">{{ $text('How to do ...') }}</f7-link>
         </div>
       </f7-card-header>
       <f7-card-content>
-        <div class="alert-info">{{message9}}</div>
+        <div class="alert-info">{{ message9 }}</div>
         <p>
-          <eb-button :onPerform="onPerformClick9">{{$text('Click')}}</eb-button>
+          <eb-button :onPerform="onPerformClick9">{{ $text('Click') }}</eb-button>
         </p>
       </f7-card-content>
     </f7-card>
@@ -219,7 +219,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

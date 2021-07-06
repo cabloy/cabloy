@@ -10,5 +10,4 @@ module.exports = class Listener {
       contextNode.vars.set('x', x);
     }
   }
-
 };

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowTask extends app.Service {
-
     async select({ options, user }) {
       return await this.ctx.bean.flowTask.select({ options, user });
     }
@@ -45,8 +43,6 @@ module.exports = app => {
     async editAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.editAtom({ flowTaskId, user });
     }
-
   }
   return FlowTask;
 };
-

@@ -1,7 +1,6 @@
 const URL = require('url').URL;
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   loader.app.beforeStart(() => {
     loader.app.io.checkRequest = checkRequest;
   });
@@ -18,7 +17,7 @@ module.exports = function(loader) {
     if (!origin || origin === '*') return fn(null, true);
 
     const host = req.headers['x-forwarded-host'] || req.headers.host;
-    if ((new URL(origin)).host === host) {
+    if (new URL(origin).host === host) {
       return fn(null, true);
     }
 
@@ -29,16 +28,17 @@ module.exports = function(loader) {
       url,
     });
     const ctx = loader.app.createAnonymousContext(_req);
-    ctx.bean.instance.checkAppReadyInstance({ startup: true }).then(res => {
-      if (!res) return fn(null, false);
-      if (loader.app.meta.util.isSafeDomain(ctx, origin)) {
-        return fn(null, true);
-      }
-      return fn(null, false);
-    }).catch(() => {
-      return fn(null, false);
-    });
+    ctx.bean.instance
+      .checkAppReadyInstance({ startup: true })
+      .then(res => {
+        if (!res) return fn(null, false);
+        if (loader.app.meta.util.isSafeDomain(ctx, origin)) {
+          return fn(null, true);
+        }
+        return fn(null, false);
+      })
+      .catch(() => {
+        return fn(null, false);
+      });
   }
-
 };
-

@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class ConfigController extends app.Controller {
-
     async test() {
       // current module
       let message = this.ctx.config.message;
@@ -17,7 +15,6 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return ConfigController;

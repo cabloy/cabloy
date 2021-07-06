@@ -5,8 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren">
-    </eb-treeview>
+    <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>
     <f7-block></f7-block>
   </eb-page>
 </template>
@@ -14,7 +13,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const query = this.$f7route.query;
     const maxLevelAutoOpened = parseInt(query.maxLevelAutoOpened || 1);
@@ -160,7 +159,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

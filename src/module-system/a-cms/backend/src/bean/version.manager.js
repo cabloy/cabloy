@@ -5,7 +5,6 @@ const utils = require('../common/utils.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aCmsArticle
@@ -89,7 +88,6 @@ module.exports = app => {
               left join aAtom d on a.atomId=d.id
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 2) {
@@ -182,7 +180,6 @@ module.exports = app => {
               left join aCmsArticleTagRef f on a.id=f.itemId
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 3) {
@@ -264,7 +261,6 @@ module.exports = app => {
 
         // atomClass
         await this._update5AtomClassIds(options);
-
       }
 
       if (options.version === 6) {
@@ -321,7 +317,6 @@ module.exports = app => {
 
         // uuid
         await this._update6Uuids(options);
-
       }
 
       if (options.version === 7) {
@@ -373,7 +368,6 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
-
     }
 
     async init(options) {
@@ -408,9 +402,7 @@ module.exports = app => {
           { roleName: 'root', action: 'read', scopeNames: 0 },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
-
       }
-
     }
 
     async test() {
@@ -474,12 +466,14 @@ module.exports = app => {
       await this.ctx.model.query(
         `update aCmsCategory set atomClassId=?
              where iid=?`,
-        [atomClass.id, this.ctx.instance.id]);
+        [atomClass.id, this.ctx.instance.id]
+      );
       // update aCmsTag's atomClassId
       await this.ctx.model.query(
         `update aCmsTag set atomClassId=?
              where iid=?`,
-        [atomClass.id, this.ctx.instance.id]);
+        [atomClass.id, this.ctx.instance.id]
+      );
     }
 
     async _update6Uuids(options) {
@@ -577,13 +571,16 @@ module.exports = app => {
 
     async _update7Migration_articles({ mapCagetoryIds, mapTagIds }) {
       // articles
-      const articles = await this.ctx.model.query(`
+      const articles = await this.ctx.model.query(
+        `
         select a.*,b.userIdCreated,c.tags
            from aCmsArticle a
            left join aAtom b on b.id=a.atomId
            left join aCmsArticleTag c on c.atomId=a.atomId
             where a.iid=? and a.deleted=0 and b.atomStage=1
-        `, [this.ctx.instance.id]);
+        `,
+        [this.ctx.instance.id]
+      );
       // loop
       for (const article of articles) {
         await this._update7Migration_article({ mapCagetoryIds, mapTagIds, article });
@@ -707,7 +704,6 @@ module.exports = app => {
     _uuid() {
       return uuid.v4().replace(/-/g, '');
     }
-
   }
 
   return Version;

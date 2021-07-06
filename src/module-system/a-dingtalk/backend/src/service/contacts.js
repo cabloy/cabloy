@@ -3,23 +3,92 @@ const DingtalkHelperFn = require('../common/dingtalkHelper.js');
 // department
 
 const __departmentFieldMap = [
-  ['departmentId', 'departmentParentId', 'departmentName', 'departmentOrder', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext'],
-  ['id', 'parentid', 'name', 'order', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext'],
+  [
+    'departmentId',
+    'departmentParentId',
+    'departmentName',
+    'departmentOrder',
+    'createDeptGroup',
+    'autoAddUser',
+    'deptHiding',
+    'deptPermits',
+    'userPermits',
+    'outerDept',
+    'outerPermitDepts',
+    'outerPermitUsers',
+    'outerDeptOnlySelf',
+    'sourceIdentifier',
+    'ext',
+  ],
+  [
+    'id',
+    'parentid',
+    'name',
+    'order',
+    'createDeptGroup',
+    'autoAddUser',
+    'deptHiding',
+    'deptPermits',
+    'userPermits',
+    'outerDept',
+    'outerPermitDepts',
+    'outerPermitUsers',
+    'outerDeptOnlySelf',
+    'sourceIdentifier',
+    'ext',
+  ],
   ['number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string'],
 ];
 
 // member
 
 const __memberFieldMap = [
-  ['memberId', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate'],
-  ['userid', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate'],
+  [
+    'memberId',
+    'name',
+    'active',
+    'avatar',
+    'orderInDepts',
+    'department',
+    'position',
+    'mobile',
+    'tel',
+    'workPlace',
+    'remark',
+    'email',
+    'orgEmail',
+    'jobnumber',
+    'isHide',
+    'isSenior',
+    'extattr',
+    'hiredDate',
+  ],
+  [
+    'userid',
+    'name',
+    'active',
+    'avatar',
+    'orderInDepts',
+    'department',
+    'position',
+    'mobile',
+    'tel',
+    'workPlace',
+    'remark',
+    'email',
+    'orgEmail',
+    'jobnumber',
+    'isHide',
+    'isSenior',
+    'extattr',
+    'hiredDate',
+  ],
   ['string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp'],
 ];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
-
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -380,7 +449,7 @@ module.exports = app => {
         sorting: department.departmentOrder,
         roleIdParent: roleParent.id,
       });
-        // force change parent role to catalog=1
+      // force change parent role to catalog=1
       await this.ctx.bean.role.save({
         roleId: roleParent.id,
         data: { catalog: 1 },
@@ -517,7 +586,6 @@ module.exports = app => {
       else if (type === 'timestamp') return new Date(value);
       return value;
     }
-
   }
 
   return Contacts;

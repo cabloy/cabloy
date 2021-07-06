@@ -92,13 +92,15 @@
       <f7-block-title>Nested</f7-block-title>
       <f7-block>
         <f7-row>
-          <f7-col>50% (.col)
+          <f7-col
+            >50% (.col)
             <f7-row>
               <f7-col>50% (.col)</f7-col>
               <f7-col>50% (.col)</f7-col>
             </f7-row>
           </f7-col>
-          <f7-col>50% (.col)
+          <f7-col
+            >50% (.col)
             <f7-row>
               <f7-col width="33">33% (.col-33)</f7-col>
               <f7-col width="66">66% (.col-66)</f7-col>
@@ -135,5 +137,4 @@ export default {
     size: 'medium',
   },
 };
-
 </script>

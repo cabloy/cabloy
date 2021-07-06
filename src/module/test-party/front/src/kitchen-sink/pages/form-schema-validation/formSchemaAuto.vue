@@ -6,10 +6,9 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-block-title>Form</f7-block-title>
-    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit">
-    </eb-validate>
+    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit"> </eb-validate>
     <f7-block-title>Form Value</f7-block-title>
-    <pre class="form-data">{{form2}}</pre>
+    <pre class="form-data">{{ form2 }}</pre>
   </eb-page>
 </template>
 <script>
@@ -41,11 +40,13 @@ export default {
       return this.$refs.validate.perform();
     },
     onPerformValidate() {
-      return this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
-        data: this.item,
-      }).then(() => {
-        return true;
-      });
+      return this.$api
+        .post('kitchen-sink/form-schema-validation/saveValidation', {
+          data: this.item,
+        })
+        .then(() => {
+          return true;
+        });
     },
     onPerformUpload() {
       this.$view.navigate('/a/file/file/upload', {
@@ -68,7 +69,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .form-data {
@@ -76,5 +76,4 @@ export default {
   margin: 8px;
   padding: 8px;
 }
-
 </style>

@@ -2,7 +2,6 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   const atomStaticKey = '--model--test--';
   const __rows = [
     { atomStaticKey, atomName: 'atom-one', atomStage: 0 },
@@ -11,9 +10,7 @@ module.exports = app => {
   ];
 
   class ModelController extends app.Controller {
-
     async model() {
-
       // model
       const model = this.ctx.model.module('a-base').atom;
 
@@ -41,12 +38,15 @@ module.exports = app => {
       });
 
       // update with options.where and options.columns
-      await model.update({
-        readCount: 1,
-      }, {
-        where: { atomStaticKey },
-        columns: ['readCount'],
-      });
+      await model.update(
+        {
+          readCount: 1,
+        },
+        {
+          where: { atomStaticKey },
+          columns: ['readCount'],
+        }
+      );
 
       // select: in
       list = await model.select({
@@ -56,7 +56,8 @@ module.exports = app => {
       list = await model.select({
         where: {
           atomStaticKey: {
-            op: 'in', val: [atomStaticKey],
+            op: 'in',
+            val: [atomStaticKey],
           },
         },
       });
@@ -98,14 +99,10 @@ module.exports = app => {
       list = await model.select({
         where: {
           atomStaticKey: [atomStaticKey],
-          __or__: [
-            { atomName: 'atom-one' },
-            { atomName: 'atom-two' },
-          ],
+          __or__: [{ atomName: 'atom-one' }, { atomName: 'atom-two' }],
         },
       });
       assert.equal(list.length, 2);
-
 
       // delete
       await model.delete({ atomStaticKey });
@@ -117,9 +114,7 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return ModelController;
-
 };

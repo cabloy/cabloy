@@ -4,7 +4,6 @@ let __statsDeps;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'stats');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -39,7 +38,10 @@ module.exports = ctx => {
         queueName: 'stats',
         queueNameSub: provider.user ? 'user' : 'instance',
         data: {
-          module, name, nameSub, user,
+          module,
+          name,
+          nameSub,
+          user,
         },
       });
     }
@@ -60,11 +62,14 @@ module.exports = ctx => {
         const fullNameSub = keys.join('.');
         // execute
         const value = await ctx.bean._getBean(provider.beanFullName).execute({
-          keys, provider, user,
+          keys,
+          provider,
+          user,
         });
         // set
         await this._set({
-          module, name,
+          module,
+          name,
           fullName: fullNameSub,
           value,
           user: provider.user ? user : null,
@@ -99,14 +104,18 @@ module.exports = ctx => {
 
     async _get({ module, fullName, user }) {
       const where = { module, name: fullName };
-      if (user) { where.userId = user.id; }
+      if (user) {
+        where.userId = user.id;
+      }
       const item = await this.modelStats.get(where);
       return item ? JSON.parse(item.value) : undefined;
     }
 
     async _set({ module, name, fullName, value, user }) {
       const where = { module, name: fullName };
-      if (user) { where.userId = user.id; }
+      if (user) {
+        where.userId = user.id;
+      }
       const item = await this.modelStats.get(where);
       if (item) {
         await this.modelStats.update({
@@ -115,7 +124,9 @@ module.exports = ctx => {
         });
       } else {
         const data = { module, name: fullName, value: JSON.stringify(value) };
-        if (user) { data.userId = user.id; }
+        if (user) {
+          data.userId = user.id;
+        }
         await this.modelStats.insert(data);
       }
       // push
@@ -123,7 +134,8 @@ module.exports = ctx => {
         const message = {
           userIdTo: user.id,
           content: {
-            module, name,
+            module,
+            name,
             fullName,
             value,
           },
@@ -195,7 +207,6 @@ module.exports = ctx => {
       }
       return dependencies;
     }
-
   }
 
   return Stats;

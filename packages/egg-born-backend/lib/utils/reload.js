@@ -1,6 +1,6 @@
 const cluster = require('cluster');
 
-module.exports = function() {
+module.exports = function () {
   this.log('[master] reload workers...');
   for (const id in cluster.workers) {
     const worker = cluster.workers[id];
@@ -77,7 +77,6 @@ function reload(master, count) {
   promise.then(() => {
     reloadNext(master, count, aliveWorkers);
   });
-
 }
 
 function reloadNext(master, count, aliveWorkers) {
@@ -92,7 +91,7 @@ function reloadNext(master, count, aliveWorkers) {
     if (firstWorker) {
       // console.log('firstWorker %s %s', firstWorker.id, firstWorker.state);
       firstWorker.kill(KILL_SIGNAL);
-      setTimeout(function() {
+      setTimeout(function () {
         firstWorker.process.kill(KILL_SIGNAL);
       }, 100);
     }
@@ -121,4 +120,3 @@ function reloadNext(master, count, aliveWorkers) {
     cluster.fork();
   }
 }
-

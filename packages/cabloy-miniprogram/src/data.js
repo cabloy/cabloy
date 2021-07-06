@@ -1,4 +1,4 @@
-module.exports = function(cabloy, options) {
+module.exports = function (cabloy, options) {
   let _instance = null;
   let _user = null;
   let _jwt = null;

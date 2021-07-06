@@ -17,8 +17,7 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {
-            },
+            tableNameModes: {},
             category: true,
             tag: true,
             resource: true,

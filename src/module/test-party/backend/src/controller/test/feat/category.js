@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class CategoryController extends app.Controller {
-
     async category() {
-
       // atomClass
       const atomClass = {
         module: 'test-party',
@@ -36,9 +33,7 @@ module.exports = app => {
       // ok
       this.ctx.success();
     }
-
   }
 
   return CategoryController;
-
 };

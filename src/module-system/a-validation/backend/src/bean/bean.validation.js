@@ -3,7 +3,6 @@ const uuid = require3('uuid');
 
 module.exports = ctx => {
   class Validation extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'validation');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -21,7 +20,8 @@ module.exports = ctx => {
         schema = schemas[0];
       }
       return {
-        module, validator,
+        module,
+        validator,
         schema: meta.validation.schemas[schema],
       };
     }
@@ -58,7 +58,7 @@ module.exports = ctx => {
       // schemas
       params.schemaRoot = uuid.v4();
       params.schemas = {
-        [params.schemaRoot]: { ... schema, $async: true },
+        [params.schemaRoot]: { ...schema, $async: true },
       };
       // create
       return ctx.app.meta.ajv.create(params);
@@ -129,7 +129,6 @@ module.exports = ctx => {
         }
       }
     }
-
   }
 
   return Validation;

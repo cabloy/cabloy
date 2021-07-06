@@ -7,18 +7,17 @@
     </eb-navbar>
     <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
       <f7-list-item :title="$text('Resource Class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{atomClass && atomClass.title}}</div>
+        <div slot="after">{{ atomClass && atomClass.title }}</div>
       </f7-list-item>
       <eb-list-item v-if="atomClass">
         <div slot="after">
-          <eb-link :onPerform="onPerformSelectAtoms">{{$text('Select Resources')}}</eb-link>
+          <eb-link :onPerform="onPerformSelectAtoms">{{ $text('Select Resources') }}</eb-link>
         </div>
       </eb-list-item>
-      <eb-list-item v-if="!!atoms" :title="$text('SelectedResources')" group-title>
-      </eb-list-item>
+      <eb-list-item v-if="!!atoms" :title="$text('SelectedResources')" group-title> </eb-list-item>
       <eb-list-item class="item" v-for="item of atoms" :key="item.id" :title="item.atomNameLocale || item.atomName">
         <div slot="after">
-          <f7-badge v-if="item.resourceType">{{getTypeCategory(item)}}</f7-badge>
+          <f7-badge v-if="item.resourceType">{{ getTypeCategory(item) }}</f7-badge>
         </div>
       </eb-list-item>
     </eb-list>
@@ -91,7 +90,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

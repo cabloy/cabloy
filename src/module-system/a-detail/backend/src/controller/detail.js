@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class DetailController extends app.Controller {
-
     async create() {
       const res = await this.ctx.service.detail.create({
         atomKey: this.ctx.request.body.atomKey,
@@ -117,8 +115,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return DetailController;
 };
-

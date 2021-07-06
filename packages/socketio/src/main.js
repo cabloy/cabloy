@@ -16,7 +16,7 @@ export default adapter => {
     _unsubscribesWaiting: {},
     // methods
     subscribe(path, cbMessage, cbSubscribed, options) {
-    // options
+      // options
       options = options || {};
       // socket
       const _socket = this._getSocket();
@@ -26,7 +26,10 @@ export default adapter => {
       // record to All
       const subscribeId = ++this._subscribeCounter;
       this._subscribesAll[subscribeId] = {
-        path, cbMessage, cbSubscribed, options,
+        path,
+        cbMessage,
+        cbSubscribed,
+        options,
       };
       // record to path
       let _itemPath = this._subscribesPath[path];
@@ -46,7 +49,7 @@ export default adapter => {
           this._doSubscribesWaiting();
         } else {
           if (!this._subscribesWaiting[path]) {
-          // invoke cbSubscribed directly
+            // invoke cbSubscribed directly
             if (cbSubscribed) {
               cbSubscribed();
             }
@@ -65,7 +68,7 @@ export default adapter => {
       if (_itemPath) {
         delete _itemPath.items[subscribeId];
         if (Object.keys(_itemPath.items).length === 0) {
-        // delete path
+          // delete path
           delete this._subscribesPath[_item.path];
           // delete waiting
           delete this._subscribesWaiting[_item.path];
@@ -99,11 +102,12 @@ export default adapter => {
       }
       // subscribe
       this._subscribesWaitingDoing = true;
-      adapter.subscribe({ subscribes, socketId: this._socket.id })
+      adapter
+        .subscribe({ subscribes, socketId: this._socket.id })
         .then(() => {
-        // loop
+          // loop
           for (const _item of subscribes) {
-          // delete waiting
+            // delete waiting
             delete this._subscribesWaiting[_item.path];
             // cbSubscribed
             const _itemPath = this._subscribesPath[_item.path];
@@ -123,7 +127,7 @@ export default adapter => {
           this._doSubscribesWaiting();
         })
         .catch(() => {
-        // done
+          // done
           this._subscribesWaitingDoing = false;
           // timeout
           this._subscribesWaitingTimeoutId = window.setTimeout(() => {
@@ -141,7 +145,7 @@ export default adapter => {
       for (const path in this._unsubscribesWaiting) {
         const _itemPath = this._subscribesPath[path];
         if (_itemPath) {
-        // delete waiting
+          // delete waiting
           delete this._unsubscribesWaiting[path];
         } else {
           const _item = this._unsubscribesWaiting[path];
@@ -150,11 +154,12 @@ export default adapter => {
       }
       // unsubscribe
       this._unsubscribesWaitingDoing = true;
-      adapter.unsubscribe({ subscribes })
+      adapter
+        .unsubscribe({ subscribes })
         .then(() => {
-        // loop
+          // loop
           for (const _item of subscribes) {
-          // delete waiting
+            // delete waiting
             delete this._unsubscribesWaiting[_item.path];
           }
           // done
@@ -163,7 +168,7 @@ export default adapter => {
           this._doUnsubscribesWaiting();
         })
         .catch(() => {
-        // done
+          // done
           this._unsubscribesWaitingDoing = false;
           // timeout
           this._unsubscribesWaitingTimeoutId = window.setTimeout(() => {
@@ -196,7 +201,7 @@ export default adapter => {
       if (Object.keys(this._subscribesPath).length === 0) {
         this._socket.disconnect();
       } else {
-      // -> waitings
+        // -> waitings
         for (const path in this._subscribesPath) {
           this._subscribesWaiting[path] = true;
         }
@@ -207,7 +212,7 @@ export default adapter => {
       this._subscribesWaiting = {};
       // reconnect
       if (reason === 'io server disconnect') {
-      // the disconnection was initiated by the server, you need to reconnect manually
+        // the disconnection was initiated by the server, you need to reconnect manually
         this._socket.connect();
       }
     },

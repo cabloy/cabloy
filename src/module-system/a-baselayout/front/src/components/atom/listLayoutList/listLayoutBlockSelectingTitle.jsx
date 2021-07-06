@@ -11,16 +11,14 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     selectedAtoms() {
       return this.layoutManager.select_getSelectedAtoms();
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     onPerformAtomOrders(event) {
       this.layoutManager.order_onPerformPopover(event.currentTarget);

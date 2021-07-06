@@ -1,5 +1,5 @@
 import workerJS from './sandbox.spec.js';
-export default function(Vue) {
+export default function (Vue) {
   return {
     _idCounter: 0,
     _callbacks: {},

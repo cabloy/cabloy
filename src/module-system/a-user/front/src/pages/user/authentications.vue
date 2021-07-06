@@ -6,14 +6,14 @@
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.providerId" :title="authTitle(item)">
           <div slot="after">
-            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
-            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
+            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</eb-link>
+            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</eb-link>
           </div>
         </eb-list-item>
       </f7-list-group>
     </f7-list>
     <f7-block v-if="ready">
-      <eb-button fill :onPerform="onPerformMigrate">{{$text('MigrateToAnotherAccount')}}</eb-button>
+      <eb-button fill :onPerform="onPerformMigrate">{{ $text('MigrateToAnotherAccount') }}</eb-button>
     </f7-block>
   </eb-page>
 </template>
@@ -21,7 +21,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       items: null,
@@ -125,5 +125,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -7,12 +7,12 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list class="label-edit-list" v-if="labelsAll">
-      <f7-list-item group-title :title="item?item.atomName:''"></f7-list-item>
-      <eb-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event,key)" swipeout>
+      <f7-list-item group-title :title="item ? item.atomName : ''"></f7-list-item>
+      <eb-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event, key)" swipeout>
         <div slot="media" :class="`label-media bg-color-${labelsAll[key].color}`"></div>
         <eb-context-menu>
           <div slot="right">
-            <div close color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</div>
+            <div close color="orange" :context="key" :onPerform="onEditLabel">{{ $text('Edit') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -20,22 +20,21 @@
     <f7-sheet class="label-edit" ref="ebSheet" fill :opened="sheetOpened" @sheet:closed="sheetOpened = false">
       <f7-toolbar>
         <div class="left">
-          <f7-link sheet-close>{{$text('Close')}}</f7-link>
+          <f7-link sheet-close>{{ $text('Close') }}</f7-link>
         </div>
         <div class="right">
-          <eb-link ref="buttonSubmit" :onPerform="onSubmit">{{$text('Submit')}}</eb-link>
+          <eb-link ref="buttonSubmit" :onPerform="onSubmit">{{ $text('Submit') }}</eb-link>
         </div>
       </f7-toolbar>
       <f7-page-content>
         <div class="label-prompt">
-          <f7-badge :color="labelColor">{{labelText || $text('PleaseInputText')}}</f7-badge>
+          <f7-badge :color="labelColor">{{ labelText || $text('PleaseInputText') }}</f7-badge>
         </div>
         <eb-list class="label-form" form inline-labels no-hairlines-md @submit="onFormSubmit">
-          <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="labelText">
-          </eb-list-input>
+          <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="labelText"> </eb-list-input>
           <f7-list-item>
             <div class="row label-colors">
-              <f7-button v-for="color of colors" :key="color.value" :class="`col-33 color-${color.value}`" small fill @click="onColorSelect(color)">{{$text(color.name)}}</f7-button>
+              <f7-button v-for="color of colors" :key="color.value" :class="`col-33 color-${color.value}`" small fill @click="onColorSelect(color)">{{ $text(color.name) }}</f7-button>
             </div>
           </f7-list-item>
         </eb-list>
@@ -96,12 +95,14 @@ export default {
       } else {
         labels[this.labelId] = { text: this.labelText, color: this.labelColor };
       }
-      return this.$api.post('/a/base/user/setLabels', {
-        labels,
-      }).then(() => {
-        this.$store.commit('a/base/setLabels', labels);
-        this.sheetOpened = false;
-      });
+      return this.$api
+        .post('/a/base/user/setLabels', {
+          labels,
+        })
+        .then(() => {
+          this.$store.commit('a/base/setLabels', labels);
+          this.sheetOpened = false;
+        });
     },
     onColorSelect(color) {
       this.labelColor = color.value;
@@ -126,25 +127,28 @@ export default {
       // sort
       this.labels.sort((a, b) => a - b);
       // post
-      this.$api.post('/a/base/atom/labels', {
-        key: { atomId: this.atomId },
-        atom: { labels: this.labels },
-      }).then(() => {
-        this.$meta.eventHub.$emit('atom:labels', { key: { atomId: this.atomId }, labels: this.labels });
-      });
+      this.$api
+        .post('/a/base/atom/labels', {
+          key: { atomId: this.atomId },
+          atom: { labels: this.labels },
+        })
+        .then(() => {
+          this.$meta.eventHub.$emit('atom:labels', { key: { atomId: this.atomId }, labels: this.labels });
+        });
     },
   },
   created() {
     this.$store.dispatch('a/base/getLabels');
-    this.$api.post('/a/base/atom/read', {
-      key: { atomId: this.atomId },
-    }).then(data => {
-      this.item = data;
-      this.labels = JSON.parse(this.item.labels) || [];
-    });
+    this.$api
+      .post('/a/base/atom/read', {
+        key: { atomId: this.atomId },
+      })
+      .then(data => {
+        this.item = data;
+        this.labels = JSON.parse(this.item.labels) || [];
+      });
   },
 };
-
 </script>
 <style lang="less" scoped>
 .label-edit-list {
@@ -172,5 +176,4 @@ export default {
     width: 100%;
   }
 }
-
 </style>

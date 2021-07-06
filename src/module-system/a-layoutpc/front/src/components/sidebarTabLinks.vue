@@ -1,41 +1,48 @@
 <script>
 import Vue from 'vue';
 export default {
-  components: {
-  },
+  components: {},
   render(c) {
     const tabLinks = [];
     for (const panel of this.panels) {
-      tabLinks.push(c('f7-link', {
-        key: this.layout._panelFullName(panel),
-        staticClass: this.layout._panelFullName(panel) === this.sidebar.options.panelActive ? 'active' : '',
-        props: {
-          text: this.__getPanelTitle(panel),
-        },
-        nativeOn: {
-          click: event => {
-            this.onClickTab(event, panel);
+      tabLinks.push(
+        c('f7-link', {
+          key: this.layout._panelFullName(panel),
+          staticClass: this.layout._panelFullName(panel) === this.sidebar.options.panelActive ? 'active' : '',
+          props: {
+            text: this.__getPanelTitle(panel),
           },
-        },
-        directives: [{
-          name: 'eb-dragdrop',
-          value: {
-            scene: this.dragdropScene,
-            panel,
-            onDragStart: this.onDragStart,
-            onDragElement: this.onDragElement,
-            onDropElement: this.onDropElement,
-            onDropLeave: this.onDropLeave,
-            onDropEnter: this.onDropEnter,
-            onDragEnd: this.onDragEnd,
-            onDragDone: this.onDragDone,
+          nativeOn: {
+            click: event => {
+              this.onClickTab(event, panel);
+            },
           },
-        }],
-      }));
+          directives: [
+            {
+              name: 'eb-dragdrop',
+              value: {
+                scene: this.dragdropScene,
+                panel,
+                onDragStart: this.onDragStart,
+                onDragElement: this.onDragElement,
+                onDropElement: this.onDropElement,
+                onDropLeave: this.onDropLeave,
+                onDropEnter: this.onDropEnter,
+                onDragEnd: this.onDragEnd,
+                onDragDone: this.onDragDone,
+              },
+            },
+          ],
+        })
+      );
     }
-    return c('div', {
-      staticClass: 'eb-layout-sidebar-tab-links',
-    }, tabLinks);
+    return c(
+      'div',
+      {
+        staticClass: 'eb-layout-sidebar-tab-links',
+      },
+      tabLinks
+    );
   },
   props: {
     side: {
@@ -65,14 +72,14 @@ export default {
       this.sidebar.createView({ ctx: null, panel });
     },
     onDragStart({ $el, context, dragElement }) {
-      const [ panel, panelIndexDrag ] = this.sidebar._getPanelAndIndex(context.panel);
+      const [panel, panelIndexDrag] = this.sidebar._getPanelAndIndex(context.panel);
       const tooltip = this.__getPanelTitle(panel);
       return { tooltip };
     },
     onDragElement({ $el, context }) {},
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [ panelDrop, panelIndexDrop ] = this.sidebar._getPanelAndIndex(context.panel);
-      const [ panelDrag, panelIndexDrag ] = this.sidebar._getPanelAndIndex(dragContext.panel);
+      const [panelDrop, panelIndexDrop] = this.sidebar._getPanelAndIndex(context.panel);
+      const [panelDrag, panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
       if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -97,5 +104,4 @@ export default {
     },
   },
 };
-
 </script>

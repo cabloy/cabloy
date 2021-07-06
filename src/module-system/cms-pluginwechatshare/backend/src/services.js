@@ -1,6 +1,4 @@
-
 module.exports = app => {
-  const services = {
-  };
+  const services = {};
   return services;
 };

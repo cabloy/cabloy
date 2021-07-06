@@ -63,5 +63,4 @@ module.exports = class Listener {
   getNodeDefOptions(contextNode /* { options }*/) {
     console.log('getNodeDefOptions: ', contextNode._nodeDef.id);
   }
-
 };

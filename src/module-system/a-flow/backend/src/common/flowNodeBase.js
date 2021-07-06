@@ -54,6 +54,4 @@ module.exports = class FlowNodeBase {
     await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     return true;
   }
-
 };
-

@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 
-export default function(Vue) {
+export default function (Vue) {
   // install vuex
   Vue.use(Vuex);
 
@@ -8,7 +8,7 @@ export default function(Vue) {
   const store = new Vuex.Store({});
 
   // get state
-  store.getState = function(path) {
+  store.getState = function (path) {
     const keys = path.split('/');
     let value = store.state;
     for (const key of keys) {
@@ -24,7 +24,7 @@ export default function(Vue) {
   store.registerModule('auth', auth);
 
   // beforeCreate
-  const beforeCreate = function(ctx) {
+  const beforeCreate = function (ctx) {
     // local
     ctx.$local = {};
 
@@ -37,14 +37,14 @@ export default function(Vue) {
 
     Object.defineProperty(ctx.$local, 'getters', {
       get() {
-        return function() {
+        return function () {
           const moduleInfo = ctx.$module.info;
           return store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
         };
       },
     });
 
-    [ 'commit', 'dispatch' ].forEach(key => {
+    ['commit', 'dispatch'].forEach(key => {
       Vue.prototype.$meta.util.overrideProperty({
         obj: ctx.$local,
         key,

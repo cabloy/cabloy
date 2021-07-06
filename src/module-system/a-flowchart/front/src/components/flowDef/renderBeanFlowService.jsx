@@ -1,7 +1,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   props: {
     context: {
       type: Object,
@@ -69,11 +69,6 @@ export default {
       ebType: 'select',
       ebOptions: this.ebOptions,
     });
-    return (
-      <eb-list-item-validate
-        parcel={parcel}
-        dataKey={key} property={propertyNew} meta={meta}>
-      </eb-list-item-validate>
-    );
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew} meta={meta}></eb-list-item-validate>;
   },
 };

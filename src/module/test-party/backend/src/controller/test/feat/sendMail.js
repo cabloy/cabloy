@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class SendMailController extends app.Controller {
-
     async sendMail() {
       // send
       const message = this.ctx.request.body.data;
@@ -12,9 +10,7 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return SendMailController;
-
 };

@@ -4,7 +4,7 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.roleIdInc}`" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="red" :context="item" :onPerform="onRemove">{{$text('Remove')}}</div>
+            <div color="red" :context="item" :onPerform="onRemove">{{ $text('Remove') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -47,11 +47,10 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post('role/includes', { roleId: this.role.id, page: { index } })
-        .then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
-        });
+      return this.$api.post('role/includes', { roleId: this.role.id, page: { index } }).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
@@ -63,28 +62,25 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              this.$api.post('role/addRoleInc', { roleId: this.role.id, roleIdInc: data.id })
-                .then(data => {
-                  this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-                  this.reload();
-                  this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-                });
+              this.$api.post('role/addRoleInc', { roleId: this.role.id, roleIdInc: data.id }).then(data => {
+                this.$meta.eventHub.$emit('role:dirty', { dirty: true });
+                this.reload();
+                this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+              });
             }
           },
         },
       });
     },
     onRemove(event, item) {
-      return this.$view.dialog.confirm()
-        .then(() => {
-          return this.$api.post('role/removeRoleInc', { id: item.id })
-            .then(() => {
-              this.onRoleDelete({ roleId: item.roleIdInc });
-              this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-              this.$meta.util.swipeoutDelete(event.target);
-              return true;
-            });
+      return this.$view.dialog.confirm().then(() => {
+        return this.$api.post('role/removeRoleInc', { id: item.id }).then(() => {
+          this.onRoleDelete({ roleId: item.roleIdInc });
+          this.$meta.eventHub.$emit('role:dirty', { dirty: true });
+          this.$meta.util.swipeoutDelete(event.target);
+          return true;
         });
+      });
     },
     onRoleSave(data) {
       const index = this.items.findIndex(item => item.roleIdInc === data.roleId);
@@ -96,7 +92,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

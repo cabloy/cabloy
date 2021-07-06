@@ -1,18 +1,16 @@
 import Vue from 'vue';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
-  mixins: [ ebAtomClasses ],
+  mixins: [ebAtomClasses],
   props: {
     context: {
       type: Object,
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     async onChooseAtom() {
       const { property, validate } = this.context;
@@ -72,8 +70,7 @@ export default {
       );
     }
     return (
-      <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAtom}>
+      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAtom}>
         <div slot="after">{value}</div>
       </eb-list-item-choose>
     );

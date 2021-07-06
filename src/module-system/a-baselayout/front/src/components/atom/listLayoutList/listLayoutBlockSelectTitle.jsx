@@ -11,11 +11,9 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     onPerformAdd() {
       // params
@@ -36,7 +34,7 @@ export default {
           callback: (code, selectedAtoms) => {
             if (code === 200) {
               if (!Array.isArray(selectedAtoms)) {
-                selectedAtoms = [ selectedAtoms ];
+                selectedAtoms = [selectedAtoms];
               }
               this.layoutManager.container.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
               this.layoutManager.page_onRefresh();
@@ -56,9 +54,9 @@ export default {
       const selectedAtoms = this.layoutManager.select_getSelectedAtoms();
       let res;
       if (this.layoutManager.container.params.selectMode === 'single') {
-        res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms[0] : null;
+        res = selectedAtoms && selectedAtoms.length > 0 ? selectedAtoms[0] : null;
       } else {
-        res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms : null;
+        res = selectedAtoms && selectedAtoms.length > 0 ? selectedAtoms : null;
       }
       return res;
     },

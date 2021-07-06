@@ -6,7 +6,9 @@ function Strategy(options, verify) {
     verify = options;
     options = {};
   }
-  if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
+  if (!verify) {
+    throw new TypeError('LocalStrategy requires a verify callback');
+  }
 
   passport.Strategy.call(this);
   this.name = 'simple';
@@ -31,8 +33,12 @@ Strategy.prototype.authenticate = function (req) {
 
   // verified
   function verified(err, user, info) {
-    if (err) { return self.error(err); }
-    if (!user) { return self.fail(info); }
+    if (err) {
+      return self.error(err);
+    }
+    if (!user) {
+      return self.fail(info);
+    }
     req.ctx.success(user);
     self.success(user, info);
   }

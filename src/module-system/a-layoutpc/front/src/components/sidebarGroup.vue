@@ -30,27 +30,33 @@ export default {
           height: `${this.sidebar.options.panelHeight - this.sidebar.options.toolbarHeight}px`,
         };
       }
-      children.push(c('eb-view', {
-        ref: view.id,
-        id: view.id,
-        key: view.id,
-        staticClass: `eb-layout-panel-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
-        style,
-        attrs: _viewAttrs,
-        props: {
-          size: viewSize,
-          sizeExtent: viewSizeExtent,
-        },
-        on: {
-          'view:ready': view => {
-            this.onViewReady(view);
+      children.push(
+        c('eb-view', {
+          ref: view.id,
+          id: view.id,
+          key: view.id,
+          staticClass: `eb-layout-panel-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
+          style,
+          attrs: _viewAttrs,
+          props: {
+            size: viewSize,
+            sizeExtent: viewSizeExtent,
           },
-        },
-      }));
+          on: {
+            'view:ready': view => {
+              this.onViewReady(view);
+            },
+          },
+        })
+      );
     }
-    return c('div', {
-      staticClass: 'eb-layout-group eb-layout-scene eb-layout-scene-panel',
-    }, children);
+    return c(
+      'div',
+      {
+        staticClass: 'eb-layout-group eb-layout-scene eb-layout-scene-panel',
+      },
+      children
+    );
   },
   props: {
     side: {
@@ -110,7 +116,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -5,7 +5,6 @@ const errors = require('./config/errors.js');
 
 // eslint-disable-next-line
 module.exports = app => {
-
   // beans
   const beans = require('./beans.js')(app);
   // routes
@@ -22,5 +21,4 @@ module.exports = app => {
     locales,
     errors,
   };
-
 };

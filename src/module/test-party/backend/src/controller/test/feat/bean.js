@@ -4,7 +4,6 @@ const assert = require3('assert');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class BeanController extends app.Controller {
-
     async bean() {
       const a = 3;
       const b = 4;
@@ -74,9 +73,7 @@ module.exports = app => {
       // ok
       this.ctx.success();
     }
-
   }
 
   return BeanController;
 };
-

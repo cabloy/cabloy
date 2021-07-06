@@ -8,11 +8,10 @@ export default {
       },
     };
   },
-  created() {
-  },
+  created() {},
   methods: {
     layout_get() {
-      return (this.$view.size === 'small') ? 'list' : 'table';
+      return this.$view.size === 'small' ? 'list' : 'table';
     },
     async layout_prepareConfig() {
       this.layout.current = this.container.layout || this.layout_get();

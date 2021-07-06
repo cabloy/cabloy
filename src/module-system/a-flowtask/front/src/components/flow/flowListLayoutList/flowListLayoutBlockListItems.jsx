@@ -14,13 +14,10 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  mounted() {
-  },
-  beforeDestroy() {
-  },
+  mounted() {},
+  beforeDestroy() {},
   methods: {
     onItemClick(event, item) {
       const url = `/a/flowtask/flow?flowId=${item.flowId}`;
@@ -75,15 +72,13 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
+          {this._getItemMetaSummary(item)}
         </div>
       );
       // domAfter
       const domAfterMetaFlags = [];
       for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
+        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       const domAfter = (
         <div slot="after" class="after">
@@ -92,10 +87,7 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.flowId}
-          link='#'
-          propsOnPerform={event => this.onItemClick(event, item)}
-        >
+        <eb-list-item class="item" key={item.flowId} link="#" propsOnPerform={event => this.onItemClick(event, item)}>
           {domMedia}
           {domHeader}
           {domTitle}
@@ -110,18 +102,10 @@ export default {
       for (const item of items) {
         children.push(this._renderListItem(item));
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {
-    return (
-      <div>
-        {this._renderList()}
-      </div>
-    );
+    return <div>{this._renderList()}</div>;
   },
 };

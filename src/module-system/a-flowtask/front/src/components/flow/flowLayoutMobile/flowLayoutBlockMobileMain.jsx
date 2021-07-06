@@ -14,8 +14,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   render() {
     const domTimeline = this.layoutManager.timeline_render();

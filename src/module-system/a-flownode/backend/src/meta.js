@@ -4,8 +4,7 @@ module.exports = app => {
   const flowEdges = require('./config/flow/edges.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
     },
     validation: {
       validators: {

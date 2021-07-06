@@ -3,7 +3,6 @@ const FlowNodeActivityUserTaskBase = require('../common/flowNodeActivityUserTask
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {
-
     get modelCondition() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeStartEventAtomCondition;
     }
@@ -35,7 +34,8 @@ module.exports = ctx => {
             'a.flowTaskStatus': 0,
           },
           history: 0,
-        } });
+        },
+      });
       const task = tasks[0];
       const flowTaskId = task.id;
       const user = { id: task.userIdAssignee };
@@ -68,7 +68,8 @@ module.exports = ctx => {
       // get condition
       const startEventId = node.id;
       const _condition = await this.modelCondition.get({
-        flowDefId, startEventId,
+        flowDefId,
+        startEventId,
       });
       if (_condition) {
         // update
@@ -78,21 +79,26 @@ module.exports = ctx => {
       } else {
         // insert
         await this.modelCondition.insert({
-          flowDefId, startEventId,
-          atomClassId: atomClass.id, conditionExpression,
+          flowDefId,
+          startEventId,
+          atomClassId: atomClass.id,
+          conditionExpression,
         });
       }
     }
 
     async _match({ atom, userId }) {
       // order by atomStatic/conditionExpression
-      const list = await ctx.model.query(`
+      const list = await ctx.model.query(
+        `
           select a.* from aFlowNodeStartEventAtomCondition a
             left join aFlowDef b on a.flowDefId=b.id
             left join aAtom c on b.atomId=c.id
             where a.iid=? and a.atomClassId=?
             order by c.atomStatic asc, a.conditionExpression desc
-        `, [ctx.instance.id, atom.atomClassId]);
+        `,
+        [ctx.instance.id, atom.atomClassId]
+      );
       for (const _condition of list) {
         const flowInstance = await this._matchCondition({ _condition, atom, userId });
         if (flowInstance) return flowInstance;
@@ -151,9 +157,7 @@ module.exports = ctx => {
       const { _condition } = context;
       await this.modelCondition.delete({ id: _condition.id });
     }
-
   }
 
   return FlowNode;
 };
-

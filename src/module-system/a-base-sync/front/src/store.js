@@ -1,6 +1,5 @@
 // eslint-disable-next-line
-export default function(Vue) {
-
+export default function (Vue) {
   const __atomClassResource = {
     module: 'a-base',
     atomClassName: 'resource',
@@ -9,13 +8,16 @@ export default function(Vue) {
   const queueLayoutConfig = Vue.prototype.$meta.util.queue((info, cb) => {
     const user = Vue.prototype.$meta.store.getState('auth/user');
     if (user.op.id !== info.userId) return cb();
-    Vue.prototype.$meta.api.post('/a/base/layoutConfig/saveKey', info.data).then(() => {
-      // donothing
-      cb();
-    }).catch(err => {
-      console.error(err);
-      cb();
-    });
+    Vue.prototype.$meta.api
+      .post('/a/base/layoutConfig/saveKey', info.data)
+      .then(() => {
+        // donothing
+        cb();
+      })
+      .catch(err => {
+        console.error(err);
+        cb();
+      });
   });
 
   Vue.prototype.$meta.eventHub.$on('auth:login', data => {
@@ -147,110 +149,137 @@ export default function(Vue) {
         return new Promise((resolve, reject) => {
           const userLabels = getters.userLabels;
           if (userLabels) return resolve(userLabels);
-          Vue.prototype.$meta.api.post('/a/base/user/getLabels').then(data => {
-            data = data || {};
-            commit('setLabels', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/user/getLabels')
+            .then(data => {
+              data = data || {};
+              commit('setLabels', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getModules({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.modules) return resolve(state.modules);
-          Vue.prototype.$meta.api.post('/a/base/base/modules').then(data => {
-            data = data || {};
-            commit('setModules', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/base/modules')
+            .then(data => {
+              data = data || {};
+              commit('setModules', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getResourceTypes({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.resourceTypes) return resolve(state.resourceTypes);
-          Vue.prototype.$meta.api.post('/a/base/base/resourceTypes').then(data => {
-            data = data || {};
-            commit('setResourceTypes', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/base/resourceTypes')
+            .then(data => {
+              data = data || {};
+              commit('setResourceTypes', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getLocales({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.locales) return resolve(state.locales);
-          Vue.prototype.$meta.api.post('/a/base/base/locales').then(data => {
-            data = data || [];
-            commit('setLocales', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/base/locales')
+            .then(data => {
+              data = data || [];
+              commit('setLocales', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getAtomClasses({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.atomClasses) return resolve(state.atomClasses);
-          Vue.prototype.$meta.api.post('/a/base/base/atomClasses').then(data => {
-            data = data || {};
-            commit('setAtomClasses', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/base/atomClasses')
+            .then(data => {
+              data = data || {};
+              commit('setAtomClasses', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getActions({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.actions) return resolve(state.actions);
-          Vue.prototype.$meta.api.post('/a/base/base/actions').then(data => {
-            data = data || {};
-            commit('setActions', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/base/actions')
+            .then(data => {
+              data = data || {};
+              commit('setActions', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getDetailActions({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.detailActions) return resolve(state.detailActions);
-          Vue.prototype.$meta.api.post('/a/detail/base/actions').then(data => {
-            data = data || {};
-            commit('setDetailActions', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/detail/base/actions')
+            .then(data => {
+              data = data || {};
+              commit('setDetailActions', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getResourceTrees({ state, commit }, { resourceType }) {
         return new Promise((resolve, reject) => {
           if (state.resourceTrees[resourceType]) return resolve(state.resourceTrees[resourceType]);
-          Vue.prototype.$meta.api.post('/a/base/category/child', {
-            atomClass: __atomClassResource,
-            categoryId: 0,
-            categoryName: resourceType,
-          }).then(categoryRoot => {
-            Vue.prototype.$meta.api.post('/a/base/category/tree', {
+          Vue.prototype.$meta.api
+            .post('/a/base/category/child', {
               atomClass: __atomClassResource,
-              categoryId: categoryRoot.id,
-              categoryHidden: 0,
-              setLocale: true,
-            }).then(data => {
-              const tree = data.list;
-              commit('setResourceTrees', { resourceType, tree });
-              resolve(tree);
-            }).catch(err => {
+              categoryId: 0,
+              categoryName: resourceType,
+            })
+            .then(categoryRoot => {
+              Vue.prototype.$meta.api
+                .post('/a/base/category/tree', {
+                  atomClass: __atomClassResource,
+                  categoryId: categoryRoot.id,
+                  categoryHidden: 0,
+                  setLocale: true,
+                })
+                .then(data => {
+                  const tree = data.list;
+                  commit('setResourceTrees', { resourceType, tree });
+                  resolve(tree);
+                })
+                .catch(err => {
+                  reject(err);
+                });
+            })
+            .catch(err => {
               reject(err);
             });
-          }).catch(err => {
-            reject(err);
-          });
         });
       },
       getResources({ state, commit }, { resourceType }) {
@@ -263,16 +292,19 @@ export default function(Vue) {
         return new Promise((resolve, reject) => {
           const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
           if (state.categories[key]) return resolve(state.categories[key]);
-          Vue.prototype.$meta.api.post('/a/base/category/children', {
-            atomClass,
-            language: language || undefined,
-          }).then(data => {
-            const categories = data.list;
-            commit('setCategories', { atomClass, language, categories });
-            resolve(categories);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/category/children', {
+              atomClass,
+              language: language || undefined,
+            })
+            .then(data => {
+              const categories = data.list;
+              commit('setCategories', { atomClass, language, categories });
+              resolve(categories);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getTags({ state, commit }, { atomClass, language }) {
@@ -280,36 +312,40 @@ export default function(Vue) {
           const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
           if (state.tags[key]) return resolve(state.tags[key]);
           const options = {
-            where: { },
-            orders: [
-              ['tagName', 'asc'],
-            ],
+            where: {},
+            orders: [['tagName', 'asc']],
           };
           if (language) {
             options.where.language = language;
           }
-          Vue.prototype.$meta.api.post('/a/base/tag/list', {
-            atomClass,
-            options,
-          }).then(data => {
-            const tags = data.list;
-            commit('setTags', { atomClass, language, tags });
-            resolve(tags);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/tag/list', {
+              atomClass,
+              options,
+            })
+            .then(data => {
+              const tags = data.list;
+              commit('setTags', { atomClass, language, tags });
+              resolve(tags);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
       getLayoutConfig({ state, commit }, module) {
         return new Promise((resolve, reject) => {
           if (state.layoutConfig[module]) return resolve(state.layoutConfig[module]);
-          Vue.prototype.$meta.api.post('/a/base/layoutConfig/load', { module }).then(data => {
-            data = data || {};
-            commit('setLayoutConfig', { module, data });
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          Vue.prototype.$meta.api
+            .post('/a/base/layoutConfig/load', { module })
+            .then(data => {
+              data = data || {};
+              commit('setLayoutConfig', { module, data });
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
         });
       },
     },
@@ -320,23 +356,28 @@ export default function(Vue) {
       if (state.resources[resourceType]) {
         return resolve(useArray ? state.resourcesArray[resourceType] : state.resources[resourceType]);
       }
-      Vue.prototype.$meta.api.post('/a/base/resource/select', {
-        options: {
-          resourceType,
-          orders: [['f.resourceSorting', 'asc'], ['f.createdAt', 'asc']],
-        },
-      }).then(data => {
-        const resourcesArray = data.list;
-        const resources = {};
-        for (const item of resourcesArray) {
-          resources[item.atomStaticKey] = item;
-        }
-        commit('setResources', { resourceType, resources, resourcesArray });
-        resolve(useArray ? resourcesArray : resources);
-      }).catch(err => {
-        reject(err);
-      });
+      Vue.prototype.$meta.api
+        .post('/a/base/resource/select', {
+          options: {
+            resourceType,
+            orders: [
+              ['f.resourceSorting', 'asc'],
+              ['f.createdAt', 'asc'],
+            ],
+          },
+        })
+        .then(data => {
+          const resourcesArray = data.list;
+          const resources = {};
+          for (const item of resourcesArray) {
+            resources[item.atomStaticKey] = item;
+          }
+          commit('setResources', { resourceType, resources, resourcesArray });
+          resolve(useArray ? resourcesArray : resources);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
-
 }

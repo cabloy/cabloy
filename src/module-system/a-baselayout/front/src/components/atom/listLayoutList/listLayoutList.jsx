@@ -17,7 +17,7 @@ export default {
   },
   created() {
     this.layoutManager.layout.instance = this;
-    if (this.layoutManager.container.atomClass && (this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting')) {
+    if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
       this.layoutManager.subnavbar.enable = true;
       this.layoutManager.bulk_loadActions();
     }
@@ -77,4 +77,3 @@ export default {
     );
   },
 };
-

@@ -14,16 +14,16 @@ export default {
       await this.layout_prepareConfig(layout.name);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-basefront', key: this.base.layoutConfigKeyCurrent, value: layout.name,
+        module: 'a-basefront',
+        key: this.base.layoutConfigKeyCurrent,
+        value: layout.name,
       });
     },
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
       // layout
-      children.push(
-        <f7-link key="actionsLayout" iconMaterial="view_list" popover-open={`#${this.actions.layoutPopoverId}`}></f7-link>
-      );
+      children.push(<f7-link key="actionsLayout" iconMaterial="view_list" popover-open={`#${this.actions.layoutPopoverId}`}></f7-link>);
       //
       return children;
     },
@@ -41,16 +41,8 @@ export default {
         );
       }
       // list
-      const domList = (
-        <f7-list inset>
-          {children}
-        </f7-list>
-      );
-      return (
-        <f7-popover id={this.actions.layoutPopoverId}>
-          {domList}
-        </f7-popover>
-      );
+      const domList = <f7-list inset>{children}</f7-list>;
+      return <f7-popover id={this.actions.layoutPopoverId}>{domList}</f7-popover>;
     },
   },
 };

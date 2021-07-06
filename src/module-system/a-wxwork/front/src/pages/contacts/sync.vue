@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="syncStatus && ioHelper" :onPerform="onPerformSync">{{syncStatus[type]?$text('Sync Again'):$text('Sync Now')}}</eb-link>
+        <eb-link v-if="syncStatus && ioHelper" :onPerform="onPerformSync">{{ syncStatus[type] ? $text('Sync Again') : $text('Sync Now') }}</eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-box @size="onSize">
@@ -13,7 +13,7 @@
 <script>
 import syncStatus from '../../common/syncStatus.js';
 export default {
-  mixins: [ syncStatus ],
+  mixins: [syncStatus],
   data() {
     return {
       type: this.$f7route.query.type,
@@ -62,12 +62,14 @@ export default {
     onPerformSync() {
       if (this.ioSimple) return;
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('contacts/sync', {
-          type: this.type,
-        }).then(res => {
-          this.progressId = res.progressId;
-          this._startSubscribe();
-        });
+        return this.$api
+          .post('contacts/sync', {
+            type: this.type,
+          })
+          .then(res => {
+            this.progressId = res.progressId;
+            this._startSubscribe();
+          });
       });
     },
     _startSubscribe() {
@@ -151,7 +153,5 @@ export default {
     },
   },
 };
-
 </script>
-<style>
-</style>
+<style></style>

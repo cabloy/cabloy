@@ -1,9 +1,7 @@
 // Process block-level custom containers
 //
 
-
 module.exports = function block_plugin(md, options) {
-
   function blockRender(tokens, idx /* _options, env, self */) {
     // blockTitle
     const blockTitle = options.utils.text('Block');
@@ -46,32 +44,42 @@ module.exports = function block_plugin(md, options) {
 
   function blockRuler(state, startLine, endLine, silent) {
     let marker,
-        len,
-        params,
-        nextLine,
-        mem,
-        token,
-        markup,
-        haveEndMarker = false,
-        pos = state.bMarks[startLine] + state.tShift[startLine],
-        max = state.eMarks[startLine];
+      len,
+      params,
+      nextLine,
+      mem,
+      token,
+      markup,
+      haveEndMarker = false,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
     // if it's indented more than 3 spaces, it should be a code block
-    if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
-    if (pos + 3 > max) { return false; }
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    if (pos + 3 > max) {
+      return false;
+    }
     marker = state.src.charCodeAt(pos);
-    if (marker !== 0x24/* $ */) {
+    if (marker !== 0x24 /* $ */) {
       return false;
     }
     // scan marker length
     mem = pos;
     pos = state.skipChars(pos, marker);
     len = pos - mem;
-    if (len < 3) { return false; }
+    if (len < 3) {
+      return false;
+    }
     markup = state.src.slice(mem, pos);
     params = state.src.slice(pos, max);
-    if (params.indexOf(String.fromCharCode(marker)) >= 0) { return false; }
+    if (params.indexOf(String.fromCharCode(marker)) >= 0) {
+      return false;
+    }
     // Since start is found, we can report success here in validation mode
-    if (silent) { return true; }
+    if (silent) {
+      return true;
+    }
     // search end of block
     nextLine = startLine;
     for (;;) {
@@ -89,17 +97,23 @@ module.exports = function block_plugin(md, options) {
         //  test
         break;
       }
-      if (state.src.charCodeAt(pos) !== marker) { continue; }
+      if (state.src.charCodeAt(pos) !== marker) {
+        continue;
+      }
       if (state.sCount[nextLine] - state.blkIndent >= 4) {
         // closing fence should be indented less than 4 spaces
         continue;
       }
       pos = state.skipChars(pos, marker);
       // closing code fence must be at least as long as the opening one
-      if (pos - mem < len) { continue; }
+      if (pos - mem < len) {
+        continue;
+      }
       // make sure tail has spaces only
       pos = state.skipSpaces(pos);
-      if (pos < max) { continue; }
+      if (pos < max) {
+        continue;
+      }
       haveEndMarker = true;
       // found!
       break;
@@ -111,12 +125,12 @@ module.exports = function block_plugin(md, options) {
     token.info = params;
     token.content = state.getLines(startLine + 1, nextLine, len, true);
     token.markup = markup;
-    token.map = [ startLine, state.line ];
+    token.map = [startLine, state.line];
     return true;
   }
 
   md.block.ruler.before('fence', 'cabloy_cms_block', blockRuler, {
-    alt: [ 'paragraph', 'reference', 'blockquote', 'list' ],
+    alt: ['paragraph', 'reference', 'blockquote', 'list'],
   });
   md.renderer.rules.cabloy_cms_block = blockRender;
 };

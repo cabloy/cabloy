@@ -128,7 +128,6 @@ module.exports = ctx => {
       taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
       taskInstance._notifyTaskHandlings(taskInstance.contextTask._flowTask.userIdAssignee);
     }
-
   }
   return FlowNodeActivityUserTaskBase;
 };

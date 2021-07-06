@@ -17,13 +17,15 @@ export default {
 
     // tab views
     if (this.tabShowed) {
-      children.push(c('eb-tab-views', {
-        key: 'tabViews',
-        ref: 'tabViews',
-        props: {
-          toolbarConfig: this.layoutConfig.toolbar,
-        },
-      }));
+      children.push(
+        c('eb-tab-views', {
+          key: 'tabViews',
+          ref: 'tabViews',
+          props: {
+            toolbarConfig: this.layoutConfig.toolbar,
+          },
+        })
+      );
     }
 
     // group
@@ -167,9 +169,7 @@ export default {
       return backLink;
     },
     __getResourcesAll() {
-      const resourceTypes = [
-        { name: 'button', var: 'buttonsAll' },
-      ];
+      const resourceTypes = [{ name: 'button', var: 'buttonsAll' }];
       const promises = [];
       for (const resourceType of resourceTypes) {
         promises.push(
@@ -180,7 +180,7 @@ export default {
       }
       return Promise.all(promises);
     },
-    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function () {
       this.__saveLayoutConfigNow();
     }, 1000),
     __saveLayoutConfigNow() {
@@ -308,17 +308,17 @@ export default {
     },
     _findButton(button) {
       const _buttonIndex = this.layoutConfig.toolbar.buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
-      if (_buttonIndex === -1) return [ null, -1 ];
-      return [ this.layoutConfig.toolbar.buttons[_buttonIndex], _buttonIndex ];
+      if (_buttonIndex === -1) return [null, -1];
+      return [this.layoutConfig.toolbar.buttons[_buttonIndex], _buttonIndex];
     },
     closeButton(button) {
-      const [ , _buttonIndex ] = this._findButton(button);
+      const [, _buttonIndex] = this._findButton(button);
       if (_buttonIndex === -1) return;
       this.layoutConfig.toolbar.buttons.splice(_buttonIndex, 1);
       this.__saveLayoutConfig();
     },
     openButton(button) {
-      const [ , _buttonIndex ] = this._findButton(button);
+      const [, _buttonIndex] = this._findButton(button);
       if (_buttonIndex > -1) return;
       // prepare button
       button = this._prepareButton(button);
@@ -327,7 +327,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -13,15 +13,17 @@ const roles = [
 ];
 
 // friend->family
-const roleIncs = [
-  ['friend', 'family'],
-];
+const roleIncs = [['friend', 'family']];
 
 // family and friend
 //   userName, roleName
 const users = [
-  ['Tom', 'father'], ['Jane', 'mother'], ['Tomson', 'son'], ['Jannie', 'daughter'],
-  ['Jimmy', 'friend'], ['Rose', 'friend'],
+  ['Tom', 'father'],
+  ['Jane', 'mother'],
+  ['Tomson', 'son'],
+  ['Jannie', 'daughter'],
+  ['Jimmy', 'friend'],
+  ['Rose', 'friend'],
   ['Smith', 'life'],
   ['Jone', 'work'],
 ];

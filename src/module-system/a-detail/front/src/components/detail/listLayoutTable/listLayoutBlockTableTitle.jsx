@@ -11,23 +11,16 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     _renderActionsLeft() {
       const title = this.layoutManager.container.title;
-      return (
-        <div class="actions-block actions-block-left">{title}</div>
-      );
+      return <div class="actions-block actions-block-left">{title}</div>;
     },
     _renderActionsRight() {
       const children = this.layoutManager.bulk_renderActionsRight();
-      return (
-        <div class="actions-block actions-block-right">
-          {children}
-        </div>
-      );
+      return <div class="actions-block actions-block-right">{children}</div>;
     },
   },
   render() {

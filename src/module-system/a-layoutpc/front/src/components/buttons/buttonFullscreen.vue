@@ -1,5 +1,5 @@
 <template>
-  <eb-link :class="buttonClass" :iconMaterial="isFullscreen?'fullscreen_exit':'fullscreen'" :onPerform="onPerform"></eb-link>
+  <eb-link :class="buttonClass" :iconMaterial="isFullscreen ? 'fullscreen_exit' : 'fullscreen'" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 import screenfull from 'screenfull';
@@ -14,7 +14,7 @@ function installFactory(_Vue) {
   const Vue = _Vue;
   const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
-    mixins: [ ebLayoutButtonBase ],
+    mixins: [ebLayoutButtonBase],
     data() {
       return {
         isFullscreen: false,
@@ -36,5 +36,4 @@ function installFactory(_Vue) {
     },
   };
 }
-
 </script>

@@ -14,15 +14,17 @@ export default {
       // tab id
       const id = `eb-layout-tab-${fullName.replace(':', '_')}`;
       // link
-      toolbarLinks.push(c('eb-tab-button', {
-        key: fullName,
-        props: {
-          layout: this.layout,
-          group: this,
-          options: button,
-          dragdropScene: this.dragdropScene,
-        },
-      }));
+      toolbarLinks.push(
+        c('eb-tab-button', {
+          key: fullName,
+          props: {
+            layout: this.layout,
+            group: this,
+            options: button,
+            dragdropScene: this.dragdropScene,
+          },
+        })
+      );
       // view
       const _viewAttrs = {
         id,
@@ -37,28 +39,38 @@ export default {
         preloadPreviousPage: false,
         'data-size': this.size,
       };
-      tabs.push(c('eb-view', {
-        key: id,
-        staticClass: `eb-layout-tab ${this.layout._combineViewSizeClass()}`,
-        attrs: _viewAttrs,
-        props: {
-          size: this.size,
-          sizeExtent: this.sizeExtent,
-        },
-        on: { 'tab:show': this.onTabShow },
-      }));
+      tabs.push(
+        c('eb-view', {
+          key: id,
+          staticClass: `eb-layout-tab ${this.layout._combineViewSizeClass()}`,
+          attrs: _viewAttrs,
+          props: {
+            size: this.size,
+            sizeExtent: this.sizeExtent,
+          },
+          on: { 'tab:show': this.onTabShow },
+        })
+      );
     }
     // toolbar
     const _toolbarAttrs = this.$utils.extend({}, this.toolbarConfig.meta);
-    const toolbar = c('f7-toolbar', {
-      staticClass: 'tab-buttons',
-      attrs: _toolbarAttrs,
-    }, toolbarLinks);
+    const toolbar = c(
+      'f7-toolbar',
+      {
+        staticClass: 'tab-buttons',
+        attrs: _toolbarAttrs,
+      },
+      toolbarLinks
+    );
     // views
-    return c('f7-views', {
-      staticClass: 'eb-layout-scene eb-layout-scene-tool',
-      attrs: { tabs: true },
-    }, [ toolbar, ...tabs ]);
+    return c(
+      'f7-views',
+      {
+        staticClass: 'eb-layout-scene eb-layout-scene-tool',
+        attrs: { tabs: true },
+      },
+      [toolbar, ...tabs]
+    );
   },
   props: {
     toolbarConfig: {
@@ -86,7 +98,7 @@ export default {
     },
     buttonActive() {
       if (!this.toolbarConfig.buttonActive) return this.buttons[0];
-      const [ button ] = this._getButtonAndIndex({ atomStaticKey: this.toolbarConfig.buttonActive });
+      const [button] = this._getButtonAndIndex({ atomStaticKey: this.toolbarConfig.buttonActive });
       if (button) return button;
       return this.buttons[0];
     },
@@ -117,12 +129,10 @@ export default {
     },
     _getButtonAndIndex(button) {
       const buttonIndex = this._getButtonIndex(button);
-      if (buttonIndex === -1) return [ null, -1 ];
-      return [ this.buttons[buttonIndex], buttonIndex ];
+      if (buttonIndex === -1) return [null, -1];
+      return [this.buttons[buttonIndex], buttonIndex];
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

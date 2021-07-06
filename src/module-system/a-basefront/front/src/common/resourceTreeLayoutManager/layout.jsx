@@ -8,8 +8,7 @@ export default {
       },
     };
   },
-  created() {
-  },
+  created() {},
   methods: {
     layout_get() {
       return this.base.layoutConfig[this.base.layoutConfigKeyCurrent] || 'accordion';

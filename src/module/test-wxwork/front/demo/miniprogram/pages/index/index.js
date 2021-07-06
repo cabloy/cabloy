@@ -37,23 +37,28 @@ Page({
     // 判断是否成功取得用户授权
     if (e.detail.errMsg.indexOf(':fail') > -1) return;
     // 登录
-    app.cabloy.util.login({ detail: e.detail }).then(res => {
-      this.setData({
-        user: res.op,
-        hasUserInfo: !!res.op.userName,
+    app.cabloy.util
+      .login({ detail: e.detail })
+      .then(res => {
+        this.setData({
+          user: res.op,
+          hasUserInfo: !!res.op.userName,
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    }).catch(err => {
-      console.log(err);
-    });
   },
   getOpenid() {
-    app.cabloy.api.post('/test/wechat/test/getOpenidMini', {
-      scene: app.cabloy.config.base.scene,
-    }).then(data => {
-      this.setData({
-        openid: data.openid,
+    app.cabloy.api
+      .post('/test/wechat/test/getOpenidMini', {
+        scene: app.cabloy.config.base.scene,
+      })
+      .then(data => {
+        this.setData({
+          openid: data.openid,
+        });
       });
-    });
   },
   getMemberId() {
     app.cabloy.api.post('/test/wxwork/test/getMemberId').then(data => {

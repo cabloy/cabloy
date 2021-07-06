@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Mobile Verification')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'mobileVerify'}" :onPerform="onPerformValidate">
+      <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'mobileVerify' }" :onPerform="onPerformValidate">
         <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
@@ -12,7 +12,7 @@
             </div>
           </eb-list-input>
           <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Verify Now')}}</eb-button>
+            <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{ $text('Verify Now') }}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>
@@ -52,12 +52,14 @@ export default {
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/mobileVerify', {
-        data: this.data,
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-      }).then(() => {
-        this.$meta.vueApp.reload({ echo: true });
-      });
+      return this.$api
+        .post('auth/mobileVerify', {
+          data: this.data,
+          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        })
+        .then(() => {
+          this.$meta.vueApp.reload({ echo: true });
+        });
     },
     onPerformOk() {
       return this.$refs.validate.perform();
@@ -67,7 +69,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

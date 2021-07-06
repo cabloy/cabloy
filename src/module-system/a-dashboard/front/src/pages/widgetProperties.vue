@@ -1,9 +1,9 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
-const _propsBasic = [ 'title', 'widthSmall', 'widthMedium', 'widthLarge', 'height' ];
+const _propsBasic = ['title', 'widthSmall', 'widthMedium', 'widthLarge', 'height'];
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       widgetId: this.$f7route.query.widgetId,
@@ -95,17 +95,23 @@ export default {
     _renderToolbar(c) {
       const children = [];
       children.push(c('div'));
-      children.push(c('eb-button', {
-        props: {
-          text: this.$text('Add Widget'),
-          onPerform: this.onPerformAddWidget,
+      children.push(
+        c('eb-button', {
+          props: {
+            text: this.$text('Add Widget'),
+            onPerform: this.onPerformAddWidget,
+          },
+        })
+      );
+      return c(
+        'f7-toolbar',
+        {
+          props: {
+            bottomMd: true,
+          },
         },
-      }));
-      return c('f7-toolbar', {
-        props: {
-          bottomMd: true,
-        },
-      }, children);
+        children
+      );
     },
     _checkPropertyValid(propertyName) {
       if (!this.propsSchemaDynamic) return true;
@@ -122,72 +128,92 @@ export default {
             dataKey: propertyName,
           },
         });
-        const link = c('eb-link', {
-          key: propertyName,
-          staticClass: 'no-ripple display-block',
-          props: {
-            context: { propertySchema, propertyName },
-            onPerform: this.onPerformPropertyEdit,
+        const link = c(
+          'eb-link',
+          {
+            key: propertyName,
+            staticClass: 'no-ripple display-block',
+            props: {
+              context: { propertySchema, propertyName },
+              onPerform: this.onPerformPropertyEdit,
+            },
           },
-        }, [ validateItem ]);
+          [validateItem]
+        );
         children.push(link);
       }
       // list
-      const list = c('f7-list', {
-        props: {
-          inset: true,
+      const list = c(
+        'f7-list',
+        {
+          props: {
+            inset: true,
+          },
         },
-      }, children);
-      const content = c('f7-accordion-content', {}, [ list ]);
-      return c('f7-list-item', {
-        props: {
-          title: this.$text(title),
-          accordionItem: true,
-          accordionItemOpened: opened,
+        children
+      );
+      const content = c('f7-accordion-content', {}, [list]);
+      return c(
+        'f7-list-item',
+        {
+          props: {
+            title: this.$text(title),
+            accordionItem: true,
+            accordionItemOpened: opened,
+          },
         },
-      }, [ content ]);
+        [content]
+      );
     },
     _renderList(c) {
       // schema
-      const [ propsSchema, propsCategories ] = this.widget._getPropsSchemaCategoryGrouping(this.widget.options);
+      const [propsSchema, propsCategories] = this.widget._getPropsSchemaCategoryGrouping(this.widget.options);
       const basicOnly = Object.keys(propsCategories).length === 1;
       // schema data
       const schemaData = this._getSchemaData(propsSchema);
       // list
       const children = [];
       for (const propsCategoryKey in propsCategories) {
-        children.push(this._renderListGroup({
-          c,
-          title: propsCategoryKey || 'General',
-          opened: propsCategoryKey !== 'Basic' || basicOnly,
-          propsSchema: propsCategories[propsCategoryKey],
-        }));
+        children.push(
+          this._renderListGroup({
+            c,
+            title: propsCategoryKey || 'General',
+            opened: propsCategoryKey !== 'Basic' || basicOnly,
+            propsSchema: propsCategories[propsCategoryKey],
+          })
+        );
       }
       // list
-      const list = c('eb-list', {
-        props: {
-          noHairlinesMd: true,
-          accordionList: true,
+      const list = c(
+        'eb-list',
+        {
+          props: {
+            noHairlinesMd: true,
+            accordionList: true,
+          },
         },
-      }, children);
+        children
+      );
       // validate
-      return c('eb-validate', {
-        ref: 'validate',
-        props: {
-          auto: false,
-          readOnly: true,
-          data: schemaData,
-          meta: {
-            schema: {
-              module: 'a-dashboard',
-              schema: propsSchema,
+      return c(
+        'eb-validate',
+        {
+          ref: 'validate',
+          props: {
+            auto: false,
+            readOnly: true,
+            data: schemaData,
+            meta: {
+              schema: {
+                module: 'a-dashboard',
+                schema: propsSchema,
+              },
             },
           },
         },
-      }, [ list ]);
+        [list]
+      );
     },
   },
-
 };
-
 </script>

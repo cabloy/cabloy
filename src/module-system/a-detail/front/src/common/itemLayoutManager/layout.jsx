@@ -14,7 +14,7 @@ export default {
   methods: {
     layout_get() {
       // large/medium/small
-      return (this.$view.size === 'large') ? 'pc' : 'mobile';
+      return this.$view.size === 'large' ? 'pc' : 'mobile';
     },
     async layout_prepareConfig() {
       // configDetailBase
@@ -61,9 +61,7 @@ export default {
         return (
           <f7-card>
             <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
-            <f7-card-content>
-              {this.$text('Not Found')}
-            </f7-card-content>
+            <f7-card-content>{this.$text('Not Found')}</f7-card-content>
           </f7-card>
         );
       }

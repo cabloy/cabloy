@@ -1,4 +1,3 @@
-
 const jsApiList = [
   'device.base.getUUID',
   'device.base.getInterface',

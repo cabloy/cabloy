@@ -6,24 +6,30 @@ export default {
   render(c) {
     const children = [];
     if (this.providerInstance) {
-      children.push(c('eb-component', {
-        props: {
-          module: this.providerInstance.provider.module,
-          name: this.providerInstance.provider.name,
-          options: {
-            props: {
-              module: this.module,
-              sceneName: this.sceneName,
-              context: this.context,
-              providerInstance: this.providerInstance,
+      children.push(
+        c('eb-component', {
+          props: {
+            module: this.providerInstance.provider.module,
+            name: this.providerInstance.provider.name,
+            options: {
+              props: {
+                module: this.module,
+                sceneName: this.sceneName,
+                context: this.context,
+                providerInstance: this.providerInstance,
+              },
             },
           },
-        },
-      }));
+        })
+      );
     }
-    return c('div', {
-      staticClass: 'captcha-container',
-    }, children);
+    return c(
+      'div',
+      {
+        staticClass: 'captcha-container',
+      },
+      children
+    );
   },
   props: {
     module: {
@@ -40,13 +46,15 @@ export default {
     };
   },
   created() {
-    this.$api.post('captcha/createProviderInstance', {
-      module: this.module,
-      sceneName: this.sceneName,
-      context: this.context,
-    }).then(providerInstance => {
-      this.providerInstance = providerInstance;
-    });
+    this.$api
+      .post('captcha/createProviderInstance', {
+        module: this.module,
+        sceneName: this.sceneName,
+        context: this.context,
+      })
+      .then(providerInstance => {
+        this.providerInstance = providerInstance;
+      });
   },
   methods: {
     captchaData({ token }) {
@@ -57,7 +65,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

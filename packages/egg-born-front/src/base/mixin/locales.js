@@ -1,19 +1,18 @@
 import localeutil from 'egg-born-localeutil';
 
-export default function(Vue) {
-
+export default function (Vue) {
   // locales
   const locales = {};
 
   // beforeCreate
-  const beforeCreate = function(ctx) {
+  const beforeCreate = function (ctx) {
     Object.defineProperty(ctx, '$text', {
       get() {
-        const func = function(...args) {
+        const func = function (...args) {
           const locale = Vue.prototype.$meta.util.getLocale();
           return getText(locale, ...args);
         };
-        func.locale = function(locale, ...args) {
+        func.locale = function (locale, ...args) {
           return getText(locale, ...args);
         };
         return func;

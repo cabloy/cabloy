@@ -6,7 +6,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomActions, ebViewSizeChange ],
+  mixins: [ebAtomActions, ebViewSizeChange],
   props: {
     layoutManager: {
       type: Object,
@@ -121,10 +121,9 @@ export default {
     onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item })
-        .then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-        });
+      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
+        this.$meta.util.swipeoutClose(event.target);
+      });
     },
     onStarChanged(data) {
       const { items, index } = this.layout._findItem(data.key.atomId);
@@ -158,12 +157,14 @@ export default {
       // others
       if (index !== -1) {
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api.post('/a/base/atom/read', {
-          key,
-          options,
-        }).then(data => {
-          Vue.set(items, index, data);
-        });
+        this.$api
+          .post('/a/base/atom/read', {
+            key,
+            options,
+          })
+          .then(data => {
+            Vue.set(items, index, data);
+          });
       }
     },
     onActionsChanged(data) {
@@ -188,13 +189,15 @@ export default {
         itemId: item.itemId,
       };
       //
-      return this.$api.post('/a/base/atom/star', {
-        key,
-        atom: { star },
-      }).then(data => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util[swipeoutAction](event.target);
-      });
+      return this.$api
+        .post('/a/base/atom/star', {
+          key,
+          atom: { star },
+        })
+        .then(data => {
+          this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
+          this.$meta.util[swipeoutAction](event.target);
+        });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -220,7 +223,7 @@ export default {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
       if (item.atomDisabled) {
-        flags = [ this.$text('Disabled') ].concat(flags);
+        flags = [this.$text('Disabled')].concat(flags);
       }
       return flags;
     },
@@ -238,7 +241,7 @@ export default {
     },
     _checkColumnNameEqualOrder(atomOrder, columnName) {
       const key = this.layoutManager.order_getKey(atomOrder);
-      return (key === `a.${columnName}` || key === `f.${columnName}` || key === columnName);
+      return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
     },
     _columnSorterFind(columnName) {
       return this.layoutManager.order_list.find(atomOrder => {
@@ -264,7 +267,7 @@ export default {
       };
       // default
       if (!column.component) {
-        return <eb-component module='a-basefront' name='renderTableCellDefault' options={options}></eb-component>;
+        return <eb-component module="a-basefront" name="renderTableCellDefault" options={options}></eb-component>;
       }
       // component
       if (column.component.options) {
@@ -274,8 +277,7 @@ export default {
     },
     _customRow(record) {
       return {
-        props: {
-        },
+        props: {},
         on: {
           contextmenu: event => {
             // popover
@@ -360,14 +362,13 @@ export default {
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
           customRow={this._customRow}
-        >
-        </a-table>
+        ></a-table>
       );
     },
   },
   render() {
     return (
-      <div class="atom-list-layout-table-container" >
+      <div class="atom-list-layout-table-container">
         {this._renderTable()}
         {this._renderListItemContextMenu()}
       </div>

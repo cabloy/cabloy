@@ -4,9 +4,7 @@ export default {
       render: {
         list: {
           info: {
-            orders: [
-              { name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' },
-            ],
+            orders: [{ name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' }],
           },
         },
         item: {

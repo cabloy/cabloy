@@ -1,6 +1,5 @@
 module.exports = app => {
   class CaptchaController extends app.Controller {
-
     async sendCode() {
       await this.ctx.service.captcha.sendCode({
         providerInstanceId: this.ctx.request.body.providerInstanceId,
@@ -8,7 +7,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return CaptchaController;
 };

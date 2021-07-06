@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class SettingsController extends app.Controller {
-
     async settings() {
-
       // user
 
       // get settings from config
@@ -46,8 +43,6 @@ module.exports = app => {
       // ok
       this.ctx.success();
     }
-
   }
   return SettingsController;
 };
-

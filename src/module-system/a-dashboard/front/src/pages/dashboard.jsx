@@ -6,23 +6,18 @@ export default {
   meta: {
     size: 'large',
   },
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     widgetGroup,
   },
   render() {
     let domNavbar;
     if (this.scene === 'manager' || this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
-      domNavbar = (
-        <eb-navbar title={this.pageTitle} ebBackLink='Back'>
-        </eb-navbar>
-      );
+      domNavbar = <eb-navbar title={this.pageTitle} ebBackLink="Back"></eb-navbar>;
     }
     let domGroup;
     if (this.ready) {
-      domGroup = (
-        <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>
-      );
+      domGroup = <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>;
     }
     let domActions;
     if (this.ready) {
@@ -73,9 +68,11 @@ export default {
     },
   },
   mounted() {
-    this.__init().then(() => {}).catch(err => {
-      this.$view.toast.show({ text: err.message });
-    });
+    this.__init()
+      .then(() => {})
+      .catch(err => {
+        this.$view.toast.show({ text: err.message });
+      });
   },
   beforeDestroy() {
     this.$emit('dashboard:destroy');
@@ -87,35 +84,23 @@ export default {
       // not manager
       if (this.scene !== 'manager') {
         if (this.lock) {
-          children.push(
-            <eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>
-          );
+          children.push(<eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>);
         }
         if (!this.lock) {
-          children.push(
-            <eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>
-          );
+          children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
         }
       }
       // manager
       if (this.scene === 'manager') {
         if (!this.lock) {
-          children.push(
-            <eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>
-          );
+          children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>);
         }
       }
       //
       if (!this.lock) {
-        children.push(
-          <eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>
-        );
+        children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
       }
-      return (
-        <div class="dashboard-actions">
-          {children}
-        </div>
-      );
+      return <div class="dashboard-actions">{children}</div>;
     },
     async __init() {
       // check scene
@@ -322,10 +307,10 @@ export default {
       if (window.performance && typeof window.performance.now === 'function') {
         d += performance.now(); // use high-precision timer if available
       }
-      const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
       });
       return uuid;
     },
@@ -334,18 +319,18 @@ export default {
       this.widgetsReal.push({ widgetId, widgetReal });
     },
     __onWidgetRealDestroy(widgetId, widgetReal) {
-      const [ widget, index ] = this.__findWidgetRealById(widgetId);
+      const [widget, index] = this.__findWidgetRealById(widgetId);
       if (index > -1) {
         this.widgetsReal.splice(index, 1);
       }
     },
     __findWidgetRealById(widgetId) {
       const index = this.widgetsReal.findIndex(item => item.widgetId === widgetId);
-      if (index === -1) return [ null, -1 ];
-      return [ this.widgetsReal[index], index ];
+      if (index === -1) return [null, -1];
+      return [this.widgetsReal[index], index];
     },
     __getWidgetRealById(widgetId) {
-      const [ widget ] = this.__findWidgetRealById(widgetId);
+      const [widget] = this.__findWidgetRealById(widgetId);
       if (!widget) return null;
       return widget.widgetReal;
     },
@@ -377,4 +362,3 @@ export default {
     },
   },
 };
-

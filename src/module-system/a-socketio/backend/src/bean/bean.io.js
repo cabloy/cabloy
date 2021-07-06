@@ -6,7 +6,6 @@ const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IO {
-
     constructor() {
       this._redis = null;
     }
@@ -242,37 +241,43 @@ module.exports = ctx => {
         messageSyncs.push(messageSync);
       }
       // receiver
-      await beanMessage.onSaveSyncsPolicy({ path, options, message, messageClass, saveLimit, onSave: async userIds => {
-        // over limit
-        if (messageSyncs && messageSyncs.length > 1) {
-          // means enter this callback again
-          messageSyncs = null;
-        }
-        // syncs
-        for (const userIdTo of userIds) {
-          if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
-            // save
-            const messageSync = {
-              messageClassId,
-              messageId,
-              userId: userIdTo,
-              messageDirection: 2, // receive
-              messageRead: 0,
-            };
-            if (persistence) {
-              messageSync.id = await this.message.saveSync({ messageSync });
-            } else {
-              messageSync.id = uuid.v4();
-            }
-            // extensible
-            await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
-            // push
-            if (messageSyncs) {
-              messageSyncs.push(messageSync);
+      await beanMessage.onSaveSyncsPolicy({
+        path,
+        options,
+        message,
+        messageClass,
+        saveLimit,
+        onSave: async userIds => {
+          // over limit
+          if (messageSyncs && messageSyncs.length > 1) {
+            // means enter this callback again
+            messageSyncs = null;
+          }
+          // syncs
+          for (const userIdTo of userIds) {
+            if (userIdTo !== message.userIdFrom && userIdTo !== 0) {
+              // save
+              const messageSync = {
+                messageClassId,
+                messageId,
+                userId: userIdTo,
+                messageDirection: 2, // receive
+                messageRead: 0,
+              };
+              if (persistence) {
+                messageSync.id = await this.message.saveSync({ messageSync });
+              } else {
+                messageSync.id = uuid.v4();
+              }
+              // extensible
+              await beanMessage.onSaveSync({ path, options, message, messageSync, messageClass });
+              // push
+              if (messageSyncs) {
+                messageSyncs.push(messageSync);
+              }
             }
           }
-        }
-      },
+        },
       });
       // array / null
       return messageSyncs;
@@ -362,25 +367,30 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
       // loop
-      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
-        if (messageSync.userId === -1) {
-          // must be set path
-          if (path) {
-            // broadcast to online users
-            const userIds = await this._getPathUsersOnline({ path });
-            for (const userId of userIds) {
-              const _messageSync = {
-                ...messageSync,
-                userId,
-              };
-              await beanMessage.onDelivery({ path, options, message, messageSync: _messageSync, messageClass });
+      await this._loopMessageSyncs({
+        options,
+        message,
+        messageSyncs,
+        messageClass,
+        onHandle: async messageSync => {
+          if (messageSync.userId === -1) {
+            // must be set path
+            if (path) {
+              // broadcast to online users
+              const userIds = await this._getPathUsersOnline({ path });
+              for (const userId of userIds) {
+                const _messageSync = {
+                  ...messageSync,
+                  userId,
+                };
+                await beanMessage.onDelivery({ path, options, message, messageSync: _messageSync, messageClass });
+              }
             }
+          } else {
+            // normal
+            await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
           }
-        } else {
-          // normal
-          await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
-        }
-      },
+        },
       });
     }
 
@@ -445,9 +455,14 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       const beanMessage = this._getBeanMessage(messageClassBase);
       // loop
-      await this._loopMessageSyncs({ options, message, messageSyncs, messageClass, onHandle: async messageSync => {
-        await beanMessage.onPush({ options, message, messageSync, messageClass });
-      },
+      await this._loopMessageSyncs({
+        options,
+        message,
+        messageSyncs,
+        messageClass,
+        onHandle: async messageSync => {
+          await beanMessage.onPush({ options, message, messageSync, messageClass });
+        },
       });
     }
 
@@ -599,7 +614,7 @@ module.exports = ctx => {
     // offline: return false
     //    hash key: userId:path
     //    hash value: scene -> workerId:socketId
-    async emit({ path, options, message, messageSync/* , messageClass*/ }) {
+    async emit({ path, options, message, messageSync /* , messageClass*/ }) {
       // userId
       const userId = messageSync.userId;
       if (!userId) return true;
@@ -679,7 +694,6 @@ module.exports = ctx => {
         data: { path, message, workerId, socketId },
       });
     }
-
   }
   return IO;
 };

@@ -2,9 +2,7 @@ const require3 = require('require3');
 const extend = require3('extend2');
 
 module.exports = app => {
-
   class Settings extends app.Service {
-
     async load({ module, user }) {
       const name = `user-layoutConfig:${module}:${user.id}`;
       return await this.ctx.bean.status.get(name);
@@ -20,7 +18,6 @@ module.exports = app => {
       const data = extend(true, {}, layoutConfig || {}, { [key]: value });
       await this.save({ module, data, user });
     }
-
   }
 
   return Settings;

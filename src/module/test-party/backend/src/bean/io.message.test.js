@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {
-
     async onSaveSync({ path, options, message, messageSync, messageClass }) {
       // options
       const messageScene = (options && options.scene) || '';
@@ -22,7 +21,6 @@ module.exports = ctx => {
       }
       return await super.onSaveSync({ path, options, message, messageSync, messageClass });
     }
-
   }
   return IOMessage;
 };

@@ -5,8 +5,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     atomClass() {
@@ -17,8 +16,7 @@ export default {
       };
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     combineAtomClassAndLanguage(language) {
       const queries = {
@@ -90,8 +88,7 @@ export default {
       );
     }
     return (
-      <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
+      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
         <div slot="after">{categoryName}</div>
       </eb-list-item-choose>
     );

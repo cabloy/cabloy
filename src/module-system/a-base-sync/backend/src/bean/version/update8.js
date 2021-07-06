@@ -1,9 +1,7 @@
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate8 {
-
     async run(options) {
-
       let sql;
 
       // aFunctionScene
@@ -28,7 +26,6 @@ module.exports = function (ctx) {
           CHANGE COLUMN scene sceneId int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
 
       // aAtom: add field roleIdOwner
       sql = `
@@ -86,8 +83,7 @@ module.exports = function (ctx) {
       // cache
       const mapUserAtomClassRole = {};
       // atoms
-      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
-        [ctx.instance.id]);
+      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0', [ctx.instance.id]);
       for (const atom of atoms) {
         const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
         let mapValue = mapUserAtomClassRole[mapKey];
@@ -108,8 +104,6 @@ module.exports = function (ctx) {
       if (roles.length === 0) return 0;
       return roles[0].roleIdWho;
     }
-
-
   }
 
   return VersionUpdate8;

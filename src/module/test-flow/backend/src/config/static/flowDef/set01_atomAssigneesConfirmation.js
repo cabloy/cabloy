@@ -13,7 +13,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom._flowDefKey===\'set01_atomAssigneesConfirmation\'',
+            conditionExpression: "atom._flowDefKey==='set01_atomAssigneesConfirmation'",
           },
         },
         {

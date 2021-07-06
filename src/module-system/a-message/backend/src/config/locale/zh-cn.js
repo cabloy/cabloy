@@ -2,8 +2,7 @@
 //   subject
 const uniformMessageRenderTemplateMailSubject = '[{{info.siteName}}] {{content.title}}';
 //   body
-const uniformMessageRenderTemplateMailBody =
-`
+const uniformMessageRenderTemplateMailBody = `
 您好，{{user.userName}}，
 
 您收到一条新消息，详情如下：

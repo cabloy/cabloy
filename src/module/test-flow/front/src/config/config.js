@@ -5,8 +5,7 @@ export default {
         list: {
           layouts: {
             list: {
-              blocks: {
-              },
+              blocks: {},
             },
           },
         },

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Atom extends app.meta.AtomBase {
-
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
@@ -46,11 +44,16 @@ module.exports = app => {
       data.id = key.itemId;
       await this.ctx.model.flowDef.update(data);
       // update content
-      await this.ctx.model.flowDefContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
+      await this.ctx.model.flowDefContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
 
       // deploy
       if (item.atomStage === 1) {
@@ -96,7 +99,6 @@ module.exports = app => {
       // ok
       item._meta = meta;
     }
-
   }
 
   return Atom;

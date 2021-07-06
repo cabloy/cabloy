@@ -1,7 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Dashboard extends app.Service {
-
     get atomClass() {
       return {
         module: moduleInfo.relativeName,
@@ -45,7 +44,8 @@ module.exports = app => {
       }
       // get system
       const dashboardSystem = await this.ctx.bean.resource.read({
-        key: { atomId: dashboardAtomId }, user,
+        key: { atomId: dashboardAtomId },
+        user,
       });
       // ok
       return { dashboardSystem };
@@ -59,21 +59,31 @@ module.exports = app => {
     }
 
     async saveItemUser({ dashboardUserId, content, user }) {
-      await this.ctx.model.dashboardUser.update({
-        content,
-      }, { where: {
-        id: dashboardUserId,
-        userId: user.id,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          content,
+        },
+        {
+          where: {
+            id: dashboardUserId,
+            userId: user.id,
+          },
+        }
+      );
     }
 
     async changeItemUserName({ dashboardUserId, dashboardName, user }) {
-      await this.ctx.model.dashboardUser.update({
-        dashboardName,
-      }, { where: {
-        id: dashboardUserId,
-        userId: user.id,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardName,
+        },
+        {
+          where: {
+            id: dashboardUserId,
+            userId: user.id,
+          },
+        }
+      );
     }
 
     async deleteItemUser({ dashboardUserId, user }) {
@@ -90,12 +100,17 @@ module.exports = app => {
       // content
       const dashboardContent = await this.ctx.model.dashboardContent.get({ atomId: dashboardAtomId });
       // update old default
-      await this.ctx.model.dashboardUser.update({
-        dashboardDefault: 0,
-      }, { where: {
-        userId: user.id,
-        dashboardAtomId,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardDefault: 0,
+        },
+        {
+          where: {
+            userId: user.id,
+            dashboardAtomId,
+          },
+        }
+      );
       // insert
       const res = await this.ctx.model.dashboardUser.insert({
         userId: user.id,
@@ -122,18 +137,22 @@ module.exports = app => {
     }
 
     async changeItemUserDefault({ dashboardAtomId, dashboardUserId, user }) {
-      await this.ctx.model.dashboardUser.update({
-        dashboardDefault: 0,
-      }, { where: {
-        userId: user.id,
-        dashboardAtomId,
-      } });
+      await this.ctx.model.dashboardUser.update(
+        {
+          dashboardDefault: 0,
+        },
+        {
+          where: {
+            userId: user.id,
+            dashboardAtomId,
+          },
+        }
+      );
       await this.ctx.model.dashboardUser.update({
         id: dashboardUserId,
         dashboardDefault: 1,
       });
     }
-
   }
 
   return Dashboard;

@@ -11,7 +11,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -51,16 +51,18 @@ export default {
       this.onLoad();
     },
     onLoad() {
-      this.$api.post('site/getConfigLanguagePreview', {
-        atomClass: this.atomClass,
-        language: this.language,
-      }).then(res => {
-        if (!res.data) {
-          this.content = '{}';
-        } else {
-          this.content = JSON5.stringify(res.data, null, 2);
-        }
-      });
+      this.$api
+        .post('site/getConfigLanguagePreview', {
+          atomClass: this.atomClass,
+          language: this.language,
+        })
+        .then(res => {
+          if (!res.data) {
+            this.content = '{}';
+          } else {
+            this.content = JSON5.stringify(res.data, null, 2);
+          }
+        });
     },
     onSize(size) {
       this.$$(this.$refs.textarea).css({
@@ -70,7 +72,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

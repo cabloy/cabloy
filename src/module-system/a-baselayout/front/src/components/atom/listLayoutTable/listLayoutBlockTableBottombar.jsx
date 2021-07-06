@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ Antdv ],
+  mixins: [Antdv],
   props: {
     layoutManager: {
       type: Object,
@@ -14,50 +14,31 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     layout() {
       return this.layoutManager.layout.instance;
     },
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     onPageChange(page) {
       this.layout.gotoPage(page);
     },
     _renderPagination() {
-      return (
-        <a-pagination
-          value={this.layout.info.pageCurrent}
-          page-size={this.layout.info.pageSize}
-          total={this.layout.info.total}
-          disabled={false}
-          onChange={this.onPageChange}
-        />
-      );
+      return <a-pagination value={this.layout.info.pageCurrent} page-size={this.layout.info.pageSize} total={this.layout.info.total} disabled={false} onChange={this.onPageChange} />;
     },
     _renderTotal() {
       let domTotal;
       if (this.layout.info.total > 0) {
         domTotal = <f7-badge>{this.layout.info.total}</f7-badge>;
       }
-      return (
-        <div>
-          {domTotal}
-        </div>
-      );
+      return <div>{domTotal}</div>;
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
-      return (
-        <a-config-provider locale={this.antdv_getLocale()}>
-          { this._renderPagination()}
-        </a-config-provider>
-      );
+      return <a-config-provider locale={this.antdv_getLocale()}>{this._renderPagination()}</a-config-provider>;
     },
   },
   render() {

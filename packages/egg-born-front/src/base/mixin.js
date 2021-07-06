@@ -1,5 +1,4 @@
-export default function(Vue) {
-
+export default function (Vue) {
   // beforeCreates
   const beforeCreates = [];
 
@@ -15,17 +14,17 @@ export default function(Vue) {
   init(null, require('./mixin/component.js'));
 
   // mixin
-  Vue.mixin({ beforeCreate() {
+  Vue.mixin({
+    beforeCreate() {
+      // mixin module
+      mixinModule(this);
 
-    // mixin module
-    mixinModule(this);
-
-    // mixins
-    for (const _beforeCreate of beforeCreates) {
-      _beforeCreate(this);
-    }
-
-  } });
+      // mixins
+      for (const _beforeCreate of beforeCreates) {
+        _beforeCreate(this);
+      }
+    },
+  });
 
   function init(key, instance) {
     const res = instance.default(Vue);
@@ -44,5 +43,4 @@ export default function(Vue) {
       ctx.$module = ctx.$parent.$module;
     }
   }
-
 }

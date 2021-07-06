@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = context => {
-
   const nodeModules = {
     require3: 'commonjs2 require3',
   };
@@ -16,19 +15,22 @@ module.exports = context => {
         options: {
           babelrc: false,
           presets: [
-            [ '@babel/preset-env', {
-              targets: {
-                node: '6',
+            [
+              '@babel/preset-env',
+              {
+                targets: {
+                  node: '6',
+                },
+                include: [
+                  '@babel/plugin-transform-for-of',
+                  '@babel/plugin-transform-parameters',
+                  '@babel/plugin-transform-shorthand-properties',
+                  '@babel/plugin-transform-spread',
+                  '@babel/plugin-transform-template-literals',
+                  '@babel/plugin-proposal-object-rest-spread',
+                ],
               },
-              include: [
-                '@babel/plugin-transform-for-of',
-                '@babel/plugin-transform-parameters',
-                '@babel/plugin-transform-shorthand-properties',
-                '@babel/plugin-transform-spread',
-                '@babel/plugin-transform-template-literals',
-                '@babel/plugin-proposal-object-rest-spread',
-              ],
-            }],
+            ],
           ],
           // plugins: [
           //   '@babel/plugin-transform-arrow-functions',
@@ -58,7 +60,7 @@ module.exports = context => {
     },
     externals: nodeModules,
     resolve: {
-      extensions: [ '.js', '.json' ],
+      extensions: ['.js', '.json'],
     },
     module: {
       rules,
@@ -70,4 +72,3 @@ module.exports = context => {
     },
   };
 };
-

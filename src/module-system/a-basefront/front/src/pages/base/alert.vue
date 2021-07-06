@@ -2,13 +2,13 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <f7-card>
-      <f7-card-header>{{data.title || $text('Friendly Tips')}}</f7-card-header>
+      <f7-card-header>{{ data.title || $text('Friendly Tips') }}</f7-card-header>
       <f7-card-content>
-        {{data.message}}
+        {{ data.message }}
       </f7-card-content>
       <f7-card-footer v-if="data.link">
         <div></div>
-        <eb-link :eb-href="data.link">{{data.linkText || $text('Link')}}</eb-link>
+        <eb-link :eb-href="data.link">{{ data.linkText || $text('Link') }}</eb-link>
       </f7-card-footer>
     </f7-card>
   </eb-page>
@@ -29,7 +29,5 @@ export default {
   },
   methods: {},
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

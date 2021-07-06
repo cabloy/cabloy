@@ -45,11 +45,6 @@ export default {
     },
   },
   render() {
-    return (
-      <div>
-        {this._renderBlock({ blockName: 'items' })}
-      </div>
-    );
+    return <div>{this._renderBlock({ blockName: 'items' })}</div>;
   },
 };
-

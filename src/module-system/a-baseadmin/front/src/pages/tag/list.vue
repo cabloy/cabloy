@@ -9,13 +9,13 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.tagName" :badge="item.tagAtomCount" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" close :context="item" :onPerform="onPerformEdit">{{$text('Edit')}}</div>
-            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" close :context="item" :onPerform="onPerformEdit">{{ $text('Edit') }}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
-    <div v-if="items && items.length===0" class="text-align-center">{{$text('No Data')}}</div>
+    <div v-if="items && items.length === 0" class="text-align-center">{{ $text('No Data') }}</div>
   </eb-page>
 </template>
 <script>
@@ -64,16 +64,16 @@ export default {
       // all tags
       const options = {
         where: { language: this.language },
-        orders: [
-          [ 'tagName', 'asc' ],
-        ],
+        orders: [['tagName', 'asc']],
       };
-      this.$api.post('/a/base/tag/list', {
-        atomClass: this.atomClass,
-        options,
-      }).then(res => {
-        this.items = res.list;
-      });
+      this.$api
+        .post('/a/base/tag/list', {
+          atomClass: this.atomClass,
+          options,
+        })
+        .then(res => {
+          this.items = res.list;
+        });
     },
     async onPerformAdd() {
       const tagName = await this.$view.dialog.prompt(this.$text('Please specify the tag name'));
@@ -115,7 +115,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

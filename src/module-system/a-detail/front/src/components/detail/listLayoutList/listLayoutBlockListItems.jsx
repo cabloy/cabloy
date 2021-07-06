@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebDetailActions ],
+  mixins: [ebDetailActions],
   props: {
     layoutManager: {
       type: Object,
@@ -17,8 +17,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   mounted() {
     this.$meta.eventHub.$on('detail:action', this.onActionChanged);
@@ -34,7 +33,7 @@ export default {
         return actions;
       }
       // only read/write/delete
-      return actions.filter(item => [ 'read', 'write', 'delete' ].indexOf(item.name) > -1);
+      return actions.filter(item => ['read', 'write', 'delete'].indexOf(item.name) > -1);
     },
     async onItemClick(event, item) {
       return await this.onAction(event, item, {
@@ -43,8 +42,7 @@ export default {
         name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
       });
     },
-    onSwipeoutOpened(event, item) {
-    },
+    onSwipeoutOpened(event, item) {},
     async onAction(event, item, action) {
       const _action = this.getDetailAction(action);
       if (!_action) return;
@@ -67,7 +65,8 @@ export default {
         atomKey.atomId !== this.layoutManager.container.atomId ||
         detailClass.module !== this.layoutManager.container.detailClass.module ||
         detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
-      ) return;
+      )
+        return;
 
       const changed = await this._onActionChanged(data);
       if (changed) {
@@ -158,15 +157,13 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
+          {this._getItemMetaSummary(item)}
         </div>
       );
       // domAfter
       const domAfterMetaFlags = [];
       for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key={flag}>{flag}</f7-badge>
-        );
+        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       const domAfter = (
         <div slot="after" class="after">
@@ -175,11 +172,18 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.detailId}
-          link='#'
+        <eb-list-item
+          class="item"
+          key={item.detailId}
+          link="#"
           propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
-          onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
+          swipeout
+          onSwipeoutOpened={event => {
+            this.onSwipeoutOpened(event, item);
+          }}
+          onContextmenuOpened={event => {
+            this.onSwipeoutOpened(event, item);
+          }}
         >
           {domMedia}
           {domTitle}
@@ -212,11 +216,7 @@ export default {
         </div>
       );
 
-      return (
-        <eb-context-menu>
-          {domRight}
-        </eb-context-menu>
-      );
+      return <eb-context-menu>{domRight}</eb-context-menu>;
     },
     _renderList() {
       const items = this.layout.items;
@@ -224,18 +224,10 @@ export default {
       for (let index = 0; index < items.length; index++) {
         children.push(this._renderListItem(items[index], index));
       }
-      return (
-        <f7-list>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {
-    return (
-      <div class="detail-list-main-container">
-        {this._renderList()}
-      </div>
-    );
+    return <div class="detail-list-main-container">{this._renderList()}</div>;
   },
 };

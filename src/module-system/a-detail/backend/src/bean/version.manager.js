@@ -1,6 +1,5 @@
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         // create table: aDetail
@@ -45,12 +44,9 @@ module.exports = app => {
       }
     }
 
-    async init(options) {
-    }
+    async init(options) {}
 
-    async test() {
-    }
-
+    async test() {}
   }
 
   return Version;

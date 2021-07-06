@@ -3,7 +3,6 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 
 module.exports = app => {
-
   // routes
   const routes = require('./routes.js')(app);
   // controllers
@@ -28,5 +27,4 @@ module.exports = app => {
     meta,
     monkey,
   };
-
 };

@@ -3,7 +3,6 @@ const WechatHelperFn = require('../common/wechatHelper.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
-
     async index({ message }) {
       let result;
       // event: subscribe
@@ -57,7 +56,8 @@ module.exports = app => {
       const userWechat = await this.ctx.model.wechatUser.get({ openid });
       if (userWechat) {
         await this.ctx.model.wechatUser.update({
-          id: userWechat.id, subscribe: 0,
+          id: userWechat.id,
+          subscribe: 0,
         });
       }
       // ok
@@ -69,7 +69,6 @@ module.exports = app => {
         Content: '',
       };
     }
-
   }
 
   return Message;

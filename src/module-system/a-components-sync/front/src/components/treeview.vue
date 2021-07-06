@@ -32,24 +32,24 @@ export default {
     //
     const _h = this.$createElement;
     const props = this.props;
-    const {
-      className,
-      id,
-      style,
-    } = props;
+    const { className, id, style } = props;
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
     // nodes
     const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children, this.treeviewId) : [];
 
     //
-    return _h('div', {
-      style,
-      class: classes,
-      attrs: {
-        id,
+    return _h(
+      'div',
+      {
+        style,
+        class: classes,
+        attrs: {
+          id,
+        },
       },
-    }, nodes);
+      nodes
+    );
   },
   watch: {
     root() {
@@ -206,7 +206,7 @@ export default {
       if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
       if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
-      if (_node.attrs.selectable) _node.attrs.selected = (this.selectedItem && this.selectedItem.id === node.id);
+      if (_node.attrs.selectable) _node.attrs.selected = this.selectedItem && this.selectedItem.id === node.id;
       if (_node.attrs.disabled === undefined) _node.attrs.disabled = this.treeviewRoot.attrs.disabled;
       // attrs onNodePerform
       if (this.onNodePerform && node.attrs.onPerform === undefined) {
@@ -219,32 +219,36 @@ export default {
       // checkbox
       const radio = !this.treeviewRoot.attrs.multiple;
       if (_node.attrs.checkbox && radio) {
-        children.push(_h('f7-radio', {
-          slot: 'content-start',
-          attrs: {
-            checked: _node.attrs.checked,
-            disabled: _node.attrs.disabled,
-          },
-          on: {
-            change: e => {
-              this._onNodeChange(node, e.target.checked);
+        children.push(
+          _h('f7-radio', {
+            slot: 'content-start',
+            attrs: {
+              checked: _node.attrs.checked,
+              disabled: _node.attrs.disabled,
             },
-          },
-        }));
+            on: {
+              change: e => {
+                this._onNodeChange(node, e.target.checked);
+              },
+            },
+          })
+        );
       } else if (_node.attrs.checkbox && !radio) {
-        children.push(_h('f7-checkbox', {
-          slot: 'content-start',
-          attrs: {
-            checked: _node.attrs.checked,
-            disabled: _node.attrs.disabled,
-            indeterminate: _node.attrs.indeterminate,
-          },
-          on: {
-            change: e => {
-              this._onNodeChange(node, !node.attrs.checked);
+        children.push(
+          _h('f7-checkbox', {
+            slot: 'content-start',
+            attrs: {
+              checked: _node.attrs.checked,
+              disabled: _node.attrs.disabled,
+              indeterminate: _node.attrs.indeterminate,
             },
-          },
-        }));
+            on: {
+              change: e => {
+                this._onNodeChange(node, !node.attrs.checked);
+              },
+            },
+          })
+        );
       }
       // scopedSlots
       const slots = this._renderScopeSlots(_h, node);
@@ -253,20 +257,24 @@ export default {
       const childrenNode = this._renderNodes(_h, node.children, _node.attrs.id);
       if (childrenNode && childrenNode.length > 0) children = children.concat(childrenNode);
       // ok
-      return _h('eb-treeview-item', {
-        key: _node.id,
-        attrs: _node.attrs,
-        class: _node.class,
-        style: _node.style,
-        on: {
-          'treeview:loadchildren': (e, done) => {
-            this._onNodeLoadChildren(e, done, node);
-          },
-          click: e => {
-            this._onNodeClick(e, node);
+      return _h(
+        'eb-treeview-item',
+        {
+          key: _node.id,
+          attrs: _node.attrs,
+          class: _node.class,
+          style: _node.style,
+          on: {
+            'treeview:loadchildren': (e, done) => {
+              this._onNodeLoadChildren(e, done, node);
+            },
+            click: e => {
+              this._onNodeClick(e, node);
+            },
           },
         },
-      }, children);
+        children
+      );
     },
     _renderNodes(_h, nodes, attrIdParent) {
       const children = [];
@@ -279,14 +287,20 @@ export default {
     _renderScopeSlots(_h, node) {
       const slots = [];
       for (const key of Object.keys(this.$scopedSlots)) {
-        slots.push(_h('template', {
-          slot: key,
-        }, [ this.$scopedSlots[key]({ node }) ]));
+        slots.push(
+          _h(
+            'template',
+            {
+              slot: key,
+            },
+            [this.$scopedSlots[key]({ node })]
+          )
+        );
       }
       return slots;
     },
     _needLoadChildren(node) {
-      return (this.onLoadChildren && node.attrs.loadChildren && !node._loaded);
+      return this.onLoadChildren && node.attrs.loadChildren && !node._loaded;
     },
     childrenLoaded(node, children) {
       this.$set(node, '_loaded', true);
@@ -311,19 +325,23 @@ export default {
     _loadChildren(node) {
       return new Promise((resolve, reject) => {
         if (!this._needLoadChildren(node)) return resolve(node.children);
-        this.onLoadChildren(node).then(data => {
-          const nodeChildren = this.childrenLoaded(node, data);
-          // ok
-          return resolve(nodeChildren);
-        }).catch(reject);
+        this.onLoadChildren(node)
+          .then(data => {
+            const nodeChildren = this.childrenLoaded(node, data);
+            // ok
+            return resolve(nodeChildren);
+          })
+          .catch(reject);
       });
     },
     _onNodeLoadChildren(e, done, node) {
-      this._loadChildren(node).then(() => {
-        this.$nextTick(() => {
-          return done();
-        });
-      }).catch(done);
+      this._loadChildren(node)
+        .then(() => {
+          this.$nextTick(() => {
+            return done();
+          });
+        })
+        .catch(done);
     },
     _onNodeClick(e, node) {
       // target
@@ -365,7 +383,6 @@ export default {
 
       // node:click
       this.$emit('node:click', e, node);
-
     },
     _onNodeChange(node, checked) {
       // node current
@@ -407,10 +424,7 @@ export default {
         });
       }
     },
-
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

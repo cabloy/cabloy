@@ -11,11 +11,9 @@
 <script>
 export default {
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
     onPerformLanguage(event) {
       return this.performAction(event, {
@@ -40,7 +38,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

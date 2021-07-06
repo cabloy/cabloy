@@ -3,18 +3,18 @@
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" link="#" :eb-href="`user/view?userId=${item.id}`" swipeout>
         <div slot="media">
-          <img class="avatar avatar32" :src="getItemMedia(item)">
+          <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
         <div slot="after">
-          <f7-badge v-if="item.realName && item.realName!==item.userName">{{item.realName}}</f7-badge>
-          <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
-          <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
+          <f7-badge v-if="item.realName && item.realName !== item.userName">{{ item.realName }}</f7-badge>
+          <f7-badge v-if="item.mobile">{{ item.mobile }}</f7-badge>
+          <f7-badge v-if="item.disabled === 1">{{ $text('Disabled') }}</f7-badge>
         </div>
         <eb-context-menu>
           <div slot="right">
-            <div v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
-            <div v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
-            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div v-if="item.disabled === 0" color="orange" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</div>
+            <div v-if="item.disabled === 1" color="orange" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -76,11 +76,10 @@ export default {
         page: { index },
       };
       if (!this.roleId) params.anonymous = 0;
-      return this.$api.post('user/list', params)
-        .then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
-        });
+      return this.$api.post('user/list', params).then(data => {
+        this.items = this.items.concat(data.list);
+        return data;
+      });
     },
     onPerformDisable(event, item) {
       return this.disableUser(event, item, 1);
@@ -90,9 +89,10 @@ export default {
     },
     onPerformDelete(event, item) {
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('user/delete', {
-          userId: item.id,
-        })
+        return this.$api
+          .post('user/delete', {
+            userId: item.id,
+          })
           .then(() => {
             this.$meta.eventHub.$emit('user:delete', { userId: item.id });
             this.$meta.util.swipeoutDelete(event.target);
@@ -101,10 +101,11 @@ export default {
       });
     },
     disableUser(event, item, disabled) {
-      return this.$api.post('user/disable', {
-        userId: item.id,
-        disabled,
-      })
+      return this.$api
+        .post('user/disable', {
+          userId: item.id,
+          disabled,
+        })
         .then(() => {
           this.$meta.eventHub.$emit('user:disable', { userId: item.id, disabled });
           this.$meta.util.swipeoutClose(event.target);
@@ -134,7 +135,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

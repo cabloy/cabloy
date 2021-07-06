@@ -1,8 +1,7 @@
 import ValidateComputedBase2Fn from './validateComputedBase2.js';
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   created() {
     // create

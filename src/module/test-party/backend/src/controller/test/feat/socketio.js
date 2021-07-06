@@ -1,10 +1,8 @@
-
 const _subscribePath = '/test/party/test';
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SocketIOController extends app.Controller {
-
     async publish() {
       const options = this.ctx.request.body.options;
       const message = this.ctx.request.body.message;
@@ -21,9 +19,7 @@ module.exports = app => {
       // done
       this.ctx.success(res);
     }
-
   }
 
   return SocketIOController;
-
 };

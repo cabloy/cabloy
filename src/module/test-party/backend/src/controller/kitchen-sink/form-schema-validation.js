@@ -14,9 +14,7 @@ const __ItemDefault = {
 };
 
 module.exports = app => {
-
   class FormSchemaValidationController extends app.Controller {
-
     async load() {
       // try load from db cache
       const cacheName = this._getCacheName();
@@ -55,9 +53,7 @@ module.exports = app => {
       const user = this.ctx.state.user.op;
       return `__formTest:${user.id}`;
     }
-
   }
 
   return FormSchemaValidationController;
 };
-

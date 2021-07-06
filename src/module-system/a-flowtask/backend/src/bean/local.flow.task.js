@@ -147,42 +147,60 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.flowTaskHidden = 0; // show
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // delete recall task: (specificFlag=2)
-      const _taskRecall = await ctx.model.queryOne(`
+      const _taskRecall = await ctx.model.queryOne(
+        `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and specificFlag=2
-          `, [ctx.instance.id, flowTask.flowNodeId]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId]
+      );
       if (_taskRecall) {
         this._notifyTaskHandlings(_taskRecall.userIdAssignee);
         // delete task
-        await ctx.model.query(`
+        await ctx.model.query(
+          `
           delete from aFlowTask
             where iid=? and id=?
-          `, [ctx.instance.id, _taskRecall.id]);
-        await ctx.model.query(`
+          `,
+          [ctx.instance.id, _taskRecall.id]
+        );
+        await ctx.model.query(
+          `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowTaskId=?
-          `, [ctx.instance.id, _taskRecall.id]);
+          `,
+          [ctx.instance.id, _taskRecall.id]
+        );
       }
       // check if bidding
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       if (options.bidding) {
         // notify
-        const _tasks = await ctx.model.query(`
+        const _tasks = await ctx.model.query(
+          `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
         for (const _task of _tasks) {
           this._notifyTaskClaimings(_task.userIdAssignee);
         }
         // delete other tasks
-        await ctx.model.query(`
+        await ctx.model.query(
+          `
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
-        await ctx.model.query(`
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
+        await ctx.model.query(
+          `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
+          `,
+          [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+        );
       }
       // event: task.claimed
       await this.claimed();
@@ -344,7 +362,7 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // node clear
       //    not use handle.remark
-      const remark = 'Cancelled';// handle.remark;
+      const remark = 'Cancelled'; // handle.remark;
       await this.nodeInstance._clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
       // end flow
       await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
@@ -383,25 +401,36 @@ module.exports = ctx => {
       await this.modelFlowTask.delete({ id: flowTaskId });
       await this.modelFlowTaskHistory.delete({ flowTaskId });
       // notify
-      const _tasks = await ctx.model.query(`
+      const _tasks = await ctx.model.query(
+        `
           select id,userIdAssignee from aFlowTask
             where iid=? and deleted=0 and flowNodeId=? and id<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
       for (const _task of _tasks) {
         this._notifyTaskClaimings(_task.userIdAssignee);
       }
       // delete other tasks
-      await ctx.model.query(`
+      await ctx.model.query(
+        `
           delete from aFlowTask
             where iid=? and flowNodeId=? and id<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
-      await ctx.model.query(`
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
+      await ctx.model.query(
+        `
           update aFlowTaskHistory set deleted=1
             where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
-          `, [ctx.instance.id, flowTask.flowNodeId, flowTaskId]);
+          `,
+        [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
+      );
       // recall
       return await ctx.bean.flowTask._gotoFlowNodePrevious({
-        nodeInstance: this.nodeInstance, rejectedNode: null, flowNodeRemark: 'Recalled',
+        nodeInstance: this.nodeInstance,
+        rejectedNode: null,
+        flowNodeRemark: 'Recalled',
       });
     }
 
@@ -447,7 +476,7 @@ module.exports = ctx => {
         // check confirmationAllowAppend
         if (!options.confirmationAllowAppend) {
           const assigneesOld = this.contextNode.vars.get('_assignees');
-          if (!(new Set(assigneesOld)).isSuperset(new Set(assignees))) {
+          if (!new Set(assigneesOld).isSuperset(new Set(assignees))) {
             ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
           }
         }
@@ -459,7 +488,8 @@ module.exports = ctx => {
       // reject
       if (handle.status === 2) {
         return await ctx.bean.flowTask._gotoFlowNodePrevious({
-          nodeInstance: this.nodeInstance, rejectedNode: null,
+          nodeInstance: this.nodeInstance,
+          rejectedNode: null,
         });
       }
     }
@@ -472,7 +502,8 @@ module.exports = ctx => {
       const atomId = this.context._atom.atomId;
       const user = this.contextTask._user;
       await ctx.bean.atom.write({
-        key: { atomId }, item: formAtom,
+        key: { atomId },
+        item: formAtom,
         options: { schema: schemaWrite },
         user,
       });
@@ -709,7 +740,6 @@ module.exports = ctx => {
     _notifyTaskHandlings(userId) {
       ctx.bean.flowTask._notifyTaskHandlings(userId);
     }
-
   }
   return FlowTask;
 };

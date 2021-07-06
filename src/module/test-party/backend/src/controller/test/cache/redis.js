@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class RedisController extends app.Controller {
-
     async redis() {
-
       let res;
       let value;
 
@@ -53,7 +50,6 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
   return RedisController;
 };

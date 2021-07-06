@@ -2,7 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
+        <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="moduleStyle">
@@ -10,18 +10,18 @@
         <f7-card-header>
           <div class="header-container">
             <div class="header-atom">
-              <eb-link :context="item" :onPerform="onPerformViewAtom">{{item.atomName}}</eb-link>
+              <eb-link :context="item" :onPerform="onPerformViewAtom">{{ item.atomName }}</eb-link>
             </div>
             <div class="header-comment">
               <div class="title">
-                <img class="avatar avatar32" :src="getItemMedia(item)">
-                <div class="name">{{item.h_userName}}</div>
-                <div class="date">#{{item.h_sorting}} · {{$meta.util.formatDateTimeRelative(item.h_createdAt)}}</div>
+                <img class="avatar avatar32" :src="getItemMedia(item)" />
+                <div class="name">{{ item.h_userName }}</div>
+                <div class="date">#{{ item.h_sorting }} · {{ $meta.util.formatDateTimeRelative(item.h_createdAt) }}</div>
               </div>
               <div class="actions">
-                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
-                <eb-link v-if="item.h_userId===user.id || rightDeleteComment" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-                <eb-link class="action" :iconMaterial="item.h_heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.h_heartCount}}</eb-link>
+                <eb-link v-if="item.h_userId === user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
+                <eb-link v-if="item.h_userId === user.id || rightDeleteComment" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
+                <eb-link class="action" :iconMaterial="item.h_heart ? 'favorite' : 'favorite_border'" :context="item" :onPerform="onPerformHeart">{{ item.h_heartCount }}</eb-link>
                 <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
               </div>
             </div>
@@ -38,13 +38,13 @@ import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   data() {
     const query = this.$f7route.query;
     const module = query && query.module;
     const atomClassName = query && query.atomClassName;
-    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
-    let where = (query && query.where) ? JSON.parse(query.where) : null;
+    const atomClass = module && atomClassName ? { module, atomClassName } : null;
+    let where = query && query.where ? JSON.parse(query.where) : null;
     // scene
     const scene = query && query.scene;
     if (scene === 'mine') {
@@ -69,16 +69,18 @@ export default {
   },
   created() {
     // check function right
-    const atomStaticKeys = [ 'a-base:deleteComment' ];
-    this.$api.post('/a/base/resource/check', {
-      atomStaticKeys,
-    }).then(data => {
-      this.rightDeleteComment = data[0].passed;
-      // markdown style
-      this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
-        this.moduleStyle = module;
+    const atomStaticKeys = ['a-base:deleteComment'];
+    this.$api
+      .post('/a/base/resource/check', {
+        atomStaticKeys,
+      })
+      .then(data => {
+        this.rightDeleteComment = data[0].passed;
+        // markdown style
+        this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
+          this.moduleStyle = module;
+        });
       });
-    });
   },
   mounted() {
     this.$meta.eventHub.$on('comment:action', this.onCommentChanged);
@@ -101,9 +103,7 @@ export default {
     onLoadMore({ index }) {
       // options
       const options = {
-        orders: [
-          [ 'h_updatedAt', this.order ],
-        ],
+        orders: [['h_updatedAt', this.order]],
         page: { index },
       };
       // where
@@ -111,13 +111,15 @@ export default {
         options.where = this.where;
       }
       // fetch
-      return this.$api.post('/a/base/comment/all', {
-        atomClass: this.atomClass,
-        options,
-      }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      return this.$api
+        .post('/a/base/comment/all', {
+          atomClass: this.atomClass,
+          options,
+        })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
     },
     reload() {
       this.$refs.loadMore.reload();
@@ -125,13 +127,15 @@ export default {
     onPerformDelete(event, item) {
       // delete
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('/a/base/comment/delete', {
-          key: { atomId: item.atomId },
-          data: { commentId: item.h_id },
-        }).then(data => {
-          this.$meta.eventHub.$emit('comment:action', data);
-          return true;
-        });
+        return this.$api
+          .post('/a/base/comment/delete', {
+            key: { atomId: item.atomId },
+            data: { commentId: item.h_id },
+          })
+          .then(data => {
+            this.$meta.eventHub.$emit('comment:action', data);
+            return true;
+          });
       });
     },
     onPerformHeart(event, item) {
@@ -144,12 +148,14 @@ export default {
         return;
       }
       //
-      return this.$api.post('/a/base/comment/heart', {
-        key: { atomId: item.atomId },
-        data: { commentId: item.h_id, heart: item.h_heart ? 0 : 1 },
-      }).then(data => {
-        this.$meta.eventHub.$emit('comment:action', data);
-      });
+      return this.$api
+        .post('/a/base/comment/heart', {
+          key: { atomId: item.atomId },
+          data: { commentId: item.h_id, heart: item.h_heart ? 0 : 1 },
+        })
+        .then(data => {
+          this.$meta.eventHub.$emit('comment:action', data);
+        });
     },
     onCommentChanged(data) {
       const action = data.action;
@@ -170,15 +176,17 @@ export default {
       }
       // others
       if (index !== -1) {
-        this.$api.post('/a/base/comment/item', {
-          key: { atomId },
-          data: { commentId },
-        }).then(data => {
-          const _item = this.items[index];
-          for (const key of Object.keys(data)) {
-            _item[`h_${key}`] = data[key];
-          }
-        });
+        this.$api
+          .post('/a/base/comment/item', {
+            key: { atomId },
+            data: { commentId },
+          })
+          .then(data => {
+            const _item = this.items[index];
+            for (const key of Object.keys(data)) {
+              _item[`h_${key}`] = data[key];
+            }
+          });
       }
     },
     onPerformSort() {
@@ -200,5 +208,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -7,13 +7,12 @@ const __queueInstanceStartup = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Instance {
-
     async list(options) {
       // options
       if (!options) options = { where: null, orders: null, page: null };
       const page = ctx.bean.util.page(options.page, false);
       const orders = options.orders;
-      const where = options.where || { disabled: 0 };// allow disabled=undefined
+      const where = options.where || { disabled: 0 }; // allow disabled=undefined
       // select
       const _options = { where, orders };
       if (page.size !== 0) {
@@ -152,13 +151,16 @@ module.exports = ctx => {
             return;
           }
           // startup
-          ctx.app.meta._runStartupInstance({ subdomain: info.subdomain, options: info.options }).then(() => {
-            info.resolve();
-            cb();
-          }).catch(err => {
-            info.reject(err);
-            cb();
-          });
+          ctx.app.meta
+            ._runStartupInstance({ subdomain: info.subdomain, options: info.options })
+            .then(() => {
+              info.resolve();
+              cb();
+            })
+            .catch(err => {
+              info.reject(err);
+              cb();
+            });
         });
       }
       // promise
@@ -169,7 +171,6 @@ module.exports = ctx => {
         __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
       });
     }
-
   }
   return Instance;
 };

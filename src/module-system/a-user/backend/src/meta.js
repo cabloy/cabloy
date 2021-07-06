@@ -9,10 +9,7 @@ module.exports = app => {
             module: 'a-stats',
             name: 'deps',
           },
-          dependencies: [
-            'a-flowtask:taskClaimings',
-            'a-flowtask:taskHandlings',
-          ],
+          dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
         },
         userOrange: {
           user: true,
@@ -32,12 +29,7 @@ module.exports = app => {
             module: 'a-user',
             name: 'user',
           },
-          dependencies: [
-            'a-user:userRed',
-            'a-user:userOrange',
-            'a-message:message',
-            'a-base:starsLabels',
-          ],
+          dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
         },
       },
     },

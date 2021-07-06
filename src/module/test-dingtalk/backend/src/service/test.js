@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Test extends app.Service {
-
     async getMemberId({ user }) {
       const modelMember = this.ctx.model.module('a-dingtalk').member;
       const member = await modelMember.get({ userId: user.id });
@@ -26,7 +24,6 @@ module.exports = app => {
         channel: { module: 'a-dingtalk', name: 'app' },
       });
     }
-
   }
 
   return Test;

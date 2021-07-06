@@ -1,7 +1,6 @@
 const beanContainerFn = require('./beanContainer.js');
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;
 
@@ -30,7 +29,6 @@ module.exports = function(loader) {
 
       return context;
     };
-
   }
 
   function loadBeans() {
@@ -54,5 +52,4 @@ module.exports = function(loader) {
       }
     }
   }
-
 };

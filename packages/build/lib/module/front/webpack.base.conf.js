@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = context => {
-
   const moduleInfo = context.utils.parseInfoFromPackage();
   const libraryName = moduleInfo.relativeName;
 
@@ -20,7 +19,7 @@ module.exports = context => {
       vue: 'Vue',
     },
     resolve: {
-      extensions: [ '.js', '.vue', '.json' ],
+      extensions: ['.js', '.vue', '.json'],
     },
     module: {
       rules: [
@@ -55,7 +54,7 @@ module.exports = context => {
             loader: 'babel-loader',
             options: context.utils.babelLoaderOptions(),
           },
-          include: [ path.join(context.modulePath, 'front/src') ],
+          include: [path.join(context.modulePath, 'front/src')],
         },
         {
           test: /\.jsx$/,
@@ -63,7 +62,7 @@ module.exports = context => {
             loader: 'babel-loader',
             options: context.utils.babelLoaderOptions(),
           },
-          include: [ path.join(context.modulePath, 'front/src') ],
+          include: [path.join(context.modulePath, 'front/src')],
         },
         {
           test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
@@ -95,6 +94,4 @@ module.exports = context => {
       ],
     },
   };
-
 };
-

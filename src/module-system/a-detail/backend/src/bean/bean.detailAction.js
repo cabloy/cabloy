@@ -6,7 +6,6 @@ const _actions = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class DetailAction extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'detailAction');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -64,7 +63,6 @@ module.exports = ctx => {
       }
       return actions;
     }
-
   }
 
   return DetailAction;

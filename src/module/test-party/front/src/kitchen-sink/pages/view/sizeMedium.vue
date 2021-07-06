@@ -9,7 +9,7 @@
     <f7-block-title>Responsive Grid</f7-block-title>
     <f7-block>
       <p>Grid cells have different size on Small/Medium/Large</p>
-      <p>Small: 100; medium: 50; large: 25; </p>
+      <p>Small: 100; medium: 50; large: 25;</p>
       <f7-row>
         <f7-col class="demo-col" width="100" medium="50" large="25">1</f7-col>
         <f7-col class="demo-col" width="100" medium="50" large="25">2</f7-col>
@@ -37,7 +37,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .demo-col {
@@ -49,5 +48,4 @@ export default {
   margin-bottom: 16px;
   font-size: 12px;
 }
-
 </style>

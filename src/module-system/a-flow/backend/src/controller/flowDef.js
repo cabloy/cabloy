@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class FlowDefController extends app.Controller {
-
     nodeBases() {
       const res = this.ctx.service.flowDef.nodeBases();
       this.ctx.success(res);
@@ -16,7 +14,6 @@ module.exports = app => {
       const res = this.ctx.service.flowDef.flowServiceBases();
       this.ctx.success(res);
     }
-
   }
   return FlowDefController;
 };

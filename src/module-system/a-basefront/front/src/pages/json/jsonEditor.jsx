@@ -4,7 +4,7 @@ export default {
   meta: {
     size: 'medium',
   },
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       content: null,
@@ -93,14 +93,10 @@ export default {
       // save/done
       if (!this.readOnly) {
         if (this.actionSave) {
-          children.push(
-            <eb-link key="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>
-          );
+          children.push(<eb-link key="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>);
         }
         if (this.actionDone) {
-          children.push(
-            <eb-link key="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
-          );
+          children.push(<eb-link key="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>);
         }
       }
       // actions
@@ -109,9 +105,7 @@ export default {
         if (action.readOnly === undefined || action.readOnly === this.readOnly) {
           const icon = action.icon && action.icon.material;
           const title = action.title ? this.$text(action.title) : null;
-          children.push(
-            <eb-link key={action.name} iconMaterial={icon} text={title} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>
-          );
+          children.push(<eb-link key={action.name} iconMaterial={icon} text={title} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>);
         }
       }
       // ok
@@ -122,9 +116,7 @@ export default {
     return (
       <eb-page>
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
-          <f7-nav-right>
-            {this.renderActions()}
-          </f7-nav-right>
+          <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
         <eb-box onSize={this.onSize}>
           <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.content} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>

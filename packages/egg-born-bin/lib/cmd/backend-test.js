@@ -8,14 +8,12 @@ const utils = require('../utils.js');
 const eventAppReady = 'eb:event:appReady';
 
 class BackendTestCommand extends TestCommand {
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin backend-test';
   }
 
-  * run(context) {
-
+  *run(context) {
     if (context.argv.timeout === undefined) context.argv.timeout = 3600 * 1000;
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
@@ -53,7 +51,6 @@ class BackendTestCommand extends TestCommand {
       // run
       yield super.run(context);
     }
-
   }
 
   /**
@@ -62,7 +59,7 @@ class BackendTestCommand extends TestCommand {
    * @return {Array} [ '--require=xxx', 'xx.test.js' ]
    * @protected
    */
-  * formatTestArgs({ argv, debugOptions }) {
+  *formatTestArgs({ argv, debugOptions }) {
     const testArgv = Object.assign({}, argv);
 
     /* istanbul ignore next */
@@ -91,7 +88,7 @@ class BackendTestCommand extends TestCommand {
     // requireArr.push(require.resolve('co-mocha'));
 
     if (requireArr.includes('intelli-espower-loader')) {
-      console.warn('[egg-bin] don\'t need to manually require `intelli-espower-loader` anymore');
+      console.warn("[egg-bin] don't need to manually require `intelli-espower-loader` anymore");
     } else {
       requireArr.push(require.resolve('intelli-espower-loader'));
     }
@@ -168,7 +165,6 @@ class BackendTestCommand extends TestCommand {
   description() {
     return 'backend test';
   }
-
 }
 
 module.exports = BackendTestCommand;

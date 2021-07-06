@@ -4,7 +4,6 @@ const extend = require3('extend2');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
-
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class Auth {
@@ -47,7 +46,8 @@ module.exports = ctx => {
       }
       // login info event
       await ctx.bean.event.invoke({
-        name: 'loginInfo', data: { info },
+        name: 'loginInfo',
+        data: { info },
       });
       return info;
     }
@@ -177,7 +177,7 @@ module.exports = ctx => {
           const config = provider.config;
           config.passReqToCallback = true;
           config.failWithError = false;
-          config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
+          config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
           // handler
           const handler = provider.handler(ctx.app);
           // use strategy
@@ -189,7 +189,6 @@ module.exports = ctx => {
         ctx.app.passport.unuse(strategyName);
       }
     }
-
   }
 
   return Auth;
@@ -224,7 +223,7 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     config.loginURL = ctx.bean.base.getAbsoluteUrl(_config.loginURL);
     config.callbackURL = ctx.bean.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
-    config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
+    config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
 
     // config functions
     if (provider.configFunctions) {
@@ -241,4 +240,3 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     await authenticate(ctx, next);
   };
 }
-

@@ -5,15 +5,14 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
-    </eb-treeview>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const query = this.$f7route.query;
     const atomClass = {
@@ -62,22 +61,24 @@ export default {
       // root
       if (node.root && this.categoryIdStart === undefined) {
         const checkbox = !this.leafOnly;
-        return [{
-          id: 0,
-          attrs: {
-            label: this.$text('Root'),
-            toggle: true,
-            loadChildren: true,
-            checkbox,
-            checkOnLabel: checkbox,
-            selectable: checkbox,
-            itemToggle: !checkbox,
-          },
-          data: {
+        return [
+          {
             id: 0,
-            categoryCatalog: 1,
+            attrs: {
+              label: this.$text('Root'),
+              toggle: true,
+              loadChildren: true,
+              checkbox,
+              checkOnLabel: checkbox,
+              selectable: checkbox,
+              itemToggle: !checkbox,
+            },
+            data: {
+              id: 0,
+              categoryCatalog: 1,
+            },
           },
-        }];
+        ];
       }
       // children
       const categoryId = node.root ? this.categoryIdStart : node.id;
@@ -105,8 +106,7 @@ export default {
         return node;
       });
       list = list.filter(item => {
-        return (!this.catalogOnly || item.data.categoryCatalog === 1) &&
-          (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
+        return (!this.catalogOnly || item.data.categoryCatalog === 1) && (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
       });
       return list;
     },
@@ -123,5 +123,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -7,17 +7,17 @@
     </eb-navbar>
     <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{atomClass && atomClass.title}}</div>
+        <div slot="after">{{ atomClass && atomClass.title }}</div>
       </f7-list-item>
-      <f7-list-item v-if="atomClass" smartSelect :title="$text('Atom Action')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
+      <f7-list-item v-if="atomClass" smartSelect :title="$text('Atom Action')" :smartSelectParams="{ openIn: 'page', closeOnSelect: true }">
         <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
-        <span class="text-color-gray">{{$text('Self')}}</span>
+        <span class="text-color-gray">{{ $text('Self') }}</span>
         <eb-toggle v-model="scopeSelf"></eb-toggle>
       </f7-list-item>
       <f7-list-item v-if="scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
-        <div slot="after">{{scopeTitle}}</div>
+        <div slot="after">{{ scopeTitle }}</div>
       </f7-list-item>
     </eb-list>
   </eb-page>
@@ -26,7 +26,7 @@
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
@@ -52,7 +52,7 @@ export default {
           groupBulk.options.push(option);
         }
       }
-      return [ groupAtom, groupBulk ];
+      return [groupAtom, groupBulk];
     },
     scopeTitle() {
       if (!this.scope) return null;
@@ -121,13 +121,14 @@ export default {
     onSave() {
       const action = this.actionCurrent;
       if (!action) return;
-      return this.$api.post('atomRight/add', {
-        roleId: this.roleId,
-        atomClass: this.atomClass,
-        actionCode: parseInt(action.code),
-        scopeSelf: this.scopeSelf,
-        scope: this.scope ? this.scope.map(item => item.id) : [],
-      })
+      return this.$api
+        .post('atomRight/add', {
+          roleId: this.roleId,
+          atomClass: this.atomClass,
+          actionCode: parseInt(action.code),
+          scopeSelf: this.scopeSelf,
+          scope: this.scope ? this.scope.map(item => item.id) : [],
+        })
         .then(() => {
           this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
           this.$f7router.back();
@@ -135,7 +136,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

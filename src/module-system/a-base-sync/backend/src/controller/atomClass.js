@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class AtomClassController extends app.Controller {
-
     async validatorSearch() {
       const res = await this.ctx.service.atomClass.validatorSearch({
         atomClass: this.ctx.request.body.atomClass,
@@ -23,7 +21,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
 
   return AtomClassController;

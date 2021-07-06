@@ -31,12 +31,11 @@ module.exports = appInfo => {
 
   // io
   config.io = {
-    init: {
-    },
+    init: {},
     namespace: {
       '/': {
-        connectionMiddleware: [ 'connection' ],
-        packetMiddleware: [ 'packet' ],
+        connectionMiddleware: ['connection'],
+        packetMiddleware: ['packet'],
       },
     },
     generateId: () => {
@@ -68,8 +67,7 @@ module.exports = appInfo => {
   };
 
   // modules
-  config.modules = {
-  };
+  config.modules = {};
 
   // i18n
   config.i18n = {
@@ -86,16 +84,7 @@ module.exports = appInfo => {
   // multipart
   config.multipart = {
     fileSize: '30mb',
-    fileExtensions: [
-      '.txt', '.ini', '.md',
-      '.apk', '.msi',
-      '.rar', '.zip', '.tar',
-      '.xls', '.xlsx',
-      '.ppt', '.pptx',
-      '.doc', '.docx',
-      '.pdf',
-      '.aac', '.ogg', '.m4a', '.mp3', '.wav',
-    ],
+    fileExtensions: ['.txt', '.ini', '.md', '.apk', '.msi', '.rar', '.zip', '.tar', '.xls', '.xlsx', '.ppt', '.pptx', '.doc', '.docx', '.pdf', '.aac', '.ogg', '.m4a', '.mp3', '.wav'],
   };
 
   // static
@@ -111,7 +100,7 @@ module.exports = appInfo => {
   // queue
   config.queue = {
     redlock: {
-      clients: [ 'redlock' ],
+      clients: ['redlock'],
       options: {
         driftFactor: 0.01,
         retryCount: -1,
@@ -237,4 +226,3 @@ async function sessionVariableSet(conn, sql) {
     return false;
   }
 }
-

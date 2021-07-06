@@ -1,13 +1,14 @@
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async list() {
       // list
-      const list = await this.ctx.model.query(`
+      const list = await this.ctx.model.query(
+        `
         select a.id, a.module,a.providerName from aAuthProvider a
           where a.iid=? and a.disabled=0
-        `, [this.ctx.instance.id]);
+        `,
+        [this.ctx.instance.id]
+      );
       // list map
       const listMap = {};
       // meta
@@ -38,7 +39,6 @@ module.exports = app => {
       // ok
       return res;
     }
-
   }
 
   return Auth;

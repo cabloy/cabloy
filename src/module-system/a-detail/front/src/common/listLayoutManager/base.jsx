@@ -14,13 +14,11 @@ export default {
       return this.$store.state.auth.user.op;
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     base_prepareReadOptions() {
       // options
-      const options = {
-      };
+      const options = {};
       // layout
       options.layout = this.layout.current;
       // options
@@ -29,7 +27,7 @@ export default {
     base_prepareSelectOptions() {
       // options
       let options = {
-        where: { },
+        where: {},
       };
       // layout
       options.layout = this.layout.current;

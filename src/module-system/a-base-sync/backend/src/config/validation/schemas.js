@@ -177,8 +177,7 @@ module.exports = app => {
   // resource search
   schemas.resourceSearch = {
     type: 'object',
-    properties: {
-    },
+    properties: {},
   };
 
   return schemas;

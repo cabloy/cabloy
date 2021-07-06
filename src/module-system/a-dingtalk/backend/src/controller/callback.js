@@ -4,7 +4,6 @@ const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   class CallbackController extends app.Controller {
-
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
         return await this.ctx.service.callback.index({ message });
@@ -31,13 +30,9 @@ module.exports = app => {
     }
 
     async _parseMessagePost({ query, encryptor }) {
-      const plainText = encryptor.getDecryptMsg(
-        query.signature, query.timestamp, query.nonce,
-        this.ctx.request.body.encrypt);
+      const plainText = encryptor.getDecryptMsg(query.signature, query.timestamp, query.nonce, this.ctx.request.body.encrypt);
       return JSON.parse(plainText);
     }
-
   }
   return CallbackController;
 };
-

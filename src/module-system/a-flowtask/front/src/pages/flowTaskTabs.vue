@@ -3,20 +3,38 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.claimings}`" :tabLinkActive="tabName==='claimings'" icon-only icon-material="play_arrow" badge-color="red" :icon-badge="stats.claimings" :stats_params="{module: 'a-flowtask',name: 'taskClaimings'}" @stats_change="onStatsChange($event,'claimings')"></eb-link>
-          <eb-link :tab-link="`#${tabId.handlings}`" :tabLinkActive="tabName==='handlings'" icon-only icon-material="fast_forward" badge-color="red" :icon-badge="stats.handlings" :stats_params="{module: 'a-flowtask',name: 'taskHandlings'}" @stats_change="onStatsChange($event,'handlings')"></eb-link>
-          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName==='completeds'" icon-only icon-material="stop"></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.claimings}`"
+            :tabLinkActive="tabName === 'claimings'"
+            icon-only
+            icon-material="play_arrow"
+            badge-color="red"
+            :icon-badge="stats.claimings"
+            :stats_params="{ module: 'a-flowtask', name: 'taskClaimings' }"
+            @stats_change="onStatsChange($event, 'claimings')"
+          ></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.handlings}`"
+            :tabLinkActive="tabName === 'handlings'"
+            icon-only
+            icon-material="fast_forward"
+            badge-color="red"
+            :icon-badge="stats.handlings"
+            :stats_params="{ module: 'a-flowtask', name: 'taskHandlings' }"
+            @stats_change="onStatsChange($event, 'handlings')"
+          ></eb-link>
+          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName === 'completeds'" icon-only icon-material="stop"></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.claimings" :tabActive="tabName==='claimings'" data-ref="claimings" @tab:show="tabName='claimings'">
+      <eb-tab-page-content :id="tabId.claimings" :tabActive="tabName === 'claimings'" data-ref="claimings" @tab:show="tabName = 'claimings'">
         <flowTaskTab ref="claimings" slot="list" :container="getContainer('claimings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.handlings" :tabActive="tabName==='handlings'" data-ref="handlings" @tab:show="tabName='handlings'">
+      <eb-tab-page-content :id="tabId.handlings" :tabActive="tabName === 'handlings'" data-ref="handlings" @tab:show="tabName = 'handlings'">
         <flowTaskTab ref="handlings" slot="list" :container="getContainer('handlings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.completeds" :tabActive="tabName==='completeds'" data-ref="completeds" @tab:show="tabName='completeds'">
+      <eb-tab-page-content :id="tabId.completeds" :tabActive="tabName === 'completeds'" data-ref="completeds" @tab:show="tabName = 'completeds'">
         <flowTaskTab ref="completeds" slot="list" :container="getContainer('completeds')"></flowTaskTab>
       </eb-tab-page-content>
     </f7-tabs>
@@ -31,7 +49,7 @@ export default {
   },
   data() {
     const query = this.$f7route.query;
-    const options = (query && query.options) ? JSON.parse(query.options) : { mode: 'claimings' };
+    const options = query && query.options ? JSON.parse(query.options) : { mode: 'claimings' };
     const layout = query && query.layout;
     return {
       options,
@@ -61,8 +79,7 @@ export default {
       return this.$text('Task');
     },
   },
-  created() {
-  },
+  created() {},
   methods: {
     getContainer(mode) {
       return {
@@ -75,5 +92,4 @@ export default {
     },
   },
 };
-
 </script>

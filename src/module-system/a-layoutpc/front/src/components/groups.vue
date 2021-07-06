@@ -13,12 +13,18 @@ export default {
         staticClass: 'eb-layout-views',
         props: { groupId: group.id, views: group.views },
       });
-      children.push(c('f7-tab', {
-        key: group.id,
-        staticClass: `eb-layout-group${group.scene ? ` eb-layout-scene eb-layout-scene-${group.scene}` : ''}`,
-        attrs: { id: group.id, 'data-groupId': group.id },
-        on: { 'tab:show': this.onTabShow },
-      }, [ _group ]));
+      children.push(
+        c(
+          'f7-tab',
+          {
+            key: group.id,
+            staticClass: `eb-layout-group${group.scene ? ` eb-layout-scene eb-layout-scene-${group.scene}` : ''}`,
+            attrs: { id: group.id, 'data-groupId': group.id },
+            on: { 'tab:show': this.onTabShow },
+          },
+          [_group]
+        )
+      );
     }
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
@@ -132,8 +138,8 @@ export default {
     },
     _getGroupAndIndex(groupId) {
       const groupIndex = this._getGroupIndex(groupId);
-      if (groupIndex === -1) return [ null, -1 ];
-      return [ this.groups[groupIndex], groupIndex ];
+      if (groupIndex === -1) return [null, -1];
+      return [this.groups[groupIndex], groupIndex];
     },
     removeGroup(groupId) {
       // current
@@ -188,7 +194,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -3,7 +3,6 @@ const captcha = require3('trek-captcha');
 
 module.exports = app => {
   class CaptchaController extends app.Controller {
-
     async image() {
       // providerInstanceId
       const providerInstanceId = this.ctx.query.providerInstanceId;
@@ -11,14 +10,14 @@ module.exports = app => {
       const { token, buffer } = await captcha();
       // update
       await this.ctx.bean.captcha.update({
-        providerInstanceId, data: { token },
+        providerInstanceId,
+        data: { token },
       });
       // ok
       this.ctx.status = 200;
       this.ctx.type = 'image/gif';
       this.ctx.body = buffer;
     }
-
   }
   return CaptchaController;
 };

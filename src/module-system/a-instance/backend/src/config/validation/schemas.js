@@ -24,13 +24,15 @@ module.exports = app => {
           target: '',
           actionSave: true,
           actionDone: true,
-          actions: [{
-            name: 'preview',
-            actionModule: moduleInfo.relativeName,
-            actionComponent: 'action',
-            icon: { material: 'visibility' },
-            navigateOptions: { target: '_self' },
-          }],
+          actions: [
+            {
+              name: 'preview',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              navigateOptions: { target: '_self' },
+            },
+          ],
         },
         // notEmpty: true,
       },

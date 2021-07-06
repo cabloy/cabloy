@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Party extends app.Service {
-
     async types() {
       const items = await this.ctx.model.partyType.select();
       return items.map(item => {
@@ -34,7 +32,9 @@ module.exports = app => {
     async _overBulk_item({ key, user }) {
       // check right
       const res = await this.ctx.bean.atom.checkRightAction({
-        atom: { id: key.atomId }, action: 101, user,
+        atom: { id: key.atomId },
+        action: 101,
+        user,
       });
       if (!res) return false;
       // over
@@ -42,7 +42,6 @@ module.exports = app => {
       // ok
       return true;
     }
-
   }
 
   return Party;

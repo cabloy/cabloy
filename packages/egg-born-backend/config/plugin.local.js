@@ -1,5 +1,4 @@
 module.exports = {
-
   view: false,
 
   static: {
@@ -26,5 +25,4 @@ module.exports = {
     enable: true,
     package: '@zhennann/egg-socket.io',
   },
-
 };

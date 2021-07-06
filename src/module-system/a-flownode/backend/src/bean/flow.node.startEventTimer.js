@@ -49,7 +49,8 @@ module.exports = ctx => {
       if (bean) {
         // bean
         const parameter = ctx.bean.flow.evaluateExpression({
-          expression: parameterExpression, globals: null,
+          expression: parameterExpression,
+          globals: null,
         });
         await ctx.bean.flow.executeService({
           bean,
@@ -89,7 +90,6 @@ module.exports = ctx => {
       const repeat = await job.queue.repeat;
       await repeat.removeRepeatableByKey(jobKeyActive);
     }
-
   }
 
   return FlowNode;
@@ -102,4 +102,3 @@ function getRepeatKey(name, repeat) {
 
   return `${name}::${endDate}:${tz}:${suffix}`;
 }
-

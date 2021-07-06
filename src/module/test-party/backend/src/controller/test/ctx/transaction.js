@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class TransactionController extends app.Controller {
-
     async transaction() {
       // user
       const user = this.ctx.state.user.op;
@@ -25,9 +23,7 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return TransactionController;
 };
-

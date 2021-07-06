@@ -8,7 +8,7 @@ const Vue = require('./base/vue.js').default;
 require('./base/json.js');
 
 // meta
-const meta = Vue.prototype.$meta = {};
+const meta = (Vue.prototype.$meta = {});
 
 // eventHub
 meta.eventHub = new Vue();

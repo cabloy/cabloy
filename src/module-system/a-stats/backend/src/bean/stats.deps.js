@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class Stats {
-
     async execute(context) {
       const { provider, user } = context;
       const dependencies = provider.dependencies;
@@ -8,7 +7,9 @@ module.exports = ctx => {
       for (const dep of dependencies) {
         const [module, fullName] = dep.split(':');
         const value = await ctx.bean.stats._get({
-          module, fullName, user,
+          module,
+          fullName,
+          user,
         });
         if (value) {
           count += value;
@@ -16,7 +17,6 @@ module.exports = ctx => {
       }
       return count;
     }
-
   }
 
   return Stats;

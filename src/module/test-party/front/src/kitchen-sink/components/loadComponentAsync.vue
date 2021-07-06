@@ -16,7 +16,5 @@ export default {
   },
   created() {},
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

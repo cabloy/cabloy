@@ -10,8 +10,8 @@ module.exports = context => {
   const baseWebpackConfig = baseWebpackConfigFn(context);
 
   // add hot-reload related code to entry chunks
-  Object.keys(baseWebpackConfig.entry).forEach(function(name) {
-    baseWebpackConfig.entry[name] = [ path.join(__dirname, 'dev-client') ].concat(baseWebpackConfig.entry[name]);
+  Object.keys(baseWebpackConfig.entry).forEach(function (name) {
+    baseWebpackConfig.entry[name] = [path.join(__dirname, 'dev-client')].concat(baseWebpackConfig.entry[name]);
   });
 
   return merge(baseWebpackConfig, {
@@ -43,7 +43,7 @@ module.exports = context => {
     },
     watchOptions: {
       aggregateTimeout: 1000,
-      ignored: [ '**/.git/**' ],
+      ignored: ['**/.git/**'],
       // ignored: [ '**/backend/cms/**', '**/backend/test/**', '**/src/module/*/dist/**', '**/.git/**' ],
     },
   });

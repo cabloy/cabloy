@@ -3,9 +3,7 @@ const extend = require3('extend2');
 const initData = require('./initData2.js');
 
 module.exports = function (ctx) {
-
   class VersionInit {
-
     async run(options) {
       // roles
       const roleIds = await this._initRoles();
@@ -54,7 +52,6 @@ module.exports = function (ctx) {
         roleId: roleIds[userRoot.roleId],
       });
     }
-
   }
 
   return VersionInit;

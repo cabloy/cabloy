@@ -37,7 +37,7 @@ export default {
       if (this.valueMode !== 3) return null;
       const value = this.valueSchema[this.mode];
       return value.map(item => {
-        const isCustom = (item && typeof item === 'object');
+        const isCustom = item && typeof item === 'object';
         const key = isCustom ? item.name : item;
         return key;
       });
@@ -47,7 +47,7 @@ export default {
       const value = this.valueSchema[this.mode];
       const properties = this.schemaReference.schema.properties;
       return value.map(item => {
-        const isCustom = (item && typeof item === 'object');
+        const isCustom = item && typeof item === 'object';
         // key
         const key = isCustom ? item.name : item;
         // property
@@ -62,9 +62,9 @@ export default {
         // icon
         let icon;
         if (isCustom && item.property.ebType) {
-          icon = (item.property.ebType === 'group-flatten' || item.property.ebType === 'group') ? 'menu' : 'radio_button_unchecked';
+          icon = item.property.ebType === 'group-flatten' || item.property.ebType === 'group' ? 'menu' : 'radio_button_unchecked';
         } else {
-          icon = property ? ((property.ebType === 'group-flatten' || property.ebType === 'group') ? 'menu' : 'radio_button_unchecked') : 'radio_button_unchecked';
+          icon = property ? (property.ebType === 'group-flatten' || property.ebType === 'group' ? 'menu' : 'radio_button_unchecked') : 'radio_button_unchecked';
         }
         // ok
         return { key, title, icon };
@@ -138,16 +138,16 @@ export default {
     __findProperty({ key }) {
       const value = this.valueSchema[this.mode];
       const index = value.findIndex(item => {
-        return (item === key || (item && item.name === key));
+        return item === key || (item && item.name === key);
       });
-      return [ index, index === -1 ? null : value[index] ];
+      return [index, index === -1 ? null : value[index]];
     },
     onInputMode3(keys) {
       const value = this.valueSchema[this.mode];
       const properties = this.schemaReference.schema.properties;
       for (const key in properties) {
         const indexSelected = keys.indexOf(key);
-        const [ index ] = this.__findProperty({ key });
+        const [index] = this.__findProperty({ key });
         if (indexSelected > -1 && index === -1) {
           value.push(key);
         } else if (indexSelected === -1 && index > -1) {
@@ -180,7 +180,7 @@ export default {
       this.valueMode4 = data;
       this.__onInputValueMode4Delay(data);
     },
-    __onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function(data) {
+    __onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function (data) {
       try {
         this.valueSchema[this.mode] = window.JSON5.parse(data);
       } catch (err) {
@@ -189,9 +189,7 @@ export default {
     }, 1000),
     renderMode_3_item(mode3Item, index) {
       // domMedia
-      const domMedia = (
-        <f7-icon material={mode3Item.icon} slot="media"></f7-icon>
-      );
+      const domMedia = <f7-icon material={mode3Item.icon} slot="media"></f7-icon>;
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -211,37 +209,29 @@ export default {
       // domRight
       const domActions = [];
       domActions.push(
-        <div key='moveUp' color='teal' propsOnPerform={event => this.onPerformMoveUpMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material='arrow_upward'></f7-icon>
+        <div key="moveUp" color="teal" propsOnPerform={event => this.onPerformMoveUpMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material="arrow_upward"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Move Up')}</div>}
         </div>
       );
       domActions.push(
-        <div key='moveDown' color='blue' propsOnPerform={event => this.onPerformMoveDownMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material='arrow_downward'></f7-icon>
+        <div key="moveDown" color="blue" propsOnPerform={event => this.onPerformMoveDownMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material="arrow_downward"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Move Down')}</div>}
         </div>
       );
-      return (
-        <div slot="left">
-          {domActions}
-        </div>
-      );
+      return <div slot="left">{domActions}</div>;
     },
     renderMode_3_itemContextMenu_right(mode3Item, index) {
       // domRight
       const domActions = [];
       domActions.push(
-        <div key='remove' color='red' propsOnPerform={event => this.onPerformRemoveMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material='delete'></f7-icon>
+        <div key="remove" color="red" propsOnPerform={event => this.onPerformRemoveMode3(event, mode3Item, index)}>
+          <f7-icon slot="media" material="delete"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Remove')}</div>}
         </div>
       );
-      return (
-        <div slot="right">
-          {domActions}
-        </div>
-      );
+      return <div slot="right">{domActions}</div>;
     },
     renderMode_3_itemContextMenu(mode3Item, index) {
       if (this.readOnly) return null;
@@ -259,8 +249,27 @@ export default {
       if (!this.readOnly) {
         domGroup = (
           <f7-list-item group-title>
-            <f7-list-item smartSelect title={this.$text('Select Fields')} smartSelectParams={ { openIn: 'page', closeOnSelect: false, formatValueText: () => { return null; } } }>
-              <eb-select name="mode3Select" value={this.mode3SelectValue} onInput={this.onInputMode3} multiple={true} options={this.mode3SelectOptions} propsOnGetDisplays={() => { return null; }}></eb-select>
+            <f7-list-item
+              smartSelect
+              title={this.$text('Select Fields')}
+              smartSelectParams={{
+                openIn: 'page',
+                closeOnSelect: false,
+                formatValueText: () => {
+                  return null;
+                },
+              }}
+            >
+              <eb-select
+                name="mode3Select"
+                value={this.mode3SelectValue}
+                onInput={this.onInputMode3}
+                multiple={true}
+                options={this.mode3SelectOptions}
+                propsOnGetDisplays={() => {
+                  return null;
+                }}
+              ></eb-select>
             </f7-list-item>
           </f7-list-item>
         );
@@ -282,7 +291,16 @@ export default {
       return (
         <f7-list-group>
           <f7-list-item>
-            <eb-input slot="inner" type="textarea" readonly={this.readOnly} resizable style={ { width: '100%' } } class="json-textarea" value={this.valueMode4} onInput={this.onInputValueMode4}></eb-input>
+            <eb-input
+              slot="inner"
+              type="textarea"
+              readonly={this.readOnly}
+              resizable
+              style={{ width: '100%' }}
+              class="json-textarea"
+              value={this.valueMode4}
+              onInput={this.onInputValueMode4}
+            ></eb-input>
           </f7-list-item>
         </f7-list-group>
       );
@@ -292,7 +310,7 @@ export default {
     return (
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
-          <f7-list-item smartSelect={!this.readOnly} title={this.$text('Mode')} smartSelectParams={ { openIn: 'sheet', closeOnSelect: true } }>
+          <f7-list-item smartSelect={!this.readOnly} title={this.$text('Mode')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
             <eb-select readOnly={this.readOnly} name="mode" value={this.valueMode} onInput={this.onInputMode} multiple={false} options={this.valueModes}></eb-select>
           </f7-list-item>
         </f7-list-group>

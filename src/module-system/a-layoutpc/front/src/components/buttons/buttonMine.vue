@@ -1,11 +1,11 @@
 <template>
   <eb-link :class="buttonClass" :onPerform="onPerformClick">
     <div class="item" v-if="loggedIn">
-      <img class="avatar" :src="userAvatar">
+      <img class="avatar" :src="userAvatar" />
     </div>
-    <div class="item name" v-if="loggedIn">{{userName}}</div>
-    <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    <div class="item"><eb-stats-color :stats_params="{module:'a-user', name:'user'}"></eb-stats-color></div>
+    <div class="item name" v-if="loggedIn">{{ userName }}</div>
+    <div class="item status" v-if="!loggedIn">{{ $text('Not LoggedIn') }}</div>
+    <div class="item"><eb-stats-color :stats_params="{ module: 'a-user', name: 'user' }"></eb-stats-color></div>
   </eb-link>
 </template>
 <script>
@@ -19,10 +19,9 @@ function installFactory(_Vue) {
   const Vue = _Vue;
   const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
-    mixins: [ ebLayoutButtonBase ],
+    mixins: [ebLayoutButtonBase],
     data() {
-      return {
-      };
+      return {};
     },
     computed: {
       loggedIn() {
@@ -77,5 +76,4 @@ function installFactory(_Vue) {
     },
   };
 }
-
 </script>

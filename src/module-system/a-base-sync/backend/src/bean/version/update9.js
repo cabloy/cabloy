@@ -1,7 +1,6 @@
 module.exports = function (ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate9 {
-
     async run() {
       await this.run_atom();
       await this.run_categorytag();
@@ -10,7 +9,6 @@ module.exports = function (ctx) {
     }
 
     async run_atom() {
-
       let sql;
 
       // aAtom: atomEnabled->atomStage
@@ -96,11 +94,9 @@ module.exports = function (ctx) {
         update aAtomAction set bulk=1 where code=1
         `;
       await ctx.model.query(sql);
-
     }
 
     async run_categorytag() {
-
       let sql;
       // aAtom: add field atomLanguage\atomCategoryId
       sql = `
@@ -164,7 +160,6 @@ module.exports = function (ctx) {
           )
         `;
       await ctx.model.query(sql);
-
     }
 
     async run_resource() {
@@ -226,7 +221,6 @@ module.exports = function (ctx) {
                 inner join aResourceRole b on a.roleIdBase=b.roleId
             `;
       await ctx.model.query(sql);
-
     }
 
     async run_function() {
@@ -243,7 +237,6 @@ module.exports = function (ctx) {
       // drop view: aViewUserRightFunction
       await ctx.model.query('drop view aViewUserRightFunction');
     }
-
   }
 
   return VersionUpdate9;

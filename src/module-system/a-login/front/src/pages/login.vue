@@ -33,26 +33,32 @@ export default {
     if (this.providers) {
       // close
       if (this.showClose) {
-        children.push(c('f7-link', {
-          staticClass: 'close',
-          props: {
-            iconMaterial: 'chevron_left',
-            text: this.$text('LookAround'),
-          },
-          on: {
-            click: this.onClose,
-          },
-        }));
+        children.push(
+          c('f7-link', {
+            staticClass: 'close',
+            props: {
+              iconMaterial: 'chevron_left',
+              text: this.$text('LookAround'),
+            },
+            on: {
+              click: this.onClose,
+            },
+          })
+        );
       }
       // title
-      children.push(c('f7-login-screen-title', {
-        domProps: { innerText: this.title },
-      }));
+      children.push(
+        c('f7-login-screen-title', {
+          domProps: { innerText: this.title },
+        })
+      );
       if (this.state === 'migrate') {
-        children.push(c('f7-login-screen-title', {
-          staticClass: 'sub-title',
-          domProps: { innerText: this.$text('SignInTheTargetAccount') },
-        }));
+        children.push(
+          c('f7-login-screen-title', {
+            staticClass: 'sub-title',
+            domProps: { innerText: this.$text('SignInTheTargetAccount') },
+          })
+        );
       }
       // loginTop
       const loginTop = this.combineLoginTop(c);
@@ -61,7 +67,7 @@ export default {
       // loginLine
       let loginLine;
       if (loginTop && loginBottom) {
-        loginLine = c('div', { staticClass: 'line' }, [ c('div', { staticClass: 'text', domProps: { innerText: this.$text('OR') } }) ]);
+        loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('OR') } })]);
       }
       // add top
       if (loginTop) children.push(loginTop);
@@ -76,14 +82,18 @@ export default {
       if (lineAndBottom) children.push(lineAndBottom);
     }
     // page
-    return c('eb-page', {
-      attrs: {
-        'login-screen': true,
-        'no-toolbar': false,
-        'no-navbar': true,
-        'no-swipeback': true,
+    return c(
+      'eb-page',
+      {
+        attrs: {
+          'login-screen': true,
+          'no-toolbar': false,
+          'no-navbar': true,
+          'no-swipeback': true,
+        },
       },
-    }, children);
+      children
+    );
   },
   methods: {
     onClose() {
@@ -107,32 +117,46 @@ export default {
       const tabs = [];
       for (const index in providers) {
         const provider = providers[index];
-        buttons.push(c('f7-link', {
-          attrs: {
-            'tab-link': `#tab-${index}`,
-            'tab-link-active': parseInt(index) === 0,
-            text: provider.provider.meta.titleLocale,
-          },
-        }));
-        tabs.push(c('f7-tab', {
-          attrs: {
-            id: `tab-${index}`,
-            'tab-active': parseInt(index) === 0,
-          },
-        }, [ c(provider.component, {
-          props: {
-            state: this.state,
-          },
-        }) ]));
+        buttons.push(
+          c('f7-link', {
+            attrs: {
+              'tab-link': `#tab-${index}`,
+              'tab-link-active': parseInt(index) === 0,
+              text: provider.provider.meta.titleLocale,
+            },
+          })
+        );
+        tabs.push(
+          c(
+            'f7-tab',
+            {
+              attrs: {
+                id: `tab-${index}`,
+                'tab-active': parseInt(index) === 0,
+              },
+            },
+            [
+              c(provider.component, {
+                props: {
+                  state: this.state,
+                },
+              }),
+            ]
+          )
+        );
       }
-      const tabbar = c('f7-toolbar', {
-        attrs: {
-          top: true,
-          tabbar: true,
+      const tabbar = c(
+        'f7-toolbar',
+        {
+          attrs: {
+            top: true,
+            tabbar: true,
+          },
         },
-      }, buttons);
+        buttons
+      );
       const tabblock = c('f7-tabs', tabs);
-      return c('div', [ tabbar, tabblock ]);
+      return c('div', [tabbar, tabblock]);
     },
     combineLoginBottom(c) {
       if (this.state === 'migrate') return null;
@@ -148,7 +172,5 @@ export default {
     },
   },
 };
-
 </script>
-<style>
-</style>
+<style></style>

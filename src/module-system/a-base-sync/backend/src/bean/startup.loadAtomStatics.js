@@ -1,8 +1,6 @@
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
-
     async execute() {
       await this._loadAtomStatics();
     }
@@ -62,7 +60,8 @@ module.exports = app => {
       for (const role of roles) {
         if (!role) continue;
         await this.ctx.bean.resource.addResourceRole({
-          atomId, roleId: role.id,
+          atomId,
+          roleId: role.id,
         });
       }
     }
@@ -133,7 +132,8 @@ module.exports = app => {
       const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomIdDraft });
       if (item.atomRevision === atom.atomRevision) return;
       const atomKey = {
-        atomId: atomIdDraft, itemId: atom.itemId,
+        atomId: atomIdDraft,
+        itemId: atom.itemId,
       };
       // update
       await this.ctx.bean.atom.modelAtom.update({
@@ -143,7 +143,9 @@ module.exports = app => {
       });
       // write
       await this.ctx.bean.atom.write({
-        key: atomKey, item, user: { id: 0 },
+        key: atomKey,
+        item,
+        user: { id: 0 },
       });
       // submit
       await this.ctx.bean.atom.submit({
@@ -186,7 +188,9 @@ module.exports = app => {
       });
       // write
       await this.ctx.bean.atom.write({
-        key: atomKey, item, user: { id: 0 },
+        key: atomKey,
+        item,
+        user: { id: 0 },
       });
       // submit
       const res = await this.ctx.bean.atom.submit({
@@ -196,7 +200,6 @@ module.exports = app => {
       });
       return res.formal.key.atomId;
     }
-
   }
 
   return Startup;

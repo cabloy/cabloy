@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class UtilController extends app.Controller {
-
     async performAction() {
       const res = await this.ctx.service.util.performAction({
         params: JSON.parse(this.ctx.request.query.params),
@@ -15,8 +13,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return UtilController;
 };
-

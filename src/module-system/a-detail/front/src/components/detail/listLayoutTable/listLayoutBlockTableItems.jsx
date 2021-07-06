@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebDetailActions ],
+  mixins: [ebDetailActions],
   props: {
     layoutManager: {
       type: Object,
@@ -60,8 +60,7 @@ export default {
         name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
       });
     },
-    onSwipeoutOpened(event, item) {
-    },
+    onSwipeoutOpened(event, item) {},
     async onAction(event, item, action) {
       const _action = this.getDetailAction(action);
       if (!_action) return;
@@ -84,7 +83,8 @@ export default {
         atomKey.atomId !== this.layoutManager.container.atomId ||
         detailClass.module !== this.layoutManager.container.detailClass.module ||
         detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
-      ) return;
+      )
+        return;
 
       const changed = await this._onActionChanged(data);
       if (changed) {
@@ -172,7 +172,7 @@ export default {
       };
       // default
       if (!column.component) {
-        return <eb-component module='a-basefront' name='renderTableCellDefault' options={options}></eb-component>;
+        return <eb-component module="a-basefront" name="renderTableCellDefault" options={options}></eb-component>;
       }
       // component
       if (column.component.options) {
@@ -182,8 +182,7 @@ export default {
     },
     _customRow(record) {
       return {
-        props: {
-        },
+        props: {},
         on: {
           contextmenu: event => {
             // popover
@@ -229,29 +228,15 @@ export default {
         </div>
       );
 
-      return (
-        <eb-context-menu mode="menu">
-          {domRight}
-        </eb-context-menu>
-      );
+      return <eb-context-menu mode="menu">{domRight}</eb-context-menu>;
     },
     _renderTable() {
-      return (
-        <a-table
-          bordered
-          columns={this.columns}
-          rowKey={item => item.detailId}
-          dataSource={this.layout.dataSource}
-          pagination={false}
-          customRow={this._customRow}
-        >
-        </a-table>
-      );
+      return <a-table bordered columns={this.columns} rowKey={item => item.detailId} dataSource={this.layout.dataSource} pagination={false} customRow={this._customRow}></a-table>;
     },
   },
   render() {
     return (
-      <div class="detai-list-layout-table-container" >
+      <div class="detai-list-layout-table-container">
         {this._renderTable()}
         {this._renderListItemContextMenu()}
       </div>

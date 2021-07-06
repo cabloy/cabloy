@@ -1,5 +1,5 @@
 <template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/dingtalk-40.png"></eb-button>
+  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/dingtalk-40.png" /></eb-button>
 </template>
 <script>
 const urlLogin = '/api/a/dingtalk/passport/a-dingtalk/dingtalkweb';
@@ -28,7 +28,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

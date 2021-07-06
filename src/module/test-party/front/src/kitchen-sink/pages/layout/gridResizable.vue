@@ -9,7 +9,7 @@
       <f7-block>
         <p>Grid cells have different size on Small/Medium/Large</p>
         <f7-row ref="resizableRow">
-          <f7-col v-for="(col,index) of resizableCols" :key="index" resizable :width="col.small" :medium="col.medium" :large="col.large">{{col[getViewSize()]}}</f7-col>
+          <f7-col v-for="(col, index) of resizableCols" :key="index" resizable :width="col.small" :medium="col.medium" :large="col.large">{{ col[getViewSize()] }}</f7-col>
         </f7-row>
       </f7-block>
       <f7-block-title>Columns with gap</f7-block-title>
@@ -99,13 +99,15 @@
       <f7-block-title>Nested</f7-block-title>
       <f7-block>
         <f7-row>
-          <f7-col>50% (.col)
+          <f7-col
+            >50% (.col)
             <f7-row>
               <f7-col>50% (.col)</f7-col>
               <f7-col>50% (.col)</f7-col>
             </f7-row>
           </f7-col>
-          <f7-col>50% (.col)
+          <f7-col
+            >50% (.col)
             <f7-row>
               <f7-col width="33">33% (.col-33)</f7-col>
               <f7-col width="66">66% (.col-66)</f7-col>
@@ -137,7 +139,7 @@
   </eb-page>
 </template>
 <script>
-const _colWidths = [ 5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100 ];
+const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 export default {
   meta: {
     size: 'large',
@@ -230,8 +232,6 @@ export default {
       }
       return null;
     },
-
   },
 };
-
 </script>

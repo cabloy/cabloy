@@ -1,9 +1,9 @@
 <template>
   <f7-card>
-    <f7-card-header>{{$text('Fruit Sales(Pie Chart)')}}</f7-card-header>
+    <f7-card-header>{{ $text('Fruit Sales(Pie Chart)') }}</f7-card-header>
     <f7-card-content>
       <canvas ref="chart"></canvas>
-      <div class="error" v-if="errorMessage">{{errorMessage}}</div>
+      <div class="error" v-if="errorMessage">{{ errorMessage }}</div>
     </f7-card-content>
   </f7-card>
 </template>
@@ -57,7 +57,7 @@ function installFactory(_Vue) {
         },
       },
     },
-    mixins: [ ebDashboardWidgetBase ],
+    mixins: [ebDashboardWidgetBase],
     props: {
       dataSource: {
         type: Object,
@@ -100,7 +100,7 @@ function installFactory(_Vue) {
         return attrs;
       },
       getPropsSchema() {
-        const props = [ 'dataSource' ];
+        const props = ['dataSource'];
         if (this.dataSource) {
           props.push('season');
         }
@@ -133,10 +133,12 @@ function installFactory(_Vue) {
         if (seasonIndex === -1) throw new Error();
         const chartData = {
           labels: this.dataSource.cols.slice(0, 2),
-          datasets: [{
-            backgroundColor: this.dataSource.colors.slice(0, 2),
-            data: this.dataSource.dataset[seasonIndex].slice(0, 2),
-          }],
+          datasets: [
+            {
+              backgroundColor: this.dataSource.colors.slice(0, 2),
+              data: this.dataSource.dataset[seasonIndex].slice(0, 2),
+            },
+          ],
         };
         return chartData;
       },
@@ -210,9 +212,7 @@ function installFactory(_Vue) {
       },
     },
   };
-
 }
-
 </script>
 <style lang="less" scoped>
 .error {
@@ -221,5 +221,4 @@ function installFactory(_Vue) {
   right: 6px;
   font-size: smaller;
 }
-
 </style>

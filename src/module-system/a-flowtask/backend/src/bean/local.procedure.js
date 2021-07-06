@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class Procedure {
-
     selectTasks({ iid, userIdWho, where, orders, page, count, history }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -55,8 +54,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowTask a
+      const _sql = `select ${_selectFields} from aFlowTask a
             inner join aFlowNode b on a.flowNodeId=b.id
             inner join aFlow c on a.flowId=c.id
             left join aUser d on a.userIdAssignee=d.id
@@ -118,8 +116,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql =
-        `select ${_selectFields} from aFlowTaskHistory a
+      const _sql = `select ${_selectFields} from aFlowTaskHistory a
             inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
             inner join aFlowHistory c on a.flowId=c.flowId
             left join aUser d on a.userIdAssignee=d.id
@@ -138,9 +135,7 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
-
   }
 
   return Procedure;
-
 };

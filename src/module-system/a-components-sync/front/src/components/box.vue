@@ -5,7 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-box',
-  mixins: [ viewSizeChange ],
+  mixins: [viewSizeChange],
   render(c) {
     return c('div', { ref: 'box' }, this.$slots.default);
   },
@@ -24,8 +24,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     onViewSizeChange(size) {
@@ -38,5 +37,4 @@ export default {
     },
   },
 };
-
 </script>

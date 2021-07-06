@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Queue extends app.meta.BeanBase {
-
     async execute(context) {
       const data = context.data;
       const queueAction = data.queueAction;
@@ -27,7 +25,6 @@ module.exports = app => {
       const build = this.ctx.bean.cms.build({ atomClass });
       return await build.deleteArticle({ key, article, inner });
     }
-
   }
 
   return Queue;

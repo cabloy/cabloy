@@ -9,7 +9,7 @@
   </f7-list>
 </template>
 <script>
-const _attrsBasic = [ 'attrTitle', 'attrWidthSmall', 'attrWidthMedium', 'attrWidthLarge', 'attrHeight' ];
+const _attrsBasic = ['attrTitle', 'attrWidthSmall', 'attrWidthMedium', 'attrWidthLarge', 'attrHeight'];
 export default {
   props: {
     dashboard: {
@@ -104,7 +104,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

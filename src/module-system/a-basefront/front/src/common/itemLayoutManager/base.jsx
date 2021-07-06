@@ -80,8 +80,7 @@ export default {
     },
     base_prepareReadOptions() {
       // options
-      const options = {
-      };
+      const options = {};
       // layout
       options.layout = this.layout.current;
       // options

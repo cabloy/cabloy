@@ -7,9 +7,9 @@
     </eb-navbar>
     <f7-block>
       <div class="alert-info">
-        <span>{{value}}</span>
+        <span>{{ value }}</span>
         <span> -> </span>
-        <span>{{value+1}}</span>
+        <span>{{ value + 1 }}</span>
       </div>
     </f7-block>
   </eb-page>
@@ -18,7 +18,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {};
   },
@@ -35,5 +35,4 @@ export default {
     },
   },
 };
-
 </script>

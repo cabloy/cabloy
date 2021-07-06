@@ -14,11 +14,8 @@ const VersionInit8Fn = require('./version/init8.js');
 const VersionInit9Fn = require('./version/init9.js');
 
 module.exports = app => {
-
   class Version extends app.meta.BeanBase {
-
     async update(options) {
-
       if (options.version === 10) {
         const versionUpdate10 = new (VersionUpdate10Fn(this.ctx))();
         await versionUpdate10.run();
@@ -61,7 +58,6 @@ module.exports = app => {
     }
 
     async init(options) {
-
       if (options.version === 2) {
         const versionInit2 = new (VersionInit2Fn(this.ctx))();
         await versionInit2.run(options);
@@ -92,7 +88,6 @@ module.exports = app => {
       const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
       await versionUpdate8._updateAtomsInstance(options);
     }
-
   }
 
   return Version;

@@ -12,8 +12,7 @@ module.exports = ctx => {
         mode: 'redirect',
         component: 'buttongithub',
       },
-      config: {
-      },
+      config: {},
       configFunctions: {
         getConfig(ctx) {
           const config = ctx.config.module(moduleInfo.relativeName).account.github.apps.default;

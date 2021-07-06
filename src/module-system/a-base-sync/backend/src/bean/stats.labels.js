@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
-
     async execute(context) {
       const { user } = context;
       // root stats
@@ -37,7 +36,6 @@ module.exports = ctx => {
       // ok
       return statsRoot;
     }
-
   }
 
   return Stats;

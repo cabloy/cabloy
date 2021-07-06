@@ -24,11 +24,25 @@ export default {
   mixins: [
     validateComputedValue,
     validateComputedDisplay,
-    renderProperties, renderComponent, renderGroup, renderPanel, renderText,
-    renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
-    renderLanguage, renderCategory, renderTags, renderResourceType,
-    renderJson, renderDetails, renderDetailsStat,
-    renderAtom, renderAtomClass,
+    renderProperties,
+    renderComponent,
+    renderGroup,
+    renderPanel,
+    renderText,
+    renderDatepicker,
+    renderFile,
+    renderToggle,
+    renderSelect,
+    renderLink,
+    renderLanguage,
+    renderCategory,
+    renderTags,
+    renderResourceType,
+    renderJson,
+    renderDetails,
+    renderDetailsStat,
+    renderAtom,
+    renderAtomClass,
   ],
   props: {
     parcel: {
@@ -81,7 +95,8 @@ export default {
       const ebComputed = property.ebComputed;
       if (!ebComputed) return;
       this.__computed_value.register({
-        parcel, name: key,
+        parcel,
+        name: key,
         expression: ebComputed.expression,
         dependencies: ebComputed.dependencies,
         immediate: ebComputed.immediate,
@@ -253,11 +268,15 @@ export default {
         noHairlinesMd: true,
         inlineLabels: !this.$config.form.floatingLabel,
       };
-      return c('eb-list', {
-        staticClass: 'eb-list-row',
-        attrs,
-        on: { submit: this.onSubmit },
-      }, children);
+      return c(
+        'eb-list',
+        {
+          staticClass: 'eb-list-row',
+          attrs,
+          on: { submit: this.onSubmit },
+        },
+        children
+      );
     },
     renderItem(c) {
       if (!this.validate.ready) return c('div');
@@ -364,7 +383,8 @@ export default {
       }
       // try to register always, for maybe disposed when parcel changed
       this.__computed_display.register({
-        parcel, name: key,
+        parcel,
+        name: key,
         expression: ebDisplay.expression,
         dependencies: ebDisplay.dependencies,
         immediate: true, // always

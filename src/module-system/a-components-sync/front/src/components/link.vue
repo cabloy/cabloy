@@ -11,7 +11,7 @@ export default {
   },
   name: 'eb-link',
   extends: f7Link,
-  mixins: [ perform, link, stats ],
+  mixins: [perform, link, stats],
   methods: {
     getLinkEl() {
       return this.$$(this.$el);
@@ -21,7 +21,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

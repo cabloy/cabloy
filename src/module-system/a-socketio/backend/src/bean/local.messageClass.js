@@ -7,7 +7,6 @@ const _cacheChannels = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
-
     get modelMessageClass() {
       return ctx.model.module(moduleInfo.relativeName).messageClass;
     }
@@ -106,8 +105,7 @@ module.exports = ctx => {
 
     // string/object
     channel(channelFullName) {
-      let module,
-        channelName;
+      let module, channelName;
       if (typeof channelFullName === 'string') {
         [module, channelName] = channelFullName.split(':');
       } else {
@@ -145,8 +143,6 @@ module.exports = ctx => {
       }
       return channels;
     }
-
-
   }
   return MessageClass;
 };

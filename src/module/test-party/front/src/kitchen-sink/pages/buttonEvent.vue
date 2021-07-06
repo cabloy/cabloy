@@ -60,11 +60,9 @@ export default {
     },
   },
 };
-
 </script>
 <style scoped>
 .test-link {
   text-align: center;
 }
-
 </style>

@@ -1,12 +1,12 @@
 import Vue from 'vue';
 const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
 
-const __watchNames = [ 'info.record', 'info.index' ];
+const __watchNames = ['info.record', 'info.index'];
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebRenderTableCellFormat ],
+  mixins: [ebRenderTableCellFormat],
   props: {
     layoutManager: {
       type: Object,
@@ -52,16 +52,17 @@ export default {
       // evaluate
       const { text, record, index, column } = this.info;
       const scope = { text, record, index, options: column.component.options }; // { text, record, index, column }
-      this.$meta.util.sandbox.evaluate(this.expression, scope).then(value => {
-        this.value = this.formatText({ text: value, column });
-      }).catch(err => {
-        throw err;
-      });
+      this.$meta.util.sandbox
+        .evaluate(this.expression, scope)
+        .then(value => {
+          this.value = this.formatText({ text: value, column });
+        })
+        .catch(err => {
+          throw err;
+        });
     },
   },
   render() {
-    return (
-      <span>{this.value}</span>
-    );
+    return <span>{this.value}</span>;
   },
 };

@@ -1,9 +1,19 @@
 <template>
   <eb-page infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar :large="advanced" :inner="false">
-      <f7-searchbar v-if="disableButton!==null" ref="searchbar" @searchbar:search="onSearch" @searchbar:disable="onDisable" :placeholder="$text(title)" :backdrop="false" :disable-button="disableButton" :clear-button="true" :custom-search="true">
+      <f7-searchbar
+        v-if="disableButton !== null"
+        ref="searchbar"
+        @searchbar:search="onSearch"
+        @searchbar:disable="onDisable"
+        :placeholder="$text(title)"
+        :backdrop="false"
+        :disable-button="disableButton"
+        :clear-button="true"
+        :custom-search="true"
+      >
       </f7-searchbar>
-      <eb-link v-if="advanced" slot="title-large" class="search-advanced" @click="onClickAdvanced">{{$text(advancedSearchTitle)}}</eb-link>
+      <eb-link v-if="advanced" slot="title-large" class="search-advanced" @click="onClickAdvanced">{{ $text(advancedSearchTitle) }}</eb-link>
     </eb-navbar>
     <slot></slot>
   </eb-page>
@@ -35,13 +45,13 @@ export default {
     };
   },
   mounted() {
-    this.disableButton = (this.$meta.vueLayout.backLink(this));
+    this.disableButton = this.$meta.vueLayout.backLink(this);
     this.$nextTick(() => {
       this.$refs.searchbar.f7Searchbar.enable(true);
     });
   },
   methods: {
-    onSearch: Vue.prototype.$meta.util.debounce(function(searchbar, query) {
+    onSearch: Vue.prototype.$meta.util.debounce(function (searchbar, query) {
       this.$emit('search', query);
     }, 300),
     onDisable() {
@@ -55,7 +65,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .search-advanced {
@@ -63,5 +72,4 @@ export default {
   font-size: var(--f7-toolbar-font-size);
   top: 6px;
 }
-
 </style>

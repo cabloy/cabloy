@@ -16,31 +16,43 @@ export default {
           },
         },
       });
-      children.push(c('eb-link', {
-        ref: group.id,
-        key: group.id,
-        attrs: { tabLink: `#${group.id}` },
-        props: {
-          onPerform: () => {
-            this.groups.switchGroup(group.id);
+      children.push(
+        c(
+          'eb-link',
+          {
+            ref: group.id,
+            key: group.id,
+            attrs: { tabLink: `#${group.id}` },
+            props: {
+              onPerform: () => {
+                this.groups.switchGroup(group.id);
+              },
+            },
+            directives: [
+              {
+                name: 'eb-dragdrop',
+                value: {
+                  scene: this.dragdropScene,
+                  group,
+                  onDragStart: this.onDragStart,
+                  onDropElement: this.onDropElement,
+                  onDragDone: this.onDragDone,
+                },
+              },
+            ],
           },
-        },
-        directives: [{
-          name: 'eb-dragdrop',
-          value: {
-            scene: this.dragdropScene,
-            group,
-            onDragStart: this.onDragStart,
-            onDropElement: this.onDropElement,
-            onDragDone: this.onDragDone,
-          },
-        }],
-      }, [ text, close ]));
+          [text, close]
+        )
+      );
     }
-    const toolbar = c('f7-toolbar', {
-      ref: 'toolbar',
-      attrs: { top: true, tabbar: true, scrollable: true },
-    }, children);
+    const toolbar = c(
+      'f7-toolbar',
+      {
+        ref: 'toolbar',
+        attrs: { top: true, tabbar: true, scrollable: true },
+      },
+      children
+    );
     return toolbar;
   },
   data() {
@@ -61,13 +73,13 @@ export default {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
     onDragStart({ $el, context, dragElement }) {
-      const [ group, groupIndexDrag ] = this.groups._getGroupAndIndex(context.group.id);
+      const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
       const tooltip = group.title;
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [ groupDrop, groupIndexDrop ] = this.groups._getGroupAndIndex(context.group.id);
-      const [ groupDrag, groupIndexDrag ] = this.groups._getGroupAndIndex(dragContext.group.id);
+      const [groupDrop, groupIndexDrop] = this.groups._getGroupAndIndex(context.group.id);
+      const [groupDrag, groupIndexDrag] = this.groups._getGroupAndIndex(dragContext.group.id);
       if (groupIndexDrop === groupIndexDrag || groupIndexDrop == groupIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -84,7 +96,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

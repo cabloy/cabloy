@@ -29,8 +29,6 @@ export default {
       return this.container_flowLayoutManager.base_atomClass;
     },
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
 };

@@ -1,6 +1,5 @@
 module.exports = app => {
   class AuthController extends app.Controller {
-
     async login() {
       const res = await this.service.auth.login({
         scene: this.ctx.request.body.scene,
@@ -17,7 +16,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return AuthController;
 };

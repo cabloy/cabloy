@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class CommentController extends app.Controller {
-
     async all() {
       const options = this.ctx.request.body.options;
       options.comment = 1;
@@ -62,7 +60,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return CommentController;
 };

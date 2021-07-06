@@ -11,7 +11,7 @@
     </f7-list>
     <f7-block-title>Custom date format</f7-block-title>
     <f7-list no-hairlines-md>
-      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{dateFormat: 'DD, MM dd, yyyy'}" />
+      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{ dateFormat: 'DD, MM dd, yyyy' }" />
     </f7-list>
     <f7-block-title>Multiple Values</f7-block-title>
     <f7-list no-hairlines-md>
@@ -23,7 +23,7 @@
     </f7-list>
     <f7-block-title>Open in Modal</f7-block-title>
     <f7-list no-hairlines-md>
-      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{openIn: 'customModal', header: true, footer: true, dateFormat: 'MM dd yyyy'}" />
+      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{ openIn: 'customModal', header: true, footer: true, dateFormat: 'MM dd yyyy' }" />
     </f7-list>
     <f7-block-title>Calendar Page</f7-block-title>
     <f7-list>
@@ -35,7 +35,7 @@
     </f7-block>
     <f7-block-title>Jalali Calendar</f7-block-title>
     <f7-list no-hairlines-md>
-      <f7-list-input type="datepicker" placeholder="Your birth date in Jalali" readonly :calendar-params="{calendarType: 'jalali'}" />
+      <f7-list-input type="datepicker" placeholder="Your birth date in Jalali" readonly :calendar-params="{ calendarType: 'jalali' }" />
     </f7-list>
   </eb-page>
 </template>
@@ -48,10 +48,10 @@ export default {
       const $ = self.$$;
 
       // Inline with custom toolbar
-      const monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       self.calendarInline = app.calendar.create({
         containerEl: '#demo-calendar-inline-container',
-        value: [ new Date() ],
+        value: [new Date()],
         renderToolbar() {
           return `
               <div class="toolbar calendar-custom-toolbar no-shadow">
@@ -89,5 +89,4 @@ export default {
     },
   },
 };
-
 </script>

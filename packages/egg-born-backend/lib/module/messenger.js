@@ -1,8 +1,7 @@
 const uuid = require('uuid');
 const eventMessengerCall = 'eb:event:messengerCall';
 
-module.exports = function(loader) {
-
+module.exports = function (loader) {
   class Messenger {
     constructor() {
       this._providers = {};
@@ -79,14 +78,16 @@ module.exports = function(loader) {
       loader.app.messenger.sendToApp(eventName, info);
     }
     sendTo(pid, eventName, info) {
-      if (loader.app.meta.isTest || !this._pids) { // support init:backend
+      if (loader.app.meta.isTest || !this._pids) {
+        // support init:backend
         loader.app.messenger.sendToApp(eventName, info);
       } else {
         loader.app.messenger.sendTo(pid, eventName, info);
       }
     }
     sendRandom(eventName, info) {
-      if (loader.app.meta.isTest || !this._pids) { // support init:backend
+      if (loader.app.meta.isTest || !this._pids) {
+        // support init:backend
         loader.app.messenger.sendToApp(eventName, info);
       } else {
         loader.app.messenger.sendRandom(eventName, info);
@@ -103,5 +104,4 @@ module.exports = function(loader) {
 
   // messenger
   loader.app.meta.messenger = new Messenger();
-
 };

@@ -2,7 +2,13 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('CMS')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
-      <eb-list-item v-for="item of items" :key="item.key" :title="item.title" link="#" :eb-href="`/a/cms/config/list?module=${item.moduleName}&atomClassName=${item.atomClassName}&title=${encodeURIComponent(item.title)}`">
+      <eb-list-item
+        v-for="item of items"
+        :key="item.key"
+        :title="item.title"
+        link="#"
+        :eb-href="`/a/cms/config/list?module=${item.moduleName}&atomClassName=${item.atomClassName}&title=${encodeURIComponent(item.title)}`"
+      >
       </eb-list-item>
     </f7-list>
   </eb-page>
@@ -15,7 +21,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses ],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     role: {
       type: Object,
@@ -60,5 +66,4 @@ export default {
   },
   methods: {},
 };
-
 </script>

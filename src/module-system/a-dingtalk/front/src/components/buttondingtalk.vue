@@ -1,5 +1,5 @@
 <template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/dingtalk-40.png"></eb-button>
+  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/dingtalk-40.png" /></eb-button>
 </template>
 <script>
 export default {
@@ -39,12 +39,15 @@ export default {
           corpId: config.corpId,
           onSuccess(info) {
             const code = info.code;
-            ctx.$api.post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state }).then(() => {
-              ctx.$meta.vueApp.reload({ echo: true });
-              resolve();
-            }).catch(e => {
-              reject(e);
-            });
+            ctx.$api
+              .post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state })
+              .then(() => {
+                ctx.$meta.vueApp.reload({ echo: true });
+                resolve();
+              })
+              .catch(e => {
+                reject(e);
+              });
           },
           onFail(err) {
             reject(new Error(err.errorMessage || err.message));
@@ -62,7 +65,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

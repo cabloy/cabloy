@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ Antdv ],
+  mixins: [Antdv],
   props: {
     layoutManager: {
       type: Object,
@@ -32,7 +32,7 @@ export default {
   created() {
     this.layoutManager.layout.instance = this;
     this.layoutManager.bottombar.enable = true;
-    if (this.layoutManager.container.atomClass && (this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting')) {
+    if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
       this.layoutManager.bulk_loadActions();
     }
     // first load
@@ -78,16 +78,19 @@ export default {
       const params = this.layoutManager.base_prepareSelectParams();
       // fetch
       this.loading = true;
-      this.$api.post('/a/base/atom/count', params).then(res => {
-        this.loading = false;
-        this.info.total = res;
-        if (this.info.total === 0) return;
-        // page 1
-        this.gotoPage(1);
-      }).catch(err => {
-        this.$view.toast.show({ text: err.message });
-        this.loading = false;
-      });
+      this.$api
+        .post('/a/base/atom/count', params)
+        .then(res => {
+          this.loading = false;
+          this.info.total = res;
+          if (this.info.total === 0) return;
+          // page 1
+          this.gotoPage(1);
+        })
+        .catch(err => {
+          this.$view.toast.show({ text: err.message });
+          this.loading = false;
+        });
     },
     async _loadMore({ index, size }) {
       // params
@@ -109,14 +112,16 @@ export default {
       // fetech
       const index = (pageNum - 1) * this.info.pageSize;
       this.loading = true;
-      this._loadMore({ index, size: this.info.pageSize }).then(items => {
-        this.$set(this.itemsPages, pageNum, items);
-        this.info.pageCurrent = pageNum;
-        this.loading = false;
-      }).catch(err => {
-        this.$view.toast.show({ text: err.message });
-        this.loading = false;
-      });
+      this._loadMore({ index, size: this.info.pageSize })
+        .then(items => {
+          this.$set(this.itemsPages, pageNum, items);
+          this.info.pageCurrent = pageNum;
+          this.loading = false;
+        })
+        .catch(err => {
+          this.$view.toast.show({ text: err.message });
+          this.loading = false;
+        });
     },
     getBlockComponentOptions({ blockConfig }) {
       return {
@@ -133,23 +138,19 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     _renderEmpty() {
-      if (this.loading) return (<f7-preloader></f7-preloader>);
-      return (<div>{this.$text('No Data')}</div>);
+      if (this.loading) return <f7-preloader></f7-preloader>;
+      return <div>{this.$text('No Data')}</div>;
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
       return (
         <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
-          { this._renderBlock({ blockName: 'items' })}
+          {this._renderBlock({ blockName: 'items' })}
         </a-config-provider>
       );
     },
   },
   render() {
-    return (
-      <div class="eb-antdv">
-        {this._renderConfigProvider()}
-      </div>
-    );
+    return <div class="eb-antdv">{this._renderConfigProvider()}</div>;
   },
 };

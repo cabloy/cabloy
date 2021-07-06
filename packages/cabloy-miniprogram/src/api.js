@@ -1,4 +1,4 @@
-module.exports = function(cabloy) {
+module.exports = function (cabloy) {
   return {
     request(options) {
       // url

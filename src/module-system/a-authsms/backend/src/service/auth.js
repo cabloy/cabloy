@@ -1,9 +1,7 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
-
     async signup({ user, state = 'login', userName, realName, mobile }) {
-
       // profileUser
       const profileUser = {
         module: moduleInfo.relativeName,
@@ -62,7 +60,6 @@ module.exports = app => {
     async mobileVerify({ user, mobile }) {
       await this.signup({ user, state: 'associate', userName: null, realName: null, mobile });
     }
-
   }
 
   return Auth;

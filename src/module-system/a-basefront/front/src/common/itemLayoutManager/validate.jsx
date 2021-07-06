@@ -1,7 +1,6 @@
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     validate_host() {
@@ -29,14 +28,16 @@ export default {
     validate_render() {
       if (!this.base_ready) return null;
       return (
-        <eb-validate ref="validate"
+        <eb-validate
+          ref="validate"
           host={this.validate_host}
           readOnly={this.container.mode !== 'edit'}
-          auto data={this.base.item}
+          auto
+          data={this.base.item}
           params={this.base.validateParams}
           propsOnPerform={this.validate_onPerformValidate}
-          onSubmit={this.validate_onSubmit}>
-        </eb-validate>
+          onSubmit={this.validate_onSubmit}
+        ></eb-validate>
       );
     },
   },

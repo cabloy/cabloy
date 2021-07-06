@@ -32,5 +32,4 @@ module.exports = class Listener {
       assert.equal(echo, 'hello');
     }
   }
-
 };

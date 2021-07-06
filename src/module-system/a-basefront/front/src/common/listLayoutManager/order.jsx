@@ -91,9 +91,7 @@ export default {
       return '';
     },
     order_renderAction() {
-      return (
-        <eb-link iconMaterial="sort" propsOnPerform={event => this.order_onPerformPopover(event)}></eb-link>
-      );
+      return <eb-link iconMaterial="sort" propsOnPerform={event => this.order_onPerformPopover(event)}></eb-link>;
     },
     order_renderPopover() {
       if (!this.base.ready) return null;
@@ -109,9 +107,7 @@ export default {
       }
       return (
         <eb-popover ref="order_popover" ready={true}>
-          <f7-list inset>
-            {children}
-          </f7-list>
+          <f7-list inset>{children}</f7-list>
         </eb-popover>
       );
     },

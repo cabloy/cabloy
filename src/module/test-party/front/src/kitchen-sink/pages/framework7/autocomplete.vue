@@ -301,15 +301,18 @@ export default {
           autocomplete.preloaderShow();
 
           // Do Ajax request to Autocomplete data
-          self.$api.get(`kitchen-sink/autocomplete/languages/${query}`).then(data => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-            // Render items by passing array with result items
-            render(data);
-          }).catch(() => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-          });
+          self.$api
+            .get(`kitchen-sink/autocomplete/languages/${query}`)
+            .then(data => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+              // Render items by passing array with result items
+              render(data);
+            })
+            .catch(() => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+            });
         },
       });
 
@@ -334,15 +337,18 @@ export default {
           autocomplete.preloaderShow();
 
           // Do Ajax request to Autocomplete data
-          self.$api.get(`kitchen-sink/autocomplete/languages/${query}`).then(data => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-            // Render items by passing array with result items
-            render(data);
-          }).catch(() => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-          });
+          self.$api
+            .get(`kitchen-sink/autocomplete/languages/${query}`)
+            .then(data => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+              // Render items by passing array with result items
+              render(data);
+            })
+            .catch(() => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+            });
         },
       });
 
@@ -421,15 +427,18 @@ export default {
           // Show Preloader
           autocomplete.preloaderShow();
           // Do Ajax request to Autocomplete data
-          self.$api.get(`kitchen-sink/autocomplete/languages/${query}`).then(data => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-            // Render items by passing array with result items
-            render(data);
-          }).catch(() => {
-            // Hide Preoloader
-            autocomplete.preloaderHide();
-          });
+          self.$api
+            .get(`kitchen-sink/autocomplete/languages/${query}`)
+            .then(data => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+              // Render items by passing array with result items
+              render(data);
+            })
+            .catch(() => {
+              // Hide Preoloader
+              autocomplete.preloaderHide();
+            });
         },
         on: {
           change(value) {
@@ -478,5 +487,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -44,9 +44,7 @@ module.exports = appInfo => {
         loadOnScroll: false,
       },
     },
-    profile: {
-
-    },
+    profile: {},
     beian: {
       icp: '',
     },

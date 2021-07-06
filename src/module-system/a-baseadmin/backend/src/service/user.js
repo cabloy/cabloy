@@ -1,18 +1,12 @@
 module.exports = app => {
-
   class User extends app.Service {
-
     async select({ query, page }) {
       return await this.ctx.bean.user.select({
         options: {
           where: {
             'a.anonymous': 0,
             'a.disabled': 0,
-            __or__: [
-              { 'a.userName': { op: 'like', val: query } },
-              { 'a.realName': { op: 'like', val: query } },
-              { 'a.mobile': { op: 'like', val: query } },
-            ],
+            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
           },
           orders: [['a.userName', 'asc']],
           page,
@@ -56,7 +50,6 @@ module.exports = app => {
     async resourceRights({ userId, page }) {
       return await this.ctx.bean.resource.resourceRightsOfUser({ userId, page });
     }
-
   }
 
   return User;

@@ -4,7 +4,7 @@ export default {
       let { property } = context;
       if (!property.ebRender) {
         property = {
-          ... property,
+          ...property,
           ebRender: {
             module: 'a-basefront',
             name: 'renderTags',

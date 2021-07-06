@@ -10,17 +10,17 @@
       <eb-list-input :label="$text('Username')" type="text" clear-button :placeholder="$text('Username')" v-model="item.userName"></eb-list-input>
       <eb-list-input :label="$text('Password')" type="password" clear-button :placeholder="$text('Password')" v-model="item.password"></eb-list-input>
       <eb-list-input :label="$text('Password Again')" type="Password" clear-button :placeholder="$text('Password Again')" v-model="item.passwordAgain"></eb-list-input>
-      <f7-list-item smartSelect :title="$text('Sex')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
+      <f7-list-item smartSelect :title="$text('Sex')" :smartSelectParams="{ openIn: 'page', closeOnSelect: true }">
         <eb-select name="sex" v-model="item.sex" optionsBlankAuto :multiple="false" :options="sexes"></eb-select>
       </f7-list-item>
-      <f7-list-item smartSelect :title="$text('Language')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
+      <f7-list-item smartSelect :title="$text('Language')" :smartSelectParams="{ openIn: 'page', closeOnSelect: true }">
         <eb-select name="language" v-model="item.language" optionsBlankAuto :multiple="false" :options="languages"></eb-select>
       </f7-list-item>
       <eb-list-input :label="$text('Avatar')" type="text" clearButton :placeholder="$text('Avatar')" v-model="item.avatar" @focus="onAvatarFocus" @blur="onAvatarBlur">
-        <eb-button slot="root-end" class="eb-input-file-upload" :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+        <eb-button slot="root-end" class="eb-input-file-upload" :onPerform="onPerformUpload">{{ $text('Upload') }}</eb-button>
       </eb-list-input>
       <f7-list-item v-if="item.avatar">
-        <img class="avatar avatar48" :src="getAvatarUrl(item.avatar,48)">
+        <img class="avatar avatar48" :src="getAvatarUrl(item.avatar, 48)" />
       </f7-list-item>
       <f7-list-item :title="$text('Remember Me')">
         <eb-toggle slot="after" v-model="item.rememberMe"></eb-toggle>
@@ -28,7 +28,7 @@
       <eb-list-input :label="$text('Motto')" type="textarea" resizable clear-button :placeholder="$text('Motto')" v-model="item.motto"></eb-list-input>
     </eb-list>
     <f7-block-title>Form Value</f7-block-title>
-    <pre class="form-data">{{form2}}</pre>
+    <pre class="form-data">{{ form2 }}</pre>
   </eb-page>
 </template>
 <script>
@@ -61,11 +61,13 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onPerformSave() {
-      return this.$api.post('kitchen-sink/form-schema-validation/saveSimple', {
-        data: this.item,
-      }).then(() => {
-        this.$view.toast.show();
-      });
+      return this.$api
+        .post('kitchen-sink/form-schema-validation/saveSimple', {
+          data: this.item,
+        })
+        .then(() => {
+          this.$view.toast.show();
+        });
     },
     onPerformUpload() {
       this.$view.navigate('/a/file/file/upload', {
@@ -105,7 +107,6 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .form-data {
@@ -113,5 +114,4 @@ export default {
   margin: 8px;
   padding: 8px;
 }
-
 </style>

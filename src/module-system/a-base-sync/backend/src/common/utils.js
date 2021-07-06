@@ -1,4 +1,3 @@
-
 /**
   escapeHtml: based on markdown-it
 **/
@@ -10,7 +9,7 @@ const HTML_REPLACEMENTS = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  '\'': '&#039;',
+  "'": '&#039;',
 };
 
 function replaceUnsafeChar(ch) {
@@ -30,7 +29,7 @@ const URL_REPLACEMENTS = {
   '<': '%3C',
   '>': '%3E',
   '"': '%22',
-  '\'': '%27',
+  "'": '%27',
 };
 
 function replaceUnsafeCharURL(ch) {

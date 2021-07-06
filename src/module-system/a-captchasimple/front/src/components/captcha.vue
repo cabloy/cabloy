@@ -1,5 +1,5 @@
 <template>
-  <img :src="src" @click="onClick" class="captcha" crossorigin="use-credentials"></img>
+  <img :src="src" @click="onClick" class="captcha" crossorigin="use-credentials" />
 </template>
 <script>
 export default {
@@ -52,7 +52,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

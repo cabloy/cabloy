@@ -1,7 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test.test.js', () => {
-
   // atomClass info
   const atomClass = {
     module: 'cms-sitecommunity',
@@ -12,63 +11,73 @@ describe('test/controller/test.test.js', () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
-    const result = await app.httpRequest().post(mockUrl('/a/cms/site/setConfigSite')).send({
-      atomClass,
-      data: {
-        host: {
-          url: 'http://localhost:9081',
-          rootPath: '',
+    const result = await app
+      .httpRequest()
+      .post(mockUrl('/a/cms/site/setConfigSite'))
+      .send({
+        atomClass,
+        data: {
+          host: {
+            url: 'http://localhost:9081',
+            rootPath: '',
+          },
+          language: {
+            default: 'en-us',
+            items: 'en-us,zh-cn',
+          },
+          themes: {
+            'en-us': 'cms-themecommunity',
+            'zh-cn': 'cms-themecommunity',
+          },
         },
-        language: {
-          default: 'en-us',
-          items: 'en-us,zh-cn',
-        },
-        themes: {
-          'en-us': 'cms-themecommunity',
-          'zh-cn': 'cms-themecommunity',
-        },
-      },
-    });
+      });
     assert(result.body.code === 0);
-
   });
 
   it('action:build languages', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({
       atomClass,
     });
     assert(result.body.code === 0);
     console.log('time used: ', result.body.data.time);
-
   });
 
   it('action:render article', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     const articles = [
       {
@@ -112,18 +121,21 @@ describe('test/controller/test.test.js', () => {
       const keyDraft = result.body.data;
 
       // submit
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-        key: keyDraft,
-        item: {
-          atomId: keyDraft.atomId,
-          atomName: article.atomName,
-          atomLanguage: article.atomLanguage,
-          editMode: article.editMode,
-          content: article.content,
-          slug: article.slug,
-        },
-        options: { ignoreFlow: true },
-      });
+      result = await app
+        .httpRequest()
+        .post(mockUrl('/a/base/atom/writeSubmit'))
+        .send({
+          key: keyDraft,
+          item: {
+            atomId: keyDraft.atomId,
+            atomName: article.atomName,
+            atomLanguage: article.atomLanguage,
+            editMode: article.editMode,
+            content: article.content,
+            slug: article.slug,
+          },
+          options: { ignoreFlow: true },
+        });
       assert(result.body.code === 0);
       const keyFormal = result.body.data.formal.key;
 
@@ -136,26 +148,26 @@ describe('test/controller/test.test.js', () => {
         assert(result.body.code === 0);
       }
     }
-
   });
 
   it('action:build languages', async () => {
     app.mockSession({});
 
     // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'root',
+          password: '123456',
+        },
+      });
 
     const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({
       atomClass,
     });
     assert(result.body.code === 0);
     console.log('time used: ', result.body.data.time);
-
   });
-
 });

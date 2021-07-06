@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class AtomClass extends app.Service {
-
     async validatorSearch({ atomClass }) {
       return await this.ctx.bean.atomClass.validatorSearch({ atomClass });
     }
@@ -13,7 +11,6 @@ module.exports = app => {
     async atomClass({ atomClass }) {
       return await this.ctx.bean.atomClass.get(atomClass);
     }
-
   }
 
   return AtomClass;

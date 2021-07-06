@@ -16,10 +16,9 @@ import Actions from './actions.jsx';
 // },
 
 export default {
-  mixins: [ Base, Page, Layout, Info, Validate, Actions ],
+  mixins: [Base, Page, Layout, Info, Validate, Actions],
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     container_flowLayoutManager() {

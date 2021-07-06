@@ -35,15 +35,18 @@ module.exports = app => {
           mode: 'direct',
           component: 'signin',
         },
-        config: {
-        },
+        config: {},
         handler: app => {
           return {
             strategy,
             callback: (req, body, done) => {
-              verify(req.ctx, body).then(user => {
-                app.passport.doVerify(req, user, done);
-              }).catch(err => { done(err); });
+              verify(req.ctx, body)
+                .then(user => {
+                  app.passport.doVerify(req, user, done);
+                })
+                .catch(err => {
+                  done(err);
+                });
             },
           };
         },

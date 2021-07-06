@@ -2,7 +2,6 @@ const path = require('path');
 const fse = require('fs-extra');
 
 module.exports = context => {
-
   function hasHash(file) {
     const name = path.basename(file);
     return name.split('.').length - 1 > 1;
@@ -22,13 +21,11 @@ module.exports = context => {
       path: context.config.build.assetsRoot,
       filename: '[name].bundle.js',
       chunkFilename: '[name].bundle.js',
-      publicPath: process.env.NODE_ENV === 'production'
-        ? context.config.build.assetsPublicPath
-        : context.config.dev.assetsPublicPath,
+      publicPath: process.env.NODE_ENV === 'production' ? context.config.build.assetsPublicPath : context.config.dev.assetsPublicPath,
     },
     resolve: {
       symlinks: false,
-      extensions: [ '.js', '.vue', '.json' ],
+      extensions: ['.js', '.vue', '.json'],
       alias: {
         vue: vueModulePath,
       },
@@ -82,5 +79,4 @@ module.exports = context => {
       ],
     },
   };
-
 };

@@ -3,16 +3,32 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.drafts}`" :tabLinkActive="tabName==='drafts'" :text="$text('Drafts')" badge-color="orange" :badge="stats.drafts" :stats_params="{module: 'a-base',name: 'drafts'}" @stats_change="onStatsChange($event,'drafts')"></eb-link>
-          <eb-link :tab-link="`#${tabId.draftsFlowing}`" :tabLinkActive="tabName==='draftsFlowing'" :text="$text('DraftsFlowingMineTab')" badge-color="gray" :badge="stats.draftsFlowing" :stats_params="{module: 'a-base',name: 'draftsFlowing'}" @stats_change="onStatsChange($event,'draftsFlowing')"></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.drafts}`"
+            :tabLinkActive="tabName === 'drafts'"
+            :text="$text('Drafts')"
+            badge-color="orange"
+            :badge="stats.drafts"
+            :stats_params="{ module: 'a-base', name: 'drafts' }"
+            @stats_change="onStatsChange($event, 'drafts')"
+          ></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.draftsFlowing}`"
+            :tabLinkActive="tabName === 'draftsFlowing'"
+            :text="$text('DraftsFlowingMineTab')"
+            badge-color="gray"
+            :badge="stats.draftsFlowing"
+            :stats_params="{ module: 'a-base', name: 'draftsFlowing' }"
+            @stats_change="onStatsChange($event, 'draftsFlowing')"
+          ></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.drafts" :tabActive="tabName==='drafts'" data-ref="drafts" @tab:show="tabName='drafts'">
+      <eb-tab-page-content :id="tabId.drafts" :tabActive="tabName === 'drafts'" data-ref="drafts" @tab:show="tabName = 'drafts'">
         <atomTab ref="drafts" slot="list" :container="getContainer('drafts')"></atomTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.draftsFlowing" :tabActive="tabName==='draftsFlowing'" data-ref="draftsFlowing" @tab:show="tabName='draftsFlowing'">
+      <eb-tab-page-content :id="tabId.draftsFlowing" :tabActive="tabName === 'draftsFlowing'" data-ref="draftsFlowing" @tab:show="tabName = 'draftsFlowing'">
         <atomTab ref="draftsFlowing" slot="list" :container="getContainer('draftsFlowing')"></atomTab>
       </eb-tab-page-content>
     </f7-tabs>
@@ -73,5 +89,4 @@ export default {
     },
   },
 };
-
 </script>

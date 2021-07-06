@@ -1,6 +1,5 @@
 module.exports = app => {
   class ProgressController extends app.Controller {
-
     async check() {
       const res = await this.service.progress.check({
         progressId: this.ctx.request.body.progressId,
@@ -25,7 +24,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return ProgressController;
 };

@@ -1,9 +1,7 @@
 module.exports = app => {
   const routes = [
     // user
-    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate',
-      meta: { validate: { module: 'a-base', validator: 'user' } },
-    },
+    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate', meta: { validate: { module: 'a-base', validator: 'user' } } },
     { method: 'post', path: 'user/saveAvatar', controller: 'user' },
     { method: 'post', path: 'user/saveLocale', controller: 'user' },
     { method: 'post', path: 'user/agent', controller: 'user' },

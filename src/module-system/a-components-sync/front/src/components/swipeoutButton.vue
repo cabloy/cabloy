@@ -8,9 +8,7 @@ export default {
   },
   name: 'eb-swipeout-button',
   extends: f7SwipeoutButton,
-  mixins: [ perform ],
+  mixins: [perform],
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,12 +1,11 @@
 const BroadcastClientFn = require('./broadcastClient.js');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // broadcast
   loader.app.meta.broadcast = new (BroadcastClientFn(loader.app))();
 
   // all broadcasts
-  const ebBroadcasts = loader.app.meta.broadcasts = {};
+  const ebBroadcasts = (loader.app.meta.broadcasts = {});
 
   // load broadcasts
   loadBroadcasts();
@@ -42,5 +41,4 @@ module.exports = function(loader, modules) {
       }
     }
   }
-
 };

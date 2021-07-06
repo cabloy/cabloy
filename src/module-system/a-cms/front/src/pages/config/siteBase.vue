@@ -17,15 +17,17 @@ export default {
     };
   },
   created() {
-    this.$local.dispatch('getConfigSiteBase', {
-      atomClass: this.atomClass,
-    }).then(data => {
-      if (!data) {
-        this.content = '{}';
-      } else {
-        this.content = JSON5.stringify(data, null, 2);
-      }
-    });
+    this.$local
+      .dispatch('getConfigSiteBase', {
+        atomClass: this.atomClass,
+      })
+      .then(data => {
+        if (!data) {
+          this.content = '{}';
+        } else {
+          this.content = JSON5.stringify(data, null, 2);
+        }
+      });
   },
   methods: {
     onSize(size) {
@@ -36,7 +38,5 @@ export default {
     },
   },
 };
-
 </script>
-<style>
-</style>
+<style></style>

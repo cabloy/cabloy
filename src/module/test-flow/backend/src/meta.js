@@ -2,8 +2,7 @@ const require3 = require('require3');
 const extend = require3('extend2');
 
 module.exports = app => {
-  const meta = {
-  };
+  const meta = {};
   const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
@@ -20,8 +19,7 @@ module.exports = app => {
             tableName: 'testFlowPurchaseOrder',
             details: ['default'],
           },
-          actions: {
-          },
+          actions: {},
           validator: 'purchaseOrder',
           search: {
             validator: 'purchaseOrderSearch',
@@ -33,8 +31,7 @@ module.exports = app => {
             title: 'Product',
             tableName: 'testFlowProduct',
           },
-          actions: {
-          },
+          actions: {},
           validator: 'product',
           search: {
             validator: 'productSearch',
@@ -61,8 +58,7 @@ module.exports = app => {
             title: 'Details',
             tableName: 'testFlowPurchaseOrderDetail',
           },
-          actions: {
-          },
+          actions: {},
           validator: 'purchaseOrderDetail',
         },
       },

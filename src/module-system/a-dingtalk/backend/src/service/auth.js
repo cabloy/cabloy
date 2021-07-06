@@ -1,9 +1,7 @@
 const DingtalkHelperFn = require('../common/dingtalkHelper.js');
 
 module.exports = app => {
-
   class Auth extends app.Service {
-
     async login({ scene, code, state }) {
       if (!scene || !code) return this.ctx.throw(403);
       // member
@@ -15,7 +13,6 @@ module.exports = app => {
       // echo
       return await this.ctx.bean.auth.echo();
     }
-
   }
 
   return Auth;

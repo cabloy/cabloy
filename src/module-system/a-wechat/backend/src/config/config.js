@@ -1,4 +1,3 @@
-
 const jsApiList = [
   'checkJsApi',
   'updateAppMessageShareData',

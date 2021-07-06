@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Flow extends app.Service {
-
     async flowChartProcess({ host, user }) {
       // check right
       const flowChartProcess = await this.__checkRightFlowChartProcess({ host, user });
@@ -10,7 +8,7 @@ module.exports = app => {
       if (flowChartProcess.nodes) {
         flowChartProcess.nodes = flowChartProcess.nodes.map(node => {
           return {
-            ... node,
+            ...node,
             options: undefined,
             nameLocale: this.ctx.text(node.name),
           };
@@ -19,7 +17,7 @@ module.exports = app => {
       if (flowChartProcess.edges) {
         flowChartProcess.edges = flowChartProcess.edges.map(edge => {
           return {
-            ... edge,
+            ...edge,
             options: undefined,
           };
         });
@@ -48,8 +46,6 @@ module.exports = app => {
       // ok
       return content.process;
     }
-
   }
   return Flow;
 };
-

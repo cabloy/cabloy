@@ -1,20 +1,22 @@
 <script>
 import Vue from 'vue';
 const F7Locales = {
-  dialog: [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ],
-  picker: [ 'toolbarCloseText' ],
-  colorPicker: [ 'navbarTitleText', 'navbarCloseText' ],
-  calendar: [ 'timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText' ],
-  smartSelect: [ 'pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText' ],
+  dialog: ['buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder'],
+  picker: ['toolbarCloseText'],
+  colorPicker: ['navbarTitleText', 'navbarCloseText'],
+  calendar: ['timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText'],
+  smartSelect: ['pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText'],
 };
 export default {
   render(c) {
     const children = [];
     // layout
     if (this.layout) {
-      children.push(c(this.layout, {
-        ref: 'layout',
-      }));
+      children.push(
+        c(this.layout, {
+          ref: 'layout',
+        })
+      );
     }
     // error
     if (this.error) {
@@ -27,17 +29,25 @@ export default {
           click: this.onClickTryAgain,
         },
       });
-      const elErrorContainer = c('div', {
-        staticClass: 'eb-init-error-container',
-      }, [ c('div', [ elError, elButton ]) ]);
+      const elErrorContainer = c(
+        'div',
+        {
+          staticClass: 'eb-init-error-container',
+        },
+        [c('div', [elError, elButton])]
+      );
       children.push(elErrorContainer);
     }
     // app
-    const app = c('f7-app', {
-      staticClass: '',
-      props: { params: this.$root.$options.framework7 },
-    }, children);
-    return c('div', [ app ]);
+    const app = c(
+      'f7-app',
+      {
+        staticClass: '',
+        props: { params: this.$root.$options.framework7 },
+      },
+      children
+    );
+    return c('div', [app]);
   },
   data() {
     return {
@@ -149,7 +159,7 @@ export default {
       const breakpoint = this.$meta.config.layout.breakpoint;
       const windowWidth = window.document.documentElement.clientWidth;
       const windowHeight = window.document.documentElement.clientHeight;
-      let layout = ((windowWidth < windowHeight) || (windowWidth <= breakpoint)) ? 'mobile' : 'pc';
+      let layout = windowWidth < windowHeight || windowWidth <= breakpoint ? 'mobile' : 'pc';
       if (!this._getLayoutItem(layout)) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
@@ -193,7 +203,7 @@ export default {
         this._reloadLayout();
       }
     },
-    onResize: Vue.prototype.$meta.util.debounce(function() {
+    onResize: Vue.prototype.$meta.util.debounce(function () {
       this.resize();
     }, 300),
     _authEchoInit() {
@@ -323,10 +333,7 @@ export default {
     },
     checkIfNeedOpenLogin() {
       const configLayout = this._getLayoutModuleConfig();
-      return (configLayout.loginOnStart === true &&
-        !this.$store.state.auth.loggedIn &&
-        !this._checkIfPasswordReset()
-      );
+      return configLayout.loginOnStart === true && !this.$store.state.auth.loggedIn && !this._checkIfPasswordReset();
     },
     popupHashInit() {
       //
@@ -390,7 +397,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

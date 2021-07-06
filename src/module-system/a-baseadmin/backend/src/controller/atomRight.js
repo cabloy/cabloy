@@ -1,6 +1,5 @@
 module.exports = app => {
   class AtomRightController extends app.Controller {
-
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.atomRight.rights({
@@ -40,7 +39,6 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
   return AtomRightController;
 };

@@ -20,7 +20,7 @@ module.exports = context => {
 
       // generate loader string to be used with extract text plugin
       function generateLoaders(loader, loaderOptions) {
-        const loaders = [ cssLoader ];
+        const loaders = [cssLoader];
         if (loader) {
           loaders.push({
             loader: loader + '-loader',
@@ -35,7 +35,7 @@ module.exports = context => {
         // if (options.extract) {
         //   return [ MiniCssExtractPlugin.loader ].concat(loaders);
         // }
-        return [ 'vue-style-loader' ].concat(loaders);
+        return ['vue-style-loader'].concat(loaders);
       }
 
       // http://vuejs.github.io/vue-loader/en/configurations/extract-css.html
@@ -80,9 +80,8 @@ module.exports = context => {
             },
           ],
         ],
-        plugins: [ '@babel/plugin-syntax-dynamic-import', 'jsx-v-model' ],
+        plugins: ['@babel/plugin-syntax-dynamic-import', 'jsx-v-model'],
       };
     },
   };
 };
-

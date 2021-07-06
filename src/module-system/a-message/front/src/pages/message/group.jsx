@@ -1,6 +1,6 @@
 import messageGroupLayoutManager from '../../common/messageGroupLayoutManager/index.jsx';
 export default {
-  mixins: [ messageGroupLayoutManager ],
+  mixins: [messageGroupLayoutManager],
   data() {
     return {
       container: {},

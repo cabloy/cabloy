@@ -3,7 +3,6 @@ let __sequences;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Sequence extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'sequence');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -118,7 +117,6 @@ module.exports = ctx => {
       }
       return sequences;
     }
-
   }
 
   return Sequence;

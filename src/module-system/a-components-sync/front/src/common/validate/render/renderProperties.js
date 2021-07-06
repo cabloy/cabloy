@@ -25,9 +25,13 @@ export default {
         }
         // group
         const className = domGroupFlattenProperty.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-        const item = c('f7-list-group', {
-          staticClass: className,
-        }, domGroupFlattenChildren);
+        const item = c(
+          'f7-list-group',
+          {
+            staticClass: className,
+          },
+          domGroupFlattenChildren
+        );
         // clear
         domGroupFlattenChildren = null;
         domGroupFlattenkey = null;

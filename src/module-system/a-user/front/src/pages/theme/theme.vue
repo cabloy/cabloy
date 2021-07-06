@@ -2,14 +2,24 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Theme')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="theme && moduleThemes">
-      <eb-list-item radio :checked="theme.type==='builtIn'" :title="$text('Built-in Theme')" @change="onChangeBuiltIn">
-        <f7-link slot="after" @click="onClickBuiltIn">{{$text('Edit')}}</f7-link>
+      <eb-list-item radio :checked="theme.type === 'builtIn'" :title="$text('Built-in Theme')" @change="onChangeBuiltIn">
+        <f7-link slot="after" @click="onClickBuiltIn">{{ $text('Edit') }}</f7-link>
       </eb-list-item>
-      <eb-list-item radio :checked="theme.type==='thirdParty'" :title="$text('Third-party Theme')" @change="onChangeThirdParty">
-        <a slot="after" ref="moduleThemes" @smartselect:beforeopen="onSmartselectBeforeOpen" @smartselect:closed="onSmartselectClosed" class="link smart-select" :data-page-title="$text('Third-party Theme')" data-close-on-select="true">
+      <eb-list-item radio :checked="theme.type === 'thirdParty'" :title="$text('Third-party Theme')" @change="onChangeThirdParty">
+        <a
+          slot="after"
+          ref="moduleThemes"
+          @smartselect:beforeopen="onSmartselectBeforeOpen"
+          @smartselect:closed="onSmartselectClosed"
+          class="link smart-select"
+          :data-page-title="$text('Third-party Theme')"
+          data-close-on-select="true"
+        >
           <select name="moduleThemes">
             <option value=""></option>
-            <option v-for="moduleName of Object.keys(moduleThemes)" :key="moduleName" :value="moduleName" :selected="moduleName===theme.thirdParty">{{moduleThemes[moduleName].titleLocale}}</option>
+            <option v-for="moduleName of Object.keys(moduleThemes)" :key="moduleName" :value="moduleName" :selected="moduleName === theme.thirdParty">
+              {{ moduleThemes[moduleName].titleLocale }}
+            </option>
           </select>
           <div>{{ theme.thirdParty || $text('Select') }}</div>
         </a>
@@ -42,13 +52,16 @@ export default {
     save() {
       // user.op
       if (this.user.op.anonymous) return;
-      this.$api.post('user/themeSave', {
-        theme: this.theme,
-      }).then(() => {
-        // donothing
-      }).catch(err => {
-        this.$view.toast.show({ text: err.message });
-      });
+      this.$api
+        .post('user/themeSave', {
+          theme: this.theme,
+        })
+        .then(() => {
+          // donothing
+        })
+        .catch(err => {
+          this.$view.toast.show({ text: err.message });
+        });
     },
     checkSave(type, force) {
       if (force || this.theme.type !== type) {
@@ -109,7 +122,5 @@ export default {
     },
   },
 };
-
 </script>
-<style lang="less" scoped="">
-</style>
+<style lang="less" scoped=""></style>

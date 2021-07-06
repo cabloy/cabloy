@@ -1,10 +1,9 @@
 import nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-export default function(Vue) {
+export default function (Vue) {
   nprogress.configure({ showSpinner: false });
   return {
-
     _counter: 0,
     _timerId: 0,
 
@@ -36,5 +35,4 @@ export default function(Vue) {
       }
     },
   };
-
 }

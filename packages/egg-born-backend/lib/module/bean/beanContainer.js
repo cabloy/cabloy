@@ -1,7 +1,6 @@
 const is = require('is-type-of');
 
 module.exports = (app, ctx) => {
-
   const beanContainer = {
     _register(moduleName, beanName, beanClass) {
       const beanFullName = beanClass.global ? beanName : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
@@ -10,7 +9,7 @@ module.exports = (app, ctx) => {
         bean = bean(app);
       }
       app.meta.beans[beanFullName] = {
-        ... beanClass,
+        ...beanClass,
         bean,
       };
       return beanFullName;
@@ -182,11 +181,13 @@ module.exports = (app, ctx) => {
                   context.result = await target.apply(thisArg, args);
                 }
                 await next();
-              }).then(() => {
-                resolve(context.result);
-              }).catch(err => {
-                reject(err);
-              });
+              })
+                .then(() => {
+                  resolve(context.result);
+                })
+                .catch(err => {
+                  reject(err);
+                });
             });
           }
         },
@@ -253,7 +254,6 @@ module.exports = (app, ctx) => {
       return beanContainer._getBean(prop);
     },
   });
-
 };
 
 function __getPropertyDescriptor(obj, prop) {
@@ -270,4 +270,3 @@ function __aopMatch(match, beanFullName) {
   if (!Array.isArray(match)) return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));
   return match.some(item => __aopMatch(item, beanFullName));
 }
-

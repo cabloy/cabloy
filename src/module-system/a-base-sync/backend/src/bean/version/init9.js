@@ -1,7 +1,5 @@
 module.exports = function (ctx) {
-
   class VersionInit {
-
     async run() {
       // add role rights
       const roleRights = [
@@ -24,9 +22,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'exportBulk' },
       ];
       await ctx.bean.role.addRoleRightBatch({ atomClassName: 'resource', roleRights });
-
     }
-
   }
 
   return VersionInit;

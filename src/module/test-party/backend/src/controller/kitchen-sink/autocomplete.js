@@ -1,9 +1,7 @@
 const languages = require('./data/autocomplete-languages.json');
 
 module.exports = app => {
-
   class AutocompleteController extends app.Controller {
-
     async languages() {
       const query = this.ctx.params.query;
       let data;
@@ -16,9 +14,7 @@ module.exports = app => {
       }
       this.ctx.success(data);
     }
-
   }
 
   return AutocompleteController;
 };
-

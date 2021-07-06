@@ -2,11 +2,8 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class MemController extends app.Controller {
-
     async mem() {
-
       let res;
       let value;
 
@@ -53,7 +50,6 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
   return MemController;
 };

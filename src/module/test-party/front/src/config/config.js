@@ -7,9 +7,7 @@ export default {
       render: {
         list: {
           info: {
-            orders: [
-              { name: 'personCount', title: 'Person Count', by: 'asc' },
-            ],
+            orders: [{ name: 'personCount', title: 'Person Count', by: 'asc' }],
           },
           layouts: {
             list: {

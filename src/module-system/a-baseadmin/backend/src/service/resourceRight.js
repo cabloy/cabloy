@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class ResourceRight extends app.Service {
-
     async rights({ roleId, page }) {
       return await this.ctx.bean.resource.resourceRights({ roleId, page });
     }
@@ -17,7 +15,6 @@ module.exports = app => {
     async spreads({ roleId, page }) {
       return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
     }
-
   }
 
   return ResourceRight;

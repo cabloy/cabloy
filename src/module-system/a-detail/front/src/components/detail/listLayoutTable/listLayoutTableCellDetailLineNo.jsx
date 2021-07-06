@@ -17,17 +17,12 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
   render() {
     const index = this.info.index;
-    return (
-      <span>{index + 1}</span>
-    );
+    return <span>{index + 1}</span>;
   },
 };

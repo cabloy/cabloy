@@ -8,7 +8,7 @@
       <eb-list-item title="钉钉扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取MemberId" link="#" :onPerform="onPerformMemberId"></eb-list-item>
       <eb-list-item title="MemberId">
-        <div slot="after">{{memberId}}</div>
+        <div slot="after">{{ memberId }}</div>
       </eb-list-item>
     </eb-list>
   </eb-page>
@@ -27,11 +27,14 @@ export default {
       actionComponent: 'jssdk',
       name: 'config',
     };
-    this.$meta.util.performAction({ ctx: this, action }).then(res => {
-      this.dd = res && res.dd;
-    }).catch(e => {
-      this.$view.toast.show({ text: e.message });
-    });
+    this.$meta.util
+      .performAction({ ctx: this, action })
+      .then(res => {
+        this.dd = res && res.dd;
+      })
+      .catch(e => {
+        this.$view.toast.show({ text: e.message });
+      });
   },
   mounted() {
     this.messagebar = this.$refs.messagebar.f7Messagebar;
@@ -61,21 +64,21 @@ export default {
         this.messagebar.focus();
       }
       // send
-      this.$api.post('test/sendAppMessage', {
-        message: {
-          text: value,
-        },
-      }).then(() => {
-        // donothing
-      });
+      this.$api
+        .post('test/sendAppMessage', {
+          message: {
+            text: value,
+          },
+        })
+        .then(() => {
+          // donothing
+        });
     },
   },
 };
-
 </script>
 <style scoped>
 .test-messagebar {
   margin-bottom: 56px;
 }
-
 </style>

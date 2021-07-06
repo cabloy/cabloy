@@ -2,14 +2,14 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
     <eb-box @size="onSize" toolbar @dragover.native="onFileDragover" @dragenter.native="onFileDragenter" @dragleave.native="onFileDragleave" @drop.native="onFileDrop">
-      <img ref="image" class="image">
+      <img ref="image" class="image" />
     </eb-box>
-    <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
-    <div v-if="fileNameTip" class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{fileNameTip}}</div>
+    <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none" />
+    <div v-if="fileNameTip" class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{ fileNameTip }}</div>
     <f7-toolbar bottom-md>
-      <f7-button @click="onClickSelect">{{selectText}}</f7-button>
-      <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-      <eb-button v-if="fileBlob" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+      <f7-button @click="onClickSelect">{{ selectText }}</f7-button>
+      <f7-button v-if="cropped" @click="onClickClearCrop">{{ $text('Clear Crop') }}</f7-button>
+      <eb-button v-if="fileBlob" active :onPerform="onPerformUpload">{{ $text('Upload') }}</eb-button>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -18,7 +18,7 @@ import Vue from 'vue';
 import Cropper from 'cropperjs';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       cropped: false,
@@ -29,16 +29,16 @@ export default {
   },
   computed: {
     mode() {
-      return this.contextParams && this.contextParams.mode || 2;
+      return (this.contextParams && this.contextParams.mode) || 2;
     },
     atomId() {
-      return this.contextParams && this.contextParams.atomId || 0;
+      return (this.contextParams && this.contextParams.atomId) || 0;
     },
     attachment() {
-      return this.contextParams && this.contextParams.attachment || 0;
+      return (this.contextParams && this.contextParams.attachment) || 0;
     },
     flag() {
-      return this.contextParams && this.contextParams.flag || '';
+      return (this.contextParams && this.contextParams.flag) || '';
     },
     fixed() {
       return this.contextParams && this.contextParams.fixed;
@@ -64,7 +64,7 @@ export default {
     },
     fileNameTip() {
       if (!this.fileName) return this.$text('UploadFileDragTip');
-      return (this.mode === 1 && !this.$config.upload.showFileName) ? null : this.fileName;
+      return this.mode === 1 && !this.$config.upload.showFileName ? null : this.fileName;
     },
   },
   mounted() {},
@@ -172,15 +172,13 @@ export default {
         }
       }
       formData.append('file', this.fileBlob);
-      return this.$api.post('file/upload', formData)
-        .then(data => {
-          this.contextCallback(200, data);
-          this.$f7router.back();
-        });
+      return this.$api.post('file/upload', formData).then(data => {
+        this.contextCallback(200, data);
+        this.$f7router.back();
+      });
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .image {
@@ -197,7 +195,6 @@ export default {
 }
 
 .fileDropPrompt {
-  background: hsla(0, 0%, 100%, .32);
+  background: hsla(0, 0%, 100%, 0.32);
 }
-
 </style>

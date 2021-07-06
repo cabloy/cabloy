@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class MessageController extends app.Controller {
-
     // options
     //   where, orders
     async group() {
@@ -12,7 +10,6 @@ module.exports = app => {
       });
       this.ctx.success(items);
     }
-
   }
   return MessageController;
 };

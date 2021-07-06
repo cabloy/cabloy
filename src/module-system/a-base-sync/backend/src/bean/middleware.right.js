@@ -114,7 +114,8 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
       atomClass: ctx.request.body.atomClass,
-      action: actionOther, stage: options.stage,
+      action: actionOther,
+      stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
@@ -122,7 +123,8 @@ async function checkAtom(moduleInfo, options, ctx) {
   } else {
     const res = await ctx.bean.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId },
-      action: actionOther, stage: options.stage,
+      action: actionOther,
+      stage: options.stage,
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
@@ -130,7 +132,6 @@ async function checkAtom(moduleInfo, options, ctx) {
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
   }
-
 }
 
 async function checkResource(moduleInfo, options, ctx) {

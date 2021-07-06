@@ -4,8 +4,7 @@ module.exports = app => {
   const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
-      atoms: {
-      },
+      atoms: {},
       statics: {
         'a-base.resource': {
           items: staticResources,

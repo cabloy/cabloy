@@ -5,7 +5,6 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Detail extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'detail');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -35,7 +34,7 @@ module.exports = ctx => {
       // detailClass
       detailClass = await ctx.bean.detailClass.get(detailClass);
       // item
-      item = item || { };
+      item = item || {};
       // detail bean
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
@@ -115,9 +114,7 @@ module.exports = ctx => {
       }
       // orders
       if (!options.orders || options.orders.length === 0) {
-        options.orders = [
-          ['a.detailLineNo', 'asc'],
-        ];
+        options.orders = [['a.detailLineNo', 'asc']];
       }
       // select
       const items = await this._list({
@@ -223,9 +220,7 @@ module.exports = ctx => {
           order by detailLineNo asc`;
       }
       // to
-      const detailTo = await ctx.model.queryOne(sql, [
-        ctx.instance.id, detailFrom.atomId, detailFrom.detailClassId, detailFrom.detailLineNo,
-      ]);
+      const detailTo = await ctx.model.queryOne(sql, [ctx.instance.id, detailFrom.atomId, detailFrom.detailClassId, detailFrom.detailLineNo]);
       if (!detailTo) {
         // do nothing
         return null;
@@ -272,18 +267,21 @@ module.exports = ctx => {
       const detailDefault = _atomClass.details && _atomClass.details[0];
       if (!detailDefault) return null;
       return this._prepareDetailClassFromName({
-        atomClass, detailClassName: detailDefault,
+        atomClass,
+        detailClassName: detailDefault,
       });
     }
 
     _prepareDetailClassFromName({ atomClass, detailClassName }) {
-      return (typeof detailClassName === 'string') ? {
-        module: atomClass.module,
-        detailClassName,
-      } : {
-        module: detailClassName.module || atomClass.module,
-        detailClassName: detailClassName.detailClassName,
-      };
+      return typeof detailClassName === 'string'
+        ? {
+            module: atomClass.module,
+            detailClassName,
+          }
+        : {
+            module: detailClassName.module || atomClass.module,
+            detailClassName: detailClassName.detailClassName,
+          };
     }
 
     async _loopDetailClasses({ atomClass, fn }) {
@@ -300,9 +298,12 @@ module.exports = ctx => {
     }
 
     async _deleteDetails({ atomClass, atomKey, user }) {
-      await this._loopDetailClasses({ atomClass, fn: async ({ detailClass }) => {
-        await this._deleteDetails_Class({ detailClass, atomClass, atomKey, user });
-      } });
+      await this._loopDetailClasses({
+        atomClass,
+        fn: async ({ detailClass }) => {
+          await this._deleteDetails_Class({ detailClass, atomClass, atomKey, user });
+        },
+      });
     }
 
     async _deleteDetails_Class({ detailClass, atomKey, user }) {
@@ -322,9 +323,12 @@ module.exports = ctx => {
     }
 
     async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
-      await this._loopDetailClasses({ atomClass, fn: async ({ detailClass }) => {
-        await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
-      } });
+      await this._loopDetailClasses({
+        atomClass,
+        fn: async ({ detailClass }) => {
+          await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+        },
+      });
     }
 
     async _copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
@@ -460,8 +464,18 @@ module.exports = ctx => {
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: {
-          detailClass, target, srcKey, srcItem, destKey, destItem, options, user,
-          atomClass, srcKeyAtom, destKeyAtom, destAtom,
+          detailClass,
+          target,
+          srcKey,
+          srcItem,
+          destKey,
+          destItem,
+          options,
+          user,
+          atomClass,
+          srcKeyAtom,
+          destKeyAtom,
+          destAtom,
         },
         fn: 'copy',
       });
@@ -471,15 +485,7 @@ module.exports = ctx => {
 
     // detail
 
-    async _add({
-      atomKey,
-      detailClass: { id, detailClassName },
-      detail: {
-        detailItemId, detailName, detailLineNo,
-        detailStatic = 0, detailStaticKey = null,
-      },
-      user,
-    }) {
+    async _add({ atomKey, detailClass: { id, detailClassName }, detail: { detailItemId, detailName, detailLineNo, detailStatic = 0, detailStaticKey = null }, user }) {
       let detailClassId = id;
       if (!detailClassId) detailClassId = await this.getDetailClassId({ detailClassName });
       const res = await this.modelDetail.insert({
@@ -496,7 +502,7 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async _update({ detail/* , user,*/ }) {
+    async _update({ detail /* , user,*/ }) {
       await this.modelDetail.update(detail);
     }
 
@@ -505,14 +511,15 @@ module.exports = ctx => {
       await this.modelDetail.delete(detail);
     }
 
-    async _get({ detailClass, options, key, mode/* , user*/ }) {
+    async _get({ detailClass, options, key, mode /* , user*/ }) {
       if (!options) options = {};
       //
       const _detailClass = await ctx.bean.detailClass.detailClass(detailClass);
       const tableName = this._getTableName({ detailClass: _detailClass, mode });
       const sql = this.sqlProcedure.getDetail({
         iid: ctx.instance.id,
-        tableName, detailId: key.detailId,
+        tableName,
+        detailId: key.detailId,
       });
       return await ctx.model.queryOne(sql);
     }
@@ -522,7 +529,10 @@ module.exports = ctx => {
       stage = typeof stage === 'number' ? stage : ctx.constant.module('a-base').atom.stage[stage];
       const sql = this.sqlProcedure.selectDetails({
         iid: ctx.instance.id,
-        tableName, where, orders, page,
+        tableName,
+        where,
+        orders,
+        page,
         count,
         stage,
       });
@@ -561,7 +571,7 @@ module.exports = ctx => {
       for (const name in actionsAll) {
         const action = actionsAll[name];
         if (action.authorize === false) continue;
-        if ((!!action.bulk) === bulk && (!action.mode || action.mode === mode)) {
+        if (!!action.bulk === bulk && (!action.mode || action.mode === mode)) {
           _actions.push(action);
         }
       }
@@ -595,9 +605,7 @@ module.exports = ctx => {
     _checkSchemaValid({ schema, detailClass }) {
       for (const key in schema.properties) {
         const property = schema.properties[key];
-        if (property.ebType === 'details' &&
-          property.ebParams.detailClass.module === detailClass.module &&
-          property.ebParams.detailClass.detailClassName === detailClass.detailClassName) {
+        if (property.ebType === 'details' && property.ebParams.detailClass.module === detailClass.module && property.ebParams.detailClass.detailClassName === detailClass.detailClassName) {
           return true;
         }
       }
@@ -620,11 +628,11 @@ module.exports = ctx => {
         return false;
       }
       // atom read
-      return !!await ctx.bean.atom.checkRightRead({
+      return !!(await ctx.bean.atom.checkRightRead({
         atom: { id: atomId },
         user,
         checkFlow: false,
-      });
+      }));
     }
 
     async _checkRightAction({ flowTaskId, detailClass, atomId, atom, actionBase, user }) {
@@ -648,14 +656,14 @@ module.exports = ctx => {
         }
       }
       // atom action
-      return !!await ctx.bean.atom.checkRightAction({
+      return !!(await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
         action: atomActionBase.code,
         // need not set stage
         // stage,
         user,
         checkFlow: false,
-      });
+      }));
     }
 
     async _checkRight({ flowTaskId, atomId, detailClass, action, user }) {
@@ -719,7 +727,6 @@ module.exports = ctx => {
       });
       if (!res) ctx.throw(403);
     }
-
   }
 
   return Detail;

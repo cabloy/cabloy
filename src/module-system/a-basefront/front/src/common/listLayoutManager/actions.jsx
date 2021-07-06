@@ -1,8 +1,7 @@
 import Vue from 'vue';
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     async actions_fetchActions(item) {

@@ -1,6 +1,5 @@
 module.exports = ctx => {
   class regExpAop {
-
     get__name(context, next) {
       next();
       context.value = `${context.value}:regexpaop`;
@@ -25,7 +24,6 @@ module.exports = ctx => {
       await next();
       context.result = `${context.result}:regexpaop`;
     }
-
   }
 
   return regExpAop;

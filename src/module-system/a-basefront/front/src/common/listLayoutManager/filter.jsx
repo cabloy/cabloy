@@ -23,10 +23,7 @@ export default {
         if (form.atomName) {
           const atomClass = form.atomClass ? this.getAtomClass(form.atomClass) : null;
           if (atomClass && atomClass.resource) {
-            options.where.__or__atomNameResource = [
-              { 'a.atomName': { val: form.atomName, op: 'like' } },
-              { 'f.atomNameLocale': { val: form.atomName, op: 'like' } },
-            ];
+            options.where.__or__atomNameResource = [{ 'a.atomName': { val: form.atomName, op: 'like' } }, { 'f.atomNameLocale': { val: form.atomName, op: 'like' } }];
           } else {
             options.where['a.atomName'] = { val: form.atomName, op: 'like' };
           }
@@ -112,9 +109,7 @@ export default {
     },
     filter_renderAction() {
       if (this.container.params && this.container.params.disableFilter === true) return null;
-      return (
-        <eb-link iconMaterial="search" propsOnPerform={this.filter_onPerform}></eb-link>
-      );
+      return <eb-link iconMaterial="search" propsOnPerform={this.filter_onPerform}></eb-link>;
     },
   },
 };

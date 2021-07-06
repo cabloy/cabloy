@@ -1,7 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/atom/right.test.js', () => {
-
   it('action:checkRightCreate', async () => {
     app.mockSession({});
 
@@ -12,16 +11,22 @@ describe('test/controller/test/atom/right.test.js', () => {
     ];
     for (const [userName, right] of checkRightCreates) {
       // login
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        data: {
-          auth: userName,
-          password: '123456',
-        },
-      });
+      await app
+        .httpRequest()
+        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .send({
+          data: {
+            auth: userName,
+            password: '123456',
+          },
+        });
       // checkRightCreate
-      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightCreate')).send({
-        atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
-      });
+      const result = await app
+        .httpRequest()
+        .post(mockUrl('test/atom/checkRightCreate'))
+        .send({
+          atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
+        });
       if (right) {
         assert.equal(result.body.data.id > 0, true);
       } else {
@@ -34,17 +39,23 @@ describe('test/controller/test/atom/right.test.js', () => {
     app.mockSession({});
 
     // login
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'Tom',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'Tom',
+          password: '123456',
+        },
+      });
 
     // create
-    let res = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-      atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
-    });
+    let res = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .send({
+        atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
+      });
     const partyKeyDraft = res.body.data;
 
     // check right read
@@ -54,12 +65,15 @@ describe('test/controller/test/atom/right.test.js', () => {
     ];
     for (const [userName, right] of checkRightReads) {
       // login
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        data: {
-          auth: userName,
-          password: '123456',
-        },
-      });
+      await app
+        .httpRequest()
+        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .send({
+          data: {
+            auth: userName,
+            password: '123456',
+          },
+        });
       // checkRightRead
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightRead')).send({
         key: partyKeyDraft,
@@ -78,12 +92,15 @@ describe('test/controller/test/atom/right.test.js', () => {
     ];
     for (const [userName, right] of checkRightWrites) {
       // login
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        data: {
-          auth: userName,
-          password: '123456',
-        },
-      });
+      await app
+        .httpRequest()
+        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .send({
+          data: {
+            auth: userName,
+            password: '123456',
+          },
+        });
       // checkRightWrite
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightWrite')).send({
         key: partyKeyDraft,
@@ -96,12 +113,15 @@ describe('test/controller/test/atom/right.test.js', () => {
     }
 
     // submit
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'Tom',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'Tom',
+          password: '123456',
+        },
+      });
     res = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: partyKeyDraft,
     });
@@ -158,16 +178,18 @@ describe('test/controller/test/atom/right.test.js', () => {
     // }
 
     // delete
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'Tom',
-        password: '123456',
-      },
-    });
+    await app
+      .httpRequest()
+      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .send({
+        data: {
+          auth: 'Tom',
+          password: '123456',
+        },
+      });
     res = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
       key: partyKeyFormal,
     });
     assert.equal(res.body.code, 0);
   });
-
 });

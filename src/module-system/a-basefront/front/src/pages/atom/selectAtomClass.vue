@@ -2,8 +2,8 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Atom Class')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
-      <f7-list-item v-for="(item,index) of atomClasses" :key="index" radio :checked="module===item.module && atomClassName===item.atomClassName" :title="item.title" @click="onItemClick(item)">
-        <div slot="after">{{item.after}}</div>
+      <f7-list-item v-for="(item, index) of atomClasses" :key="index" radio :checked="module === item.module && atomClassName === item.atomClassName" :title="item.title" @click="onItemClick(item)">
+        <div slot="after">{{ item.after }}</div>
       </f7-list-item>
     </f7-list>
   </eb-page>
@@ -14,7 +14,7 @@ const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModu
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebModules, ebPageContext, ebAtomClasses ],
+  mixins: [ebModules, ebPageContext, ebAtomClasses],
   data() {
     return {};
   },
@@ -61,15 +61,16 @@ export default {
   },
   methods: {
     onItemClick(item) {
-      const data = item.module ? {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        title: item.title,
-      } : null;
+      const data = item.module
+        ? {
+            module: item.module,
+            atomClassName: item.atomClassName,
+            title: item.title,
+          }
+        : null;
       this.contextCallback(200, data);
       this.$f7router.back();
     },
   },
 };
-
 </script>

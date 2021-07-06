@@ -1,6 +1,5 @@
 <template>
-  <eb-page>
-  </eb-page>
+  <eb-page> </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -11,7 +10,5 @@ export default {
   created() {},
   methods: {},
 };
-
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

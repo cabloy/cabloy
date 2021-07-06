@@ -1,6 +1,5 @@
 module.exports = app => {
   class Version extends app.meta.BeanBase {
-
     async update(options) {
       if (options.version === 1) {
         let sql;
@@ -138,7 +137,6 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
-
       }
 
       if (options.version === 2) {
@@ -171,9 +169,7 @@ module.exports = app => {
           ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
                   `;
         await this.ctx.model.query(sql);
-
       }
-
     }
 
     async init(options) {
@@ -200,8 +196,7 @@ module.exports = app => {
       }
     }
 
-    async test() { }
-
+    async test() {}
   }
 
   return Version;

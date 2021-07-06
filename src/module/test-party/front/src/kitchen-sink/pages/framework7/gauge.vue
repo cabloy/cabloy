@@ -5,13 +5,23 @@
       <p>Framework7 comes with Gauge component. It produces nice looking fully responsive SVG gauges.</p>
     </f7-block>
     <f7-block strong class="text-align-center">
-      <f7-gauge type="circle" :value="gaugeValue" :size="250" borderColor="#2196f3" :borderWidth="10" :valueText="`${gaugeValue * 100}%`" :valueFontSize="41" valueTextColor="#2196f3" labelText="amount of something" />
+      <f7-gauge
+        type="circle"
+        :value="gaugeValue"
+        :size="250"
+        borderColor="#2196f3"
+        :borderWidth="10"
+        :valueText="`${gaugeValue * 100}%`"
+        :valueFontSize="41"
+        valueTextColor="#2196f3"
+        labelText="amount of something"
+      />
       <f7-segmented tag="p" raised>
-        <f7-button :active="gaugeValue === 0" @click="() => gaugeValue = 0">0%</f7-button>
-        <f7-button :active="gaugeValue === 0.25" @click="() => gaugeValue = 0.25">25%</f7-button>
-        <f7-button :active="gaugeValue === 0.5" @click="() => gaugeValue = 0.5">50%</f7-button>
-        <f7-button :active="gaugeValue === 0.75" @click="() => gaugeValue = 0.75">75%</f7-button>
-        <f7-button :active="gaugeValue === 1" @click="() => gaugeValue = 1">100%</f7-button>
+        <f7-button :active="gaugeValue === 0" @click="() => (gaugeValue = 0)">0%</f7-button>
+        <f7-button :active="gaugeValue === 0.25" @click="() => (gaugeValue = 0.25)">25%</f7-button>
+        <f7-button :active="gaugeValue === 0.5" @click="() => (gaugeValue = 0.5)">50%</f7-button>
+        <f7-button :active="gaugeValue === 0.75" @click="() => (gaugeValue = 0.75)">75%</f7-button>
+        <f7-button :active="gaugeValue === 1" @click="() => (gaugeValue = 1)">100%</f7-button>
       </f7-segmented>
     </f7-block>
     <f7-block-title>Circle Gauges</f7-block-title>
@@ -40,16 +50,48 @@
     <f7-block strong>
       <f7-row>
         <f7-col class="text-align-center">
-          <f7-gauge type="circle" :value="0.35" valueText="35%" valueTextColor="#4caf50" :valueFontSize="51" :valueFontWeight="700" :borderWidth="20" borderColor="#4caf50" borderBgColor="#ffeb3b" bgColor="#ffeb3b" />
+          <f7-gauge
+            type="circle"
+            :value="0.35"
+            valueText="35%"
+            valueTextColor="#4caf50"
+            :valueFontSize="51"
+            :valueFontWeight="700"
+            :borderWidth="20"
+            borderColor="#4caf50"
+            borderBgColor="#ffeb3b"
+            bgColor="#ffeb3b"
+          />
         </f7-col>
         <f7-col class="text-align-center">
-          <f7-gauge type="circle" :value="0.67" valueText="$670" valueTextColor="#000" borderColor="#ff9800" labelText="of $1000 spent" labelTextColor="#4caf50" :labelFontWeight="800" :labelFontSize="12" :borderWidth="30" />
+          <f7-gauge
+            type="circle"
+            :value="0.67"
+            valueText="$670"
+            valueTextColor="#000"
+            borderColor="#ff9800"
+            labelText="of $1000 spent"
+            labelTextColor="#4caf50"
+            :labelFontWeight="800"
+            :labelFontSize="12"
+            :borderWidth="30"
+          />
         </f7-col>
       </f7-row>
       <br />
       <f7-row>
         <f7-col class="text-align-center">
-          <f7-gauge type="semicircle" :value="0.5" valueText="50%" valueTextColor="#ffeb3b" :valueFontSize="41" :valueFontWeight="700" :borderWidth="10" borderColor="#ffeb3b" borderBgColor="transparent" />
+          <f7-gauge
+            type="semicircle"
+            :value="0.5"
+            valueText="50%"
+            valueTextColor="#ffeb3b"
+            :valueFontSize="41"
+            :valueFontWeight="700"
+            :borderWidth="10"
+            borderColor="#ffeb3b"
+            borderBgColor="transparent"
+          />
         </f7-col>
         <f7-col class="text-align-center">
           <f7-gauge type="semicircle" :value="0.77" borderColor="#ff9800" labelText="$770 spent so far" labelTextColor="#ff9800" :labelFontWeight="800" :labelFontSize="12" :borderWidth="10" />
@@ -66,5 +108,4 @@ export default {
     };
   },
 };
-
 </script>

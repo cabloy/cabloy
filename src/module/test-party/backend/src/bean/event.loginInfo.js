@@ -4,7 +4,6 @@ const extend = require3('extend2');
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class EventBean {
-
     async execute(context, next) {
       const data = context.data;
       const info = data.info;
@@ -17,11 +16,11 @@ module.exports = ctx => {
                 login: '/a/login/login',
                 loginOnStart: true,
                 toolbar: {
-                  tabbar: true, labels: true, bottomMd: true,
+                  tabbar: true,
+                  labels: true,
+                  bottomMd: true,
                 },
-                tabs: [
-                  { name: 'Mine', tabLinkActive: true, iconMaterial: 'person', url: '/a/user/user/mine' },
-                ],
+                tabs: [{ name: 'Mine', tabLinkActive: true, iconMaterial: 'person', url: '/a/user/user/mine' }],
               },
             },
           },
@@ -30,7 +29,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return EventBean;

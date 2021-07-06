@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class QueueController extends app.Controller {
-
     async pushAsync() {
       const res = await this.ctx.app.meta.queue.pushAsync({
         locale: this.ctx.locale,
@@ -27,9 +25,7 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
 
   return QueueController;
-
 };

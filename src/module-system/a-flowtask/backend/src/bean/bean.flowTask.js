@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
-
     get modelFlowTask() {
       return ctx.model.module(moduleInfo.relativeName).flowTask;
     }
@@ -108,10 +107,14 @@ module.exports = ctx => {
         return;
       }
       const taskCountPassed = await this.modelFlowTask.count({
-        flowNodeId, flowTaskStatus: 1, handleStatus: 1,
+        flowNodeId,
+        flowTaskStatus: 1,
+        handleStatus: 1,
       });
       const taskCountRejected = await this.modelFlowTask.count({
-        flowNodeId, flowTaskStatus: 1, handleStatus: 2,
+        flowNodeId,
+        flowTaskStatus: 1,
+        handleStatus: 2,
       });
       // check passed
       if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {
@@ -178,7 +181,8 @@ module.exports = ctx => {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
-        flowNodeId, cb: ({ /* flowNode*/ nodeDef }) => {
+        flowNodeId,
+        cb: ({ /* flowNode*/ nodeDef }) => {
           return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
         },
       });
@@ -208,7 +212,9 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.selectTasks({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        where, orders, page,
+        where,
+        orders,
+        page,
         count,
         history,
       });
@@ -269,10 +275,13 @@ module.exports = ctx => {
       // flowTaskHistory close
       //    flowTaskStatus:1
       //    handleStatus: not changed
-      await ctx.model.query(`
+      await ctx.model.query(
+        `
         update aFlowTaskHistory set flowTaskStatus=1
           where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
-        `, [ctx.instance.id, flowNodeId]);
+        `,
+        [ctx.instance.id, flowNodeId]
+      );
     }
 
     _notifyTaskClaimings(userId) {
@@ -294,7 +303,6 @@ module.exports = ctx => {
         });
       }
     }
-
   }
 
   return FlowTask;

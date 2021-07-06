@@ -6,7 +6,6 @@ const authProviderScenes = require('./authProviderScenes.js');
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WxworkHelper {
-
     getSceneInfo(scene) {
       return authProviderScenes.getScene(scene);
     }
@@ -72,10 +71,7 @@ module.exports = function (ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
-        [ctx.instance.id, providerItem.id, profileId]
-      );
+      const authItems = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?', [ctx.instance.id, providerItem.id, profileId]);
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -102,10 +98,7 @@ module.exports = function (ctx) {
         authUserId = authItem.userId;
       }
       // check if has userId for memberId
-      const _authOthers = await ctx.model.query(
-        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
-        [ctx.instance.id, profileId, authId]
-      );
+      const _authOthers = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?', [ctx.instance.id, profileId, authId]);
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
@@ -114,7 +107,6 @@ module.exports = function (ctx) {
       // ready
       return profileUser;
     }
-
   }
 
   return WxworkHelper;

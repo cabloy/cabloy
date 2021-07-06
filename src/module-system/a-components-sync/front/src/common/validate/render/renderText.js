@@ -26,19 +26,23 @@ export default {
       }
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
-        return c('f7-list-item', {
-          key,
-          staticClass: '',
-          attrs: {
-            after: value,
+        return c(
+          'f7-list-item',
+          {
+            key,
+            staticClass: '',
+            attrs: {
+              after: value,
+            },
           },
-        }, [
-          c('div', {
-            slot: 'title',
-            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-            domProps: { innerText: title },
-          }),
-        ]);
+          [
+            c('div', {
+              slot: 'title',
+              staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+              domProps: { innerText: title },
+            }),
+          ]
+        );
       }
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -52,34 +56,38 @@ export default {
       } else {
         type = 'text';
       }
-      return c('eb-list-input', {
-        key,
-        attrs: {
-          floatingLabel: this.$config.form.floatingLabel,
-          type,
-          placeholder,
-          info,
-          resizable: property.ebTextarea,
-          clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
-          dataPath,
-          value,
-          disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
-        },
-        on: {
-          input: valueNew => {
-            if (property.ebCurrency) {
-              valueNew = this._updateValueCurrency(valueNew);
-            }
-            context.setValue(valueNew);
+      return c(
+        'eb-list-input',
+        {
+          key,
+          attrs: {
+            floatingLabel: this.$config.form.floatingLabel,
+            type,
+            placeholder,
+            info,
+            resizable: property.ebTextarea,
+            clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
+            dataPath,
+            value,
+            disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
+          },
+          on: {
+            input: valueNew => {
+              if (property.ebCurrency) {
+                valueNew = this._updateValueCurrency(valueNew);
+              }
+              context.setValue(valueNew);
+            },
           },
         },
-      }, [
-        c('div', {
-          slot: 'label',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          domProps: { innerText: title },
-        }),
-      ]);
+        [
+          c('div', {
+            slot: 'label',
+            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+            domProps: { innerText: title },
+          }),
+        ]
+      );
     },
   },
 };

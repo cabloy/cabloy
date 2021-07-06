@@ -5,7 +5,6 @@ const constants = require('../config/constants.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Settings extends ctx.app.meta.BeanModuleBase {
-
     constructor(moduleName) {
       super(ctx, 'settings');
       this.moduleName = moduleName || ctx.module.info.relativeName;
@@ -29,16 +28,15 @@ module.exports = ctx => {
       return await this._get({ scene: 'instance', module, name });
     }
 
-
     // user
 
     async loadSettingsUser(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return await this._loadSettings({ scene: 'user', module: ops.module });
     }
 
     async loadValidatorUser(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return this._getValidator({ scene: 'user', module: ops.module });
     }
 
@@ -49,12 +47,12 @@ module.exports = ctx => {
     // instance
 
     async loadSettingsInstance(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return await this._loadSettings({ scene: 'instance', module: ops.module });
     }
 
     async loadValidatorInstance(ops) {
-      ops = ops || { };
+      ops = ops || {};
       return this._getValidator({ scene: 'instance', module: ops.module });
     }
 
@@ -102,7 +100,8 @@ module.exports = ctx => {
         module: validator.module,
         validator: validator.validator,
         schema: null,
-        data });
+        data,
+      });
       // update aSettings
       const _data = await this.modelSettings.get({
         module,
@@ -177,7 +176,6 @@ module.exports = ctx => {
       const schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
       return extend(true, {}, schema);
     }
-
   }
 
   return Settings;

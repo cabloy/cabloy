@@ -1,16 +1,24 @@
 module.exports = function (ctx) {
-
   class VersionInit {
-
     async run(options) {
       // add role:template to authenticated
       // add role:system to template
       const items = [
         {
-          roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 0, roleIdParent: 'authenticated',
+          roleName: 'template',
+          leader: 0,
+          catalog: 1,
+          system: 1,
+          sorting: 0,
+          roleIdParent: 'authenticated',
         },
         {
-          roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+          roleName: 'system',
+          leader: 0,
+          catalog: 0,
+          system: 1,
+          sorting: 1,
+          roleIdParent: 'template',
         },
       ];
       let needBuild = false;
@@ -38,9 +46,7 @@ module.exports = function (ctx) {
       if (needBuild) {
         await ctx.bean.role.setDirty(true);
       }
-
     }
-
   }
 
   return VersionInit;

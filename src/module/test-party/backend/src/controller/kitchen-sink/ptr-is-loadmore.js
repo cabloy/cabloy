@@ -1,10 +1,7 @@
-
 const gTestListMax = 89;
 
 module.exports = app => {
-
   class PtrIsLoadMoreController extends app.Controller {
-
     async list() {
       // page
       let page = this.ctx.request.body.page;
@@ -23,9 +20,7 @@ module.exports = app => {
       // ok
       this.ctx.successMore(items, page.index, page.size);
     }
-
   }
 
   return PtrIsLoadMoreController;
 };
-

@@ -63,7 +63,7 @@ export default {
       // Create toast
       if (!self.toastCenter) {
         self.toastCenter = self.$view.toast.create({
-          text: 'I\'m on center',
+          text: "I'm on center",
           position: 'center',
           closeTimeout: 2000,
         });
@@ -77,7 +77,7 @@ export default {
       if (!self.toastIcon) {
         self.toastIcon = self.$view.toast.create({
           icon: self.$theme.ios || self.$theme.aurora ? '<i class="f7-icons">star_fill</i>' : '<i class="material-icons">star</i>',
-          text: 'I\'m on center',
+          text: "I'm on center",
           position: 'center',
           closeTimeout: 2000,
         });
@@ -158,5 +158,4 @@ export default {
     },
   },
 };
-
 </script>

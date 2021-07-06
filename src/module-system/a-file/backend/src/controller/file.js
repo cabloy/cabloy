@@ -1,6 +1,5 @@
 module.exports = app => {
   class FileController extends app.Controller {
-
     async all() {
       const options = this.ctx.request.body.options;
       options.page = this.ctx.bean.util.page(options.page);
@@ -56,7 +55,6 @@ module.exports = app => {
         user: this.ctx.state.user.op,
       });
     }
-
   }
   return FileController;
 };

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class TagController extends app.Controller {
-
     async list() {
       const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.tag.list({
@@ -42,8 +40,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
   return TagController;
 };
-

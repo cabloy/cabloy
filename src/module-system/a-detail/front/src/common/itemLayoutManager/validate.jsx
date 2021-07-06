@@ -1,7 +1,6 @@
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     validate_getInstance() {
@@ -35,14 +34,16 @@ export default {
         detailId: this.container.detailId,
       };
       return (
-        <eb-validate ref="validate"
+        <eb-validate
+          ref="validate"
           host={host}
           readOnly={this.container.mode !== 'edit'}
-          auto data={this.base.item}
+          auto
+          data={this.base.item}
           params={this.base.validateParams}
           propsOnPerform={this.validate_onPerformValidate}
-          onSubmit={this.validate_onSubmit}>
-        </eb-validate>
+          onSubmit={this.validate_onSubmit}
+        ></eb-validate>
       );
     },
   },

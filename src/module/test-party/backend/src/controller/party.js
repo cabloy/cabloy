@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class PartyController extends app.Controller {
-
     async types() {
       const res = await this.ctx.service.party.types();
       this.ctx.success(res);
@@ -22,9 +20,7 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
   }
 
   return PartyController;
 };
-

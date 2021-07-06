@@ -2,9 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = app => {
-
   class StarLabelController extends app.Controller {
-
     async getRoleIdOwner(atomClass, userId) {
       const roles = await this.ctx.bean.atom.preferredRoles({
         atomClass,
@@ -102,9 +100,7 @@ module.exports = app => {
       // done
       this.ctx.success();
     }
-
   }
 
   return StarLabelController;
 };
-

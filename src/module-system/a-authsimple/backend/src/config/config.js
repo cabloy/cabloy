@@ -1,7 +1,6 @@
 // eslint-disable-next-line
 module.exports = appInfo => {
-  const config = {
-  };
+  const config = {};
 
   // defaultPassword
   config.defaultPassword = '123456';

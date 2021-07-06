@@ -26,7 +26,9 @@ module.exports = ctx => {
         },
         getToken(ctx, openid, cb) {
           const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
-          ctx.cache.db.module(moduleInfo.relativeName).get(name)
+          ctx.cache.db
+            .module(moduleInfo.relativeName)
+            .get(name)
             .then(token => {
               cb(null, token);
             })
@@ -34,7 +36,9 @@ module.exports = ctx => {
         },
         saveToken(ctx, openid, token, cb) {
           const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
-          ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
+          ctx.cache.db
+            .module(moduleInfo.relativeName)
+            .set(name, token, (token.expires_in - 10) * 1000)
             .then(() => {
               cb(null);
             })
@@ -48,15 +52,20 @@ module.exports = ctx => {
             const ctx = req.ctx;
             const state = ctx.request.query.state || 'login';
             const wechatHelper = new (WechatHelperFn(ctx))();
-            wechatHelper.verifyAuthUser({
-              scene: sceneInfo.scene,
-              openid: userInfo.openid,
-              userInfo,
-              state,
-              cbVerify: (profileUser, cb) => {
-                app.passport.doVerify(req, profileUser, cb);
-              },
-            }).then(verifyUser => { done(null, verifyUser); }).catch(done);
+            wechatHelper
+              .verifyAuthUser({
+                scene: sceneInfo.scene,
+                openid: userInfo.openid,
+                userInfo,
+                state,
+                cbVerify: (profileUser, cb) => {
+                  app.passport.doVerify(req, profileUser, cb);
+                },
+              })
+              .then(verifyUser => {
+                done(null, verifyUser);
+              })
+              .catch(done);
           },
         };
       },
@@ -72,15 +81,13 @@ module.exports = ctx => {
         mode: 'direct',
         disableAssociate: true,
       },
-      config: {
-      },
+      config: {},
       handler: null,
     };
   }
 
   const metaAuth = {
-    providers: {
-    },
+    providers: {},
   };
 
   // wechat/wechatweb

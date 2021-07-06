@@ -6,7 +6,7 @@ export default {
     global: true,
   },
   name: 'eb-list-item-validate',
-  mixins: [ validateItem ],
+  mixins: [validateItem],
   render(c) {
     if (this.root) {
       return this.renderRoot(c);
@@ -14,7 +14,5 @@ export default {
     return this.renderItem(c);
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

@@ -8,7 +8,6 @@ const fse = require('fs-extra');
 const chalk = require('chalk');
 
 module.exports = (context, cb) => {
-
   // config
   const config = require(path.join(context.projectPath, 'build/config.js'));
 
@@ -42,9 +41,7 @@ module.exports = (context, cb) => {
   const entryDefault = path.join(context.projectPath, 'src/front/config/config.default.js');
   const entryScene = path.join(context.projectPath, `src/front/config/config.${sceneValue}.js`);
   if (!fse.existsSync(entryScene)) {
-    console.log(chalk.red(
-      `  Scene Config File Not Found:\n  ${entryScene}\n`
-    ));
+    console.log(chalk.red(`  Scene Config File Not Found:\n  ${entryScene}\n`));
     process.exit(0);
   }
 
@@ -73,12 +70,17 @@ module.exports = (context, cb) => {
     const fileScene = path.join(tmpdir, `cabloy-front-config-${sceneValue}.js`);
     let configProject = require(fileDefault).default;
     const configScene = require(fileScene).default;
-    configProject = extend(true, {
-      base: {
-        name: pkgName,
-        title: pkgTitle,
+    configProject = extend(
+      true,
+      {
+        base: {
+          name: pkgName,
+          title: pkgTitle,
+        },
       },
-    }, configProject, configScene);
+      configProject,
+      configScene
+    );
 
     const envCustomTitle = {
       build: {
@@ -99,51 +101,55 @@ module.exports = (context, cb) => {
     fse.removeSync(fileScene);
 
     // merge
-    const res = merge({
-      projectPath: context.projectPath,
-      frontPath: context.frontPath,
-      configProject,
-      pkgCabloy,
-      build: {
-        env: require('./prod.env'),
-        index: path.resolve(distPath, 'index.html'),
-        assetsRoot: distPath,
-        assetsSubDirectory: 'static',
-        assetsPublicPath: '',
-        productionSourceMap: true,
-        uglify: true,
-      },
-      dev: {
-        env: require('./dev.env'),
-        port: 9090,
-        autoOpenBrowser: true,
-        assetsSubDirectory: 'static',
-        assetsPublicPath: '',
-        proxyTable: {
-          // '/favicon.ico': {
-          //   target: proxyTarget,
-          //   xfwd: true,
-          // },
-          '/api': {
-            target: proxyTarget,
-            xfwd: true,
-          },
-          '/socket.io': {
-            target: proxyTarget,
-            xfwd: true,
-            ws: true,
-          },
+    const res = merge(
+      {
+        projectPath: context.projectPath,
+        frontPath: context.frontPath,
+        configProject,
+        pkgCabloy,
+        build: {
+          env: require('./prod.env'),
+          index: path.resolve(distPath, 'index.html'),
+          assetsRoot: distPath,
+          assetsSubDirectory: 'static',
+          assetsPublicPath: '',
+          productionSourceMap: true,
+          uglify: true,
         },
-        // CSS Sourcemaps off by default because relative paths are "buggy"
-        // with this option, according to the CSS-Loader README
-        // (https://github.com/webpack/css-loader#sourcemaps)
-        // In our experience, they generally work as expected,
-        // just be aware of this issue when enabling this option.
-        cssSourceMap: false,
+        dev: {
+          env: require('./dev.env'),
+          port: 9090,
+          autoOpenBrowser: true,
+          assetsSubDirectory: 'static',
+          assetsPublicPath: '',
+          proxyTable: {
+            // '/favicon.ico': {
+            //   target: proxyTarget,
+            //   xfwd: true,
+            // },
+            '/api': {
+              target: proxyTarget,
+              xfwd: true,
+            },
+            '/socket.io': {
+              target: proxyTarget,
+              xfwd: true,
+              ws: true,
+            },
+          },
+          // CSS Sourcemaps off by default because relative paths are "buggy"
+          // with this option, according to the CSS-Loader README
+          // (https://github.com/webpack/css-loader#sourcemaps)
+          // In our experience, they generally work as expected,
+          // just be aware of this issue when enabling this option.
+          cssSourceMap: false,
+        },
       },
-    }, envCustom, envCustomTitle, config.front);
+      envCustom,
+      envCustomTitle,
+      config.front
+    );
 
     cb(null, res);
   });
-
 };

@@ -112,10 +112,14 @@ export default {
         children.push(buttons);
       }
       // tabs
-      return c('div', {
-        key: 'tabs',
-        staticClass: 'eb-layout-sidebar-tabs',
-      }, children);
+      return c(
+        'div',
+        {
+          key: 'tabs',
+          staticClass: 'eb-layout-sidebar-tabs',
+        },
+        children
+      );
     },
     _renderSidebarPanel(c) {
       // toolbar
@@ -147,16 +151,18 @@ export default {
       // resize handler
       const resizeHandler = c('div', {
         staticClass: 'panel-resize-handler',
-        directives: [{
-          name: 'eb-dragdrop',
-          value: {
-            scene: this.dragdropSceneResize,
-            resizable: true,
-            resizeDirection: this._getResizeDirection(),
-            onDragStart: this.onDragStartResizable,
-            onDragMove: this.onDragMoveResizable,
+        directives: [
+          {
+            name: 'eb-dragdrop',
+            value: {
+              scene: this.dragdropSceneResize,
+              resizable: true,
+              resizeDirection: this._getResizeDirection(),
+              onDragStart: this.onDragStartResizable,
+              onDragMove: this.onDragMoveResizable,
+            },
           },
-        }],
+        ],
       });
       // panel
       const viewSizeExtent = this.viewSizeExtent;
@@ -169,11 +175,15 @@ export default {
           height: `${viewSizeExtent.height}px`,
         };
       }
-      const panel = c('div', {
-        key: 'panel',
-        staticClass: this._getPanelClassName(),
-        style,
-      }, [ toolbar, group, resizeHandler ]);
+      const panel = c(
+        'div',
+        {
+          key: 'panel',
+          staticClass: this._getPanelClassName(),
+          style,
+        },
+        [toolbar, group, resizeHandler]
+      );
       return panel;
     },
     createView({ ctx, panel, options, init }) {
@@ -258,8 +268,8 @@ export default {
     },
     _getPanelAndIndex(panel) {
       const panelIndex = this._getPanelIndex(panel);
-      if (panelIndex === -1) return [ null, -1 ];
-      return [ this.options.panels[panelIndex], panelIndex ];
+      if (panelIndex === -1) return [null, -1];
+      return [this.options.panels[panelIndex], panelIndex];
     },
     _removePanel(panel) {
       const panelIndex = this._getPanelIndex(panel);
@@ -302,7 +312,7 @@ export default {
       // save
       this.layout.__saveLayoutConfig();
     },
-    _onPanelResizeDelay: Vue.prototype.$meta.util.debounce(function() {
+    _onPanelResizeDelay: Vue.prototype.$meta.util.debounce(function () {
       this.layout.onResize();
     }, 300),
     _getTopView(skip) {
@@ -329,7 +339,7 @@ export default {
       return `panel panel-cover panel-resizable ${classNameSide} ${classNameOpened}`;
     },
     _getResizeDirection() {
-      return (this.side === 'left' || this.side === 'right') ? 'column' : 'row';
+      return this.side === 'left' || this.side === 'right' ? 'column' : 'row';
     },
     onDragStartResizable({ $el, context, dragElement }) {
       const isRow = this._getResizeDirection() === 'row';
@@ -357,10 +367,7 @@ export default {
       this.setPanelWidth(newPanelHeight);
       const tooltip = newPanelHeight;
       return { eaten: true, tooltip };
-
-
     },
   },
 };
-
 </script>

@@ -11,25 +11,16 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     _renderActionsLeft() {
       const children = this.layoutManager.info_renderActionsLeft();
-      return (
-        <div class="actions-block actions-block-left">
-          {children}
-        </div>
-      );
+      return <div class="actions-block actions-block-left">{children}</div>;
     },
     _renderActionsRight() {
       const children = this.layoutManager.info_renderActionsRight();
-      return (
-        <div class="actions-block actions-block-right">
-          {children}
-        </div>
-      );
+      return <div class="actions-block actions-block-right">{children}</div>;
     },
   },
   render() {

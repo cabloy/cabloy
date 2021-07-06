@@ -213,9 +213,7 @@
             <th class="numeric-cell">Fat (g)</th>
             <th class="numeric-cell">Carbs</th>
             <th class="numeric-cell">Protein (g)</th>
-            <th class="tablet-only">
-              <f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments
-            </th>
+            <th class="tablet-only"><f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments</th>
           </tr>
         </thead>
         <tbody>
@@ -287,19 +285,19 @@
             <th class="input-cell">
               <span class="table-head-label">ID</span>
               <div class="input" style="width: 50px">
-                <input type="number" placeholder="Filter">
+                <input type="number" placeholder="Filter" />
               </div>
             </th>
             <th class="input-cell">
               <span class="table-head-label">Name</span>
               <div class="input">
-                <input type="text" placeholder="Filter">
+                <input type="text" placeholder="Filter" />
               </div>
             </th>
             <th class="input-cell">
               <span class="table-head-label">Email</span>
               <div class="input">
-                <input type="email" placeholder="Filter">
+                <input type="email" placeholder="Filter" />
               </div>
             </th>
             <th class="input-cell">
@@ -366,9 +364,7 @@
               <th class="numeric-cell">Fat (g)</th>
               <th class="numeric-cell">Carbs</th>
               <th class="numeric-cell">Protein (g)</th>
-              <th class="tablet-only">
-                <f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments
-              </th>
+              <th class="tablet-only"><f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments</th>
             </tr>
           </thead>
           <tbody>
@@ -456,9 +452,7 @@
               <th class="numeric-cell sortable-cell">Fat (g)</th>
               <th class="numeric-cell sortable-cell">Carbs</th>
               <th class="numeric-cell sortable-cell">Protein (g)</th>
-              <th class="tablet-only">
-                <f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments
-              </th>
+              <th class="tablet-only"><f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments</th>
             </tr>
           </thead>
           <tbody>
@@ -555,9 +549,7 @@
               <th class="numeric-cell">Fat (g)</th>
               <th class="numeric-cell">Carbs</th>
               <th class="numeric-cell">Protein (g)</th>
-              <th class="tablet-only">
-                <f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments
-              </th>
+              <th class="tablet-only"><f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments</th>
             </tr>
           </thead>
           <tbody>
@@ -645,9 +637,7 @@
               <th class="numeric-cell">Fat (g)</th>
               <th class="numeric-cell">Carbs</th>
               <th class="numeric-cell">Protein (g)</th>
-              <th class="tablet-only">
-                <f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments
-              </th>
+              <th class="tablet-only"><f7-icon ios="f7:message_fill" aurora="f7:message_fill" md="material:message"></f7-icon> Comments</th>
               <th></th>
             </tr>
           </thead>
@@ -788,5 +778,4 @@
 </template>
 <script>
 export default {};
-
 </script>

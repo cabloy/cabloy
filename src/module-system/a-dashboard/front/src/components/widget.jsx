@@ -1,6 +1,6 @@
 import widgetToolbar from './widgetToolbar.jsx';
 
-const _colWidths = [ 5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100 ];
+const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 export default {
   meta: {
     global: true,
@@ -14,35 +14,38 @@ export default {
     // toolbar
     if (!this.dashboard.lock) {
       children.push(
-        <widget-toolbar key="widget-toolbar" staticClass="widget-toolbar" widget={this.options}
+        <widget-toolbar
+          key="widget-toolbar"
+          staticClass="widget-toolbar"
+          widget={this.options}
           dragdropScene={this.dragdropScene}
-          propsOnDragStart={ this.onDragStart}
-          propsOnDragElement={ this.onDragElement}
+          propsOnDragStart={this.onDragStart}
+          propsOnDragElement={this.onDragElement}
           propsOnDropElement={this.onDropElement}
-          propsOnDropLeave={ this.onDropLeave}
+          propsOnDropLeave={this.onDropLeave}
           propsOnDropEnter={this.onDropEnter}
           propsOnDragEnd={this.onDragEnd}
           propsOnDragDone={this.onDragDone}
-          propsOnWidgetDelete={ this.onWidgetDelete}
+          propsOnWidgetDelete={this.onWidgetDelete}
           propsOnWidgetProperties={this.onWidgetProperties}
         ></widget-toolbar>
       );
     }
     // resize handler
     if (!this.dashboard.lock) {
-      const directives = [{
-        name: 'eb-dragdrop',
-        value: {
-          scene: this.dragdropSceneResize,
-          resizable: true,
-          widgetId: this.options.id,
-          onDragStart: this.onDragStartResizable,
-          onDragMove: this.onDragMoveResizable,
+      const directives = [
+        {
+          name: 'eb-dragdrop',
+          value: {
+            scene: this.dragdropSceneResize,
+            resizable: true,
+            widgetId: this.options.id,
+            onDragStart: this.onDragStartResizable,
+            onDragMove: this.onDragMoveResizable,
+          },
         },
-      }];
-      children.push(
-        <span key="resize-handler" staticClass="resize-handler" {...{ directives }}></span>
-      );
+      ];
+      children.push(<span key="resize-handler" staticClass="resize-handler" {...{ directives }}></span>);
     }
     // group/widget
     if (this.options.group) {
@@ -55,10 +58,7 @@ export default {
       };
       this.__combineWidgetProps(props);
       children.push(
-        <eb-dashboard-widget-group key="group" ref="group" {...{ props }}
-          onWidgetRealReady={this.__onWidgetRealReady}
-          onWidgetRealDestroy={ this.__onWidgetRealDestroy}
-        ></eb-dashboard-widget-group>
+        <eb-dashboard-widget-group key="group" ref="group" {...{ props }} onWidgetRealReady={this.__onWidgetRealReady} onWidgetRealDestroy={this.__onWidgetRealDestroy}></eb-dashboard-widget-group>
       );
     } else {
       if (!this.errorMessage && this.ready) {
@@ -67,25 +67,22 @@ export default {
           widget: this, // for more extensible
         };
         this.__combineWidgetProps(props);
-        children.push(c(this.__getFullName(), {
-          key: 'widget-inner',
-          staticClass: 'widget-inner',
-          props,
-          style: {
-            height: this.__getPropertyRealValue('height'),
-          },
-          on: {
-            'widgetReal:ready': this.__onWidgetRealReady,
-            'widgetReal:destroy': this.__onWidgetRealDestroy,
-          },
-        }));
-      } else if (this.errorMessage) {
         children.push(
-          <div key="errorMessage" staticClass="widget-inner widget-inner-error"
-            domPropsInnerText={this.errorMessage}
-            style={{ height: this.__getPropertyRealValue('height') }}
-          ></div>
+          c(this.__getFullName(), {
+            key: 'widget-inner',
+            staticClass: 'widget-inner',
+            props,
+            style: {
+              height: this.__getPropertyRealValue('height'),
+            },
+            on: {
+              'widgetReal:ready': this.__onWidgetRealReady,
+              'widgetReal:destroy': this.__onWidgetRealDestroy,
+            },
+          })
         );
+      } else if (this.errorMessage) {
+        children.push(<div key="errorMessage" staticClass="widget-inner widget-inner-error" domPropsInnerText={this.errorMessage} style={{ height: this.__getPropertyRealValue('height') }}></div>);
       }
     }
     // f7-col
@@ -307,7 +304,7 @@ export default {
     },
     _getPropsSchemaCategoryGrouping(options) {
       const propsSchema = this._getPropsSchema(options);
-      if (!propsSchema) return [ null, null ];
+      if (!propsSchema) return [null, null];
       const propsCategories = {};
       for (const propertyName in propsSchema.properties) {
         const propSchema = propsSchema.properties[propertyName];
@@ -315,7 +312,7 @@ export default {
         if (!propsCategories[category]) propsCategories[category] = {};
         propsCategories[category][propertyName] = propSchema;
       }
-      return [ propsSchema, propsCategories ];
+      return [propsSchema, propsCategories];
     },
     __combineWidgetProps(props) {
       const propsSchema = this._getPropsSchema(this.options);
@@ -337,14 +334,14 @@ export default {
     },
     _getBindSourceTitleAndPropertyTitle(widgetId, propertyName) {
       // widget
-      const [ widgetItem ] = this.dashboard.__findWidgetRealById(widgetId);
-      if (!widgetItem) return [ '', '' ];
+      const [widgetItem] = this.dashboard.__findWidgetRealById(widgetId);
+      if (!widgetItem) return ['', ''];
       // title
       const title = this._getBindSourceTitle(widgetItem);
       // property title
       const propertyTitle = this._getBindSourcePropertyTitle(widgetItem, propertyName);
       // ok
-      return [ title, propertyTitle ];
+      return [title, propertyTitle];
     },
     __getClassName() {
       if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length === 0 ? 'widget-group-empty' : 'widget-group-some'}`;
@@ -368,7 +365,7 @@ export default {
       if (diffPercent === 0) return;
       const minus = diffPercent < 0;
       // this widget
-      const [ widget, index ] = this.group.__getWidgetById(context.widgetId);
+      const [widget, index] = this.group.__getWidgetById(context.widgetId);
       const widgetWidthCurrent = this.__getPropertyRealValue2(widget, propertyNameWidth);
       let widgetWidthNew = widgetWidthCurrent + diffPercent;
       widgetWidthNew = this.__getPreferWidth(widgetWidthCurrent, widgetWidthNew, false, minus);
@@ -398,7 +395,7 @@ export default {
       const viewSizeUpperCase = viewSize.replace(viewSize[0], viewSize[0].toUpperCase());
       const propertyNameWidth = `width${viewSizeUpperCase}`;
       let tooltip;
-      const [ widget, index ] = this.group.__getWidgetById(context.widgetId);
+      const [widget, index] = this.group.__getWidgetById(context.widgetId);
       tooltip = this.__getPropertyRealValue2(widget, propertyNameWidth);
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
@@ -420,7 +417,7 @@ export default {
       return null;
     },
     onDragStart({ $el, context, dragElement }) {
-      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(context.widgetId);
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
       const tooltip = `${this.__getPropertyRealValue2(widgetDrag, 'title')}`;
       return { tooltip };
     },
@@ -428,8 +425,8 @@ export default {
       return this.$$(`.widget-id-${context.widgetId}`);
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [ widgetDrop, indexDrop ] = this.group.__getWidgetById(context.widgetId);
-      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(dragContext.widgetId);
+      const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
       if (indexDrop === indexDrag || indexDrop === indexDrag + 1) return null;
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
@@ -442,21 +439,24 @@ export default {
     onDropEnter({ $el, context, dropElement }) {},
     onDragEnd({ $el, context, dragElement }) {},
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
-      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(context.widgetId);
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
       this.group.widgets.splice(indexDrag, 1);
-      const [ widgetDrop, indexDrop ] = this.group.__getWidgetById(dropContext.widgetId);
+      const [widgetDrop, indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
       this.group.widgets.splice(indexDrop, 0, widgetDrag);
       // save
       this.dashboard.__saveLayoutConfig();
     },
     onWidgetDelete(widget) {
-      this.$view.dialog.confirm().then(() => {
-        const [ _widget, index ] = this.group.__getWidgetById(widget.id);
-        if (index === -1) return;
-        this.group.widgets.splice(index, 1);
-        // save
-        this.dashboard.__saveLayoutConfig();
-      }).catch(() => {});
+      this.$view.dialog
+        .confirm()
+        .then(() => {
+          const [_widget, index] = this.group.__getWidgetById(widget.id);
+          if (index === -1) return;
+          this.group.widgets.splice(index, 1);
+          // save
+          this.dashboard.__saveLayoutConfig();
+        })
+        .catch(() => {});
     },
     onWidgetProperties(widget) {
       this.$view.navigate(`/a/dashboard/widget/properties?widgetId=${this.options.id}`, {

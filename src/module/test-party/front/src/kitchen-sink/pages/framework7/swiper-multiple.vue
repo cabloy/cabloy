@@ -50,7 +50,13 @@
       </div>
     </div>
     <f7-block-title>Auto Slides Per View + Centered</f7-block-title>
-    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="10" data-slides-per-view="auto" data-centered-slides="true" class="swiper-container swiper-init demo-swiper-multiple demo-swiper-multiple-auto">
+    <div
+      data-pagination='{"el": ".swiper-pagination"}'
+      data-space-between="10"
+      data-slides-per-view="auto"
+      data-centered-slides="true"
+      class="swiper-container swiper-init demo-swiper-multiple demo-swiper-multiple-auto"
+    >
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -96,5 +102,4 @@
 </template>
 <script>
 export default {};
-
 </script>

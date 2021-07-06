@@ -1,7 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Tag {
-
     get modelTag() {
       return ctx.model.module(moduleInfo.relativeName).tag;
     }
@@ -127,12 +126,14 @@ module.exports = ctx => {
     }
 
     async calcAtomCount({ tagId }) {
-      const res = await ctx.model.query(`
+      const res = await ctx.model.query(
+        `
         select count(*) atomCount from aTagRef a
           inner join aAtom b on a.atomId=b.id
           where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomStage=1
         `,
-      [ctx.instance.id, tagId, ctx.instance.id]);
+        [ctx.instance.id, tagId, ctx.instance.id]
+      );
       return res[0].atomCount;
     }
 
@@ -150,7 +151,9 @@ module.exports = ctx => {
         if (!force) continue;
         // create
         const tagId = await this._register({
-          atomClass, language, tagName: _tagName,
+          atomClass,
+          language,
+          tagName: _tagName,
         });
         tagIds.push(tagId);
       }
@@ -187,7 +190,6 @@ module.exports = ctx => {
         },
       });
     }
-
   }
   return Tag;
 };

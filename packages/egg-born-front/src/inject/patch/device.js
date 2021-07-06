@@ -1,4 +1,4 @@
-export default function(Vue) {
+export default function (Vue) {
   // device
   const device = Vue.prototype.$device;
   // ua

@@ -1,23 +1,23 @@
 <template>
   <f7-card>
-    <f7-card-header>{{$text('Fruit Sales')}}</f7-card-header>
+    <f7-card-header>{{ $text('Fruit Sales') }}</f7-card-header>
     <f7-card-content>
       <div class="data-table">
         <table>
           <thead>
             <tr>
               <th class="label-cell"></th>
-              <th v-for="(col,index) of dataSource.cols" :key="index" class="numeric-cell">
-                <f7-link :class="col===fruit?'selected':''" @click="onClickFruit(col)">{{col}}</f7-link>
+              <th v-for="(col, index) of dataSource.cols" :key="index" class="numeric-cell">
+                <f7-link :class="col === fruit ? 'selected' : ''" @click="onClickFruit(col)">{{ col }}</f7-link>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row,index) of dataSource.rows" :key="index">
+            <tr v-for="(row, index) of dataSource.rows" :key="index">
               <th class="label-cell">
-                <f7-link :class="row===season?'selected':''" @click="onClickSeason(row)">{{row}}</f7-link>
+                <f7-link :class="row === season ? 'selected' : ''" @click="onClickSeason(row)">{{ row }}</f7-link>
               </th>
-              <td v-for="(col,colIndex) of dataSource.cols" :key="colIndex" class="numeric-cell">{{dataSource.dataset[index][colIndex]}}</td>
+              <td v-for="(col, colIndex) of dataSource.cols" :key="colIndex" class="numeric-cell">{{ dataSource.dataset[index][colIndex] }}</td>
             </tr>
           </tbody>
         </table>
@@ -26,7 +26,7 @@
     <f7-card-footer>
       <span></span>
       <span></span>
-      <span>Amount: {{getAmount()}}</span>
+      <span>Amount: {{ getAmount() }}</span>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -68,7 +68,7 @@ function installFactory(_Vue) {
         },
       },
     },
-    mixins: [ ebDashboardWidgetBase ],
+    mixins: [ebDashboardWidgetBase],
     data() {
       return {
         dataSource,
@@ -91,11 +91,9 @@ function installFactory(_Vue) {
     },
   };
 }
-
 </script>
 <style lang="less" scoped>
 .data-table {
-
   th,
   td {
     padding: 0 6px;
@@ -107,5 +105,4 @@ function installFactory(_Vue) {
     }
   }
 }
-
 </style>

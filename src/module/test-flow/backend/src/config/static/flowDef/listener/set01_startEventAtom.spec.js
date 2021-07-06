@@ -12,5 +12,4 @@ module.exports = class Listener {
       assert.equal(_flowDefKey, 'set01_startEventAtom');
     }
   }
-
 };

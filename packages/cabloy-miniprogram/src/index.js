@@ -3,7 +3,7 @@ const Api = require('./api.js');
 const Data = require('./data.js');
 const Config = require('./config.js');
 
-module.exports = function(app, options) {
+module.exports = function (app, options) {
   let _util;
   let _api;
   let _data;

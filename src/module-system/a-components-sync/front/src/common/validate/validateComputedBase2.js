@@ -39,7 +39,6 @@ export default ({ ctx, onChange }) => {
     register({ parcel, name, expression, dependencies, immediate }) {
       this.__computed_instance.register({ parcel, name, expression, dependencies, immediate });
     }
-
   }
 
   const _instance = new ValidateComputedBase2();

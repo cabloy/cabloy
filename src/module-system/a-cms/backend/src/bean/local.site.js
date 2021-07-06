@@ -6,7 +6,6 @@ let __blocks = null;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site {
-
     async getSite({ atomClass, language, options }) {
       const build = ctx.bean.cms.build({ atomClass });
       return await build.getSite({ language, options });
@@ -146,14 +145,16 @@ module.exports = ctx => {
       // categories
       if (atomClassBase.category) {
         stats.categories = await ctx.bean.category.count({
-          atomClass, language: _language,
+          atomClass,
+          language: _language,
         });
       }
 
       // tags
       if (atomClassBase.tag) {
         stats.tags = await ctx.bean.tag.count({
-          atomClass, language: _language,
+          atomClass,
+          language: _language,
         });
       }
 
@@ -226,7 +227,7 @@ module.exports = ctx => {
         }
         // ok
         blocksModule[fullName] = {
-          ... block,
+          ...block,
           validator,
           beanFullName,
         };
@@ -263,7 +264,6 @@ module.exports = ctx => {
       // default
       return null;
     }
-
   }
 
   return Site;

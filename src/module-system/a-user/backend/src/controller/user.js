@@ -1,6 +1,5 @@
 module.exports = app => {
   class UserController extends app.Controller {
-
     async save() {
       const res = await this.service.user.save({
         data: this.ctx.request.body.data,
@@ -109,7 +108,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
   return UserController;
 };

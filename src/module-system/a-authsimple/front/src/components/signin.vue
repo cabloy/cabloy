@@ -20,38 +20,38 @@
               <f7-icon slot="media"></f7-icon>
               <eb-toggle slot="after" v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
-            <eb-list-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign In')}}</eb-list-button>
+            <eb-list-button ref="buttonSubmit" :onPerform="signIn">{{ $text('Sign In') }}</eb-list-button>
           </eb-list>
         </eb-validate>
       </f7-card-content>
       <f7-card-footer>
-        <eb-link eb-href="/a/authsimple/passwordForgot" eb-target="_self" class="text-smaller">{{$text('Forgot Password')}}</eb-link>
+        <eb-link eb-href="/a/authsimple/passwordForgot" eb-target="_self" class="text-smaller">{{ $text('Forgot Password') }}</eb-link>
         <div></div>
-        <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign Up')}}</eb-link>
+        <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{ $text('Sign Up') }}</eb-link>
       </f7-card-footer>
       <div v-if="demoEnable" class="alert-info">
         <div class="data-table">
           <table>
             <thead>
               <tr>
-                <th>{{$text('Account Type')}}</th>
-                <th>{{$text('Username')}}</th>
-                <th>{{$text('Password')}}</th>
+                <th>{{ $text('Account Type') }}</th>
+                <th>{{ $text('Username') }}</th>
+                <th>{{ $text('Password') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>{{$text('Admin User')}}</td>
+                <td>{{ $text('Admin User') }}</td>
                 <td>admin</td>
                 <td>123456</td>
               </tr>
               <tr>
-                <td>{{$text('Normal User')}}</td>
+                <td>{{ $text('Normal User') }}</td>
                 <td>tom</td>
                 <td>123456</td>
               </tr>
               <tr>
-                <td>{{$text('Normal User')}}</td>
+                <td>{{ $text('Normal User') }}</td>
                 <td>jane</td>
                 <td>123456</td>
               </tr>
@@ -107,13 +107,15 @@ export default {
   created() {},
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/signin', {
-        data: this.data,
-        state: this.state,
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-      }).then(() => {
-        this.$meta.vueApp.reload({ echo: true });
-      });
+      return this.$api
+        .post('auth/signin', {
+          data: this.data,
+          state: this.state,
+          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        })
+        .then(() => {
+          this.$meta.vueApp.reload({ echo: true });
+        });
     },
     signIn() {
       return this.$refs.validate.perform();
@@ -123,11 +125,9 @@ export default {
     },
   },
 };
-
 </script>
 <style lang="less" scoped>
 .text-smaller {
   font-size: smaller !important;
 }
-
 </style>

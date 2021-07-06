@@ -3,20 +3,29 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.mine}`" :tabLinkActive="tabName==='mine'" icon-only icon-material="person" badge-color="orange" :icon-badge="stats.mine" :stats_params="{module: 'a-flow',name: 'flowInitiateds'}" @stats_change="onStatsChange($event,'mine')"></eb-link>
-          <eb-link :tab-link="`#${tabId.others}`" :tabLinkActive="tabName==='others'" icon-only icon-material="people"></eb-link>
-          <eb-link :tab-link="`#${tabId.history}`" :tabLinkActive="tabName==='history'" icon-only icon-material="stop"></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.mine}`"
+            :tabLinkActive="tabName === 'mine'"
+            icon-only
+            icon-material="person"
+            badge-color="orange"
+            :icon-badge="stats.mine"
+            :stats_params="{ module: 'a-flow', name: 'flowInitiateds' }"
+            @stats_change="onStatsChange($event, 'mine')"
+          ></eb-link>
+          <eb-link :tab-link="`#${tabId.others}`" :tabLinkActive="tabName === 'others'" icon-only icon-material="people"></eb-link>
+          <eb-link :tab-link="`#${tabId.history}`" :tabLinkActive="tabName === 'history'" icon-only icon-material="stop"></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.mine" :tabActive="tabName==='mine'" data-ref="mine" @tab:show="tabName='mine'">
+      <eb-tab-page-content :id="tabId.mine" :tabActive="tabName === 'mine'" data-ref="mine" @tab:show="tabName = 'mine'">
         <flowTab ref="mine" slot="list" :container="getContainer('mine')"></flowTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.others" :tabActive="tabName==='others'" data-ref="others" @tab:show="tabName='others'">
+      <eb-tab-page-content :id="tabId.others" :tabActive="tabName === 'others'" data-ref="others" @tab:show="tabName = 'others'">
         <flowTab ref="others" slot="list" :container="getContainer('others')"></flowTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.history" :tabActive="tabName==='history'" data-ref="history" @tab:show="tabName='history'">
+      <eb-tab-page-content :id="tabId.history" :tabActive="tabName === 'history'" data-ref="history" @tab:show="tabName = 'history'">
         <flowTab ref="history" slot="list" :container="getContainer('history')"></flowTab>
       </eb-tab-page-content>
     </f7-tabs>
@@ -31,7 +40,7 @@ export default {
   },
   data() {
     const query = this.$f7route.query;
-    const options = (query && query.options) ? JSON.parse(query.options) : { mode: 'mine' };
+    const options = query && query.options ? JSON.parse(query.options) : { mode: 'mine' };
     const layout = query && query.layout;
     return {
       options,
@@ -79,5 +88,4 @@ export default {
     },
   },
 };
-
 </script>

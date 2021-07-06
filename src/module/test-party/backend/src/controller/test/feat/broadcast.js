@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class BroadcastController extends app.Controller {
-
     async emit() {
       this.ctx.app.meta.broadcast.emit({
         locale: 'zh-cn',
@@ -12,9 +10,7 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
   }
 
   return BroadcastController;
-
 };

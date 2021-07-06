@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
+      <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'passwordChange' }" :onPerform="onPerformValidate">
         <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
@@ -47,12 +47,14 @@ export default {
   created() {},
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/passwordChange', {
-        data: this.data,
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-      }).then(() => {
-        this.$f7router.back();
-      });
+      return this.$api
+        .post('auth/passwordChange', {
+          data: this.data,
+          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        })
+        .then(() => {
+          this.$f7router.back();
+        });
     },
     onPerformOk() {
       return this.$refs.validate.perform();
@@ -62,7 +64,5 @@ export default {
     },
   },
 };
-
 </script>
-<style scoped>
-</style>
+<style scoped></style>

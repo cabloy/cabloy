@@ -1,7 +1,6 @@
 const ModelClass = require('../base/model.js');
 
-module.exports = function(loader, modules) {
-
+module.exports = function (loader, modules) {
   // load models
   loadModels();
 
@@ -27,7 +26,7 @@ module.exports = function(loader, modules) {
     const modelContainer = new (ModelClass(loader.app))(context, { table: null });
     // module
     modelContainer.__ebCacheModule = new Map();
-    modelContainer.module = function(moduleName) {
+    modelContainer.module = function (moduleName) {
       let _modelContainer = modelContainer.__ebCacheModule.get(moduleName);
       if (!_modelContainer) {
         _modelContainer = createModelContainer(context, moduleName);
@@ -62,5 +61,4 @@ module.exports = function(loader, modules) {
       }
     }
   }
-
 };

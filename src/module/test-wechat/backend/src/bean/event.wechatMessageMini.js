@@ -1,7 +1,6 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
-
     async execute(context, next) {
       const data = context.data;
       // scene
@@ -17,7 +16,6 @@ module.exports = ctx => {
       // next
       await next();
     }
-
   }
 
   return eventBean;

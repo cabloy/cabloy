@@ -11,7 +11,6 @@ module.exports = app => {
     { method: 'post', path: 'messageMini/:scene', controller: 'messageMini', action: 'index', meta: { auth: { enable: false } } },
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
-
   ];
   return routes;
 };

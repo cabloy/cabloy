@@ -1,32 +1,26 @@
 export default {
   render() {
     const buttons = [];
-    buttons.push(
-      <eb-link key="remove" iconMaterial="remove" propsOnPerform={() => this.onWidgetDelete(this.widget)}></eb-link>
-    );
-    buttons.push(
-      <eb-link key="settings" iconMaterial="settings" propsOnPerform={() => this.onWidgetProperties(this.widget)}></eb-link>
-    );
-    const directives = [{
-      name: 'eb-dragdrop',
-      value: {
-        scene: this.dragdropScene,
-        widgetId: this.widget.id,
-        onDragStart: this.onDragStart,
-        onDragElement: this.onDragElement,
-        onDropElement: this.onDropElement,
-        onDropLeave: this.onDropLeave,
-        onDropEnter: this.onDropEnter,
-        onDragEnd: this.onDragEnd,
-        onDragDone: this.onDragDone,
+    buttons.push(<eb-link key="remove" iconMaterial="remove" propsOnPerform={() => this.onWidgetDelete(this.widget)}></eb-link>);
+    buttons.push(<eb-link key="settings" iconMaterial="settings" propsOnPerform={() => this.onWidgetProperties(this.widget)}></eb-link>);
+    const directives = [
+      {
+        name: 'eb-dragdrop',
+        value: {
+          scene: this.dragdropScene,
+          widgetId: this.widget.id,
+          onDragStart: this.onDragStart,
+          onDragElement: this.onDragElement,
+          onDropElement: this.onDropElement,
+          onDropLeave: this.onDropLeave,
+          onDropEnter: this.onDropEnter,
+          onDragEnd: this.onDragEnd,
+          onDragDone: this.onDragDone,
+        },
       },
-    }];
-    buttons.push(
-      <eb-link key="open_with" iconMaterial="open_with" {...{ directives }}></eb-link>
-    );
-    return (
-      <div>{buttons}</div>
-    );
+    ];
+    buttons.push(<eb-link key="open_with" iconMaterial="open_with" {...{ directives }}></eb-link>);
+    return <div>{buttons}</div>;
   },
   props: {
     widget: {

@@ -1,6 +1,5 @@
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
-
     async execute(context) {
       const sameAsCaller = context.sameAsCaller;
       const data = context.data;
@@ -9,7 +8,6 @@ module.exports = app => {
         moduleCache._remove(data.name);
       }
     }
-
   }
 
   return Broadcast;

@@ -1,7 +1,5 @@
 module.exports = app => {
-
   class Category extends app.Service {
-
     async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
       return await this.ctx.bean.category.child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
     }
@@ -37,7 +35,6 @@ module.exports = app => {
     async relativeTop({ categoryId, setLocale }) {
       return await this.ctx.bean.category.relativeTop({ categoryId, setLocale });
     }
-
   }
 
   return Category;

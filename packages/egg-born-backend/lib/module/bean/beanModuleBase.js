@@ -1,7 +1,6 @@
 const BeanModuleCaches = Symbol('BEAN#__BeanModuleCaches');
 
 class BeanModuleBase {
-
   constructor(ctx, beanClassName) {
     this.__ctx = ctx;
     this.__beanClassName = beanClassName;
@@ -17,7 +16,6 @@ class BeanModuleBase {
     }
     return beanInstance;
   }
-
 }
 
 module.exports = BeanModuleBase;
