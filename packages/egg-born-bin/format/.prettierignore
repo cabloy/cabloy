@@ -1,0 +1,11 @@
+**/dist/**
+*.min.js
+*.min.css
+miniprogram_npm
+**/assets/lib/**
+src/backend/app
+src/backend/run
+/.assets/**
+/coverage/**
+/docker-compose/**
+/packages/egg-born-template-*/**
