@@ -5,8 +5,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_{{safeKeys}}';
 
   // modules
-  config.modules = {
-  };
+  config.modules = {};
 
   // mysql
   config.mysql = {

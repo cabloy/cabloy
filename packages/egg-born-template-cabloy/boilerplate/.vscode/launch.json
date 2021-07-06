@@ -4,28 +4,29 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-  {
-    "name": "dev:backend",
-    "type": "pwa-node",
-    "request": "launch",
-    "cwd": "${workspaceRoot}",
-    "runtimeExecutable": "npm",
-    "runtimeArgs": ["run", "dev:backend"]
-  },
-  {
-    "name": "test:backend",
-    "type": "pwa-node",
-    "request": "launch",
-    "cwd": "${workspaceRoot}",
-    "runtimeExecutable": "npm",
-    "runtimeArgs": ["run", "test:backend"]
-  },
-  {
-    "name": "cov:backend",
-    "type": "pwa-node",
-    "request": "launch",
-    "cwd": "${workspaceRoot}",
-    "runtimeExecutable": "npm",
-    "runtimeArgs": ["run", "cov:backend"]
-  }]
+    {
+      "name": "dev:backend",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:backend"]
+    },
+    {
+      "name": "test:backend",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test:backend"]
+    },
+    {
+      "name": "cov:backend",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "cov:backend"]
+    }
+  ]
 }

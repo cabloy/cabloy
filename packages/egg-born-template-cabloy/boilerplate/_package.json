@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "title": "{{name}}",
   "description": "{{description}}",
-  "keywords": [
-    "Cabloy Project"
-  ],
+  "keywords": ["Cabloy Project"],
   "scripts": {
     "dev:front": "egg-born-bin front-dev",
     "build:front": "egg-born-bin front-build",

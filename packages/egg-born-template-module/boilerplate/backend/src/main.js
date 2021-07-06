@@ -3,7 +3,6 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 
 module.exports = app => {
-
   // aops
   const aops = require('./aops.js')(app);
   // beans
@@ -31,5 +30,4 @@ module.exports = app => {
     errors,
     meta,
   };
-
 };
