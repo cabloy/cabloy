@@ -1,9 +1,8 @@
 const path = require('path');
-const eslintConfigEggBorn = require.resolve('./packages/eslint-config-egg-born');
 
 module.exports = {
   parser: 'vue-eslint-parser',
-  extends: ['plugin:vue/essential', eslintConfigEggBorn],
+  extends: ['plugin:vue/essential', 'eslint-config-egg-born'],
   parserOptions: {
     parser: '@babel/eslint-parser',
     sourceType: 'module',
