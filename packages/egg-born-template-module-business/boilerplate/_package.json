@@ -11,7 +11,9 @@
     }
   },
   "description": "{{description}}",
-  "keywords": ["Cabloy Module"],
+  "keywords": [
+    "Cabloy Module"
+  ],
   "scripts": {
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
     "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",

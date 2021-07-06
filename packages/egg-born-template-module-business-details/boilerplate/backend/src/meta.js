@@ -15,10 +15,9 @@ module.exports = app => {
             language: false,
             category: true,
             tag: true,
-            details: [ 'default' ],
+            details: ['default'],
           },
-          actions: {
-          },
+          actions: {},
           validator: '{{atomClassName}}',
           search: {
             validator: '{{atomClassName}}Search',
@@ -39,8 +38,7 @@ module.exports = app => {
             title: 'Details',
             tableName: '{{providerId}}{{atomClassNameCapitalize}}Detail',
           },
-          actions: {
-          },
+          actions: {},
           validator: '{{atomClassName}}Detail',
         },
       },
