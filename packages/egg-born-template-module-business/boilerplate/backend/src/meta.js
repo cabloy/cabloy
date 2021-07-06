@@ -16,8 +16,7 @@ module.exports = app => {
             category: true,
             tag: true,
           },
-          actions: {
-          },
+          actions: {},
           validator: '{{atomClassName}}',
           search: {
             validator: '{{atomClassName}}Search',
