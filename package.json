@@ -26,14 +26,15 @@
     "build:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
     "dev:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-dev",
     "debug:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-debug",
-    "lint": "eslint src",
     "test:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-test",
     "cov:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
     "start:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start",
     "start:backend-daemon": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-start --daemon",
     "stop:backend": "node ./packages/egg-born-scripts/bin/egg-born-scripts.js backend-stop",
     "commits": "./scripts/commits.sh",
-    "commits-all": "./scripts/commits-all.sh"
+    "commits-all": "./scripts/commits-all.sh",
+    "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
+    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\""
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
