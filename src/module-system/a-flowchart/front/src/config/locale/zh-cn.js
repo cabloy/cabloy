@@ -19,4 +19,5 @@ export default {
   'Select Fields': '选择字段',
   'Move Up': '上移',
   'Move Down': '下移',
+  'Add Node': '添加节点',
 };

@@ -2,8 +2,8 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode"></eb-link>
-        <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode">{{ $text('Add Node') }}</eb-link>
+        <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave">{{ $text('Save') }}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar>
