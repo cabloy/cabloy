@@ -5,4 +5,5 @@ export default {
   CabloyAboutTip3: 'Vertically, CabloyJS make the frontend and the backend work together to form an organic wholeness, so as to avoid working independently between them',
   CabloyAboutTip4:
     'Horizontally, CabloyJS has refined a code organization mode called “business modularity”, which could offer a powerful basic framework for the continually growing business demands of large-scale web applications through different module combinations',
+  DashboardUnlockWarningSave: 'You should lock again for saving the modified profile',
 };

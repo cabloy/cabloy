@@ -263,6 +263,8 @@ export default {
       }
       // open lock
       this.lock = false;
+      // toast
+      this.$view.toast.show({ text: this.$text('DashboardUnlockWarningSave') });
     },
     async onPerformUnlock() {
       // save
