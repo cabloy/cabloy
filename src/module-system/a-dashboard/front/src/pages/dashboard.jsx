@@ -306,8 +306,8 @@ export default {
       this.__onWidgetRealDestroy();
       this.widgetsReal.push({ widgetId, widgetReal });
     },
-    __onWidgetRealDestroy(widgetId, widgetReal) {
-      const [widget, index] = this.__findWidgetRealById(widgetId);
+    __onWidgetRealDestroy(widgetId /* , widgetReal*/) {
+      const [, index] = this.__findWidgetRealById(widgetId);
       if (index > -1) {
         this.widgetsReal.splice(index, 1);
       }

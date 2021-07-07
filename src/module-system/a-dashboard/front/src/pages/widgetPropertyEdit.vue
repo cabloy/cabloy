@@ -247,7 +247,7 @@ export default {
       if (!extra) return this.propertySchema;
       return Object.assign({}, this.propertySchema, extra);
     },
-    _renderValueStatic(c, propertyReal) {
+    _renderValueStatic(c /* , propertyReal*/) {
       // schema extra
       // schema
       const schema = {
