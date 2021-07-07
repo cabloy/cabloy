@@ -95,7 +95,7 @@ export default {
       this.$meta.util.swipeoutClose(e.target);
     },
     _onPerformBindAdd() {
-      this._bindAddOrEdit({ id: this.dashboard.__generateUUID() });
+      this._bindAddOrEdit({ id: this.$meta.util.uuidv4() });
     },
     _bindAddOrEdit(propertyBind) {
       this.$view.navigate(`/a/dashboard/widget/property/bind/add?widgetId=${this.widgetId}&propertyName=${this.propertyName}`, {

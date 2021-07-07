@@ -195,7 +195,7 @@ export default {
     },
     __checkProfile(profile) {
       // root id
-      if (!profile.root.id) profile.root.id = this.__generateUUID();
+      if (!profile.root.id) profile.root.id = this.$meta.util.uuidv4();
       // widget id
       for (const widget of profile.root.widgets) {
         this.__initWidget(widget, 'widget');
@@ -205,7 +205,7 @@ export default {
     __getProfileEmpty() {
       return {
         root: {
-          id: this.__generateUUID(),
+          id: this.$meta.util.uuidv4(),
           widgets: [],
         },
       };
@@ -213,7 +213,7 @@ export default {
     __initWidget(widget, type) {
       // uuid
       if (!widget.id) {
-        widget.id = this.__generateUUID();
+        widget.id = this.$meta.util.uuidv4();
       }
       // properties
       if (!widget.properties) {
@@ -301,18 +301,6 @@ export default {
       this.profile.root.widgets.push(widgetGroup);
       // save
       this.__saveLayoutConfig();
-    },
-    __generateUUID() {
-      let d = new Date().getTime();
-      if (window.performance && typeof window.performance.now === 'function') {
-        d += performance.now(); // use high-precision timer if available
-      }
-      const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-      });
-      return uuid;
     },
     __onWidgetRealReady(widgetId, widgetReal) {
       this.__onWidgetRealDestroy();

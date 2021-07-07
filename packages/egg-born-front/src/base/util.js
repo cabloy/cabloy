@@ -1,5 +1,6 @@
 import mparse from 'egg-born-mparse';
 import moment from 'moment';
+import * as uuid from 'uuid';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
@@ -113,6 +114,9 @@ export default function (Vue) {
       if (!_ids.scene) _ids.scene = 1;
       else _ids.scene++;
       return `${scene}_${_ids.scene}`;
+    },
+    uuidv4() {
+      return uuid.v4().replace(/-/g, '');
     },
     fromNow(date) {
       if (typeof date !== 'object') date = new Date(date);
@@ -444,6 +448,7 @@ export default function (Vue) {
   Object.assign(util, {
     sandbox: sandboxFn(Vue),
     moment,
+    uuid,
     queue,
     cookies,
     extend(...args) {
