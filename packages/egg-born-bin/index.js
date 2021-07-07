@@ -42,7 +42,13 @@ function confirmFormat() {
   // check .eslintrc.js
   if (!checkEslintrc()) return;
   // copy
-  const files = ['.eslintrc.js', '.eslintignore', '.prettierrc', '.prettierignore'];
+  const files = [
+    '.eslintrc.js', //
+    '.eslintignore',
+    '.prettierrc',
+    '.prettierignore',
+    'jsconfig.json',
+  ];
   for (const file of files) {
     const fileDest = path.join(process.cwd(), file);
     const fileSrc = path.join(__dirname, `./format/${file}`);
