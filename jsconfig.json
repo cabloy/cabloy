@@ -5,7 +5,6 @@
   "include": [
     "src/module/**/*", //
     "src/module-system/**/*",
-    "packages/**/*",
-    "node_modules/egg-born-module-*/**/*"
+    "packages/**/*"
   ]
 }
