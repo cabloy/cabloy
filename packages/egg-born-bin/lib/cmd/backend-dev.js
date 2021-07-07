@@ -1,4 +1,4 @@
-const DevCommand = require('egg-bin').DevCommand;
+const DevCommand = require('@zhennann/egg-bin').DevCommand;
 const utils = require('../utils.js');
 
 class BackendDevCommand extends DevCommand {

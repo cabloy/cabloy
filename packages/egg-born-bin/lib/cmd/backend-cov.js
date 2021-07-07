@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const globby = require('globby');
-const CovCommand = require('egg-bin').CovCommand;
+const CovCommand = require('@zhennann/egg-bin').CovCommand;
 const utils = require('../utils.js');
 
 class BackendCovCommand extends CovCommand {
@@ -51,7 +51,7 @@ class BackendCovCommand extends CovCommand {
 
     // clean mocha stack, inspired by https://github.com/rstacruz/mocha-clean
     // [mocha built-in](https://github.com/mochajs/mocha/blob/master/lib/utils.js#L738) don't work with `[npminstall](https://github.com/cnpm/npminstall)`, so we will override it.
-    if (!testArgv.fullTrace) requireArr.unshift(require.resolve('egg-bin/lib/mocha-clean'));
+    if (!testArgv.fullTrace) requireArr.unshift(require.resolve('@zhennann/egg-bin/lib/mocha-clean'));
 
     // requireArr.push(require.resolve('co-mocha'));
 

@@ -3,7 +3,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 const globby = require('globby');
 const mock = require('egg-mock');
-const TestCommand = require('egg-bin').TestCommand;
+const TestCommand = require('@zhennann/egg-bin').TestCommand;
 const utils = require('../utils.js');
 const eventAppReady = 'eb:event:appReady';
 
@@ -83,7 +83,7 @@ class BackendTestCommand extends TestCommand {
 
     // clean mocha stack, inspired by https://github.com/rstacruz/mocha-clean
     // [mocha built-in](https://github.com/mochajs/mocha/blob/master/lib/utils.js#L738) don't work with `[npminstall](https://github.com/cnpm/npminstall)`, so we will override it.
-    if (!testArgv.fullTrace) requireArr.unshift(require.resolve('egg-bin/lib/mocha-clean'));
+    if (!testArgv.fullTrace) requireArr.unshift(require.resolve('@zhennann/egg-bin/lib/mocha-clean'));
 
     // requireArr.push(require.resolve('co-mocha'));
 

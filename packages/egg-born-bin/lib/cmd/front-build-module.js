@@ -1,4 +1,4 @@
-const Command = require('egg-bin').Command;
+const Command = require('@zhennann/egg-bin').Command;
 
 class FrontBuildCommand extends Command {
   constructor(rawArgv) {

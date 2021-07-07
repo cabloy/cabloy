@@ -9,7 +9,7 @@ const rimraf = require('mz-modules/rimraf');
 const fse = require('fs-extra');
 const chalk = require('chalk');
 const semverDiff = require('semver-diff');
-const Command = require('egg-bin').Command;
+const Command = require('@zhennann/egg-bin').Command;
 
 class TestUpdateCommand extends Command {
   constructor(rawArgv) {

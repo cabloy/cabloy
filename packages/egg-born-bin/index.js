@@ -1,6 +1,6 @@
 const path = require('path');
 const fse = require('fs-extra');
-const Command = require('egg-bin').Command;
+const Command = require('@zhennann/egg-bin').Command;
 
 class EggBornBinCommand extends Command {
   constructor(rawArgv) {

@@ -1,5 +1,5 @@
 const path = require('path');
-const Command = require('egg-bin').Command;
+const Command = require('@zhennann/egg-bin').Command;
 
 class FrontDevCommand extends Command {
   constructor(rawArgv) {
