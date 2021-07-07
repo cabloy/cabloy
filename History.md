@@ -1,5 +1,11 @@
 # History
 
+## 2021-07-07, Version 4.11.16
+
+- **特性**
+  - egg-born-front: 前端增加 uuid 工具`this.$meta.util.uuid`
+  - dashboard: 当开锁时，提示`您应该重新加锁，以便保存被修改的配置`
+
 ## 2021-07-06, Version 4.11.11
 
 - **杂项**
