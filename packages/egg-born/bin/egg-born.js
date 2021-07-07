@@ -29,7 +29,6 @@ co(function* () {
       - npm run build:front
       - npm run build:backend
       - npm run build:all
-      - npm run lint
     `);
     } else {
       this.log(`usage:
@@ -46,6 +45,7 @@ co(function* () {
       - npm run cov:backend
       - npm run update:test
       - npm run lint
+      - npm run format
     `);
     }
   };
