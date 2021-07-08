@@ -1,4 +1,4 @@
-// 2021-07-07
+// 2021-07-08
 const path = require('path');
 const eslintConfigEggBorn = require.resolve('./packages/eslint-config-egg-born');
 

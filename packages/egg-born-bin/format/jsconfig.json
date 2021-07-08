@@ -5,5 +5,10 @@
   "include": [
     "src/module/**/*", //
     "node_modules/egg-born-*/**/*"
+  ],
+  "exclude": [
+    "node_modules", //
+    "**/dist/**",
+    "**/*.min.js"
   ]
 }
