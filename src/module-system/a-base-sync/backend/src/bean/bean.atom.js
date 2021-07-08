@@ -426,8 +426,6 @@ module.exports = ctx => {
         atomSimple: 1,
         userIdUpdated: user.id,
       });
-      // fetch formal
-      const atomFormal = await this.modelAtom.get({ id: atomIdFormal });
       // delete draft
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
@@ -439,12 +437,52 @@ module.exports = ctx => {
       });
       // notify to change draft stats
       this._notifyDrafts();
+      // fetch formal
+      const atomFormal = await this.modelAtom.get({ id: atomIdFormal });
       // ok
       return atomFormal;
     }
 
     async _switchToSimple_1_createFormal({ atomClass, _atomClass, atom, user }) {
       const atomIdFormal = atom.id;
+      // update history
+      await ctx.model.query(
+        `
+          update aAtom set atomSimple=1, atomIdDraft=0 
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [ctx.instance.id, atomIdFormal]
+      );
+      // update formal
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomFlowId: 0,
+        atomClosed: 0,
+        atomIdDraft: 0,
+        atomSimple: 1,
+        userIdUpdated: user.id,
+      });
+      // delete draft
+      if (atom.atomIdDraft) {
+        const atomDraft = await this.modelAtom.get({ id: atom.atomIdDraft });
+        const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key: keyDraft, user },
+          fn: 'delete',
+        });
+        // notify to change draft stats
+        this._notifyDrafts();
+      }
+      // ok
+      return atom;
+    }
+
+    async _switchToSimple_2_createFormal({ atomClass, _atomClass, atom, user }) {
+      const atomIdFormal = atom.atomIdFormal;
       // update history
       await ctx.model.query(
         `
