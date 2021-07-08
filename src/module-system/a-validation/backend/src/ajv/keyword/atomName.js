@@ -15,13 +15,16 @@ module.exports = {
       }
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
+      // atomStage should same as atom's by atomId, not atomClass's atomSimple(maybe changed)
+      const _atomOld = await ctx.bean.atom.modelAtom.get({ id: atomId });
+      const _atomStage = _atomOld.atomStage;
       //   read by atomClass, atomLanguage, atomName
       const items = await ctx.model.query(
         `
           select a.id from aAtom a
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+              where a.atomStage=? and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
           `,
-        [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
+        [_atomStage, ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
       );
       if (items[0] && items[0].id !== atomId) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');

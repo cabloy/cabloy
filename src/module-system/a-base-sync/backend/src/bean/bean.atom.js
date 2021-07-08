@@ -566,6 +566,7 @@ module.exports = ctx => {
       const atomLanguage = srcItem.atomLanguage;
       const atomCategoryId = srcItem.atomCategoryId;
       const atomTags = srcItem.atomTags;
+      const atomSimple = srcItem.atomSimple;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
@@ -604,6 +605,7 @@ module.exports = ctx => {
         atomLanguage,
         atomCategoryId,
         atomTags,
+        atomSimple,
         atomStage,
         atomFlowId,
         allowComment: srcItem.allowComment,
@@ -628,6 +630,7 @@ module.exports = ctx => {
         // atomCategoryId: destItem.atomCategoryId,
         // atomTags: destItem.atomTags,
         // allowComment: destItem.allowComment,
+        atomSimple: destItem.atomSimple,
         atomStage: destItem.atomStage,
         atomFlowId: destItem.atomFlowId,
         attachmentCount: destItem.attachmentCount,
