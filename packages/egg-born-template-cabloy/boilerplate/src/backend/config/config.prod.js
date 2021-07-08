@@ -5,7 +5,18 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_{{safeKeys}}';
 
   // disabledModules
-  config.disabledModules = ['test-dingtalk', 'test-flow', 'test-hostsimple', 'test-localeone', 'test-localetwo', 'test-party', 'test-partymonkey', 'test-wechat', 'test-wxwork'];
+  config.disabledModules = [
+    'test-dingtalk', //
+    'test-flow',
+    'test-hostsimple',
+    'test-localeone',
+    'test-localetwo',
+    'test-note',
+    'test-party',
+    'test-partymonkey',
+    'test-wechat',
+    'test-wxwork',
+  ];
 
   // instances
   config.instances = [
