@@ -28,6 +28,7 @@ miniprogram_npm
 /src/front/config
 
 /src/module/*
+!/src/module/test-note
 !/src/module/test-party
 !/src/module/test-partymonkey-monkey
 !/src/module/test-flow
