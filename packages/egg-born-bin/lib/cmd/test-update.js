@@ -77,7 +77,10 @@ class TestUpdateCommand extends Command {
     const downloadUrl = result.dist.tarball;
     const version = result.version;
 
-    const _pkg = require(path.join(moduleDestDir, 'package.json'));
+    const _pkgFile = path.join(moduleDestDir, 'package.json');
+    if (!fse.existsSync(_pkgFile)) return downloadUrl;
+
+    const _pkg = require(_pkgFile);
     const diffType = semverDiff(_pkg.version, version);
     if (!diffType) return null;
 
