@@ -8,6 +8,8 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
     async create({ atomClass, item, user }) {
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       // atomName
       if (!item.atomName) {
         // draftId
@@ -18,6 +20,14 @@ module.exports = app => {
       // atomStaticKey
       if (!item.atomStaticKey) {
         item.atomStaticKey = uuid.v4().replace(/-/g, '');
+      }
+      // atomSimple
+      if (_atomClass.simple) {
+        item.atomSimple = 1;
+        item.atomStage = 1;
+      } else {
+        item.atomSimple = 0;
+        item.atomStage = 0;
       }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });

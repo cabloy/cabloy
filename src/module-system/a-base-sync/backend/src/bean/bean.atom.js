@@ -882,12 +882,12 @@ module.exports = ctx => {
     // atom
 
     async _add({
-      atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, roleIdOwner = 0, atomStatic = 0, atomStaticKey = null, atomRevision = 0, atomLanguage = null, atomCategoryId = 0, atomTags = null, allowComment = 1 },
+      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      atom: { itemId, atomName, roleIdOwner = 0, atomStatic = 0, atomStaticKey = null, atomRevision = 0, atomLanguage = null, atomCategoryId = 0, atomTags = null, allowComment = 1, atomSimple = 0 },
       user,
     }) {
       let atomClassId = id;
-      if (!atomClassId) atomClassId = await this.getAtomClassId({ atomClassName, atomClassIdParent });
+      if (!atomClassId) atomClassId = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const res = await this.modelAtom.insert({
         atomStage: 0,
         itemId,
@@ -899,6 +899,7 @@ module.exports = ctx => {
         atomLanguage,
         atomCategoryId,
         atomTags,
+        atomSimple,
         allowComment,
         userIdCreated: user.id,
         userIdUpdated: user.id,
