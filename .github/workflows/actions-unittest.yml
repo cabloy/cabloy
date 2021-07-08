@@ -1,5 +1,8 @@
 name: actions-unittest
-on: [push]
+on:
+  push:
+    branches:
+      - master
 jobs:
   unittest:
     runs-on: ubuntu-latest
