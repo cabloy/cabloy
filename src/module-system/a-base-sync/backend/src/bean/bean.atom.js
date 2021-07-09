@@ -518,62 +518,52 @@ module.exports = ctx => {
       return keyDraft;
     }
 
-    async openDraft({ key, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // atom
-      let _atom = await this.modelAtom.get({ id: key.atomId });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // check simple switch
-      _atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom: _atom, user });
-      // draft
+    async _openDraft_asSimple({}) {}
+
+    async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+      let keyDraft;
       let changed = true;
-      if (_atom.atomStage === 0) {
-        if (_atom.atomClosed === 1) {
+      // draft
+      if (atom.atomStage === 0) {
+        keyDraft = { atomId: atom.id, itemId: atom.itemId };
+        if (atom.atomClosed === 1) {
           // open
           await this._openDraft_update({
-            atomId: _atom.id,
-            atomRevision: _atom.atomRevision + 1,
+            atomId: atom.id,
+            atomRevision: atom.atomRevision + 1,
             user,
           });
         } else {
           changed = false;
         }
-        return { draft: { key }, changed };
       }
       // formal
-      if (_atom.atomStage === 1) {
-        let keyDraft;
-        if (_atom.atomIdDraft > 0) {
-          keyDraft = { atomId: _atom.atomIdDraft };
+      if (atom.atomStage === 1) {
+        if (atom.atomIdDraft > 0) {
+          keyDraft = { atomId: atom.atomIdDraft };
         } else {
           // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: key.atomId, user });
+          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
         }
         // open
         await this._openDraft_update({
           atomId: keyDraft.atomId,
-          atomRevision: _atom.atomRevision + 1,
+          atomRevision: atom.atomRevision + 1,
           user,
         });
-        // ok
-        return { draft: { key: keyDraft }, changed };
       }
       // history
-      if (_atom.atomStage === 2) {
-        let keyDraft;
-        if (_atom.atomIdDraft > 0) {
-          keyDraft = { atomId: _atom.atomIdDraft };
+      if (atom.atomStage === 2) {
+        if (atom.atomIdDraft > 0) {
+          keyDraft = { atomId: atom.atomIdDraft };
         } else {
           // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: _atom.atomIdFormal, user });
+          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
         }
         // ** create draft from history
         keyDraft = await this._copy({
           target: 'draft',
-          srcKey: { atomId: key.atomId },
+          srcKey: { atomId: atom.id },
           srcItem: null,
           destKey: keyDraft,
           user,
@@ -581,24 +571,42 @@ module.exports = ctx => {
         // open
         await this._openDraft_update({
           atomId: keyDraft.atomId,
-          atomRevision: await this._openDraft_atomRevision_history({ _atom }),
+          atomRevision: await this._openDraft_atomRevision_history({ atom }),
           user,
         });
-        // ok
-        return { draft: { key: keyDraft }, changed };
       }
+      // ok
+      return { draft: { key: keyDraft }, changed };
     }
 
-    async _openDraft_atomRevision_history({ _atom }) {
+    async openDraft({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // atom
+      let atom = await this.modelAtom.get({ id: key.atomId });
+      if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // check simple switch
+      atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
+      if (atom.atomSimple) {
+        // simple
+        return await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+      }
+      // not simple
+      return await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
+    }
+
+    async _openDraft_atomRevision_history({ atom }) {
       let atomRevision;
-      if (_atom.atomIdDraft) {
-        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdDraft });
-        atomRevision = _atom2.atomRevision + 1;
-      } else if (_atom.atomIdFormal) {
-        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdFormal });
-        atomRevision = _atom2.atomRevision + 1;
+      if (atom.atomIdDraft) {
+        const atom2 = await this.modelAtom.get({ id: atom.atomIdDraft });
+        atomRevision = atom2.atomRevision + 1;
+      } else if (atom.atomIdFormal) {
+        const atom2 = await this.modelAtom.get({ id: atom.atomIdFormal });
+        atomRevision = atom2.atomRevision + 1;
       } else {
-        atomRevision = _atom.atomRevision + 1;
+        atomRevision = atom.atomRevision + 1;
       }
       return atomRevision;
     }
