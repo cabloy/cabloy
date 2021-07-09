@@ -518,7 +518,38 @@ module.exports = ctx => {
       return keyDraft;
     }
 
-    async _openDraft_asSimple({}) {}
+    async _openDraft_asSimple({ atom, user }) {
+      let keyFormal;
+      let changed = true;
+      // formal
+      if (atom.atomStage === 1) {
+        keyFormal = { atomId: atom.id, itemId: atom.itemId };
+        changed = false;
+      }
+      // history
+      if (atom.atomStage === 2) {
+        const atomIdFormal = atom.atomIdFormal;
+        keyFormal = { atomId: atomIdFormal };
+        const atomFormal = await this.modelAtom.get({ id: atomIdFormal });
+        const atomRevision = atomFormal.atomRevision;
+        // ** create formal from history
+        keyFormal = await this._copy({
+          target: 'formal',
+          srcKey: { atomId: atom.id },
+          srcItem: null,
+          destKey: keyFormal,
+          user,
+        });
+        // update formal
+        await this.modelAtom.update({
+          id: atomIdFormal,
+          atomRevision,
+          userIdUpdated: user.id,
+        });
+      }
+      // ok
+      return { formal: { key: keyFormal }, changed };
+    }
 
     async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
       let keyDraft;
