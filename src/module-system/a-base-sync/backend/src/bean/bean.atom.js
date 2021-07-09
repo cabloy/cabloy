@@ -391,60 +391,33 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user);
     }
 
-    async _switchToSimple_0({ atomClass, _atomClass, atom, user }) {
-      let atomIdFormal = atom.atomIdFormal;
-      if (!atomIdFormal) {
-        // formal/history not exists, so copy it
-        // create formal
-        const srcItem = await ctx.bean.atom.read({ key: { atomId: atom.id }, user });
-        srcItem.atomSimple = 1; // important
-        const keyFormal = await this._copy({
-          target: 'formal',
-          srcKey: { atomId: atom.id },
-          srcItem,
-          destKey: null,
-          options: null,
-          user,
-        });
-        atomIdFormal = keyFormal.atomId;
+    async _switchToSimple({ atomClass, _atomClass, atom, user }) {
+      let atomIdDraft;
+      let atomIdFormal;
+      if (atom.atomStage === 0) {
+        // is draft
+        atomIdDraft = atom.id;
+        atomIdFormal = atom.atomIdFormal;
+        if (!atomIdFormal) {
+          // formal/history not exists, so copy it
+          // create formal
+          const srcItem = await ctx.bean.atom.read({ key: { atomId: atomIdDraft }, user });
+          srcItem.atomSimple = 1; // important
+          const keyFormal = await this._copy({
+            target: 'formal',
+            srcKey: { atomId: atomIdDraft },
+            srcItem,
+            destKey: null,
+            options: null,
+            user,
+          });
+          atomIdFormal = keyFormal.atomId;
+        }
       } else {
-        // update history
-        await ctx.model.query(
-          `
-          update aAtom set atomSimple=1, atomIdDraft=0 
-            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
-        `,
-          [ctx.instance.id, atomIdFormal]
-        );
+        // is formal/history
+        atomIdDraft = atom.atomIdDraft;
+        atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
       }
-      // update formal
-      await this.modelAtom.update({
-        id: atomIdFormal,
-        atomFlowId: 0,
-        atomClosed: 0,
-        atomIdDraft: 0,
-        atomSimple: 1,
-        userIdUpdated: user.id,
-      });
-      // delete draft
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key: { atomId: atom.id, itemId: atom.itemId }, user },
-        fn: 'delete',
-      });
-      // notify to change draft stats
-      this._notifyDrafts();
-      // fetch formal
-      const atomFormal = await this.modelAtom.get({ id: atomIdFormal });
-      // ok
-      return atomFormal;
-    }
-
-    async _switchToSimple_1_2({ atomClass, _atomClass, atom, user }) {
-      const atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
       // update history
       await ctx.model.query(
         `
@@ -456,15 +429,12 @@ module.exports = ctx => {
       // update formal
       await this.modelAtom.update({
         id: atomIdFormal,
-        atomFlowId: 0,
-        atomClosed: 0,
-        atomIdDraft: 0,
         atomSimple: 1,
-        userIdUpdated: user.id,
+        atomIdDraft: 0,
       });
       // delete draft
-      if (atom.atomIdDraft) {
-        const atomDraft = await this.modelAtom.get({ id: atom.atomIdDraft });
+      if (atomIdDraft) {
+        const atomDraft = atom.atomStage === 0 ? atom : await this.modelAtom.get({ id: atomIdDraft });
         const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
         const _moduleInfo = mparse.parseInfo(atomClass.module);
         const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
@@ -478,16 +448,11 @@ module.exports = ctx => {
         this._notifyDrafts();
       }
       // ok
-      return atom;
-    }
-
-    async _switchToSimple({ atomClass, _atomClass, atom, user }) {
       if (atom.atomStage === 0) {
-        // is draft
-        return await this._switchToSimple_0({ atomClass, _atomClass, atom, user });
+        // fetch formal
+        return await this.modelAtom.get({ id: atomIdFormal });
       }
-      // is formal/history
-      return await this._switchToSimple_1_2({ atomClass, _atomClass, atom, user });
+      return atom;
     }
 
     async _switchToSimpleNot({ atomClass, _atomClass, atom, user }) {}
