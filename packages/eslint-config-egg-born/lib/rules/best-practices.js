@@ -56,5 +56,6 @@ module.exports = {
       },
     ],
     'generator-star-spacing': [0],
+    'newline-per-chained-call': [0],
   },
 };
