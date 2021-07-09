@@ -455,7 +455,31 @@ module.exports = ctx => {
       return atom;
     }
 
-    async _switchToSimpleNot({ atomClass, _atomClass, atom, user }) {}
+    async _switchToSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+      const atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
+      // update history's atomSimple
+      await ctx.model.query(
+        `
+          update aAtom set atomSimple=0
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [ctx.instance.id, atomIdFormal]
+      );
+      // update formal's atomSimple
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomSimple: 0,
+      });
+      // ** create draft from formal
+      const keyDraft = await this._createDraftFromFormal({ atomIdFormal, user });
+      // update draft's atomClosed
+      await this.modelAtom.update({
+        id: keyDraft.atomId,
+        atomClosed: 1,
+      });
+      // ok
+      return atom;
+    }
 
     async _checkSimpleSwitch({ atomClass, _atomClass, atom, user }) {
       // the same mode
@@ -465,7 +489,7 @@ module.exports = ctx => {
         return await this._switchToSimple({ atomClass, _atomClass, atom, user });
       }
       // -> not simple
-      return await this._switchToSimpleNot({ atomClass, _atomClass, atom, user });
+      return await this._switchToSimpleZero({ atomClass, _atomClass, atom, user });
     }
 
     async _createDraftFromFormal({ atomIdFormal, user }) {
