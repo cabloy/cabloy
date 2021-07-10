@@ -530,8 +530,6 @@ module.exports = ctx => {
       if (atom.atomStage === 2) {
         const atomIdFormal = atom.atomIdFormal;
         keyFormal = { atomId: atomIdFormal };
-        const atomFormal = await this.modelAtom.get({ id: atomIdFormal });
-        const atomRevision = atomFormal.atomRevision;
         // ** create formal from history
         keyFormal = await this._copy({
           target: 'formal',
@@ -543,7 +541,6 @@ module.exports = ctx => {
         // update formal
         await this.modelAtom.update({
           id: atomIdFormal,
-          atomRevision,
           userIdUpdated: user.id,
         });
       }
@@ -591,6 +588,9 @@ module.exports = ctx => {
           // ** create draft from formal
           keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
         }
+        // hold atomRevision
+        const atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
+        const atomRevision = atomDraft.atomRevision;
         // ** create draft from history
         keyDraft = await this._copy({
           target: 'draft',
@@ -602,7 +602,7 @@ module.exports = ctx => {
         // open
         await this._openDraft_update({
           atomId: keyDraft.atomId,
-          atomRevision: await this._openDraft_atomRevision_history({ atom }),
+          atomRevision: atomRevision + 1,
           user,
         });
       }
@@ -626,20 +626,6 @@ module.exports = ctx => {
       }
       // not simple
       return await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
-    }
-
-    async _openDraft_atomRevision_history({ atom }) {
-      let atomRevision;
-      if (atom.atomIdDraft) {
-        const atom2 = await this.modelAtom.get({ id: atom.atomIdDraft });
-        atomRevision = atom2.atomRevision + 1;
-      } else if (atom.atomIdFormal) {
-        const atom2 = await this.modelAtom.get({ id: atom.atomIdFormal });
-        atomRevision = atom2.atomRevision + 1;
-      } else {
-        atomRevision = atom.atomRevision + 1;
-      }
-      return atomRevision;
     }
 
     async _openDraft_update({ atomId, atomRevision, user }) {
@@ -745,11 +731,26 @@ module.exports = ctx => {
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
         userIdUpdated = user.id;
         atomFlowId = 0;
-        atomRevision = undefined;
+        // formal->draft: = srcItem.atomRevision
+        if (srcItem.atomStage === 2) {
+          // history->draft
+          atomRevision = undefined;
+        }
       } else if (target === 'formal') {
-        atomIdDraft = srcItem.atomId;
+        if (srcItem.atomStage === 0) {
+          // draft->formal
+          atomIdDraft = srcItem.atomId;
+        } else {
+          // history->formal
+          atomIdDraft = 0;
+        }
         atomIdFormal = 0;
+        // history->formal
+        if (srcItem.atomStage === 2) {
+          atomRevision = undefined;
+        }
       } else if (target === 'history') {
+        // formal->history
         atomIdDraft = srcItem.atomIdDraft;
         atomIdFormal = srcItem.atomId;
       } else if (target === 'clone') {
