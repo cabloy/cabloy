@@ -208,8 +208,22 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       // basic info
       const _atomBasic = await this.modelAtom.get({ id: key.atomId });
-      // item draft
-      const itemDraft = Object.assign({}, item, {
+      if (!_atomBasic.simple) {
+        if (_atomBasic.atomStage !== 0) ctx.throw(403);
+      } else {
+        if (_atomBasic.atomStage !== 1) ctx.throw(403);
+        //  formal -> history
+        await this._copy({
+          target: 'history',
+          srcKey: { atomId: key.atomId },
+          srcItem: null,
+          destKey: null,
+          options,
+          user,
+        });
+      }
+      // write draft/formal(simple)
+      const itemWrite = Object.assign({}, item, {
         atomId: key.atomId,
         itemId: key.itemId,
         atomSimple: _atomBasic.atomSimple,
@@ -218,9 +232,16 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, target, key, item: itemDraft, options, user },
+        context: { atomClass, target, key, item: itemWrite, options, user },
         fn: 'write',
       });
+      // update formal version for simple
+      if (_atomBasic.simple) {
+        await this.modelAtom.update({
+          id: key.atomId,
+          atomRevision: _atomBasic.atomRevision + 1,
+        });
+      }
     }
 
     // deleteBulk
