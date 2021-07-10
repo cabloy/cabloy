@@ -69,7 +69,8 @@ module.exports = app => {
       if (!item) return;
       // force delete atomDisabled
       delete item.atomDisabled;
-      // stage
+      // simple/stage
+      const atomSimple = item.atomSimple;
       const atomStage = item.atomStage;
       // atomClass
       const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
@@ -79,7 +80,7 @@ module.exports = app => {
       }
       // validate
       const ignoreValidate = options && options.ignoreValidate;
-      if (atomStage === 0 && !target && !ignoreValidate) {
+      if (((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) && !target && !ignoreValidate) {
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
           atomClass,
           key,
@@ -90,7 +91,7 @@ module.exports = app => {
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
       // write atom
-      await this._writeAtom({ key, item, user, atomStage });
+      await this._writeAtom({ key, item, user, atomSimple, atomStage });
       // tag
       if (_atomClass.tag && item.atomTags !== undefined) {
         await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
@@ -107,13 +108,13 @@ module.exports = app => {
       }
     }
 
-    async _writeAtom({ key, item, user, atomStage }) {
+    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
       // write atom
       const atom = {};
       for (const field of __atomBasicFields) {
         if (item[field] !== undefined) atom[field] = item[field];
       }
-      if (atomStage === 0) {
+      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
         atom.updatedAt = new Date();
       }
       if (atom.atomName) {
