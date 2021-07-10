@@ -2,7 +2,17 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
-const __atomBasicFields = ['atomName', 'atomStatic', 'atomStaticKey', 'atomRevision', 'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment'];
+// maybe modified by user
+const __atomBasicFields = [
+  'atomName', //
+  'atomLanguage',
+  'atomCategoryId',
+  'atomTags',
+  'allowComment',
+  // 'atomStatic',
+  // 'atomStaticKey',
+  // 'atomRevision',
+];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
