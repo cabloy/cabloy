@@ -262,11 +262,8 @@ module.exports = ctx => {
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 0) {
         if (_atom.atomIdFormal) {
-          // just close
-          await this.modelAtom.update({
-            id: key.atomId,
-            atomClosed: 1,
-          });
+          // just closeDraft with _notifyDrafts
+          await this.closeDraft({ key });
         } else {
           // delete
           await ctx.executeBean({
@@ -275,9 +272,9 @@ module.exports = ctx => {
             context: { atomClass, key, user },
             fn: 'delete',
           });
+          // notify
+          this._notifyDrafts();
         }
-        // notify
-        this._notifyDrafts();
       } else if (_atom.atomStage === 1) {
         // delete history
         const listHistory = await this.modelAtom.select({

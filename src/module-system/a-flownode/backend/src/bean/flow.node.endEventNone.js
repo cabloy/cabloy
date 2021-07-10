@@ -10,9 +10,10 @@ module.exports = ctx => {
       await this.flowInstance._endFlow({
         flowHandleStatus: 1,
         flowRemark: null,
-        atom: {
-          close: true,
-        },
+        // should not handle atom
+        // atom: {
+        //   close: true,
+        // },
       });
       // also true
       return true;
