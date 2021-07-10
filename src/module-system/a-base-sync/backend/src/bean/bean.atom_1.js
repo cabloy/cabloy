@@ -618,6 +618,8 @@ module.exports = ctx => {
     async _checkRightAction({ atom, action, stage, user, checkFlow }) {
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // adjust for simple
+      if (stage === 'draft' && _atom.atomSimple === 1) stage = 'formal';
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)) return null;
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
