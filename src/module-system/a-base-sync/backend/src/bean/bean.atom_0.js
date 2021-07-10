@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
