@@ -380,13 +380,23 @@ module.exports = ctx => {
     }
 
     async closeDraft({ key }) {
+      const atomIdDraft = key.atomId;
+      const atomDraft = await this.modelAtom.get({ id: atomIdDraft });
+      const user = { id: atomDraft.userIdUpdated };
+      // ** update draft from formal
+      await this._copy({
+        target: 'draft',
+        srcKey: { atomId: atomDraft.atomIdFormal },
+        srcItem: null,
+        destKey: key,
+        user,
+      });
+      // update atomClosed
       await this.modelAtom.update({
-        id: key.atomId,
+        id: atomIdDraft,
         atomClosed: 1,
       });
       // notify
-      const item = await this.modelAtom.get({ id: key.atomId });
-      const user = { id: item.userIdUpdated };
       this._notifyDrafts(user);
       this._notifyDraftsFlowing(user);
     }
