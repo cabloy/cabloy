@@ -288,6 +288,8 @@ module.exports = ctx => {
             context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
             fn: 'delete',
           });
+          // notify
+          this._notifyDrafts();
         }
         // delete formal
         await ctx.executeBean({
@@ -296,8 +298,6 @@ module.exports = ctx => {
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
           fn: 'delete',
         });
-        // notify
-        this._notifyDrafts();
       } else if (_atom.atomStage === 2) {
         // delete history self
         await ctx.executeBean({
