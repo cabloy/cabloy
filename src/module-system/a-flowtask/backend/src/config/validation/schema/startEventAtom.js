@@ -9,6 +9,9 @@ module.exports = app => {
         ebType: 'atomClass',
         ebTitle: 'Atom Class',
         notEmpty: true,
+        ebParams: {
+          simple: 0,
+        },
       },
       conditionExpression: {
         type: 'string',

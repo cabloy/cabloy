@@ -33,6 +33,8 @@ export default {
       if (target === undefined) target = '_self';
       // optional
       const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
+      // simple
+      const simple = this.$meta.util.getProperty(property, 'ebParams.simple');
       return new Promise(resolve => {
         const url = '/a/basefront/atom/selectAtomClass';
         this.$view.navigate(url, {
@@ -41,6 +43,7 @@ export default {
             params: {
               atomClass: this.atomClass,
               optional,
+              simple,
             },
             callback: (code, data) => {
               if (code === 200) {

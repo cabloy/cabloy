@@ -31,6 +31,9 @@ export default {
     optional() {
       return this.contextParams.optional;
     },
+    simple() {
+      return this.contextParams.simple;
+    },
     resource() {
       return this.contextParams.resource;
     },
@@ -44,16 +47,20 @@ export default {
         const atomClassesModule = this.atomClassesAll[moduleName];
         for (const atomClassName in atomClassesModule) {
           const atomClass = atomClassesModule[atomClassName];
-          if (!this.resource || atomClass.resource) {
-            const title = atomClass.titleLocale;
-            const after = module.titleLocale;
-            atomClasses.push({
-              title,
-              module: moduleName,
-              atomClassName,
-              after,
-            });
-          }
+          // check resource
+          if (this.resource && !atomClass.resource) continue;
+          // check simple
+          if (this.simple === 0 && atomClass.simple) continue;
+          if (this.simple === 1 && !atomClass.simple) continue;
+          // show
+          const title = atomClass.titleLocale;
+          const after = module.titleLocale;
+          atomClasses.push({
+            title,
+            module: moduleName,
+            atomClassName,
+            after,
+          });
         }
       }
       return atomClasses;
