@@ -51,13 +51,13 @@ export default {
         const key = { atomId: item.atomId, itemId: item.itemId };
         // openDraft
         const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
-        const keyDraft = data.draft.key;
+        const keyWrite = data.draft ? data.draft.key : data.formal.key;
         const changed = data.changed;
         // navigate
         const _item = {
           ...item,
-          atomId: keyDraft.atomId,
-          itemId: keyDraft.itemId,
+          atomId: keyWrite.atomId,
+          itemId: keyWrite.itemId,
         };
         const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
         ctx.$view.navigate(url, action.navigateOptions);
