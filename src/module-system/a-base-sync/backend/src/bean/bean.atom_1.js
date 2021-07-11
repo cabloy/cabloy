@@ -116,6 +116,7 @@ module.exports = ctx => {
         // fetch formal
         return await this.modelAtom.get({ id: atomIdFormal });
       }
+      atom.atomSimple = 1;
       return atom;
     }
 
@@ -142,6 +143,7 @@ module.exports = ctx => {
         atomClosed: 1,
       });
       // ok
+      atom.atomSimple = 0;
       return atom;
     }
 
