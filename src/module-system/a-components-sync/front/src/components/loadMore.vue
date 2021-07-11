@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     none() {
-      return !this.error && !this.doing && this.finished && this.index == 0;
+      return !this.error && !this.doing && this.finished && this.index === 0;
     },
     nomore() {
       return !this.error && !this.doing && this.finished && this.index > 0;
