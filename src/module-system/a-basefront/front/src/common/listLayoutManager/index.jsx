@@ -11,6 +11,8 @@ import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
 import Actions from './actions.jsx';
 import Data from './data.jsx';
+import DataContinuous from './dataContinuous.jsx';
+import DataPaged from './dataPaged.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
@@ -38,6 +40,8 @@ export default {
     Bottombar,
     Actions,
     Data,
+    DataContinuous,
+    DataPaged,
   ],
   data() {
     return {};
