@@ -14,7 +14,12 @@ export default {
       const actions = [];
       const atomClosed = this.base.item.atomClosed === 1;
       // submit: support simple
-      const submit = this.actions_findAction('write') && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed;
+      // const submit = this.actions_findAction('write') && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed;
+      // // adjust
+      // if (submit && this.base.item.atomSimple === 1 && this.container.mode === 'view') {
+      //   submit = false;
+      // }
+      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0 && !atomClosed;
       if (submit) {
         actions.push({
           module: this.base.atomClass.module,

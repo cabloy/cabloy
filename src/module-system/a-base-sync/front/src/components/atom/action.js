@@ -30,7 +30,9 @@ export default {
         const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
         if (data.formal) {
           // delete draft
-          ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+          if (item.atomStage === 0) {
+            ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+          }
           // update formal
           ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
           // back
