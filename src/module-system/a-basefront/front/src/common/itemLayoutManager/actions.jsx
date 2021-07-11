@@ -13,8 +13,8 @@ export default {
       if (!this.base_ready) return null;
       const actions = [];
       const atomClosed = this.base.item.atomClosed === 1;
-      // submit
-      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0 && !atomClosed;
+      // submit: support simple
+      const submit = this.actions_findAction('write') && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed;
       if (submit) {
         actions.push({
           module: this.base.atomClass.module,
@@ -24,8 +24,8 @@ export default {
       }
       // others
       for (const action of this.actions.list) {
-        // write
-        if (action.name === 'write' && this.base.item.atomStage === 0) continue;
+        // write: support simple
+        if (action.name === 'write' && this.base.item.atomStage === this.base.item.atomSimple) continue;
         // view
         if (action.name === 'read' && this.container.mode === 'view') continue;
         // stage
@@ -38,8 +38,8 @@ export default {
         actions.push(action);
       }
       // specials
-      //    draft
-      if (this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
+      //    draft: ignore simple
+      if (this.base.item.atomSimple === 0 && this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
         actions.push({
           module: this.base.atomClass.module,
           atomClassName: this.base.atomClass.atomClassName,
@@ -126,7 +126,8 @@ export default {
       // only show on draft
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
-      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
+      // support simple
+      if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
         children.push(<eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
