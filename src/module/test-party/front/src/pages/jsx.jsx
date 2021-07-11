@@ -1,8 +1,20 @@
+import Vue from 'vue';
+import JsxComponent from '../components/jsxComponent.jsx';
 export default {
   data() {
     return {
       counter: 1,
+      counterComponent: null,
     };
+  },
+  created() {
+    this.counterComponent = new Vue(JsxComponent);
+  },
+  beforeDestroy() {
+    if (this.counterComponent) {
+      this.counterComponent.$destroy();
+      this.counterComponent = null;
+    }
   },
   methods: {
     addCounter() {
@@ -22,6 +34,8 @@ export default {
           {this.showCounter()}
           <f7-button onClick={this.addCounter}>Counter++</f7-button>
         </f7-block>
+        <div> -- demo for jsx component --</div>
+        {this.counterComponent.renderContent()}
       </eb-page>
     );
   },
