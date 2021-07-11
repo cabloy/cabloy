@@ -1,14 +1,3 @@
-<template>
-  <div class="eb-loadmore" v-if="doing || none || nomore || retry">
-    <f7-preloader class="eb-preloader" v-if="doing"></f7-preloader>
-    <div v-if="none">{{ $text('No Data') }}</div>
-    <div v-if="nomore">{{ $text('No More Data') }}</div>
-    <div v-if="retry">
-      <f7-button round class="color-orange" @click="onRetry">{{ $text('Load Error, Try Again') }}</f7-button>
-    </div>
-  </div>
-</template>
-<script>
 export default {
   meta: {
     global: true,
@@ -95,6 +84,22 @@ export default {
       this.loadMore();
     },
   },
+  render() {
+    const show = this.doing || this.none || this.nomore || this.retry;
+    if (!show) return null;
+    return (
+      <div class="eb-loadmore">
+        {this.doing && <f7-preloader class="eb-preloader"></f7-preloader>}
+        {this.none && <div>{this.$text('No Data')}</div>}
+        {this.nomore && <div>{this.$text('No More Data')}</div>}
+        {this.retry && (
+          <div>
+            <f7-button round class="color-orange" onClick={this.onRetry}>
+              {this.$text('Load Error, Try Again')}
+            </f7-button>
+          </div>
+        )}
+      </div>
+    );
+  },
 };
-</script>
-<style></style>

@@ -1,4 +1,4 @@
-import loadMore from './components/loadMore.vue';
+import loadMore from './components/loadMore.jsx';
 import view from './components/view2.vue';
 import page from './components/page.vue';
 import navbar from './components/navbar.vue';
