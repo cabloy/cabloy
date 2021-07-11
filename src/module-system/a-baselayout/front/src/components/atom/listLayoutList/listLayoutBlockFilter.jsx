@@ -71,7 +71,9 @@ export default {
     },
     stages() {
       const stages = [];
+      const atomClassBase = this.atomClassBase;
       for (const key of ['draft', 'formal', 'history']) {
+        if (atomClassBase && atomClassBase.simple && key === 'draft') continue;
         stages.push({ title: key.replace(key[0], key[0].toUpperCase()), value: key });
       }
       return stages;
