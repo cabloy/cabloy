@@ -1,10 +1,18 @@
 export default {
+  props: {
+    name: {
+      type: String,
+      default: 'cat',
+    },
+  },
   data() {
     return {
       counter: 1,
     };
   },
-  created() {},
+  created() {
+    console.log(this.name);
+  },
   beforeDestroy() {},
   methods: {
     addCounter() {

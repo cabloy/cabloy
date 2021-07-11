@@ -207,6 +207,10 @@ export default function (Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
     },
+    createComponentInstance(component, options) {
+      const _component = Object.assign({}, component, options);
+      return new Vue(_component);
+    },
     async performAction({ ctx, action, item }) {
       // actionPath
       if (!action.actionComponent) {

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import JsxComponent from '../components/jsxComponent.jsx';
 export default {
   data() {
@@ -8,7 +7,8 @@ export default {
     };
   },
   created() {
-    this.counterComponent = new Vue(JsxComponent);
+    const options = { propsData: { name: 'dog' } };
+    this.counterComponent = this.$meta.util.createComponentInstance(JsxComponent, options);
   },
   beforeDestroy() {
     if (this.counterComponent) {
