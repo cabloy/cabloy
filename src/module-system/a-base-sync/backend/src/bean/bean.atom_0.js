@@ -208,8 +208,8 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       // basic info
       const _atomBasic = await this.modelAtom.get({ id: key.atomId });
-      if (_atomBasic.atomStage !== _atomBasic.simple) ctx.throw(403);
-      if (_atomBasic.simple) {
+      if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
+      if (_atomBasic.atomSimple) {
         //  formal -> history
         await this._copy({
           target: 'history',
@@ -234,7 +234,7 @@ module.exports = ctx => {
         fn: 'write',
       });
       // update formal version for simple
-      if (_atomBasic.simple) {
+      if (_atomBasic.atomSimple) {
         await this.modelAtom.update({
           id: key.atomId,
           atomRevision: _atomBasic.atomRevision + 1,
