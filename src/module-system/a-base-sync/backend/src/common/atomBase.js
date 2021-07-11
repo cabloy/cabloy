@@ -39,6 +39,12 @@ module.exports = app => {
         item.atomSimple = 0;
         item.atomStage = 0;
       }
+      // roleIdOwner
+      if (!item.roleIdOwner) {
+        const roleName = 'superuser';
+        const role = await this.ctx.bean.role.parseRoleName({ roleName });
+        item.roleIdOwner = role.id;
+      }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
       return { atomId };
