@@ -15,7 +15,7 @@ module.exports = app => {
             language: false,
             category: true,
             tag: true,
-            simple: true,
+            // simple: true,
           },
           actions: {},
           validator: 'note',
