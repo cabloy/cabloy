@@ -23,7 +23,7 @@ module.exports = {
         `
           select a.atomStage,a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage in [0,1] and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
           `,
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
