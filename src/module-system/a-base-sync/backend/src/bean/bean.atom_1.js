@@ -309,7 +309,7 @@ module.exports = ctx => {
         destKey.itemId = _item.itemId;
       }
       // atomStage
-      const atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
+      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
       // atomClosed
       const atomClosed = 0;
       // atomIdDraft/atomIdFormal
@@ -354,6 +354,7 @@ module.exports = ctx => {
         atomIdDraft = srcItem.atomIdDraft;
         atomIdFormal = srcItem.atomId;
       } else if (target === 'clone') {
+        atomStage = atomSimple; // support simple
         atomIdDraft = 0;
         atomIdFormal = 0;
         userIdUpdated = user.id;
