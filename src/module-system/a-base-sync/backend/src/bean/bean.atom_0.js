@@ -266,20 +266,8 @@ module.exports = ctx => {
       // atom
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 0) {
-        if (_atom.atomIdFormal) {
-          // just closeDraft with _notifyDrafts
-          await this.closeDraft({ key });
-        } else {
-          // delete
-          await ctx.executeBean({
-            beanModule: _moduleInfo.relativeName,
-            beanFullName,
-            context: { atomClass, key, user },
-            fn: 'delete',
-          });
-          // notify
-          this._notifyDrafts();
-        }
+        // close draft
+        await this.closeDraft({ key });
       } else if (_atom.atomStage === 1) {
         // delete history
         const listHistory = await this.modelAtom.select({
@@ -352,22 +340,50 @@ module.exports = ctx => {
     }
 
     async closeDraft({ key }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!key.itemId) key.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // draft
       const atomIdDraft = key.atomId;
       const atomDraft = await this.modelAtom.get({ id: atomIdDraft });
       const user = { id: atomDraft.userIdUpdated };
       // ** update draft from formal
-      await this._copy({
-        target: 'draft',
-        srcKey: { atomId: atomDraft.atomIdFormal },
-        srcItem: null,
-        destKey: key,
-        user,
-      });
-      // update atomClosed
-      await this.modelAtom.update({
-        id: atomIdDraft,
-        atomClosed: 1,
-      });
+      if (atomDraft.atomIdFormal) {
+        await this._copy({
+          target: 'draft',
+          srcKey: { atomId: atomDraft.atomIdFormal },
+          srcItem: null,
+          destKey: key,
+          user,
+        });
+        // update atomClosed
+        await this.modelAtom.update({
+          id: atomIdDraft,
+          atomClosed: 1,
+        });
+      } else {
+        // not delete draft if atomFlowId>0
+        if (atomDraft.atomFlowId > 0) {
+          // update atomClosed
+          await this.modelAtom.update({
+            id: atomIdDraft,
+            atomClosed: 1,
+            atomRevision: atomDraft.atomRevision - 1,
+          });
+        } else {
+          // delete
+          await ctx.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, key, user },
+            fn: 'delete',
+          });
+        }
+      }
       // notify
       this._notifyDrafts(user);
       this._notifyDraftsFlowing(user);
