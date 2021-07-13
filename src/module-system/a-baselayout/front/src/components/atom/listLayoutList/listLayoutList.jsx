@@ -20,6 +20,10 @@ export default {
     if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
       this.layoutManager.subnavbar.enable = true;
     }
+    this.layoutManager.data_layout({
+      mode: 'continuous',
+      autoInit: this.layoutManager.container.scene !== 'search',
+    });
   },
   beforeDestroy() {
     this.layoutManager.layout.instance = null;

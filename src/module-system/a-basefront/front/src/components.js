@@ -9,6 +9,9 @@ import renderTableCellDefault from './components/render/renderTableCellDefault.j
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
 // tab
 import atomTab from './components/tab/atomTab.jsx';
+// layout
+import layoutListDataContinuous from './components/layout/listDataContinuous.jsx';
+import layoutListDataPaged from './components/layout/listDataPaged.jsx';
 
 export default {
   renderAtom,
@@ -22,4 +25,7 @@ export default {
   renderTableCellComputed,
   // tab
   atomTab,
+  // layout
+  layoutListDataContinuous,
+  layoutListDataPaged,
 };
