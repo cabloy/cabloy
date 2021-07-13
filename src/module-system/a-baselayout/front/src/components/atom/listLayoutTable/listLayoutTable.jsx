@@ -32,11 +32,11 @@ export default {
   created() {
     this.layoutManager.layout.instance = this;
     this.layoutManager.bottombar.enable = true;
-    if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
-      this.layoutManager.bulk_loadActions();
-    }
     // first load
     this.onPageRefresh();
+  },
+  beforeDestroy() {
+    this.layoutManager.layout.instance = null;
   },
   methods: {
     onPageRefresh(/* force*/) {

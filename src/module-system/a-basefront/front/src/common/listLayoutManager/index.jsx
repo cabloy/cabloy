@@ -48,15 +48,18 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.select_prepareSelectedAtoms().then(() => {
-        this.layout_prepareConfig().then(() => {
-          this.base.ready = true;
-        });
-      });
+      this.index_init();
     });
   },
   beforeDestroy() {
-    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
+  },
+  methods: {
+    async index_init() {
+      await this.select_prepareSelectedAtoms();
+      await this.layout_prepareConfig();
+      await this.bulk_actionsInit();
+      this.base.ready = true;
+    },
   },
 };

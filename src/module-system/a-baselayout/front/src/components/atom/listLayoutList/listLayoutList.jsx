@@ -19,8 +19,10 @@ export default {
     this.layoutManager.layout.instance = this;
     if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
       this.layoutManager.subnavbar.enable = true;
-      this.layoutManager.bulk_loadActions();
     }
+  },
+  beforeDestroy() {
+    this.layoutManager.layout.instance = null;
   },
   methods: {
     onPageRefresh(force) {

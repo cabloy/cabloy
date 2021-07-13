@@ -1,7 +1,10 @@
 export default {
   data() {
     return {
-      dataContinuous: {},
+      dataContinuous: {
+        inited: false,
+        loadMore: null,
+      },
     };
   },
   methods: {},

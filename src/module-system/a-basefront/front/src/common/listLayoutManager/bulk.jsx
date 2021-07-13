@@ -9,6 +9,11 @@ export default {
     };
   },
   methods: {
+    async bulk_actionsInit() {
+      if (this.container.atomClass && this.container.scene !== 'select' && this.container.scene !== 'selecting') {
+        await this.bulk_loadActions();
+      }
+    },
     bulk_onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
       // action
@@ -38,16 +43,12 @@ export default {
       // performAction
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
-    bulk_loadActions() {
+    async bulk_loadActions() {
       if (this.bulk.actions) return;
-      this.$api
-        .post('/a/base/atom/actionsBulk', {
-          atomClass: this.container.atomClass,
-          stage: this.base_getCurrentStage(),
-        })
-        .then(data => {
-          this.bulk.actions = data;
-        });
+      this.bulk.actions = await this.$api.post('/a/base/atom/actionsBulk', {
+        atomClass: this.container.atomClass,
+        stage: this.base_getCurrentStage(),
+      });
     },
     bulk_clearSelectedAtoms() {
       this.bulk.selectedAtoms = [];
