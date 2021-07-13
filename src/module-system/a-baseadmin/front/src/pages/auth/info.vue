@@ -43,7 +43,7 @@ export default {
       this.$nextTick(() => {
         for (const btn of ['loginURL', 'callbackURL']) {
           this.addClipboardTrigger(this.$refs[btn].$el, {
-            text: trigger => {
+            text: (/* trigger*/) => {
               return this.meta[btn];
             },
           });

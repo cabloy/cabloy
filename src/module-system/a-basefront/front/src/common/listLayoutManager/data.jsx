@@ -11,6 +11,22 @@ export default {
     };
   },
   methods: {
+    onPageRefresh(force) {
+      if (!this.provider) return;
+      this.provider.onPageRefresh(force);
+    },
+    onPageInfinite() {
+      if (!this.provider) return;
+      this.provider.onPageInfinite();
+    },
+    onPageClear() {
+      if (!this.provider) return;
+      this.provider.onPageClear();
+    },
+    getItems() {
+      if (!this.provider) return null;
+      return this.provider.getItems();
+    },
     async data_layout(options) {
       // mode
       this.mode = options.mode;

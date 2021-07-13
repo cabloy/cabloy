@@ -16,8 +16,10 @@ export default {
     };
   },
   created() {
+    // eslint-disable-next-line
     this.layoutManager.layout.instance = this;
     if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
+      // eslint-disable-next-line
       this.layoutManager.subnavbar.enable = true;
     }
     this.layoutManager.data_layout({
@@ -26,6 +28,7 @@ export default {
     });
   },
   beforeDestroy() {
+    // eslint-disable-next-line
     this.layoutManager.layout.instance = null;
   },
   methods: {
