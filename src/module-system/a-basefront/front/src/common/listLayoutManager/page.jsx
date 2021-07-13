@@ -5,13 +5,13 @@ export default {
   methods: {
     page_onRefresh(done) {
       done && done();
-      this.layout.instance && this.layout.instance.onPageRefresh(true);
+      this.data_onPageRefresh(true);
     },
     page_onInfinite() {
-      this.layout.instance && this.layout.instance.onPageInfinite();
+      this.data_onPageInfinite();
     },
     page_onClear() {
-      this.layout.instance && this.layout.instance.onPageClear();
+      this.data_onPageClear();
     },
     page_getTitle() {
       //

@@ -11,21 +11,37 @@ export default {
     };
   },
   methods: {
-    onPageRefresh(force) {
-      if (!this.provider) return;
-      this.provider.onPageRefresh(force);
+    data_onPageRefresh(force) {
+      if (this.provider) {
+        return this.provider.onPageRefresh(force);
+      }
+      if (this.layout.instance && this.layout.instance.onPageRefresh) {
+        this.layout.instance.onPageRefresh(force);
+      }
     },
-    onPageInfinite() {
-      if (!this.provider) return;
-      this.provider.onPageInfinite();
+    data_onPageInfinite() {
+      if (this.provider) {
+        return this.provider.onPageInfinite();
+      }
+      if (this.layout.instance && this.layout.instance.onPageInfinite) {
+        this.layout.instance.onPageInfinite();
+      }
     },
-    onPageClear() {
-      if (!this.provider) return;
-      this.provider.onPageClear();
+    data_onPageClear() {
+      if (this.provider) {
+        return this.provider.onPageClear();
+      }
+      if (this.layout.instance && this.layout.instance.onPageClear) {
+        this.layout.instance.onPageClear();
+      }
     },
-    getItems() {
-      if (!this.provider) return null;
-      return this.provider.getItems();
+    data_getItems() {
+      if (this.provider) {
+        return this.provider.getItems();
+      }
+      if (this.layout.instance && this.layout.instance.getItems) {
+        this.layout.instance.getItems();
+      }
     },
     async data_layout(options) {
       // mode
@@ -47,6 +63,10 @@ export default {
       if (this.provider) {
         await this.provider.switch(options);
       }
+    },
+    data_renderLoadMore() {
+      if (!this.provider) return null;
+      return this.provider.renderLoadMore();
     },
   },
 };

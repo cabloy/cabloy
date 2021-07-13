@@ -83,23 +83,26 @@ export default {
     onRetry() {
       this.loadMore();
     },
+    renderContent() {
+      const show = this.doing || this.none || this.nomore || this.retry;
+      if (!show) return null;
+      return (
+        <div class="eb-loadmore">
+          {this.doing && <f7-preloader class="eb-preloader"></f7-preloader>}
+          {this.none && <div>{this.$text('No Data')}</div>}
+          {this.nomore && <div>{this.$text('No More Data')}</div>}
+          {this.retry && (
+            <div>
+              <f7-button round class="color-orange" onClick={this.onRetry}>
+                {this.$text('Load Error, Try Again')}
+              </f7-button>
+            </div>
+          )}
+        </div>
+      );
+    },
   },
   render() {
-    const show = this.doing || this.none || this.nomore || this.retry;
-    if (!show) return null;
-    return (
-      <div class="eb-loadmore">
-        {this.doing && <f7-preloader class="eb-preloader"></f7-preloader>}
-        {this.none && <div>{this.$text('No Data')}</div>}
-        {this.nomore && <div>{this.$text('No More Data')}</div>}
-        {this.retry && (
-          <div>
-            <f7-button round class="color-orange" onClick={this.onRetry}>
-              {this.$text('Load Error, Try Again')}
-            </f7-button>
-          </div>
-        )}
-      </div>
-    );
+    return this.renderContent();
   },
 };

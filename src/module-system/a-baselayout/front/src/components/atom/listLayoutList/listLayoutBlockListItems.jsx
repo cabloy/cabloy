@@ -368,7 +368,7 @@ export default {
       );
     },
     _renderList() {
-      const items = this.layout.items;
+      const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         children.push(this._renderListItem(item));

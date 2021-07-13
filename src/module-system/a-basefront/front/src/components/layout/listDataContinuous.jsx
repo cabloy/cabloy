@@ -58,5 +58,9 @@ export default {
       // inited
       this.inited = true;
     },
+    renderLoadMore() {
+      if (!this.loadMore) return null;
+      return this.loadMore.renderContent();
+    },
   },
 };

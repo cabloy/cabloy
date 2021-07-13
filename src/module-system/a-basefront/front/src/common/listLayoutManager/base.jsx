@@ -74,7 +74,7 @@ export default {
       return params;
     },
     base_getItems() {
-      return this.layout.instance ? this.layout.instance.getItems() : [];
+      return this.data_getItems();
     },
     base_getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
