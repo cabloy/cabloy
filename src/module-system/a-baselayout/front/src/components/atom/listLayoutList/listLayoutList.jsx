@@ -20,7 +20,7 @@ export default {
       // eslint-disable-next-line
       this.layoutManager.subnavbar.enable = true;
     }
-    this.layoutManager.data_layout({
+    this.layoutManager.data_providerSwitch({
       mode: 'continuous',
       autoInit: this.layoutManager.container.scene !== 'search',
     });

@@ -6,44 +6,20 @@ export default {
     return {
       data: {
         mode: null,
-        provider: null,
+        providerContinuous: null,
+        providerPaged: null,
       },
     };
   },
+  computed: {
+    data_provider() {
+      if (this.mode === 'continuous') return this.providerContinuous;
+      if (this.mode === 'paged') return this.providerPaged;
+      return null;
+    },
+  },
   methods: {
-    data_onPageRefresh(force) {
-      if (this.provider) {
-        return this.provider.onPageRefresh(force);
-      }
-      if (this.layout.instance && this.layout.instance.onPageRefresh) {
-        this.layout.instance.onPageRefresh(force);
-      }
-    },
-    data_onPageInfinite() {
-      if (this.provider) {
-        return this.provider.onPageInfinite();
-      }
-      if (this.layout.instance && this.layout.instance.onPageInfinite) {
-        this.layout.instance.onPageInfinite();
-      }
-    },
-    data_onPageClear() {
-      if (this.provider) {
-        return this.provider.onPageClear();
-      }
-      if (this.layout.instance && this.layout.instance.onPageClear) {
-        this.layout.instance.onPageClear();
-      }
-    },
-    data_getItems() {
-      if (this.provider) {
-        return this.provider.getItems();
-      }
-      if (this.layout.instance && this.layout.instance.getItems) {
-        this.layout.instance.getItems();
-      }
-    },
-    async data_layout(options) {
+    async data_providerSwitch(options) {
       // mode
       this.mode = options.mode;
       // provider
@@ -52,21 +28,39 @@ export default {
           layoutManager: this,
         },
       };
-      if (this.mode === 'continuous') {
-        this.provider = this.$meta.util.createComponentInstance(layoutListDataContinuous, providerOptions);
-      } else if (this.mode === 'paged') {
-        this.provider = this.$meta.util.createComponentInstance(layoutListDataPaged, providerOptions);
-      } else {
-        this.provider = null;
+      if (this.mode === 'continuous' && !this.providerContinuous) {
+        this.providerContinuous = this.$meta.util.createComponentInstance(layoutListDataContinuous, providerOptions);
+      } else if (this.mode === 'paged' && !this.providerPaged) {
+        this.providerPaged = this.$meta.util.createComponentInstance(layoutListDataPaged, providerOptions);
       }
       // provider init
-      if (this.provider) {
-        await this.provider.switch(options);
+      if (this.data_provider) {
+        await this.data_provider.switch(options);
       }
     },
+    data_callMethod(methodName, ...args) {
+      if (this.data_provider) {
+        return this.data_provider[methodName](...args);
+      }
+      if (this.layout.instance && this.layout.instance[methodName]) {
+        return this.layout.instance[methodName](...args);
+      }
+      return null;
+    },
+    data_onPageRefresh(force) {
+      return this.data_callMethod('onPageRefresh', force);
+    },
+    data_onPageInfinite() {
+      return this.data_callMethod('onPageInfinite');
+    },
+    data_onPageClear() {
+      return this.data_callMethod('onPageClear');
+    },
+    data_getItems() {
+      return this.data_callMethod('getItems');
+    },
     data_renderLoadMore() {
-      if (!this.provider) return null;
-      return this.provider.renderLoadMore();
+      return this.data_callMethod('renderLoadMore');
     },
   },
 };
