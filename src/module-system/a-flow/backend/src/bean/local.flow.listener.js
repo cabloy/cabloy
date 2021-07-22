@@ -18,23 +18,18 @@ module.exports = ctx => {
         this._flowListener = null;
         return this._flowListener;
       }
-      // sandbox
-      let sandbox = {};
-      sandbox.assert = {
+      // script
+      const expression = `${listenerContent};\nmodule.exports = new Listener(__contextFlow);`;
+      // globals
+      const globals = {};
+      globals.__contextFlow = this.context;
+      globals.assert = {
         equal: (...args) => {
           assert.equal(...args);
         },
       };
-      sandbox.console = {
-        log: (...args) => {
-          console.log(...args);
-        },
-      };
-      sandbox = vm.createContext(sandbox);
-      // class
-      const FlowListenerFn = vm.compileFunction(`return ${listenerContent}`, [], { parsingContext: sandbox });
       // new class
-      this._flowListener = new (FlowListenerFn())(this.context);
+      this._flowListener = ctx.bean.util.evaluateExpression({ expression, globals, wrapper: true });
       return this._flowListener;
     }
 

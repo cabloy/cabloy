@@ -147,16 +147,22 @@ module.exports = app => {
       return utils.escapeURL(str);
     }
 
-    evaluateExpression({ expression, globals }) {
+    evaluateExpression({ expression, globals, wrapper }) {
+      if (!wrapper) {
+        wrapper = 'none';
+      } else if (wrapper === true) {
+        wrapper = 'commonjs';
+      }
       // return vm.runInContext(expression, vm.createContext(globals || {}));
       const vm = new NodeVM({
         console: 'inherit',
         sandbox: globals || {},
         require: false,
         nesting: true,
-        wrapper: 'none',
+        wrapper,
       });
-      return vm.run(`return (${expression})`);
+      const script = wrapper === 'none' ? `return (${expression})` : expression;
+      return vm.run(script);
     }
   }
 
