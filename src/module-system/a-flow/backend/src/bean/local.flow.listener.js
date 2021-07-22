@@ -1,4 +1,3 @@
-const vm = require('vm');
 const require3 = require('require3');
 const assert = require3('assert');
 

@@ -84,7 +84,9 @@ function createValidate(schemaRoot) {
 /***/ }),
 
 /***/ 946:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const utils = __webpack_require__(294);
 
 module.exports = {
   async: true,
@@ -106,12 +108,14 @@ module.exports = {
       //   read by atomClass, atomLanguage, atomName
       const items = await ctx.model.query(
         `
-          select a.id from aAtom a
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+          select a.atomStage,a.id from aAtom a
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
           `,
         [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
       );
-      if (items[0] && items[0].id !== atomId) {
+      // check draft/formal
+      const checkExists = await utils.checkAtomIdExists({ ctx, atomId, items });
+      if (checkExists) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;
         const errors = [{ keyword: 'x-atomName', params: [], message }];
@@ -169,9 +173,7 @@ function transformDate(fun, ctx, data) {
 /***/ }),
 
 /***/ 629:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const vm = __webpack_require__(184);
+/***/ ((module) => {
 
 module.exports = {
   errors: true,
@@ -197,14 +199,14 @@ module.exports = {
 
 function evaluateExpression({ expression, rootData, ctx }) {
   try {
-    const scope = {
+    const globals = {
       ...rootData,
       _meta: {
         host: ctx.meta && ctx.meta.validateHost,
         user: ctx.state.user && ctx.state.user.op,
       },
     };
-    return vm.runInContext(expression, vm.createContext(scope));
+    return ctx.bean.util.evaluateExpression({ expression, globals });
   } catch (err) {
     console.log(expression, rootData);
     throw err;
@@ -223,7 +225,9 @@ function checkIfEmpty(schemaProperty, value) {
 /***/ }),
 
 /***/ 10:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const utils = __webpack_require__(294);
 
 module.exports = {
   async: true,
@@ -246,13 +250,15 @@ module.exports = {
       //   read by atomClass, atomLanguage, slug
       const items = await ctx.model.query(
         `
-          select a.id from aAtom a
+          select a.atomStage,a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
           `,
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
-      if (items[0] && items[0].id !== atomId) {
+      // check draft/formal
+      const checkExists = await utils.checkAtomIdExists({ ctx, atomId, items });
+      if (checkExists) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
       }
@@ -483,6 +489,30 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 294:
+/***/ ((module) => {
+
+module.exports = {
+  // check draft/formal
+  async checkAtomIdExists({ ctx, atomId, items }) {
+    if (items.length === 0) return false;
+    const _atomOld = await ctx.bean.atom.modelAtom.get({ id: atomId });
+    const atomIds = new Set([atomId]);
+    if (_atomOld.atomIdDraft) {
+      atomIds.add(_atomOld.atomIdDraft);
+    }
+    if (_atomOld.atomIdFormal) {
+      atomIds.add(_atomOld.atomIdFormal);
+    }
+    return items.some(item => {
+      return !atomIds.has(item.id);
+    });
+  },
+};
+
+
+/***/ }),
+
 /***/ 76:
 /***/ ((module) => {
 
@@ -698,14 +728,6 @@ module.exports = {
 
 "use strict";
 module.exports = require("require3");
-
-/***/ }),
-
-/***/ 184:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("vm");
 
 /***/ })
 

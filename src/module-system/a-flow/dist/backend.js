@@ -125,9 +125,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 869:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const vm = __webpack_require__(184);
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -168,7 +166,7 @@ module.exports = ctx => {
     }
 
     evaluateExpression({ expression, globals }) {
-      return vm.runInContext(expression, vm.createContext(globals || {}));
+      return ctx.bean.util.evaluateExpression({ expression, globals });
     }
 
     async executeService({ bean, parameterExpression, parameter, globals }) {
@@ -1287,7 +1285,6 @@ module.exports = ctx => {
 /***/ 408:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const vm = __webpack_require__(184);
 const require3 = __webpack_require__(718);
 const assert = require3('assert');
 
@@ -1307,23 +1304,18 @@ module.exports = ctx => {
         this._flowListener = null;
         return this._flowListener;
       }
-      // sandbox
-      let sandbox = {};
-      sandbox.assert = {
+      // script
+      const expression = `${listenerContent};\nmodule.exports = new Listener(__contextFlow);`;
+      // globals
+      const globals = {};
+      globals.__contextFlow = this.context;
+      globals.assert = {
         equal: (...args) => {
           assert.equal(...args);
         },
       };
-      sandbox.console = {
-        log: (...args) => {
-          console.log(...args);
-        },
-      };
-      sandbox = vm.createContext(sandbox);
-      // class
-      const FlowListenerFn = vm.compileFunction(`return ${listenerContent}`, [], { parsingContext: sandbox });
       // new class
-      this._flowListener = new (FlowListenerFn())(this.context);
+      this._flowListener = ctx.bean.util.evaluateExpression({ expression, globals, wrapper: true });
       return this._flowListener;
     }
 
@@ -3034,14 +3026,6 @@ module.exports = app => {
 
 "use strict";
 module.exports = require("require3");
-
-/***/ }),
-
-/***/ 184:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("vm");
 
 /***/ })
 

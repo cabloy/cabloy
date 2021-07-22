@@ -1,5 +1,3 @@
-const vm = require('vm');
-
 module.exports = {
   errors: true,
   compile(schema, schemaProperty) {
@@ -24,14 +22,14 @@ module.exports = {
 
 function evaluateExpression({ expression, rootData, ctx }) {
   try {
-    const scope = {
+    const globals = {
       ...rootData,
       _meta: {
         host: ctx.meta && ctx.meta.validateHost,
         user: ctx.state.user && ctx.state.user.op,
       },
     };
-    return vm.runInContext(expression, vm.createContext(scope));
+    return ctx.bean.util.evaluateExpression({ expression, globals });
   } catch (err) {
     console.log(expression, rootData);
     throw err;
