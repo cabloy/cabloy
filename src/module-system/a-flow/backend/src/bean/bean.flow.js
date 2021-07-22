@@ -39,7 +39,7 @@ module.exports = ctx => {
     }
 
     evaluateExpression({ expression, globals }) {
-      return vm.runInContext(expression, vm.createContext(globals || {}));
+      return ctx.bean.util.evaluateExpression({ expression, globals });
     }
 
     async executeService({ bean, parameterExpression, parameter, globals }) {

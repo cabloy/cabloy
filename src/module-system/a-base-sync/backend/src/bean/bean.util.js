@@ -1,6 +1,7 @@
 const require3 = require('require3');
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
+const { NodeVM } = require3('vm2');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
@@ -144,6 +145,18 @@ module.exports = app => {
 
     escapeURL(str) {
       return utils.escapeURL(str);
+    }
+
+    evaluateExpression({ expression, globals }) {
+      // return vm.runInContext(expression, vm.createContext(globals || {}));
+      const vm = new NodeVM({
+        console: 'inherit',
+        sandbox: globals || {},
+        require: false,
+        nesting: true,
+        wrapper: 'none',
+      });
+      return vm.run(`return (${expression})`);
     }
   }
 

@@ -38,8 +38,7 @@ module.exports = app => {
           target: 'endEvent_2',
           options: {
             conditionExpression: `
-              const x=contextNode.vars.get('x');
-              x===2;
+              contextNode.vars.get('x')===2
             `,
           },
         },
