@@ -1,5 +1,5 @@
-import layoutListDataContinuous from '../../components/layout/listDataContinuous.jsx';
-import layoutListDataPaged from '../../components/layout/listDataPaged.jsx';
+import layoutListDataProviderContinuous from '../../components/layout/listDataProviderContinuous.jsx';
+import layoutListDataProviderPaged from '../../components/layout/listDataProviderPaged.jsx';
 
 export default {
   data() {
@@ -29,9 +29,9 @@ export default {
         },
       };
       if (this.mode === 'continuous' && !this.providerContinuous) {
-        this.providerContinuous = this.$meta.util.createComponentInstance(layoutListDataContinuous, providerOptions);
+        this.providerContinuous = this.$meta.util.createComponentInstance(layoutListDataProviderContinuous, providerOptions);
       } else if (this.mode === 'paged' && !this.providerPaged) {
-        this.providerPaged = this.$meta.util.createComponentInstance(layoutListDataPaged, providerOptions);
+        this.providerPaged = this.$meta.util.createComponentInstance(layoutListDataProviderPaged, providerOptions);
       }
       // provider init
       if (this.data_provider) {
