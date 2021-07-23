@@ -22,18 +22,16 @@ export default {
     }
     this.layoutManager.data_providerSwitch({
       mode: 'continuous',
-      autoInit: this.layoutManager.container.scene !== 'search',
+      loadMore: {
+        autoInit: this.layoutManager.container.scene !== 'search',
+      },
     });
   },
   beforeDestroy() {
     // eslint-disable-next-line
     this.layoutManager.layout.instance = null;
   },
-  methods: {
-    _renderLoadMore() {
-      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit={this.layoutManager.container.scene !== 'search'}></eb-load-more>;
-    },
-  },
+  methods: {},
   render() {
     return (
       <div>

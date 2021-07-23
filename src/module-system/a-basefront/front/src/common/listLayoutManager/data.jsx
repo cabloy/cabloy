@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       data: {
-        mode: null,
+        mode: null, // continuous / paged / null
         providerContinuous: null,
         providerPaged: null,
       },

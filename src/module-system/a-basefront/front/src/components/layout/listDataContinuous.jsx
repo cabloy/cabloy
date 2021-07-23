@@ -51,7 +51,7 @@ export default {
         propsData: {
           onLoadClear: this.onLoadClear,
           onLoadMore: this.onLoadMore,
-          autoInit: options.autoInit,
+          autoInit: options.loadMore.autoInit,
         },
       };
       this.loadMore = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
