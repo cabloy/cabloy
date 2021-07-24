@@ -40,42 +40,6 @@ export default {
         this.$meta.util.swipeoutClose(event.target);
       });
     },
-    onActionChanged(data) {
-      const key = data.key;
-      const action = data.action;
-      // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
-        return;
-      }
-      // delete
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
-      if (action.name === 'delete') {
-        if (index !== -1) {
-          this.layout.items.splice(index, 1);
-        }
-        return;
-      }
-      // others
-      if (index !== -1) {
-        const options = this.layoutManager.base_prepareReadOptions();
-        this.$api
-          .post('/a/base/atom/read', {
-            key,
-            options,
-          })
-          .then(data => {
-            Vue.set(this.layout.items, index, data);
-          });
-      }
-    },
-    onActionsChanged(data) {
-      const key = data.key;
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
-      if (index !== -1) {
-        Vue.set(this.layout.items[index], '_actions', null);
-      }
-    },
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
     },

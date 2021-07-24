@@ -94,43 +94,6 @@ export default {
         this.$meta.util.swipeoutClose(event.target);
       });
     },
-    onActionChanged(data) {
-      const key = data.key;
-      const action = data.action;
-      // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
-        return;
-      }
-      // delete
-      const { items, index } = this.layout._findItem(key.atomId);
-      if (action.name === 'delete') {
-        if (index !== -1) {
-          items.splice(index, 1);
-          this.layout.info.total -= 1;
-        }
-        return;
-      }
-      // others
-      if (index !== -1) {
-        const options = this.layoutManager.base_prepareReadOptions();
-        this.$api
-          .post('/a/base/atom/read', {
-            key,
-            options,
-          })
-          .then(data => {
-            Vue.set(items, index, data);
-          });
-      }
-    },
-    onActionsChanged(data) {
-      const key = data.key;
-      const { items, index } = this.layout._findItem(key.atomId);
-      if (index !== -1) {
-        Vue.set(items[index], '_actions', null);
-      }
-    },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);

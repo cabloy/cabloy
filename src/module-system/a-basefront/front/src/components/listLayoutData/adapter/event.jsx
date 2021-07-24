@@ -37,6 +37,12 @@ export default {
           });
       }
     },
-    event_onActionsChanged(data) {},
+    event_onActionsChanged(data) {
+      const key = data.key;
+      const { items, index } = this.findItem(key.atomId);
+      if (index !== -1) {
+        this.$set(items[index], '_actions', null);
+      }
+    },
   },
 };
