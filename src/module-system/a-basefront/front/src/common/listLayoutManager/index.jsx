@@ -11,7 +11,6 @@ import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
 import Actions from './actions.jsx';
 import Data from './data.jsx';
-import DataStar from './dataStar.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
@@ -39,7 +38,6 @@ export default {
     Bottombar,
     Actions,
     Data,
-    DataStar,
   ],
   data() {
     return {};
@@ -57,6 +55,7 @@ export default {
       await this.select_prepareSelectedAtoms();
       await this.layout_prepareConfig();
       await this.bulk_actionsInit();
+      await this.data_adapterInit();
       this.base.ready = true;
     },
   },

@@ -3,6 +3,28 @@ export default {
     render: {
       list: {
         info: {
+          data: {
+            adapter: {
+              component: {
+                module: 'a-basefront',
+                name: 'layoutListDataAdapter',
+              },
+              providers: {
+                continuous: {
+                  component: {
+                    module: 'a-basefront',
+                    name: 'layoutListDataProviderContinuous',
+                  },
+                },
+                paged: {
+                  component: {
+                    module: 'a-basefront',
+                    name: 'layoutListDataProviderPages',
+                  },
+                },
+              },
+            },
+          },
           orders: [
             { name: 'atomCreatedAt', title: 'Created Time', by: 'desc', tableAlias: '' },
             { name: 'atomUpdatedAt', title: 'Modification Time', by: 'desc', tableAlias: '' },
