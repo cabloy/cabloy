@@ -24,15 +24,18 @@ export default {
   created() {},
   methods: {
     onPageChange(page) {
-      this.layout.gotoPage(page);
+      this.layoutManager.data.adapter.gotoPage(page);
     },
     _renderPagination() {
-      return <a-pagination value={this.layout.info.pageCurrent} page-size={this.layout.info.pageSize} total={this.layout.info.total} disabled={false} onChange={this.onPageChange} />;
+      const pageInfo = this.layoutManager.data.adapter.getPageInfo();
+      if (!pageInfo) return null;
+      return <a-pagination value={pageInfo.pageCurrent} page-size={pageInfo.pageSize} total={pageInfo.total} disabled={false} onChange={this.onPageChange} />;
     },
     _renderTotal() {
       let domTotal;
-      if (this.layout.info.total > 0) {
-        domTotal = <f7-badge>{this.layout.info.total}</f7-badge>;
+      const pageInfo = this.layoutManager.data.adapter.getPageInfo();
+      if (pageInfo && pageInfo.total > 0) {
+        domTotal = <f7-badge>{pageInfo.total}</f7-badge>;
       }
       return <div>{domTotal}</div>;
     },

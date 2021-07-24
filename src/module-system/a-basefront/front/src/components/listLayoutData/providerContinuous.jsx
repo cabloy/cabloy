@@ -65,6 +65,12 @@ export default {
     getItems() {
       return this.items;
     },
+    getPageInfo() {
+      // do nothing
+    },
+    gotoPage(/* pageNum*/) {
+      // do nothing
+    },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;
       return this.loadMoreComponent.renderContent();

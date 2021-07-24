@@ -77,6 +77,12 @@ export default {
       const items = this._callMethod('getItems');
       return items || [];
     },
+    getPageInfo() {
+      return this._callMethod('getPageInfo');
+    },
+    gotoPage(pageNum) {
+      return this._callMethod('gotoPage', pageNum);
+    },
     renderLoadMore() {
       return this._callMethod('renderLoadMore');
     },

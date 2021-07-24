@@ -19,7 +19,7 @@ export default {
                 paged: {
                   component: {
                     module: 'a-basefront',
-                    name: 'listLayoutDataProviderPages',
+                    name: 'listLayoutDataProviderPaged',
                   },
                 },
               },

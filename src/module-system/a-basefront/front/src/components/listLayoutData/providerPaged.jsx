@@ -54,6 +54,9 @@ export default {
     getItems() {
       return this.dataSource || [];
     },
+    getPageInfo() {
+      return this.info;
+    },
     findItem(atomId) {
       for (const pageNum in this.itemsPages) {
         const items = this.itemsPages[pageNum];
@@ -67,6 +70,58 @@ export default {
         }
       }
       return { pageNum: null, items: null, index: -1 };
+    },
+    gotoPage(pageNum) {
+      // check if same
+      if (this.info.pageCurrent === pageNum) return;
+      // eslint-disable-next-line
+      this.layoutManager.bulk.selectedAtoms = [];
+      const items = this.itemsPages[pageNum];
+      if (items) {
+        this.info.pageCurrent = pageNum;
+        return;
+      }
+      // fetch
+      const index = (pageNum - 1) * this.info.pageSize;
+      this.loading = true;
+      this._loadMore({ index, size: this.info.pageSize })
+        .then(items => {
+          this.$set(this.itemsPages, pageNum, items);
+          this.info.pageCurrent = pageNum;
+          this.loading = false;
+        })
+        .catch(err => {
+          this.layoutManager.$view.toast.show({ text: err.message });
+          this.loading = false;
+        });
+    },
+    _loadTotal() {
+      // params
+      const params = this.layoutManager.base_prepareSelectParams();
+      // fetch
+      this.loading = true;
+      this.$api
+        .post('/a/base/atom/count', params)
+        .then(res => {
+          this.loading = false;
+          this.info.total = res;
+          if (this.info.total === 0) return;
+          // page 1
+          this.gotoPage(1);
+        })
+        .catch(err => {
+          this.layoutManager.$view.toast.show({ text: err.message });
+          this.loading = false;
+        });
+    },
+    async _loadMore({ index, size }) {
+      // params
+      const params = this.layoutManager.base_prepareSelectParams();
+      // index
+      params.options.page = { index, size };
+      // fetch
+      const res = await this.$api.post('/a/base/atom/select', params);
+      return res.list;
     },
   },
 };
