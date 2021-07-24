@@ -7,19 +7,19 @@ export default {
             adapter: {
               component: {
                 module: 'a-basefront',
-                name: 'layoutListDataAdapter',
+                name: 'listLayoutDataAdapter',
               },
               providers: {
                 continuous: {
                   component: {
                     module: 'a-basefront',
-                    name: 'layoutListDataProviderContinuous',
+                    name: 'listLayoutDataProviderContinuous',
                   },
                 },
                 paged: {
                   component: {
                     module: 'a-basefront',
-                    name: 'layoutListDataProviderPages',
+                    name: 'listLayoutDataProviderPages',
                   },
                 },
               },

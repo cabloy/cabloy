@@ -9,10 +9,10 @@ import renderTableCellDefault from './components/render/renderTableCellDefault.j
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
 // tab
 import atomTab from './components/tab/atomTab.jsx';
-// layout
-import layoutListDataAdapter from './components/layout/listDataAdapter.jsx';
-import layoutListDataProviderContinuous from './components/layout/listDataProviderContinuous.jsx';
-import layoutListDataProviderPaged from './components/layout/listDataProviderPaged.jsx';
+// listLayoutData
+import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
+import listLayoutDataProviderContinuous from './components/listLayoutData/providerContinuous.jsx';
+import listLayoutDataProviderPaged from './components/listLayoutData/providerPaged.jsx';
 
 export default {
   renderAtom,
@@ -27,7 +27,7 @@ export default {
   // tab
   atomTab,
   // layout
-  layoutListDataAdapter,
-  layoutListDataProviderContinuous,
-  layoutListDataProviderPaged,
+  listLayoutDataAdapter,
+  listLayoutDataProviderContinuous,
+  listLayoutDataProviderPaged,
 };
