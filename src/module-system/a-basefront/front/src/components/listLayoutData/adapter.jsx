@@ -79,5 +79,10 @@ export default {
     renderLoadMore() {
       return this._callMethod('renderLoadMore');
     },
+    findItem(atomId) {
+      const res = this._callMethod('findItem', atomId);
+      if (res) return res;
+      return { pageNum: null, items: null, index: -1 };
+    },
   },
 };

@@ -22,13 +22,11 @@ export default {
     };
   },
   mounted() {
-    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
     this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
     this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
@@ -67,27 +65,7 @@ export default {
         this.$meta.util.swipeoutClose(event.target);
       });
     },
-    onStarChanged(data) {
-      const items = this.layout.items;
-      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
-      const star = params.options.star;
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (star) {
-        // switch
-        if (data.star === 0 && index !== -1) {
-          items.splice(index, 1);
-        } else if (data.star === 1 && index === -1) {
-          this.layout.onPageRefresh();
-        } else if (index !== -1) {
-          items[index].star = data.star;
-        }
-      } else {
-        // just change
-        if (index !== -1) {
-          items[index].star = data.star;
-        }
-      }
-    },
+
     onLabelsChanged(data) {
       const items = this.layout.items;
       const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });

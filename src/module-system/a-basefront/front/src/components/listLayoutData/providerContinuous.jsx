@@ -68,5 +68,9 @@ export default {
       if (!this.loadMoreComponent) return null;
       return this.loadMoreComponent.renderContent();
     },
+    findItem(atomId) {
+      const index = this.items.findIndex(item => item.atomId === atomId);
+      return { pageNum: 1, items: this.items, index };
+    },
   },
 };
