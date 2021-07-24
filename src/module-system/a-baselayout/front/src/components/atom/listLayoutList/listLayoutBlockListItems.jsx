@@ -60,10 +60,6 @@ export default {
       });
       this.$meta.util.swipeoutClose(event.target);
     },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
-    },
     onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
@@ -152,31 +148,6 @@ export default {
     },
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
-    },
-    _onStarSwitch(event, item, star, swipeoutAction) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // key
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      //
-      return this.$api
-        .post('/a/base/atom/star', {
-          key,
-          atom: { star },
-        })
-        .then(data => {
-          this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-          this.$meta.util[swipeoutAction](event.target);
-        });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
