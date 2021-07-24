@@ -28,11 +28,10 @@ export default {
         // eslint-disable-next-line
         this.layoutManager.subnavbar.enable = true;
       }
+      // provider switch
       await this.layoutManager.data_providerSwitch({
         providerName: 'continuous',
-        loadMore: {
-          autoInit: this.layoutManager.container.scene !== 'search',
-        },
+        autoInit: this.layoutManager.container.scene !== 'search',
       });
     },
   },

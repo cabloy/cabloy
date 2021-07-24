@@ -21,6 +21,21 @@ export default {
     }
   },
   methods: {
+    async switch(options) {
+      // only inited once
+      if (this.inited) return;
+      // load more
+      const componentOptions = {
+        propsData: {
+          onLoadClear: this.onLoadClear,
+          onLoadMore: this.onLoadMore,
+          autoInit: options.autoInit,
+        },
+      };
+      this.loadMoreComponent = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
+      // inited
+      this.inited = true;
+    },
     onPageRefresh(force) {
       this.loadMoreComponent.reload(force);
     },
@@ -48,21 +63,6 @@ export default {
     },
     getItems() {
       return this.items;
-    },
-    async switch(options) {
-      // only inited once
-      if (this.inited) return;
-      // load more
-      const componentOptions = {
-        propsData: {
-          onLoadClear: this.onLoadClear,
-          onLoadMore: this.onLoadMore,
-          autoInit: options.loadMore.autoInit,
-        },
-      };
-      this.loadMoreComponent = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
-      // inited
-      this.inited = true;
     },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;

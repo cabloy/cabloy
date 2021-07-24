@@ -14,64 +14,26 @@ export default {
     },
   },
   data() {
-    return {
-      info: {
-        pageCurrent: 0,
-        pageSize: 20,
-        total: 0,
-      },
-      itemsPages: {},
-      loading: false,
-    };
-  },
-  computed: {
-    dataSource() {
-      return this.itemsPages[this.info.pageCurrent];
-    },
+    return {};
   },
   created() {
-    this.layoutManager.layout.instance = this;
-    this.layoutManager.bottombar.enable = true;
-    // first load
-    this.onPageRefresh();
+    this.init();
   },
   beforeDestroy() {
+    // eslint-disable-next-line
     this.layoutManager.layout.instance = null;
   },
   methods: {
-    onPageRefresh(/* force*/) {
-      this.onPageClear();
-      this._loadTotal();
-    },
-    onPageInfinite() {
-      // do nothing
-    },
-    onPageClear() {
-      this.layoutManager.bulk.selectedAtoms = [];
-      this.itemsPages = {};
-      this.info = {
-        pageCurrent: 0,
-        pageSize: 20,
-        total: 0,
-      };
-      this.loading = false;
-    },
-    getItems() {
-      return this.dataSource || [];
-    },
-    _findItem(atomId) {
-      for (const pageNum in this.itemsPages) {
-        const items = this.itemsPages[pageNum];
-        const index = items.findIndex(item => item.atomId === atomId);
-        if (index !== -1) {
-          return {
-            pageNum: parseInt(pageNum),
-            items,
-            index,
-          };
-        }
-      }
-      return { pageNum: null, items: null, index: -1 };
+    async init() {
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = this;
+      // eslint-disable-next-line
+      this.layoutManager.bottombar.enable = true;
+      // provider switch
+      await this.layoutManager.data_providerSwitch({
+        providerName: 'paged',
+        autoInit: true,
+      });
     },
     _loadTotal() {
       // params
