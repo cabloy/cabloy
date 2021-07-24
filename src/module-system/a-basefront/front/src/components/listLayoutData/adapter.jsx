@@ -1,7 +1,8 @@
 import Star from './adapter/star.jsx';
+import Labels from './adapter/labels.jsx';
 
 export default {
-  mixins: [Star],
+  mixins: [Star, Labels],
   props: {
     layoutManager: {
       type: Object,

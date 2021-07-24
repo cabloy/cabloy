@@ -1,15 +1,9 @@
 export default {
   created() {
     this.$meta.eventHub.$on('atom:star', this.star_onChanged);
-    // this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
-    // this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-    // this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.star_onChanged);
-    // this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
-    // this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-    // this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
   },
   methods: {
     async star_onSwitch(event, item) {

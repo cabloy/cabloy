@@ -22,12 +22,10 @@ export default {
     };
   },
   mounted() {
-    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
     this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
     this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
   },
@@ -43,50 +41,12 @@ export default {
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    onLabel(event, item) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // navigate
-      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
-        target: '_self',
-      });
-      this.$meta.util.swipeoutClose(event.target);
-    },
     onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
       return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
         this.$meta.util.swipeoutClose(event.target);
       });
-    },
-
-    onLabelsChanged(data) {
-      const items = this.layout.items;
-      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
-      const label = params.options.label;
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (label) {
-        // switch
-        const exists = data.labels.indexOf(String(label)) > -1;
-        if (!exists && index !== -1) {
-          items.splice(index, 1);
-        } else if (exists && index === -1) {
-          this.layout.onPageRefresh();
-        } else if (index !== -1) {
-          items[index].labels = JSON.stringify(data.labels);
-        }
-      } else {
-        // just change
-        if (index !== -1) {
-          items[index].labels = JSON.stringify(data.labels);
-        }
-      }
     },
     onActionChanged(data) {
       const key = data.key;
@@ -276,7 +236,7 @@ export default {
           </div>
         );
         const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
+          <div color="blue" propsOnPerform={event => this.layoutManager.data.adapter.labels_onClick(event, item)}>
             <f7-icon slot="media" material="label"></f7-icon>
             {this.$device.desktop && <div slot="title">{this.$text('UserLabels')}</div>}
           </div>
