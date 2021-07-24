@@ -6,10 +6,8 @@ export default {
   },
   data() {
     return {
-      data: {
-        providerName: null, // continuous / paged / others
-        providers: {},
-      },
+      providerName: null, // continuous / paged / others
+      providers: {},
     };
   },
   computed: {
@@ -37,41 +35,39 @@ export default {
       // config component
       const configComponent = this.getProviderConfig(providerName).component;
       // load module
-      await this.$meta.module.use(configComponent.module);
+      const moduleProvider = await this.$meta.module.use(configComponent.module);
       // create provider
       const providerOptions = {
         propsData: {
           layoutManager: this,
         },
       };
-      return this.$meta.util.createComponentInstance(configComponent.name, providerOptions);
+      const component = moduleProvider.options.components[configComponent.name];
+      return this.$meta.util.createComponentInstance(component, providerOptions);
     },
     getProviderConfig(providerName) {
       return this.$meta.util.getProperty(this.layoutManager.base.config, `render.list.info.data.adapter.providers.${providerName}`);
     },
-    data_callMethod(methodName, ...args) {
-      if (this.data_provider) {
-        return this.data_provider[methodName](...args);
-      }
-      if (this.layout.instance && this.layout.instance[methodName]) {
-        return this.layout.instance[methodName](...args);
-      }
-      return null;
+    _callMethod(methodName, ...args) {
+      const provider = this.providerCurrent;
+      if (!provider) return null; // e.g. renderLoadMore
+      return provider[methodName](...args);
     },
-    data_onPageRefresh(force) {
-      return this.data_callMethod('onPageRefresh', force);
+    onPageRefresh(force) {
+      return this._callMethod('onPageRefresh', force);
     },
-    data_onPageInfinite() {
-      return this.data_callMethod('onPageInfinite');
+    onPageInfinite() {
+      return this._callMethod('onPageInfinite');
     },
-    data_onPageClear() {
-      return this.data_callMethod('onPageClear');
+    onPageClear() {
+      return this._callMethod('onPageClear');
     },
-    data_getItems() {
-      return this.data_callMethod('getItems');
+    getItems() {
+      const items = this._callMethod('getItems');
+      return items || [];
     },
-    data_renderLoadMore() {
-      return this.data_callMethod('renderLoadMore');
+    renderLoadMore() {
+      return this._callMethod('renderLoadMore');
     },
   },
 };

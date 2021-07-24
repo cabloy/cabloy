@@ -11,14 +11,34 @@ export default {
       // config component
       const configComponent = this.$meta.util.getProperty(this.base.config, 'render.list.info.data.adapter.component');
       // load module
-      await this.$meta.module.use(configComponent.module);
+      const moduleAdapter = await this.$meta.module.use(configComponent.module);
       // create adapter
       const options = {
         propsData: {
           layoutManager: this,
         },
       };
-      this.adapter = this.$meta.util.createComponentInstance(configComponent.name, options);
+      const component = moduleAdapter.options.components[configComponent.name];
+      this.data.adapter = this.$meta.util.createComponentInstance(component, options);
+    },
+    data_callMethod(methodName, ...args) {
+      if (!this.data.adapter) return null;
+      return this.data.adapter[methodName](...args);
+    },
+    data_onPageRefresh(force) {
+      return this.data_callMethod('onPageRefresh', force);
+    },
+    data_onPageInfinite() {
+      return this.data_callMethod('onPageInfinite');
+    },
+    data_onPageClear() {
+      return this.data_callMethod('onPageClear');
+    },
+    data_getItems() {
+      return this.data_callMethod('getItems');
+    },
+    data_renderLoadMore() {
+      return this.data_callMethod('renderLoadMore');
     },
   },
 };

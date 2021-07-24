@@ -14,24 +14,28 @@ export default {
     return {};
   },
   created() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = this;
-    if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
-      // eslint-disable-next-line
-      this.layoutManager.subnavbar.enable = true;
-    }
-    this.layoutManager.data_providerSwitch({
-      mode: 'continuous',
-      loadMore: {
-        autoInit: this.layoutManager.container.scene !== 'search',
-      },
-    });
+    this.init();
   },
   beforeDestroy() {
     // eslint-disable-next-line
     this.layoutManager.layout.instance = null;
   },
-  methods: {},
+  methods: {
+    async init() {
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = this;
+      if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
+        // eslint-disable-next-line
+        this.layoutManager.subnavbar.enable = true;
+      }
+      await this.layoutManager.data.adapter.providerSwitch({
+        providerName: 'continuous',
+        loadMore: {
+          autoInit: this.layoutManager.container.scene !== 'search',
+        },
+      });
+    },
+  },
   render() {
     return (
       <div>
