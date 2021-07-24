@@ -291,13 +291,14 @@ export default {
       );
     },
     _renderTable() {
+      const items = this.layoutManager.data_getItems();
       return (
         <a-table
           bordered
           rowSelection={this.rowSelection}
           columns={this.columns}
           rowKey={item => item.atomId}
-          dataSource={this.layout.dataSource}
+          dataSource={items}
           pagination={false}
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
