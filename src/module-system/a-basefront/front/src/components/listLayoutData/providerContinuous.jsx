@@ -46,9 +46,10 @@ export default {
       this.loadMoreComponent.clear();
     },
     onLoadClear(done) {
-      this.items = [];
       // eslint-disable-next-line
       this.layoutManager.bulk.selectedAtoms = [];
+      // items
+      this.items = [];
       done();
     },
     async onLoadMore({ index }) {
