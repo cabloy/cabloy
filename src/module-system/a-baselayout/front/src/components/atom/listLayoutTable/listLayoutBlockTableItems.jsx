@@ -60,14 +60,6 @@ export default {
       };
     },
   },
-  mounted() {
-    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
-  },
   methods: {
     onViewSizeChange(size) {
       this.tableHeight = size.height - _heightTableHeader;

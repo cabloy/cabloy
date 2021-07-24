@@ -21,14 +21,6 @@ export default {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
-  mounted() {
-    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-    this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
-  },
   methods: {
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
