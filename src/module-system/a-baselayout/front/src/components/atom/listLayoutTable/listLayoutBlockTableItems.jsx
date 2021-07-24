@@ -61,14 +61,10 @@ export default {
     },
   },
   mounted() {
-    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
     this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
     this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
   },
@@ -99,43 +95,12 @@ export default {
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    onLabel(event, item) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // navigate
-      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
-        // target: '_self',
-      });
-      this.$meta.util.swipeoutClose(event.target);
-    },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
-    },
     onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
       return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
         this.$meta.util.swipeoutClose(event.target);
       });
-    },
-    onStarChanged(data) {
-      const { items, index } = this.layout._findItem(data.key.atomId);
-      if (index !== -1) {
-        items[index].star = data.star;
-      }
-    },
-    onLabelsChanged(data) {
-      const { items, index } = this.layout._findItem(data.key.atomId);
-      if (index !== -1) {
-        items[index].labels = JSON.stringify(data.labels);
-      }
     },
     onActionChanged(data) {
       const key = data.key;
@@ -173,31 +138,6 @@ export default {
       if (index !== -1) {
         Vue.set(items[index], '_actions', null);
       }
-    },
-    _onStarSwitch(event, item, star, swipeoutAction) {
-      // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // key
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      //
-      return this.$api
-        .post('/a/base/atom/star', {
-          key,
-          atom: { star },
-        })
-        .then(data => {
-          this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-          this.$meta.util[swipeoutAction](event.target);
-        });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
