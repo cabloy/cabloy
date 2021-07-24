@@ -1,4 +1,7 @@
+import Star from './adapter/star.jsx';
+
 export default {
+  mixins: [Star],
   props: {
     layoutManager: {
       type: Object,

@@ -321,7 +321,7 @@ export default {
       let domLeft;
       if (item.atomStage === 1) {
         const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
+          <div color="teal" propsOnPerform={event => this.layoutManager.data.adapter.star_onSwitch(event, item)}>
             <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
             {this.$device.desktop && <div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
           </div>
