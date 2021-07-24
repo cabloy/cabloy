@@ -6,6 +6,12 @@ export default {
       },
     };
   },
+  beforeDestroy() {
+    if (this.data.adapter) {
+      this.data.adapter.$destroy();
+      this.data.adapter = null;
+    }
+  },
   methods: {
     async data_adapterInit() {
       // config component

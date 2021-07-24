@@ -10,19 +10,25 @@ export default {
   data() {
     return {
       inited: false,
-      loadMore: null,
+      loadMoreComponent: null,
       items: [],
     };
   },
+  beforeDestroy() {
+    if (this.loadMoreComponent) {
+      this.loadMoreComponent.$destroy();
+      this.loadMoreComponent = null;
+    }
+  },
   methods: {
     onPageRefresh(force) {
-      this.loadMore.reload(force);
+      this.loadMoreComponent.reload(force);
     },
     onPageInfinite() {
-      this.loadMore.loadMore();
+      this.loadMoreComponent.loadMore();
     },
     onPageClear() {
-      this.loadMore.clear();
+      this.loadMoreComponent.clear();
     },
     onLoadClear(done) {
       this.items = [];
@@ -54,13 +60,13 @@ export default {
           autoInit: options.loadMore.autoInit,
         },
       };
-      this.loadMore = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
+      this.loadMoreComponent = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
       // inited
       this.inited = true;
     },
     renderLoadMore() {
-      if (!this.loadMore) return null;
-      return this.loadMore.renderContent();
+      if (!this.loadMoreComponent) return null;
+      return this.loadMoreComponent.renderContent();
     },
   },
 };

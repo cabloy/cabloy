@@ -15,6 +15,13 @@ export default {
       return this.providers[this.providerName];
     },
   },
+  beforeDestroy() {
+    for (const key in this.providers) {
+      const provider = this.providers[key];
+      provider.$destroy();
+    }
+    this.providers = {};
+  },
   methods: {
     async providerSwitch(options) {
       // providerName
