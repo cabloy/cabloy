@@ -14,10 +14,10 @@ export default {
   },
   methods: {
     reload(force) {
-      this.layout.instance && this.layout.instance.onPageRefresh(force);
+      this.data_onPageRefresh(force);
     },
     loadMore() {
-      this.layout.instance && this.layout.instance.onPageInfinite();
+      this.data_onPageInfinite();
     },
   },
   render() {
