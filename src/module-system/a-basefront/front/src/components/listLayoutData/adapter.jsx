@@ -83,13 +83,16 @@ export default {
     gotoPage(pageNum) {
       return this._callMethod('gotoPage', pageNum);
     },
-    renderLoadMore() {
-      return this._callMethod('renderLoadMore');
-    },
     findItem(atomId) {
       const res = this._callMethod('findItem', atomId);
       if (res) return res;
       return { pageNum: null, items: null, index: -1 };
+    },
+    spliceItem(items, index) {
+      return this._callMethod('spliceItem', items, index);
+    },
+    renderLoadMore() {
+      return this._callMethod('renderLoadMore');
     },
   },
 };

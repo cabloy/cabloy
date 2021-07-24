@@ -29,7 +29,7 @@ export default {
         // switch
         const exists = data.labels.indexOf(String(label)) > -1;
         if (!exists && index !== -1) {
-          items.splice(index, 1);
+          this.spliceItem(items, index);
         } else if (exists && index === -1) {
           this.onPageRefresh();
         } else if (index !== -1) {

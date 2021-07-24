@@ -36,7 +36,7 @@ export default {
       if (star) {
         // switch
         if (data.star === 0 && index !== -1) {
-          items.splice(index, 1);
+          this.spliceItem(items, index);
         } else if (data.star === 1 && index === -1) {
           this.onPageRefresh();
         } else if (index !== -1) {

@@ -71,13 +71,16 @@ export default {
     gotoPage(/* pageNum*/) {
       // do nothing
     },
-    renderLoadMore() {
-      if (!this.loadMoreComponent) return null;
-      return this.loadMoreComponent.renderContent();
-    },
     findItem(atomId) {
       const index = this.items.findIndex(item => item.atomId === atomId);
       return { pageNum: 1, items: this.items, index };
+    },
+    spliceItem(items, index) {
+      items.splice(index, 1);
+    },
+    renderLoadMore() {
+      if (!this.loadMoreComponent) return null;
+      return this.loadMoreComponent.renderContent();
     },
   },
 };

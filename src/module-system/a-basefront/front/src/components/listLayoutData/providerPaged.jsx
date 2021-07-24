@@ -71,6 +71,10 @@ export default {
       }
       return { pageNum: null, items: null, index: -1 };
     },
+    spliceItem(items, index) {
+      items.splice(index, 1);
+      this.info.total -= 1;
+    },
     gotoPage(pageNum) {
       // check if same
       if (this.info.pageCurrent === pageNum) return;
