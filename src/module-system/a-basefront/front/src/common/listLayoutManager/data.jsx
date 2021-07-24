@@ -21,6 +21,9 @@ export default {
       const component = moduleAdapter.options.components[configComponent.name];
       this.data.adapter = this.$meta.util.createComponentInstance(component, options);
     },
+    async data_providerSwitch(options) {
+      return await this.data.adapter.providerSwitch(options);
+    },
     data_callMethod(methodName, ...args) {
       if (!this.data.adapter) return null;
       return this.data.adapter[methodName](...args);

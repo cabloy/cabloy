@@ -39,7 +39,7 @@ export default {
       // create provider
       const providerOptions = {
         propsData: {
-          layoutManager: this,
+          layoutManager: this.layoutManager,
         },
       };
       const component = moduleProvider.options.components[configComponent.name];

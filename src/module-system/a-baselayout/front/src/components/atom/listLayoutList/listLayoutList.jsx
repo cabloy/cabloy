@@ -28,7 +28,7 @@ export default {
         // eslint-disable-next-line
         this.layoutManager.subnavbar.enable = true;
       }
-      await this.layoutManager.data.adapter.providerSwitch({
+      await this.layoutManager.data_providerSwitch({
         providerName: 'continuous',
         loadMore: {
           autoInit: this.layoutManager.container.scene !== 'search',
