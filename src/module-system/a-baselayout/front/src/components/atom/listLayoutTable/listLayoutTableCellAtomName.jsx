@@ -53,7 +53,7 @@ export default {
       }
     }
     // domSummary
-    const domSummary = <div class="atomName-summary">{this.layoutItems._getItemMetaSummary(item)}</div>;
+    const domSummary = <div class="atomName-summary">{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>;
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">

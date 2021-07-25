@@ -29,35 +29,8 @@ export default {
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
-      if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
-        this.$meta.util.swipeoutClose(event.target);
-      });
-    },
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
-    },
-    _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 24);
-    },
-    _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
-    _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
-      }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
     },
     _getItemMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];
@@ -87,14 +60,14 @@ export default {
       // media
       const domMedia = this.layoutManager.bulk.selecting ? null : (
         <div slot="media">
-          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
+          <img class="avatar avatar24" src={this.layoutManager.data.adapter.item_getMetaMedia(item)} />
         </div>
       );
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
           <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
+            <span>{this.layoutManager.data.adapter.item_getMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
             {item.star > 0 && <span>⭐</span>}
@@ -115,7 +88,7 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this._getItemMetaSummary(item)}
+          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
