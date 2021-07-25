@@ -22,7 +22,7 @@ export default {
   created() {},
   methods: {
     onItemClick(event) {
-      return this.layoutManager.data.adapter.item_onClick(event, this.info.record);
+      return this.layoutItems.onItemClick(event, this.info.record);
     },
   },
   render() {
