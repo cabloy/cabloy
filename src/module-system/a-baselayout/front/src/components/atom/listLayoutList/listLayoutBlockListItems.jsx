@@ -32,14 +32,6 @@ export default {
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
     },
-    _getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
-      return 'blue';
-    },
-    _getActionTitle(action, item) {
-      return this.getActionTitle(action, item);
-    },
     _getItemChecked(item) {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
@@ -140,59 +132,7 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      // domLeft
-      let domLeft;
-      if (item.atomStage === 1) {
-        const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.layoutManager.data.adapter.star_onSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
-          </div>
-        );
-        const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.layoutManager.data.adapter.labels_onClick(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text('UserLabels')}</div>}
-          </div>
-        );
-        domLeft = (
-          <div slot="left">
-            {domLeftStar}
-            {domLeftLabel}
-          </div>
-        );
-      }
-      // domRight
-      const domActions = [];
-      if (item._actions) {
-        for (let index in item._actions) {
-          index = parseInt(index);
-          const action = item._actions[index];
-          const _action = this.getAction(action);
-          domActions.push(
-            <div
-              key={action.id}
-              color={this.layoutManager.data.adapter.item_getActionColor(action, index)}
-              propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}
-            >
-              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this.layoutManager.data.adapter.item_getActionTitle(action, item)}</div>}
-            </div>
-          );
-        }
-      }
-      const domRight = (
-        <div slot="right" ready={!!item._actions}>
-          {domActions}
-        </div>
-      );
-
-      return (
-        <eb-context-menu>
-          {domLeft}
-          {domRight}
-        </eb-context-menu>
-      );
+      return this.layoutManager.data.adapter.item_renderContextMenu(item);
     },
     _renderList() {
       const items = this.layoutManager.data_getItems();

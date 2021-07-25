@@ -53,5 +53,69 @@ export default {
     item_getActionTitle(action, item) {
       return this.layoutManager.getActionTitle(action, item);
     },
+    item_renderContextMenu(item, mode) {
+      // domLeft
+      let domLeft;
+      if (item && item.atomStage === 1) {
+        // star
+        let domLeftStarTitle;
+        if (mode === 'menu' || (!mode && this.$device.desktop)) {
+          domLeftStarTitle = <div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>;
+        }
+        const domLeftStar = (
+          <div color="teal" propsOnPerform={event => this.star_onSwitch(event, item)}>
+            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
+            {domLeftStarTitle}
+          </div>
+        );
+        // label
+        let domLeftLabelTitle;
+        if (mode === 'menu' || (!mode && this.$device.desktop)) {
+          domLeftLabelTitle = <div slot="title">{this.$text('UserLabels')}</div>;
+        }
+        const domLeftLabel = (
+          <div color="blue" propsOnPerform={event => this.labels_onClick(event, item)}>
+            <f7-icon slot="media" material="label"></f7-icon>
+            {domLeftLabelTitle}
+          </div>
+        );
+        domLeft = (
+          <div slot="left">
+            {domLeftStar}
+            {domLeftLabel}
+          </div>
+        );
+      }
+      // domRight
+      const domActions = [];
+      if (item && item._actions) {
+        for (let index in item._actions) {
+          index = parseInt(index);
+          const action = item._actions[index];
+          const _action = this.layoutManager.getAction(action);
+          let domActionTitle;
+          if (mode === 'menu' || (!mode && this.$device.desktop)) {
+            domActionTitle = <div slot="title">{this.item_getActionTitle(action, item)}</div>;
+          }
+          domActions.push(
+            <div key={action.id} color={this.item_getActionColor(action, index)} propsOnPerform={event => this.item_onAction(event, item, action)}>
+              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
+              {domActionTitle}
+            </div>
+          );
+        }
+      }
+      const domRight = (
+        <div slot="right" ready={item && !!item._actions}>
+          {domActions}
+        </div>
+      );
+      return (
+        <eb-context-menu mode={mode}>
+          {domLeft}
+          {domRight}
+        </eb-context-menu>
+      );
+    },
   },
 };

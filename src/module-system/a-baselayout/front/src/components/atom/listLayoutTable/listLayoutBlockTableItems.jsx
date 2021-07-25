@@ -73,6 +73,7 @@ export default {
     },
     onSelectChange(selectedRowKeys) {
       const items = this.layoutManager.base_getItems();
+      // eslint-disable-next-line
       this.layoutManager.bulk.selectedAtoms = items.filter(item => {
         return selectedRowKeys.findIndex(atomId => atomId === item.atomId) > -1;
       });
@@ -145,58 +146,7 @@ export default {
     },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
-      // domLeft
-      let domLeft;
-      if (item && item.atomStage === 1) {
-        const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.layoutManager.data.adapter.star_onSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {<div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
-          </div>
-        );
-        const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.layoutManager.data.adapter.labels_onClick(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
-            {<div slot="title">{this.$text('UserLabels')}</div>}
-          </div>
-        );
-        domLeft = (
-          <div slot="left">
-            {domLeftStar}
-            {domLeftLabel}
-          </div>
-        );
-      }
-      // domRight
-      const domActions = [];
-      if (item && item._actions) {
-        for (let index in item._actions) {
-          index = parseInt(index);
-          const action = item._actions[index];
-          const _action = this.layoutManager.getAction(action);
-          domActions.push(
-            <div
-              key={action.id}
-              color={this.layoutManager.data.adapter.item_getActionColor(action, index)}
-              propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}
-            >
-              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {<div slot="title">{this.layoutManager.data.adapter.item_getActionTitle(action, item)}</div>}
-            </div>
-          );
-        }
-      }
-      const domRight = (
-        <div slot="right" ready={item && !!item._actions}>
-          {domActions}
-        </div>
-      );
-      return (
-        <eb-context-menu mode="menu">
-          {domLeft}
-          {domRight}
-        </eb-context-menu>
-      );
+      return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
     },
     _renderTable() {
       const items = this.layoutManager.data_getItems();
