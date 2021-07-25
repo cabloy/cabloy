@@ -32,10 +32,6 @@ export default {
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
     },
-    _getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
-    },
     _getActionColor(action, index) {
       if (index === 0) return 'orange';
       else if (index === 1) return 'red';
@@ -101,7 +97,7 @@ export default {
       const domAfterLabels = [];
       if (item.labels && this.layoutManager.base_userLabels) {
         for (const label of JSON.parse(item.labels)) {
-          const _label = this._getLabel(label);
+          const _label = this.layoutManager.data.adapter.item_getLabel(label);
           domAfterLabels.push(
             <f7-badge key={label} style={{ backgroundColor: _label.color }}>
               {_label.text}
@@ -174,9 +170,13 @@ export default {
           const action = item._actions[index];
           const _action = this.getAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}>
+            <div
+              key={action.id}
+              color={this.layoutManager.data.adapter.item_getActionColor(action, index)}
+              propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}
+            >
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this._getActionTitle(action, item)}</div>}
+              {this.$device.desktop && <div slot="title">{this.layoutManager.data.adapter.item_getActionTitle(action, item)}</div>}
             </div>
           );
         }

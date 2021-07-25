@@ -22,7 +22,7 @@ export default {
   created() {},
   methods: {
     onItemClick(event) {
-      return this.layoutItems.onItemClick(event, this.info.record);
+      return this.layoutManager.data.adapter.item_onClick(event, this.info.record);
     },
   },
   render() {
@@ -45,7 +45,7 @@ export default {
     const domAfterLabels = [];
     if (item.labels && this.layoutManager.base_userLabels) {
       for (const label of JSON.parse(item.labels)) {
-        const _label = this.layoutItems._getLabel(label);
+        const _label = this.layoutManager.data.adapter.item_getLabel(label);
         domAfterLabels.push(
           <f7-badge key={label} style={{ backgroundColor: _label.color }}>
             {_label.text}

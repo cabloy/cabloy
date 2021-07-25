@@ -83,18 +83,6 @@ export default {
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    _getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
-    },
-    _getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
-      return 'blue';
-    },
-    _getActionTitle(action, item) {
-      return this.getActionTitle(action, item);
-    },
     _checkColumnNameEqualOrder(atomOrder, columnName) {
       const key = this.layoutManager.order_getKey(atomOrder);
       return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
@@ -185,11 +173,15 @@ export default {
         for (let index in item._actions) {
           index = parseInt(index);
           const action = item._actions[index];
-          const _action = this.getAction(action);
+          const _action = this.layoutManager.getAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}>
+            <div
+              key={action.id}
+              color={this.layoutManager.data.adapter.item_getActionColor(action, index)}
+              propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}
+            >
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {<div slot="title">{this._getActionTitle(action, item)}</div>}
+              {<div slot="title">{this.layoutManager.data.adapter.item_getActionTitle(action, item)}</div>}
             </div>
           );
         }

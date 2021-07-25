@@ -41,5 +41,17 @@ export default {
       }
       return flags;
     },
+    item_getLabel(id) {
+      if (!this.layoutManager.base_userLabels) return null;
+      return this.layoutManager.base_userLabels[id];
+    },
+    item_getActionColor(action, index) {
+      if (index === 0) return 'orange';
+      else if (index === 1) return 'red';
+      return 'blue';
+    },
+    item_getActionTitle(action, item) {
+      return this.layoutManager.getActionTitle(action, item);
+    },
   },
 };
