@@ -32,14 +32,6 @@ export default {
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
     },
-    _getItemMetaFlags(item) {
-      let flags = (item._meta && item._meta.flags) || [];
-      if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
-      return flags;
-    },
     _getLabel(id) {
       if (!this.layoutManager.base_userLabels) return null;
       return this.layoutManager.base_userLabels[id];
@@ -102,7 +94,8 @@ export default {
         );
       }
       // flags
-      for (const flag of this._getItemMetaFlags(item)) {
+      const itemFlags = this.layoutManager.data.adapter.item_getMetaFlags(item);
+      for (const flag of itemFlags) {
         domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       const domAfterLabels = [];

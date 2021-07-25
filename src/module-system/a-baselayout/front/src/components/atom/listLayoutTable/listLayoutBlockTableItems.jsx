@@ -83,14 +83,6 @@ export default {
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    _getItemMetaFlags(item) {
-      let flags = (item._meta && item._meta.flags) || [];
-      if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
-      return flags;
-    },
     _getLabel(id) {
       if (!this.layoutManager.base_userLabels) return null;
       return this.layoutManager.base_userLabels[id];

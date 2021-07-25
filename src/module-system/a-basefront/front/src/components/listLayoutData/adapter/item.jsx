@@ -33,5 +33,13 @@ export default {
       if (!atomClass) return summary;
       return `${atomClass.titleLocale} ${summary}`;
     },
+    item_getMetaFlags(item) {
+      let flags = (item._meta && item._meta.flags) || [];
+      if (!Array.isArray(flags)) flags = flags.split(',');
+      if (item.atomDisabled) {
+        flags = [this.$text('Disabled')].concat(flags);
+      }
+      return flags;
+    },
   },
 };

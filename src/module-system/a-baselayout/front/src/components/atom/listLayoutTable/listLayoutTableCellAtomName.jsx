@@ -38,7 +38,8 @@ export default {
       );
     }
     // flags
-    for (const flag of this.layoutItems._getItemMetaFlags(item)) {
+    const itemFlags = this.layoutManager.data.adapter.item_getMetaFlags(item);
+    for (const flag of itemFlags) {
       domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
     }
     const domAfterLabels = [];
