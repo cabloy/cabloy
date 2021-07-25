@@ -149,13 +149,13 @@ export default {
       let domLeft;
       if (item && item.atomStage === 1) {
         const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
+          <div color="teal" propsOnPerform={event => this.layoutManager.data.adapter.star_onSwitch(event, item)}>
             <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
             {<div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>}
           </div>
         );
         const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
+          <div color="blue" propsOnPerform={event => this.layoutManager.data.adapter.labels_onClick(event, item)}>
             <f7-icon slot="media" material="label"></f7-icon>
             {<div slot="title">{this.$text('UserLabels')}</div>}
           </div>
