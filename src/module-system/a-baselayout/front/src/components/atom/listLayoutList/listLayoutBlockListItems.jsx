@@ -24,11 +24,7 @@ export default {
   methods: {
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
-      return this.onAction(event, item, {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        name: 'read',
-      });
+      return this.layoutManager.data.adapter.item_onClick(event, item);
     },
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
@@ -212,7 +208,7 @@ export default {
           const action = item._actions[index];
           const _action = this.getAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
+            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
               {this.$device.desktop && <div slot="title">{this._getActionTitle(action, item)}</div>}
             </div>

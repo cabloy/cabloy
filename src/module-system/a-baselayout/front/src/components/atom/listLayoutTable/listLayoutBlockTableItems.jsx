@@ -78,22 +78,12 @@ export default {
       });
     },
     onItemClick(event, item) {
-      return this.onAction(event, item, {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        name: 'read',
-      });
+      return this.layoutManager.data.adapter.item_onClick(event, item);
     },
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
-      if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
-        this.$meta.util.swipeoutClose(event.target);
-      });
-    },
+
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
@@ -226,7 +216,7 @@ export default {
           const action = item._actions[index];
           const _action = this.getAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
+            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.layoutManager.data.adapter.item_onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
               {<div slot="title">{this._getActionTitle(action, item)}</div>}
             </div>
