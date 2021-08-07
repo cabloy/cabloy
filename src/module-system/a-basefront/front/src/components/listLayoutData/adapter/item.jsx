@@ -120,5 +120,55 @@ export default {
     item_renderMedia(item, className) {
       return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item)} />;
     },
+    item_renderStats(item) {
+      const children = [];
+      if (item.star > 0) {
+        children.push(<span key="stat_star">⭐</span>);
+      }
+      if (item.attachmentCount > 0) {
+        children.push(<span key="stat_attachmentCount_icon">🧷</span>);
+      }
+      if (item.attachmentCount > 1) {
+        children.push(<span key="stat_attachmentCount_value">{`${item.attachmentCount}`}</span>);
+      }
+      if (item.commentCount > 0) {
+        children.push(<span key="stat_commentCount_icon">💬</span>);
+      }
+      if (item.commentCount > 1) {
+        children.push(<span key="stat_commentCount_value">{`${item.commentCount}`}</span>);
+      }
+      return children;
+    },
+    item_renderMetaFlags(item) {
+      const domMetaFlags = [];
+      // flow
+      if (item.flowNodeNameCurrentLocale) {
+        domMetaFlags.push(
+          <f7-badge key="flowNodeNameCurrent" color="orange">
+            {item.flowNodeNameCurrentLocale}
+          </f7-badge>
+        );
+      }
+      // flags
+      const itemFlags = this.item_getMetaFlags(item);
+      for (const flag of itemFlags) {
+        domMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
+      }
+      return domMetaFlags;
+    },
+    item_renderLabels(item) {
+      const domLabels = [];
+      if (item.labels && this.layoutManager.base_userLabels) {
+        for (const label of JSON.parse(item.labels)) {
+          const _label = this.item_getLabel(label);
+          domLabels.push(
+            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
+              {_label.text}
+            </f7-badge>
+          );
+        }
+      }
+      return domLabels;
+    },
   },
 };

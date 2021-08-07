@@ -46,11 +46,7 @@ export default {
             <span>{this.layoutManager.data.adapter.item_getMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            {item.star > 0 && <span>⭐</span>}
-            {item.attachmentCount > 0 && <span>🧷</span>}
-            {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-            {item.commentCount > 0 && <span>💬</span>}
-            {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
+            {this.layoutManager.data.adapter.item_renderStats(item)}
             <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
           </div>
         </div>
@@ -68,31 +64,8 @@ export default {
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = [];
-      // flow
-      if (item.flowNodeNameCurrentLocale) {
-        domAfterMetaFlags.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
-      // flags
-      const itemFlags = this.layoutManager.data.adapter.item_getMetaFlags(item);
-      for (const flag of itemFlags) {
-        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
-      }
-      const domAfterLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
-        for (const label of JSON.parse(item.labels)) {
-          const _label = this.layoutManager.data.adapter.item_getLabel(label);
-          domAfterLabels.push(
-            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-              {_label.text}
-            </f7-badge>
-          );
-        }
-      }
+      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}

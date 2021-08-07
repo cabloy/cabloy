@@ -28,47 +28,18 @@ export default {
   render() {
     const item = this.info.record;
     // domAfter
-    const domAfterMetaFlags = [];
-    // flow
-    if (item.flowNodeNameCurrentLocale) {
-      domAfterMetaFlags.push(
-        <f7-badge key="flowNodeNameCurrent" color="orange">
-          {item.flowNodeNameCurrentLocale}
-        </f7-badge>
-      );
-    }
-    // flags
-    const itemFlags = this.layoutManager.data.adapter.item_getMetaFlags(item);
-    for (const flag of itemFlags) {
-      domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
-    }
-    const domAfterLabels = [];
-    if (item.labels && this.layoutManager.base_userLabels) {
-      for (const label of JSON.parse(item.labels)) {
-        const _label = this.layoutManager.data.adapter.item_getLabel(label);
-        domAfterLabels.push(
-          <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-            {_label.text}
-          </f7-badge>
-        );
-      }
-    }
+    const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+    const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
     // domSummary
     const domSummary = <div class="atomName-summary">{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>;
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
-            <eb-link propsOnPerform={event => this.onItemClick(event)}>{this.info.record.atomNameLocale || this.info.record.atomName}</eb-link>
+            <eb-link propsOnPerform={event => this.onItemClick(event)}>{item.atomNameLocale || item.atomName}</eb-link>
           </div>
           <div class="atomName-right">
-            <span class="stats">
-              {item.star > 0 && <span>⭐</span>}
-              {item.attachmentCount > 0 && <span>🧷</span>}
-              {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-              {item.commentCount > 0 && <span>💬</span>}
-              {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
-            </span>
+            <span class="stats">{this.layoutManager.data.adapter.item_renderStats(item)}</span>
             {domAfterMetaFlags}
             {domAfterLabels}
           </div>
