@@ -79,7 +79,7 @@ export default {
       });
     },
     onItemClick(event, item) {
-      return this.layoutManager.data.adapter.item_onClick(event, item);
+      return this.layoutManager.data.adapter.item_onActionView(event, item);
     },
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);

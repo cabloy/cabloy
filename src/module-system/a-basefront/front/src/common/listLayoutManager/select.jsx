@@ -38,5 +38,21 @@ export default {
         return this.base_getItems();
       }
     },
+    select_onItemChange(event, item) {
+      const selectMode = this.container.params.selectMode;
+      if (selectMode === 'single') {
+        if (event.target.checked) {
+          this.select.selectedAtoms = [item];
+        }
+      } else {
+        const selectedAtoms = this.select.selectedAtoms;
+        const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+        if (event.target.checked && index === -1) {
+          selectedAtoms.push(item);
+        } else if (!event.target.checked && index > -1) {
+          selectedAtoms.splice(index, 1);
+        }
+      }
+    },
   },
 };

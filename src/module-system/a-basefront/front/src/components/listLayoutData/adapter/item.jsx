@@ -6,7 +6,7 @@ export default {
       await this.$meta.util.performAction({ ctx: this.layoutManager, action: _action, item });
       this.$meta.util.swipeoutClose(event.target);
     },
-    async item_onClick(event, item) {
+    async item_onActionView(event, item) {
       return await this.item_onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,

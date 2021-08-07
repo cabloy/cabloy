@@ -28,62 +28,10 @@ export default {
   },
   methods: {
     onItemChange(event, item) {
-      const selectMode = this.layoutManager.container.params.selectMode;
-      if (selectMode === 'single') {
-        if (event.target.checked) {
-          this.layoutManager.select.selectedAtoms = [item];
-        }
-      } else {
-        const selectedAtoms = this.layoutManager.select.selectedAtoms;
-        const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
-        if (event.target.checked && index === -1) {
-          selectedAtoms.push(item);
-        } else if (!event.target.checked && index > -1) {
-          selectedAtoms.splice(index, 1);
-        }
-      }
+      return this.layoutManager.select_onItemChange(event, item);
     },
     onActionView(event, item) {
-      return this.onAction(event, item, {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        name: 'read',
-      });
-    },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
-      if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
-        this.$meta.util.swipeoutClose(event.target);
-      });
-    },
-    _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
-    _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
-      }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
-    },
-    _getItemMetaFlags(item) {
-      let flags = (item._meta && item._meta.flags) || [];
-      if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
-      return flags;
-    },
-    _getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
+      return this.layoutManager.data.adapter.item_onActionView(event, item);
     },
     _getItemChecked(item) {
       const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
@@ -94,14 +42,10 @@ export default {
       const domHeader = (
         <div slot="root-start" class="header">
           <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
+            <span>{this.layoutManager.data.adapter.item_getMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            {item.star > 0 && <span>⭐</span>}
-            {item.attachmentCount > 0 && <span>🧷</span>}
-            {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-            {item.commentCount > 0 && <span>💬</span>}
-            {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
+            {this.layoutManager.data.adapter.item_renderStats(item)}
             <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
           </div>
         </div>
@@ -115,34 +59,12 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this._getItemMetaSummary(item)}
+          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = [];
-      // flow
-      if (item.flowNodeNameCurrentLocale) {
-        domAfterMetaFlags.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
-      // flags
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
-      }
-      const domAfterLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
-        for (const label of JSON.parse(item.labels)) {
-          const _label = this._getLabel(label);
-          domAfterLabels.push(
-            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-              {_label.text}
-            </f7-badge>
-          );
-        }
-      }
+      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}
@@ -181,7 +103,7 @@ export default {
       );
     },
     _renderList() {
-      const items = this.layout.items;
+      const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         children.push(this._renderListItem(item));

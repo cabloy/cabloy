@@ -1,10 +1,8 @@
 import Vue from 'vue';
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebAtomActions],
   props: {
     layoutManager: {
       type: Object,
@@ -24,7 +22,7 @@ export default {
   methods: {
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
-      return this.layoutManager.data.adapter.item_onClick(event, item);
+      return this.layoutManager.data.adapter.item_onActionView(event, item);
     },
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
