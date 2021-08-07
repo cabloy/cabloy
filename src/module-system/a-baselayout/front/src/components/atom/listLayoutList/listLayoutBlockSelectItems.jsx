@@ -1,10 +1,7 @@
-import Vue from 'vue';
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebAtomActions],
   props: {
     layoutManager: {
       type: Object,
@@ -21,11 +18,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      return this.onAction(event, item, {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        name: 'read',
-      });
+      return this.layoutManager.data.adapter.item_onActionView(event, item);
     },
     onActionSelectRemove(event, item) {
       // close
@@ -45,64 +38,17 @@ export default {
         items.splice(index, 1);
       }
     },
-    onAction(event, item, action) {
-      const _action = this.getAction(action);
-      if (!_action) return;
-      return this.$meta.util.performAction({ ctx: this, action: _action, item }).then(() => {
-        this.$meta.util.swipeoutClose(event.target);
-      });
-    },
-    _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
-    },
-    _getItemMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
-    _getItemMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
-      }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
-    },
-    _getItemMetaFlags(item) {
-      let flags = (item._meta && item._meta.flags) || [];
-      if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
-      return flags;
-    },
-    _getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
-    },
     _renderListItem(item) {
       // media
-      const domMedia = (
-        <div slot="media">
-          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
-        </div>
-      );
+      const domMedia = <div slot="media">{this.layoutManager.data.adapter.item_renderMedia(item)}</div>;
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
           <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
+            <span>{this.layoutManager.data.adapter.item_getMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            {item.star > 0 && <span>⭐</span>}
-            {item.attachmentCount > 0 && <span>🧷</span>}
-            {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-            {item.commentCount > 0 && <span>💬</span>}
-            {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
+            {this.layoutManager.data.adapter.item_renderStats(item)}
             <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
           </div>
         </div>
@@ -116,34 +62,12 @@ export default {
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this._getItemMetaSummary(item)}
+          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = [];
-      // flow
-      if (item.flowNodeNameCurrentLocale) {
-        domAfterMetaFlags.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
-      // flags
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
-      }
-      const domAfterLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
-        for (const label of JSON.parse(item.labels)) {
-          const _label = this._getLabel(label);
-          domAfterLabels.push(
-            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-              {_label.text}
-            </f7-badge>
-          );
-        }
-      }
+      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}
@@ -174,7 +98,7 @@ export default {
       );
     },
     _renderList() {
-      const items = this.layout.items;
+      const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         children.push(this._renderListItem(item));
