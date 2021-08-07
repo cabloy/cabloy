@@ -117,5 +117,8 @@ export default {
         </eb-context-menu>
       );
     },
+    item_renderMedia(item, className) {
+      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item)} />;
+    },
   },
 };

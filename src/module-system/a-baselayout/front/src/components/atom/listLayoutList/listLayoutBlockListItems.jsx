@@ -38,11 +38,7 @@ export default {
     },
     _renderListItem(item) {
       // media
-      const domMedia = this.layoutManager.bulk.selecting ? null : (
-        <div slot="media">
-          <img class="avatar avatar24" src={this.layoutManager.data.adapter.item_getMetaMedia(item)} />
-        </div>
-      );
+      const domMedia = this.layoutManager.bulk.selecting ? null : <div slot="media">{this.layoutManager.data.adapter.item_renderMedia(item)}</div>;
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
