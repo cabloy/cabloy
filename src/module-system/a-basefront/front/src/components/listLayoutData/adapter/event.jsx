@@ -39,10 +39,15 @@ export default {
     },
     event_onActionsChanged(data) {
       const key = data.key;
-      const { items, index } = this.findItem(key.atomId);
-      if (index !== -1) {
+      // loop
+      this._loopProviders(async provider => {
+        // findItem
+        const res = this._callMethodProvider(provider, 'findItem', key.atomId);
+        if (!res) return;
+        const { items, index } = res;
+        if (index === -1) return;
         this.$set(items[index], '_actions', null);
-      }
+      });
     },
   },
 };

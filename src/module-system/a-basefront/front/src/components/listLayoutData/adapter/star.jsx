@@ -30,24 +30,30 @@ export default {
     },
     star_onChanged(data) {
       const atomId = data.key.atomId;
-      const { items, index } = this.findItem(atomId);
-      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
-      const star = params.options.star;
-      if (star) {
-        // switch
-        if (data.star === 0 && index !== -1) {
-          this.spliceItem(items, index);
-        } else if (data.star === 1 && index === -1) {
-          this.onPageRefresh();
-        } else if (index !== -1) {
-          items[index].star = data.star;
+      // loop
+      this._loopProviders(async provider => {
+        // findItem
+        const res = this._callMethodProvider(provider, 'findItem', atomId);
+        if (!res) return;
+        const { items, index } = res;
+        const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+        const star = params.options.star;
+        if (star) {
+          // switch
+          if (data.star === 0 && index !== -1) {
+            this._callMethodProvider(provider, 'spliceItem', items, index);
+          } else if (data.star === 1 && index === -1) {
+            this._callMethodProvider(provider, 'onPageRefresh');
+          } else if (index !== -1) {
+            items[index].star = data.star;
+          }
+        } else {
+          // just change
+          if (index !== -1) {
+            items[index].star = data.star;
+          }
         }
-      } else {
-        // just change
-        if (index !== -1) {
-          items[index].star = data.star;
-        }
-      }
+      });
     },
   },
 };
