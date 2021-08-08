@@ -13,6 +13,9 @@ export default {
         name: 'read',
       });
     },
+    item_getAtomName(item) {
+      return item.atomNameLocale || item.atomName;
+    },
     item_getMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);

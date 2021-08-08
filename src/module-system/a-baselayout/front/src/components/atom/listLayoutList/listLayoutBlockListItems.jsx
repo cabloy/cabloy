@@ -52,7 +52,7 @@ export default {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.atomNameLocale || item.atomName}</div>
+          <div>{this.layoutManager.data.adapter.item_getAtomName(item)}</div>
         </div>
       );
       // domSummary
