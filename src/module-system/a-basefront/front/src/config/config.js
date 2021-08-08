@@ -31,6 +31,7 @@ export default {
             { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
           ],
           filter: {
+            actionPath: '/a/baselayout/listLayoutFilter',
             component: {
               module: 'a-baselayout',
               name: 'listLayoutBlockFilter',

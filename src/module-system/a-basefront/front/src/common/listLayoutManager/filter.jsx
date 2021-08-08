@@ -126,6 +126,7 @@ export default {
       const inPanel = this.$view.inPanel();
       const immediate = this.$meta.vueApp.layout === 'pc' && !inPanel;
       const filterConfig = this.filter_getConfig();
+      const actionPath = filterConfig.actionPath;
       const navigateOptions = {
         context: {
           params: {
@@ -141,7 +142,7 @@ export default {
       } else {
         navigateOptions.target = '_self';
       }
-      this.$view.navigate(`/a/baselayout/listLayoutFilter?t=${Date.now()}`, navigateOptions);
+      this.$view.navigate(`${actionPath}?t=${Date.now()}`, navigateOptions);
     },
     filter_onChanged(value) {
       this.filter.data = value;
