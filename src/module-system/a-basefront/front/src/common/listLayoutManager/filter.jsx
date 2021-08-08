@@ -7,6 +7,47 @@ export default {
     };
   },
   methods: {
+    async filter_prepareData() {
+      // form
+      const form = {
+        atomName: null,
+        mine: (this.container.options && this.container.options.mine) || 0,
+        stage: (this.container.options && this.container.options.stage) || 'formal',
+        language: (this.container.options && this.container.options.language) || '',
+        category: (this.container.options && this.container.options.category) || 0,
+        tag: (this.container.options && this.container.options.tag) || 0,
+        star: (this.container.options && this.container.options.star) || 0,
+        label: (this.container.options && this.container.options.label) || 0,
+        atomClass: this.container.atomClass,
+      };
+      const formAtomClass = this.$meta.util.getProperty(this.container, 'params.filter.formAtomClass') || {};
+      // validator of formAtomClass
+      const schemaSearch = await this.filter_loadSchemaSearch(this.container.atomClass);
+      // ok
+      this.filter.data = {
+        form,
+        formAtomClass,
+        schemaSearch,
+      };
+    },
+    async filter_loadSchemaSearch(atomClass) {
+      if (!atomClass) return null;
+      // module
+      await this.$meta.module.use(atomClass.module);
+      // validator
+      const validator = await this.$api.post('/a/base/atomClass/validatorSearch', {
+        atomClass: {
+          module: atomClass.module,
+          atomClassName: atomClass.atomClassName,
+        },
+      });
+      // schema
+      return await this.$api.post('/a/validation/validation/schema', {
+        module: validator.module,
+        validator: validator.validator,
+        schema: null,
+      });
+    },
     filter_prepareSelectParams() {
       if (!this.filter.data) return null;
       // options

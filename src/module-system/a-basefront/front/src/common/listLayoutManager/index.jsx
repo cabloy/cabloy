@@ -55,6 +55,7 @@ export default {
       await this.select_prepareSelectedAtoms();
       await this.layout_prepareConfig();
       await this.bulk_actionsInit();
+      await this.filter_prepareData();
       await this.data_adapterInit();
       this.base.ready = true;
     },

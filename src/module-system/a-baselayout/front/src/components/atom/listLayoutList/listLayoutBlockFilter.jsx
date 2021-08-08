@@ -17,26 +17,14 @@ export default {
     },
   },
   data() {
-    const form = this.$meta.util.getProperty(this.layoutManager, 'filter.data.form') || {
-      atomName: null,
-      mine: (this.layoutManager.container.options && this.layoutManager.container.options.mine) || 0,
-      stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'formal',
-      language: (this.layoutManager.container.options && this.layoutManager.container.options.language) || '',
-      category: (this.layoutManager.container.options && this.layoutManager.container.options.category) || 0,
-      tag: (this.layoutManager.container.options && this.layoutManager.container.options.tag) || 0,
-      star: (this.layoutManager.container.options && this.layoutManager.container.options.star) || 0,
-      label: (this.layoutManager.container.options && this.layoutManager.container.options.label) || 0,
-      atomClass: this.layoutManager.container.atomClass,
-    };
-    const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.data.formAtomClass') || {};
+    const filterData = this.$meta.util.getProperty(this.layoutManager, 'filter.data');
     return {
-      form,
-      formAtomClass,
-      validateParams: null,
+      form: filterData.form,
+      formAtomClass: filterData.formAtomClass,
+      schemaSearch: filterData.schemaSearch,
       categoriesAll: null,
       tagsAll: null,
       ready: false,
-      schemaSearch: null,
     };
   },
   computed: {
@@ -104,7 +92,7 @@ export default {
       // locales
       await this.$store.dispatch('a/base/getLocales');
       // init atomClass
-      await this.atomClassChanged();
+      await this.atomClassChanged(true);
       //
       this.ready = true;
     },
@@ -124,28 +112,27 @@ export default {
         language,
       });
     },
-    async atomClassChanged() {
-      // reset
-      this.validateParams = null;
+    async loadSchemaSearch(atomClass) {
+      this.schemaSearch = await this.layoutManager.filter_loadSchemaSearch(atomClass);
+    },
+    async atomClassChanged(first) {
       const atomClass = this.atomClass;
-      if (!atomClass) return;
-      // categories
-      await this.loadCategoriesAll(this.form.language);
-      // tags
-      await this.loadTagsAll(this.form.language);
-      // module
-      await this.$meta.module.use(atomClass.module);
-      // validateParams
-      const data = await this.$api.post('/a/base/atomClass/validatorSearch', {
-        atomClass: {
-          module: atomClass.module,
-          atomClassName: atomClass.atomClassName,
-        },
-      });
-      this.validateParams = {
-        module: data.module,
-        validator: data.validator,
-      };
+      if (!atomClass) {
+        // reset
+        this.categoriesAll = null;
+        this.tagsAll = null;
+        this.schemaSearch = null;
+      } else {
+        // switch
+        // categories
+        await this.loadCategoriesAll(this.form.language);
+        // tags
+        await this.loadTagsAll(this.form.language);
+        // schemaSearch
+        if (!first) {
+          await this.loadSchemaSearch(atomClass);
+        }
+      }
     },
     onSelectAtomClass() {
       this.$view.navigate('/a/basefront/atom/selectAtomClass', {
@@ -189,9 +176,6 @@ export default {
       } else {
         this.onPerformSearch();
       }
-    },
-    onSchemaReady(schema) {
-      this.schemaSearch = schema;
     },
     getCategoryName(categoryId) {
       if (!this.categoriesAll || !categoryId) return '';
@@ -360,8 +344,11 @@ export default {
       );
     },
     _renderFormAtomClass() {
-      if (!this.validateParams) return null;
-      return <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit} onSchemaReady={this.onSchemaReady}></eb-validate>;
+      if (!this.schemaSearch) return null;
+      const meta = {
+        schema: this.schemaSearch,
+      };
+      return <eb-validate ref="validate" auto data={this.formAtomClass} meta={meta} onSubmit={this.onFormSubmit}></eb-validate>;
     },
   },
   render() {
