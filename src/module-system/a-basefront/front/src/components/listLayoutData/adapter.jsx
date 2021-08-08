@@ -64,7 +64,17 @@ export default {
     _callMethod(methodName, ...args) {
       const provider = this.providerCurrent;
       if (!provider) return null; // e.g. renderLoadMore
+      return this._callMethodProvider(provider, methodName, ...args);
+    },
+    _callMethodProvider(provider, methodName, ...args) {
       return provider[methodName](...args);
+    },
+    _loopProviders(cb) {
+      // loop all providers
+      for (const key in this.providers) {
+        const provider = this.providers[key];
+        cb(provider);
+      }
     },
     onPageRefresh(force) {
       return this._callMethod('onPageRefresh', force);

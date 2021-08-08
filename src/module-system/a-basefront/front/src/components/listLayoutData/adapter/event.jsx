@@ -12,30 +12,30 @@ export default {
       const key = data.key;
       const action = data.action;
       // create
-      if (action.menu === 1 && action.action === 'create') {
+      if (action.name === 'create') {
         // do nothing
         return;
       }
-      // delete
-      const { items, index } = this.findItem(key.atomId);
-      if (action.name === 'delete') {
-        if (index !== -1) {
-          this.spliceItem(items, index);
+      // loop
+      this._loopProviders(async provider => {
+        // findItem
+        const res = this._callMethodProvider(provider, 'findItem', key.atomId);
+        if (!res) return;
+        const { items, index } = res;
+        if (index === -1) return;
+        if (action.name === 'delete') {
+          this._callMethodProvider(provider, 'spliceItem', items, index);
+          return;
         }
-        return;
-      }
-      // others
-      if (index !== -1) {
+        // other actions
+        // fetch new atom
         const options = this.layoutManager.base_prepareReadOptions();
-        this.$api
-          .post('/a/base/atom/read', {
-            key,
-            options,
-          })
-          .then(data => {
-            this.$set(items, index, data);
-          });
-      }
+        const atomNew = await this.$api.post('/a/base/atom/read', {
+          key,
+          options,
+        });
+        this.$set(items, index, atomNew);
+      });
     },
     event_onActionsChanged(data) {
       const key = data.key;
