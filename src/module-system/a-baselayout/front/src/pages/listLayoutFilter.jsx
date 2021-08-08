@@ -201,42 +201,58 @@ export default {
       }
       return <f7-nav-right>{domButtonSearch}</f7-nav-right>;
     },
+    _renderNavbarSubLink(tabName, tabNameTitle) {
+      return (
+        <eb-link tabLink={`#${this.tabId[tabName]}`} tabLinkActive={this.tabName === tabName}>
+          {this.$text(tabNameTitle)}
+        </eb-link>
+      );
+    },
     _renderNavbarSub() {
       // basic
-      const domLinkBasic = (
-        <eb-link tabLink={`#${this.tabId.basic}`} tabLinkActive={this.tabName === 'basic'}>
-          {this.$text('Basic')}
-        </eb-link>
-      );
+      const domLinkBasic = this._renderNavbarSubLink('basic', 'Basic');
       // general
-      const domLinkGeneral = (
-        <eb-link tabLink={`#${this.tabId.general}`} tabLinkActive={this.tabName === 'general'}>
-          {this.$text('General')}
-        </eb-link>
-      );
+      const domLinkGeneral = this._renderNavbarSubLink('general', 'General');
       // category
       let domLinkCategory;
-
+      if (this.atomClassBase && this.atomClassBase.category) {
+        domLinkCategory = this._renderNavbarSubLink('category', 'Category');
+      }
+      // tag
+      let domLinkTag;
+      if (this.atomClassBase && this.atomClassBase.tag) {
+        domLinkTag = this._renderNavbarSubLink('tag', 'Tag');
+      }
       return (
         <f7-subnavbar>
           <f7-toolbar top tabbar>
             {domLinkBasic}
             {domLinkGeneral}
+            {domLinkCategory}
+            {domLinkTag}
           </f7-toolbar>
         </f7-subnavbar>
       );
     },
+    _renderTabs() {
+      //   <f7-tabs ref="tabs">
+      //   <eb-tab-page-content :id="tabId.mine" :tabActive="tabName === 'mine'" data-ref="mine" @tab:show="tabName = 'mine'">
+      //     <flowTab ref="mine" slot="list" :container="getContainer('mine')"></flowTab>
+      //   </eb-tab-page-content>
+      //   <eb-tab-page-content :id="tabId.others" :tabActive="tabName === 'others'" data-ref="others" @tab:show="tabName = 'others'">
+      //     <flowTab ref="others" slot="list" :container="getContainer('others')"></flowTab>
+      //   </eb-tab-page-content>
+      //   <eb-tab-page-content :id="tabId.history" :tabActive="tabName === 'history'" data-ref="history" @tab:show="tabName = 'history'">
+      //     <flowTab ref="history" slot="list" :container="getContainer('history')"></flowTab>
+      //   </eb-tab-page-content>
+      // </f7-tabs>
+    },
   },
   render() {
-    let domComponent;
-    if (this.ready) {
-      const filterConfig = this.contextParams.filterConfig;
-      domComponent = <eb-component ref="filter" module={filterConfig.component.module} name={filterConfig.component.name} options={this._getFilterComponentOptions()}></eb-component>;
-    }
     return (
-      <eb-page>
-        {this.ready && this._renderNavbar()}
-        {domComponent}
+      <eb-page page-content={false} tabs with-subnavbar>
+        {this._renderNavbar()}
+        {this._renderTabs()}
       </eb-page>
     );
   },
