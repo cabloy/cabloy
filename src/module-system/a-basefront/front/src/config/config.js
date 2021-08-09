@@ -39,6 +39,12 @@ export default {
                   schema: 'filterTabBasic',
                 },
               },
+              general: {
+                schema: {
+                  module: 'a-baselayout',
+                  schema: 'filterTabGeneral',
+                },
+              },
             },
           },
           export: {

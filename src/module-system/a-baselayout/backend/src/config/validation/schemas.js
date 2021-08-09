@@ -28,5 +28,16 @@ module.exports = app => {
       },
     },
   };
+  // filterTabGeneral
+  schemas.filterTabGeneral = {
+    type: 'object',
+    properties: {
+      mine: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'Mine',
+      },
+    },
+  };
   return schemas;
 };

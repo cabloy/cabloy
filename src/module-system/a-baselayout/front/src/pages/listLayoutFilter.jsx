@@ -2,11 +2,13 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 import tabBasic from '../components/filter/tabBasic.jsx';
+import tabGeneral from '../components/filter/tabGeneral.jsx';
 
 export default {
   mixins: [ebPageContext, ebAtomClasses],
   components: {
     tabBasic,
+    tabGeneral,
   },
   data() {
     return {
@@ -239,8 +241,26 @@ export default {
           <tabBasic layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabBasic>
         </f7-tab>
       );
+      // general
+      const domTabGeneral = (
+        <f7-tab
+          id={this.tabId.general}
+          class="page-content"
+          tabActive={this.tabName === 'general'}
+          onTabShow={() => {
+            this.tabName = 'general';
+          }}
+        >
+          <tabGeneral layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabGeneral>
+        </f7-tab>
+      );
 
-      return <f7-tabs>{domTabBasic}</f7-tabs>;
+      return (
+        <f7-tabs>
+          {domTabBasic}
+          {domTabGeneral}
+        </f7-tabs>
+      );
     },
     _renderNavbarSubLink(tabName, tabNameTitle) {
       return (

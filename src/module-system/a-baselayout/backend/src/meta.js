@@ -8,6 +8,7 @@ module.exports = app => {
       keywords: {},
       schemas: {
         filterTabBasic: schemas.filterTabBasic,
+        filterTabGeneral: schemas.filterTabGeneral,
       },
     },
   };
