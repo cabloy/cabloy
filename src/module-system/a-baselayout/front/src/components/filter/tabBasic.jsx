@@ -17,9 +17,15 @@ export default {
     console.log(this.filterConfig);
   },
   methods: {
-    reload(force) {},
+    _renderForm() {},
+    _renderFormAtomClass() {},
   },
   render() {
-    return <div>test</div>;
+    return (
+      <div>
+        {this._renderForm()}
+        {this._renderFormAtomClass()}
+      </div>
+    );
   },
 };

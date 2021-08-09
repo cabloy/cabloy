@@ -180,13 +180,6 @@ export default {
     onLayoutManagerDestroy() {
       this.$view.close();
     },
-    _getFilterTabOptions() {
-      return {
-        layoutManager: this.layoutManager,
-        filterConfig: this.filterConfig,
-        filterContainer: this,
-      };
-    },
     _renderNavbar() {
       const domNavbarRight = this._renderNavbarRight();
       const domNavbarSub = this._renderNavbarSub();
