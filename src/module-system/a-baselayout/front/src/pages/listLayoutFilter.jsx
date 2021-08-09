@@ -200,7 +200,7 @@ export default {
     _renderNavbarRight() {
       let domButtonSearch;
       if (!this.immediate) {
-        domButtonSearch = <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>;
+        domButtonSearch = <eb-link ref="buttonSubmit" iconMaterial="done" propsOnPerform={this.onPerformSearch}></eb-link>;
       }
       return <f7-nav-right>{domButtonSearch}</f7-nav-right>;
     },
@@ -231,8 +231,6 @@ export default {
       );
     },
     _renderTabs() {
-      // options
-      const options = this._getFilterTabOptions();
       // basic
       const domTabBasic = (
         <eb-tab-page-content
@@ -243,22 +241,11 @@ export default {
             this.tabName = 'basic';
           }}
         >
-          <tabBasic ref="basic" slot="list" options={options}></tabBasic>
+          <tabBasic ref="basic" slot="list" layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabBasic>
         </eb-tab-page-content>
       );
 
       return <f7-tabs>{domTabBasic}</f7-tabs>;
-      //   <f7-tabs ref="tabs">
-      //   <eb-tab-page-content :id="tabId.mine" :tabActive="tabName === 'mine'" data-ref="mine" @tab:show="tabName = 'mine'">
-      //     <flowTab ref="mine" slot="list" :container="getContainer('mine')"></flowTab>
-      //   </eb-tab-page-content>
-      //   <eb-tab-page-content :id="tabId.others" :tabActive="tabName === 'others'" data-ref="others" @tab:show="tabName = 'others'">
-      //     <flowTab ref="others" slot="list" :container="getContainer('others')"></flowTab>
-      //   </eb-tab-page-content>
-      //   <eb-tab-page-content :id="tabId.history" :tabActive="tabName === 'history'" data-ref="history" @tab:show="tabName = 'history'">
-      //     <flowTab ref="history" slot="list" :container="getContainer('history')"></flowTab>
-      //   </eb-tab-page-content>
-      // </f7-tabs>
     },
     _renderNavbarSubLink(tabName, tabNameTitle) {
       return (

@@ -1,13 +1,21 @@
 export default {
   props: {
-    options: {
+    layoutManager: {
+      type: Object,
+    },
+    filterConfig: {
+      type: Object,
+    },
+    filterContainer: {
       type: Object,
     },
   },
   data() {
     return {};
   },
-  created() {},
+  created() {
+    console.log(this.filterConfig);
+  },
   methods: {
     reload(force) {},
   },
