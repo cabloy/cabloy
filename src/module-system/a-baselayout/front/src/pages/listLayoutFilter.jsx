@@ -105,8 +105,8 @@ export default {
   created() {
     // filter data
     const filterData = this.$meta.util.getProperty(this.layoutManager, 'filter.data');
-    this.form = filterData.form;
-    this.formAtomClass = filterData.formAtomClass;
+    this.form = this.$meta.util.extend({}, filterData.form);
+    this.formAtomClass = this.$meta.util.extend({}, filterData.formAtomClass);
     this.schemaSearch = filterData.schemaSearch;
   },
   methods: {
