@@ -166,6 +166,7 @@ export default {
       this.$f7router.back();
     },
     onFilterChanged(force) {
+      if (!this.ready) return;
       if (force || this.immediate) {
         this.onFilterDebounce();
       }

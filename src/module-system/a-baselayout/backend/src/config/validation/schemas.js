@@ -22,6 +22,9 @@ module.exports = app => {
         type: 'object',
         ebType: 'atomClass',
         ebTitle: 'Atom Class',
+        ebDisplay: {
+          expression: '!_meta.host.container.atomClass',
+        },
       },
     },
   };

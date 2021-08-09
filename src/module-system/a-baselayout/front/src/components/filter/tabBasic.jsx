@@ -11,19 +11,36 @@ export default {
     },
   },
   data() {
-    return {};
+    const form = this.filterContainer.form;
+    const formBasic = {
+      atomName: form.atomName,
+      stage: form.stage,
+      atomClass: form.atomClass,
+    };
+    return {
+      formBasic,
+    };
   },
-  computed: {
-    formBasic() {
-      const form = this.filterContainer.form;
-      return {
-        atomName: form.atomName,
-        stage: form.stage,
-      };
+  computed: {},
+  watch: {
+    'formBasic.atomClass': function () {
+      // clear formAtomClass
+      // eslint-disable-next-line
+      this.filterContainer.formAtomClass = {};
+      this.filterContainer.atomClassChanged();
+    },
+    formBasic: {
+      handler() {
+        Object.assign(this.filterContainer.form, this.formBasic);
+      },
+      deep: true,
     },
   },
-  created() {},
+  created() {
+    this.init();
+  },
   methods: {
+    init() {},
     onFormSubmit() {
       if (this.filterContainer.immediate) {
         // donothing
@@ -41,6 +58,7 @@ export default {
       // host
       const host = {
         hint: false,
+        container: this.layoutManager.container,
       };
       // meta
       const meta = {
