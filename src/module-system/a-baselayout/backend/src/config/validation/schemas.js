@@ -9,15 +9,14 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Atom Name',
       },
-      leader: {
-        type: 'number',
-        ebType: 'toggle',
-        ebTitle: 'Leader',
+      stage: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Stage',
+        ebParams: { openIn: 'sheet', closeOnSelect: true },
       },
-      sorting: {
-        type: 'number',
-        ebType: 'text',
-        ebTitle: 'Sorting',
+      __divider: {
+        ebType: 'divider',
       },
     },
   };

@@ -33,14 +33,25 @@ export default {
     },
     _renderFormBasic() {
       const configTabBasic = this.filterConfig.tabs.basic;
+      // params
       const params = {
         module: configTabBasic.schema.module,
         schema: configTabBasic.schema.schema,
       };
+      // host
       const host = {
         hint: false,
       };
-      return <eb-validate ref="validate" auto host={host} data={this.formBasic} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      // meta
+      const meta = {
+        properties: {
+          stage: {
+            ebOptions: this.filterContainer.stages,
+          },
+        },
+      };
+      // render
+      return <eb-validate ref="validate" auto host={host} meta={meta} data={this.formBasic} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
     },
     _renderFormAtomClass() {},
   },
