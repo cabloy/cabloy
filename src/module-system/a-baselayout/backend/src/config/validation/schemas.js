@@ -18,6 +18,11 @@ module.exports = app => {
       __divider: {
         ebType: 'divider',
       },
+      atomClass: {
+        type: 'object',
+        ebType: 'atomClass',
+        ebTitle: 'Atom Class',
+      },
     },
   };
   return schemas;
