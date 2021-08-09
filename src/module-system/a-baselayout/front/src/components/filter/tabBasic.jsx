@@ -36,11 +36,8 @@ export default {
       deep: true,
     },
   },
-  created() {
-    this.init();
-  },
+  created() {},
   methods: {
-    init() {},
     onFormSubmit() {
       if (this.filterContainer.immediate) {
         // donothing
@@ -69,9 +66,21 @@ export default {
         },
       };
       // render
-      return <eb-validate ref="validate" auto host={host} meta={meta} data={this.formBasic} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      return <eb-validate auto host={host} meta={meta} data={this.formBasic} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
     },
-    _renderFormAtomClass() {},
+    _renderFormAtomClass() {
+      if (!this.filterContainer.schemaSearch) return null;
+      // host
+      const host = {
+        hint: false,
+        container: this.layoutManager.container,
+      };
+      // meta
+      const meta = {
+        schema: this.filterContainer.schemaSearch,
+      };
+      return <eb-validate auto host={host} data={this.filterContainer.formAtomClass} meta={meta} onSubmit={this.onFormSubmit}></eb-validate>;
+    },
   },
   render() {
     return (
