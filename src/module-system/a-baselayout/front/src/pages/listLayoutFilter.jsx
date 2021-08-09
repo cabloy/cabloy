@@ -1,8 +1,13 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+import tabBasic from '../components/filter/tabBasic.jsx';
+
 export default {
   mixins: [ebPageContext, ebAtomClasses],
+  components: {
+    tabBasic,
+  },
   data() {
     return {
       tabId: {
@@ -175,13 +180,11 @@ export default {
     onLayoutManagerDestroy() {
       this.$view.close();
     },
-    _getFilterComponentOptions() {
+    _getFilterTabOptions() {
       return {
-        props: {
-          layoutManager: this.layoutManager,
-          filterConfig: this.filterConfig,
-          filterContainer: this,
-        },
+        layoutManager: this.layoutManager,
+        filterConfig: this.filterConfig,
+        filterContainer: this,
       };
     },
     _renderNavbar() {
@@ -200,13 +203,6 @@ export default {
         domButtonSearch = <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>;
       }
       return <f7-nav-right>{domButtonSearch}</f7-nav-right>;
-    },
-    _renderNavbarSubLink(tabName, tabNameTitle) {
-      return (
-        <eb-link tabLink={`#${this.tabId[tabName]}`} tabLinkActive={this.tabName === tabName}>
-          {this.$text(tabNameTitle)}
-        </eb-link>
-      );
     },
     _renderNavbarSub() {
       // basic
@@ -235,6 +231,23 @@ export default {
       );
     },
     _renderTabs() {
+      // options
+      const options = this._getFilterTabOptions();
+      // basic
+      const domTabBasic = (
+        <eb-tab-page-content
+          id={this.tabId.basic}
+          tabActive={this.tabName === 'basic'}
+          data-ref="basic"
+          onTabShow={() => {
+            this.tabName = 'basic';
+          }}
+        >
+          <tabBasic ref="basic" slot="list" options={options}></tabBasic>
+        </eb-tab-page-content>
+      );
+
+      return <f7-tabs>{domTabBasic}</f7-tabs>;
       //   <f7-tabs ref="tabs">
       //   <eb-tab-page-content :id="tabId.mine" :tabActive="tabName === 'mine'" data-ref="mine" @tab:show="tabName = 'mine'">
       //     <flowTab ref="mine" slot="list" :container="getContainer('mine')"></flowTab>
@@ -246,6 +259,13 @@ export default {
       //     <flowTab ref="history" slot="list" :container="getContainer('history')"></flowTab>
       //   </eb-tab-page-content>
       // </f7-tabs>
+    },
+    _renderNavbarSubLink(tabName, tabNameTitle) {
+      return (
+        <eb-link tabLink={`#${this.tabId[tabName]}`} tabLinkActive={this.tabName === tabName}>
+          {this.$text(tabNameTitle)}
+        </eb-link>
+      );
     },
   },
   render() {

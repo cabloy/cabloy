@@ -53,6 +53,7 @@ export default {
     },
     onTabShow(el) {
       this.$emit('tab:show', el);
+      this.$emit('tabShow', el);
       if (!this.inited && this.list) {
         this.inited = true;
         this.list.reload(true);
