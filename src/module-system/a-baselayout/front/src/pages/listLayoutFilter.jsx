@@ -224,18 +224,19 @@ export default {
       );
     },
     _renderTabs() {
+      if (!this.ready) return;
       // basic
       const domTabBasic = (
-        <eb-tab-page-content
+        <f7-tab
           id={this.tabId.basic}
+          class="page-content"
           tabActive={this.tabName === 'basic'}
-          data-ref="basic"
           onTabShow={() => {
             this.tabName = 'basic';
           }}
         >
-          <tabBasic ref="basic" slot="list" layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabBasic>
-        </eb-tab-page-content>
+          <tabBasic layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabBasic>
+        </f7-tab>
       );
 
       return <f7-tabs>{domTabBasic}</f7-tabs>;

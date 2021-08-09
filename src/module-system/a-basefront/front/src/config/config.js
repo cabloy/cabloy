@@ -32,9 +32,13 @@ export default {
           ],
           filter: {
             actionPath: '/a/baselayout/listLayoutFilter',
-            component: {
-              module: 'a-baselayout',
-              name: 'listLayoutBlockFilter',
+            tabs: {
+              basic: {
+                schema: {
+                  module: 'a-baselayout',
+                  schema: 'filterTabBasic',
+                },
+              },
             },
           },
           export: {

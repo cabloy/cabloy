@@ -186,7 +186,13 @@ export default {
       // hint
       if (!notHint) {
         // config
-        const hint = (this.validate.host && this.validate.host.hint) || this.$config.validate.hint;
+        let hint = this.validate.host && this.validate.host.hint;
+        if (!hint && hint !== false) {
+          hint = this.$config.validate.hint;
+        }
+        if (hint === false) {
+          return title;
+        }
         const hintOptional = hint.optional;
         const hintMust = hint.must;
         // check optional
