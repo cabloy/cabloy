@@ -1,3 +1,4 @@
+// form fields: mine/star/label/language
 export default {
   props: {
     layoutManager: {
@@ -10,28 +11,7 @@ export default {
       type: Object,
     },
   },
-  data() {
-    const form = this.filterContainer.form;
-    const formGeneral = {
-      mine: form.mine,
-      star: form.star,
-      label: form.label,
-      language: form.language,
-    };
-    return {
-      formGeneral,
-    };
-  },
-  computed: {},
-  watch: {
-    formGeneral: {
-      handler() {
-        Object.assign(this.filterContainer.form, this.formGeneral);
-      },
-      deep: true,
-    },
-  },
-  created() {},
+  data() {},
   methods: {
     onFormSubmit() {
       if (this.filterContainer.immediate) {
@@ -58,7 +38,7 @@ export default {
         properties: {},
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.formGeneral} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
     },
   },
   render() {
