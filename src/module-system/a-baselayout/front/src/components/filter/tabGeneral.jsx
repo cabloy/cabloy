@@ -11,14 +11,12 @@ export default {
       type: Object,
     },
   },
-  data() {},
+  data() {
+    return {};
+  },
   methods: {
     onFormSubmit() {
-      if (this.filterContainer.immediate) {
-        // donothing
-      } else {
-        this.filterContainer.onPerformSearch();
-      }
+      this.filterContainer.onFormSubmit();
     },
     _renderFormGeneral() {
       const configTabGeneral = this.filterConfig.tabs.general;

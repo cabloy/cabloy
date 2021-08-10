@@ -39,11 +39,7 @@ export default {
   created() {},
   methods: {
     onFormSubmit() {
-      if (this.filterContainer.immediate) {
-        // donothing
-      } else {
-        this.filterContainer.onPerformSearch();
-      }
+      this.filterContainer.onFormSubmit();
     },
     _renderFormBasic() {
       const configTabBasic = this.filterConfig.tabs.basic;

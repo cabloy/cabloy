@@ -163,6 +163,13 @@ export default {
         }
       }
     },
+    onFormSubmit() {
+      if (this.immediate) {
+        // donothing
+      } else {
+        this.onPerformSearch();
+      }
+    },
     onPerformSearch() {
       this.onFilterChanged(true);
       this.$f7router.back();
