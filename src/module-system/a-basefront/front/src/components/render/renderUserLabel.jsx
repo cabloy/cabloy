@@ -8,96 +8,77 @@ export default {
     return {};
   },
   computed: {
-    atomClass() {
-      const { parcel } = this.context;
-      return {
-        module: parcel.data.module,
-        atomClassName: parcel.data.atomClassName,
-      };
+    userLabels() {
+      return this.$store.getters['a/base/userLabels'];
     },
   },
-  created() {},
+  created() {
+    this.$store.dispatch('a/base/getLabels');
+  },
   methods: {
-    combineAtomClassAndLanguage(language) {
-      const queries = {
-        module: this.atomClass.module,
-        atomClassName: this.atomClass.atomClassName,
-      };
-      if (language) {
-        queries.language = language;
-      }
-      return queries;
+    getLabel(value) {
+      if (!this.userLabels) return null;
+      return this.userLabels[value];
     },
-    async onChooseCategory(event) {
-      const { parcel } = this.context;
-      const action = {
-        actionModule: 'a-base',
-        actionComponent: 'action',
-        name: 'selectResourceType',
-        targetEl: event.target,
-      };
-      let resourceType;
-      if (parcel.data.resourceType) {
-        resourceType = parcel.data.resourceType;
-      } else {
-        const resourceType = await this.$meta.util.performAction({ ctx: this, action, item: parcel.data });
-        if (resourceType) {
-          this.context.setValue(resourceType, 'resourceType');
-        }
-      }
-      // get categoryId from resourceType
-      const categoryRoot = await this.$api.post('/a/base/category/child', {
-        atomClass: this.atomClass,
-        categoryId: 0,
-        categoryName: resourceType,
-      });
-      const categoryIdStart = categoryRoot.id;
-      // select
+    getLabelCurrent() {
+      const value = this.context.getValue();
+      return this.getLabel(value);
+    },
+    async onChooseLabel(event) {
+      const self = this;
+      if (!this.userLabels) return;
+      // choose
       return new Promise(resolve => {
-        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.atomClass);
-        this.$view.navigate(url, {
-          target: '_self',
-          context: {
-            params: {
-              categoryIdStart,
-              leafOnly: true,
-              setLocale: true,
+        const hostEl = this.$view.getHostEl();
+        const targetEl = event.target;
+        const buttons = [];
+        let resolved = false;
+        function onButtonClick(labelId) {
+          self.context.setValue(labelId);
+          resolved = true;
+          resolve(true);
+        }
+        for (const labelId in this.userLabels) {
+          const label = this.userLabels[labelId];
+          buttons.push({
+            color: label.color,
+            text: label.text,
+            onClick: () => {
+              onButtonClick(labelId);
             },
-            callback: (code, node) => {
-              if (code === 200) {
-                if (node) {
-                  this.context.setValue(node.id, 'atomCategoryId');
-                  this.context.setValue(node.data.categoryName, 'atomCategoryName');
-                  this.context.setValue(node.data.categoryNameLocale, 'atomCategoryNameLocale');
-                } else {
-                  this.context.setValue(0, 'atomCategoryId');
-                  this.context.setValue('', 'atomCategoryName');
-                  this.context.setValue('', 'atomCategoryNameLocale');
-                }
-                resolve(true);
-              } else if (code === false) {
-                resolve(false);
-              }
-            },
-          },
-        });
+          });
+        }
+        const actions = this.$f7.actions.create({ hostEl, buttons, targetEl });
+        function onActionsClosed() {
+          actions.destroy();
+          if (!resolved) {
+            resolved = true;
+            resolve(false);
+          }
+        }
+        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
       });
+    },
+    _renderAfterLabel() {
+      const labelCurrent = this.getLabelCurrent();
+      if (!labelCurrent) return null;
+      return <f7-badge color={labelCurrent.color}>{labelCurrent.text}</f7-badge>;
     },
   },
   render() {
-    const { parcel, dataPath, property, validate } = this.context;
+    const { dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
-    const categoryName = parcel.data.atomCategoryNameLocale || parcel.data.atomCategoryName;
+    const domAfterLabel = this._renderAfterLabel();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{categoryName}</div>
+          <div slot="after">{domAfterLabel}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
-        <div slot="after">{categoryName}</div>
+      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseLabel}>
+        <div slot="after">{domAfterLabel}</div>
       </eb-list-item-choose>
     );
   },
