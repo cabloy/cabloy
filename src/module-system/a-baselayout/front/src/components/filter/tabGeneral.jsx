@@ -51,6 +51,7 @@ export default {
       const host = {
         hint: false,
         container: this.layoutManager.container,
+        atomClassBase: this.filterContainer.atomClassBase,
       };
       // meta
       const meta = {

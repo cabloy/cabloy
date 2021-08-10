@@ -47,6 +47,15 @@ module.exports = app => {
         ebType: 'userLabel',
         ebTitle: 'UserLabel',
       },
+      language: {
+        type: 'string',
+        ebType: 'language',
+        ebTitle: 'Language',
+        ebParams: { openIn: 'sheet', closeOnSelect: true },
+        ebDisplay: {
+          expression: '_meta.host.atomClassBase && _meta.host.atomClassBase.language',
+        },
+      },
     },
   };
   return schemas;
