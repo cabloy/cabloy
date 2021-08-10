@@ -49,6 +49,9 @@ module.exports = app => {
         type: 'number',
         ebType: 'userLabel',
         ebTitle: 'UserLabel',
+        ebParams: {
+          optional: true,
+        },
       },
       language: {
         type: 'string',

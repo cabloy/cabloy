@@ -28,6 +28,8 @@ export default {
       const self = this;
       if (!this.userLabels) return;
       // choose
+      const { property } = this.context;
+      const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
       return new Promise(resolve => {
         const hostEl = this.$view.getHostEl();
         const targetEl = event.target;
@@ -38,6 +40,16 @@ export default {
           resolved = true;
           resolve(true);
         }
+        // optional
+        if (optional) {
+          buttons.push({
+            text: '',
+            onClick: () => {
+              onButtonClick(0);
+            },
+          });
+        }
+        //
         for (const labelId in this.userLabels) {
           const label = this.userLabels[labelId];
           buttons.push({
