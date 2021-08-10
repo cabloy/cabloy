@@ -51,6 +51,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'language',
         ebTitle: 'Language',
+        ebOptionsBlankAuto: true,
         ebParams: { openIn: 'sheet', closeOnSelect: true },
         ebDisplay: {
           expression: '_meta.host.atomClassBase && _meta.host.atomClassBase.language',

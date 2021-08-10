@@ -45,21 +45,6 @@ export default {
       return this.contextParams.filterConfig;
     },
     //
-    userLabels() {
-      const labelsAll = this.$store.getters['a/base/userLabels'];
-      if (!labelsAll) return null;
-
-      const labels = [{ title: '', value: 0 }];
-      for (const key in labelsAll) {
-        labels.push({ title: labelsAll[key].text, value: key });
-      }
-      return labels;
-    },
-    locales() {
-      const locales = this.$store.getState('a/base/locales');
-      if (!locales) return [];
-      return [{ title: '', value: '' }].concat(locales);
-    },
     atomClass() {
       return this.form.atomClass;
     },
@@ -132,10 +117,6 @@ export default {
       this.init();
     },
     async init() {
-      // labels
-      await this.$store.dispatch('a/base/getLabels');
-      // locales
-      await this.$store.dispatch('a/base/getLocales');
       // init atomClass
       await this.atomClassChanged(true);
       //

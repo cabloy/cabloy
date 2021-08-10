@@ -16,17 +16,24 @@ export default {
       };
     },
     locales() {
-      return this.$store.getState('a/base/locales');
+      const locales = this.$store.getState('a/base/locales');
+      return locales || [];
     },
   },
   created() {
-    this.$store.dispatch('a/base/getLocales').then(locales => {
-      if (locales.length === 1) {
-        this.context.setValue(locales[0].value, 'atomLanguage');
-      }
-    });
+    this.init();
   },
-  methods: {},
+  methods: {
+    async init() {
+      const locales = await this.$store.dispatch('a/base/getLocales');
+      if (locales.length === 1) {
+        const atomLanguage = this.context.getValue('atomLanguage');
+        if (!atomLanguage && atomLanguage !== undefined) {
+          this.context.setValue(locales[0].value, 'atomLanguage');
+        }
+      }
+    },
+  },
   render() {
     const { parcel, key, property } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
