@@ -37,6 +37,16 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'Mine',
       },
+      star: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'UserStar',
+      },
+      label: {
+        type: 'number',
+        ebType: 'userLabel',
+        ebTitle: 'UserLabel',
+      },
     },
   };
   return schemas;

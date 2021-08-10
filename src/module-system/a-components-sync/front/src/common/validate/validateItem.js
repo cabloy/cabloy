@@ -20,6 +20,7 @@ import renderDetailsStat from './render/renderDetailsStat.js';
 import renderAtom from './render/renderAtom.js';
 import renderAtomClass from './render/renderAtomClass.js';
 import renderDivider from './render/renderDivider.js';
+import renderUserLabel from './render/renderUserLabel.js';
 
 export default {
   mixins: [
@@ -45,6 +46,7 @@ export default {
     renderAtom,
     renderAtomClass,
     renderDivider,
+    renderUserLabel,
   ],
   props: {
     parcel: {
@@ -368,6 +370,9 @@ export default {
       } else if (ebType === 'divider') {
         // divider
         return this.renderDivider(c, context);
+      } else if (ebType === 'userLabel') {
+        // userLabel
+        return this.renderUserLabel(c, context);
       }
       // not support
       return c('div', {
