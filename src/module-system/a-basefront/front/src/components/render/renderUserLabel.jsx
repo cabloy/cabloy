@@ -25,9 +25,9 @@ export default {
       return this.getLabel(value);
     },
     async onChooseLabel(event) {
-      const self = this;
       if (!this.userLabels) return;
       // choose
+      const self = this;
       const { property } = this.context;
       const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
       return new Promise(resolve => {
@@ -60,6 +60,7 @@ export default {
             },
           });
         }
+        //
         const actions = this.$f7.actions.create({ hostEl, buttons, targetEl });
         function onActionsClosed() {
           actions.destroy();
