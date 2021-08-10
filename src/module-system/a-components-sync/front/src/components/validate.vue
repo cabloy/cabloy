@@ -97,10 +97,10 @@ export default {
   },
   watch: {
     params() {
-      this.custom = null;
-      this.$nextTick(() => {
-        this.fetchSchema();
-      });
+      this.schemaMaybeChanged();
+    },
+    'meta.schema': function () {
+      this.schemaMaybeChanged();
     },
     data() {
       this.initData();
@@ -113,6 +113,12 @@ export default {
     this.fetchSchema();
   },
   methods: {
+    schemaMaybeChanged() {
+      this.custom = null;
+      this.$nextTick(() => {
+        this.fetchSchema();
+      });
+    },
     initData() {
       this.dataCopy = this.$meta.util.extend({}, this.data);
     },

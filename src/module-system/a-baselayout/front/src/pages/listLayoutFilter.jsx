@@ -85,6 +85,18 @@ export default {
     },
   },
   watch: {
+    'form.atomClass': function (valNew, valOld) {
+      if (this._getAtomClassFullName(valNew) === this._getAtomClassFullName(valOld)) return;
+      // clear some fields: formAtomClass/language/categoryId/tags
+      this.formAtomClass = {};
+      this.form = {
+        ...this.form,
+        language: '',
+        category: 0,
+        tag: 0,
+      };
+      this.atomClassChanged();
+    },
     form: {
       handler() {
         this.onFilterChanged();
@@ -112,6 +124,10 @@ export default {
     this.schemaSearch = filterData.schemaSearch;
   },
   methods: {
+    _getAtomClassFullName(atomClass) {
+      if (!atomClass) return null;
+      return `${atomClass.module}:${atomClass.atomClassName}`;
+    },
     onAtomClassesReady() {
       this.init();
     },

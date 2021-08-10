@@ -1,3 +1,4 @@
+// form fields: atomName/stage/atomClass
 export default {
   props: {
     layoutManager: {
@@ -11,32 +12,8 @@ export default {
     },
   },
   data() {
-    const form = this.filterContainer.form;
-    const formBasic = {
-      atomName: form.atomName,
-      stage: form.stage,
-      atomClass: form.atomClass,
-    };
-    return {
-      formBasic,
-    };
+    return {};
   },
-  computed: {},
-  watch: {
-    'formBasic.atomClass': function () {
-      // clear formAtomClass
-      // eslint-disable-next-line
-      this.filterContainer.formAtomClass = {};
-      this.filterContainer.atomClassChanged();
-    },
-    formBasic: {
-      handler() {
-        Object.assign(this.filterContainer.form, this.formBasic);
-      },
-      deep: true,
-    },
-  },
-  created() {},
   methods: {
     onFormSubmit() {
       this.filterContainer.onFormSubmit();
@@ -62,7 +39,7 @@ export default {
         },
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.formBasic} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
     },
     _renderFormAtomClass() {
       if (!this.filterContainer.schemaSearch) return null;
