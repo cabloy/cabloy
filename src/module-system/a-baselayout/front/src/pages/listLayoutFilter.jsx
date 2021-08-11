@@ -233,36 +233,20 @@ export default {
     _renderTabs() {
       if (!this.ready) return;
       // basic
-      const domTabBasic = (
-        <f7-tab
-          id={this.tabId.basic}
-          class="page-content"
-          tabActive={this.tabName === 'basic'}
-          onTabShow={() => {
-            this.tabName = 'basic';
-          }}
-        >
-          <tabBasic layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabBasic>
-        </f7-tab>
-      );
+      const domTabBasic = this._renderTab('basic', 'tabBasic');
       // general
-      const domTabGeneral = (
-        <f7-tab
-          id={this.tabId.general}
-          class="page-content"
-          tabActive={this.tabName === 'general'}
-          onTabShow={() => {
-            this.tabName = 'general';
-          }}
-        >
-          <tabGeneral layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></tabGeneral>
-        </f7-tab>
-      );
+      const domTabGeneral = this._renderTab('general', 'tabGeneral');
+      // category
+      let domTabCategory;
+      if (this.atomClassBase && this.atomClassBase.category) {
+        domTabCategory = this._renderTab('category', 'tabGeneral');
+      }
 
       return (
         <f7-tabs>
           {domTabBasic}
           {domTabGeneral}
+          {domTabCategory}
         </f7-tabs>
       );
     },
@@ -271,6 +255,20 @@ export default {
         <eb-link tabLink={`#${this.tabId[tabName]}`} tabLinkActive={this.tabName === tabName}>
           {this.$text(tabNameTitle)}
         </eb-link>
+      );
+    },
+    _renderTab(tabName, TabTag) {
+      return (
+        <f7-tab
+          id={this.tabId[tabName]}
+          class="page-content"
+          tabActive={this.tabName === tabName}
+          onTabShow={() => {
+            this.tabName = tabName;
+          }}
+        >
+          <TabTag layoutManager={this.layoutManager} filterConfig={this.filterConfig} filterContainer={this}></TabTag>
+        </f7-tab>
       );
     },
   },
