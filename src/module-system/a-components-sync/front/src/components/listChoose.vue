@@ -31,9 +31,13 @@ export default {
       if (!this.onChoose) return;
       const res = this.onChoose(event, this.context);
       if (this.$meta.util.isPromise(res)) {
-        res.then(data => {
-          if (data) this.clearValidateError();
-        });
+        res
+          .then(data => {
+            if (data) this.clearValidateError();
+          })
+          .catch(() => {
+            // do nothing
+          });
       } else if (res) {
         this.clearValidateError();
       }
