@@ -67,10 +67,12 @@ export default {
   },
   methods: {
     async reload() {
-      if (this.root) {
-        this._initRootNode();
-        await this._loadChildren(this.treeviewRoot);
-      }
+      await this.load(this.root);
+    },
+    async load(root) {
+      if (!root) return;
+      this._initRootNode(root);
+      await this._loadChildren(this.treeviewRoot);
     },
     async reloadNode(node, nodeNew) {
       if (node.root) return;
@@ -184,8 +186,8 @@ export default {
         }
       }
     },
-    _initRootNode() {
-      const _root = this.$utils.extend({}, this.root);
+    _initRootNode(root) {
+      const _root = this.$utils.extend({}, root);
       // root
       _root.root = true;
       // attrs

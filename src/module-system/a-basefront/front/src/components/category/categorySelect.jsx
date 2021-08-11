@@ -13,19 +13,6 @@ export default {
   data() {
     return {};
   },
-  computed: {
-    root() {
-      return {
-        attrs: {
-          itemToggle: false,
-          selectable: false,
-          multiple: this.multiple,
-          checkbox: true,
-          checkOnLabel: true,
-        },
-      };
-    },
-  },
   mounted() {
     this.init();
   },
@@ -34,8 +21,19 @@ export default {
       return this.$refs.tree;
     },
     async init() {
+      // root
+      const root = {
+        attrs: {
+          itemToggle: false,
+          selectable: false,
+          multiple: this.multiple,
+          checkbox: true,
+          checkOnLabel: true,
+        },
+      };
+      // load
       const tree = this.getInstance();
-      await tree.reload();
+      await tree.load(root);
     },
     _findChildren(children, categoryId) {
       for (const item of children) {
@@ -116,6 +114,6 @@ export default {
     },
   },
   render() {
-    return <eb-treeview ref="tree" auto={false} root={this.root} propsOnLoadChildren={this.onLoadChildren}></eb-treeview>;
+    return <eb-treeview ref="tree" auto={false} propsOnLoadChildren={this.onLoadChildren}></eb-treeview>;
   },
 };
