@@ -33,6 +33,7 @@ export default function (Vue) {
       resourceTrees: {},
       resources: {},
       resourcesArray: {},
+      categoryTrees: {},
       categories: {},
       tags: {},
       // global
@@ -60,6 +61,7 @@ export default function (Vue) {
         state.resourceTrees = {};
         state.resources = {};
         state.resourcesArray = {};
+        state.categoryTrees = {};
         state.categories = {};
         state.tags = {};
       },
@@ -113,7 +115,7 @@ export default function (Vue) {
       setResourceTypes(state, resourceTypes) {
         state.resourceTypes = resourceTypes;
       },
-      setResourceTrees(state, { resourceType, tree }) {
+      setResourceTree(state, { resourceType, tree }) {
         state.resourceTrees = {
           ...state.resourceTrees,
           [resourceType]: tree,
@@ -127,6 +129,13 @@ export default function (Vue) {
         state.resourcesArray = {
           ...state.resourcesArray,
           [resourceType]: resourcesArray,
+        };
+      },
+      setCategoryTree(state, { atomClass, language, tree }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+        state.categoryTrees = {
+          ...state.categoryTrees,
+          [key]: tree,
         };
       },
       setCategories(state, { atomClass, language, categories }) {
@@ -251,7 +260,7 @@ export default function (Vue) {
             });
         });
       },
-      getResourceTrees({ state, commit }, { resourceType }) {
+      getResourceTree({ state, commit }, { resourceType }) {
         return new Promise((resolve, reject) => {
           if (state.resourceTrees[resourceType]) return resolve(state.resourceTrees[resourceType]);
           Vue.prototype.$meta.api
@@ -270,7 +279,7 @@ export default function (Vue) {
                 })
                 .then(data => {
                   const tree = data.list;
-                  commit('setResourceTrees', { resourceType, tree });
+                  commit('setResourceTree', { resourceType, tree });
                   resolve(tree);
                 })
                 .catch(err => {
@@ -287,6 +296,25 @@ export default function (Vue) {
       },
       getResourcesArray({ state, commit }, { resourceType }) {
         return __getResources({ state, commit }, { resourceType, useArray: true });
+      },
+      getCategoryTree({ state, commit }, { atomClass, language }) {
+        return new Promise((resolve, reject) => {
+          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          if (state.categoryTrees[key]) return resolve(state.categoryTrees[key]);
+          Vue.prototype.$meta.api
+            .post('/a/base/category/tree', {
+              atomClass,
+              language: language || undefined,
+            })
+            .then(data => {
+              const tree = data.list;
+              commit('setCategoryTree', { atomClass, language, tree });
+              resolve(tree);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        });
       },
       getCategories({ state, commit }, { atomClass, language }) {
         return new Promise((resolve, reject) => {

@@ -26,7 +26,7 @@ export default {
       // resurce
       await this.$store.dispatch('a/base/getResourceTypes');
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });
-      this.base.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.container.resourceType });
+      this.base.treeData = await this.$store.dispatch('a/base/getResourceTree', { resourceType: this.container.resourceType });
       return true;
     },
     base_onPerformResource(event, resource) {
