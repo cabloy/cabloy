@@ -14,7 +14,6 @@
       :catalogOnly="catalogOnly"
       :leafOnly="leafOnly"
       :categoryIdDisable="categoryIdDisable"
-      :setLocale="setLocale"
     ></categorySelect>
   </eb-page>
 </template>
@@ -55,9 +54,9 @@ export default {
     categoryIdDisable() {
       return this.contextParams.categoryIdDisable;
     },
-    setLocale() {
-      return this.contextParams.setLocale;
-    },
+    // setLocale() {
+    //   return this.contextParams.setLocale;
+    // },
   },
   methods: {
     onPerformDone() {

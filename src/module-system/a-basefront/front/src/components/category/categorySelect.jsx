@@ -7,7 +7,7 @@ export default {
     catalogOnly: {},
     leafOnly: {},
     categoryIdDisable: {},
-    setLocale: {},
+    // setLocale: {},
   },
   data() {
     return {};
@@ -29,38 +29,41 @@ export default {
     getInstance() {
       return this.$refs.tree;
     },
-    async onLoadChildren(node) {
-      // root
-      if (node.root && this.categoryIdStart === undefined) {
-        const checkbox = !this.leafOnly;
-        return [
-          {
-            id: 0,
-            attrs: {
-              label: this.$text('Root'),
-              toggle: true,
-              loadChildren: true,
-              checkbox,
-              checkOnLabel: checkbox,
-              selectable: checkbox,
-              itemToggle: !checkbox,
-            },
-            data: {
-              id: 0,
-              categoryCatalog: 1,
-            },
-          },
-        ];
+    _findChildren(children, categoryId) {
+      for (const item of children) {
+        if (item.id === categoryId) return item.children;
+        if (item.children) {
+          const res = this._findChildren(item.children, categoryId);
+          if (res) return res;
+        }
       }
-      // children
-      const categoryId = node.root ? this.categoryIdStart : node.id;
-      const data = await this.$api.post('/a/base/category/children', {
-        atomClass: this.atomClass,
-        language: this.language,
-        categoryId,
-        setLocale: this.setLocale,
-      });
-      let list = data.list.map(item => {
+      return null;
+    },
+    _createNodeRoot(children) {
+      const checkbox = !this.leafOnly;
+      return [
+        {
+          id: 0,
+          attrs: {
+            label: this.$text('Root'),
+            toggle: true,
+            loadChildren: true,
+            checkbox,
+            checkOnLabel: checkbox,
+            selectable: checkbox,
+            itemToggle: !checkbox,
+          },
+          data: {
+            id: 0,
+            categoryCatalog: 1,
+            children,
+          },
+        },
+      ];
+    },
+    _createNodeChildren(children) {
+      if (!children) return [];
+      let nodes = children.map(item => {
         const checkbox = !this.leafOnly || item.categoryCatalog === 0;
         const node = {
           id: item.id,
@@ -77,10 +80,29 @@ export default {
         };
         return node;
       });
-      list = list.filter(item => {
+      nodes = nodes.filter(item => {
         return (!this.catalogOnly || item.data.categoryCatalog === 1) && (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
       });
-      return list;
+      return nodes;
+    },
+    async onLoadChildren(node) {
+      if (node.root) {
+        const treeChildren = await this.$store.dispatch('a/base/getCategoryTree', { atomClass: this.atomClass, language: this.language });
+        // append root node
+        if (this.categoryIdStart === undefined) {
+          return this._createNodeRoot(treeChildren);
+        }
+        // children
+        let children;
+        if (this.categoryIdStart === 0) {
+          children = treeChildren;
+        } else {
+          children = this._findChildren(treeChildren, this.categoryIdStart);
+        }
+        return this._createNodeChildren(children);
+      }
+      // children
+      return this._createNodeChildren(node.data.children);
     },
   },
   render() {
