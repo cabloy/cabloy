@@ -45,6 +45,31 @@ export default {
       if (content.length === 0) return null;
       return this.$$(content[0]).closest('a');
     },
+    _switchFolderIcon(el) {
+      const $el = this.$$(el);
+      // icon
+      const $icon = $el.find('i.icon.material-icons');
+      if ($icon.length === 0) return;
+      // text
+      const text = $icon.text();
+      if (text !== 'folder' && text !== 'folder_open') return;
+      // switch
+      if ($el.hasClass('treeview-item-opened')) {
+        $icon.text('folder_open');
+      } else {
+        $icon.text('folder');
+      }
+    },
+    onOpen(el) {
+      if (this.eventTargetEl !== el) return;
+      this._switchFolderIcon(el);
+      this.dispatchEvent('treeview:open treeviewOpen', el);
+    },
+    onClose(el) {
+      if (this.eventTargetEl !== el) return;
+      this._switchFolderIcon(el);
+      this.dispatchEvent('treeview:close treeviewClose', el);
+    },
   },
 };
 </script>

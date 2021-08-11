@@ -208,6 +208,14 @@ export default {
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) _node.attrs.selected = this.selectedItem && this.selectedItem.id === node.id;
       if (_node.attrs.disabled === undefined) _node.attrs.disabled = this.treeviewRoot.attrs.disabled;
+      // attrs folder
+      if (_node.attrs.folder) {
+        if (_node.attrs.opened === true) {
+          _node.attrs.iconMaterial = 'folder_open';
+        } else {
+          _node.attrs.iconMaterial = 'folder';
+        }
+      }
       // attrs onNodePerform
       if (this.onNodePerform && node.attrs.onPerform === undefined) {
         _node.attrs.onPerform = (e, context) => {
@@ -243,7 +251,7 @@ export default {
               indeterminate: _node.attrs.indeterminate,
             },
             on: {
-              change: e => {
+              change: () => {
                 this._onNodeChange(node, !node.attrs.checked);
               },
             },

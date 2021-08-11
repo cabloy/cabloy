@@ -65,6 +65,7 @@ export default {
       if (!children) return [];
       let nodes = children.map(item => {
         const checkbox = !this.leafOnly || item.categoryCatalog === 0;
+        const folder = !checkbox && item.categoryCatalog === 1;
         const node = {
           id: item.id,
           attrs: {
@@ -75,6 +76,7 @@ export default {
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
+            folder,
           },
           data: item,
         };
