@@ -8,7 +8,8 @@ import renderResourceType from './components/render/renderResourceType.jsx';
 import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
-
+// category
+import categorySelect from './components/category/categorySelect.jsx';
 // tab
 import atomTab from './components/tab/atomTab.jsx';
 // listLayoutData
@@ -27,6 +28,8 @@ export default {
   renderTableCellDefault,
   renderTableCellComputed,
   renderUserLabel,
+  // category
+  categorySelect,
   // tab
   atomTab,
   // layout
