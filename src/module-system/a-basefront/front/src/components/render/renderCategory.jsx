@@ -40,12 +40,17 @@ export default {
       if (parcel.data.atomLanguage) {
         language = parcel.data.atomLanguage;
       } else {
+        // when need locale, throw error on no selection
         const locale = await this.$meta.util.performAction({ ctx: this, action, item: parcel.data });
         if (locale) {
           language = locale.value;
           this.context.setValue(locale.value, 'atomLanguage');
         }
       }
+      // selectedCategoryIds
+      const atomCategoryId = this.context.getValue('atomCategoryId');
+      const selectedCategoryIds = [atomCategoryId];
+      // select
       return new Promise(resolve => {
         const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(language));
         this.$view.navigate(url, {
@@ -54,6 +59,7 @@ export default {
             params: {
               categoryIdStart: 0,
               leafOnly: true,
+              selectedCategoryIds,
             },
             callback: (code, node) => {
               if (code === 200) {

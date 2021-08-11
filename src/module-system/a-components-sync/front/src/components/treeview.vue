@@ -11,6 +11,10 @@ export default {
   name: 'eb-treeview',
   extends: f7Treeview,
   props: {
+    auto: {
+      type: Boolean,
+      default: true,
+    },
     root: {
       type: Object,
     },
@@ -57,16 +61,18 @@ export default {
     },
   },
   created() {
-    this.reload();
+    if (this.auto) {
+      this.reload();
+    }
   },
   methods: {
-    reload() {
+    async reload() {
       if (this.root) {
         this._initRootNode();
-        this._loadChildren(this.treeviewRoot);
+        await this._loadChildren(this.treeviewRoot);
       }
     },
-    reloadNode(node, nodeNew) {
+    async reloadNode(node, nodeNew) {
       if (node.root) return;
       // empty
       node.children.splice(0, node.children.length);
@@ -80,7 +86,7 @@ export default {
       // load again
       if (node._loaded) {
         node._loaded = false;
-        this._loadChildren(node);
+        await this._loadChildren(node);
       }
     },
     removeNode(node) {
@@ -330,17 +336,10 @@ export default {
       }
       return nodeChildren;
     },
-    _loadChildren(node) {
-      return new Promise((resolve, reject) => {
-        if (!this._needLoadChildren(node)) return resolve(node.children);
-        this.onLoadChildren(node)
-          .then(data => {
-            const nodeChildren = this.childrenLoaded(node, data);
-            // ok
-            return resolve(nodeChildren);
-          })
-          .catch(reject);
-      });
+    async _loadChildren(node) {
+      if (!this._needLoadChildren(node)) return node.children;
+      const data = await this.onLoadChildren(node);
+      return this.childrenLoaded(node, data);
     },
     _onNodeLoadChildren(e, done, node) {
       this._loadChildren(node)

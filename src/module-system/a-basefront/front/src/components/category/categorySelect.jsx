@@ -7,6 +7,7 @@ export default {
     catalogOnly: {},
     leafOnly: {},
     categoryIdDisable: {},
+    selectedCategoryIds: {},
     // setLocale: {},
   },
   data() {

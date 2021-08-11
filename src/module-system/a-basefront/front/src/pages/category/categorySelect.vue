@@ -54,6 +54,9 @@ export default {
     categoryIdDisable() {
       return this.contextParams.categoryIdDisable;
     },
+    selectedCategoryIds() {
+      return this.contextParams.selectedCategoryIds;
+    },
     // setLocale() {
     //   return this.contextParams.setLocale;
     // },
