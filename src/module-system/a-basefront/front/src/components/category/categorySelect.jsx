@@ -26,9 +26,16 @@ export default {
       };
     },
   },
+  mounted() {
+    this.init();
+  },
   methods: {
     getInstance() {
       return this.$refs.tree;
+    },
+    async init() {
+      const tree = this.getInstance();
+      await tree.reload();
     },
     _findChildren(children, categoryId) {
       for (const item of children) {
@@ -109,6 +116,6 @@ export default {
     },
   },
   render() {
-    return <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren}></eb-treeview>;
+    return <eb-treeview ref="tree" auto={false} root={this.root} propsOnLoadChildren={this.onLoadChildren}></eb-treeview>;
   },
 };
