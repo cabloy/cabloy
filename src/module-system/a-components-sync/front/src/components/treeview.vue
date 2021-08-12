@@ -110,6 +110,18 @@ export default {
       if (!nodeStart) return;
       this._treeDown(nodeStart, cb);
     },
+    async treeDownAsync(nodeStart, loadChildren, cb) {
+      // arguments
+      if (!cb) {
+        cb = loadChildren;
+        loadChildren = false;
+      }
+      // nodeStart
+      nodeStart = nodeStart || this.treeviewRoot;
+      if (!nodeStart) return;
+      // treeDown
+      await this._treeDownAsync(nodeStart, loadChildren, cb);
+    },
     treeParent(nodeStart, cb) {
       if (!nodeStart) return;
       this._treeParent(nodeStart.parent, cb);
@@ -118,6 +130,18 @@ export default {
       let node = null;
       this.treeDown(nodeStart, item => {
         if (cb(item)) {
+          node = item;
+          return false; // break
+        }
+      });
+      return node;
+    },
+    // options: loadChildren
+    async findAsync(nodeStart, loadChildren, cb) {
+      let node = null;
+      await this.treeDownAsync(nodeStart, loadChildren, async item => {
+        const res = await cb(item);
+        if (res) {
           node = item;
           return false; // break
         }
@@ -182,6 +206,23 @@ export default {
         if (res !== true) {
           // children
           res = this._treeDown(node, cb);
+          if (res === false) return false; // return immediately
+        }
+      }
+    },
+    async _treeDownAsync(nodeParent, loadChildren, cb) {
+      // children
+      for (const node of nodeParent.children) {
+        // current first
+        let res = await cb(node, nodeParent);
+        if (res === false) return false; // return immediately
+        if (res !== true) {
+          // loadChildren
+          if (loadChildren) {
+            await this._loadChildren(node);
+          }
+          // children
+          res = this._treeDownAsync(node, loadChildren, cb);
           if (res === false) return false; // return immediately
         }
       }
