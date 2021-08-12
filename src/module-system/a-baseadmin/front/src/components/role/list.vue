@@ -51,7 +51,7 @@ export default {
           throw err;
         });
     },
-    onNodeClick(e, node) {
+    onNodeClick(node) {
       this.$emit('node:click', node);
     },
   },

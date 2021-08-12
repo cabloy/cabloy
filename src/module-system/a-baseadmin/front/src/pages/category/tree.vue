@@ -96,7 +96,7 @@ export default {
       });
       return list;
     },
-    onNodeClick(e, node) {
+    onNodeClick(node) {
       if (!node.id) return;
       const queries = this.combineAtomClassAndLanguage();
       queries.categoryId = node.id;
