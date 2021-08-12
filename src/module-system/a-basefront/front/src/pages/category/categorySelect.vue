@@ -13,7 +13,7 @@
       :multiple="multiple"
       :catalogOnly="catalogOnly"
       :leafOnly="leafOnly"
-      :categoryIdDisable="categoryIdDisable"
+      :disabledCategoryIds="disabledCategoryIds"
       :selectedCategoryIds="selectedCategoryIds"
     ></categorySelect>
   </eb-page>
@@ -52,8 +52,8 @@ export default {
     leafOnly() {
       return this.contextParams.leafOnly;
     },
-    categoryIdDisable() {
-      return this.contextParams.categoryIdDisable;
+    disabledCategoryIds() {
+      return this.contextParams.disabledCategoryIds;
     },
     selectedCategoryIds() {
       return this.contextParams.selectedCategoryIds;

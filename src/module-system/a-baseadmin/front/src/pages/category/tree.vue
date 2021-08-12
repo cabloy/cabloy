@@ -135,7 +135,7 @@ export default {
       this.$view.navigate(url, {
         context: {
           params: {
-            categoryIdDisable: categoryId,
+            disabledCategoryIds: [categoryId],
           },
           callback: (code, data) => {
             if (code === 200) {

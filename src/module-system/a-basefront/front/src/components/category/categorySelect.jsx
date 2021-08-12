@@ -6,7 +6,7 @@ export default {
     multiple: {},
     catalogOnly: {},
     leafOnly: {},
-    categoryIdDisable: {},
+    disabledCategoryIds: {},
     selectedCategoryIds: {},
     // setLocale: {},
   },
@@ -74,6 +74,7 @@ export default {
       let nodes = children.map(item => {
         const checkbox = !this.leafOnly || item.categoryCatalog === 0;
         const folder = !checkbox && item.categoryCatalog === 1;
+        const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(item.id) > -1;
         const node = {
           id: item.id,
           attrs: {
@@ -85,13 +86,14 @@ export default {
             selectable: checkbox,
             itemToggle: !checkbox,
             folder,
+            disabled,
           },
           data: item,
         };
         return node;
       });
       nodes = nodes.filter(item => {
-        return (!this.catalogOnly || item.data.categoryCatalog === 1) && (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
+        return !this.catalogOnly || item.data.categoryCatalog === 1;
       });
       return nodes;
     },
