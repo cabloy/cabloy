@@ -23,14 +23,25 @@ export default {
       this.filterContainer.onFormSubmit();
     },
     onNodeChange(node) {
-      // eslint-disable-next-line
-      this.filterContainer.form.category = node.id;
+      if (node.attrs.checked) {
+        // eslint-disable-next-line
+        this.filterContainer.form.category = node.id;
+      }
     },
     onPerformSelectLanguage() {
       return this.filterContainer.onPerformSelectLanguage();
     },
-    _renderButtonSelectLanguage() {
+    onPerformClearCategory() {
+      const tree = this.$refs.tree.getInstance();
+      tree.uncheckNodes(this.filterContainer.form.category);
+      // eslint-disable-next-line
+      this.filterContainer.form.category = 0;
+    },
+    _renderSelectLanguage() {
       return <eb-button propsOnPerform={this.onPerformSelectLanguage}>{this.$text('Select Language')}</eb-button>;
+    },
+    _renderClearCategory() {
+      return <eb-button propsOnPerform={this.onPerformClearCategory}>{this.$text('Clear Category')}</eb-button>;
     },
     _renderCategoryTree() {
       const selectedCategoryIds = [this.filterContainer.form.category];
@@ -50,12 +61,21 @@ export default {
     },
   },
   render() {
-    let domElement;
+    let domSelectLanguage;
+    let domClearCategory;
+    let domCategoryTree;
     if (this.filterContainer.atomClassBase.language && !this.filterContainer.form.language) {
-      domElement = this._renderButtonSelectLanguage();
+      domSelectLanguage = this._renderSelectLanguage();
     } else {
-      domElement = this._renderCategoryTree();
+      domClearCategory = this._renderClearCategory();
+      domCategoryTree = this._renderCategoryTree();
     }
-    return <div>{domElement}</div>;
+    return (
+      <div>
+        {domSelectLanguage}
+        {domClearCategory}
+        {domCategoryTree}
+      </div>
+    );
   },
 };
