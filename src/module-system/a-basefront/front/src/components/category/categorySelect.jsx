@@ -49,6 +49,7 @@ export default {
     },
     _createNodeRoot(children) {
       const checkbox = !this.leafOnly;
+      const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(0) > -1;
       return [
         {
           id: 0,
@@ -60,6 +61,7 @@ export default {
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
+            disabled,
           },
           data: {
             id: 0,

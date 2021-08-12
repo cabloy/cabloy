@@ -131,30 +131,35 @@ export default {
     },
     onPerformMove(event, node) {
       const categoryId = node.data.id;
+      const categoryIdParentOld = node.data.categoryIdParent;
       const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage());
       this.$view.navigate(url, {
         context: {
           params: {
-            disabledCategoryIds: [categoryId],
+            disabledCategoryIds: [categoryId, categoryIdParentOld],
           },
           callback: (code, data) => {
             if (code === 200) {
               if (!data) return;
               const categoryIdParent = data.id;
-              if (node.data.categoryIdParent === categoryIdParent) return;
-              this.$api.post('/a/base/category/move', { categoryId, categoryIdParent }).then(() => {
-                this.reloadNode(this.findNode(node.data.categoryIdParent));
-                this.reloadNode(this.findNode(categoryIdParent), {
-                  attrs: {
-                    toggle: true,
-                    loadChildren: true,
-                  },
-                });
-              });
+              this._moveNode(node, categoryIdParent);
             }
           },
         },
       });
+    },
+    async _moveNode(node, categoryIdParent) {
+      if (node.data.categoryIdParent === categoryIdParent) return;
+      const categoryId = node.data.id;
+      await this.$api.post('/a/base/category/move', { categoryId, categoryIdParent });
+      this.reloadNode(this.findNode(node.data.categoryIdParent));
+      this.reloadNode(this.findNode(categoryIdParent), {
+        attrs: {
+          toggle: true,
+          loadChildren: true,
+        },
+      });
+      this._clearSystemCache();
     },
     reloadNode(node, nodeNew) {
       if (!node) return;
@@ -167,6 +172,13 @@ export default {
       if (data.atomClass.module !== this.atomClass.module) return;
       const node = this.findNode(data.categoryIdParent);
       this.reloadNode(node);
+    },
+    _clearSystemCache() {
+      this.$store.commit('a/base/setCategoryTree', {
+        atomClass: this.atomClass,
+        language: this.language,
+        tree: null,
+      });
     },
   },
 };
