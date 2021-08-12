@@ -148,6 +148,19 @@ export default {
       });
       return node;
     },
+    async checkNodes(nodeIds, loadChildren) {
+      if (!Array.isArray(nodeIds)) {
+        nodeIds = [nodeIds];
+      }
+      for (const nodeId of nodeIds) {
+        const node = await this.findAsync(null, loadChildren, item => {
+          return item.id === nodeId;
+        });
+        if (node) {
+          this.$set(node.attrs, 'checked', true);
+        }
+      }
+    },
     selected() {
       return this.selectedItem;
     },

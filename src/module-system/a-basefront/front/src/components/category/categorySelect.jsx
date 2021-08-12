@@ -34,11 +34,8 @@ export default {
       // load
       const tree = this.getInstance();
       await tree.load(root);
-      // find
-      const node = await tree.findAsync(null, true, node => {
-        return node.id === 33;
-      });
-      console.log(node);
+      // checkNodes
+      await tree.checkNodes(33, true);
     },
     _findChildren(children, categoryId) {
       for (const item of children) {
