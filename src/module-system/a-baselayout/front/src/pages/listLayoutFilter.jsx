@@ -25,8 +25,6 @@ export default {
       form: null,
       formAtomClass: null,
       schemaSearch: null,
-      categoriesAll: null,
-      tagsAll: null,
       ready: false,
     };
   },
@@ -127,22 +125,6 @@ export default {
       //
       this.ready = true;
     },
-    async loadCategoriesAll(language) {
-      const atomClassBase = this.atomClassBase;
-      if (!atomClassBase || !atomClassBase.category) return;
-      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
-        atomClass: this.atomClass,
-        language,
-      });
-    },
-    async loadTagsAll(language) {
-      const atomClassBase = this.atomClassBase;
-      if (!atomClassBase || !atomClassBase.tag) return;
-      this.tagsAll = await this.$store.dispatch('a/base/getTags', {
-        atomClass: this.atomClass,
-        language,
-      });
-    },
     async loadSchemaSearch(atomClass) {
       this.schemaSearch = await this.layoutManager.filter_loadSchemaSearch(atomClass);
     },
@@ -150,15 +132,9 @@ export default {
       const atomClass = this.atomClass;
       if (!atomClass) {
         // reset
-        this.categoriesAll = null;
-        this.tagsAll = null;
         this.schemaSearch = null;
       } else {
         // switch
-        // categories
-        await this.loadCategoriesAll(this.form.language);
-        // tags
-        await this.loadTagsAll(this.form.language);
         // schemaSearch
         if (!first) {
           await this.loadSchemaSearch(atomClass);
