@@ -115,6 +115,7 @@ export default {
           categoryIdParent: categoryId,
         },
       });
+      this._clearSystemCache();
       this.reloadNode(node, {
         attrs: {
           toggle: true,
@@ -127,6 +128,7 @@ export default {
       await this.$api.post('/a/base/category/delete', {
         categoryId: node.data.id,
       });
+      this._clearSystemCache();
       this.reloadNode(node.parent);
     },
     onPerformMove(event, node) {
@@ -152,6 +154,7 @@ export default {
       if (node.data.categoryIdParent === categoryIdParent) return;
       const categoryId = node.data.id;
       await this.$api.post('/a/base/category/move', { categoryId, categoryIdParent });
+      this._clearSystemCache();
       this.reloadNode(this.findNode(node.data.categoryIdParent));
       this.reloadNode(this.findNode(categoryIdParent), {
         attrs: {
@@ -159,7 +162,6 @@ export default {
           loadChildren: true,
         },
       });
-      this._clearSystemCache();
     },
     reloadNode(node, nodeNew) {
       if (!node) return;
@@ -169,15 +171,23 @@ export default {
       return this.$refs.tree.find(null, node => node.id === id);
     },
     onCategorySave(data) {
-      if (data.atomClass.module !== this.atomClass.module) return;
+      if (data.atomClass.module !== this.atomClass.module || data.atomClass.atomClassName !== this.atomClass.atomClassName) return;
+      this._clearSystemCache();
       const node = this.findNode(data.categoryIdParent);
-      this.reloadNode(node);
+      if (node) {
+        this.reloadNode(node);
+      }
     },
     _clearSystemCache() {
       this.$store.commit('a/base/setCategoryTree', {
         atomClass: this.atomClass,
         language: this.language,
         tree: null,
+      });
+      this.$store.commit('a/base/setCategories', {
+        atomClass: this.atomClass,
+        language: this.language,
+        categories: null,
       });
     },
   },
