@@ -410,6 +410,7 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         atomClassName: 'article',
       };
+      // categories
       const categories = [
         // en-us
         { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
@@ -443,6 +444,29 @@ module.exports = app => {
           },
         });
         categoryIds[item.categoryName] = categoryId;
+      }
+      // tags
+      const tags = [
+        // en-us
+        { tagName: 'Life', language: 'en-us' },
+        { tagName: 'Study', language: 'en-us' },
+        { tagName: 'Work', language: 'en-us' },
+        // zh-cn
+        { tagName: '生活', language: 'zh-cn' },
+        { tagName: '学习', language: 'zh-cn' },
+        { tagName: '工作', language: 'zh-cn' },
+      ];
+      const tagIds = {};
+      for (const item of tags) {
+        // add
+        const tagId = await this.ctx.bean.tag.add({
+          atomClass,
+          data: {
+            language: item.language,
+            tagName: item.tagName,
+          },
+        });
+        tagIds[item.tagName] = tagId;
       }
     }
 
