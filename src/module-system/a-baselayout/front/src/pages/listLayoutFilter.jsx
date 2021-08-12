@@ -168,6 +168,21 @@ export default {
     onLayoutManagerDestroy() {
       this.$view.close();
     },
+    async onPerformSelectLanguage() {
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'selectLocale',
+      };
+      // when need locale, throw error on no selection
+      const locale = await this.$meta.util.performAction({ ctx: this, action });
+      if (locale) {
+        this.form = {
+          ...this.form,
+          language: locale.value,
+        };
+      }
+    },
     _renderNavbar() {
       const domNavbarRight = this._renderNavbarRight();
       const domNavbarSub = this._renderNavbarSub();

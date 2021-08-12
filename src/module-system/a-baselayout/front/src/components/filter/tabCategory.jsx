@@ -26,6 +26,12 @@ export default {
       // eslint-disable-next-line
       this.filterContainer.form.category = node.id;
     },
+    onPerformSelectLanguage() {
+      return this.filterContainer.onPerformSelectLanguage();
+    },
+    _renderButtonSelectLanguage() {
+      return <eb-button propsOnPerform={this.onPerformSelectLanguage}>{this.$text('Select Language')}</eb-button>;
+    },
     _renderCategoryTree() {
       const selectedCategoryIds = [this.filterContainer.form.category];
       return (
@@ -44,7 +50,12 @@ export default {
     },
   },
   render() {
-    const domCategoryTree = this._renderCategoryTree();
-    return domCategoryTree;
+    let domElement;
+    if (this.filterContainer.atomClassBase.language && !this.filterContainer.form.language) {
+      domElement = this._renderButtonSelectLanguage();
+    } else {
+      domElement = this._renderCategoryTree();
+    }
+    return <div>{domElement}</div>;
   },
 };
