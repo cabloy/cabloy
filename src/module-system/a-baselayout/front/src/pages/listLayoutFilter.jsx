@@ -73,6 +73,7 @@ export default {
   },
   watch: {
     'form.atomClass': function (valNew, valOld) {
+      if (!this.ready) return;
       if (this._getAtomClassFullName(valNew) === this._getAtomClassFullName(valOld)) return;
       // clear some fields: formAtomClass/language/categoryId/tags
       this.formAtomClass = {};
@@ -86,12 +87,14 @@ export default {
     },
     form: {
       handler() {
+        if (!this.ready) return;
         this.onFilterChanged();
       },
       deep: true,
     },
     formAtomClass: {
       handler() {
+        if (!this.ready) return;
         this.onFilterChanged();
       },
       deep: true,
