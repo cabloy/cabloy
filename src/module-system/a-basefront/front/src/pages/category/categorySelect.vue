@@ -14,6 +14,7 @@
       :catalogOnly="catalogOnly"
       :leafOnly="leafOnly"
       :categoryIdDisable="categoryIdDisable"
+      :selectedCategoryIds="selectedCategoryIds"
     ></categorySelect>
   </eb-page>
 </template>

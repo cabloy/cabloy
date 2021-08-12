@@ -149,6 +149,7 @@ export default {
       return node;
     },
     async findNodes(nodeIds, loadChildren) {
+      if (!nodeIds) return [];
       if (!Array.isArray(nodeIds)) {
         nodeIds = [nodeIds];
       }
