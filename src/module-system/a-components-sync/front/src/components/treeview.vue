@@ -148,18 +148,42 @@ export default {
       });
       return node;
     },
-    async checkNodes(nodeIds, loadChildren) {
+    async findNodes(nodeIds, loadChildren) {
       if (!Array.isArray(nodeIds)) {
         nodeIds = [nodeIds];
       }
+      const nodesRes = [];
       for (const nodeId of nodeIds) {
         const node = await this.findAsync(null, loadChildren, item => {
           return item.id === nodeId;
         });
         if (node) {
-          this.$set(node.attrs, 'checked', true);
+          nodesRes.push(node);
         }
       }
+      return nodesRes;
+    },
+    async checkNodes(nodeIds, loadChildren, open) {
+      return await this._checkNodesGeneral('check', nodeIds, loadChildren, open);
+    },
+    async uncheckNodes(nodeIds, loadChildren) {
+      return await this._checkNodesGeneral('uncheck', nodeIds, loadChildren);
+    },
+    async toggleNodes(nodeIds, loadChildren, open) {
+      return await this._checkNodesGeneral('toggle', nodeIds, loadChildren, open);
+    },
+    async _checkNodesGeneral(mode, nodeIds, loadChildren, open) {
+      const nodes = await this.findNodes(nodeIds, loadChildren);
+      for (const node of nodes) {
+        if (mode === 'check') {
+          this._onNodeChange(node, true);
+        } else if (mode === 'uncheck') {
+          this._onNodeChange(node, false);
+        } else if (mode === 'toggle') {
+          this._onNodeChange(node, !node.attrs.checked);
+        }
+      }
+      return nodes;
     },
     selected() {
       return this.selectedItem;
