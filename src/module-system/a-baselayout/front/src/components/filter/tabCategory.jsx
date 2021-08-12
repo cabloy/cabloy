@@ -31,9 +31,9 @@ export default {
     onPerformSelectLanguage() {
       return this.filterContainer.onPerformSelectLanguage();
     },
-    onPerformClearCategory() {
+    async onPerformClearCategory() {
       const tree = this.$refs.tree.getInstance();
-      tree.uncheckNodes(this.filterContainer.form.category);
+      await tree.uncheckNodes(this.filterContainer.form.category);
       // eslint-disable-next-line
       this.filterContainer.form.category = 0;
     },
