@@ -10,6 +10,8 @@ import renderTableCellComputed from './components/render/renderTableCellComputed
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 // category
 import categorySelect from './components/category/categorySelect.jsx';
+// tag
+import tagSelect from './components/category/tagSelect.jsx';
 // tab
 import atomTab from './components/tab/atomTab.jsx';
 // listLayoutData
@@ -30,6 +32,8 @@ export default {
   renderUserLabel,
   // category
   categorySelect,
+  // tag
+  tagSelect,
   // tab
   atomTab,
   // layout

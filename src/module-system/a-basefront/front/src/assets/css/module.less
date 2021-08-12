@@ -1,1 +1,26 @@
+.tag-select {
+  .selected-tags {
+    min-height: 40px;
 
+    .chip {
+      & + .chip {
+        margin-left: 6px;
+      }
+    }
+  }
+
+  .tags {
+    justify-content: space-around;
+
+    .chip {
+      cursor: pointer;
+
+      .chip-media {
+        min-width: 32px;
+        width: auto;
+        border: 1px solid var(--f7-block-header-text-color);
+        color: var(--f7-block-header-text-color);
+      }
+    }
+  }
+}
