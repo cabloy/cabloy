@@ -4,6 +4,7 @@ const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 import tabBasic from '../components/filter/tabBasic.jsx';
 import tabGeneral from '../components/filter/tabGeneral.jsx';
 import tabCategory from '../components/filter/tabCategory.jsx';
+import tabTag from '../components/filter/tabTag.jsx';
 
 export default {
   mixins: [ebPageContext, ebAtomClasses],
@@ -11,6 +12,7 @@ export default {
     tabBasic,
     tabGeneral,
     tabCategory,
+    tabTag,
   },
   data() {
     return {
@@ -237,12 +239,17 @@ export default {
       if (this.atomClassBase && this.atomClassBase.category) {
         domTabCategory = this._renderTab('category', 'tabCategory');
       }
-
+      // tag
+      let domTabTag;
+      if (this.atomClassBase && this.atomClassBase.tag) {
+        domTabTag = this._renderTab('tag', 'tabTag');
+      }
       return (
         <f7-tabs>
           {domTabBasic}
           {domTabGeneral}
           {domTabCategory}
+          {domTabTag}
         </f7-tabs>
       );
     },
