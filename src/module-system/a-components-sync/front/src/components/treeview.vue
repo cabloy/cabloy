@@ -40,7 +40,7 @@ export default {
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
     // nodes
-    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children, this.treeviewId) : [];
+    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children) : [];
 
     //
     return _h(
@@ -163,16 +163,16 @@ export default {
       }
       return nodesRes;
     },
-    async checkNodes(nodeIds, loadChildren, open) {
-      return await this._checkNodesGeneral('check', nodeIds, loadChildren, open);
+    async checkNodes(nodeIds, loadChildren, expandNode) {
+      return await this._checkNodesGeneral('check', nodeIds, loadChildren, expandNode);
     },
     async uncheckNodes(nodeIds, loadChildren) {
       return await this._checkNodesGeneral('uncheck', nodeIds, loadChildren);
     },
-    async toggleNodes(nodeIds, loadChildren, open) {
-      return await this._checkNodesGeneral('toggle', nodeIds, loadChildren, open);
+    async toggleNodes(nodeIds, loadChildren, expandNode) {
+      return await this._checkNodesGeneral('toggle', nodeIds, loadChildren, expandNode);
     },
-    async _checkNodesGeneral(mode, nodeIds, loadChildren, open) {
+    async _checkNodesGeneral(mode, nodeIds, loadChildren, expandNode) {
       const nodes = await this.findNodes(nodeIds, loadChildren);
       for (const node of nodes) {
         if (mode === 'check') {
@@ -182,8 +182,31 @@ export default {
         } else if (mode === 'toggle') {
           this._onNodeChange(node, !node.attrs.checked);
         }
+        if (expandNode) {
+          this.expandNode(node);
+        }
       }
       return nodes;
+    },
+    expandNode(node) {
+      // current
+      if (node.attrs.toggle) {
+        this._openNode(node);
+      }
+      // parent
+      this.treeParent(node, item => {
+        if (item.attrs.toggle) {
+          this._openNode(item);
+        }
+      });
+    },
+    _openNode(node) {
+      const $el = this.getElementByNode(node);
+      this.$f7.treeview.open($el);
+    },
+    getElementByNode(node) {
+      const elementId = node.attrs.id;
+      return this.$$(`#${elementId}`);
     },
     selected() {
       return this.selectedItem;
@@ -270,6 +293,8 @@ export default {
       _root.root = true;
       // attrs
       if (!_root.attrs) _root.attrs = {};
+      // attrs id
+      _root.attrs.id = this.treeviewId;
       // loadChildren
       if (_root.attrs.loadChildren === undefined && this.onLoadChildren) _root.attrs.loadChildren = true;
       // children
@@ -281,12 +306,10 @@ export default {
       // ready
       this.treeviewRoot = _root;
     },
-    _renderNode(_h, node, attrIdParent) {
+    _renderNode(_h, node) {
       // node
       const _node = { ...node };
       _node.attrs = this.$utils.extend({}, node.attrs);
-      // attrs id
-      _node.attrs.id = `${attrIdParent}-${node.id}`;
       // attrs
       if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewRoot.attrs.itemToggle;
       if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
@@ -348,7 +371,7 @@ export default {
       const slots = this._renderScopeSlots(_h, node);
       if (slots && slots.length > 0) children = children.concat(slots);
       // children of node
-      const childrenNode = this._renderNodes(_h, node.children, _node.attrs.id);
+      const childrenNode = this._renderNodes(_h, node.children);
       if (childrenNode && childrenNode.length > 0) children = children.concat(childrenNode);
       // ok
       return _h(
@@ -370,11 +393,11 @@ export default {
         children
       );
     },
-    _renderNodes(_h, nodes, attrIdParent) {
+    _renderNodes(_h, nodes) {
       const children = [];
       if (!nodes) return children;
       for (const node of nodes) {
-        children.push(this._renderNode(_h, node, attrIdParent));
+        children.push(this._renderNode(_h, node));
       }
       return children;
     },
@@ -401,6 +424,8 @@ export default {
       if (!node.children) node.children = [];
       const nodeChildren = node.children;
       for (const item of children) {
+        // attrs id
+        item.attrs.id = `${node.attrs.id}-${item.id}`;
         // children
         if (!item.children) item.children = [];
         // checked

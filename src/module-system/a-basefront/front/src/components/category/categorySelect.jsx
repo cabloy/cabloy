@@ -35,7 +35,7 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      await tree.checkNodes(33, true);
+      await tree.checkNodes(33, true, true);
     },
     _findChildren(children, categoryId) {
       for (const item of children) {
