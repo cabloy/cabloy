@@ -118,8 +118,12 @@ export default {
       // children
       return this._createNodeChildren(node.data.children);
     },
+    onNodeChange(node) {
+      this.$emit('node:change', node);
+      this.$emit('nodeChange', node);
+    },
   },
   render() {
-    return <eb-treeview ref="tree" auto={false} propsOnLoadChildren={this.onLoadChildren}></eb-treeview>;
+    return <eb-treeview ref="tree" auto={false} propsOnLoadChildren={this.onLoadChildren} onNodeChange={this.onNodeChange}></eb-treeview>;
   },
 };

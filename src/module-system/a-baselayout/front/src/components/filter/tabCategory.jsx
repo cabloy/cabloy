@@ -22,6 +22,10 @@ export default {
     onFormSubmit() {
       this.filterContainer.onFormSubmit();
     },
+    onNodeChange(node) {
+      // eslint-disable-next-line
+      this.filterContainer.form.category = node.id;
+    },
     _renderCategoryTree() {
       const selectedCategoryIds = [this.filterContainer.form.category];
       return (
@@ -34,6 +38,7 @@ export default {
           catalogOnly={false}
           leafOnly={true}
           selectedCategoryIds={selectedCategoryIds}
+          onNodeChange={this.onNodeChange}
         ></categorySelect>
       );
     },

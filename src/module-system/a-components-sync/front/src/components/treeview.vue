@@ -496,6 +496,7 @@ export default {
 
       // node:click
       this.$emit('node:click', node, e);
+      this.$emit('nodeClick', node, e);
     },
     _onNodeChange(node, checked) {
       // node current
@@ -538,6 +539,7 @@ export default {
       }
       // node:change
       this.$emit('node:change', node);
+      this.$emit('nodeChange', node);
     },
   },
 };
