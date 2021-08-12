@@ -174,9 +174,7 @@ export default {
       if (data.atomClass.module !== this.atomClass.module || data.atomClass.atomClassName !== this.atomClass.atomClassName) return;
       this._clearSystemCache();
       const node = this.findNode(data.categoryIdParent);
-      if (node) {
-        this.reloadNode(node);
-      }
+      this.reloadNode(node);
     },
     _clearSystemCache() {
       this.$store.commit('a/base/setCategoryTree', {
