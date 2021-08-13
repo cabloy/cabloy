@@ -24,6 +24,10 @@ export default {
     },
   },
   created() {},
+  mounted() {
+    const title = this.layoutManager.page_getTitle();
+    this.$pageContainer.setPageTitle(title);
+  },
   methods: {
     onClickStage() {
       this.layoutManager.filter_openTab('basic');
