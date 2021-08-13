@@ -85,6 +85,7 @@ export default {
           language: this.language,
         },
       });
+      this._clearSystemCache();
       this.reload();
     },
     async onItemClick(event, item) {
@@ -99,6 +100,7 @@ export default {
           tagName,
         },
       });
+      this._clearSystemCache();
       const index = this.items.findIndex(_item => _item.id === item.id);
       if (index !== -1) {
         this.items.splice(index, 1, { ...item, tagName });
@@ -107,11 +109,19 @@ export default {
     async onPerformDelete(event, item) {
       await this.$view.dialog.confirm();
       await this.$api.post('/a/base/tag/delete', { tagId: item.id });
+      this._clearSystemCache();
       this.$meta.util.swipeoutClose(event.target);
       const index = this.items.findIndex(_item => _item.id === item.id);
       if (index !== -1) {
         this.items.splice(index, 1);
       }
+    },
+    _clearSystemCache() {
+      this.$store.commit('a/base/setTags', {
+        atomClass: this.atomClass,
+        language: this.language,
+        tags: null,
+      });
     },
   },
 };
