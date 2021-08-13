@@ -93,6 +93,16 @@ export default {
       };
       this.atomClassChanged();
     },
+    'form.language': function (valNew, valOld) {
+      if (!this.ready) return;
+      if (valNew === valOld) return;
+      // clear some fields: categoryId/tags
+      this.form = {
+        ...this.form,
+        category: 0,
+        tag: 0,
+      };
+    },
     form: {
       handler() {
         if (!this.ready) return;
