@@ -124,7 +124,7 @@ export default {
       return this.$meta.util.getProperty(this.base.config, 'render.list.info.filter');
     },
     filter_openTab(tabName) {
-      this.tabNameCurrent = tabName;
+      this.filter.tabNameCurrent = tabName;
       this.filter_onPerform();
     },
     filter_onPerform() {

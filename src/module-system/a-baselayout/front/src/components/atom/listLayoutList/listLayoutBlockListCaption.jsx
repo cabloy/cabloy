@@ -25,7 +25,7 @@ export default {
   created() {},
   methods: {
     onClickStage() {
-      this.layoutManager.filter_openTab('general');
+      this.layoutManager.filter_openTab('basic');
     },
     onClickCategory() {
       this.layoutManager.filter_openTab('category');
