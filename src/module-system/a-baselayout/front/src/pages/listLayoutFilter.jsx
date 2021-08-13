@@ -22,7 +22,6 @@ export default {
         category: Vue.prototype.$meta.util.nextId('category'),
         tag: Vue.prototype.$meta.util.nextId('tag'),
       },
-      tabName: 'basic',
       //
       form: null,
       formAtomClass: null,
@@ -45,6 +44,15 @@ export default {
     },
     filterConfig() {
       return this.contextParams.filterConfig;
+    },
+    // tabName
+    tabName: {
+      get() {
+        return this.layoutManager.filter.tabNameCurrent || 'basic';
+      },
+      set(value) {
+        this.layoutManager.filter.tabNameCurrent = value;
+      },
     },
     //
     atomClass() {

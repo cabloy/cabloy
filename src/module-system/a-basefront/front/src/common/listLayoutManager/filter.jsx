@@ -3,6 +3,7 @@ export default {
     return {
       filter: {
         data: null,
+        tabNameCurrent: null,
       },
     };
   },
