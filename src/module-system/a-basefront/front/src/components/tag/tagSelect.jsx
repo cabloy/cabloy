@@ -78,6 +78,7 @@ export default {
     },
     onTagSwitch(item) {
       if (this.multiple) {
+        // multiple
         const index = this.tagIndex(item.id);
         if (index > -1) {
           this.tagsCurrent.splice(index, 1);
@@ -85,7 +86,12 @@ export default {
           this.tagsCurrent.push(item.id);
         }
       } else {
-        this.tagsCurrent = [item.id];
+        // single
+        if (this.tagsCurrent[0] === item.id) {
+          this.tagsCurrent = [];
+        } else {
+          this.tagsCurrent = [item.id];
+        }
       }
       this.emitChange();
     },
