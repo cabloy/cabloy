@@ -15,6 +15,7 @@ export default {
       atomClass: null,
       language: null,
       categoriesAll: null,
+      tagsAll: null,
     };
   },
   computed: {
@@ -30,6 +31,9 @@ export default {
     onClickCategory() {
       this.layoutManager.filter_openTab('category');
     },
+    onClickTag() {
+      this.layoutManager.filter_openTab('tag');
+    },
     getStage() {
       let stage = this.layoutManager.base_getCurrentStage();
       if (!stage) stage = 'formal';
@@ -37,11 +41,14 @@ export default {
       return stage;
     },
     getCategoryName() {
-      // fix categoriesAll
-      this._fixCategoriesAll();
+      this._fixCategoriesTagsAll();
       return this._getCategoryName(this.form.category);
     },
-    _fixCategoriesAll() {
+    getTagName() {
+      this._fixCategoriesTagsAll();
+      return this._getTagName(this.form.tag);
+    },
+    _fixCategoriesTagsAll() {
       const key1 = this._getKey(this.atomClass, this.language);
       const key2 = this._getKey(this.form.atomClass, this.form.language);
       if (key1 === key2) return true;
@@ -49,8 +56,10 @@ export default {
       this.atomClass = this.form.atomClass;
       this.language = this.form.language;
       this.categoriesAll = null;
+      this.tagsAll = null;
       // load
       this._loadCategoriesAll();
+      this._loadTagsAll();
       return false;
     },
     async _loadCategoriesAll() {
@@ -60,10 +69,22 @@ export default {
         language: this.language,
       });
     },
+    async _loadTagsAll() {
+      if (!this.atomClass) return;
+      this.tagsAll = await this.$store.dispatch('a/base/getTags', {
+        atomClass: this.atomClass,
+        language: this.language,
+      });
+    },
     _getCategoryName(categoryId) {
       if (!this.categoriesAll || !categoryId) return '';
       const category = this.categoriesAll.find(_item => _item.id === categoryId);
       return category ? category.categoryNameLocale || category.categoryName : '';
+    },
+    _getTagName(tagId) {
+      if (!this.tagsAll || !tagId) return '';
+      const tag = this.tagsAll.find(_item => _item.id === tagId);
+      return tag ? tag.tagName : '';
     },
     _getKey(atomClass, language) {
       if (!atomClass) return null;
@@ -89,6 +110,16 @@ export default {
         </f7-badge>
       );
     },
+    _renderTag() {
+      if (!this.layoutManager.base.ready) return;
+      const tagName = this.getTagName();
+      if (!tagName) return null;
+      return (
+        <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickTag}>
+          {tagName}
+        </f7-badge>
+      );
+    },
   },
   render() {
     return (
@@ -97,6 +128,7 @@ export default {
         <div class="subtitle">
           {this._renderStage()}
           {this._renderCategory()}
+          {this._renderTag()}
         </div>
       </f7-nav-title>
     );
