@@ -63,6 +63,12 @@ export default {
               name: 'listLayoutList',
             },
             blocks: {
+              caption: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockListCaption',
+                },
+              },
               title: {
                 component: {
                   module: 'a-baselayout',
@@ -89,6 +95,12 @@ export default {
               name: 'listLayoutTable',
             },
             blocks: {
+              caption: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockListCaption',
+                },
+              },
               title: {
                 component: {
                   module: 'a-baselayout',

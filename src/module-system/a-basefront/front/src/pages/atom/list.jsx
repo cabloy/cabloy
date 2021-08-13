@@ -27,7 +27,8 @@ export default {
     }
     return (
       <eb-page withSubnavbar={this.subnavbar.enable} ptr onPtrRefresh={this.page_onRefresh} infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
-        <eb-navbar title={this.page_getTitle()} subtitle={this.page_getSubtitle()} eb-back-link="Back">
+        <eb-navbar eb-back-link="Back">
+          {this.layout_renderBlock({ blockName: 'caption' })}
           {this.layout_renderBlock({ blockName: 'title' })}
           {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>

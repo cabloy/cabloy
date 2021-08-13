@@ -1,5 +1,6 @@
 // listLayoutList
 import listLayoutList from './components/atom/listLayoutList/listLayoutList.jsx';
+import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
 import listLayoutBlockListTitle from './components/atom/listLayoutList/listLayoutBlockListTitle.jsx';
 import listLayoutBlockListSubnavbar from './components/atom/listLayoutList/listLayoutBlockListSubnavbar.jsx';
 import listLayoutBlockListItems from './components/atom/listLayoutList/listLayoutBlockListItems.jsx';
@@ -34,6 +35,7 @@ import resourceTreeLayoutBlockAccordionItems from './components/resource/treeLay
 export default {
   // listLayoutList
   listLayoutList,
+  listLayoutBlockListCaption,
   listLayoutBlockListTitle,
   listLayoutBlockListSubnavbar,
   listLayoutBlockListItems,

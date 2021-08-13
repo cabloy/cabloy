@@ -123,6 +123,10 @@ export default {
     filter_getConfig() {
       return this.$meta.util.getProperty(this.base.config, 'render.list.info.filter');
     },
+    filter_openTab(tabName) {
+      this.tabNameCurrent = tabName;
+      this.filter_onPerform();
+    },
     filter_onPerform() {
       const inPanel = this.$view.inPanel();
       const immediate = this.$meta.vueApp.layout === 'pc' && !inPanel;
