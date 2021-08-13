@@ -42,10 +42,20 @@ export default {
       }
     },
     async loadTagsAll() {
-      this.tagsAll = await this.$store.dispatch('a/base/getTags', {
+      // tagAtomCount maybe changed
+      // this.tagsAll = await this.$store.dispatch('a/base/getTags', {
+      //   atomClass: this.atomClass,
+      //   language: this.language,
+      // });
+      const options = {
+        where: { language: this.language },
+        orders: [['tagName', 'asc']],
+      };
+      const res = await this.$api.post('/a/base/tag/list', {
         atomClass: this.atomClass,
-        language: this.language,
+        options,
       });
+      this.tagsAll = res.list;
     },
     getTagName(tagId) {
       const tagBase = this.getTagBase(tagId);
@@ -132,8 +142,10 @@ export default {
               this.onTagSwitch(item);
             }}
           >
-            <div class="chip-media">{item.tagAtomCount}</div>
             <div class="chip-label">{item.tagName}</div>
+            <f7-badge class="eb-icon-badge" color="gray">
+              {item.tagAtomCount}
+            </f7-badge>
           </div>
         );
       }
