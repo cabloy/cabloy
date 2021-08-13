@@ -19,9 +19,6 @@ export default {
     return {};
   },
   methods: {
-    onFormSubmit() {
-      this.filterContainer.onFormSubmit();
-    },
     onNodeChange(node) {
       if (node.attrs.checked) {
         // eslint-disable-next-line
@@ -49,7 +46,7 @@ export default {
         <categorySelect
           ref="tree"
           atomClass={this.filterContainer.atomClass}
-          language="zh-cn"
+          language={this.filterContainer.form.language}
           categoryIdStart={0}
           multiple={false}
           catalogOnly={false}

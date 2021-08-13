@@ -1,8 +1,8 @@
 import Vue from 'vue';
-const categorySelect = Vue.prototype.$meta.module.get('a-basefront').options.components.categorySelect;
+const tagSelect = Vue.prototype.$meta.module.get('a-basefront').options.components.tagSelect;
 export default {
   components: {
-    categorySelect,
+    tagSelect,
   },
   props: {
     layoutManager: {
@@ -16,65 +16,50 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      searchQuery: null,
+    };
   },
   methods: {
-    onFormSubmit() {
-      this.filterContainer.onFormSubmit();
-    },
-    onNodeChange(node) {
-      if (node.attrs.checked) {
-        // eslint-disable-next-line
-        this.filterContainer.form.category = node.id;
-      }
+    onChange() {
+      const checked = this.$refs.tagSelect.checked();
+      // eslint-disable-next-line
+      this.filterContainer.form.tag = checked;
     },
     onPerformSelectLanguage() {
       return this.filterContainer.onPerformSelectLanguage();
     },
-    async onPerformClearCategory() {
-      const tree = this.$refs.tree.getInstance();
-      await tree.uncheckNodes(this.filterContainer.form.category);
-      // eslint-disable-next-line
-      this.filterContainer.form.category = 0;
-    },
     _renderSelectLanguage() {
       return <eb-button propsOnPerform={this.onPerformSelectLanguage}>{this.$text('Select Language')}</eb-button>;
     },
-    _renderClearCategory() {
-      return <eb-button propsOnPerform={this.onPerformClearCategory}>{this.$text('Clear Category')}</eb-button>;
-    },
-    _renderCategoryTree() {
-      const selectedCategoryIds = [this.filterContainer.form.category];
+    _renderTagSelect() {
+      const selectedTags = this.filterContainer.form.tag;
       return (
-        <categorySelect
-          ref="tree"
+        <tagSelect
+          ref="tagSelect"
           atomClass={this.filterContainer.atomClass}
-          language="zh-cn"
-          categoryIdStart={0}
+          language={this.filterContainer.form.language}
           multiple={false}
-          catalogOnly={false}
-          leafOnly={true}
-          selectedCategoryIds={selectedCategoryIds}
-          onNodeChange={this.onNodeChange}
-        ></categorySelect>
+          searchQuery={this.searchQuery}
+          selectedTags={selectedTags}
+          showBlockCurrent={false}
+          onChange={this.onChange}
+        ></tagSelect>
       );
     },
   },
   render() {
     let domSelectLanguage;
-    let domClearCategory;
-    let domCategoryTree;
+    let domTagSelect;
     if (this.filterContainer.atomClassBase.language && !this.filterContainer.form.language) {
       domSelectLanguage = this._renderSelectLanguage();
     } else {
-      domClearCategory = this._renderClearCategory();
-      domCategoryTree = this._renderCategoryTree();
+      domTagSelect = this._renderTagSelect();
     }
     return (
       <div>
         {domSelectLanguage}
-        {domClearCategory}
-        {domCategoryTree}
+        {domTagSelect}
       </div>
     );
   },

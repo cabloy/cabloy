@@ -8,7 +8,15 @@
       <f7-searchbar ref="searchbar" expandable @searchbar:search="onSearch" @searchbar:disable="onDisable" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
       </f7-searchbar>
     </eb-navbar>
-    <tagSelect ref="tagSelect" :atomClass="atomClass" :language="language" :multiple="multiple" :searchQuery="searchQuery" :selectedTags="selectedTags"></tagSelect>
+    <tagSelect
+      ref="tagSelect"
+      :atomClass="atomClass"
+      :language="language"
+      :multiple="multiple"
+      :searchQuery="searchQuery"
+      :selectedTags="selectedTags"
+      :showBlockCurrent="showBlockCurrent"
+    ></tagSelect>
   </eb-page>
 </template>
 <script>
@@ -39,6 +47,9 @@ export default {
     },
     multiple() {
       return this.contextParams.multiple !== false;
+    },
+    showBlockCurrent() {
+      return this.contextParams.showBlockCurrent !== false;
     },
   },
   methods: {

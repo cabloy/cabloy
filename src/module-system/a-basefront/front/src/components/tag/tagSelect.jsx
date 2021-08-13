@@ -5,6 +5,7 @@ export default {
     multiple: {},
     searchQuery: {},
     selectedTags: {},
+    showBlockCurrent: {},
   },
   data() {
     return {
@@ -34,6 +35,8 @@ export default {
       }
       if (Array.isArray(this.selectedTags)) {
         this.tagsCurrent = this.selectedTags.concat();
+      } else if (typeof this.selectedTags === 'number') {
+        this.tagsCurrent = [this.selectedTags];
       } else {
         this.tagsCurrent = JSON.parse(this.selectedTags);
       }
@@ -61,6 +64,7 @@ export default {
       if (index > -1) {
         this.tagsCurrent.splice(index, 1);
       }
+      this.emitChange();
     },
     onTagSwitch(item) {
       if (this.multiple) {
@@ -73,6 +77,10 @@ export default {
       } else {
         this.tagsCurrent = [item.id];
       }
+      this.emitChange();
+    },
+    emitChange() {
+      this.$emit('change', this.tagsCurrent);
     },
     checked() {
       let res;
@@ -84,6 +92,7 @@ export default {
       return res;
     },
     _renderTagsCurrent() {
+      if (!this.showBlockCurrent) return null;
       if (!this.tagsAll) return null;
       const children = [];
       for (const tagId of this.tagsCurrent) {
