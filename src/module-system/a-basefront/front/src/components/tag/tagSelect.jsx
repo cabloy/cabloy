@@ -13,6 +13,14 @@ export default {
       tagsAll: null,
     };
   },
+  watch: {
+    atomClass() {
+      this.reload();
+    },
+    language() {
+      this.reload();
+    },
+  },
   computed: {
     tagsAll2() {
       if (!this.tagsAll || !this.searchQuery) return this.tagsAll;
@@ -25,6 +33,10 @@ export default {
   methods: {
     async init() {
       this.initTagsCurrent();
+      await this.loadTagsAll();
+    },
+    async reload() {
+      this.tagsCurrent = [];
       await this.loadTagsAll();
     },
     initTagsCurrent() {

@@ -13,14 +13,22 @@ export default {
   data() {
     return {};
   },
+  watch: {
+    atomClass() {
+      this.reload();
+    },
+    language() {
+      this.reload();
+    },
+  },
   mounted() {
-    this.init();
+    this.init(this.selectedCategoryIds);
   },
   methods: {
     getInstance() {
       return this.$refs.tree;
     },
-    async init() {
+    async init(selectedCategoryIds) {
       // root
       const root = {
         attrs: {
@@ -35,7 +43,10 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      await tree.checkNodes(this.selectedCategoryIds, true, true);
+      await tree.checkNodes(selectedCategoryIds, true, true);
+    },
+    async reload() {
+      await this.init(null);
     },
     _findChildren(children, categoryId) {
       for (const item of children) {
