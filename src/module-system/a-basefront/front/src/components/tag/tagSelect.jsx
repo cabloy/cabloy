@@ -74,8 +74,79 @@ export default {
         this.tagsCurrent = [item.id];
       }
     },
+    checked() {
+      let res;
+      if (this.multiple) {
+        res = this.tagsCurrent.length > 0 ? this.tagsCurrent : null;
+      } else {
+        res = this.tagsCurrent.length > 0 ? this.tagsCurrent[0] : 0;
+      }
+      return res;
+    },
+    _renderTagsCurrent() {
+      if (!this.tagsAll) return null;
+      const children = [];
+      for (const tagId of this.tagsCurrent) {
+        children.push(
+          <f7-chip
+            key={tagId}
+            text={this.getTagName(tagId)}
+            deleteable
+            onClick={() => {
+              this.onTagRemove(tagId);
+            }}
+          ></f7-chip>
+        );
+      }
+      return (
+        <div>
+          <f7-block-title>{this.$text('Selected Tags')}</f7-block-title>
+          <f7-block class="selected-tags">{children}</f7-block>
+          <hr></hr>
+        </div>
+      );
+    },
+    _renderTagsAll() {
+      if (!this.tagsAll) return null;
+      const children = [];
+      for (const item of this.tagsAll2) {
+        const classes = {
+          chip: true,
+          'col-33': true,
+          'chip-outline': this.tagIndex(item.id) === -1,
+        };
+        children.push(
+          <div
+            key={item.id}
+            class={classes}
+            onClick={() => {
+              this.onTagSwitch(item);
+            }}
+          >
+            <div class="chip-media">{item.tagAtomCount}</div>
+            <div class="chip-label">{item.tagName}</div>
+          </div>
+        );
+      }
+      return (
+        <f7-block>
+          <div class="row tags">
+            {children}
+            <div class="col-33"></div>
+            <div class="col-33"></div>
+          </div>
+        </f7-block>
+      );
+    },
   },
   render() {
-    return <eb-treeview ref="tree" auto={false} propsOnLoadChildren={this.onLoadChildren} onNodeChange={this.onNodeChange}></eb-treeview>;
+    const domTagsCurrent = this._renderTagsCurrent();
+    const domTagsAll = this._renderTagsAll();
+    return (
+      <div class="eb-tag-select">
+        {domTagsCurrent}
+        {domTagsAll}
+      </div>
+    );
   },
 };

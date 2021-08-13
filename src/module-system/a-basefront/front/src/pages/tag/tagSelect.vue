@@ -8,20 +8,7 @@
       <f7-searchbar ref="searchbar" expandable @searchbar:search="onSearch" @searchbar:disable="onDisable" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
       </f7-searchbar>
     </eb-navbar>
-    <f7-block-title>{{ $text('Selected Tags') }}</f7-block-title>
-    <f7-block v-if="!!tagsAll" class="selected-tags">
-      <f7-chip v-for="tagId of tagsCurrent" :key="tagId" :text="getTagName(tagId)" deleteable @click="onTagRemove(tagId)"></f7-chip>
-    </f7-block>
-    <f7-block>
-      <div class="row tags">
-        <div :class="{ chip: true, 'col-33': true, 'chip-outline': tagIndex(item.id) === -1 }" v-for="item of tagsAll2" :key="item.id" @click="onTagSwitch(item)">
-          <div class="chip-media">{{ item.tagAtomCount }}</div>
-          <div class="chip-label">{{ item.tagName }}</div>
-        </div>
-        <div class="col-33"></div>
-        <div class="col-33"></div>
-      </div>
-    </f7-block>
+    <tagSelect ref="tagSelect" :atomClass="atomClass" :language="language" :multiple="multiple" :searchQuery="searchQuery" :selectedTags="selectedTags"></tagSelect>
   </eb-page>
 </template>
 <script>
@@ -47,8 +34,8 @@ export default {
     };
   },
   computed: {
-    tags() {
-      return this.contextParams.tags;
+    selectedTags() {
+      return this.contextParams.selectedTags;
     },
     multiple() {
       return this.contextParams.multiple !== false;
@@ -56,13 +43,8 @@ export default {
   },
   methods: {
     onPerformDone() {
-      let res;
-      if (this.multiple) {
-        res = this.tagsCurrent.length > 0 ? this.tagsCurrent : null;
-      } else {
-        res = this.tagsCurrent.length > 0 ? this.tagsCurrent[0] : 0;
-      }
-      this.contextCallback(200, res);
+      const checked = this.$refs.tagSelect.checked();
+      this.contextCallback(200, checked);
       this.$f7router.back();
     },
     onPerformSearch() {

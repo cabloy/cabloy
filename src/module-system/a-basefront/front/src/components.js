@@ -11,7 +11,7 @@ import renderUserLabel from './components/render/renderUserLabel.jsx';
 // category
 import categorySelect from './components/category/categorySelect.jsx';
 // tag
-import tagSelect from './components/category/tagSelect.jsx';
+import tagSelect from './components/tag/tagSelect.jsx';
 // tab
 import atomTab from './components/tab/atomTab.jsx';
 // listLayoutData

@@ -75,7 +75,8 @@ export default {
           target: '_self',
           context: {
             params: {
-              tags: parcel.data.atomTags,
+              selectedTags: parcel.data.atomTags,
+              multiple: true,
             },
             callback: (code, tags) => {
               if (code === 200) {
