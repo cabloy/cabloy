@@ -30,7 +30,8 @@ export default {
         return `${this.$text('Search')} ${atomClassTitle}`;
       }
       if (!atomClass) return this.$text('Atom');
-      return `${this.$text('Atom')}: ${atomClassTitle}`;
+      // return `${this.$text('Atom')}: ${atomClassTitle}`;
+      return atomClassTitle;
     },
     page_getSubtitle() {
       const stage = this.base_getCurrentStage();
