@@ -105,15 +105,15 @@ export default {
           stage: 'history',
         };
         // params
-        const params = {
-          pageTitle: `${this.$text('History')}: ${item.atomName}`,
-        };
+        // const params = {
+        //   pageTitle: `${this.$text('History')}: ${item.atomName}`,
+        // };
         // queries
         const queries = {
           module: item.module,
           atomClassName: item.atomClassName,
           options: JSON.stringify(options),
-          params: JSON.stringify(params),
+          // params: JSON.stringify(params),
         };
         const url = ctx.$meta.util.combineQueries('/a/basefront/atom/list', queries);
         ctx.$view.navigate(url, {
