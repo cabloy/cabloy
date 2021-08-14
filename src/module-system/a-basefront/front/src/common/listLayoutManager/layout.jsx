@@ -55,7 +55,7 @@ export default {
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
-    layout_rendSubnavbar() {
+    layout_renderSubnavbar() {
       if (!this.base.ready) return null;
       if (!this.layout.instance || !this.subnavbar.enable) return null;
       return this.layout_renderBlock({ blockName: 'subnavbar' });
@@ -73,13 +73,13 @@ export default {
         </div>
       );
     },
-    layout_page() {
+    layout_renderPage() {
       return (
         <eb-page withSubnavbar={this.subnavbar.enable} ptr onPtrRefresh={this.page_onRefresh} infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
           <eb-navbar eb-back-link="Back">
             {this.layout_renderBlock({ blockName: 'caption' })}
             {this.layout_renderBlock({ blockName: 'title' })}
-            {this.layout_rendSubnavbar()}
+            {this.layout_renderSubnavbar()}
           </eb-navbar>
           {this.layout_renderBottombar()}
           {this.layout_renderLayout()}

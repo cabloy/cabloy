@@ -57,6 +57,11 @@ export default {
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
+    layout_renderSubnavbar() {
+      if (!this.base.ready) return null;
+      if (!this.layout.instance || !this.subnavbar.enable) return null;
+      return this.layout_renderBlock({ blockName: 'subnavbar' });
+    },
     layout_renderLayout() {
       if (this.base.notfound) {
         return (
@@ -71,6 +76,17 @@ export default {
           {this.layout_renderComponent()}
           {this.actions_renderPopover()}
         </div>
+      );
+    },
+    layout_renderPage() {
+      return (
+        <eb-page withSubnavbar={this.subnavbar.enable}>
+          <eb-navbar title={this.page_getTitle()} subtitle={this.page_getSubtitle()} eb-back-link="Back">
+            {this.layout_renderBlock({ blockName: 'title' })}
+            {this.layout_renderSubnavbar()}
+          </eb-navbar>
+          {this.layout_renderLayout()}
+        </eb-page>
       );
     },
   },

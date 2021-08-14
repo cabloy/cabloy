@@ -21,6 +21,6 @@ export default {
     };
   },
   render() {
-    return this.layout_page();
+    return this.layout_renderPage();
   },
 };
