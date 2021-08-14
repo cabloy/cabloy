@@ -21,10 +21,6 @@ export default {
     };
   },
   render() {
-    let domToolbar;
-    if (this.bottombar.enable) {
-      domToolbar = <f7-toolbar position="bottom">{this.layout.instance && this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}</f7-toolbar>;
-    }
     return (
       <eb-page withSubnavbar={this.subnavbar.enable} ptr onPtrRefresh={this.page_onRefresh} infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
         <eb-navbar eb-back-link="Back">
@@ -32,7 +28,7 @@ export default {
           {this.layout_renderBlock({ blockName: 'title' })}
           {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
-        {domToolbar}
+        {this.layout_renderBottombar()}
         {this.layout_renderLayout()}
       </eb-page>
     );

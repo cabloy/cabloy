@@ -55,6 +55,11 @@ export default {
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
+    layout_renderBottombar() {
+      if (!this.base.ready) return null;
+      if (!this.layout.instance || !this.bottombar.enable) return null;
+      return <f7-toolbar position="bottom">{this.layout_renderBlock({ blockName: 'bottombar' })}</f7-toolbar>;
+    },
     layout_renderLayout() {
       return (
         <div>
