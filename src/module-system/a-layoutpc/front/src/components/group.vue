@@ -132,7 +132,7 @@ export default {
       let space = this.size.width;
       let spacing = 0;
       for (let i = this.views.length - 1; i >= 0; i--) {
-        const view = this.$refs[this.views[i].id];
+        // const view = this.$refs[this.views[i].id];
         // width
         const viewSize = this._combineViewSize(this.views[i].sizeWill, i);
         const width = this.size[viewSize];

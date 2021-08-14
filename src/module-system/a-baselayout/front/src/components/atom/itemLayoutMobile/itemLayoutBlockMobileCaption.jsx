@@ -19,8 +19,8 @@ export default {
     };
   },
   computed: {
-    form() {
-      return this.layoutManager.filter.data.form;
+    item() {
+      return this.layoutManager.base.item;
     },
   },
   created() {},
