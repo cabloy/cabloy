@@ -55,6 +55,11 @@ export default {
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
+    layout_rendSubnavbar() {
+      if (!this.base.ready) return null;
+      if (!this.layout.instance || !this.subnavbar.enable) return null;
+      return this.layout_renderBlock({ blockName: 'subnavbar' });
+    },
     layout_renderBottombar() {
       if (!this.base.ready) return null;
       if (!this.layout.instance || !this.bottombar.enable) return null;
@@ -66,6 +71,19 @@ export default {
           {this.layout_renderComponent()}
           {this.order_renderPopover()}
         </div>
+      );
+    },
+    layout_page() {
+      return (
+        <eb-page withSubnavbar={this.subnavbar.enable} ptr onPtrRefresh={this.page_onRefresh} infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
+          <eb-navbar eb-back-link="Back">
+            {this.layout_renderBlock({ blockName: 'caption' })}
+            {this.layout_renderBlock({ blockName: 'title' })}
+            {this.layout_rendSubnavbar()}
+          </eb-navbar>
+          {this.layout_renderBottombar()}
+          {this.layout_renderLayout()}
+        </eb-page>
       );
     },
   },

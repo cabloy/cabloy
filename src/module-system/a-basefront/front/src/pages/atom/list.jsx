@@ -21,16 +21,6 @@ export default {
     };
   },
   render() {
-    return (
-      <eb-page withSubnavbar={this.subnavbar.enable} ptr onPtrRefresh={this.page_onRefresh} infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
-        <eb-navbar eb-back-link="Back">
-          {this.layout_renderBlock({ blockName: 'caption' })}
-          {this.layout_renderBlock({ blockName: 'title' })}
-          {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
-        </eb-navbar>
-        {this.layout_renderBottombar()}
-        {this.layout_renderLayout()}
-      </eb-page>
-    );
+    return this.layout_page();
   },
 };
