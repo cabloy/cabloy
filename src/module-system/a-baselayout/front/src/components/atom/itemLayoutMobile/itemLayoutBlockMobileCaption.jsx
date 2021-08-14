@@ -40,25 +40,27 @@ export default {
     },
     getStage() {
       let stage = this.layoutManager.base_getCurrentStage();
-      if (!stage) stage = 'formal';
+      if (!stage || stage === 'formal') return null;
       stage = this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
       return stage;
     },
     getCategoryName() {
       this._fixCategoriesTagsAll();
-      return this._getCategoryName(this.form.category);
+      return this._getCategoryName(this.item.atomCategory);
     },
     getTagName() {
       this._fixCategoriesTagsAll();
-      return this._getTagName(this.form.tag);
+      return this._getTagName(this.item.atomTags);
     },
     _fixCategoriesTagsAll() {
+      const atomClass = this.layoutManager.base.atomClass;
+      const language = this.item.atomLanguage;
       const key1 = this._getKey(this.atomClass, this.language);
-      const key2 = this._getKey(this.form.atomClass, this.form.language);
+      const key2 = this._getKey(atomClass, language);
       if (key1 === key2) return true;
       // reset
-      this.atomClass = this.form.atomClass;
-      this.language = this.form.language;
+      this.atomClass = atomClass;
+      this.language = language;
       this.categoriesAll = null;
       this.tagsAll = null;
       // load
@@ -97,6 +99,7 @@ export default {
     _renderStage() {
       // stage
       const stage = this.getStage();
+      if (!stage) return null;
       // render
       return (
         <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickStage}>

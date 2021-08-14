@@ -40,7 +40,7 @@ export default {
     },
     getStage() {
       let stage = this.layoutManager.base_getCurrentStage();
-      if (!stage) stage = 'formal';
+      if (!stage || stage === 'formal') return null;
       stage = this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
       return stage;
     },
@@ -97,6 +97,7 @@ export default {
     _renderStage() {
       // stage
       const stage = this.getStage();
+      if (!stage) return null;
       // render
       return (
         <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickStage}>
