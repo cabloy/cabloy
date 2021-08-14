@@ -29,14 +29,41 @@ export default {
     this.$pageContainer.setPageTitle(title);
   },
   methods: {
+    openUrl(options) {
+      const atomClass = this.layoutManager.base.atomClass;
+      // queries
+      const queries = {
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        options: JSON.stringify(options),
+      };
+      const url = this.$meta.util.combineQueries('/a/basefront/atom/list', queries);
+      this.$view.navigate(url, {
+        target: '_group',
+      });
+    },
     onClickStage() {
-      this.layoutManager.filter_openTab('basic');
+      // options
+      const options = {
+        stage: this.layoutManager.base_getCurrentStage(),
+      };
+      this.openUrl(options);
     },
     onClickCategory() {
-      this.layoutManager.filter_openTab('category');
+      // options
+      const options = {
+        language: this.item.atomLanguage,
+        category: this.item.atomCategoryId,
+      };
+      this.openUrl(options);
     },
     onClickTag(tagId) {
-      this.layoutManager.filter_openTab('tag');
+      // options
+      const options = {
+        language: this.item.atomLanguage,
+        tag: tagId,
+      };
+      this.openUrl(options);
     },
     getStage() {
       let stage = this.layoutManager.base_getCurrentStage();

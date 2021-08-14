@@ -218,6 +218,8 @@ export default {
         return this.$meta.util.performAction({ ctx: this, action, item: null });
       }
     },
+    // options:
+    //  target: _self/_view/_group
     navigate(url, options) {
       // options
       options = options || {};
@@ -247,17 +249,22 @@ export default {
         // groupId
         let groupId;
         let groupForceNew = false;
-        if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
-          // open at right even in eb-layout-scene
-          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-        } else if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
+        // force new no matter _view/_group
+        groupForceNew = window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
+        if (groupForceNew) {
           groupId = null;
           groupForceNew = true;
+        } else if (target === '_group') {
+          groupId = null;
+          groupForceNew = false;
+        } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
+          // open at right even in eb-layout-scene
+          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
         } else if (!$viewEl || $viewEl.parents('.eb-layout-scene').length > 0 || ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0) {
           groupId = null;
           groupForceNew = false;
         } else {
-          // open at right
+          // open at right as _view
           groupId = $viewEl.parents('.eb-layout-group').data('groupId');
         }
         // get view

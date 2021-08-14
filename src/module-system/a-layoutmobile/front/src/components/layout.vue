@@ -120,6 +120,8 @@ export default {
     openHome() {
       this.tabShowed = true;
     },
+    // options:
+    //  target: _self/_view/_group
     navigate(url, options) {
       if (!url) return;
       // check if http
@@ -136,7 +138,7 @@ export default {
         // view
         const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
         // check if target===_view or in views
-        if (!$viewEl || target === '_view' || scene === 'sidebar' || $viewEl.parents('.eb-layout-scene').length > 0) {
+        if (!$viewEl || target === '_view' || target === '_group' || scene === 'sidebar' || $viewEl.parents('.eb-layout-scene').length > 0) {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {
