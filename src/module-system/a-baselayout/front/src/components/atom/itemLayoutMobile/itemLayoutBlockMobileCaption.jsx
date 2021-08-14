@@ -35,7 +35,7 @@ export default {
     onClickCategory() {
       this.layoutManager.filter_openTab('category');
     },
-    onClickTag() {
+    onClickTag(tagId) {
       this.layoutManager.filter_openTab('tag');
     },
     getStage() {
@@ -46,11 +46,28 @@ export default {
     },
     getCategoryName() {
       this._fixCategoriesTagsAll();
-      return this._getCategoryName(this.item.atomCategory);
+      return this._getCategoryName(this.item.atomCategoryId);
     },
     getTagName() {
-      this._fixCategoriesTagsAll();
       return this._getTagName(this.item.atomTags);
+    },
+    getTags() {
+      // tags
+      this._fixCategoriesTagsAll();
+      if (!this.tagsAll) return null;
+      // atomTags
+      let atomTags = this.item.atomTags;
+      if (!atomTags) return null;
+      if (!Array.isArray(atomTags)) {
+        atomTags = JSON.parse(atomTags);
+      }
+      // parse
+      return atomTags.map(tagId => {
+        return {
+          tagId,
+          tagName: this._getTagName(tagId),
+        };
+      });
     },
     _fixCategoriesTagsAll() {
       const atomClass = this.layoutManager.base.atomClass;
@@ -117,15 +134,25 @@ export default {
         </f7-badge>
       );
     },
-    _renderTag() {
+    _renderTags() {
       if (!this.layoutManager.base.ready) return;
-      const tagName = this.getTagName();
-      if (!tagName) return null;
-      return (
-        <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickTag}>
-          {tagName}
-        </f7-badge>
-      );
+      const tags = this.getTags();
+      if (!tags) return null;
+      const children = [];
+      for (const item of tags) {
+        children.push(
+          <f7-badge
+            key={item.tagId}
+            class="eb-cursor-pointer"
+            nativeOnClick={() => {
+              this.onClickTag(item.tagId);
+            }}
+          >
+            {item.tagName}
+          </f7-badge>
+        );
+      }
+      return children;
     },
   },
   render() {
@@ -135,7 +162,7 @@ export default {
         <div class="subtitle">
           {this._renderStage()}
           {this._renderCategory()}
-          {this._renderTag()}
+          {this._renderTags()}
         </div>
       </f7-nav-title>
     );
