@@ -205,6 +205,12 @@ export default {
               name: 'itemLayoutMobile',
             },
             blocks: {
+              caption: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileCaption',
+                },
+              },
               title: {
                 component: {
                   module: 'a-baselayout',
@@ -231,6 +237,12 @@ export default {
               name: 'itemLayoutPC',
             },
             blocks: {
+              caption: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileCaption',
+                },
+              },
               title: {
                 component: {
                   module: 'a-baselayout',
