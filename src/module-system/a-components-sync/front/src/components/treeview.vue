@@ -283,7 +283,7 @@ export default {
             await this._loadChildren(node);
           }
           // children
-          res = this._treeDownAsync(node, loadChildren, cb);
+          res = await this._treeDownAsync(node, loadChildren, cb);
           if (res === false) return false; // return immediately
         }
       }
