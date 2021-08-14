@@ -156,7 +156,7 @@ export default {
       const categoryName = this.getCategoryName();
       if (!categoryName) return null;
       return (
-        <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickCategory}>
+        <f7-badge color="teal" class="eb-cursor-pointer" nativeOnClick={this.onClickCategory}>
           {categoryName}
         </f7-badge>
       );
@@ -170,6 +170,7 @@ export default {
         children.push(
           <f7-badge
             key={item.tagId}
+            color="blue"
             class="eb-cursor-pointer"
             nativeOnClick={() => {
               this.onClickTag(item.tagId);

@@ -110,7 +110,7 @@ export default {
       const categoryName = this.getCategoryName();
       if (!categoryName) return null;
       return (
-        <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickCategory}>
+        <f7-badge color="teal" class="eb-cursor-pointer" nativeOnClick={this.onClickCategory}>
           {categoryName}
         </f7-badge>
       );
@@ -120,7 +120,7 @@ export default {
       const tagName = this.getTagName();
       if (!tagName) return null;
       return (
-        <f7-badge class="eb-cursor-pointer" nativeOnClick={this.onClickTag}>
+        <f7-badge color="blue" class="eb-cursor-pointer" nativeOnClick={this.onClickTag}>
           {tagName}
         </f7-badge>
       );
