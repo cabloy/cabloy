@@ -23,11 +23,7 @@ export default {
     onSwipeoutOpened(/* event, item*/) {},
     _renderListItem(item, index) {
       // media
-      const domMedia = (
-        <div slot="media">
-          <f7-badge>{index + 1}</f7-badge>
-        </div>
-      );
+      const domMedia = <div slot="media">{this.layoutManager.data.adapter.item_renderMedia(item, index)}</div>;
       // domTitle
       const domTitle = (
         <div slot="title" class="title">

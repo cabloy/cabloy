@@ -26,14 +26,6 @@ export default {
     item_getDetailName(item) {
       return item.detailName;
     },
-    item_getMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 24);
-    },
-    item_getMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
-      return mediaLabel;
-    },
     item_getMetaSummary(item) {
       return (item._meta && item._meta.summary) || '';
       // return (item._meta && item._meta.summary) || item.detailCode;
@@ -42,10 +34,6 @@ export default {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
       return flags;
-    },
-    item_getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
     },
     item_getActionColor(action, index) {
       if (index === 0) return 'orange';
@@ -93,27 +81,8 @@ export default {
       );
       return <eb-context-menu mode={mode}>{domRight}</eb-context-menu>;
     },
-    item_renderMedia(item, className) {
-      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item)} />;
-    },
-    item_renderStats(item) {
-      const children = [];
-      if (item.star > 0) {
-        children.push(<span key="stat_star">⭐</span>);
-      }
-      if (item.attachmentCount > 0) {
-        children.push(<span key="stat_attachmentCount_icon">🧷</span>);
-      }
-      if (item.attachmentCount > 1) {
-        children.push(<span key="stat_attachmentCount_value">{`${item.attachmentCount}`}</span>);
-      }
-      if (item.commentCount > 0) {
-        children.push(<span key="stat_commentCount_icon">💬</span>);
-      }
-      if (item.commentCount > 1) {
-        children.push(<span key="stat_commentCount_value">{`${item.commentCount}`}</span>);
-      }
-      return children;
+    item_renderMedia(item, index) {
+      return <f7-badge>{index + 1}</f7-badge>;
     },
     item_renderMetaFlags(item) {
       const domMetaFlags = [];
@@ -122,20 +91,6 @@ export default {
         domMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       return domMetaFlags;
-    },
-    item_renderLabels(item) {
-      const domLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
-        for (const label of JSON.parse(item.labels)) {
-          const _label = this.item_getLabel(label);
-          domLabels.push(
-            <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-              {_label.text}
-            </f7-badge>
-          );
-        }
-      }
-      return domLabels;
     },
   },
 };
