@@ -2,7 +2,24 @@ export default {
   detail: {
     render: {
       list: {
-        info: {},
+        info: {
+          data: {
+            adapter: {
+              component: {
+                module: 'a-detail',
+                name: 'listLayoutDataAdapter',
+              },
+              providers: {
+                all: {
+                  component: {
+                    module: 'a-detail',
+                    name: 'listLayoutDataProviderAll',
+                  },
+                },
+              },
+            },
+          },
+        },
         layouts: {
           list: {
             component: {

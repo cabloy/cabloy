@@ -4,6 +4,7 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Actions from './actions.jsx';
+import Data from './data.jsx';
 const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 
 // container: {
@@ -18,17 +19,29 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [ebDetailActions, Base, Page, Layout, Bulk, Actions],
+  mixins: [
+    ebDetailActions, //
+    Base,
+    Page,
+    Layout,
+    Bulk,
+    Actions,
+    Data,
+  ],
   data() {
     return {};
   },
   created() {
-    this.layout_prepareConfig().then(() => {
-      this.base.ready = true;
-    });
+    this.index_init();
   },
   beforeDestroy() {
-    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
+  },
+  methods: {
+    async index_init() {
+      await this.layout_prepareConfig();
+      await this.data_adapterInit();
+      this.base.ready = true;
+    },
   },
 };

@@ -19,6 +19,10 @@ export default {
     this.layoutManager.layout.instance = this;
     this.loadDetails();
   },
+  beforeDestroy() {
+    // eslint-disable-next-line
+    this.layoutManager.layout.instance = null;
+  },
   methods: {
     async loadDetails() {
       // params
