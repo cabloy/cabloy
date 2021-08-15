@@ -26,7 +26,6 @@ export default {
     this.index_load();
   },
   beforeDestroy() {
-    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
   },
   methods: {

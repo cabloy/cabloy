@@ -21,15 +21,17 @@ export default {
     return {};
   },
   created() {
-    this.base_loadItem().then(res => {
-      if (!res) return;
-      this.layout_prepareConfig().then(() => {
-        this.base.ready = true;
-      });
-    });
+    this.index_load();
   },
   beforeDestroy() {
-    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
+  },
+  methods: {
+    async index_load() {
+      const res = await this.base_loadItem();
+      if (!res) return;
+      await this.layout_prepareConfig();
+      this.base.ready = true;
+    },
   },
 };
