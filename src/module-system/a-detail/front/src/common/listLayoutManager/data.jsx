@@ -34,7 +34,6 @@ export default {
       if (!this.data.adapter) return null;
       return this.data.adapter[methodName](...args);
     },
-    /*
     data_onPageRefresh(force) {
       return this.data_callMethod('onPageRefresh', force);
     },
@@ -50,6 +49,5 @@ export default {
     data_renderLoadMore() {
       return this.data_callMethod('renderLoadMore');
     },
-    */
   },
 };

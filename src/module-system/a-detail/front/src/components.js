@@ -15,6 +15,9 @@ import listLayoutTableCellDetailName from './components/detail/listLayoutTable/l
 import itemLayoutMobile from './components/detail/itemLayoutMobile/itemLayoutMobile.jsx';
 import itemLayoutBlockMobileTitle from './components/detail/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
 import itemLayoutBlockMobileMain from './components/detail/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
+// listLayoutData
+import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
+import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
 
 export default {
   action,
@@ -34,4 +37,7 @@ export default {
   itemLayoutMobile,
   itemLayoutBlockMobileTitle,
   itemLayoutBlockMobileMain,
+  // layout
+  listLayoutDataAdapter,
+  listLayoutDataProviderAll,
 };
