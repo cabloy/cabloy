@@ -55,7 +55,6 @@ export default {
         const aIndex = findA.index;
         const findB = this.findItemProvier(provider, b);
         const bIndex = findB.index;
-
         if (aIndex === -1 || bIndex === -1) {
           // load
           this._callMethodProvider(provider, 'onPageRefresh');
