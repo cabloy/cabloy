@@ -7,7 +7,13 @@ export default {
   data() {
     return {
       inited: false,
+      info: {
+        pageCurrent: 0,
+        pageSize: 20,
+        total: 0,
+      },
       items: [],
+      loading: false,
     };
   },
   beforeDestroy() {},
@@ -15,28 +21,49 @@ export default {
     async switch(options) {
       // only inited once
       if (this.inited) return;
-      // load details
-      if (options.autoInit) {
-        await this.loadDetails();
-      }
       // inited
       this.inited = true;
+      // init
+      if (options.autoInit) {
+        this.onPageRefresh();
+      }
     },
     onPageRefresh(/* force*/) {
+      this.onPageClear();
       this.loadDetails();
     },
-    onPageInfinite() {},
+    onPageInfinite() {
+      // do nothing
+    },
     onPageClear() {
       // items
       this.items = [];
+      this.info = {
+        pageCurrent: 0,
+        pageSize: 20,
+        total: 0,
+      };
+      this.loading = false;
     },
     async loadDetails() {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // fetch
-      const res = await this.$api.post('/a/detail/detail/select', params);
-      this.items = res.list;
-      return res;
+      this.loading = true;
+      try {
+        // params
+        const params = this.layoutManager.base_prepareSelectParams();
+        // fetch
+        const res = await this.$api.post('/a/detail/detail/select', params);
+        this.items = res.list;
+        this.info = {
+          pageCurrent: 1,
+          pageSize: this.items.length,
+          total: this.items.length,
+        };
+        this.loading = false;
+        return res;
+      } catch (err) {
+        this.layoutManager.$view.toast.show({ text: err.message });
+        this.loading = false;
+      }
     },
     getItems() {
       return this.items;
@@ -44,8 +71,11 @@ export default {
     getItemsAll() {
       return this.getItems();
     },
+    getLoading() {
+      return this.loading;
+    },
     getPageInfo() {
-      // do nothing
+      return this.info;
     },
     gotoPage(/* pageNum*/) {
       // do nothing

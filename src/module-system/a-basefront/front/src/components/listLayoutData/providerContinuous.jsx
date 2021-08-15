@@ -65,6 +65,9 @@ export default {
     getItems() {
       return this.items;
     },
+    getLoading() {
+      return false;
+    },
     getPageInfo() {
       // do nothing
     },

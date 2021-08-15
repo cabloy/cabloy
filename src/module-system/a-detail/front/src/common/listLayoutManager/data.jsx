@@ -49,6 +49,9 @@ export default {
     data_getItemsAll() {
       return this.data_callMethod('getItemsAll');
     },
+    data_getLoading() {
+      return this.data_callMethod('getLoading');
+    },
     data_renderLoadMore() {
       return this.data_callMethod('renderLoadMore');
     },

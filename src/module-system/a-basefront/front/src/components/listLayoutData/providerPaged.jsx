@@ -54,6 +54,9 @@ export default {
     getItems() {
       return this.dataSource || [];
     },
+    getLoading() {
+      return this.loading;
+    },
     getPageInfo() {
       return this.info;
     },

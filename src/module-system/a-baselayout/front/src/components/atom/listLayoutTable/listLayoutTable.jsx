@@ -36,7 +36,8 @@ export default {
       });
     },
     _renderEmpty() {
-      if (this.loading) return <f7-preloader></f7-preloader>;
+      const loading = this.layoutManager.data_getLoading();
+      if (loading) return <f7-preloader></f7-preloader>;
       return <div>{this.$text('No Data')}</div>;
     },
     _renderConfigProvider() {
