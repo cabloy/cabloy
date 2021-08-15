@@ -47,7 +47,7 @@ export default {
     },
     onLoadClear(done) {
       // eslint-disable-next-line
-      this.layoutManager.bulk.selectedAtoms = [];
+      this.layoutManager.bulk_clearSelectedAtoms();
       // items
       this.items = [];
       done();

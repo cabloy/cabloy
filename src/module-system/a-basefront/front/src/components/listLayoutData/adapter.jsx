@@ -43,6 +43,8 @@ export default {
       await provider.switch(options);
       // save as ready
       this.providerName = providerName;
+      // bulk
+      this.layoutManager.bulk_closeSelecting();
     },
     async providerCreate(providerName) {
       // config component

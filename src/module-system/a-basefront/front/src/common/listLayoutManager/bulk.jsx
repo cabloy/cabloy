@@ -53,6 +53,10 @@ export default {
     bulk_clearSelectedAtoms() {
       this.bulk.selectedAtoms = [];
     },
+    bulk_closeSelecting() {
+      this.bulk.selecting = false;
+      this.bulk_clearSelectedAtoms();
+    },
     bulk_onSelectingSwitch() {
       this.bulk.selecting = !this.bulk.selecting;
       if (!this.bulk.selecting) {

@@ -41,7 +41,7 @@ export default {
     },
     onPageClear() {
       // eslint-disable-next-line
-      this.layoutManager.bulk.selectedAtoms = [];
+      this.layoutManager.bulk_clearSelectedAtoms();
       // items
       this.itemsPages = {};
       this.info = {
@@ -83,7 +83,7 @@ export default {
       // check if same
       if (this.info.pageCurrent === pageNum) return;
       // eslint-disable-next-line
-      this.layoutManager.bulk.selectedAtoms = [];
+      this.layoutManager.bulk_clearSelectedAtoms();
       const items = this.itemsPages[pageNum];
       if (items) {
         this.info.pageCurrent = pageNum;
