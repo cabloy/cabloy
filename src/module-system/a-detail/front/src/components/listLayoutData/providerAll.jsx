@@ -43,8 +43,8 @@ export default {
     gotoPage(/* pageNum*/) {
       // do nothing
     },
-    findItem(atomId) {
-      const index = this.items.findIndex(item => item.atomId === atomId);
+    findItem(detailId) {
+      const index = this.items.findIndex(item => item.detailId === detailId);
       return { pageNum: 1, items: this.items, index };
     },
     spliceItem(items, index) {

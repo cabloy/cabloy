@@ -93,8 +93,8 @@ export default {
     gotoPage(pageNum) {
       return this._callMethod('gotoPage', pageNum);
     },
-    findItem(atomId) {
-      const res = this._callMethod('findItem', atomId);
+    findItem(detailId) {
+      const res = this._callMethod('findItem', detailId);
       if (res) return res;
       return { pageNum: null, items: null, index: -1 };
     },
