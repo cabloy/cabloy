@@ -16,7 +16,9 @@ export default {
       // only inited once
       if (this.inited) return;
       // load details
-      await this.loadDetails();
+      if (options.autoInit) {
+        await this.loadDetails();
+      }
       // inited
       this.inited = true;
     },
