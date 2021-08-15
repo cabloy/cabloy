@@ -1,16 +1,26 @@
 export default {
   methods: {
     async item_onAction(event, item, action) {
-      const _action = this.layoutManager.getAction(action);
+      const _action = this.layoutManager.getDetailAction(action);
       if (!_action) return;
-      await this.$meta.util.performAction({ ctx: this.layoutManager, action: _action, item });
+      const res = await this.$meta.util.performAction({
+        ctx: this.layoutManager,
+        action: _action,
+        item: {
+          item,
+          meta: {
+            flowTaskId: this.layoutManager.container.flowTaskId,
+          },
+        },
+      });
       this.$meta.util.swipeoutClose(event.target);
+      return res;
     },
-    async item_onActionView(event, item) {
+    async item_onItemClick(event, item) {
       return await this.item_onAction(event, item, {
         module: item.module,
-        atomClassName: item.atomClassName,
-        name: 'read',
+        detailClassName: item.detailClassName,
+        name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
       });
     },
     item_getAtomName(item) {
@@ -53,55 +63,34 @@ export default {
       else if (index === 1) return 'red';
       return 'blue';
     },
-    item_getActionTitle(action, item) {
-      return this.layoutManager.getActionTitle(action, item);
+    item_getActionTitle(action) {
+      return this.layoutManager.getDetailActionTitle(action);
+    },
+    item_getActions(mode) {
+      const actions = this.layoutManager.actions.list;
+      if (!actions) return actions;
+      if (mode === 'menu' || (!mode && this.$device.desktop)) {
+        // show all on menu
+        return actions;
+      }
+      // only read/write/delete
+      return actions.filter(item => ['read', 'write', 'delete'].indexOf(item.name) > -1);
     },
     item_renderContextMenu(item, mode) {
-      // domLeft
-      let domLeft;
-      if (item && item.atomStage === 1) {
-        // star
-        let domLeftStarTitle;
-        if (mode === 'menu' || (!mode && this.$device.desktop)) {
-          domLeftStarTitle = <div slot="title">{this.$text(item.star ? 'Unstar' : 'UserStar')}</div>;
-        }
-        const domLeftStar = (
-          <div color="teal" propsOnPerform={event => this.star_onSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {domLeftStarTitle}
-          </div>
-        );
-        // label
-        let domLeftLabelTitle;
-        if (mode === 'menu' || (!mode && this.$device.desktop)) {
-          domLeftLabelTitle = <div slot="title">{this.$text('UserLabels')}</div>;
-        }
-        const domLeftLabel = (
-          <div color="blue" propsOnPerform={event => this.labels_onClick(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
-            {domLeftLabelTitle}
-          </div>
-        );
-        domLeft = (
-          <div slot="left">
-            {domLeftStar}
-            {domLeftLabel}
-          </div>
-        );
-      }
+      const itemActions = this.item_getActions(mode);
       // domRight
       const domActions = [];
-      if (item && item._actions) {
-        for (let index in item._actions) {
+      if (itemActions) {
+        for (let index in itemActions) {
           index = parseInt(index);
-          const action = item._actions[index];
-          const _action = this.layoutManager.getAction(action);
+          const action = itemActions[index];
+          const _action = this.layoutManager.getDetailAction(action);
           let domActionTitle;
           if (mode === 'menu' || (!mode && this.$device.desktop)) {
-            domActionTitle = <div slot="title">{this.item_getActionTitle(action, item)}</div>;
+            domActionTitle = <div slot="title">{this.item_getActionTitle(action)}</div>;
           }
           domActions.push(
-            <div key={action.id} color={this.item_getActionColor(action, index)} propsOnPerform={event => this.item_onAction(event, item, action)}>
+            <div key={action.code} color={this.item_getActionColor(action, index)} propsOnPerform={event => this.item_onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
               {domActionTitle}
             </div>
@@ -109,16 +98,11 @@ export default {
         }
       }
       const domRight = (
-        <div slot="right" ready={item && !!item._actions}>
+        <div slot="right" ready={!!itemActions}>
           {domActions}
         </div>
       );
-      return (
-        <eb-context-menu mode={mode}>
-          {domLeft}
-          {domRight}
-        </eb-context-menu>
-      );
+      return <eb-context-menu mode={mode}>{domRight}</eb-context-menu>;
     },
     item_renderMedia(item, className) {
       return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item)} />;

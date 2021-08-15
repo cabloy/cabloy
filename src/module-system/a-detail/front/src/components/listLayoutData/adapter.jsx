@@ -87,6 +87,10 @@ export default {
       const items = this._callMethod('getItems');
       return items || [];
     },
+    getItemsAll() {
+      const items = this._callMethod('getItemsAll');
+      return items || [];
+    },
     getPageInfo() {
       return this._callMethod('getPageInfo');
     },

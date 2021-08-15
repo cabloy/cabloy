@@ -41,6 +41,9 @@ export default {
     getItems() {
       return this.items;
     },
+    getItemsAll() {
+      return this.getItems();
+    },
     getPageInfo() {
       // do nothing
     },

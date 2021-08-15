@@ -21,7 +21,7 @@ export default {
         // details:change
         this.$meta.eventHub.$emit('details:change', {
           ...data,
-          details: this.layout.getItemsAll(),
+          details: this.layoutManager.data_getItemsAll(),
         });
       }
     },

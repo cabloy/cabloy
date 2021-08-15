@@ -17,39 +17,10 @@ export default {
     return {};
   },
   methods: {
-    getItemActions() {
-      const actions = this.layoutManager.actions.list;
-      if (!actions) return actions;
-      if (this.$device.desktop) {
-        return actions;
-      }
-      // only read/write/delete
-      return actions.filter(item => ['read', 'write', 'delete'].indexOf(item.name) > -1);
-    },
     async onItemClick(event, item) {
-      return await this.onAction(event, item, {
-        module: item.module,
-        detailClassName: item.detailClassName,
-        name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
-      });
+      return this.layoutManager.data.adapter.item_onItemClick(event, item);
     },
-    onSwipeoutOpened(event, item) {},
-    async onAction(event, item, action) {
-      const _action = this.getDetailAction(action);
-      if (!_action) return;
-      const res = await this.$meta.util.performAction({
-        ctx: this,
-        action: _action,
-        item: {
-          item,
-          meta: {
-            flowTaskId: this.layoutManager.container.flowTaskId,
-          },
-        },
-      });
-      this.$meta.util.swipeoutClose(event.target);
-      return res;
-    },
+    onSwipeoutOpened(/* event, item*/) {},
     _getItemMetaSummary(item) {
       return (item._meta && item._meta.summary) || '';
       // return (item._meta && item._meta.summary) || item.detailCode;
@@ -58,14 +29,6 @@ export default {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
       return flags;
-    },
-    _getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
-      return 'blue';
-    },
-    _getActionTitle(action) {
-      return this.getDetailActionTitle(action);
     },
     _renderListItem(item, index) {
       // media
@@ -120,32 +83,10 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      const itemActions = this.getItemActions();
-      // domRight
-      const domActions = [];
-      if (itemActions) {
-        for (let index in itemActions) {
-          index = parseInt(index);
-          const action = itemActions[index];
-          const _action = this.getDetailAction(action);
-          domActions.push(
-            <div key={action.code} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
-              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this._getActionTitle(action)}</div>}
-            </div>
-          );
-        }
-      }
-      const domRight = (
-        <div slot="right" ready={!!itemActions}>
-          {domActions}
-        </div>
-      );
-
-      return <eb-context-menu>{domRight}</eb-context-menu>;
+      return this.layoutManager.data.adapter.item_renderContextMenu(item);
     },
     _renderList() {
-      const items = this.layout.items;
+      const items = this.layoutManager.data_getItems();
       const children = [];
       for (let index = 0; index < items.length; index++) {
         children.push(this._renderListItem(items[index], index));
