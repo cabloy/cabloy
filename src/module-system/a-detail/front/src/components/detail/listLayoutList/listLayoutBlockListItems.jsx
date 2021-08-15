@@ -21,15 +21,6 @@ export default {
       return this.layoutManager.data.adapter.item_onItemClick(event, item);
     },
     onSwipeoutOpened(/* event, item*/) {},
-    _getItemMetaSummary(item) {
-      return (item._meta && item._meta.summary) || '';
-      // return (item._meta && item._meta.summary) || item.detailCode;
-    },
-    _getItemMetaFlags(item) {
-      let flags = (item._meta && item._meta.flags) || [];
-      if (!Array.isArray(flags)) flags = flags.split(',');
-      return flags;
-    },
     _renderListItem(item, index) {
       // media
       const domMedia = (
@@ -40,20 +31,17 @@ export default {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.detailName}</div>
+          <div>{this.layoutManager.data.adapter.item_getDetailName(item)}</div>
         </div>
       );
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this._getItemMetaSummary(item)}
+          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = [];
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
-      }
+      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}

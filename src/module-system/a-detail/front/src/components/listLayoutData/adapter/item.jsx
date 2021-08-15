@@ -23,8 +23,8 @@ export default {
         name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
       });
     },
-    item_getAtomName(item) {
-      return item.atomNameLocale || item.atomName;
+    item_getDetailName(item) {
+      return item.detailName;
     },
     item_getMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -35,23 +35,12 @@ export default {
       return mediaLabel;
     },
     item_getMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
-      }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
+      return (item._meta && item._meta.summary) || '';
+      // return (item._meta && item._meta.summary) || item.detailCode;
     },
     item_getMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
       return flags;
     },
     item_getLabel(id) {
@@ -128,15 +117,6 @@ export default {
     },
     item_renderMetaFlags(item) {
       const domMetaFlags = [];
-      // flow
-      if (item.flowNodeNameCurrentLocale) {
-        domMetaFlags.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
-      // flags
       const itemFlags = this.item_getMetaFlags(item);
       for (const flag of itemFlags) {
         domMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
