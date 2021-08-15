@@ -60,5 +60,23 @@ export default {
     layout_renderLayout() {
       return <div>{this.layout_renderComponent()}</div>;
     },
+    layout_renderTitle() {
+      return (
+        <f7-list-item groupTitle>
+          <div class="detail-list-title-container">
+            {this.layout_renderTitleLeft()}
+            {this.layout_renderTitleRight()}
+          </div>
+        </f7-list-item>
+      );
+    },
+    layout_renderTitleLeft() {
+      const title = this.container.title;
+      return <div class="actions-block actions-block-left">{title}</div>;
+    },
+    layout_renderTitleRight() {
+      const children = this.bulk_renderActionsRight();
+      return <div class="actions-block actions-block-right">{children}</div>;
+    },
   },
 };

@@ -1,10 +1,8 @@
 import Vue from 'vue';
-const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebDetailActions],
   props: {
     layoutManager: {
       type: Object,
@@ -65,8 +63,9 @@ export default {
         atomKey.atomId !== this.layoutManager.container.atomId ||
         detailClass.module !== this.layoutManager.container.detailClass.module ||
         detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
-      )
+      ) {
         return;
+      }
 
       const changed = await this._onActionChanged(data);
       if (changed) {
