@@ -28,10 +28,10 @@ export default {
       this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
       this.$meta.util[swipeoutAction](event.target);
     },
-    star_onChanged(data) {
+    async star_onChanged(data) {
       const atomId = data.key.atomId;
       // loop
-      this._loopProviders(async provider => {
+      await this._loopProviders(async provider => {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', atomId);
         if (!res) return;

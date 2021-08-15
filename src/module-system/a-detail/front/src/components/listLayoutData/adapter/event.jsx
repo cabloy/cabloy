@@ -28,7 +28,7 @@ export default {
     async event_onActionChanged2(data) {
       let res = false;
       // loop
-      this._loopProviders(async provider => {
+      await this._loopProviders(async provider => {
         const res2 = await this.event_onActionChanged2_provider(data, provider);
         if (res2) {
           // changed
@@ -50,8 +50,12 @@ export default {
         if (!result) return false;
         const a = action.name === 'moveUp' ? result.to : result.from;
         const b = action.name === 'moveUp' ? result.from : result.to;
-        const { items, aIndex } = this.findItemProvier(provider, a);
-        const { bIndex } = this.findItemProvier(provider, b);
+        const findA = this.findItemProvier(provider, a);
+        const items = findA.items;
+        const aIndex = findA.index;
+        const findB = this.findItemProvier(provider, b);
+        const bIndex = findB.index;
+
         if (aIndex === -1 || bIndex === -1) {
           // load
           this._callMethodProvider(provider, 'onPageRefresh');

@@ -8,7 +8,7 @@ export default {
     this.$meta.eventHub.$off('atom:actions', this.event_onActionsChanged);
   },
   methods: {
-    event_onActionChanged(data) {
+    async event_onActionChanged(data) {
       const key = data.key;
       const action = data.action;
       // create
@@ -17,7 +17,7 @@ export default {
         return;
       }
       // loop
-      this._loopProviders(async provider => {
+      await this._loopProviders(async provider => {
         // findItem
         const { items, index } = this.findItemProvier(provider, key.atomId);
         if (index === -1) return;
@@ -35,10 +35,10 @@ export default {
         this.$set(items, index, atomNew);
       });
     },
-    event_onActionsChanged(data) {
+    async event_onActionsChanged(data) {
       const key = data.key;
       // loop
-      this._loopProviders(async provider => {
+      await this._loopProviders(async provider => {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', key.atomId);
         if (!res) return;

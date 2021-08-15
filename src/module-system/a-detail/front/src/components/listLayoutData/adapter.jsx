@@ -67,11 +67,11 @@ export default {
     _callMethodProvider(provider, methodName, ...args) {
       return provider[methodName](...args);
     },
-    _loopProviders(cb) {
+    async _loopProviders(cb) {
       // loop all providers
       for (const key in this.providers) {
         const provider = this.providers[key];
-        cb(provider);
+        await cb(provider);
       }
     },
     onPageRefresh(force) {

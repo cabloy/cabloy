@@ -20,10 +20,10 @@ export default {
       });
       this.$meta.util.swipeoutClose(event.target);
     },
-    labels_onChanged(data) {
+    async labels_onChanged(data) {
       const atomId = data.key.atomId;
       // loop
-      this._loopProviders(async provider => {
+      await this._loopProviders(async provider => {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', atomId);
         if (!res) return;
