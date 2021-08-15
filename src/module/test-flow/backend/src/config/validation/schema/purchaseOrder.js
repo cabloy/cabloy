@@ -44,7 +44,7 @@ module.exports = app => {
       // Stats
       __groupStats: {
         ebType: 'group-flatten',
-        ebTitle: 'Stats',
+        ebTitle: 'Details Stats',
       },
       detailsCount: {
         type: 'number',
