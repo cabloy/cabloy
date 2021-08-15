@@ -19,9 +19,7 @@ export default {
       // loop
       this._loopProviders(async provider => {
         // findItem
-        const res = this._callMethodProvider(provider, 'findItem', key.atomId);
-        if (!res) return;
-        const { items, index } = res;
+        const { items, index } = this.findItemProvier(provider, key.atomId);
         if (index === -1) return;
         if (action.name === 'delete') {
           this._callMethodProvider(provider, 'spliceItem', items, index);

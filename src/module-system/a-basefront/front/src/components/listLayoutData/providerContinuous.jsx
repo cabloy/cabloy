@@ -75,8 +75,9 @@ export default {
       const index = this.items.findIndex(item => item.atomId === atomId);
       return { pageNum: 1, items: this.items, index };
     },
-    spliceItem(items, index) {
-      items.splice(index, 1);
+    spliceItem(items, index, howmany, ...args) {
+      if (howmany === undefined) howmany = 1;
+      return items.splice(index, howmany, ...args);
     },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;

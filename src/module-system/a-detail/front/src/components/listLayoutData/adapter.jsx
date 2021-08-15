@@ -98,8 +98,14 @@ export default {
       if (res) return res;
       return { pageNum: null, items: null, index: -1 };
     },
-    spliceItem(items, index) {
-      return this._callMethod('spliceItem', items, index);
+    findItemProvier(provider, detailId) {
+      const res = this._callMethodProvider(provider, 'findItem', detailId);
+      if (res) return res;
+      return { pageNum: null, items: null, index: -1 };
+    },
+    // items,index,howmany[,...item]
+    spliceItem(items, index, howmany, ...args) {
+      return this._callMethod('spliceItem', items, index, howmany, ...args);
     },
     renderLoadMore() {
       return this._callMethod('renderLoadMore');

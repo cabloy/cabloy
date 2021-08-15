@@ -22,7 +22,9 @@ export default {
       // inited
       this.inited = true;
     },
-    onPageRefresh(force) {},
+    onPageRefresh(/* force*/) {
+      this.loadDetails();
+    },
     onPageInfinite() {},
     onPageClear() {
       // items
@@ -49,8 +51,9 @@ export default {
       const index = this.items.findIndex(item => item.detailId === detailId);
       return { pageNum: 1, items: this.items, index };
     },
-    spliceItem(items, index) {
-      items.splice(index, 1);
+    spliceItem(items, index, howmany, ...args) {
+      if (howmany === undefined) howmany = 1;
+      return items.splice(index, howmany, ...args);
     },
   },
 };

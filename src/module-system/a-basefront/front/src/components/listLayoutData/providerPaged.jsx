@@ -71,9 +71,10 @@ export default {
       }
       return { pageNum: null, items: null, index: -1 };
     },
-    spliceItem(items, index) {
-      items.splice(index, 1);
-      this.info.total -= 1;
+    spliceItem(items, index, howmany, ...args) {
+      if (howmany === undefined) howmany = 1;
+      this.info.total -= howmany - args.length;
+      return items.splice(index, howmany, ...args);
     },
     gotoPage(pageNum) {
       // check if same
