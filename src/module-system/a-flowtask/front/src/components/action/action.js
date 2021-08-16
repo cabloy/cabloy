@@ -1,4 +1,5 @@
 import ActionViewAtom from './action/actionViewAtom.js';
+import ActionAssigneesConfirmation from './action/actionAssigneesConfirmation.js';
 
 export default {
   meta: {
@@ -6,6 +7,7 @@ export default {
   },
   mixins: [
     ActionViewAtom, //
+    ActionAssigneesConfirmation,
   ],
   props: {
     ctx: {
@@ -39,7 +41,7 @@ export default {
       if (action.name === 'viewAtom') {
         return await this._onActionViewAtom();
       } else if (action.name === 'assigneesConfirmation') {
-        return await this._assigneesConfirmation({ ctx, action, flowLayoutManager, task, flowTaskId });
+        return await this._onActionAssigneesConfirmation();
       } else if (action.name === 'cancelFlow') {
         return await this._cancelFlow({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'handleTask') {
@@ -90,32 +92,6 @@ export default {
       }
       // navigate
       ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=edit`, navigateOptions);
-    },
-    async _assigneesConfirmation({ ctx, flowLayoutManager, flowTaskId }) {
-      // assignees
-      const assignees = await ctx.$api.post('/a/flowtask/task/assignees', {
-        flowTaskId,
-      });
-      // navigate options
-      const navigateOptions = {
-        context: {
-          params: {
-            flowTaskId,
-            assignees,
-          },
-          callback: code => {
-            if (code === 200) {
-              flowLayoutManager.base_loadData().then(() => {});
-            }
-          },
-        },
-      };
-      if (ctx.$pageRoute.path === '/a/flowtask/flowTaskAtom') {
-        navigateOptions.target = '_self';
-        navigateOptions.reloadCurrent = true;
-      }
-      // navigate
-      ctx.$view.navigate(`/a/flowtask/assigneesConfirmation?flowTaskId=${flowTaskId}`, navigateOptions);
     },
     async _recall({ ctx, flowLayoutManager, flowTaskId }) {
       await ctx.$view.dialog.confirm(ctx.$text('RecallPrompt'));
