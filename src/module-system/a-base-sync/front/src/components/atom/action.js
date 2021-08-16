@@ -8,6 +8,7 @@ import ActionHistory from './action/actionHistory.js';
 import ActionFormal from './action/actionFormal.js';
 import ActionDraft from './action/actionDraft.js';
 import ActionSelectLocale from './action/actionSelectLocale.js';
+import ActionSelectResourceType from './action/actionSelectResourceType.js';
 
 export default {
   meta: {
@@ -24,6 +25,7 @@ export default {
     ActionFormal,
     ActionDraft,
     ActionSelectLocale,
+    ActionSelectResourceType,
   ],
   props: {
     ctx: {
@@ -60,7 +62,7 @@ export default {
       } else if (action.name === 'selectLocale') {
         return await this._onActionSelectLocale();
       } else if (action.name === 'selectResourceType') {
-        return await this._onActionSelectResourceType({ ctx, action, item });
+        return await this._onActionSelectResourceType();
       } else if (action.name === 'enable') {
         const key = { atomId: item.atomId, itemId: item.itemId };
         return await this._onActionEnable({ ctx, key });
@@ -80,43 +82,7 @@ export default {
       actionRead = ctx.$utils.extend({}, actionRead);
       await ctx.$meta.util.performAction({ ctx, action: actionRead, item: { atomId } });
     },
-    async _onActionSelectResourceType({ ctx, action /* , item*/ }) {
-      const resourceTypes = await ctx.$store.dispatch('a/base/getResourceTypes');
-      // choose
-      return new Promise((resolve, reject) => {
-        const hostEl = ctx.$view.getHostEl();
-        const targetEl = action.targetEl;
-        const buttons = [
-          {
-            text: ctx.$text('SelectResourceTypeTip'),
-            label: true,
-          },
-        ];
-        let resolved = false;
-        function onButtonClick(locale) {
-          resolved = true;
-          resolve(locale);
-        }
-        for (const key in resourceTypes) {
-          const resourceType = resourceTypes[key];
-          buttons.push({
-            text: resourceType.titleLocale,
-            onClick: () => {
-              onButtonClick(key);
-            },
-          });
-        }
-        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
-        function onActionsClosed() {
-          actions.destroy();
-          if (!resolved) {
-            resolved = true;
-            reject(new Error());
-          }
-        }
-        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
-      });
-    },
+
     async _onActionEnable({ ctx, key }) {
       await ctx.$api.post('/a/base/atom/enable', { key });
       ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
