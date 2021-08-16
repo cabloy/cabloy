@@ -1,23 +1,63 @@
+import ActionCreate from './action/actionCreate.js';
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [
+    ActionCreate, //
+  ],
+  props: {
+    ctx: {
+      type: Object,
+    },
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      detailItem: null,
+      meta: null,
+      //
+      flowTaskId: 0,
+      atomKey: null,
+      detailKey: null,
+      detailClass: null,
+    };
+  },
+  created() {
+    this.init();
+  },
   methods: {
-    async onAction({ ctx, action, item: { item, meta } }) {
+    init() {
+      // detailItem
+      this.detailItem = this.item.item;
+      // meta
+      this.meta = this.item.meta;
       // flowTaskId
-      const flowTaskId = (meta && meta.flowTaskId) || 0;
+      this.flowTaskId = (this.meta && this.meta.flowTaskId) || 0;
       // atomKey
-      const atomKey = { atomId: item.atomId };
+      this.atomKey = { atomId: this.detailItem.atomId };
       // key
-      const key = { detailId: item.detailId, detailItemId: item.detailItemId };
-      // detailClass
-      const detailClass = {
-        module: item.module,
-        detailClassName: item.detailClassName,
+      this.detailKey = {
+        detailId: this.detailItem.detailId,
+        detailItemId: this.detailItem.detailItemId,
       };
+      // detailClass
+      this.detailClass = {
+        module: this.detailItem.module,
+        detailClassName: this.detailItem.detailClassName,
+      };
+    },
+    async onAction() {
+      const action = this.action;
       // do
       if (action.name === 'create' || action.action === 'create') {
-        return await this._onActionCreate({ ctx, action, item, meta, atomKey, detailClass });
+        return await this._onActionCreate();
       } else if (action.name === 'delete') {
         // delete
         await ctx.$view.dialog.confirm();
@@ -89,28 +129,6 @@ export default {
         const result = await ctx.$api.post('/a/detail/detail/moveDown', { flowTaskId, key });
         ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
       }
-    },
-    async _onActionCreate({ ctx, action, item, meta, atomKey, detailClass }) {
-      // create
-      const key = await ctx.$api.post('/a/detail/detail/create', {
-        flowTaskId: meta.flowTaskId,
-        atomKey,
-        detailClass,
-        item,
-      });
-      // event
-      ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
-      // menu
-      if (action.menu === 1 || action.actionComponent || action.actionPath) {
-        item = ctx.$utils.extend({}, item, key);
-        // write
-        const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
-        let actionWrite = actionsAll[item.module][item.detailClassName].write;
-        actionWrite = ctx.$utils.extend({}, actionWrite);
-        await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: { item, meta } });
-      }
-      // just return key
-      return key;
     },
   },
 };
