@@ -22,8 +22,7 @@ export default {
       }
     },
     async onAction_deleteBulk() {
-      const ctx = this.ctx;
-      const item = this.item;
+      const { ctx, item } = this.$props;
       // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
@@ -50,8 +49,7 @@ export default {
       return this.$text('DeleteBulkNotAllDone');
     },
     async onAction_exportBulk() {
-      const ctx = this.ctx;
-      const item = this.item;
+      const { ctx, item } = this.$props;
       // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
