@@ -1,5 +1,6 @@
 import ActionCreate from './action/actionCreate.js';
 import ActionDelete from './action/actionDelete.js';
+import ActionWrite from './action/actionWrite.js';
 
 export default {
   meta: {
@@ -8,6 +9,7 @@ export default {
   mixins: [
     ActionCreate, //
     ActionDelete,
+    ActionWrite,
   ],
   props: {
     ctx: {
@@ -61,26 +63,7 @@ export default {
           });
         }
       } else if (action.name === 'write') {
-        const key = { atomId: item.atomId, itemId: item.itemId };
-        // openDraft
-        const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
-        const keyWrite = data.draft ? data.draft.key : data.formal.key;
-        const changed = data.changed;
-        // navigate
-        const _item = {
-          ...item,
-          atomId: keyWrite.atomId,
-          itemId: keyWrite.itemId,
-        };
-        const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
-        ctx.$view.navigate(url, action.navigateOptions);
-        // event: neednot check atomStage
-        // if (item.atomStage > 0) {
-        //   ctx.$meta.eventHub.$emit('atom:actions', { key });
-        // }
-        if (changed) {
-          ctx.$meta.eventHub.$emit('atom:actions', { key });
-        }
+        return await this._onActionWrite();
       } else if (action.name === 'clone') {
         // clone
         await ctx.$view.dialog.confirm();
