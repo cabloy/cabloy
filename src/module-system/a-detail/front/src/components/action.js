@@ -4,6 +4,8 @@ import ActionDelete from './action/actionDelete.js';
 import ActionSave from './action/actionSave.js';
 import ActionRead from './action/actionRead.js';
 import ActionClone from './action/actionClone.js';
+import ActionMoveUp from './action/actionMoveUp.js';
+import ActionMoveDown from './action/actionMoveDown.js';
 
 export default {
   meta: {
@@ -16,6 +18,8 @@ export default {
     ActionSave,
     ActionRead,
     ActionClone,
+    ActionMoveUp,
+    ActionMoveDown,
   ],
   props: {
     ctx: {
@@ -79,13 +83,9 @@ export default {
       } else if (action.name === 'clone') {
         return await this._onActionClone();
       } else if (action.name === 'moveUp') {
-        // moveUp
-        const result = await ctx.$api.post('/a/detail/detail/moveUp', { flowTaskId, key });
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
+        return await this._onActionMoveUp();
       } else if (action.name === 'moveDown') {
-        // moveUp
-        const result = await ctx.$api.post('/a/detail/detail/moveDown', { flowTaskId, key });
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action, result });
+        return await this._onActionMoveDown();
       }
     },
   },
