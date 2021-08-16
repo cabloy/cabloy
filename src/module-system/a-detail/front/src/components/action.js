@@ -1,6 +1,8 @@
 import ActionCreate from './action/actionCreate.js';
 import ActionWrite from './action/actionWrite.js';
 import ActionDelete from './action/actionDelete.js';
+import ActionSave from './action/actionSave.js';
+import ActionRead from './action/actionRead.js';
 
 export default {
   meta: {
@@ -10,6 +12,8 @@ export default {
     ActionCreate, //
     ActionWrite,
     ActionDelete,
+    ActionSave,
+    ActionRead,
   ],
   props: {
     ctx: {
@@ -65,20 +69,9 @@ export default {
       } else if (action.name === 'delete') {
         return await this._onActionDelete();
       } else if (action.name === 'save') {
-        // save
-        await ctx.$api.post('/a/detail/detail/write', { flowTaskId, key, item });
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
-        // toast
-        return ctx.$text('Saved');
+        return await this._onActionSave();
       } else if (action.name === 'read') {
-        const queries = {
-          mode: 'view',
-          detailId: item.detailId,
-          detailItemId: item.detailItemId,
-          flowTaskId,
-        };
-        const url = ctx.$meta.util.combineQueries('/a/detail/detail/item', queries);
-        ctx.$view.navigate(url, action.navigateOptions);
+        return await this._onActionRead();
       } else if (action.name === 'write') {
         return await this._onActionWrite();
       } else if (action.name === 'clone') {
