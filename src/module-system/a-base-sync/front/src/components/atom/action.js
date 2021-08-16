@@ -11,6 +11,7 @@ import ActionSelectLocale from './action/actionSelectLocale.js';
 import ActionSelectResourceType from './action/actionSelectResourceType.js';
 import ActionEnable from './action/actionEnable.js';
 import ActionDisable from './action/actionDisable.js';
+import ActionWorkflow from './action/actionWorkflow.js';
 
 export default {
   meta: {
@@ -30,6 +31,7 @@ export default {
     ActionSelectResourceType,
     ActionEnable,
     ActionDisable,
+    ActionWorkflow,
   ],
   props: {
     ctx: {
@@ -72,9 +74,7 @@ export default {
       } else if (action.name === 'disable') {
         return await this._onActionDisable();
       } else if (action.name === 'workflow') {
-        const flowId = item.atomFlowId;
-        const url = `/a/flowtask/flow?flowId=${flowId}`;
-        ctx.$view.navigate(url, {});
+        return await this._onActionWorkflow();
       }
     },
     async _onActionReadGeneral({ atomId }) {
