@@ -9,6 +9,8 @@ import ActionFormal from './action/actionFormal.js';
 import ActionDraft from './action/actionDraft.js';
 import ActionSelectLocale from './action/actionSelectLocale.js';
 import ActionSelectResourceType from './action/actionSelectResourceType.js';
+import ActionEnable from './action/actionEnable.js';
+import ActionDisable from './action/actionDisable.js';
 
 export default {
   meta: {
@@ -26,6 +28,8 @@ export default {
     ActionDraft,
     ActionSelectLocale,
     ActionSelectResourceType,
+    ActionEnable,
+    ActionDisable,
   ],
   props: {
     ctx: {
@@ -64,11 +68,9 @@ export default {
       } else if (action.name === 'selectResourceType') {
         return await this._onActionSelectResourceType();
       } else if (action.name === 'enable') {
-        const key = { atomId: item.atomId, itemId: item.itemId };
-        return await this._onActionEnable({ ctx, key });
+        return await this._onActionEnable();
       } else if (action.name === 'disable') {
-        const key = { atomId: item.atomId, itemId: item.itemId };
-        return await this._onActionDisable({ ctx, key });
+        return await this._onActionDisable();
       } else if (action.name === 'workflow') {
         const flowId = item.atomFlowId;
         const url = `/a/flowtask/flow?flowId=${flowId}`;
@@ -81,15 +83,6 @@ export default {
       let actionRead = actionsAll[item.module][item.atomClassName].read;
       actionRead = ctx.$utils.extend({}, actionRead);
       await ctx.$meta.util.performAction({ ctx, action: actionRead, item: { atomId } });
-    },
-
-    async _onActionEnable({ ctx, key }) {
-      await ctx.$api.post('/a/base/atom/enable', { key });
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
-    },
-    async _onActionDisable({ ctx, key }) {
-      await ctx.$api.post('/a/base/atom/disable', { key });
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
     },
   },
 };
