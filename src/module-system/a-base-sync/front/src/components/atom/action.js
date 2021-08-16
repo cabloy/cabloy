@@ -4,6 +4,7 @@ import ActionSave from './action/actionSave.js';
 import ActionSubmit from './action/actionSubmit.js';
 import ActionWrite from './action/actionWrite.js';
 import ActionClone from './action/actionClone.js';
+import ActionHistory from './action/actionHistory.js';
 
 export default {
   meta: {
@@ -16,6 +17,7 @@ export default {
     ActionSubmit,
     ActionWrite,
     ActionClone,
+    ActionHistory,
   ],
   props: {
     ctx: {
@@ -44,30 +46,7 @@ export default {
       } else if (action.name === 'clone') {
         return await this._onActionClone();
       } else if (action.name === 'history') {
-        const atomIdFormal = item.atomStage === 1 ? item.atomId : item.atomIdFormal;
-        if (!atomIdFormal) return;
-        // options
-        const options = {
-          where: {
-            'a.atomIdFormal': atomIdFormal,
-          },
-          stage: 'history',
-        };
-        // params
-        // const params = {
-        //   pageTitle: `${this.$text('History')}: ${item.atomName}`,
-        // };
-        // queries
-        const queries = {
-          module: item.module,
-          atomClassName: item.atomClassName,
-          options: JSON.stringify(options),
-          // params: JSON.stringify(params),
-        };
-        const url = ctx.$meta.util.combineQueries('/a/basefront/atom/list', queries);
-        ctx.$view.navigate(url, {
-          // target: '_self'
-        });
+        return await this._onActionHistory();
       } else if (action.name === 'formal') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdFormal });
       } else if (action.name === 'draft') {
@@ -88,7 +67,8 @@ export default {
         ctx.$view.navigate(url, {});
       }
     },
-    async _onActionRead({ ctx, item, atomId }) {
+    async _onActionRead({ atomId }) {
+      const { ctx, item } = this.$props;
       const actionsAll = await ctx.$store.dispatch('a/base/getActions');
       let actionRead = actionsAll[item.module][item.atomClassName].read;
       actionRead = ctx.$utils.extend({}, actionRead);
