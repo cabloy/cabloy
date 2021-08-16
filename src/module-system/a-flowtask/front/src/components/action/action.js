@@ -1,15 +1,43 @@
-import Vue from 'vue';
+import ActionViewAtom from './action/actionViewAtom.js';
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [
+    ActionViewAtom, //
+  ],
+  props: {
+    ctx: {
+      type: Object,
+    },
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      flowLayoutManager: null,
+      task: null,
+      flowTaskId: 0,
+    };
+  },
+  created() {
+    this.init();
+  },
   methods: {
-    async onAction({ ctx, action, item }) {
-      const flowLayoutManager = item.flowLayoutManager;
-      const task = item.task;
-      const flowTaskId = task.flowTaskId;
+    init() {
+      this.flowLayoutManager = this.item.flowLayoutManager;
+      this.task = this.item.task;
+      this.flowTaskId = this.task.flowTaskId;
+    },
+    async onAction() {
+      const action = this.action;
       if (action.name === 'viewAtom') {
-        return await this._viewAtom({ ctx, action, flowLayoutManager, task, flowTaskId });
+        return await this._onActionViewAtom();
       } else if (action.name === 'assigneesConfirmation') {
         return await this._assigneesConfirmation({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'cancelFlow') {
@@ -19,25 +47,6 @@ export default {
       } else if (action.name === 'recall') {
         return await this._recall({ ctx, action, flowLayoutManager, task, flowTaskId });
       }
-    },
-    async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
-      // load schema and item
-      if (!task._viewAtomData) {
-        const data = await ctx.$api.post('/a/flowtask/task/viewAtom', {
-          flowTaskId,
-        });
-        Vue.set(task, '_viewAtomData', data);
-      }
-      // navigate
-      ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=view`, {
-        context: {
-          params: {
-            flowLayoutManager,
-            task,
-            data: task._viewAtomData,
-          },
-        },
-      });
     },
     async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
       // claim first
