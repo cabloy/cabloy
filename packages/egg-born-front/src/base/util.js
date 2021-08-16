@@ -211,7 +211,8 @@ export default function (Vue) {
       const _component = Object.assign({}, component, options);
       return new Vue(_component);
     },
-    async performAction({ ctx, action, item }) {
+    async performAction(args) {
+      const { ctx, action, item } = args;
       // actionPath
       if (!action.actionComponent) {
         const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
@@ -229,9 +230,18 @@ export default function (Vue) {
       const module = await Vue.prototype.$meta.module.use(action.actionModule);
       const component = module.options.components[action.actionComponent];
       if (!component) throw new Error(`actionComponent not found: ${action.actionComponent}`);
-      const componentInstance = new Vue(component);
+      // options
+      const options = {};
+      if (component.props) {
+        options.propsData = {};
+        for (const key in component.props) {
+          options.propsData[key] = args[key];
+        }
+      }
+      // create instance
+      const componentInstance = this.createComponentInstance(component, options);
       try {
-        const res = await componentInstance.onAction({ ctx, action, item });
+        const res = await componentInstance.onAction(args);
         componentInstance.$destroy();
         return res;
       } catch (err) {
