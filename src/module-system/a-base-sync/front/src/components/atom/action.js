@@ -1,5 +1,7 @@
 import ActionCreate from './action/actionCreate.js';
 import ActionDelete from './action/actionDelete.js';
+import ActionSave from './action/actionSave.js';
+import ActionSubmit from './action/actionSubmit.js';
 import ActionWrite from './action/actionWrite.js';
 
 export default {
@@ -9,6 +11,8 @@ export default {
   mixins: [
     ActionCreate, //
     ActionDelete,
+    ActionSave,
+    ActionSubmit,
     ActionWrite,
   ],
   props: {
@@ -30,38 +34,9 @@ export default {
       } else if (action.name === 'delete') {
         return await this._onActionDelete();
       } else if (action.name === 'save') {
-        // save
-        const key = { atomId: item.atomId, itemId: item.itemId };
-        await ctx.$api.post('/a/base/atom/write', { key, item });
-        ctx.$meta.eventHub.$emit('atom:action', { key, action });
-        // toast
-        return ctx.$text('Saved');
+        return await this._onActionSave();
       } else if (action.name === 'submit') {
-        // submit
-        await ctx.$view.dialog.confirm();
-        const key = { atomId: item.atomId, itemId: item.itemId };
-        const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
-        if (data.formal) {
-          // delete draft
-          if (item.atomStage === 0) {
-            ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
-          }
-          // update formal
-          ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
-          // back
-          ctx.$f7router.back();
-        } else {
-          // flow
-          const flow = data.flow;
-          // update draft
-          ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
-          // navigate replace self
-          const url = `/a/flowtask/flow?flowId=${flow.id}`;
-          ctx.$view.navigate(url, {
-            target: '_self',
-            reloadCurrent: true,
-          });
-        }
+        return await this._onActionSubmit();
       } else if (action.name === 'write') {
         return await this._onActionWrite();
       } else if (action.name === 'clone') {
