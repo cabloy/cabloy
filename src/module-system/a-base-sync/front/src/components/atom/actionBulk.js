@@ -2,15 +2,28 @@ export default {
   meta: {
     global: false,
   },
+  props: {
+    ctx: {
+      type: Object,
+    },
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
+    },
+  },
   methods: {
-    async onAction({ ctx, action, item }) {
-      if (action.name === 'deleteBulk') {
-        return await this.onAction_deleteBulk({ ctx, item });
-      } else if (action.name === 'exportBulk') {
-        return await this.onAction_exportBulk({ ctx, item });
+    async onAction() {
+      if (this.action.name === 'deleteBulk') {
+        return await this.onAction_deleteBulk();
+      } else if (this.action.name === 'exportBulk') {
+        return await this.onAction_exportBulk();
       }
     },
-    async onAction_deleteBulk({ ctx, item }) {
+    async onAction_deleteBulk() {
+      const ctx = this.ctx;
+      const item = this.item;
       // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
@@ -36,7 +49,9 @@ export default {
       if (res.keys.length === keys.length) return true;
       return this.$text('DeleteBulkNotAllDone');
     },
-    async onAction_exportBulk({ ctx, item }) {
+    async onAction_exportBulk() {
+      const ctx = this.ctx;
+      const item = this.item;
       // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
