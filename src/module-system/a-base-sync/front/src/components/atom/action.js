@@ -5,6 +5,8 @@ import ActionSubmit from './action/actionSubmit.js';
 import ActionWrite from './action/actionWrite.js';
 import ActionClone from './action/actionClone.js';
 import ActionHistory from './action/actionHistory.js';
+import ActionFormal from './action/actionFormal.js';
+import ActionDraft from './action/actionDraft.js';
 
 export default {
   meta: {
@@ -18,6 +20,8 @@ export default {
     ActionWrite,
     ActionClone,
     ActionHistory,
+    ActionFormal,
+    ActionDraft,
   ],
   props: {
     ctx: {
@@ -48,9 +52,9 @@ export default {
       } else if (action.name === 'history') {
         return await this._onActionHistory();
       } else if (action.name === 'formal') {
-        await this._onActionRead({ ctx, item, atomId: item.atomIdFormal });
+        return await this._onActionFormal();
       } else if (action.name === 'draft') {
-        await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
+        return await this._onActionDraft();
       } else if (action.name === 'selectLocale') {
         return await this._onActionSelectLocale({ ctx, action, item });
       } else if (action.name === 'selectResourceType') {
@@ -67,7 +71,7 @@ export default {
         ctx.$view.navigate(url, {});
       }
     },
-    async _onActionRead({ atomId }) {
+    async _onActionReadGeneral({ atomId }) {
       const { ctx, item } = this.$props;
       const actionsAll = await ctx.$store.dispatch('a/base/getActions');
       let actionRead = actionsAll[item.module][item.atomClassName].read;
