@@ -1,5 +1,6 @@
 import ActionCreate from './action/actionCreate.js';
 import ActionWrite from './action/actionWrite.js';
+import ActionDelete from './action/actionDelete.js';
 
 export default {
   meta: {
@@ -8,6 +9,7 @@ export default {
   mixins: [
     ActionCreate, //
     ActionWrite,
+    ActionDelete,
   ],
   props: {
     ctx: {
@@ -61,16 +63,7 @@ export default {
       if (action.name === 'create' || action.action === 'create') {
         return await this._onActionCreate();
       } else if (action.name === 'delete') {
-        // delete
-        await ctx.$view.dialog.confirm();
-        // delete
-        await ctx.$api.post('/a/detail/detail/delete', { flowTaskId, key });
-        // event
-        ctx.$meta.eventHub.$emit('detail:action', { atomKey, detailClass, key, action });
-        // back
-        if (ctx.$pageRoute.path === '/a/detail/detail/item') {
-          ctx.$f7router.back();
-        }
+        return await this._onActionDelete();
       } else if (action.name === 'save') {
         // save
         await ctx.$api.post('/a/detail/detail/write', { flowTaskId, key, item });
