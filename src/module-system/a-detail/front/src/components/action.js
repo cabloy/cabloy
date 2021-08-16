@@ -1,4 +1,5 @@
 import ActionCreate from './action/actionCreate.js';
+import ActionWrite from './action/actionWrite.js';
 
 export default {
   meta: {
@@ -6,6 +7,7 @@ export default {
   },
   mixins: [
     ActionCreate, //
+    ActionWrite,
   ],
   props: {
     ctx: {
@@ -85,14 +87,7 @@ export default {
         const url = ctx.$meta.util.combineQueries('/a/detail/detail/item', queries);
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'write') {
-        const queries = {
-          mode: 'edit',
-          detailId: item.detailId,
-          detailItemId: item.detailItemId,
-          flowTaskId,
-        };
-        const url = ctx.$meta.util.combineQueries('/a/detail/detail/item', queries);
-        ctx.$view.navigate(url, action.navigateOptions);
+        return await this._onActionWrite();
       } else if (action.name === 'clone') {
         // clone
         try {
