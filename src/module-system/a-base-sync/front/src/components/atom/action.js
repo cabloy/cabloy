@@ -3,6 +3,7 @@ import ActionDelete from './action/actionDelete.js';
 import ActionSave from './action/actionSave.js';
 import ActionSubmit from './action/actionSubmit.js';
 import ActionWrite from './action/actionWrite.js';
+import ActionClone from './action/actionClone.js';
 
 export default {
   meta: {
@@ -14,6 +15,7 @@ export default {
     ActionSave,
     ActionSubmit,
     ActionWrite,
+    ActionClone,
   ],
   props: {
     ctx: {
@@ -40,29 +42,7 @@ export default {
       } else if (action.name === 'write') {
         return await this._onActionWrite();
       } else if (action.name === 'clone') {
-        // clone
-        await ctx.$view.dialog.confirm();
-        try {
-          const key = { atomId: item.atomId, itemId: item.itemId };
-          const data = await ctx.$api.post('/a/base/atom/clone', { key });
-          const keyDraft = data.draft.key;
-          const _item = {
-            ...item,
-            atomId: keyDraft.atomId,
-            itemId: keyDraft.itemId,
-          };
-          const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
-          let navigateOptions = action.navigateOptions;
-          if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
-            navigateOptions = { target: '_self' };
-          }
-          ctx.$view.navigate(url, navigateOptions);
-        } catch (err) {
-          if (err.code === 422) {
-            throw new Error(err.message[0].message);
-          }
-          throw err;
-        }
+        return await this._onActionClone();
       } else if (action.name === 'history') {
         const atomIdFormal = item.atomStage === 1 ? item.atomId : item.atomIdFormal;
         if (!atomIdFormal) return;
