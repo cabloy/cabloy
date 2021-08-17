@@ -13,8 +13,9 @@ export default {
     layout_get() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
-    async layout_prepareConfig() {
-      this.layout.current = this.container.layout || this.layout_get();
+    async layout_prepareConfig(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom

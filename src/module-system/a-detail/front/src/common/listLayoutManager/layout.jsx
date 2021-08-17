@@ -8,15 +8,15 @@ export default {
       },
     };
   },
-  created() {
-    this.layout.current = this.container.layout || this.layout_get();
-  },
+  created() {},
   methods: {
     layout_get() {
       // return 'table';
       return this.$view.size === 'small' ? 'list' : 'table';
     },
-    async layout_prepareConfig() {
+    async layout_prepareConfig(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
       // configDetailBase
       this.base.configDetailBase = this.$meta.config.modules['a-detail'].detail;
       // configDetail
