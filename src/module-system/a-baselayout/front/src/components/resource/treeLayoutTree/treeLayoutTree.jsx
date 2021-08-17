@@ -16,7 +16,12 @@ export default {
     };
   },
   created() {
+    // eslint-disable-next-line
     this.layoutManager.layout.instance = this;
+  },
+  beforeDestroy() {
+    // eslint-disable-next-line
+    this.layoutManager.layout.instance = null;
   },
   methods: {
     getBlockComponentOptions({ blockConfig }) {
