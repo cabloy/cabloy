@@ -1,25 +1,17 @@
+import Vue from 'vue';
 import ActionPartyOver from './action/actionPartyOver.js';
 import ActionPartyOverBulk from './action/actionPartyOverBulk.js';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
   meta: {
     global: false,
   },
   mixins: [
-    ActionPartyOver, //
+    ebActionBase, //
+    ActionPartyOver,
     ActionPartyOverBulk,
   ],
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
   methods: {
     async onAction() {
       if (this.action.name === 'partyOver') {
