@@ -17,8 +17,10 @@ export default {
     this.init();
   },
   beforeDestroy() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = null;
+    if (this.layoutManager.layout.instance === this) {
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = null;
+    }
   },
   methods: {
     init() {

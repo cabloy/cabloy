@@ -20,8 +20,10 @@ export default {
     this.layoutManager.layout.instance = this;
   },
   beforeDestroy() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = null;
+    if (this.layoutManager.layout.instance === this) {
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = null;
+    }
   },
   methods: {
     onPageRefresh(force) {

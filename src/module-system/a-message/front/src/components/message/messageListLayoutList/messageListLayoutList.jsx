@@ -22,8 +22,10 @@ export default {
     this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
   },
   beforeDestroy() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = null;
+    if (this.layoutManager.layout.instance === this) {
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = null;
+    }
   },
   methods: {
     onPageRefresh(force) {
