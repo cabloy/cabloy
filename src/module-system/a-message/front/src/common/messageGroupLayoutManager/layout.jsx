@@ -8,14 +8,14 @@ export default {
       },
     };
   },
-  created() {
-    this.layout.current = this.container.layout || this.layout_get();
-  },
+  created() {},
   methods: {
     layout_get() {
       return 'list';
     },
-    async layout_prepareConfig() {
+    async layout_prepareConfig(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
       // configMessageBase
       this.base.configMessageBase = this.$meta.config.modules['a-message'].message;
       // config
