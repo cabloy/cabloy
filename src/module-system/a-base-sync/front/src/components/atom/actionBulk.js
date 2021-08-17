@@ -1,3 +1,4 @@
+import ActionBase from '../../common/actionBase.js';
 import ActionBulkDelete from './actionBulk/actionBulkDelete.js';
 import ActionBulkExport from './actionBulk/actionBulkExport.js';
 
@@ -6,20 +7,10 @@ export default {
     global: false,
   },
   mixins: [
-    ActionBulkDelete, //
+    ActionBase, //
+    ActionBulkDelete,
     ActionBulkExport,
   ],
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
   methods: {
     async onAction() {
       if (this.action.name === 'deleteBulk') {

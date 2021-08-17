@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import ActionCreate from './action/actionCreate.js';
 import ActionWrite from './action/actionWrite.js';
 import ActionDelete from './action/actionDelete.js';
@@ -6,13 +7,15 @@ import ActionRead from './action/actionRead.js';
 import ActionClone from './action/actionClone.js';
 import ActionMoveUp from './action/actionMoveUp.js';
 import ActionMoveDown from './action/actionMoveDown.js';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
   meta: {
     global: false,
   },
   mixins: [
-    ActionCreate, //
+    ebActionBase, //
+    ActionCreate,
     ActionWrite,
     ActionDelete,
     ActionSave,
@@ -21,17 +24,6 @@ export default {
     ActionMoveUp,
     ActionMoveDown,
   ],
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
   data() {
     return {
       detailItem: null,

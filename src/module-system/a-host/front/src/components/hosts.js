@@ -1,18 +1,13 @@
+import Vue from 'vue';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
+
 export default {
   meta: {
     global: false,
   },
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
+  mixins: [
+    ebActionBase, //
+  ],
   methods: {
     async onAction() {
       if (this.action.name === 'register') return this._register();
