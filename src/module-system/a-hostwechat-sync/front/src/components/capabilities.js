@@ -2,11 +2,23 @@ export default {
   meta: {
     global: false,
   },
-  methods: {
-    async onAction({ ctx, action, item }) {
-      if (action.name === 'shareLink') return await this._shareLink({ ctx, action, item });
+  props: {
+    ctx: {
+      type: Object,
     },
-    async _get_wx({ ctx }) {
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
+    },
+  },
+  methods: {
+    async onAction() {
+      if (this.action.name === 'shareLink') return await this._shareLink();
+    },
+    async _get_wx() {
+      const { ctx } = this.$props;
       const action = {
         actionModule: 'a-wechat',
         actionComponent: 'jssdk',
@@ -15,8 +27,9 @@ export default {
       const res = await this.$meta.util.performAction({ ctx, action });
       return res && res.wx;
     },
-    async _shareLink({ ctx, item }) {
-      const wx = await this._get_wx({ ctx });
+    async _shareLink() {
+      const { item } = this.$props;
+      const wx = await this._get_wx();
       if (!wx) return;
       // 分享给朋友
       wx.updateAppMessageShareData({
