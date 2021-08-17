@@ -7,13 +7,14 @@ module.exports = app => {
       atomName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Name',
+        ebTitle: 'Title',
         notEmpty: true,
       },
-      description: {
+      content: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'Content',
+        ebTextarea: true,
       },
     },
   };
