@@ -29,7 +29,6 @@ export default {
     });
   },
   beforeDestroy() {
-    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
   },
 };

@@ -16,8 +16,13 @@ export default {
     };
   },
   created() {
+    // eslint-disable-next-line
     this.layoutManager.layout.instance = this;
     this.onLoad();
+  },
+  beforeDestroy() {
+    // eslint-disable-next-line
+    this.layoutManager.layout.instance = null;
   },
   methods: {
     async onLoad() {
