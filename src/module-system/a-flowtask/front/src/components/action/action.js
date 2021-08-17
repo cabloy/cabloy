@@ -1,31 +1,23 @@
+import Vue from 'vue';
 import ActionViewAtom from './action/actionViewAtom.js';
 import ActionAssigneesConfirmation from './action/actionAssigneesConfirmation.js';
 import ActionCancelFlow from './action/actionCancelFlow.js';
 import ActionHandleTask from './action/actionHandleTask.js';
 import ActionRecall from './action/actionRecall.js';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
   meta: {
     global: false,
   },
   mixins: [
-    ActionViewAtom, //
+    ebActionBase, //
+    ActionViewAtom,
     ActionAssigneesConfirmation,
     ActionCancelFlow,
     ActionHandleTask,
     ActionRecall,
   ],
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
   data() {
     return {
       flowLayoutManager: null,
