@@ -31,7 +31,7 @@ async function __onLoaded({ moduleInfo }) {
 }
 
 async function __register({ moduleInfo }) {
-  const hostName = 'test-hostsimple';
+  const hostName = 'test-simple';
   const capabilityName = 'shareLink';
   // register host
   await Vue.prototype.$meta.util.performAction({
