@@ -1,3 +1,4 @@
+import ActionBase from '../../common/actionBase.js';
 import ActionCreate from './action/actionCreate.js';
 import ActionDelete from './action/actionDelete.js';
 import ActionSave from './action/actionSave.js';
@@ -18,7 +19,8 @@ export default {
     global: false,
   },
   mixins: [
-    ActionCreate, //
+    ActionBase, //
+    ActionCreate,
     ActionDelete,
     ActionSave,
     ActionSubmit,
@@ -33,17 +35,6 @@ export default {
     ActionDisable,
     ActionWorkflow,
   ],
-  props: {
-    ctx: {
-      type: Object,
-    },
-    action: {
-      type: Object,
-    },
-    item: {
-      type: Object,
-    },
-  },
   methods: {
     async onAction() {
       const { action } = this.$props;

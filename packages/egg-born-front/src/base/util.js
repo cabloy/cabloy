@@ -211,6 +211,14 @@ export default function (Vue) {
       const _component = Object.assign({}, component, options);
       return new Vue(_component);
     },
+    _combineComponentsProps(parent, component) {
+      if (component.mixins) {
+        for (const mixin of component.mixins) {
+          this._combineComponentsProps(parent, mixin);
+        }
+      }
+      Object.assign(parent, component.props);
+    },
     async performAction(args) {
       const { ctx, action, item } = args;
       // actionPath
@@ -230,11 +238,14 @@ export default function (Vue) {
       const module = await Vue.prototype.$meta.module.use(action.actionModule);
       const component = module.options.components[action.actionComponent];
       if (!component) throw new Error(`actionComponent not found: ${action.actionComponent}`);
+      // componentProps
+      const componentProps = {};
+      this._combineComponentsProps(componentProps, component);
       // options
       const options = {};
-      if (component.props) {
+      if (componentProps) {
         options.propsData = {};
-        for (const key in component.props) {
+        for (const key in componentProps) {
           options.propsData[key] = args[key];
         }
       }
