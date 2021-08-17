@@ -104,7 +104,7 @@ export default {
               title: {
                 component: {
                   module: 'a-baselayout',
-                  name: 'listLayoutBlockTableTitle',
+                  name: 'listLayoutBlockListTitle',
                 },
               },
               items: {

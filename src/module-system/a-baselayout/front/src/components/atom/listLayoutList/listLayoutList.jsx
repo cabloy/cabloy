@@ -24,10 +24,8 @@ export default {
     async init() {
       // eslint-disable-next-line
       this.layoutManager.layout.instance = this;
-      if (this.layoutManager.container.atomClass && this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting') {
-        // eslint-disable-next-line
-        this.layoutManager.subnavbar.enable = true;
-      }
+      // subnavbar
+      this.layoutManager.subnavbar_policyDefault();
       // provider switch
       await this.layoutManager.data_providerSwitch({
         providerName: 'continuous',

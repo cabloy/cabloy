@@ -27,6 +27,8 @@ export default {
     async init() {
       // eslint-disable-next-line
       this.layoutManager.layout.instance = this;
+      // subnavbar
+      this.layoutManager.subnavbar_policyDefault();
       // eslint-disable-next-line
       this.layoutManager.bottombar.enable = true;
       // provider switch
