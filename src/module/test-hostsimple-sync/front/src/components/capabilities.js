@@ -2,11 +2,23 @@ export default {
   meta: {
     global: false,
   },
-  methods: {
-    onAction({ ctx, action, item }) {
-      if (action.name === 'shareLink') return this._shareLink({ ctx, action, item });
+  props: {
+    ctx: {
+      type: Object,
     },
-    _shareLink({ item }) {
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
+    },
+  },
+  methods: {
+    onAction() {
+      if (this.action.name === 'shareLink') return this._shareLink();
+    },
+    _shareLink() {
+      const item = this.item;
       console.log(item);
       if (item.success) {
         item.success();
