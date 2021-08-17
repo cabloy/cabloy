@@ -11,6 +11,7 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
+            summary TEXT DEFAULT NULL,
             content LONGTEXT DEFAULT NULL,
             html LONGTEXT DEFAULT NULL,
             PRIMARY KEY (id)

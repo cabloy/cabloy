@@ -53,7 +53,7 @@ module.exports = app => {
       const flags = [];
       // meta
       const meta = {
-        summary: item.description,
+        summary: item.summary,
         flags,
       };
       // ok

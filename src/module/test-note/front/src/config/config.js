@@ -4,44 +4,35 @@ export default {
       render: {
         list: {
           layouts: {
-            table: {
+            card: {
+              component: {
+                module: 'test-note',
+                name: 'listLayoutCard',
+              },
               blocks: {
+                caption: {
+                  component: {
+                    module: 'a-baselayout',
+                    name: 'listLayoutBlockListCaption',
+                  },
+                },
+                title: {
+                  component: {
+                    module: 'a-baselayout',
+                    name: 'listLayoutBlockListTitle',
+                  },
+                },
+                subnavbar: {
+                  component: {
+                    module: 'a-baselayout',
+                    name: 'listLayoutBlockListSubnavbar',
+                  },
+                },
                 items: {
-                  columns: [
-                    {
-                      dataIndex: 'atomName',
-                      title: 'Atom Name',
-                      align: 'left',
-                      component: {
-                        module: 'a-baselayout',
-                        name: 'listLayoutTableCellAtomName',
-                      },
-                    },
-                    {
-                      dataIndex: 'description',
-                      title: 'Description',
-                      align: 'left',
-                    },
-                    {
-                      dataIndex: 'userName',
-                      title: 'Creator',
-                      align: 'left',
-                      component: {
-                        module: 'a-baselayout',
-                        name: 'listLayoutTableCellUserName',
-                      },
-                    },
-                    {
-                      dataIndex: 'atomCreatedAt',
-                      title: 'Created Time',
-                      align: 'left',
-                    },
-                    {
-                      dataIndex: 'atomUpdatedAt',
-                      title: 'Modification Time',
-                      align: 'left',
-                    },
-                  ],
+                  component: {
+                    module: 'test-note',
+                    name: 'listLayoutBlockCardItems',
+                  },
                 },
               },
             },
