@@ -47,8 +47,16 @@ export default {
     },
     async layout_switchLayout(layoutCurrent) {
       if (layoutCurrent === this.layout.current) return true;
-      // force clear layout instance
+      // force clear status
+      this.layout.current = null;
+      this.layout.config = null;
       this.layout.instance = null;
+      this.subnavbar.enable = false;
+      this.subnavbar.render = false;
+      this.bottombar.enable = false;
+      if (this.data.adapter) {
+        this.data.adapter.providerName = null;
+      }
       // prepare
       if (!this.layout_prepareConfigLayout(layoutCurrent)) {
         return false;
