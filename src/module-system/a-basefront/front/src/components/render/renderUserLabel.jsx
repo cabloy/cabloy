@@ -30,47 +30,32 @@ export default {
       const self = this;
       const { property } = this.context;
       const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
-      return new Promise(resolve => {
-        const hostEl = this.$view.getHostEl();
-        const targetEl = event.target;
-        const buttons = [];
-        let resolved = false;
-        function onButtonClick(labelId) {
-          self.context.setValue(labelId);
-          resolved = true;
-          resolve(true);
-        }
-        // optional
-        if (optional) {
-          buttons.push({
-            text: '',
-            onClick: () => {
-              onButtonClick(0);
-            },
-          });
-        }
-        //
-        for (const labelId in this.userLabels) {
-          const label = this.userLabels[labelId];
-          buttons.push({
-            color: label.color,
-            text: label.text,
-            onClick: () => {
-              onButtonClick(labelId);
-            },
-          });
-        }
-        //
-        const actions = this.$f7.actions.create({ hostEl, buttons, targetEl });
-        function onActionsClosed() {
-          actions.destroy();
-          if (!resolved) {
-            resolved = true;
-            resolve(false);
-          }
-        }
-        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
-      });
+      // buttons
+      const buttons = [];
+      // optional
+      if (optional) {
+        buttons.push({
+          text: '',
+          data: 0,
+        });
+      }
+      // userLabels
+      for (const labelId in this.userLabels) {
+        const label = this.userLabels[labelId];
+        buttons.push({
+          color: label.color,
+          text: label.text,
+          data: parseInt(labelId),
+        });
+      }
+      // choose
+      const params = {
+        targetEl: event.target,
+        buttons,
+      };
+      const button = await this.$view.actions.choose(params);
+      self.context.setValue(button.data);
+      return true;
     },
     _renderAfterLabel() {
       const labelCurrent = this.getLabelCurrent();
