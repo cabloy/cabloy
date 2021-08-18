@@ -29,9 +29,9 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.$emit('click', event);
-      this._ChooseInner(event);
+      this._onChooseInner(event);
     },
-    async _ChooseInner(event) {
+    async _onChooseInner(event) {
       if (!this.onChoose) return;
       try {
         const res = await this.onChoose(event, this.context);
