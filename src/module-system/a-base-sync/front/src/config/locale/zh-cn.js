@@ -18,6 +18,7 @@ export default {
   Others: '其他',
   List: '列表',
   Table: '表格',
+  Card: '卡片',
   Tools: '工具',
   Draft: '草稿',
   Drafts: '草稿',

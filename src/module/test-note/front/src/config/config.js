@@ -8,14 +8,14 @@ export default {
               viewSize: {
                 small: [
                   { name: 'list', title: 'List' },
-                  { name: 'table', title: 'Table' },
+                  { name: 'card', title: 'Card' },
                 ],
                 medium: [
-                  { name: 'list', title: 'List' },
+                  { name: 'card', title: 'Card' },
                   { name: 'table', title: 'Table' },
                 ],
                 large: [
-                  { name: 'list', title: 'List' },
+                  { name: 'card', title: 'Card' },
                   { name: 'table', title: 'Table' },
                 ],
               },
