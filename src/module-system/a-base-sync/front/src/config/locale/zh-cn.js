@@ -53,6 +53,7 @@ export default {
   Link: '链接',
   Select: '选择',
   Selecting: '选择中',
+  Selected: '已选择',
   Remove: '移除',
   HeartForAtom: '点赞',
   Hearted: '已点赞',

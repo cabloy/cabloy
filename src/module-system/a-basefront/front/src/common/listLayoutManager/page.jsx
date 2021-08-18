@@ -20,11 +20,11 @@ export default {
       const atomClass = this.getAtomClass(this.container.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
       if (this.container.scene === 'select') {
+        if (!atomClass) return `${this.$text('Selected')} ${this.$text('Atom')}`;
+        return `${this.$text('Selected')} ${atomClassTitle}`;
+      } else if (this.container.scene === 'selecting') {
         if (!atomClass) return `${this.$text('Select')} ${this.$text('Atom')}`;
         return `${this.$text('Select')} ${atomClassTitle}`;
-      } else if (this.container.scene === 'selecting') {
-        if (!atomClass) return `${this.$text('Selecting')} ${this.$text('Atom')}`;
-        return `${this.$text('Selecting')} ${atomClassTitle}`;
       } else if (this.container.scene === 'search') {
         if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
         return `${this.$text('Search')} ${atomClassTitle}`;
