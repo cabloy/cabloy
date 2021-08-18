@@ -15,39 +15,26 @@ export default {
       if (locales.length === 1) {
         return locales[0];
       }
+      // buttons
+      const buttons = [
+        {
+          text: ctx.$text('SelectLanguageTip'),
+          label: true,
+        },
+      ];
+      for (const locale of locales) {
+        buttons.push({
+          text: locale.title,
+          data: locale,
+        });
+      }
       // choose
-      return new Promise((resolve, reject) => {
-        const hostEl = ctx.$view.getHostEl();
-        const targetEl = action.targetEl;
-        const buttons = [
-          {
-            text: ctx.$text('SelectLanguageTip'),
-            label: true,
-          },
-        ];
-        let resolved = false;
-        function onButtonClick(locale) {
-          resolved = true;
-          resolve(locale);
-        }
-        for (const locale of locales) {
-          buttons.push({
-            text: locale.title,
-            onClick: () => {
-              onButtonClick(locale);
-            },
-          });
-        }
-        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
-        function onActionsClosed() {
-          actions.destroy();
-          if (!resolved) {
-            resolved = true;
-            reject(new Error());
-          }
-        }
-        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
-      });
+      const params = {
+        targetEl: action.targetEl,
+        buttons,
+      };
+      const button = await ctx.$view.actions.choose(params);
+      return button.data;
     },
   },
 };

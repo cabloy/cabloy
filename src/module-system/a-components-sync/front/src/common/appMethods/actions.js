@@ -29,6 +29,7 @@ export default function (ctx) {
       }
       return buttonArray;
     },
+    // params: forceToPopover, targetEl, buttons
     choose(params) {
       // params
       const _params = this._prepareParams(params);
