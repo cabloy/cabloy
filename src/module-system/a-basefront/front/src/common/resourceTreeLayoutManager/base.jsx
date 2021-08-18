@@ -22,7 +22,7 @@ export default {
     async base_load() {
       // layoutConfig
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
-      this.base.layoutConfigKeyCurrent = `resource.${this.container.resourceType}.tree.layout.current`;
+      this.base.layoutConfigKeyCurrent = `resource.${this.container.resourceType}.render.tree.layout.current`;
       // resurce
       await this.$store.dispatch('a/base/getResourceTypes');
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });

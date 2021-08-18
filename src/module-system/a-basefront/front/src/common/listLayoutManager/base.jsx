@@ -28,7 +28,7 @@ export default {
     },
     base_getLayoutConfigKeyCurrent() {
       const atomClassKey = this.container.atomClass ? `${this.container.atomClass.module}_${this.container.atomClass.atomClassName}` : null;
-      return `atom.${atomClassKey}.list.layout.current.${this.$view.size}`;
+      return `atom.${atomClassKey}.render.list.layout.current.${this.$view.size}`;
     },
     base_prepareReadOptions() {
       // options
