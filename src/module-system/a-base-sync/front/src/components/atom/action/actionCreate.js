@@ -66,38 +66,30 @@ export default {
     },
     async _onActionCreateSelectPreferredRole({ roles }) {
       const { ctx, action } = this.$props;
-      return new Promise(resolve => {
-        const hostEl = ctx.$view.getHostEl();
-        const targetEl = action.targetEl;
-        const buttons = [
-          {
-            text: ctx.$text('AtomClassSelectRoleTip'),
-            label: true,
-          },
-        ];
-        let resolved = false;
-        function onButtonClick(roleIdOwner) {
-          resolved = true;
-          resolve(roleIdOwner);
-        }
-        for (const role of roles) {
-          buttons.push({
-            text: role.roleNameWho,
-            onClick: () => {
-              onButtonClick(role.roleIdWho);
-            },
-          });
-        }
-        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
-        function onActionsClosed() {
-          actions.destroy();
-          if (!resolved) {
-            resolved = true;
-            resolve();
-          }
-        }
-        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
-      });
+      // buttons
+      const buttons = [
+        {
+          text: ctx.$text('AtomClassSelectRoleTip'),
+          label: true,
+        },
+      ];
+      for (const role of roles) {
+        buttons.push({
+          text: role.roleNameWho,
+          data: role,
+        });
+      }
+      // choose
+      const params = {
+        targetEl: action.targetEl,
+        buttons,
+      };
+      try {
+        const button = await ctx.$view.actions.choose(params);
+        return button.data.roleIdWho;
+      } catch (err) {
+        return null;
+      }
     },
   },
 };
