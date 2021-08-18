@@ -191,4 +191,5 @@ export default {
   'Resource Type': '资源类型',
   'Resource Sorting': '资源排序',
   'Close Draft': '关闭草稿',
+  'Block Not Found': '区块未发现',
 };

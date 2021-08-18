@@ -84,7 +84,10 @@ export default {
     layout_renderBlock({ blockName }) {
       if (!this.base.ready) return null;
       const blockConfig = this.layout.config.blocks[blockName];
-      if (!blockConfig) return null;
+      if (!blockConfig) {
+        const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
+        return <div>{errorMessage}</div>;
+      }
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     layout_renderSubnavbar() {
