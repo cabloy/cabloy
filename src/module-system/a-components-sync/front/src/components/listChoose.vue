@@ -1,6 +1,7 @@
 <script>
 import Vue from 'vue';
 import validate from '../common/validate/validateCheck.js';
+import trimMessage from '../common/trimMessage.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 export default {
   meta: {
@@ -28,21 +29,21 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.$emit('click', event);
+      this._onPerformChoose();
+    },
+    async _onPerformChoose(event) {
       if (!this.onChoose) return;
-      const res = this.onChoose(event, this.context);
-      if (this.$meta.util.isPromise(res)) {
-        res
-          .then(data => {
-            if (data) this.clearValidateError();
-          })
-          .catch(() => {
-            // do nothing
-          });
-      } else if (res) {
-        this.clearValidateError();
+      try {
+        const res = await this.onChoose(event, this.context);
+        if (res) {
+          this.clearValidateError();
+        }
+      } catch (err) {
+        if (err && err.code !== 401 && err.message) {
+          this.$view.toast.show({ text: trimMessage(this, err.message) });
+        }
       }
     },
   },
 };
 </script>
-<style scoped></style>
