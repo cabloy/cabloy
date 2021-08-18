@@ -6,8 +6,8 @@ export default {
           layout: {
             viewSize: {
               small: { name: 'list', title: 'List' },
-              medium: { name: 'list', title: 'Table' },
-              large: { name: 'list', title: 'Table' },
+              medium: { name: 'table', title: 'Table' },
+              large: { name: 'table', title: 'Table' },
             },
           },
           data: {
