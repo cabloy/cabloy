@@ -16,10 +16,10 @@ export default {
     };
   },
   created() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = this;
     // queueScroll
     this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
+    // eslint-disable-next-line
+    this.layoutManager.layout.instance = this;
   },
   beforeDestroy() {
     if (this.layoutManager.layout.instance === this) {

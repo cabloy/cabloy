@@ -27,13 +27,13 @@ export default {
   },
   methods: {
     async init() {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = this;
       // provider switch
       await this.layoutManager.data_providerSwitch({
         providerName: 'all',
         autoInit: true,
       });
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = this;
     },
     _renderEmpty() {
       const loading = this.layoutManager.data_getLoading();

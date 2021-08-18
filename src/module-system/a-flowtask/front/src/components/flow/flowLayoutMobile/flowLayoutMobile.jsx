@@ -15,9 +15,9 @@ export default {
   },
   created() {
     // eslint-disable-next-line
-    this.layoutManager.layout.instance = this;
-    // eslint-disable-next-line
     this.layoutManager.subnavbar.enable = true;
+    // eslint-disable-next-line
+    this.layoutManager.layout.instance = this;
   },
   beforeDestroy() {
     if (this.layoutManager.layout.instance === this) {
