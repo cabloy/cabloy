@@ -38,31 +38,28 @@ export default {
       // check again !!!
       if (event && event.preventF7Router) return;
 
+      // onPerform
+      this._onPerformInner(event);
+    },
+    async _onPerformInner(event) {
       // linkClick
-      if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
-
+      if (!this.onPerform) {
+        if (this.onLinkClick) {
+          this.onLinkClick(event);
+        }
+        return;
+      }
       // onPerform
       try {
-        const res = this.onPerform(event, this.context);
-        if (this.$meta.util.isPromise(res)) {
-          this._showPreloader();
-          res
-            .then(res2 => {
-              this._hidePreloader();
-              this._handleResult(res2);
-            })
-            .catch(err => {
-              this._hidePreloader();
-              if (err && err.code !== 401 && err.message) {
-                this.$view.toast.show({ text: trimMessage(this, err.message) });
-              }
-            });
-        } else {
-          this._handleResult(res);
-        }
+        this._showPreloader();
+        const res = await this.onPerform(event, this.context);
+        this._hidePreloader();
+        this._handleResult(res);
       } catch (err) {
-        console.error(err);
-        this.$view.toast.show({ text: err.message });
+        this._hidePreloader();
+        if (err && err.code !== 401 && err.message) {
+          this.$view.toast.show({ text: trimMessage(this, err.message) });
+        }
       }
     },
     _handleResult(res) {
