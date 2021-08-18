@@ -47,6 +47,8 @@ export default {
     },
     async layout_switchLayout(layoutCurrent) {
       if (layoutCurrent === this.layout.current) return true;
+      // force clear layout instance
+      this.layout.instance = null;
       // prepare
       if (!this.layout_prepareConfigLayout(layoutCurrent)) {
         return false;
