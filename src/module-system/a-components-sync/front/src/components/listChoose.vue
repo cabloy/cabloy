@@ -29,7 +29,7 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.$emit('click', event);
-      this._onPerformChoose();
+      this._onPerformChoose(event);
     },
     async _onPerformChoose(event) {
       if (!this.onChoose) return;
