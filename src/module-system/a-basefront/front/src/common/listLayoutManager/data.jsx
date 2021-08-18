@@ -50,6 +50,7 @@ export default {
       return this.data_callMethod('getLoading');
     },
     data_renderLoadMore() {
+      if (!this.layout.instance) return null;
       return this.data_callMethod('renderLoadMore');
     },
   },

@@ -27,8 +27,6 @@ export default {
   },
   methods: {
     async init() {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = this;
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
       // eslint-disable-next-line
@@ -38,6 +36,8 @@ export default {
         providerName: 'paged',
         autoInit: true,
       });
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = this;
     },
     _renderEmpty() {
       const loading = this.layoutManager.data_getLoading();

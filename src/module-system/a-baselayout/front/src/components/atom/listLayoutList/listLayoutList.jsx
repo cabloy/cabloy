@@ -24,8 +24,6 @@ export default {
   },
   methods: {
     async init() {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = this;
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
       // provider switch
@@ -33,6 +31,8 @@ export default {
         providerName: 'continuous',
         autoInit: this.layoutManager.container.scene !== 'search',
       });
+      // eslint-disable-next-line
+      this.layoutManager.layout.instance = this;
     },
   },
   render() {

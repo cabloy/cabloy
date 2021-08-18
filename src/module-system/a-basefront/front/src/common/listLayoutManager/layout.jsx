@@ -93,6 +93,7 @@ export default {
     },
     layout_renderBlock({ blockName }) {
       if (!this.base.ready) return null;
+      if (!this.layout.instance) return null;
       const blockConfig = this.layout.config.blocks[blockName];
       if (!blockConfig) {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
