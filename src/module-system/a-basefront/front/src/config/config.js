@@ -114,6 +114,12 @@ export default {
                   name: 'listLayoutBlockListTitle',
                 },
               },
+              subnavbar: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockListSubnavbar',
+                },
+              },
               items: {
                 component: {
                   module: 'a-baselayout',
