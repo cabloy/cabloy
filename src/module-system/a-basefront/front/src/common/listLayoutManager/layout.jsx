@@ -40,7 +40,25 @@ export default {
       // current
       this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
       // layoutConfig
-      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      const config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      if (!config) return false;
+      this.layout.config = config;
+      return true;
+    },
+    async layout_switchLayout(layoutCurrent) {
+      if (layoutCurrent === this.layout.current) return true;
+      // prepare
+      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+        return false;
+      }
+      // save
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-basefront',
+        key: layoutConfigKeyCurrent,
+        value: layoutCurrent,
+      });
+      return true;
     },
     layout_getComponentOptions() {
       return {

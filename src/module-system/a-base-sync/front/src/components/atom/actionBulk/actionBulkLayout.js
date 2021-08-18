@@ -23,7 +23,8 @@ export default {
         buttons,
       };
       const button = await ctx.$view.actions.choose(params);
-      console.log(button.data);
+      // switch layout
+      await ctx.layout_switchLayout(button.data.name);
     },
   },
 };
