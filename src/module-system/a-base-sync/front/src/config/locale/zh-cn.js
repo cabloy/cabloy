@@ -17,6 +17,7 @@ export default {
   Create: '新建',
   Others: '其他',
   List: '列表',
+  Table: '表格',
   Tools: '工具',
   Draft: '草稿',
   Drafts: '草稿',

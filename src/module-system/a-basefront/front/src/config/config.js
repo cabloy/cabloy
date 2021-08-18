@@ -3,6 +3,13 @@ export default {
     render: {
       list: {
         info: {
+          layout: {
+            viewSize: {
+              small: { name: 'list', title: 'List' },
+              medium: { name: 'list', title: 'Table' },
+              large: { name: 'list', title: 'Table' },
+            },
+          },
           data: {
             adapter: {
               component: {
