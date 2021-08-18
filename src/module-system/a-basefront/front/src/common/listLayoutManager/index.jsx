@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     async index_init() {
+      await this.base_init();
       await this.select_prepareSelectedAtoms();
       await this.layout_prepareConfig();
       await this.bulk_actionsInit();

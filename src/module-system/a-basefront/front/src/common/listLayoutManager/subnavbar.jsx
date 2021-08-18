@@ -20,13 +20,7 @@ export default {
       if (!render) {
         enable = false;
       } else {
-        // layoutDefault: list/tabel
-        const layoutDefault = this.layout_get();
-        if (layoutDefault === 'table') {
-          enable = false;
-        } else {
-          enable = true;
-        }
+        enable = this.$view.size === 'small';
       }
       // ok
       return { enable, render };

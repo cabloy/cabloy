@@ -10,12 +10,7 @@ export default {
   },
   created() {},
   methods: {
-    layout_get() {
-      return this.$view.size === 'small' ? 'list' : 'table';
-    },
-    async layout_prepareConfig(layoutCurrent) {
-      // current
-      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
+    async layout_prepareConfig() {
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
@@ -26,6 +21,24 @@ export default {
       }
       // config
       this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
+      // prepareLayout
+      this.layout_prepareConfigLayout();
+    },
+    layout_getDefault() {
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];
+      if (configCurrent) return configCurrent;
+      // from config
+      const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.list.info.layout.viewSize');
+      let layouts = configViewSize[this.$view.size];
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts];
+      }
+      return layouts[0].name;
+    },
+    layout_prepareConfigLayout(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
       // layoutConfig
       this.layout.config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
     },

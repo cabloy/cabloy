@@ -6,6 +6,7 @@ export default {
         configAtomBase: null,
         configAtom: null,
         config: null,
+        layoutConfig: null,
       },
     };
   },
@@ -21,6 +22,14 @@ export default {
     this.$store.dispatch('a/base/getLabels');
   },
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const atomClassKey = this.container.atomClass ? `${this.container.atomClass.module}_${this.container.atomClass.atomClassName}` : null;
+      return `atom.${atomClassKey}.list.layout.current.${this.$view.size}`;
+    },
     base_prepareReadOptions() {
       // options
       const options = {};
