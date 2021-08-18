@@ -32,6 +32,7 @@ module.exports = app => {
           { roleName: 'authenticated', action: 'clone', scopeNames: 0 },
           { roleName: 'authenticated', action: 'deleteBulk' },
           { roleName: 'authenticated', action: 'exportBulk' },
+          { roleName: 'authenticated', action: 'layoutBulk' },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'note', roleRights });

@@ -25,7 +25,7 @@ module.exports = app => {
         exportBulk: 36,
         // importBulk: 37,
         // reportBulk: 38,
-        // layoutBulk: 39,
+        layoutBulk: 45,
 
         save: 51,
         submit: 52,
@@ -118,6 +118,14 @@ module.exports = app => {
           bulk: true,
           select: null,
           icon: { material: 'cloud_download' },
+        },
+        layoutBulk: {
+          title: 'Layout',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          bulk: true,
+          select: null,
+          icon: { material: 'view_list' },
         },
         save: {
           title: 'Save',
