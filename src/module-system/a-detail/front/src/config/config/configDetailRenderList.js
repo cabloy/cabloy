@@ -1,5 +1,12 @@
 const list = {
   info: {
+    layout: {
+      viewSize: {
+        small: { name: 'list' },
+        medium: { name: 'table' },
+        large: { name: 'table' },
+      },
+    },
     data: {
       adapter: {
         component: {
@@ -18,11 +25,7 @@ const list = {
     },
   },
   layouts: {
-    list: {
-      component: {
-        module: 'a-detail',
-        name: 'listLayoutList',
-      },
+    base: {
       blocks: {
         title: {
           component: {
@@ -30,6 +33,15 @@ const list = {
             name: 'listLayoutBlockListTitle',
           },
         },
+      },
+    },
+    list: {
+      title: 'LayoutList',
+      component: {
+        module: 'a-detail',
+        name: 'listLayoutList',
+      },
+      blocks: {
         items: {
           component: {
             module: 'a-detail',
@@ -39,17 +51,12 @@ const list = {
       },
     },
     table: {
+      title: 'LayoutTable',
       component: {
         module: 'a-detail',
         name: 'listLayoutTable',
       },
       blocks: {
-        title: {
-          component: {
-            module: 'a-detail',
-            name: 'listLayoutBlockTableTitle',
-          },
-        },
         items: {
           component: {
             module: 'a-detail',
