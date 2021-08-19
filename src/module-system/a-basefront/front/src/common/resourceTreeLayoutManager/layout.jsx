@@ -23,8 +23,12 @@ export default {
       const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];
       if (configCurrent) return configCurrent;
       // from config
-      const items = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.items');
-      return items[0].name;
+      const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.viewSize');
+      let layouts = configViewSize[this.$view.size];
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts];
+      }
+      return layouts[0].name;
     },
     layout_prepareConfigLayout(layoutCurrent) {
       // current

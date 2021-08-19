@@ -1,7 +1,11 @@
 const tree = {
   info: {
     layout: {
-      items: [{ name: 'accordion' }, { name: 'tree' }],
+      viewSize: {
+        small: [{ name: 'accordion' }, { name: 'tree' }],
+        medium: [{ name: 'accordion' }, { name: 'tree' }],
+        large: [{ name: 'accordion' }, { name: 'tree' }],
+      },
     },
   },
   layouts: {

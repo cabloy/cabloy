@@ -24,7 +24,11 @@ export default {
     actions_renderPopover() {
       if (!this.base_ready) return null;
       // layouts
-      const layouts = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.items');
+      const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.viewSize');
+      let layouts = configViewSize[this.$view.size];
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts];
+      }
       const children = [];
       for (const layout of layouts) {
         const layoutConfig = this.$meta.util.getProperty(this.base.config, `render.tree.layouts.${layout.name}`);
