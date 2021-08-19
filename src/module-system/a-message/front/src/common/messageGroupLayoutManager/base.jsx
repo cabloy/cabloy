@@ -5,6 +5,7 @@ export default {
         ready: false,
         configMessageBase: null,
         config: null,
+        layoutConfig: null,
       },
     };
   },
@@ -15,6 +16,14 @@ export default {
   },
   created() {},
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const atomClassKey = null;
+      return `message.${atomClassKey}.render.group.layout.current.${this.$view.size}`;
+    },
     base_prepareSelectOptions() {
       // options
       let options = {
