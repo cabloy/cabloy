@@ -22,7 +22,6 @@ import itemLayoutBlockMobileSubnavbar from './components/atom/itemLayoutMobile/i
 import itemLayoutBlockMobileMain from './components/atom/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
 // itemLayoutPC
 import itemLayoutPC from './components/atom/itemLayoutPC/itemLayoutPC.jsx';
-import itemLayoutBlockPCTitle from './components/atom/itemLayoutPC/itemLayoutBlockPCTitle.jsx';
 // resourceTreeLayoutAccordion
 import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
 import resourceTreeLayoutBlockAccordionTitle from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionTitle.jsx';
@@ -56,7 +55,6 @@ export default {
   itemLayoutBlockMobileMain,
   // itemLayoutPC
   itemLayoutPC,
-  itemLayoutBlockPCTitle,
   // resourceTreeLayoutAccordion
   resourceTreeLayoutAccordion,
   resourceTreeLayoutBlockAccordionTitle,
