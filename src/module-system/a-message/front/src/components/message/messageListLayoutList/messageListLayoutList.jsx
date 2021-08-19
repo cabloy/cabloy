@@ -51,15 +51,6 @@ export default {
       this.items = this.items.concat(res.list);
       return res;
     },
-    getBlockComponentOptions({ blockConfig }) {
-      return {
-        props: {
-          layoutManager: this.layoutManager,
-          layout: this,
-          blockConfig,
-        },
-      };
-    },
     getItems() {
       return this.items;
     },
@@ -90,11 +81,6 @@ export default {
       if (pageContent.scrollTop() === 0) return cb();
       pageContent.scrollTop(0, 300, cb);
     },
-    _renderBlock({ blockName }) {
-      const blockConfig = this.layoutConfig.blocks[blockName];
-      if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
-    },
     _renderLoadMore() {
       return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit></eb-load-more>;
     },
@@ -102,7 +88,7 @@ export default {
   render() {
     return (
       <div>
-        {this._renderBlock({ blockName: 'items' })}
+        {this.layoutManager.layout_renderBlock({ blockName: 'items' })}
         {this._renderLoadMore()}
       </div>
     );
