@@ -11,9 +11,7 @@ export default {
     },
   },
   data() {
-    return {
-      items: [],
-    };
+    return {};
   },
   created() {
     // eslint-disable-next-line
@@ -25,26 +23,8 @@ export default {
       this.layoutManager.layout.instance = null;
     }
   },
-  methods: {
-    getBlockComponentOptions({ blockConfig }) {
-      return {
-        props: {
-          layoutManager: this.layoutManager,
-          layout: this,
-          blockConfig,
-        },
-      };
-    },
-    getItems() {
-      return this.items;
-    },
-    _renderBlock({ blockName }) {
-      const blockConfig = this.layoutConfig.blocks[blockName];
-      if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
-    },
-  },
+  methods: {},
   render() {
-    return <div>{this._renderBlock({ blockName: 'items' })}</div>;
+    return <div>{this.layoutManager.layout_renderBlock({ blockName: 'items' })}</div>;
   },
 };
