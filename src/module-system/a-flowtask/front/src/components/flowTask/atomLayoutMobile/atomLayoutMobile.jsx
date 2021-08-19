@@ -23,23 +23,8 @@ export default {
       this.layoutManager.layout.instance = null;
     }
   },
-  methods: {
-    getBlockComponentOptions({ blockConfig }) {
-      return {
-        props: {
-          layoutManager: this.layoutManager,
-          layout: this,
-          blockConfig,
-        },
-      };
-    },
-    _renderBlock({ blockName }) {
-      const blockConfig = this.layoutConfig.blocks[blockName];
-      if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
-    },
-  },
+  methods: {},
   render() {
-    return <div>{this._renderBlock({ blockName: 'main' })}</div>;
+    return <div>{this.layoutManager.layout_renderBlock({ blockName: 'main' })}</div>;
   },
 };
