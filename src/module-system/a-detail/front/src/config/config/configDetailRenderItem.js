@@ -1,11 +1,15 @@
 const item = {
-  info: {},
-  layouts: {
-    mobile: {
-      component: {
-        module: 'a-detail',
-        name: 'itemLayoutMobile',
+  info: {
+    layout: {
+      viewSize: {
+        small: { name: 'mobile' },
+        medium: { name: 'mobile' },
+        large: { name: 'pc' },
       },
+    },
+  },
+  layouts: {
+    base: {
       blocks: {
         title: {
           component: {
@@ -20,6 +24,22 @@ const item = {
           },
         },
       },
+    },
+    mobile: {
+      title: 'LayoutMobile',
+      component: {
+        module: 'a-detail',
+        name: 'itemLayoutMobile',
+      },
+      blocks: {},
+    },
+    pc: {
+      title: 'LayoutPC',
+      component: {
+        module: 'a-detail',
+        name: 'itemLayoutMobile',
+      },
+      blocks: {},
     },
   },
 };
