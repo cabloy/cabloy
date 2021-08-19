@@ -1,10 +1,7 @@
 const tree = {
   info: {
     layout: {
-      items: [
-        { name: 'accordion', title: 'LayoutAccordion' },
-        { name: 'tree', title: 'LayoutTree' },
-      ],
+      items: [{ name: 'accordion' }, { name: 'tree' }],
     },
   },
   layouts: {
@@ -19,6 +16,7 @@ const tree = {
       },
     },
     accordion: {
+      title: 'LayoutAccordion',
       component: {
         module: 'a-baselayout',
         name: 'resourceTreeLayoutAccordion',
@@ -33,6 +31,7 @@ const tree = {
       },
     },
     tree: {
+      title: 'LayoutTree',
       component: {
         module: 'a-baselayout',
         name: 'resourceTreeLayoutTree',

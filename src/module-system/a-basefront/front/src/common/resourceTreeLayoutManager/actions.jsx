@@ -27,10 +27,12 @@ export default {
       const layouts = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.items');
       const children = [];
       for (const layout of layouts) {
+        const layoutConfig = this.$meta.util.getProperty(this.base.config, `render.tree.layouts.${layout.name}`);
+        if (!layoutConfig) continue;
         children.push(
           <eb-list-item key={layout.name} link="#" popover-close propsOnPerform={event => this.actions_onActionLayout(event, layout)}>
             <f7-icon slot="media" material={this.layout.current === layout.name ? 'done' : ''}></f7-icon>
-            <div slot="title">{this.$text(layout.title)}</div>
+            <div slot="title">{this.$text(layoutConfig.title)}</div>
           </eb-list-item>
         );
       }
