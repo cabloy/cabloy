@@ -19,6 +19,18 @@ const item = {
             name: 'itemLayoutBlockMobileCaption',
           },
         },
+        title: {
+          component: {
+            module: 'a-baselayout',
+            name: 'itemLayoutBlockMobileTitle',
+          },
+        },
+        subnavbar: {
+          component: {
+            module: 'a-baselayout',
+            name: 'itemLayoutBlockMobileSubnavbar',
+          },
+        },
         main: {
           component: {
             module: 'a-baselayout',
@@ -33,20 +45,7 @@ const item = {
         module: 'a-baselayout',
         name: 'itemLayoutMobile',
       },
-      blocks: {
-        title: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileTitle',
-          },
-        },
-        subnavbar: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileSubnavbar',
-          },
-        },
-      },
+      blocks: {},
     },
     pc: {
       title: 'LayoutPC',
@@ -54,14 +53,7 @@ const item = {
         module: 'a-baselayout',
         name: 'itemLayoutPC',
       },
-      blocks: {
-        title: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockPCTitle',
-          },
-        },
-      },
+      blocks: {},
     },
   },
 };
