@@ -34,6 +34,7 @@ const item = {
       },
     },
     mobile: {
+      title: 'LayoutMobile',
       component: {
         module: 'a-flowtask',
         name: 'flowLayoutMobile',
@@ -41,9 +42,10 @@ const item = {
       blocks: {},
     },
     pc: {
+      title: 'LayoutPC',
       component: {
         module: 'a-flowtask',
-        name: 'flowLayoutPC',
+        name: 'flowLayoutMobile',
       },
       blocks: {},
     },
