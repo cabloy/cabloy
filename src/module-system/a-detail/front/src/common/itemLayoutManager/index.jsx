@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     async index_load() {
+      await this.base_init();
       const res = await this.base_loadItem();
       if (!res) return;
       await this.layout_prepareConfig();

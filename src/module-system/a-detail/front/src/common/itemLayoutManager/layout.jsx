@@ -10,25 +10,61 @@ export default {
   },
   created() {},
   methods: {
-    layout_get() {
-      // large/medium/small
-      return this.$view.size === 'large' ? 'pc' : 'mobile';
-    },
-    async layout_prepareConfig(layoutCurrent) {
-      // current
-      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
+    async layout_prepareConfig() {
       // configDetailBase
       this.base.configDetailBase = this.$meta.config.modules['a-detail'].detail;
       // configDetail
       this.base.configDetail = this.$meta.util.getProperty(this.$meta.config.modules[this.base.detailClass.module], `details.${this.base.detailClass.detailClassName}`);
       // config
       this.base.config = this.base.configDetail ? this.$meta.util.extend({}, this.base.configDetailBase, this.base.configDetail) : this.base.configDetailBase;
-      // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
-      if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.item.layouts.mobile');
+      // prepareConfigLayout
+      this.layout_prepareConfigLayout();
+    },
+    layout_getDefault() {
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];
+      if (configCurrent) return configCurrent;
+      // from config
+      const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.item.info.layout.viewSize');
+      let layouts = configViewSize[this.$view.size];
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts];
       }
-      this.layout.config = _config;
+      return layouts[0].name;
+    },
+    layout_prepareConfigLayout(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
+      // layoutConfig
+      let config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
+      if (!config) {
+        config = this.$meta.util.getProperty(this.base.config, 'render.item.layouts.mobile');
+      }
+      if (!config) return false;
+      const configBase = this.$meta.util.getProperty(this.base.config, 'render.item.layouts.base');
+      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
+      return true;
+    },
+    async layout_switchLayout(layoutCurrent) {
+      if (layoutCurrent === this.layout.current) return true;
+      // force clear status
+      this.layout.current = null;
+      this.layout.config = null;
+      this.layout.instance = null;
+      this.subnavbar.enable = false;
+      this.subnavbar.render = false;
+      // prepare
+      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+        return false;
+      }
+      // save
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-basefront',
+        key: layoutConfigKeyCurrent,
+        value: layoutCurrent,
+      });
+      return true;
     },
     layout_getComponentOptions() {
       return {

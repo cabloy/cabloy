@@ -6,6 +6,7 @@ export default {
         configDetailBase: null,
         configDetail: null,
         config: null,
+        layoutConfig: null,
         //
         item: null,
         detailClass: null,
@@ -31,6 +32,14 @@ export default {
     this.$meta.eventHub.$off('detail:action', this.base_onActionChanged);
   },
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const detailClassKey = `${this.base.detailClass.module}_${this.base.detailClass.detailClassName}`;
+      return `detail.${detailClassKey}.render.item.layout.current.${this.$view.size}`;
+    },
     async base_loadItem() {
       try {
         // item
