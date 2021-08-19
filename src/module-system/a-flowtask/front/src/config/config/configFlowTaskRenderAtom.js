@@ -1,14 +1,17 @@
 const atom = {
   info: {
+    layout: {
+      viewSize: {
+        small: { name: 'mobile' },
+        medium: { name: 'mobile' },
+        large: { name: 'pc' },
+      },
+    },
     attachment: true,
     comment: true,
   },
   layouts: {
-    mobile: {
-      component: {
-        module: 'a-flowtask',
-        name: 'atomLayoutMobile',
-      },
+    base: {
       blocks: {
         title: {
           component: {
@@ -23,6 +26,22 @@ const atom = {
           },
         },
       },
+    },
+    mobile: {
+      title: 'LayoutMobile',
+      component: {
+        module: 'a-flowtask',
+        name: 'atomLayoutMobile',
+      },
+      blocks: {},
+    },
+    pc: {
+      title: 'LayoutPC',
+      component: {
+        module: 'a-flowtask',
+        name: 'atomLayoutMobile',
+      },
+      blocks: {},
     },
   },
 };

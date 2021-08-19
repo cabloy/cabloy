@@ -6,6 +6,7 @@ export default {
         configAtomBase: null,
         configAtom: null,
         config: null,
+        layoutConfig: null,
       },
     };
   },
@@ -30,5 +31,15 @@ export default {
     },
   },
   created() {},
-  methods: {},
+  methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const atomClass = this.base_atomClass;
+      const atomClassKey = atomClass ? `${atomClass.module}_${atomClass.atomClassName}` : null;
+      return `flowTask.${atomClassKey}.render.atom.layout.current.${this.$view.size}`;
+    },
+  },
 };
