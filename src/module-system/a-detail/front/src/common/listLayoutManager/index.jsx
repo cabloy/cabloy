@@ -39,6 +39,7 @@ export default {
   },
   methods: {
     async index_init() {
+      await this.base_init();
       await this.layout_prepareConfig();
       await this.data_adapterInit();
       this.base.ready = true;
