@@ -2,9 +2,9 @@ const list = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'list', title: 'LayoutList' },
-        medium: { name: 'table', title: 'LayoutTable' },
-        large: { name: 'table', title: 'LayoutTable' },
+        small: { name: 'list' },
+        medium: { name: 'table' },
+        large: { name: 'table' },
       },
     },
     data: {
@@ -84,6 +84,7 @@ const list = {
       },
     },
     list: {
+      title: 'LayoutList',
       component: {
         module: 'a-baselayout',
         name: 'listLayoutList',
@@ -98,6 +99,7 @@ const list = {
       },
     },
     table: {
+      title: 'LayoutTable',
       component: {
         module: 'a-baselayout',
         name: 'listLayoutTable',

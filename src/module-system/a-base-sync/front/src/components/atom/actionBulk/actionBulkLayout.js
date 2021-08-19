@@ -12,10 +12,12 @@ export default {
       const layoutCurrent = ctx.layout.current;
       const buttons = [];
       for (const layout of layouts) {
+        const layoutConfig = ctx.$meta.util.getProperty(ctx.base.config, `render.list.layouts.${layout.name}`);
+        if (!layoutConfig) continue;
         const iconName = layoutCurrent === layout.name ? 'done' : '';
         buttons.push({
           icon: `<i class="icon material-icons">${iconName}</i>`,
-          text: ctx.$text(layout.title),
+          text: ctx.$text(layoutConfig.title),
           data: layout,
         });
       }

@@ -2,9 +2,9 @@ const item = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'mobile', title: 'LayoutMobile' },
-        medium: { name: 'mobile', title: 'LayoutMobile' },
-        large: { name: 'pc', title: 'LayoutPC' },
+        small: { name: 'mobile' },
+        medium: { name: 'mobile' },
+        large: { name: 'pc' },
       },
     },
     attachment: true,
@@ -28,6 +28,7 @@ const item = {
       },
     },
     mobile: {
+      title: 'LayoutMobile',
       component: {
         module: 'a-baselayout',
         name: 'itemLayoutMobile',
@@ -48,6 +49,7 @@ const item = {
       },
     },
     pc: {
+      title: 'LayoutPC',
       component: {
         module: 'a-baselayout',
         name: 'itemLayoutPC',

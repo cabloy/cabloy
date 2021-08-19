@@ -2,23 +2,15 @@ const list = {
   info: {
     layout: {
       viewSize: {
-        small: [
-          { name: 'list', title: 'LayoutList' },
-          { name: 'card', title: 'LayoutCard' },
-        ],
-        medium: [
-          { name: 'card', title: 'LayoutCard' },
-          { name: 'table', title: 'LayoutTable' },
-        ],
-        large: [
-          { name: 'card', title: 'LayoutCard' },
-          { name: 'table', title: 'LayoutTable' },
-        ],
+        small: [{ name: 'list' }, { name: 'card' }],
+        medium: [{ name: 'card' }, { name: 'table' }],
+        large: [{ name: 'card' }, { name: 'table' }],
       },
     },
   },
   layouts: {
     card: {
+      title: 'LayoutCard',
       component: {
         module: 'test-note',
         name: 'listLayoutCard',
