@@ -4,7 +4,9 @@ export default {
       base: {
         ready: false,
         configMessageBase: null,
+        configMessage: null,
         config: null,
+        layoutConfig: null,
       },
     };
   },
@@ -22,6 +24,15 @@ export default {
   },
   created() {},
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const messageClass = this.base_messageClass;
+      const messageClassKey = messageClass ? `${messageClass.module}_${messageClass.messageClassName}` : null;
+      return `message.${messageClassKey}.render.list.layout.current.${this.$view.size}`;
+    },
     base_prepareSelectOptions() {
       // options
       let options = {

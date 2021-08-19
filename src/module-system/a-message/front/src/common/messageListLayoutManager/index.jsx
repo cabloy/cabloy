@@ -13,11 +13,16 @@ export default {
     return {};
   },
   created() {
-    this.layout_prepareConfig().then(() => {
-      this.base.ready = true;
-    });
+    this.index_init();
   },
   beforeDestroy() {
     this.$emit('layoutManager:destroy');
+  },
+  methods: {
+    async index_init() {
+      await this.base_init();
+      await this.layout_prepareConfig();
+      this.base.ready = true;
+    },
   },
 };
