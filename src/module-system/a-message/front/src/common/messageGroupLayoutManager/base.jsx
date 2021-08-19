@@ -21,8 +21,8 @@ export default {
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
     },
     base_getLayoutConfigKeyCurrent() {
-      const atomClassKey = null;
-      return `message.${atomClassKey}.render.group.layout.current.${this.$view.size}`;
+      const messageClassKey = null;
+      return `message.${messageClassKey}.render.group.layout.current.${this.$view.size}`;
     },
     base_prepareSelectOptions() {
       // options
