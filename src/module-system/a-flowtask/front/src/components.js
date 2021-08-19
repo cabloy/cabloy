@@ -13,9 +13,6 @@ import flowLayoutMobile from './components/flow/flowLayoutMobile/flowLayoutMobil
 import flowLayoutBlockMobileTitle from './components/flow/flowLayoutMobile/flowLayoutBlockMobileTitle.jsx';
 import flowLayoutBlockMobileSubnavbar from './components/flow/flowLayoutMobile/flowLayoutBlockMobileSubnavbar.jsx';
 import flowLayoutBlockMobileMain from './components/flow/flowLayoutMobile/flowLayoutBlockMobileMain.jsx';
-// flowLayoutPC
-import flowLayoutPC from './components/flow/flowLayoutPC/flowLayoutPC.jsx';
-import flowLayoutBlockPCTitle from './components/flow/flowLayoutPC/flowLayoutBlockPCTitle.jsx';
 // atomLayoutMobile
 import atomLayoutMobile from './components/flowTask/atomLayoutMobile/atomLayoutMobile.jsx';
 import atomLayoutBlockMobileTitle from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileTitle.jsx';
@@ -40,9 +37,6 @@ export default {
   flowLayoutBlockMobileTitle,
   flowLayoutBlockMobileSubnavbar,
   flowLayoutBlockMobileMain,
-  // flowLayoutPC
-  flowLayoutPC,
-  flowLayoutBlockPCTitle,
   // atomLayoutMobile
   atomLayoutMobile,
   atomLayoutBlockMobileTitle,
