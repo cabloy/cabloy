@@ -42,7 +42,8 @@ export default {
       // layoutConfig
       const config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
       if (!config) return false;
-      this.layout.config = config;
+      const configBase = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.base');
+      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
       return true;
     },
     async layout_switchLayout(layoutCurrent) {

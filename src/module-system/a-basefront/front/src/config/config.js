@@ -64,11 +64,7 @@ export default {
           },
         },
         layouts: {
-          list: {
-            component: {
-              module: 'a-baselayout',
-              name: 'listLayoutList',
-            },
+          base: {
             blocks: {
               caption: {
                 component: {
@@ -88,6 +84,14 @@ export default {
                   name: 'listLayoutBlockListSubnavbar',
                 },
               },
+            },
+          },
+          list: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutList',
+            },
+            blocks: {
               items: {
                 component: {
                   module: 'a-baselayout',
@@ -102,24 +106,6 @@ export default {
               name: 'listLayoutTable',
             },
             blocks: {
-              caption: {
-                component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutBlockListCaption',
-                },
-              },
-              title: {
-                component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutBlockListTitle',
-                },
-              },
-              subnavbar: {
-                component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutBlockListSubnavbar',
-                },
-              },
               items: {
                 component: {
                   module: 'a-baselayout',
