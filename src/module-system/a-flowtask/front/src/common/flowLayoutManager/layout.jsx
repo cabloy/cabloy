@@ -87,6 +87,7 @@ export default {
       return {
         props: {
           layoutManager: this,
+          layout: this.layout.instance,
           blockConfig,
         },
       };
