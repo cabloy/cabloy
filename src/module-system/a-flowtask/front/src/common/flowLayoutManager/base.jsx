@@ -6,6 +6,7 @@ export default {
         configFlowBase: null,
         configAtom: null,
         config: null,
+        layoutConfig: null,
         //
         data: null,
         notfound: false,
@@ -70,6 +71,15 @@ export default {
     this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
   },
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const atomClass = this.base_atomClass;
+      const atomClassKey = atomClass ? `${atomClass.module}_${atomClass.atomClassName}` : null;
+      return `flow.${atomClassKey}.render.item.layout.current.${this.$view.size}`;
+    },
     async base_loadData() {
       try {
         // flow data

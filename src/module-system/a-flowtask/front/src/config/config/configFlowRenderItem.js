@@ -1,14 +1,17 @@
 const item = {
   info: {
+    layout: {
+      viewSize: {
+        small: { name: 'mobile' },
+        medium: { name: 'pc' },
+        large: { name: 'pc' },
+      },
+    },
     attachment: true,
     comment: true,
   },
   layouts: {
-    mobile: {
-      component: {
-        module: 'a-flowtask',
-        name: 'flowLayoutMobile',
-      },
+    base: {
       blocks: {
         title: {
           component: {
@@ -30,25 +33,19 @@ const item = {
         },
       },
     },
+    mobile: {
+      component: {
+        module: 'a-flowtask',
+        name: 'flowLayoutMobile',
+      },
+      blocks: {},
+    },
     pc: {
       component: {
         module: 'a-flowtask',
         name: 'flowLayoutPC',
       },
-      blocks: {
-        title: {
-          component: {
-            module: 'a-flowtask',
-            name: 'flowLayoutBlockPCTitle',
-          },
-        },
-        main: {
-          component: {
-            module: 'a-flowtask',
-            name: 'flowLayoutBlockMobileMain',
-          },
-        },
-      },
+      blocks: {},
     },
   },
 };
