@@ -24,10 +24,10 @@ export default {
   },
   methods: {
     init() {
+      // subnavbar
+      this.layoutManager.subnavbar_policyDefault();
       // eslint-disable-next-line
       this.layoutManager.layout.instance = this;
-      // eslint-disable-next-line
-      this.layoutManager.subnavbar.enable = false;
     },
   },
   render() {
