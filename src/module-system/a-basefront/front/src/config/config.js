@@ -272,11 +272,7 @@ export default {
           },
         },
         layouts: {
-          accordion: {
-            component: {
-              module: 'a-baselayout',
-              name: 'resourceTreeLayoutAccordion',
-            },
+          base: {
             blocks: {
               title: {
                 component: {
@@ -284,6 +280,14 @@ export default {
                   name: 'resourceTreeLayoutBlockAccordionTitle',
                 },
               },
+            },
+          },
+          accordion: {
+            component: {
+              module: 'a-baselayout',
+              name: 'resourceTreeLayoutAccordion',
+            },
+            blocks: {
               items: {
                 component: {
                   module: 'a-baselayout',
@@ -298,12 +302,6 @@ export default {
               name: 'resourceTreeLayoutTree',
             },
             blocks: {
-              title: {
-                component: {
-                  module: 'a-baselayout',
-                  name: 'resourceTreeLayoutBlockTreeTitle',
-                },
-              },
               items: {
                 component: {
                   module: 'a-baselayout',
