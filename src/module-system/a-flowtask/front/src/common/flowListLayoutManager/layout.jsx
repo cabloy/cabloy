@@ -10,22 +10,54 @@ export default {
   },
   created() {},
   methods: {
-    layout_get() {
-      return this.$view.size === 'small' ? 'list' : 'table';
-    },
-    async layout_prepareConfig(layoutCurrent) {
-      // current
-      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
+    async layout_prepareConfig() {
       // configFlowBase
       this.base.configFlowBase = this.$meta.config.modules['a-flowtask'].flow;
       // config
       this.base.config = this.base.configFlowBase;
-      // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
-      if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.list');
+      // prepareConfigLayout
+      this.layout_prepareConfigLayout();
+    },
+    layout_getDefault() {
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];
+      if (configCurrent) return configCurrent;
+      // from config
+      const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.list.info.layout.viewSize');
+      let layouts = configViewSize[this.$view.size];
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts];
       }
-      this.layout.config = _config;
+      return layouts[0].name;
+    },
+    layout_prepareConfigLayout(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
+      // layoutConfig
+      const config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      if (!config) return false;
+      const configBase = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.base');
+      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
+      return true;
+    },
+    async layout_switchLayout(layoutCurrent) {
+      if (layoutCurrent === this.layout.current) return true;
+      // force clear status
+      this.layout.current = null;
+      this.layout.config = null;
+      this.layout.instance = null;
+      // prepare
+      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+        return false;
+      }
+      // save
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-basefront',
+        key: layoutConfigKeyCurrent,
+        value: layoutCurrent,
+      });
+      return true;
     },
     layout_getComponentOptions() {
       return {

@@ -1,10 +1,15 @@
 const list = {
-  layouts: {
-    list: {
-      component: {
-        module: 'a-flowtask',
-        name: 'flowListLayoutList',
+  info: {
+    layout: {
+      viewSize: {
+        small: { name: 'list' },
+        medium: { name: 'list' },
+        large: { name: 'list' },
       },
+    },
+  },
+  layouts: {
+    base: {
       blocks: {
         title: {
           component: {
@@ -12,6 +17,15 @@ const list = {
             name: 'flowListLayoutBlockListTitle',
           },
         },
+      },
+    },
+    list: {
+      title: 'LayoutList',
+      component: {
+        module: 'a-flowtask',
+        name: 'flowListLayoutList',
+      },
+      blocks: {
         items: {
           component: {
             module: 'a-flowtask',
