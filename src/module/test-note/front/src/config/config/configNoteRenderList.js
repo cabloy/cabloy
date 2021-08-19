@@ -3,16 +3,16 @@ const list = {
     layout: {
       viewSize: {
         small: [
-          { name: 'list', title: 'List' },
-          { name: 'card', title: 'Card' },
+          { name: 'list', title: 'LayoutList' },
+          { name: 'card', title: 'LayoutCard' },
         ],
         medium: [
-          { name: 'card', title: 'Card' },
-          { name: 'table', title: 'Table' },
+          { name: 'card', title: 'LayoutCard' },
+          { name: 'table', title: 'LayoutTable' },
         ],
         large: [
-          { name: 'card', title: 'Card' },
-          { name: 'table', title: 'Table' },
+          { name: 'card', title: 'LayoutCard' },
+          { name: 'table', title: 'LayoutTable' },
         ],
       },
     },

@@ -2,9 +2,9 @@ const list = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'list', title: 'List' },
-        medium: { name: 'table', title: 'Table' },
-        large: { name: 'table', title: 'Table' },
+        small: { name: 'list', title: 'LayoutList' },
+        medium: { name: 'table', title: 'LayoutTable' },
+        large: { name: 'table', title: 'LayoutTable' },
       },
     },
     data: {

@@ -5,8 +5,6 @@ export default {
   PleaseInputText: '请输入文本',
   ShowAllComments: '显示所有评论',
   SharingCompleted: '分享已完成',
-  LayoutAccordion: '折叠布局',
-  LayoutTree: '树形布局',
   DraftsFlowingMineTab: '流转中',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',

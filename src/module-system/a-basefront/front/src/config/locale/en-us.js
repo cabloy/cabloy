@@ -2,8 +2,6 @@ export default {
   PleaseInputText: 'Please Input text',
   ShowAllComments: 'Show All Comments',
   SharingCompleted: 'Sharing Completed',
-  LayoutAccordion: 'Accordion Layout',
-  LayoutTree: 'Tree Layout',
   DraftsFlowingMineTab: 'Flowings',
   CabloyAboutTip1: 'CabloyJS - The Ultimate NodeJS Full Stack Business Development Platform',
   CabloyAboutTip2: 'The frontend of CabloyJS uses VueJS + Framework7 + Webpack, while the backend uses KoaJS + EggJS, and the database uses MySQL',

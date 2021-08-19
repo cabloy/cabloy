@@ -13,4 +13,11 @@ export default {
   DeleteBulkNotAllDone: 'Some Items Cannot be Deleted',
   ReferenceForHelp: 'Reference',
   ReferenceForFunction: 'Reference',
+  LayoutAccordion: 'Accordion Layout',
+  LayoutTree: 'Tree Layout',
+  LayoutList: 'List Layout',
+  LayoutTable: 'Table Layout',
+  LayoutCard: 'Card Layout',
+  LayoutMobile: 'Mobile Layout',
+  LayoutPC: 'PC Layout',
 };

@@ -1,14 +1,17 @@
 const item = {
   info: {
+    layout: {
+      viewSize: {
+        small: { name: 'mobile', title: 'LayoutMobile' },
+        medium: { name: 'mobile', title: 'LayoutMobile' },
+        large: { name: 'pc', title: 'LayoutPC' },
+      },
+    },
     attachment: true,
     comment: true,
   },
   layouts: {
-    mobile: {
-      component: {
-        module: 'a-baselayout',
-        name: 'itemLayoutMobile',
-      },
+    base: {
       blocks: {
         caption: {
           component: {
@@ -16,6 +19,20 @@ const item = {
             name: 'itemLayoutBlockMobileCaption',
           },
         },
+        main: {
+          component: {
+            module: 'a-baselayout',
+            name: 'itemLayoutBlockMobileMain',
+          },
+        },
+      },
+    },
+    mobile: {
+      component: {
+        module: 'a-baselayout',
+        name: 'itemLayoutMobile',
+      },
+      blocks: {
         title: {
           component: {
             module: 'a-baselayout',
@@ -28,12 +45,6 @@ const item = {
             name: 'itemLayoutBlockMobileSubnavbar',
           },
         },
-        main: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileMain',
-          },
-        },
       },
     },
     pc: {
@@ -42,22 +53,10 @@ const item = {
         name: 'itemLayoutPC',
       },
       blocks: {
-        caption: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileCaption',
-          },
-        },
         title: {
           component: {
             module: 'a-baselayout',
             name: 'itemLayoutBlockPCTitle',
-          },
-        },
-        main: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileMain',
           },
         },
       },

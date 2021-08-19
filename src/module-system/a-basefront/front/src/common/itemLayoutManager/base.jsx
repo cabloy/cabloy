@@ -6,6 +6,7 @@ export default {
         configAtomBase: null,
         configAtom: null,
         config: null,
+        layoutConfig: null,
         //
         item: null,
         atomClass: null,
@@ -46,6 +47,14 @@ export default {
     this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
   },
   methods: {
+    async base_init() {
+      // layoutConfig
+      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_getLayoutConfigKeyCurrent() {
+      const atomClassKey = `${this.base.atomClass.module}_${this.base.atomClass.atomClassName}`;
+      return `atom.${atomClassKey}.render.item.layout.current.${this.$view.size}`;
+    },
     async base_loadItem() {
       try {
         // item
