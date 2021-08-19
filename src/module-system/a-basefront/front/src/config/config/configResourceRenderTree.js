@@ -1,4 +1,4 @@
-const resource = {
+const tree = {
   info: {
     layout: {
       items: [
@@ -48,4 +48,4 @@ const resource = {
     },
   },
 };
-export default resource;
+export default tree;
