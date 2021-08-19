@@ -10,22 +10,53 @@ export default {
   },
   created() {},
   methods: {
-    layout_get() {
-      return this.base.layoutConfig[this.base.layoutConfigKeyCurrent] || 'accordion';
-    },
-    async layout_prepareConfig(layoutCurrent) {
-      // current
-      this.layout.current = layoutCurrent || this.container.layout || this.layout_get();
+    async layout_prepareConfig() {
       // configResourceBase
       this.base.configResourceBase = this.$meta.config.modules['a-basefront'].resource;
       // config
       this.base.config = this.base.configResourceBase;
+      // prepareConfigLayout
+      this.layout_prepareConfigLayout();
+    },
+    layout_getDefault() {
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];
+      if (configCurrent) return configCurrent;
+      // from config
+      const items = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.items');
+      return items[0].name;
+    },
+    layout_prepareConfigLayout(layoutCurrent) {
+      // current
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
       // layoutConfig
-      let _config = this.$meta.util.getProperty(this.base.config, `render.tree.layouts.${this.layout.current}`);
-      if (!_config) {
-        _config = this.$meta.util.getProperty(this.base.config, 'render.tree.layouts.accordion');
+      let config = this.$meta.util.getProperty(this.base.config, `render.tree.layouts.${this.layout.current}`);
+      if (!config) {
+        config = this.$meta.util.getProperty(this.base.config, 'render.tree.layouts.accordion');
       }
-      this.layout.config = _config;
+      if (!config) return false;
+      const configBase = this.$meta.util.getProperty(this.base.config, 'render.tree.layouts.base');
+      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
+      return true;
+    },
+    async layout_switchLayout(layoutCurrent) {
+      if (layoutCurrent === this.layout.current) return true;
+      // force clear status
+      this.layout.current = null;
+      this.layout.config = null;
+      this.layout.instance = null;
+      // prepare
+      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+        return false;
+      }
+      // save
+      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-basefront',
+        key: layoutConfigKeyCurrent,
+        value: layoutCurrent,
+      });
+      return true;
     },
     layout_getComponentOptions() {
       return {

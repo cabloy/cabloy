@@ -10,14 +10,8 @@ export default {
   },
   methods: {
     async actions_onActionLayout(event, layout) {
-      // change layout
-      await this.layout_prepareConfig(layout.name);
-      // save
-      this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-basefront',
-        key: this.base.layoutConfigKeyCurrent,
-        value: layout.name,
-      });
+      // switch layout
+      await this.layout_switchLayout(layout.name);
     },
     actions_render() {
       if (!this.base_ready) return null;
@@ -30,7 +24,7 @@ export default {
     actions_renderPopover() {
       if (!this.base_ready) return null;
       // layouts
-      const layouts = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layouts');
+      const layouts = this.$meta.util.getProperty(this.base.config, 'render.tree.info.layout.items');
       const children = [];
       for (const layout of layouts) {
         children.push(

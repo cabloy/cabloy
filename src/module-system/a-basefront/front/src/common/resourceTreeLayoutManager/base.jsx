@@ -22,12 +22,14 @@ export default {
     async base_load() {
       // layoutConfig
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
-      this.base.layoutConfigKeyCurrent = `resource.${this.container.resourceType}.render.tree.layout.current`;
       // resurce
       await this.$store.dispatch('a/base/getResourceTypes');
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.container.resourceType });
       this.base.treeData = await this.$store.dispatch('a/base/getResourceTree', { resourceType: this.container.resourceType });
       return true;
+    },
+    base_getLayoutConfigKeyCurrent() {
+      return `resource.${this.container.resourceType}.render.tree.layout.current`;
     },
     base_onPerformResource(event, resource) {
       const resourceConfig = JSON.parse(resource.resourceConfig);

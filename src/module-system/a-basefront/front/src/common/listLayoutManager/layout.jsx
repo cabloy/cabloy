@@ -21,7 +21,7 @@ export default {
       }
       // config
       this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
-      // prepareLayout
+      // prepareConfigLayout
       this.layout_prepareConfigLayout();
     },
     layout_getDefault() {

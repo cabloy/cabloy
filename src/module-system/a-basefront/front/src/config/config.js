@@ -264,10 +264,12 @@ export default {
     render: {
       tree: {
         info: {
-          layouts: [
-            { name: 'accordion', title: 'LayoutAccordion' },
-            { name: 'tree', title: 'LayoutTree' },
-          ],
+          layout: {
+            items: [
+              { name: 'accordion', title: 'LayoutAccordion' },
+              { name: 'tree', title: 'LayoutTree' },
+            ],
+          },
         },
         layouts: {
           accordion: {
