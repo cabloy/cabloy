@@ -59,11 +59,14 @@ export default {
         </div>
       );
       // domSummary
-      const domSummary = (
-        <div slot="root-end" class="summary">
-          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
-        </div>
-      );
+      let domSummary;
+      if (this.blockConfig.summary !== false) {
+        domSummary = (
+          <div slot="root-end" class="summary">
+            {this.layoutManager.data.adapter.item_getMetaSummary(item)}
+          </div>
+        );
+      }
       // domAfter
       const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
       const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);

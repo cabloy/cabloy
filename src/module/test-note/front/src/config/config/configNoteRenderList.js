@@ -27,6 +27,7 @@ const list = {
             module: 'a-baselayout',
             name: 'listLayoutBlockListItem',
           },
+          summary: false,
         },
       },
     },
