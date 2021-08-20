@@ -24,7 +24,9 @@ export default {
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
       const _action = this.getAction(action);
       const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
-      this.page_setDirty(false);
+      if (actionName === 'save' || actionName === 'submit') {
+        this.page_setDirty(false);
+      }
       return res;
     },
     validate_onValidateItemChange() {
