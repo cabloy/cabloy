@@ -3,6 +3,7 @@ import clipboard from './common/clipboard.js';
 import validateCheck from './common/validate/validateCheck.js';
 import viewSizeChange from './common/viewSizeChange.jsx';
 import stats from './common/stats.js';
+import pageDirty from './common/pageDirty.js';
 
 export default {
   ebPageContext: pageContext,
@@ -10,4 +11,5 @@ export default {
   ebValidateCheck: validateCheck,
   ebViewSizeChange: viewSizeChange,
   ebStats: stats,
+  ebPageDirty: pageDirty,
 };

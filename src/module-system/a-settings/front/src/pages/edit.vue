@@ -11,15 +11,15 @@
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
-  mixins: [ebModules],
+  mixins: [ebModules, ebPageDirty],
   data() {
     return {
       scene: this.$f7route.params.scene,
       module: this.$f7route.query.module,
       data: null,
       validateParams: null,
-      pageDirty: false,
     };
   },
   computed: {
@@ -32,18 +32,10 @@ export default {
       if (module) {
         title = module.titleLocale;
       }
-      if (this.pageDirty) {
-        title = `* ${title}`;
-      }
-      return title;
+      return this.page_getDirtyTitle(title);
     },
   },
   methods: {
-    page_setDirty(dirty) {
-      if (this.pageDirty === dirty) return;
-      this.pageDirty = dirty;
-      this.$pageContainer.setPageDirty(dirty);
-    },
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
