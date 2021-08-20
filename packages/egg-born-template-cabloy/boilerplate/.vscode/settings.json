@@ -1,0 +1,27 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  // eslint
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+  // prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // vetur
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap_attributes": "aligned-multiple"
+    }
+  },
+  // associations
+  "files.associations": {
+    "*.js.ejs": "javascript",
+    "*.css.ejs": "css",
+    "*.less.ejs": "less"
+  }
+}
