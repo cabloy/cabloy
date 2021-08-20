@@ -13,7 +13,7 @@ export default {
     blockConfig: {
       type: Object,
     },
-    options: {
+    info: {
       type: Object,
     },
   },
@@ -106,7 +106,7 @@ export default {
     },
   },
   render() {
-    const { item } = this.options;
+    const { item } = this.info;
     return this._renderListItem(item);
   },
 };

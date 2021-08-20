@@ -21,13 +21,13 @@ export default {
       const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
-        const domItem = this.layoutManager.layout_renderBlock({
+        const domListItem = this.layoutManager.layout_renderBlock({
           blockName: 'item',
           key: item.atomId,
-          options: { item },
+          info: { item },
           listItem: true,
         });
-        children.push(domItem);
+        children.push(domListItem);
       }
       return <f7-list>{children}</f7-list>;
     },

@@ -21,7 +21,7 @@ export default {
       const domListItem = this.layoutManager.layout_renderBlock({
         blockName: 'item',
         key: item.atomId,
-        options: { item },
+        info: { item },
         listItem: true,
       });
       // ok
