@@ -2,7 +2,7 @@ const list = {
   info: {
     layout: {
       viewSize: {
-        small: [{ name: 'list' }, { name: 'card' }],
+        small: [{ name: 'card' }, { name: 'list' }],
         medium: [{ name: 'card' }, { name: 'table' }],
         large: [{ name: 'card' }, { name: 'table' }],
       },
