@@ -179,7 +179,7 @@ export default {
                 resolve({ text: data.realName, addr: data.downloadUrl });
               }
               if (code === false) {
-                reject();
+                reject(new Error());
               }
             },
           },
@@ -224,7 +224,7 @@ export default {
                 resolve(data);
               }
               if (code === false) {
-                reject();
+                reject(new Error());
               }
             },
           },
