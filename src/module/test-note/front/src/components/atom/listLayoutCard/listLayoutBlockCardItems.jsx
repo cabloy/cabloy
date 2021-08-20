@@ -100,7 +100,7 @@ export default {
               </eb-list-item>
             </f7-list>
           </f7-card-header>
-          <f7-card-content></f7-card-content>
+          <f7-card-content>{item.content}</f7-card-content>
         </f7-card>
       );
     },
