@@ -159,13 +159,14 @@ export default {
       // dataSrc
       //   always set value for !property
       if (!property || property.type) {
+        // change src
         this.$set(parcel.dataSrc, key, _value);
-      }
-
-      if (_valueOld !== _value) {
-        this.$emit('change', _value);
-        this.validate.$emit('validateItem:change', key, _value);
-        this.validate.$emit('validateItemChange', key, _value);
+        // emit changed
+        if (_valueOld !== _value) {
+          this.$emit('change', _value);
+          this.validate.$emit('validateItem:change', key, _value);
+          this.validate.$emit('validateItemChange', key, _value);
+        }
       }
     },
     checkIfEmptyForSelect(value) {

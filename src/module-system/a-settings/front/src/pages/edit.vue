@@ -1,11 +1,11 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="page_title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready" ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit"> </eb-validate>
+    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit" @validateItem:change="onValidateItemChange"></eb-validate>
   </eb-page>
 </template>
 <script>
@@ -19,33 +19,47 @@ export default {
       module: this.$f7route.query.module,
       data: null,
       validateParams: null,
+      pageDirty: false,
     };
   },
   computed: {
     ready() {
       return this.data && this.validateParams;
     },
-    title() {
+    page_title() {
+      let title = '';
       const module = this.getModule(this.module);
-      return module ? module.titleLocale : '';
+      if (module) {
+        title = module.titleLocale;
+      }
+      if (this.pageDirty) {
+        title = `* ${title}`;
+      }
+      return title;
     },
   },
   methods: {
+    page_setDirty(dirty) {
+      if (this.pageDirty === dirty) return;
+      this.pageDirty = dirty;
+      this.$pageContainer.setPageDirty(dirty);
+    },
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
-    onPerformValidate() {
-      return this.$api
-        .post(`settings/${this.scene}/save`, {
-          module: this.module,
-          data: this.data,
-        })
-        .then(() => {
-          return true; // toast on success
-        });
+    async onPerformValidate() {
+      await this.$api.post(`settings/${this.scene}/save`, {
+        module: this.module,
+        data: this.data,
+      });
+      this.page_setDirty(false);
+      return true; // toast on success
     },
     onPerformSave(event) {
       return this.$refs.validate.perform(event);
+    },
+    onValidateItemChange() {
+      this.page_setDirty(true);
     },
   },
   created() {
