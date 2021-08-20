@@ -22,6 +22,12 @@ const list = {
             name: 'listLayoutBlockCardItems',
           },
         },
+        item: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockListItem',
+          },
+        },
       },
     },
   },
