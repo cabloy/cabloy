@@ -29,10 +29,16 @@ export default {
     }
   },
   methods: {
+    getPageTitle() {
+      return this.pageTitle;
+    },
     setPageTitle(title) {
       if (this.pageTitle === title) return;
       this.pageTitle = title;
       this.onTitleChange(false);
+    },
+    getPageDirty() {
+      return this.pageDirty;
     },
     setPageDirty(dirty) {
       if (this.pageDirty === dirty) return;
