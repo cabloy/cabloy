@@ -25,10 +25,27 @@ export default {
   },
   created() {},
   mounted() {
-    const title = this.layoutManager.page_getTitle();
-    this.$pageContainer.setPageTitle(title);
+    this._unwatchPageTitle = this.$watch(
+      'layoutManager.page_title',
+      () => {
+        this._changePageTitle();
+      },
+      {
+        immediate: true,
+      }
+    );
+  },
+  beforeDestroy() {
+    if (this._unwatchPageTitle) {
+      this._unwatchPageTitle();
+      this._unwatchPageTitle = null;
+    }
   },
   methods: {
+    _changePageTitle() {
+      const title = this.layoutManager.page_title;
+      this.$pageContainer.setPageTitle(title);
+    },
     openUrl(options) {
       const atomClass = this.layoutManager.base.atomClass;
       // queries
@@ -186,7 +203,7 @@ export default {
   render() {
     return (
       <f7-nav-title>
-        <div>{this.layoutManager.page_getTitle()}</div>
+        <div>{this.layoutManager.page_title}</div>
         <div class="subtitle">
           {this._renderStage()}
           {this._renderCategory()}

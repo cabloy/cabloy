@@ -4,6 +4,11 @@ export default {
       pageDirty: false,
     };
   },
+  computed: {
+    page_title() {
+      return this.page_getTitle();
+    },
+  },
   methods: {
     page_setDirty(dirty) {
       if (this.pageDirty === dirty) return;
