@@ -108,7 +108,7 @@ export default {
       if (!this.base_ready) return;
       if (this.base.item.atomId !== key.atomId) return;
 
-      if (this.container.mode === 'edit' && this.pageDirty) {
+      if (this.container.mode === 'edit' && this.page_getDirty()) {
         // just update time
         this.base.item.atomUpdatedAt = new Date();
         return;

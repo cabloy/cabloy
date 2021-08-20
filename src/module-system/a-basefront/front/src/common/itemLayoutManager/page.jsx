@@ -1,8 +1,6 @@
 export default {
   data() {
-    return {
-      pageDirty: false,
-    };
+    return {};
   },
   computed: {
     page_title() {
@@ -10,11 +8,6 @@ export default {
     },
   },
   methods: {
-    page_setDirty(dirty) {
-      if (this.pageDirty === dirty) return;
-      this.pageDirty = dirty;
-      this.$pageContainer.setPageDirty(dirty);
-    },
     page_getTitle() {
       let title;
       if (!this.base.item) {
@@ -22,10 +15,7 @@ export default {
       } else {
         title = this.base.item.atomName;
       }
-      if (this.pageDirty) {
-        title = `* ${title}`;
-      }
-      return title;
+      return this.page_getDirtyTitle(title);
       // return `${name}: ${this.base.item.atomName}`;
     },
     page_getSubtitle() {

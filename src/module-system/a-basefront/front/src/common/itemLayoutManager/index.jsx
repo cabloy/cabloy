@@ -9,6 +9,7 @@ import Validate from './validate.jsx';
 import Share from './share.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 
 // container: {
 //   mode,  // edit/view
@@ -18,7 +19,19 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 // },
 
 export default {
-  mixins: [ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate, Share],
+  mixins: [
+    ebAtomClasses, //
+    ebAtomActions,
+    ebPageDirty,
+    Base,
+    Page,
+    Layout,
+    Subnavbar,
+    Info,
+    Actions,
+    Validate,
+    Share,
+  ],
   data() {
     return {};
   },
