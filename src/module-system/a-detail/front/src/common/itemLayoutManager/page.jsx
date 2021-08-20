@@ -1,12 +1,31 @@
 export default {
   data() {
-    return {};
+    return {
+      pageDirty: false,
+    };
+  },
+  computed: {
+    page_title() {
+      return this.page_getTitle();
+    },
   },
   methods: {
+    page_setDirty(dirty) {
+      if (this.pageDirty === dirty) return;
+      this.pageDirty = dirty;
+      this.$pageContainer.setPageDirty(dirty);
+    },
     page_getTitle() {
-      const details = this.$text('Details');
-      if (!this.base.item) return details;
-      return this.base.item.detailName;
+      let title;
+      if (!this.base.item) {
+        title = this.$text('Details');
+      } else {
+        title = this.base.item.detailName;
+      }
+      if (this.pageDirty) {
+        title = `* ${title}`;
+      }
+      return title;
     },
     page_getSubtitle() {
       return '';
