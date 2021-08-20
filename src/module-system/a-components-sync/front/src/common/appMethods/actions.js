@@ -44,14 +44,16 @@ export default function (ctx) {
           }
         });
         const actions = ctx.$f7.actions.create(_params);
-        function onActionsClosed() {
+        const onActionsClosed = function () {
+          actions.off('actionsClosed', onActionsClosed).off('popoverClosed', onActionsClosed);
           actions.destroy();
           if (!resolved) {
             resolved = true;
             reject(new Error());
           }
-        }
-        actions.open().once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
+        };
+        actions.once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
+        actions.open();
       });
     },
   };
