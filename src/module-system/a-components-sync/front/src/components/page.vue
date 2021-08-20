@@ -18,8 +18,7 @@ export default {
     const navbar = this.$$(this.$el).find('.navbar');
     if (navbar.length > 0) {
       this._watchTitle = navbar[0].__vue__.$watch('title', value => {
-        this.pageTitle = value;
-        this.onTitleChange(false);
+        this.setPageTitle(value);
       });
     }
   },
@@ -31,6 +30,7 @@ export default {
   },
   methods: {
     setPageTitle(title) {
+      if (this.pageTitle === title) return;
       this.pageTitle = title;
       this.onTitleChange(false);
     },
@@ -74,10 +74,11 @@ export default {
     },
     onTitleChange(force) {
       if (force || this.$$(this.$el).hasClass('page-current')) {
-        this.$view.$emit('view:title', { page: this, title: this.pageTitle });
+        const pageTitle = this._adjustPageTitle();
+        this.$view.$emit('view:title', { page: this, title: pageTitle });
       }
     },
-    _adjustTitle() {
+    _adjustPageTitle() {
       let pageTitle = this.pageTitle;
       if (!this.pageDirty) return pageTitle;
       if (!pageTitle || pageTitle.indexOf(__prefix) !== 0) {
