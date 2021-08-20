@@ -19,11 +19,16 @@ export default {
     validate_onSubmit() {
       this.actions_onSubmit();
     },
-    validate_onPerformValidate(event, options) {
+    async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
       const _action = this.getAction(action);
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      this.page_setDirty(false);
+      return res;
+    },
+    validate_onValidateItemChange() {
+      this.page_setDirty(true);
     },
     validate_render() {
       if (!this.base_ready) return null;
@@ -37,6 +42,7 @@ export default {
           params={this.base.validateParams}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}
+          onValidateItemChange={this.validate_onValidateItemChange}
         ></eb-validate>
       );
     },
