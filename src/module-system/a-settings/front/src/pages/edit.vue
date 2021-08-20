@@ -35,7 +35,20 @@ export default {
       return this.page_getDirtyTitle(title);
     },
   },
+  created() {
+    this._load();
+  },
   methods: {
+    async _load() {
+      const data = await this.$api.post(`settings/${this.scene}/load`, {
+        module: this.module,
+      });
+      this.data = data.data;
+      this.validateParams = {
+        module: data.module,
+        validator: data.validator,
+      };
+    },
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
@@ -54,19 +67,5 @@ export default {
       this.page_setDirty(true);
     },
   },
-  created() {
-    this.$api
-      .post(`settings/${this.scene}/load`, {
-        module: this.module,
-      })
-      .then(data => {
-        this.data = data.data;
-        this.validateParams = {
-          module: data.module,
-          validator: data.validator,
-        };
-      });
-  },
 };
 </script>
-<style scoped></style>
