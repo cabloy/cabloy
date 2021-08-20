@@ -2,6 +2,11 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    page_title() {
+      return this.page_getTitle();
+    },
+  },
   methods: {
     page_onRefresh(done) {
       done && done();
