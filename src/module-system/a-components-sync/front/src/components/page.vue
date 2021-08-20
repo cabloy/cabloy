@@ -1,6 +1,7 @@
 <script>
 import Vue from 'vue';
 const f7Page = Vue.options.components['f7-page'].extendOptions;
+const __prefix = '* ';
 export default {
   meta: {
     global: true,
@@ -10,6 +11,7 @@ export default {
   data() {
     return {
       pageTitle: null,
+      pageDirty: false,
     };
   },
   mounted() {
@@ -30,6 +32,11 @@ export default {
   methods: {
     setPageTitle(title) {
       this.pageTitle = title;
+      this.onTitleChange(false);
+    },
+    setPageDirty(dirty) {
+      if (this.pageDirty === dirty) return;
+      this.pageDirty = dirty;
       this.onTitleChange(false);
     },
     _tryParsePageTitle() {
@@ -69,6 +76,14 @@ export default {
       if (force || this.$$(this.$el).hasClass('page-current')) {
         this.$view.$emit('view:title', { page: this, title: this.pageTitle });
       }
+    },
+    _adjustTitle() {
+      let pageTitle = this.pageTitle;
+      if (!this.pageDirty) return pageTitle;
+      if (!pageTitle || pageTitle.indexOf(__prefix) !== 0) {
+        pageTitle = `${__prefix}${pageTitle}`;
+      }
+      return pageTitle;
     },
   },
 };
