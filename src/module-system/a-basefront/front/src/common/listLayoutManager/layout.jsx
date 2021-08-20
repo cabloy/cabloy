@@ -83,16 +83,17 @@ export default {
       if (!this.base.ready) return null;
       return <eb-component module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
     },
-    layout_getBlockComponentOptions({ blockConfig }) {
+    layout_getBlockComponentOptions({ blockConfig, options }) {
       return {
         props: {
           layoutManager: this,
           layout: this.layout.instance,
           blockConfig,
+          options,
         },
       };
     },
-    layout_renderBlock({ blockName }) {
+    layout_renderBlock({ blockName, key, options, listItem }) {
       if (!this.base.ready) return null;
       if (!this.layout.instance) return null;
       const blockConfig = this.layout.config.blocks[blockName];
@@ -100,7 +101,11 @@ export default {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
       }
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
+      const blockOptions = this.layout_getBlockComponentOptions({ blockConfig, options });
+      if (listItem) {
+        return <eb-list-item-component key={key} module={blockConfig.component.module} name={blockConfig.component.name} options={blockOptions}></eb-list-item-component>;
+      }
+      return <eb-component key={key} module={blockConfig.component.module} name={blockConfig.component.name} options={blockOptions}></eb-component>;
     },
     layout_renderSubnavbar() {
       if (!this.base.ready) return null;

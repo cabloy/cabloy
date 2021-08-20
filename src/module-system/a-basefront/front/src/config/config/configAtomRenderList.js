@@ -96,6 +96,12 @@ const list = {
             name: 'listLayoutBlockListItems',
           },
         },
+        item: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockListItem',
+          },
+        },
       },
     },
     table: {

@@ -39,6 +39,7 @@ export default {
             c(
               'template',
               {
+                key,
                 slot: key,
               },
               this.$slots[key]
@@ -46,7 +47,7 @@ export default {
           );
         }
       }
-      return c(this.__getFullName(), options, children);
+      return c(fullName, options, children);
     } else if (this.errorMessage) {
       return c('div', {
         // staticClass: 'text-align-center',
