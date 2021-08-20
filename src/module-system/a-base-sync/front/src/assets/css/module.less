@@ -1,7 +1,5 @@
 :root {
-
   .comment {
-
     .header-container {
       width: 100%;
     }
@@ -50,7 +48,7 @@
           font-size: 18px;
         }
 
-        &+a.action {
+        & + a.action {
           margin-left: 6px;
         }
       }
@@ -78,7 +76,6 @@
           margin-left: 4px;
         }
       }
-
     }
 
     .title {
@@ -120,15 +117,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
   }
-
 }
 
 :root {
-
   .atom-item-title-info-container {
-
     .info-avatar,
     .info-date {
       display: flex;
@@ -149,7 +142,6 @@
     justify-content: space-between;
     align-items: center;
     font-size: var(--f7-toolbar-font-size);
-
 
     .actions-block {
       height: var(--f7-toolbar-height);
@@ -180,11 +172,23 @@
         color: var(--f7-block-footer-text-color);
         font-size: 10px;
       }
-
     }
   }
 
-  .atom-list-layout-table-container {}
+  .atom-list-layout-card-container {
+    .card {
+      .card-header {
+        padding: 0;
+
+        .list {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .atom-list-layout-table-container {
+  }
 
   .atom-list-layout-table-pagination-container {
     width: 100%;
@@ -240,17 +244,14 @@
       color: var(--f7-block-header-text-color);
       font-size: 12px;
 
-      span+span {
+      span + span {
         margin-left: 4px;
       }
     }
-
   }
-
 }
 
 :root {
-
   .eb-view-size-medium,
   .eb-view-size-large {
     form.eb-list-row {
@@ -259,7 +260,7 @@
       flex-wrap: wrap;
       align-items: flex-start;
 
-      &>ul {
+      & > ul {
         width: 100%;
       }
 
@@ -267,18 +268,17 @@
         width: 100%;
       }
 
-      >.list-group.eb-list-group {
+      > .list-group.eb-list-group {
         box-sizing: border-box;
         width: calc((100% - var(--f7-grid-gap)) / 2);
-        margin-top: calc(var(--f7-grid-gap)/2);
+        margin-top: calc(var(--f7-grid-gap) / 2);
       }
 
-      >.list-group.eb-list-group-whole {
+      > .list-group.eb-list-group-whole {
         box-sizing: border-box;
-        width: calc((100% - var(--f7-grid-gap)/2));
-        margin-top: calc(var(--f7-grid-gap)/2);
+        width: calc((100% - var(--f7-grid-gap) / 2));
+        margin-top: calc(var(--f7-grid-gap) / 2);
       }
-
     }
   }
 }

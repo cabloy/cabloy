@@ -55,12 +55,12 @@ export default {
           <div>{this.layoutManager.data.adapter.item_getAtomName(item)}</div>
         </div>
       );
-      // domSummary
-      const domSummary = (
-        <div slot="root-end" class="summary">
-          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
-        </div>
-      );
+      // // domSummary
+      // const domSummary = (
+      //   <div slot="root-end" class="summary">
+      //     {this.layoutManager.data.adapter.item_getMetaSummary(item)}
+      //   </div>
+      // );
       // domAfter
       const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
       const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
@@ -72,30 +72,36 @@ export default {
       );
       // ok
       return (
-        <eb-list-item
-          class="item"
-          key={item.atomId}
-          link={this.layoutManager.bulk.selecting ? false : '#'}
-          name={this.radioName}
-          checkbox={this.layoutManager.bulk.selecting}
-          checked={this._getItemChecked(item)}
-          propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout
-          onSwipeoutOpened={event => {
-            this.onSwipeoutOpened(event, item);
-          }}
-          onContextmenuOpened={event => {
-            this.onSwipeoutOpened(event, item);
-          }}
-          onChange={event => this.onItemChange(event, item)}
-        >
-          {domMedia}
-          {domHeader}
-          {domTitle}
-          {domSummary}
-          {domAfter}
-          {this._renderListItemContextMenu(item)}
-        </eb-list-item>
+        <f7-card key={item.atomId}>
+          <f7-card-header>
+            <f7-list>
+              <eb-list-item
+                class="item"
+                key={item.atomId}
+                link={this.layoutManager.bulk.selecting ? false : '#'}
+                name={this.radioName}
+                checkbox={this.layoutManager.bulk.selecting}
+                checked={this._getItemChecked(item)}
+                propsOnPerform={event => this.onItemClick(event, item)}
+                swipeout
+                onSwipeoutOpened={event => {
+                  this.onSwipeoutOpened(event, item);
+                }}
+                onContextmenuOpened={event => {
+                  this.onSwipeoutOpened(event, item);
+                }}
+                onChange={event => this.onItemChange(event, item)}
+              >
+                {domMedia}
+                {domHeader}
+                {domTitle}
+                {domAfter}
+                {this._renderListItemContextMenu(item)}
+              </eb-list-item>
+            </f7-list>
+          </f7-card-header>
+          <f7-card-content></f7-card-content>
+        </f7-card>
       );
     },
     _renderListItemContextMenu(item) {
@@ -107,10 +113,10 @@ export default {
       for (const item of items) {
         children.push(this._renderListItem(item));
       }
-      return <f7-list>{children}</f7-list>;
+      return children;
     },
   },
   render() {
-    return <div>{this._renderList()}</div>;
+    return <div class="atom-list-layout-card-container">{this._renderList()}</div>;
   },
 };
