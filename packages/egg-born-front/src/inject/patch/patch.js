@@ -43,6 +43,17 @@ export default function (ctx, router) {
     const viewVue = viewEl.__vue__;
     return viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
   }
+  function _pageDirtyPrompt(viewEl, cbOk, cbCancel) {
+    const viewVue = viewEl.__vue__;
+    viewVue.dialog
+      .confirm(ctx.$text('PageDirtyQuitPrompt'))
+      .then(() => {
+        cbOk && cbOk();
+      })
+      .catch(() => {
+        cbCancel && cbCancel();
+      });
+  }
   // navigate
   const navigate = router.navigate;
   const _navigateReal = function (navigateParams, navigateOptions, cb) {
@@ -84,15 +95,15 @@ export default function (ctx, router) {
     }
     const pageDirty = navigateOptions && navigateOptions.reloadCurrent && _checkIfDirtyOfPage(router.currentPageEl);
     if (!pageDirty) return _navigateReal(navigateParams, navigateOptions, cb);
-    const viewVue = router.view.$el[0].__vue__;
-    viewVue.dialog
-      .confirm(ctx.$text('PageDirtyQuitPrompt'))
-      .then(() => {
+    _pageDirtyPrompt(
+      router.view.$el[0],
+      () => {
         _navigateReal(navigateParams, navigateOptions, cb);
-      })
-      .catch(() => {
+      },
+      () => {
         cb && cb();
-      });
+      }
+    );
     return router;
   };
   // back
@@ -112,15 +123,9 @@ export default function (ctx, router) {
     if (!_checkIfDirtyOfPage(router.currentPageEl)) {
       return _backReal.call(router, ...args);
     }
-    const viewVue = router.view.$el[0].__vue__;
-    viewVue.dialog
-      .confirm(ctx.$text('PageDirtyQuitPrompt'))
-      .then(() => {
-        _backReal.call(router, ...args);
-      })
-      .catch(() => {
-        // do nothing
-      });
+    _pageDirtyPrompt(router.view.$el[0], () => {
+      _backReal.call(router, ...args);
+    });
     return router;
   };
   // close
@@ -149,15 +154,9 @@ export default function (ctx, router) {
     if (!_checkIfDirtyOfView(viewEl)) {
       return _closeReal.call(router);
     }
-    const viewVue = viewEl.__vue__;
-    viewVue.dialog
-      .confirm(ctx.$text('PageDirtyQuitPrompt'))
-      .then(() => {
-        _closeReal.call(router);
-      })
-      .catch(() => {
-        // do nothing
-      });
+    _pageDirtyPrompt(viewEl, () => {
+      _closeReal.call(router);
+    });
     return router;
   };
 
