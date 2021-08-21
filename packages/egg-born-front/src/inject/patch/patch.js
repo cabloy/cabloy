@@ -45,10 +45,7 @@ export default function (ctx, router) {
   }
   // navigate
   const navigate = router.navigate;
-  router.navigate = (navigateParams, navigateOptions, cb) => {
-    if (navigateOptions && navigateOptions.initial) {
-      return navigate.call(router, navigateParams, navigateOptions);
-    }
+  const _navigateReal = function (navigateParams, navigateOptions, cb) {
     ctx.$nextTick(() => {
       // url
       let url;
@@ -77,6 +74,25 @@ export default function (ctx, router) {
         return cb && cb();
       });
     });
+    return router;
+  };
+  router.navigate = (navigateParams, navigateOptions, cb) => {
+    if (navigateOptions && navigateOptions.initial) {
+      navigate.call(router, navigateParams, navigateOptions);
+      cb && cb();
+      return router;
+    }
+    const pageDirty = navigateOptions && navigateOptions.reloadCurrent && _checkIfDirtyOfPage(router.currentPageEl);
+    if (!pageDirty) return _navigateReal(navigateParams, navigateOptions, cb);
+    const viewVue = router.view.$el[0].__vue__;
+    viewVue.dialog
+      .confirm(ctx.$text('PageDirtyQuitPrompt'))
+      .then(() => {
+        _navigateReal(navigateParams, navigateOptions, cb);
+      })
+      .catch(() => {
+        cb && cb();
+      });
     return router;
   };
   // back
