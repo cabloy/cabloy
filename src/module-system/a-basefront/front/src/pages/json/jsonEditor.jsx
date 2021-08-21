@@ -1,10 +1,11 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
   meta: {
     size: 'medium',
   },
-  mixins: [ebPageContext],
+  mixins: [ebPageContext, ebPageDirty],
   data() {
     return {
       content: null,
@@ -14,7 +15,7 @@ export default {
     value() {
       return this.contextParams.value;
     },
-    pageTitle() {
+    title() {
       return this.contextParams.title;
     },
     readOnly() {
@@ -40,6 +41,9 @@ export default {
       if (type && Array.isArray(type)) return type[0];
       return type || 'string';
     },
+    page_title() {
+      return this.page_getDirtyTitle(this.title);
+    },
   },
   created() {
     if (!this.value) {
@@ -61,6 +65,7 @@ export default {
     },
     onInput(event) {
       this.content = event.target.value;
+      this.page_setDirty(true);
     },
     getValue() {
       // string
@@ -73,11 +78,13 @@ export default {
     onPerformDone() {
       const value = this.getValue();
       this.contextCallback(200, value);
+      this.page_setDirty(false);
       this.$f7router.back();
     },
     onPerformSave() {
       const value = this.getValue();
       return this.onSave(value).then(() => {
+        this.page_setDirty(false);
         return this.$text('Saved');
       });
     },
@@ -115,7 +122,7 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar title={this.pageTitle} eb-back-link="Back">
+        <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
         <eb-box onSize={this.onSize}>
