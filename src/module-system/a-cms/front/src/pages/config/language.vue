@@ -38,7 +38,7 @@ export default {
         if (!res.data) {
           this.content = '{}';
         } else {
-          this.content = JSON5.stringify(res.data, null, 2);
+          this.content = window.JSON5.stringify(res.data, null, 2);
         }
       });
   },
@@ -56,7 +56,7 @@ export default {
       this.content = event.target.value;
     },
     onPerformSave() {
-      const data = JSON5.parse(this.content);
+      const data = window.JSON5.parse(this.content);
       return this.$api
         .post('site/setConfigLanguage', {
           atomClass: this.atomClass,
