@@ -1,11 +1,11 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Info')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="page_title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :auto="false" :data="user" :params="{ module: 'a-base', validator: 'user' }" :onPerform="onPerformValidate">
+    <eb-validate ref="validate" :auto="false" :data="user" :params="{ module: 'a-base', validator: 'user' }" :onPerform="onPerformValidate" @validateItem:change="onValidateItemChange">
       <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
@@ -35,7 +35,9 @@
 </template>
 <script>
 import Vue from 'vue';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
+  mixins: [ebPageDirty],
   components: {},
   data() {
     return {
@@ -44,6 +46,10 @@ export default {
     };
   },
   computed: {
+    page_title() {
+      const title = this.$text('Info');
+      return this.page_getDirtyTitle(title);
+    },
     emailConfirmButtonText() {
       return !this.user.email || this.user.emailConfirmed ? this.$text('Change') : this.$text('Confirm');
     },
@@ -62,20 +68,21 @@ export default {
     onPerformSave(event) {
       return this.$refs.validate.perform(event);
     },
-    onPerformValidate(event) {
-      return this.$api
-        .post('user/save', {
-          data: this.user,
-        })
-        .then(() => {
-          // save
-          const userNew = { agent: this.user };
-          if (this.$store.state.auth.user.op.id === this.user.id) {
-            userNew.op = this.user;
-          }
-          this.$store.commit('auth/setUser', userNew);
-          this.$f7router.back();
-        });
+    onValidateItemChange() {
+      this.page_setDirty(true);
+    },
+    async onPerformValidate() {
+      await this.$api.post('user/save', {
+        data: this.user,
+      });
+      // save
+      const userNew = { agent: this.user };
+      if (this.$store.state.auth.user.op.id === this.user.id) {
+        userNew.op = this.user;
+      }
+      this.$store.commit('auth/setUser', userNew);
+      this.page_setDirty(false);
+      this.$f7router.back();
     },
   },
 };
