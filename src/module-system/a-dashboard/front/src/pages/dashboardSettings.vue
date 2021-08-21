@@ -29,12 +29,14 @@ export default {
   data() {
     return {
       dashboardUserIdCurrent: parseInt(this.$f7route.query.dashboardUserId || 0),
-      dashboardUsers: null,
     };
   },
   computed: {
     dashboard() {
       return this.contextParams.dashboard;
+    },
+    dashboardUsers() {
+      return this.$local.state.dashboardUsers[this.dashboard.dashboardAtomId];
     },
   },
   created() {
@@ -47,16 +49,12 @@ export default {
     this.dashboard.$off('dashboard:destroy', this.onDashboardDestroy);
   },
   methods: {
-    __load() {
+    async __load() {
       if (this.dashboard.scene === 'manager') return;
       // list
-      this.$api
-        .post('/a/dashboard/dashboard/itemUsers', {
-          key: { atomId: this.dashboard.dashboardAtomId },
-        })
-        .then(data => {
-          this.dashboardUsers = data;
-        });
+      await this.$local.dispatch('getDashboardUsers', {
+        dashboardAtomId: this.dashboard.dashboardAtomId,
+      });
     },
     __findItem(dashboardUserId) {
       const index = this.dashboardUsers.findIndex(item => item.id === dashboardUserId);
@@ -74,7 +72,7 @@ export default {
     },
     async onPerformChangeName(e, item) {
       const dashboardUserId = item.id;
-      const dashboardName = await this.$view.dialog.prompt(this.$text('Please specify the dashboard name'));
+      const dashboardName = await this.$view.dialog.prompt(this.$text('Please specify the dashboard name'), null, item.dashboardName);
       if (!dashboardName || dashboardName === item.dashboardName) return;
       await this.$api.post('/a/dashboard/dashboard/changeItemUserName', {
         dashboardUserId,
@@ -121,8 +119,6 @@ export default {
       // switch
       await this.dashboard.__switchProfile({ dashboardUserId });
       this.dashboardUserIdCurrent = dashboardUserId;
-      // reload
-      this.__load();
     },
   },
 };

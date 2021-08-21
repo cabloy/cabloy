@@ -258,10 +258,20 @@ export default {
     },
     async __createDashboardUser() {
       // create dashboardUser
-      const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
+      const dashboardUser = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
         key: { atomId: this.dashboardAtomId },
       });
-      return res.id;
+      // check if cache exists
+      const dashboardUsers = this.$local.state.dashboardUsers[this.dashboardAtomId];
+      if (dashboardUsers) {
+        dashboardUsers.push(dashboardUser);
+        this.$local.commit('setDashboardUsers', {
+          dashboardAtomId: this.dashboardAtomId,
+          dashboardUsers,
+        });
+      }
+      // ok
+      return dashboardUser.id;
     },
     async __saveDashboardUser() {
       // check if dirty

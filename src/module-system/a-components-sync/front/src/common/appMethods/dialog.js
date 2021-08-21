@@ -26,14 +26,15 @@ export default function (ctx) {
     });
   };
   // prompt
-  dialog.prompt = function (text, title) {
+  dialog.prompt = function (text, title, defaultValue) {
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.prompt(
         ctx.getHostEl(),
         text,
         title,
         value => resolve(value),
-        value => reject(value)
+        value => reject(value),
+        defaultValue
       );
     });
   };
