@@ -256,24 +256,23 @@ export default {
       if (widget.group) return null;
       return this.__findResourceStock(this.widgetsAll, widget);
     },
-    async __saveDashboardUser() {
-      // check if dirty
-      if (this.page_getDirty()) {
-        // save dashboardUser
-        await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
-          dashboardUserId: this.dashboardUserId,
-          content: JSON.stringify(this.profile),
-        });
-        this.page_setDirty(false);
-        return this.$text('Saved');
-      }
-    },
     async __createDashboardUser() {
       // create dashboardUser
       const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
         key: { atomId: this.dashboardAtomId },
       });
       return res.dashboardUserId;
+    },
+    async __saveDashboardUser() {
+      // check if dirty
+      if (!this.page_getDirty()) return;
+      // save dashboardUser
+      await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
+        dashboardUserId: this.dashboardUserId,
+        content: JSON.stringify(this.profile),
+      });
+      this.page_setDirty(false);
+      return this.$text('Saved');
     },
     async onPerformLock() {
       // check if user
