@@ -26,11 +26,13 @@ export default {
     this.widget.$on('widget:destroy', this.onWidgetDestroy);
     this.widgetReal.$on('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
     this.dashboard.$on('dashboard:profileChange', this.onDashboardProfileChange);
+    this.dashboard.$on('dashboard:lockChange', this.onDashboardLockChange);
   },
   beforeDestroy() {
     this.widget.$off('widget:destroy', this.onWidgetDestroy);
     this.widgetReal.$off('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
     this.dashboard.$off('dashboard:profileChange', this.onDashboardProfileChange);
+    this.dashboard.$off('dashboard:lockChange', this.onDashboardLockChange);
     this.widget = null;
     this.widgetReal = null;
   },
@@ -44,6 +46,11 @@ export default {
     return c('eb-page', {}, children);
   },
   methods: {
+    onDashboardLockChange(lock) {
+      if (lock) {
+        this.$view.close();
+      }
+    },
     onDashboardProfileChange() {
       this.$view.close();
     },

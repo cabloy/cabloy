@@ -300,6 +300,11 @@ export default {
       this.page_setDirty(false);
       return this.$text('Saved');
     },
+    __setLock(lock) {
+      this.lock = lock;
+      // emit event
+      this.$emit('dashboard:lockChange', this.lock);
+    },
     async onPerformLock() {
       // check if user
       if (this.dashboardUserId === 0) {
@@ -308,7 +313,7 @@ export default {
         await this.__switchProfile({ dashboardUserId });
       }
       // open lock
-      this.lock = false;
+      this.__setLock(false);
       // // toast
       // this.$view.toast.show({ text: this.$text('DashboardUnlockWarningSave') });
     },
@@ -316,7 +321,7 @@ export default {
       // save
       const res = await this.onPerformSave();
       // lock
-      this.lock = true;
+      this.__setLock(true);
       // ok
       return res;
     },
