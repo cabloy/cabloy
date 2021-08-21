@@ -265,10 +265,6 @@ export default {
       const dashboardUsers = this.$local.state.dashboardUsers[this.dashboardAtomId];
       if (dashboardUsers) {
         dashboardUsers.push(dashboardUser);
-        this.$local.commit('setDashboardUsers', {
-          dashboardAtomId: this.dashboardAtomId,
-          dashboardUsers,
-        });
       }
       // ok
       return dashboardUser.id;
