@@ -36,12 +36,12 @@ export default function (ctx, router) {
   function _checkIfDirtyOfPage(pageEl) {
     if (!pageEl) return false;
     const pageVue = pageEl.__vue__;
-    return pageVue.getPageDirty && pageVue.getPageDirty();
+    return pageVue && pageVue.getPageDirty && pageVue.getPageDirty();
   }
   function _checkIfDirtyOfView(viewEl) {
     if (!viewEl) return false;
     const viewVue = viewEl.__vue__;
-    return viewVue.getViewDirty && viewVue.getViewDirty();
+    return viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
   }
   // navigate
   const navigate = router.navigate;

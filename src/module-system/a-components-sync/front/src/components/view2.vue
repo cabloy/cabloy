@@ -25,7 +25,7 @@ export default {
       const pages = this.routerData.pages;
       for (const page of pages) {
         const pageVue = page.el.__vue__;
-        if (pageVue.getPageDirty && pageVue.getPageDirty()) return true;
+        if (pageVue && pageVue.getPageDirty && pageVue.getPageDirty()) return true;
       }
       return false;
     },

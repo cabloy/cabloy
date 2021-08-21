@@ -13,6 +13,7 @@ export default {
         // update formal
         ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
         // back
+        ctx.page_setDirty(false); // should before navigate
         ctx.$f7router.back();
       } else {
         // flow
@@ -20,6 +21,7 @@ export default {
         // update draft
         ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
         // navigate replace self
+        ctx.page_setDirty(false); // should before navigate
         const url = `/a/flowtask/flow?flowId=${flow.id}`;
         ctx.$view.navigate(url, {
           target: '_self',
