@@ -46,7 +46,7 @@ export default {
       let target = this.$meta.util.getProperty(property, 'ebParams.target');
       if (target === undefined) target = '_self';
       // navigate
-      this.$view.navigate('/a/validation/validate', {
+      this.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
         target,
         context: {
           params: {
