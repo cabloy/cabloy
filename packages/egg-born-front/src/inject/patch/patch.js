@@ -106,28 +106,6 @@ export default function (ctx, router) {
     );
     return router;
   };
-  // back
-  const back = router.back;
-  const _backReal = function (...args) {
-    // view
-    const view = router.view;
-    if (view && view.$el.hasClass('eb-layout-view')) {
-      if (ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
-        return router.close();
-      }
-    }
-    return back.call(router, ...args);
-  };
-  router.back = (...args) => {
-    // check if current page is dirty
-    if (!_checkIfDirtyOfPage(router.currentPageEl)) {
-      return _backReal.call(router, ...args);
-    }
-    _pageDirtyPrompt(router.view.$el[0], () => {
-      _backReal.call(router, ...args);
-    });
-    return router;
-  };
   // close
   const _closeReal = function () {
     const view = router.view;
@@ -156,6 +134,28 @@ export default function (ctx, router) {
     }
     _pageDirtyPrompt(viewEl, () => {
       _closeReal.call(router);
+    });
+    return router;
+  };
+  // back
+  const back = router.back;
+  const _backReal = function (...args) {
+    // view
+    const view = router.view;
+    if (view && view.$el.hasClass('eb-layout-view')) {
+      if (ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
+        return _closeReal.call(router);
+      }
+    }
+    return back.call(router, ...args);
+  };
+  router.back = (...args) => {
+    // check if current page is dirty
+    if (!_checkIfDirtyOfPage(router.currentPageEl)) {
+      return _backReal.call(router, ...args);
+    }
+    _pageDirtyPrompt(router.view.$el[0], () => {
+      _backReal.call(router, ...args);
     });
     return router;
   };
