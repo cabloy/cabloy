@@ -228,6 +228,8 @@ export default {
       const title = this.dashboardUser.dashboardName;
       this.__checkProfile(this.profile);
       this.__setTitle(title);
+      // emit event
+      this.$emit('dashboard:profileChange', this.dashboardUserId);
       // toast
       const toastText = `${this.$text('ProfileSwitchedPrompt')}: ${title}`;
       this.$view.toast.show({ text: toastText });

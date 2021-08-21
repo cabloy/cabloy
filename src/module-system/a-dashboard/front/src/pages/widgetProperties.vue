@@ -25,10 +25,12 @@ export default {
   mounted() {
     this.widget.$on('widget:destroy', this.onWidgetDestroy);
     this.widgetReal.$on('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
+    this.dashboard.$on('dashboard:profileChange', this.onDashboardProfileChange);
   },
   beforeDestroy() {
     this.widget.$off('widget:destroy', this.onWidgetDestroy);
     this.widgetReal.$off('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
+    this.dashboard.$off('dashboard:profileChange', this.onDashboardProfileChange);
     this.widget = null;
     this.widgetReal = null;
   },
@@ -42,6 +44,9 @@ export default {
     return c('eb-page', {}, children);
   },
   methods: {
+    onDashboardProfileChange() {
+      this.$view.close();
+    },
     onWidgetPropsSchemaChange() {
       this.propsSchemaDynamic = this.widgetReal.getPropsSchema();
     },

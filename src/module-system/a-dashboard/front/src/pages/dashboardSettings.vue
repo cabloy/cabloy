@@ -2,12 +2,14 @@
   <eb-page>
     <eb-navbar :title="$text('Dashboard')" eb-back-link="Back"></eb-navbar>
     <f7-list>
-      <eb-list-item link="#" :title="$text('Add Widget')" :onPerform="onPerformAddWidget">
-        <f7-icon slot="media" material="add"></f7-icon>
-      </eb-list-item>
-      <eb-list-item link="#" :title="$text('Add Group')" :onPerform="onPerformAddGroup">
-        <f7-icon slot="media" material="add"></f7-icon>
-      </eb-list-item>
+      <template v-if="!dashboard.lock">
+        <eb-list-item link="#" :title="$text('Add Widget')" :onPerform="onPerformAddWidget">
+          <f7-icon slot="media" material="add"></f7-icon>
+        </eb-list-item>
+        <eb-list-item link="#" :title="$text('Add Group')" :onPerform="onPerformAddGroup">
+          <f7-icon slot="media" material="add"></f7-icon>
+        </eb-list-item>
+      </template>
       <template v-if="dashboard.scene !== 'manager'">
         <f7-list-item group-title>
           <div class="detail-list-title-container">
@@ -59,9 +61,11 @@ export default {
   },
   mounted() {
     this.dashboard.$on('dashboard:destroy', this.onDashboardDestroy);
+    this.dashboard.$on('dashboard:profileChange', this.onDashboardProfileChange);
   },
   beforeDestroy() {
     this.dashboard.$off('dashboard:destroy', this.onDashboardDestroy);
+    this.dashboard.$off('dashboard:profileChange', this.onDashboardProfileChange);
   },
   methods: {
     async __load() {
@@ -75,6 +79,9 @@ export default {
       const index = this.dashboardUsers.findIndex(item => item.id === dashboardUserId);
       if (index === -1) return { item: null, index };
       return { item: this.dashboardUsers[index], index };
+    },
+    onDashboardProfileChange(dashboardUserId) {
+      this.dashboardUserIdCurrent = dashboardUserId;
     },
     onDashboardDestroy() {
       this.$view.close();
