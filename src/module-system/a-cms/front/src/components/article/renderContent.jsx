@@ -19,7 +19,7 @@ export default {
   },
   created() {},
   methods: {
-    save() {
+    onSave() {
       const { validate } = this.context;
       return validate.perform(null, { action: 'save' });
     },
@@ -36,6 +36,9 @@ export default {
             ctx: this,
             item: parcel.data,
             readOnly: validate.readOnly,
+            onSave: () => {
+              return this.onSave();
+            },
           },
           callback: (code, res) => {
             if (code === 200) {

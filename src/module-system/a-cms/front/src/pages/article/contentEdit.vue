@@ -133,7 +133,7 @@ export default {
         });
     },
     onPerformSave() {
-      return this.contextParams.ctx.save().then(() => {
+      return this.contextParams.onSave().then(() => {
         this.dirty = false;
         return this.$text('Saved');
       });
