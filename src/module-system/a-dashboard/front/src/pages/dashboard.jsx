@@ -37,7 +37,7 @@ export default {
     const dashboardAtomId = parseInt(query.atomId) || 0;
     const scene = query.scene;
     return {
-      scene,
+      scene, // manager/others
       ready: false,
       widgetsAll: null,
       atomStaticKey,
@@ -285,7 +285,7 @@ export default {
     },
     async onPerformSave() {
       // for manager
-      await this.contextParams.ctx.save();
+      await this.contextParams.onSave();
       this.__setDirty(false);
       return this.$text('Saved');
     },
