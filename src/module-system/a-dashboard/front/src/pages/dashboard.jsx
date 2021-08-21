@@ -74,13 +74,12 @@ export default {
     item() {
       return this.contextParams && this.contextParams.item;
     },
+    dashboardUsers() {
+      return this.$local.state.dashboardUsers[this.dashboardAtomId];
+    },
   },
   mounted() {
-    this.__init()
-      .then(() => {})
-      .catch(err => {
-        this.$view.toast.show({ text: err.message });
-      });
+    this.__init();
   },
   beforeDestroy() {
     this.$emit('dashboard:destroy');
@@ -133,6 +132,11 @@ export default {
       const children = [];
       if (this.lock) {
         children.push(<eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>);
+        if (this.dashboardUsers && this.dashboardUsers.length > 1) {
+          children.push(
+            <eb-link key="dashboard-action-profileSwitch" class="dashboard-action-profileSwitch" iconMaterial="view_list" propsOnPerform={event => this.onPerformProfileSwitch(event)}></eb-link>
+          );
+        }
       }
       if (!this.lock) {
         children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
@@ -144,15 +148,27 @@ export default {
       return children;
     },
     async __init() {
-      // check scene
-      if (this.scene === 'manager') {
-        this.lock = this.readOnly;
+      try {
+        // check scene
+        if (this.scene === 'manager') {
+          // lock
+          this.lock = this.readOnly;
+        }
+        // widgetsAll
+        this.widgetsAll = await this.$store.dispatch('a/base/getResources', { resourceType: 'a-dashboard:widget' });
+        // switch profile
+        await this.__switchProfile({ dashboardUserId: this.dashboardUserId });
+        // dashboardUsers
+        if (this.scene !== 'manager') {
+          await this.$local.dispatch('getDashboardUsers', {
+            dashboardAtomId: this.dashboardAtomId,
+          });
+        }
+        // ready
+        this.ready = true;
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
       }
-      // widgetsAll
-      this.widgetsAll = await this.$store.dispatch('a/base/getResources', { resourceType: 'a-dashboard:widget' });
-      await this.__switchProfile({ dashboardUserId: this.dashboardUserId });
-      // ready
-      this.ready = true;
     },
     __saveLayoutConfig() {
       this.page_setDirty(true);
@@ -262,9 +278,8 @@ export default {
         key: { atomId: this.dashboardAtomId },
       });
       // check if cache exists
-      const dashboardUsers = this.$local.state.dashboardUsers[this.dashboardAtomId];
-      if (dashboardUsers) {
-        dashboardUsers.push(dashboardUser);
+      if (this.dashboardUsers) {
+        this.dashboardUsers.push(dashboardUser);
       }
       // ok
       return dashboardUser.id;
@@ -320,6 +335,30 @@ export default {
           },
         },
       });
+    },
+    async onPerformProfileSwitch(event) {
+      if (!this.dashboardUsers) return;
+      // buttons
+      const dashboardUserIdCurrent = this.dashboardUserId;
+      const buttons = [];
+      for (const item of this.dashboardUsers) {
+        const iconName = dashboardUserIdCurrent === item.id ? 'done' : '';
+        buttons.push({
+          icon: `<i class="icon material-icons">${iconName}</i>`,
+          text: item.dashboardName,
+          disabled: dashboardUserIdCurrent === item.id,
+          data: item,
+        });
+      }
+      // choose
+      const params = {
+        forceToPopover: true,
+        targetEl: event.target,
+        buttons,
+      };
+      const button = await this.$view.actions.choose(params);
+      // switch layout
+      await this.__switchProfile({ dashboardUserId: button.data.id });
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
