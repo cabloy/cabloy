@@ -82,7 +82,7 @@ export default function (ctx, router) {
     return back.call(router, ...args);
   };
   router.back = (...args) => {
-    // view
+    // check if current page is dirty
     const pageVue = router.currentPageEl.__vue__;
     if (!pageVue.getPageDirty || !pageVue.getPageDirty()) {
       return _backReal.call(router, ...args);
