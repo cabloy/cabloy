@@ -33,6 +33,11 @@ export default function (ctx, router) {
       );
     });
   }
+  function _checkIfDirtyOfPage(pageEl) {
+    if (!pageEl) return false;
+    const pageVue = pageEl.__vue__;
+    return pageVue.getPageDirty && pageVue.getPageDirty();
+  }
   // navigate
   const navigate = router.navigate;
   router.navigate = (navigateParams, navigateOptions, cb) => {
@@ -83,8 +88,7 @@ export default function (ctx, router) {
   };
   router.back = (...args) => {
     // check if current page is dirty
-    const pageVue = router.currentPageEl.__vue__;
-    if (!pageVue.getPageDirty || !pageVue.getPageDirty()) {
+    if (!_checkIfDirtyOfPage(router.currentPageEl)) {
       return _backReal.call(router, ...args);
     }
     const viewVue = router.view.$el[0].__vue__;
@@ -96,9 +100,10 @@ export default function (ctx, router) {
       .catch(() => {
         // do nothing
       });
+    return router;
   };
   // close
-  router.close = () => {
+  const _closeReal = function () {
     const view = router.view;
     if (view && view.$el.hasClass('eb-layout-view')) {
       // clear hash
@@ -116,6 +121,9 @@ export default function (ctx, router) {
       ctx.$meta.vueLayout.closeView(view);
     }
     return router;
+  };
+  router.close = () => {
+    // check if all of pages of current view is dirty
   };
 
   return {
