@@ -6,4 +6,5 @@ export default {
   CabloyAboutTip4:
     'Horizontally, CabloyJS has refined a code organization mode called “business modularity”, which could offer a powerful basic framework for the continually growing business demands of large-scale web applications through different module combinations',
   DashboardUnlockWarningSave: 'You should lock again for saving the modified profile',
+  ProfileSwitchedPrompt: 'Switched to Profile',
 };
