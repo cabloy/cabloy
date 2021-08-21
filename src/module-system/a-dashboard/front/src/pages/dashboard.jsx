@@ -12,11 +12,16 @@ export default {
   },
   render() {
     let domNavbar;
-    if (this.scene === 'manager' || this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
+    const domActions = this.renderActions();
+    const showNavbar = this.scene === 'manager' || this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small';
+    if (showNavbar) {
       const domActionsManager = this.renderActionsManager();
       domNavbar = (
         <eb-navbar title={this.pageTitle} ebBackLink="Back">
-          {domActionsManager}
+          <f7-nav-right>
+            {domActionsManager}
+            {domActions}
+          </f7-nav-right>
         </eb-navbar>
       );
     }
@@ -24,12 +29,11 @@ export default {
     if (this.ready) {
       domGroup = <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>;
     }
-    const domActions = this.renderActions();
     return (
       <eb-page ref="page" staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
         {domNavbar}
         {domGroup}
-        {domActions}
+        {!showNavbar && <div class="dashboard-actions">{domActions}</div>}
       </eb-page>
     );
   },
@@ -89,7 +93,7 @@ export default {
         children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSaveManager(event)}></eb-link>);
         children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
       }
-      return <f7-nav-right>{children}</f7-nav-right>;
+      return children;
     },
     renderActions() {
       if (!this.ready) return null;
@@ -106,7 +110,7 @@ export default {
       if (!this.lock) {
         children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
       }
-      return <div class="dashboard-actions">{children}</div>;
+      return children;
     },
     async __init() {
       // check scene
