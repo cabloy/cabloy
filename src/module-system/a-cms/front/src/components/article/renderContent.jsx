@@ -33,7 +33,6 @@ export default {
         target: validate.readOnly ? '_self' : undefined,
         context: {
           params: {
-            ctx: this,
             item: parcel.data,
             readOnly: validate.readOnly,
             onSave: () => {

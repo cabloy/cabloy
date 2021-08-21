@@ -10,7 +10,7 @@ export default {
   computed: {},
   created() {},
   methods: {
-    save() {
+    onSave() {
       const { validate } = this.context;
       return validate.perform(null, { action: 'save' });
     },
@@ -21,9 +21,11 @@ export default {
         target: validate.readOnly ? '_self' : undefined,
         context: {
           params: {
-            ctx: this,
             item: parcel.data,
             readOnly: validate.readOnly,
+            onSave: () => {
+              return this.onSave();
+            },
           },
           callback: (code, res) => {
             if (code === 200) {
