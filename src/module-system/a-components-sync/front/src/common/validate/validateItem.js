@@ -124,33 +124,8 @@ export default {
       } else {
         property = parcel.properties[key];
       }
-      // value
-      let _value;
-      if (!property) {
-        _value = value;
-      } else {
-        if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
-          _value = null; // for distinguish from 0
-        } else {
-          if (property.type === 'number') {
-            if (isNaN(value)) {
-              _value = value;
-            } else {
-              _value = Number(value);
-            }
-          } else if (property.type === 'integer') {
-            if (isNaN(value)) {
-              _value = value;
-            } else {
-              _value = parseInt(Number(value));
-            }
-          } else if (property.type === 'boolean') {
-            _value = Boolean(value);
-          } else {
-            _value = value;
-          }
-        }
-      }
+      // typed value
+      const _value = this._convertValueType(property, value);
 
       const _valueOld = parcel.data[key];
 
@@ -162,12 +137,50 @@ export default {
         // change src
         this.$set(parcel.dataSrc, key, _value);
         // emit changed
-        if (_valueOld !== _value) {
+        if (!this._checkIfEqual(_valueOld, _value)) {
           this.$emit('change', _value);
           this.validate.$emit('validateItem:change', key, _value);
           this.validate.$emit('validateItemChange', key, _value);
         }
       }
+    },
+    _checkIfEqual(value1, value2) {
+      if (value1 === value2) return true;
+      if (!value1 || !value2) return false;
+      // special for date
+      if (value1 instanceof Date && value2 instanceof Date && value1.getTime() === value2.getTime()) return true;
+      // others
+      return false;
+    },
+    _convertValueType(property, value) {
+      if (!property) return value;
+      // special for select empty
+      if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
+        return null; // for distinguish from 0
+      }
+      // others
+      let _value;
+      if (property.type === 'number') {
+        if (isNaN(value)) {
+          _value = value;
+        } else {
+          _value = Number(value);
+        }
+      } else if (property.type === 'integer') {
+        if (isNaN(value)) {
+          _value = value;
+        } else {
+          _value = parseInt(Number(value));
+        }
+      } else if (property.type === 'boolean') {
+        _value = Boolean(value);
+      } else if (property.type === 'string') {
+        _value = String(value);
+      } else {
+        _value = value;
+      }
+      // ok
+      return _value;
     },
     checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;
