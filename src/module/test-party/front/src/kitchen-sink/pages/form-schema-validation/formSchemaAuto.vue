@@ -1,18 +1,21 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Form / Schema (Auto) / Validation')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="page_title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-block-title>Form</f7-block-title>
-    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit"> </eb-validate>
+    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit" @validateItem:change="onValidateItemChange"></eb-validate>
     <f7-block-title>Form Value</f7-block-title>
     <pre class="form-data">{{ form2 }}</pre>
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
+  mixins: [ebPageDirty],
   data() {
     return {
       item: null,
@@ -23,8 +26,12 @@ export default {
     };
   },
   computed: {
+    page_title() {
+      const title = this.$text('Form / Schema (Auto) / Validation');
+      return this.page_getDirtyTitle(title);
+    },
     form2() {
-      return JSON5.stringify(this.item, null, 2);
+      return window.JSON5.stringify(this.item, null, 2);
     },
   },
   created() {
@@ -39,14 +46,15 @@ export default {
     onPerformSave() {
       return this.$refs.validate.perform();
     },
-    onPerformValidate() {
-      return this.$api
-        .post('kitchen-sink/form-schema-validation/saveValidation', {
-          data: this.item,
-        })
-        .then(() => {
-          return true;
-        });
+    onValidateItemChange() {
+      this.page_setDirty(true);
+    },
+    async onPerformValidate() {
+      await this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
+        data: this.item,
+      });
+      this.page_setDirty(false);
+      return true; // toast on success
     },
     onPerformUpload() {
       this.$view.navigate('/a/file/file/upload', {
