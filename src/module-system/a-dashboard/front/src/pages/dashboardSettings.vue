@@ -6,6 +6,12 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
+      <eb-list-item link="#" :title="$text('Add Widget')" :onPerform="onPerformAddWidget">
+        <f7-icon slot="media" material="add"></f7-icon>
+      </eb-list-item>
+      <eb-list-item link="#" :title="$text('Add Group')" :onPerform="onPerformAddGroup">
+        <f7-icon slot="media" material="add"></f7-icon>
+      </eb-list-item>
       <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id === dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
         <eb-context-menu>
           <div slot="right">
@@ -15,10 +21,6 @@
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
-    <f7-toolbar bottom-md>
-      <eb-button :onPerform="onPerformAddGroup">{{ $text('Add Group') }}</eb-button>
-      <eb-button :onPerform="onPerformAddWidget">{{ $text('Add Widget') }}</eb-button>
-    </f7-toolbar>
   </eb-page>
 </template>
 <script>
