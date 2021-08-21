@@ -1,10 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Dashboard')" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link v-if="dashboard.scene !== 'manager'" iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
-      </f7-nav-right>
-    </eb-navbar>
+    <eb-navbar :title="$text('Dashboard')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <eb-list-item link="#" :title="$text('Add Widget')" :onPerform="onPerformAddWidget">
         <f7-icon slot="media" material="add"></f7-icon>
@@ -12,14 +8,31 @@
       <eb-list-item link="#" :title="$text('Add Group')" :onPerform="onPerformAddGroup">
         <f7-icon slot="media" material="add"></f7-icon>
       </eb-list-item>
-      <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id === dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
-        <eb-context-menu>
-          <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformChangeName">{{ $text('Change Name') }}</div>
-            <div v-if="item.id !== dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
+      <template v-if="dashboard.scene !== 'manager'">
+        <f7-list-item group-title>
+          <div class="detail-list-title-container">
+            <div class="actions-block actions-block-left">{{ $text('Profile List') }}</div>
+            <eb-link class="actions-block actions-block-right" iconMaterial="add" :onPerform="onPerformProfileCreate"></eb-link>
           </div>
-        </eb-context-menu>
-      </eb-list-item>
+        </f7-list-item>
+        <eb-list-item
+          v-for="item of dashboardUsers"
+          :key="item.id"
+          :title="item.dashboardName"
+          radio
+          :checked="item.id === dashboardUserIdCurrent"
+          :context="item"
+          :onPerform="onPerformSwitch"
+          swipeout
+        >
+          <eb-context-menu>
+            <div slot="right">
+              <div color="orange" :context="item" :onPerform="onPerformChangeName">{{ $text('Change Name') }}</div>
+              <div v-if="item.id !== dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
+            </div>
+          </eb-context-menu>
+        </eb-list-item>
+      </template>
     </f7-list>
   </eb-page>
 </template>
@@ -112,7 +125,7 @@ export default {
       await this.dashboard.__switchProfile({ dashboardUserId });
       this.dashboardUserIdCurrent = dashboardUserId;
     },
-    async onPerformCreate() {
+    async onPerformProfileCreate() {
       await this.$view.dialog.confirm();
       // save
       await this.dashboard.__saveDashboardUser();

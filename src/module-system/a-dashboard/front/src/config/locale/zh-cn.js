@@ -38,4 +38,5 @@ export default {
   'Source Widget': '源部件',
   'Property Name': '属性名',
   'Change Name': '修改名称',
+  'Profile List': '配置列表',
 };
