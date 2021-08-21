@@ -17,7 +17,7 @@ export default {
     if (showNavbar) {
       const domActionsManager = this.renderActionsManager();
       domNavbar = (
-        <eb-navbar title={this.pageTitle} ebBackLink="Back">
+        <eb-navbar title={this.page_title} ebBackLink="Back">
           <f7-nav-right>
             {domActionsManager}
             {domActions}
@@ -54,13 +54,15 @@ export default {
       dashboardUser: null,
       widgetsReal: [],
       title: null,
-      dirty: false,
       lock: true,
+      page_dirty: false,
     };
   },
   computed: {
-    pageTitle() {
-      return this.dirty ? `* ${this.title}` : this.title;
+    page_title() {
+      const title = this.title;
+      if (!this.page_dirty) return title;
+      return `* ${title}`;
     },
     user() {
       return this.$store.state.auth.user;
@@ -84,6 +86,32 @@ export default {
     this.$emit('dashboard:destroy');
   },
   methods: {
+    page_getDirty() {
+      return this.page_dirty;
+    },
+    page_setDirty(dirty) {
+      if (this.page_dirty === dirty) return;
+      this.page_dirty = dirty;
+      if (this.scene !== 'manager') {
+        // not for manager
+        this.$pageContainer.setPageDirty(dirty);
+      }
+    },
+    __setTitle(title) {
+      const titleBase = this.$text('Dashboard');
+      if (!title) {
+        title = titleBase;
+      } else {
+        // need not $text
+        // title = this.$text(title);
+        if (title === this.$text('Default')) {
+          title = titleBase;
+        }
+      }
+      this.title = title;
+      // force set pageTitle, may be navbar rerendered
+      this.$pageContainer.setPageTitle(this.page_title);
+    },
     renderActionsManager() {
       if (!this.ready) return null;
       if (this.user.op.anonymous === 1) return null;
@@ -124,31 +152,10 @@ export default {
       this.ready = true;
     },
     __saveLayoutConfig() {
-      this.__setDirty(true);
+      this.page_setDirty(true);
       if (this.scene === 'manager' && !this.readOnly) {
         this.contextCallback(200, { content: JSON.stringify(this.profile) });
       }
-    },
-    __setTitle(title) {
-      const titleBase = this.$text('Dashboard');
-      if (!title) {
-        title = titleBase;
-      } else {
-        // need not $text
-        // title = this.$text(title);
-        if (title === this.$text('Default')) {
-          title = titleBase;
-        }
-      }
-      this.title = title;
-      this.__onTitleChange();
-    },
-    __setDirty(dirty) {
-      this.dirty = dirty;
-      this.__onTitleChange();
-    },
-    __onTitleChange() {
-      this.$refs.page.setPageTitle(this.pageTitle);
     },
     __adjustDashboardKey(atomStaticKey) {
       const presets = this.$config.dashboard.presets;
@@ -248,13 +255,13 @@ export default {
     },
     async __saveDashboardUser() {
       // check if dirty
-      if (this.dirty) {
+      if (this.page_getDirty()) {
         // save dashboardUser
         await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
           dashboardUserId: this.dashboardUserId,
           content: JSON.stringify(this.profile),
         });
-        this.__setDirty(false);
+        this.page_setDirty(false);
       }
     },
     async __createDashboardUser() {
@@ -296,7 +303,7 @@ export default {
     async onPerformSaveManager() {
       // for manager
       await this.contextParams.onSave();
-      this.__setDirty(false);
+      this.page_setDirty(false);
       return this.$text('Saved');
     },
     onWidgetsAdd({ widgets }) {
