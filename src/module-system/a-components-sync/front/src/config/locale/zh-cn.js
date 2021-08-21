@@ -24,4 +24,5 @@ export default {
   'Switch Now': '现在切换',
   AppLayoutSwitchPromptPC: '您需要切换到PC布局吗？',
   AppLayoutSwitchPromptMobile: '您需要切换到Mobile布局吗？',
+  PageDirtyQuitPrompt: '数据尚未保存，您确定离开该页面吗？',
 };

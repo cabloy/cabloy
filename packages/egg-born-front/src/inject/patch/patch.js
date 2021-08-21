@@ -71,7 +71,8 @@ export default function (ctx, router) {
   };
   // back
   const back = router.back;
-  router.back = (...args) => {
+  const _backReal = function (...args) {
+    // view
     const view = router.view;
     if (view && view.$el.hasClass('eb-layout-view')) {
       if (ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
@@ -79,6 +80,22 @@ export default function (ctx, router) {
       }
     }
     return back.call(router, ...args);
+  };
+  router.back = (...args) => {
+    // view
+    const pageVue = router.currentPageEl.__vue__;
+    if (!pageVue.getPageDirty || !pageVue.getPageDirty()) {
+      return _backReal.call(router, ...args);
+    }
+    const viewVue = router.view.$el[0].__vue__;
+    viewVue.dialog
+      .confirm(ctx.$text('PageDirtyQuitPrompt'))
+      .then(() => {
+        _backReal.call(router, ...args);
+      })
+      .catch(() => {
+        // do nothing
+      });
   };
   // close
   router.close = () => {
