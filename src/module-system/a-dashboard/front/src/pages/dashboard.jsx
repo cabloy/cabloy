@@ -13,16 +13,18 @@ export default {
   render() {
     let domNavbar;
     if (this.scene === 'manager' || this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
-      domNavbar = <eb-navbar title={this.pageTitle} ebBackLink="Back"></eb-navbar>;
+      const domActionsManager = this.renderActionsManager();
+      domNavbar = (
+        <eb-navbar title={this.pageTitle} ebBackLink="Back">
+          {domActionsManager}
+        </eb-navbar>
+      );
     }
     let domGroup;
     if (this.ready) {
       domGroup = <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>;
     }
-    let domActions;
-    if (this.ready) {
-      domActions = this.renderActions();
-    }
+    const domActions = this.renderActions();
     return (
       <eb-page ref="page" staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
         {domNavbar}
@@ -78,23 +80,27 @@ export default {
     this.$emit('dashboard:destroy');
   },
   methods: {
-    renderActions() {
+    renderActionsManager() {
+      if (!this.ready) return null;
       if (this.user.op.anonymous === 1) return null;
+      if (this.scene !== 'manager') return null;
       const children = [];
-      // not manager
-      if (this.scene !== 'manager') {
-        if (this.lock) {
-          children.push(<eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>);
-        }
-        if (!this.lock) {
-          children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
-        }
+      if (!this.lock) {
+        children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSaveManager(event)}></eb-link>);
+        children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
       }
-      // manager
-      if (this.scene === 'manager') {
-        if (!this.lock) {
-          children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>);
-        }
+      return <f7-nav-right>{children}</f7-nav-right>;
+    },
+    renderActions() {
+      if (!this.ready) return null;
+      if (this.user.op.anonymous === 1) return null;
+      if (this.scene === 'manager') return null;
+      const children = [];
+      if (this.lock) {
+        children.push(<eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>);
+      }
+      if (!this.lock) {
+        children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
       }
       //
       if (!this.lock) {
@@ -283,7 +289,7 @@ export default {
         },
       });
     },
-    async onPerformSave() {
+    async onPerformSaveManager() {
       // for manager
       await this.contextParams.onSave();
       this.__setDirty(false);
