@@ -22,7 +22,12 @@ export default {
   },
   methods: {
     getViewDirty() {
-      return true;
+      const pages = this.routerData.pages;
+      for (const page of pages) {
+        const pageVue = page.el.__vue__;
+        if (pageVue.getPageDirty && pageVue.getPageDirty()) return true;
+      }
+      return false;
     },
     getHostEl() {
       const view = this.$$(this.$el);
