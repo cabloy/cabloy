@@ -21,6 +21,9 @@ export default {
     return appMethods(this);
   },
   methods: {
+    getViewDirty() {
+      return true;
+    },
     getHostEl() {
       const view = this.$$(this.$el);
       const views = view.parents('.views');

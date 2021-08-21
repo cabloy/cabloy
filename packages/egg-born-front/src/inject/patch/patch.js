@@ -38,6 +38,11 @@ export default function (ctx, router) {
     const pageVue = pageEl.__vue__;
     return pageVue.getPageDirty && pageVue.getPageDirty();
   }
+  function _checkIfDirtyOfView(viewEl) {
+    if (!viewEl) return false;
+    const viewVue = viewEl.__vue__;
+    return viewVue.getViewDirty && viewVue.getViewDirty();
+  }
   // navigate
   const navigate = router.navigate;
   router.navigate = (navigateParams, navigateOptions, cb) => {
@@ -123,7 +128,21 @@ export default function (ctx, router) {
     return router;
   };
   router.close = () => {
-    // check if all of pages of current view is dirty
+    // check if current view is dirty
+    const viewEl = router.view.$el[0];
+    if (!_checkIfDirtyOfView(viewEl)) {
+      return _closeReal.call(router);
+    }
+    const viewVue = viewEl.__vue__;
+    viewVue.dialog
+      .confirm(ctx.$text('PageDirtyQuitPrompt'))
+      .then(() => {
+        _closeReal.call(router);
+      })
+      .catch(() => {
+        // do nothing
+      });
+    return router;
   };
 
   return {
