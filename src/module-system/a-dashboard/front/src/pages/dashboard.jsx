@@ -261,7 +261,7 @@ export default {
       const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
         key: { atomId: this.dashboardAtomId },
       });
-      return res.dashboardUserId;
+      return res.id;
     },
     async __saveDashboardUser() {
       // check if dirty

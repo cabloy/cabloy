@@ -112,17 +112,17 @@ module.exports = app => {
         }
       );
       // insert
-      const res = await this.ctx.model.dashboardUser.insert({
+      const data = {
         userId: user.id,
         dashboardDefault: 1,
         dashboardAtomId,
         dashboardName,
         content: dashboardContent.content,
-      });
-      // ok
-      return {
-        dashboardUserId: res.insertId,
       };
+      const res = await this.ctx.model.dashboardUser.insert(data);
+      data.id = res.insertId;
+      // ok
+      return data;
     }
 
     async itemUsers({ dashboardAtomId, user }) {
