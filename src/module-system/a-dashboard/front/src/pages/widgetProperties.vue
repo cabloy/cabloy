@@ -38,10 +38,6 @@ export default {
     children.push(this._renderNavbar(c));
     // list
     children.push(this._renderList(c));
-    // toolbar
-    if (this.widget.options.group) {
-      children.push(this._renderToolbar(c));
-    }
     // ok
     return c('eb-page', {}, children);
   },
@@ -64,14 +60,14 @@ export default {
             widget: this.widget,
             propertySchema,
           },
-          callback: (code, data) => {},
+          callback: (/* code, data*/) => {},
         },
       });
     },
     _getSchemaData(propsSchema) {
       const data = {};
       for (const propertyName in propsSchema.properties) {
-        const property = propsSchema.properties[propertyName];
+        // const property = propsSchema.properties[propertyName];
         const propertyValue = this.widget.__getPropertyRealValue(propertyName);
         if (propertyValue && (Array.isArray(propertyValue) || typeof propertyValue === 'object')) {
           data[propertyName] = '➡️';
@@ -85,32 +81,28 @@ export default {
       return `${this.$text('Properties')}: ${this.widget.__getPropertyRealValue('title')}`;
     },
     _renderNavbar(c) {
-      return c('eb-navbar', {
-        props: {
-          title: this._getPageTitle(),
-          ebBackLink: 'Back',
-        },
-      });
-    },
-    _renderToolbar(c) {
-      const children = [];
-      children.push(c('div'));
-      children.push(
-        c('eb-button', {
-          props: {
-            text: this.$text('Add Widget'),
-            onPerform: this.onPerformAddWidget,
-          },
-        })
-      );
+      const domActions = [];
+      if (this.widget.options.group) {
+        domActions.push(
+          c('eb-link', {
+            key: 'action-addWidget',
+            props: {
+              text: this.$text('Add Widget'),
+              onPerform: this.onPerformAddWidget,
+            },
+          })
+        );
+      }
+      const domNavRight = c('f7-nav-right', {}, domActions);
       return c(
-        'f7-toolbar',
+        'eb-navbar',
         {
           props: {
-            bottomMd: true,
+            title: this._getPageTitle(),
+            ebBackLink: 'Back',
           },
         },
-        children
+        [domNavRight]
       );
     },
     _checkPropertyValid(propertyName) {
