@@ -112,6 +112,7 @@ export default {
       // force set pageTitle, may be navbar rerendered
       this.$pageContainer.setPageTitle(this.page_title);
     },
+    // actions: save/settings
     renderActionsManager() {
       if (!this.ready) return null;
       if (this.user.op.anonymous === 1) return null;
@@ -123,6 +124,8 @@ export default {
       }
       return children;
     },
+    // actions: lock/profile list
+    // actions: unlock/save/settings
     renderActions() {
       if (!this.ready) return null;
       if (this.user.op.anonymous === 1) return null;
@@ -133,9 +136,9 @@ export default {
       }
       if (!this.lock) {
         children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
-      }
-      //
-      if (!this.lock) {
+        if (this.page_getDirty()) {
+          children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>);
+        }
         children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
       }
       return children;
@@ -262,6 +265,7 @@ export default {
           content: JSON.stringify(this.profile),
         });
         this.page_setDirty(false);
+        return this.$text('Saved');
       }
     },
     async __createDashboardUser() {
@@ -280,14 +284,26 @@ export default {
       }
       // open lock
       this.lock = false;
-      // toast
-      this.$view.toast.show({ text: this.$text('DashboardUnlockWarningSave') });
+      // // toast
+      // this.$view.toast.show({ text: this.$text('DashboardUnlockWarningSave') });
     },
     async onPerformUnlock() {
       // save
-      await this.__saveDashboardUser();
+      const res = await this.onPerformSave();
       // lock
       this.lock = true;
+      // ok
+      return res;
+    },
+    async onPerformSave() {
+      // save
+      return await this.__saveDashboardUser();
+    },
+    async onPerformSaveManager() {
+      // for manager
+      await this.contextParams.onSave();
+      this.page_setDirty(false);
+      return this.$text('Saved');
     },
     onPerformSettings() {
       this.$view.navigate(`/a/dashboard/dashboard/settings?dashboardUserId=${this.dashboardUserId}`, {
@@ -299,12 +315,6 @@ export default {
           },
         },
       });
-    },
-    async onPerformSaveManager() {
-      // for manager
-      await this.contextParams.onSave();
-      this.page_setDirty(false);
-      return this.$text('Saved');
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
