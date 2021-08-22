@@ -29,6 +29,16 @@ export default {
       }
       return false;
     },
+    viewDirtyPrompt(cbOk, cbCancel) {
+      this.dialog
+        .confirm(this.$text('PageDirtyQuitPrompt'))
+        .then(() => {
+          cbOk && cbOk();
+        })
+        .catch(() => {
+          cbCancel && cbCancel();
+        });
+    },
     getHostEl() {
       const view = this.$$(this.$el);
       const views = view.parents('.views');

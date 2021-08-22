@@ -45,14 +45,7 @@ export default function (ctx, router) {
   }
   function _pageDirtyPrompt(viewEl, cbOk, cbCancel) {
     const viewVue = viewEl.__vue__;
-    viewVue.dialog
-      .confirm(ctx.$text('PageDirtyQuitPrompt'))
-      .then(() => {
-        cbOk && cbOk();
-      })
-      .catch(() => {
-        cbCancel && cbCancel();
-      });
+    viewVue.viewDirtyPrompt(cbOk, cbCancel);
   }
   // navigate
   const navigate = router.navigate;

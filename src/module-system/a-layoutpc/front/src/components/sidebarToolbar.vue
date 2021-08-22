@@ -76,9 +76,17 @@ export default {
     },
     onClickClose() {
       const view = this.sidebar._getTopView();
-      if (view) {
-        this.sidebar.closeView(this.$$('#' + view.id)[0].f7View);
+      if (!view) return;
+      const viewEl = this.$$('#' + view.id)[0];
+      const viewVue = viewEl.__vue__;
+      const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+      if (!dirty) {
+        this.sidebar.closeView(viewEl.f7View);
+        return;
       }
+      viewVue.viewDirtyPrompt(() => {
+        this.sidebar.closeView(viewEl.f7View);
+      });
     },
   },
 };
