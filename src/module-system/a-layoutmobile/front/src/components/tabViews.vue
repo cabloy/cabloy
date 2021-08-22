@@ -120,6 +120,7 @@ export default {
         }
         const fullName = target[0].f7View.name;
         if (this.buttonActiveFullName !== fullName) {
+          // eslint-disable-next-line
           this.toolbarConfig.buttonActive = fullName;
           this.layout.__saveLayoutConfig();
         }
@@ -141,7 +142,7 @@ export default {
       for (const button of this.buttons) {
         const viewId = this._getViewId(button);
         const viewVue = this.$refs[viewId];
-        const dirty = viewVue && viewVue.getViewDirty();
+        const dirty = viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
         if (dirty) return true;
       }
       return false;

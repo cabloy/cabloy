@@ -120,7 +120,7 @@ export default {
     _getGroupDirty() {
       for (const view of this.views) {
         const viewVue = this.getView(view.id);
-        const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+        const dirty = viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
         if (dirty) return true;
       }
       return false;
