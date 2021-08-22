@@ -30,8 +30,9 @@ export default {
       return false;
     },
     viewDirtyConfirm(cbOk, cbCancel) {
-      this.dialog
-        .confirm(this.$text('PageDirtyQuitConfirm'))
+      const _promise = this.dialog.confirm(this.$text('PageDirtyQuitConfirm'));
+      if (!cbOk) return _promise;
+      _promise
         .then(() => {
           cbOk && cbOk();
         })

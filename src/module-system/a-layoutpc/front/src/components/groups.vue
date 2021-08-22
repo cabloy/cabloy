@@ -117,15 +117,19 @@ export default {
           } else {
             // remove last views
             const viewIndexNew = viewIndex + 1;
-            for (let i = group.views.length - 1; i >= 0; i--) {
-              if (i > viewIndexNew) {
-                group.views.splice(i, 1);
-              }
-            }
-            this.reLayout(group.id);
-            // return next view
-            const view = this.getView(group.id, group.views[viewIndexNew].id);
-            resolve({ view, options: { reloadAll: true } });
+            this._removeNextViews(group.id, viewIndexNew + 1)
+              .then(() => {
+                this.reLayout(group.id);
+                // return next view
+                const view = this.getView(group.id, group.views[viewIndexNew].id);
+                resolve({ view, options: { reloadAll: true } });
+              })
+              .catch(() => {
+                // maybe has removed some views
+                this.reLayout(group.id);
+                // return null
+                resolve(null);
+              });
           }
         }
       });
@@ -174,22 +178,40 @@ export default {
         const viewIndex = parseInt($view.data('index'));
         const groupId = $view.parents('.eb-layout-group').data('groupId');
         const group = this.getGroup({ id: groupId });
-        for (let i = group.views.length - 1; i >= 0; i--) {
-          if (i >= viewIndex) {
-            group.views.splice(i, 1);
-          }
-        }
-        if (group.views.length === 0) {
-          this.removeGroup(groupId);
-        } else {
-          this.reLayout(groupId);
-        }
+        this._removeNextViews(groupId, viewIndex)
+          .then(() => {
+            if (group.views.length === 0) {
+              this.removeGroup(groupId);
+            } else {
+              this.reLayout(groupId);
+            }
+          })
+          .catch(() => {
+            // do nothing
+          });
       });
     },
     onViewTitle(groupId, title) {
       if (title) {
         const group = this.groups.find(group => group.id === groupId);
         group.title = title;
+      }
+    },
+    async _removeNextViews(groupId, viewIndexStart) {
+      const group = this.getGroup({ id: groupId });
+      // from right to left
+      for (let i = group.views.length - 1; i >= 0; i--) {
+        if (i >= viewIndexStart) {
+          const view = group.views[i];
+          const viewVue = this.groups.getView(group.id, view.id);
+          if (viewVue.getViewDirty && viewVue.getViewDirty()) {
+            // will throw error if cancelled
+            await viewVue.viewDirtyConfirm();
+            group.views.splice(i, 1);
+          } else {
+            group.views.splice(i, 1);
+          }
+        }
       }
     },
   },
