@@ -2,6 +2,7 @@ import App from './pages/app.vue';
 import routes from './routes.js';
 import patchDevice from './patch/device.js';
 import patchRouter from './patch/router.js';
+import beforeunload from './patch/beforeunload.js';
 
 export default function (Vue, options, cb) {
   // patch device
@@ -60,6 +61,8 @@ export default function (Vue, options, cb) {
           Vue.prototype.$meta.module.loadWaitings();
           // remove app loading
           Vue.prototype.$meta.util.removeAppLoading();
+          // beforeunload
+          beforeunload(Vue);
         });
       },
     };
