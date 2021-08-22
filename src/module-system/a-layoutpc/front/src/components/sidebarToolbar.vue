@@ -84,7 +84,7 @@ export default {
         this.sidebar.closeView(viewEl.f7View);
         return;
       }
-      viewVue.viewDirtyPrompt(() => {
+      viewVue.viewDirtyConfirm(() => {
         this.sidebar.closeView(viewEl.f7View);
       });
     },

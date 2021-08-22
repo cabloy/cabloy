@@ -29,9 +29,9 @@ export default {
       }
       return false;
     },
-    viewDirtyPrompt(cbOk, cbCancel) {
+    viewDirtyConfirm(cbOk, cbCancel) {
       this.dialog
-        .confirm(this.$text('PageDirtyQuitPrompt'))
+        .confirm(this.$text('PageDirtyQuitConfirm'))
         .then(() => {
           cbOk && cbOk();
         })

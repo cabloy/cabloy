@@ -43,9 +43,9 @@ export default function (ctx, router) {
     const viewVue = viewEl.__vue__;
     return viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
   }
-  function _pageDirtyPrompt(viewEl, cbOk, cbCancel) {
+  function _pageDirtyConfirm(viewEl, cbOk, cbCancel) {
     const viewVue = viewEl.__vue__;
-    viewVue.viewDirtyPrompt(cbOk, cbCancel);
+    viewVue.viewDirtyConfirm(cbOk, cbCancel);
   }
   // navigate
   const navigate = router.navigate;
@@ -94,7 +94,7 @@ export default function (ctx, router) {
       pageDirty = navigateOptions && navigateOptions.reloadAll && _checkIfDirtyOfView(viewEl);
     }
     if (!pageDirty) return _navigateReal(navigateParams, navigateOptions, cb);
-    _pageDirtyPrompt(
+    _pageDirtyConfirm(
       viewEl,
       () => {
         _navigateReal(navigateParams, navigateOptions, cb);
@@ -131,7 +131,7 @@ export default function (ctx, router) {
     if (!_checkIfDirtyOfView(viewEl)) {
       return _closeReal.call(router);
     }
-    _pageDirtyPrompt(viewEl, () => {
+    _pageDirtyConfirm(viewEl, () => {
       _closeReal.call(router);
     });
     return router;
@@ -153,7 +153,7 @@ export default function (ctx, router) {
     if (!_checkIfDirtyOfPage(router.currentPageEl)) {
       return _backReal.call(router, ...args);
     }
-    _pageDirtyPrompt(router.view.$el[0], () => {
+    _pageDirtyConfirm(router.view.$el[0], () => {
       _backReal.call(router, ...args);
     });
     return router;
