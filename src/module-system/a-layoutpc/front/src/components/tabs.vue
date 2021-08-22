@@ -10,9 +10,9 @@ export default {
         attrs: { material: 'close' },
         nativeOn: {
           click: event => {
-            this.groups.removeGroup(group.id);
             event.stopPropagation();
             event.preventDefault();
+            this.onClickClose(group);
           },
         },
       });
@@ -93,6 +93,24 @@ export default {
       this.layout.groups.splice(groupIndexDrag, 1);
       const groupIndexDrop = this.groups._getGroupIndex(dropContext.group.id);
       this.layout.groups.splice(groupIndexDrop, 0, context.group);
+    },
+    onClickClose(group) {
+      for (let i = group.views.length - 1; i >= 0; i--) {
+        const view = group.views[i];
+        // from right to left
+        const viewVue = this.groups.getView(group.id, view.id);
+        if (viewVue.getViewDirty && viewVue.getViewDirty()) {
+          viewVue.viewDirtyConfirm(() => {
+            this._removeGroup(group);
+          });
+          return; // break
+        }
+      }
+      // default
+      this._removeGroup(group);
+    },
+    _removeGroup(group) {
+      this.groups.removeGroup(group.id);
     },
   },
 };
