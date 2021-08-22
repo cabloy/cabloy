@@ -242,6 +242,7 @@ export default {
         if (dirty) {
           // just switch group
           this.switchGroup(groupId);
+          return;
         }
       }
     },
