@@ -338,71 +338,81 @@ export default function (Vue) {
       return `${url}&${str}`;
     },
     loadScript(src, callback) {
-      if (!(typeof callback === 'function')) {
-        callback = function () {};
-      }
-      const check = document.querySelectorAll("script[src='" + src + "']");
-      if (check.length > 0) {
-        check[0].addEventListener('load', function () {
+      if (callback) {
+        const check = document.querySelectorAll("script[src='" + src + "']");
+        if (check.length > 0) {
+          check[0].addEventListener('load', function () {
+            callback();
+          });
           callback();
+          return;
+        }
+        const script = document.createElement('script');
+        const head = document.getElementsByTagName('head')[0];
+        script.type = 'text/javascript';
+        script.charset = 'UTF-8';
+        script.async = true;
+        script.src = src;
+        if (script.addEventListener) {
+          script.addEventListener(
+            'load',
+            function () {
+              callback();
+            },
+            false
+          );
+        } else if (script.attachEvent) {
+          script.attachEvent('onreadystatechange', function () {
+            const target = window.event.srcElement;
+            if (target.readyState === 'loaded') {
+              callback();
+            }
+          });
+        }
+        head.appendChild(script);
+      } else {
+        return new Promise(resolve => {
+          this.loadScript(src, () => {
+            resolve();
+          });
         });
-        callback();
-        return;
       }
-      const script = document.createElement('script');
-      const head = document.getElementsByTagName('head')[0];
-      script.type = 'text/javascript';
-      script.charset = 'UTF-8';
-      script.async = true;
-      script.src = src;
-      if (script.addEventListener) {
-        script.addEventListener(
-          'load',
-          function () {
-            callback();
-          },
-          false
-        );
-      } else if (script.attachEvent) {
-        script.attachEvent('onreadystatechange', function () {
-          const target = window.event.srcElement;
-          if (target.readyState === 'loaded') {
-            callback();
-          }
-        });
-      }
-      head.appendChild(script);
     },
     loadLink(src, callback) {
-      if (!(typeof callback === 'function')) {
-        callback = function () {};
-      }
-      const check = document.querySelectorAll("link[href='" + src + "']");
-      if (check.length > 0) {
-        callback();
-        return;
-      }
-      const link = document.createElement('link');
-      const head = document.getElementsByTagName('head')[0];
-      link.rel = 'stylesheet';
-      link.href = src;
-      if (link.addEventListener) {
-        link.addEventListener(
-          'load',
-          function () {
-            callback();
-          },
-          false
-        );
-      } else if (link.attachEvent) {
-        link.attachEvent('onreadystatechange', function () {
-          const target = window.event.srcElement;
-          if (target.readyState === 'loaded') {
-            callback();
-          }
+      if (callback) {
+        const check = document.querySelectorAll("link[href='" + src + "']");
+        if (check.length > 0) {
+          callback();
+          return;
+        }
+        const link = document.createElement('link');
+        const head = document.getElementsByTagName('head')[0];
+        link.rel = 'stylesheet';
+        link.href = src;
+        if (link.addEventListener) {
+          link.addEventListener(
+            'load',
+            function () {
+              callback();
+            },
+            false
+          );
+        } else if (link.attachEvent) {
+          link.attachEvent('onreadystatechange', function () {
+            const target = window.event.srcElement;
+            if (target.readyState === 'loaded') {
+              callback();
+            }
+          });
+        }
+        head.appendChild(link);
+      } else {
+        return new Promise(resolve => {
+          this.loadLink(src, () => {
+            resolve();
+          });
         });
       }
-      head.appendChild(link);
     },
     removeClassLike($el, className) {
       const classes = className.split(' ');
