@@ -93,10 +93,16 @@ export default function (ctx, router) {
       cb && cb();
       return router;
     }
-    const pageDirty = navigateOptions && navigateOptions.reloadCurrent && _checkIfDirtyOfPage(router.currentPageEl);
+    const viewEl = router.view.$el[0];
+    // check reloadCurrent
+    let pageDirty = navigateOptions && navigateOptions.reloadCurrent && _checkIfDirtyOfPage(router.currentPageEl);
+    if (!pageDirty) {
+      // check reloadAll
+      pageDirty = navigateOptions && navigateOptions.reloadAll && _checkIfDirtyOfView(viewEl);
+    }
     if (!pageDirty) return _navigateReal(navigateParams, navigateOptions, cb);
     _pageDirtyPrompt(
-      router.view.$el[0],
+      viewEl,
       () => {
         _navigateReal(navigateParams, navigateOptions, cb);
       },
