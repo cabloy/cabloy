@@ -119,14 +119,11 @@ export default {
             const viewIndexNew = viewIndex + 1;
             this._removeNextViews(group.id, viewIndexNew + 1)
               .then(() => {
-                this.reLayout(group.id);
                 // return next view
                 const view = this.getView(group.id, group.views[viewIndexNew].id);
                 resolve({ view, options: { reloadAll: true } });
               })
               .catch(() => {
-                // maybe has removed some views
-                this.reLayout(group.id);
                 // return null
                 resolve(null);
               });
@@ -182,13 +179,9 @@ export default {
           .then(() => {
             if (group.views.length === 0) {
               this.removeGroup(groupId);
-            } else {
-              this.reLayout(groupId);
             }
           })
-          .catch(() => {
-            // do nothing
-          });
+          .catch(() => {});
       });
     },
     onViewTitle(groupId, title) {
@@ -203,14 +196,15 @@ export default {
       for (let i = group.views.length - 1; i >= 0; i--) {
         if (i >= viewIndexStart) {
           const view = group.views[i];
-          const viewVue = this.groups.getView(group.id, view.id);
-          if (viewVue.getViewDirty && viewVue.getViewDirty()) {
+          const viewVue = this.getView(group.id, view.id);
+          const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+          if (dirty) {
             // will throw error if cancelled
             await viewVue.viewDirtyConfirm();
-            group.views.splice(i, 1);
-          } else {
-            group.views.splice(i, 1);
           }
+          group.views.splice(i, 1);
+          // for show the viewDirtyConfirm dialog
+          this.reLayout(groupId);
         }
       }
     },

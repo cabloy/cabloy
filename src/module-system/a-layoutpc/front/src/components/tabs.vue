@@ -95,19 +95,12 @@ export default {
       this.layout.groups.splice(groupIndexDrop, 0, context.group);
     },
     onClickClose(group) {
-      for (let i = group.views.length - 1; i >= 0; i--) {
-        const view = group.views[i];
-        // from right to left
-        const viewVue = this.groups.getView(group.id, view.id);
-        if (viewVue.getViewDirty && viewVue.getViewDirty()) {
-          viewVue.viewDirtyConfirm(() => {
-            this._removeGroup(group);
-          });
-          return; // break
-        }
-      }
-      // default
-      this._removeGroup(group);
+      this.groups
+        ._removeNextViews(group.id, 0)
+        .then(() => {
+          this._removeGroup(group);
+        })
+        .catch(() => {});
     },
     _removeGroup(group) {
       this.groups.removeGroup(group.id);
