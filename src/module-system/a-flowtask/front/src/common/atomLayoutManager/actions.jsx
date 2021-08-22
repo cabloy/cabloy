@@ -16,6 +16,7 @@ export default {
     async actions_onPerformValidate(event, { /* action,*/ handle }) {
       // init for validateInstance.perform directly
       this.$refs.actionHandleTask.init({
+        atomLayoutManager: this,
         flowLayoutManager: this.container_flowLayoutManager,
         flowTaskId: this.container.flowTaskId,
         action: this.container_action,
@@ -35,6 +36,7 @@ export default {
     actions_onPerformTaskHandleSubmit() {
       // open
       this.$refs.actionHandleTask.open({
+        atomLayoutManager: this,
         flowLayoutManager: this.container_flowLayoutManager,
         flowTaskId: this.container.flowTaskId,
         action: this.container_action,

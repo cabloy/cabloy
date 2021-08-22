@@ -21,6 +21,9 @@ export default {
     validate_onPerformValidate(event, data) {
       return this.actions_onPerformValidate(event, data);
     },
+    validate_onValidateItemChange() {
+      this.page_setDirty(true);
+    },
     validate_render() {
       if (!this.base_ready) return null;
       const meta = {
@@ -36,6 +39,7 @@ export default {
           meta={meta}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}
+          onValidateItemChange={this.validate_onValidateItemChange}
         ></eb-validate>
       );
     },

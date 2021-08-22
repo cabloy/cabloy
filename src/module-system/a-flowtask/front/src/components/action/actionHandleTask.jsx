@@ -1,6 +1,7 @@
 export default {
   data() {
     return {
+      atomLayoutManager: null,
       flowLayoutManager: null,
       flowTaskId: 0,
       action: null,
@@ -11,6 +12,11 @@ export default {
   },
   created() {
     this.pathThis = this.$f7route.path;
+  },
+  beforeDestroy() {
+    this.atomLayoutManager = null;
+    this.flowLayoutManager = null;
+    this.callback = null;
   },
   methods: {
     onFormSubmit() {
@@ -50,6 +56,8 @@ export default {
       await this.$api.post('/a/flowtask/task/complete', params);
       // load flow & atom
       await this.flowLayoutManager.base_loadData();
+      // pageDirty : save/submit(pass/reject)
+      this.atomLayoutManager.page_setDirty(false);
       // back
       if (handle) {
         if (this.pathThis === '/a/flowtask/flowTaskAtom') {
@@ -57,14 +65,15 @@ export default {
         }
       }
     },
-    init({ flowLayoutManager, flowTaskId, action, callback }) {
+    init({ atomLayoutManager, flowLayoutManager, flowTaskId, action, callback }) {
+      this.atomLayoutManager = atomLayoutManager;
       this.flowLayoutManager = flowLayoutManager;
       this.flowTaskId = flowTaskId;
       this.action = action;
       this.callback = callback;
     },
-    open({ flowLayoutManager, flowTaskId, action, callback }) {
-      this.init({ flowLayoutManager, flowTaskId, action, callback });
+    open({ atomLayoutManager, flowLayoutManager, flowTaskId, action, callback }) {
+      this.init({ atomLayoutManager, flowLayoutManager, flowTaskId, action, callback });
       this.$refs.sheet.f7Sheet.open();
     },
   },

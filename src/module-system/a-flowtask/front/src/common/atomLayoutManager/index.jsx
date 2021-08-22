@@ -1,9 +1,11 @@
+import Vue from 'vue';
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Info from './info.jsx';
 import Validate from './validate.jsx';
 import Actions from './actions.jsx';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 
 // container: {
 //   flowTaskId,
@@ -16,7 +18,15 @@ import Actions from './actions.jsx';
 // },
 
 export default {
-  mixins: [Base, Page, Layout, Info, Validate, Actions],
+  mixins: [
+    ebPageDirty, //
+    Base,
+    Page,
+    Layout,
+    Info,
+    Validate,
+    Actions,
+  ],
   data() {
     return {};
   },

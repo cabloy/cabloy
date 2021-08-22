@@ -5,7 +5,8 @@ export default {
   methods: {
     page_getTitle() {
       if (!this.base_ready) return '';
-      return `${this.$text('Task')}: ${this.base_flow.flowName}`;
+      const title = `${this.$text('Task')}: ${this.base_flow.flowName}`;
+      return this.page_getDirtyTitle(title);
     },
     page_getSubtitle() {
       return null;
