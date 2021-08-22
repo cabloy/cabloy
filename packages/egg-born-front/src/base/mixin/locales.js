@@ -4,20 +4,12 @@ export default function (Vue) {
   // locales
   const locales = {};
 
-  // beforeCreate
-  const beforeCreate = function (ctx) {
-    Object.defineProperty(ctx, '$text', {
-      get() {
-        const func = function (...args) {
-          const locale = Vue.prototype.$meta.util.getLocale();
-          return getText(locale, ...args);
-        };
-        func.locale = function (locale, ...args) {
-          return getText(locale, ...args);
-        };
-        return func;
-      },
-    });
+  Vue.prototype.$text = function (...args) {
+    const locale = Vue.prototype.$meta.util.getLocale();
+    return getText(locale, ...args);
+  };
+  Vue.prototype.$text.locale = function (locale, ...args) {
+    return getText(locale, ...args);
   };
 
   function getText(locale, ...args) {
@@ -41,5 +33,5 @@ export default function (Vue) {
     return localeutil.getText.apply(localeutil, args);
   }
 
-  return { locales, beforeCreate };
+  return { locales, beforeCreate: null };
 }

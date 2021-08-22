@@ -607,7 +607,7 @@ export default {
       }, 50);
     },
     onbeforeunload() {
-      return 'ssss';
+      return this.$refs.groups.onbeforeunload();
     },
   },
 };

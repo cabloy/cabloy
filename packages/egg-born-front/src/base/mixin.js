@@ -21,7 +21,7 @@ export default function (Vue) {
 
       // mixins
       for (const _beforeCreate of beforeCreates) {
-        _beforeCreate(this);
+        _beforeCreate && _beforeCreate(this);
       }
     },
   });

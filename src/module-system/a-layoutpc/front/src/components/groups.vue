@@ -208,6 +208,24 @@ export default {
         }
       }
     },
+    onbeforeunload() {
+      const dirty = this._onbeforeunload_stage_one();
+      if (!dirty) return dirty;
+      this._onbeforeunload_stage_two();
+      return dirty;
+    },
+    _onbeforeunload_stage_one() {
+      // from left to right
+      for (const group of this.groups) {
+        for (const view of group.views) {
+          const viewVue = this.getView(group.id, view.id);
+          const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+          if (dirty) {
+          }
+        }
+      }
+    },
+    _onbeforeunload_stage_two() {},
   },
 };
 </script>

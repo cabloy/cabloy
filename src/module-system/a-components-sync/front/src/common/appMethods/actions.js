@@ -46,7 +46,9 @@ export default function (ctx) {
         const actions = ctx.$f7.actions.create(_params);
         const onActionsClosed = function () {
           actions.off('actionsClosed', onActionsClosed).off('popoverClosed', onActionsClosed);
-          actions.destroy();
+          window.setTimeout(() => {
+            actions.destroy();
+          }, 0);
           if (!resolved) {
             resolved = true;
             reject(new Error());
