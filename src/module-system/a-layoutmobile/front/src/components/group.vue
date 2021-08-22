@@ -117,6 +117,14 @@ export default {
     getView(viewId) {
       return this.$refs[viewId];
     },
+    _getGroupDirty() {
+      for (const view of this.views) {
+        const viewVue = this.getView(view.id);
+        const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+        if (dirty) return true;
+      }
+      return false;
+    },
   },
 };
 </script>

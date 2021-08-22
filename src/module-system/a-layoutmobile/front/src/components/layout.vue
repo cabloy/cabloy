@@ -327,6 +327,18 @@ export default {
       this.layoutConfig.toolbar.buttons.push(button);
       this.__saveLayoutConfig();
     },
+    onbeforeunload() {
+      // check group
+      const groupVue = this.$refs.group;
+      let dirty = groupVue && groupVue._getGroupDirty();
+      if (dirty) return true;
+      // check tabViews
+      const tabViewsVue = this.$refs.tabViews;
+      dirty = tabViewsVue && tabViewsVue._getTabViewsDirty();
+      if (dirty) return true;
+      // default
+      return false;
+    },
   },
 };
 </script>

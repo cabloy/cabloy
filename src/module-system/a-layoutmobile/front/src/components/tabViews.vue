@@ -11,8 +11,8 @@ export default {
     const tabs = [];
     for (const button of this.buttons) {
       const fullName = this.layout._buttonFullName(button);
-      // tab id
-      const id = `eb-layout-tab-${fullName.replace(':', '_')}`;
+      // tabview id
+      const id = this._getViewId(button);
       // link
       toolbarLinks.push(
         c('eb-tab-button', {
@@ -42,6 +42,7 @@ export default {
       tabs.push(
         c('eb-view', {
           key: id,
+          ref: id,
           staticClass: `eb-layout-tab ${this.layout._combineViewSizeClass()}`,
           attrs: _viewAttrs,
           props: {
@@ -131,6 +132,19 @@ export default {
       const buttonIndex = this._getButtonIndex(button);
       if (buttonIndex === -1) return [null, -1];
       return [this.buttons[buttonIndex], buttonIndex];
+    },
+    _getViewId(button) {
+      const fullName = this.layout._buttonFullName(button);
+      return `eb-layout-tab-${fullName.replace(':', '_')}`;
+    },
+    _getTabViewsDirty() {
+      for (const button of this.buttons) {
+        const viewId = this._getViewId(button);
+        const viewVue = this.$refs[viewId];
+        const dirty = viewVue && viewVue.getViewDirty();
+        if (dirty) return true;
+      }
+      return false;
     },
   },
 };
