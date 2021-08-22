@@ -142,7 +142,7 @@ export default {
       if (groupIndex === -1) return [null, -1];
       return [this.groups[groupIndex], groupIndex];
     },
-    removeGroup(groupId) {
+    removeGroup(groupId, onlyRemove) {
       // current
       const index = this._getGroupIndex(groupId);
       const groupCurrent = this.groups[index];
@@ -157,6 +157,9 @@ export default {
       }
       // remove
       this.groups.splice(index, 1);
+      // only remove
+      if (onlyRemove) return;
+      // next action
       this.$nextTick(() => {
         // next
         if (groupIdNext) {
@@ -214,19 +217,34 @@ export default {
       this._onbeforeunload_stage_two();
       return dirty;
     },
+    _getGroupDirty(groupId) {
+      const [group] = this._getGroupAndIndex(groupId);
+      for (const view of group.views) {
+        const viewVue = this.getView(groupId, view.id);
+        const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+        if (dirty) return true;
+      }
+      return false;
+    },
     _onbeforeunload_stage_one() {
       // from left to right
       for (const group of this.groups) {
-        for (const view of group.views) {
-          const viewVue = this.getView(group.id, view.id);
-          const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
-          if (dirty) {
-          }
+        const dirty = this._getGroupDirty(group.id);
+        if (dirty) return true;
+      }
+      return false;
+    },
+    async _onbeforeunload_stage_two() {
+      // from left to right
+      const groupIds = this.groups.map(item => item.id);
+      for (const groupId of groupIds) {
+        const dirty = this._getGroupDirty(groupId);
+        if (dirty) {
+          // just switch group
+          this.switchGroup(groupId);
         }
       }
     },
-    _onbeforeunload_stage_two() {},
   },
 };
 </script>
-<style scoped></style>
