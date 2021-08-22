@@ -269,10 +269,10 @@ export default {
         }
         // get view
         this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options.scene, sceneOptions: options.sceneOptions }).then(res => {
-          if (res) {
-            if (res.options) options = this.$utils.extend({}, options, res.options);
-            res.view.f7View.router.navigate(url, options);
-          }
+          if (!res) return;
+          // navigate
+          if (res.options) options = this.$utils.extend({}, options, res.options);
+          res.view.f7View.router.navigate(url, options);
           // autohide
           this._autoHideAllSidebars();
         });
@@ -605,6 +605,9 @@ export default {
       window.setTimeout(() => {
         this.__checkSafeSetSize(cb);
       }, 50);
+    },
+    onbeforeunload() {
+      return 'ssss';
     },
   },
 };
