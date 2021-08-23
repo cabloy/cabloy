@@ -8,8 +8,7 @@ import sandboxFn from './sandbox.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
 import _escape from './escape.js';
-const requirejs = require('requirejs/require.js');
-const requirecss = require('require-css/css.js');
+import requirejs from './requirejs.js';
 
 export default function (Vue) {
   const _ids = {};
@@ -482,8 +481,7 @@ export default function (Vue) {
   window.moment = moment;
 
   // requirejs
-  console.log(requirejs);
-  requirejs.config({});
+  window.requirejs = requirejs;
 
   // mixin
   Object.assign(util, {
