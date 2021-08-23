@@ -14,5 +14,6 @@ module.exports = {
     getApp: true,
     Page: true,
     wx: true,
+    define: true,
   },
 };
