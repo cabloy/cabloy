@@ -19,6 +19,6 @@ export default function (Vue) {
     config.baseUrl = Vue.prototype.$meta.config.api.baseURL;
   }
   requirejs.require.config(config);
-  // ready
+  // ok
   return requirejs;
 }

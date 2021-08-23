@@ -505,13 +505,7 @@ export default function (Vue) {
     escapeURL: _escape.escapeURL,
   });
 
-  // test:
-  window.setTimeout(() => {
-    util.requirejs.require(['/api/static/a/markdownblock/blocks/audio/audio.js'], function () {
-      console.log('loaded');
-    });
-  }, 0);
-
+  // ok
   return util;
 }
 
