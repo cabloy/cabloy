@@ -1,5 +1,6 @@
 import requirejs from '../vendors/requirejs/require.js';
-import requirecss from '../vendors/requirejs/require-css.js';
+
+const requirecss_path = 'api/static/a/base/js/require-css/css.min';
 
 export default function (Vue) {
   // global
@@ -7,7 +8,13 @@ export default function (Vue) {
   window.require = requirejs.require;
   window.define = requirejs.define;
   // config
-  const config = {};
+  const config = {
+    map: {
+      '*': {
+        css: requirecss_path,
+      },
+    },
+  };
   if (Vue.prototype.$meta.config.api.baseURL) {
     config.baseUrl = Vue.prototype.$meta.config.api.baseURL;
   }

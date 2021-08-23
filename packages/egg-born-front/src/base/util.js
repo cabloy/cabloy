@@ -481,9 +481,13 @@ export default function (Vue) {
   window.moment = moment;
 
   // requirejs
+  let requirejs;
   Object.defineProperty(util, 'requirejs', {
     get() {
-      return requirejsFn(Vue);
+      if (!requirejs) {
+        requirejs = requirejsFn(Vue);
+      }
+      return requirejs;
     },
   });
 
