@@ -480,10 +480,16 @@ export default function (Vue) {
   // moment
   window.moment = moment;
 
+  // requirejs
+  Object.defineProperty(util, 'requirejs', {
+    get() {
+      return requirejsFn(Vue);
+    },
+  });
+
   // mixin
   Object.assign(util, {
     sandbox: sandboxFn(Vue),
-    requirejs: requirejsFn(Vue),
     moment,
     uuid,
     queue,
@@ -494,6 +500,13 @@ export default function (Vue) {
     escapeHtml: _escape.escapeHtml,
     escapeURL: _escape.escapeURL,
   });
+
+  // test:
+  window.setTimeout(() => {
+    util.requirejs.require(['/api/static/a/markdownblock/blocks/audio/audio.js'], function () {
+      console.log('loaded');
+    });
+  }, 0);
 
   return util;
 }
