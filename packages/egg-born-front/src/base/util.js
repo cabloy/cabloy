@@ -5,10 +5,10 @@ import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
 import sandboxFn from './sandbox.js';
+import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
 import _escape from './escape.js';
-import requirejs from './requirejs.js';
 
 export default function (Vue) {
   const _ids = {};
@@ -480,12 +480,10 @@ export default function (Vue) {
   // moment
   window.moment = moment;
 
-  // requirejs
-  window.requirejs = requirejs;
-
   // mixin
   Object.assign(util, {
     sandbox: sandboxFn(Vue),
+    requirejs: requirejsFn(Vue),
     moment,
     uuid,
     queue,
