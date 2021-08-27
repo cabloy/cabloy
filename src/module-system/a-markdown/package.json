@@ -25,6 +25,15 @@
   "dependencies": {
     "egg-born-mock": "^2.1.1",
     "require3": "^2.0.7",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "prosemirror-commands": "^1.1.10",
+    "prosemirror-history": "^1.2.0",
+    "prosemirror-keymap": "^1.1.4",
+    "prosemirror-model": "^1.14.3",
+    "prosemirror-schema-basic": "^1.1.2",
+    "prosemirror-state": "^1.3.4",
+    "prosemirror-transform": "^1.3.2",
+    "prosemirror-view": "^1.19.3",
+    "prosemirror-markdown": "^1.5.1"
   }
 }
