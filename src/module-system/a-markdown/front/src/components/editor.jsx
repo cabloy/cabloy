@@ -44,8 +44,10 @@ export default {
       this.view.updateState(state);
     },
   },
-  mounted() {
+  created() {
     this._buildMenuItems();
+  },
+  mounted() {
     const state = this._createState(this.lastValue);
     this.view = this._createView(state);
   },
@@ -90,12 +92,45 @@ export default {
         this.$emit('input', this.lastValue);
       }
     },
-    _renderButtons(buttonsWant) {
+    _renderButton(menuItem) {
+      // spec
+      const spec = menuItem.spec;
+      // classes
+      const classes = {
+        'text-editor-button': true,
+        [`text-editor-button-${spec.key}`]: true,
+      };
+      // icon
+      let domIcon;
+      if (spec.icon && spec.icon.material) {
+        domIcon = <i class="material-icons">{spec.icon.material}</i>;
+      } else if (spec.icon && spec.icon.text) {
+        domIcon = <i class="icon">{spec.icon.text}</i>;
+      }
+      // button
+      return (
+        <button key={spec.key} type="button" class={classes}>
+          {domIcon}
+        </button>
+      );
+    },
+    _renderButtons(domButtons, menuItems) {
+      for (let index = 0; index < menuItems.length; index++) {
+        const items = menuItems[index];
+        for (const item of items) {
+          domButtons.push(this._renderButton(item));
+        }
+        if (index < menuItems.length - 1) {
+          const domButtonDivider = <div key={`button-divider-${index}`} class="text-editor-button-divider"></div>;
+          domButtons.push(domButtonDivider);
+        }
+      }
       return null;
     },
     _renderToolbar() {
       if (this.mode !== 'toolbar') return null;
-      const domButtons = this._renderButtons(this.buttonsWant);
+      const domButtons = [];
+      this._renderButtons(domButtons, this.menuItems);
       return <div class="text-editor-toolbar">{domButtons}</div>;
     },
   },

@@ -138,6 +138,7 @@ function buildMenuItemsAll(ctx, schema) {
     const options = {
       ...buttonOptions,
       title: ctx.$text(buttonOptions.title),
+      key,
     };
     const menuItem = buttonOptions.onBuild(key, options);
     menuItems[key] = menuItem;
