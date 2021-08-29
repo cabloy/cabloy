@@ -6,6 +6,7 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 // import { exampleSetup } from 'prosemirror-example-setup';
+import { speckle } from '../common/plugins/speckle.js';
 
 export default {
   meta: {
@@ -21,6 +22,7 @@ export default {
       schema,
       doc: defaultMarkdownParser.parse(this.content),
       plugins: [
+        speckle(),
         history(), //
         keymap({ 'Mod-z': undo, 'Mod-y': redo }),
         keymap(baseKeymap),
