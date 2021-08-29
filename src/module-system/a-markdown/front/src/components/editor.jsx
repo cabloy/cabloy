@@ -5,9 +5,9 @@ import { undo, redo, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { exampleSetup } from 'prosemirror-example-setup';
+// import { exampleSetup } from 'prosemirror-example-setup';
 import { speckle } from '../common/plugins/speckle.js';
-import { ButtonsDefault } from '../common/buttons.js';
+import { ButtonsDefault, buildMenuItems } from '../common/buttons.js';
 
 export default {
   meta: {
@@ -28,7 +28,13 @@ export default {
   data() {
     return {
       lastValue: this.value,
+      menuItems: null,
     };
+  },
+  computed: {
+    buttonsWant() {
+      return this.buttons || ButtonsDefault;
+    },
   },
   watch: {
     value(newValue) {
@@ -39,13 +45,18 @@ export default {
     },
   },
   mounted() {
+    this._buildMenuItems();
     const state = this._createState(this.lastValue);
     this.view = this._createView(state);
   },
   beforeDestroy() {
     this.view = null;
+    this.menuItems = null;
   },
   methods: {
+    _buildMenuItems() {
+      this.menuItems = buildMenuItems(this, schema, this.buttonsWant);
+    },
     _createState(value) {
       const state = EditorState.create({
         schema,
@@ -84,7 +95,7 @@ export default {
     },
     _renderToolbar() {
       if (this.mode !== 'toolbar') return null;
-      const domButtons = this._renderButtons(this.buttons || ButtonsDefault);
+      const domButtons = this._renderButtons(this.buttonsWant);
       return <div class="text-editor-toolbar">{domButtons}</div>;
     },
   },

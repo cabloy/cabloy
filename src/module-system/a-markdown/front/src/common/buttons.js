@@ -1,3 +1,6 @@
+import { wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem, selectParentNodeItem, undoItem, redoItem, icons, MenuItem } from 'prosemirror-menu';
+import { toggleMark } from 'prosemirror-commands';
+
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
 //   ['orderedList', 'unorderedList'],
@@ -16,18 +19,21 @@ export const ButtonsDefault = [
   ['horizontal_rule'],
 ];
 
-export const ButtonsAll = {
+export const ButtonsOptions = {
   strong: {
     title: 'EditorButtonTitleStrong',
     icon: { material: 'format_bold' },
+    onBuild: markItem,
   },
   em: {
     title: 'EditorButtonTitleItalic',
     icon: { material: 'format_italic' },
+    onBuild: markItem,
   },
   code: {
     title: 'EditorButtonTitleCode',
     icon: { material: 'code' },
+    onBuild: markItem,
   },
   link: {
     title: 'EditorButtonTitleLink',
@@ -93,7 +99,68 @@ export const ButtonsAll = {
   },
 };
 
-export function buildMenuItems(schema) {
+function cmdItem(cmd, options) {
+  const passedOptions = {
+    label: options.title,
+    run: cmd,
+  };
+  for (const prop in options) passedOptions[prop] = options[prop];
+  if ((!options.enable || options.enable === true) && !options.select) {
+    passedOptions[options.enable ? 'enable' : 'select'] = state => cmd(state);
+  }
+
+  return new MenuItem(passedOptions);
+}
+
+function markActive(state, type) {
+  const { from, $from, to, empty } = state.selection;
+  if (empty) return type.isInSet(state.storedMarks || $from.marks());
+  return state.doc.rangeHasMark(from, to, type);
+}
+
+function markItem(markType, options) {
+  const passedOptions = {
+    active(state) {
+      return markActive(state, markType);
+    },
+    enable: true,
+  };
+  for (const prop in options) passedOptions[prop] = options[prop];
+  return cmdItem(toggleMark(markType), passedOptions);
+}
+
+function buildMenuItemsAll(ctx, schema) {
+  const menuItems = {};
+  // marks
+  for (const key in schema.marks) {
+    const buttonOptions = ButtonsOptions[key];
+    if (!buttonOptions.onBuild) continue;
+    const options = {
+      ...buttonOptions,
+      title: ctx.$text(buttonOptions.title),
+    };
+    const menuItem = buttonOptions.onBuild(key, options);
+    menuItems[key] = menuItem;
+  }
+  // nodes
+  return menuItems;
+}
+
+export function buildMenuItems(ctx, schema, buttonsWant) {
+  // menuItemsAll
+  const menuItemsAll = buildMenuItemsAll(ctx, schema);
+  // menuItems
+  let menuItems = buttonsWant.map(buttons => {
+    const arr = buttons.map(button => {
+      return menuItemsAll[button];
+    });
+    return arr.filter(x => x);
+  });
+  menuItems = menuItems.filter(x => x && x.length > 0);
+  return menuItems;
+}
+
+export function buildMenuItems1(schema, buttonsWant) {
   let r = {},
     type;
   if ((type = schema.marks.strong)) {
