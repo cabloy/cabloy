@@ -20,6 +20,10 @@ export default {
     buttons: {
       type: Array,
     },
+    mode: {
+      type: String,
+      default: 'toolbar',
+    },
   },
   data() {
     return {
@@ -79,11 +83,13 @@ export default {
       return null;
     },
     _renderToolbar() {
-      const buttons = this._renderButtons(this.buttons || ButtonsDefault);
-      return <div class="text-editor-toolbar">{buttons}</div>;
+      if (this.mode !== 'toolbar') return null;
+      const domButtons = this._renderButtons(this.buttons || ButtonsDefault);
+      return <div class="text-editor-toolbar">{domButtons}</div>;
     },
   },
   render() {
-    return <div class="text-editor"></div>;
+    const domToolbar = this._renderToolbar();
+    return <div class="text-editor">{domToolbar}</div>;
   },
 };
