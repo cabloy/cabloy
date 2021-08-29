@@ -12,33 +12,66 @@ export default {
   meta: {
     global: false,
   },
+  props: {
+    value: {
+      type: String,
+    },
+  },
   data() {
     return {
-      content: '## hello world',
+      lastValue: this.value,
     };
   },
-  mounted() {
-    const state = EditorState.create({
-      schema,
-      doc: defaultMarkdownParser.parse(this.content),
-      plugins: exampleSetup({ schema }),
-      // plugins: [
-      //   speckle(),
-      //   history(), //
-      //   keymap({ 'Mod-z': undo, 'Mod-y': redo }),
-      //   keymap(baseKeymap),
-      // ],
-    });
-    const view = new EditorView(this.$el, {
-      state,
-      dispatchTransaction(transaction) {
-        console.log('Document size went from', transaction.before.content.size, 'to', transaction.doc.content.size);
-        const newState = view.state.apply(transaction);
-        view.updateState(newState);
-      },
-    });
+  watch: {
+    value(newValue) {
+      if (newValue === this.lastValue) return;
+      this.lastValue = newValue;
+      const state = this._createState(this.lastValue);
+      this.view.updateState(state);
+    },
   },
-  methods: {},
+  mounted() {
+    const state = this._createState(this.lastValue);
+    this.view = this._createView(state);
+  },
+  beforeDestroy() {
+    this.view = null;
+  },
+  methods: {
+    _createState(value) {
+      const state = EditorState.create({
+        schema,
+        doc: defaultMarkdownParser.parse(value),
+        plugins: exampleSetup({ schema }),
+        // plugins: [
+        //   speckle(),
+        //   history(), //
+        //   keymap({ 'Mod-z': undo, 'Mod-y': redo }),
+        //   keymap(baseKeymap),
+        // ],
+      });
+      return state;
+    },
+    _createView(state) {
+      const view = new EditorView(this.$el, {
+        state,
+        dispatchTransaction: transaction => {
+          return this._viewDispatchTransaction(view, transaction);
+        },
+      });
+      return view;
+    },
+    _viewDispatchTransaction(view, transaction) {
+      console.log('Document size went from', transaction.before.content.size, 'to', transaction.doc.content.size);
+      const newState = view.state.apply(transaction);
+      view.updateState(newState);
+      const mdValue = defaultMarkdownSerializer.serialize(newState.doc);
+      if (this.lastValue !== mdValue) {
+        this.lastValue = mdValue;
+        this.$emit('input', this.lastValue);
+      }
+    },
+  },
   render() {
     return <div></div>;
   },
