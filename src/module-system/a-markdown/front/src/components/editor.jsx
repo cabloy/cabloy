@@ -5,7 +5,7 @@ import { undo, redo, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
-// import { exampleSetup } from 'prosemirror-example-setup';
+import { exampleSetup } from 'prosemirror-example-setup';
 import { speckle } from '../common/plugins/speckle.js';
 
 export default {
@@ -21,12 +21,13 @@ export default {
     const state = EditorState.create({
       schema,
       doc: defaultMarkdownParser.parse(this.content),
-      plugins: [
-        speckle(),
-        history(), //
-        keymap({ 'Mod-z': undo, 'Mod-y': redo }),
-        keymap(baseKeymap),
-      ],
+      plugins: exampleSetup({ schema }),
+      // plugins: [
+      //   speckle(),
+      //   history(), //
+      //   keymap({ 'Mod-z': undo, 'Mod-y': redo }),
+      //   keymap(baseKeymap),
+      // ],
     });
     const view = new EditorView(this.$el, {
       state,
