@@ -74,7 +74,7 @@ export default {
       return state;
     },
     _createView(state) {
-      const view = new EditorView(this.$el, {
+      const view = new EditorView(this.$refs.textEditorContent, {
         state,
         dispatchTransaction: transaction => {
           return this._viewDispatchTransaction(view, transaction);
@@ -136,6 +136,11 @@ export default {
   },
   render() {
     const domToolbar = this._renderToolbar();
-    return <div class="text-editor">{domToolbar}</div>;
+    return (
+      <div class="text-editor">
+        {domToolbar}
+        <div ref="textEditorContent" class="text-editor-content"></div>
+      </div>
+    );
   },
 };
