@@ -16,6 +16,83 @@ export const ButtonsDefault = [
   ['horizontal_rule'],
 ];
 
+export const ButtonsAll = {
+  strong: {
+    title: 'EditorButtonTitleStrong',
+    icon: { material: 'format_bold' },
+  },
+  em: {
+    title: 'EditorButtonTitleItalic',
+    icon: { material: 'format_italic' },
+  },
+  code: {
+    title: 'EditorButtonTitleCode',
+    icon: { material: 'code' },
+  },
+  link: {
+    title: 'EditorButtonTitleLink',
+    icon: { material: 'link' },
+  },
+  image: {
+    title: 'EditorButtonTitleImage',
+    icon: { material: 'image' },
+  },
+  bullet_list: {
+    title: 'EditorButtonTitleBulletList',
+    icon: { material: 'format_list_bulleted' },
+  },
+  ordered_list: {
+    title: 'EditorButtonTitleOrderedList',
+    icon: { material: 'format_list_numbered' },
+  },
+  blockquote: {
+    title: 'EditorButtonTitleBlockquote',
+    icon: { material: 'format_quote' },
+  },
+  paragraph: {
+    title: 'EditorButtonTitleParagraph',
+    icon: { text: '¶' },
+  },
+  code_block: {
+    title: 'EditorButtonTitleCodeBlock',
+    icon: { material: 'wysiwyg' },
+  },
+  horizontal_rule: {
+    title: 'EditorButtonTitleHorizontalRule',
+    icon: { material: 'horizontal_rule' },
+  },
+  heading: {
+    title: 'EditorButtonTitleHeading',
+    icon: { material: 'title' },
+    children: [
+      {
+        name: 'H1',
+        title: 'EditorButtonTitleHeading1',
+      },
+      {
+        name: 'H2',
+        title: 'EditorButtonTitleHeading2',
+      },
+      {
+        name: 'H3',
+        title: 'EditorButtonTitleHeading3',
+      },
+      {
+        name: 'H4',
+        title: 'EditorButtonTitleHeading4',
+      },
+      {
+        name: 'H5',
+        title: 'EditorButtonTitleHeading5',
+      },
+      {
+        name: 'H6',
+        title: 'EditorButtonTitleHeading6',
+      },
+    ],
+  },
+};
+
 export function buildMenuItems(schema) {
   let r = {},
     type;
