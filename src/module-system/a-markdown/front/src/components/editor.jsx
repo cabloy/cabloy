@@ -7,6 +7,7 @@ import { baseKeymap } from 'prosemirror-commands';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { exampleSetup } from 'prosemirror-example-setup';
 import { speckle } from '../common/plugins/speckle.js';
+import { ButtonsDefault } from '../common/buttons.js';
 
 export default {
   meta: {
@@ -15,6 +16,9 @@ export default {
   props: {
     value: {
       type: String,
+    },
+    buttons: {
+      type: Array,
     },
   },
   data() {
@@ -42,13 +46,13 @@ export default {
       const state = EditorState.create({
         schema,
         doc: defaultMarkdownParser.parse(value),
-        plugins: exampleSetup({ schema }),
-        // plugins: [
-        //   speckle(),
-        //   history(), //
-        //   keymap({ 'Mod-z': undo, 'Mod-y': redo }),
-        //   keymap(baseKeymap),
-        // ],
+        // plugins: exampleSetup({ schema }),
+        plugins: [
+          speckle(),
+          history(), //
+          keymap({ 'Mod-z': undo, 'Mod-y': redo }),
+          keymap(baseKeymap),
+        ],
       });
       return state;
     },
@@ -71,8 +75,15 @@ export default {
         this.$emit('input', this.lastValue);
       }
     },
+    _renderButtons(buttonsWant) {
+      return null;
+    },
+    _renderToolbar() {
+      const buttons = this._renderButtons(this.buttons || ButtonsDefault);
+      return <div class="text-editor-toolbar">{buttons}</div>;
+    },
   },
   render() {
-    return <div></div>;
+    return <div class="text-editor"></div>;
   },
 };

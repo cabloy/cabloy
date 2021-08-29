@@ -12,7 +12,7 @@ export default {
   render() {
     return (
       <eb-page>
-        <Editor value={this.content} onInput={value => (this.content = value)}></Editor>
+        <Editor style={{ height: '300px' }} value={this.content} onInput={value => (this.content = value)}></Editor>
         <textarea vModel={this.content}></textarea>
       </eb-page>
     );
