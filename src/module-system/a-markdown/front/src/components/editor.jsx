@@ -8,7 +8,7 @@ import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosem
 // import { exampleSetup } from 'prosemirror-example-setup';
 import { speckle } from '../common/plugins/speckle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
-import { ButtonsDefault, buildMenuItems } from '../common/buttons.js';
+import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
 export default {
   meta: {
@@ -94,6 +94,10 @@ export default {
         this.$emit('input', this.lastValue);
       }
     },
+    onButtonClick(event, menuItem) {
+      if (!menuItem.enabled) return;
+      menuItem.spec.run(this.view.state, this.view.dispatch, this.view, event);
+    },
     _renderButton(menuItem) {
       // spec
       const spec = menuItem.spec;
@@ -101,6 +105,7 @@ export default {
       const classes = {
         'text-editor-button': true,
         [`text-editor-button-${spec.key}`]: true,
+        active: menuItem.active,
       };
       // icon
       let domIcon;
@@ -111,7 +116,7 @@ export default {
       }
       // button
       return (
-        <button key={spec.key} type="button" class={classes}>
+        <button key={spec.key} type="button" class={classes} onClick={event => this.onButtonClick(event, menuItem)}>
           {domIcon}
         </button>
       );
