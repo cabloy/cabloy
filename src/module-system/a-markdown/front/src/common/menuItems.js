@@ -71,6 +71,7 @@ export const ButtonsOptions = {
   horizontal_rule: {
     title: 'EditorButtonTitleHorizontalRule',
     icon: { material: 'horizontal_rule' },
+    onBuild: insertHorizontalRule,
   },
   heading: {
     title: 'EditorButtonTitleHeading',
@@ -136,6 +137,26 @@ function markItem(markType, options) {
   };
   for (const prop in options) passedOptions[prop] = options[prop];
   return cmdItem(toggleMark(markType), passedOptions);
+}
+function canInsert(state, nodeType) {
+  const $from = state.selection.$from;
+  for (let d = $from.depth; d >= 0; d--) {
+    const index = $from.index(d);
+    if ($from.node(d).canReplaceWith(index, index, nodeType)) return true;
+  }
+  return false;
+}
+
+function insertHorizontalRule(nodeType, options) {
+  return new MenuItem({
+    ...options,
+    enable(state) {
+      return canInsert(state, nodeType);
+    },
+    run(state, dispatch) {
+      dispatch(state.tr.replaceSelectionWith(nodeType.create()));
+    },
+  });
 }
 
 function buildMenuItemsAll(ctx, schema) {
