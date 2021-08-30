@@ -36,6 +36,16 @@ class MenuBarView {
   _checkUpdateMenuItem(state, item) {
     const { ctx } = this.options;
     const spec = item.spec;
+    if (spec.popup) {
+      const selected = this._checkUpdateMenuItems(state, spec.menuItems);
+      ctx.$set(item, 'selected', selected);
+      if (!selected) return false;
+      // enable
+      ctx.$set(item, 'enabled', true);
+      // active
+      ctx.$set(item, 'active', false);
+      return true;
+    }
     // select
     let selected = true;
     if (spec.select) {

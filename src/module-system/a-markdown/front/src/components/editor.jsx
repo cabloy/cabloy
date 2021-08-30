@@ -98,7 +98,6 @@ export default {
       return view;
     },
     _viewDispatchTransaction(view, transaction) {
-      console.log('steps:', transaction);
       const newState = view.state.apply(transaction);
       view.updateState(newState);
       const mdValue = defaultMarkdownSerializer.serialize(newState.doc);

@@ -78,7 +78,7 @@ export const ButtonsOptions = {
     title: 'EditorButtonTitleHeading',
     icon: { material: 'title' },
     popup: true,
-    onPopup: onPopupHeading,
+    onPopup: onPopupPerform,
     children: [
       {
         key: 'H1',
@@ -194,13 +194,14 @@ function buildPopupButton(ctx, element, options) {
   return menuItem;
 }
 
-async function onPopupHeading(state, dispatch, view, event, menuItemParent) {
+async function onPopupPerform(state, dispatch, view, event, menuItemParent) {
   try {
     const { ctx, menuItems } = menuItemParent.spec;
     const buttons = [];
     for (const menuItem of menuItems) {
       buttons.push({
         text: menuItem.spec.title,
+        disabled: !menuItem.enabled,
         data: menuItem,
       });
     }
