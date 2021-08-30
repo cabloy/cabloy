@@ -108,6 +108,7 @@ export default {
         'text-editor-button': true,
         [`text-editor-button-${spec.key}`]: true,
         active: menuItem.active,
+        disabled: !menuItem.enabled,
       };
       // icon
       let domIcon;
@@ -126,10 +127,14 @@ export default {
     _renderButtons(domButtons, menuItems) {
       for (let index = 0; index < menuItems.length; index++) {
         const items = menuItems[index];
+        let something = false;
         for (const item of items) {
-          domButtons.push(this._renderButton(item));
+          if (item.selected) {
+            domButtons.push(this._renderButton(item));
+            something = true;
+          }
         }
-        if (index < menuItems.length - 1) {
+        if (something && index < menuItems.length - 1) {
           const domButtonDivider = <div key={`button-divider-${index}`} class="text-editor-button-divider"></div>;
           domButtons.push(domButtonDivider);
         }
