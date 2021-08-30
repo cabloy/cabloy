@@ -133,6 +133,7 @@ function buildMenuItemsAll(ctx, schema) {
   const menuItems = {};
   // marks
   for (const key in schema.marks) {
+    const markType = schema.marks[key];
     const buttonOptions = ButtonsOptions[key];
     if (!buttonOptions.onBuild) continue;
     const options = {
@@ -140,7 +141,7 @@ function buildMenuItemsAll(ctx, schema) {
       title: ctx.$text(buttonOptions.title),
       key,
     };
-    const menuItem = buttonOptions.onBuild(key, options);
+    const menuItem = buttonOptions.onBuild(markType, options);
     menuItems[key] = menuItem;
   }
   // nodes

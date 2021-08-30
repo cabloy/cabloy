@@ -7,6 +7,7 @@ import { baseKeymap } from 'prosemirror-commands';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 // import { exampleSetup } from 'prosemirror-example-setup';
 import { speckle } from '../common/plugins/speckle.js';
+import { menuBar } from '../common/plugins/menuBar.js';
 import { ButtonsDefault, buildMenuItems } from '../common/buttons.js';
 
 export default {
@@ -65,6 +66,7 @@ export default {
         doc: defaultMarkdownParser.parse(value),
         // plugins: exampleSetup({ schema }),
         plugins: [
+          menuBar({ ctx: this, menuItems: this.menuItems }),
           speckle(),
           history(), //
           keymap({ 'Mod-z': undo, 'Mod-y': redo }),
