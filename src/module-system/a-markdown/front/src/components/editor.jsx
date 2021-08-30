@@ -122,7 +122,7 @@ export default {
       }
       // button
       return (
-        <button key={spec.key} type="button" class={classes} onMousedown={event => this.onButtonClick(event, menuItem)}>
+        <button key={spec.key} title={spec.title} type="button" class={classes} onMousedown={event => this.onButtonClick(event, menuItem)}>
           {domIcon}
         </button>
       );
@@ -152,7 +152,7 @@ export default {
     return (
       <div class="text-editor">
         {domToolbar}
-        <div ref="textEditorContent" class="text-editor-content"></div>
+        <div ref="textEditorContent" class="text-editor-content no-active-state"></div>
       </div>
     );
   },
