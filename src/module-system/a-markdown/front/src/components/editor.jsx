@@ -96,6 +96,7 @@ export default {
     },
     onButtonClick(event, menuItem) {
       event.preventDefault();
+      // event.stopPropagation();
       if (!menuItem.enabled) return;
       menuItem.spec.run(this.view.state, this.view.dispatch, this.view, event);
     },
