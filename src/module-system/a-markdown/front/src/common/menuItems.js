@@ -57,6 +57,7 @@ export const ButtonsOptions = {
   blockquote: {
     title: 'EditorButtonTitleBlockquote',
     icon: { material: 'format_quote' },
+    onBuild: wrapItem,
   },
   paragraph: {
     title: 'EditorButtonTitleParagraph',
@@ -138,6 +139,7 @@ function markItem(markType, options) {
   for (const prop in options) passedOptions[prop] = options[prop];
   return cmdItem(toggleMark(markType), passedOptions);
 }
+
 function canInsert(state, nodeType) {
   const $from = state.selection.$from;
   for (let d = $from.depth; d >= 0; d--) {
