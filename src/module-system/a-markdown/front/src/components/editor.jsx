@@ -9,6 +9,7 @@ import { gapCursor } from 'prosemirror-gapcursor';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
 import { menuBar } from '../common/plugins/menuBar.js';
+import { markdownStyle } from '../common/plugins/markdownStyle.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
 export default {
@@ -50,14 +51,21 @@ export default {
     this._buildMenuItems();
   },
   mounted() {
-    const state = this._createState(this.lastValue);
-    this.view = this._createView(state);
+    this.init();
   },
   beforeDestroy() {
     this.view = null;
     this.menuItems = null;
   },
   methods: {
+    async init() {
+      // markdown style
+      await this.$meta.module.use(this.$meta.config.markdown.style.module);
+      // state
+      const state = this._createState(this.lastValue);
+      // view
+      this.view = this._createView(state);
+    },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schema, this.buttonsWant);
     },
@@ -67,14 +75,15 @@ export default {
         doc: defaultMarkdownParser.parse(value),
         // plugins: exampleSetup({ schema }),
         plugins: [
-          buildInputRules(schema),
+          buildInputRules(schema), //
           keymap(buildKeymap(schema)),
           // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
           dropCursor(),
           gapCursor(),
           menuBar({ ctx: this, menuItems: this.menuItems }),
-          history(), //
+          history(),
+          markdownStyle(),
         ],
       });
       return state;
