@@ -95,6 +95,7 @@ export default {
       }
     },
     onButtonClick(event, menuItem) {
+      event.preventDefault();
       if (!menuItem.enabled) return;
       menuItem.spec.run(this.view.state, this.view.dispatch, this.view, event);
     },
@@ -116,7 +117,7 @@ export default {
       }
       // button
       return (
-        <button key={spec.key} type="button" class={classes} onClick={event => this.onButtonClick(event, menuItem)}>
+        <button key={spec.key} type="button" class={classes} onMousedown={event => this.onButtonClick(event, menuItem)}>
           {domIcon}
         </button>
       );
