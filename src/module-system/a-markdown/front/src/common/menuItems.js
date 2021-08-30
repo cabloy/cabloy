@@ -1,5 +1,6 @@
 import { wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem, selectParentNodeItem, undoItem, redoItem, icons, MenuItem } from 'prosemirror-menu';
 import { toggleMark } from 'prosemirror-commands';
+import { wrapInList } from 'prosemirror-schema-list';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -46,10 +47,12 @@ export const ButtonsOptions = {
   bullet_list: {
     title: 'EditorButtonTitleBulletList',
     icon: { material: 'format_list_bulleted' },
+    onBuild: wrapListItem,
   },
   ordered_list: {
     title: 'EditorButtonTitleOrderedList',
     icon: { material: 'format_list_numbered' },
+    onBuild: wrapListItem,
   },
   blockquote: {
     title: 'EditorButtonTitleBlockquote',
@@ -100,6 +103,10 @@ export const ButtonsOptions = {
     ],
   },
 };
+
+function wrapListItem(nodeType, options) {
+  return cmdItem(wrapInList(nodeType, options.attrs), options);
+}
 
 function cmdItem(cmd, options) {
   const passedOptions = {
