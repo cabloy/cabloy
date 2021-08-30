@@ -87,9 +87,6 @@ export default {
       return view;
     },
     _viewDispatchTransaction(view, transaction) {
-      console.log('Document size went from', transaction.before.content.size, 'to', transaction.doc.content.size);
-      console.log('selection:', transaction.curSelection.$from.pos, transaction.curSelection.$to.pos);
-      console.log('selection:', transaction.steps);
       const newState = view.state.apply(transaction);
       view.updateState(newState);
       const mdValue = defaultMarkdownSerializer.serialize(newState.doc);
