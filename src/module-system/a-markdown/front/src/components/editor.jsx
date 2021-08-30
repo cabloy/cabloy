@@ -1,13 +1,13 @@
 // import { schema } from 'prosemirror-schema-basic';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { undo, redo, history } from 'prosemirror-history';
+import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
-// import { exampleSetup } from 'prosemirror-example-setup';
+import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
 import { menuBar } from '../common/plugins/menuBar.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
@@ -67,7 +67,9 @@ export default {
         doc: defaultMarkdownParser.parse(value),
         // plugins: exampleSetup({ schema }),
         plugins: [
-          keymap({ 'Mod-z': undo, 'Mod-y': redo }),
+          buildInputRules(schema),
+          keymap(buildKeymap(schema)),
+          // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
           dropCursor(),
           gapCursor(),
@@ -87,6 +89,7 @@ export default {
       return view;
     },
     _viewDispatchTransaction(view, transaction) {
+      console.log('steps:', transaction);
       const newState = view.state.apply(transaction);
       view.updateState(newState);
       const mdValue = defaultMarkdownSerializer.serialize(newState.doc);
