@@ -5,7 +5,7 @@ export default {
   },
   data() {
     return {
-      content: '## hello world',
+      content: 'hello world',
     };
   },
   methods: {},

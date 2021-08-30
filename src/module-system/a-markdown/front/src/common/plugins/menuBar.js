@@ -25,7 +25,6 @@ class MenuBarView {
   _checkUpdateMenuItems(state, items) {
     let something = false;
     for (const item of items) {
-      console.log(item.spec);
       const up = this._checkUpdateMenuItem(state, item);
       if (up) {
         something = true;

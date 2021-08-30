@@ -4,9 +4,10 @@ import { EditorView } from 'prosemirror-view';
 import { undo, redo, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 // import { exampleSetup } from 'prosemirror-example-setup';
-import { speckle } from '../common/plugins/speckle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
@@ -66,11 +67,12 @@ export default {
         doc: defaultMarkdownParser.parse(value),
         // plugins: exampleSetup({ schema }),
         plugins: [
-          menuBar({ ctx: this, menuItems: this.menuItems }),
-          speckle(),
-          history(), //
           keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
+          dropCursor(),
+          gapCursor(),
+          menuBar({ ctx: this, menuItems: this.menuItems }),
+          history(), //
         ],
       });
       return state;
@@ -86,6 +88,8 @@ export default {
     },
     _viewDispatchTransaction(view, transaction) {
       console.log('Document size went from', transaction.before.content.size, 'to', transaction.doc.content.size);
+      console.log('selection:', transaction.curSelection.$from.pos, transaction.curSelection.$to.pos);
+      console.log('selection:', transaction.steps);
       const newState = view.state.apply(transaction);
       view.updateState(newState);
       const mdValue = defaultMarkdownSerializer.serialize(newState.doc);
