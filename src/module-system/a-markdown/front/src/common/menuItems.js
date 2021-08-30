@@ -77,30 +77,44 @@ export const ButtonsOptions = {
   heading: {
     title: 'EditorButtonTitleHeading',
     icon: { material: 'title' },
+    popup: true,
+    onPopup: onPopupHeading,
     children: [
       {
-        name: 'H1',
+        key: 'H1',
         title: 'EditorButtonTitleHeading1',
+        attrs: { level: 1 },
+        onBuild: blockTypeItem,
       },
       {
-        name: 'H2',
+        key: 'H2',
         title: 'EditorButtonTitleHeading2',
+        attrs: { level: 2 },
+        onBuild: blockTypeItem,
       },
       {
-        name: 'H3',
+        key: 'H3',
         title: 'EditorButtonTitleHeading3',
+        attrs: { level: 3 },
+        onBuild: blockTypeItem,
       },
       {
-        name: 'H4',
+        key: 'H4',
         title: 'EditorButtonTitleHeading4',
+        attrs: { level: 4 },
+        onBuild: blockTypeItem,
       },
       {
         name: 'H5',
         title: 'EditorButtonTitleHeading5',
+        attrs: { level: 5 },
+        onBuild: blockTypeItem,
       },
       {
         name: 'H6',
         title: 'EditorButtonTitleHeading6',
+        attrs: { level: 6 },
+        onBuild: blockTypeItem,
       },
     ],
   },
@@ -161,27 +175,88 @@ function insertHorizontalRule(nodeType, options) {
   });
 }
 
-function buildMenuItemsAll(ctx, schema) {
+function buildPopupButton(ctx, element, options) {
+  // children
+  const menuItems = [];
+  for (const buttonOptions of options.children) {
+    const menuItem = __buildMenuItem(ctx, element, buttonOptions.key, buttonOptions);
+    if (menuItem) {
+      menuItems.push(menuItem);
+    }
+  }
+  const menuItem = new MenuItem({
+    ...options,
+    menuItems,
+    run(state, dispatch, view, event) {
+      options.onPopup(state, dispatch, view, event, menuItem);
+    },
+  });
+  return menuItem;
+}
+
+async function onPopupHeading(state, dispatch, view, event, menuItemParent) {
+  try {
+    const { ctx, menuItems } = menuItemParent.spec;
+    const buttons = [];
+    for (const menuItem of menuItems) {
+      buttons.push({
+        text: menuItem.spec.title,
+        data: menuItem,
+      });
+    }
+    // choose
+    const params = {
+      forceToPopover: true,
+      targetEl: event.target,
+      buttons,
+    };
+    const button = await ctx.$view.actions.choose(params);
+    const menuItem = button.data;
+    menuItem.spec.run(state, dispatch, view);
+  } catch (err) {}
+}
+
+function __buildMenuItem(ctx, element, key, buttonOptions) {
+  if (!buttonOptions) return null;
+  const options = {
+    ...buttonOptions,
+    title: ctx.$text(buttonOptions.title),
+    key,
+    ctx,
+  };
+  let menuItem;
+  if (buttonOptions.onBuild) {
+    // build
+    menuItem = buttonOptions.onBuild(element, options);
+  } else if (buttonOptions.popup) {
+    // popup
+    menuItem = buildPopupButton(ctx, element, options);
+  }
+  return menuItem;
+}
+
+function __schemaElements(ctx, elements) {
   const menuItems = {};
-  function __schemaElements(elements) {
-    for (const key in elements) {
-      const element = elements[key];
-      const buttonOptions = ButtonsOptions[key];
-      if (!buttonOptions || !buttonOptions.onBuild) continue;
-      const options = {
-        ...buttonOptions,
-        title: ctx.$text(buttonOptions.title),
-        key,
-      };
-      const menuItem = buttonOptions.onBuild(element, options);
+  for (const key in elements) {
+    const element = elements[key];
+    const buttonOptions = ButtonsOptions[key];
+    const menuItem = __buildMenuItem(ctx, element, key, buttonOptions);
+    if (menuItem) {
       menuItems[key] = menuItem;
     }
   }
+  return menuItems;
+}
+
+function buildMenuItemsAll(ctx, schema) {
+  const menuItems = {};
   // marks
-  __schemaElements(schema.marks);
+  let res = __schemaElements(ctx, schema.marks);
+  Object.assign(menuItems, res);
   // nodes
-  __schemaElements(schema.nodes);
-  // nodes
+  res = __schemaElements(ctx, schema.nodes);
+  Object.assign(menuItems, res);
+  // ok
   return menuItems;
 }
 
