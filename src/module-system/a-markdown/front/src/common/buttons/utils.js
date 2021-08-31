@@ -44,3 +44,64 @@ export function canInsert(state, nodeType) {
   }
   return false;
 }
+
+export function buildMenuItem(ctx, element, key, buttonOptions) {
+  if (!buttonOptions) return null;
+  const options = {
+    ...buttonOptions,
+    title: ctx.$text(buttonOptions.title),
+    key,
+    ctx,
+  };
+  let menuItem;
+  if (buttonOptions.onBuild) {
+    // build
+    menuItem = buttonOptions.onBuild(element, options);
+  } else if (buttonOptions.popup) {
+    // popup
+    menuItem = buildPopupButton(ctx, element, options);
+  }
+  return menuItem;
+}
+
+export function buildPopupButton(ctx, element, options) {
+  // children
+  const menuItems = [];
+  for (const buttonOptions of options.children) {
+    const menuItem = buildMenuItem(ctx, element, buttonOptions.key, buttonOptions);
+    if (menuItem) {
+      menuItems.push(menuItem);
+    }
+  }
+  const menuItem = new MenuItem({
+    ...options,
+    menuItems,
+    run(state, dispatch, view, event) {
+      options.onPopup(state, dispatch, view, event, menuItem);
+    },
+  });
+  return menuItem;
+}
+
+export async function onPopupPerform(state, dispatch, view, event, menuItemParent) {
+  try {
+    const { ctx, menuItems } = menuItemParent.spec;
+    const buttons = [];
+    for (const menuItem of menuItems) {
+      buttons.push({
+        text: menuItem.spec.title,
+        disabled: !menuItem.enabled,
+        data: menuItem,
+      });
+    }
+    // choose
+    const params = {
+      forceToPopover: true,
+      targetEl: event.target,
+      buttons,
+    };
+    const button = await ctx.$view.actions.choose(params);
+    const menuItem = button.data;
+    menuItem.spec.run(state, dispatch, view);
+  } catch (err) {}
+}

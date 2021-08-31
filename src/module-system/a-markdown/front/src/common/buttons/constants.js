@@ -1,3 +1,5 @@
+import { wrapItem, blockTypeItem } from 'prosemirror-menu';
+import { markItem, wrapListItem, onPopupPerform } from './utils.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 import { ButtonHorizontalRule } from './horizontalRule.js';
