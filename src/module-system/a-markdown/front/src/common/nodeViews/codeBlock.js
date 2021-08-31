@@ -74,7 +74,7 @@ export class CodeBlockView {
     const change = computeChange(this.node.textContent, this.cm.getValue());
     if (change) {
       const start = this.getPos() + 1;
-      const tr = this.view.state.tr.replaceWith(start + change.from, start + change.to, change.text ? schema.text(change.text) : null);
+      const tr = this.view.state.tr.replaceWith(start + change.from, start + change.to, change.text ? this.view.state.schema.text(change.text) : null);
       this.view.dispatch(tr);
     }
   }
