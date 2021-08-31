@@ -27,6 +27,9 @@ export default {
       type: String,
       default: 'toolbar',
     },
+    host: {
+      type: Object,
+    },
   },
   data() {
     return {
