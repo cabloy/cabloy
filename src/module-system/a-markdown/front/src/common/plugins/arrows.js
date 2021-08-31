@@ -1,4 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
+import { Selection } from 'prosemirror-state';
 
 export function arrows() {
   const arrowsPlugin = keymap({
