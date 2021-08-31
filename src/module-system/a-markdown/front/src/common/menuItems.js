@@ -20,63 +20,75 @@ export const ButtonsDefault = [
   ['horizontal_rule'],
 ];
 
-export const ButtonsOptions = {
+export const ButtonsAllOptions = {
   strong: {
+    mark: true,
     title: 'EditorButtonTitleStrong',
     icon: { material: 'format_bold' },
     onBuild: markItem,
   },
   em: {
+    mark: true,
     title: 'EditorButtonTitleItalic',
     icon: { material: 'format_italic' },
     onBuild: markItem,
   },
   code: {
+    mark: true,
     title: 'EditorButtonTitleCode',
     icon: { material: 'code' },
     onBuild: markItem,
   },
   link: {
+    mark: true,
     title: 'EditorButtonTitleLink',
     icon: { material: 'link' },
     onBuild: insertLinkItem,
   },
   image: {
+    node: true,
     title: 'EditorButtonTitleImage',
     icon: { material: 'image' },
     onBuild: insertImageItem,
   },
   bullet_list: {
+    node: true,
     title: 'EditorButtonTitleBulletList',
     icon: { material: 'format_list_bulleted' },
     onBuild: wrapListItem,
   },
   ordered_list: {
+    node: true,
     title: 'EditorButtonTitleOrderedList',
     icon: { material: 'format_list_numbered' },
     onBuild: wrapListItem,
   },
   blockquote: {
+    node: true,
     title: 'EditorButtonTitleBlockquote',
     icon: { material: 'format_quote' },
     onBuild: wrapItem,
   },
   paragraph: {
+    node: true,
     title: 'EditorButtonTitleParagraph',
     icon: { text: '¶' },
     onBuild: blockTypeItem,
   },
   code_block: {
+    node: true,
     title: 'EditorButtonTitleCodeBlock',
     icon: { material: 'wysiwyg' },
     onBuild: blockTypeItem,
   },
   horizontal_rule: {
+    node: true,
     title: 'EditorButtonTitleHorizontalRule',
     icon: { material: 'horizontal_rule' },
     onBuild: insertHorizontalRule,
   },
   heading: {
+    node: true,
     title: 'EditorButtonTitleHeading',
     icon: { material: 'title' },
     popup: true,
@@ -321,7 +333,7 @@ function __schemaElements(ctx, elements) {
   const menuItems = {};
   for (const key in elements) {
     const element = elements[key];
-    const buttonOptions = ButtonsOptions[key];
+    const buttonOptions = ButtonsAllOptions[key];
     const menuItem = __buildMenuItem(ctx, element, key, buttonOptions);
     if (menuItem) {
       menuItems[key] = menuItem;
@@ -330,14 +342,26 @@ function __schemaElements(ctx, elements) {
   return menuItems;
 }
 
+function getMarkNodeElement(schema, key, buttonOptions) {
+  if (buttonOptions.mark) {
+    return schema.marks[buttonOptions.mark === true ? key : buttonOptions.mark];
+  }
+  if (buttonOptions.node) {
+    return schema.nodes[buttonOptions.node === true ? key : buttonOptions.node];
+  }
+  return null;
+}
+
 function buildMenuItemsAll(ctx, schema) {
   const menuItems = {};
-  // marks
-  let res = __schemaElements(ctx, schema.marks);
-  Object.assign(menuItems, res);
-  // nodes
-  res = __schemaElements(ctx, schema.nodes);
-  Object.assign(menuItems, res);
+  for (const key in ButtonsAllOptions) {
+    const buttonOptions = ButtonsAllOptions[key];
+    const element = getMarkNodeElement(schema, key, buttonOptions);
+    const menuItem = __buildMenuItem(ctx, element, key, buttonOptions);
+    if (menuItem) {
+      menuItems[key] = menuItem;
+    }
+  }
   // ok
   return menuItems;
 }
