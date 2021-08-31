@@ -1,4 +1,4 @@
-import { PluginKey, Plugin } from 'prosemirror-state';
+import { Plugin } from 'prosemirror-state';
 
 class PlaceholderEmptyView {
   constructor(editorView, options) {
@@ -20,7 +20,6 @@ class PlaceholderEmptyView {
   }
 
   _checkUpdate(view, state) {
-    const { ctx } = this.options;
     if (state.doc.content.size <= 2 && !this.showing) {
       this.showing = true;
       window.setTimeout(() => {
