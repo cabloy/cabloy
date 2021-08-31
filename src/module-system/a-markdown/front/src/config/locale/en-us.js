@@ -18,4 +18,5 @@ export default {
   EditorButtonTitleHeading4: 'Heading 4',
   EditorButtonTitleHeading5: 'Heading 5',
   EditorButtonTitleHeading6: 'Heading 6',
+  TextEditorPlaceHolder: 'Begin editing...',
 };

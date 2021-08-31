@@ -1,8 +1,9 @@
-import { Plugin } from 'prosemirror-state';
+import { PluginKey, Plugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 export function placeholder() {
   const placeholderPlugin = new Plugin({
+    key: new PluginKey('placeholder'),
     state: {
       init() {
         return DecorationSet.empty;
@@ -13,8 +14,13 @@ export function placeholder() {
         // See if the transaction adds or removes any placeholders
         const action = tr.getMeta(this);
         if (action && action.add) {
-          const deco = Decoration.widget(action.add.pos, action.add.widget, { id: action.add.id });
-          set = set.add(tr.doc, [deco]);
+          const found = set.find(null, null, spec => {
+            return spec.id === action.add.id;
+          });
+          if (found.length === 0) {
+            const deco = Decoration.widget(action.add.pos, action.add.widget, { id: action.add.id });
+            set = set.add(tr.doc, [deco]);
+          }
         } else if (action && action.remove) {
           set = set.remove(set.find(null, null, spec => spec.id === action.remove.id));
         }

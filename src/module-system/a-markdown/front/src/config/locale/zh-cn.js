@@ -21,5 +21,6 @@ export default {
   EditorButtonTitleHeading4: '四级标题',
   EditorButtonTitleHeading5: '五级标题',
   EditorButtonTitleHeading6: '六级标题',
+  TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
 };

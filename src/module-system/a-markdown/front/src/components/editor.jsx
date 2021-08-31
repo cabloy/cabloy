@@ -10,7 +10,8 @@ import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosem
 import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
 import { markdownStyle } from '../common/plugins/markdownStyle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
-import { placeholder } from '../common/plugins/placeholder';
+import { placeholder } from '../common/plugins/placeholder.js';
+import { placeholderEmpty } from '../common/plugins/placeholderEmpty.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
 export default {
@@ -31,6 +32,9 @@ export default {
     host: {
       type: Object,
     },
+    placeholder: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -41,6 +45,9 @@ export default {
   computed: {
     buttonsWant() {
       return this.buttons || ButtonsDefault;
+    },
+    placeholderText() {
+      return this.placeholder || this.$text('TextEditorPlaceHolder');
     },
   },
   watch: {
@@ -89,6 +96,7 @@ export default {
           history(),
           markdownStyle(),
           placeholder(),
+          placeholderEmpty({ ctx: this, placeholderText: this.placeholderText }),
         ],
       });
       return state;
