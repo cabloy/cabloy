@@ -8,6 +8,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Link',
+        format: 'uri',
         notEmpty: true,
       },
       title: {
