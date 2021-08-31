@@ -83,7 +83,7 @@ export default {
     _createState(value) {
       const state = EditorState.create({
         schema,
-        doc: defaultMarkdownParser.parse(value),
+        doc: defaultMarkdownParser.parse(value || ''),
         // plugins: exampleSetup({ schema }),
         plugins: [
           buildInputRules(schema), //
