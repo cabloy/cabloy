@@ -5,7 +5,11 @@ module.exports = app => {
       atoms: {},
     },
     validation: {
-      validators: {},
+      validators: {
+        link: {
+          schemas: 'link',
+        },
+      },
       keywords: {},
       schemas,
     },
