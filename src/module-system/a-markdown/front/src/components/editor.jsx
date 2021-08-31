@@ -175,7 +175,7 @@ export default {
   render() {
     const domToolbar = this._renderToolbar();
     return (
-      <div class="text-editor">
+      <div class="text-editor text-editor-markdown">
         {domToolbar}
         <div ref="textEditorContent" class="text-editor-content no-active-state"></div>
       </div>
