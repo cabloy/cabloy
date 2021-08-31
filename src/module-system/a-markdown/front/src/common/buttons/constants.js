@@ -14,10 +14,10 @@ import { ButtonImage } from './image.js';
 // ];
 
 export const ButtonsDefault = [
-  ['strong', 'em', 'code'], //
+  ['heading', 'strong', 'em', 'code'], //
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
-  ['blockquote', 'paragraph', 'code_block', 'heading'],
+  ['paragraph', 'blockquote', 'code_block'],
   ['horizontal_rule'],
 ];
 
