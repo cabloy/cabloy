@@ -39,6 +39,7 @@ export const ButtonsOptions = {
   link: {
     title: 'EditorButtonTitleLink',
     icon: { material: 'link' },
+    onBuild: insertLinkItem,
   },
   image: {
     title: 'EditorButtonTitleImage',
@@ -171,6 +172,47 @@ function insertHorizontalRule(nodeType, options) {
     },
     run(state, dispatch) {
       dispatch(state.tr.replaceSelectionWith(nodeType.create()));
+    },
+  });
+}
+function insertLinkItem(markType, options) {
+  return new MenuItem({
+    ...options,
+    active(state) {
+      return markActive(state, markType);
+    },
+    enable(state) {
+      return !state.selection.empty;
+    },
+    run(state, dispatch, view) {
+      if (markActive(state, markType)) {
+        toggleMark(markType)(state, dispatch);
+        return true;
+      }
+      // navigate
+      const { ctx } = options;
+      ctx.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
+        context: {
+          params: {
+            params: {
+              module: 'a-markdown',
+              validator: 'link',
+            },
+            title: ctx.$text('Create Link'),
+            data: {
+              href: '',
+              title: '',
+            },
+          },
+          callback: (code, res) => {
+            if (code === 200) {
+              const attrs = res.data;
+              toggleMark(markType, attrs)(view.state, view.dispatch);
+              view.focus();
+            }
+          },
+        },
+      });
     },
   });
 }

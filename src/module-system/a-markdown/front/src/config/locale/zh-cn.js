@@ -1,4 +1,5 @@
 export default {
+  Link: '链接',
   EditorButtonTitleStrong: '加粗',
   EditorButtonTitleItalic: '斜体',
   EditorButtonTitleCode: '代码',
@@ -17,4 +18,5 @@ export default {
   EditorButtonTitleHeading4: '四级标题',
   EditorButtonTitleHeading5: '五级标题',
   EditorButtonTitleHeading6: '六级标题',
+  'Create Link': '创建链接',
 };

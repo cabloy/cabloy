@@ -4,13 +4,13 @@ module.exports = app => {
   schemas.link = {
     type: 'object',
     properties: {
-      link: {
+      href: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Link',
         notEmpty: true,
       },
-      description: {
+      title: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Description',
