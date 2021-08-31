@@ -26,6 +26,8 @@
     "egg-born-mock": "^2.1.1",
     "require3": "^2.0.7",
     "extend2": "^1.0.0",
+    "codemirror": "^5.62.3",
+    "markdown-it": "^12.2.0",
     "prosemirror-commands": "^1.1.10",
     "prosemirror-history": "^1.2.0",
     "prosemirror-keymap": "^1.1.4",

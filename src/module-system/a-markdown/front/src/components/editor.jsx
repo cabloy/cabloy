@@ -6,13 +6,17 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
-import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
+import { arrows } from '../common/plugins/arrows.js';
 import { markdownStyle } from '../common/plugins/markdownStyle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
 import { placeholder } from '../common/plugins/placeholder.js';
 import { placeholderEmpty } from '../common/plugins/placeholderEmpty.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
+import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
+import { schemaCustom } from '../common/schema/schemaCustom.js';
+import { markdownParserCustom } from '../common/schema/markdownParserCustom.js';
+import { markdownSerializerCustom } from '../common/schema/markdownSerializerCustom.js';
 
 export default {
   meta: {
@@ -78,22 +82,23 @@ export default {
       this.view = this._createView(state);
     },
     _buildMenuItems() {
-      this.menuItems = buildMenuItems(this, schema, this.buttonsWant);
+      this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
     },
     _createState(value) {
       const state = EditorState.create({
-        schema,
-        doc: defaultMarkdownParser.parse(value || ''),
+        schema: schemaCustom,
+        doc: markdownParserCustom.parse(value || ''),
         // plugins: exampleSetup({ schema }),
         plugins: [
-          buildInputRules(schema), //
-          keymap(buildKeymap(schema)),
+          buildInputRules(schemaCustom), //
+          keymap(buildKeymap(schemaCustom)),
           // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
           dropCursor(),
           gapCursor(),
           menuBar({ ctx: this, menuItems: this.menuItems }),
           history(),
+          arrows(),
           markdownStyle(),
           placeholder(),
           placeholderEmpty({ ctx: this, placeholderText: this.placeholderText }),
@@ -104,6 +109,9 @@ export default {
     _createView(state) {
       const view = new EditorView(this.$refs.textEditorContent, {
         state,
+        nodeViews: {
+          code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos),
+        },
         dispatchTransaction: transaction => {
           return this._viewDispatchTransaction(view, transaction);
         },
@@ -113,7 +121,7 @@ export default {
     _viewDispatchTransaction(view, transaction) {
       const newState = view.state.apply(transaction);
       view.updateState(newState);
-      const mdValue = defaultMarkdownSerializer.serialize(newState.doc);
+      const mdValue = markdownSerializerCustom.serialize(newState.doc);
       if (this.lastValue !== mdValue) {
         this.lastValue = mdValue;
         this.$emit('input', this.lastValue);
