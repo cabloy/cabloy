@@ -105,3 +105,15 @@ export async function onPopupPerform(state, dispatch, view, event, menuItemParen
     menuItem.spec.run(state, dispatch, view);
   } catch (err) {}
 }
+
+export function insertNode(nodeType, options) {
+  return new MenuItem({
+    ...options,
+    enable(state) {
+      return canInsert(state, nodeType);
+    },
+    run(state, dispatch) {
+      dispatch(state.tr.replaceSelectionWith(nodeType.create()));
+    },
+  });
+}

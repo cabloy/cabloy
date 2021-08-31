@@ -1,8 +1,7 @@
 import { wrapItem, blockTypeItem } from 'prosemirror-menu';
-import { markItem, wrapListItem, onPopupPerform } from './utils.js';
+import { markItem, wrapListItem, onPopupPerform, insertNode } from './utils.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
-import { ButtonHorizontalRule } from './horizontalRule.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -73,7 +72,12 @@ export const ButtonsAllOptions = {
     icon: { material: 'wysiwyg' },
     onBuild: blockTypeItem,
   },
-  horizontal_rule: ButtonHorizontalRule,
+  horizontal_rule: {
+    node: true,
+    title: 'EditorButtonTitleHorizontalRule',
+    icon: { material: 'horizontal_rule' },
+    onBuild: insertNode,
+  },
   heading: {
     node: true,
     title: 'EditorButtonTitleHeading',
