@@ -8,8 +8,9 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
-import { menuBar } from '../common/plugins/menuBar.js';
 import { markdownStyle } from '../common/plugins/markdownStyle.js';
+import { menuBar } from '../common/plugins/menuBar.js';
+import { placeholder } from '../common/plugins/placeholder';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 
 export default {
@@ -87,6 +88,7 @@ export default {
           menuBar({ ctx: this, menuItems: this.menuItems }),
           history(),
           markdownStyle(),
+          placeholder(),
         ],
       });
       return state;
