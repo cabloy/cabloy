@@ -9,12 +9,13 @@
       ref="validate"
       :readOnly="readOnly"
       auto
-      :data="data"
+      :data="dataLocal"
       :dataPathRoot="dataPathRoot"
       :errors="errors"
       :params="params"
       :host="host"
       :meta="meta"
+      :onPerform="onPerformValidate"
       @submit="onFormSubmit"
       @validateItem:change="onValidateItemChange"
     ></eb-validate>
@@ -27,7 +28,9 @@ const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixin
 export default {
   mixins: [ebPageContext, ebPageDirty],
   data() {
-    return {};
+    return {
+      dataLocal: null,
+    };
   },
   computed: {
     host() {
@@ -57,14 +60,31 @@ export default {
     page_title() {
       return this.page_getDirtyTitle(this.title);
     },
+    performValidate() {
+      return this.contextParams.performValidate;
+    },
+  },
+  created() {
+    this.dataLocal = this.$meta.util.extend({}, this.data);
   },
   methods: {
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
-    onPerformDone() {
+    onPerformValidate() {
+      return this.$api.post('validation/validate', {
+        params: this.params,
+        data: this.dataLocal,
+      });
+    },
+    async onPerformDone() {
+      // performValidate
+      if (this.performValidate) {
+        await this.$refs.validate.perform();
+      }
+      // callback
       this.contextCallback(200, {
-        data: this.data,
+        data: this.dataLocal,
         errors: this.errors,
       });
       this.page_setDirty(false);

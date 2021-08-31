@@ -203,6 +203,7 @@ function insertLinkItem(markType, options) {
               href: '',
               title: '',
             },
+            performValidate: true,
           },
           callback: (code, res) => {
             if (code === 200) {
