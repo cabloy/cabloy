@@ -3,6 +3,20 @@ import { ButtonsDefault, ButtonsAllOptions } from './buttons/constants.js';
 
 export { ButtonsDefault, ButtonsAllOptions };
 
+export function buildMenuItems(ctx, schema, buttonsWant) {
+  // menuItemsAll
+  const menuItemsAll = buildMenuItemsAll(ctx, schema);
+  // menuItems
+  let menuItems = buttonsWant.map(buttons => {
+    const arr = buttons.map(button => {
+      return menuItemsAll[button];
+    });
+    return arr.filter(x => x);
+  });
+  menuItems = menuItems.filter(x => x && x.length > 0);
+  return menuItems;
+}
+
 function getMarkNodeElement(schema, key, buttonOptions) {
   if (buttonOptions.mark) {
     return schema.marks[buttonOptions.mark === true ? key : buttonOptions.mark] || false;
@@ -25,19 +39,5 @@ function buildMenuItemsAll(ctx, schema) {
     }
   }
   // ok
-  return menuItems;
-}
-
-export function buildMenuItems(ctx, schema, buttonsWant) {
-  // menuItemsAll
-  const menuItemsAll = buildMenuItemsAll(ctx, schema);
-  // menuItems
-  let menuItems = buttonsWant.map(buttons => {
-    const arr = buttons.map(button => {
-      return menuItemsAll[button];
-    });
-    return arr.filter(x => x);
-  });
-  menuItems = menuItems.filter(x => x && x.length > 0);
   return menuItems;
 }
