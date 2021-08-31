@@ -1,4 +1,6 @@
 export default {
+  Undo: '撤销',
+  Redo: '重做',
   Link: '链接',
   EditorButtonTitleStrong: '加粗',
   EditorButtonTitleItalic: '斜体',

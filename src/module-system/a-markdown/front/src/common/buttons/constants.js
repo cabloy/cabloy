@@ -1,5 +1,5 @@
-import { wrapItem, blockTypeItem } from 'prosemirror-menu';
-import { markItem, wrapListItem, onPopupPerform, insertNode } from './utils.js';
+import { wrapItem, blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
+import { markItem, wrapListItem, onPopupPerform, insertNode, extendMenuItem } from './utils.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 
@@ -14,7 +14,8 @@ import { ButtonImage } from './image.js';
 // ];
 
 export const ButtonsDefault = [
-  ['heading', 'strong', 'em', 'code'], //
+  ['undo', 'redo'], //
+  ['heading', 'strong', 'em', 'code'],
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
@@ -128,5 +129,19 @@ export const ButtonsAllOptions = {
         onBuild: blockTypeItem,
       },
     ],
+  },
+  undo: {
+    title: 'Undo',
+    icon: { material: 'undo' },
+    onBuild: (_, options) => {
+      return extendMenuItem(undoItem, options);
+    },
+  },
+  redo: {
+    title: 'Redo',
+    icon: { material: 'redo' },
+    onBuild: (_, options) => {
+      return extendMenuItem(redoItem, options);
+    },
   },
 };

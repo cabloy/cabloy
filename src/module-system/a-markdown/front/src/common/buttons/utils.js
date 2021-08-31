@@ -117,3 +117,10 @@ export function insertNode(nodeType, options) {
     },
   });
 }
+
+export function extendMenuItem(menuItem, options) {
+  return new MenuItem({
+    ...menuItem.spec,
+    ...options,
+  });
+}
