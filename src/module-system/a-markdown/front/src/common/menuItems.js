@@ -1,6 +1,6 @@
-import { wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem, selectParentNodeItem, undoItem, redoItem, icons, MenuItem } from 'prosemirror-menu';
-import { toggleMark } from 'prosemirror-commands';
-import { wrapInList } from 'prosemirror-schema-list';
+import { wrapItem, blockTypeItem, MenuItem } from 'prosemirror-menu';
+import { wrapListItem, markItem, canInsert } from './buttons/utils.js';
+import { ButtonLink } from './buttons/link.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -39,12 +39,7 @@ export const ButtonsAllOptions = {
     icon: { material: 'code' },
     onBuild: markItem,
   },
-  link: {
-    mark: true,
-    title: 'EditorButtonTitleLink',
-    icon: { material: 'link' },
-    onBuild: insertLinkItem,
-  },
+  link: ButtonLink,
   image: {
     node: true,
     title: 'EditorButtonTitleImage',
@@ -134,49 +129,6 @@ export const ButtonsAllOptions = {
   },
 };
 
-function wrapListItem(nodeType, options) {
-  return cmdItem(wrapInList(nodeType, options.attrs), options);
-}
-
-function cmdItem(cmd, options) {
-  const passedOptions = {
-    label: options.title,
-    run: cmd,
-  };
-  for (const prop in options) passedOptions[prop] = options[prop];
-  if ((!options.enable || options.enable === true) && !options.select) {
-    passedOptions[options.enable ? 'enable' : 'select'] = state => cmd(state);
-  }
-
-  return new MenuItem(passedOptions);
-}
-
-function markActive(state, type) {
-  const { from, $from, to, empty } = state.selection;
-  if (empty) return type.isInSet(state.storedMarks || $from.marks());
-  return state.doc.rangeHasMark(from, to, type);
-}
-
-function markItem(markType, options) {
-  const passedOptions = {
-    active(state) {
-      return markActive(state, markType);
-    },
-    enable: true,
-  };
-  for (const prop in options) passedOptions[prop] = options[prop];
-  return cmdItem(toggleMark(markType), passedOptions);
-}
-
-function canInsert(state, nodeType) {
-  const $from = state.selection.$from;
-  for (let d = $from.depth; d >= 0; d--) {
-    const index = $from.index(d);
-    if ($from.node(d).canReplaceWith(index, index, nodeType)) return true;
-  }
-  return false;
-}
-
 function insertHorizontalRule(nodeType, options) {
   return new MenuItem({
     ...options,
@@ -210,52 +162,6 @@ function insertImageItem(nodeType, options) {
             if (code === 200) {
               const attrs = { alt: data.realName, src: data.downloadUrl };
               view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)));
-              view.focus();
-            }
-            if (code === false) {
-              view.focus();
-            }
-          },
-        },
-      });
-    },
-  });
-}
-
-function insertLinkItem(markType, options) {
-  return new MenuItem({
-    ...options,
-    active(state) {
-      return markActive(state, markType);
-    },
-    enable(state) {
-      return !state.selection.empty;
-    },
-    run(state, dispatch, view) {
-      if (markActive(state, markType)) {
-        toggleMark(markType)(state, dispatch);
-        return true;
-      }
-      // navigate
-      const { ctx } = options;
-      ctx.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
-        context: {
-          params: {
-            params: {
-              module: 'a-markdown',
-              validator: 'link',
-            },
-            title: ctx.$text('Create Link'),
-            data: {
-              href: '',
-              title: '',
-            },
-            performValidate: true,
-          },
-          callback: (code, res) => {
-            if (code === 200) {
-              const attrs = res.data;
-              toggleMark(markType, attrs)(view.state, view.dispatch);
               view.focus();
             }
             if (code === false) {
