@@ -329,25 +329,12 @@ function __buildMenuItem(ctx, element, key, buttonOptions) {
   return menuItem;
 }
 
-function __schemaElements(ctx, elements) {
-  const menuItems = {};
-  for (const key in elements) {
-    const element = elements[key];
-    const buttonOptions = ButtonsAllOptions[key];
-    const menuItem = __buildMenuItem(ctx, element, key, buttonOptions);
-    if (menuItem) {
-      menuItems[key] = menuItem;
-    }
-  }
-  return menuItems;
-}
-
 function getMarkNodeElement(schema, key, buttonOptions) {
   if (buttonOptions.mark) {
-    return schema.marks[buttonOptions.mark === true ? key : buttonOptions.mark];
+    return schema.marks[buttonOptions.mark === true ? key : buttonOptions.mark] || false;
   }
   if (buttonOptions.node) {
-    return schema.nodes[buttonOptions.node === true ? key : buttonOptions.node];
+    return schema.nodes[buttonOptions.node === true ? key : buttonOptions.node] || false;
   }
   return null;
 }
@@ -357,6 +344,7 @@ function buildMenuItemsAll(ctx, schema) {
   for (const key in ButtonsAllOptions) {
     const buttonOptions = ButtonsAllOptions[key];
     const element = getMarkNodeElement(schema, key, buttonOptions);
+    if (element === false) continue;
     const menuItem = __buildMenuItem(ctx, element, key, buttonOptions);
     if (menuItem) {
       menuItems[key] = menuItem;
