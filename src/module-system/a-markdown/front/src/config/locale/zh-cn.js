@@ -9,6 +9,7 @@ export default {
   EditorButtonTitleOrderedList: '有序列表',
   EditorButtonTitleBlockquote: '块引用',
   EditorButtonTitleParagraph: '段落',
+  EditorButtonTitleParagraphKeyboardReturn: '换行',
   EditorButtonTitleCodeBlock: '代码块',
   EditorButtonTitleHorizontalRule: '分割线',
   EditorButtonTitleHeading: '标题',

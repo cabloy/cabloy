@@ -8,6 +8,7 @@ export default {
   EditorButtonTitleOrderedList: 'Ordered List',
   EditorButtonTitleBlockquote: 'Block Quote',
   EditorButtonTitleParagraph: 'Paragraph',
+  EditorButtonTitleParagraphKeyboardReturn: 'New Line',
   EditorButtonTitleCodeBlock: 'Code Block',
   EditorButtonTitleHorizontalRule: 'Horizontal Rule',
   EditorButtonTitleHeading: 'Heading',

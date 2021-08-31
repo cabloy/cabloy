@@ -18,7 +18,7 @@ export const ButtonsDefault = [
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
-  ['horizontal_rule'],
+  ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
 
 export const ButtonsAllOptions = {
@@ -65,6 +65,12 @@ export const ButtonsAllOptions = {
     title: 'EditorButtonTitleParagraph',
     icon: { text: '¶' },
     onBuild: blockTypeItem,
+  },
+  paragraph_keyboardReturn: {
+    node: 'paragraph',
+    title: 'EditorButtonTitleParagraphKeyboardReturn',
+    icon: { material: 'keyboard_return' },
+    onBuild: insertNode,
   },
   code_block: {
     node: true,
