@@ -17,7 +17,8 @@ import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
 import { schemaCustom } from '../common/schema/schemaCustom.js';
 import { markdownParserCustom } from '../common/schema/markdownParserCustom.js';
 import { markdownSerializerCustom } from '../common/schema/markdownSerializerCustom.js';
-import { buildInputRules } from '../common/inputrules.js';
+import { buildInputRules } from '../common/inputrules/base.js';
+import { buildInputRulesLinks } from '../common/inputrules/links.js';
 
 export default {
   meta: {
@@ -94,6 +95,7 @@ export default {
         // plugins: exampleSetup({ schema }),
         plugins: [
           buildInputRules(schemaCustom), //
+          buildInputRulesLinks(schemaCustom),
           keymap(buildKeymap(schemaCustom)),
           // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
