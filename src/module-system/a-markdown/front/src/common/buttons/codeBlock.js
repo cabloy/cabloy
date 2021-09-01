@@ -12,8 +12,23 @@ function insertCodeBlock(nodeType, options) {
   return blockTypeItem(nodeType, {
     ...options,
     run: (state, dispatch, view, event) => {
-      const command = setBlockType(nodeType, { params: 'shell' });
-      return command(state, dispatch, view, event);
+      const { ctx } = options;
+
+      // navigate
+      ctx.$view.navigate(`/a/codemirror/selectMode?t=${Date.now()}`, {
+        context: {
+          callback: (code, data) => {
+            if (code === 200) {
+              const attrs = { params: data.mode };
+              const command = setBlockType(nodeType, attrs);
+              command(state, dispatch, view, event);
+            }
+            if (code === false) {
+              view.focus();
+            }
+          },
+        },
+      });
     },
   });
 }
