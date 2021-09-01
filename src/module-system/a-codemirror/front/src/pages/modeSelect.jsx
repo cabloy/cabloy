@@ -26,8 +26,13 @@ export default {
       });
     },
     async onPerformAdd() {
-      const mode = await this.$view.dialog.prompt(this.$text('Please specify the new code mode'));
+      let mode = await this.$view.dialog.prompt(this.$text('Please specify the new code mode'));
       if (!mode) return;
+      mode = mode.toLowerCase();
+      const index = this.modes.indexOf(mode);
+      if (index > -1) {
+        this.modes.splice(index, 1);
+      }
       this.modes.unshift(mode);
       // save config
       this._saveConfig();

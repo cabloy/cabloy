@@ -6,7 +6,7 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
-import { buildInputRules, buildKeymap } from 'prosemirror-example-setup';
+import { buildKeymap } from 'prosemirror-example-setup';
 import { arrows } from '../common/plugins/arrows.js';
 import { markdownStyle } from '../common/plugins/markdownStyle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
@@ -17,6 +17,7 @@ import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
 import { schemaCustom } from '../common/schema/schemaCustom.js';
 import { markdownParserCustom } from '../common/schema/markdownParserCustom.js';
 import { markdownSerializerCustom } from '../common/schema/markdownSerializerCustom.js';
+import { buildInputRules } from '../common/inputrules.js';
 
 export default {
   meta: {
