@@ -125,6 +125,7 @@ export default {
           return this._viewDispatchTransaction(view, transaction);
         },
       });
+      view.focus();
       return view;
     },
     _viewDispatchTransaction(view, transaction) {
