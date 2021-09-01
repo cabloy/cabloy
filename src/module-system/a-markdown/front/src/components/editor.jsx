@@ -20,6 +20,7 @@ import { markdownSerializerCustom } from '../common/schema/markdownSerializerCus
 import { buildInputRules } from '../common/inputrules/base.js';
 import { buildInputRulesLinks } from '../common/inputrules/links.js';
 import { buildInputRulesTextFormatting } from '../common/inputrules/text-formatting.js';
+import { buildKeymapTabs } from '../common/keymaps/tabs.js';
 
 export default {
   meta: {
@@ -99,7 +100,7 @@ export default {
           buildInputRulesLinks(schemaCustom),
           buildInputRulesTextFormatting(schemaCustom),
           keymap(buildKeymap(schemaCustom)),
-          // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
+          keymap(buildKeymapTabs(schemaCustom)),
           keymap(baseKeymap),
           dropCursor(),
           gapCursor(),
