@@ -2,6 +2,7 @@ import { wrapItem, blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
 import { markItem, wrapListItem, onPopupPerform, insertNode, extendMenuItem } from './utils.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
+import { ButtonCodeBlock } from './codeBlock.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -73,12 +74,7 @@ export const ButtonsAllOptions = {
     icon: { material: 'keyboard_return' },
     onBuild: insertNode,
   },
-  code_block: {
-    node: true,
-    title: 'EditorButtonTitleCodeBlock',
-    icon: { material: 'wysiwyg' },
-    onBuild: blockTypeItem,
-  },
+  code_block: ButtonCodeBlock,
   horizontal_rule: {
     node: true,
     title: 'EditorButtonTitleHorizontalRule',
