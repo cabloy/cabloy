@@ -1,22 +1,17 @@
 import { Selection, TextSelection } from 'prosemirror-state';
 import { exitCode } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
-// import 'codemirror/mode/javascript/javascript';
-// import 'codemirror/mode/shell/shell';
-// import 'codemirror/mode/python/python';
-// import 'codemirror/lib/codemirror.css';
 
 export class CodeBlockView {
-  constructor(node, view, getPos, options) {
+  constructor(node, view, getPos) {
     // Store for later
     this.node = node;
     this.view = view;
     this.getPos = getPos;
     this.incomingChanges = false;
-    this.options = options;
 
     // Create a CodeMirror instance
-    this.cm = new CodeMirror(null, {
+    this.cm = new window.CodeMirror(null, {
       value: this.node.textContent,
       lineNumbers: true,
       extraKeys: this.codeMirrorKeymap(),
@@ -27,9 +22,8 @@ export class CodeBlockView {
     // CodeMirror needs to be in the DOM to properly initialize, so
     // schedule it to update itself
     setTimeout(() => {
-      const { ctx } = this.options;
-      ctx.$meta.util.requirejs.require(['/api/static/a/markdown/lib/codemirror/mode/javascript/javascript.js'], function () {
-        console.log('loaded');
+      window.CodeMirror.__loadMode('javascript', () => {
+        this.cm.setOption('mode', 'javascript');
         this.cm.refresh();
       });
     }, 20);
@@ -93,7 +87,7 @@ export class CodeBlockView {
   codeMirrorKeymap() {
     const view = this.view;
     const mod = /Mac/.test(navigator.platform) ? 'Cmd' : 'Ctrl';
-    return CodeMirror.normalizeKeyMap({
+    return window.CodeMirror.normalizeKeyMap({
       Up: () => this.maybeEscape('line', -1),
       Left: () => this.maybeEscape('char', -1),
       Down: () => this.maybeEscape('line', 1),
@@ -110,7 +104,7 @@ export class CodeBlockView {
   maybeEscape(unit, dir) {
     const pos = this.cm.getCursor();
     if (this.cm.somethingSelected() || pos.line !== (dir < 0 ? this.cm.firstLine() : this.cm.lastLine()) || (unit === 'char' && pos.ch !== (dir < 0 ? 0 : this.cm.getLine(pos.line).length))) {
-      return CodeMirror.Pass;
+      return window.CodeMirror.Pass;
     }
     this.view.focus();
     const targetPos = this.getPos() + (dir < 0 ? 0 : this.node.nodeSize);

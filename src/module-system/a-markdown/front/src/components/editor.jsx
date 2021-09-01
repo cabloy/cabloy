@@ -113,7 +113,7 @@ export default {
         state,
         nodeViews: {
           code_block: (node, view, getPos) => {
-            return new CodeBlockView(node, view, getPos, { ctx: this });
+            return new CodeBlockView(node, view, getPos);
           },
         },
         dispatchTransaction: transaction => {
