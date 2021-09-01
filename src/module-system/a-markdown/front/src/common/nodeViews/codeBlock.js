@@ -93,6 +93,22 @@ export class CodeBlockView {
       [`${mod}-Z`]: () => undo(view.state, view.dispatch),
       [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
       [`${mod}-Y`]: () => redo(view.state, view.dispatch),
+      Tab: cm => {
+        if (cm.somethingSelected()) {
+          cm.indentSelection('add');
+        } else {
+          cm.replaceSelection(Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
+        }
+      },
+      'Shift-Tab': cm => {
+        if (cm.somethingSelected()) {
+          cm.indentSelection('subtract');
+        } else {
+          const cursor = cm.getCursor();
+          cm.setCursor({ line: cursor.line, ch: cursor.ch - 4 });
+        }
+        return;
+      },
     });
   }
 
