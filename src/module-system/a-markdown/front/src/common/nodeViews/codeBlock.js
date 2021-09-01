@@ -107,7 +107,6 @@ export class CodeBlockView {
           const cursor = cm.getCursor();
           cm.setCursor({ line: cursor.line, ch: cursor.ch - 4 });
         }
-        return;
       },
     });
   }
