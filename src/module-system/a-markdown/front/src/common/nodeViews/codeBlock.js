@@ -21,12 +21,7 @@ export class CodeBlockView {
     this.dom = this.cm.getWrapperElement();
     // CodeMirror needs to be in the DOM to properly initialize, so
     // schedule it to update itself
-    setTimeout(() => {
-      window.CodeMirror.__loadMode('javascript', () => {
-        this.cm.setOption('mode', 'javascript');
-        this.cm.refresh();
-      });
-    }, 20);
+    this.__changeMode(this.node);
 
     // This flag is used to avoid an update loop between the outer and
     // inner editor
@@ -116,6 +111,10 @@ export class CodeBlockView {
   // nodeview_update{
   update(node) {
     if (node.type !== this.node.type) return false;
+    // check mode
+    if (this.node.attrs.params !== node.attrs.params) {
+      this.__changeMode(node);
+    }
     this.node = node;
     const change = computeChange(this.cm.getValue(), node.textContent);
     if (change) {
@@ -133,6 +132,22 @@ export class CodeBlockView {
   }
   stopEvent() {
     return true;
+  }
+
+  __changeMode(node) {
+    setTimeout(() => {
+      const language = String(node.attrs.params).trim();
+      const modeInfo = window.CodeMirror.__findMode(language);
+      if (!modeInfo) {
+        this.cm.refresh();
+      } else {
+        const mode = modeInfo.mode;
+        window.CodeMirror.__loadMode(mode, () => {
+          this.cm.setOption('mode', mode);
+          this.cm.refresh();
+        });
+      }
+    }, 20);
   }
 }
 

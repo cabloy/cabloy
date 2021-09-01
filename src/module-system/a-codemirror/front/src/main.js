@@ -9,11 +9,19 @@ function install(_Vue, cb) {
   Vue = _Vue;
 
   const codemirror_js = 'api/static/a/codemirror/lib/codemirror/lib/codemirror';
+  const codemirror_modemeta_js = 'api/static/a/codemirror/lib/codemirror/mode/meta';
   const codemirror_css = 'css!api/static/a/codemirror/lib/codemirror/lib/codemirror';
-  Vue.prototype.$meta.util.requirejs.require([codemirror_js, codemirror_css], function (CodeMirror) {
+  Vue.prototype.$meta.util.requirejs.require([codemirror_js, codemirror_modemeta_js, codemirror_css], function (CodeMirror) {
     window.CodeMirror = CodeMirror;
     CodeMirror.__loadMode = (mode, cb) => {
       Vue.prototype.$meta.util.requirejs.require([`api/static/a/codemirror/lib/codemirror/mode/${mode}/${mode}`], cb);
+    };
+    CodeMirror.__findMode = name => {
+      let mode = window.CodeMirror.findModeByName(name);
+      if (!mode) {
+        mode = window.CodeMirror.findModeByExtension(name);
+      }
+      return mode;
     };
     return cb({
       routes: require('./routes.js').default,
