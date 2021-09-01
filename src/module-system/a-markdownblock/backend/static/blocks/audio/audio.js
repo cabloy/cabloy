@@ -4,4 +4,6 @@ require.config({
     APlayer_CSS: 'api/static/a/markdownblock/blocks/audio/aplayer/aplayer-1.10.1.min',
   },
 });
-define(['APlayer', 'css!APlayer_CSS'], function (APlayer) {});
+define(['APlayer', 'css!APlayer_CSS'], function (APlayer) {
+  console.log(APlayer);
+});
