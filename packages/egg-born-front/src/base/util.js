@@ -505,12 +505,12 @@ export default function (Vue) {
     escapeURL: _escape.escapeURL,
   });
 
-  // test:
-  window.setTimeout(() => {
-    util.requirejs.require(['api/static/a/markdownblock/blocks/audio/audio'], function () {
-      console.log('loaded');
-    });
-  }, 0);
+  // // test:
+  // window.setTimeout(() => {
+  //   util.requirejs.require(['api/static/a/markdownblock/blocks/audio/audio'], function () {
+  //     console.log('audio.js loaded');
+  //   });
+  // }, 0);
 
   // ok
   return util;
