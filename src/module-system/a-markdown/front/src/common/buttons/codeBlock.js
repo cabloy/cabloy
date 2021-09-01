@@ -16,9 +16,9 @@ function insertCodeBlock(nodeType, options) {
       // navigate
       ctx.$view.navigate(`/a/codemirror/modeSelect?t=${Date.now()}`, {
         context: {
-          callback: (code, data) => {
+          callback: (code, res) => {
             if (code === 200) {
-              const attrs = { params: data.mode };
+              const attrs = { params: res.mode };
               const command = setBlockType(nodeType, attrs);
               command(state, dispatch, view, event);
             }
