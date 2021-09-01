@@ -5,7 +5,15 @@ export default {
   },
   data() {
     return {
-      content: 'hello world',
+      content: `
+## hello world
+      
+This is a test
+
+\`\`\` javascript
+const i = 1;
+\`\`\`
+`,
     };
   },
   methods: {},

@@ -110,7 +110,9 @@ export default {
       const view = new EditorView(this.$refs.textEditorContent, {
         state,
         nodeViews: {
-          code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos),
+          code_block: (node, view, getPos) => {
+            return new CodeBlockView(node, view, getPos, { ctx: this });
+          },
         },
         dispatchTransaction: transaction => {
           return this._viewDispatchTransaction(view, transaction);

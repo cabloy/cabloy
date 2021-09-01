@@ -2,18 +2,20 @@ import { Selection, TextSelection } from 'prosemirror-state';
 import CodeMirror from 'codemirror';
 import { exitCode } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
-import 'codemirror/mode/javascript/javascript';
+// import 'codemirror/mode/javascript/javascript';
 // import 'codemirror/mode/shell/shell';
 // import 'codemirror/mode/python/python';
 import 'codemirror/lib/codemirror.css';
+window.CodeMirror = CodeMirror;
 
 export class CodeBlockView {
-  constructor(node, view, getPos) {
+  constructor(node, view, getPos, options) {
     // Store for later
     this.node = node;
     this.view = view;
     this.getPos = getPos;
     this.incomingChanges = false;
+    this.options = options;
 
     // Create a CodeMirror instance
     this.cm = new CodeMirror(null, {
@@ -26,7 +28,13 @@ export class CodeBlockView {
     this.dom = this.cm.getWrapperElement();
     // CodeMirror needs to be in the DOM to properly initialize, so
     // schedule it to update itself
-    setTimeout(() => this.cm.refresh(), 20);
+    setTimeout(() => {
+      const { ctx } = this.options;
+      ctx.$meta.util.requirejs.require(['/api/static/a/markdown/lib/codemirror/mode/javascript/javascript.js'], function () {
+        console.log('loaded');
+        this.cm.refresh();
+      });
+    }, 20);
 
     // This flag is used to avoid an update loop between the outer and
     // inner editor
