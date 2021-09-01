@@ -4,7 +4,18 @@ const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mix
 export default {
   mixins: [ebPageContext],
   data() {
-    return {};
+    return {
+      modes: null,
+    };
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      const layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-codemirror');
+      this.modes = layoutConfig.modes || [];
+    },
   },
   render() {
     return (

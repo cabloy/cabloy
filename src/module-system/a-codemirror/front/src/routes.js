@@ -6,5 +6,5 @@ function loadjsx(name) {
 }
 
 export default [
-  { path: 'selectMode', component: loadjsx('selectMode') }, //
+  { path: 'modeSelect', component: loadjsx('modeSelect') }, //
 ];
