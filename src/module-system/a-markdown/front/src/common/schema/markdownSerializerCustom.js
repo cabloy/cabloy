@@ -7,7 +7,7 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       state.wrapBlock('> ', null, node, () => state.renderContent(node));
     },
     code_block(state, node) {
-      state.write('```' + (node.attrs.params || '') + '\n');
+      state.write('```' + (node.attrs.params ? ` ${node.attrs.params}` : '') + '\n');
       state.text(node.textContent, false);
       state.ensureNewLine();
       state.write('```');

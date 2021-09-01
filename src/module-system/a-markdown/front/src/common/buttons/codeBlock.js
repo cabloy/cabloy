@@ -12,7 +12,7 @@ function insertCodeBlock(nodeType, options) {
   return blockTypeItem(nodeType, {
     ...options,
     run: (state, dispatch, view, event) => {
-      const command = setBlockType(nodeType, { params: ' shell' });
+      const command = setBlockType(nodeType, { params: 'shell' });
       return command(state, dispatch, view, event);
     },
   });
