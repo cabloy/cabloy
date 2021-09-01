@@ -76,6 +76,8 @@ export default {
     async init() {
       // markdown style
       await this.$meta.module.use(this.$meta.config.markdown.style.module);
+      // codemirror
+      await this.$meta.module.use('a-codemirror');
       // state
       const state = this._createState(this.lastValue);
       // view

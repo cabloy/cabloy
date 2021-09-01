@@ -1,12 +1,10 @@
 import { Selection, TextSelection } from 'prosemirror-state';
-import CodeMirror from 'codemirror';
 import { exitCode } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
 // import 'codemirror/mode/javascript/javascript';
 // import 'codemirror/mode/shell/shell';
 // import 'codemirror/mode/python/python';
-import 'codemirror/lib/codemirror.css';
-window.CodeMirror = CodeMirror;
+// import 'codemirror/lib/codemirror.css';
 
 export class CodeBlockView {
   constructor(node, view, getPos, options) {
