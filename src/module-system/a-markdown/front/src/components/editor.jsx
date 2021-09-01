@@ -19,6 +19,7 @@ import { markdownParserCustom } from '../common/schema/markdownParserCustom.js';
 import { markdownSerializerCustom } from '../common/schema/markdownSerializerCustom.js';
 import { buildInputRules } from '../common/inputrules/base.js';
 import { buildInputRulesLinks } from '../common/inputrules/links.js';
+import { buildInputRulesTextFormatting } from '../common/inputrules/text-formatting.js';
 
 export default {
   meta: {
@@ -96,6 +97,7 @@ export default {
         plugins: [
           buildInputRules(schemaCustom), //
           buildInputRulesLinks(schemaCustom),
+          buildInputRulesTextFormatting(schemaCustom),
           keymap(buildKeymap(schemaCustom)),
           // keymap({ 'Mod-z': undo, 'Mod-y': redo }),
           keymap(baseKeymap),
