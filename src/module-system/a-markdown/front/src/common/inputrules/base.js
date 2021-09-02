@@ -31,7 +31,7 @@ export function bulletListRule(nodeType) {
 // Given a code block node type, returns an input rule that turns a
 // textblock starting with three backticks into a code block.
 export function codeBlockRule(nodeType) {
-  return textblockTypeInputRule(/^```\s?(\S+)\s$/, nodeType, match => ({ params: match[1] }));
+  return textblockTypeInputRule(/^```\s?([a-z]+)\s$/, nodeType, match => ({ params: match[1] }));
 }
 
 // : (NodeType, number) → InputRule
