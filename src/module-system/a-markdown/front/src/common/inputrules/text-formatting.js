@@ -2,12 +2,20 @@ import { inputRules } from 'prosemirror-inputrules';
 import { applyMarkOnRange } from '../commands/utils.js';
 import { createInputRule } from './utils.js';
 
+// const validCombos = {
+//   '**': ['_', '~~'],
+//   '*': ['__', '~~'],
+//   __: ['*', '~~'],
+//   _: ['**', '~~'],
+//   '~~': ['__', '_', '**', '*'],
+// };
 const validCombos = {
-  '**': ['_', '~~'],
-  '*': ['__', '~~'],
-  __: ['*', '~~'],
-  _: ['**', '~~'],
-  '~~': ['__', '_', '**', '*'],
+  '**': ['_', '~~', '++'],
+  '*': ['__', '~~', '++'],
+  __: ['*', '~~', '++'],
+  _: ['**', '~~', '++'],
+  '~~': ['__', '_', '**', '*', '++'],
+  '++': ['__', '_', '**', '*', '~~'],
 };
 
 const validRegex = (char, str) => {
@@ -130,6 +138,8 @@ export const italicRegex2 = /(\S*[^\s\*]*)(\*([^\s\*][^\*]*[^\s\*]|[^\s\*])\*)$/
 export const strikeRegex = /(\S*)(\~\~([^\s\~](\~(?!\~)|[^\~])*[^\s\~]|[^\s\~])\~\~)$/;
 export const codeRegex = /(\S*)(`[^\s][^`]*`)$/;
 
+export const underlineRegex = /(\S*)(\+\+([^\*\s](\*(?!\*)|[^\*])*[^\*\s]|[^\*\s])\+\+)$/;
+
 // Create input rules for strong mark
 function getStrongInputRules(schema) {
   // **string** or __strong__ should bold the text
@@ -140,6 +150,17 @@ function getStrongInputRules(schema) {
   const doubleAsterixRule = createInputRule(strongRegex2, addMark(schema.marks.strong, schema, markLength, '**'));
 
   return [doubleUnderscoreRule, doubleAsterixRule];
+}
+
+// Create input rules for underline mark
+function getUnderlineInputRules(schema) {
+  // ++string++ should underline the text
+
+  const markLength = 2;
+
+  const doublePlusRule = createInputRule(underlineRegex, addMark(schema.marks.underline, schema, markLength, '++'));
+
+  return [doublePlusRule];
 }
 
 // Create input rules for em mark
@@ -178,6 +199,10 @@ export function buildInputRulesTextFormatting(schema) {
 
   if (schema.marks.em) {
     rules.push(...getItalicInputRules(schema));
+  }
+
+  if (schema.marks.underline) {
+    rules.push(...getUnderlineInputRules(schema));
   }
 
   if (schema.marks.strike) {
