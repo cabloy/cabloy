@@ -60,6 +60,7 @@ export const markdownSerializerCustom = new MarkdownSerializer(
   {
     em: { open: '*', close: '*', mixable: true, expelEnclosingWhitespace: true },
     strong: { open: '**', close: '**', mixable: true, expelEnclosingWhitespace: true },
+    underline: { open: '++', close: '++', mixable: true, expelEnclosingWhitespace: true },
     link: {
       open(_state, mark, parent, index) {
         return isPlainURL(mark, parent, index, 1) ? '<' : '[';

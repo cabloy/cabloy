@@ -34,7 +34,7 @@ export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.
 
   em: { mark: 'em' },
   strong: { mark: 'strong' },
-  underline: { mark: 'underline' },
+  ins: { mark: 'underline' },
   link: {
     mark: 'link',
     getAttrs: tok => ({

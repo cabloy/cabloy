@@ -12,9 +12,9 @@ function patchMarks(baseMarks) {
   // underline
   baseMarks = baseMarks.append({
     underline: {
-      parseDOM: [{ tag: 'u' }, { style: 'text-decoration=underline' }],
+      parseDOM: [{ tag: 'u' }, { tag: 'ins' }, { style: 'text-decoration=underline' }],
       toDOM() {
-        return ['u', 0];
+        return ['ins', 0];
       },
     },
   });
