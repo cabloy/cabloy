@@ -1,11 +1,12 @@
-import markdownit from 'markdown-it';
+// import markdownit from 'markdown-it';
 import { MarkdownParser } from 'prosemirror-markdown';
 import { schemaCustom } from './schemaCustom.js';
+const markdownit = require('@zhennann/markdown');
 
 // :: MarkdownParser
 // A parser parsing unextended [CommonMark](http://commonmark.org/),
 // without inline HTML, and producing a document in the basic schema.
-export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit('commonmark', { html: false }), {
+export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.create(), {
   blockquote: { block: 'blockquote' },
   paragraph: { block: 'paragraph' },
   list_item: { block: 'list_item' },
@@ -33,6 +34,7 @@ export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit(
 
   em: { mark: 'em' },
   strong: { mark: 'strong' },
+  underline: { mark: 'underline' },
   link: {
     mark: 'link',
     getAttrs: tok => ({

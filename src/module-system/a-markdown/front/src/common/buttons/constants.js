@@ -1,5 +1,6 @@
 import { wrapItem, blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
 import { markItem, wrapListItem, onPopupPerform, insertNode, extendMenuItem } from './utils.js';
+import { ButtonUnderline } from './underline.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 import { ButtonCodeBlock } from './codeBlock.js';
@@ -16,7 +17,7 @@ import { ButtonCodeBlock } from './codeBlock.js';
 
 export const ButtonsDefault = [
   ['undo', 'redo'], //
-  ['heading', 'strong', 'em', 'code'],
+  ['heading', 'strong', 'em', 'underline', 'code'],
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
@@ -36,6 +37,7 @@ export const ButtonsAllOptions = {
     icon: { material: 'format_italic' },
     onBuild: markItem,
   },
+  underline: ButtonUnderline,
   code: {
     mark: true,
     title: 'EditorButtonTitleCode',
