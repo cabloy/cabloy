@@ -8,8 +8,8 @@ function patchNodes(baseNodes) {
   baseNodes = baseNodes.append({
     container: {
       attrs: { params: { default: '' } },
-      // content: 'block+',
-      content: 'inline*',
+      content: 'block+',
+      // content: 'inline*',
       group: 'block',
       parseDOM: [
         {

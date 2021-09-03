@@ -25,7 +25,7 @@ export const ButtonsDefault = [
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
-  ['align_left', 'align_center', 'align_right'],
+  // ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
 
