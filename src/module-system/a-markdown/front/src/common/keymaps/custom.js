@@ -20,6 +20,11 @@ export function buildKeymapCustom(schema) {
     bind('Mod-u', toggleMark(type));
     bind('Mod-U', toggleMark(type));
   }
+  // strikethrough
+  if ((type = schema.marks.strikethrough)) {
+    bind('Mod-Shift-x', toggleMark(type));
+    bind('Mod-Shift-X', toggleMark(type));
+  }
 
   return keys;
 }

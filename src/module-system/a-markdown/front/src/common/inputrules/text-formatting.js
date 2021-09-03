@@ -178,7 +178,7 @@ function getItalicInputRules(schema) {
 // Create input rules for strike mark
 function getStrikeInputRules(schema) {
   const markLength = 2;
-  const doubleTildeRule = createInputRule(strikeRegex, addMark(schema.marks.strike, schema, markLength, '~~'));
+  const doubleTildeRule = createInputRule(strikeRegex, addMark(schema.marks.strikethrough, schema, markLength, '~~'));
 
   return [doubleTildeRule];
 }
@@ -205,7 +205,7 @@ export function buildInputRulesTextFormatting(schema) {
     rules.push(...getUnderlineInputRules(schema));
   }
 
-  if (schema.marks.strike) {
+  if (schema.marks.strikethrough) {
     rules.push(...getStrikeInputRules(schema));
   }
 
