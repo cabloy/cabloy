@@ -7,6 +7,7 @@ import { ButtonSup, ButtonSub } from './supsub.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 import { ButtonCodeBlock } from './codeBlock.js';
+import { ButtonAlignLeft } from './container.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -24,6 +25,7 @@ export const ButtonsDefault = [
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
+  ['align_left'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
 
@@ -149,4 +151,5 @@ export const ButtonsAllOptions = {
       return extendMenuItem(redoItem, options);
     },
   },
+  align_left: ButtonAlignLeft,
 };

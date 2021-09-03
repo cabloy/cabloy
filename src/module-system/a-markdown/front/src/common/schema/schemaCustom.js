@@ -4,6 +4,28 @@ import { Schema } from 'prosemirror-model';
 function patchNodes(baseNodes) {
   // code_block
   baseNodes = baseNodes.update('code_block', Object.assign({}, baseNodes.get('code_block'), { isolating: true }));
+  // container
+  baseNodes = baseNodes.append({
+    container: {
+      attrs: { params: { default: '' } },
+      content: 'block+',
+      group: 'block',
+      parseDOM: [
+        {
+          tag: 'div',
+          getAttrs: node => {
+            const className = String(node.className);
+            if (!className.includes('markdown-it-container')) return false;
+            const params = className.split(' ')[1].trim();
+            return { params };
+          },
+        },
+      ],
+      toDOM(node) {
+        return ['div', node.attrs.params ? { class: `markdown-it-container ${node.attrs.params}` } : {}, 0];
+      },
+    },
+  });
   // ok
   return baseNodes;
 }
