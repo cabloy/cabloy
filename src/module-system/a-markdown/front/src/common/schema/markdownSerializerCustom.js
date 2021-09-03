@@ -62,6 +62,8 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       state.ensureNewLine();
       state.write(':::');
       state.closeBlock(node);
+
+      // state.wrapBlock('> ', null, node, () => state.renderContent(node));
     },
   },
   {

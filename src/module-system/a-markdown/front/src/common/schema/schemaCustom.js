@@ -2,6 +2,8 @@ import { schema as baseSchema } from 'prosemirror-markdown';
 import { Schema } from 'prosemirror-model';
 
 function patchNodes(baseNodes) {
+  // doc
+  baseNodes = baseNodes.update('doc', Object.assign({}, baseNodes.get('doc'), { content: '(block|containerblock)+' }));
   // code_block
   baseNodes = baseNodes.update('code_block', Object.assign({}, baseNodes.get('code_block'), { isolating: true }));
   // container
@@ -10,7 +12,8 @@ function patchNodes(baseNodes) {
       attrs: { params: { default: '' } },
       content: 'block+',
       // content: 'inline*',
-      group: 'block',
+      // group: 'block',
+      group: 'containerblock',
       parseDOM: [
         {
           tag: 'div',
