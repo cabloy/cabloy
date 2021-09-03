@@ -7,7 +7,7 @@ import { ButtonSup, ButtonSub } from './supsub.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 import { ButtonCodeBlock } from './codeBlock.js';
-import { ButtonAlignLeft } from './container.js';
+import { ButtonAlignLeft, ButtonAlignCenter, ButtonAlignRight } from './container.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -25,7 +25,7 @@ export const ButtonsDefault = [
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
-  ['align_left'],
+  ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
 
@@ -152,4 +152,6 @@ export const ButtonsAllOptions = {
     },
   },
   align_left: ButtonAlignLeft,
+  align_center: ButtonAlignCenter,
+  align_right: ButtonAlignRight,
 };

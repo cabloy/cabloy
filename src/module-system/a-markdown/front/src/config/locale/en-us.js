@@ -23,5 +23,8 @@ export default {
   EditorButtonTitleMark: 'Highlight',
   EditorButtonTitleSup: 'Superscript',
   EditorButtonTitleSub: 'Subscript',
+  EditorButtonTitleAlignLeft: 'Align Left',
+  EditorButtonTitleAlignCenter: 'Align Center',
+  EditorButtonTitleAlignRight: 'Align Right',
   TextEditorPlaceHolder: 'Begin editing...',
 };

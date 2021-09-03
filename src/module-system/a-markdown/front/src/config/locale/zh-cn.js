@@ -26,6 +26,9 @@ export default {
   EditorButtonTitleMark: '高亮',
   EditorButtonTitleSup: '上标',
   EditorButtonTitleSub: '下标',
+  EditorButtonTitleAlignLeft: '居左',
+  EditorButtonTitleAlignCenter: '居中',
+  EditorButtonTitleAlignRight: '居右',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
 };
