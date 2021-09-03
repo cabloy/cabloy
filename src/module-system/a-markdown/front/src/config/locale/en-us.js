@@ -19,5 +19,6 @@ export default {
   EditorButtonTitleHeading5: 'Heading 5',
   EditorButtonTitleHeading6: 'Heading 6',
   EditorButtonTitleUnderline: 'Underline',
+  EditorButtonTitleStrikethrough: 'Strikethrough',
   TextEditorPlaceHolder: 'Begin editing...',
 };
