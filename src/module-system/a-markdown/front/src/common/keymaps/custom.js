@@ -25,6 +25,11 @@ export function buildKeymapCustom(schema) {
     bind('Mod-Shift-x', toggleMark(type));
     bind('Mod-Shift-X', toggleMark(type));
   }
+  // mark
+  if ((type = schema.marks.mark)) {
+    bind('Mod-Shift-h', toggleMark(type));
+    bind('Mod-Shift-H', toggleMark(type));
+  }
 
   return keys;
 }

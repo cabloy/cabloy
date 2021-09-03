@@ -14,8 +14,9 @@ const validCombos = {
   '*': ['__', '~~', '++'],
   __: ['*', '~~', '++'],
   _: ['**', '~~', '++'],
-  '~~': ['__', '_', '**', '*', '++'],
-  '++': ['__', '_', '**', '*', '~~'],
+  '~~': ['__', '_', '**', '*', '++', '=='],
+  '++': ['__', '_', '**', '*', '~~', '=='],
+  '==': ['__', '_', '**', '*', '~~', '++'],
 };
 
 const validRegex = (char, str) => {
@@ -138,7 +139,8 @@ export const italicRegex2 = /(\S*[^\s\*]*)(\*([^\s\*][^\*]*[^\s\*]|[^\s\*])\*)$/
 export const strikeRegex = /(\S*)(\~\~([^\s\~](\~(?!\~)|[^\~])*[^\s\~]|[^\s\~])\~\~)$/;
 export const codeRegex = /(\S*)(`[^\s][^`]*`)$/;
 
-export const underlineRegex = /(\S*)(\+\+([^\*\s](\*(?!\*)|[^\*])*[^\*\s]|[^\*\s])\+\+)$/;
+export const underlineRegex = /(\S*)(\+\+([^\+\s](\+(?!\+)|[^\+])*[^\+\s]|[^\+\s])\+\+)$/;
+export const markRegex = /(\S*)(\=\=([^\=\s](\=(?!\=)|[^\=])*[^\=\s]|[^\=\s])\=\=)$/;
 
 // Create input rules for strong mark
 function getStrongInputRules(schema) {
@@ -161,6 +163,17 @@ function getUnderlineInputRules(schema) {
   const doublePlusRule = createInputRule(underlineRegex, addMark(schema.marks.underline, schema, markLength, '++'));
 
   return [doublePlusRule];
+}
+
+// Create input rules for highlight mark
+function getHighlightInputRules(schema) {
+  // ==string== should mark/highlight the text
+
+  const markLength = 2;
+
+  const doubleEqualRule = createInputRule(markRegex, addMark(schema.marks.mark, schema, markLength, '=='));
+
+  return [doubleEqualRule];
 }
 
 // Create input rules for em mark
@@ -207,6 +220,10 @@ export function buildInputRulesTextFormatting(schema) {
 
   if (schema.marks.strikethrough) {
     rules.push(...getStrikeInputRules(schema));
+  }
+
+  if (schema.marks.mark) {
+    rules.push(...getHighlightInputRules(schema));
   }
 
   if (schema.marks.code) {

@@ -44,6 +44,15 @@ function patchMarks(baseMarks) {
       },
     },
   });
+  // mark
+  baseMarks = baseMarks.append({
+    mark: {
+      parseDOM: [{ tag: 'mark' }],
+      toDOM() {
+        return ['mark', 0];
+      },
+    },
+  });
 
   // ok
   return baseMarks;

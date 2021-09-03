@@ -23,6 +23,7 @@ export default {
   EditorButtonTitleHeading6: '六级标题',
   EditorButtonTitleUnderline: '下划线',
   EditorButtonTitleStrikethrough: '删除线',
+  EditorButtonTitleMark: '高亮',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
 };
