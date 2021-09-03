@@ -30,6 +30,14 @@ export function buildKeymapCustom(schema) {
     bind('Mod-Shift-h', toggleMark(type));
     bind('Mod-Shift-H', toggleMark(type));
   }
+  // sup
+  if ((type = schema.marks.sup)) {
+    bind('Mod-.', toggleMark(type));
+  }
+  // sub
+  if ((type = schema.marks.sub)) {
+    bind('Mod-,', toggleMark(type));
+  }
 
   return keys;
 }

@@ -21,5 +21,7 @@ export default {
   EditorButtonTitleUnderline: 'Underline',
   EditorButtonTitleStrikethrough: 'Strikethrough',
   EditorButtonTitleMark: 'Highlight',
+  EditorButtonTitleSup: 'Superscript',
+  EditorButtonTitleSub: 'Subscript',
   TextEditorPlaceHolder: 'Begin editing...',
 };

@@ -10,13 +10,15 @@ import { createInputRule } from './utils.js';
 //   '~~': ['__', '_', '**', '*'],
 // };
 const validCombos = {
-  '**': ['_', '~~', '++'],
-  '*': ['__', '~~', '++'],
-  __: ['*', '~~', '++'],
-  _: ['**', '~~', '++'],
-  '~~': ['__', '_', '**', '*', '++', '=='],
-  '++': ['__', '_', '**', '*', '~~', '=='],
-  '==': ['__', '_', '**', '*', '~~', '++'],
+  '**': ['_', '~~', '++', '==', '^', '~'],
+  '*': ['__', '~~', '++', '==', '^', '~'],
+  __: ['*', '~~', '++', '==', '^', '~'],
+  _: ['**', '~~', '++', '==', '^', '~'],
+  '~~': ['__', '_', '**', '*', '++', '==', '^', '~'],
+  '++': ['__', '_', '**', '*', '~~', '==', '^', '~'],
+  '==': ['__', '_', '**', '*', '~~', '++', '^', '~'],
+  '^': ['__', '_', '**', '*', '++', '==', '~'],
+  '~': ['__', '_', '**', '*', '++', '==', '^'],
 };
 
 const validRegex = (char, str) => {
@@ -141,6 +143,8 @@ export const codeRegex = /(\S*)(`[^\s][^`]*`)$/;
 
 export const underlineRegex = /(\S*)(\+\+([^\+\s](\+(?!\+)|[^\+])*[^\+\s]|[^\+\s])\+\+)$/;
 export const markRegex = /(\S*)(\=\=([^\=\s](\=(?!\=)|[^\=])*[^\=\s]|[^\=\s])\=\=)$/;
+export const supRegex = /(\S*)(\^([^\^\s](\^(?!\^)|[^\^])*[^\^\s]|[^\^\s])\^)$/;
+export const subRegex = /(\S*[^\s\~]*)(\~([^\s\~][^\~]*[^\s\~]|[^\s\~])\~)$/;
 
 // Create input rules for strong mark
 function getStrongInputRules(schema) {
@@ -174,6 +178,28 @@ function getHighlightInputRules(schema) {
   const doubleEqualRule = createInputRule(markRegex, addMark(schema.marks.mark, schema, markLength, '=='));
 
   return [doubleEqualRule];
+}
+
+// Create input rules for sup mark
+function getSupInputRules(schema) {
+  // ^string^ should sup the text
+
+  const markLength = 1;
+
+  const supRule = createInputRule(supRegex, addMark(schema.marks.sup, schema, markLength, '^'));
+
+  return [supRule];
+}
+
+// Create input rules for sub mark
+function getSubInputRules(schema) {
+  // ~string~ should sup the text
+
+  const markLength = 1;
+
+  const subRule = createInputRule(subRegex, addMark(schema.marks.sub, schema, markLength, '~'));
+
+  return [subRule];
 }
 
 // Create input rules for em mark
@@ -224,6 +250,14 @@ export function buildInputRulesTextFormatting(schema) {
 
   if (schema.marks.mark) {
     rules.push(...getHighlightInputRules(schema));
+  }
+
+  if (schema.marks.sup) {
+    rules.push(...getSupInputRules(schema));
+  }
+
+  if (schema.marks.sub) {
+    rules.push(...getSubInputRules(schema));
   }
 
   if (schema.marks.code) {

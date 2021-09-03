@@ -3,6 +3,7 @@ import { markItem, wrapListItem, onPopupPerform, insertNode, extendMenuItem } fr
 import { ButtonUnderline } from './underline.js';
 import { ButtonStrikethrough } from './strikethrough.js';
 import { ButtonMark } from './mark.js';
+import { ButtonSup, ButtonSub } from './supsub.js';
 import { ButtonLink } from './link.js';
 import { ButtonImage } from './image.js';
 import { ButtonCodeBlock } from './codeBlock.js';
@@ -19,7 +20,7 @@ import { ButtonCodeBlock } from './codeBlock.js';
 
 export const ButtonsDefault = [
   ['undo', 'redo'], //
-  ['heading', 'strong', 'em', 'underline', 'strikethrough', 'mark', 'code'],
+  ['heading', 'strong', 'em', 'underline', 'strikethrough', 'mark', 'sup', 'sub', 'code'],
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
@@ -42,6 +43,8 @@ export const ButtonsAllOptions = {
   underline: ButtonUnderline,
   strikethrough: ButtonStrikethrough,
   mark: ButtonMark,
+  sup: ButtonSup,
+  sub: ButtonSub,
   code: {
     mark: true,
     title: 'EditorButtonTitleCode',

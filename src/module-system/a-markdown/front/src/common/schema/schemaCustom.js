@@ -53,6 +53,24 @@ function patchMarks(baseMarks) {
       },
     },
   });
+  // sup
+  baseMarks = baseMarks.append({
+    sup: {
+      parseDOM: [{ tag: 'sup' }],
+      toDOM() {
+        return ['sup', 0];
+      },
+    },
+  });
+  // sub
+  baseMarks = baseMarks.append({
+    sub: {
+      parseDOM: [{ tag: 'sub' }],
+      toDOM() {
+        return ['sub', 0];
+      },
+    },
+  });
 
   // ok
   return baseMarks;
