@@ -56,6 +56,13 @@ export const markdownSerializerCustom = new MarkdownSerializer(
     text(state, node) {
       state.text(node.text);
     },
+    container(state, node) {
+      state.write(':::' + (node.attrs.params ? ` ${node.attrs.params}` : '') + '\n');
+      state.text(node.textContent, false);
+      state.ensureNewLine();
+      state.write(':::');
+      state.closeBlock(node);
+    },
   },
   {
     em: { open: '*', close: '*', mixable: true, expelEnclosingWhitespace: true },

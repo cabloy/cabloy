@@ -6,7 +6,7 @@ const markdownit = require('@zhennann/markdown');
 // :: MarkdownParser
 // A parser parsing unextended [CommonMark](http://commonmark.org/),
 // without inline HTML, and producing a document in the basic schema.
-export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.create(), {
+const types = {
   blockquote: { block: 'blockquote' },
   paragraph: { block: 'paragraph' },
   list_item: { block: 'list_item' },
@@ -47,7 +47,20 @@ export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.
     }),
   },
   code_inline: { mark: 'code', noCloseToken: true },
-});
+};
+
+// contianer
+const containerTypes = ['comment-quot', 'alert-success', 'alert-info', 'alert-warning', 'alert-danger', 'hljs-left', 'hljs-center', 'hljs-right'];
+for (const containerType of containerTypes) {
+  types[`container_${containerType}`] = {
+    block: 'container',
+    getAttrs: () => {
+      return { params: containerType };
+    },
+  };
+}
+
+export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.create(), types);
 
 function listIsTight(tokens, i) {
   while (++i < tokens.length) {
