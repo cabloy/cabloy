@@ -18,7 +18,7 @@ import { ButtonCodeBlock } from './codeBlock.js';
 
 export const ButtonsDefault = [
   ['undo', 'redo'], //
-  ['heading', 'strong', 'em', 'underline', 'code'],
+  ['heading', 'strong', 'em', 'underline', 'strikethrough', 'code'],
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block'],
