@@ -12,12 +12,39 @@ function patchMarks(baseMarks) {
   // underline
   baseMarks = baseMarks.append({
     underline: {
-      parseDOM: [{ tag: 'u' }, { tag: 'ins' }, { style: 'text-decoration=underline' }],
+      parseDOM: [
+        { tag: 'u' }, //
+        { tag: 'ins' },
+        {
+          style: 'text-decoration',
+          consuming: false,
+          getAttrs: style => (String(style).includes('underline') ? {} : false),
+        },
+      ],
       toDOM() {
         return ['ins', 0];
       },
     },
   });
+  // strikethrough
+  baseMarks = baseMarks.append({
+    strikethrough: {
+      parseDOM: [
+        { tag: 's' }, //
+        { tag: 'del' },
+        { tag: 'strike' },
+        {
+          style: 'text-decoration',
+          consuming: false,
+          getAttrs: style => (String(style).includes('line-through') ? {} : false),
+        },
+      ],
+      toDOM() {
+        return ['s', 0];
+      },
+    },
+  });
+
   // ok
   return baseMarks;
 }
