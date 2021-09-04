@@ -31,6 +31,7 @@ export default {
   EditorButtonTitleAlignRight: '居右',
   EditorButtonTitleInsertColumnBefore: '在前面添加列',
   EditorButtonTitleInsertColumnAfter: '在后面添加列',
+  EditorButtonTitleDeleteColumn: '删除列',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
 };

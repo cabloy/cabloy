@@ -28,5 +28,6 @@ export default {
   EditorButtonTitleAlignRight: 'Align Right',
   EditorButtonTitleInsertColumnBefore: 'Insert column before',
   EditorButtonTitleInsertColumnAfter: 'Insert column after',
+  EditorButtonTitleDeleteColumn: 'Delete column',
   TextEditorPlaceHolder: 'Begin editing...',
 };
