@@ -147,7 +147,7 @@ export function selectionTableRow(state) {
   return row;
 }
 
-export function selectionTableCellIndex(state) {
+export function selectionTableColumnIndex(state) {
   const cell = selectionTableCell(state);
   const row = selectionTableRow(state);
   if (!cell || !row) return -1;
