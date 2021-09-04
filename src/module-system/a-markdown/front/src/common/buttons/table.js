@@ -19,7 +19,8 @@ function insertTableMenu(nodeType, options) {
       const rowsCount = 3;
       const colsCount = 3;
       const offset = state.tr.selection.anchor + 1;
-      const nodes = createTable(state.schema, rowsCount, colsCount);
+      const cell = state.schema.nodes.paragraph.create();
+      const nodes = createTable(state.schema, rowsCount, colsCount, true, cell);
       const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
       const resolvedPos = tr.doc.resolve(offset);
 

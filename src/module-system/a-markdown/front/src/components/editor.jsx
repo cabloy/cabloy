@@ -100,7 +100,6 @@ export default {
           buildInputRules(schemaCustom), //
           buildInputRulesLinks(schemaCustom),
           buildInputRulesTextFormatting(schemaCustom),
-          tableEditing(),
           keymap(buildKeymap(schemaCustom)),
           keymap(buildKeymapCustom(schemaCustom)),
           keymap(baseKeymap),
@@ -112,6 +111,7 @@ export default {
           markdownStyle(),
           placeholder(),
           placeholderEmpty({ ctx: this, placeholderText: this.placeholderText }),
+          tableEditing(),
         ],
       });
       const fix = fixTables(state);
