@@ -63,8 +63,18 @@ for (const containerType of containerTypes) {
 // table
 types.table = { block: 'table' };
 types.tr = { block: 'table_row' };
-types.th = { block: 'table_header' };
-types.td = { block: 'table_cell' };
+types.th = {
+  block: 'table_header',
+  getAttrs: tok => {
+    return { textAlign: tok.info };
+  },
+};
+types.td = {
+  block: 'table_cell',
+  getAttrs: tok => {
+    return { textAlign: tok.info };
+  },
+};
 
 const md = Markdownit.create().use(parserTable);
 export const markdownParserCustom = new MarkdownParser(schemaCustom, md, types);
