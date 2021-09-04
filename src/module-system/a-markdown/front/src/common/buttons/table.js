@@ -1,6 +1,6 @@
 import { MenuItem } from 'prosemirror-menu';
 import { TextSelection } from 'prosemirror-state';
-import { addRowAt, createTable, getCellsInColumn, moveRow } from '@zhennann/prosemirror-utils';
+import { createTable } from '@zhennann/prosemirror-utils';
 import { isInTable, addColumnBefore, addColumnAfter, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable } from 'prosemirror-tables';
 import { buttonPopupChildren, onPopupPerform, selectionTableColumnIndex, setTableColumnAttr } from './utils.js';
 

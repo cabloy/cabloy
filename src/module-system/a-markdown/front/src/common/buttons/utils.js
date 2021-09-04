@@ -2,7 +2,7 @@ import { MenuItem } from 'prosemirror-menu';
 import { toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { selectionCell, isInTable } from 'prosemirror-tables';
-import { getCellsInTable, getCellsInColumn } from '@zhennann/prosemirror-utils';
+import { getCellsInColumn } from '@zhennann/prosemirror-utils';
 
 export function wrapListItem(nodeType, options) {
   return cmdItem(wrapInList(nodeType, options.attrs), options);
