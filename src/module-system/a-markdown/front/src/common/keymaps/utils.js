@@ -3,7 +3,7 @@ import { Fragment, Slice } from 'prosemirror-model';
 
 import { createInputRule as defaultCreateInputRule, leafNodeReplacementCharacter, hasVisibleContent, isNodeEmpty, compose } from '../inputrules/utils';
 
-import { hasParentNodeOfType } from 'prosemirror-utils';
+import { hasParentNodeOfType } from '@zhennann/prosemirror-utils';
 
 import * as baseListCommand from 'prosemirror-schema-list';
 

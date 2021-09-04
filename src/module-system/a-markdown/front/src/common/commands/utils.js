@@ -1,4 +1,4 @@
-import { hasParentNodeOfType } from 'prosemirror-utils';
+import { hasParentNodeOfType } from '@zhennann/prosemirror-utils';
 import { Selection, TextSelection, NodeSelection } from 'prosemirror-state';
 import { markActive, hasCode } from '../inputrules/utils.js';
 import { mapSlice, canMoveDown, canMoveUp } from '../inputrules/utils.js';
