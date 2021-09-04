@@ -62,6 +62,10 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       state.write(':::');
       state.closeBlock(node);
     },
+    table(state, node) {
+      renderTable(state, node);
+      state.closeBlock(node);
+    },
   },
   {
     em: { open: '*', close: '*', mixable: true, expelEnclosingWhitespace: true },
@@ -109,4 +113,52 @@ function isPlainURL(link, parent, index, side) {
   if (index === (side < 0 ? 1 : parent.childCount - 1)) return true;
   const next = parent.child(index + (side < 0 ? -2 : 1));
   return !link.isInSet(next.marks);
+}
+
+function renderTable(state, node) {
+  state.flushClose(1);
+
+  const prevTable = state.inTable;
+  state.inTable = true;
+
+  // ensure there is an empty newline above all tables
+  state.out += '\n';
+
+  // rows
+  node.forEach((row, _, rowIndex) => {
+    let headerBuffer = '';
+    // cols
+    row.forEach((cell, _, j) => {
+      state.out += j === 0 ? '| ' : ' | ';
+
+      cell.forEach(para => {
+        if (para.textContent === '' && para.content.size === 0) {
+          state.out += '  ';
+        } else {
+          state.closed = false;
+          state.render(para, row, j);
+        }
+      });
+
+      if (rowIndex === 0) {
+        if (cell.attrs.textAlign === 'center') {
+          headerBuffer += '|:---:';
+        } else if (cell.attrs.textAlign === 'left') {
+          headerBuffer += '|:---';
+        } else if (cell.attrs.textAlign === 'right') {
+          headerBuffer += '|---:';
+        } else {
+          headerBuffer += '|----';
+        }
+      }
+    });
+
+    state.out += ' |\n';
+
+    if (headerBuffer) {
+      state.out += `${headerBuffer}|\n`;
+    }
+  });
+
+  state.inTable = prevTable;
 }
