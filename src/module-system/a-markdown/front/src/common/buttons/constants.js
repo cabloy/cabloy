@@ -1,5 +1,5 @@
 import { wrapItem, blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
-import { markItem, wrapListItem, onPopupPerform, insertNode, extendMenuItem } from './utils.js';
+import { markItem, wrapListItem, insertNode, extendMenuItem } from './utils.js';
 import { ButtonUnderline } from './underline.js';
 import { ButtonStrikethrough } from './strikethrough.js';
 import { ButtonMark } from './mark.js';
