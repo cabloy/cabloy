@@ -1,5 +1,6 @@
 import { schema as baseSchema } from 'prosemirror-markdown';
 import { Schema } from 'prosemirror-model';
+import { tableNodes } from 'prosemirror-tables';
 
 function patchNodes(baseNodes) {
   // doc
@@ -30,6 +31,26 @@ function patchNodes(baseNodes) {
       },
     },
   });
+  // table
+  baseNodes = baseNodes.append(
+    tableNodes({
+      tableGroup: 'block',
+      cellContent: 'inline*',
+      cellAttributes: {
+        textAlign: {
+          default: null,
+          getFromDOM(dom) {
+            return (dom.style && dom.style.textAlign) || null;
+          },
+          setDOMAttr(value, attrs) {
+            if (value) {
+              attrs.style = (attrs.style || '') + `text-align: ${value};`;
+            }
+          },
+        },
+      },
+    })
+  );
   // ok
   return baseNodes;
 }
