@@ -9,6 +9,9 @@ module.exports = app => {
         link: {
           schemas: 'link',
         },
+        table: {
+          schemas: 'table',
+        },
       },
       keywords: {},
       schemas,

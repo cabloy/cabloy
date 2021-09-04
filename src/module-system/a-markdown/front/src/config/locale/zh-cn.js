@@ -2,6 +2,8 @@ export default {
   Undo: '撤销',
   Redo: '重做',
   Link: '链接',
+  RowCount: '行数',
+  ColumnCount: '列数',
   EditorButtonTitleStrong: '加粗',
   EditorButtonTitleItalic: '斜体',
   EditorButtonTitleCode: '代码',
@@ -38,4 +40,5 @@ export default {
   EditorButtonTitleDeleteTable: '删除表格',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
+  'Create Table': '创建表格',
 };

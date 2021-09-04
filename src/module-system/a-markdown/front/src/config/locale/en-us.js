@@ -1,4 +1,6 @@
 export default {
+  RowCount: 'Row Count',
+  ColumnCount: 'Column Count',
   EditorButtonTitleStrong: 'Strong',
   EditorButtonTitleItalic: 'Italic',
   EditorButtonTitleCode: 'Code',

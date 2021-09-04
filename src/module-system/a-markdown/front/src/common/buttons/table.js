@@ -103,22 +103,48 @@ function insertTableMenu(nodeType, options) {
       return true;
     },
     run(state, dispatch, view, event) {
-      if (!isInTable(state)) return _insertTable(state, dispatch);
+      if (!isInTable(state)) return _insertTable(state, dispatch, view, options);
       return onPopupPerform(state, dispatch, view, event, menuItem);
     },
   });
   return menuItem;
 }
 
-function _insertTable(state, dispatch) {
-  const rowsCount = 3;
-  const colsCount = 3;
-  const offset = state.tr.selection.anchor + 1;
-  // const cell = state.schema.nodes.paragraph.create();
-  const nodes = createTable(state.schema, rowsCount, colsCount, true /* , cell*/);
-  const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
-  const resolvedPos = tr.doc.resolve(offset);
+function _insertTable(state, dispatch, view, options) {
+  // navigate
+  const { ctx } = options;
+  ctx.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
+    context: {
+      params: {
+        params: {
+          module: 'a-markdown',
+          validator: 'table',
+        },
+        title: ctx.$text('Create Table'),
+        data: {
+          RowCount: 3,
+          columnCount: 3,
+        },
+        performValidate: true,
+      },
+      callback: (code, res) => {
+        if (code === 200) {
+          const { rowCount, columnCount } = res.data;
+          const offset = state.tr.selection.anchor + 1;
+          // const cell = state.schema.nodes.paragraph.create();
+          const nodes = createTable(state.schema, rowCount, columnCount, true /* , cell*/);
+          const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
+          const resolvedPos = tr.doc.resolve(offset);
 
-  tr.setSelection(TextSelection.near(resolvedPos));
-  dispatch(tr);
+          tr.setSelection(TextSelection.near(resolvedPos));
+          dispatch(tr);
+
+          view.focus();
+        }
+        if (code === false) {
+          view.focus();
+        }
+      },
+    },
+  });
 }
