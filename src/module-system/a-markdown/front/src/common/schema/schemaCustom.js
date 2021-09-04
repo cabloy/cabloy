@@ -35,7 +35,7 @@ function patchNodes(baseNodes) {
   baseNodes = baseNodes.append(
     tableNodes({
       tableGroup: 'block',
-      cellContent: 'paragraph*',
+      cellContent: 'paragraph+',
       cellAttributes: {
         textAlign: {
           default: null,

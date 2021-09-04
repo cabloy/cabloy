@@ -26,5 +26,7 @@ export default {
   EditorButtonTitleAlignLeft: 'Align Left',
   EditorButtonTitleAlignCenter: 'Align Center',
   EditorButtonTitleAlignRight: 'Align Right',
+  EditorButtonTitleInsertColumnBefore: 'Insert column before',
+  EditorButtonTitleInsertColumnAfter: 'Insert column after',
   TextEditorPlaceHolder: 'Begin editing...',
 };

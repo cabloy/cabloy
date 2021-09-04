@@ -1,8 +1,8 @@
 import { MenuItem } from 'prosemirror-menu';
 import { TextSelection } from 'prosemirror-state';
 import { addRowAt, createTable, getCellsInColumn, moveRow } from '@zhennann/prosemirror-utils';
-import { isInTable, setCellAttr, selectionCell } from 'prosemirror-tables';
-import { buttonPopupChildren, onPopupPerform, selectionTableColumnIndex } from './utils.js';
+import { isInTable, addColumnBefore, addColumnAfter } from 'prosemirror-tables';
+import { buttonPopupChildren, onPopupPerform, selectionTableColumnIndex, setTableColumnAttr } from './utils.js';
 
 export const ButtonTable = {
   node: true,
@@ -12,25 +12,43 @@ export const ButtonTable = {
   popup: true,
   children: [
     {
-      key: 'AlignLeft',
+      key: 'TableAlignLeft',
       title: 'EditorButtonTitleAlignLeft',
       attrs: { textAlign: 'left' },
       onBuild: menuItemSetAlign,
     },
     {
-      key: 'AlignCenter',
+      key: 'TableAlignCenter',
       title: 'EditorButtonTitleAlignCenter',
       attrs: { textAlign: 'center' },
       onBuild: menuItemSetAlign,
     },
     {
-      key: 'AlignRight',
+      key: 'TableAlignRight',
       title: 'EditorButtonTitleAlignRight',
       attrs: { textAlign: 'right' },
       onBuild: menuItemSetAlign,
     },
+    {
+      key: 'TableInsertColumnBefore',
+      title: 'EditorButtonTitleInsertColumnBefore',
+      onBuild: (nodeType, options) => menuItemTableCmd(options, addColumnBefore),
+    },
+    {
+      key: 'TableInsertColumnAfter',
+      title: 'EditorButtonTitleInsertColumnAfter',
+      onBuild: (nodeType, options) => menuItemTableCmd(options, addColumnAfter),
+    },
   ],
 };
+
+function menuItemTableCmd(options, cmd) {
+  return new MenuItem({
+    ...options,
+    select: cmd,
+    run: cmd,
+  });
+}
 
 function menuItemSetAlign(nodeType, options) {
   return new MenuItem({
@@ -40,9 +58,7 @@ function menuItemSetAlign(nodeType, options) {
     },
     run(state, dispatch, view) {
       const index = selectionTableColumnIndex(state);
-      console.log(index);
-      // getCellsInColumn
-      const cmd = setCellAttr('textAlign', options.attrs.textAlign);
+      const cmd = setTableColumnAttr(index, options.attrs);
       return cmd(state, dispatch, view);
     },
   });
@@ -73,8 +89,8 @@ function _insertTable(state, dispatch) {
   const rowsCount = 3;
   const colsCount = 3;
   const offset = state.tr.selection.anchor + 1;
-  const cell = state.schema.nodes.paragraph.create();
-  const nodes = createTable(state.schema, rowsCount, colsCount, true, cell);
+  // const cell = state.schema.nodes.paragraph.create();
+  const nodes = createTable(state.schema, rowsCount, colsCount, true /* , cell*/);
   const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
   const resolvedPos = tr.doc.resolve(offset);
 

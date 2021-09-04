@@ -1,8 +1,8 @@
 import { MenuItem } from 'prosemirror-menu';
 import { toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
-import { selectionCell } from 'prosemirror-tables';
-import { getCellsInTable } from '@zhennann/prosemirror-utils';
+import { selectionCell, isInTable } from 'prosemirror-tables';
+import { getCellsInTable, getCellsInColumn } from '@zhennann/prosemirror-utils';
 
 export function wrapListItem(nodeType, options) {
   return cmdItem(wrapInList(nodeType, options.attrs), options);
@@ -158,4 +158,16 @@ export function selectionTableColumnIndex(state) {
     }
   });
   return res;
+}
+
+export function setTableColumnAttr(columnIndex, attrs) {
+  return function (state, dispatch) {
+    if (!isInTable(state)) return false;
+    const cells = getCellsInColumn(columnIndex)(state.selection) || [];
+    let transaction = state.tr;
+    cells.forEach(({ pos }) => {
+      transaction = transaction.setNodeMarkup(pos, null, attrs);
+    });
+    return dispatch(transaction);
+  };
 }
