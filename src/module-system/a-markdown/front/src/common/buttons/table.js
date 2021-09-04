@@ -2,17 +2,31 @@ import { MenuItem } from 'prosemirror-menu';
 import { TextSelection } from 'prosemirror-state';
 import { addRowAt, createTable, getCellsInColumn, moveRow } from '@zhennann/prosemirror-utils';
 import { isInTable } from 'prosemirror-tables';
+import { buttonPopupChildren } from './utils.js';
 
 export const ButtonTable = {
   node: true,
   title: 'EditorButtonTitleTable',
   icon: { material: 'grid_on' },
   onBuild: insertTableMenu,
+  // popup: true,
+  children: [
+    {
+      key: 'AlignLeft',
+      title: 'EditorButtonTitleTableSetAlignLeft',
+      attrs: { textAlign: 'left' },
+      // onBuild: blockTypeItem,
+    },
+  ],
 };
 
 function insertTableMenu(nodeType, options) {
+  // children
+  const menuItems = buttonPopupChildren(options.ctx, nodeType, options);
+  // menuItem
   const menuItem = new MenuItem({
     ...options,
+    menuItems,
     // select(state) {
     //   return !isInTable(state);
     // },

@@ -64,8 +64,7 @@ export function buildMenuItem(ctx, element, key, buttonOptions) {
   return menuItem;
 }
 
-export function buildPopupButton(ctx, element, options) {
-  // children
+export function buttonPopupChildren(ctx, element, options) {
   const menuItems = [];
   for (const buttonOptions of options.children) {
     const menuItem = buildMenuItem(ctx, element, buttonOptions.key, buttonOptions);
@@ -73,11 +72,19 @@ export function buildPopupButton(ctx, element, options) {
       menuItems.push(menuItem);
     }
   }
+  return menuItems;
+}
+
+export function buildPopupButton(ctx, element, options) {
+  // children
+  const menuItems = buttonPopupChildren(ctx, element, options);
+  // menuItem
   const menuItem = new MenuItem({
     ...options,
     menuItems,
     run(state, dispatch, view, event) {
-      options.onPopup(state, dispatch, view, event, menuItem);
+      const onPopup = options.onPopup || onPopupPerform;
+      onPopup(state, dispatch, view, event, menuItem);
     },
   });
   return menuItem;

@@ -98,7 +98,6 @@ export const ButtonsAllOptions = {
     title: 'EditorButtonTitleHeading',
     icon: { material: 'title' },
     popup: true,
-    onPopup: onPopupPerform,
     children: [
       {
         key: 'H1',
