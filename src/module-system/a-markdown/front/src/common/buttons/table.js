@@ -1,7 +1,7 @@
 import { MenuItem } from 'prosemirror-menu';
 import { TextSelection } from 'prosemirror-state';
 import { addRowAt, createTable, getCellsInColumn, moveRow } from '@zhennann/prosemirror-utils';
-import { isInTable, addColumnBefore, addColumnAfter, deleteColumn } from 'prosemirror-tables';
+import { isInTable, addColumnBefore, addColumnAfter, deleteColumn, addRowBefore, addRowAfter, deleteRow } from 'prosemirror-tables';
 import { buttonPopupChildren, onPopupPerform, selectionTableColumnIndex, setTableColumnAttr } from './utils.js';
 
 export const ButtonTable = {
@@ -43,6 +43,21 @@ export const ButtonTable = {
       key: 'TableDeleteColumn',
       title: 'EditorButtonTitleDeleteColumn',
       onBuild: (nodeType, options) => menuItemTableCmd(options, deleteColumn),
+    },
+    {
+      key: 'TableInsertRowBefore',
+      title: 'EditorButtonTitleInsertRowBefore',
+      onBuild: (nodeType, options) => menuItemTableCmd(options, addRowBefore),
+    },
+    {
+      key: 'TableInsertRowAfter',
+      title: 'EditorButtonTitleInsertRowAfter',
+      onBuild: (nodeType, options) => menuItemTableCmd(options, addRowAfter),
+    },
+    {
+      key: 'TableDeleteRow',
+      title: 'EditorButtonTitleDeleteRow',
+      onBuild: (nodeType, options) => menuItemTableCmd(options, deleteRow),
     },
   ],
 };

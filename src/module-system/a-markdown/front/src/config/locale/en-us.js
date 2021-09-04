@@ -29,5 +29,8 @@ export default {
   EditorButtonTitleInsertColumnBefore: 'Insert column before',
   EditorButtonTitleInsertColumnAfter: 'Insert column after',
   EditorButtonTitleDeleteColumn: 'Delete column',
+  EditorButtonTitleInsertRowBefore: 'Insert row before',
+  EditorButtonTitleInsertRowAfter: 'Insert row after',
+  EditorButtonTitleDeleteRow: 'Delete row',
   TextEditorPlaceHolder: 'Begin editing...',
 };
