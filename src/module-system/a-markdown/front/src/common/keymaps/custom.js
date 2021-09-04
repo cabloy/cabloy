@@ -1,4 +1,5 @@
 import { toggleMark } from 'prosemirror-commands';
+import { isInTable, goToNextCell } from 'prosemirror-tables';
 import { indentList, outdentList } from './utils.js';
 
 export function buildKeymapCustom(schema) {
@@ -9,11 +10,11 @@ export function buildKeymapCustom(schema) {
 
   let type;
 
-  // tab
-  if (schema.nodes.list_item) {
-    bind('Tab', indentList());
-    bind('Shift-Tab', outdentList());
-  }
+  // // tab
+  // if (schema.nodes.list_item) {
+  //   bind('Tab', indentList());
+  //   bind('Shift-Tab', outdentList());
+  // }
 
   // underline
   if ((type = schema.marks.underline)) {
@@ -37,6 +38,25 @@ export function buildKeymapCustom(schema) {
   // sub
   if ((type = schema.marks.sub)) {
     bind('Mod-,', toggleMark(type));
+  }
+  // table
+  if (schema.nodes.list_item || schema.nodes.table) {
+    const tabTable = goToNextCell(1);
+    const shiftTabTable = goToNextCell(-1);
+    const tabList = indentList();
+    const shiftTabList = outdentList();
+    bind('Tab', (state, dispatch, view) => {
+      if (isInTable(state)) {
+        return tabTable(state, dispatch, view);
+      }
+      return tabList(state, dispatch, view);
+    });
+    bind('Shift-Tab', (state, dispatch, view) => {
+      if (isInTable(state)) {
+        return shiftTabTable(state, dispatch, view);
+      }
+      return shiftTabList(state, dispatch, view);
+    });
   }
 
   return keys;
