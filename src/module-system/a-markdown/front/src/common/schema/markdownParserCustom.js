@@ -1,7 +1,7 @@
-// import markdownit from 'markdown-it';
 import { MarkdownParser } from 'prosemirror-markdown';
 import { schemaCustom } from './schemaCustom.js';
-const markdownit = require('@zhennann/markdown');
+import parserTable from './parser/table.js';
+const Markdownit = require('@zhennann/markdown');
 
 // :: MarkdownParser
 // A parser parsing unextended [CommonMark](http://commonmark.org/),
@@ -60,7 +60,14 @@ for (const containerType of containerTypes) {
   };
 }
 
-export const markdownParserCustom = new MarkdownParser(schemaCustom, markdownit.create(), types);
+// table
+types.table = { block: 'table' };
+types.tr = { block: 'table_row' };
+types.th = { block: 'table_header' };
+types.td = { block: 'table_cell' };
+
+const md = Markdownit.create().use(parserTable);
+export const markdownParserCustom = new MarkdownParser(schemaCustom, md, types);
 
 function listIsTight(tokens, i) {
   while (++i < tokens.length) {

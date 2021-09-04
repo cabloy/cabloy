@@ -21,6 +21,7 @@ import { buildInputRules } from '../common/inputrules/base.js';
 import { buildInputRulesLinks } from '../common/inputrules/links.js';
 import { buildInputRulesTextFormatting } from '../common/inputrules/text-formatting.js';
 import { buildKeymapCustom } from '../common/keymaps/custom.js';
+import { tableEditing, fixTables } from 'prosemirror-tables';
 
 export default {
   meta: {
@@ -91,7 +92,7 @@ export default {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
     },
     _createState(value) {
-      const state = EditorState.create({
+      let state = EditorState.create({
         schema: schemaCustom,
         doc: markdownParserCustom.parse(value || ''),
         // plugins: exampleSetup({ schema }),
@@ -99,6 +100,7 @@ export default {
           buildInputRules(schemaCustom), //
           buildInputRulesLinks(schemaCustom),
           buildInputRulesTextFormatting(schemaCustom),
+          tableEditing(),
           keymap(buildKeymap(schemaCustom)),
           keymap(buildKeymapCustom(schemaCustom)),
           keymap(baseKeymap),
@@ -112,6 +114,10 @@ export default {
           placeholderEmpty({ ctx: this, placeholderText: this.placeholderText }),
         ],
       });
+      const fix = fixTables(state);
+      if (fix) {
+        state = state.apply(fix.setMeta('addToHistory', false));
+      }
       return state;
     },
     _createView(state) {
