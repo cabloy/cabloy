@@ -1,6 +1,8 @@
 import { MenuItem } from 'prosemirror-menu';
 import { toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
+import { selectionCell } from 'prosemirror-tables';
+import { getCellsInTable } from '@zhennann/prosemirror-utils';
 
 export function wrapListItem(nodeType, options) {
   return cmdItem(wrapInList(nodeType, options.attrs), options);
@@ -130,4 +132,30 @@ export function extendMenuItem(menuItem, options) {
     ...menuItem.spec,
     ...options,
   });
+}
+export function selectionTableCell(state) {
+  const cell = selectionCell(state);
+  if (!cell) return null;
+  return cell.nodeAfter;
+}
+
+export function selectionTableRow(state) {
+  const cell = selectionCell(state);
+  if (!cell) return null;
+  const row = cell.parent;
+  if (row.type.name !== 'table_row') return null;
+  return row;
+}
+
+export function selectionTableCellIndex(state) {
+  const cell = selectionTableCell(state);
+  const row = selectionTableRow(state);
+  if (!cell || !row) return -1;
+  let res = -1;
+  row.forEach((_cell, _, index) => {
+    if (_cell === cell) {
+      res = index;
+    }
+  });
+  return res;
 }

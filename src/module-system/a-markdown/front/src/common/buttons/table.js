@@ -1,8 +1,8 @@
 import { MenuItem } from 'prosemirror-menu';
 import { TextSelection } from 'prosemirror-state';
 import { addRowAt, createTable, getCellsInColumn, moveRow } from '@zhennann/prosemirror-utils';
-import { isInTable, setCellAttr } from 'prosemirror-tables';
-import { buttonPopupChildren, onPopupPerform } from './utils.js';
+import { isInTable, setCellAttr, selectionCell } from 'prosemirror-tables';
+import { buttonPopupChildren, onPopupPerform, selectionTableCellIndex } from './utils.js';
 
 export const ButtonTable = {
   node: true,
@@ -39,6 +39,9 @@ function menuItemSetAlign(nodeType, options) {
       return true;
     },
     run(state, dispatch, view) {
+      const index = selectionTableCellIndex(state);
+      console.log(index);
+      // getCellsInColumn
       const cmd = setCellAttr('textAlign', options.attrs.textAlign);
       return cmd(state, dispatch, view);
     },
