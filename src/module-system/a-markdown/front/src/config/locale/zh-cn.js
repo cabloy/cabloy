@@ -35,6 +35,7 @@ export default {
   EditorButtonTitleInsertRowBefore: '在上面添加行',
   EditorButtonTitleInsertRowAfter: '在下面添加行',
   EditorButtonTitleDeleteRow: '删除行',
+  EditorButtonTitleDeleteTable: '删除表格',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
 };

@@ -32,5 +32,6 @@ export default {
   EditorButtonTitleInsertRowBefore: 'Insert row before',
   EditorButtonTitleInsertRowAfter: 'Insert row after',
   EditorButtonTitleDeleteRow: 'Delete row',
+  EditorButtonTitleDeleteTable: 'Delete table',
   TextEditorPlaceHolder: 'Begin editing...',
 };
