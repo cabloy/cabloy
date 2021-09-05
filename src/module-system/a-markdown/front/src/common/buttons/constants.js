@@ -9,6 +9,7 @@ import { ButtonImage } from './image.js';
 import { ButtonCodeBlock } from './codeBlock.js';
 import { ButtonAlignLeft, ButtonAlignCenter, ButtonAlignRight } from './container.js';
 import { ButtonTable } from './table.js';
+import { ButtonKeyboardReturn } from './keyboardReturn.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -26,7 +27,7 @@ export const ButtonsDefault = [
   ['link', 'image'],
   ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block', 'table'],
-  // ['align_left', 'align_center', 'align_right'],
+  ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
 
@@ -80,12 +81,7 @@ export const ButtonsAllOptions = {
     icon: { text: '¶' },
     onBuild: blockTypeItem,
   },
-  paragraph_keyboardReturn: {
-    node: 'paragraph',
-    title: 'EditorButtonTitleParagraphKeyboardReturn',
-    icon: { material: 'keyboard_return' },
-    onBuild: insertNode,
-  },
+  paragraph_keyboardReturn: ButtonKeyboardReturn,
   code_block: ButtonCodeBlock,
   horizontal_rule: {
     node: true,

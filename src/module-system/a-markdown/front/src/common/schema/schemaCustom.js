@@ -5,6 +5,8 @@ import { tableNodes } from 'prosemirror-tables';
 function patchNodes(baseNodes) {
   // doc
   baseNodes = baseNodes.update('doc', Object.assign({}, baseNodes.get('doc'), { content: '(block|containerblock)+' }));
+  // paragraph
+  baseNodes = baseNodes.update('paragraph', Object.assign({}, baseNodes.get('paragraph'), { content: 'inline*' }));
   // code_block
   baseNodes = baseNodes.update('code_block', Object.assign({}, baseNodes.get('code_block'), { isolating: true }));
   // container
