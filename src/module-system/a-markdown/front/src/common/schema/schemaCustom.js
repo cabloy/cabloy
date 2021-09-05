@@ -50,9 +50,15 @@ function patchNodes(baseNodes) {
           },
         },
       ],
-      // toDOM(node) {
-      //   return ['input', node.attrs.checked ? { checked: node.attrs.checked } : {}, 0];
-      // },
+      toDOM(node) {
+        const attrs = {
+          class: 'task-list-item-checkbox',
+        };
+        if (node.attrs.checked) {
+          attrs.checked = node.attrs.checked;
+        }
+        return ['input', attrs];
+      },
     },
   });
   // table

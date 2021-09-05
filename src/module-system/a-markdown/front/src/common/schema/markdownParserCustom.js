@@ -3,6 +3,7 @@ import { schemaCustom } from './schemaCustom.js';
 import parserTable from './parser/table.js';
 const Markdownit = require('@zhennann/markdown');
 
+const HTML_INLINE_CHECKED_REGEX = /checked="([^"]*)"/;
 // :: MarkdownParser
 // A parser parsing unextended [CommonMark](http://commonmark.org/),
 // without inline HTML, and producing a document in the basic schema.
@@ -49,10 +50,11 @@ const types = {
   code_inline: { mark: 'code', noCloseToken: true },
   html_inline: {
     node: 'html_inline',
-    getAttrs: tok => ({
-      href: tok.attrGet('href'),
-      title: tok.attrGet('title') || null,
-    }),
+    getAttrs: tok => {
+      const matches = tok.content.match(HTML_INLINE_CHECKED_REGEX);
+      const checked = !!matches;
+      return { checked };
+    },
   },
 };
 
