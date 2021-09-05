@@ -33,26 +33,6 @@ function patchNodes(baseNodes) {
       },
     },
   });
-  // table
-  baseNodes = baseNodes.append(
-    tableNodes({
-      tableGroup: 'block',
-      cellContent: 'paragraph+',
-      cellAttributes: {
-        textAlign: {
-          default: null,
-          getFromDOM(dom) {
-            return (dom.style && dom.style.textAlign) || null;
-          },
-          setDOMAttr(value, attrs) {
-            if (value) {
-              attrs.style = (attrs.style || '') + `text-align: ${value};`;
-            }
-          },
-        },
-      },
-    })
-  );
   // html_inline
   baseNodes = baseNodes.append({
     html_inline: {
@@ -75,6 +55,26 @@ function patchNodes(baseNodes) {
       // },
     },
   });
+  // table
+  baseNodes = baseNodes.append(
+    tableNodes({
+      tableGroup: 'block',
+      cellContent: 'paragraph+',
+      cellAttributes: {
+        textAlign: {
+          default: null,
+          getFromDOM(dom) {
+            return (dom.style && dom.style.textAlign) || null;
+          },
+          setDOMAttr(value, attrs) {
+            if (value) {
+              attrs.style = (attrs.style || '') + `text-align: ${value};`;
+            }
+          },
+        },
+      },
+    })
+  );
   // ok
   return baseNodes;
 }
