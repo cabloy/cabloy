@@ -1,4 +1,4 @@
-import { MenuItem } from 'prosemirror-menu';
+import { MenuItem, wrapItem } from 'prosemirror-menu';
 import { toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { selectionCell, isInTable } from 'prosemirror-tables';
@@ -8,14 +8,23 @@ export function wrapListItem(nodeType, options) {
   return cmdItem(wrapInList(nodeType, options.attrs), options);
 }
 
+export function wrapItemCmd(nodeType, options) {
+  const menuItem = wrapItem(nodeType, options);
+  return cmdItem(menuItem.spec.run, options);
+}
+
 export function cmdItem(cmd, options) {
   const passedOptions = {
     label: options.title,
     run: cmd,
   };
   for (const prop in options) passedOptions[prop] = options[prop];
-  if ((!options.enable || options.enable === true) && !options.select) {
-    passedOptions[options.enable ? 'enable' : 'select'] = state => cmd(state);
+  // if ((!options.enable || options.enable === true) && !options.select) {
+  //   passedOptions[options.enable ? 'enable' : 'select'] = state => cmd(state);
+  // }
+  // not use select
+  if (!options.enable || options.enable === true) {
+    passedOptions.enable = state => cmd(state);
   }
 
   return new MenuItem(passedOptions);

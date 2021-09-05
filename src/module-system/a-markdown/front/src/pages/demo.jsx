@@ -7,7 +7,10 @@ export default {
     return {
       content: `
 ## hello world
-      
+
+- [x] shopping
+- [ ] gaming
+
 This is a test
 
 \`\`\` javascript
@@ -20,7 +23,7 @@ const i = 1;
   render() {
     return (
       <eb-page>
-        <Editor style={{ height: '300px' }} value={this.content} onInput={value => (this.content = value)}></Editor>
+        <Editor style={{ height: '400px' }} value={this.content} onInput={value => (this.content = value)}></Editor>
         <textarea vModel={this.content} style="border:1px solid gray; width:100%;height:200px;"></textarea>
       </eb-page>
     );

@@ -120,6 +120,26 @@ function patchMarks(baseMarks) {
       },
     },
   });
+  // html_inline
+  baseMarks = baseMarks.append({
+    html_inline: {
+      attrs: { checked: { default: false } },
+      parseDOM: [
+        {
+          tag: 'input',
+          getAttrs: node => {
+            const className = String(node.className);
+            if (!className.includes('task-list-item-checkbox')) return false;
+            const checked = node.getAttribute('checked');
+            return { checked };
+          },
+        },
+      ],
+      // toDOM(node) {
+      //   return ['input', node.attrs.checked ? { checked: node.attrs.checked } : {}, 0];
+      // },
+    },
+  });
 
   // ok
   return baseMarks;

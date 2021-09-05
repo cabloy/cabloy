@@ -92,6 +92,15 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       },
       escape: false,
     },
+    html_inline: {
+      open(_state, _mark, parent, index) {
+        return backticksFor(parent.child(index), -1);
+      },
+      close(_state, _mark, parent, index) {
+        return backticksFor(parent.child(index - 1), 1);
+      },
+      escape: false,
+    },
   }
 );
 

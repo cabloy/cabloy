@@ -1,11 +1,11 @@
-import { /* blockTypeItem*/ wrapItem } from 'prosemirror-menu';
+import { wrapItemCmd } from './utils.js';
 
 export const ButtonAlignLeft = {
   node: 'container',
   title: 'EditorButtonTitleAlignLeft',
   attrs: { params: 'hljs-left' },
   icon: { material: 'format_align_left' },
-  onBuild: wrapItem,
+  onBuild: wrapItemCmd,
 };
 
 export const ButtonAlignCenter = {
@@ -13,7 +13,7 @@ export const ButtonAlignCenter = {
   title: 'EditorButtonTitleAlignCenter',
   attrs: { params: 'hljs-center' },
   icon: { material: 'format_align_center' },
-  onBuild: wrapItem,
+  onBuild: wrapItemCmd,
 };
 
 export const ButtonAlignRight = {
@@ -21,5 +21,5 @@ export const ButtonAlignRight = {
   title: 'EditorButtonTitleAlignRight',
   attrs: { params: 'hljs-right' },
   icon: { material: 'format_align_right' },
-  onBuild: wrapItem,
+  onBuild: wrapItemCmd,
 };

@@ -14,6 +14,7 @@ import { placeholder } from '../common/plugins/placeholder.js';
 import { placeholderEmpty } from '../common/plugins/placeholderEmpty.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
+import { HtmlInlineView } from '../common/nodeViews/html_inline.js';
 import { schemaCustom } from '../common/schema/schemaCustom.js';
 import { markdownParserCustom } from '../common/schema/markdownParserCustom.js';
 import { markdownSerializerCustom } from '../common/schema/markdownSerializerCustom.js';
@@ -126,6 +127,9 @@ export default {
         nodeViews: {
           code_block: (node, view, getPos) => {
             return new CodeBlockView(node, view, getPos);
+          },
+          html_inline: (node, view, getPos, editor) => {
+            return new HtmlInlineView(node, view, getPos, editor);
           },
         },
         dispatchTransaction: transaction => {
