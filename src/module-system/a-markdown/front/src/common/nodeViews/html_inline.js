@@ -32,6 +32,7 @@ export class HtmlInlineView {
     }
 
     this.dom = this.checkbox;
+    // not set contentDOM
     // this.contentDOM = this.checkbox;
   }
   // }

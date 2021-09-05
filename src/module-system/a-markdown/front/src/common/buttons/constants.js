@@ -1,5 +1,5 @@
-import { wrapItem, blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
-import { markItem, wrapListItem, insertNode, extendMenuItem } from './utils.js';
+import { blockTypeItem, undoItem, redoItem } from 'prosemirror-menu';
+import { markItem, wrapListItem, insertNode, extendMenuItem, wrapItemCmd } from './utils.js';
 import { ButtonUnderline } from './underline.js';
 import { ButtonStrikethrough } from './strikethrough.js';
 import { ButtonMark } from './mark.js';
@@ -73,7 +73,7 @@ export const ButtonsAllOptions = {
     node: true,
     title: 'EditorButtonTitleBlockquote',
     icon: { material: 'format_quote' },
-    onBuild: wrapItem,
+    onBuild: wrapItemCmd,
   },
   paragraph: {
     node: true,
