@@ -1,4 +1,4 @@
-import { inputRules, wrappingInputRule, textblockTypeInputRule, smartQuotes, emDash, ellipsis } from 'prosemirror-inputrules';
+import { InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, smartQuotes, emDash, ellipsis } from 'prosemirror-inputrules';
 
 // : (NodeType) → InputRule
 // Given a blockquote node type, returns an input rule that turns `"> "`
@@ -8,9 +8,18 @@ export function blockQuoteRule(nodeType) {
 }
 
 export function blockHtmlInlineRule(nodeType) {
-  return textblockTypeInputRule(/^\s*(\[([ |x])\])\s$/, nodeType, match => ({
-    checked: match[match.length - 1] === 'x',
-  }));
+  // return textblockTypeInputRule(/^\s*(\[([ |x])\])\s$/, nodeType, match => ({
+  //   checked: match[match.length - 1] === 'x',
+  // }));
+  return new InputRule(/^\s*(\[([ |x])\])\s$/, function (state, match, start, end) {
+    // let insert = string;
+    const checked = match[match.length - 1] === 'x';
+    let tr = state.tr;
+    tr = state.tr.deleteRange(start, end);
+    tr.insert(start, nodeType.create({ checked }));
+    tr.insertText(' ');
+    return tr;
+  });
 }
 
 // : (NodeType) → InputRule
