@@ -25,8 +25,8 @@ export const ButtonsDefault = [
   ['undo', 'redo'], //
   ['heading', 'strong', 'em', 'underline', 'strikethrough', 'mark', 'sup', 'sub', 'code'],
   ['link', 'image'],
-  ['bullet_list', 'ordered_list'],
   ['paragraph', 'blockquote', 'code_block', 'table'],
+  ['bullet_list', 'ordered_list'],
   ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
