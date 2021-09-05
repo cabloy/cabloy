@@ -49,10 +49,10 @@ const types = {
   code_inline: { mark: 'code', noCloseToken: true },
   html_inline: {
     node: 'html_inline',
-    // getAttrs: tok => ({
-    //   href: tok.attrGet('href'),
-    //   title: tok.attrGet('title') || null,
-    // }),
+    getAttrs: tok => ({
+      href: tok.attrGet('href'),
+      title: tok.attrGet('title') || null,
+    }),
   },
 };
 
