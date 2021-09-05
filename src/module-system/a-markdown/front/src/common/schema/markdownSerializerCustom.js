@@ -66,6 +66,10 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       renderTable(state, node);
       state.closeBlock(node);
     },
+    html_inline(state, node) {
+      state.write(node.attrs.checked ? '[x]' : '[ ]');
+      state.closeBlock();
+    },
   },
   {
     em: { open: '*', close: '*', mixable: true, expelEnclosingWhitespace: true },
@@ -84,15 +88,6 @@ export const markdownSerializerCustom = new MarkdownSerializer(
       },
     },
     code: {
-      open(_state, _mark, parent, index) {
-        return backticksFor(parent.child(index), -1);
-      },
-      close(_state, _mark, parent, index) {
-        return backticksFor(parent.child(index - 1), 1);
-      },
-      escape: false,
-    },
-    html_inline: {
       open(_state, _mark, parent, index) {
         return backticksFor(parent.child(index), -1);
       },

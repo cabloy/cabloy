@@ -47,7 +47,7 @@ const types = {
     }),
   },
   code_inline: { mark: 'code', noCloseToken: true },
-  html_inline: { mark: 'html_inline', noCloseToken: true },
+  html_inline: { node: 'html_inline' },
 };
 
 // contianer

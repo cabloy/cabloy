@@ -53,6 +53,28 @@ function patchNodes(baseNodes) {
       },
     })
   );
+  // html_inline
+  baseNodes = baseNodes.append({
+    html_inline: {
+      attrs: { checked: { default: false } },
+      inline: true,
+      group: 'inline',
+      parseDOM: [
+        {
+          tag: 'input',
+          getAttrs: node => {
+            const className = String(node.className);
+            if (!className.includes('task-list-item-checkbox')) return false;
+            const checked = node.getAttribute('checked');
+            return { checked };
+          },
+        },
+      ],
+      // toDOM(node) {
+      //   return ['input', node.attrs.checked ? { checked: node.attrs.checked } : {}, 0];
+      // },
+    },
+  });
   // ok
   return baseNodes;
 }
@@ -118,26 +140,6 @@ function patchMarks(baseMarks) {
       toDOM() {
         return ['sub', 0];
       },
-    },
-  });
-  // html_inline
-  baseMarks = baseMarks.append({
-    html_inline: {
-      attrs: { checked: { default: false } },
-      parseDOM: [
-        {
-          tag: 'input',
-          getAttrs: node => {
-            const className = String(node.className);
-            if (!className.includes('task-list-item-checkbox')) return false;
-            const checked = node.getAttribute('checked');
-            return { checked };
-          },
-        },
-      ],
-      // toDOM(node) {
-      //   return ['input', node.attrs.checked ? { checked: node.attrs.checked } : {}, 0];
-      // },
     },
   });
 
