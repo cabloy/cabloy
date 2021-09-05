@@ -1,5 +1,5 @@
 import { MenuItem } from 'prosemirror-menu';
-import { NodeSelection /* , TextSelection*/ } from 'prosemirror-state';
+import { NodeSelection, TextSelection, Selection } from 'prosemirror-state';
 
 export const ButtonKeyboardReturn = {
   title: 'EditorButtonTitleParagraphKeyboardReturn',
@@ -19,7 +19,7 @@ function menuItemKeyboardReturn(_, options) {
   });
 }
 
-function KeyboardReturn(state, dispatch) {
+function KeyboardReturn(state, dispatch, view) {
   const ref = state.selection;
   const $from = ref.$from;
   if (dispatch) {
@@ -29,9 +29,10 @@ function KeyboardReturn(state, dispatch) {
     } else {
       const pos = $from.end(1);
       tr = tr.insert(pos + 1, state.schema.nodes.paragraph.createAndFill());
-      tr.setSelection(NodeSelection.create(tr.doc, pos + 1));
+      tr.setSelection(Selection.near(tr.doc.resolve(pos + 1), 1));
     }
     dispatch(tr.scrollIntoView());
+    view.focus(); // for exit codemirror
   }
   return true;
 }
