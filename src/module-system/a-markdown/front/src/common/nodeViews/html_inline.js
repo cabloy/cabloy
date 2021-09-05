@@ -9,22 +9,10 @@ export class HtmlInlineView {
     this.checkbox.type = 'checkbox';
     this.checkbox.addEventListener('change', event => {
       const { checked } = event.target;
-      const start = this.getPos() + 1;
-      const tr = this.view.state.tr.replaceWith(start + change.from, start + change.to, change.text ? this.view.state.schema.text(change.text) : null);
+      const tr = this.view.state.tr.setNodeMarkup(getPos(), undefined, {
+        checked,
+      });
       this.view.dispatch(tr);
-
-      if (editor.isEditable && typeof getPos === 'function') {
-        editor
-          .chain()
-          .focus()
-          .command(({ tr }) => {
-            tr.setNodeMarkup(getPos(), undefined, {
-              checked,
-            });
-            return true;
-          })
-          .run();
-      }
     });
 
     if (node.attrs.checked) {
