@@ -7,6 +7,12 @@ export function blockQuoteRule(nodeType) {
   return wrappingInputRule(/^\s*>\s$/, nodeType);
 }
 
+export function blockHtmlInlineRule(nodeType) {
+  return textblockTypeInputRule(/^\s*(\[([ |x])\])\s$/, nodeType, match => ({
+    checked: match[match.length - 1] === 'x',
+  }));
+}
+
 // : (NodeType) → InputRule
 // Given a list node type, returns an input rule that turns a number
 // followed by a dot at the start of a textblock into an ordered list.
@@ -54,5 +60,6 @@ export function buildInputRules(schema) {
   if ((type = schema.nodes.bullet_list)) rules.push(bulletListRule(type));
   if ((type = schema.nodes.code_block)) rules.push(codeBlockRule(type));
   if ((type = schema.nodes.heading)) rules.push(headingRule(type, 6));
+  if ((type = schema.nodes.html_inline)) rules.push(blockHtmlInlineRule(type));
   return inputRules({ rules });
 }
