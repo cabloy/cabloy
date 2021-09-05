@@ -2,7 +2,7 @@ import { MenuItem } from 'prosemirror-menu';
 
 export const ButtonTaskToggle = {
   title: 'EditorButtonTitleTaskToggle',
-  icon: { material: 'add_task' },
+  icon: { material: 'task_alt' },
   onBuild: menuItemTaskToggle,
 };
 
