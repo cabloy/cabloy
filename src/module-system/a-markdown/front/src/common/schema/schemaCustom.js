@@ -45,7 +45,7 @@ function patchNodes(baseNodes) {
           getAttrs: node => {
             const className = String(node.className);
             if (!className.includes('task-list-item-checkbox')) return false;
-            const checked = node.getAttribute('checked');
+            const checked = node.hasAttribute('checked');
             return { checked };
           },
         },
