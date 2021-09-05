@@ -8,6 +8,7 @@ export default {
   EditorButtonTitleImage: 'Image',
   EditorButtonTitleBulletList: 'Bulleted List',
   EditorButtonTitleOrderedList: 'Ordered List',
+  EditorButtonTitleTaskToggle: 'Task',
   EditorButtonTitleBlockquote: 'Block Quote',
   EditorButtonTitleParagraph: 'Paragraph',
   EditorButtonTitleParagraphKeyboardReturn: 'New Line',

@@ -1,17 +1,19 @@
 import { MenuItem } from 'prosemirror-menu';
-import { /* NodeSelection, TextSelection,*/ Selection } from 'prosemirror-state';
 
-export const ButtonKeyboardReturn = {
-  title: 'EditorButtonTitleParagraphKeyboardReturn',
-  icon: { material: 'keyboard_return' },
-  onBuild: menuItemKeyboardReturn,
+export const ButtonTaskToggle = {
+  title: 'EditorButtonTitleTaskToggle',
+  icon: { material: 'add_task' },
+  onBuild: menuItemTaskToggle,
 };
 
-function menuItemKeyboardReturn(_, options) {
+function menuItemTaskToggle(nodeType, options) {
   return new MenuItem({
     ...options,
     enable(state) {
       return true;
+    },
+    active(state) {
+      return false;
     },
     run(state, dispatch, view) {
       KeyboardReturn(state, dispatch, view);

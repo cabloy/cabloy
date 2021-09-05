@@ -10,6 +10,7 @@ import { ButtonCodeBlock } from './codeBlock.js';
 import { ButtonAlignLeft, ButtonAlignCenter, ButtonAlignRight } from './container.js';
 import { ButtonTable } from './table.js';
 import { ButtonKeyboardReturn } from './keyboardReturn.js';
+import { ButtonTaskToggle } from './task.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -26,7 +27,7 @@ export const ButtonsDefault = [
   ['heading', 'strong', 'em', 'underline', 'strikethrough', 'mark', 'sup', 'sub', 'code'],
   ['link', 'image'],
   ['paragraph', 'blockquote', 'code_block', 'table'],
-  ['bullet_list', 'ordered_list'],
+  ['bullet_list', 'ordered_list', 'task_toggle'],
   ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
 ];
@@ -69,6 +70,7 @@ export const ButtonsAllOptions = {
     icon: { material: 'format_list_numbered' },
     onBuild: wrapListItem,
   },
+  task_toggle: ButtonTaskToggle,
   blockquote: {
     node: true,
     title: 'EditorButtonTitleBlockquote',

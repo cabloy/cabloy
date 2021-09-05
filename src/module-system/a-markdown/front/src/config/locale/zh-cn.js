@@ -11,6 +11,7 @@ export default {
   EditorButtonTitleImage: '图片',
   EditorButtonTitleBulletList: '无序列表',
   EditorButtonTitleOrderedList: '有序列表',
+  EditorButtonTitleTaskToggle: '任务',
   EditorButtonTitleBlockquote: '块引用',
   EditorButtonTitleParagraph: '段落',
   EditorButtonTitleParagraphKeyboardReturn: '换行',
