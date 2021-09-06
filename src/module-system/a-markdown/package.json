@@ -27,6 +27,7 @@
   "devDependencies": {},
   "dependencies": {
     "@zhennann/markdown": "^3.1.2",
+    "@zhennann/markdown-it-block": "^4.0.0",
     "@zhennann/prosemirror-utils": "^0.9.6",
     "egg-born-mock": "^2.1.1",
     "require3": "^2.0.7",
