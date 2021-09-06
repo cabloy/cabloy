@@ -13,7 +13,7 @@ module.exports = function block_plugin(md, options) {
     let content;
     let errorMessage;
     try {
-      content = token.content ? JSON5.parse(token.content) : {};
+      content = token.content ? window.JSON5.parse(token.content) : {};
     } catch (err) {
       errorMessage = err.message;
     }
@@ -29,7 +29,7 @@ module.exports = function block_plugin(md, options) {
     // render
     if (!block || !block.beanFullName) {
       // placeholder
-      const res = JSON5.stringify(content, null, 2);
+      const res = window.JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
 <p><strong>${blockTitle}: ${md.utils.escapeHtml(blockName)}</strong></p>
 <pre><code>${md.utils.escapeHtml(res)}</code></pre>
@@ -121,7 +121,7 @@ module.exports = function block_plugin(md, options) {
     // If a fence has heading spaces, they should be removed from its inner block
     len = state.sCount[startLine];
     state.line = nextLine + (haveEndMarker ? 1 : 0);
-    token = state.push('cabloy_cms_block', 'div', 0);
+    token = state.push('cabloy_block', 'div', 0);
     token.info = params;
     token.content = state.getLines(startLine + 1, nextLine, len, true);
     token.markup = markup;
@@ -129,8 +129,8 @@ module.exports = function block_plugin(md, options) {
     return true;
   }
 
-  md.block.ruler.before('fence', 'cabloy_cms_block', blockRuler, {
+  md.block.ruler.before('fence', 'cabloy_block', blockRuler, {
     alt: ['paragraph', 'reference', 'blockquote', 'list'],
   });
-  md.renderer.rules.cabloy_cms_block = blockRender;
+  md.renderer.rules.cabloy_block = blockRender;
 };
