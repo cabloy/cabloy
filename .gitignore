@@ -29,6 +29,8 @@ miniprogram_npm
 
 /src/module/*
 !/src/module/test-note
+!/src/module/test-party/backend/cms
+!/src/module/test-party/backend/test
 !/src/module/test-party/dist
 !/src/module/test-party/docs
 !/src/module/test-party/package.json
