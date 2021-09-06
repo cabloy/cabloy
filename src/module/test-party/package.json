@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "4.4.19",
+  "version": "4.4.21",
   "title": "Party Test",
   "eggBornModule": {
     "fileVersion": 1,
@@ -16,7 +16,9 @@
   "description": "",
   "files": [
     "dist",
-    "docs"
+    "docs",
+    "backend/cms",
+    "backend/test"
   ],
   "scripts": {
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
