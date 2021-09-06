@@ -1,4 +1,5 @@
 import { MenuItem } from 'prosemirror-menu';
+import { isInList } from './utils.js';
 
 export const ButtonTaskToggle = {
   title: 'EditorButtonTitleTaskToggle',
@@ -10,31 +11,59 @@ function menuItemTaskToggle(nodeType, options) {
   return new MenuItem({
     ...options,
     enable(state) {
-      return true;
+      return isInList(state);
     },
     active(state) {
-      return false;
+      return !!checkTaskActive(state);
     },
     run(state, dispatch, view) {
-      KeyboardReturn(state, dispatch, view);
+      taskToggle(state, dispatch, view);
     },
   });
 }
 
-function KeyboardReturn(state, dispatch, view) {
-  const ref = state.selection;
-  const $from = ref.$from;
+function taskToggle(state, dispatch) {
+  const checkbox = checkTaskActive(state);
   if (dispatch) {
     let tr = state.tr;
-    if (!$from.node(1)) {
-      tr = tr.insertText('\n');
+    if (checkbox) {
+      const $from = state.selection.$from;
+      const pos = $from.posAtIndex(0, $from.depth);
+      tr = tr.delete(pos, pos + checkbox.nodeSize + 1);
     } else {
-      const pos = $from.end(1);
-      tr = tr.insert(pos + 1, state.schema.nodes.paragraph.createAndFill());
-      tr.setSelection(Selection.near(tr.doc.resolve(pos + 1), 1));
     }
-    dispatch(tr.scrollIntoView());
-    view.focus(); // for exit codemirror
+    dispatch(tr);
   }
-  return true;
+
+  return !!checkbox;
+}
+
+function checkTaskActive(state) {
+  if (!isInList(state)) return false;
+  // paragraph
+  const paragraph = _findParagraph(state);
+  if (!paragraph) return false;
+  // checkbox
+  return _findCheckbox(paragraph);
+}
+
+function _findParagraph(state) {
+  const $head = state.selection.$head;
+  for (let d = $head.depth; d > 0; d--) {
+    const node = $head.node(d);
+    if (node.type.name === 'paragraph') {
+      return node;
+    }
+  }
+  return null;
+}
+
+function _findCheckbox(paragraph) {
+  let _node;
+  paragraph.forEach(node => {
+    if (node.type.name === 'html_inline') {
+      _node = node;
+    }
+  });
+  return _node;
 }
