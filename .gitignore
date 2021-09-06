@@ -30,6 +30,11 @@ miniprogram_npm
 /src/module/*
 
 !/src/module/test-note
+/src/module/test-note/backend/src
+/src/module/test-note/backend/static
+/src/module/test-note/build
+/src/module/test-note/front
+/src/module/test-note/.gitignore
 
 !/src/module/test-party
 /src/module/test-party/backend/src
