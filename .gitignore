@@ -28,12 +28,16 @@ miniprogram_npm
 /src/front/config
 
 /src/module/*
+
 !/src/module/test-note
-!/src/module/test-party/backend/cms
-!/src/module/test-party/backend/test
-!/src/module/test-party/dist
-!/src/module/test-party/docs
-!/src/module/test-party/package.json
+
+!/src/module/test-party
+/src/module/test-party/backend/src
+/src/module/test-party/backend/static
+/src/module/test-party/build
+/src/module/test-party/front
+/src/module/test-party/.gitignore
+
 !/src/module/test-partymonkey-monkey
 !/src/module/test-flow
 !/src/module/test-hostsimple-sync
