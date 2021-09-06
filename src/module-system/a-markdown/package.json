@@ -14,7 +14,8 @@
     "Cabloy Module"
   ],
   "files": [
-    "dist"
+    "dist",
+    "backend/test"
   ],
   "scripts": {
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",

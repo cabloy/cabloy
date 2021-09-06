@@ -44,7 +44,14 @@ miniprogram_npm
 /src/module/test-party/.gitignore
 
 !/src/module/test-partymonkey-monkey
+
 !/src/module/test-flow
+/src/module/test-flow/backend/src
+/src/module/test-flow/backend/static
+/src/module/test-flow/build
+/src/module/test-flow/front
+/src/module/test-flow/.gitignore
+
 !/src/module/test-hostsimple-sync
 !/src/module/test-localeone
 !/src/module/test-localetwo
