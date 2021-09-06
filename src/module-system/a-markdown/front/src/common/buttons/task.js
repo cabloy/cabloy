@@ -37,7 +37,6 @@ function taskToggle(nodeType, state, dispatch) {
     }
     dispatch(tr);
   }
-
   return !!checkbox;
 }
 
