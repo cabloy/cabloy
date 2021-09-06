@@ -39,7 +39,10 @@ miniprogram_npm
 !/src/module/test-wechat
 !/src/module/test-wxwork
 
-/src/module-system/a-markdown
+/src/module-system/a-markdown/backend
+/src/module-system/a-markdown/front
+/src/module-system/a-markdown/build
+/src/module-system/a-markdown/.gitignore
 
 # package-lock.json
 # yarn.lock
