@@ -2,6 +2,7 @@ import { MenuItem } from 'prosemirror-menu';
 import { isInList } from './utils.js';
 
 export const ButtonTaskToggle = {
+  node: 'html_inline',
   title: 'EditorButtonTitleTaskToggle',
   icon: { material: 'task_alt' },
   onBuild: menuItemTaskToggle,
@@ -17,20 +18,22 @@ function menuItemTaskToggle(nodeType, options) {
       return !!checkTaskActive(state);
     },
     run(state, dispatch, view) {
-      taskToggle(state, dispatch, view);
+      taskToggle(nodeType, state, dispatch, view);
     },
   });
 }
 
-function taskToggle(state, dispatch) {
+function taskToggle(nodeType, state, dispatch) {
   const checkbox = checkTaskActive(state);
   if (dispatch) {
     let tr = state.tr;
+    const $from = state.selection.$from;
+    const pos = $from.posAtIndex(0, $from.depth);
     if (checkbox) {
-      const $from = state.selection.$from;
-      const pos = $from.posAtIndex(0, $from.depth);
       tr = tr.delete(pos, pos + checkbox.nodeSize + 1);
     } else {
+      const nodes = [nodeType.create(), state.schema.text(' ')];
+      tr = tr.insert(pos, nodes);
     }
     dispatch(tr);
   }
