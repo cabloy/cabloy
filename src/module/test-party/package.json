@@ -14,6 +14,10 @@
     }
   },
   "description": "",
+  "files": [
+    "dist",
+    "docs"
+  ],
   "scripts": {
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
     "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",

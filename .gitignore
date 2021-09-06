@@ -29,7 +29,9 @@ miniprogram_npm
 
 /src/module/*
 !/src/module/test-note
-!/src/module/test-party
+!/src/module/test-party/dist
+!/src/module/test-party/docs
+!/src/module/test-party/package.json
 !/src/module/test-partymonkey-monkey
 !/src/module/test-flow
 !/src/module/test-hostsimple-sync
