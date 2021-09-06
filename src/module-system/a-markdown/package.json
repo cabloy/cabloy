@@ -9,7 +9,7 @@
       "a-base": "4.0.0"
     }
   },
-  "description": "",
+  "description": "A Markdown Editor based on Prosemirror",
   "keywords": [
     "Cabloy Module"
   ],
