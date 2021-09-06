@@ -27,8 +27,8 @@ function taskToggle(nodeType, state, dispatch) {
   const checkbox = checkTaskActive(state);
   if (dispatch) {
     let tr = state.tr;
-    const $from = state.selection.$from;
-    const pos = $from.posAtIndex(0, $from.depth);
+    const $head = state.selection.$head;
+    const pos = $head.posAtIndex(0, $head.depth);
     if (checkbox) {
       tr = tr.delete(pos, pos + checkbox.nodeSize + 1);
     } else {
@@ -51,13 +51,15 @@ function checkTaskActive(state) {
 
 function _findParagraph(state) {
   const $head = state.selection.$head;
-  for (let d = $head.depth; d > 0; d--) {
-    const node = $head.node(d);
-    if (node.type.name === 'paragraph') {
-      return node;
-    }
-  }
-  return null;
+  return $head.node($head.depth);
+  // const $head = state.selection.$head;
+  // for (let d = $head.depth; d > 0; d--) {
+  //   const node = $head.node(d);
+  //   if (node.type.name === 'paragraph') {
+  //     return node;
+  //   }
+  // }
+  // return null;
 }
 
 function _findCheckbox(paragraph) {
