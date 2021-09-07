@@ -18,6 +18,8 @@
         // content
         if (!$content.audio) return;
         $content.container = $player;
+        $content.autoplay = !!$content.autoplay;
+        $content.loop = $content.loop ? 'all' : 'none';
         // audio
         if (!Array.isArray($content.audio)) {
           $content.audio = [$content.audio];
