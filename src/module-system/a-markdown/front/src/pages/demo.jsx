@@ -8,7 +8,7 @@ export default {
       content: `
 ## hello world
 
-$$$ a-markdownblock:blockAudio
+$$$ a-markdownblock:audio
 {
   loop: true,
   audio: {

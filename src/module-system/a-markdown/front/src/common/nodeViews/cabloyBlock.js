@@ -55,7 +55,9 @@ export class CabloyBlockView {
     // Block Instance
     this.blockInstance = new BlockClass();
     // initialize
-    await this.blockInstance.initialize();
+    let res = this.blockInstance.mount();
+    res = await Vue.prototype.$meta.util.wrapPromise(res);
+    console.log(res);
   }
   _initBlockClass() {
     if (this.BlockClass) return Promise.resolve(this.BlockClass);

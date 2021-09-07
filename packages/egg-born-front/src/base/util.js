@@ -89,7 +89,7 @@ export default function (Vue) {
     },
     wrapPromise(promise) {
       if (!this.isPromise(promise)) {
-        return new Promise(resovle => resovle(promise));
+        return Promise.resolve(promise);
       }
       return promise;
     },
