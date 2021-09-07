@@ -13,6 +13,7 @@ import { menuBar } from '../common/plugins/menuBar.js';
 import { placeholder } from '../common/plugins/placeholder.js';
 import { placeholderEmpty } from '../common/plugins/placeholderEmpty.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
+import { CabloyBlockView } from '../common/nodeViews/cabloyBlock.js';
 import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
 import { HtmlInlineView } from '../common/nodeViews/html_inline.js';
 import { schemaCustom } from '../common/schema/schemaCustom.js';
@@ -125,6 +126,9 @@ export default {
       const view = new EditorView(this.$refs.textEditorContent, {
         state,
         nodeViews: {
+          cabloy_block: (node, view, getPos) => {
+            return new CabloyBlockView(node, view, getPos);
+          },
           code_block: (node, view, getPos) => {
             return new CodeBlockView(node, view, getPos);
           },
