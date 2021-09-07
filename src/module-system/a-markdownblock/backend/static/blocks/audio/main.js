@@ -2,14 +2,17 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? (module.exports = factory()) : typeof define === 'function' && define.amd ? define(factory) : null;
 })(this, function () {
   class Audio {
-    APlayer = null;
+    constructor(host) {
+      this.host = host;
+      this.APlayer = null;
+    }
 
     render() {
       return '<div class="aplayer"></div>';
     }
 
-    mount(host) {
-      const { $container, $content, $util } = host;
+    mount() {
+      const { $container, $content, $util } = this.host;
       return this._loadAPlayer().then(APlayer => {
         const $player = $container.querySelector('.aplayer');
         // content

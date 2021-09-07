@@ -58,8 +58,14 @@ export class CabloyBlockView {
       // do nothing
       return;
     }
+    // host
+    const host = {
+      $container: this.blockContainer,
+      $content: window.JSON5.parse(this.node.attrs.content),
+      $util: Vue.prototype.$meta.util.hostUtil,
+    };
     // Block Instance
-    this.blockInstance = new BlockClass();
+    this.blockInstance = new BlockClass(host);
     // render
     let content = this.blockInstance.render();
     content = await Vue.prototype.$meta.util.wrapPromise(content);
@@ -67,12 +73,7 @@ export class CabloyBlockView {
       this.blockContainer.innerHTML = content;
     }
     // mount
-    const host = {
-      $container: this.blockContainer,
-      $content: window.JSON5.parse(this.node.attrs.content),
-      $util: Vue.prototype.$meta.util.hostUtil,
-    };
-    const res = this.blockInstance.mount(host);
+    const res = this.blockInstance.mount();
     await Vue.prototype.$meta.util.wrapPromise(res);
   }
   _initBlockClass() {
