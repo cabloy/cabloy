@@ -35,9 +35,10 @@
           paths: {
             APlayer: 'api/static/a/markdownblock/blocks/audio/aplayer/aplayer-1.10.1.min',
             APlayer_CSS: 'api/static/a/markdownblock/blocks/audio/aplayer/aplayer-1.10.1.min',
+            AudioMain_CSS: 'api/static/a/markdownblock/blocks/audio/main',
           },
         });
-        require(['APlayer', 'css!APlayer_CSS'], APlayer => {
+        require(['APlayer', 'css!APlayer_CSS', 'css!AudioMain_CSS'], APlayer => {
           this.APlayer = APlayer;
           resolve(APlayer);
         });

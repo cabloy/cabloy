@@ -1,0 +1,9 @@
+.markdown-it-cabloy-block .aplayer {
+  margin: 0;
+}
+.markdown-it-cabloy-block .aplayer * {
+  box-sizing: content-box;
+}
+.markdown-it-cabloy-block .aplayer .aplayer-info {
+  box-sizing: border-box;
+}

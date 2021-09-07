@@ -15,7 +15,9 @@ export class CabloyBlockView {
     this.blockContainer.setAttribute('data-block-content', encodeURIComponent(node.attrs.content));
     this.dom = this.blockContainer;
 
-    this._mountBlock();
+    window.setTimeout(() => {
+      this._mountBlock();
+    }, 0);
 
     // not set contentDOM
     // this.contentDOM = this.checkbox;
