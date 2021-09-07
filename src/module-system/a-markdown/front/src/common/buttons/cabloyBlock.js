@@ -15,31 +15,11 @@ function insertCabloyBlock(nodeType, options) {
       return canInsert(state, nodeType);
     },
     run(state, _, view) {
-      const { ctx } = options;
-      _blockAdd(options).then(res => {
-        console.log(res);
-      });
-      return;
-      // atomId
-      const atomId = (ctx.host && ctx.host.atomId) || 0;
-      // navigate
-      ctx.$view.navigate(`/a/file/file/upload?t=${Date.now()}`, {
-        context: {
-          params: {
-            mode: 1, // image
-            atomId,
-          },
-          callback: (code, data) => {
-            if (code === 200) {
-              const attrs = { alt: data.realName, src: data.downloadUrl };
-              view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)));
-              view.focus();
-            }
-            if (code === false) {
-              view.focus();
-            }
-          },
-        },
+      _blockAdd(options).then(attrs => {
+        if (attrs) {
+          view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)));
+        }
+        view.focus();
       });
     },
   });
@@ -47,9 +27,9 @@ function insertCabloyBlock(nodeType, options) {
 
 async function _blockAdd(options) {
   const block = await _blockSelect(options);
-  if (!block) return;
-  console.log(block);
-  return await this._blockEdit(block, this.item.atomId);
+  if (!block) return null;
+  const content = await _blockEdit(options, block);
+  return content ? { params: block.atomStaticKey, content } : null;
 }
 
 function _blockSelect(options) {
@@ -66,6 +46,36 @@ function _blockSelect(options) {
             res = node && node.data;
           } else {
             resolve(res);
+          }
+        },
+      },
+    });
+  });
+}
+
+function _blockEdit(options, block) {
+  const { ctx } = options;
+  return new Promise((resolve, reject) => {
+    const resourceConfig = window.JSON5.parse(block.resourceConfig);
+    const validatorParams = resourceConfig.validator;
+    const dataDefault = resourceConfig.default;
+    ctx.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
+      context: {
+        params: {
+          params: validatorParams,
+          title: ctx.$text('Create Block'),
+          data: dataDefault,
+          host: ctx.host,
+          performValidate: resourceConfig.performValidate !== false,
+        },
+        callback: (code, res) => {
+          if (code === 200) {
+            let content = res.data;
+            content = content ? window.JSON5.stringify(content, null, 2) : null;
+            resolve(content);
+          }
+          if (code === false) {
+            resolve(null);
           }
         },
       },

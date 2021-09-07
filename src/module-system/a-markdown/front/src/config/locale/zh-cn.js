@@ -43,4 +43,5 @@ export default {
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
   'Create Table': '创建表格',
+  'Create Block': '创建区块',
 };
