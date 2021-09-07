@@ -42,6 +42,10 @@ export class CodeBlockView {
     this.cm.on('focus', () => this.forwardSelection());
   }
   // }
+  destroy() {
+    this.cm._handlers = {};
+    this.cm = null;
+  }
   // nodeview_forwardSelection{
   forwardSelection() {
     if (!this.cm.hasFocus()) return;
