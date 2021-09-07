@@ -22,16 +22,6 @@ module.exports = app => {
       keywords: {},
       schemas,
     },
-    markdown: {
-      blocks: {
-        iframe: {
-          validator: 'blockIFrame',
-        },
-        audio: {
-          validator: 'blockAudio',
-        },
-      },
-    },
   };
   return meta;
 };
