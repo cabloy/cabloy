@@ -15,7 +15,7 @@ export class CabloyBlockView {
     this.blockContainer.setAttribute('data-block-content', encodeURIComponent(node.attrs.content));
     this.dom = this.blockContainer;
 
-    this._initBlock();
+    this._mountBlock();
 
     // not set contentDOM
     // this.contentDOM = this.checkbox;
@@ -46,7 +46,7 @@ export class CabloyBlockView {
     this.BlockParams = { module, blockName };
     return this.BlockParams;
   }
-  async _initBlock() {
+  async _mountBlock() {
     // params
     const BlockParams = this._initBlockParams();
     if (!BlockParams) return;
@@ -58,10 +58,19 @@ export class CabloyBlockView {
     }
     // Block Instance
     this.blockInstance = new BlockClass();
-    // initialize
-    let res = this.blockInstance.mount();
-    res = await Vue.prototype.$meta.util.wrapPromise(res);
-    console.log(res);
+    // render
+    let content = this.blockInstance.render();
+    content = await Vue.prototype.$meta.util.wrapPromise(content);
+    if (content) {
+      this.blockContainer.innerHTML = content;
+    }
+    // mount
+    const host = {
+      $container: this.blockContainer,
+      $content: window.JSON5.parse(this.node.attrs.content),
+    };
+    const res = this.blockInstance.mount(host);
+    await Vue.prototype.$meta.util.wrapPromise(res);
   }
   _initBlockClass() {
     if (this.BlockClass) return Promise.resolve(this.BlockClass);

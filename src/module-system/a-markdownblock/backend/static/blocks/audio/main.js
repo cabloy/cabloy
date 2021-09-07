@@ -4,9 +4,27 @@
   class Audio {
     APlayer = null;
 
-    mount() {
+    render() {
+      return '<div class="aplayer"></div>';
+    }
+
+    mount(host) {
+      const { $container, $content } = host;
       return this._loadAPlayer().then(APlayer => {
-        console.log(APlayer);
+        const $player = $container.querySelector('.aplayer');
+        // content
+        if (!$content.audio) return;
+        $content.container = $player;
+        // audio
+        if ($content.audio.concat) {
+          for (let i = 0; i < $content.audio.length; i++) {
+            if (!$content.audio[i].cover) $content.audio[i].cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
+          }
+        } else {
+          if (!$content.audio.cover) $content.audio.cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
+        }
+        // create
+        new APlayer($content);
       });
     }
 
@@ -19,7 +37,7 @@
             APlayer_CSS: 'api/static/a/markdownblock/blocks/audio/aplayer/aplayer-1.10.1.min',
           },
         });
-        define(['APlayer', 'css!APlayer_CSS'], APlayer => {
+        require(['APlayer', 'css!APlayer_CSS'], APlayer => {
           this.APlayer = APlayer;
           resolve(APlayer);
         });
