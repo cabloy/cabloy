@@ -9,19 +9,22 @@
     }
 
     mount(host) {
-      const { $container, $content } = host;
+      const { $container, $content, $util } = host;
       return this._loadAPlayer().then(APlayer => {
         const $player = $container.querySelector('.aplayer');
         // content
         if (!$content.audio) return;
         $content.container = $player;
         // audio
-        if ($content.audio.concat) {
-          for (let i = 0; i < $content.audio.length; i++) {
-            if (!$content.audio[i].cover) $content.audio[i].cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
-          }
-        } else {
-          if (!$content.audio.cover) $content.audio.cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
+        if (!Array.isArray($content.audio)) {
+          $content.audio = [$content.audio];
+        }
+        for (const audio of $content.audio) {
+          audio.name = $util.escapeHtml(audio.name);
+          audio.url = $util.escapeURL(audio.url);
+          audio.artist = $util.escapeHtml(audio.artist);
+          audio.cover = $util.escapeURL(audio.cover);
+          if (!audio.cover) audio.cover = $util.url('api/static/a/base/img/audio_cover.jpg');
         }
         // create
         new APlayer($content);

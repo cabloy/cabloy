@@ -70,6 +70,7 @@ export class CabloyBlockView {
     const host = {
       $container: this.blockContainer,
       $content: window.JSON5.parse(this.node.attrs.content),
+      $util: Vue.prototype.$meta.util.hostUtil,
     };
     const res = this.blockInstance.mount(host);
     await Vue.prototype.$meta.util.wrapPromise(res);
