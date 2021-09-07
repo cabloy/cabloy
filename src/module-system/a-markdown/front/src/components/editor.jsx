@@ -76,7 +76,10 @@ export default {
     this.init();
   },
   beforeDestroy() {
-    this.view = null;
+    if (this.view) {
+      this.view.destroy();
+      this.view = null;
+    }
     this.menuItems = null;
   },
   methods: {
