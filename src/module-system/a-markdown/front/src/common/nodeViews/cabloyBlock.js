@@ -52,6 +52,10 @@ export class CabloyBlockView {
     if (!BlockParams) return;
     // Block Class
     const BlockClass = await this._initBlockClass();
+    if (!BlockClass) {
+      // do nothing
+      return;
+    }
     // Block Instance
     this.blockInstance = new BlockClass();
     // initialize
