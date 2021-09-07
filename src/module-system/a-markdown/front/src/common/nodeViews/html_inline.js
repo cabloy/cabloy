@@ -7,13 +7,8 @@ export class HtmlInlineView {
 
     this.checkbox = document.createElement('input');
     this.checkbox.type = 'checkbox';
-    this.checkbox.addEventListener('change', event => {
-      const { checked } = event.target;
-      const tr = this.view.state.tr.setNodeMarkup(getPos(), undefined, {
-        checked,
-      });
-      this.view.dispatch(tr);
-    });
+    this._eventHandlerChange = this._onChange.bind(this);
+    this.checkbox.addEventListener('change', this._eventHandlerChange);
 
     if (node.attrs.checked) {
       this.checkbox.setAttribute('checked', 'checked');
@@ -23,8 +18,20 @@ export class HtmlInlineView {
     // not set contentDOM
     // this.contentDOM = this.checkbox;
   }
-  // }
-  // nodeview_update{
+  destroy() {
+    if (this.checkbox) {
+      this.checkbox.removeEventListener('change', this._eventHandlerChange);
+      this.checkbox = null;
+      this._eventHandlerChange = null;
+    }
+  }
+  _onChange(event) {
+    const { checked } = event.target;
+    const tr = this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
+      checked,
+    });
+    this.view.dispatch(tr);
+  }
   update(node) {
     if (node.type !== this.node.type) return false;
     this.node = node;
@@ -36,6 +43,4 @@ export class HtmlInlineView {
     }
     return true;
   }
-  // }
-  // nodeview_end{
 }
