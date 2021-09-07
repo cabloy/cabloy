@@ -1,1 +1,3 @@
-module.exports = {};
+module.exports = {
+  'Markdown Block': 'Markdown区块',
+};

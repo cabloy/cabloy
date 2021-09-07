@@ -3,6 +3,11 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {},
+      resources: {
+        block: {
+          title: 'Markdown Block',
+        },
+      },
     },
     validation: {
       validators: {
