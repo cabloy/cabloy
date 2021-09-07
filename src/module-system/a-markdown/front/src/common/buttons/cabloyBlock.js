@@ -16,6 +16,9 @@ function insertCabloyBlock(nodeType, options) {
     },
     run(state, _, view) {
       const { ctx } = options;
+      const attrs = {
+        params: 'a-markdownblock:',
+      };
       // atomId
       const atomId = (ctx.host && ctx.host.atomId) || 0;
       // navigate

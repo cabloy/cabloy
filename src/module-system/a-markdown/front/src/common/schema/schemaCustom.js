@@ -55,7 +55,7 @@ function patchNodes(baseNodes) {
       ],
       toDOM(node) {
         const attrs = {};
-        attrs.class = `markdown-it-cabloy-block markdown-it-cabloy-block-${node.attrs.params}`;
+        attrs.class = 'markdown-it-cabloy-block';
         attrs['data-block-params'] = node.attrs.params;
         attrs['data-block-content'] = encodeURIComponent(node.attrs.content);
         return ['div', attrs];
