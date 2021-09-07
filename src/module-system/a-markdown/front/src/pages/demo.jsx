@@ -21,9 +21,11 @@ $$$ a-markdownblock:audio
 }
 $$$
 
-$$$ iframe
+$$$ a-markdownblock:iframe
 {
-  "src":"https://cabloy.com"
+  height: '200px',
+  width: '100%',
+  url: 'https://cabloy.com',
 }
 $$$
 

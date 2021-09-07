@@ -48,6 +48,14 @@ export class CabloyBlockView {
     this.BlockParams = { module, blockName };
     return this.BlockParams;
   }
+  _getHost() {
+    return {
+      $host: this.ctx.host, // atomId/atom
+      $container: this.blockContainer,
+      $content: window.JSON5.parse(this.node.attrs.content),
+      $util: this.ctx.$meta.util.hostUtil,
+    };
+  }
   async _mountBlock() {
     // params
     const BlockParams = this._initBlockParams();
@@ -59,22 +67,22 @@ export class CabloyBlockView {
       return;
     }
     // host
-    const host = {
-      $container: this.blockContainer,
-      $content: window.JSON5.parse(this.node.attrs.content),
-      $util: this.ctx.$meta.util.hostUtil,
-    };
+    const host = this._getHost();
     // Block Instance
     this.blockInstance = new BlockClass(host);
     // render
-    let content = this.blockInstance.render();
-    content = await this.ctx.$meta.util.wrapPromise(content);
-    if (content) {
-      this.blockContainer.innerHTML = content;
+    if (this.blockInstance.render) {
+      let content = this.blockInstance.render();
+      content = await this.ctx.$meta.util.wrapPromise(content);
+      if (content) {
+        this.blockContainer.innerHTML = content;
+      }
     }
     // mount
-    const res = this.blockInstance.mount();
-    await this.ctx.$meta.util.wrapPromise(res);
+    if (this.blockInstance.mount) {
+      const res = this.blockInstance.mount();
+      await this.ctx.$meta.util.wrapPromise(res);
+    }
   }
   _initBlockClass() {
     if (this.BlockClass) return Promise.resolve(this.BlockClass);
