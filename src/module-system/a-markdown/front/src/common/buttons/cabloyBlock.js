@@ -16,6 +16,10 @@ function insertCabloyBlock(nodeType, options) {
     },
     run(state, _, view) {
       const { ctx } = options;
+      _blockAdd(options).then(res => {
+        console.log(res);
+      });
+      return;
       // atomId
       const atomId = (ctx.host && ctx.host.atomId) || 0;
       // navigate
@@ -38,5 +42,33 @@ function insertCabloyBlock(nodeType, options) {
         },
       });
     },
+  });
+}
+
+async function _blockAdd(options) {
+  const block = await _blockSelect(options);
+  if (!block) return;
+  console.log(block);
+  return await this._blockEdit(block, this.item.atomId);
+}
+
+function _blockSelect(options) {
+  const { ctx } = options;
+  return new Promise(resolve => {
+    let res;
+    ctx.$view.navigate('/a/basefront/resource/select?resourceType=a-markdown:block', {
+      context: {
+        params: {
+          multiple: false,
+        },
+        callback: (code, node) => {
+          if (code === 200) {
+            res = node && node.data;
+          } else {
+            resolve(res);
+          }
+        },
+      },
+    });
   });
 }

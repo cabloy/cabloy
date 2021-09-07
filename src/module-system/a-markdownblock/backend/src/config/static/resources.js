@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Audio',
       atomStaticKey: 'blockAudio',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-markdown:block.General',
       resourceType: 'a-markdown:block',
       resourceConfig: JSON.stringify({
@@ -29,7 +29,7 @@ module.exports = app => {
     {
       atomName: 'Embed Page',
       atomStaticKey: 'blockIFrame',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-markdown:block.General',
       resourceType: 'a-markdown:block',
       resourceConfig: JSON.stringify({
