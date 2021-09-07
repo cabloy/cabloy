@@ -5,9 +5,26 @@ module.exports = app => {
       atoms: {},
     },
     validation: {
-      validators: {},
+      validators: {
+        blockIFrame: {
+          schemas: 'blockIFrame',
+        },
+        blockAudio: {
+          schemas: 'blockAudio',
+        },
+      },
       keywords: {},
       schemas,
+    },
+    markdown: {
+      blocks: {
+        iframe: {
+          validator: 'blockIFrame',
+        },
+        audio: {
+          validator: 'blockAudio',
+        },
+      },
     },
   };
   return meta;
