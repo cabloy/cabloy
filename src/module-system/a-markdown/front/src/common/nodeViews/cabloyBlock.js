@@ -1,10 +1,10 @@
-import Vue from 'vue';
 export class CabloyBlockView {
-  constructor(node, view, getPos) {
+  constructor(node, view, getPos, ctx) {
     // Store for later
     this.node = node;
     this.view = view;
     this.getPos = getPos;
+    this.ctx = ctx;
     this.BlockParams = null;
     this.BlockClass = null;
     this.blockInstance = null;
@@ -62,26 +62,26 @@ export class CabloyBlockView {
     const host = {
       $container: this.blockContainer,
       $content: window.JSON5.parse(this.node.attrs.content),
-      $util: Vue.prototype.$meta.util.hostUtil,
+      $util: this.ctx.$meta.util.hostUtil,
     };
     // Block Instance
     this.blockInstance = new BlockClass(host);
     // render
     let content = this.blockInstance.render();
-    content = await Vue.prototype.$meta.util.wrapPromise(content);
+    content = await this.ctx.$meta.util.wrapPromise(content);
     if (content) {
       this.blockContainer.innerHTML = content;
     }
     // mount
     const res = this.blockInstance.mount();
-    await Vue.prototype.$meta.util.wrapPromise(res);
+    await this.ctx.$meta.util.wrapPromise(res);
   }
   _initBlockClass() {
     if (this.BlockClass) return Promise.resolve(this.BlockClass);
     return new Promise(resolve => {
       const { module, blockName } = this.BlockParams;
       const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main`;
-      Vue.prototype.$meta.util.requirejs.require([block_js], BlockClass => {
+      this.ctx.$meta.util.requirejs.require([block_js], BlockClass => {
         this.BlockClass = BlockClass;
         resolve(BlockClass);
       });

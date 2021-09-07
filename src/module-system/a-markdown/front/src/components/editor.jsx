@@ -127,7 +127,7 @@ export default {
         state,
         nodeViews: {
           cabloy_block: (node, view, getPos) => {
-            return new CabloyBlockView(node, view, getPos);
+            return new CabloyBlockView(node, view, getPos, this);
           },
           code_block: (node, view, getPos) => {
             return new CodeBlockView(node, view, getPos);
