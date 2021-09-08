@@ -11,6 +11,10 @@ export function buildKeymapCustom(schema, ctx) {
     ctx.$emit('save');
     return true;
   }
+  function toolbarMode() {
+    ctx.$emit('toolbarMode');
+    return true;
+  }
 
   let type;
 
@@ -63,6 +67,8 @@ export function buildKeymapCustom(schema, ctx) {
   // Save
   bind('Mod-s', save);
   bind('Mod-S', save);
+  // ToolbarMode
+  bind('Mod-0', toolbarMode);
 
   return keys;
 }

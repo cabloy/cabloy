@@ -25,12 +25,7 @@ export default {
         flowTaskId: this.flowTaskId,
         handle: {
           status,
-          assignees:
-            status === 1
-              ? {
-                  users: this.selectedUsers,
-                }
-              : undefined,
+          assignees: status === 1 ? { users: this.selectedUsers } : undefined,
         },
       });
       this.contextCallback(200, true);

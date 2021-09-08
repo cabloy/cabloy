@@ -5,6 +5,7 @@ export default {
   },
   data() {
     return {
+      toolbarMode: 'toolbar',
       content: `
 ## hello world
 
@@ -40,12 +41,20 @@ const i = 1;
 `,
     };
   },
-  methods: {},
+  methods: {
+    onPerformSwitch() {
+      this.toolbarMode = !this.toolbarMode ? 'toolbar' : '';
+    },
+  },
   render() {
     return (
       <eb-page>
-        <eb-navbar title={this.$text('Demo')} eb-back-link="Back"></eb-navbar>
-        <Editor style={{ height: '400px' }} value={this.content} onInput={value => (this.content = value)}></Editor>
+        <eb-navbar title={this.$text('Demo')} eb-back-link="Back">
+          <f7-nav-right>
+            <eb-link propsOnPerform={this.onPerformSwitch}>{this.$text('Switch')}</eb-link>
+          </f7-nav-right>
+        </eb-navbar>
+        <Editor style={{ height: '400px' }} toolbarMode={this.toolbarMode} onToolbarMode={this.onPerformSwitch} value={this.content} onInput={value => (this.content = value)}></Editor>
         <textarea vModel={this.content} style="border:1px solid gray; width:100%;height:200px;"></textarea>
       </eb-page>
     );

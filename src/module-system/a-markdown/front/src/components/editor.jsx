@@ -36,7 +36,7 @@ export default {
     buttons: {
       type: Array,
     },
-    mode: {
+    toolbarMode: {
       type: String,
       default: 'toolbar',
     },
@@ -207,7 +207,7 @@ export default {
       return null;
     },
     _renderToolbar() {
-      if (this.mode !== 'toolbar') return null;
+      if (this.toolbarMode !== 'toolbar') return <div></div>;
       const domButtons = [];
       this._renderButtons(domButtons, this.menuItems);
       return <div class="text-editor-toolbar">{domButtons}</div>;
