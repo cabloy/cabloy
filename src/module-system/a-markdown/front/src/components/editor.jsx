@@ -27,8 +27,9 @@ import { tableEditing, fixTables } from 'prosemirror-tables';
 
 export default {
   meta: {
-    global: false,
+    global: true,
   },
+  name: 'eb-markdown-editor',
   props: {
     value: {
       type: String,
