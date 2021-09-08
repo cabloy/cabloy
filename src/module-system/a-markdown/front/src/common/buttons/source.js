@@ -21,7 +21,7 @@ function menuItemSource(_, options) {
 function openSource(options) {
   const { ctx } = options;
   ctx.$nextTick(() => {
-    ctx._setViewMode('source');
+    ctx._setViewMode('source', true);
   });
   return true;
 }

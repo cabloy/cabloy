@@ -87,7 +87,7 @@ export default {
     viewMode(newValue) {
       if (newValue === this.viewModeInner) return;
       this.$nextTick(() => {
-        this._setViewMode(newValue);
+        this._setViewMode(newValue, false);
       });
     },
   },
@@ -111,12 +111,12 @@ export default {
       // codemirror
       await this.$meta.module.use('a-codemirror');
       // view
-      this._setViewMode(this.viewModeInner);
+      this._setViewMode(this.viewModeInner, false);
     },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
     },
-    _setViewMode(viewMode) {
+    _setViewMode(viewMode, fireEvent) {
       if (this.viewWrapper && this.viewWrapper.viewMode === viewMode) return;
       if (this.viewWrapper) {
         this.viewWrapper.destroy();
@@ -129,6 +129,9 @@ export default {
       this.viewWrapper.focus();
       this.viewWrapper.viewMode = viewMode;
       this.viewModeInner = viewMode;
+      if (fireEvent) {
+        this.$emit('viewMode', viewMode);
+      }
     },
     _createState(value) {
       let state = EditorState.create({
