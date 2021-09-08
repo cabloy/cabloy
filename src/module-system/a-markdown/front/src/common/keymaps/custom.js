@@ -12,8 +12,7 @@ export function buildKeymapCustom(schema, ctx) {
     return true;
   }
   function toolbar() {
-    ctx.toolbarInner = !ctx.toolbarInner;
-    ctx.$emit('toolbar', ctx.toolbarInner);
+    ctx._setToolbar(!ctx.toolbarInner, true);
     return true;
   }
 

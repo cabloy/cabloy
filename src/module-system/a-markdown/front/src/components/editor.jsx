@@ -82,7 +82,7 @@ export default {
     },
     toolbar(newValue) {
       if (newValue === this.toolbarInner) return;
-      this.toolbarInner = newValue;
+      this._setToolbar(newValue, false);
     },
     viewMode(newValue) {
       if (newValue === this.viewModeInner) return;
@@ -115,6 +115,13 @@ export default {
     },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
+    },
+    _setToolbar(toolbar, fireEvent) {
+      if (toolbar === this.toolbarInner) return;
+      this.toolbarInner = toolbar;
+      if (fireEvent) {
+        this.$emit('toolbar', toolbar);
+      }
     },
     _setViewMode(viewMode, fireEvent) {
       if (this.viewWrapper && this.viewWrapper.viewMode === viewMode) return;
