@@ -15,14 +15,34 @@ function insertCabloyBlock(nodeType, options) {
       return canInsert(state, nodeType);
     },
     run(state, _, view) {
-      _blockAdd(options).then(attrs => {
-        if (attrs) {
-          view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)));
-        }
-        view.focus();
-      });
+      const node = _inCabloyBlock(state);
+      if (!node) {
+        // add
+        _blockAdd(options).then(attrs => {
+          if (attrs) {
+            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)));
+          }
+          view.focus();
+        });
+      } else {
+        // update
+        const pos = state.selection.$head.pos;
+        _blockUpdate(options, node.attrs).then(attrs => {
+          if (attrs) {
+            const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs);
+            view.dispatch(tr);
+          }
+          view.focus();
+        });
+      }
     },
   });
+}
+
+function _inCabloyBlock(state) {
+  const node = state.selection.node;
+  if (!node || node.type.name !== 'cabloy_block') return null;
+  return node;
 }
 
 async function _blockAdd(options) {
@@ -30,6 +50,19 @@ async function _blockAdd(options) {
   if (!block) return null;
   const content = await _blockEdit(options, block);
   return content ? { params: block.atomStaticKey, content } : null;
+}
+
+async function _blockUpdate(options, attrs) {
+  const block = await _blockFetch(options, attrs);
+  if (!block) return null;
+  const content = await _blockEdit(options, block, attrs.content);
+  return content ? { params: block.atomStaticKey, content } : null;
+}
+
+async function _blockFetch(options, attrs) {
+  const { ctx } = options;
+  const resources = await ctx.$store.dispatch('a/base/getResources', { resourceType: 'a-markdown:block' });
+  return resources[attrs.params];
 }
 
 function _blockSelect(options) {
@@ -53,17 +86,18 @@ function _blockSelect(options) {
   });
 }
 
-function _blockEdit(options, block) {
+function _blockEdit(options, block, content) {
   const { ctx } = options;
   return new Promise((resolve, reject) => {
     const resourceConfig = window.JSON5.parse(block.resourceConfig);
     const validatorParams = resourceConfig.validator;
-    const dataDefault = resourceConfig.default;
+    const dataDefault = content ? window.JSON5.parse(content) : resourceConfig.default;
+    const isCreate = !content;
     ctx.$view.navigate(`/a/validation/validate?t=${Date.now()}`, {
       context: {
         params: {
           params: validatorParams,
-          title: ctx.$text('Create Block'),
+          title: isCreate ? ctx.$text('Create Block') : ctx.$text('Edit Block'),
           data: dataDefault,
           host: ctx.host,
           performValidate: resourceConfig.performValidate !== false,

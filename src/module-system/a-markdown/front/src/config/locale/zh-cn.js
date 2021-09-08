@@ -44,4 +44,5 @@ export default {
   'Create Link': '创建链接',
   'Create Table': '创建表格',
   'Create Block': '创建区块',
+  'Edit Block': '编辑区块',
 };
