@@ -2,10 +2,14 @@ import { toggleMark } from 'prosemirror-commands';
 import { goToNextCell } from 'prosemirror-tables';
 import { indentList, outdentList } from './utils.js';
 
-export function buildKeymapCustom(schema) {
+export function buildKeymapCustom(schema, ctx) {
   const keys = [];
   function bind(key, cmd) {
     keys[key] = cmd;
+  }
+  function save() {
+    ctx.$emit('save');
+    return true;
   }
 
   let type;
@@ -56,6 +60,9 @@ export function buildKeymapCustom(schema) {
       return shiftTabList(state, dispatch, view);
     });
   }
+  // Save
+  bind('Mod-s', save);
+  bind('Mod-S', save);
 
   return keys;
 }

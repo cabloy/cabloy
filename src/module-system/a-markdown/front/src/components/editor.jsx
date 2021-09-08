@@ -106,7 +106,7 @@ export default {
           buildInputRulesLinks(schemaCustom),
           buildInputRulesTextFormatting(schemaCustom),
           keymap(buildKeymap(schemaCustom)),
-          keymap(buildKeymapCustom(schemaCustom)),
+          keymap(buildKeymapCustom(schemaCustom, this)),
           keymap(baseKeymap),
           dropCursor(),
           gapCursor(),
