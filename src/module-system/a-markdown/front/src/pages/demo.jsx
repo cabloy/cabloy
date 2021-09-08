@@ -5,6 +5,8 @@ export default {
   },
   data() {
     return {
+      readOnly: true,
+      // readOnly: false,
       toolbar: true,
       content: `
 ## hello world
@@ -54,7 +56,14 @@ const i = 1;
             <eb-link propsOnPerform={this.onPerformSwitch}>{this.$text('Switch')}</eb-link>
           </f7-nav-right>
         </eb-navbar>
-        <Editor style={{ height: '400px' }} toolbar={this.toolbar} onToolbar={value => (this.toolbar = value)} value={this.content} onInput={value => (this.content = value)}></Editor>
+        <Editor
+          style={{ height: '400px' }}
+          readOnly={this.readOnly}
+          toolbar={this.toolbar}
+          onToolbar={value => (this.toolbar = value)}
+          value={this.content}
+          onInput={value => (this.content = value)}
+        ></Editor>
         <textarea vModel={this.content} style="border:1px solid gray; width:100%;height:200px;"></textarea>
       </eb-page>
     );

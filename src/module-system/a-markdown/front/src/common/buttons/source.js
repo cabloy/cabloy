@@ -4,6 +4,7 @@ export const ButtonSource = {
   title: 'EditorButtonTitleSource',
   icon: { material: 'source' },
   onBuild: menuItemSource,
+  enableOnReadOnly: true,
 };
 
 function menuItemSource(_, options) {

@@ -181,6 +181,9 @@ export default {
       const view = this.$refs.textEditorContent.appendChild(document.createElement('textarea'));
       view.className = 'markdown-source';
       view.value = this.lastValue;
+      if (this.readOnly) {
+        view.setAttribute('readonly', 'readonly');
+      }
       function onInput() {
         self._emitEventInput(view.value);
       }
@@ -206,6 +209,9 @@ export default {
       // view
       const view = new EditorView(this.$refs.textEditorContent, {
         state,
+        editable: () => {
+          return !this.readOnly;
+        },
         nodeViews: {
           cabloy_block: (node, view, getPos) => {
             return new CabloyBlockView(node, view, getPos, this);
@@ -243,6 +249,7 @@ export default {
       this._emitEventInput(mdValue);
     },
     _emitEventInput(mdValue) {
+      if (this.readOnly) return;
       if (this.lastValue !== mdValue) {
         this.lastValue = mdValue;
         this.$emit('input', this.lastValue);
@@ -301,7 +308,7 @@ export default {
         const items = menuItems[index];
         let something = false;
         for (const item of items) {
-          if (item.selected) {
+          if (item.selected && (!this.readOnly || item.spec.enableOnReadOnly)) {
             domButtons.push(this._renderButton(item));
             something = true;
           }

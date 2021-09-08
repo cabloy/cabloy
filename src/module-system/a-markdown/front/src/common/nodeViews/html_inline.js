@@ -7,8 +7,12 @@ export class HtmlInlineView {
 
     this.checkbox = document.createElement('input');
     this.checkbox.type = 'checkbox';
-    this._eventHandlerChange = this._onChange.bind(this);
-    this.checkbox.addEventListener('change', this._eventHandlerChange);
+    if (this.view.editable) {
+      this._eventHandlerChange = this._onChange.bind(this);
+      this.checkbox.addEventListener('change', this._eventHandlerChange);
+    } else {
+      this.checkbox.setAttribute('disabled', 'disabled');
+    }
 
     if (node.attrs.checked) {
       this.checkbox.setAttribute('checked', 'checked');
@@ -20,9 +24,11 @@ export class HtmlInlineView {
   }
   destroy() {
     if (this.checkbox) {
-      this.checkbox.removeEventListener('change', this._eventHandlerChange);
+      if (this._eventHandlerChange) {
+        this.checkbox.removeEventListener('change', this._eventHandlerChange);
+        this._eventHandlerChange = null;
+      }
       this.checkbox = null;
-      this._eventHandlerChange = null;
     }
   }
   _onChange(event) {
