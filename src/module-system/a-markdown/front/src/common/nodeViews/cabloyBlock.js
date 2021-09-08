@@ -23,6 +23,12 @@ export class CabloyBlockView {
     // this.contentDOM = this.checkbox;
   }
   destroy() {
+    if (this.blockInstance) {
+      if (this.blockInstance.unmount) {
+        this.blockInstance.unmount();
+      }
+      this.blockInstance = null;
+    }
     if (this.blockContainer) {
       this.blockContainer = null;
     }

@@ -5,6 +5,7 @@
     constructor(host) {
       this.host = host;
       this.APlayer = null;
+      this.playerInstance = null;
     }
 
     render() {
@@ -32,8 +33,15 @@
           if (!audio.cover) audio.cover = $util.url('api/static/a/base/img/audio_cover.jpg');
         }
         // create
-        new APlayer($content);
+        this.playerInstance = new APlayer($content);
       });
+    }
+
+    unmount() {
+      if (this.playerInstance) {
+        this.playerInstance.destroy();
+        this.playerInstance = null;
+      }
     }
 
     _loadAPlayer() {
