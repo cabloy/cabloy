@@ -26,7 +26,7 @@ function insertCabloyBlock(nodeType, options) {
         });
       } else {
         // update
-        const pos = state.selection.$head.pos;
+        const pos = state.selection.$anchor.pos;
         _blockUpdate(options, node.attrs).then(attrs => {
           if (attrs) {
             const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs);

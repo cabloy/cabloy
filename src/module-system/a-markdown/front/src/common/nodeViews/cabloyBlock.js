@@ -23,15 +23,9 @@ export class CabloyBlockView {
     // this.contentDOM = this.checkbox;
   }
   destroy() {
-    if (this.blockInstance) {
-      if (this.blockInstance.unmount) {
-        this.blockInstance.unmount();
-      }
-      this.blockInstance = null;
-    }
-    if (this.blockContainer) {
+    this._unmountBlock().then(() => {
       this.blockContainer = null;
-    }
+    });
   }
   update(node) {
     if (node.type !== this.node.type) return false;
@@ -41,8 +35,11 @@ export class CabloyBlockView {
     this.node = node;
     // changed
     if (contentOld !== contentNew) {
-      // destroy old
-      // init new
+      window.setTimeout(() => {
+        this._unmountBlock().then(() => {
+          this._mountBlock();
+        });
+      }, 0);
     }
     return true;
   }
@@ -62,6 +59,7 @@ export class CabloyBlockView {
       $util: this.ctx.$meta.util.hostUtil,
     };
   }
+
   async _mountBlock() {
     // params
     const BlockParams = this._initBlockParams();
@@ -90,6 +88,20 @@ export class CabloyBlockView {
       await this.ctx.$meta.util.wrapPromise(res);
     }
   }
+
+  async _unmountBlock() {
+    if (this.blockInstance) {
+      if (this.blockInstance.unmount) {
+        const res = this.blockInstance.unmount();
+        await this.ctx.$meta.util.wrapPromise(res);
+      }
+      this.blockInstance = null;
+    }
+    if (this.blockContainer) {
+      this.blockContainer.innerHTML = '';
+    }
+  }
+
   _initBlockClass() {
     if (this.BlockClass) return Promise.resolve(this.BlockClass);
     return new Promise(resolve => {
