@@ -86,9 +86,8 @@ export default {
     },
     viewMode(newValue) {
       if (newValue === this.viewModeInner) return;
-      this.viewModeInner = newValue;
       this.$nextTick(() => {
-        this._setViewMode();
+        this._setViewMode(newValue);
       });
     },
   },
@@ -112,13 +111,12 @@ export default {
       // codemirror
       await this.$meta.module.use('a-codemirror');
       // view
-      this._setViewMode();
+      this._setViewMode(this.viewModeInner);
     },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
     },
-    _setViewMode() {
-      const viewMode = this.viewModeInner;
+    _setViewMode(viewMode) {
       if (this.viewWrapper && this.viewWrapper.viewMode === viewMode) return;
       if (this.viewWrapper) {
         this.viewWrapper.destroy();
@@ -128,8 +126,9 @@ export default {
       } else {
         this.viewWrapper = this._createViewSource();
       }
-      this.viewWrapper.viewMode = viewMode;
       this.viewWrapper.focus();
+      this.viewWrapper.viewMode = viewMode;
+      this.viewModeInner = viewMode;
     },
     _createState(value) {
       let state = EditorState.create({
@@ -161,10 +160,12 @@ export default {
       return state;
     },
     _createViewSource() {
+      const self = this;
       const view = this.$refs.textEditorContent.appendChild(document.createElement('textarea'));
+      view.className = 'markdown-source';
       view.value = this.lastValue;
       function onInput() {
-        this._emitEventInput(view.value);
+        self._emitEventInput(view.value);
       }
       view.addEventListener('input', onInput);
       return {
@@ -177,11 +178,12 @@ export default {
           view.remove();
         },
         update() {
-          view.value = this.lastValue;
+          view.value = self.lastValue;
         },
       };
     },
     _createViewProsemirror() {
+      const self = this;
       // state
       const state = this._createState(this.lastValue);
       // view
@@ -212,7 +214,7 @@ export default {
           view.destroy();
         },
         update() {
-          const state = this._createState(this.lastValue);
+          const state = self._createState(self.lastValue);
           view.updateState(state);
         },
       };

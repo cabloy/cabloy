@@ -12,6 +12,7 @@ import { ButtonTable } from './table.js';
 import { ButtonKeyboardReturn } from './keyboardReturn.js';
 import { ButtonTaskToggle } from './task.js';
 import { ButtonCabloyBlock } from './cabloyBlock.js';
+import { ButtonSource } from './source.js';
 
 // export const ButtonsDefault = [
 //   ['bold', 'italic', 'underline', 'strikeThrough'],
@@ -32,9 +33,11 @@ export const ButtonsDefault = [
   ['bullet_list', 'ordered_list', 'task_toggle'],
   ['align_left', 'align_center', 'align_right'],
   ['paragraph_keyboardReturn', 'horizontal_rule'],
+  ['source'],
 ];
 
 export const ButtonsAllOptions = {
+  source: ButtonSource,
   cabloy_block: ButtonCabloyBlock,
   strong: {
     mark: true,

@@ -13,11 +13,15 @@ function menuItemSource(_, options) {
       return true;
     },
     run() {
-      openSource();
+      openSource(options);
     },
   });
 }
 
-function openSource() {
+function openSource(options) {
+  const { ctx } = options;
+  ctx.$nextTick(() => {
+    ctx._setViewMode('source');
+  });
   return true;
 }
