@@ -27,9 +27,9 @@ function KeyboardReturn(state, dispatch, view) {
     if (!$from.node(1)) {
       tr = tr.insertText('\n');
     } else {
-      const pos = $from.end(1);
-      tr = tr.insert(pos + 1, state.schema.nodes.paragraph.createAndFill());
-      tr.setSelection(Selection.near(tr.doc.resolve(pos + 1), 1));
+      const pos = $from.end(1) + 1;
+      tr = tr.insert(pos, state.schema.nodes.paragraph.createAndFill());
+      tr.setSelection(Selection.near(tr.doc.resolve(pos), 1));
     }
     dispatch(tr.scrollIntoView());
     view.focus(); // for exit codemirror
