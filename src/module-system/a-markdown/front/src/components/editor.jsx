@@ -46,12 +46,17 @@ export default {
     placeholder: {
       type: String,
     },
+    viewMode: {
+      type: String,
+      default: 'editor', // editor/source
+    },
   },
   data() {
     return {
       toolbarInner: this.toolbar,
       lastValue: this.value,
       menuItems: null,
+      viewModeInner: this.viewMode,
     };
   },
   computed: {
@@ -145,8 +150,8 @@ export default {
           code_block: (node, view, getPos) => {
             return new CodeBlockView(node, view, getPos);
           },
-          html_inline: (node, view, getPos, editor) => {
-            return new HtmlInlineView(node, view, getPos, editor);
+          html_inline: (node, view, getPos) => {
+            return new HtmlInlineView(node, view, getPos);
           },
         },
         dispatchTransaction: transaction => {

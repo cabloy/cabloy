@@ -37,5 +37,6 @@ export default {
   EditorButtonTitleDeleteRow: 'Delete row',
   EditorButtonTitleDeleteTable: 'Delete table',
   EditorButtonTitleBlock: 'Block',
+  EditorButtonTitleSource: 'Source',
   TextEditorPlaceHolder: 'Begin editing...',
 };
