@@ -38,5 +38,6 @@ export default {
   EditorButtonTitleDeleteTable: 'Delete table',
   EditorButtonTitleBlock: 'Block',
   EditorButtonTitleSource: 'Source',
+  EditorButtonTitleBackToEditor: 'Back to Editor',
   TextEditorPlaceHolder: 'Begin editing...',
 };

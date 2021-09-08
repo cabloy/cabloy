@@ -241,6 +241,10 @@ export default {
         this.$emit('input', this.lastValue);
       }
     },
+    onButtonBackToEditor(event) {
+      event.preventDefault();
+      this._setViewMode('editor');
+    },
     onButtonClick(event, menuItem) {
       event.preventDefault();
       if (!menuItem.enabled) return;
@@ -271,7 +275,21 @@ export default {
         </button>
       );
     },
-    _renderButtons(domButtons, menuItems) {
+    _renderButtonsSource(domButtons) {
+      const key = 'backtoeditor';
+      // classes
+      const classes = {
+        'text-editor-button': true,
+        [`text-editor-button-${key}`]: true,
+      };
+      const buttonBackToEditor = (
+        <button key={key} type="button" class={classes} onMousedown={event => this.onButtonBackToEditor(event)}>
+          <i class="material-icons">arrow_back</i> {this.$text('EditorButtonTitleBackToEditor')}
+        </button>
+      );
+      domButtons.push(buttonBackToEditor);
+    },
+    _renderButtonsEditor(domButtons, menuItems) {
       for (let index = 0; index < menuItems.length; index++) {
         const items = menuItems[index];
         let something = false;
@@ -291,7 +309,11 @@ export default {
     _renderToolbar() {
       if (!this.toolbarInner) return <div></div>;
       const domButtons = [];
-      this._renderButtons(domButtons, this.menuItems);
+      if (this.viewModeInner === 'editor') {
+        this._renderButtonsEditor(domButtons, this.menuItems);
+      } else {
+        this._renderButtonsSource(domButtons);
+      }
       return <div class="text-editor-toolbar">{domButtons}</div>;
     },
   },

@@ -41,6 +41,7 @@ export default {
   EditorButtonTitleDeleteTable: '删除表格',
   EditorButtonTitleBlock: '区块',
   EditorButtonTitleSource: '源码',
+  EditorButtonTitleBackToEditor: '返回编辑器',
   TextEditorPlaceHolder: '开始编辑...',
   'Create Link': '创建链接',
   'Create Table': '创建表格',
