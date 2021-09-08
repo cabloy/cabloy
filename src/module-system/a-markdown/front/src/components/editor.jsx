@@ -36,9 +36,9 @@ export default {
     buttons: {
       type: Array,
     },
-    toolbarMode: {
-      type: String,
-      default: 'toolbar',
+    toolbar: {
+      type: Boolean,
+      default: true,
     },
     host: {
       type: Object,
@@ -49,6 +49,7 @@ export default {
   },
   data() {
     return {
+      toolbarInner: this.toolbar,
       lastValue: this.value,
       menuItems: null,
     };
@@ -72,6 +73,10 @@ export default {
       this.lastValue = newValue;
       const state = this._createState(this.lastValue);
       this.view.updateState(state);
+    },
+    toolbar(newValue) {
+      if (newValue === this.toolbarInner) return;
+      this.toolbarInner = newValue;
     },
   },
   created() {
@@ -207,7 +212,7 @@ export default {
       return null;
     },
     _renderToolbar() {
-      if (this.toolbarMode !== 'toolbar') return <div></div>;
+      if (!this.toolbarInner) return <div></div>;
       const domButtons = [];
       this._renderButtons(domButtons, this.menuItems);
       return <div class="text-editor-toolbar">{domButtons}</div>;

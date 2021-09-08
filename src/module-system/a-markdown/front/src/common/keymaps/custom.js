@@ -11,8 +11,9 @@ export function buildKeymapCustom(schema, ctx) {
     ctx.$emit('save');
     return true;
   }
-  function toolbarMode() {
-    ctx.$emit('toolbarMode');
+  function toolbar() {
+    ctx.toolbarInner = !ctx.toolbarInner;
+    ctx.$emit('toolbar', ctx.toolbarInner);
     return true;
   }
 
@@ -67,8 +68,8 @@ export function buildKeymapCustom(schema, ctx) {
   // Save
   bind('Mod-s', save);
   bind('Mod-S', save);
-  // ToolbarMode
-  bind('Mod-0', toolbarMode);
+  // Toolbar
+  bind('Mod-0', toolbar);
 
   return keys;
 }
