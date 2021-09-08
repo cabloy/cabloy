@@ -53,7 +53,7 @@ export class CabloyBlockView {
   }
   _getHost() {
     return {
-      $host: this.ctx.host, // atomId/atom
+      $host: this.ctx.host2, // atomId/atom
       $container: this.blockContainer,
       $content: window.JSON5.parse(this.node.attrs.content),
       $util: this.ctx.$meta.util.hostUtil,

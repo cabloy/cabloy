@@ -99,7 +99,7 @@ function _blockEdit(options, block, content) {
           params: validatorParams,
           title: isCreate ? ctx.$text('Create Block') : ctx.$text('Edit Block'),
           data: dataDefault,
-          host: ctx.host,
+          host: ctx.host2,
           performValidate: resourceConfig.performValidate !== false,
         },
         callback: (code, res) => {

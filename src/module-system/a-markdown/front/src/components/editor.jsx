@@ -60,6 +60,11 @@ export default {
     placeholderText() {
       return this.placeholder || this.$text('TextEditorPlaceHolder');
     },
+    host2() {
+      return Object.assign({}, this.host, {
+        mode: 'edit',
+      });
+    },
   },
   watch: {
     value(newValue) {
