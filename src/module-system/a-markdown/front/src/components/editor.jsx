@@ -34,6 +34,10 @@ export default {
     value: {
       type: String,
     },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
     buttons: {
       type: Array,
     },
@@ -68,9 +72,11 @@ export default {
       return this.placeholder || this.$text('TextEditorPlaceHolder');
     },
     host2() {
-      return Object.assign({}, this.host, {
-        mode: 'edit',
-      });
+      const host = Object.assign({}, this.host);
+      if (host.mode === undefined) {
+        host.mode = this.readOnly ? 'view' : 'edit';
+      }
+      return host;
     },
   },
   watch: {
