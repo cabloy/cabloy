@@ -5,8 +5,8 @@ export default {
   },
   data() {
     return {
-      readOnly: true,
-      // readOnly: false,
+      // readOnly: true,
+      readOnly: false,
       toolbar: true,
       content: `
 ## hello world
