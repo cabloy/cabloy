@@ -84,6 +84,13 @@ export default {
       if (newValue === this.toolbarInner) return;
       this.toolbarInner = newValue;
     },
+    viewMode(newValue) {
+      if (newValue === this.viewModeInner) return;
+      this.viewModeInner = newValue;
+      this.$nextTick(() => {
+        this._setViewMode();
+      });
+    },
   },
   created() {
     this._buildMenuItems();
@@ -105,11 +112,24 @@ export default {
       // codemirror
       await this.$meta.module.use('a-codemirror');
       // view
-      this.viewWrapper = this._createViewProsemirror();
-      this.viewWrapper.focus();
+      this._setViewMode();
     },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
+    },
+    _setViewMode() {
+      const viewMode = this.viewModeInner;
+      if (this.viewWrapper && this.viewWrapper.viewMode === viewMode) return;
+      if (this.viewWrapper) {
+        this.viewWrapper.destroy();
+      }
+      if (viewMode === 'editor') {
+        this.viewWrapper = this._createViewProsemirror();
+      } else {
+        this.viewWrapper = this._createViewSource();
+      }
+      this.viewWrapper.viewMode = viewMode;
+      this.viewWrapper.focus();
     },
     _createState(value) {
       let state = EditorState.create({
