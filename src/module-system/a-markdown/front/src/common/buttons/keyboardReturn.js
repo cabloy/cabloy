@@ -22,10 +22,16 @@ function menuItemKeyboardReturn(_, options) {
 function KeyboardReturn(state, dispatch, view) {
   const ref = state.selection;
   const $from = ref.$from;
+  const $head = ref.$head;
   if (dispatch) {
     let tr = state.tr;
-    if (!$from.node(1)) {
-      tr = tr.insertText('\n');
+    const node = $from.node(1);
+    if (!node) {
+      if (ref.node) {
+        tr = tr.insertText('\n', $head.pos);
+      } else {
+        tr = tr.insertText('\n');
+      }
     } else {
       const pos = $from.end(1) + 1;
       tr = tr.insert(pos, state.schema.nodes.paragraph.createAndFill());
