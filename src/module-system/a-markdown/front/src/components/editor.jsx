@@ -76,8 +76,9 @@ export default {
     value(newValue) {
       if (newValue === this.lastValue) return;
       this.lastValue = newValue;
-      const state = this._createState(this.lastValue);
-      this.view.updateState(state);
+      if (this.viewWrapper) {
+        this.viewWrapper.update();
+      }
     },
     toolbar(newValue) {
       if (newValue === this.toolbarInner) return;
@@ -91,9 +92,9 @@ export default {
     this.init();
   },
   beforeDestroy() {
-    if (this.view) {
-      this.view.destroy();
-      this.view = null;
+    if (this.viewWrapper) {
+      this.viewWrapper.destroy();
+      this.viewWrapper = null;
     }
     this.menuItems = null;
   },
@@ -103,10 +104,9 @@ export default {
       await this.$meta.module.use(this.$meta.config.markdown.style.module);
       // codemirror
       await this.$meta.module.use('a-codemirror');
-      // state
-      const state = this._createState(this.lastValue);
       // view
-      this.view = this._createView(state);
+      this.viewWrapper = this._createViewProsemirror();
+      this.viewWrapper.focus();
     },
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
@@ -140,7 +140,31 @@ export default {
       }
       return state;
     },
-    _createView(state) {
+    _createViewSource() {
+      const view = this.$refs.textEditorContent.appendChild(document.createElement('textarea'));
+      view.value = this.lastValue;
+      function onInput() {
+        this._emitEventInput(view.value);
+      }
+      view.addEventListener('input', onInput);
+      return {
+        view,
+        focus() {
+          view.focus();
+        },
+        destroy() {
+          view.removeEventListener('input', onInput);
+          view.remove();
+        },
+        update() {
+          view.value = this.lastValue;
+        },
+      };
+    },
+    _createViewProsemirror() {
+      // state
+      const state = this._createState(this.lastValue);
+      // view
       const view = new EditorView(this.$refs.textEditorContent, {
         state,
         nodeViews: {
@@ -158,13 +182,28 @@ export default {
           return this._viewDispatchTransaction(view, transaction);
         },
       });
-      view.focus();
-      return view;
+      // view wrapper
+      return {
+        view,
+        focus() {
+          view.focus();
+        },
+        destroy() {
+          view.destroy();
+        },
+        update() {
+          const state = this._createState(this.lastValue);
+          view.updateState(state);
+        },
+      };
     },
     _viewDispatchTransaction(view, transaction) {
       const newState = view.state.apply(transaction);
       view.updateState(newState);
       const mdValue = markdownSerializerCustom.serialize(newState.doc);
+      this._emitEventInput(mdValue);
+    },
+    _emitEventInput(mdValue) {
       if (this.lastValue !== mdValue) {
         this.lastValue = mdValue;
         this.$emit('input', this.lastValue);
@@ -173,7 +212,8 @@ export default {
     onButtonClick(event, menuItem) {
       event.preventDefault();
       if (!menuItem.enabled) return;
-      menuItem.spec.run(this.view.state, this.view.dispatch, this.view, event);
+      const view = this.viewWrapper.view;
+      menuItem.spec.run(view.state, view.dispatch, view, event);
     },
     _renderButton(menuItem) {
       // spec
