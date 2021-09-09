@@ -8,7 +8,6 @@ module.exports = function block_plugin(md, options) {
     // block
     const token = tokens[idx];
     const blockName = token.info.trim().split(' ', 2)[0];
-    const block = options.blocks && options.blocks[blockName];
     // content
     let content;
     let errorMessage;
@@ -27,7 +26,7 @@ module.exports = function block_plugin(md, options) {
 `;
     }
     // render
-    if (!block || !block.beanFullName) {
+    if (!blockName) {
       // placeholder
       const res = window.JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
@@ -36,10 +35,8 @@ module.exports = function block_plugin(md, options) {
 </div>
 `;
     }
-    // bean
-    const beanInstance = options.ctx.bean._getBean(block.beanFullName);
-    if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
-    return beanInstance.render({ md, options, block, token, index: idx, content });
+    // register
+    return options.utils.register({ blockName, content });
   }
 
   function blockRuler(state, startLine, endLine, silent) {
