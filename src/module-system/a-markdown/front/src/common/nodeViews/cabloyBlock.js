@@ -52,11 +52,14 @@ export class CabloyBlockView {
     return this.BlockParams;
   }
   _getHost() {
+    const $util = this.ctx.$meta.util.hostUtil({
+      locale: this.ctx.$meta.util.getProperty(this.ctx.host2, 'atom.atomLanguage'),
+    });
     return {
       $host: this.ctx.host2, // atomId/atom
       $container: this.blockContainer,
       $content: window.JSON5.parse(this.node.attrs.content),
-      $util: this.ctx.$meta.util.hostUtil,
+      $util,
     };
   }
 
@@ -64,6 +67,8 @@ export class CabloyBlockView {
     // params
     const BlockParams = this._initBlockParams();
     if (!BlockParams) return;
+    // use module
+    await this.ctx.$meta.module.use(BlockParams.module);
     // Block Class
     const BlockClass = await this._initBlockClass();
     if (!BlockClass) {
