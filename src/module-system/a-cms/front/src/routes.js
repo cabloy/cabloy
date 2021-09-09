@@ -12,5 +12,4 @@ export default [
   { path: 'article/contentEdit', component: load('article/contentEdit') },
   { path: 'article/post', component: load('article/post') },
   { path: 'article/edit', component: load('article/edit') },
-  { path: 'block/edit', component: load('block/blockEdit') },
 ];

@@ -18,7 +18,6 @@ module.exports = app => {
     { method: 'post', path: 'site/buildLanguages', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: 'site' },
     { method: 'post', path: 'site/getUrl', controller: 'site' },
-    { method: 'post', path: 'site/blockSave', controller: 'site' },
     { method: 'post', path: 'site/getStats', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     // rss
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },

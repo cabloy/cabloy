@@ -97,14 +97,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async blockSave() {
-      const res = await this.ctx.service.site.blockSave({
-        blockName: this.ctx.request.body.blockName,
-        item: this.ctx.request.body.item,
-      });
-      this.ctx.success(res);
-    }
-
     async getStats() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getStats({

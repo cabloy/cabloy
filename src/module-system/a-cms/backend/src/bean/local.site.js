@@ -162,22 +162,6 @@ module.exports = ctx => {
       return stats;
     }
 
-    async blockSave({ blockName, item }) {
-      // block
-      const blocks = this.getBlocks();
-      const block = blocks[blockName];
-      // validate
-      await ctx.bean.validation.validate({
-        module: block.validator.module,
-        validator: block.validator.validator,
-        schema: null,
-        data: item,
-      });
-      // output
-      if (!block.output) return item;
-      return await block.output({ ctx, block, data: item });
-    }
-
     getBlocks() {
       if (!__blocks) {
         __blocks = this._prepareBlocks();
