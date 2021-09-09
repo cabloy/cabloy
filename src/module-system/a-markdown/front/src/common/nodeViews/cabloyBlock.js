@@ -81,24 +81,21 @@ export class CabloyBlockView {
     this.blockInstance = new BlockClass(host);
     // render
     if (this.blockInstance.render) {
-      let content = this.blockInstance.render();
-      content = await this.ctx.$meta.util.wrapPromise(content);
+      const content = await this.blockInstance.render();
       if (content) {
         this.blockContainer.innerHTML = content;
       }
     }
     // mount
     if (this.blockInstance.mount) {
-      const res = this.blockInstance.mount();
-      await this.ctx.$meta.util.wrapPromise(res);
+      await this.blockInstance.mount();
     }
   }
 
   async _unmountBlock() {
     if (this.blockInstance) {
       if (this.blockInstance.unmount) {
-        const res = this.blockInstance.unmount();
-        await this.ctx.$meta.util.wrapPromise(res);
+        await this.blockInstance.unmount();
       }
       this.blockInstance = null;
     }

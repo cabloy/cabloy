@@ -177,7 +177,11 @@ module.exports = app => {
       } else if (editMode === 1) {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
-        html = await this._renderMarkdown({ item });
+        // html = await this._renderMarkdown({ item });
+        html = await this.ctx.bean.markdown.render({
+          content: item.content,
+          locale: item.atomLanguage,
+        });
       } else if (editMode === 2) {
         // 2: html
         html = item.content || '';

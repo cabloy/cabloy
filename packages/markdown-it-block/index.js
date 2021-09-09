@@ -7,36 +7,38 @@ module.exports = function block_plugin(md, options) {
     const blockTitle = options.utils.text('Block');
     // block
     const token = tokens[idx];
-    const blockName = token.info.trim().split(' ', 2)[0];
+    const params = token.info.trim().split(' ', 2)[0];
     // content
     let content;
     let errorMessage;
     try {
-      content = token.content ? window.JSON5.parse(token.content) : {};
+      // not use window.JSON5
+      // eslint-disable-next-line
+      content = token.content ? JSON5.parse(token.content) : {};
     } catch (err) {
       errorMessage = err.message;
     }
     // error
     if (errorMessage) {
       return `<div class="alert-danger">
-<p><strong>${blockTitle}: ${md.utils.escapeHtml(blockName)}</strong></p>
+<p><strong>${blockTitle}: ${md.utils.escapeHtml(params)}</strong></p>
 <p>${md.utils.escapeHtml(errorMessage)}</p>
 <pre><code>${md.utils.escapeHtml(token.content)}</code></pre>
 </div>
 `;
     }
     // render
-    if (!blockName) {
+    if (!params) {
       // placeholder
       const res = window.JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
-<p><strong>${blockTitle}: ${md.utils.escapeHtml(blockName)}</strong></p>
+<p><strong>${blockTitle}: ${md.utils.escapeHtml(params)}</strong></p>
 <pre><code>${md.utils.escapeHtml(res)}</code></pre>
 </div>
 `;
     }
     // register
-    return options.utils.register({ blockName, content });
+    return options.utils.register({ params, content });
   }
 
   function blockRuler(state, startLine, endLine, silent) {
@@ -57,6 +59,7 @@ module.exports = function block_plugin(md, options) {
     if (pos + 3 > max) {
       return false;
     }
+    // eslint-disable-next-line
     marker = state.src.charCodeAt(pos);
     if (marker !== 0x24 /* $ */) {
       return false;
@@ -68,7 +71,9 @@ module.exports = function block_plugin(md, options) {
     if (len < 3) {
       return false;
     }
+    // eslint-disable-next-line
     markup = state.src.slice(mem, pos);
+    // eslint-disable-next-line
     params = state.src.slice(pos, max);
     if (params.indexOf(String.fromCharCode(marker)) >= 0) {
       return false;
@@ -118,6 +123,7 @@ module.exports = function block_plugin(md, options) {
     // If a fence has heading spaces, they should be removed from its inner block
     len = state.sCount[startLine];
     state.line = nextLine + (haveEndMarker ? 1 : 0);
+    // eslint-disable-next-line
     token = state.push('cabloy_block', 'div', 0);
     token.info = params;
     token.content = state.getLines(startLine + 1, nextLine, len, true);
