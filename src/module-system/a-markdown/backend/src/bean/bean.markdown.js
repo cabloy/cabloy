@@ -6,7 +6,7 @@ const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Markdown {
     async render({ host, content, locale }) {
       if (!content) return '';
@@ -29,7 +29,6 @@ module.exports = ctx => {
       const md = Markdownit.create().use(markdonw_it_block, blockOptions);
       // render
       let html = md.render(content);
-      console.log(html);
       // render async
       for (const placeholder in asyncs) {
         const { params, content } = asyncs[placeholder];
@@ -39,15 +38,17 @@ module.exports = ctx => {
         const block_js = path.join(_module.static.backend, `blocks/${blockName}/main.js`);
         const BlockClass = require(block_js);
         // render
-        const host = this._getHost();
+        const blockHost = this._getHost({ host, content, locale });
         // Block Instance
-        const blockInstance = new BlockClass(host);
+        const blockInstance = new BlockClass(blockHost);
         let blockHtml = '';
         if (blockInstance.render) {
           blockHtml = await blockInstance.render();
         }
+        // eslint-disable-next-line
+        const dataContent = encodeURIComponent(JSON5.stringify(content, null, 2));
         blockHtml = `
-<div class="markdown-it-cabloy-block" data-block-params="${params}" data-block-content="${encodeURIComponent(content)}">
+<div class="markdown-it-cabloy-block" data-block-params="${params}" data-block-content="${dataContent}">
   ${blockHtml}
 </div>
 `;
@@ -60,14 +61,13 @@ module.exports = ctx => {
       return html;
     }
 
-    _getHost({ host, content }) {
-      const $util = this.ctx.$meta.util.hostUtil({
-        locale: this.ctx.$meta.util.getProperty(this.ctx.host2, 'atom.atomLanguage'),
+    _getHost({ host, content, locale }) {
+      const $util = ctx.bean.util.hostUtil({
+        locale: locale || ctx.bean.util.getProperty(host, 'atom.atomLanguage'),
       });
       return {
-        $host: this.ctx.host2, // atomId/atom
-        $container: this.blockContainer,
-        $content: window.JSON5.parse(this.node.attrs.content),
+        $host: host, // atomId/atom
+        $content: content,
         $util,
       };
     }

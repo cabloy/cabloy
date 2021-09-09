@@ -164,6 +164,27 @@ module.exports = app => {
       const script = wrapper === 'none' ? `return (${expression})` : expression;
       return vm.run(script);
     }
+
+    hostUtil(options) {
+      const self = this;
+      return {
+        text(...args) {
+          const locale = options && options.locale;
+          return self.ctx.text.locale(locale || self.ctx.app.config.i18n.defaultLocale, ...args);
+        },
+        url(str) {
+          if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
+          if (str[0] !== '/') str = '/' + str;
+          return self.ctx.bean.base.getAbsoluteUrl(str);
+        },
+        escapeHtml(str) {
+          return self.escapeHtml(str);
+        },
+        escapeURL(str) {
+          return self.escapeURL(str);
+        },
+      };
+    }
   }
 
   return Util;

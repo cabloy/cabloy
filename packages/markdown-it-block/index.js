@@ -30,7 +30,8 @@ module.exports = function block_plugin(md, options) {
     // render
     if (!params) {
       // placeholder
-      const res = window.JSON5.stringify(content, null, 2);
+      // eslint-disable-next-line
+      const res = JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
 <p><strong>${blockTitle}: ${md.utils.escapeHtml(params)}</strong></p>
 <pre><code>${md.utils.escapeHtml(res)}</code></pre>
