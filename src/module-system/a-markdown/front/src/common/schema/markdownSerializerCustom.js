@@ -64,7 +64,7 @@ export const markdownSerializerCustom = new MarkdownSerializer(
     },
     cabloy_block(state, node) {
       state.write('$$$' + (node.attrs.params ? ` ${node.attrs.params}` : '') + '\n');
-      state.write(node.attrs.content);
+      state.write(node.attrs.content.trim() + '\n');
       state.write('$$$');
       state.closeBlock(node);
     },
