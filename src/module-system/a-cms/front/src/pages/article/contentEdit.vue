@@ -2,28 +2,13 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
         <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="module">
       <eb-box>
-        <mavon-editor
-          ref="editor"
-          :value="item.content"
-          @change="onChange"
-          @save="onSave"
-          :onImageUpload="onImageUpload"
-          :onAudioUpload="onAudioUpload"
-          :onBlockAdd="onBlockAdd"
-          :language="language"
-          :subfield="subfield"
-          :editable="editable"
-          :defaultOpen="defaultOpen"
-          :toolbarsFlag="toolbarsFlag"
-          :navigation="navigation"
-          :toolbars="toolbars"
-        />
+        <eb-markdown-editor ref="editor" :readOnly="readOnly" :host="host" :value="item.content" @input="onInput" @save="onSave" />
       </eb-box>
     </template>
   </eb-page>
@@ -55,9 +40,15 @@ export default {
     item() {
       return this.contextParams.item;
     },
+    host() {
+      return {
+        atomId: this.item.atomId,
+        atom: this.item,
+      };
+    },
   },
   created() {
-    this.$meta.module.use('a-mavoneditor', module => {
+    this.$meta.module.use('a-markdown', module => {
       this.module = module;
     });
   },
@@ -65,20 +56,14 @@ export default {
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
-    onChange(data) {
+    onInput(data) {
       if (this.readOnly) return;
       if (this.item.content === data) return;
       this.dirty = true;
       this.contextCallback(200, { content: data });
     },
     onSave() {
-      this.onPerformSave()
-        .then(text => {
-          this.$view.toast.show({ text });
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-        });
+      this.$refs.buttonSave.onClick();
     },
     onPerformSave() {
       return this.contextParams.onSave().then(() => {
