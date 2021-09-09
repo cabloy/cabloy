@@ -28,7 +28,7 @@ module.exports = ctx => {
       // md
       const md = Markdownit.create().use(markdonw_it_block, blockOptions);
       // render
-      const html = md.render(content);
+      let html = md.render(content);
       console.log(html);
       // render async
       for (const placeholder in asyncs) {
@@ -41,25 +41,26 @@ module.exports = ctx => {
         // render
         const host = this._getHost();
         // Block Instance
-        this.blockInstance = new BlockClass(host);
-
-        // bean
-        const beanInstance = this.ctx.bean._getBean(block.beanFullName);
-        if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
-        // render
-        const res = await beanInstance.renderAsync({
-          md,
-          options: blockOptions,
-          block,
-          content,
-        });
+        const blockInstance = new BlockClass(host);
+        let blockHtml = '';
+        if (blockInstance.render) {
+          blockHtml = await blockInstance.render();
+        }
+        blockHtml = `
+<div class="markdown-it-cabloy-block" data-block-params="${params}" data-block-content="${encodeURIComponent(content)}">
+  ${blockHtml}
+</div>
+`;
         // replace
         const regexp = new RegExp(placeholder);
-        itemContent = itemContent.replace(regexp, res);
+        html = html.replace(regexp, blockHtml);
       }
+      // ok
+      console.log(html);
+      return html;
     }
 
-    _getHost() {
+    _getHost({ host, content }) {
       const $util = this.ctx.$meta.util.hostUtil({
         locale: this.ctx.$meta.util.getProperty(this.ctx.host2, 'atom.atomLanguage'),
       });
