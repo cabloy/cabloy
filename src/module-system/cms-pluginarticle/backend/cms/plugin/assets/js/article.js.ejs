@@ -1,17 +1,18 @@
-function _onParseComment(item) {
-  const actionsEdit =
-    item.userId !== util.user.op.id
-      ? ''
-      : `
+(function () {
+  function _onParseComment(item) {
+    const actionsEdit =
+      item.userId !== util.user.op.id
+        ? ''
+        : `
       <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
-  const reply = !env.article.allowComment
-    ? ''
-    : `
+    const reply = !env.article.allowComment
+      ? ''
+      : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
-  return `
+    return `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
   <div class="header card-header">
     <div class="user">
@@ -34,22 +35,22 @@ function _onParseComment(item) {
   </div>
 </div>
   `;
-}
+  }
 
-function _onParseCommentAll(item) {
-  const actionsEdit =
-    item.h_userId !== util.user.op.id
-      ? ''
-      : `
+  function _onParseCommentAll(item) {
+    const actionsEdit =
+      item.h_userId !== util.user.op.id
+        ? ''
+        : `
       <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
-  const reply = !item.allowComment
-    ? ''
-    : `
+    const reply = !item.allowComment
+      ? ''
+      : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
-  return `
+    return `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
   <div class="header card-header">
     <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.atomLanguage)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
@@ -73,340 +74,341 @@ function _onParseCommentAll(item) {
   </div>
 </div>
   `;
-}
+  }
 
-// article
-util.article = {
-  stats() {
-    const stats = $('.stat');
-    const atomIds = {};
-    $.each(stats, (index, item) => {
-      const $item = $(item);
-      if (!$item.hasClass('no-parse')) {
-        atomIds[$item.data('article-id')] = true;
-      }
-    });
-    if (Object.keys(atomIds).length === 0) return;
-    util
-      .performAction({
-        method: 'post',
-        url: '/a/base/atom/stats',
-        body: {
-          atomIds: Object.keys(atomIds),
-        },
-      })
-      .then(atoms => {
-        this._setStats(atoms);
-        // read
-        this.read();
-      });
-  },
-  read() {
-    if (!env.article) return;
-    util
-      .performAction({
-        method: 'post',
-        url: '/a/base/atom/readCount',
-        body: {
-          key: { atomId: env.article.atomId },
-          atom: { readCount: 1 },
-        },
-      })
-      .then(data => {
-        this._readCountInc(env.article.atomId, 1);
-      });
-  },
-  brothers({ container, order }) {
-    const $container = $(container);
-    if (!env.article || $container.length === 0) return;
-    order = order || env.brother.order || 'desc';
-    this._brothers($container, 'prev', order);
-    this._brothers($container, 'next', order);
-  },
-  comments(options) {
-    const $container = $(options.container);
-    if ($container.length === 0) return;
-    if (!options.onParse) options.onParse = env.article ? _onParseComment : _onParseCommentAll;
-    const orderInit = env.article ? env.comment.order : 'desc';
-    if (env.article) {
-      // postComment click
-      $('.button-postComment', $container).click(() => {
-        const url = util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 });
-        location.assign(url);
-      });
-      // order click
-      $('.order a', $container).click(event => {
-        event.preventDefault();
-        const link = $(event.target).closest('a');
-        const order = link.hasClass('asc') ? 'desc' : 'asc';
-        this._switchOrder({ $container, order, onParse: options.onParse });
-      });
-    }
-    // action click
-    $('.list', $container).click(event => {
-      const link = $(event.target).closest('a.action');
-      if (link.length > 0) {
-        const comment = link.closest('.comment');
-        const commentId = parseInt(comment.data('comment-id'));
-        const atomId = parseInt(comment.data('atom-id'));
-        if (link.hasClass('delete')) {
-          event.preventDefault();
-          this._commentActionDelete({ comment, atomId, id: commentId });
-        } else if (link.hasClass('heart')) {
-          event.preventDefault();
-          const heart = $('.heart-on', link).hasClass('d-none') ? 1 : 0;
-          this._commentActionHeart({ link, atomId, id: commentId, heart });
+  // article
+  window.util.article = {
+    stats() {
+      const stats = $('.stat');
+      const atomIds = {};
+      $.each(stats, (index, item) => {
+        const $item = $(item);
+        if (!$item.hasClass('no-parse')) {
+          atomIds[$item.data('article-id')] = true;
         }
-      }
-    });
-    // init order
-    this._switchOrder({ $container, order: orderInit, onParse: options.onParse });
-  },
-  commentUrl({ atomId, id, replyId }) {
-    return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
-  },
-  articleEdit(options) {
-    if (window.self !== window.top) return;
-    const $container = $(options.container);
-    if ($container.length === 0) return;
-    if (env.article.userIdCreated === util.user.op.id || env.article.userIdUpdated === util.user.op.id) {
-      const item = {
-        atomId: env.article.atomId,
-        itemId: env.article.itemId,
-        module: env.site.atomClass.module,
-        atomClassName: env.site.atomClass.atomClassName,
-        atomClassIdParent: env.site.atomClass.atomClassIdParent,
-      };
-      const url = `${env.site.serverUrl}/#!/a/cms/article/edit?item=${encodeURIComponent(JSON.stringify(item))}`;
-      const edit = `<a href="${url}" target="_blank"><i class="fas fa-edit"></i></a>`;
-      $container.append($(edit));
-    }
-  },
-  _commentActionDelete({ comment, atomId, id }) {
-    bootbox.confirm({
-      message: '<%=text("Are You Sure?")%>',
-      buttons: {
-        confirm: {
-          label: '<%=text("Yes")%>',
-        },
-        cancel: {
-          label: '<%=text("No")%>',
-        },
-      },
-      callback: res => {
-        if (!res) return;
-        util
-          .performAction({
-            method: 'post',
-            url: '/a/base/comment/delete',
-            body: {
-              key: { atomId },
-              data: { commentId: id },
-            },
-          })
-          .then(() => {
-            comment.remove();
-            this._commentCountInc(atomId, -1);
-          });
-      },
-    });
-  },
-  _commentActionHeart({ link, atomId, id, heart }) {
-    // check if anonymous
-    if (util.user.op.anonymous) {
-      // url
-      const url = `${env.site.serverUrl}/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
-      location.assign(url);
-    } else {
+      });
+      if (Object.keys(atomIds).length === 0) return;
       util
         .performAction({
           method: 'post',
-          url: '/a/base/comment/heart',
+          url: '/a/base/atom/stats',
           body: {
-            key: { atomId },
-            data: { commentId: id, heart },
+            atomIds: Object.keys(atomIds),
           },
         })
-        .then(() => {
-          this._commentHeartSwitch(link, atomId, id, heart);
+        .then(atoms => {
+          this._setStats(atoms);
+          // read
+          this.read();
         });
-    }
-  },
-  _switchOrder({ $container, order, onParse }) {
-    // res
-    let res;
-    // load more
-    if (this._commentsController) {
-      res = this._commentsController.reload({ index: 0, context: { order } });
-    } else {
-      res = true;
-      this._commentsController = util.loadMore({
-        container: $('.list', $container),
-        index: 0,
-        context: { order },
-        onFetch({ index, context }) {
-          // article's comments
-          if (env.article) {
+    },
+    read() {
+      if (!env.article) return;
+      util
+        .performAction({
+          method: 'post',
+          url: '/a/base/atom/readCount',
+          body: {
+            key: { atomId: env.article.atomId },
+            atom: { readCount: 1 },
+          },
+        })
+        .then(data => {
+          this._readCountInc(env.article.atomId, 1);
+        });
+    },
+    brothers({ container, order }) {
+      const $container = $(container);
+      if (!env.article || $container.length === 0) return;
+      order = order || env.brother.order || 'desc';
+      this._brothers($container, 'prev', order);
+      this._brothers($container, 'next', order);
+    },
+    comments(options) {
+      const $container = $(options.container);
+      if ($container.length === 0) return;
+      if (!options.onParse) options.onParse = env.article ? _onParseComment : _onParseCommentAll;
+      const orderInit = env.article ? env.comment.order : 'desc';
+      if (env.article) {
+        // postComment click
+        $('.button-postComment', $container).click(() => {
+          const url = util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 });
+          location.assign(url);
+        });
+        // order click
+        $('.order a', $container).click(event => {
+          event.preventDefault();
+          const link = $(event.target).closest('a');
+          const order = link.hasClass('asc') ? 'desc' : 'asc';
+          this._switchOrder({ $container, order, onParse: options.onParse });
+        });
+      }
+      // action click
+      $('.list', $container).click(event => {
+        const link = $(event.target).closest('a.action');
+        if (link.length > 0) {
+          const comment = link.closest('.comment');
+          const commentId = parseInt(comment.data('comment-id'));
+          const atomId = parseInt(comment.data('atom-id'));
+          if (link.hasClass('delete')) {
+            event.preventDefault();
+            this._commentActionDelete({ comment, atomId, id: commentId });
+          } else if (link.hasClass('heart')) {
+            event.preventDefault();
+            const heart = $('.heart-on', link).hasClass('d-none') ? 1 : 0;
+            this._commentActionHeart({ link, atomId, id: commentId, heart });
+          }
+        }
+      });
+      // init order
+      this._switchOrder({ $container, order: orderInit, onParse: options.onParse });
+    },
+    commentUrl({ atomId, id, replyId }) {
+      return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
+    },
+    articleEdit(options) {
+      if (window.self !== window.top) return;
+      const $container = $(options.container);
+      if ($container.length === 0) return;
+      if (env.article.userIdCreated === util.user.op.id || env.article.userIdUpdated === util.user.op.id) {
+        const item = {
+          atomId: env.article.atomId,
+          itemId: env.article.itemId,
+          module: env.site.atomClass.module,
+          atomClassName: env.site.atomClass.atomClassName,
+          atomClassIdParent: env.site.atomClass.atomClassIdParent,
+        };
+        const url = `${env.site.serverUrl}/#!/a/cms/article/edit?item=${encodeURIComponent(JSON.stringify(item))}`;
+        const edit = `<a href="${url}" target="_blank"><i class="fas fa-edit"></i></a>`;
+        $container.append($(edit));
+      }
+    },
+    _commentActionDelete({ comment, atomId, id }) {
+      bootbox.confirm({
+        message: '<%=text("Are You Sure?")%>',
+        buttons: {
+          confirm: {
+            label: '<%=text("Yes")%>',
+          },
+          cancel: {
+            label: '<%=text("No")%>',
+          },
+        },
+        callback: res => {
+          if (!res) return;
+          util
+            .performAction({
+              method: 'post',
+              url: '/a/base/comment/delete',
+              body: {
+                key: { atomId },
+                data: { commentId: id },
+              },
+            })
+            .then(() => {
+              comment.remove();
+              this._commentCountInc(atomId, -1);
+            });
+        },
+      });
+    },
+    _commentActionHeart({ link, atomId, id, heart }) {
+      // check if anonymous
+      if (util.user.op.anonymous) {
+        // url
+        const url = `${env.site.serverUrl}/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
+        location.assign(url);
+      } else {
+        util
+          .performAction({
+            method: 'post',
+            url: '/a/base/comment/heart',
+            body: {
+              key: { atomId },
+              data: { commentId: id, heart },
+            },
+          })
+          .then(() => {
+            this._commentHeartSwitch(link, atomId, id, heart);
+          });
+      }
+    },
+    _switchOrder({ $container, order, onParse }) {
+      // res
+      let res;
+      // load more
+      if (this._commentsController) {
+        res = this._commentsController.reload({ index: 0, context: { order } });
+      } else {
+        res = true;
+        this._commentsController = util.loadMore({
+          container: $('.list', $container),
+          index: 0,
+          context: { order },
+          onFetch({ index, context }) {
+            // article's comments
+            if (env.article) {
+              // options
+              const options = {
+                orders: [['sorting', context.order]],
+                page: { index },
+              };
+              return util.performAction({
+                method: 'post',
+                url: '/a/base/comment/list',
+                body: {
+                  key: { atomId: env.article.atomId },
+                  options,
+                },
+              });
+            }
+            // all comments
             // options
             const options = {
-              orders: [['sorting', context.order]],
+              orders: [['h_updatedAt', 'desc']],
               page: { index },
             };
             return util.performAction({
               method: 'post',
-              url: '/a/base/comment/list',
+              url: '/a/cms/comment/all',
               body: {
-                key: { atomId: env.article.atomId },
+                atomClass: env.site.atomClass,
                 options,
               },
             });
-          }
-          // all comments
-          // options
-          const options = {
-            orders: [['h_updatedAt', 'desc']],
-            page: { index },
-          };
-          return util.performAction({
-            method: 'post',
-            url: '/a/cms/comment/all',
-            body: {
-              atomClass: env.site.atomClass,
-              options,
-            },
-          });
-        },
-        onParse(item) {
-          return onParse(item);
-        },
-      });
-    }
-    // order
-    if (res) {
-      if (order === 'asc') {
-        $('.order .asc', $container).removeClass('d-none');
-        $('.order .desc', $container).addClass('d-none');
-      } else {
-        $('.order .asc', $container).addClass('d-none');
-        $('.order .desc', $container).removeClass('d-none');
+          },
+          onParse(item) {
+            return onParse(item);
+          },
+        });
       }
-    }
-  },
-  _brothers($container, type, order) {
-    // article
-    const article = env.article;
-    // options
-    const options = {
-      language: article.atomLanguage,
-      category: article.atomCategoryId,
-      where: {},
-      page: { index: 0, size: 1 },
-      mode: 'default',
-    };
-    if (article.sorting > 0) {
-      // asc for sorting
-      options.where['p.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
-      options.orders = [['p.sorting', type === 'prev' ? 'desc' : 'asc']];
-    } else {
-      // asc/desc for createdAt
-      options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : order === 'desc' ? '<' : '>', val: article.atomCreatedAt };
-      options.orders = [['a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : order === 'desc' ? 'desc' : 'asc']];
-    }
-    // select
-    util
-      .performAction({
-        method: 'post',
-        url: '/a/cms/article/list',
-        body: {
-          atomClass: env.site.atomClass,
-          options,
-        },
-      })
-      .then(data => {
-        this._brother({ $container, type, article: data.list[0] });
-      });
-  },
-  _brother({ $container, type, article }) {
-    if (!article) return;
-    const $brother = $(`.${type}`, $container);
-    const $brotherLink = $(`.${type} a`, $container);
-
-    $brotherLink.attr('href', `${util.url(article.url)}`);
-    $brotherLink.text(article.atomName);
-    $brother.removeClass('d-none');
-    $container.removeClass('d-none');
-  },
-  _setStats(atoms) {
-    for (const atom of atoms) {
-      const atomId = atom.atomId;
-      // stat
-      const $stat = $(`.stat[data-article-id=${atomId}]`);
-      // num
-      $('.num.readCount', $stat).text(atom.readCount);
-      $('.num.commentCount', $stat).text(atom.commentCount);
-      this._starCount(atomId, atom.star, atom.starCount);
-      // click
-      $('.button-starCount', $stat).click(() => {
-        this._starClick(atomId);
-      });
-    }
-  },
-  _starClick(atomId) {
-    // check if anonymous
-    if (util.user.op.anonymous) {
-      // url
-      const url = `${env.site.serverUrl}/#!/a/basefront/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
-      location.assign(url);
-    } else {
-      // star
-      const $stat = $(`.stat[data-article-id=${atomId}]`);
-      const star = $('.button-starCount .star-on', $stat).hasClass('d-none') ? 1 : 0;
+      // order
+      if (res) {
+        if (order === 'asc') {
+          $('.order .asc', $container).removeClass('d-none');
+          $('.order .desc', $container).addClass('d-none');
+        } else {
+          $('.order .asc', $container).addClass('d-none');
+          $('.order .desc', $container).removeClass('d-none');
+        }
+      }
+    },
+    _brothers($container, type, order) {
+      // article
+      const article = env.article;
+      // options
+      const options = {
+        language: article.atomLanguage,
+        category: article.atomCategoryId,
+        where: {},
+        page: { index: 0, size: 1 },
+        mode: 'default',
+      };
+      if (article.sorting > 0) {
+        // asc for sorting
+        options.where['p.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
+        options.orders = [['p.sorting', type === 'prev' ? 'desc' : 'asc']];
+      } else {
+        // asc/desc for createdAt
+        options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : order === 'desc' ? '<' : '>', val: article.atomCreatedAt };
+        options.orders = [['a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : order === 'desc' ? 'desc' : 'asc']];
+      }
+      // select
       util
         .performAction({
           method: 'post',
-          url: '/a/base/atom/star',
+          url: '/a/cms/article/list',
           body: {
-            key: { atomId },
-            atom: { star },
+            atomClass: env.site.atomClass,
+            options,
           },
         })
         .then(data => {
-          this._starCount(atomId, data.star, data.starCount);
+          this._brother({ $container, type, article: data.list[0] });
         });
-    }
-  },
-  _starCount(atomId, star, starCount) {
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    $('.num.starCount', $stat).text(starCount);
-    if (star) {
-      $('.button-starCount .star-on').removeClass('d-none');
-      $('.button-starCount .star-off').addClass('d-none');
-    } else {
-      $('.button-starCount .star-on').addClass('d-none');
-      $('.button-starCount .star-off').removeClass('d-none');
-    }
-  },
-  _readCountInc(atomId, num) {
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    const $readCount = $('.num.readCount', $stat);
-    $readCount.text(parseInt($($readCount[0]).text()) + num);
-  },
-  _commentCountInc(atomId, num) {
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    const $commentCount = $('.num.commentCount', $stat);
-    $commentCount.text(parseInt($($commentCount[0]).text()) + num);
-  },
-  _commentHeartSwitch(link, atomId, id, heart) {
-    // num
-    const $heartCount = $('.num', link);
-    $heartCount.text(parseInt($($heartCount[0]).text()) + (heart ? 1 : -1));
-    // icon
-    if (heart) {
-      $('.heart-on', link).removeClass('d-none');
-      $('.heart-off', link).addClass('d-none');
-    } else {
-      $('.heart-on', link).addClass('d-none');
-      $('.heart-off', link).removeClass('d-none');
-    }
-  },
-};
+    },
+    _brother({ $container, type, article }) {
+      if (!article) return;
+      const $brother = $(`.${type}`, $container);
+      const $brotherLink = $(`.${type} a`, $container);
+
+      $brotherLink.attr('href', `${util.url(article.url)}`);
+      $brotherLink.text(article.atomName);
+      $brother.removeClass('d-none');
+      $container.removeClass('d-none');
+    },
+    _setStats(atoms) {
+      for (const atom of atoms) {
+        const atomId = atom.atomId;
+        // stat
+        const $stat = $(`.stat[data-article-id=${atomId}]`);
+        // num
+        $('.num.readCount', $stat).text(atom.readCount);
+        $('.num.commentCount', $stat).text(atom.commentCount);
+        this._starCount(atomId, atom.star, atom.starCount);
+        // click
+        $('.button-starCount', $stat).click(() => {
+          this._starClick(atomId);
+        });
+      }
+    },
+    _starClick(atomId) {
+      // check if anonymous
+      if (util.user.op.anonymous) {
+        // url
+        const url = `${env.site.serverUrl}/#!/a/basefront/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
+        location.assign(url);
+      } else {
+        // star
+        const $stat = $(`.stat[data-article-id=${atomId}]`);
+        const star = $('.button-starCount .star-on', $stat).hasClass('d-none') ? 1 : 0;
+        util
+          .performAction({
+            method: 'post',
+            url: '/a/base/atom/star',
+            body: {
+              key: { atomId },
+              atom: { star },
+            },
+          })
+          .then(data => {
+            this._starCount(atomId, data.star, data.starCount);
+          });
+      }
+    },
+    _starCount(atomId, star, starCount) {
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      $('.num.starCount', $stat).text(starCount);
+      if (star) {
+        $('.button-starCount .star-on').removeClass('d-none');
+        $('.button-starCount .star-off').addClass('d-none');
+      } else {
+        $('.button-starCount .star-on').addClass('d-none');
+        $('.button-starCount .star-off').removeClass('d-none');
+      }
+    },
+    _readCountInc(atomId, num) {
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      const $readCount = $('.num.readCount', $stat);
+      $readCount.text(parseInt($($readCount[0]).text()) + num);
+    },
+    _commentCountInc(atomId, num) {
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      const $commentCount = $('.num.commentCount', $stat);
+      $commentCount.text(parseInt($($commentCount[0]).text()) + num);
+    },
+    _commentHeartSwitch(link, atomId, id, heart) {
+      // num
+      const $heartCount = $('.num', link);
+      $heartCount.text(parseInt($($heartCount[0]).text()) + (heart ? 1 : -1));
+      // icon
+      if (heart) {
+        $('.heart-on', link).removeClass('d-none');
+        $('.heart-off', link).addClass('d-none');
+      } else {
+        $('.heart-on', link).addClass('d-none');
+        $('.heart-off', link).removeClass('d-none');
+      }
+    },
+  };
+})();

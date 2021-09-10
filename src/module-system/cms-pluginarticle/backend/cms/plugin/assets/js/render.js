@@ -59,10 +59,10 @@
   function _getHost($blockContainer, blockContent) {
     const $host = {
       atom: env.article,
-      atomId: env.article.atomId,
+      atomId: env.article && env.article.atomId,
     };
     const $util = window.util.hostUtil({
-      locale: $host.atom.atomLanguage,
+      locale: $host.atom && $host.atom.atomLanguage,
     });
     return {
       $host, // atomId/atom

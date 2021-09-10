@@ -10,7 +10,5 @@ $(document).on('echo-ready', function () {
   // article edit
   util.article.articleEdit({ container: '.article-edit' });
   // markdown render
-  if (env.article) {
-    util.article.mountMarkdown($('.article-body'));
-  }
+  util.article.mountMarkdown($('.article-body'));
 });
