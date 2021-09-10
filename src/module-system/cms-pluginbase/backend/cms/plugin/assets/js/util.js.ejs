@@ -207,11 +207,17 @@ const util = {
     const _url = path ? `${urlRoot}/${path}` : urlRoot;
     return this.escapeURL(_url);
   },
+  serverUrl(str){
+    if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return str;
+    const baseURL = '<%=site.serverUrl%>';
+    if (str[0] !== '/') str = '/' + str;
+    return baseURL + str; 
+  },
   ajax({ url, body }) {
     return this.promise((resolve, reject) => {
       $.ajax({
         type: 'GET',
-        url: `<%=site.serverUrl%>/api${url}`,
+        url: this.serverUrl(`/api${url}`),
         data: body,
         dataType: 'jsonp',
         timeout: 18000,
@@ -231,7 +237,7 @@ const util = {
       const ajaxMethod = method.toUpperCase();
       $.ajax({
         type: ajaxMethod,
-        url: `<%=site.serverUrl%>/api${url}`,
+        url: this.serverUrl(`/api${url}`),
         data: ajaxMethod === 'POST' ? JSON.stringify(body) : body,
         contentType: ajaxMethod === 'POST' ? 'application/json' : undefined,
         dataType: 'json',
@@ -479,4 +485,25 @@ const util = {
   escapeURL(str) {
     return _escapeURL(str);
   },
+  hostUtil(options){
+    return {
+      text(...args) {
+       return args[0];
+      },
+      url(str) {
+        if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
+        const baseURL = util.getBaseURL();
+        if (str[0] !== '/') str = '/' + str;
+        return baseURL + this.escapeURL(str);
+      },
+      escapeHtml(str) {
+        return util.escapeHtml(str);
+      },
+      escapeURL(str) {
+        return util.escapeURL(str);
+      },
+    };
+  };
+  return hostUtil;
+  }
 };

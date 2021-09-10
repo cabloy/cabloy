@@ -80,7 +80,6 @@ function getOrderedListInputRules(schema) {
 
 export function listInputRules(schema) {
   const rules = [];
-  console.log('rules', schema);
   if (schema.nodes.bullet_list) {
     rules.push(...getBulletListInputRules(schema));
   }

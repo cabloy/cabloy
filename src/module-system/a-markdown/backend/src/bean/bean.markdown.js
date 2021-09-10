@@ -56,7 +56,6 @@ module.exports = ctx => {
         html = html.replace(regexp, blockHtml);
       }
       // ok
-      console.log(html);
       return html;
     }
 
