@@ -50,6 +50,7 @@ export default {
       }
     },
     async _unmountHtml() {
+      if (this.blockInstances.length === 0) return;
       for (const blockInstance of this.blockInstances) {
         if (blockInstance.unmount) {
           await blockInstance.unmount();
