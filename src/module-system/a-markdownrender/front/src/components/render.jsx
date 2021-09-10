@@ -28,23 +28,45 @@ export default {
     },
   },
   mounted() {
+    this._$html = this.$refs.html;
+    this._handlerOnClick = this._onClick.bind(this);
+    this._$html.addEventListener('click', this._handlerOnClick);
     this.init();
   },
   beforeDestroy() {
+    //
     this._unmountHtml();
+    //
+    if (this._$html) {
+      this._$html.removeEventListener('click', this._handlerOnClick);
+      this._handlerOnClick = null;
+      this._$html = null;
+    }
   },
   methods: {
     async init() {
       await this.$meta.module.use(this.$meta.config.markdown.style.module);
       await this._setHtml(this.htmlInner);
     },
+    _onClick(event) {
+      const $clickedEl = this.$$(event.target);
+      const $clickedLinkEl = $clickedEl.closest('a');
+      const isLink = $clickedLinkEl.length > 0;
+      const url = isLink && $clickedLinkEl.attr('href');
+      if (isLink) {
+        event.preventDefault();
+        if (url) {
+          window.open(url, '_blank');
+        }
+      }
+    },
     async _setHtml(html) {
       await this._unmountHtml();
-      this.$refs.html.innerHTML = html;
+      this._$html.innerHTML = html;
       this._mountHtml();
     },
     async _mountHtml() {
-      const blocks = this.$$('.markdown-it-cabloy-block', this.$refs.html);
+      const blocks = this.$$('.markdown-it-cabloy-block', this._$html);
       for (let i = 0; i < blocks.length; i++) {
         await this._mountBlock(blocks[i]);
       }
