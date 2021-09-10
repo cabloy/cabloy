@@ -6,7 +6,7 @@ class PlaceholderEmptyView {
     this.options = options;
     this.placeholderText = options.placeholderText;
     this.placeholderId = options.ctx.$meta.util.nextId('placeholder');
-    this.placeholderKey = { key: 'placeholder$' };
+    this.placeholderKey = this._findPlaceholderKey(editorView);
     this.showing = false;
     this.update();
   }
@@ -17,6 +17,14 @@ class PlaceholderEmptyView {
 
   destroy() {
     // do nothing
+  }
+
+  _findPlaceholderKey(view) {
+    const plugins = view.state.plugins;
+    const plugin = plugins.find(item => {
+      return item.key.indexOf('placeholder$') === 0;
+    });
+    return plugin.key;
   }
 
   _checkUpdate(view, state) {
