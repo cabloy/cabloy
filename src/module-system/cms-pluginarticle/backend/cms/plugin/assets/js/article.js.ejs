@@ -1,9 +1,14 @@
 function _onParseComment(item) {
-  const actionsEdit = item.userId !== util.user.op.id ? '' : `
+  const actionsEdit =
+    item.userId !== util.user.op.id
+      ? ''
+      : `
       <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
-  const reply = !env.article.allowComment ? '' : `
+  const reply = !env.article.allowComment
+    ? ''
+    : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
   return `
@@ -32,11 +37,16 @@ function _onParseComment(item) {
 }
 
 function _onParseCommentAll(item) {
-  const actionsEdit = item.h_userId !== util.user.op.id ? '' : `
+  const actionsEdit =
+    item.h_userId !== util.user.op.id
+      ? ''
+      : `
       <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
-  const reply = !item.allowComment ? '' : `
+  const reply = !item.allowComment
+    ? ''
+    : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
   return `
@@ -77,30 +87,34 @@ util.article = {
       }
     });
     if (Object.keys(atomIds).length === 0) return;
-    util.performAction({
-      method: 'post',
-      url: '/a/base/atom/stats',
-      body: {
-        atomIds: Object.keys(atomIds),
-      },
-    }).then(atoms => {
-      this._setStats(atoms);
-      // read
-      this.read();
-    });
+    util
+      .performAction({
+        method: 'post',
+        url: '/a/base/atom/stats',
+        body: {
+          atomIds: Object.keys(atomIds),
+        },
+      })
+      .then(atoms => {
+        this._setStats(atoms);
+        // read
+        this.read();
+      });
   },
   read() {
     if (!env.article) return;
-    util.performAction({
-      method: 'post',
-      url: '/a/base/atom/readCount',
-      body: {
-        key: { atomId: env.article.atomId },
-        atom: { readCount: 1 },
-      },
-    }).then(data => {
-      this._readCountInc(env.article.atomId, 1);
-    });
+    util
+      .performAction({
+        method: 'post',
+        url: '/a/base/atom/readCount',
+        body: {
+          key: { atomId: env.article.atomId },
+          atom: { readCount: 1 },
+        },
+      })
+      .then(data => {
+        this._readCountInc(env.article.atomId, 1);
+      });
   },
   brothers({ container, order }) {
     const $container = $(container);
@@ -152,13 +166,13 @@ util.article = {
     return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
   },
   articleEdit(options) {
-    if(window.self !== window.top) return;
+    if (window.self !== window.top) return;
     const $container = $(options.container);
     if ($container.length === 0) return;
     if (env.article.userIdCreated === util.user.op.id || env.article.userIdUpdated === util.user.op.id) {
       const item = {
-        atomId:env.article.atomId,
-        itemId:env.article.itemId,
+        atomId: env.article.atomId,
+        itemId: env.article.itemId,
         module: env.site.atomClass.module,
         atomClassName: env.site.atomClass.atomClassName,
         atomClassIdParent: env.site.atomClass.atomClassIdParent,
@@ -181,17 +195,19 @@ util.article = {
       },
       callback: res => {
         if (!res) return;
-        util.performAction({
-          method: 'post',
-          url: '/a/base/comment/delete',
-          body: {
-            key: { atomId },
-            data: { commentId: id },
-          },
-        }).then(() => {
-          comment.remove();
-          this._commentCountInc(atomId, -1);
-        });
+        util
+          .performAction({
+            method: 'post',
+            url: '/a/base/comment/delete',
+            body: {
+              key: { atomId },
+              data: { commentId: id },
+            },
+          })
+          .then(() => {
+            comment.remove();
+            this._commentCountInc(atomId, -1);
+          });
       },
     });
   },
@@ -202,16 +218,18 @@ util.article = {
       const url = `${env.site.serverUrl}/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
       location.assign(url);
     } else {
-      util.performAction({
-        method: 'post',
-        url: '/a/base/comment/heart',
-        body: {
-          key: { atomId },
-          data: { commentId: id, heart },
-        },
-      }).then(() => {
-        this._commentHeartSwitch(link, atomId, id, heart);
-      });
+      util
+        .performAction({
+          method: 'post',
+          url: '/a/base/comment/heart',
+          body: {
+            key: { atomId },
+            data: { commentId: id, heart },
+          },
+        })
+        .then(() => {
+          this._commentHeartSwitch(link, atomId, id, heart);
+        });
     }
   },
   _switchOrder({ $container, order, onParse }) {
@@ -231,9 +249,7 @@ util.article = {
           if (env.article) {
             // options
             const options = {
-              orders: [
-                [ 'sorting', context.order ],
-              ],
+              orders: [['sorting', context.order]],
               page: { index },
             };
             return util.performAction({
@@ -248,9 +264,7 @@ util.article = {
           // all comments
           // options
           const options = {
-            orders: [
-              [ 'h_updatedAt', 'desc' ],
-            ],
+            orders: [['h_updatedAt', 'desc']],
             page: { index },
           };
           return util.performAction({
@@ -285,35 +299,32 @@ util.article = {
     const options = {
       language: article.atomLanguage,
       category: article.atomCategoryId,
-      where: {
-      },
+      where: {},
       page: { index: 0, size: 1 },
       mode: 'default',
     };
     if (article.sorting > 0) {
       // asc for sorting
       options.where['p.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
-      options.orders = [
-        [ 'p.sorting', type === 'prev' ? 'desc' : 'asc' ],
-      ];
+      options.orders = [['p.sorting', type === 'prev' ? 'desc' : 'asc']];
     } else {
       // asc/desc for createdAt
-      options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.atomCreatedAt };
-      options.orders = [
-        [ 'a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
-      ];
+      options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : order === 'desc' ? '<' : '>', val: article.atomCreatedAt };
+      options.orders = [['a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : order === 'desc' ? 'desc' : 'asc']];
     }
     // select
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/article/list',
-      body: {
-        atomClass: env.site.atomClass,
-        options,
-      },
-    }).then(data => {
-      this._brother({ $container, type, article: data.list[0] });
-    });
+    util
+      .performAction({
+        method: 'post',
+        url: '/a/cms/article/list',
+        body: {
+          atomClass: env.site.atomClass,
+          options,
+        },
+      })
+      .then(data => {
+        this._brother({ $container, type, article: data.list[0] });
+      });
   },
   _brother({ $container, type, article }) {
     if (!article) return;
@@ -350,16 +361,18 @@ util.article = {
       // star
       const $stat = $(`.stat[data-article-id=${atomId}]`);
       const star = $('.button-starCount .star-on', $stat).hasClass('d-none') ? 1 : 0;
-      util.performAction({
-        method: 'post',
-        url: '/a/base/atom/star',
-        body: {
-          key: { atomId },
-          atom: { star },
-        },
-      }).then(data => {
-        this._starCount(atomId, data.star, data.starCount);
-      });
+      util
+        .performAction({
+          method: 'post',
+          url: '/a/base/atom/star',
+          body: {
+            key: { atomId },
+            atom: { star },
+          },
+        })
+        .then(data => {
+          this._starCount(atomId, data.star, data.starCount);
+        });
     }
   },
   _starCount(atomId, star, starCount) {

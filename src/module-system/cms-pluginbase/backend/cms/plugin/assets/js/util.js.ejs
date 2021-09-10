@@ -1,520 +1,537 @@
-function __patchJSON() {
-  // 2020-03-13T00:44:15.149Z
-  // 2020-03-13T00:44:15Z
-  const __dateTest = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
-  function __jsonReviver(k, v, reviver) {
-    if (v && typeof v === 'string' && __dateTest.test(v)) {
-      v = new Date(v);
+(function () {
+  function __patchJSON() {
+    // 2020-03-13T00:44:15.149Z
+    // 2020-03-13T00:44:15Z
+    const __dateTest = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+    function __jsonReviver(k, v, reviver) {
+      if (v && typeof v === 'string' && __dateTest.test(v)) {
+        v = new Date(v);
+      }
+      if (!reviver) return v;
+      return reviver(k, v);
     }
-    if (!reviver) return v;
-    return reviver(k, v);
+
+    // json
+    const _jsonParse = JSON.parse;
+    JSON.parse = function (source, reviver) {
+      return _jsonParse(source, function (k, v) {
+        return __jsonReviver(k, v, reviver);
+      });
+    };
+
+    // json5
+    const _json5Parse = JSON5.parse;
+    JSON5.parse = function (source, reviver) {
+      return _json5Parse(source, function (k, v) {
+        return __jsonReviver(k, v, reviver);
+      });
+    };
   }
 
-  // json
-  const _jsonParse = JSON.parse;
-  JSON.parse = function (source, reviver) {
-    return _jsonParse(source, function (k, v) {
-      return __jsonReviver(k, v, reviver);
-    });
-  };
+  __patchJSON();
 
-  // json5
-  const _json5Parse = JSON5.parse;
-  JSON5.parse = function (source, reviver) {
-    return _json5Parse(source, function (k, v) {
-      return __jsonReviver(k, v, reviver);
-    });
-  };
-}
-
-__patchJSON();
-
-/**
+  /**
   escapeHtml: based on markdown-it
 **/
 
-const HTML_ESCAPE_TEST_RE = /[&<>"']/;
-const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
-const HTML_REPLACEMENTS = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#039;',
-};
-
-function _replaceUnsafeChar(ch) {
-  return HTML_REPLACEMENTS[ch];
-}
-
-function _escapeHtml(str) {
-  if (HTML_ESCAPE_TEST_RE.test(str)) {
-    return str.replace(HTML_ESCAPE_REPLACE_RE, _replaceUnsafeChar);
-  }
-  return str;
-}
-
-const URL_ESCAPE_TEST_RE = /[<>"']/;
-const URL_ESCAPE_REPLACE_RE = /[<>"']/g;
-const URL_REPLACEMENTS = {
-  '<': '%3C',
-  '>': '%3E',
-  '"': '%22',
-  "'": '%27',
-};
-
-function _replaceUnsafeCharURL(ch) {
-  return URL_REPLACEMENTS[ch];
-}
-
-function _escapeURL(str) {
-  if (URL_ESCAPE_TEST_RE.test(str)) {
-    return str.replace(URL_ESCAPE_REPLACE_RE, _replaceUnsafeCharURL);
-  }
-  return str;
-}
-
-// promise
-const _createPromise = function (handler) {
-  let resolved = false;
-  let rejected = false;
-  let resolveArgs;
-  let rejectArgs;
-  const promiseHandlers = {
-    then: undefined,
-    catch: undefined,
-  };
-  const promise = {
-    then(thenHandler) {
-      if (resolved) {
-        thenHandler(...resolveArgs);
-      } else {
-        promiseHandlers.then = thenHandler;
-      }
-      return promise;
-    },
-    catch(catchHandler) {
-      if (rejected) {
-        catchHandler(...rejectArgs);
-      } else {
-        promiseHandlers.catch = catchHandler;
-      }
-      return promise;
-    },
+  const HTML_ESCAPE_TEST_RE = /[&<>"']/;
+  const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
+  const HTML_REPLACEMENTS = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
   };
 
-  function resolve(...args) {
-    resolved = true;
-    if (promiseHandlers.then) promiseHandlers.then(...args);
-    else resolveArgs = args;
+  function _replaceUnsafeChar(ch) {
+    return HTML_REPLACEMENTS[ch];
   }
-  function reject(...args) {
-    rejected = true;
-    if (promiseHandlers.catch) promiseHandlers.catch(...args);
-    else rejectArgs = args;
+
+  function _escapeHtml(str) {
+    if (HTML_ESCAPE_TEST_RE.test(str)) {
+      return str.replace(HTML_ESCAPE_REPLACE_RE, _replaceUnsafeChar);
+    }
+    return str;
   }
-  handler(resolve, reject);
 
-  return promise;
-};
-
-const _formatDateTime = function (date, fmt) {
-  // original author: meizz
-  const o = {
-    'M+': date.getMonth() + 1, // month
-    'D+': date.getDate(), // day
-    'H+': date.getHours(), // hour
-    'm+': date.getMinutes(), // minute
-    's+': date.getSeconds(), // second
-    'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
-    S: date.getMilliseconds(), // millisecond
+  const URL_ESCAPE_TEST_RE = /[<>"']/;
+  const URL_ESCAPE_REPLACE_RE = /[<>"']/g;
+  const URL_REPLACEMENTS = {
+    '<': '%3C',
+    '>': '%3E',
+    '"': '%22',
+    "'": '%27',
   };
-  if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-  for (const k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+
+  function _replaceUnsafeCharURL(ch) {
+    return URL_REPLACEMENTS[ch];
   }
-  return fmt;
-};
 
-const _time = {
-  now() {
-    return this.formatDateTime(null);
-  },
-  today() {
-    return this.formatDate(null);
-  },
-  formatDateTime(date, fmt) {
-    date = date || new Date();
-    if (typeof date !== 'object') date = new Date(date);
-    fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-    return _formatDateTime(date, fmt);
-  },
-  formatDate(date, sep) {
-    sep = sep || '-';
-    return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
-  },
-  formatTime(date, sep) {
-    sep = sep || ':';
-    return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
-  },
-};
+  function _escapeURL(str) {
+    if (URL_ESCAPE_TEST_RE.test(str)) {
+      return str.replace(URL_ESCAPE_REPLACE_RE, _replaceUnsafeCharURL);
+    }
+    return str;
+  }
 
-const util = {
-  time: _time,
-  formatDateTime(date) {
-    return this.time.formatDateTime(date, `${env.format.date} ${env.format.time}`);
-  },
-  parseUrlQuery(url) {
-    const query = {};
-    let urlToParse = url || window.location.href;
-    let i;
-    let params;
-    let param;
-    let length;
-    if (typeof urlToParse === 'string' && urlToParse.length) {
-      urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
-      params = urlToParse.split('&');
-      length = params.length;
-
-      for (let i = 0; i < length; i += 1) {
-        param = params[i].replace(/#\S+/g, '').split('=');
-        query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
-      }
-    }
-    return query;
-  },
-  promise(handler) {
-    return window.Promise ? new Promise(handler) : _createPromise(handler);
-  },
-  getAtomClassFullName(atomClass) {
-    return `${atomClass.module}:${atomClass.atomClassName}`;
-  },
-  atomClassEqual(atomClass1, atomClass2) {
-    if (!atomClass1 || !atomClass2) return false;
-    return this.getAtomClassFullName(atomClass1) === this.getAtomClassFullName(atomClass2);
-  },
-  rootUrl(language, atomClass) {
-    let _env;
-    if (!atomClass || this.atomClassEqual(atomClass, env.site.atomClass)) {
-      _env = env;
-    } else {
-      _env = env.envs && env.envs[this.getAtomClassFullName(atomClass)];
-      if (!_env) return null;
-    }
-    language = language || (_env.language && _env.language.current);
-    return `${_env.site.rawRootUrl}${!_env.language || language === _env.language.default ? '' : '/' + language}`;
-  },
-  url(path, language, atomClass) {
-    if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
-    const urlRoot = this.rootUrl(language, atomClass);
-    const _url = path ? `${urlRoot}/${path}` : urlRoot;
-    return this.escapeURL(_url);
-  },
-  serverUrl(str) {
-    if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return str;
-    const baseURL = '<%=site.serverUrl%>';
-    if (str[0] !== '/') str = '/' + str;
-    return baseURL + str;
-  },
-  ajax({ url, body }) {
-    return this.promise((resolve, reject) => {
-      $.ajax({
-        type: 'GET',
-        url: this.serverUrl(`/api${url}`),
-        data: body,
-        dataType: 'jsonp',
-        timeout: 18000,
-      })
-        .done(function (data) {
-          if (data.code === 0) {
-            resolve(data.data);
-          } else {
-            reject(data.message);
-          }
-        })
-        .fail(function () {
-          reject(null);
-        });
-    });
-  },
-  cors({ method, url, body }) {
-    return this.promise((resolve, reject) => {
-      const ajaxMethod = method.toUpperCase();
-      $.ajax({
-        type: ajaxMethod,
-        url: this.serverUrl(`/api${url}`),
-        data: ajaxMethod === 'POST' ? JSON.stringify(body) : body,
-        contentType: ajaxMethod === 'POST' ? 'application/json' : undefined,
-        dataType: 'json',
-        timeout: 18000,
-        xhrFields: {
-          withCredentials: true,
-        },
-        headers: {
-          'x-clientid': this.clientId,
-        },
-      })
-        .done(function (data) {
-          if (data.code === 0) {
-            resolve(data.data);
-          } else {
-            reject(data.message);
-          }
-        })
-        .fail(function (xhr, status) {
-          reject((xhr.responseJSON && xhr.responseJSON.message) || status);
-        });
-    });
-  },
-  performAction(params) {
-    if ($.support && $.support.cors) {
-      return this.cors(params);
-    }
-    return this.ajax({
-      url: '/a/base/util/performAction',
-      body: {
-        params: JSON.stringify(params),
+  // promise
+  const _createPromise = function (handler) {
+    let resolved = false;
+    let rejected = false;
+    let resolveArgs;
+    let rejectArgs;
+    const promiseHandlers = {
+      then: undefined,
+      catch: undefined,
+    };
+    const promise = {
+      then(thenHandler) {
+        if (resolved) {
+          thenHandler(...resolveArgs);
+        } else {
+          promiseHandlers.then = thenHandler;
+        }
+        return promise;
       },
-    });
-  },
-  combineImageUrl(url, width, height) {
-    if (!url) return this.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
-    if (url.indexOf('/api/a/file/file/download') === -1) return this.escapeURL(url);
-    if (!width && !height) return this.escapeURL(url);
-    const pixelRatio = window.devicePixelRatio || 1;
-    let query = '';
-    if (width) query = `width=${parseInt(width) * pixelRatio}`;
-    if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
-    const _url = `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
-    return this.escapeURL(_url);
-  },
-  loadMore({ container, loadOnScroll, threshold = 100, index = 0, context, onFetch, onParse }) {
-    if (loadOnScroll === undefined) loadOnScroll = env.loadMore.loadOnScroll;
-    // init
-    const $container = $(container);
-    const $window = $(window);
-    const $body = $('body');
-
-    const $loadMoreContainer = $('<div class="load-more"></div>');
-    $loadMoreContainer.insertAfter($container);
-
-    //
-    let finished = false;
-    let fetching = false;
-    let error = false;
-
-    let _onFetch = null;
-
-    // showButtonLoadMore
-    const _showButtonLoadMore = function () {
-      const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
-      $buttonMore.click(() => {
-        _onFetch();
-      });
-      $loadMoreContainer.empty();
-      $loadMoreContainer.append($buttonMore);
+      catch(catchHandler) {
+        if (rejected) {
+          catchHandler(...rejectArgs);
+        } else {
+          promiseHandlers.catch = catchHandler;
+        }
+        return promise;
+      },
     };
 
-    // showTextLoadCompleted
-    const _showTextLoadCompleted = function () {
-      // const $text = $('<span class="load-completed"><%=text("Load Completed")%></span>');
-      $loadMoreContainer.empty();
-      // $loadMoreContainer.append($text);
-    };
+    function resolve(...args) {
+      resolved = true;
+      if (promiseHandlers.then) promiseHandlers.then(...args);
+      else resolveArgs = args;
+    }
+    function reject(...args) {
+      rejected = true;
+      if (promiseHandlers.catch) promiseHandlers.catch(...args);
+      else rejectArgs = args;
+    }
+    handler(resolve, reject);
 
-    // onFetch
-    _onFetch = function () {
-      fetching = true;
-      $loadMoreContainer.empty();
-      $loadMoreContainer.append($('<i class="fas fa-sync"></i>'));
-      const res = onFetch({ index, context });
-      res
-        .then(data => {
-          //
-          if (!data.finished) {
-            // load more
-            _showButtonLoadMore();
-          } else {
-            // finished
-            _showTextLoadCompleted();
-          }
-          //
-          index = data.index;
-          finished = data.finished;
-          for (let i = 0; i < data.list.length; i++) {
-            $container.append($(onParse(data.list[i])));
-          }
-          error = false;
-          fetching = false;
+    return promise;
+  };
+
+  const _formatDateTime = function (date, fmt) {
+    // original author: meizz
+    const o = {
+      'M+': date.getMonth() + 1, // month
+      'D+': date.getDate(), // day
+      'H+': date.getHours(), // hour
+      'm+': date.getMinutes(), // minute
+      's+': date.getSeconds(), // second
+      'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
+      S: date.getMilliseconds(), // millisecond
+    };
+    if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+    for (const k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+    }
+    return fmt;
+  };
+
+  const _time = {
+    now() {
+      return this.formatDateTime(null);
+    },
+    today() {
+      return this.formatDate(null);
+    },
+    formatDateTime(date, fmt) {
+      date = date || new Date();
+      if (typeof date !== 'object') date = new Date(date);
+      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      return _formatDateTime(date, fmt);
+    },
+    formatDate(date, sep) {
+      sep = sep || '-';
+      return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
+    },
+    formatTime(date, sep) {
+      sep = sep || ':';
+      return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
+    },
+  };
+
+  window.util = {
+    time: _time,
+    formatDateTime(date) {
+      return this.time.formatDateTime(date, `${env.format.date} ${env.format.time}`);
+    },
+    parseUrlQuery(url) {
+      const query = {};
+      let urlToParse = url || window.location.href;
+      let i;
+      let params;
+      let param;
+      let length;
+      if (typeof urlToParse === 'string' && urlToParse.length) {
+        urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
+        params = urlToParse.split('&');
+        length = params.length;
+
+        for (let i = 0; i < length; i += 1) {
+          param = params[i].replace(/#\S+/g, '').split('=');
+          query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
+        }
+      }
+      return query;
+    },
+    promise(handler) {
+      return window.Promise ? new Promise(handler) : _createPromise(handler);
+    },
+    getAtomClassFullName(atomClass) {
+      return `${atomClass.module}:${atomClass.atomClassName}`;
+    },
+    atomClassEqual(atomClass1, atomClass2) {
+      if (!atomClass1 || !atomClass2) return false;
+      return this.getAtomClassFullName(atomClass1) === this.getAtomClassFullName(atomClass2);
+    },
+    rootUrl(language, atomClass) {
+      let _env;
+      if (!atomClass || this.atomClassEqual(atomClass, env.site.atomClass)) {
+        _env = env;
+      } else {
+        _env = env.envs && env.envs[this.getAtomClassFullName(atomClass)];
+        if (!_env) return null;
+      }
+      language = language || (_env.language && _env.language.current);
+      return `${_env.site.rawRootUrl}${!_env.language || language === _env.language.default ? '' : '/' + language}`;
+    },
+    url(path, language, atomClass) {
+      if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
+      const urlRoot = this.rootUrl(language, atomClass);
+      const _url = path ? `${urlRoot}/${path}` : urlRoot;
+      return this.escapeURL(_url);
+    },
+    serverUrl(str) {
+      const baseURL = '<%=site.serverUrl%>';
+      if (!str) return baseURL;
+      if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return str;
+      if (str[0] !== '/') str = '/' + str;
+      return baseURL + str;
+    },
+    ajax({ url, body }) {
+      return this.promise((resolve, reject) => {
+        $.ajax({
+          type: 'GET',
+          url: this.serverUrl(`/api${url}`),
+          data: body,
+          dataType: 'jsonp',
+          timeout: 18000,
         })
-        .catch(err => {
-          console.error(err);
-          const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
-          $buttonTry.click(() => {
-            _onFetch();
+          .done(function (data) {
+            if (data.code === 0) {
+              resolve(data.data);
+            } else {
+              reject(data.message);
+            }
+          })
+          .fail(function () {
+            reject(null);
           });
-          $loadMoreContainer.empty();
-          $loadMoreContainer.append($buttonTry);
-          // need retry manually
-          error = true;
-          fetching = false;
+      });
+    },
+    cors({ method, url, body }) {
+      return this.promise((resolve, reject) => {
+        const ajaxMethod = method.toUpperCase();
+        $.ajax({
+          type: ajaxMethod,
+          url: this.serverUrl(`/api${url}`),
+          data: ajaxMethod === 'POST' ? JSON.stringify(body) : body,
+          contentType: ajaxMethod === 'POST' ? 'application/json' : undefined,
+          dataType: 'json',
+          timeout: 18000,
+          xhrFields: {
+            withCredentials: true,
+          },
+          headers: {
+            'x-clientid': this.clientId,
+          },
+        })
+          .done(function (data) {
+            if (data.code === 0) {
+              resolve(data.data);
+            } else {
+              reject(data.message);
+            }
+          })
+          .fail(function (xhr, status) {
+            reject((xhr.responseJSON && xhr.responseJSON.message) || status);
+          });
+      });
+    },
+    performAction(params) {
+      if ($.support && $.support.cors) {
+        return this.cors(params);
+      }
+      return this.ajax({
+        url: '/a/base/util/performAction',
+        body: {
+          params: JSON.stringify(params),
+        },
+      });
+    },
+    combineImageUrl(url, width, height) {
+      if (!url) return this.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+      if (url.indexOf('/api/a/file/file/download') === -1) return this.escapeURL(url);
+      if (!width && !height) return this.escapeURL(url);
+      const pixelRatio = window.devicePixelRatio || 1;
+      let query = '';
+      if (width) query = `width=${parseInt(width) * pixelRatio}`;
+      if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
+      const _url = `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
+      return this.escapeURL(_url);
+    },
+    loadMore({ container, loadOnScroll, threshold = 100, index = 0, context, onFetch, onParse }) {
+      if (loadOnScroll === undefined) loadOnScroll = env.loadMore.loadOnScroll;
+      // init
+      const $container = $(container);
+      const $window = $(window);
+      const $body = $('body');
+
+      const $loadMoreContainer = $('<div class="load-more"></div>');
+      $loadMoreContainer.insertAfter($container);
+
+      //
+      let finished = false;
+      let fetching = false;
+      let error = false;
+
+      let _onFetch = null;
+
+      // showButtonLoadMore
+      const _showButtonLoadMore = function () {
+        const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
+        $buttonMore.click(() => {
+          _onFetch();
         });
-    };
-    // onScroll
-    const _onScroll = function () {
-      if (finished || fetching || error) return false;
-      if ($body.outerHeight() - $window.height() - $window.scrollTop() < threshold || $container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop() < threshold) {
-        _onFetch();
-        return true;
-      }
-      return false;
-    };
-    // getInitIndex
-    const _getInitIndex = function () {
-      if (!env.index || !env.site.path) return 0;
-      return env.index[env.site.path];
-    };
+        $loadMoreContainer.empty();
+        $loadMoreContainer.append($buttonMore);
+      };
 
-    // fetchOrScroll
-    const _fetchOrScroll = function () {
-      if (index === _getInitIndex()) {
-        _onFetch();
-      } else {
-        if (!_onScroll()) {
-          // show button
-          _showButtonLoadMore();
+      // showTextLoadCompleted
+      const _showTextLoadCompleted = function () {
+        // const $text = $('<span class="load-completed"><%=text("Load Completed")%></span>');
+        $loadMoreContainer.empty();
+        // $loadMoreContainer.append($text);
+      };
+
+      // onFetch
+      _onFetch = function () {
+        fetching = true;
+        $loadMoreContainer.empty();
+        $loadMoreContainer.append($('<i class="fas fa-sync"></i>'));
+        const res = onFetch({ index, context });
+        res
+          .then(data => {
+            //
+            if (!data.finished) {
+              // load more
+              _showButtonLoadMore();
+            } else {
+              // finished
+              _showTextLoadCompleted();
+            }
+            //
+            index = data.index;
+            finished = data.finished;
+            for (let i = 0; i < data.list.length; i++) {
+              $container.append($(onParse(data.list[i])));
+            }
+            error = false;
+            fetching = false;
+          })
+          .catch(err => {
+            console.error(err);
+            const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
+            $buttonTry.click(() => {
+              _onFetch();
+            });
+            $loadMoreContainer.empty();
+            $loadMoreContainer.append($buttonTry);
+            // need retry manually
+            error = true;
+            fetching = false;
+          });
+      };
+      // onScroll
+      const _onScroll = function () {
+        if (finished || fetching || error) return false;
+        if ($body.outerHeight() - $window.height() - $window.scrollTop() < threshold || $container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop() < threshold) {
+          _onFetch();
+          return true;
         }
+        return false;
+      };
+      // getInitIndex
+      const _getInitIndex = function () {
+        if (!env.index || !env.site.path) return 0;
+        return env.index[env.site.path];
+      };
+
+      // fetchOrScroll
+      const _fetchOrScroll = function () {
+        if (index === _getInitIndex()) {
+          _onFetch();
+        } else {
+          if (!_onScroll()) {
+            // show button
+            _showButtonLoadMore();
+          }
+        }
+      };
+
+      // bind event
+      if (loadOnScroll) {
+        $window.on('scroll.infinite resize.infinite', _onScroll);
       }
-    };
 
-    // bind event
-    if (loadOnScroll) {
-      $window.on('scroll.infinite resize.infinite', _onScroll);
-    }
+      // init
+      _fetchOrScroll();
 
-    // init
-    _fetchOrScroll();
+      // controller
+      const _controller = {
+        reload(ops) {
+          // check if fetching
+          if (fetching) return false;
+          // reset
+          index = ops.index;
+          context = ops.context;
+          finished = false;
+          error = false;
+          // empty
+          $container.empty();
+          // load
+          _fetchOrScroll();
+          // ok
+          return true;
+        },
+      };
 
-    // controller
-    const _controller = {
-      reload(ops) {
-        // check if fetching
-        if (fetching) return false;
-        // reset
-        index = ops.index;
-        context = ops.context;
-        finished = false;
-        error = false;
-        // empty
-        $container.empty();
-        // load
-        _fetchOrScroll();
-        // ok
-        return true;
-      },
-    };
-
-    return _controller;
-  },
-  loadScript(src, callback) {
-    if (!(typeof callback === 'function')) {
-      callback = function () {};
-    }
-    const check = document.querySelectorAll("script[src='" + src + "']");
-    if (check.length > 0) {
-      check[0].addEventListener('load', function () {
+      return _controller;
+    },
+    loadScript(src, callback) {
+      if (!(typeof callback === 'function')) {
+        callback = function () {};
+      }
+      const check = document.querySelectorAll("script[src='" + src + "']");
+      if (check.length > 0) {
+        check[0].addEventListener('load', function () {
+          callback();
+        });
         callback();
+        return;
+      }
+      const script = document.createElement('script');
+      const head = document.getElementsByTagName('head')[0];
+      script.type = 'text/javascript';
+      script.charset = 'UTF-8';
+      script.async = true;
+      script.src = src;
+      if (script.addEventListener) {
+        script.addEventListener(
+          'load',
+          function () {
+            callback();
+          },
+          false
+        );
+      } else if (script.attachEvent) {
+        script.attachEvent('onreadystatechange', function () {
+          const target = window.event.srcElement;
+          if (target.readyState === 'loaded') {
+            callback();
+          }
+        });
+      }
+      head.appendChild(script);
+    },
+    loadLink(src, callback) {
+      if (!(typeof callback === 'function')) {
+        callback = function () {};
+      }
+      const check = document.querySelectorAll("link[href='" + src + "']");
+      if (check.length > 0) {
+        callback();
+        return;
+      }
+      const link = document.createElement('link');
+      const head = document.getElementsByTagName('head')[0];
+      link.rel = 'stylesheet';
+      link.href = src;
+      if (link.addEventListener) {
+        link.addEventListener(
+          'load',
+          function () {
+            callback();
+          },
+          false
+        );
+      } else if (link.attachEvent) {
+        link.attachEvent('onreadystatechange', function () {
+          const target = window.event.srcElement;
+          if (target.readyState === 'loaded') {
+            callback();
+          }
+        });
+      }
+      head.appendChild(link);
+    },
+    echo() {
+      return this.performAction({
+        method: 'post',
+        url: '/a/base/auth/echo',
+      }).then(data => {
+        this.user = data.user;
+        this.clientId = data.clientId;
+        $(document).trigger('echo-ready', data);
       });
-      callback();
-      return;
-    }
-    const script = document.createElement('script');
-    const head = document.getElementsByTagName('head')[0];
-    script.type = 'text/javascript';
-    script.charset = 'UTF-8';
-    script.async = true;
-    script.src = src;
-    if (script.addEventListener) {
-      script.addEventListener(
-        'load',
-        function () {
-          callback();
+    },
+    escapeHtml(str) {
+      return _escapeHtml(str);
+    },
+    escapeURL(str) {
+      return _escapeURL(str);
+    },
+    hostUtil(options) {
+      const self = this;
+      return {
+        text(...args) {
+          // not handled
+          return args[0];
         },
-        false
-      );
-    } else if (script.attachEvent) {
-      script.attachEvent('onreadystatechange', function () {
-        const target = window.event.srcElement;
-        if (target.readyState === 'loaded') {
-          callback();
-        }
-      });
-    }
-    head.appendChild(script);
-  },
-  loadLink(src, callback) {
-    if (!(typeof callback === 'function')) {
-      callback = function () {};
-    }
-    const check = document.querySelectorAll("link[href='" + src + "']");
-    if (check.length > 0) {
-      callback();
-      return;
-    }
-    const link = document.createElement('link');
-    const head = document.getElementsByTagName('head')[0];
-    link.rel = 'stylesheet';
-    link.href = src;
-    if (link.addEventListener) {
-      link.addEventListener(
-        'load',
-        function () {
-          callback();
+        url(str) {
+          return this.escapeURL(self.serverUrl(str));
         },
-        false
-      );
-    } else if (link.attachEvent) {
-      link.attachEvent('onreadystatechange', function () {
-        const target = window.event.srcElement;
-        if (target.readyState === 'loaded') {
-          callback();
-        }
-      });
-    }
-    head.appendChild(link);
-  },
-  echo() {
-    return this.performAction({
-      method: 'post',
-      url: '/a/base/auth/echo',
-    }).then(data => {
-      this.user = data.user;
-      this.clientId = data.clientId;
-      $(document).trigger('echo-ready', data);
-    });
-  },
-  escapeHtml(str) {
-    return _escapeHtml(str);
-  },
-  escapeURL(str) {
-    return _escapeURL(str);
-  },
-  hostUtil(options) {
-    const self = this;
-    return {
-      text(...args) {
-        // not handled
-        return args[0];
-      },
-      url(str) {
-        return this.escapeURL(self.serverUrl(str));
-      },
-      escapeHtml(str) {
-        return util.escapeHtml(str);
-      },
-      escapeURL(str) {
-        return util.escapeURL(str);
+        escapeHtml(str) {
+          return util.escapeHtml(str);
+        },
+        escapeURL(str) {
+          return util.escapeURL(str);
+        },
+      };
+    },
+  };
+
+  $(document).ready(function () {
+    const requirecss_path = 'api/static/a/base/js/require-css/css.min';
+    // config
+    const config = {
+      baseUrl: window.util.serverUrl(),
+      map: {
+        '*': {
+          css: requirecss_path,
+        },
       },
     };
-  },
-};
+    window.requirejs.config(config);
+  });
+})();
