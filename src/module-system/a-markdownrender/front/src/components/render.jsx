@@ -15,6 +15,7 @@ export default {
     return {
       htmlInner: this.html,
       BlockClasses: {},
+      blockInstances: [],
     };
   },
   watch: {
@@ -48,6 +49,15 @@ export default {
         await this._mountBlock(blocks[i]);
       }
     },
+    async _unmountHtml() {
+      for (const blockInstance of this.blockInstances) {
+        if (blockInstance.unmount) {
+          await blockInstance.unmount();
+        }
+      }
+      this.blockInstances = [];
+      this.$refs.html.innerHTML = '';
+    },
     async _mountBlock(blockContainer) {
       const blockParams = this._getBlockParams(blockContainer);
       const blockContent = this._getBlockContent(blockContainer);
@@ -68,6 +78,8 @@ export default {
       if (blockInstance.mount) {
         await blockInstance.mount();
       }
+      // record
+      this.blockInstances.push(blockInstance);
     },
     _getBlockParams(block) {
       const params = block.getAttribute('data-block-params');
@@ -104,7 +116,6 @@ export default {
         $util,
       };
     },
-    async _unmountHtml() {},
   },
   render() {
     return <div ref="html" class="markdown-body"></div>;
