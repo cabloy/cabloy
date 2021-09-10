@@ -15,6 +15,7 @@ export default {
   },
   data() {
     return {
+      moduleMarkdownRender: null,
       articleUrl: null,
     };
   },
@@ -28,8 +29,16 @@ export default {
     enableMarkdown() {
       return this.containerMode === 'view' && !this.enableIframe && this.blockConfig.markdown !== false;
     },
+    markdownHost() {
+      const atom = this.layoutManager.base.item;
+      return {
+        atomId: atom.atomId,
+        atom,
+      };
+    },
   },
   created() {
+    this._loadModuleMarkdownRender();
     this._getArticleUrl();
     // this._unwatch = this.$watch('layoutManager.base.item', () => {
     //   this._getArticleUrl();
@@ -47,6 +56,10 @@ export default {
         height: `${size.height}px`,
         width: `${size.width}px`,
       });
+    },
+    async _loadModuleMarkdownRender() {
+      if (!this.enableMarkdown) return;
+      this.moduleMarkdownRender = await this.$meta.module.use('a-markdownrender');
     },
     async _getArticleUrl() {
       if (!this.enableIframe) return;
@@ -73,18 +86,28 @@ export default {
       }
     },
     _renderIFrame() {
+      if (!this.articleUrl) return <div></div>;
       const subnavbar = this.layoutManager.subnavbar.enable;
-
       return (
         <eb-box onSize={this.onSize} header subnavbar={subnavbar} class="eb-box-iframe">
           <iframe ref="iframe" src={this.articleUrl} seamless={true}></iframe>
         </eb-box>
       );
     },
+    _renderMarkdown() {
+      if (!this.moduleMarkdownRender) return <div></div>;
+      const item = this.markdownHost.atom;
+      return (
+        <f7-card class="cms-article-markdown">
+          <f7-card-content padding>
+            <eb-markdown-render host={this.markdownHost} html={item.html}></eb-markdown-render>
+          </f7-card-content>
+        </f7-card>
+      );
+    },
   },
   render() {
     if (this.enableIframe) {
-      if (!this.articleUrl) return <div></div>;
       return this._renderIFrame();
     }
     if (this.enableMarkdown) {
