@@ -12,7 +12,7 @@
         >
       </f7-subnavbar>
     </eb-navbar>
-    <template v-if="moduleStyle && moduleRender">
+    <template v-if="moduleMarkdownRender">
       <f7-card class="comment" v-for="item of items" :key="item.id">
         <f7-card-header>
           <div class="title">
@@ -47,8 +47,7 @@ export default {
       commentId: parseInt(this.$f7route.query.commentId || 0),
       order: 'desc',
       items: [],
-      moduleStyle: null,
-      moduleRender: null,
+      moduleMarkdownRender: null,
       single: true,
       atom: null,
     };
@@ -62,11 +61,8 @@ export default {
     },
   },
   created() {
-    this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
-      this.moduleStyle = module;
-    });
-    this.$meta.module.use('a-markdown', module => {
-      this.moduleRender = module;
+    this.$meta.module.use('a-markdownrender', module => {
+      this.moduleMarkdownRender = module;
     });
     this._loadAtom();
   },

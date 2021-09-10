@@ -23,20 +23,23 @@ export default {
     },
   },
   mounted() {
-    this._setHtml(this.htmlInner);
+    this.init();
   },
   beforeDestroy() {
     this._unmountHtml();
   },
   methods: {
+    async init() {
+      await this.$meta.module.use(this.$meta.config.markdown.style.module);
+      await this._setHtml(this.htmlInner);
+    },
     async _setHtml(html) {
       await this._unmountHtml();
       this.$refs.html.innerHTML = html;
       this._mountHtml();
     },
     async _mountHtml() {
-      // const blocks = this.$$('.markdown-it-cabloy-block', this.$refs.html);
-      const blocks = this.$$('div', this.$refs.html);
+      const blocks = this.$$('.markdown-it-cabloy-block', this.$refs.html);
       console.log(blocks.length);
     },
     async _unmountHtml() {},
