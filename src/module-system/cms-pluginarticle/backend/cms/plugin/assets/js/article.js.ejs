@@ -12,7 +12,7 @@
       : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
-    return `
+    const html = `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
   <div class="header card-header">
     <div class="user">
@@ -35,6 +35,9 @@
   </div>
 </div>
   `;
+    const $html = $(html);
+    window.util.article.mountMarkdown($html);
+    return $html;
   }
 
   function _onParseCommentAll(item) {
@@ -50,7 +53,7 @@
       : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
-    return `
+    const html = `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
   <div class="header card-header">
     <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.atomLanguage)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
@@ -74,6 +77,9 @@
   </div>
 </div>
   `;
+    const $html = $(html);
+    window.util.article.mountMarkdown($html);
+    return $html;
   }
 
   // article
