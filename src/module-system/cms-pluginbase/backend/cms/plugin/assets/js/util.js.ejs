@@ -12,16 +12,16 @@ function __patchJSON() {
 
   // json
   const _jsonParse = JSON.parse;
-  JSON.parse = function(source, reviver) {
-    return _jsonParse(source, function(k, v) {
+  JSON.parse = function (source, reviver) {
+    return _jsonParse(source, function (k, v) {
       return __jsonReviver(k, v, reviver);
     });
   };
 
   // json5
   const _json5Parse = JSON5.parse;
-  JSON5.parse = function(source, reviver) {
-    return _json5Parse(source, function(k, v) {
+  JSON5.parse = function (source, reviver) {
+    return _json5Parse(source, function (k, v) {
       return __jsonReviver(k, v, reviver);
     });
   };
@@ -40,7 +40,7 @@ const HTML_REPLACEMENTS = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  '\'': '&#039;',
+  "'": '&#039;',
 };
 
 function _replaceUnsafeChar(ch) {
@@ -60,7 +60,7 @@ const URL_REPLACEMENTS = {
   '<': '%3C',
   '>': '%3E',
   '"': '%22',
-  '\'': '%27',
+  "'": '%27',
 };
 
 function _replaceUnsafeCharURL(ch) {
@@ -75,7 +75,7 @@ function _escapeURL(str) {
 }
 
 // promise
-const _createPromise = function(handler) {
+const _createPromise = function (handler) {
   let resolved = false;
   let rejected = false;
   let resolveArgs;
@@ -118,7 +118,8 @@ const _createPromise = function(handler) {
   return promise;
 };
 
-const _formatDateTime = function(date, fmt) { // original author: meizz
+const _formatDateTime = function (date, fmt) {
+  // original author: meizz
   const o = {
     'M+': date.getMonth() + 1, // month
     'D+': date.getDate(), // day
@@ -129,7 +130,9 @@ const _formatDateTime = function(date, fmt) { // original author: meizz
     S: date.getMilliseconds(), // millisecond
   };
   if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-  for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
+  for (const k in o) {
+    if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+  }
   return fmt;
 };
 
@@ -142,7 +145,7 @@ const _time = {
   },
   formatDateTime(date, fmt) {
     date = date || new Date();
-    if (typeof (date) !== 'object') date = new Date(date);
+    if (typeof date !== 'object') date = new Date(date);
     fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
     return _formatDateTime(date, fmt);
   },
@@ -199,7 +202,7 @@ const util = {
       if (!_env) return null;
     }
     language = language || (_env.language && _env.language.current);
-    return `${_env.site.rawRootUrl}${(!_env.language || language === _env.language.default) ? '' : '/' + language}`;
+    return `${_env.site.rawRootUrl}${!_env.language || language === _env.language.default ? '' : '/' + language}`;
   },
   url(path, language, atomClass) {
     if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
@@ -207,11 +210,11 @@ const util = {
     const _url = path ? `${urlRoot}/${path}` : urlRoot;
     return this.escapeURL(_url);
   },
-  serverUrl(str){
+  serverUrl(str) {
     if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return str;
     const baseURL = '<%=site.serverUrl%>';
     if (str[0] !== '/') str = '/' + str;
-    return baseURL + str; 
+    return baseURL + str;
   },
   ajax({ url, body }) {
     return this.promise((resolve, reject) => {
@@ -221,15 +224,17 @@ const util = {
         data: body,
         dataType: 'jsonp',
         timeout: 18000,
-      }).done(function(data) {
-        if (data.code === 0) {
-          resolve(data.data);
-        } else {
-          reject(data.message);
-        }
-      }).fail(function() {
-        reject(null);
-      });
+      })
+        .done(function (data) {
+          if (data.code === 0) {
+            resolve(data.data);
+          } else {
+            reject(data.message);
+          }
+        })
+        .fail(function () {
+          reject(null);
+        });
     });
   },
   cors({ method, url, body }) {
@@ -248,15 +253,17 @@ const util = {
         headers: {
           'x-clientid': this.clientId,
         },
-      }).done(function(data) {
-        if (data.code === 0) {
-          resolve(data.data);
-        } else {
-          reject(data.message);
-        }
-      }).fail(function(xhr, status) {
-        reject((xhr.responseJSON && xhr.responseJSON.message) || status);
-      });
+      })
+        .done(function (data) {
+          if (data.code === 0) {
+            resolve(data.data);
+          } else {
+            reject(data.message);
+          }
+        })
+        .fail(function (xhr, status) {
+          reject((xhr.responseJSON && xhr.responseJSON.message) || status);
+        });
     });
   },
   performAction(params) {
@@ -299,7 +306,7 @@ const util = {
     let _onFetch = null;
 
     // showButtonLoadMore
-    const _showButtonLoadMore = function() {
+    const _showButtonLoadMore = function () {
       const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
       $buttonMore.click(() => {
         _onFetch();
@@ -309,68 +316,67 @@ const util = {
     };
 
     // showTextLoadCompleted
-    const _showTextLoadCompleted = function() {
+    const _showTextLoadCompleted = function () {
       // const $text = $('<span class="load-completed"><%=text("Load Completed")%></span>');
       $loadMoreContainer.empty();
       // $loadMoreContainer.append($text);
     };
 
     // onFetch
-    _onFetch = function() {
+    _onFetch = function () {
       fetching = true;
       $loadMoreContainer.empty();
       $loadMoreContainer.append($('<i class="fas fa-sync"></i>'));
       const res = onFetch({ index, context });
-      res.then(data => {
-        //
-        if (!data.finished) {
-          // load more
-          _showButtonLoadMore();
-        } else {
-          // finished
-          _showTextLoadCompleted();
-        }
-        //
-        index = data.index;
-        finished = data.finished;
-        for (let i = 0; i < data.list.length; i++) {
-          $container.append($(onParse(data.list[i])));
-        }
-        error = false;
-        fetching = false;
-      }).catch(err => {
-        console.error(err);
-        const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
-        $buttonTry.click(() => {
-          _onFetch();
+      res
+        .then(data => {
+          //
+          if (!data.finished) {
+            // load more
+            _showButtonLoadMore();
+          } else {
+            // finished
+            _showTextLoadCompleted();
+          }
+          //
+          index = data.index;
+          finished = data.finished;
+          for (let i = 0; i < data.list.length; i++) {
+            $container.append($(onParse(data.list[i])));
+          }
+          error = false;
+          fetching = false;
+        })
+        .catch(err => {
+          console.error(err);
+          const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
+          $buttonTry.click(() => {
+            _onFetch();
+          });
+          $loadMoreContainer.empty();
+          $loadMoreContainer.append($buttonTry);
+          // need retry manually
+          error = true;
+          fetching = false;
         });
-        $loadMoreContainer.empty();
-        $loadMoreContainer.append($buttonTry);
-        // need retry manually
-        error = true;
-        fetching = false;
-      });
     };
     // onScroll
-    const _onScroll = function() {
+    const _onScroll = function () {
       if (finished || fetching || error) return false;
-      if (
-        (($body.outerHeight() - $window.height() - $window.scrollTop()) < threshold) ||
-        (($container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop()) < threshold)
-      ) {
+      if ($body.outerHeight() - $window.height() - $window.scrollTop() < threshold || $container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop() < threshold) {
         _onFetch();
         return true;
       }
       return false;
     };
     // getInitIndex
-    const _getInitIndex = function() {
+    const _getInitIndex = function () {
       if (!env.index || !env.site.path) return 0;
       return env.index[env.site.path];
     };
 
     // fetchOrScroll
-    const _fetchOrScroll = function() {
+    const _fetchOrScroll = function () {
       if (index === _getInitIndex()) {
         _onFetch();
       } else {
@@ -412,11 +418,11 @@ const util = {
   },
   loadScript(src, callback) {
     if (!(typeof callback === 'function')) {
-      callback = function() {};
+      callback = function () {};
     }
     const check = document.querySelectorAll("script[src='" + src + "']");
     if (check.length > 0) {
-      check[0].addEventListener('load', function() {
+      check[0].addEventListener('load', function () {
         callback();
       });
       callback();
@@ -429,11 +435,15 @@ const util = {
     script.async = true;
     script.src = src;
     if (script.addEventListener) {
-      script.addEventListener('load', function() {
-        callback();
-      }, false);
+      script.addEventListener(
+        'load',
+        function () {
+          callback();
+        },
+        false
+      );
     } else if (script.attachEvent) {
-      script.attachEvent('onreadystatechange', function() {
+      script.attachEvent('onreadystatechange', function () {
         const target = window.event.srcElement;
         if (target.readyState === 'loaded') {
           callback();
@@ -444,7 +454,7 @@ const util = {
   },
   loadLink(src, callback) {
     if (!(typeof callback === 'function')) {
-      callback = function() {};
+      callback = function () {};
     }
     const check = document.querySelectorAll("link[href='" + src + "']");
     if (check.length > 0) {
@@ -456,11 +466,15 @@ const util = {
     link.rel = 'stylesheet';
     link.href = src;
     if (link.addEventListener) {
-      link.addEventListener('load', function() {
-        callback();
-      }, false);
+      link.addEventListener(
+        'load',
+        function () {
+          callback();
+        },
+        false
+      );
     } else if (link.attachEvent) {
-      link.attachEvent('onreadystatechange', function() {
+      link.attachEvent('onreadystatechange', function () {
         const target = window.event.srcElement;
         if (target.readyState === 'loaded') {
           callback();
@@ -485,16 +499,15 @@ const util = {
   escapeURL(str) {
     return _escapeURL(str);
   },
-  hostUtil(options){
+  hostUtil(options) {
+    const self = this;
     return {
       text(...args) {
-       return args[0];
+        // not handled
+        return args[0];
       },
       url(str) {
-        if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
-        const baseURL = util.getBaseURL();
-        if (str[0] !== '/') str = '/' + str;
-        return baseURL + this.escapeURL(str);
+        return this.escapeURL(self.serverUrl(str));
       },
       escapeHtml(str) {
         return util.escapeHtml(str);
@@ -503,7 +516,5 @@ const util = {
         return util.escapeURL(str);
       },
     };
-  };
-  return hostUtil;
-  }
+  },
 };
