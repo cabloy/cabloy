@@ -1,7 +1,5 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
-const markdown = require3('@zhennann/markdown');
-const markdonw_it_block = require3('@zhennann/markdown-it-block');
 
 module.exports = app => {
   class Comment extends app.Service {
@@ -49,7 +47,7 @@ module.exports = app => {
       const item = await this.ctx.model.commentView.get({ id: commentId });
       if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
       // html
-      const html = this._renderContent({
+      const html = await this._renderContent({
         content,
         replyContent: item.replyContent,
         replyUserName: item.replyUserName,
@@ -88,7 +86,7 @@ module.exports = app => {
       // replyContent
       const replyContent = !reply ? '' : this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
       // html
-      const html = this._renderContent({
+      const html = await this._renderContent({
         content,
         replyContent,
         replyUserName: reply && reply.userName,
@@ -283,20 +281,12 @@ ${sep}
       return ':'.repeat(posB - posA + 1);
     }
 
-    _renderContent({ content, replyContent, replyUserName }) {
-      const _content = this._fullContent({ content, replyContent, replyUserName });
-      const md = markdown.create();
-      // block options
-      const blockOptions = {
-        utils: {
-          text: (...args) => {
-            return this.ctx.text(...args);
-          },
-        },
-      };
-      md.use(markdonw_it_block, blockOptions);
-      // render
-      return md.render(_content);
+    async _renderContent({ content, replyContent, replyUserName }) {
+      const fullContent = this._fullContent({ content, replyContent, replyUserName });
+      return await this.ctx.bean.markdown.render({
+        content: fullContent,
+        locale: this.ctx.locale,
+      });
     }
 
     _trimHtml(html) {
