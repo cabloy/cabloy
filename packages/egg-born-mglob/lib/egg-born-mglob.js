@@ -29,6 +29,15 @@ const __paths = [
     ],
   },
   {
+    prefix: 'src/module-vendor/',
+    public: false,
+    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
+    backends: [
+      { js: 'backend/src/main.js', static: 'backend/static' },
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
+  {
     prefix: 'node_modules/egg-born-module-',
     public: true,
     fronts: [{ js: 'dist/front.js' }],

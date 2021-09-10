@@ -4,6 +4,7 @@
   },
   "include": [
     "src/module/**/*", //
+    "src/module-vendor/**/*",
     "node_modules/egg-born-*/**/*"
   ],
   "exclude": [
