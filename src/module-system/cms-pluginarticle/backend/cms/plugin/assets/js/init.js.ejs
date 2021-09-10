@@ -9,4 +9,8 @@ $(document).on('echo-ready', function () {
   util.article.comments({ container: '.comments' });
   // article edit
   util.article.articleEdit({ container: '.article-edit' });
+  // markdown render
+  if (env.article) {
+    util.article.mountMarkdown($('.article-body'));
+  }
 });

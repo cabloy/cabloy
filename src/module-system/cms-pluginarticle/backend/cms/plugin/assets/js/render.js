@@ -1,8 +1,4 @@
 (function () {
-  $(document).ready(function () {
-    util.article.mountMarkdown($('.article-body'));
-  });
-
   const BlockClasses = [];
 
   util.article.mountMarkdown = function ($container) {
