@@ -18,6 +18,17 @@ export default {
       articleUrl: null,
     };
   },
+  computed: {
+    containerMode() {
+      return this.layoutManager.container.mode;
+    },
+    enableIframe() {
+      return this.containerMode === 'view' && this.blockConfig.iframe;
+    },
+    enableMarkdown() {
+      return this.containerMode === 'view' && !this.enableIframe && this.blockConfig.markdown !== false;
+    },
+  },
   created() {
     this._getArticleUrl();
     // this._unwatch = this.$watch('layoutManager.base.item', () => {
@@ -38,10 +49,7 @@ export default {
       });
     },
     async _getArticleUrl() {
-      if (this.blockConfig.iframe === false || this.layoutManager.container.mode === 'edit') {
-        this.articleUrl = '';
-        return;
-      }
+      if (!this.enableIframe) return;
       try {
         const data = await this.$api.post('render/getArticleUrl', {
           key: {
@@ -75,8 +83,14 @@ export default {
     },
   },
   render() {
-    if (this.articleUrl === null) return null;
-    if (this.articleUrl === '') return this.layoutManager.validate_render();
-    return this._renderIFrame();
+    if (this.enableIframe) {
+      if (!this.articleUrl) return <div></div>;
+      return this._renderIFrame();
+    }
+    if (this.enableMarkdown) {
+      return this._renderMarkdown();
+    }
+    // others
+    return this.layoutManager.validate_render();
   },
 };

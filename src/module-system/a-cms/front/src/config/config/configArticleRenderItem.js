@@ -8,6 +8,7 @@ const item = {
             name: 'itemLayoutBlockMobileMain',
           },
           // iframe: false,
+          // markdown: false,
         },
       },
     },
