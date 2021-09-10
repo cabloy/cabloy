@@ -7,10 +7,14 @@ export default {
     html: {
       type: String,
     },
+    host: {
+      type: Object,
+    },
   },
   data() {
     return {
       htmlInner: this.html,
+      BlockClasses: {},
     };
   },
   watch: {
@@ -40,7 +44,65 @@ export default {
     },
     async _mountHtml() {
       const blocks = this.$$('.markdown-it-cabloy-block', this.$refs.html);
-      console.log(blocks.length);
+      for (let i = 0; i < blocks.length; i++) {
+        await this._mountBlock(blocks[i]);
+      }
+    },
+    async _mountBlock(blockContainer) {
+      const blockParams = this._getBlockParams(blockContainer);
+      const blockContent = this._getBlockContent(blockContainer);
+      if (!blockParams || !blockContent) return;
+      // use module
+      await this.$meta.module.use(blockParams.module);
+      // Block Class
+      const BlockClass = await this._getBlockClass(blockParams);
+      if (!BlockClass) {
+        // do nothing
+        return;
+      }
+      // host
+      const host = this._getHost(blockContainer, blockContent);
+      // Block Instance
+      const blockInstance = new BlockClass(host);
+      // mount
+      if (blockInstance.mount) {
+        await blockInstance.mount();
+      }
+    },
+    _getBlockParams(block) {
+      const params = block.getAttribute('data-block-params');
+      if (!params) return null;
+      const [module, blockName] = params.split(':');
+      if (!module || !blockName) return null;
+      return { params, module, blockName };
+    },
+    _getBlockContent(block) {
+      const content = block.getAttribute('data-block-content');
+      if (!content) return null;
+      return window.JSON5.parse(decodeURIComponent(content));
+    },
+    async _getBlockClass(blockParams) {
+      const { params, module, blockName } = blockParams;
+      const BlockClass = this.BlockClasses[params];
+      if (BlockClass) return Promise.resolve(BlockClass);
+      return new Promise(resolve => {
+        const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main`;
+        this.$meta.util.requirejs.require([block_js], BlockClass => {
+          this.BlockClasses[params] = BlockClass;
+          resolve(BlockClass);
+        });
+      });
+    },
+    _getHost(blockContainer, blockContent) {
+      const $util = this.$meta.util.hostUtil({
+        locale: this.$meta.util.getProperty(this.host, 'atom.atomLanguage'),
+      });
+      return {
+        $host: this.host, // atomId/atom
+        $container: blockContainer,
+        $content: blockContent,
+        $util,
+      };
     },
     async _unmountHtml() {},
   },

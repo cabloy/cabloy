@@ -12,7 +12,7 @@
         >
       </f7-subnavbar>
     </eb-navbar>
-    <template v-if="moduleMarkdownRender">
+    <template v-if="moduleMarkdownRender && atom">
       <f7-card class="comment" v-for="item of items" :key="item.id">
         <f7-card-header>
           <div class="title">
@@ -28,7 +28,7 @@
           </div>
         </f7-card-header>
         <f7-card-content padding>
-          <eb-markdown-render :html="item.html"></eb-markdown-render>
+          <eb-markdown-render :host="markdownHost" :html="item.html"></eb-markdown-render>
         </f7-card-content>
       </f7-card>
     </template>
@@ -58,6 +58,12 @@ export default {
     },
     showSingle() {
       return this.commentId > 0 && this.single;
+    },
+    markdownHost() {
+      return {
+        atomId: this.atom.atomId,
+        atom: this.atom,
+      };
     },
   },
   created() {
