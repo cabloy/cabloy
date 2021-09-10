@@ -12,7 +12,7 @@
         >
       </f7-subnavbar>
     </eb-navbar>
-    <template v-if="moduleStyle">
+    <template v-if="moduleStyle && moduleRender">
       <f7-card class="comment" v-for="item of items" :key="item.id">
         <f7-card-header>
           <div class="title">
@@ -27,7 +27,9 @@
             <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"></eb-link>
           </div>
         </f7-card-header>
-        <f7-card-content padding class="markdown-body" v-html="item.html"></f7-card-content>
+        <f7-card-content padding>
+          <eb-markdown-render :html="item.html"></eb-markdown-render>
+        </f7-card-content>
       </f7-card>
     </template>
     <eb-load-more :class="showSingle ? 'display-none' : ''" ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
@@ -46,6 +48,7 @@ export default {
       order: 'desc',
       items: [],
       moduleStyle: null,
+      moduleRender: null,
       single: true,
       atom: null,
     };
@@ -61,6 +64,9 @@ export default {
   created() {
     this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
       this.moduleStyle = module;
+    });
+    this.$meta.module.use('a-markdown', module => {
+      this.moduleRender = module;
     });
     this._loadAtom();
   },
