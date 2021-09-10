@@ -1,7 +1,5 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
-const markdown = require3('@zhennann/markdown');
-const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -177,7 +175,6 @@ module.exports = app => {
       } else if (editMode === 1) {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
-        // html = await this._renderMarkdown({ item });
         html = await this.ctx.bean.markdown.render({
           content: item.content,
           locale: item.atomLanguage,
@@ -209,54 +206,6 @@ module.exports = app => {
       }
       // ok
       return summary;
-    }
-
-    async _renderMarkdown({ item }) {
-      if (!item.content) return '';
-      // markdown
-      const md = markdown.create();
-      // markdown-it-block
-      const blocks = this.ctx.bean.cms.site.getBlocks();
-      // asyncs
-      const asyncs = {};
-      // block options
-      const blockOptions = {
-        ctx: this.ctx,
-        article: item,
-        utils: {
-          text: (...args) => {
-            return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
-          },
-          async: ({ block, content }) => {
-            const placeholder = `__cmsblockplaceholder__${uuid.v4().replace(/-/g, '')}`;
-            asyncs[placeholder] = { block, content };
-            return placeholder;
-          },
-        },
-        blocks,
-      };
-      md.use(markdonw_it_block, blockOptions);
-      // render
-      let itemContent = md.render(item.content);
-      // render async
-      for (const placeholder in asyncs) {
-        const { block, content } = asyncs[placeholder];
-        // bean
-        const beanInstance = this.ctx.bean._getBean(block.beanFullName);
-        if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
-        // render
-        const res = await beanInstance.renderAsync({
-          md,
-          options: blockOptions,
-          block,
-          content,
-        });
-        // replace
-        const regexp = new RegExp(placeholder);
-        itemContent = itemContent.replace(regexp, res);
-      }
-      // ok
-      return itemContent;
     }
 
     async delete({ atomClass, key, user }) {

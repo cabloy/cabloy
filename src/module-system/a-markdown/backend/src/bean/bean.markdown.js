@@ -1,6 +1,5 @@
 const path = require('path');
 const require3 = require('require3');
-const trimHtml = require3('@zhennann/trim-html');
 const Markdownit = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
