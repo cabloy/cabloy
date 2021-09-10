@@ -50,10 +50,6 @@ module.exports = app => {
       return await this.ctx.bean.cms.site.getStats({ atomClass, languages });
     }
 
-    getBlocks() {
-      return this.ctx.bean.cms.site.getBlocks();
-    }
-
     async checkFile({ atomId, file, mtime, user }) {
       return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }

@@ -1,8 +1,6 @@
 const require3 = require('require3');
 const fse = require3('fs-extra');
 
-let __blocks = null;
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site {
@@ -160,63 +158,6 @@ module.exports = ctx => {
 
       // ok
       return stats;
-    }
-
-    getBlocks() {
-      if (!__blocks) {
-        __blocks = this._prepareBlocks();
-      }
-      return __blocks;
-    }
-
-    _prepareBlocks() {
-      const blocks = {};
-      // (X) modulesArray for block override
-      for (const module of ctx.app.meta.modulesArray) {
-        const _blocksModule = ctx.bean.util.getProperty(module, 'main.meta.cms.plugin.blocks');
-        if (_blocksModule) {
-          const blocksModule = this._prepareBlocksModule({ module, blocks: _blocksModule });
-          Object.assign(blocks, blocksModule);
-        }
-      }
-      return blocks;
-    }
-
-    _prepareBlocksModule({ module, blocks }) {
-      const blocksModule = {};
-      const moduleName = module.info.relativeName;
-      for (const key in blocks) {
-        const fullName = `${moduleName}:${key}`;
-        const block = blocks[key];
-        // validator
-        let validator = block.validator;
-        if (typeof validator === 'string') {
-          validator = {
-            module: moduleName,
-            validator,
-          };
-        } else {
-          validator = {
-            module: validator.module || moduleName,
-            validator: validator.validator,
-          };
-        }
-        // beanFullName
-        const beanName = block.bean;
-        let beanFullName;
-        if (typeof beanName === 'string') {
-          beanFullName = `${moduleName}.cms.block.${beanName}`;
-        } else {
-          beanFullName = `${beanName.module || moduleName}.cms.block.${beanName.name}`;
-        }
-        // ok
-        blocksModule[fullName] = {
-          ...block,
-          validator,
-          beanFullName,
-        };
-      }
-      return blocksModule;
     }
 
     async checkFile({ atomId, file, mtime, user }) {
