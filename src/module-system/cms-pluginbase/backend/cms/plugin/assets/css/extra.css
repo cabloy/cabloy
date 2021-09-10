@@ -104,6 +104,10 @@ article img,
   width: 48px;
 }
 
+.markdown-it-cabloy-block {
+  margin: 8px auto;
+}
+
 .fa-sync,
 .fa-spinner {
   animation: spin 1s infinite linear;
