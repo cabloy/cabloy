@@ -57,7 +57,6 @@ export default {
         }
       }
       this.blockInstances = [];
-      this.$refs.html.innerHTML = '';
     },
     async _mountBlock(blockContainer) {
       const blockParams = this._getBlockParams(blockContainer);

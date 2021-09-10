@@ -5,7 +5,7 @@
         <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <template v-if="moduleStyle">
+    <template v-if="moduleMarkdownRender">
       <f7-card class="comment" v-for="item of items" :key="item.h_id">
         <f7-card-header>
           <div class="header-container">
@@ -27,7 +27,9 @@
             </div>
           </div>
         </f7-card-header>
-        <f7-card-content padding class="markdown-body" v-html="item.h_html"></f7-card-content>
+        <f7-card-content padding>
+          <eb-markdown-render :host="markdownHost" :html="item.h_html"></eb-markdown-render>
+        </f7-card-content>
       </f7-card>
     </template>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
@@ -58,13 +60,16 @@ export default {
       where,
       order: 'desc',
       items: [],
-      moduleStyle: null,
+      moduleMarkdownRender: null,
       rightDeleteComment: false,
     };
   },
   computed: {
     user() {
       return this.$store.state.auth.user.op;
+    },
+    markdownHost() {
+      return {};
     },
   },
   created() {
@@ -76,9 +81,9 @@ export default {
       })
       .then(data => {
         this.rightDeleteComment = data[0].passed;
-        // markdown style
-        this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
-          this.moduleStyle = module;
+        // markdown render
+        this.$meta.module.use('a-markdownrender', module => {
+          this.moduleMarkdownRender = module;
         });
       });
   },
