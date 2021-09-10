@@ -97,7 +97,7 @@ module.exports = app => {
       let audioFirst = '';
       let audioCoverFirst = '';
       if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:blockAudio([\s\S]*?)\$\$\$/);
+        const matches = item.content && item.content.match(/\$\$\$\s*a-markdownblock:audio([\s\S]*?)\$\$\$/);
         let options = matches && matches[1];
         if (options) {
           options = global.JSON5.parse(options);

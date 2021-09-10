@@ -77,7 +77,6 @@
     "egg-born-module-cms-pluginarticle": "^4.1.5",
     "egg-born-module-cms-pluginbacktotop": "^4.0.15",
     "egg-born-module-cms-pluginbase": "^4.1.16",
-    "egg-born-module-cms-pluginblock": "^4.0.17",
     "egg-born-module-cms-plugincopyright": "^4.0.15",
     "egg-born-module-cms-pluginmarkdowngithub": "^4.0.15",
     "egg-born-module-cms-pluginrss": "^4.0.15",
