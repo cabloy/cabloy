@@ -8,6 +8,7 @@ export default {
   //   first check / then -
   parseInfo(moduleName) {
     if (!moduleName) return null;
+    if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
     let parts = moduleName.split('/');
     if (parts.length < 2) {

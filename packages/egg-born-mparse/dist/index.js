@@ -45,6 +45,7 @@ var PREFIX_D = './';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   parseInfo: function parseInfo(moduleName) {
     if (!moduleName) return null;
+    if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
     var parts = moduleName.split('/');
 
