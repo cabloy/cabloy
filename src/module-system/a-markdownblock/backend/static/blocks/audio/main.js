@@ -9,7 +9,7 @@
     }
 
     render() {
-      return '<div class="aplayer1"></div>';
+      return '<div class="aplayer"></div>';
     }
 
     mount() {
