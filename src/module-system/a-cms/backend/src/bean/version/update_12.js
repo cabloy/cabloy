@@ -25,7 +25,7 @@ module.exports = app => {
     }
 
     async _update12Migration_articles() {
-      // articles
+      // first, hold articles
       const articles = await this.ctx.model.query(
         `
         select a.id as atomId,a.atomClassId,a.atomStage,a.userIdCreated,b.content
@@ -40,11 +40,20 @@ module.exports = app => {
         `,
         [this.ctx.instance.id]
       );
+      // then, update all articles
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:blockAudio','a-markdownblock:audio') where content like '%cms-pluginblock:blockAudio%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:blockIFrame','a-markdownblock:iframe') where content like '%cms-pluginblock:blockIFrame%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cabloy-dashboard:blockCourse','cabloy-dashboard:course') where content like '%cabloy-dashboard:blockCourse%'
+    `);
       // loop
       for (const article of articles) {
         await this._update12Migration_article({ article });
       }
-      throw new Error('');
     }
 
     async _update12Migration_article({ article }) {
