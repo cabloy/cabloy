@@ -48,6 +48,7 @@ module.exports = app => {
       if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
       // html
       const html = await this._renderContent({
+        atomId: key.atomId,
         content,
         replyContent: item.replyContent,
         replyUserName: item.replyUserName,
@@ -87,6 +88,7 @@ module.exports = app => {
       const replyContent = !reply ? '' : this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
       // html
       const html = await this._renderContent({
+        atomId: key.atomId,
         content,
         replyContent,
         replyUserName: reply && reply.userName,
@@ -281,9 +283,10 @@ ${sep}
       return ':'.repeat(posB - posA + 1);
     }
 
-    async _renderContent({ content, replyContent, replyUserName }) {
+    async _renderContent({ atomId, content, replyContent, replyUserName }) {
       const fullContent = this._fullContent({ content, replyContent, replyUserName });
       return await this.ctx.bean.markdown.render({
+        host: { atomId },
         content: fullContent,
         locale: this.ctx.locale,
       });

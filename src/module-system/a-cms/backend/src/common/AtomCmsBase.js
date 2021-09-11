@@ -176,6 +176,10 @@ module.exports = app => {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
         html = await this.ctx.bean.markdown.render({
+          host: {
+            atom: item,
+            atomId: item.atomId,
+          },
           content: item.content,
           locale: item.atomLanguage,
         });

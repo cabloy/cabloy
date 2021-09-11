@@ -13,7 +13,7 @@
       const atomId = $host.atomId;
       const res = await $util.performAction({ method: 'post', url: '/a/base/atom/read', body: { key: { atomId } } });
       console.log(res);
-      return '<div class="aplayer"></div>';
+      return '<div class="aplayer1"></div>';
     }
 
     mount() {
