@@ -45,6 +45,7 @@ export default {
     host() {
       return {
         atomId: this.atomId,
+        opts: { upload: { flag: 'comment' } },
       };
     },
   },
