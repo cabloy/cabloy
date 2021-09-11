@@ -8,7 +8,8 @@
       this.playerInstance = null;
     }
 
-    render() {
+    async render() {
+      const atomId = this.host.atomId;
       return '<div class="aplayer"></div>';
     }
 

@@ -4,12 +4,12 @@ const __socketioAdapter = {
   initialize(io) {
     const self = this;
     self._io = io;
-    $(document).on('echo-ready', function() {
+    $(document).on('echo-ready', function () {
       // reset
       self._io.reset();
     });
     // visibilitychange
-    $(document).on('visibilitychange', function() {
+    $(document).on('visibilitychange', function () {
       if (document.visibilityState === 'hidden') {
         self._io.disconnect();
       }
@@ -34,7 +34,7 @@ const __socketioAdapter = {
   },
   socket() {
     const url = '<%=site.serverUrl%>';
-    return io(url, { autoConnect: false });
+    return window.io(url, { autoConnect: false });
   },
 };
 
@@ -42,9 +42,9 @@ const __socketioAdapter = {
 Object.defineProperty(util, 'io', {
   get() {
     if (!util.__io) {
-      const _io = socketio.default(__socketioAdapter);
+      const _io = window.socketio.default(__socketioAdapter);
       const _subscribe = _io.subscribe;
-      _io.subscribe = function(path, cbMessage, cbSubscribed, options) {
+      _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
         options = options || {};
         if (options.scene === undefined) {
           options.scene = util.clientId;
