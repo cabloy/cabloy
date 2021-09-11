@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
     async update(options) {
       if (options.version === 1) {
@@ -34,6 +34,9 @@ module.exports = app => {
       }
       if (options.version === 11) {
         await this._update_11(options);
+      }
+      if (options.version === 12) {
+        await this._update_12(options);
       }
     }
 

@@ -34,6 +34,7 @@ module.exports = ctx => {
         const [module, blockName] = params.split(':');
         if (!module || !blockName) throw new Error(`Invalid Markdown Block: ${params}`);
         const _module = ctx.app.meta.modules[module];
+        if (!_module) throw new Error(`Module Not Found: ${module}`);
         const block_js = path.join(_module.static.backend, `blocks/${blockName}/main.js`);
         const BlockClass = require(block_js);
         // render
