@@ -12,6 +12,7 @@ import { markdownStyle } from '../common/plugins/markdownStyle.js';
 import { menuBar } from '../common/plugins/menuBar.js';
 import { placeholder } from '../common/plugins/placeholder.js';
 import { placeholderEmpty } from '../common/plugins/placeholderEmpty.js';
+import { cabloyBlockPlugin } from '../common/plugins/cabloyBlock.js';
 import { ButtonsDefault, buildMenuItems } from '../common/menuItems.js';
 import { CabloyBlockView } from '../common/nodeViews/cabloyBlock.js';
 import { CodeBlockView } from '../common/nodeViews/codeBlock.js';
@@ -123,6 +124,14 @@ export default {
     _buildMenuItems() {
       this.menuItems = buildMenuItems(this, schemaCustom, this.buttonsWant);
     },
+    _findMenuItem(key) {
+      for (const items of this.menuItems) {
+        for (const item of items) {
+          if (item.spec.key === key) return item;
+        }
+      }
+      return null;
+    },
     _setToolbar(toolbar, fireEvent) {
       if (toolbar === this.toolbarInner) return;
       this.toolbarInner = toolbar;
@@ -167,6 +176,7 @@ export default {
           markdownStyle(),
           placeholder(),
           placeholderEmpty({ ctx: this, placeholderText: this.placeholderText }),
+          cabloyBlockPlugin({ ctx: this }),
           tableEditing(),
         ],
       });
