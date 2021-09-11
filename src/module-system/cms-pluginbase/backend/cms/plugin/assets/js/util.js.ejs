@@ -517,6 +517,9 @@
         escapeURL(str) {
           return util.escapeURL(str);
         },
+        performAction({ method, url, body }) {
+          return self.performAction({ method, url, body });
+        },
       };
     },
   };

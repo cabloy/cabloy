@@ -8,11 +8,7 @@
       this.playerInstance = null;
     }
 
-    async render() {
-      const { $host, $util } = this.host;
-      const atomId = $host.atomId;
-      const res = await $util.performAction({ method: 'post', url: '/a/base/atom/read', body: { key: { atomId } } });
-      console.log(res);
+    render() {
       return '<div class="aplayer1"></div>';
     }
 

@@ -114,7 +114,7 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const html = await this._renderContent({ item });
+      const html = await this._renderContent({ item, atomId: key.atomId });
       const summary = this._parseSummary({ item, html });
       // update article
       await this.modelArticle.update(
@@ -158,7 +158,7 @@ module.exports = app => {
       }
     }
 
-    async _renderContent({ item }) {
+    async _renderContent({ item, atomId }) {
       // editMode
       const editMode = item.editMode;
       // html
@@ -178,7 +178,7 @@ module.exports = app => {
         html = await this.ctx.bean.markdown.render({
           host: {
             atom: item,
-            atomId: item.atomId,
+            atomId,
           },
           content: item.content,
           locale: item.atomLanguage,

@@ -183,6 +183,9 @@ module.exports = app => {
         escapeURL(str) {
           return self.escapeURL(str);
         },
+        performAction({ method, url, body }) {
+          return self.ctx.performAction({ method, url, body });
+        },
       };
     }
   }
