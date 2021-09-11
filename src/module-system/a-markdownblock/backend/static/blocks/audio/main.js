@@ -9,7 +9,10 @@
     }
 
     async render() {
-      const atomId = this.host.atomId;
+      const { $host, $util } = this.host;
+      const atomId = $host.atomId;
+      const res = await $util.performAction({ method: 'post', url: '/a/base/atom/read', body: { key: { atomId } } });
+      console.log(res);
       return '<div class="aplayer"></div>';
     }
 

@@ -18,6 +18,9 @@ export default function (Vue, util) {
       escapeURL(str) {
         return util.escapeURL(str);
       },
+      performAction({ method, url, body }) {
+        return Vue.prototype.$meta.api[method.toLowerCase()](url, body);
+      },
     };
   };
   return hostUtil;
