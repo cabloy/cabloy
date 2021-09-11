@@ -175,7 +175,7 @@ module.exports = app => {
         url(str) {
           if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
           if (str[0] !== '/') str = '/' + str;
-          return self.ctx.bean.base.getAbsoluteUrl(str);
+          return self.ctx.bean.base.getAbsoluteUrl(this.escapeURL(str));
         },
         escapeHtml(str) {
           return self.escapeHtml(str);
