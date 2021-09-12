@@ -1,5 +1,6 @@
 module.exports = {
   Atom: 'Data',
+  Atoms: 'Data',
   AtomName: 'Name',
   CommentPublishTitleNewComment: 'Posted a new comment',
   CommentPublishTitleEditComment: 'Modified the comment',

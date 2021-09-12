@@ -1,5 +1,6 @@
 export default {
   Atom: '数据',
+  Atoms: '数据',
   AtomName: '名称',
   Basic: '基本',
   Name: '名称',

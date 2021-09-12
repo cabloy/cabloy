@@ -53,6 +53,7 @@ module.exports = {
   Save: '保存',
   Submit: '提交',
   Atom: '数据',
+  Atoms: '数据',
   AtomName: '名称',
   Search: '搜索',
   CloneCopyText: '副本',
