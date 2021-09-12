@@ -1,6 +1,6 @@
 import requirejs from '../vendors/requirejs/require.js';
 
-const requirecss_path = 'api/static/a/base/js/require-css/css.min';
+const requirecss_path = 'api/static/a/base/vendor/require-css/css.min';
 
 export default function (Vue) {
   // global
