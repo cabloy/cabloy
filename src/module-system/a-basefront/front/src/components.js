@@ -18,6 +18,8 @@ import atomTab from './components/tab/atomTab.jsx';
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderContinuous from './components/listLayoutData/providerContinuous.jsx';
 import listLayoutDataProviderPaged from './components/listLayoutData/providerPaged.jsx';
+// tools
+import developerTool from './components/tools/developerTool.js';
 
 export default {
   renderAtom,
@@ -40,4 +42,6 @@ export default {
   listLayoutDataAdapter,
   listLayoutDataProviderContinuous,
   listLayoutDataProviderPaged,
+  //
+  developerTool,
 };
