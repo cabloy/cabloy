@@ -1,4 +1,5 @@
 export default {
+  Atom: '数据',
   Basic: '基本',
   Name: '名称',
   Description: '描述',

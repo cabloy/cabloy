@@ -1,4 +1,5 @@
 export default {
+  Atom: 'Data',
   UserStar: 'User Star',
   UserLabel: 'User Label',
   UserLabels: 'User Labels',
