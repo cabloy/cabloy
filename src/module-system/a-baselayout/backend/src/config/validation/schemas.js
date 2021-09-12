@@ -14,6 +14,9 @@ module.exports = app => {
         ebType: 'select',
         ebTitle: 'Stage',
         ebParams: { openIn: 'sheet', closeOnSelect: true },
+        ebDisplay: {
+          expression: '_meta.host.stages.length>1',
+        },
       },
       __divider: {
         ebType: 'divider',

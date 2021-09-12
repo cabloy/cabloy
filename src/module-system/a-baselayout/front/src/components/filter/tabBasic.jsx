@@ -29,6 +29,7 @@ export default {
       const host = {
         hint: false,
         container: this.layoutManager.container,
+        stages: this.filterContainer.stages,
       };
       // meta
       const meta = {
