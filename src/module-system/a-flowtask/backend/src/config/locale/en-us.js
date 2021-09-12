@@ -1,5 +1,5 @@
 module.exports = {
-  StartEventAtom: 'StartEvent: Atom Draft',
-  EndEventAtom: 'EndEvent: Atom Submit',
+  StartEventAtom: 'StartEvent: Data Draft',
+  EndEventAtom: 'EndEvent: Data Submit',
   ActivityUserTask: 'Activity: User Task',
 };

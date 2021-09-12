@@ -4,6 +4,6 @@ export default {
   flowDefListenerTitle: 'Listener',
   EditInPCTip: 'Please edit in PC',
   FlowInitiator: 'Flow Initiator',
-  NotFoundStartEventAtom: 'Not Found: StartEvent of Atom Draft',
-  NotSetStartEventAtom: 'Not Set: StartEvent of Atom Draft',
+  NotFoundStartEventAtom: 'Not Found: StartEvent of Data Draft',
+  NotSetStartEventAtom: 'Not Set: StartEvent of Data Draft',
 };
