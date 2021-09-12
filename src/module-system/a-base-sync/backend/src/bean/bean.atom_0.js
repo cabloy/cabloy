@@ -210,15 +210,17 @@ module.exports = ctx => {
       const _atomBasic = await this.modelAtom.get({ id: key.atomId });
       if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
       if (_atomBasic.atomSimple) {
-        //  formal -> history
-        await this._copy({
-          target: 'history',
-          srcKey: { atomId: key.atomId },
-          srcItem: null,
-          destKey: null,
-          options,
-          user,
-        });
+        if (_atomClass.history !== false) {
+          //  formal -> history
+          await this._copy({
+            target: 'history',
+            srcKey: { atomId: key.atomId },
+            srcItem: null,
+            destKey: null,
+            options,
+            user,
+          });
+        }
       }
       // write draft/formal(simple)
       const itemWrite = Object.assign({}, item, {

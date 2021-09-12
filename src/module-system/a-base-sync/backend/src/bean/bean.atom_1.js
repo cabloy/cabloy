@@ -19,17 +19,23 @@ module.exports = ctx => {
       return true;
     }
 
-    async _submitDirect({ /* key,*/ item, options, user }) {
+    async _submitDirect({ key, item, options, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // formal -> history
       if (item.atomIdFormal) {
-        await this._copy({
-          target: 'history',
-          srcKey: { atomId: item.atomIdFormal },
-          srcItem: null,
-          destKey: null,
-          options,
-          user,
-        });
+        if (_atomClass.history !== false) {
+          await this._copy({
+            target: 'history',
+            srcKey: { atomId: item.atomIdFormal },
+            srcItem: null,
+            destKey: null,
+            options,
+            user,
+          });
+        }
       }
       // draft -> formal
       const keyFormal = await this._copy({
