@@ -50,6 +50,19 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
+    {
+      atomName: 'Developer Tool',
+      atomStaticKey: 'developerTool',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.Tools',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        actionModule: moduleInfo.relativeName,
+        actionComponent: 'developerTool',
+        name: 'initialize',
+      }),
+      resourceRoles: 'template.system',
+    },
   ];
   // mine
   resources = resources.concat(resourceMines);

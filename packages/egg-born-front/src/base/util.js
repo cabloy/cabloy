@@ -239,7 +239,7 @@ export default function (Vue) {
       // actionComponent
       const module = await Vue.prototype.$meta.module.use(action.actionModule);
       const component = module.options.components[action.actionComponent];
-      if (!component) throw new Error(`actionComponent not found: ${action.actionComponent}`);
+      if (!component) throw new Error(`actionComponent not found: ${action.actionModule}:${action.actionComponent}`);
       // componentProps
       const componentProps = {};
       this._combineComponentsProps(componentProps, component);

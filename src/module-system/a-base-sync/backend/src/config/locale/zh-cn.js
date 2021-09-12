@@ -24,6 +24,7 @@ module.exports = {
   'Resource List': '资源列表',
   'Move Up': '上移',
   'Move Down': '下移',
+  'Developer Tool': '开发者工具',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
