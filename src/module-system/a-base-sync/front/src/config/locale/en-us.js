@@ -1,5 +1,6 @@
 export default {
   Atom: 'Data',
+  AtomName: 'Name',
   UserStar: 'User Star',
   UserLabel: 'User Label',
   UserLabels: 'User Labels',
@@ -21,4 +22,10 @@ export default {
   LayoutCard: 'Card Layout',
   LayoutMobile: 'Mobile Layout',
   LayoutPC: 'PC Layout',
+  'Atom Flag': 'Data Flag',
+  'Atom Name': 'Data Name',
+  'Search Atom': 'Search Data',
+  'Select Atom Class': 'Select Data Class',
+  'Atom Class': 'Data Class',
+  'My Atoms': 'My Data',
 };
