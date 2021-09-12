@@ -1,7 +1,7 @@
 export default {
   Atom: '数据',
   Atoms: '数据',
-  AtomName: '名称',
+  AtomName: '标题',
   Basic: '基本',
   Name: '名称',
   Description: '描述',
@@ -166,7 +166,7 @@ export default {
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '数据标记',
-  'Atom Name': '数据名称',
+  'Atom Name': '标题',
   'Modification Time': '修改时间',
   'Comment List': '评论列表',
   'Created Time': '创建时间',
