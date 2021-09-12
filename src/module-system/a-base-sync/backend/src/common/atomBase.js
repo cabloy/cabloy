@@ -122,6 +122,13 @@ module.exports = app => {
           atomName: item.atomName,
         });
       }
+      // remove fields.custom
+      const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
+      if (fieldsCustom) {
+        for (const field of fieldsCustom) {
+          delete item[field];
+        }
+      }
     }
 
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
