@@ -43,7 +43,7 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'panelAtom',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({

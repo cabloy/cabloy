@@ -27,7 +27,7 @@ module.exports = app => {
     {
       atomName: 'Atom Right Management',
       atomStaticKey: 'atomRight',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
