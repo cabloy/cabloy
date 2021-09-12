@@ -61,11 +61,14 @@ export default {
       }
       //    history
       if (this.base.item.atomIdFormal || this.base.item.atomStage === 1) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'history',
-        });
+        const atomClassBase = this.getAtomClass(this.base.atomClass);
+        if (atomClassBase.history !== false) {
+          actions.push({
+            module: this.base.atomClass.module,
+            atomClassName: this.base.atomClass.atomClassName,
+            name: 'history',
+          });
+        }
       }
       //    workflow
       if (this.base.item.atomStage === 0 && this.base.item.atomFlowId > 0) {
