@@ -366,9 +366,11 @@ export default {
         targetEl: event.target,
         buttons,
       };
-      const button = await this.$view.actions.choose(params);
-      // switch layout
-      await this.__switchProfile({ dashboardUserId: button.data.id });
+      try {
+        const button = await this.$view.actions.choose(params);
+        // switch layout
+        await this.__switchProfile({ dashboardUserId: button.data.id });
+      } catch (err) {}
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
