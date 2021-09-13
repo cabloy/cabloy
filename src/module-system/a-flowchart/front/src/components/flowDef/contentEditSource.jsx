@@ -9,20 +9,26 @@ export default {
     contentProcessStr: {
       type: String,
     },
+    onSave: {
+      type: Function,
+    },
   },
   data() {
-    return {};
+    return {
+      ready: false,
+    };
   },
-  created() {},
+  created() {
+    this.init();
+  },
   methods: {
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
-      });
+    async init() {
+      // json editor
+      await this.$meta.module.use('a-jsoneditor');
+      // ok
+      this.ready = true;
     },
-    onInput(event) {
-      const data = event.target.value;
+    onInput(data) {
       try {
         const value = window.JSON5.parse(data);
         this.$emit('contentChange', { type: 'process', value, valueStr: data });
@@ -30,19 +36,12 @@ export default {
         this.$view.toast.show({ text: err.message });
       }
     },
+    onSaveEditor() {
+      this.onSave();
+    },
   },
   render() {
-    return (
-      <eb-box onSize={this.onSize} header subnavbar>
-        <textarea
-          ref="textarea"
-          readonly={this.readOnly ? 'readonly' : false}
-          type="textarea"
-          value={this.contentProcessStr}
-          onInput={this.onInput}
-          class="json-textarea json-textarea-margin"
-        ></textarea>
-      </eb-box>
-    );
+    if (!this.ready) return <div></div>;
+    return <eb-json-editor ref="jsonEditor" readOnly={this.readOnly} valueType="string" value={this.contentProcessStr} onInput={this.onInput} onSave={this.onSaveEditor}></eb-json-editor>;
   },
 };

@@ -3,7 +3,7 @@
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode">{{ $text('Add Node') }}</eb-link>
-        <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave">{{ $text('Save') }}</eb-link>
+        <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave">{{ $text('Save') }}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar>
@@ -25,10 +25,10 @@
         ></content-edit-diagram>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName === 'source'" data-ref="source" @tab:show="tabName = 'source'">
-        <content-edit-source :readOnly="readOnly" :contentProcessStr="contentProcessStr" @contentChange="onContentChange"></content-edit-source>
+        <content-edit-source :readOnly="readOnly" :contentProcessStr="contentProcessStr" :onSave="onSave" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName === 'listener'" data-ref="listener" @tab:show="tabName = 'listener'">
-        <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" @contentChange="onContentChange"></content-edit-listener>
+        <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" :onSave="onSave" @contentChange="onContentChange"></content-edit-listener>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
@@ -107,19 +107,12 @@ export default {
       this.contextCallback(200, { content });
     },
     onSave() {
-      this.onPerformSave()
-        .then(text => {
-          this.$view.toast.show({ text });
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-        });
+      this.$refs.buttonSave.onClick();
     },
-    onPerformSave() {
-      return this.contextParams.onSave().then(() => {
-        this.dirty = false;
-        return this.$text('Saved');
-      });
+    async onPerformSave() {
+      await this.contextParams.onSave();
+      this.dirty = false;
+      return this.$text('Saved');
     },
     onPerformAddNode() {
       this.$refs.diagram.onPerformAddNode();

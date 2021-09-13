@@ -125,6 +125,7 @@ export default {
       }
       // change
       if (value !== undefined) {
+        // eslint-disable-next-line
         this.valueSchema[this.mode] = value;
       }
     },
@@ -182,6 +183,7 @@ export default {
     },
     __onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function (data) {
       try {
+        // eslint-disable-next-line
         this.valueSchema[this.mode] = window.JSON5.parse(data);
       } catch (err) {
         this.$view.toast.show({ text: err.message });
