@@ -90,6 +90,10 @@ export default {
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
         readOnly: this.readOnly,
       });
+      // event
+      this.cmEditor.on('changes', () => {
+        this.onChanges();
+      });
       // ok
       this.ready = true;
     },
@@ -99,8 +103,8 @@ export default {
         width: `${size.width - 20}px`,
       });
     },
-    onInput(event) {
-      this.content = event.target.value;
+    onChanges() {
+      this.content = this.cmEditor.getValue();
       this.page_setDirty(true);
     },
     getValue() {
@@ -162,7 +166,7 @@ export default {
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
         <eb-box onSize={this.onSize}>
-          <textarea ref="textarea" readonly={this.readOnly ? 'readonly' : false} type="textarea" value={this.content} onInput={this.onInput} class="json-textarea json-textarea-margin"></textarea>
+          <textarea ref="textarea" type="textarea" value={this.content} class="json-textarea json-textarea-margin"></textarea>
         </eb-box>
       </eb-page>
     );
