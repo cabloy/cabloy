@@ -9,6 +9,7 @@ export default {
   data() {
     return {
       content: null,
+      ready: false,
     };
   },
   computed: {
@@ -46,17 +47,33 @@ export default {
     },
   },
   created() {
-    if (!this.value) {
-      this.content = '{}';
-    } else {
-      if (typeof this.value === 'string') {
-        this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
-      } else {
-        this.content = window.JSON5.stringify(this.value, null, 2);
-      }
-    }
+    this.init();
+  },
+  mounted() {
+    this.mountCodeMirror();
   },
   methods: {
+    init() {
+      // value
+      if (!this.value) {
+        this.content = '{}';
+      } else {
+        if (typeof this.value === 'string') {
+          this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
+        } else {
+          this.content = window.JSON5.stringify(this.value, null, 2);
+        }
+      }
+    },
+    async mountCodeMirror() {
+      // codemirror
+      await this.$meta.module.use('a-codemirror');
+      this.cmEditor = window.CodeMirror.fromTextArea(this.$refs.textarea, {
+        lineNumbers: true,
+      });
+      // ok
+      this.ready = true;
+    },
     onSize(size) {
       this.$$(this.$refs.textarea).css({
         height: `${size.height - 20}px`,
@@ -121,7 +138,7 @@ export default {
   },
   render() {
     return (
-      <eb-page>
+      <eb-page class="eb-json-editor-page">
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
