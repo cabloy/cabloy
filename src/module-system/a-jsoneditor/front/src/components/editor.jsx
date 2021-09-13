@@ -4,9 +4,7 @@ export default {
   },
   name: 'eb-json-editor',
   props: {
-    value: {
-      type: String,
-    },
+    value: {},
     valueType: {},
     readOnly: {
       type: Boolean,

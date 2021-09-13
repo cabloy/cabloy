@@ -8,7 +8,7 @@ export default {
   mixins: [ebPageContext, ebPageDirty],
   data() {
     return {
-      content: this.value,
+      content: null,
     };
   },
   computed: {
@@ -43,7 +43,9 @@ export default {
       return this.page_getDirtyTitle(this.title);
     },
   },
-  created() {},
+  created() {
+    this.content = this.value;
+  },
   methods: {
     onInput(value) {
       this.content = value;
