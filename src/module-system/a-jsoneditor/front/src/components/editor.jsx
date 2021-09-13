@@ -7,6 +7,7 @@ export default {
     value: {
       type: String,
     },
+    valueType: {},
     readOnly: {
       type: Boolean,
       default: false,
@@ -14,8 +15,15 @@ export default {
   },
   data() {
     return {
-      content: this.value,
+      content: this.parseValue(this.value),
     };
+  },
+  computed: {
+    valueType2() {
+      const type = this.valueType;
+      if (type && Array.isArray(type)) return type[0];
+      return type || 'string';
+    },
   },
   created() {},
   mounted() {
@@ -82,12 +90,26 @@ export default {
       const value = this.cmEditor.getValue();
       if (this.content !== value) {
         this.content = value;
-        this.$emit('input', this.content);
+        this.$emit('input', this.getValue());
       }
     },
-    parseValue(valueType) {
+    parseValue(value) {
+      let content;
+      // value
+      if (!value) {
+        content = '{}';
+      } else {
+        if (typeof value === 'string') {
+          content = window.JSON5.stringify(window.JSON5.parse(value), null, 2);
+        } else {
+          content = window.JSON5.stringify(value, null, 2);
+        }
+      }
+      return content;
+    },
+    getValue() {
       // string
-      if (valueType === 'string') {
+      if (this.valueType2 === 'string') {
         return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
       }
       // object
