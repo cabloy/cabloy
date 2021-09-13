@@ -27,11 +27,9 @@ export default {
         targetEl: action.targetEl,
         buttons,
       };
-      try {
-        const button = await ctx.$view.actions.choose(params);
-        // switch layout
-        await ctx.layout_switchLayout(button.data.name);
-      } catch (err) {}
+      const button = await ctx.$view.actions.choose(params);
+      // switch layout
+      await ctx.layout_switchLayout(button.data.name);
     },
   },
 };
