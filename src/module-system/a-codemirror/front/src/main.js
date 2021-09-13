@@ -14,7 +14,13 @@ function install(_Vue, cb) {
   Vue.prototype.$meta.util.requirejs.require([codemirror_js, codemirror_modemeta_js, codemirror_css], function (CodeMirror) {
     window.CodeMirror = CodeMirror;
     CodeMirror.__loadMode = (mode, cb) => {
-      Vue.prototype.$meta.util.requirejs.require([`api/static/a/codemirror/lib/codemirror/mode/${mode}/${mode}`], cb);
+      if (cb) {
+        Vue.prototype.$meta.util.requirejs.require([`api/static/a/codemirror/lib/codemirror/mode/${mode}/${mode}`], cb);
+        return;
+      }
+      return new Promise(resolve => {
+        CodeMirror.__loadMode(mode, resolve);
+      });
     };
     CodeMirror.__findMode = name => {
       let mode = window.CodeMirror.findModeByName(name);

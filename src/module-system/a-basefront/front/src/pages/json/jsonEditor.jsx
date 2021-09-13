@@ -70,13 +70,13 @@ export default {
       await this.$meta.module.use('a-codemirror');
       // mode
       const modeInfo = window.CodeMirror.__findMode('json');
+      await window.CodeMirror.__loadMode(modeInfo.mode);
       this.cmEditor = window.CodeMirror.fromTextArea(this.$refs.textarea, {
         mode: modeInfo.mode,
         lineNumbers: true,
-        lineWrapping: true,
-        foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        matchBrackets: true,
+        indentUnit: 2,
+        tabSize: 2,
+        lineWrapping: false,
         readOnly: this.readOnly,
       });
       // ok
