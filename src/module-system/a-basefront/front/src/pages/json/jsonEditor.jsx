@@ -89,6 +89,7 @@ export default {
         lineWrapping: false,
         foldGutter: true,
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        extraKeys: this.codeMirrorKeymap(),
         readOnly: this.readOnly,
       });
       // event
@@ -97,6 +98,31 @@ export default {
       });
       // ok
       this.ready = true;
+    },
+    codeMirrorKeymap() {
+      const mod = /Mac/.test(navigator.platform) ? 'Cmd' : 'Ctrl';
+      return window.CodeMirror.normalizeKeyMap({
+        [`${mod}-S`]: () => {
+          if (this.$refs.actionSave) {
+            this.$refs.actionSave.onClick();
+          }
+        },
+        Tab: cm => {
+          if (cm.somethingSelected()) {
+            cm.indentSelection('add');
+          } else {
+            cm.replaceSelection(Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
+          }
+        },
+        'Shift-Tab': cm => {
+          if (cm.somethingSelected()) {
+            cm.indentSelection('subtract');
+          } else {
+            const cursor = cm.getCursor();
+            cm.setCursor({ line: cursor.line, ch: cursor.ch - 4 });
+          }
+        },
+      });
     },
     onChanges() {
       this.content = this.cmEditor.getValue();
@@ -135,10 +161,10 @@ export default {
       // save/done
       if (!this.readOnly) {
         if (this.actionSave) {
-          children.push(<eb-link key="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>);
+          children.push(<eb-link key="actionSave" ref="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>);
         }
         if (this.actionDone) {
-          children.push(<eb-link key="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>);
+          children.push(<eb-link key="actionDone" ref="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>);
         }
       }
       // actions
