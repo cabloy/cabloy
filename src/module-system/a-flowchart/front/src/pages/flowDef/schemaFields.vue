@@ -71,7 +71,7 @@ export default {
     },
     onPerformInfo() {
       // navigate
-      this.$view.navigate(`/a/basefront/json/editor?t=${Date.now()}`, {
+      this.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
         target: '_self',
         context: {
           params: {

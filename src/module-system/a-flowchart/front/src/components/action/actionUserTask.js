@@ -52,7 +52,7 @@ export default {
       let target = ctx.$meta.util.getProperty(action, 'navigateOptions.target');
       if (target === undefined) target = '_self';
       // navigate
-      ctx.$view.navigate(`/a/basefront/json/editor?t=${Date.now()}`, {
+      ctx.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
         target,
         context: {
           params: {
