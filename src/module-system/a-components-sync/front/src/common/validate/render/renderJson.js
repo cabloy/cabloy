@@ -21,11 +21,12 @@ export default {
               // actions
               const actions = this.$meta.util.getProperty(property, 'ebParams.actions');
               // navigate
-              this.$view.navigate(`/a/basefront/json/editor?t=${Date.now()}`, {
+              this.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
                 target,
                 context: {
                   params: {
                     value: context.getValue(),
+                    valueType: property.type,
                     title,
                     readOnly: this.validate.readOnly || property.ebReadOnly,
                     actionSave,

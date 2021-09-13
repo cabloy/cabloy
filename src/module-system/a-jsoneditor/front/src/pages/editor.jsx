@@ -37,7 +37,7 @@ export default {
       return this.contextParams.context;
     },
     valueType() {
-      return this.context.property.type;
+      return this.contextParams.valueType;
     },
     page_title() {
       return this.page_getDirtyTitle(this.title);
