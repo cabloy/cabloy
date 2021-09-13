@@ -13,6 +13,13 @@ function install(_Vue, cb) {
   const codemirror_css = 'css!api/static/a/codemirror/lib/codemirror/lib/codemirror';
   Vue.prototype.$meta.util.requirejs.require([codemirror_js, codemirror_modemeta_js, codemirror_css], function (CodeMirror) {
     window.CodeMirror = CodeMirror;
+    CodeMirror.__findMode = name => {
+      let mode = window.CodeMirror.findModeByName(name);
+      if (!mode) {
+        mode = window.CodeMirror.findModeByExtension(name);
+      }
+      return mode;
+    };
     CodeMirror.__loadMode = (mode, cb) => {
       if (cb) {
         Vue.prototype.$meta.util.requirejs.require([`api/static/a/codemirror/lib/codemirror/mode/${mode}/${mode}`], cb);
@@ -22,12 +29,27 @@ function install(_Vue, cb) {
         CodeMirror.__loadMode(mode, resolve);
       });
     };
-    CodeMirror.__findMode = name => {
-      let mode = window.CodeMirror.findModeByName(name);
-      if (!mode) {
-        mode = window.CodeMirror.findModeByExtension(name);
+    CodeMirror.__loadAddon = (addon, jsArr, cssArr, cb) => {
+      if (cb) {
+        if (jsArr && !Array.isArray(jsArr)) jsArr = [jsArr];
+        if (cssArr && !Array.isArray(cssArr)) cssArr = [cssArr];
+        const deps = [];
+        if (jsArr) {
+          for (const item of jsArr) {
+            deps.push(`api/static/a/codemirror/lib/codemirror/addon/${addon}/${item}`);
+          }
+        }
+        if (cssArr) {
+          for (const item of cssArr) {
+            deps.push(`css!api/static/a/codemirror/lib/codemirror/addon/${addon}/${item}`);
+          }
+        }
+        Vue.prototype.$meta.util.requirejs.require(deps, cb);
+        return;
       }
-      return mode;
+      return new Promise(resolve => {
+        CodeMirror.__loadAddon(addon, jsArr, cssArr, resolve);
+      });
     };
     return cb({
       routes: require('./routes.js').default,

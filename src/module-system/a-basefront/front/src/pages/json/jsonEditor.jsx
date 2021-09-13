@@ -71,12 +71,17 @@ export default {
       // mode
       const modeInfo = window.CodeMirror.__findMode('json');
       await window.CodeMirror.__loadMode(modeInfo.mode);
+      // addon
+      await window.CodeMirror.__loadAddon('fold', ['foldcode', 'foldgutter', 'brace-fold'], ['foldgutter']);
+      // create
       this.cmEditor = window.CodeMirror.fromTextArea(this.$refs.textarea, {
         mode: modeInfo.mode,
         lineNumbers: true,
         indentUnit: 2,
         tabSize: 2,
         lineWrapping: false,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
         readOnly: this.readOnly,
       });
       // ok
