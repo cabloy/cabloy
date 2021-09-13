@@ -68,8 +68,16 @@ export default {
     async mountCodeMirror() {
       // codemirror
       await this.$meta.module.use('a-codemirror');
+      // mode
+      const modeInfo = window.CodeMirror.__findMode('json');
       this.cmEditor = window.CodeMirror.fromTextArea(this.$refs.textarea, {
+        mode: modeInfo.mode,
         lineNumbers: true,
+        lineWrapping: true,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        matchBrackets: true,
+        readOnly: this.readOnly,
       });
       // ok
       this.ready = true;
