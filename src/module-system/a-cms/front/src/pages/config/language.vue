@@ -2,24 +2,26 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="json-textarea json-textarea-margin"></textarea>
-    </eb-box>
+    <eb-json-editor v-if="ready" ref="jsonEditor" :readOnly="false" valueType="object" :value="content" @input="onInput" @save="onSaveEditor"></eb-json-editor>
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
 import utils from '../../common/utils.js';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
+  mixins: [ebPageDirty],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
       atomClass,
       language: this.$f7route.query.language,
-      content: '{}',
+      content: null,
+      ready: false,
     };
   },
   computed: {
@@ -27,22 +29,26 @@ export default {
       const _title = this.$text('Language');
       return `${_title}: ${this.language}`;
     },
+    page_title() {
+      return this.page_getDirtyTitle(this.title);
+    },
   },
   created() {
-    this.$api
-      .post('site/getConfigLanguage', {
-        atomClass: this.atomClass,
-        language: this.language,
-      })
-      .then(res => {
-        if (!res.data) {
-          this.content = '{}';
-        } else {
-          this.content = window.JSON5.stringify(res.data, null, 2);
-        }
-      });
+    this.init();
   },
   methods: {
+    async init() {
+      // markdown style
+      await this.$meta.module.use('a-jsoneditor');
+      // get content
+      const res = await this.$api.post('site/getConfigLanguage', {
+        atomClass: this.atomClass,
+        language: this.language,
+      });
+      this.content = res.data;
+      // ok
+      this.ready = true;
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
@@ -54,6 +60,9 @@ export default {
     },
     onInput(event) {
       this.content = event.target.value;
+    },
+    onSaveEditor() {
+      this.$refs.buttonSave.onClick();
     },
     onPerformSave() {
       const data = window.JSON5.parse(this.content);
