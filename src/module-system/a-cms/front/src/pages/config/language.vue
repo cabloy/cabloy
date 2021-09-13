@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     async init() {
-      // markdown style
+      // json editor
       await this.$meta.module.use('a-jsoneditor');
       // get content
       const res = await this.$api.post('site/getConfigLanguage', {

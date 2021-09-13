@@ -1,9 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="$text('Preview')" eb-back-link="Back"></eb-navbar>
-    <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="json-textarea json-textarea-margin"></textarea>
-    </eb-box>
+    <eb-json-editor v-if="ready" ref="jsonEditor" :readOnly="true" valueType="object" :value="content"></eb-json-editor>
   </eb-page>
 </template>
 <script>
@@ -17,7 +15,8 @@ export default {
     return {
       atomClass,
       language: this.$f7route.query.language,
-      content: '{}',
+      content: null,
+      ready: false,
     };
   },
   computed: {
@@ -29,7 +28,7 @@ export default {
     },
   },
   created() {
-    this.onLoad();
+    this.init();
   },
   mounted() {
     // preview
@@ -44,31 +43,26 @@ export default {
     }
   },
   methods: {
+    async init() {
+      // json editor
+      await this.$meta.module.use('a-jsoneditor');
+      // load
+      await this.onLoad();
+      // ok
+      this.ready = true;
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
     onPreview() {
       this.onLoad();
     },
-    onLoad() {
-      this.$api
-        .post('site/getConfigLanguagePreview', {
-          atomClass: this.atomClass,
-          language: this.language,
-        })
-        .then(res => {
-          if (!res.data) {
-            this.content = '{}';
-          } else {
-            this.content = JSON5.stringify(res.data, null, 2);
-          }
-        });
-    },
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
+    async onLoad() {
+      const res = await this.$api.post('site/getConfigLanguagePreview', {
+        atomClass: this.atomClass,
+        language: this.language,
       });
+      this.content = res.data;
     },
   },
 };

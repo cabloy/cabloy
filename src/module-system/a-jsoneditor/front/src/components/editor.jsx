@@ -23,6 +23,14 @@ export default {
       return type || 'string';
     },
   },
+  watch: {
+    value(newValue) {
+      const _newValue = this.parseValue(newValue);
+      if (_newValue === this.content) return;
+      this.content = _newValue;
+      this.cmEditor.setValue(this.content);
+    },
+  },
   created() {},
   mounted() {
     this.mountCodeMirror();
