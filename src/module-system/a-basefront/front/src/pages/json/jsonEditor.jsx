@@ -52,6 +52,12 @@ export default {
   mounted() {
     this.mountCodeMirror();
   },
+  beforeDestroy() {
+    if (this.cmEditor) {
+      this.cmEditor.toTextArea();
+      this.cmEditor = null;
+    }
+  },
   methods: {
     init() {
       // value
