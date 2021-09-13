@@ -5,4 +5,6 @@ function loadjsx(name) {
   return require(`./pages/${name}.jsx`).default;
 }
 
-export default [];
+export default [
+  { path: 'json/editor', component: loadjsx('editor') }, //
+];

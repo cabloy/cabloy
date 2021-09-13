@@ -29,5 +29,4 @@ export default [
   { path: 'resource/tree', component: loadjsx('resource/tree') },
   { path: 'resource/authorize', component: load('resource/authorize') },
   { path: 'resource/select', component: load('resource/resourceSelect') },
-  { path: 'json/editor', component: loadjsx('json/jsonEditor') },
 ];
