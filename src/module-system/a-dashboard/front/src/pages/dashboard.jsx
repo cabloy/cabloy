@@ -186,6 +186,12 @@ export default {
       }
       return atomStaticKey;
     },
+    async __changeProfileUserDefault({ dashboardUserId }) {
+      await this.$api.post('/a/dashboard/dashboard/changeItemUserDefault', {
+        key: { atomId: this.dashboardAtomId },
+        dashboardUserId,
+      });
+    },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
         let title;
@@ -366,11 +372,13 @@ export default {
         targetEl: event.target,
         buttons,
       };
-      try {
-        const button = await this.$view.actions.choose(params);
-        // switch layout
-        await this.__switchProfile({ dashboardUserId: button.data.id });
-      } catch (err) {}
+      const button = await this.$view.actions.choose(params);
+      // dashboardUserId
+      const dashboardUserId = button.data.id;
+      // change default
+      await this.__changeProfileUserDefault({ dashboardUserId });
+      // switch layout
+      await this.__switchProfile({ dashboardUserId });
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {

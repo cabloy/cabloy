@@ -124,10 +124,7 @@ export default {
       // save
       await this.dashboard.__saveDashboardUser();
       // change default
-      await this.$api.post('/a/dashboard/dashboard/changeItemUserDefault', {
-        key: { atomId: this.dashboard.dashboardAtomId },
-        dashboardUserId,
-      });
+      await this.dashboard.__changeProfileUserDefault({ dashboardUserId });
       // switch
       await this.dashboard.__switchProfile({ dashboardUserId });
       this.dashboardUserIdCurrent = dashboardUserId;
