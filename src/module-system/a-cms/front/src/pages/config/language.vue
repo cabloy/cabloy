@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar :title="page_title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
@@ -52,30 +52,22 @@ export default {
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
-      });
-    },
-    onInput(event) {
-      this.content = event.target.value;
+    onInput(value) {
+      this.content = value;
+      this.page_setDirty(true);
     },
     onSaveEditor() {
       this.$refs.buttonSave.onClick();
     },
-    onPerformSave() {
-      const data = window.JSON5.parse(this.content);
-      return this.$api
-        .post('site/setConfigLanguage', {
-          atomClass: this.atomClass,
-          language: this.language,
-          data,
-        })
-        .then(() => {
-          this.$emit('preview');
-          return true;
-        });
+    async onPerformSave() {
+      await this.$api.post('site/setConfigLanguage', {
+        atomClass: this.atomClass,
+        language: this.language,
+        data: this.content,
+      });
+      this.page_setDirty(false);
+      this.$emit('preview');
+      return true;
     },
     onPerformPreview() {
       const url = this.combineAtomClass(`/a/cms/config/languagePreview?language=${this.language}`);

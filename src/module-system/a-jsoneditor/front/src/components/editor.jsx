@@ -88,8 +88,14 @@ export default {
       const value = this.cmEditor.getValue();
       if (this.content !== value) {
         this.content = value;
-        this.$emit('input', this.getValue());
+        this._raiseEventInput();
       }
+    },
+    _raiseEventInput() {
+      try {
+        // not raise event if json.parse error
+        this.$emit('input', this.getValue());
+      } catch (err) {}
     },
     parseValue(value) {
       let content;
