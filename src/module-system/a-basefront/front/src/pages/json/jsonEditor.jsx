@@ -54,7 +54,7 @@ export default {
   },
   beforeDestroy() {
     if (this.cmEditor) {
-      this.cmEditor.toTextArea();
+      this.cmEditor._handlers = {};
       this.cmEditor = null;
     }
   },
@@ -80,7 +80,8 @@ export default {
       // addon
       await window.CodeMirror.__loadAddon('fold', ['foldcode', 'foldgutter', 'brace-fold'], ['foldgutter']);
       // create
-      this.cmEditor = window.CodeMirror.fromTextArea(this.$refs.textarea, {
+      this.cmEditor = window.CodeMirror(this.$refs.textarea, {
+        value: this.content,
         mode: modeInfo.mode,
         lineNumbers: true,
         indentUnit: 2,
@@ -96,12 +97,6 @@ export default {
       });
       // ok
       this.ready = true;
-    },
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
-      });
     },
     onChanges() {
       this.content = this.cmEditor.getValue();
@@ -161,13 +156,11 @@ export default {
   },
   render() {
     return (
-      <eb-page class="eb-json-editor-page">
+      <eb-page>
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
-        <eb-box onSize={this.onSize}>
-          <textarea ref="textarea" type="textarea" value={this.content} class="json-textarea json-textarea-margin"></textarea>
-        </eb-box>
+        <div ref="textarea" class="eb-json-editor-codemirror"></div>
       </eb-page>
     );
   },
