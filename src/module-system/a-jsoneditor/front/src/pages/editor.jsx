@@ -8,8 +8,7 @@ export default {
   mixins: [ebPageContext, ebPageDirty],
   data() {
     return {
-      content: null,
-      ready: false,
+      content: this.value,
     };
   },
   computed: {
@@ -38,116 +37,32 @@ export default {
       return this.contextParams.context;
     },
     valueType() {
-      const type = this.context.property.type;
-      if (type && Array.isArray(type)) return type[0];
-      return type || 'string';
+      return this.context.property.type;
     },
     page_title() {
       return this.page_getDirtyTitle(this.title);
     },
   },
-  created() {
-    this.init();
-  },
-  mounted() {
-    this.mountCodeMirror();
-  },
-  beforeDestroy() {
-    if (this.cmEditor) {
-      this.cmEditor._handlers = {};
-      this.cmEditor = null;
-    }
-  },
+  created() {},
   methods: {
-    init() {
-      // value
-      if (!this.value) {
-        this.content = '{}';
-      } else {
-        if (typeof this.value === 'string') {
-          this.content = window.JSON5.stringify(window.JSON5.parse(this.value), null, 2);
-        } else {
-          this.content = window.JSON5.stringify(this.value, null, 2);
-        }
-      }
-    },
-    async mountCodeMirror() {
-      // codemirror
-      await this.$meta.module.use('a-codemirror');
-      // mode
-      const modeInfo = window.CodeMirror.__findMode('json');
-      await window.CodeMirror.__loadMode(modeInfo.mode);
-      // addon
-      await window.CodeMirror.__loadAddon('fold', ['foldcode', 'foldgutter', 'brace-fold'], ['foldgutter']);
-      // create
-      this.cmEditor = window.CodeMirror(this.$refs.textarea, {
-        value: this.content,
-        mode: modeInfo.mode,
-        lineNumbers: true,
-        indentUnit: 2,
-        tabSize: 2,
-        lineWrapping: false,
-        foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        extraKeys: this.codeMirrorKeymap(),
-        readOnly: this.readOnly,
-      });
-      // event
-      this.cmEditor.on('changes', () => {
-        this.onChanges();
-      });
-      // ok
-      this.ready = true;
-    },
-    codeMirrorKeymap() {
-      const mod = /Mac/.test(navigator.platform) ? 'Cmd' : 'Ctrl';
-      return window.CodeMirror.normalizeKeyMap({
-        [`${mod}-S`]: () => {
-          if (this.$refs.actionSave) {
-            this.$refs.actionSave.onClick();
-          }
-        },
-        Tab: cm => {
-          if (cm.somethingSelected()) {
-            cm.indentSelection('add');
-          } else {
-            cm.replaceSelection(Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
-          }
-        },
-        'Shift-Tab': cm => {
-          if (cm.somethingSelected()) {
-            cm.indentSelection('subtract');
-          } else {
-            const cursor = cm.getCursor();
-            cm.setCursor({ line: cursor.line, ch: cursor.ch - 4 });
-          }
-        },
-      });
-    },
-    onChanges() {
-      this.content = this.cmEditor.getValue();
+    onInput(value) {
+      this.content = value;
       this.page_setDirty(true);
     },
-    getValue() {
-      // string
-      if (this.valueType === 'string') {
-        return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
+    onSaveEditor() {
+      if (this.$refs.actionSave) {
+        this.$refs.actionSave.onClick();
       }
-      // object
-      return this.content ? window.JSON5.parse(this.content) : null;
+    },
+    async onPerformSave() {
+      await this.onSave(this.content);
+      this.page_setDirty(false);
+      return this.$text('Saved');
     },
     onPerformDone() {
-      const value = this.getValue();
-      this.contextCallback(200, value);
+      this.contextCallback(200, this.content);
       this.page_setDirty(false);
       this.$f7router.back();
-    },
-    onPerformSave() {
-      const value = this.getValue();
-      return this.onSave(value).then(() => {
-        this.page_setDirty(false);
-        return this.$text('Saved');
-      });
     },
     async onPerformAction(event, action) {
       action = {
@@ -186,7 +101,7 @@ export default {
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
-        <div ref="textarea" class="eb-json-editor-codemirror"></div>
+        <eb-json-editor ref="jsonEditor" readOnly={this.readOnly} valueType={this.valueType} value={this.content} onInput={this.onInput} onSave={this.onSaveEditor}></eb-json-editor>
       </eb-page>
     );
   },
