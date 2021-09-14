@@ -117,8 +117,10 @@ export default {
           const title = this.base.item.atomNameLocale || this.base.item.atomName;
           try {
             await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), title);
-            await this.base_loadItem();
-            this.page_setDirty(false);
+            if (this.page_getDirty()) {
+              await this.base_loadItem();
+              this.page_setDirty(false);
+            }
           } catch (err) {
             // just update time
             this.base.item.atomUpdatedAt = new Date();
