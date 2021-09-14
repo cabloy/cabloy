@@ -43,10 +43,32 @@ export default {
       return this.page_getDirtyTitle(this.title);
     },
   },
+  watch: {
+    value(newValue) {
+      this._updateValue(newValue);
+    },
+  },
   created() {
     this.content = this.value;
   },
   methods: {
+    async _updateValue(newValue) {
+      if (newValue === this.content) return;
+      if (!this.page_getDirty()) {
+        this.content = newValue;
+        return;
+      }
+      // prompt
+      try {
+        await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), this.title);
+        if (this.page_getDirty()) {
+          this.content = newValue;
+          this.page_setDirty(false);
+        }
+      } catch (err) {
+        // do nothing
+      }
+    },
     onInput(value) {
       this.content = value;
       this.page_setDirty(true);

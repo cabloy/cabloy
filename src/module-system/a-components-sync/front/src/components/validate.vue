@@ -105,6 +105,9 @@ export default {
     data() {
       this.initData();
     },
+    parcel(newValue) {
+      this.$emit('parcelChanged', newValue);
+    },
   },
   created() {
     this.initData();
