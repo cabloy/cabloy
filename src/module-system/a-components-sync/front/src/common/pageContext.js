@@ -12,6 +12,15 @@ export default {
         this.pageContext.callback(code, data);
       }
     },
+    setPageContext(pageContext) {
+      this.pageContext = pageContext;
+      this.contextParams = pageContext.params;
+    },
+  },
+  created() {
+    if (this.pageContext && this.pageContext.callback) {
+      this.pageContext.callback(201, this);
+    }
   },
   beforeDestroy() {
     if (this.pageContext && this.pageContext.callback) {
