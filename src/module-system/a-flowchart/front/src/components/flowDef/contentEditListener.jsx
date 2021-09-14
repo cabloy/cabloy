@@ -10,20 +10,28 @@ export default {
     contentListener: {
       type: String,
     },
+    onSave: {
+      type: Function,
+    },
   },
   data() {
-    return {};
+    return {
+      ready: false,
+    };
   },
   created() {},
   methods: {
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
-      });
+    async reload() {
+      // json editor
+      await this.$meta.module.use('a-jsoneditor');
+      // ok
+      this.ready = true;
     },
-    onInput(event) {
-      this._onInputDelay(event.target.value);
+    onSaveEditor() {
+      this.onSave();
+    },
+    onInput(value) {
+      this._onInputDelay(value);
     },
     _onInputDelay: Vue.prototype.$meta.util.debounce(function (value) {
       try {
@@ -34,17 +42,7 @@ export default {
     }, 500),
   },
   render() {
-    return (
-      <eb-box onSize={this.onSize} header subnavbar>
-        <textarea
-          ref="textarea"
-          readonly={this.readOnly ? 'readonly' : false}
-          type="textarea"
-          value={this.contentListener}
-          onInput={this.onInput}
-          class="json-textarea json-textarea-margin"
-        ></textarea>
-      </eb-box>
-    );
+    if (!this.ready) return <div></div>;
+    return <eb-json-editor ref="jsonEditor" readOnly={this.readOnly} valueType="string" valueMode="js" value={this.contentListener} onInput={this.onInput} onSave={this.onSaveEditor}></eb-json-editor>;
   },
 };

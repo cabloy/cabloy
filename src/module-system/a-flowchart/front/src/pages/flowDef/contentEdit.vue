@@ -28,7 +28,7 @@
         <content-edit-source slot="list" :readOnly="readOnly" :contentProcessStr="contentProcessStr" :onSave="onSave" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName === 'listener'" data-ref="listener" @tab:show="tabName = 'listener'">
-        <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" :onSave="onSave" @contentChange="onContentChange"></content-edit-listener>
+        <content-edit-listener slot="list" :readOnly="readOnly" :contentListener="contentListener" :onSave="onSave" @contentChange="onContentChange"></content-edit-listener>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>

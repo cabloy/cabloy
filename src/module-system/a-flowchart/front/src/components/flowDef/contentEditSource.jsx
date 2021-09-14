@@ -26,6 +26,9 @@ export default {
       // ok
       this.ready = true;
     },
+    onSaveEditor() {
+      this.onSave();
+    },
     onInput(data) {
       try {
         const value = window.JSON5.parse(data);
@@ -33,9 +36,6 @@ export default {
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
-    },
-    onSaveEditor() {
-      this.onSave();
     },
   },
   render() {

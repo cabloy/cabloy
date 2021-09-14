@@ -6,6 +6,10 @@ export default {
   props: {
     value: {},
     valueType: {},
+    valueMode: {
+      type: String,
+      default: 'json',
+    },
     readOnly: {
       type: Boolean,
       default: false,
@@ -46,12 +50,12 @@ export default {
       // codemirror
       await this.$meta.module.use('a-codemirror');
       // mode
-      const modeInfo = window.CodeMirror.__findMode('json');
+      const modeInfo = window.CodeMirror.__findMode(this.valueMode);
       await window.CodeMirror.__loadMode(modeInfo.mode);
       // addon
       await window.CodeMirror.__loadAddon('fold', ['foldcode', 'foldgutter', 'brace-fold'], ['foldgutter']);
       // create
-      this.cmEditor = window.CodeMirror(this.$refs.json, {
+      this.cmEditor = window.CodeMirror(this.$refs.editorContainer, {
         value: this.content,
         mode: modeInfo.mode,
         lineNumbers: true,
@@ -106,6 +110,7 @@ export default {
       } catch (err) {}
     },
     parseValue(value) {
+      if (this.valueMode !== 'json') return value;
       let content;
       // value
       if (!value) {
@@ -120,6 +125,7 @@ export default {
       return content;
     },
     getValue() {
+      if (this.valueMode !== 'json') return this.content;
       // string
       if (this.valueType2 === 'string') {
         return this.content ? JSON.stringify(window.JSON5.parse(this.content)) : null;
@@ -129,6 +135,6 @@ export default {
     },
   },
   render() {
-    return <div ref="json" class="eb-json-editor-codemirror"></div>;
+    return <div ref="editorContainer" class="eb-json-editor-codemirror"></div>;
   },
 };
