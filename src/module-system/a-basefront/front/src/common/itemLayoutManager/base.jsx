@@ -118,6 +118,7 @@ export default {
           try {
             await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), title);
             if (this.page_getDirty()) {
+              // only load once when more updates
               await this.base_loadItem();
               this.page_setDirty(false);
             }

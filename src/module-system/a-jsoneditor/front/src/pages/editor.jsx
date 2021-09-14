@@ -52,6 +52,13 @@ export default {
     this.content = this.value;
   },
   methods: {
+    onPageReinit() {
+      const jsonEditor = this.$refs.jsonEditor;
+      if (jsonEditor && jsonEditor.cmEditor) {
+        jsonEditor.cmEditor.focus();
+        jsonEditor.cmEditor.refresh();
+      }
+    },
     async _updateValue(newValue) {
       if (newValue === this.content) return;
       if (!this.page_getDirty()) {
@@ -62,6 +69,7 @@ export default {
       try {
         await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), this.title);
         if (this.page_getDirty()) {
+          // use the lastest one when more updates
           this.content = newValue;
           this.page_setDirty(false);
         }
@@ -121,7 +129,7 @@ export default {
   },
   render() {
     return (
-      <eb-page>
+      <eb-page onPageReinit={this.onPageReinit}>
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
