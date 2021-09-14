@@ -18,11 +18,9 @@ export default {
       ready: false,
     };
   },
-  created() {
-    this.init();
-  },
+  created() {},
   methods: {
-    async init() {
+    async reload() {
       // json editor
       await this.$meta.module.use('a-jsoneditor');
       // ok

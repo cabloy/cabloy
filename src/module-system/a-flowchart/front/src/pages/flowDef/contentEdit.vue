@@ -25,7 +25,7 @@
         ></content-edit-diagram>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName === 'source'" data-ref="source" @tab:show="tabName = 'source'">
-        <content-edit-source :readOnly="readOnly" :contentProcessStr="contentProcessStr" :onSave="onSave" @contentChange="onContentChange"></content-edit-source>
+        <content-edit-source slot="list" :readOnly="readOnly" :contentProcessStr="contentProcessStr" :onSave="onSave" @contentChange="onContentChange"></content-edit-source>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName === 'listener'" data-ref="listener" @tab:show="tabName = 'listener'">
         <content-edit-listener :readOnly="readOnly" :contentListener="contentListener" :onSave="onSave" @contentChange="onContentChange"></content-edit-listener>
