@@ -108,14 +108,27 @@ export default {
       if (!this.base_ready) return;
       if (this.base.item.atomId !== key.atomId) return;
 
-      if (this.container.mode === 'edit' && this.page_getDirty()) {
-        // just update time
-        this.base.item.atomUpdatedAt = new Date();
+      if (action.name === 'save' && this.container.mode === 'edit' && this.page_getDirty()) {
+        if (data.actionSource === this) {
+          // just update time
+          this.base.item.atomUpdatedAt = new Date();
+        } else {
+          // prompt
+          const title = this.base.item.atomNameLocale || this.base.item.atomName;
+          try {
+            await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), title);
+            await this.base_loadItem();
+            this.page_setDirty(false);
+          } catch (err) {
+            // just update time
+            this.base.item.atomUpdatedAt = new Date();
+          }
+        }
         return;
       }
 
       // create
-      if (action.menu === 1 && action.action === 'create') {
+      if (action.name === 'create') {
         // do nothing
         return;
       }

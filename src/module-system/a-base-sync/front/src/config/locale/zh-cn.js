@@ -163,6 +163,7 @@ export default {
   LayoutCard: '卡片布局',
   LayoutMobile: '移动布局',
   LayoutPC: 'PC布局',
+  DataChangedReloadConfirm: '数据已变更，您想要重新加载吗？',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '数据标记',

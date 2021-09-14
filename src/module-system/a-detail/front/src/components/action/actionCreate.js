@@ -17,7 +17,7 @@ export default {
         action,
       });
       // menu
-      if (action.menu === 1 || action.actionComponent || action.actionPath) {
+      if (action.actionComponent || action.actionPath) {
         const itemWrite = ctx.$utils.extend({}, this.detailItem, key);
         // write
         const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
