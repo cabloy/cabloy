@@ -375,6 +375,12 @@ export default {
       } else if (ebType === 'markdown') {
         // json
         return this.renderMarkdown(c, context);
+      } else if (ebType === 'markdown-content') {
+        // json
+        return this.renderMarkdownContent(c, context);
+      } else if (ebType === 'markdown-content-cms') {
+        // json
+        return this.renderMarkdownContentCms(c, context);
       } else if (ebType === 'details') {
         // details
         return this.renderDetails(c, context);
