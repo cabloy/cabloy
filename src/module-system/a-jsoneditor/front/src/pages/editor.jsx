@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import utils from '../common/utils.js';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
@@ -39,6 +40,9 @@ export default {
     valueType() {
       return this.contextParams.valueType;
     },
+    valueMode() {
+      return this.contextParams.valueMode || 'json';
+    },
     page_title() {
       return this.page_getDirtyTitle(this.title);
     },
@@ -60,7 +64,7 @@ export default {
       }
     },
     async _updateValue(newValue) {
-      if (newValue === this.content) return;
+      if (utils.parseValue(newValue, this.valueMode) === utils.parseValue(this.content, this.valueMode)) return;
       if (!this.page_getDirty()) {
         this.content = newValue;
         return;
@@ -133,7 +137,15 @@ export default {
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{this.renderActions()}</f7-nav-right>
         </eb-navbar>
-        <eb-json-editor ref="jsonEditor" readOnly={this.readOnly} valueType={this.valueType} value={this.content} onInput={this.onInput} onSave={this.onSaveEditor}></eb-json-editor>
+        <eb-json-editor
+          ref="jsonEditor"
+          readOnly={this.readOnly}
+          valueType={this.valueType}
+          valueMode={this.valueMode}
+          value={this.content}
+          onInput={this.onInput}
+          onSave={this.onSaveEditor}
+        ></eb-json-editor>
       </eb-page>
     );
   },

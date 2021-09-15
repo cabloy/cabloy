@@ -1,3 +1,5 @@
+import Vue from 'vue';
+import utils from '../common/utils.js';
 export default {
   meta: {
     global: true,
@@ -17,7 +19,7 @@ export default {
   },
   data() {
     return {
-      content: this.parseValue(this.value),
+      content: utils.parseValue(this.value, this.valueMode),
     };
   },
   computed: {
@@ -29,8 +31,8 @@ export default {
   },
   watch: {
     value(newValue) {
-      const _newValue = this.parseValue(newValue);
-      if (_newValue === this.content) return;
+      const _newValue = utils.parseValue(newValue, this.valueMode);
+      if (_newValue === utils.parseValue(this.content, this.valueMode)) return;
       this.content = _newValue;
       this.cmEditor.setValue(this.content);
     },
@@ -108,21 +110,6 @@ export default {
         // not raise event if json.parse error
         this.$emit('input', this.getValue());
       } catch (err) {}
-    },
-    parseValue(value) {
-      if (this.valueMode !== 'json') return value;
-      let content;
-      // value
-      if (!value) {
-        content = '{}';
-      } else {
-        if (typeof value === 'string') {
-          content = window.JSON5.stringify(window.JSON5.parse(value), null, 2);
-        } else {
-          content = window.JSON5.stringify(value, null, 2);
-        }
-      }
-      return content;
     },
     getValue() {
       if (this.valueMode !== 'json') return this.content;
