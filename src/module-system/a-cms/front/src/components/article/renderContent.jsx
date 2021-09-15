@@ -27,14 +27,17 @@ export default {
       return utils.combineAtomClass(this.atomClass, url);
     },
     onChooseEditContent() {
-      const { parcel, validate } = this.context;
+      const { parcel, property, validate } = this.context;
+      // target
+      let target = this.$meta.util.getProperty(property, 'ebParams.target');
+      if (target === undefined) target = '_self';
       const url = this.combineAtomClass('/a/cms/article/contentEdit');
       this.$view.navigate(url, {
-        target: validate.readOnly ? '_self' : undefined,
+        target,
         context: {
           params: {
             item: parcel.data,
-            readOnly: validate.readOnly,
+            readOnly: validate.readOnly || property.ebReadOnly,
             onSave: () => {
               return this.onSave();
             },
