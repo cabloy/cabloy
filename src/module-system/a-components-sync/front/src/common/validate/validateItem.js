@@ -15,6 +15,7 @@ import renderCategory from './render/renderCategory.js';
 import renderTags from './render/renderTags.js';
 import renderResourceType from './render/renderResourceType.js';
 import renderJson from './render/renderJson.js';
+import renderMarkdown from './render/renderMarkdown.js';
 import renderDetails from './render/renderDetails.js';
 import renderDetailsStat from './render/renderDetailsStat.js';
 import renderAtom from './render/renderAtom.js';
@@ -41,6 +42,7 @@ export default {
     renderTags,
     renderResourceType,
     renderJson,
+    renderMarkdown,
     renderDetails,
     renderDetailsStat,
     renderAtom,
@@ -370,6 +372,9 @@ export default {
       } else if (ebType === 'json') {
         // json
         return this.renderJson(c, context);
+      } else if (ebType === 'markdown') {
+        // json
+        return this.renderMarkdown(c, context);
       } else if (ebType === 'details') {
         // details
         return this.renderDetails(c, context);
