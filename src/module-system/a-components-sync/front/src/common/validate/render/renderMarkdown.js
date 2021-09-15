@@ -5,12 +5,11 @@ export default {
     },
     renderMarkdownContent(c, context) {
       let { property } = context;
-      property = {
-        ...property,
+      property = Object.assign({}, property, {
         ebParams: {
           host: this._renderMarkdown_host(context),
         },
-      };
+      });
       context = {
         ...context,
         property,
@@ -19,8 +18,7 @@ export default {
     },
     renderMarkdownContentCms(c, context) {
       let { property } = context;
-      property = {
-        ...property,
+      property = Object.assign({}, property, {
         ebParams: {
           host: this._renderMarkdown_host(context),
           actions: [
@@ -32,7 +30,7 @@ export default {
             },
           ],
         },
-      };
+      });
       context = {
         ...context,
         property,
