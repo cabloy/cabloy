@@ -15,23 +15,33 @@ export default {
       }
     },
     async onAction_preview() {
-      const { ctx, action } = this.$props;
-      // value
-      const res = await ctx.$api.post('/a/instance/instance/getConfigsPreview');
-      // taget
-      let target = ctx.$meta.util.getProperty(action, 'navigateOptions.target');
-      if (target === undefined) target = '_self';
-      // navigate
-      ctx.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
-        target,
-        context: {
-          params: {
-            value: res.data,
-            title: ctx.$text('Preview'),
-            readOnly: true,
-          },
+      const { ctx } = this.$props;
+      if (ctx.readOnly) {
+        return await this._preview();
+      }
+      await ctx.onPerformSave();
+      await this._preview();
+    },
+    _getAtomClass() {
+      const { host } = this.item;
+      return {
+        module: host.atom.module,
+        atomClassName: host.atom.atomClassName,
+      };
+    },
+    async _preview() {
+      const { ctx } = this.$props;
+      const { host } = this.item;
+      const atomClass = this._getAtomClass();
+      const data = await ctx.$api.post('/a/cms/render/getArticleUrl', {
+        atomClass,
+        key: { atomId: host.atomId },
+        options: {
+          returnWaitingPath: true,
         },
       });
+      if (!data) return;
+      window.open(data.url, `cms_article_${atomClass.module}_${host.atomId}`);
     },
   },
 };
