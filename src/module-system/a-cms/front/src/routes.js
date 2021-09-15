@@ -9,7 +9,6 @@ export default [
   { path: 'config/siteBase', component: load('config/siteBase') },
   { path: 'config/language', component: load('config/language') },
   { path: 'config/languagePreview', component: load('config/languagePreview') },
-  { path: 'article/contentEdit', component: load('article/contentEdit') },
   { path: 'article/post', component: load('article/post') },
   { path: 'article/edit', component: load('article/edit') },
 ];
