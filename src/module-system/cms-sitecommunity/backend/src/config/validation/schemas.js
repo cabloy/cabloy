@@ -26,12 +26,8 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'markdown-content-cms',
         ebTitle: 'Content',
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleContent',
-        },
       },
       // Basic Info
       __groupBasicInfo: {
