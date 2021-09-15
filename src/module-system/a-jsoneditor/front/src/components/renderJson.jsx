@@ -37,7 +37,7 @@ export default {
       const { property, validate } = context;
       const title = context.getTitle();
       // actionSave
-      const actionSave = this.$meta.util.getProperty(property, 'ebParams.actionSave') !== false;
+      const actionSave = this.$meta.util.getProperty(property, 'ebParams.actionSave') === true;
       // actionDone
       const actionDone = this.$meta.util.getProperty(property, 'ebParams.actionDone') !== false;
       // actions
