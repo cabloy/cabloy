@@ -23,7 +23,8 @@ export default {
       await this._preview();
     },
     _getAtomClass() {
-      const { host } = this.item;
+      const { ctx } = this.$props;
+      const { host } = ctx;
       return {
         module: host.atom.module,
         atomClassName: host.atom.atomClassName,
@@ -31,7 +32,7 @@ export default {
     },
     async _preview() {
       const { ctx } = this.$props;
-      const { host } = this.item;
+      const { host } = ctx;
       const atomClass = this._getAtomClass();
       const data = await ctx.$api.post('/a/cms/render/getArticleUrl', {
         atomClass,

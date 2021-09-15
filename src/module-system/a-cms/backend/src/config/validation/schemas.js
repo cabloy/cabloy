@@ -23,12 +23,8 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'markdown-content-cms',
         ebTitle: 'Content',
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleContent',
-        },
       },
       // Basic Info
       __groupBasicInfo: {
