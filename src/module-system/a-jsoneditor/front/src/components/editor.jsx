@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import utils from '../common/utils.js';
 export default {
   meta: {
