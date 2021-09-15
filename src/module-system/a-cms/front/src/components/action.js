@@ -1,14 +1,21 @@
+import Vue from 'vue';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [
+    ebActionBase, //
+  ],
   methods: {
-    async onAction({ ctx, action, item }) {
-      if (action.name === 'preview') {
-        return await this.onAction_preview({ ctx, action, item });
+    async onAction() {
+      if (this.action.name === 'preview') {
+        return await this.onAction_preview();
       }
     },
-    async onAction_preview({ ctx, action }) {
+    async onAction_preview() {
+      const { ctx, action } = this.$props;
       // value
       const res = await ctx.$api.post('/a/instance/instance/getConfigsPreview');
       // taget
