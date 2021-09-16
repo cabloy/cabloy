@@ -16,33 +16,32 @@ export default {
     },
     async onAction_preview_cms_content() {
       const { ctx } = this.$props;
-      if (ctx.readOnly) {
-        return await this._preview();
-      }
-      await ctx.onPerformSave();
-      await this._preview();
-    },
-    _getAtomClass() {
-      const { ctx } = this.$props;
       const { host } = ctx;
-      return {
+      // info
+      const atomClass = {
         module: host.atom.module,
         atomClassName: host.atom.atomClassName,
       };
+      const atomId = host.atomId;
+      // readOnly
+      if (ctx.readOnly) {
+        return await this._preview();
+      }
+      // save first
+      await ctx.onPerformSave();
+      await this._preview({ atomClass, atomId });
     },
-    async _preview() {
+    async _preview({ atomClass, atomId }) {
       const { ctx } = this.$props;
-      const { host } = ctx;
-      const atomClass = this._getAtomClass();
       const data = await ctx.$api.post('/a/cms/render/getArticleUrl', {
         atomClass,
-        key: { atomId: host.atomId },
+        key: { atomId },
         options: {
           returnWaitingPath: true,
         },
       });
       if (!data) return;
-      window.open(data.url, `cms_article_${atomClass.module}_${host.atomId}`);
+      window.open(data.url, `cms_article_${atomClass.module}_${atomId}`);
     },
   },
 };
