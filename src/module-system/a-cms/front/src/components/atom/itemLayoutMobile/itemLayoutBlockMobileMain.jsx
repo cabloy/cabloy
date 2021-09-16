@@ -107,7 +107,7 @@ export default {
     },
     async onSaveEditor() {
       try {
-        const res = await this.layoutManager.validate_onPerformAction(null, 'save');
+        const res = await this.layoutManager.validate_onPerformValidate(null, { action: 'save' });
         if (res === true) {
           this.$view.toast.show({ text: this.$text('Operation Succeeded') });
         } else if (typeof res === 'string') {
