@@ -45,6 +45,15 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
       }
+
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'root', action: 'layout', scopeNames: 'root' }, //
+          { roleName: 'root', action: 'preview', scopeNames: 'root' }, //
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+      }
     }
 
     async test() {

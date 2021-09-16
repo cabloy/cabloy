@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = require('./config/validation/schemas.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
@@ -20,7 +21,18 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {},
+          actions: {
+            preview: {
+              code: 101,
+              title: 'Preview',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'draft,formal',
+            },
+          },
           validator: 'post',
           search: {
             validator: 'postSearch',
