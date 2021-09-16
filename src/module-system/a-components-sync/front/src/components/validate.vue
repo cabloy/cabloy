@@ -144,7 +144,9 @@ export default {
           if (err.code !== 422) throw err;
           this.verrors = err.message;
           this.$emit('errorsSet', this.verrors);
-          throw new Error(this.$text('Data Validation Error'));
+          const _err = new Error(this.$text('Data Validation Error'));
+          _err.code = -422;
+          throw _err;
         }
       }
     },

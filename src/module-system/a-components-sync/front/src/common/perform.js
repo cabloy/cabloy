@@ -57,7 +57,7 @@ export default {
         this._handleResult(res);
       } catch (err) {
         this._hidePreloader();
-        if (err && err.code === 422) {
+        if (err && (err.code === 422 || err.code === -422)) {
           const message = this.$text('Data Validation Error');
           this.$view.toast.show({ text: message });
           return;
