@@ -1,5 +1,5 @@
-const __viewSizeDefaultLayoutView = [{ name: 'info' }];
-const __viewSizeDefaultLayoutEdit = [{ name: 'info' }];
+const __viewSizeDefaultLayoutView = [{ name: 'default' }];
+const __viewSizeDefaultLayoutEdit = [{ name: 'default' }];
 const __viewSizeDefaultView = {
   small: __viewSizeDefaultLayoutView,
   medium: __viewSizeDefaultLayoutView,
@@ -50,19 +50,11 @@ const item = {
         },
       },
     },
-    mobile: {
-      title: 'LayoutMobile',
+    default: {
+      title: 'LayoutDefault',
       component: {
         module: 'a-baselayout',
-        name: 'itemLayoutMobile',
-      },
-      blocks: {},
-    },
-    pc: {
-      title: 'LayoutPC',
-      component: {
-        module: 'a-baselayout',
-        name: 'itemLayoutPC',
+        name: 'itemLayoutDefault',
       },
       blocks: {},
     },
