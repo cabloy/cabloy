@@ -63,12 +63,7 @@ export default {
       this._loadModuleMarkdownRender();
       this._getArticleUrl();
     },
-    onSize(size) {
-      this.$$(this.$refs.iframe).css({
-        height: `${size.height}px`,
-        width: `${size.width}px`,
-      });
-    },
+    onSize(/* size*/) {},
     async _loadModuleMarkdownRender() {
       if (!this.enableMarkdown) return;
       if (this.containerMode === 'view') {
