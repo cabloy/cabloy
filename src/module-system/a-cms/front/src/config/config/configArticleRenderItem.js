@@ -21,25 +21,35 @@ const item = {
     },
   },
   layouts: {
-    mobile: {
+    info: {
+      title: 'LayoutInfo',
+      component: {
+        module: 'a-baselayout',
+        name: 'itemLayoutDefault',
+      },
       blocks: {
         main: {
           component: {
             module: 'a-cms',
             name: 'itemLayoutBlockMobileMain',
           },
-          // iframe: false,
-          // markdown: false,
+          markdown: false,
         },
       },
     },
-    pc: {
+    content: {
+      title: 'LayoutContent',
+      component: {
+        module: 'a-baselayout',
+        name: 'itemLayoutDefault',
+      },
       blocks: {
         main: {
           component: {
             module: 'a-cms',
             name: 'itemLayoutBlockMobileMain',
           },
+          markdown: true,
         },
       },
     },

@@ -162,6 +162,8 @@ export default {
   LayoutTable: '表格布局',
   LayoutCard: '卡片布局',
   LayoutDefault: '缺省布局',
+  LayoutInfo: '信息布局',
+  LayoutContent: '正文布局',
   LayoutMobile: '移动布局',
   LayoutPC: 'PC布局',
   DataChangedReloadConfirm: '数据已变更，您想要重新加载吗？',

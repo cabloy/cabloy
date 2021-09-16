@@ -22,6 +22,8 @@ export default {
   LayoutTable: 'Table Layout',
   LayoutCard: 'Card Layout',
   LayoutDefault: 'Default Layout',
+  LayoutInfo: 'Info Layout',
+  LayoutContent: 'Content Layout',
   LayoutMobile: 'Mobile Layout',
   LayoutPC: 'PC Layout',
   DataChangedReloadConfirm: 'Data changed, do you want to reload it?',
