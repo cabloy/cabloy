@@ -114,7 +114,17 @@ export default {
           this.$view.toast.show({ text: res });
         }
       } catch (err) {
-        this.$view.toast.show({ text: err.message });
+        let message;
+        if (err.code === 422) {
+          message = this.$text('Data Validation Error');
+          this.$nextTick(() => {
+            // switch layout
+            this.layoutManager.layout_switchLayout('default');
+          });
+        } else {
+          message = err.message;
+        }
+        this.$view.toast.show({ text: message });
       }
     },
     _renderIFrame() {
