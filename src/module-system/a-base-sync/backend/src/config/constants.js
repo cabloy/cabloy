@@ -16,8 +16,8 @@ module.exports = app => {
         clone: 5,
         enable: 6,
         disable: 7,
-        // report: 8,
-        // layout: 9,
+        layout: 15,
+        // report: 16,
 
         authorize: 25,
 
@@ -93,6 +93,14 @@ module.exports = app => {
           enableOnOpened: true,
           stage: 'formal',
           icon: { material: 'stop' },
+        },
+        layout: {
+          title: 'Layout',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          enableOnStatic: true,
+          enableOnOpened: true,
+          icon: { material: 'view_list' },
         },
         authorize: {
           title: 'Authorize',
