@@ -11,7 +11,7 @@ export default {
       context = this._renderMarkdown_patchContext(context);
       // action
       const action = {
-        name: 'preview',
+        name: 'cms-content-preview',
         actionModule: 'a-cms',
         actionComponent: 'action',
         icon: { material: 'visibility' },
