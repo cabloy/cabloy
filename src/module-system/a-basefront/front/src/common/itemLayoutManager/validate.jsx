@@ -21,6 +21,9 @@ export default {
     },
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
+      return await this.validate_onPerformAction(event, actionName);
+    },
+    async validate_onPerformAction(event, actionName) {
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
       const _action = this.getAction(action);
       const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });

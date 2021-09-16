@@ -1,5 +1,5 @@
-const __viewSizeDefaultLayoutView = [{ name: 'content' }, { name: 'info' }];
-const __viewSizeDefaultLayoutEdit = [{ name: 'info' }, { name: 'content' }];
+const __viewSizeDefaultLayoutView = [{ name: 'content' }, { name: 'default' }];
+const __viewSizeDefaultLayoutEdit = [{ name: 'default' }, { name: 'content' }];
 const __viewSizeDefaultView = {
   small: __viewSizeDefaultLayoutView,
   medium: __viewSizeDefaultLayoutView,
@@ -21,7 +21,7 @@ const item = {
     },
   },
   layouts: {
-    info: {
+    default: {
       title: 'LayoutInfo',
       component: {
         module: 'a-baselayout',

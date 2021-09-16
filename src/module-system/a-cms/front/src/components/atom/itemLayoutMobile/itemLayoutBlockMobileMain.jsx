@@ -101,12 +101,20 @@ export default {
       }
     },
     onInput(value) {
-      this.content = value;
-      this.page_setDirty(true);
+      const atom = this.layoutManager.base.item;
+      atom.content = value;
+      this.layoutManager.page_setDirty(true);
     },
-    onSaveEditor() {
-      if (this.$refs.actionSave) {
-        this.$refs.actionSave.onClick();
+    async onSaveEditor() {
+      try {
+        const res = await this.layoutManager.validate_onPerformAction(null, 'save');
+        if (res === true) {
+          this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+        } else if (typeof res === 'string') {
+          this.$view.toast.show({ text: res });
+        }
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
       }
     },
     _renderIFrame() {
