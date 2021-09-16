@@ -106,28 +106,7 @@ export default {
       this.layoutManager.page_setDirty(true);
     },
     async onSaveEditor() {
-      try {
-        const res = await this.layoutManager.validate_onPerformValidate(null, { action: 'save' });
-        if (res === true) {
-          this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-        } else if (typeof res === 'string') {
-          this.$view.toast.show({ text: res });
-        }
-      } catch (err) {
-        let message;
-        if (err.code === 422) {
-          // eslint-disable-next-line
-          this.layoutManager.validate.errors = err.message;
-          message = this.$text('Data Validation Error');
-          this.$nextTick(() => {
-            // switch layout
-            this.layoutManager.layout_switchLayout('default');
-          });
-        } else {
-          message = err.message;
-        }
-        this.$view.toast.show({ text: message });
-      }
+      return await this.layoutManager.validate_onPerformValidateWrapper(null, { action: 'save' });
     },
     _renderIFrame() {
       if (!this.articleUrl) return <div></div>;

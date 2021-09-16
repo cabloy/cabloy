@@ -23,6 +23,32 @@ export default {
     validate_onSubmit() {
       this.actions_onSubmit();
     },
+    async validate_onPerformValidateWrapper(event, options) {
+      try {
+        const res = await this.validate_onPerformValidate(event, options);
+        if (res === true) {
+          this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+        } else if (typeof res === 'string') {
+          this.$view.toast.show({ text: res });
+        }
+      } catch (err) {
+        if (err.code === 422) {
+          // eslint-disable-next-line
+          this.validate.errors = err.message;
+          const message = this.$text('Data Validation Error');
+          this.$view.toast.show({ text: message });
+          this.$nextTick(() => {
+            // switch layout
+            this.layout_switchLayout('default');
+          });
+          return;
+        }
+        if (err.message) {
+          this.$view.toast.show({ text: err.message });
+          throw err;
+        }
+      }
+    },
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });

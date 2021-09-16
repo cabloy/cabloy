@@ -101,7 +101,7 @@ export default {
       const options = { action };
       const validateInstance = this.validate_getInstance();
       if (!validateInstance) {
-        return this.validate_onPerformValidate(event, options);
+        return this.validate_onPerformValidateWrapper(event, options);
       }
       return validateInstance.perform(event, options);
     },
