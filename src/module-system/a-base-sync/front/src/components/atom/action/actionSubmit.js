@@ -11,7 +11,7 @@ export default {
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
         }
         // update formal
-        ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' } });
+        ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' }, actionSource: ctx });
         // back
         ctx.page_setDirty(false); // should before navigate
         ctx.$f7router.back();
@@ -19,7 +19,7 @@ export default {
         // flow
         const flow = data.flow;
         // update draft
-        ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
+        ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' }, actionSource: ctx });
         // navigate replace self
         ctx.page_setDirty(false); // should before navigate
         const url = `/a/flowtask/flow?flowId=${flow.id}`;
