@@ -62,9 +62,14 @@ module.exports = app => {
         atomClassName: 'post',
       };
       const categories = [
+        // en-us
         { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
         { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, categorySorting: 2 },
         { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, categorySorting: 3 },
+        // zh-cn
+        { categoryName: '分享', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: '问答', language: 'zh-cn', categoryIdParent: 0, categorySorting: 2 },
+        { categoryName: '公告', language: 'zh-cn', categoryIdParent: 0, categorySorting: 3 },
       ];
       const categoryIds = {};
       for (const item of categories) {
