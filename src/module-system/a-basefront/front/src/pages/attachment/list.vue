@@ -109,7 +109,7 @@ export default {
                 resolve();
               }
               if (code === false) {
-                reject();
+                reject(new Error(''));
               }
             },
           },
