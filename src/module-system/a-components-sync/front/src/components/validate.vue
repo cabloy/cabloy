@@ -108,6 +108,9 @@ export default {
     parcel(newValue) {
       this.$emit('parcelChanged', newValue);
     },
+    errors(newValue) {
+      this.verrors = newValue;
+    },
   },
   created() {
     this.initData();
@@ -127,6 +130,7 @@ export default {
     },
     reset() {
       this.verrors = null;
+      this.$emit('errorsReset');
     },
     async perform(event, context) {
       if (this.auto && !this.ready) return null;
@@ -139,6 +143,7 @@ export default {
         if (err) {
           if (err.code !== 422) throw err;
           this.verrors = err.message;
+          this.$emit('errorsSet', this.verrors);
           throw new Error(this.$text('Data Validation Error'));
         }
       }

@@ -1,6 +1,10 @@
 export default {
   data() {
-    return {};
+    return {
+      validate: {
+        errors: null,
+      },
+    };
   },
   computed: {
     validate_host() {
@@ -35,6 +39,12 @@ export default {
     validate_onValidateItemChange() {
       this.page_setDirty(true);
     },
+    validate_errorsSet(errors) {
+      this.validate.errors = errors;
+    },
+    validate_errorsReset() {
+      this.validate.errors = null;
+    },
     validate_render() {
       if (!this.base_ready) return null;
       return (
@@ -45,9 +55,12 @@ export default {
           auto
           data={this.base.item}
           params={this.base.validateParams}
+          errors={this.validate.errors}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}
           onValidateItemChange={this.validate_onValidateItemChange}
+          onErrorsSet={this.validate_errorsSet}
+          onErrorsReset={this.validate_errorsReset}
         ></eb-validate>
       );
     },

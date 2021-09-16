@@ -116,6 +116,8 @@ export default {
       } catch (err) {
         let message;
         if (err.code === 422) {
+          // eslint-disable-next-line
+          this.layoutManager.validate.errors = err.message;
           message = this.$text('Data Validation Error');
           this.$nextTick(() => {
             // switch layout
