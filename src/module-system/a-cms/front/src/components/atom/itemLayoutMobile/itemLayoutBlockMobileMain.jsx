@@ -15,6 +15,7 @@ export default {
   },
   data() {
     return {
+      moduleMarkdownEditor: null,
       moduleMarkdownRender: null,
       articleUrl: null,
     };
@@ -69,8 +70,16 @@ export default {
       });
     },
     async _loadModuleMarkdownRender() {
-      if (!this.enableMarkdown || this.moduleMarkdownRender) return;
-      this.moduleMarkdownRender = await this.$meta.module.use('a-markdownrender');
+      if (!this.enableMarkdown) return;
+      if (this.containerMode === 'view') {
+        if (!this.moduleMarkdownRender) {
+          this.moduleMarkdownRender = await this.$meta.module.use('a-markdownrender');
+        }
+      } else {
+        if (!this.moduleMarkdownEditor) {
+          this.moduleMarkdownEditor = await this.$meta.module.use('a-markdown');
+        }
+      }
     },
     async _getArticleUrl() {
       if (!this.enableIframe || this.articleUrl) return;
@@ -96,6 +105,15 @@ export default {
         this.articleUrl = '';
       }
     },
+    onInput(value) {
+      this.content = value;
+      this.page_setDirty(true);
+    },
+    onSaveEditor() {
+      if (this.$refs.actionSave) {
+        this.$refs.actionSave.onClick();
+      }
+    },
     _renderIFrame() {
       if (!this.articleUrl) return <div></div>;
       const subnavbar = this.layoutManager.subnavbar.enable;
@@ -105,7 +123,7 @@ export default {
         </eb-box>
       );
     },
-    _renderMarkdown() {
+    _renderMarkdownRender() {
       if (!this.moduleMarkdownRender) return <div></div>;
       const item = this.markdownHost.atom;
       return (
@@ -116,13 +134,26 @@ export default {
         </f7-card>
       );
     },
+    _renderMarkdownEditor() {
+      if (!this.moduleMarkdownEditor) return <div></div>;
+      const subnavbar = this.layoutManager.subnavbar.enable;
+      const item = this.markdownHost.atom;
+      return (
+        <eb-box onSize={this.onSize} header subnavbar={subnavbar} class="eb-box-iframe">
+          <eb-markdown-editor ref="markdownEditor" host={this.markdownHost} value={item.content} onInput={this.onInput} onSave={this.onSaveEditor} />
+        </eb-box>
+      );
+    },
   },
   render() {
     if (this.enableIframe) {
       return this._renderIFrame();
     }
     if (this.enableMarkdown) {
-      return this._renderMarkdown();
+      if (this.containerMode === 'view') {
+        return this._renderMarkdownRender();
+      }
+      return this._renderMarkdownEditor();
     }
     // others
     return this.layoutManager.validate_render();
