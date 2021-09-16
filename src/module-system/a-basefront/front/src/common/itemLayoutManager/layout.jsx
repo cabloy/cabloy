@@ -50,7 +50,7 @@ export default {
       // force clear status
       this.layout.current = null;
       this.layout.config = null;
-      this.layout.instance = null;
+      // this.layout.instance = null;
       this.subnavbar.enable = false;
       this.subnavbar.render = false;
       // prepare
