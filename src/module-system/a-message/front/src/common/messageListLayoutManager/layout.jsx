@@ -51,7 +51,7 @@ export default {
       // force clear status
       this.layout.current = null;
       this.layout.config = null;
-      this.layout.instance = null;
+      // this.layout.instance = null;
       // prepare
       if (!this.layout_prepareConfigLayout(layoutCurrent)) {
         return false;

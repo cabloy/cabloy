@@ -51,7 +51,7 @@ export default {
       // force clear status
       this.layout.current = null;
       this.layout.config = null;
-      this.layout.instance = null;
+      // this.layout.instance = null;
       if (this.data.adapter) {
         this.data.adapter.providerName = null;
       }
