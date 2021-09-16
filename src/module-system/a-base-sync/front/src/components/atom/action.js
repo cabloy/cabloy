@@ -13,6 +13,7 @@ import ActionSelectResourceType from './action/actionSelectResourceType.js';
 import ActionEnable from './action/actionEnable.js';
 import ActionDisable from './action/actionDisable.js';
 import ActionWorkflow from './action/actionWorkflow.js';
+import ActionLayout from './action/actionLayout.js';
 
 export default {
   meta: {
@@ -34,6 +35,7 @@ export default {
     ActionEnable,
     ActionDisable,
     ActionWorkflow,
+    ActionLayout,
   ],
   methods: {
     async onAction() {
@@ -66,6 +68,8 @@ export default {
         return await this._onActionDisable();
       } else if (action.name === 'workflow') {
         return await this._onActionWorkflow();
+      } else if (action.name === 'layout') {
+        return await this._onActionLayout();
       }
     },
     async _onActionReadGeneral({ atomId }) {
