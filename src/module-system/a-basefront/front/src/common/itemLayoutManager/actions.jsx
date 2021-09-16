@@ -29,6 +29,8 @@ export default {
       }
       // others
       for (const action of this.actions.list) {
+        // layout
+        if (action.name === 'layout') continue;
         // write: support simple
         if (action.name === 'write' && this.base.item.atomStage === this.base.item.atomSimple) continue;
         // view
@@ -131,6 +133,13 @@ export default {
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
+      // layout button before save
+      const actionLayout = this.actions_findAction('layout');
+      if (actionLayout) {
+        const actionName = 'layout';
+        const actionIcon = 'view_list';
+        children.push(<eb-link key={actionName} ref="buttonLayout" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
+      }
       // only show on draft
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
