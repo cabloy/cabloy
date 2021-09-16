@@ -24,10 +24,13 @@ export default {
       return this.layoutManager.container.mode;
     },
     enableIframe() {
-      return this.containerMode === 'view' && this.blockConfig.iframe;
+      return !!this.blockConfig.iframe;
+    },
+    enableInfo() {
+      return !!this.blockConfig.info;
     },
     enableMarkdown() {
-      return this.containerMode === 'view' && !this.enableIframe && this.blockConfig.markdown !== false;
+      return !!this.blockConfig.markdown;
     },
     markdownHost() {
       const atom = this.layoutManager.base.item;

@@ -33,7 +33,7 @@ const item = {
             module: 'a-cms',
             name: 'itemLayoutBlockMobileMain',
           },
-          markdown: false,
+          info: true,
         },
       },
     },
