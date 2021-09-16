@@ -1,10 +1,21 @@
+const __viewSizeDefaultLayoutView = [{ name: 'info' }];
+const __viewSizeDefaultLayoutEdit = [{ name: 'info' }];
+const __viewSizeDefaultView = {
+  small: __viewSizeDefaultLayoutView,
+  medium: __viewSizeDefaultLayoutView,
+  large: __viewSizeDefaultLayoutView,
+};
+const __viewSizeDefaultEdit = {
+  small: __viewSizeDefaultLayoutEdit,
+  medium: __viewSizeDefaultLayoutEdit,
+  large: __viewSizeDefaultLayoutEdit,
+};
 const item = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'mobile' },
-        medium: { name: 'mobile' },
-        large: { name: 'pc' },
+        view: __viewSizeDefaultView,
+        edit: __viewSizeDefaultEdit,
       },
     },
     attachment: true,
@@ -16,25 +27,25 @@ const item = {
         caption: {
           component: {
             module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileCaption',
+            name: 'itemLayoutBlockDefaultCaption',
           },
         },
         title: {
           component: {
             module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileTitle',
+            name: 'itemLayoutBlockDefaultTitle',
           },
         },
         subnavbar: {
           component: {
             module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileSubnavbar',
+            name: 'itemLayoutBlockDefaultSubnavbar',
           },
         },
         main: {
           component: {
             module: 'a-baselayout',
-            name: 'itemLayoutBlockMobileMain',
+            name: 'itemLayoutBlockDefaultMain',
           },
         },
       },

@@ -15,14 +15,12 @@ import listLayoutBlockTableItems from './components/atom/listLayoutTable/listLay
 import listLayoutBlockTableBottombar from './components/atom/listLayoutTable/listLayoutBlockTableBottombar.jsx';
 import listLayoutTableCellUserName from './components/atom/listLayoutTable/listLayoutTableCellUserName.jsx';
 import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listLayoutTableCellAtomName.jsx';
-// itemLayoutMobile
-import itemLayoutMobile from './components/atom/itemLayoutMobile/itemLayoutMobile.jsx';
-import itemLayoutBlockMobileCaption from './components/atom/itemLayoutMobile/itemLayoutBlockMobileCaption.jsx';
-import itemLayoutBlockMobileTitle from './components/atom/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
-import itemLayoutBlockMobileSubnavbar from './components/atom/itemLayoutMobile/itemLayoutBlockMobileSubnavbar.jsx';
-import itemLayoutBlockMobileMain from './components/atom/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
-// itemLayoutPC
-import itemLayoutPC from './components/atom/itemLayoutPC/itemLayoutPC.jsx';
+// itemLayoutDefault
+import itemLayoutDefault from './components/atom/itemLayoutDefault/itemLayoutDefault.jsx';
+import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
+import itemLayoutBlockDefaultTitle from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
+import itemLayoutBlockDefaultSubnavbar from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
+import itemLayoutBlockDefaultMain from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
 // resourceTreeLayoutAccordion
 import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
 import resourceTreeLayoutBlockAccordionTitle from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionTitle.jsx';
@@ -49,14 +47,12 @@ export default {
   listLayoutBlockTableBottombar,
   listLayoutTableCellUserName,
   listLayoutTableCellAtomName,
-  // itemLayoutMobile
-  itemLayoutMobile,
-  itemLayoutBlockMobileCaption,
-  itemLayoutBlockMobileTitle,
-  itemLayoutBlockMobileSubnavbar,
-  itemLayoutBlockMobileMain,
-  // itemLayoutPC
-  itemLayoutPC,
+  // itemLayoutDefault
+  itemLayoutDefault,
+  itemLayoutBlockDefaultCaption,
+  itemLayoutBlockDefaultTitle,
+  itemLayoutBlockDefaultSubnavbar,
+  itemLayoutBlockDefaultMain,
   // resourceTreeLayoutAccordion
   resourceTreeLayoutAccordion,
   resourceTreeLayoutBlockAccordionTitle,
