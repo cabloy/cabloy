@@ -19,6 +19,11 @@ export default {
       articleUrl: null,
     };
   },
+  watch: {
+    blockConfig() {
+      this.loadResources();
+    },
+  },
   computed: {
     containerMode() {
       return this.layoutManager.container.mode;
@@ -41,8 +46,7 @@ export default {
     },
   },
   created() {
-    this._loadModuleMarkdownRender();
-    this._getArticleUrl();
+    this.loadResources();
     // this._unwatch = this.$watch('layoutManager.base.item', () => {
     //   this._getArticleUrl();
     // });
@@ -54,6 +58,10 @@ export default {
     // }
   },
   methods: {
+    loadResources() {
+      this._loadModuleMarkdownRender();
+      this._getArticleUrl();
+    },
     onSize(size) {
       this.$$(this.$refs.iframe).css({
         height: `${size.height}px`,
@@ -61,11 +69,11 @@ export default {
       });
     },
     async _loadModuleMarkdownRender() {
-      if (!this.enableMarkdown) return;
+      if (!this.enableMarkdown || this.moduleMarkdownRender) return;
       this.moduleMarkdownRender = await this.$meta.module.use('a-markdownrender');
     },
     async _getArticleUrl() {
-      if (!this.enableIframe) return;
+      if (!this.enableIframe || this.articleUrl) return;
       try {
         const data = await this.$api.post('render/getArticleUrl', {
           key: {
