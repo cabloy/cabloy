@@ -38,7 +38,7 @@ export default {
     },
     base_getLayoutConfigKeyCurrent() {
       const detailClassKey = `${this.base.detailClass.module}_${this.base.detailClass.detailClassName}`;
-      return `detail.${detailClassKey}.render.item.layout.current.${this.$view.size}`;
+      return `detail.${detailClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
     async base_loadItem() {
       try {
