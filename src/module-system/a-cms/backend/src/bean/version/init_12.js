@@ -5,6 +5,7 @@ module.exports = app => {
       // add role rights
       const roleRights = [
         { roleName: 'root', action: 'layout', scopeNames: 'root' }, //
+        { roleName: 'root', action: 'preview', scopeNames: 'root' }, //
       ];
       await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
     }

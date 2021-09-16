@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
@@ -22,7 +23,18 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {},
+          actions: {
+            preview: {
+              code: 101,
+              title: 'Preview',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'draft,formal',
+            },
+          },
           validator: 'article',
           search: {
             validator: 'articleSearch',
