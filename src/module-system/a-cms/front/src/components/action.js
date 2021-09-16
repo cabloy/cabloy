@@ -12,6 +12,8 @@ export default {
     async onAction() {
       if (this.action.name === 'cms-content-preview') {
         return await this.onAction_preview_cms_content();
+      } else if (this.action.name === 'preview') {
+        return await this.onAction_preview();
       }
     },
     async onAction_preview_cms_content() {
@@ -25,10 +27,26 @@ export default {
       const atomId = host.atomId;
       // readOnly
       if (ctx.readOnly) {
-        return await this._preview();
+        return await this._preview({ atomClass, atomId });
       }
       // save first
       await ctx.onPerformSave();
+      await this._preview({ atomClass, atomId });
+    },
+    async onAction_preview() {
+      const { ctx, item } = this.$props;
+      // info
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      const atomId = item.atomId;
+      // readOnly
+      if (!ctx.page_getDirty || !ctx.page_getDirty()) {
+        return await this._preview({ atomClass, atomId });
+      }
+      // save first
+      await ctx.validate_onPerformValidateWrapper(null, { action: 'save' });
       await this._preview({ atomClass, atomId });
     },
     async _preview({ atomClass, atomId }) {
