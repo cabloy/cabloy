@@ -1,7 +1,7 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const AtomBaseFn = require('./common/atomBase.js');
+const AtomBaseFn = require('./bean/bean.atomBase.js');
 
 // eslint-disable-next-line
 module.exports = app => {
