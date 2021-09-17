@@ -15,8 +15,18 @@ export default {
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
       this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.base.atomClass.module], `atoms.${this.base.atomClass.atomClassName}`);
+      // special for cms
+      let configPatchCMS;
+      const atomClassBase = this.getAtomClass(this.base.atomClass);
+      if (!atomClassBase.cms || (this.base.atomClass.module === 'a-cms' && this.base.atomClass.atomClassName === 'article')) {
+        configPatchCMS = this.base.configAtom;
+      } else {
+        await this.$meta.module.use('a-cms');
+        const configCMS = this.$meta.util.getProperty(this.$meta.config.modules['a-cms'], 'atoms.article');
+        configPatchCMS = this.base.configAtom ? this.$meta.util.extend({}, configCMS, this.base.configAtom) : configCMS;
+      }
       // config
-      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
+      this.base.config = configPatchCMS ? this.$meta.util.extend({}, this.base.configAtomBase, configPatchCMS) : this.base.configAtomBase;
       // prepareConfigLayout
       this.layout_prepareConfigLayout();
     },

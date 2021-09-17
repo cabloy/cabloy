@@ -6,7 +6,7 @@ export default {
     post: {
       render: {
         list: configPostRenderList,
-        item: configPostRenderItem,
+        // item: configPostRenderItem,
       },
     },
   },
