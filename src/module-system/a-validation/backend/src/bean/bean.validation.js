@@ -26,22 +26,22 @@ module.exports = ctx => {
       };
     }
 
-    async validate({ module, validator, schema, data }) {
+    async validate({ module, validator, schema, data, filterOptions }) {
       const _validator = this._checkValidator({ module, validator });
-      return await _validator.ajv.v({ ctx, schema, data });
+      return await _validator.ajv.v({ ctx, schema, data, filterOptions });
     }
 
-    async ajvFromSchemaAndValidate({ module, schema, options, data }) {
+    async ajvFromSchemaAndValidate({ module, schema, options, data, filterOptions }) {
       if (typeof schema === 'string') {
         const _schema = this.getSchema({ module, schema });
         schema = _schema.schema;
       }
       const ajv = this.ajvFromSchema({ module, schema, options });
-      return await this.ajvValidate({ ajv, schema: null, data });
+      return await this.ajvValidate({ ajv, schema: null, data, filterOptions });
     }
 
-    async ajvValidate({ ajv, schema, data }) {
-      return await ajv.v({ ctx, schema, data });
+    async ajvValidate({ ajv, schema, data, filterOptions }) {
+      return await ajv.v({ ctx, schema, data, filterOptions });
     }
 
     ajvFromSchema({ module, schema, options }) {
@@ -85,7 +85,7 @@ module.exports = ctx => {
       return schemas;
     }
 
-    async _validate({ atomClass, detailClass, data, options }) {
+    async _validate({ atomClass, detailClass, data, options, filterOptions }) {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
@@ -96,6 +96,7 @@ module.exports = ctx => {
             validator: optionsSchema.validator,
             schema: optionsSchema.schema,
             data,
+            filterOptions,
           });
         } else {
           // create validator dynamicly
@@ -103,6 +104,7 @@ module.exports = ctx => {
             module: optionsSchema.module,
             schema: optionsSchema.schema,
             data,
+            filterOptions,
           });
         }
       } else if (atomClass) {
@@ -114,6 +116,7 @@ module.exports = ctx => {
             validator: validator.validator,
             schema: validator.schema,
             data,
+            filterOptions,
           });
         }
       } else if (detailClass) {
@@ -125,6 +128,7 @@ module.exports = ctx => {
             validator: validator.validator,
             schema: validator.schema,
             data,
+            filterOptions,
           });
         }
       }

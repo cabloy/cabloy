@@ -53,12 +53,12 @@ module.exports = app => {
 };
 
 function createValidate(schemaRoot) {
-  return async function ({ ctx, schema, data, options }) {
+  return async function ({ ctx, schema, data, filterOptions }) {
     const validate = this.getSchema(schema || schemaRoot);
     try {
       const res = await validate.call(ctx, data);
-      if (options && options.filter) {
-        _filterResult({ ajv: this, validate, data, options });
+      if (filterOptions) {
+        _filterResult({ ajv: this, validate, data, filterOptions });
       }
       return res;
     } catch (e) {
@@ -77,29 +77,28 @@ function createValidate(schemaRoot) {
   };
 }
 
-function _filterResult({ ajv, validate, data, options }) {
-  const filter = options && options.filter;
-  _filterSchema({ ajv, schema: validate.schema, data, filter });
+function _filterResult({ ajv, validate, data, filterOptions }) {
+  _filterSchema({ ajv, schema: validate.schema, data, filterOptions });
 }
 
-function _filterSchema({ ajv, schema, data, filter }) {
-  _filterProperties({ ajv, properties: schema.properties, data, filter });
+function _filterSchema({ ajv, schema, data, filterOptions }) {
+  _filterProperties({ ajv, properties: schema.properties, data, filterOptions });
 }
 
-function _filterProperties({ ajv, properties, data, filter }) {
+function _filterProperties({ ajv, properties, data, filterOptions }) {
   if (!data) return;
   for (const key in properties) {
     const property = properties[key];
     if (data[key] === undefined) continue;
-    if (filter.type && !property.type) {
+    if (filterOptions.type && !property.type) {
       delete data[key];
-    } else if (filter.ebReadOnly && property.ebReadOnly === true) {
+    } else if (filterOptions.ebReadOnly && property.ebReadOnly === true) {
       delete data[key];
     } else if (property.type === 'object' && property.properties) {
-      _filterProperties({ ajv, properties: property.properties, data: data[key], filter });
+      _filterProperties({ ajv, properties: property.properties, data: data[key], filterOptions });
     } else if (property.type === 'object' && property.$ref) {
       const validate = ajv.getSchema(property.$ref);
-      _filterSchema({ ajv, schema: validate.schema, data: data[key], filter });
+      _filterSchema({ ajv, schema: validate.schema, data: data[key], filterOptions });
     }
   }
 }
