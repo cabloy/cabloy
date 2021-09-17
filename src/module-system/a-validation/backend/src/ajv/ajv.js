@@ -53,10 +53,13 @@ module.exports = app => {
 };
 
 function createValidate(schemaRoot) {
-  return async function ({ ctx, schema, data }) {
+  return async function ({ ctx, schema, data, options }) {
     const validate = this.getSchema(schema || schemaRoot);
     try {
       const res = await validate.call(ctx, data);
+      if (options && options.filter) {
+        _filterResult({ ajv: this, validate, data, options });
+      }
       return res;
     } catch (e) {
       if (!Array.isArray(e.errors)) throw e;
@@ -72,4 +75,30 @@ function createValidate(schemaRoot) {
       });
     }
   };
+}
+
+function _filterResult({ ajv, validate, data, options }) {
+  const filter = options && options.filter;
+  _filterSchema({ ajv, schema: validate.schema, data, filter });
+}
+
+function _filterSchema({ ajv, schema, data, filter }) {
+  _filterProperties({ ajv, properties: schema.properties, data, filter });
+}
+
+function _filterProperties({ ajv, properties, data, filter }) {
+  for (const key in properties) {
+    const property = properties;
+    if (data[key] === undefined) continue;
+    if (filter.type && !property.type) {
+      delete data[key];
+    } else if (filter.ebReadOnly && property.ebReadOnly === true) {
+      delete data[key];
+    } else if (property.type === 'object' && property.properties) {
+      _filterProperties({ ajv, properties: property.properties, data: data[key], filter });
+    } else if (property.type === 'object' && property.$ref) {
+      const validate = ajv.getSchema(property.$ref);
+      _filterSchema({ ajv, schema: validate.schema, data: data[key], filter });
+    }
+  }
 }
