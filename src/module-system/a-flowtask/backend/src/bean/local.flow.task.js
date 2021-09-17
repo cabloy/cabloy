@@ -611,9 +611,16 @@ module.exports = ctx => {
       fields.atomId = {};
       fields.module = {};
       fields.atomClassName = {};
+      fields.atomNameLocale = {};
       fields.atomCategoryName = {};
+      fields.atomCategoryNameLocale = {};
+      fields.flowNodeNameCurrent = {};
+      fields.flowNodeNameCurrentLocale = {};
+      fields._meta = {};
       for (const field in fields) {
-        item[field] = atom[field];
+        if (item[field] === undefined && atom[field] !== undefined) {
+          item[field] = atom[field];
+        }
       }
       // ok
       return { schema, item };
