@@ -50,6 +50,8 @@ export default {
     async base_init() {
       // layoutConfig
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+      // load atomClasses
+      await this.$store.dispatch('a/base/getAtomClasses');
     },
     base_getLayoutConfigKeyCurrent() {
       const atomClassKey = `${this.base.atomClass.module}_${this.base.atomClass.atomClassName}`;
