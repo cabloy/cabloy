@@ -459,13 +459,6 @@ module.exports = ctx => {
       }
     }
 
-    _appendRevisionToHistory({ item }) {
-      if (!item.atomRevision || item.atomStage !== 2) return;
-      if (!item._meta) item._meta = {};
-      if (!item._meta.flags) item._meta.flags = [];
-      item._meta.flags.push(`Rev.${item.atomRevision}`);
-    }
-
     // atom
 
     async _add({

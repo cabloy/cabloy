@@ -2,18 +2,6 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
-// maybe modified by user
-const __atomBasicFields = [
-  'atomName', //
-  'atomLanguage',
-  'atomCategoryId',
-  'atomTags',
-  'allowComment',
-  // 'atomStatic',
-  // 'atomStaticKey',
-  // 'atomRevision',
-];
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
@@ -52,11 +40,33 @@ module.exports = app => {
 
     async read({ atomClass, options, key, user }) {
       // get
-      return await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      // revision
+      if (item) {
+        this._appendRevisionToHistory({ item });
+      }
+      // flow
+      if (item && item.flowNodeNameCurrent) {
+        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+      }
+      return item;
     }
 
-    async select(/* { atomClass, options, items, user } */) {
-      // donothing
+    async select({ /* atomClass,*/ options, items, user }) {
+      // revision
+      if (options.stage === 'history') {
+        for (const item of items) {
+          this._appendRevisionToHistory({ item });
+        }
+      }
+      // flow
+      if (options.stage === 'draft') {
+        for (const item of items) {
+          if (item.flowNodeNameCurrent) {
+            item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+          }
+        }
+      }
     }
 
     async delete({ atomClass, key, user }) {
@@ -129,23 +139,6 @@ module.exports = app => {
           delete item[field];
         }
       }
-    }
-
-    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
-      // write atom
-      const atom = {};
-      for (const field of __atomBasicFields) {
-        if (item[field] !== undefined) atom[field] = item[field];
-      }
-      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
-        atom.updatedAt = new Date();
-      }
-      if (atom.atomName) {
-        atom.atomName = atom.atomName.trim();
-      }
-      // update
-      atom.id = key.atomId;
-      await this.ctx.bean.atom._update({ atom, user });
     }
 
     async submit({ /* atomClass,*/ key, options, user }) {

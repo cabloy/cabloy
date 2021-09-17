@@ -98,14 +98,6 @@ module.exports = ctx => {
         context: { atomClass, options, key, user },
         fn: 'read',
       });
-      // revision
-      if (item) {
-        this._appendRevisionToHistory({ item });
-      }
-      // flow
-      if (item && item.flowNodeNameCurrent) {
-        item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
-      }
       // ok
       return item;
     }
@@ -167,28 +159,18 @@ module.exports = ctx => {
         count,
       });
       // select items
-      if (!count && atomClass) {
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        await ctx.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, options, items, user },
-          fn: 'select',
-        });
-      }
-      // revision
-      if (!count && options.stage === 'history') {
-        for (const item of items) {
-          this._appendRevisionToHistory({ item });
-        }
-      }
-      // flow
-      if (!count && options.stage === 'draft') {
-        for (const item of items) {
-          if (item.flowNodeNameCurrent) {
-            item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
-          }
+      if (!count) {
+        if (atomClass) {
+          const _moduleInfo = mparse.parseInfo(atomClass.module);
+          const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+          await ctx.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, options, items, user },
+            fn: 'select',
+          });
+        } else {
+          await ctx.bean.atomBase.select({ atomClass, options, items, user });
         }
       }
       // ok
