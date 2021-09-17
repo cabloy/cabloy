@@ -1,10 +1,21 @@
+const __viewSizeDefaultLayoutView = [{ name: 'default' }];
+const __viewSizeDefaultLayoutEdit = [{ name: 'default' }];
+const __viewSizeDefaultView = {
+  small: __viewSizeDefaultLayoutView,
+  medium: __viewSizeDefaultLayoutView,
+  large: __viewSizeDefaultLayoutView,
+};
+const __viewSizeDefaultEdit = {
+  small: __viewSizeDefaultLayoutEdit,
+  medium: __viewSizeDefaultLayoutEdit,
+  large: __viewSizeDefaultLayoutEdit,
+};
 const item = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'mobile' },
-        medium: { name: 'pc' },
-        large: { name: 'pc' },
+        view: __viewSizeDefaultView,
+        edit: __viewSizeDefaultEdit,
       },
     },
     attachment: true,
@@ -16,36 +27,28 @@ const item = {
         title: {
           component: {
             module: 'a-flowtask',
-            name: 'flowLayoutBlockMobileTitle',
+            name: 'flowLayoutBlockDefaultTitle',
           },
         },
         subnavbar: {
           component: {
             module: 'a-flowtask',
-            name: 'flowLayoutBlockMobileSubnavbar',
+            name: 'flowLayoutBlockDefaultSubnavbar',
           },
         },
         main: {
           component: {
             module: 'a-flowtask',
-            name: 'flowLayoutBlockMobileMain',
+            name: 'flowLayoutBlockDefaultMain',
           },
         },
       },
     },
-    mobile: {
-      title: 'LayoutMobile',
+    default: {
+      title: 'LayoutDefault',
       component: {
         module: 'a-flowtask',
-        name: 'flowLayoutMobile',
-      },
-      blocks: {},
-    },
-    pc: {
-      title: 'LayoutPC',
-      component: {
-        module: 'a-flowtask',
-        name: 'flowLayoutMobile',
+        name: 'flowLayoutDefault',
       },
       blocks: {},
     },

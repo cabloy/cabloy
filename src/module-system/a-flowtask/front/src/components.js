@@ -8,11 +8,11 @@ import flowListLayoutBlockListItems from './components/flow/flowListLayoutList/f
 import flowTaskListLayoutList from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutList.jsx';
 import flowTaskListLayoutBlockListTitle from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutBlockListTitle.jsx';
 import flowTaskListLayoutBlockListItems from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutBlockListItems.jsx';
-// flowLayoutMobile
-import flowLayoutMobile from './components/flow/flowLayoutMobile/flowLayoutMobile.jsx';
-import flowLayoutBlockMobileTitle from './components/flow/flowLayoutMobile/flowLayoutBlockMobileTitle.jsx';
-import flowLayoutBlockMobileSubnavbar from './components/flow/flowLayoutMobile/flowLayoutBlockMobileSubnavbar.jsx';
-import flowLayoutBlockMobileMain from './components/flow/flowLayoutMobile/flowLayoutBlockMobileMain.jsx';
+// flowLayoutDefault
+import flowLayoutDefault from './components/flow/flowLayoutDefault/flowLayoutDefault.jsx';
+import flowLayoutBlockDefaultTitle from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultTitle.jsx';
+import flowLayoutBlockDefaultSubnavbar from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultSubnavbar.jsx';
+import flowLayoutBlockDefaultMain from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultMain.jsx';
 // atomLayoutMobile
 import atomLayoutMobile from './components/flowTask/atomLayoutMobile/atomLayoutMobile.jsx';
 import atomLayoutBlockMobileTitle from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileTitle.jsx';
@@ -32,11 +32,11 @@ export default {
   flowTaskListLayoutList,
   flowTaskListLayoutBlockListTitle,
   flowTaskListLayoutBlockListItems,
-  // flowLayoutMobile
-  flowLayoutMobile,
-  flowLayoutBlockMobileTitle,
-  flowLayoutBlockMobileSubnavbar,
-  flowLayoutBlockMobileMain,
+  // flowLayoutDefault
+  flowLayoutDefault,
+  flowLayoutBlockDefaultTitle,
+  flowLayoutBlockDefaultSubnavbar,
+  flowLayoutBlockDefaultMain,
   // atomLayoutMobile
   atomLayoutMobile,
   atomLayoutBlockMobileTitle,
