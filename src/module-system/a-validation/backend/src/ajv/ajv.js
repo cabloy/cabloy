@@ -87,8 +87,9 @@ function _filterSchema({ ajv, schema, data, filter }) {
 }
 
 function _filterProperties({ ajv, properties, data, filter }) {
+  if (!data) return;
   for (const key in properties) {
-    const property = properties;
+    const property = properties[key];
     if (data[key] === undefined) continue;
     if (filter.type && !property.type) {
       delete data[key];
