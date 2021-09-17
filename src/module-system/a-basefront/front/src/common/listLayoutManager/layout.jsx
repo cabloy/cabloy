@@ -11,13 +11,21 @@ export default {
   created() {},
   methods: {
     async layout_prepareConfig() {
+      const atomClass = this.container.atomClass;
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
-      if (this.container.atomClass) {
+      if (atomClass) {
         // load module
-        await this.$meta.module.use(this.container.atomClass.module);
-        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
+        await this.$meta.module.use(atomClass.module);
+        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[atomClass.module], `atoms.${atomClass.atomClassName}`);
+        // special for cms
+        const atomClassBase = this.getAtomClass(atomClass);
+        if (atomClassBase.cms && !(atomClass.module === 'a-cms' && atomClass.atomClassName === 'article')) {
+          await this.$meta.module.use('a-cms');
+          const configCMS = this.$meta.util.getProperty(this.$meta.config.modules['a-cms'], 'atoms.article');
+          this.base.configAtom = this.base.configAtom ? this.$meta.util.extend({}, configCMS, this.base.configAtom) : configCMS;
+        }
       }
       // config
       this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
