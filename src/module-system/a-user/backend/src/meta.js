@@ -30,7 +30,7 @@ module.exports = app => {
             name: 'user',
           },
           // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
-          dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message'],
+          dependencies: ['a-user:userRed', 'a-user:userOrange'],
         },
       },
     },

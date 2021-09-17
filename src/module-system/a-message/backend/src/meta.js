@@ -15,6 +15,7 @@ module.exports = app => {
         message: {
           user: true,
           bean: 'message',
+          dependents: ['a-user:user'],
         },
       },
     },
