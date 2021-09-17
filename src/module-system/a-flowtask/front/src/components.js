@@ -13,10 +13,10 @@ import flowLayoutDefault from './components/flow/flowLayoutDefault/flowLayoutDef
 import flowLayoutBlockDefaultTitle from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultTitle.jsx';
 import flowLayoutBlockDefaultSubnavbar from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultSubnavbar.jsx';
 import flowLayoutBlockDefaultMain from './components/flow/flowLayoutDefault/flowLayoutBlockDefaultMain.jsx';
-// atomLayoutMobile
-import atomLayoutMobile from './components/flowTask/atomLayoutMobile/atomLayoutMobile.jsx';
-import atomLayoutBlockMobileTitle from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileTitle.jsx';
-import atomLayoutBlockMobileMain from './components/flowTask/atomLayoutMobile/atomLayoutBlockMobileMain.jsx';
+// atomLayoutDefault
+import atomLayoutDefault from './components/flowTask/atomLayoutDefault/atomLayoutDefault.jsx';
+import atomLayoutBlockDefaultTitle from './components/flowTask/atomLayoutDefault/atomLayoutBlockDefaultTitle.jsx';
+import atomLayoutBlockDefaultMain from './components/flowTask/atomLayoutDefault/atomLayoutBlockDefaultMain.jsx';
 // tab
 import flowTaskTab from './components/tab/flowTaskTab.jsx';
 import flowTab from './components/tab/flowTab.jsx';
@@ -37,10 +37,10 @@ export default {
   flowLayoutBlockDefaultTitle,
   flowLayoutBlockDefaultSubnavbar,
   flowLayoutBlockDefaultMain,
-  // atomLayoutMobile
-  atomLayoutMobile,
-  atomLayoutBlockMobileTitle,
-  atomLayoutBlockMobileMain,
+  // atomLayoutDefault
+  atomLayoutDefault,
+  atomLayoutBlockDefaultTitle,
+  atomLayoutBlockDefaultMain,
   // flowTaskTab
   flowTaskTab,
   // flowTab

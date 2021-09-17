@@ -31,7 +31,7 @@ export default {
       if (configCurrent) return configCurrent;
       // from config
       const configViewSize = this.$meta.util.getProperty(this.base.config, 'render.atom.info.layout.viewSize');
-      let layouts = configViewSize[this.$view.size];
+      let layouts = configViewSize[this.container.mode][this.$view.size];
       if (!Array.isArray(layouts)) {
         layouts = [layouts];
       }
@@ -43,7 +43,7 @@ export default {
       // layoutConfig
       let config = this.$meta.util.getProperty(this.base.config, `render.atom.layouts.${this.layout.current}`);
       if (!config) {
-        config = this.$meta.util.getProperty(this.base.config, 'render.atom.layouts.mobile');
+        config = this.$meta.util.getProperty(this.base.config, 'render.atom.layouts.default');
       }
       if (!config) return false;
       const configBase = this.$meta.util.getProperty(this.base.config, 'render.atom.layouts.base');

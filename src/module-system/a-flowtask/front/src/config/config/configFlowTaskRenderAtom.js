@@ -1,10 +1,21 @@
+const __viewSizeDefaultLayoutView = [{ name: 'default' }];
+const __viewSizeDefaultLayoutEdit = [{ name: 'default' }];
+const __viewSizeDefaultView = {
+  small: __viewSizeDefaultLayoutView,
+  medium: __viewSizeDefaultLayoutView,
+  large: __viewSizeDefaultLayoutView,
+};
+const __viewSizeDefaultEdit = {
+  small: __viewSizeDefaultLayoutEdit,
+  medium: __viewSizeDefaultLayoutEdit,
+  large: __viewSizeDefaultLayoutEdit,
+};
 const atom = {
   info: {
     layout: {
       viewSize: {
-        small: { name: 'mobile' },
-        medium: { name: 'mobile' },
-        large: { name: 'pc' },
+        view: __viewSizeDefaultView,
+        edit: __viewSizeDefaultEdit,
       },
     },
     attachment: true,
@@ -16,30 +27,22 @@ const atom = {
         title: {
           component: {
             module: 'a-flowtask',
-            name: 'atomLayoutBlockMobileTitle',
+            name: 'atomLayoutBlockDefaultTitle',
           },
         },
         main: {
           component: {
             module: 'a-flowtask',
-            name: 'atomLayoutBlockMobileMain',
+            name: 'atomLayoutBlockDefaultMain',
           },
         },
       },
     },
-    mobile: {
-      title: 'LayoutMobile',
+    default: {
+      title: 'LayoutDefault',
       component: {
         module: 'a-flowtask',
-        name: 'atomLayoutMobile',
-      },
-      blocks: {},
-    },
-    pc: {
-      title: 'LayoutPC',
-      component: {
-        module: 'a-flowtask',
-        name: 'atomLayoutMobile',
+        name: 'atomLayoutDefault',
       },
       blocks: {},
     },

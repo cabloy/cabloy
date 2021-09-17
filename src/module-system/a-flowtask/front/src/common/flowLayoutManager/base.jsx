@@ -78,7 +78,8 @@ export default {
     base_getLayoutConfigKeyCurrent() {
       const atomClass = this.base_atomClass;
       const atomClassKey = atomClass ? `${atomClass.module}_${atomClass.atomClassName}` : null;
-      return `flow.${atomClassKey}.render.item.layout.current.${this.$view.size}`;
+      const containerMode = 'view';
+      return `flow.${atomClassKey}.render.item.layout.current.${containerMode}.${this.$view.size}`;
     },
     async base_loadData() {
       try {

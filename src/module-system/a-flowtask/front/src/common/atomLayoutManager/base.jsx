@@ -39,7 +39,7 @@ export default {
     base_getLayoutConfigKeyCurrent() {
       const atomClass = this.base_atomClass;
       const atomClassKey = atomClass ? `${atomClass.module}_${atomClass.atomClassName}` : null;
-      return `flowTask.${atomClassKey}.render.atom.layout.current.${this.$view.size}`;
+      return `flowTask.${atomClassKey}.render.atom.layout.current.${this.container.mode}.${this.$view.size}`;
     },
   },
 };
