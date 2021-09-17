@@ -16,6 +16,8 @@
     - 重构条目布局
     - 重构筛选布局
   - dashboard：重构仪表板
+  - markdown：重构 markdown 编辑器以及渲染器
+  - json：重构 json 编辑器
 
 ## 2021-07-07, Version 4.11.16
 
