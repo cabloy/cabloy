@@ -233,10 +233,14 @@ module.exports = ctx => {
       for (const dep of dependents) {
         // deps
         if (!__statsDeps[fullKey]) __statsDeps[fullKey] = [];
-        __statsDeps[fullKey].push(dep);
+        if (__statsDeps[fullKey].indexOf(dep) === -1) {
+          __statsDeps[fullKey].push(dep);
+        }
         // stats
         if (!__stats[dep].dependencies) __stats[dep].dependencies = [];
-        __stats[dep].dependencies.push(fullKey);
+        if (__stats[dep].dependencies.indexOf(fullKey) === -1) {
+          __stats[dep].dependencies.push(fullKey);
+        }
       }
     }
   }
