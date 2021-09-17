@@ -113,7 +113,7 @@ module.exports = app => {
           options,
           user,
         });
-        await this.ctx.bean.validation._validate({ atomClass, data: item, options });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
       // write atom

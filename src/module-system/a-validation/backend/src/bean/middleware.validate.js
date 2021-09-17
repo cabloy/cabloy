@@ -18,6 +18,7 @@ module.exports = ctx => {
         validator,
         schema,
         data,
+        filterOptions: true,
       });
       // next
       await next();

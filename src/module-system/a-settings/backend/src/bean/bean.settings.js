@@ -101,6 +101,7 @@ module.exports = ctx => {
         validator: validator.validator,
         schema: null,
         data,
+        filterOptions: true,
       });
       // update aSettings
       const _data = await this.modelSettings.get({
