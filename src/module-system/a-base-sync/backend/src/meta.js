@@ -123,6 +123,7 @@ module.exports = app => {
           user: true,
           bean: 'starsLabels',
           dependencies: ['stars', 'labels'],
+          dependents: ['a-user:user'],
         },
       },
     },
