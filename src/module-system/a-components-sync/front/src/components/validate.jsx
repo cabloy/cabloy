@@ -7,9 +7,11 @@ export default {
   components: {
     validateItem,
   },
-  render(c) {
+  render() {
     // slot
-    if (!this.auto) return c('div', this.$slots.default);
+    if (!this.auto) {
+      return <div>{this.$scopedSlots.default()}</div>;
+    }
     // schema
     if (this.auto && this.ready) {
       // custom
@@ -20,22 +22,22 @@ export default {
           readOnly: this.readOnly,
           onSubmit: this.onSubmit,
         };
-        return c('eb-component', {
-          props: {
-            module: this.custom.module,
-            name: this.custom.name,
-            options: {
+        return (
+          <eb-component
+            module={this.custom.module}
+            name={this.custom.name}
+            options={{
               props: {
                 context,
               },
-            },
-          },
-        });
+            }}
+          ></eb-component>
+        );
       }
       // auto
-      return this.renderSchema(c);
+      return this.renderSchema();
     }
-    return c('div');
+    return <div></div>;
   },
   props: {
     host: {
@@ -231,16 +233,8 @@ export default {
       this.$emit('schema:ready', this.schema);
       this.$emit('schemaReady', this.schema);
     },
-    renderSchema(c) {
-      return c('validateItem', {
-        props: {
-          parcel: this.parcel,
-          dataKey: null,
-          property: null,
-          meta: null,
-          root: true,
-        },
-      });
+    renderSchema() {
+      return <validateItem parcel={this.parcel} dataKey={null} property={null} meta={null} root={true}></validateItem>;
     },
     onSubmit(event) {
       this.$emit('submit', event);
