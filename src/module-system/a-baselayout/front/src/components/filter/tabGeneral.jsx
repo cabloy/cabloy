@@ -42,6 +42,7 @@ export default {
           onSearchStatesChange={value => {
             // eslint-disable-next-line
             this.filterContainer.searchStatesGeneral = value;
+            this.filterContainer.onFilterChanged();
           }}
         ></eb-validate>
       );

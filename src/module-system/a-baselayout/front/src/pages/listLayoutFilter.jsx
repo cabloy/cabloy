@@ -123,18 +123,6 @@ export default {
       },
       deep: true,
     },
-    searchStatesBasic() {
-      if (!this.ready) return;
-      this.onFilterChanged();
-    },
-    searchStatesGeneral() {
-      if (!this.ready) return;
-      this.onFilterChanged();
-    },
-    searchStatesSearch() {
-      if (!this.ready) return;
-      this.onFilterChanged();
-    },
   },
   mounted() {
     this.layoutManager.$on('layoutManager:destroy', this.onLayoutManagerDestroy);
