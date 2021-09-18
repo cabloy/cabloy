@@ -25,4 +25,8 @@ export default {
   AppLayoutSwitchPromptPC: '您需要切换到PC布局吗？',
   AppLayoutSwitchPromptMobile: '您需要切换到Mobile布局吗？',
   PageDirtyQuitConfirm: '数据尚未保存，您确定离开该页面吗？',
+  SearchInclude: '包含',
+  SearchEqual: '等于',
+  SearchLeftMatch: '左匹配',
+  SearchRightMatch: '右匹配',
 };
