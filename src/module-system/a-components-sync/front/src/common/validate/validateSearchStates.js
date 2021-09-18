@@ -24,24 +24,38 @@ export default {
       // operators
       const operators = this.__searchStates_parseOperators(ebSearch.operators);
       if (!operators) return null; // render nothing
-      const operatorFirst = operators[0];
+      // operatorCurrent
+      const operatorCurrent = this.__searchStates_getOperatorCurrent(operators, dataPath);
       // render
       if (operators.length === 1) {
         return c('div', {
           staticClass: 'single text-color-gray',
           domProps: {
-            title: operatorFirst.title,
-            innerText: operatorFirst.text,
+            title: operatorCurrent.title,
+            innerText: operatorCurrent.text,
           },
         });
       }
-      return c('eb-link', {
-        staticClass: operators.length === 1 ? 'single text-color-gray' : 'more',
+      return c('eb-button', {
+        staticClass: 'more',
         attrs: {
-          title: operatorFirst.title,
-          text: operatorFirst.text,
+          title: operatorCurrent.title,
+          text: operatorCurrent.text,
         },
       });
+    },
+    __searchStates_getOperatorCurrent(operators, dataPath) {
+      const searchState = this.__searchStates_getSearchState(dataPath);
+      let operatorCurrent = searchState && operators.find(item => item.op === searchState.op);
+      if (!operatorCurrent) {
+        operatorCurrent = operators[0];
+      }
+      return operatorCurrent;
+    },
+    __searchStates_getSearchState(dataPath) {
+      const searchStates = this.validate.vSearchStates;
+      if (!searchStates) return null;
+      return searchStates[dataPath];
     },
     __searchStates_parseOperators(operators) {
       // null or =
