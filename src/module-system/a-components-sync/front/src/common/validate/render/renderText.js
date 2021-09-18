@@ -86,6 +86,15 @@ export default {
             staticClass: property.ebReadOnly ? 'text-color-gray' : '',
             domProps: { innerText: title },
           }),
+          property.ebSearch &&
+            c(
+              'div',
+              {
+                slot: 'after-title',
+                staticClass: property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search',
+              },
+              [this.__searchStates_render(c, context)]
+            ),
         ]
       );
     },

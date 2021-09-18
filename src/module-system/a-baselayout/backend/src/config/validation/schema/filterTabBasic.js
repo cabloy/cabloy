@@ -10,7 +10,7 @@ module.exports = app => {
         ebTitle: 'Atom Name',
         ebSearch: {
           tableAlias: 'a',
-          op: 'like,likeLeft,likeRight,=', // {} } { =
+          operators: 'like,likeLeft,likeRight,=', // {} } { =
           combine: {
             module: 'a-baselayout',
             component: 'combineSearch',
