@@ -69,11 +69,15 @@ export default {
     errors: {
       type: Array,
     },
+    searchStates: {
+      type: Object,
+    },
   },
   data() {
     return {
       schema: null,
       verrors: null,
+      vSearchStates: null,
       custom: null,
       schemaModuleName: null,
       renderModuleName: null,
@@ -111,9 +115,13 @@ export default {
     errors(newValue) {
       this.verrors = newValue;
     },
+    searchStates(newValue) {
+      this.vSearchStates = newValue;
+    },
   },
   created() {
     this.initData();
+    this.vSearchStates = this.searchStates;
   },
   mounted() {
     this.fetchSchema();
