@@ -19,12 +19,6 @@ export default {
       this.filterContainer.onFormSubmit();
     },
     _renderFormBasic() {
-      const configTabBasic = this.filterConfig.tabs.basic;
-      // params
-      const params = {
-        module: configTabBasic.schema.module,
-        schema: configTabBasic.schema.schema,
-      };
       // host
       const host = {
         hint: false,
@@ -33,6 +27,7 @@ export default {
       };
       // meta
       const meta = {
+        schema: this.filterContainer.schemaBasic,
         properties: {
           stage: {
             ebOptions: this.filterContainer.stages,
@@ -40,7 +35,7 @@ export default {
         },
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} onSubmit={this.onFormSubmit}></eb-validate>;
     },
     _renderFormAtomClass() {
       if (!this.filterContainer.schemaSearch) return null;

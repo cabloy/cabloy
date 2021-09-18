@@ -25,6 +25,8 @@ export default {
       //
       form: null,
       formAtomClass: null,
+      schemaBasic: null,
+      schemaGeneral: null,
       schemaSearch: null,
       ready: false,
     };
@@ -130,6 +132,8 @@ export default {
     const filterData = this.$meta.util.getProperty(this.layoutManager, 'filter.data');
     this.form = this.$meta.util.extend({}, filterData.form);
     this.formAtomClass = this.$meta.util.extend({}, filterData.formAtomClass);
+    this.schemaBasic = filterData.schemaBasic;
+    this.schemaGeneral = filterData.schemaGeneral;
     this.schemaSearch = filterData.schemaSearch;
   },
   methods: {
@@ -183,6 +187,8 @@ export default {
       this.layoutManager.filter_onChanged({
         form: this.form,
         formAtomClass: this.formAtomClass,
+        schemaBasic: this.schemaBasic,
+        schemaGeneral: this.schemaGeneral,
         schemaSearch: this.schemaSearch,
       });
     }, 300),

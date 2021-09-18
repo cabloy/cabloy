@@ -19,12 +19,6 @@ export default {
       this.filterContainer.onFormSubmit();
     },
     _renderFormGeneral() {
-      const configTabGeneral = this.filterConfig.tabs.general;
-      // params
-      const params = {
-        module: configTabGeneral.schema.module,
-        schema: configTabGeneral.schema.schema,
-      };
       // host
       const host = {
         hint: false,
@@ -33,10 +27,11 @@ export default {
       };
       // meta
       const meta = {
+        schema: this.filterContainer.schemaGeneral,
         properties: {},
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} params={params} onSubmit={this.onFormSubmit}></eb-validate>;
+      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} onSubmit={this.onFormSubmit}></eb-validate>;
     },
   },
   render() {
