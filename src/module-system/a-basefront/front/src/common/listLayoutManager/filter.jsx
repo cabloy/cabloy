@@ -70,7 +70,7 @@ export default {
             options.where['a.atomName'] = { val: form.atomName, op: 'like' };
           }
         }
-        options.mine = Number(form.mine);
+        options.mine = form.mine;
         options.stage = form.stage;
 
         if (form.language) {
@@ -83,8 +83,8 @@ export default {
           options.tag = form.tag;
         }
 
-        options.star = Number(form.star);
-        options.label = Number(form.label);
+        options.star = form.star;
+        options.label = form.label;
 
         params.atomClass = form.atomClass;
       }
