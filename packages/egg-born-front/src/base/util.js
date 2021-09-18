@@ -505,7 +505,7 @@ export default function (Vue) {
       const blob = new Blob(['(' + fn + ')()'], { type: 'text/javascript' });
       return URL.createObjectURL(blob);
     },
-    combineSearchClause({ ctx, schema, data, searchStats }) {
+    combineSearchClause({ ctx, schema, data, searchStates }) {
       if (!schema || !data) return null;
       const clause = {};
       const properties = schema.schema.properties;
@@ -520,7 +520,7 @@ export default function (Vue) {
         // operator
         const operator = this._combineSearchParseOperator({
           property,
-          operator: searchStats && searchStats[dataPath],
+          operator: searchStates && searchStates[dataPath],
         });
         // combine
         let res;
