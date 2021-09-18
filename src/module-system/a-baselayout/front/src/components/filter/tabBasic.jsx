@@ -42,10 +42,10 @@ export default {
           meta={meta}
           data={this.filterContainer.form}
           onSubmit={this.onFormSubmit}
-          searchStats={this.filterConfig.searchStatsBasic}
+          searchStates={this.filterContainer.searchStatesBasic}
           onSearchStatesChange={value => {
             // eslint-disable-next-line
-            this.filterConfig.searchStatsBasic = value;
+            this.filterContainer.searchStatesBasic = value;
           }}
         ></eb-validate>
       );
@@ -68,10 +68,10 @@ export default {
           data={this.filterContainer.formAtomClass}
           meta={meta}
           onSubmit={this.onFormSubmit}
-          searchStats={this.filterConfig.searchStatsSearch}
+          searchStates={this.filterContainer.searchStatesSearch}
           onSearchStatesChange={value => {
             // eslint-disable-next-line
-            this.filterConfig.searchStatsSearch = value;
+            this.filterContainer.searchStatesSearch = value;
           }}
         ></eb-validate>
       );

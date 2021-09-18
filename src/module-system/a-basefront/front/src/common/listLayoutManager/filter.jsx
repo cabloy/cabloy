@@ -34,9 +34,9 @@ export default {
         schemaBasic,
         schemaGeneral,
         schemaSearch,
-        searchStatsBasic: null,
-        searchStatsGeneral: null,
-        searchStatsSearch: null,
+        searchStatesBasic: null,
+        searchStatesGeneral: null,
+        searchStatesSearch: null,
       };
     },
     async filter_loadSchemaBasic() {
@@ -94,7 +94,7 @@ export default {
           ctx: this,
           schema: this.filter.data.schemaBasic,
           data: form,
-          searchStats: this.filter.data.searchStatsBasic,
+          searchStates: this.filter.data.searchStatesBasic,
         });
         console.log(clause);
         if (form.atomName) {

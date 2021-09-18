@@ -28,9 +28,9 @@ export default {
       schemaBasic: null,
       schemaGeneral: null,
       schemaSearch: null,
-      searchStatsBasic: null,
-      searchStatsGeneral: null,
-      searchStatsSearch: null,
+      searchStatesBasic: null,
+      searchStatesGeneral: null,
+      searchStatesSearch: null,
       ready: false,
     };
   },
@@ -123,6 +123,18 @@ export default {
       },
       deep: true,
     },
+    searchStatesBasic() {
+      if (!this.ready) return;
+      this.onFilterChanged();
+    },
+    searchStatesGeneral() {
+      if (!this.ready) return;
+      this.onFilterChanged();
+    },
+    searchStatesSearch() {
+      if (!this.ready) return;
+      this.onFilterChanged();
+    },
   },
   mounted() {
     this.layoutManager.$on('layoutManager:destroy', this.onLayoutManagerDestroy);
@@ -138,9 +150,9 @@ export default {
     this.schemaBasic = filterData.schemaBasic;
     this.schemaGeneral = filterData.schemaGeneral;
     this.schemaSearch = filterData.schemaSearch;
-    this.searchStatsBasic = filterData.searchStatsBasic;
-    this.searchStatsGeneral = filterData.searchStatsGeneral;
-    this.searchStatsSearch = filterData.searchStatsSearch;
+    this.searchStatesBasic = filterData.searchStatesBasic;
+    this.searchStatesGeneral = filterData.searchStatesGeneral;
+    this.searchStatesSearch = filterData.searchStatesSearch;
   },
   methods: {
     _getAtomClassFullName(atomClass) {
@@ -196,9 +208,9 @@ export default {
         schemaBasic: this.schemaBasic,
         schemaGeneral: this.schemaGeneral,
         schemaSearch: this.schemaSearch,
-        searchStatsBasic: this.searchStatsBasic,
-        searchStatsGeneral: this.searchStatsGeneral,
-        searchStatsSearch: this.searchStatsSearch,
+        searchStatesBasic: this.searchStatesBasic,
+        searchStatesGeneral: this.searchStatesGeneral,
+        searchStatesSearch: this.searchStatesSearch,
       });
     }, 300),
     onLayoutManagerDestroy() {

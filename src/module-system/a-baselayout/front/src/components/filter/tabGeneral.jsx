@@ -38,10 +38,10 @@ export default {
           meta={meta}
           data={this.filterContainer.form}
           onSubmit={this.onFormSubmit}
-          searchStats={this.filterConfig.searchStatsGeneral}
+          searchStates={this.filterContainer.searchStatesGeneral}
           onSearchStatesChange={value => {
             // eslint-disable-next-line
-            this.filterConfig.searchStatsGeneral = value;
+            this.filterContainer.searchStatesGeneral = value;
           }}
         ></eb-validate>
       );
