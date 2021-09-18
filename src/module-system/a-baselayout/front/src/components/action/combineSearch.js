@@ -16,8 +16,20 @@ export default {
     },
     onAction_atomName() {
       const { ctx, item } = this.$props;
-      const { key, property, dataPath, value, operator } = item;
-      return { a: 1 };
+      const { value, operator, data } = item;
+      if (!value) return null;
+      const clause = {};
+      const op = operator.op;
+      const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
+      if (atomClass && atomClass.resource) {
+        clause.__or__atomNameResource = [
+          { 'a.atomName': { val: value, op } }, //
+          { 'f.atomNameLocale': { val: value, op } },
+        ];
+      } else {
+        clause['a.atomName'] = { val: value, op };
+      }
+      return clause;
     },
   },
 };

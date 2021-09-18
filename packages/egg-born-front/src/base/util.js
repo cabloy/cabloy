@@ -518,23 +518,39 @@ export default function (Vue) {
         // value
         const value = data[key];
         // operator
-        const operator = searchStats && searchStats[dataPath];
+        const operator = this._combineSearchParseOperator({
+          property,
+          operator: searchStats && searchStats[dataPath],
+        });
         // combine
         let res;
         if (ebSearch && ebSearch.combine) {
           res = this.performActionSync({
             ctx,
             action: ebSearch.combine,
-            item: { key, property, dataPath, value, operator },
+            item: { key, property, dataPath, value, operator, schema, data },
           });
         } else {
-          res = this._combineSearchClause({ key, property, dataPath, operator });
+          res = this._combineSearchClause({ key, property, value, operator });
         }
         if (res) {
           Object.assign(clause, res);
         }
       }
       return clause;
+    },
+    _combineSearchParseOperator({ property, operator }) {
+      if (operator) return operator;
+      const ebSearch = property.ebSearch;
+      let operators = ebSearch && ebSearch.operators;
+      let op;
+      if (!operators) {
+        op = '=';
+      } else {
+        if (!Array.isArray(operators)) operators = operators.split(',');
+        op = operators[0];
+      }
+      return { op };
     },
     _combineSearchClause({ key, property, value, operator }) {
       const ebSearch = property.ebSearch;
@@ -545,7 +561,7 @@ export default function (Vue) {
       const fieldName = (ebSearch && ebSearch.fieldName) || key;
       const clauseName = `${tableAlias}.${fieldName}`;
       const clauseValue = {
-        op: (operator && operator.op) || '=',
+        op: operator.op,
         val: value,
       };
       return { [clauseName]: clauseValue };
