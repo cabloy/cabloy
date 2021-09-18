@@ -506,6 +506,7 @@ export default function (Vue) {
       return URL.createObjectURL(blob);
     },
     combineSearchClause({ ctx, schema, data, searchStats }) {
+      if (!schema || !data) return null;
       const clause = {};
       for (const key in schema.properties) {
         const property = schema.properties[key];
@@ -532,6 +533,7 @@ export default function (Vue) {
           Object.assign(clause, res);
         }
       }
+      return clause;
     },
     _combineSearchClause({ key, property, value, operator }) {
       const ebSearch = property.ebSearch;
