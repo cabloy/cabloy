@@ -262,6 +262,35 @@ export default function (Vue) {
         throw err;
       }
     },
+    performActionSync(args) {
+      const { action } = args;
+      // actionComponent
+      //  should load module before the call
+      const module = Vue.prototype.$meta.module.get(action.actionModule);
+      const component = module.options.components[action.actionComponent];
+      if (!component) throw new Error(`actionComponent not found: ${action.actionModule}:${action.actionComponent}`);
+      // componentProps
+      const componentProps = {};
+      this._combineComponentsProps(componentProps, component);
+      // options
+      const options = {};
+      if (componentProps) {
+        options.propsData = {};
+        for (const key in componentProps) {
+          options.propsData[key] = args[key];
+        }
+      }
+      // create instance
+      const componentInstance = this.createComponentInstance(component, options);
+      try {
+        const res = componentInstance.onAction(args);
+        componentInstance.$destroy();
+        return res;
+      } catch (err) {
+        componentInstance.$destroy();
+        throw err;
+      }
+    },
     navigate({ ctx, url, options }) {
       const view = ctx.$view;
       if (view) {
@@ -475,6 +504,50 @@ export default function (Vue) {
     fn2workerURL(fn) {
       const blob = new Blob(['(' + fn + ')()'], { type: 'text/javascript' });
       return URL.createObjectURL(blob);
+    },
+    combineSearchClause({ ctx, schema, data, searchStats }) {
+      const clause = {};
+      for (const key in schema.properties) {
+        const property = schema.properties[key];
+        const ebSearch = property.ebSearch;
+        if (ebSearch === false) continue;
+        // dataPath
+        const dataPath = key;
+        // value
+        const value = data[key];
+        // operator
+        const operator = searchStats && searchStats[dataPath];
+        // combine
+        let res;
+        if (ebSearch && ebSearch.combine) {
+          res = this.performActionSync({
+            ctx,
+            action: ebSearch.combine,
+            item: { key, property, dataPath, value, operator },
+          });
+        } else {
+          res = this._combineSearchClause({ key, property, dataPath, operator });
+        }
+        if (res) {
+          Object.assign(clause, res);
+        }
+      }
+    },
+    _combineSearchClause({ key, property, value, operator }) {
+      const ebSearch = property.ebSearch;
+      if (this.checkIfEmptyForSelect(value)) return null;
+      if (ebSearch && ebSearch.ignoreValue === value) return null;
+      const tableAlias = (ebSearch && ebSearch.tableAlias) || 'f';
+      const fieldName = (ebSearch && ebSearch.fieldName) || key;
+      const clauseName = `${tableAlias}.${fieldName}`;
+      const clauseValue = {
+        op: operator.op,
+        val: value,
+      };
+      return { [clauseName]: clauseValue };
+    },
+    checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
     },
   };
 

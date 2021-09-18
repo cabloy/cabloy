@@ -9,11 +9,13 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Atom Name',
         ebSearch: {
+          fieldName: 'atomName',
           tableAlias: 'a',
+          // ignoreValue:0,
           operators: 'like,likeLeft,likeRight,=', // {} } { =
           combine: {
-            module: 'a-baselayout',
-            component: 'combineSearch',
+            actionModule: 'a-baselayout',
+            actionComponent: 'combineSearch',
             name: 'atomName',
           },
         },
