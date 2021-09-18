@@ -34,11 +34,16 @@ export default {
         schemaBasic,
         schemaGeneral,
         schemaSearch,
+        searchStatsBasic: null,
+        searchStatsGeneral: null,
+        searchStatsSearch: null,
       };
     },
     async filter_loadSchemaBasic() {
       const filterConfig = this.filter_getConfig();
       const configTabBasic = filterConfig.tabs.basic;
+      // module
+      await this.$meta.module.use(configTabBasic.schema.module);
       return await this.$api.post('/a/validation/validation/schema', {
         module: configTabBasic.schema.module,
         schema: configTabBasic.schema.schema,
@@ -47,6 +52,8 @@ export default {
     async filter_loadSchemaGeneral() {
       const filterConfig = this.filter_getConfig();
       const configTabGeneral = filterConfig.tabs.general;
+      // module
+      await this.$meta.module.use(configTabGeneral.schema.module);
       return await this.$api.post('/a/validation/validation/schema', {
         module: configTabGeneral.schema.module,
         schema: configTabGeneral.schema.schema,
@@ -83,6 +90,13 @@ export default {
       // form
       const form = this.filter.data.form;
       if (form) {
+        const clause = this.$meta.util.combineSearchClause({
+          ctx: this,
+          schema: this.filter.data.schemaBasic,
+          data: form,
+          searchStats: this.filter.data.searchStatsBasic,
+        });
+        console.log(clause);
         if (form.atomName) {
           const atomClass = form.atomClass ? this.getAtomClass(form.atomClass) : null;
           if (atomClass && atomClass.resource) {

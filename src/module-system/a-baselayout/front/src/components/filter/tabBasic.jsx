@@ -35,7 +35,20 @@ export default {
         },
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} onSubmit={this.onFormSubmit}></eb-validate>;
+      return (
+        <eb-validate
+          auto
+          host={host}
+          meta={meta}
+          data={this.filterContainer.form}
+          onSubmit={this.onFormSubmit}
+          searchStats={this.filterConfig.searchStatsBasic}
+          onSearchStatesChange={value => {
+            // eslint-disable-next-line
+            this.filterConfig.searchStatsBasic = value;
+          }}
+        ></eb-validate>
+      );
     },
     _renderFormAtomClass() {
       if (!this.filterContainer.schemaSearch) return null;
@@ -48,7 +61,20 @@ export default {
       const meta = {
         schema: this.filterContainer.schemaSearch,
       };
-      return <eb-validate auto host={host} data={this.filterContainer.formAtomClass} meta={meta} onSubmit={this.onFormSubmit}></eb-validate>;
+      return (
+        <eb-validate
+          auto
+          host={host}
+          data={this.filterContainer.formAtomClass}
+          meta={meta}
+          onSubmit={this.onFormSubmit}
+          searchStats={this.filterConfig.searchStatsSearch}
+          onSearchStatesChange={value => {
+            // eslint-disable-next-line
+            this.filterConfig.searchStatsSearch = value;
+          }}
+        ></eb-validate>
+      );
     },
   },
   render() {

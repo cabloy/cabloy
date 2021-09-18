@@ -90,7 +90,7 @@ export default {
         op: operator.op,
       });
       this.validate.vSearchStates = searchStates;
-      this.$emit('searchStatesSet', searchStates);
+      this.$emit('searchStatesChange', searchStates);
     },
     __searchStates_parseOperators(operators) {
       // null or =

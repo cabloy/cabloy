@@ -42,6 +42,6 @@ export default {
   listLayoutDataAdapter,
   listLayoutDataProviderContinuous,
   listLayoutDataProviderPaged,
-  //
+  // developerTool
   developerTool,
 };

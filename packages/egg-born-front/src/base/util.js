@@ -508,8 +508,9 @@ export default function (Vue) {
     combineSearchClause({ ctx, schema, data, searchStats }) {
       if (!schema || !data) return null;
       const clause = {};
-      for (const key in schema.properties) {
-        const property = schema.properties[key];
+      const properties = schema.schema.properties;
+      for (const key in properties) {
+        const property = properties[key];
         const ebSearch = property.ebSearch;
         if (ebSearch === false) continue;
         // dataPath

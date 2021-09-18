@@ -28,6 +28,9 @@ export default {
       schemaBasic: null,
       schemaGeneral: null,
       schemaSearch: null,
+      searchStatsBasic: null,
+      searchStatsGeneral: null,
+      searchStatsSearch: null,
       ready: false,
     };
   },
@@ -135,6 +138,9 @@ export default {
     this.schemaBasic = filterData.schemaBasic;
     this.schemaGeneral = filterData.schemaGeneral;
     this.schemaSearch = filterData.schemaSearch;
+    this.searchStatsBasic = filterData.searchStatsBasic;
+    this.searchStatsGeneral = filterData.searchStatsGeneral;
+    this.searchStatsSearch = filterData.searchStatsSearch;
   },
   methods: {
     _getAtomClassFullName(atomClass) {
@@ -190,6 +196,9 @@ export default {
         schemaBasic: this.schemaBasic,
         schemaGeneral: this.schemaGeneral,
         schemaSearch: this.schemaSearch,
+        searchStatsBasic: this.searchStatsBasic,
+        searchStatsGeneral: this.searchStatsGeneral,
+        searchStatsSearch: this.searchStatsSearch,
       });
     }, 300),
     onLayoutManagerDestroy() {

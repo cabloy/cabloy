@@ -31,7 +31,20 @@ export default {
         properties: {},
       };
       // render
-      return <eb-validate auto host={host} meta={meta} data={this.filterContainer.form} onSubmit={this.onFormSubmit}></eb-validate>;
+      return (
+        <eb-validate
+          auto
+          host={host}
+          meta={meta}
+          data={this.filterContainer.form}
+          onSubmit={this.onFormSubmit}
+          searchStats={this.filterConfig.searchStatsGeneral}
+          onSearchStatesChange={value => {
+            // eslint-disable-next-line
+            this.filterConfig.searchStatsGeneral = value;
+          }}
+        ></eb-validate>
+      );
     },
   },
   render() {
