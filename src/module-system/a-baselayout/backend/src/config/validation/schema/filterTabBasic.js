@@ -8,6 +8,15 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Atom Name',
+        ebSearch: {
+          tableAlias: 'a',
+          op: 'like,=',
+          combine: {
+            module: 'a-baselayout',
+            component: 'combineSearch',
+            name: 'atomName',
+          },
+        },
       },
       stage: {
         type: 'string',

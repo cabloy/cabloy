@@ -1,3 +1,4 @@
+import validateRenderSearch from './validateRenderSearch.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
 import renderProperties from './render/renderProperties.js';
@@ -25,6 +26,7 @@ import renderUserLabel from './render/renderUserLabel.js';
 
 export default {
   mixins: [
+    validateRenderSearch,
     validateComputedValue,
     validateComputedDisplay,
     renderProperties,
