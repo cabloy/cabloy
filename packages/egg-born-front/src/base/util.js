@@ -537,13 +537,14 @@ export default function (Vue) {
     },
     _combineSearchClause({ key, property, value, operator }) {
       const ebSearch = property.ebSearch;
+      if (!property.type) return null;
       if (this.checkIfEmptyForSelect(value)) return null;
       if (ebSearch && ebSearch.ignoreValue === value) return null;
       const tableAlias = (ebSearch && ebSearch.tableAlias) || 'f';
       const fieldName = (ebSearch && ebSearch.fieldName) || key;
       const clauseName = `${tableAlias}.${fieldName}`;
       const clauseValue = {
-        op: operator.op,
+        op: (operator && operator.op) || '=',
         val: value,
       };
       return { [clauseName]: clauseValue };
