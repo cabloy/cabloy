@@ -1,5 +1,4 @@
-<script>
-import validateItem from './validateItem.vue';
+import validateItem from './validateItem.jsx';
 export default {
   meta: {
     global: true,
@@ -248,4 +247,3 @@ export default {
     },
   },
 };
-</script>
