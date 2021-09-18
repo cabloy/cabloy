@@ -1,6 +1,6 @@
-import validateSearchStates from './validateSearchStates.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
+import renderSearchStates from './render/renderSearchStates.jsx';
 import renderProperties from './render/renderProperties.js';
 import renderComponent from './render/renderComponent.js';
 import renderGroup from './render/renderGroup.js';
@@ -26,7 +26,7 @@ import renderUserLabel from './render/renderUserLabel.js';
 
 export default {
   mixins: [
-    validateSearchStates,
+    renderSearchStates,
     validateComputedValue,
     validateComputedDisplay,
     renderProperties,
