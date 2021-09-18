@@ -22,14 +22,35 @@ export default {
         atomClass: this.container.atomClass,
       };
       const formAtomClass = this.$meta.util.getProperty(this.container, 'params.filter.formAtomClass') || {};
-      // validator of formAtomClass
+      // validator: tabBasic/tabGeneral
+      const schemaBasic = await this.filter_loadSchemaBasic();
+      const schemaGeneral = await this.filter_loadSchemaGeneral();
+      // validator: formAtomClass
       const schemaSearch = await this.filter_loadSchemaSearch(this.container.atomClass);
       // ok
       this.filter.data = {
         form,
         formAtomClass,
+        schemaBasic,
+        schemaGeneral,
         schemaSearch,
       };
+    },
+    async filter_loadSchemaBasic() {
+      const filterConfig = this.filter_getConfig();
+      const configTabBasic = filterConfig.tabs.basic;
+      return await this.$api.post('/a/validation/validation/schema', {
+        module: configTabBasic.schema.module,
+        schema: configTabBasic.schema.schema,
+      });
+    },
+    async filter_loadSchemaGeneral() {
+      const filterConfig = this.filter_getConfig();
+      const configTabGeneral = filterConfig.tabs.general;
+      return await this.$api.post('/a/validation/validation/schema', {
+        module: configTabGeneral.schema.module,
+        schema: configTabGeneral.schema.schema,
+      });
     },
     async filter_loadSchemaSearch(atomClass) {
       if (!atomClass) return null;
