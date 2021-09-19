@@ -97,6 +97,13 @@ export default {
           searchStates: this.filter.data.searchStatesBasic,
         });
         console.log(clause);
+        const clause2 = this.$meta.util.combineSearchClause({
+          ctx: this,
+          schema: this.filter.data.schemaGeneral,
+          data: form,
+          searchStates: this.filter.data.searchStatesGeneral,
+        });
+        console.log(clause2);
         if (form.atomName) {
           const atomClass = form.atomClass ? this.getAtomClass(form.atomClass) : null;
           if (atomClass && atomClass.resource) {

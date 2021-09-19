@@ -8,11 +8,19 @@ module.exports = app => {
         type: 'number',
         ebType: 'toggle',
         ebTitle: 'Mine',
+        ebSearch: {
+          tableAlias: null,
+          ignoreValue: 0,
+        },
       },
       star: {
         type: 'number',
         ebType: 'toggle',
         ebTitle: 'UserStar',
+        ebSearch: {
+          tableAlias: null,
+          ignoreValue: 0,
+        },
       },
       label: {
         type: 'number',
@@ -20,6 +28,10 @@ module.exports = app => {
         ebTitle: 'UserLabel',
         ebParams: {
           optional: true,
+        },
+        ebSearch: {
+          tableAlias: null,
+          ignoreValue: 0,
         },
       },
       language: {
