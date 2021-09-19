@@ -78,6 +78,8 @@ export default {
         return await this._onActionMoveUp();
       } else if (action.name === 'moveDown') {
         return await this._onActionMoveDown();
+      } else if (action.name === '__test') {
+        return <eb-list-item title="test"></eb-list-item>;
       }
     },
   },

@@ -36,16 +36,21 @@ module.exports = app => {
       },
       createdAt: {
         type: ['object', 'null'],
-        ebType: 'datepicker',
+        ebType: 'component-action',
         ebTitle: 'Created Date',
         ebParams: {
           dateFormat: 'yyyy-mm-dd',
           header: false,
           toolbar: false,
         },
+        ebRender: {
+          actionModule: 'a-detail',
+          actionComponent: 'action',
+          name: '__test',
+        },
         ebSearch: {
-          tableAlias: 'a',
-          operators: '>=',
+          // tableAlias: 'a',
+          // operators: '>=',
         },
       },
       language: {

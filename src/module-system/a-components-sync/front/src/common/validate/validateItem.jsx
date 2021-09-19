@@ -3,6 +3,7 @@ import validateComputedDisplay from './validateComputedDisplay.js';
 import renderSearchStates from './render/renderSearchStates.jsx';
 import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
+import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
 import renderPanel from './render/renderPanel.jsx';
 import renderText from './render/renderText.jsx';
@@ -31,6 +32,7 @@ export default {
     validateComputedDisplay,
     renderProperties,
     renderComponent,
+    renderComponentAction,
     renderGroup,
     renderPanel,
     renderText,
@@ -355,6 +357,9 @@ export default {
       } else if (ebType === 'component') {
         // component
         return this.renderComponent(context);
+      } else if (ebType === 'component-action') {
+        // component-action
+        return this.renderComponentAction(context);
       } else if (ebType === 'language') {
         // language
         return this.renderLanguage(context);

@@ -267,6 +267,7 @@ export default function (Vue) {
       // actionComponent
       //  should load module before the call
       const module = Vue.prototype.$meta.module.get(action.actionModule);
+      if (!module) throw new Error(`actionModule not found: ${action.actionModule}:${action.actionComponent}`);
       const component = module.options.components[action.actionComponent];
       if (!component) throw new Error(`actionComponent not found: ${action.actionModule}:${action.actionComponent}`);
       // componentProps
