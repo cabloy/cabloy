@@ -1,33 +1,27 @@
 export default {
   methods: {
-    renderToggle(c, context) {
+    renderToggle(context) {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
-      return c(
-        'f7-list-item',
-        {
-          key,
-        },
-        [
-          c('div', {
-            slot: 'title',
-            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-            domProps: { innerText: title },
-          }),
-          c('eb-toggle', {
-            slot: 'after',
-            attrs: {
-              dataPath,
-              value: context.getValue(),
-              disabled: this.validate.readOnly || property.ebReadOnly,
-            },
-            on: {
-              input: value => {
-                context.setValue(value);
-              },
-            },
-          }),
-        ]
+      // props
+      const props = {
+        dataPath,
+        value: context.getValue(),
+        disabled: this.validate.readOnly || property.ebReadOnly,
+      };
+      return (
+        <f7-list-item key={key}>
+          <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+            {title}
+          </div>
+          <eb-toggle
+            slot="after"
+            {...{ props }}
+            onInput={value => {
+              context.setValue(value);
+            }}
+          ></eb-toggle>
+        </f7-list-item>
       );
     },
   },

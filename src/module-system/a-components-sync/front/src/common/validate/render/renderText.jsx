@@ -8,7 +8,7 @@ export default {
       if (isNaN(value)) return value;
       return Number((Number(value) * 100).toFixed(0));
     },
-    renderText(c, context) {
+    renderText(context) {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       let value = context.getValue();
@@ -26,22 +26,12 @@ export default {
       }
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
-        return c(
-          'f7-list-item',
-          {
-            key,
-            staticClass: '',
-            attrs: {
-              after: value,
-            },
-          },
-          [
-            c('div', {
-              slot: 'title',
-              staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-              domProps: { innerText: title },
-            }),
-          ]
+        return (
+          <f7-list-item key={key} staticClass="" after={value}>
+            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+              {title}
+            </div>
+          </f7-list-item>
         );
       }
       const placeholder = this.getPlaceholder(context);
@@ -56,46 +46,39 @@ export default {
       } else {
         type = 'text';
       }
-      return c(
-        'eb-list-input',
-        {
-          key,
-          attrs: {
-            floatingLabel: this.$config.form.floatingLabel,
-            type,
-            placeholder,
-            info,
-            resizable: property.ebTextarea,
-            clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
-            dataPath,
-            value,
-            disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
-          },
-          on: {
-            input: valueNew => {
-              if (property.ebCurrency) {
-                valueNew = this._updateValueCurrency(valueNew);
-              }
-              context.setValue(valueNew);
-            },
-          },
-        },
-        [
-          c('div', {
-            slot: 'label',
-            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-            domProps: { innerText: title },
-          }),
-          property.ebSearch &&
-            c(
-              'div',
-              {
-                slot: 'after-title',
-                staticClass: property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search',
-              },
-              [this.__searchStates_render(context)]
-            ),
-        ]
+      // props
+      const props = {
+        floatingLabel: this.$config.form.floatingLabel,
+        type,
+        placeholder,
+        info,
+        resizable: property.ebTextarea,
+        clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
+        dataPath,
+        value,
+        disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
+      };
+      return (
+        <eb-list-input
+          key={key}
+          {...{ props }}
+          onInput={valueNew => {
+            if (property.ebCurrency) {
+              valueNew = this._updateValueCurrency(valueNew);
+            }
+            context.setValue(valueNew);
+          }}
+        >
+          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+            {title}
+          </div>
+
+          {!!property.ebSearch && (
+            <div slot="after-title" staticClass={property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'}>
+              {this.__searchStates_render(context)}
+            </div>
+          )}
+        </eb-list-input>
       );
     },
   },

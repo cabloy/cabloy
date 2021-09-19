@@ -1,6 +1,6 @@
 export default {
   methods: {
-    renderSelect(c, context) {
+    renderSelect(context) {
       const { key, property, dataPath } = context;
       // title
       const title = context.getTitle();
@@ -34,33 +34,26 @@ export default {
           }
         }
       }
+      // props
+      const props = {
+        smartSelect: !readOnly,
+        // title,
+        smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
+      };
       // render
-      return c(
-        'eb-list-item',
-        {
-          key,
-          props: {
-            smartSelect: !readOnly,
-            // title,
-            smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
-          },
-        },
-        [
-          c('div', {
-            slot: 'title',
-            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-            domProps: { innerText: title },
-          }),
-          c('eb-select', {
-            slot: readOnly ? 'after' : null,
-            attrs,
-            on: {
-              input: value => {
-                context.setValue(value);
-              },
-            },
-          }),
-        ]
+      return (
+        <eb-list-item key={key} {...{ props }}>
+          <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+            {title}
+          </div>
+          <eb-select
+            slot={readOnly ? 'after' : null}
+            {...{ props: attrs }}
+            onInput={value => {
+              context.setValue(value);
+            }}
+          ></eb-select>
+        </eb-list-item>
       );
     },
   },
