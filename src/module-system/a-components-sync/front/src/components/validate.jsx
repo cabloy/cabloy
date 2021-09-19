@@ -10,7 +10,7 @@ export default {
   render() {
     // slot
     if (!this.auto) {
-      return <div>{this.$scopedSlots.default()}</div>;
+      return <div>{!!this.$scopedSlots.default && this.$scopedSlots.default()}</div>;
     }
     // schema
     if (this.auto && this.ready) {
