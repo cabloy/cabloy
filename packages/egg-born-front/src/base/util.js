@@ -210,7 +210,7 @@ export default function (Vue) {
       return `/${moduleInfo.url}/${arg}`;
     },
     createComponentInstance(component, options) {
-      const _component = Object.assign({}, component, options);
+      const _component = this.extend({}, component, options);
       return new Vue(_component);
     },
     _combineComponentsProps(parent, component) {
