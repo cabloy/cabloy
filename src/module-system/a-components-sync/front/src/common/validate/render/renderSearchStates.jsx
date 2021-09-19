@@ -49,6 +49,8 @@ export default {
       const props = {
         text: operatorCurrent.text,
         onPerform: event => {
+          event.preventDefault();
+          event.stopPropagation();
           return this.__searchStates_onPerform(event, context, operatorCurrent, operators);
         },
       };
