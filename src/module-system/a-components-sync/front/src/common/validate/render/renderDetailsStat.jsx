@@ -1,7 +1,7 @@
 export default {
   methods: {
-    renderDetailsStat(c, context) {
-      return this._renderComponent(c, context, {
+    renderDetailsStat(context) {
+      return this._renderComponent(context, {
         module: 'a-detail',
         name: 'renderDetailsStat',
       });
