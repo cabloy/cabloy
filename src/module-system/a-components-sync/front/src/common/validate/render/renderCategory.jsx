@@ -1,6 +1,6 @@
 export default {
   methods: {
-    renderCategory(c, context) {
+    renderCategory(context) {
       let { property } = context;
       if (!property.ebRender) {
         property = {
@@ -15,7 +15,7 @@ export default {
           property,
         };
       }
-      return this.renderComponent(c, context);
+      return this.renderComponent(context);
     },
   },
 };
