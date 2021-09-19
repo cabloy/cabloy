@@ -1,7 +1,7 @@
 export default {
   methods: {
-    renderLink(c, context) {
-      const { property } = context;
+    renderLink(context) {
+      const { key, property } = context;
       const title = this.getTitle(context, true);
       // not use parcel.data
       let href = this.$meta.util.replaceTemplate(property.ebParams.href, this.parcel.data);
@@ -19,9 +19,7 @@ export default {
       if (property.ebParams.target !== undefined) {
         props.target = property.ebParams.target;
       }
-      return c('f7-list-item', {
-        props,
-      });
+      return <f7-list-item key={key} {...{ props }}></f7-list-item>;
     },
   },
 };

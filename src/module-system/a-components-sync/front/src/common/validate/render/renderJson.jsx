@@ -1,7 +1,7 @@
 export default {
   methods: {
-    renderJson(c, context) {
-      return this._renderComponent(c, context, {
+    renderJson(context) {
+      return this._renderComponent(context, {
         module: 'a-jsoneditor',
         name: 'renderJson',
       });

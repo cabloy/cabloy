@@ -26,7 +26,11 @@ export default {
       }
       // group
       const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-      return <f7-list-group staticClass={className}>{children}</f7-list-group>;
+      return (
+        <f7-list-group key={key} staticClass={className}>
+          {children}
+        </f7-list-group>
+      );
     },
   },
 };
