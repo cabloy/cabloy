@@ -284,31 +284,27 @@ export default {
       };
       return context;
     },
-    renderRoot(c) {
-      if (!this.validate.ready) return c('div');
+    renderRoot() {
+      if (!this.validate.ready) return <div></div>;
       // context
       const context = {
         parcel: this.getParcel(),
       };
       // renderProperties
-      const children = this.renderProperties(c, context);
-      const attrs = {
+      const children = this.renderProperties(context);
+      const props = {
         form: true,
         noHairlinesMd: true,
         inlineLabels: !this.$config.form.floatingLabel,
       };
-      return c(
-        'eb-list',
-        {
-          staticClass: 'eb-list-row',
-          attrs,
-          on: { submit: this.onSubmit },
-        },
-        children
+      return (
+        <eb-list staticClass="eb-list-row" {...{ props }} onSubmit={this.onSubmit}>
+          {children}
+        </eb-list>
       );
     },
-    renderItem(c) {
-      if (!this.validate.ready) return c('div');
+    renderItem() {
+      if (!this.validate.ready) return <div></div>;
       // context
       const parcel = this.getParcel();
       const key = this.dataKey;
@@ -319,9 +315,9 @@ export default {
         meta: this.meta,
       });
       // renderItem
-      return this._renderItem(c, context);
+      return this._renderItem(context);
     },
-    _renderItem(c, context) {
+    _renderItem(context) {
       const { parcel, key, property } = context;
       // ebType
       const ebType = property.ebType;
@@ -334,80 +330,76 @@ export default {
       // render
       if (ebType === 'group') {
         // group
-        return this.renderGroup(c, context);
+        return this.renderGroup(context);
       } else if (ebType === 'panel') {
         // panel
-        return this.renderPanel(c, context);
+        return this.renderPanel(context);
       } else if (ebType === 'text') {
         // text
-        return this.renderText(c, context);
+        return this.renderText(context);
       } else if (ebType === 'toggle') {
         // toggle
-        return this.renderToggle(c, context);
+        return this.renderToggle(context);
       } else if (ebType === 'select') {
         // select
-        return this.renderSelect(c, context);
+        return this.renderSelect(context);
       } else if (ebType === 'file') {
         // file
-        return this.renderFile(c, context);
+        return this.renderFile(context);
       } else if (ebType === 'datepicker') {
         // datepicker
-        return this.renderDatepicker(c, context);
+        return this.renderDatepicker(context);
       } else if (ebType === 'link') {
         // link
-        return this.renderLink(c, context);
+        return this.renderLink(context);
       } else if (ebType === 'component') {
         // component
-        return this.renderComponent(c, context);
+        return this.renderComponent(context);
       } else if (ebType === 'language') {
         // language
-        return this.renderLanguage(c, context);
+        return this.renderLanguage(context);
       } else if (ebType === 'category') {
         // category
-        return this.renderCategory(c, context);
+        return this.renderCategory(context);
       } else if (ebType === 'tags') {
         // tags
-        return this.renderTags(c, context);
+        return this.renderTags(context);
       } else if (ebType === 'resourceType') {
         // resourceType
-        return this.renderResourceType(c, context);
+        return this.renderResourceType(context);
       } else if (ebType === 'json') {
         // json
-        return this.renderJson(c, context);
+        return this.renderJson(context);
       } else if (ebType === 'markdown') {
         // json
-        return this.renderMarkdown(c, context);
+        return this.renderMarkdown(context);
       } else if (ebType === 'markdown-content') {
         // json
-        return this.renderMarkdownContent(c, context);
+        return this.renderMarkdownContent(context);
       } else if (ebType === 'markdown-content-cms') {
         // json
-        return this.renderMarkdownContentCms(c, context);
+        return this.renderMarkdownContentCms(context);
       } else if (ebType === 'details') {
         // details
-        return this.renderDetails(c, context);
+        return this.renderDetails(context);
       } else if (ebType === 'detailsStat') {
         // details
-        return this.renderDetailsStat(c, context);
+        return this.renderDetailsStat(context);
       } else if (ebType === 'atom') {
         // atom
-        return this.renderAtom(c, context);
+        return this.renderAtom(context);
       } else if (ebType === 'atomClass') {
         // atomClass
-        return this.renderAtomClass(c, context);
+        return this.renderAtomClass(context);
       } else if (ebType === 'divider') {
         // divider
-        return this.renderDivider(c, context);
+        return this.renderDivider(context);
       } else if (ebType === 'userLabel') {
         // userLabel
-        return this.renderUserLabel(c, context);
+        return this.renderUserLabel(context);
       }
       // not support
-      return c('div', {
-        domProps: {
-          innerText: `not support: ${ebType}`,
-        },
-      });
+      return <div>{`not support: ${ebType}`}</div>;
     },
     _handleComputedDisplay(parcel, key, property) {
       // check if specify ebDisplay
