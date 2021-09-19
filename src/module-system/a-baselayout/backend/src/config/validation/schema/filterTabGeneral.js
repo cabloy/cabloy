@@ -44,9 +44,9 @@ module.exports = app => {
           toolbar: false,
         },
         ebRender: {
-          actionModule: 'a-host',
-          actionComponent: 'capabilities',
-          name: '__test',
+          actionModule: 'a-basefront',
+          actionComponent: 'componentAction',
+          name: 'dateRange',
         },
         ebSearch: {
           // tableAlias: 'a',

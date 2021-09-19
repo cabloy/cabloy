@@ -1,3 +1,4 @@
+import componentAction from './components/render/componentAction.jsx';
 import renderAtom from './components/render/renderAtom.jsx';
 import renderAtomClass from './components/render/renderAtomClass.jsx';
 import renderLanguage from './components/render/renderLanguage.jsx';
@@ -22,6 +23,7 @@ import listLayoutDataProviderPaged from './components/listLayoutData/providerPag
 import developerTool from './components/tools/developerTool.js';
 
 export default {
+  componentAction,
   renderAtom,
   renderAtomClass,
   renderLanguage,
