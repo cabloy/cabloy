@@ -1,13 +1,8 @@
 export default {
   methods: {
-    renderDivider(c, context) {
+    renderDivider(context) {
       const { key } = context;
-      return c('f7-list-item', {
-        key,
-        attrs: {
-          divider: true,
-        },
-      });
+      return <f7-list-item key={key} divider={true}></f7-list-item>;
     },
   },
 };
