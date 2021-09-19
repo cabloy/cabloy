@@ -35,7 +35,7 @@ module.exports = app => {
         },
       },
       createdAt: {
-        type: ['object', 'null'],
+        type: 'string',
         ebType: 'component-action',
         ebTitle: 'Created Date',
         ebParams: {

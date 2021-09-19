@@ -175,6 +175,8 @@ export default {
   'Modification Date': '修改日期',
   'Created Time': '创建时间',
   'Created Date': '创建日期',
+  'Begin Date': '起始日期',
+  'End Date': '结束日期',
   'Comment List': '评论列表',
   'Search Menu': '搜索菜单',
   'Search Atom': '搜索数据',
