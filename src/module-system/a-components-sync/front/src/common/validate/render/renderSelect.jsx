@@ -53,6 +53,7 @@ export default {
               context.setValue(value);
             }}
           ></eb-select>
+          {this.__searchStates_render_list_item(context)}
         </eb-list-item>
       );
     },

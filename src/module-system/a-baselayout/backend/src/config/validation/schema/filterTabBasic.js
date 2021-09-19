@@ -30,6 +30,7 @@ module.exports = app => {
         },
         ebSearch: {
           tableAlias: null,
+          operators: 'like,likeLeft,likeRight,=', // {} } { =
         },
       },
       __divider: {
