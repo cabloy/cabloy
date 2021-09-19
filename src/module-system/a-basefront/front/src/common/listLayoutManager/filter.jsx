@@ -90,66 +90,53 @@ export default {
       // form
       const form = this.filter.data.form;
       if (form) {
-        const clause = this.$meta.util.combineSearchClause({
+        // atomName、mine、stage、language、star、label、atomClass
+        // category、tag
+        const clause1 = this.$meta.util.combineSearchClause({
           ctx: this,
           schema: this.filter.data.schemaBasic,
           data: form,
           searchStates: this.filter.data.searchStatesBasic,
         });
-        console.log(clause);
         const clause2 = this.$meta.util.combineSearchClause({
           ctx: this,
           schema: this.filter.data.schemaGeneral,
           data: form,
           searchStates: this.filter.data.searchStatesGeneral,
         });
-        console.log(clause2);
-        if (form.atomName) {
-          const atomClass = form.atomClass ? this.getAtomClass(form.atomClass) : null;
-          if (atomClass && atomClass.resource) {
-            options.where.__or__atomNameResource = [{ 'a.atomName': { val: form.atomName, op: 'like' } }, { 'f.atomNameLocale': { val: form.atomName, op: 'like' } }];
-          } else {
-            options.where['a.atomName'] = { val: form.atomName, op: 'like' };
-          }
+        const clause = Object.assign({}, clause1, clause2);
+        // atomName
+        if (clause.__or__atomNameResource) {
+          options.where.__or__atomNameResource = clause.__or__atomNameResource;
+          delete clause.__or__atomNameResource;
         }
-        options.mine = form.mine;
-        options.stage = form.stage;
-
-        if (form.language) {
-          options.language = form.language;
+        if (clause['a.atomName']) {
+          options.where['a.atomName'] = clause['a.atomName'];
+          delete clause['a.atomName'];
         }
+        // mine、stage、language、star、label、atomClass
+        for (const key in clause) {
+          options[key] = clause[key].val;
+        }
+        // category、tag
         if (form.category) {
           options.category = form.category;
         }
         if (form.tag) {
           options.tag = form.tag;
         }
-
-        options.star = form.star;
-        options.label = form.label;
-
-        params.atomClass = form.atomClass;
       }
       // formAtomClass
       const formAtomClass = this.filter.data.formAtomClass;
       if (formAtomClass) {
-        let hasValue = false;
-        const schema = this.filter_getSchemaSearch();
-        for (const key in formAtomClass) {
-          const value = formAtomClass[key];
-          // undefined/null/'', except 0/false
-          if (value !== undefined && value !== null && value !== '') {
-            const property = this.filter_getSchemaSearchProperty({ schema, key });
-            const tableAlias = this.$meta.util.getProperty(property, 'ebSearch.tableAlias') || 'f';
-            if (typeof value === 'string') {
-              options.where[`${tableAlias}.${key}`] = { val: value, op: 'like' };
-            } else {
-              options.where[`${tableAlias}.${key}`] = value;
-            }
-            hasValue = true;
-          }
-        }
-        if (hasValue) {
+        const clause = this.$meta.util.combineSearchClause({
+          ctx: this,
+          schema: this.filter.data.schemaSearch,
+          data: formAtomClass,
+          searchStates: this.filter.data.searchStatesSearch,
+        });
+        Object.assign(options.where, clause);
+        if (Object.keys(clause).length > 0) {
           options.mode = 'search';
         }
       }
