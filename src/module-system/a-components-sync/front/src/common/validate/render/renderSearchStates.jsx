@@ -18,7 +18,7 @@ const __operators_all = {
 };
 export default {
   methods: {
-    __searchStates_render(c, context) {
+    __searchStates_render(context) {
       const { property, dataPath } = context;
       const ebSearch = property.ebSearch;
       // operators
@@ -28,24 +28,20 @@ export default {
       const operatorCurrent = this.__searchStates_getOperatorCurrent(operators, dataPath);
       // render
       if (operators.length === 1) {
-        return c('div', {
-          staticClass: 'single text-color-gray',
-          domProps: {
-            title: operatorCurrent.title,
-            innerText: operatorCurrent.text,
-          },
-        });
+        return (
+          <div staticClass="single text-color-gray" title={operatorCurrent.title}>
+            {operatorCurrent.text}
+          </div>
+        );
       }
-      return c('eb-button', {
-        staticClass: 'more',
-        attrs: {
-          title: operatorCurrent.title,
-          text: operatorCurrent.text,
-          onPerform: event => {
-            this.__searchStates_onPerform(event, context, operatorCurrent, operators);
-          },
+      const props = {
+        title: operatorCurrent.title,
+        text: operatorCurrent.text,
+        onPerform: event => {
+          this.__searchStates_onPerform(event, context, operatorCurrent, operators);
         },
-      });
+      };
+      return <eb-button staticClass="more" {...{ props }}></eb-button>;
     },
     async __searchStates_onPerform(event, context, operatorCurrent, operators) {
       const { dataPath } = context;
