@@ -47,13 +47,12 @@ export default {
         );
       }
       const props = {
-        title: operatorCurrent.title,
         text: operatorCurrent.text,
         onPerform: event => {
           return this.__searchStates_onPerform(event, context, operatorCurrent, operators);
         },
       };
-      return <eb-button staticClass="more" {...{ props }}></eb-button>;
+      return <eb-button staticClass="more" title={operatorCurrent.title} {...{ props }}></eb-button>;
     },
     async __searchStates_onPerform(event, context, operatorCurrent, operators) {
       const { dataPath } = context;
