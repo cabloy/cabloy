@@ -43,6 +43,9 @@ module.exports = app => {
         ebDisplay: {
           expression: '_meta.host.atomClassBase && _meta.host.atomClassBase.language',
         },
+        ebSearch: {
+          tableAlias: null,
+        },
       },
     },
   };
