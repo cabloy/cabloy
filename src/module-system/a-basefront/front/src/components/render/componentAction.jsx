@@ -10,12 +10,15 @@ export default {
   ],
   methods: {
     onAction() {
+      const { ctx } = this.$props;
+      this.$createElement = ctx.$createElement;
       if (this.action.name === 'dateRange') return this._renderDateRange();
     },
     _renderDateRange() {
       const { ctx, item } = this.$props;
       const { context } = item;
       const { property } = context;
+      // title
       const title = ctx.getTitle(context);
       // value
       const value = context.getValue();
@@ -51,7 +54,6 @@ export default {
         calendarParams: property.ebParams,
       };
       // input
-      const domOperator = ctx.__searchStates_render_list_item(context);
       return (
         <eb-list-input
           key={key}
@@ -63,7 +65,7 @@ export default {
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
-          {domOperator}
+          {ctx.__searchStates_render_list_item(context)}
         </eb-list-input>
       );
     },
