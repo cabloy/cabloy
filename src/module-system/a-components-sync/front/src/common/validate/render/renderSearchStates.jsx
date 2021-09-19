@@ -50,7 +50,7 @@ export default {
         title: operatorCurrent.title,
         text: operatorCurrent.text,
         onPerform: event => {
-          this.__searchStates_onPerform(event, context, operatorCurrent, operators);
+          return this.__searchStates_onPerform(event, context, operatorCurrent, operators);
         },
       };
       return <eb-button staticClass="more" {...{ props }}></eb-button>;
