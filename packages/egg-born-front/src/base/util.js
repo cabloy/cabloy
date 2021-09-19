@@ -557,9 +557,10 @@ export default function (Vue) {
       if (!property.type) return null;
       if (this.checkIfEmptyForSelect(value)) return null;
       if (ebSearch && ebSearch.ignoreValue === value) return null;
-      const tableAlias = (ebSearch && ebSearch.tableAlias) || 'f';
+      let tableAlias = ebSearch && ebSearch.tableAlias;
+      tableAlias = tableAlias === null ? null : tableAlias || 'f';
       const fieldName = (ebSearch && ebSearch.fieldName) || key;
-      const clauseName = `${tableAlias}.${fieldName}`;
+      const clauseName = tableAlias === null ? fieldName : `${tableAlias}.${fieldName}`;
       const clauseValue = {
         op: operator.op,
         val: value,

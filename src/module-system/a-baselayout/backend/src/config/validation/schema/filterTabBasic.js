@@ -28,6 +28,9 @@ module.exports = app => {
         ebDisplay: {
           expression: '_meta.host.stages.length>1',
         },
+        ebSearch: {
+          tableAlias: null,
+        },
       },
       __divider: {
         ebType: 'divider',
@@ -41,6 +44,9 @@ module.exports = app => {
         },
         ebDisplay: {
           expression: '!_meta.host.container.atomClass',
+        },
+        ebSearch: {
+          tableAlias: null,
         },
       },
     },
