@@ -21,13 +21,14 @@ export default {
       const clause = {};
       const op = operator.op;
       const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
+      const clauseValue = { op, val: value };
       if (atomClass && atomClass.resource) {
         clause.__or__atomNameResource = [
-          { 'a.atomName': { val: value, op } }, //
-          { 'f.atomNameLocale': { val: value, op } },
+          { 'a.atomName': clauseValue }, //
+          { 'f.atomNameLocale': clauseValue },
         ];
       } else {
-        clause['a.atomName'] = { val: value, op };
+        clause['a.atomName'] = clauseValue;
       }
       return clause;
     },
