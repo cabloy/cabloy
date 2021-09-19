@@ -22,7 +22,7 @@ export default {
       const { property, dataPath } = context;
       const ebSearch = property.ebSearch;
       // operators
-      const operators = this.__searchStates_parseOperators(ebSearch.operators);
+      const operators = this.__searchStates_parseOperators(property, ebSearch.operators);
       if (!operators) return null; // render nothing
       // operatorCurrent
       const operatorCurrent = this.__searchStates_getOperatorCurrent(operators, dataPath);
@@ -88,7 +88,7 @@ export default {
       this.validate.vSearchStates = searchStates;
       this.validate.$emit('searchStatesChange', searchStates);
     },
-    __searchStates_parseOperators(operators) {
+    __searchStates_parseOperators(property, operators) {
       // null or =
       if (!operators || operators === '=') return null; // render nothing
       if (!Array.isArray(operators)) {

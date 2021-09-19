@@ -545,7 +545,7 @@ export default function (Vue) {
       let operators = ebSearch && ebSearch.operators;
       let op;
       if (!operators) {
-        op = '=';
+        op = property.type === 'string' ? 'like' : '=';
       } else {
         if (!Array.isArray(operators)) operators = operators.split(',');
         op = operators[0];
