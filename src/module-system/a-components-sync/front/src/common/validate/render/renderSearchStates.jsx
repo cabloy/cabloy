@@ -13,11 +13,23 @@ const __operators_all = {
   },
   '=': {
     title: 'SearchEqual',
-    text: '=',
   },
+  '>': {},
+  '>=': {},
+  '<': {},
+  '<=': {},
 };
 export default {
   methods: {
+    __searchStates_render_list_item(context) {
+      const { property } = context;
+      if (!property.ebSearch) return null;
+      return (
+        <div slot="after-title" staticClass={property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'}>
+          {this.__searchStates_render(context)}
+        </div>
+      );
+    },
     __searchStates_render(context) {
       const { property, dataPath } = context;
       const ebSearch = property.ebSearch;
@@ -96,11 +108,9 @@ export default {
       }
       return operators.map(op => {
         const item = __operators_all[op];
-        return {
-          op,
-          title: this.$text(item.title),
-          text: item.text,
-        };
+        const text = item.text || op;
+        const title = item.title ? this.$text(item.title) : text;
+        return { op, title, text };
       });
     },
   },

@@ -54,6 +54,7 @@ export default {
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
+          {this.__searchStates_render_list_item(context)}
         </eb-list-input>
       );
     },

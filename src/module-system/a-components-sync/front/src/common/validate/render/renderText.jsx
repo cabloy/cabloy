@@ -72,12 +72,7 @@ export default {
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
-
-          {!!property.ebSearch && (
-            <div slot="after-title" staticClass={property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'}>
-              {this.__searchStates_render(context)}
-            </div>
-          )}
+          {this.__searchStates_render_list_item(context)}
         </eb-list-input>
       );
     },

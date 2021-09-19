@@ -105,7 +105,7 @@ export default {
           searchStates: this.filter.data.searchStatesGeneral,
         });
         const clause = Object.assign({}, clause1, clause2);
-        // atomName
+        // atomName、atomCreatedAt
         if (clause.__or__atomNameResource) {
           options.where.__or__atomNameResource = clause.__or__atomNameResource;
           delete clause.__or__atomNameResource;
@@ -113,6 +113,10 @@ export default {
         if (clause['a.atomName']) {
           options.where['a.atomName'] = clause['a.atomName'];
           delete clause['a.atomName'];
+        }
+        if (clause['a.createdAt']) {
+          options.where['a.createdAt'] = clause['a.createdAt'];
+          delete clause['a.createdAt'];
         }
         // mine、stage、language、star、label、atomClass
         for (const key in clause) {

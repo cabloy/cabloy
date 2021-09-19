@@ -34,6 +34,20 @@ module.exports = app => {
           ignoreValue: 0,
         },
       },
+      createdAt: {
+        type: ['object', 'null'],
+        ebType: 'datepicker',
+        ebTitle: 'Created Date',
+        ebParams: {
+          dateFormat: 'yyyy-mm-dd',
+          header: false,
+          toolbar: false,
+        },
+        ebSearch: {
+          tableAlias: 'a',
+          operators: '>=',
+        },
+      },
       language: {
         type: 'string',
         ebType: 'language',
