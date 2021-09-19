@@ -135,9 +135,11 @@ export default {
           data: formAtomClass,
           searchStates: this.filter.data.searchStatesSearch,
         });
-        Object.assign(options.where, clause);
-        if (Object.keys(clause).length > 0) {
-          options.mode = 'search';
+        if (clause) {
+          Object.assign(options.where, clause);
+          if (Object.keys(clause).length > 0) {
+            options.mode = 'search';
+          }
         }
       }
       // ok
