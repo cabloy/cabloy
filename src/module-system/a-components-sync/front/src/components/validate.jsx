@@ -185,53 +185,67 @@ export default {
       if (dataPath[0] !== '/') return this.dataPathRoot + dataPath;
       return dataPath;
     },
-    fetchSchema() {
+    async fetchSchema() {
       if (this.meta && this.meta.schema) {
         this.schemaModuleName = this.meta.schema.module || this.$page.$module.name;
-        this.$meta.module.use(this.schemaModuleName, () => {
-          this.__schemaReady(this.meta.schema.schema, this.schemaModuleName);
-        });
+        await this.$meta.module.use(this.schemaModuleName);
+        await this.__schemaReady(this.meta.schema.schema, this.schemaModuleName);
         return;
       }
       if (!this.params) return;
       const moduleName = this.params.module || this.$page.$module.name;
       this.schemaModuleName = moduleName;
-      this.$meta.module.use(moduleName, () => {
-        this.$api
-          .post('/a/validation/validation/schema', {
-            module: moduleName,
-            validator: this.params.validator,
-            schema: this.params.schema,
-          })
-          .then(data => {
-            this.__schemaReady(data.schema, moduleName);
-          });
+      await this.$meta.module.use(moduleName);
+      const data = await this.$api.post('/a/validation/validation/schema', {
+        module: moduleName,
+        validator: this.params.validator,
+        schema: this.params.schema,
       });
+      await this.__schemaReady(data.schema, moduleName);
     },
-    __schemaReady(schema, moduleMaybe) {
+    async __schemaReady(schema, moduleMaybe) {
       const _componentName = schema.meta && schema.meta.custom && schema.meta.custom.component;
       if (!_componentName) {
         this.renderModuleName = moduleMaybe;
-        this.__schemaReady2(schema);
+        await this.__schemaReady2(schema);
         return;
       }
       // custom
       const moduleName = schema.meta.custom.module || moduleMaybe;
       this.renderModuleName = moduleName;
-      this.$meta.module.use(moduleName, () => {
-        this.custom = {
-          module: moduleName,
-          name: _componentName,
-        };
-        this.__schemaReady2(schema);
-      });
+      await this.$meta.module.use(moduleName);
+      this.custom = {
+        module: moduleName,
+        name: _componentName,
+      };
+      await this.__schemaReady2(schema);
     },
-    __schemaReady2(schema) {
+    async __schemaReady2(schema) {
+      // patchSchema
+      await this.__schemaReady_patchSchema(schema);
+      // ready
+      this.__schemaReady3(schema);
+    },
+    __schemaReady3(schema) {
       this.schema = schema;
       if (this.errors) this.verrors = this.errors;
       // event
       this.$emit('schema:ready', this.schema);
       this.$emit('schemaReady', this.schema);
+    },
+    async __schemaReady_patchSchema(schema) {
+      await this.__schemaReady_patchSchema_properties(schema.properties);
+    },
+    async __schemaReady_patchSchema_properties(properties) {
+      for (const key in properties) {
+        const property = properties[key];
+        if (property.ebType === 'component-action' && property.ebRender) {
+          if (!property.ebRender.actionModule) throw new Error(`actionModule not set for component-action: ${key}`);
+          await this.$meta.module.use(property.ebRender.actionModule);
+        } else if (property.type === 'object' && property.properties) {
+          await this.__schemaReady_patchSchema_properties(property.properties);
+        }
+      }
     },
     renderSchema() {
       return <validateItem parcel={this.parcel} dataKey={null} property={null} meta={null} root={true}></validateItem>;

@@ -44,8 +44,8 @@ module.exports = app => {
           toolbar: false,
         },
         ebRender: {
-          actionModule: 'a-detail',
-          actionComponent: 'action',
+          actionModule: 'a-host',
+          actionComponent: 'capabilities',
           name: '__test',
         },
         ebSearch: {
