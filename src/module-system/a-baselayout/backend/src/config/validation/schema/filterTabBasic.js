@@ -9,8 +9,8 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Atom Name',
         ebSearch: {
-          fieldName: 'atomName',
-          tableAlias: 'a',
+          // fieldName: 'atomName',
+          // tableAlias: 'a',
           // ignoreValue:0,
           operators: 'like,likeLeft,likeRight,=', // {} } { =
           combine: {
