@@ -51,6 +51,7 @@ export default {
         calendarParams: property.ebParams,
       };
       // input
+      const domOperator = ctx.__searchStates_render_list_item(context);
       return (
         <eb-list-input
           key={key}
@@ -62,7 +63,7 @@ export default {
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
-          {ctx.__searchStates_render_list_item(context)}
+          {domOperator}
         </eb-list-input>
       );
     },

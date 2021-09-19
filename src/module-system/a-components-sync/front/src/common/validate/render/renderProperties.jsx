@@ -2,7 +2,7 @@ export default {
   methods: {
     renderProperties(context) {
       const { parcel } = context;
-      const children = [];
+      let children = [];
       let domGroupFlattenChildren = null;
       let domGroupFlattenkey = null;
       let domGroupFlattenProperty = null;
@@ -60,9 +60,17 @@ export default {
           const item = this._renderItem(context2);
           if (item) {
             if (domGroupFlattenChildren) {
-              domGroupFlattenChildren.push(item);
+              if (Array.isArray(item)) {
+                domGroupFlattenChildren = domGroupFlattenChildren.concat(item);
+              } else {
+                domGroupFlattenChildren.push(item);
+              }
             } else {
-              children.push(item);
+              if (Array.isArray(item)) {
+                children = children.concat(item);
+              } else {
+                children.push(item);
+              }
             }
           }
         }
