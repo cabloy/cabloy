@@ -1,13 +1,13 @@
 export default {
   methods: {
-    renderMarkdown(c, context) {
-      return this._renderMarkdown_general(c, context);
+    renderMarkdown(context) {
+      return this._renderMarkdown_general(context);
     },
-    renderMarkdownContent(c, context) {
+    renderMarkdownContent(context) {
       context = this._renderMarkdown_patchContext(context);
-      return this._renderMarkdown_general(c, context);
+      return this._renderMarkdown_general(context);
     },
-    renderMarkdownContentCms(c, context) {
+    renderMarkdownContentCms(context) {
       context = this._renderMarkdown_patchContext(context);
       // action
       const action = {
@@ -19,7 +19,7 @@ export default {
       // actions
       if (!context.property.ebParams.actions) context.property.ebParams.actions = [];
       context.property.ebParams.actions.push(action);
-      return this._renderMarkdown_general(c, context);
+      return this._renderMarkdown_general(context);
     },
     _renderMarkdown_patchContext(context) {
       let { property } = context;
@@ -42,8 +42,8 @@ export default {
         property,
       };
     },
-    _renderMarkdown_general(c, context) {
-      return this._renderComponent(c, context, {
+    _renderMarkdown_general(context) {
+      return this._renderComponent(context, {
         module: 'a-markdown',
         name: 'renderMarkdown',
       });

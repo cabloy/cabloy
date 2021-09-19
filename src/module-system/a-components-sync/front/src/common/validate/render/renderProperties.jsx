@@ -1,6 +1,6 @@
 export default {
   methods: {
-    renderProperties(c, context) {
+    renderProperties(context) {
       const { parcel } = context;
       const children = [];
       let domGroupFlattenChildren = null;
@@ -10,27 +10,24 @@ export default {
         // group title
         const titleHidden = domGroupFlattenProperty.ebParams && domGroupFlattenProperty.ebParams.titleHidden;
         if (!titleHidden) {
+          const props = {
+            groupTitle: true,
+            title: this.getTitle({
+              key: domGroupFlattenkey,
+              property: domGroupFlattenProperty,
+            }),
+          };
           // title
-          const groupTitle = c('f7-list-item', {
-            attrs: {
-              groupTitle: true,
-              title: this.getTitle({
-                key: domGroupFlattenkey,
-                property: domGroupFlattenProperty,
-              }),
-            },
-          });
+          const groupTitle = <f7-list-item key={domGroupFlattenkey + '_groupTitle'} {...{ props }}></f7-list-item>;
           // combine
           domGroupFlattenChildren.unshift(groupTitle);
         }
         // group
         const className = domGroupFlattenProperty.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-        const item = c(
-          'f7-list-group',
-          {
-            staticClass: className,
-          },
-          domGroupFlattenChildren
+        const item = (
+          <f7-list-group key={domGroupFlattenkey} staticClass={className}>
+            {domGroupFlattenChildren}
+          </f7-list-group>
         );
         // clear
         domGroupFlattenChildren = null;
@@ -60,7 +57,7 @@ export default {
             property,
           });
           // render
-          const item = this._renderItem(c, context2);
+          const item = this._renderItem(context2);
           if (item) {
             if (domGroupFlattenChildren) {
               domGroupFlattenChildren.push(item);

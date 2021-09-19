@@ -1,6 +1,6 @@
 export default {
   methods: {
-    renderPanel(c, context) {
+    renderPanel(context) {
       let { key, property, dataPath } = context;
       // panelMeta
       const panelMeta = this.$meta.util.getProperty(property, 'ebParams.meta');
@@ -8,19 +8,18 @@ export default {
       const value = context.getValue();
       // dataPath
       dataPath = dataPath + '/';
-      return c('eb-list-item-panel', {
-        key,
-        attrs: {
-          link: '#',
-          title,
-          dataPath,
+      // props
+      const props = {
+        link: '#',
+        title,
+        dataPath,
+      };
+      const on = {
+        click: () => {
+          this._renderPanel_onClick(context, panelMeta, title, value);
         },
-        on: {
-          click: () => {
-            this._renderPanel_onClick(context, panelMeta, title, value);
-          },
-        },
-      });
+      };
+      return <eb-list-item-panel key={key} {...{ props, on }}></eb-list-item-panel>;
     },
     _renderPanel_onClick(context, panelMeta, title, value) {
       const { property, dataPath } = context;
