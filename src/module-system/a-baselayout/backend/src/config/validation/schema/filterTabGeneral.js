@@ -48,7 +48,7 @@ module.exports = app => {
           combine: {
             actionModule: 'a-baselayout',
             actionComponent: 'combineSearch',
-            name: 'createdAt',
+            name: 'dateRange',
           },
         },
       },

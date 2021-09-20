@@ -113,7 +113,6 @@ export default {
         ebDescription: mode === 'begin' ? 'Begin Date' : 'End Date',
         ebRender: null,
         ebSearch: {
-          tableAlias: 'a',
           operators: mode === 'begin' ? '>=' : '<=',
         },
       };

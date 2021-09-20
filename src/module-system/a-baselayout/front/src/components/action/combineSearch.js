@@ -12,8 +12,8 @@ export default {
     onAction() {
       if (this.action.name === 'atomName') {
         return this.onAction_atomName();
-      } else if (this.action.name === 'createdAt') {
-        return this.onAction_createdAt();
+      } else if (this.action.name === 'dateRange') {
+        return this.onAction_dateRange();
       }
     },
     onAction_atomName() {
@@ -31,7 +31,7 @@ export default {
       }
       return clause;
     },
-    onAction_createdAt() {
+    onAction_dateRange() {
       const { ctx, item } = this.$props;
       const { key, property, value } = item;
       const ebSearch = property.ebSearch;
