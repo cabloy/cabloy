@@ -8,6 +8,7 @@ import renderGroup from './render/renderGroup.jsx';
 import renderPanel from './render/renderPanel.jsx';
 import renderText from './render/renderText.jsx';
 import renderDatepicker from './render/renderDatepicker.jsx';
+import renderDateRange from './render/renderDateRange.jsx';
 import renderFile from './render/renderFile.jsx';
 import renderToggle from './render/renderToggle.jsx';
 import renderSelect from './render/renderSelect.jsx';
@@ -37,6 +38,7 @@ export default {
     renderPanel,
     renderText,
     renderDatepicker,
+    renderDateRange,
     renderFile,
     renderToggle,
     renderSelect,
@@ -351,6 +353,9 @@ export default {
       } else if (ebType === 'datepicker') {
         // datepicker
         return this.renderDatepicker(context);
+      } else if (ebType === 'dateRange') {
+        // datepicker
+        return this.renderDateRange(context);
       } else if (ebType === 'link') {
         // link
         return this.renderLink(context);

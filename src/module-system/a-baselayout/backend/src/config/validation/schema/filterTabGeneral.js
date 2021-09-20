@@ -34,26 +34,12 @@ module.exports = app => {
           ignoreValue: 0,
         },
       },
-      createdAt: {
+      createdAtx: {
         type: 'string',
-        ebType: 'component-action',
+        ebType: 'dateRange',
         ebTitle: 'Created Date',
-        ebParams: {
-          dateFormat: 'YYYY-MM-DD',
-          header: false,
-          toolbar: false,
-        },
-        ebRender: {
-          actionModule: 'a-basefront',
-          actionComponent: 'componentAction',
-          name: 'dateRange',
-        },
         ebSearch: {
-          combine: {
-            actionModule: 'a-baselayout',
-            actionComponent: 'combineSearch',
-            name: 'createdAt',
-          },
+          tableAlias: 'x',
         },
       },
       language: {
