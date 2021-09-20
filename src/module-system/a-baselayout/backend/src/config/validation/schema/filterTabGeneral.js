@@ -39,7 +39,7 @@ module.exports = app => {
         ebType: 'component-action',
         ebTitle: 'Created Date',
         ebParams: {
-          dateFormat: 'yyyy-mm-dd',
+          dateFormat: 'YYYY-MM-DD',
           header: false,
           toolbar: false,
         },
