@@ -44,22 +44,22 @@ export default {
       const clauseName = tableAlias === null ? fieldName : `${tableAlias}.${fieldName}`;
       // value
       const [valueBegin, valueEnd] = value.split(',');
-      const __and__createdAt = [];
+      const __and__dateRange = [];
       if (valueBegin) {
         const val = new Date(ctx.$meta.util.moment(valueBegin, dateFormat).format('YYYY-MM-DD 00:00:00'));
-        __and__createdAt.push({
+        __and__dateRange.push({
           [clauseName]: { op: '>=', val },
         });
       }
       if (valueEnd) {
         const val = new Date(ctx.$meta.util.moment(valueEnd, dateFormat).format('YYYY-MM-DD 23:59:59'));
-        __and__createdAt.push({
+        __and__dateRange.push({
           [clauseName]: { op: '<=', val },
         });
       }
       // ok
-      if (__and__createdAt.length === 0) return null;
-      return { __and__createdAt };
+      if (__and__dateRange.length === 0) return null;
+      return { [`__and__${fieldName}`]: __and__dateRange };
     },
   },
 };
