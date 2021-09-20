@@ -1,5 +1,3 @@
-// combineSearch
-import combineSearch from './components/action/combineSearch.js';
 // listLayoutList
 import listLayoutList from './components/atom/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
@@ -32,8 +30,6 @@ import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLay
 import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
 
 export default {
-  // combineSearch
-  combineSearch,
   // listLayoutList
   listLayoutList,
   listLayoutBlockListCaption,

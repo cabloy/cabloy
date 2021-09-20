@@ -46,7 +46,7 @@ module.exports = app => {
         ebSearch: {
           tableAlias: 'a',
           combine: {
-            actionModule: 'a-baselayout',
+            actionModule: 'a-components',
             actionComponent: 'combineSearch',
             name: 'dateRange',
           },

@@ -14,7 +14,7 @@ module.exports = app => {
           // ignoreValue:0,
           operators: 'like,likeLeft,likeRight,=', // {} } { =
           combine: {
-            actionModule: 'a-baselayout',
+            actionModule: 'a-components',
             actionComponent: 'combineSearch',
             name: 'atomName',
           },
