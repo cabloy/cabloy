@@ -76,7 +76,12 @@ module.exports = ctx => {
         schemas[_schema] = meta.validation.schemas[_schema];
         schemas[_schema].$async = true;
       }
-      _validator.ajv = ctx.app.meta.ajv.create({ options: _validator.options, keywords: meta.validation.keywords, schemas, schemaRoot: _schemas[0] });
+      _validator.ajv = ctx.app.meta.ajv.create({
+        options: _validator.options,
+        keywords: meta.validation.keywords,
+        schemas,
+        schemaRoot: _schemas[0],
+      });
       return _validator;
     }
 
