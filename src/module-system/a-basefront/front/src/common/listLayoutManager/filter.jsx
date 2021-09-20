@@ -105,15 +105,10 @@ export default {
           searchStates: this.filter.data.searchStatesGeneral,
         });
         const clause = Object.assign({}, clause1, clause2);
-        console.log(clause);
-        // atomName、atomCreatedAt
+        // atomName、createdAt
         if (clause.__or__atomNameResource) {
           options.where.__or__atomNameResource = clause.__or__atomNameResource;
           delete clause.__or__atomNameResource;
-        }
-        if (clause['a.atomName']) {
-          options.where['a.atomName'] = clause['a.atomName'];
-          delete clause['a.atomName'];
         }
         if (clause.__and__createdAt) {
           options.where.__and__createdAt = clause.__and__createdAt;

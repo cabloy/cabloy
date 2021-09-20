@@ -20,17 +20,14 @@ export default {
       const { ctx, item } = this.$props;
       const { value, operator, data } = item;
       if (!value) return null;
-      const clause = {};
       const op = operator.op;
-      const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
       const clauseValue = { op, val: value };
+      const clause = {
+        __or__atomNameResource: [{ 'a.atomName': clauseValue }],
+      };
+      const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
       if (atomClass && atomClass.resource) {
-        clause.__or__atomNameResource = [
-          { 'a.atomName': clauseValue }, //
-          { 'f.atomNameLocale': clauseValue },
-        ];
-      } else {
-        clause['a.atomName'] = clauseValue;
+        clause.__or__atomNameResource.push({ 'f.atomNameLocale': clauseValue });
       }
       return clause;
     },
