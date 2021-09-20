@@ -3,6 +3,7 @@ const moment = require('moment');
 const RDSClient = require('ali-rds');
 
 const __whereOrPlaceholder = '__or__';
+const __whereAndPlaceholder = '__and__';
 const __columns = {};
 
 module.exports = app => {
@@ -202,7 +203,7 @@ module.exports = app => {
   return Model;
 };
 
-function _formatOr(db, ors) {
+function _formatOrAnd(db, ors, orAnd) {
   const wheres = [];
   for (const or of ors) {
     const _where = _formatWhere(db, or);
@@ -211,7 +212,7 @@ function _formatOr(db, ors) {
     }
   }
   if (wheres.length === 0) return '';
-  return wheres.join(' OR ');
+  return wheres.join(` ${orAnd} `);
 }
 
 function _formatWhere(db, where) {
@@ -225,7 +226,15 @@ function _formatWhere(db, where) {
     // check key
     if (key.indexOf(__whereOrPlaceholder) > -1) {
       // or
-      const _where = _formatOr(db, value);
+      const _where = _formatOrAnd(db, value, 'OR');
+      if (_where) {
+        wheres.push(`(${_where})`);
+      }
+      continue;
+    }
+    if (key.indexOf(__whereAndPlaceholder) > -1) {
+      // and
+      const _where = _formatOrAnd(db, value, 'AND');
       if (_where) {
         wheres.push(`(${_where})`);
       }
