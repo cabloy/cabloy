@@ -71,7 +71,12 @@ export default function (Vue) {
     parseHash(url) {
       if (!url || url === '/') return '/';
       // support external url
-      if ((url.indexOf('https://') === 0 || url.indexOf('http://') === 0) && url.indexOf(this._locationFullPathName()) === -1) return url;
+      if (
+        (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) &&
+        url.indexOf(this._locationFullPathName()) === -1
+      ) {
+        return url;
+      }
       return url.split(Vue.prototype.$f7.router.params.pushStateSeparator)[1] || '/';
     },
     combineHash(hash) {
@@ -225,7 +230,9 @@ export default function (Vue) {
       const { ctx, action, item } = args;
       // actionPath
       if (!action.actionComponent) {
-        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
+        const url = action.actionPath
+          ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item))
+          : null;
         const options = Object.assign({}, action.navigateOptions, {
           context: {
             params: {

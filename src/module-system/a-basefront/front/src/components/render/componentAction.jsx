@@ -22,11 +22,30 @@ export default {
       const title = ctx.getTitle(context);
       // value
       const value = context.getValue();
+      const [valueBegin, valueEnd] = this._renderDateRange_splitValue(value);
       const children = [
-        this._renderDateRange_renderProperty({ ctx, context, property, mode: 'begin', title, value }), //
-        this._renderDateRange_renderProperty({ ctx, context, property, mode: 'end', title, value }),
+        this._renderDateRange_renderProperty({
+          ctx,
+          context,
+          property,
+          mode: 'begin',
+          title,
+          value: valueBegin,
+        }), //
+        this._renderDateRange_renderProperty({
+          ctx,
+          context,
+          property,
+          mode: 'end',
+          title,
+          value: valueEnd,
+        }),
       ];
       return children;
+    },
+    _renderDateRange_splitValue(value) {
+      if (!value) return [null, null];
+      return value.split(',');
     },
     _renderDateRange_renderProperty({ ctx, context, mode, title, value }) {
       const { key } = context;

@@ -5,7 +5,7 @@ module.exports = {
     'max-len': [
       'error',
       {
-        code: 200,
+        code: 120,
         ignoreComments: true,
         ignoreTrailingComments: true,
         ignoreUrls: true,
@@ -37,7 +37,18 @@ module.exports = {
     'no-empty-function': [
       'error',
       {
-        allow: ['functions', 'arrowFunctions', 'generatorFunctions', 'methods', 'generatorMethods', 'getters', 'setters', 'constructors', 'asyncFunctions', 'asyncMethods'],
+        allow: [
+          'functions',
+          'arrowFunctions',
+          'generatorFunctions',
+          'methods',
+          'generatorMethods',
+          'getters',
+          'setters',
+          'constructors',
+          'asyncFunctions',
+          'asyncMethods',
+        ],
       },
     ],
     'no-constant-condition': [
