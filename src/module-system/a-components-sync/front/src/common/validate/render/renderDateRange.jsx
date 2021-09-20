@@ -5,10 +5,15 @@ const __DateRangeDefault = {
     toolbar: false,
   },
   ebRender: {
-    actionModule: 'a-basefront',
-    actionComponent: 'componentAction',
+    actionModule: 'a-user',
+    actionComponent: 'action',
     name: 'dateRange',
   },
+  // ebRender: {
+  //   actionModule: 'a-basefront',
+  //   actionComponent: 'componentAction',
+  //   name: 'dateRange',
+  // },
   ebSearch: {
     combine: {
       actionModule: 'a-baselayout',

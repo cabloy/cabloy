@@ -222,7 +222,7 @@ export default {
     },
     async __schemaReady2(schema) {
       // patchSchema
-      await this.__schemaReady_patchSchema(schema);
+      // await this.__schemaReady_patchSchema(schema);
       // ready
       this.__schemaReady3(schema);
     },
@@ -233,20 +233,20 @@ export default {
       this.$emit('schema:ready', this.schema);
       this.$emit('schemaReady', this.schema);
     },
-    async __schemaReady_patchSchema(schema) {
-      await this.__schemaReady_patchSchema_properties(schema.properties);
-    },
-    async __schemaReady_patchSchema_properties(properties) {
-      for (const key in properties) {
-        const property = properties[key];
-        if (property.ebType === 'component-action' && property.ebRender) {
-          if (!property.ebRender.actionModule) throw new Error(`actionModule not set for component-action: ${key}`);
-          await this.$meta.module.use(property.ebRender.actionModule);
-        } else if (property.type === 'object' && property.properties) {
-          await this.__schemaReady_patchSchema_properties(property.properties);
-        }
-      }
-    },
+    // async __schemaReady_patchSchema(schema) {
+    //   await this.__schemaReady_patchSchema_properties(schema.properties);
+    // },
+    // async __schemaReady_patchSchema_properties(properties) {
+    //   for (const key in properties) {
+    //     const property = properties[key];
+    //     if (property.ebType === 'component-action' && property.ebRender) {
+    //       if (!property.ebRender.actionModule) throw new Error(`actionModule not set for component-action: ${key}`);
+    //       await this.$meta.module.use(property.ebRender.actionModule);
+    //     } else if (property.type === 'object' && property.properties) {
+    //       await this.__schemaReady_patchSchema_properties(property.properties);
+    //     }
+    //   }
+    // },
     renderSchema() {
       return <validateItem parcel={this.parcel} dataKey={null} property={null} meta={null} root={true}></validateItem>;
     },
