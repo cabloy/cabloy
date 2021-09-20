@@ -1,25 +1,8 @@
 const __DateRangeDefault = {
-  ebParams: {
-    dateFormat: 'YYYY-MM-DD',
-    header: false,
-    toolbar: false,
-  },
   ebRender: {
-    actionModule: 'a-user',
-    actionComponent: 'action',
+    actionModule: 'a-basefront',
+    actionComponent: 'componentAction',
     name: 'dateRange',
-  },
-  // ebRender: {
-  //   actionModule: 'a-basefront',
-  //   actionComponent: 'componentAction',
-  //   name: 'dateRange',
-  // },
-  ebSearch: {
-    combine: {
-      actionModule: 'a-baselayout',
-      actionComponent: 'combineSearch',
-      name: 'createdAt',
-    },
   },
 };
 export default {

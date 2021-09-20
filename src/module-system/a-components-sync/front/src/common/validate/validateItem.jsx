@@ -1,3 +1,4 @@
+import validateActionModule from './validateActionModule.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
 import renderSearchStates from './render/renderSearchStates.jsx';
@@ -29,6 +30,7 @@ import renderUserLabel from './render/renderUserLabel.jsx';
 export default {
   mixins: [
     renderSearchStates,
+    validateActionModule,
     validateComputedValue,
     validateComputedDisplay,
     renderProperties,

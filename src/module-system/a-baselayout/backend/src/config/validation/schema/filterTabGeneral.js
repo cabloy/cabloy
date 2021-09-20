@@ -38,8 +38,17 @@ module.exports = app => {
         type: 'string',
         ebType: 'dateRange',
         ebTitle: 'Created Date',
+        ebParams: {
+          dateFormat: 'YYYY-MM-DD',
+          header: false,
+          toolbar: false,
+        },
         ebSearch: {
-          tableAlias: 'x',
+          combine: {
+            actionModule: 'a-baselayout',
+            actionComponent: 'combineSearch',
+            name: 'createdAt',
+          },
         },
       },
       language: {
