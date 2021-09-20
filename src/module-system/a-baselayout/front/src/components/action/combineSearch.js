@@ -12,6 +12,8 @@ export default {
     onAction() {
       if (this.action.name === 'atomName') {
         return this.onAction_atomName();
+      } else if (this.action.name === 'createdAt') {
+        return this.onAction_createdAt();
       }
     },
     onAction_atomName() {
@@ -31,6 +33,29 @@ export default {
         clause['a.atomName'] = clauseValue;
       }
       return clause;
+    },
+    onAction_createdAt() {
+      const { ctx, item } = this.$props;
+      const { property, value } = item;
+      const dateFormat = property.ebParams.dateFormat;
+      if (!value) return null;
+      const [valueBegin, valueEnd] = value.split(',');
+      const __and__createdAt = [];
+      if (valueBegin) {
+        const val = new Date(ctx.$meta.util.moment(valueBegin, dateFormat).format('YYYY-MM-DD 00:00:00'));
+        __and__createdAt.push({
+          'a.createdAt': { op: '>=', val },
+        });
+      }
+      if (valueEnd) {
+        const val = new Date(ctx.$meta.util.moment(valueEnd, dateFormat).format('YYYY-MM-DD 23:59:59'));
+        __and__createdAt.push({
+          'a.createdAt': { op: '<=', val },
+        });
+      }
+      // ok
+      if (__and__createdAt.length === 0) return null;
+      return { __and__createdAt };
     },
   },
 };

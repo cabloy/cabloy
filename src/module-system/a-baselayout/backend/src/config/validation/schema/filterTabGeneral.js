@@ -49,8 +49,11 @@ module.exports = app => {
           name: 'dateRange',
         },
         ebSearch: {
-          // tableAlias: 'a',
-          // operators: '>=',
+          combine: {
+            actionModule: 'a-baselayout',
+            actionComponent: 'combineSearch',
+            name: 'createdAt',
+          },
         },
       },
       language: {

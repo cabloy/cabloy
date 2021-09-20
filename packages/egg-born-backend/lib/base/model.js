@@ -10,8 +10,10 @@ module.exports = app => {
     constructor(ctx, { table, options = {} }) {
       super(ctx);
       this.table = table;
-      this.disableDeleted = options.disableDeleted === undefined ? app.config.model.disableDeleted : options.disableDeleted;
-      this.disableInstance = options.disableInstance === undefined ? app.config.model.disableInstance : options.disableInstance;
+      this.disableDeleted =
+        options.disableDeleted === undefined ? app.config.model.disableDeleted : options.disableDeleted;
+      this.disableInstance =
+        options.disableInstance === undefined ? app.config.model.disableInstance : options.disableInstance;
     }
 
     async columns() {
@@ -56,7 +58,19 @@ module.exports = app => {
     }
   }
 
-  ['literals', 'escape', 'escapeId', 'format', 'query', 'queryOne', '_query', '_where', '_selectColumns', '_orders', '_limit'].forEach(method => {
+  [
+    'literals',
+    'escape',
+    'escapeId',
+    'format',
+    'query',
+    'queryOne',
+    '_query',
+    '_where',
+    '_selectColumns',
+    '_orders',
+    '_limit',
+  ].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
         if (is.function(this.ctx.db[method])) {

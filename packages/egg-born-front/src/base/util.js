@@ -536,7 +536,7 @@ export default function (Vue) {
           res = this.performActionSync({
             ctx,
             action: ebSearch.combine,
-            item: { key, property, dataPath, value, operator, schema, data },
+            item: { key, property, dataPath, value, operator, schema, data, searchStates },
           });
         } else {
           res = this._combineSearchClause({ key, property, value, operator });
