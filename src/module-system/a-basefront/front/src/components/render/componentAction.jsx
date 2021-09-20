@@ -10,8 +10,6 @@ export default {
   ],
   methods: {
     onAction() {
-      const { ctx } = this.$props;
-      this.$createElement = ctx.$createElement;
       if (this.action.name === 'dateRange') return this._renderDateRange();
     },
     _renderDateRange() {
@@ -31,7 +29,7 @@ export default {
           mode: 'begin',
           title,
           value: valueBegin,
-        }), //
+        }),
         this._renderDateRange_renderProperty({
           ctx,
           context,
