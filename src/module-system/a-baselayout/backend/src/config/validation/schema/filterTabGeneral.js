@@ -34,7 +34,7 @@ module.exports = app => {
           ignoreValue: 0,
         },
       },
-      createdAtx: {
+      createdAt: {
         type: 'string',
         ebType: 'dateRange',
         ebTitle: 'Created Date',
@@ -44,6 +44,7 @@ module.exports = app => {
           toolbar: false,
         },
         ebSearch: {
+          tableAlias: 'a',
           combine: {
             actionModule: 'a-baselayout',
             actionComponent: 'combineSearch',
