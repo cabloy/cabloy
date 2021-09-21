@@ -40,6 +40,9 @@ export default {
                 },
               },
             ],
+            nativeOn: {
+              contextmenu: this.onContextMenu,
+            },
           },
           [text, close]
         )
@@ -71,6 +74,10 @@ export default {
   methods: {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
+    },
+    onContextMenu(event) {
+      event.stopPropagation();
+      event.preventDefault();
     },
     onDragStart({ $el, context, dragElement }) {
       const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
