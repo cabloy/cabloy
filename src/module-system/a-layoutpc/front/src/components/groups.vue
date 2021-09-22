@@ -187,6 +187,13 @@ export default {
           .catch(() => {});
       });
     },
+    closeGroup(groupId, onlyRemove) {
+      this._removeNextViews(groupId, 0)
+        .then(() => {
+          this.removeGroup(groupId, onlyRemove);
+        })
+        .catch(() => {});
+    },
     onViewTitle(groupId, title) {
       if (title) {
         const group = this.groups.find(group => group.id === groupId);

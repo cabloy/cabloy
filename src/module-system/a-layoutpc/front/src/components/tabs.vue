@@ -1,5 +1,13 @@
 <script>
 import Vue from 'vue';
+
+// Refresh / Close /  Close Other Tabs / Close Tabs to the Right
+const __tabContextMenuButtons = [
+  { name: 'refresh', text: 'Refresh' }, //
+  { name: 'close', text: 'Close' },
+  { name: 'closeOtherTabs', text: 'CloseOtherTabs' },
+  { name: 'closeTabsToTheRight', text: 'CloseTabsToTheRight' },
+];
 export default {
   render(c) {
     const children = [];
@@ -41,7 +49,9 @@ export default {
               },
             ],
             nativeOn: {
-              contextmenu: this.onContextMenu,
+              contextmenu: event => {
+                this.onContextMenu(event, group.id);
+              },
             },
           },
           [text, close]
@@ -75,10 +85,40 @@ export default {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
-    onContextMenu(event) {
+    onContextMenu(event, groupId) {
       event.stopPropagation();
       event.preventDefault();
-      this.$meta.vueLayout.appMethods.toast.show({ text: 'sssss' });
+      this.$nextTick(() => {
+        this._showContextMenu(event, groupId);
+      });
+    },
+    // Refresh / Close /  Close Other Tabs / Close Tabs to the Right
+    async _showContextMenu(event, groupId) {
+      try {
+        // buttons
+        const buttons = [];
+        for (const item of __tabContextMenuButtons) {
+          buttons.push({
+            text: this.$text(item.text),
+            data: item,
+          });
+        }
+        // choose
+        const params = {
+          forceToPopover: true,
+          targetEl: event.target,
+          buttons,
+        };
+        const button = await this.$meta.vueLayout.appMethods.actions.choose(params);
+        const handlerName = `_onContextMenuItemClick_${button.data.name}`;
+        this[handlerName](groupId);
+      } catch (err) {
+        if (err.message) throw err;
+      }
+    },
+    _onContextMenuItemClick_refresh() {},
+    _onContextMenuItemClick_close(groupId) {
+      this.groups.closeGroup(groupId, false);
     },
     onDragStart({ $el, context, dragElement }) {
       const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
@@ -103,12 +143,7 @@ export default {
       this.layout.groups.splice(groupIndexDrop, 0, context.group);
     },
     onClickClose(group) {
-      this.groups
-        ._removeNextViews(group.id, 0)
-        .then(() => {
-          this._removeGroup(group);
-        })
-        .catch(() => {});
+      this.groups.closeGroup(group.id, false);
     },
     _removeGroup(group) {
       this.groups.removeGroup(group.id);
