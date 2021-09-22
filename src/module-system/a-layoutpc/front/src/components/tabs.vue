@@ -122,6 +122,12 @@ export default {
     async _onContextMenuItemClick_close(groupId) {
       await this.groups.closeGroup(groupId, false);
     },
+    async _onContextMenuItemClick_closeOtherTabs(groupId) {
+      await this.groups.closeOtherTabs(groupId);
+    },
+    async _onContextMenuItemClick_closeTabsToTheRight(groupId) {
+      await this.groups.closeTabsToTheRight(groupId);
+    },
     onDragStart({ $el, context, dragElement }) {
       const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
       const tooltip = group.title;

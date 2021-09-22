@@ -274,6 +274,8 @@ export default {
         }
       }
     },
+    closeOtherTabs(groupId) {},
+    closeTabsToTheRight(groupId) {},
   },
 };
 </script>
