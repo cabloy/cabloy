@@ -8,7 +8,7 @@ export default function (ctx) {
         },
         params,
         {
-          hostEl: ctx.getHostEl(),
+          hostEl: ctx.getHostEl && ctx.getHostEl(),
         }
       );
       if (!_params.text) {

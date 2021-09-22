@@ -2,7 +2,7 @@ export default function (ctx) {
   const actions = {
     _prepareParams(params) {
       const _params = ctx.$utils.extend({}, params, {
-        hostEl: ctx.getHostEl(),
+        hostEl: ctx.getHostEl && ctx.getHostEl(),
       });
       return _params;
     },

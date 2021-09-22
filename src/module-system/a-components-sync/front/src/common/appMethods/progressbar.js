@@ -15,7 +15,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   let dialog;
   let counter = 0;
   const app = ctx.$f7;
-  const hostEl = ctx.getHostEl();
+  const hostEl = ctx.getHostEl && ctx.getHostEl();
   let subscribeId = null;
   const subscribePath = `/a/progress/update/${progressId}`;
   // buttons

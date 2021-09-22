@@ -1,9 +1,10 @@
 <script>
+import Vue from 'vue';
 import Header from './header.vue';
 import Sidebar from './sidebar.vue';
 import Groups from './groups.vue';
+const appMethods = Vue.prototype.$meta.module.get('a-components').options.utils.appMethods;
 
-import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -70,6 +71,7 @@ export default {
       panelsAll: null,
       buttonsAll: null,
       layoutAtomStaticKey: null,
+      appMethods: appMethods(this),
     };
   },
   computed: {
@@ -260,7 +262,11 @@ export default {
         } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
           // open at right even in eb-layout-scene
           groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-        } else if (!$viewEl || $viewEl.parents('.eb-layout-scene').length > 0 || ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0) {
+        } else if (
+          !$viewEl ||
+          $viewEl.parents('.eb-layout-scene').length > 0 ||
+          ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0
+        ) {
           groupId = null;
           groupForceNew = false;
         } else {
@@ -268,14 +274,16 @@ export default {
           groupId = $viewEl.parents('.eb-layout-group').data('groupId');
         }
         // get view
-        this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options.scene, sceneOptions: options.sceneOptions }).then(res => {
-          if (!res) return;
-          // navigate
-          if (res.options) options = this.$utils.extend({}, options, res.options);
-          res.view.f7View.router.navigate(url, options);
-          // autohide
-          this._autoHideAllSidebars();
-        });
+        this.$refs.groups
+          .createView({ ctx, groupId, groupForceNew, url, scene: options.scene, sceneOptions: options.sceneOptions })
+          .then(res => {
+            if (!res) return;
+            // navigate
+            if (res.options) options = this.$utils.extend({}, options, res.options);
+            res.view.f7View.router.navigate(url, options);
+            // autohide
+            this._autoHideAllSidebars();
+          });
       }
     },
     openLogin(routeTo, options) {
@@ -378,9 +386,11 @@ export default {
       const promises = [];
       for (const resourceType of resourceTypes) {
         promises.push(
-          this.$store.dispatch('a/base/getResources', { resourceType: `a-layoutpc:${resourceType.name}` }).then(data => {
-            this[resourceType.var] = data;
-          })
+          this.$store
+            .dispatch('a/base/getResources', { resourceType: `a-layoutpc:${resourceType.name}` })
+            .then(data => {
+              this[resourceType.var] = data;
+            })
         );
       }
       return Promise.all(promises);
@@ -455,7 +465,9 @@ export default {
         if (!resource.atomStaticKey && !resource.module) {
           resources.splice(index, 1);
         } else {
-          resources[index] = resource.atomStaticKey ? { atomStaticKey: resource.atomStaticKey } : { module: resource.module, name: resource.name };
+          resources[index] = resource.atomStaticKey
+            ? { atomStaticKey: resource.atomStaticKey }
+            : { module: resource.module, name: resource.name };
         }
       }
     },
@@ -555,7 +567,9 @@ export default {
       // prepare panel
       panel = this._preparePanel(panel, url);
       // check if has exists
-      const _panelTabIndex = this.sidebar[side].panels.findIndex(item => this._panelFullName(item) === this._panelFullName(panel));
+      const _panelTabIndex = this.sidebar[side].panels.findIndex(
+        item => this._panelFullName(item) === this._panelFullName(panel)
+      );
       if (_panelTabIndex === -1) {
         this.sidebar[side].panels.push(panel);
         if (this.sidebar[side].panels.length === 1) {
@@ -585,7 +599,9 @@ export default {
       this.__saveLayoutConfig();
     },
     _findButton(side, button) {
-      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      const _buttonIndex = this.sidebar[side].buttons.findIndex(
+        item => this._buttonFullName(item) === this._buttonFullName(button)
+      );
       if (_buttonIndex === -1) return [null, -1];
       return [this.sidebar[side].buttons[_buttonIndex], _buttonIndex];
     },

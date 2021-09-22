@@ -5,7 +5,7 @@ export default function (ctx) {
   // create
   dialog.create = function (params) {
     ctx.$utils.extend(params, {
-      hostEl: ctx.getHostEl(),
+      hostEl: ctx.getHostEl && ctx.getHostEl(),
     });
     return ctx.$f7.dialog.create(params);
   };
@@ -16,20 +16,20 @@ export default function (ctx) {
   // preloader / progress
   for (const method of ['preloader', 'progress']) {
     dialog[method] = function (...args) {
-      return ctx.$f7.dialog[method](ctx.getHostEl(), ...args);
+      return ctx.$f7.dialog[method](ctx.getHostEl && ctx.getHostEl(), ...args);
     };
   }
   // alert
   dialog.alert = function (text, title) {
     return new Promise((resolve, reject) => {
-      ctx.$f7.dialog.alert(ctx.getHostEl(), text, title, () => resolve());
+      ctx.$f7.dialog.alert(ctx.getHostEl && ctx.getHostEl(), text, title, () => resolve());
     });
   };
   // prompt
   dialog.prompt = function (text, title, defaultValue) {
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.prompt(
-        ctx.getHostEl(),
+        ctx.getHostEl && ctx.getHostEl(),
         text,
         title,
         value => resolve(value),
@@ -43,7 +43,7 @@ export default function (ctx) {
     if (!text) text = ctx.$text('Are you sure to perform this operation?');
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.confirm(
-        ctx.getHostEl(),
+        ctx.getHostEl && ctx.getHostEl(),
         text,
         title,
         () => resolve(),

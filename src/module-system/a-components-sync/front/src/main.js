@@ -4,6 +4,7 @@ import './assets/css/module.less';
 
 import dragdropUtilFn from './common/dragdrop.js';
 import dragdrop from './directives/dragdrop.js';
+import appMethods from './common/appMethods.js';
 
 // install
 function install(_Vue, cb) {
@@ -16,7 +17,10 @@ function install(_Vue, cb) {
   Vue.directive('eb-dragdrop', dragdrop(dragdropUtil));
 
   // utils
-  const utils = { dragdrop: dragdropUtil };
+  const utils = {
+    dragdrop: dragdropUtil,
+    appMethods,
+  };
 
   //
   return cb({

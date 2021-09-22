@@ -78,6 +78,7 @@ export default {
     onContextMenu(event) {
       event.stopPropagation();
       event.preventDefault();
+      this.$meta.vueLayout.appMethods.toast.show({ text: 'sssss' });
     },
     onDragStart({ $el, context, dragElement }) {
       const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);

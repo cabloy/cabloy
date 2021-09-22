@@ -2,7 +2,7 @@ export default function (ctx) {
   const calendar = {
     create(params) {
       ctx.$utils.extend(params, {
-        hostEl: ctx.getHostEl(),
+        hostEl: ctx.getHostEl && ctx.getHostEl(),
       });
       return ctx.$f7.calendar.create(params);
     },
