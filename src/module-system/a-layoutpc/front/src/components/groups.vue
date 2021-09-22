@@ -29,7 +29,9 @@ export default {
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
   data() {
-    return {};
+    return {
+      groupIdCurrent: 0,
+    };
   },
   computed: {
     layout() {
@@ -138,6 +140,7 @@ export default {
     },
     switchGroup(groupId) {
       this.$f7.tab.show(`#${groupId}`);
+      this.groupIdCurrent = groupId;
     },
     _getGroupIndex(groupId) {
       return this.groups.findIndex(group => group.id === groupId);

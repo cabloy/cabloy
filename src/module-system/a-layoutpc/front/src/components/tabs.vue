@@ -32,8 +32,8 @@ export default {
             key: group.id,
             attrs: { tabLink: `#${group.id}` },
             props: {
-              onPerform: () => {
-                this.groups.switchGroup(group.id);
+              onPerform: event => {
+                this.onPerformTabClick(event, group.id);
               },
             },
             directives: [
@@ -152,6 +152,14 @@ export default {
     },
     async onClickClose(group) {
       await this.groups.closeGroup(group.id, false);
+    },
+    onPerformTabClick(event, groupId) {
+      // check if currrent
+      if (this.groups.groupIdCurrent !== groupId) {
+        this.groups.switchGroup(groupId);
+      } else {
+        this._showContextMenu(event, groupId);
+      }
     },
   },
 };
