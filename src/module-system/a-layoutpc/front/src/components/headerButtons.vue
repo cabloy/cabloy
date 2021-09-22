@@ -79,10 +79,20 @@ export default {
       }
       // choose
       const params = {
-        forceToPopover: true,
         targetEl: event.target,
         buttons,
       };
+      if (buttons.length > 8) {
+        Object.assign(params, {
+          grid: true,
+          forceToPopover: false,
+          convertToPopover: false,
+        });
+      } else {
+        Object.assign(params, {
+          forceToPopover: true,
+        });
+      }
       const button = await this.$meta.vueLayout.appMethods.actions.choose(params);
       this.groups.switchGroup(button.data.id);
     },

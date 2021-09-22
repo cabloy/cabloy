@@ -128,15 +128,15 @@ export default {
     async _onContextMenuItemClick_closeTabsToTheRight(groupId) {
       await this.groups.closeTabsToTheRight(groupId);
     },
-    onDragStart({ $el, context, dragElement }) {
-      const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
+    onDragStart({ /* $el,*/ context /* , dragElement*/ }) {
+      const [group] = this.groups._getGroupAndIndex(context.group.id);
       const tooltip = group.title;
       return { tooltip };
     },
-    onDropElement({ $el, context, dragElement, dragContext }) {
+    onDropElement({ $el, context, /* dragElement,*/ dragContext }) {
       const [groupDrop, groupIndexDrop] = this.groups._getGroupAndIndex(context.group.id);
-      const [groupDrag, groupIndexDrag] = this.groups._getGroupAndIndex(dragContext.group.id);
-      if (groupIndexDrop === groupIndexDrag || groupIndexDrop == groupIndexDrag + 1) return null;
+      const [, /* groupDrag*/ groupIndexDrag] = this.groups._getGroupAndIndex(dragContext.group.id);
+      if (groupIndexDrop === groupIndexDrag || groupIndexDrop === groupIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
       // tooltip
@@ -144,7 +144,7 @@ export default {
       // ok
       return { dropElement, tooltip };
     },
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+    onDragDone({ /* $el,*/ context, /* dragElement, dropElement,*/ dropContext }) {
       const groupIndexDrag = this.groups._getGroupIndex(context.group.id);
       this.layout.groups.splice(groupIndexDrag, 1);
       const groupIndexDrop = this.groups._getGroupIndex(dropContext.group.id);
