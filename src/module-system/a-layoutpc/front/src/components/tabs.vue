@@ -85,37 +85,6 @@ export default {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
-    onContextMenu(event, groupId) {
-      event.stopPropagation();
-      event.preventDefault();
-      this.$nextTick(() => {
-        this._showContextMenu(event, groupId);
-      });
-    },
-    // Refresh / Close /  Close Other Tabs / Close Tabs to the Right
-    async _showContextMenu(event, groupId) {
-      try {
-        // buttons
-        const buttons = [];
-        for (const item of __tabContextMenuButtons) {
-          buttons.push({
-            text: this.$text(item.text),
-            data: item,
-          });
-        }
-        // choose
-        const params = {
-          forceToPopover: true,
-          targetEl: event.target,
-          buttons,
-        };
-        const button = await this.$meta.vueLayout.appMethods.actions.choose(params);
-        const handlerName = `_onContextMenuItemClick_${button.data.name}`;
-        this[handlerName](groupId);
-      } catch (err) {
-        if (err.message) throw err;
-      }
-    },
     async _onContextMenuItemClick_refresh(groupId) {
       await this.groups.refreshGroup(groupId);
     },
@@ -157,8 +126,40 @@ export default {
       // check if currrent
       if (this.groups.groupIdCurrent !== groupId) {
         this.groups.switchGroup(groupId);
-      } else {
+      } else if (!this.$device.desktop) {
         this._showContextMenu(event, groupId);
+      }
+    },
+    onContextMenu(event, groupId) {
+      event.stopPropagation();
+      event.preventDefault();
+      if (!this.$device.desktop) return;
+      this.$nextTick(() => {
+        this._showContextMenu(event, groupId);
+      });
+    },
+    // Refresh / Close /  Close Other Tabs / Close Tabs to the Right
+    async _showContextMenu(event, groupId) {
+      try {
+        // buttons
+        const buttons = [];
+        for (const item of __tabContextMenuButtons) {
+          buttons.push({
+            text: this.$text(item.text),
+            data: item,
+          });
+        }
+        // choose
+        const params = {
+          forceToPopover: true,
+          targetEl: event.currentTarget,
+          buttons,
+        };
+        const button = await this.$meta.vueLayout.appMethods.actions.choose(params);
+        const handlerName = `_onContextMenuItemClick_${button.data.name}`;
+        this[handlerName](groupId);
+      } catch (err) {
+        if (err.message) throw err;
       }
     },
   },

@@ -79,7 +79,7 @@ export default {
       }
       // choose
       const params = {
-        targetEl: event.target,
+        targetEl: event.currentTarget,
         buttons,
       };
       if (buttons.length > 8) {
