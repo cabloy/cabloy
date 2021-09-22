@@ -274,8 +274,36 @@ export default {
         }
       }
     },
-    closeOtherTabs(groupId) {},
-    closeTabsToTheRight(groupId) {},
+    async closeOtherTabs(groupIdThis) {
+      // switch current
+      this.switchGroup(groupIdThis);
+      // from left to right
+      const groupIds = this.groups.map(item => item.id);
+      for (const groupId of groupIds) {
+        const dirty = this._getGroupDirty(groupId);
+        if (groupId !== groupIdThis && !dirty) {
+          // close group
+          await this.closeGroup(groupId, true);
+        }
+      }
+    },
+    async closeTabsToTheRight(groupIdThis) {
+      // switch current
+      this.switchGroup(groupIdThis);
+      // from left to right
+      const [, groupIndexThis] = this._getGroupAndIndex(groupIdThis);
+      const groupIds = [];
+      for (let index = groupIndexThis + 1; index < this.groups.length; index++) {
+        groupIds.push(this.groups[index].id);
+      }
+      for (const groupId of groupIds) {
+        const dirty = this._getGroupDirty(groupId);
+        if (groupId !== groupIdThis && !dirty) {
+          // close group
+          await this.closeGroup(groupId, true);
+        }
+      }
+    },
   },
 };
 </script>
