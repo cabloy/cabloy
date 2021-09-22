@@ -10,44 +10,16 @@ export default {
     if (this.side === 'top') {
       // more
       children.push(
-        c('f7-link', {
+        c('eb-link', {
           key: 'expand_more',
           staticClass: this.layout.size.verySmall || this.layout.groups.length > 2 ? '' : 'display-none',
           props: {
             iconMaterial: 'expand_more',
-            popoverOpen: `#${this.popoverId}`,
+            onPerform: event => {
+              return this.onPerformExpandMore(event);
+            },
           },
         })
-      );
-      // popover
-      const tabButtons = [];
-      for (const group of this.layout.groups) {
-        tabButtons.push(
-          c('eb-list-item', {
-            key: group.id,
-            props: {
-              link: '#',
-              popoverClose: true,
-              title: group.title,
-            },
-            on: {
-              click: event => {
-                this.groups.switchGroup(group.id);
-              },
-            },
-          })
-        );
-      }
-      const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
-      children.push(
-        c(
-          'f7-popover',
-          {
-            key: 'popover',
-            attrs: { id: this.popoverId },
-          },
-          [tabList]
-        )
       );
     }
     // buttons
@@ -77,7 +49,6 @@ export default {
     return {
       buttonsReal: {},
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
-      popoverId: Vue.prototype.$meta.util.nextId('popover'),
     };
   },
   computed: {
@@ -96,6 +67,24 @@ export default {
       const buttonIndex = this._getButtonIndex(button);
       if (buttonIndex === -1) return [null, -1];
       return [this.buttons[buttonIndex], buttonIndex];
+    },
+    async onPerformExpandMore(event) {
+      // buttons
+      const buttons = [];
+      for (const group of this.layout.groups) {
+        buttons.push({
+          text: group.title,
+          data: group,
+        });
+      }
+      // choose
+      const params = {
+        forceToPopover: true,
+        targetEl: event.target,
+        buttons,
+      };
+      const button = await this.$meta.vueLayout.appMethods.actions.choose(params);
+      this.groups.switchGroup(button.data.id);
     },
   },
 };
