@@ -67,7 +67,8 @@ export default {
       if (id) return this.groups.find(group => group.id === id);
       return this.groups.find(group => group.url === url);
     },
-    createView({ ctx, groupId, groupForceNew, url, scene, sceneOptions }) {
+    createView({ ctx, groupId, groupForceNew, url, scene, sceneOptions, options }) {
+      if (!options) options = {};
       return new Promise(resolve => {
         // group
         let group = groupForceNew ? null : this.getGroup({ id: groupId, url });
@@ -87,7 +88,7 @@ export default {
           }
         }
         // view
-        if (group.url === url && group.views.length > 0) {
+        if (group.url === url && group.views.length > 0 && !options.reloadAll) {
           // exists
           this.switchGroup(group.id);
           resolve(null);
@@ -142,6 +143,12 @@ export default {
       if (groupIndex === -1) return [null, -1];
       return [this.groups[groupIndex], groupIndex];
     },
+    onViewTitle(groupId, title) {
+      if (title) {
+        const group = this.groups.find(group => group.id === groupId);
+        group.title = title;
+      }
+    },
     removeGroup(groupId, onlyRemove) {
       // current
       const index = this._getGroupIndex(groupId);
@@ -187,18 +194,28 @@ export default {
           .catch(() => {});
       });
     },
-    closeGroup(groupId, onlyRemove) {
-      this._removeNextViews(groupId, 0)
-        .then(() => {
-          this.removeGroup(groupId, onlyRemove);
-        })
-        .catch(() => {});
+    async closeGroup(groupId, onlyRemove) {
+      try {
+        await this._removeNextViews(groupId, 0);
+        this.removeGroup(groupId, onlyRemove);
+      } catch (err) {}
     },
-    onViewTitle(groupId, title) {
-      if (title) {
-        const group = this.groups.find(group => group.id === groupId);
-        group.title = title;
-      }
+    async refreshGroup(groupId) {
+      try {
+        const group = this.getGroup({ id: groupId });
+        if (!group) return;
+        const view = group.views[0];
+        const viewVue = this.getView(group.id, view.id);
+        const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+        if (dirty) {
+          // will throw error if cancelled
+          await viewVue.viewDirtyConfirm();
+        }
+        this.layout.navigate(group.url, {
+          ctx: viewVue,
+          reloadAll: true,
+        });
+      } catch (err) {}
     },
     async _removeNextViews(groupId, viewIndexStart) {
       const group = this.getGroup({ id: groupId });

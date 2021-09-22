@@ -275,7 +275,15 @@ export default {
         }
         // get view
         this.$refs.groups
-          .createView({ ctx, groupId, groupForceNew, url, scene: options.scene, sceneOptions: options.sceneOptions })
+          .createView({
+            ctx,
+            groupId,
+            groupForceNew,
+            url,
+            scene: options.scene,
+            sceneOptions: options.sceneOptions,
+            options,
+          })
           .then(res => {
             if (!res) return;
             // navigate

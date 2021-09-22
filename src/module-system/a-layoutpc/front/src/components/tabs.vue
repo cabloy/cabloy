@@ -116,9 +116,11 @@ export default {
         if (err.message) throw err;
       }
     },
-    _onContextMenuItemClick_refresh() {},
-    _onContextMenuItemClick_close(groupId) {
-      this.groups.closeGroup(groupId, false);
+    async _onContextMenuItemClick_refresh(groupId) {
+      await this.groups.refreshGroup(groupId);
+    },
+    async _onContextMenuItemClick_close(groupId) {
+      await this.groups.closeGroup(groupId, false);
     },
     onDragStart({ $el, context, dragElement }) {
       const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
@@ -142,11 +144,8 @@ export default {
       const groupIndexDrop = this.groups._getGroupIndex(dropContext.group.id);
       this.layout.groups.splice(groupIndexDrop, 0, context.group);
     },
-    onClickClose(group) {
-      this.groups.closeGroup(group.id, false);
-    },
-    _removeGroup(group) {
-      this.groups.removeGroup(group.id);
+    async onClickClose(group) {
+      await this.groups.closeGroup(group.id, false);
     },
   },
 };
