@@ -1,11 +1,27 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <eb-box @size="onSize" toolbar @dragover.native="onFileDragover" @dragenter.native="onFileDragenter" @dragleave.native="onFileDragleave" @drop.native="onFileDrop">
+    <eb-box
+      @size="onSize"
+      toolbar
+      @dragover.native="onFileDragover"
+      @dragenter.native="onFileDragenter"
+      @dragleave.native="onFileDragleave"
+      @drop.native="onFileDrop"
+    >
       <img ref="image" class="image" />
     </eb-box>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none" />
-    <div v-if="fileNameTip" class="fileName" @dragover="onFileDragover" @dragenter="onFileDragenter" @dragleave="onFileDragleave" @drop="onFileDrop">{{ fileNameTip }}</div>
+    <div
+      v-if="fileNameTip"
+      class="fileName"
+      @dragover="onFileDragover"
+      @dragenter="onFileDragenter"
+      @dragleave="onFileDragleave"
+      @drop="onFileDrop"
+    >
+      {{ fileNameTip }}
+    </div>
     <f7-toolbar bottom-md>
       <f7-button @click="onClickSelect">{{ selectText }}</f7-button>
       <f7-button v-if="cropped" @click="onClickClearCrop">{{ $text('Clear Crop') }}</f7-button>
@@ -100,7 +116,7 @@ export default {
       this.$refs.file.click();
     },
     onFileChange(event) {
-      this.__setFile(event.target.files[0]);
+      this.__setFile(event, event.target.files[0]);
     },
     __checkFileType(file) {
       const type = file.type;
@@ -108,7 +124,7 @@ export default {
       if (this.mode === 3 && type.indexOf('audio/') !== 0) return false;
       return true;
     },
-    __setFile(file) {
+    __setFile(event, file) {
       if (!file) return;
       // check
       if (!this.__checkFileType(file)) {
@@ -146,7 +162,7 @@ export default {
     onFileDrop(event) {
       event.preventDefault();
       event.stopPropagation();
-      this.__setFile(event.dataTransfer.files[0]);
+      this.__setFile(event, event.dataTransfer.files[0]);
     },
     onClickClearCrop() {
       this._cropper.clear();
