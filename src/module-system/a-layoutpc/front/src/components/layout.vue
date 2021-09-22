@@ -253,7 +253,10 @@ export default {
         let groupForceNew = false;
         // force new no matter _view/_group
         groupForceNew = window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
-        if (groupForceNew) {
+        if (options.groupId) {
+          groupId = options.groupId;
+          groupForceNew = false;
+        } else if (groupForceNew) {
           groupId = null;
           groupForceNew = true;
         } else if (target === '_group') {

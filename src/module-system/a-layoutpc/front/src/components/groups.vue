@@ -88,7 +88,7 @@ export default {
           }
         }
         // view
-        if (group.url === url && group.views.length > 0 && !options.reloadAll) {
+        if (group.url === url && group.views.length > 0 && !options.reloadGroup) {
           // exists
           this.switchGroup(group.id);
           resolve(null);
@@ -100,7 +100,7 @@ export default {
               viewIndex = -1;
             }
           }
-          if (viewIndex === -1) {
+          if (viewIndex === -1 && !options.reloadGroup) {
             // new view
             group.views.push({
               id: this.$meta.util.nextId('layoutgroupview'),
@@ -122,7 +122,11 @@ export default {
               .then(() => {
                 // return next view
                 const view = this.getView(group.id, group.views[viewIndexNew].id);
-                resolve({ view, options: { reloadAll: true } });
+                const _options = { reloadAll: true };
+                if (options.reloadGroup) {
+                  _options.reloadCurrent = true;
+                }
+                resolve({ view, options: _options });
               })
               .catch(() => {
                 // return null
@@ -212,8 +216,8 @@ export default {
           await viewVue.viewDirtyConfirm();
         }
         this.layout.navigate(group.url, {
-          ctx: viewVue,
-          reloadAll: true,
+          groupId,
+          reloadGroup: true,
         });
       } catch (err) {}
     },
