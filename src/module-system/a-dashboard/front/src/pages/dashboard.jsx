@@ -176,16 +176,19 @@ export default {
             propsOnPerform={event => this.onPerformUnlock(event)}
           ></eb-link>
         );
-        if (this.page_getDirty()) {
-          children.push(
-            <eb-link
-              key="dashboard-action-save"
-              class="dashboard-action-save"
-              iconMaterial="save"
-              propsOnPerform={event => this.onPerformSave(event)}
-            ></eb-link>
-          );
-        }
+      }
+      // not check if lock
+      if (this.page_getDirty()) {
+        children.push(
+          <eb-link
+            key="dashboard-action-save"
+            class="dashboard-action-save"
+            iconMaterial="save"
+            propsOnPerform={event => this.onPerformSave(event)}
+          ></eb-link>
+        );
+      }
+      if (!this.lock) {
         children.push(
           <eb-link
             key="dashboard-action-settings"
