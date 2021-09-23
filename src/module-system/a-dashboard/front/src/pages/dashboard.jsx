@@ -224,6 +224,11 @@ export default {
       }
     },
     __saveLayoutConfig() {
+      if (this.scene === 'manager' && this.readOnly) {
+        // do nothing
+        return;
+      }
+      // dirty
       this.page_setDirty(true);
       if (this.scene === 'manager' && !this.readOnly) {
         this.contextCallback(200, { content: JSON.stringify(this.profile) });
@@ -365,6 +370,7 @@ export default {
       this.$emit('dashboard:lockChange', this.lock);
     },
     async __forceDashboardUser() {
+      if (this.scene === 'manager') return;
       if (this.dashboardUserId !== 0) return;
       // create dashboardUser
       const dashboardUserId = await this.__createDashboardUser();
