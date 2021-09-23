@@ -228,6 +228,10 @@ export default {
         // do nothing
         return;
       }
+      if (this.user.op.anonymous === 1) {
+        // do nothing
+        return;
+      }
       // dirty
       this.page_setDirty(true);
       if (this.scene === 'manager' && !this.readOnly) {
@@ -370,7 +374,7 @@ export default {
       this.$emit('dashboard:lockChange', this.lock);
     },
     async __forceDashboardUser() {
-      if (this.scene === 'manager') return;
+      if (this.scene === 'manager' || this.user.op.anonymous === 1) return;
       if (this.dashboardUserId !== 0) return;
       // create dashboardUser
       const dashboardUserId = await this.__createDashboardUser();
