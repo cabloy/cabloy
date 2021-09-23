@@ -98,22 +98,25 @@ export default {
       this._bindAddOrEdit({ id: this.$meta.util.uuidv4() });
     },
     _bindAddOrEdit(propertyBind) {
-      this.$view.navigate(`/a/dashboard/widget/property/bind/add?widgetId=${this.widgetId}&propertyName=${this.propertyName}`, {
-        target: '_self',
-        context: {
-          params: {
-            dashboard: this.dashboard,
-            widget: this.widget,
-            propertySchema: this.propertySchema,
-            propertyBind,
+      this.$view.navigate(
+        `/a/dashboard/widget/property/bind/add?widgetId=${this.widgetId}&propertyName=${this.propertyName}`,
+        {
+          target: '_self',
+          context: {
+            params: {
+              dashboard: this.dashboard,
+              widget: this.widget,
+              propertySchema: this.propertySchema,
+              propertyBind,
+            },
+            callback: (code, bind) => {
+              if (code === 200) {
+                this._onBindChange(bind);
+              }
+            },
           },
-          callback: (code, bind) => {
-            if (code === 200) {
-              this._onBindChange(bind);
-            }
-          },
-        },
-      });
+        }
+      );
     },
     _renderNavbar(c) {
       return c('eb-navbar', {
@@ -199,7 +202,10 @@ export default {
           // context menu
           const menu = c('eb-context-menu', {}, [right]);
           // list item
-          const [title, propertyTitle] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
+          const [title, propertyTitle] = this.widget._getBindSourceTitleAndPropertyTitle(
+            propertyBind.widgetId,
+            propertyBind.propertyName
+          );
           children.push(
             c(
               'eb-list-item',
