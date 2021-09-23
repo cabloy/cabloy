@@ -58,7 +58,13 @@ export default {
       };
       this.__combineWidgetProps(props);
       children.push(
-        <eb-dashboard-widget-group key="group" ref="group" {...{ props }} onWidgetRealReady={this.__onWidgetRealReady} onWidgetRealDestroy={this.__onWidgetRealDestroy}></eb-dashboard-widget-group>
+        <eb-dashboard-widget-group
+          key="group"
+          ref="group"
+          {...{ props }}
+          onWidgetRealReady={this.__onWidgetRealReady}
+          onWidgetRealDestroy={this.__onWidgetRealDestroy}
+        ></eb-dashboard-widget-group>
       );
     } else {
       if (!this.errorMessage && this.ready) {
@@ -82,7 +88,14 @@ export default {
           })
         );
       } else if (this.errorMessage) {
-        children.push(<div key="errorMessage" staticClass="widget-inner widget-inner-error" domPropsInnerText={this.errorMessage} style={{ height: this.__getPropertyRealValue('height') }}></div>);
+        children.push(
+          <div
+            key="errorMessage"
+            staticClass="widget-inner widget-inner-error"
+            domPropsInnerText={this.errorMessage}
+            style={{ height: this.__getPropertyRealValue('height') }}
+          ></div>
+        );
       }
     }
     // f7-col
@@ -291,7 +304,12 @@ export default {
       if (options.group) return this.$options.components['eb-dashboard-widget-group'].options.meta.widget.schema.attrs;
       // widget
       const component = this.$options.components[this.__getFullName(options)];
-      const attrsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
+      const attrsSchema =
+        component &&
+        component.meta &&
+        component.meta.widget &&
+        component.meta.widget.schema &&
+        component.meta.widget.schema.attrs;
       return attrsSchema || null;
     },
     _getPropsSchema(options) {
@@ -299,7 +317,12 @@ export default {
       if (options.group) return this.$options.components['eb-dashboard-widget-group'].options.meta.widget.schema.props;
       // widget
       const component = this.$options.components[this.__getFullName(options)];
-      const propsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
+      const propsSchema =
+        component &&
+        component.meta &&
+        component.meta.widget &&
+        component.meta.widget.schema &&
+        component.meta.widget.schema.props;
       return propsSchema || null;
     },
     _getPropsSchemaCategoryGrouping(options) {
@@ -344,19 +367,22 @@ export default {
       return [title, propertyTitle];
     },
     __getClassName() {
-      if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length === 0 ? 'widget-group-empty' : 'widget-group-some'}`;
+      if (this.options.group) {
+        const classGroup = this.options.widgets.length === 0 ? 'widget-group-empty' : 'widget-group-some';
+        return `widget widget-id-${this.options.id} widget-group ${classGroup}`;
+      }
       return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName(options) {
       return this.dashboard.__resourceFullName(options || this.options);
     },
-    onDragStartResizable({ $el, context, dragElement }) {
+    onDragStartResizable({ /* $el,*/ context /* , dragElement*/ }) {
       const $container = this.$$(this.group.$el);
       const size = { width: $container.width() };
       const tooltip = this.__getTooltipResizable(context);
       return { size, tooltip };
     },
-    onDragMoveResizable({ $el, context, diff }) {
+    onDragMoveResizable({ /* $el,*/ context, diff }) {
       const viewSize = this.getViewSize();
       const viewSizeUpperCase = viewSize.replace(viewSize[0], viewSize[0].toUpperCase());
       const propertyNameWidth = `width${viewSizeUpperCase}`;
@@ -416,17 +442,17 @@ export default {
       }
       return null;
     },
-    onDragStart({ $el, context, dragElement }) {
-      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
+    onDragStart({ /* $el,*/ context /* , dragElement*/ }) {
+      const [widgetDrag] = this.group.__getWidgetById(context.widgetId);
       const tooltip = `${this.__getPropertyRealValue2(widgetDrag, 'title')}`;
       return { tooltip };
     },
-    onDragElement({ $el, context }) {
+    onDragElement({ /* $el,*/ context }) {
       return this.$$(`.widget-id-${context.widgetId}`);
     },
-    onDropElement({ $el, context, dragElement, dragContext }) {
+    onDropElement({ /* $el,*/ context /* , dragElement*/, dragContext }) {
       const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
-      const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
+      const [, /* widgetDrag*/ indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
       if (indexDrop === indexDrag || indexDrop === indexDrag + 1) return null;
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
@@ -435,13 +461,15 @@ export default {
       // ok
       return { dropElement, tooltip };
     },
-    onDropLeave({ $el, context, dropElement }) {},
-    onDropEnter({ $el, context, dropElement }) {},
-    onDragEnd({ $el, context, dragElement }) {},
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+    onDropLeave(/* { $el, context, dropElement }*/) {},
+    onDropEnter(/* { $el, context, dropElement }*/) {},
+    onDragEnd(/* { $el, context, dragElement }*/) {},
+    onDragDone({ /* $el,*/ context /* , dragElement, dropElement*/, dropContext }) {
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
+      // eslint-disable-next-line
       this.group.widgets.splice(indexDrag, 1);
-      const [widgetDrop, indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
+      const [, /* widgetDrop*/ indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
+      // eslint-disable-next-line
       this.group.widgets.splice(indexDrop, 0, widgetDrag);
       // save
       this.dashboard.__saveLayoutConfig();
@@ -450,15 +478,16 @@ export default {
       this.$view.dialog
         .confirm()
         .then(() => {
-          const [_widget, index] = this.group.__getWidgetById(widget.id);
+          const [, /* _widget*/ index] = this.group.__getWidgetById(widget.id);
           if (index === -1) return;
+          // eslint-disable-next-line
           this.group.widgets.splice(index, 1);
           // save
           this.dashboard.__saveLayoutConfig();
         })
         .catch(() => {});
     },
-    onWidgetProperties(widget) {
+    onWidgetProperties(/* widget*/) {
       this.$view.navigate(`/a/dashboard/widget/properties?widgetId=${this.options.id}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'properties', title: 'Properties' },
