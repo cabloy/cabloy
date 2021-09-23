@@ -283,6 +283,13 @@ export default {
     __setPropertyRealValue(propertyName, data) {
       return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
+    // by outer access
+    async setPropertyValue(propertyName, data) {
+      // create user copy before change profile if needed
+      await this.dashboard.__forceDashboardUser();
+      // set property
+      return this.__setPropertyRealValue(propertyName, data);
+    },
     _getPropSchema(options, propertyName) {
       const propsSchema = this._getPropsSchema(options);
       if (propsSchema) {

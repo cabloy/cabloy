@@ -30,7 +30,10 @@ export default {
       domGroup = <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>;
     }
     return (
-      <eb-page ref="page" staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
+      <eb-page
+        ref="page"
+        staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}
+      >
         {domNavbar}
         {domGroup}
         {!showNavbar && <div class="dashboard-actions">{domActions}</div>}
@@ -118,8 +121,22 @@ export default {
       if (this.scene !== 'manager') return null;
       const children = [];
       if (!this.lock) {
-        children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSaveManager(event)}></eb-link>);
-        children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
+        children.push(
+          <eb-link
+            key="dashboard-action-save"
+            class="dashboard-action-save"
+            iconMaterial="save"
+            propsOnPerform={event => this.onPerformSaveManager(event)}
+          ></eb-link>
+        );
+        children.push(
+          <eb-link
+            key="dashboard-action-settings"
+            class="dashboard-action-settings"
+            iconMaterial="settings"
+            propsOnPerform={event => this.onPerformSettings(event)}
+          ></eb-link>
+        );
       }
       return children;
     },
@@ -131,19 +148,52 @@ export default {
       if (this.scene === 'manager') return null;
       const children = [];
       if (this.lock) {
-        children.push(<eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>);
+        children.push(
+          <eb-link
+            key="dashboard-action-lock"
+            class="dashboard-action-lock"
+            iconMaterial="lock"
+            propsOnPerform={event => this.onPerformLock(event)}
+          ></eb-link>
+        );
         if (this.dashboardUsers && this.dashboardUsers.length > 1) {
           children.push(
-            <eb-link key="dashboard-action-profileSwitch" class="dashboard-action-profileSwitch" iconMaterial="view_list" propsOnPerform={event => this.onPerformProfileSwitch(event)}></eb-link>
+            <eb-link
+              key="dashboard-action-profileSwitch"
+              class="dashboard-action-profileSwitch"
+              iconMaterial="view_list"
+              propsOnPerform={event => this.onPerformProfileSwitch(event)}
+            ></eb-link>
           );
         }
       }
       if (!this.lock) {
-        children.push(<eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>);
+        children.push(
+          <eb-link
+            key="dashboard-action-unlock"
+            class="dashboard-action-unlock"
+            iconMaterial="lock_open"
+            propsOnPerform={event => this.onPerformUnlock(event)}
+          ></eb-link>
+        );
         if (this.page_getDirty()) {
-          children.push(<eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>);
+          children.push(
+            <eb-link
+              key="dashboard-action-save"
+              class="dashboard-action-save"
+              iconMaterial="save"
+              propsOnPerform={event => this.onPerformSave(event)}
+            ></eb-link>
+          );
         }
-        children.push(<eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>);
+        children.push(
+          <eb-link
+            key="dashboard-action-settings"
+            class="dashboard-action-settings"
+            iconMaterial="settings"
+            propsOnPerform={event => this.onPerformSettings(event)}
+          ></eb-link>
+        );
       }
       return children;
     },
@@ -311,13 +361,15 @@ export default {
       // emit event
       this.$emit('dashboard:lockChange', this.lock);
     },
+    async __forceDashboardUser() {
+      if (this.dashboardUserId !== 0) return;
+      // create dashboardUser
+      const dashboardUserId = await this.__createDashboardUser();
+      await this.__switchProfile({ dashboardUserId });
+    },
     async onPerformLock() {
       // check if user
-      if (this.dashboardUserId === 0) {
-        // create dashboardUser
-        const dashboardUserId = await this.__createDashboardUser();
-        await this.__switchProfile({ dashboardUserId });
-      }
+      await this.__forceDashboardUser();
       // open lock
       this.__setLock(false);
       // // toast
