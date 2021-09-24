@@ -33,46 +33,50 @@ export default function (io) {
       this._pushMessage(message);
     };
 
-    this._onSubscribed = function () {
+    this._onSubscribed = async function () {
       if (this.messageOfflineFetching) return;
       this.messageOfflineFetching = true;
+      // maybe messages are sent out of order, so need re-receive offset again
+      // // offset
+      // if (this.messageOffset > -1) {
+      //   await this._offlineFetch();
+      //   return;
+      // }
       // get offset
-      this.onMessageOffset()
-        .then(data => {
-          this.messageOffset = data.offset;
-          if (this.messageOffset === -1) {
-            this._offlineFetchStop();
-          } else {
-            this._offlineFetch();
-          }
-        })
-        .catch(() => {
+      try {
+        const data = await this.onMessageOffset();
+        this.messageOffset = data.offset;
+        if (this.messageOffset === -1) {
           this._offlineFetchStop();
-        });
+        } else {
+          await this._offlineFetch();
+        }
+      } catch (err) {
+        this._offlineFetchStop();
+      }
     };
 
-    this._offlineFetch = function () {
-      this.onMessageSelect({ offset: this.messageOffset })
-        .then(data => {
-          // push
-          const list = data.list;
-          if (list.length > 0) {
-            // offset
-            this.messageOffset = list[list.length - 1].id;
-            for (const message of list) {
-              this._pushMessage(message);
-            }
+    this._offlineFetch = async function () {
+      try {
+        const data = await this.onMessageSelect({ offset: this.messageOffset });
+        // push
+        const list = data.list;
+        if (list.length > 0) {
+          // offset
+          this.messageOffset = list[list.length - 1].id;
+          for (const message of list) {
+            this._pushMessage(message);
           }
-          // next
-          if (data.finished) {
-            this._offlineFetchStop();
-          } else {
-            this._offlineFetch();
-          }
-        })
-        .catch(() => {
+        }
+        // next
+        if (data.finished) {
           this._offlineFetchStop();
-        });
+        } else {
+          await this._offlineFetch();
+        }
+      } catch (err) {
+        this._offlineFetchStop();
+      }
     };
 
     this._offlineFetchStop = function () {
@@ -132,23 +136,20 @@ export default function (io) {
       this._performRead2();
     }, 300);
 
-    this._performRead2 = function () {
+    this._performRead2 = async function () {
       const messageIds = Object.keys(this.messageIdsToRead);
       this.messageIdsToRead = {};
-      Vue.prototype.$meta.api
-        .post('/a/socketio/message/setRead', {
+      try {
+        await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
           messageClass: this.messageClass,
           messageIds,
-        })
-        .then(() => {
-          // do nothing
-        })
-        .catch(() => {
-          // save back
-          for (const messageId of messageIds) {
-            this.messageIdsToRead[messageId] = true;
-          }
         });
+      } catch (err) {
+        // save back
+        for (const messageId of messageIds) {
+          this.messageIdsToRead[messageId] = true;
+        }
+      }
     };
   };
   return {
