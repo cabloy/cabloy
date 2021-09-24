@@ -99,6 +99,10 @@ export default function (io) {
       this._setMessageOffset(this.messageOffsetPending);
     };
 
+    this.setMessageOffset = function (offset) {
+      return this._setMessageOffset(offset);
+    };
+
     this._setMessageOffset = function (offset) {
       if (this.messageOfflineFetching) {
         if (offset > this.messageOffsetPending) this.messageOffsetPending = offset;
@@ -107,6 +111,10 @@ export default function (io) {
       if (offset > this.messageOffset) {
         this.messageOffset = offset;
       }
+    };
+
+    this.pushMessage = function (message) {
+      return this._pushMessage(message);
     };
 
     this._pushMessage = function (message) {
@@ -126,6 +134,10 @@ export default function (io) {
     };
 
     this._insertMessage = function (message) {
+      if (message.id === null) {
+        this.messagesData.push(message);
+        return true;
+      }
       let indexBase = -1;
       for (let index = this.messagesData.length - 1; index >= 0; index--) {
         const _message = this.messagesData[index];
