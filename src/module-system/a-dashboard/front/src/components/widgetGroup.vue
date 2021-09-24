@@ -72,8 +72,11 @@ export default {
       return [this.widgets[index], index];
     },
     onWidgetAdd(widget) {
-      const _widget = widget.atomStaticKey ? { atomStaticKey: widget.atomStaticKey } : { module: widget.module, name: widget.name };
+      const _widget = widget.atomStaticKey
+        ? { atomStaticKey: widget.atomStaticKey }
+        : { module: widget.module, name: widget.name };
       this.dashboard.__initWidget(_widget, this.root ? 'widget' : 'group');
+      // eslint-disable-next-line
       this.widgets.push(_widget);
       // save
       this.dashboard.__saveLayoutConfig();

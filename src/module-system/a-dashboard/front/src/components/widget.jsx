@@ -378,7 +378,8 @@ export default {
         const classGroup = this.options.widgets.length === 0 ? 'widget-group-empty' : 'widget-group-some';
         return `widget widget-id-${this.options.id} widget-group ${classGroup}`;
       }
-      return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
+      const widgetName = this.options.atomStaticKey || `${this.options.module}:${this.options.name}`;
+      return `widget widget-id-${this.options.id} widget-item widget-name-${widgetName}`;
     },
     __getFullName(options) {
       return this.dashboard.__resourceFullName(options || this.options);
