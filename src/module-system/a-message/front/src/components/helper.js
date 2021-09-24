@@ -15,7 +15,11 @@ export default function (io) {
     this.subscribe = function () {
       const user = Vue.prototype.$meta.store.state.auth.user.op;
       if (user.anonymous) return;
-      this.subscribeId = io.subscribe(__PATH_MESSAGE_UNIFORM, this._onMessage.bind(this), this._onSubscribed.bind(this));
+      this.subscribeId = io.subscribe(
+        __PATH_MESSAGE_UNIFORM,
+        this._onMessage.bind(this),
+        this._onSubscribed.bind(this)
+      );
     };
 
     this.reset = function () {
