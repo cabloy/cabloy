@@ -522,7 +522,13 @@ module.exports = ctx => {
         const beanMessage = this._getBeanMessage(messageClassBase);
         if (!beanMessage) return false;
         // render message content
-        const content = await beanMessage.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+        const content = await beanMessage.onChannelRender({
+          channelFullName,
+          options,
+          message,
+          messageSync,
+          messageClass,
+        });
         if (!content) return false;
         // get channel base
         const beanChannel = this._getBeanChannel(channelFullName);

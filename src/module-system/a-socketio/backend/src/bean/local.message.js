@@ -45,14 +45,23 @@ module.exports = ctx => {
       where.syncDeleted = 0;
       where.messageClassId = messageClass.id;
       where.userId = user ? user.id : 0;
-      where.messageRead = 0;
+      // messageRead
+      if (where.messageRead === null) {
+        delete where.messageRead;
+      } else if (where.messageRead === undefined) {
+        where.messageRead = 0;
+      }
+      // orders
+      const _orders = (options && options.orders) || [['id', 'asc']];
+      // offset
+      const _offset = (options && options.offset) || 0;
       // offset
       const res = await ctx.db.select('aSocketIOMessageView', {
         where,
         columns: ['id'],
-        orders: [['id', 'asc']],
+        orders: _orders,
         limit: 1,
-        offset: 0,
+        offset: _offset,
       });
       // offset - 1
       const offset = res[0] ? res[0].id - 1 : -1;
