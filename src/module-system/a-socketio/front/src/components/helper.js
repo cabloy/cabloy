@@ -14,8 +14,8 @@ export default function (io) {
       this.messageOfflineFetching = false;
       this.messageIdsToRead = {};
 
-      this.onMessageOffset = onMessageOffset;
-      this.onMessageSelect = onMessageSelect;
+      this.onMessageOffset = onMessageOffset || this._onMessageOffsetDefault;
+      this.onMessageSelect = onMessageSelect || this._onMessageSelectDefault;
       this.onMessagePush = onMessagePush;
 
       this.subscribeId = io.subscribe(path, this._onMessage.bind(this), this._onSubscribed.bind(this), options);
@@ -26,6 +26,21 @@ export default function (io) {
       // unsubscribe
       io.unsubscribe(this.subscribeId);
       this.subscribeId = null;
+    };
+
+    this._onMessageOffsetDefault = async function () {
+      return await Vue.prototype.$meta.api.post('/a/socketio/message/offset', {
+        messageClass: this.messageClass,
+      });
+    };
+
+    this._onMessageSelectDefault = async function () {
+      return await Vue.prototype.$meta.api.post('/a/socketio/message/select', {
+        messageClass: this.messageClass,
+        options: {
+          offset: this.messageOffset,
+        },
+      });
     };
 
     this._onMessage = function ({ message }) {
