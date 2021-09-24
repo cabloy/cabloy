@@ -134,7 +134,7 @@ export default function (io) {
     };
 
     this._insertMessage = function (message) {
-      if (message.id === null) {
+      if (!message.id) {
         this.messagesData.push(message);
         return true;
       }
@@ -154,7 +154,7 @@ export default function (io) {
     };
 
     this._messageToRead = function (message) {
-      if (message.messageRead === 1) return;
+      if (!message.id || message.messageRead === 1) return;
       this.messageIdsToRead[message.id] = true;
       this._performRead();
     };
