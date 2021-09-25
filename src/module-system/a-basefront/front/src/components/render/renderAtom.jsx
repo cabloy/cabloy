@@ -13,7 +13,7 @@ export default {
   created() {},
   methods: {
     async onChooseAtom() {
-      const { property, validate } = this.context;
+      const { key, property, validate } = this.context;
       // target
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
@@ -44,8 +44,13 @@ export default {
             callback: (code, selectedAtom) => {
               if (code === 200) {
                 // mapper
-                for (const key in mapper) {
-                  const value = selectedAtom[mapper[key]];
+                if (mapper) {
+                  for (const key in mapper) {
+                    const value = selectedAtom[mapper[key]];
+                    this.context.setValue(value, key);
+                  }
+                } else {
+                  const value = selectedAtom[key];
                   this.context.setValue(value, key);
                 }
                 resolve(true);
