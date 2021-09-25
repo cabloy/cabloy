@@ -134,7 +134,13 @@ export default {
       const item = this.markdownHost.atom;
       return (
         <eb-box onSize={this.onSize} header subnavbar={subnavbar} class="eb-box-iframe">
-          <eb-markdown-editor ref="markdownEditor" host={this.markdownHost} value={item.content} onInput={this.onInput} onSave={this.onSaveEditor} />
+          <eb-markdown-editor
+            ref="markdownEditor"
+            host={this.markdownHost}
+            value={item.content}
+            onInput={this.onInput}
+            onSave={this.onSaveEditor}
+          />
         </eb-box>
       );
     },
