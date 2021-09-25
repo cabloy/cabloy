@@ -176,13 +176,20 @@
   }
 
   .atom-list-layout-card-container {
+    justify-content: space-evenly;
     .card {
+      margin-left: 0;
+      margin-right: 0;
       .card-header {
         padding: 0;
 
         .list {
           width: 100%;
         }
+      }
+      .card-content {
+        max-height: 350px;
+        overflow-y: auto;
       }
     }
   }
