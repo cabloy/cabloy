@@ -57,9 +57,10 @@ export default {
     _getPageTitle() {
       return `${this.$text('Property')}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
-    _setPropertyValue: Vue.prototype.$meta.util.debounce(function (data, propertyName) {
+    // not use debounce for maybe set more property's value once
+    _setPropertyValue(data, propertyName) {
       this.widget.__setPropertyRealValue(propertyName || this.propertyName, data);
-    }, 600),
+    },
     _onChangeValueType(bDynamic) {
       this._setPropertyValue({ type: bDynamic ? 2 : 1 });
     },
@@ -263,9 +264,7 @@ export default {
         },
       };
       // data
-      const data = {
-        [this.propertyName]: this.widget.__getPropertyRealValue(this.propertyName),
-      };
+      const data = {};
       // validate
       return c('eb-validate', {
         ref: 'validate',
@@ -285,18 +284,14 @@ export default {
               schema,
             },
             ebPatch: {
-              getValue: () => {
-                console.log('getValue');
+              getValue: (value, name) => {
+                return this.widget.__getPropertyRealValue(name);
               },
-              setValue: () => {
-                console.log('setValue');
+              setValue: (value, name) => {
+                this._setPropertyValue({ type: 1, value }, name);
+                return value;
               },
             },
-          },
-        },
-        on: {
-          'validateItem:change': (key, value) => {
-            return this._setPropertyValue({ type: 1, value }, key);
           },
         },
       });
