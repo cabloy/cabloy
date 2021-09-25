@@ -275,19 +275,27 @@ export default {
           return this.getTitle(context, notHint);
         },
         getValue: name => {
-          let value = this.getValue(parcel, name || key);
+          const propertyName = name || key;
+          let value = this.getValue(parcel, propertyName);
           if (patchGetValue && (!name || name === key)) {
             // only patch this
             value = patchGetValue(value);
           }
+          if (patchGetValueGlobal) {
+            value = patchGetValueGlobal(value, propertyName);
+          }
           return value;
         },
         setValue: (value, name) => {
+          const propertyName = name || key;
+          if (patchSetValueGlobal) {
+            value = patchSetValueGlobal(value, propertyName);
+          }
           if (patchSetValue && (!name || name === key)) {
             // only patch this
             value = patchSetValue(value);
           }
-          this.setValue(parcel, name || key, value);
+          this.setValue(parcel, propertyName, value);
         },
       };
       return context;
