@@ -28,21 +28,24 @@ export default {
   created() {},
   render(c) {
     const children = [];
-    const propertyReal = this.widget.__getPropertyReal(this.propertyName);
-    const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && propertyReal.type === 2);
-    // navbar
-    children.push(this._renderNavbar(c));
-    // toolbar
-    if (this.propertySchema.ebBindArray) {
-      children.push(this._renderToolbar(c));
-    }
-    // valueType
-    children.push(this._renderValueTypes(c, propertyReal, isDynamic));
-    // static
-    if (!isDynamic) {
-      children.push(this._renderValueStatic(c, propertyReal));
-    } else {
-      children.push(this._renderValueDynamic(c, propertyReal));
+    const widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
+    if (widgetReal) {
+      const propertyReal = this.widget.__getPropertyReal(this.propertyName);
+      const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && propertyReal.type === 2);
+      // navbar
+      children.push(this._renderNavbar(c));
+      // toolbar
+      if (this.propertySchema.ebBindArray) {
+        children.push(this._renderToolbar(c));
+      }
+      // valueType
+      children.push(this._renderValueTypes(c, propertyReal, isDynamic));
+      // static
+      if (!isDynamic) {
+        children.push(this._renderValueStatic(c, propertyReal));
+      } else {
+        children.push(this._renderValueDynamic(c, propertyReal));
+      }
     }
     // ok
     return c(
