@@ -57,8 +57,8 @@ export default {
     _getPageTitle() {
       return `${this.$text('Property')}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
-    _setPropertyValue: Vue.prototype.$meta.util.debounce(function (data) {
-      this.widget.__setPropertyRealValue(this.propertyName, data);
+    _setPropertyValue: Vue.prototype.$meta.util.debounce(function (data, propertyName) {
+      this.widget.__setPropertyRealValue(propertyName || this.propertyName, data);
     }, 600),
     _onChangeValueType(bDynamic) {
       this._setPropertyValue({ type: bDynamic ? 2 : 1 });
@@ -284,11 +284,19 @@ export default {
               module: 'a-dashboard',
               schema,
             },
+            ebPatch: {
+              getValue: () => {
+                console.log('getValue');
+              },
+              setValue: () => {
+                console.log('setValue');
+              },
+            },
           },
         },
         on: {
           'validateItem:change': (key, value) => {
-            return this._setPropertyValue({ type: 1, value });
+            return this._setPropertyValue({ type: 1, value }, key);
           },
         },
       });

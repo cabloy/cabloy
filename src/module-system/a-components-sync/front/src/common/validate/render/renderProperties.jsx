@@ -55,6 +55,7 @@ export default {
             parcel,
             key,
             property,
+            meta: this.meta,
           });
           // render
           const item = this._renderItem(context2);

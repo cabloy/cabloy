@@ -260,6 +260,8 @@ export default {
       // patch getValue/setValue
       const patchGetValue = this.$meta.util.getProperty(property, 'ebPatch.getValue');
       const patchSetValue = this.$meta.util.getProperty(property, 'ebPatch.setValue');
+      const patchGetValueGlobal = this.$meta.util.getProperty(this.validate, 'meta.ebPatch.getValue');
+      const patchSetValueGlobal = this.$meta.util.getProperty(this.validate, 'meta.ebPatch.setValue');
       // context
       const context = {
         validate: this.validate,
