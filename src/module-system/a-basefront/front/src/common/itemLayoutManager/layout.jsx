@@ -15,16 +15,23 @@ export default {
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
-      this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[atomClass.module], `atoms.${atomClass.atomClassName}`);
+      this.base.configAtom = this.$meta.util.getProperty(
+        this.$meta.config.modules[atomClass.module],
+        `atoms.${atomClass.atomClassName}`
+      );
       // special for cms
       const atomClassBase = this.getAtomClass(atomClass);
       if (atomClassBase.cms && !(atomClass.module === 'a-cms' && atomClass.atomClassName === 'article')) {
         await this.$meta.module.use('a-cms');
         const configCMS = this.$meta.util.getProperty(this.$meta.config.modules['a-cms'], 'atoms.article');
-        this.base.configAtom = this.base.configAtom ? this.$meta.util.extend({}, configCMS, this.base.configAtom) : configCMS;
+        this.base.configAtom = this.base.configAtom
+          ? this.$meta.util.extend({}, configCMS, this.base.configAtom)
+          : configCMS;
       }
       // config
-      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
+      this.base.config = this.base.configAtom
+        ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom)
+        : this.base.configAtomBase;
       // prepareConfigLayout
       this.layout_prepareConfigLayout();
     },
@@ -84,7 +91,13 @@ export default {
     },
     layout_renderComponent() {
       if (!this.base.ready) return null;
-      return <eb-component module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
+      return (
+        <eb-component
+          module={this.layout.config.component.module}
+          name={this.layout.config.component.name}
+          options={this.layout_getComponentOptions()}
+        ></eb-component>
+      );
     },
     layout_getBlockComponentOptions({ blockConfig }) {
       return {
@@ -104,7 +117,13 @@ export default {
         return <div>{errorMessage}</div>;
       }
       const blockOptions = this.layout_getBlockComponentOptions({ blockConfig });
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={blockOptions}></eb-component>;
+      return (
+        <eb-component
+          module={blockConfig.component.module}
+          name={blockConfig.component.name}
+          options={blockOptions}
+        ></eb-component>
+      );
     },
     layout_renderSubnavbar() {
       if (!this.base.ready) return null;
