@@ -202,6 +202,8 @@ export default {
     },
     async __init() {
       try {
+        // queueForceDashboardUser
+        this._queueForceDashboardUser = this.$meta.util.queue(this._queueTaskForceDashboardUser.bind(this));
         // check scene
         if (this.scene === 'manager') {
           // lock
@@ -373,12 +375,29 @@ export default {
       // emit event
       this.$emit('dashboard:lockChange', this.lock);
     },
-    async __forceDashboardUser() {
+    _queueTaskForceDashboardUser(data, cb) {
+      this._queueTaskForceDashboardUser_inner()
+        .then(() => {
+          cb();
+        })
+        .catch(err => {
+          cb(err);
+        });
+    },
+    async _queueTaskForceDashboardUser_inner() {
       if (this.scene === 'manager' || this.user.op.anonymous === 1) return;
       if (this.dashboardUserId !== 0) return;
       // create dashboardUser
       const dashboardUserId = await this.__createDashboardUser();
       await this.__switchProfile({ dashboardUserId });
+    },
+    async __forceDashboardUser() {
+      return new Promise((resolve, reject) => {
+        this._queueForceDashboardUser.push(null, err => {
+          if (!err) return resolve();
+          return reject(err);
+        });
+      });
     },
     async onPerformLock() {
       // check if user
