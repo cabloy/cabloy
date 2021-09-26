@@ -256,7 +256,10 @@ export default {
         dashboardUserId,
       });
     },
-    async __switchProfile({ dashboardUserId }) {
+    async __switchProfile({ dashboardUser, dashboardUserId }) {
+      if (dashboardUser) {
+        dashboardUserId = dashboardUser.id;
+      }
       if (dashboardUserId === 0) {
         let title;
         if (this.scene === 'manager') {
@@ -286,10 +289,12 @@ export default {
         return;
       }
       // profile of user
-      const dashboardUser = await this.$api.post('/a/dashboard/dashboard/loadItemUser', {
-        dashboardUserId,
-      });
-      if (!dashboardUser) throw new Error('Dashboard not found!');
+      if (!dashboardUser) {
+        dashboardUser = await this.$api.post('/a/dashboard/dashboard/loadItemUser', {
+          dashboardUserId,
+        });
+        if (!dashboardUser) throw new Error('Dashboard not found!');
+      }
       // data
       this.dashboardUser = dashboardUser;
       this.dashboardAtomId = this.dashboardUser.dashboardAtomId;
@@ -357,7 +362,7 @@ export default {
         this.dashboardUsers.push(dashboardUser);
       }
       // ok
-      return dashboardUser.id;
+      return dashboardUser;
     },
     async __saveDashboardUser() {
       // check if dirty
@@ -388,8 +393,8 @@ export default {
       if (this.scene === 'manager' || this.user.op.anonymous === 1) return;
       if (this.dashboardUserId !== 0) return;
       // create dashboardUser
-      const dashboardUserId = await this.__createDashboardUser();
-      await this.__switchProfile({ dashboardUserId });
+      const dashboardUser = await this.__createDashboardUser();
+      await this.__switchProfile({ dashboardUser });
     },
     async __forceDashboardUser() {
       return new Promise((resolve, reject) => {

@@ -14,7 +14,11 @@
         <f7-list-item group-title>
           <div class="detail-list-title-container">
             <div class="actions-block actions-block-left">{{ $text('Profile List') }}</div>
-            <eb-link class="actions-block actions-block-right" iconMaterial="add" :onPerform="onPerformProfileCreate"></eb-link>
+            <eb-link
+              class="actions-block actions-block-right"
+              iconMaterial="add"
+              :onPerform="onPerformProfileCreate"
+            ></eb-link>
           </div>
         </f7-list-item>
         <eb-list-item
@@ -30,7 +34,9 @@
           <eb-context-menu>
             <div slot="right">
               <div color="orange" :context="item" :onPerform="onPerformChangeName">{{ $text('Change Name') }}</div>
-              <div v-if="item.id !== dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
+              <div v-if="item.id !== dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">
+                {{ $text('Delete') }}
+              </div>
             </div>
           </eb-context-menu>
         </eb-list-item>
@@ -94,7 +100,11 @@ export default {
     },
     async onPerformChangeName(e, item) {
       const dashboardUserId = item.id;
-      const dashboardName = await this.$view.dialog.prompt(this.$text('Please specify the dashboard name'), null, item.dashboardName);
+      const dashboardName = await this.$view.dialog.prompt(
+        this.$text('Please specify the dashboard name'),
+        null,
+        item.dashboardName
+      );
       if (!dashboardName || dashboardName === item.dashboardName) return;
       await this.$api.post('/a/dashboard/dashboard/changeItemUserName', {
         dashboardUserId,
@@ -134,10 +144,10 @@ export default {
       // save
       await this.dashboard.__saveDashboardUser();
       // create dashboardUser
-      const dashboardUserId = await this.dashboard.__createDashboardUser();
+      const dashboardUser = await this.dashboard.__createDashboardUser();
       // switch
-      await this.dashboard.__switchProfile({ dashboardUserId });
-      this.dashboardUserIdCurrent = dashboardUserId;
+      await this.dashboard.__switchProfile({ dashboardUser });
+      this.dashboardUserIdCurrent = dashboardUser.id;
     },
   },
 };
