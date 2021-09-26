@@ -94,11 +94,14 @@ module.exports = app => {
     }
 
     async createItemUser({ dashboardAtomId, user }) {
+      // get system
+      const dashboardSystem = await this.ctx.bean.resource.read({
+        key: { atomId: dashboardAtomId },
+        user,
+      });
       // name
       const id = await this.sequence.next('dashboard');
-      const dashboardName = `${this.ctx.text('Dashboard')}-${id}`;
-      // content
-      const dashboardContent = await this.ctx.model.dashboardContent.get({ atomId: dashboardAtomId });
+      const dashboardName = `${dashboardSystem.atomNameLocale}-${id}`;
       // update old default
       await this.ctx.model.dashboardUser.update(
         {
@@ -117,7 +120,7 @@ module.exports = app => {
         dashboardDefault: 1,
         dashboardAtomId,
         dashboardName,
-        content: dashboardContent.content,
+        content: dashboardSystem.content,
       };
       const res = await this.ctx.model.dashboardUser.insert(data);
       data.id = res.insertId;
@@ -127,7 +130,17 @@ module.exports = app => {
 
     async itemUsers({ dashboardAtomId, user }) {
       return await this.ctx.model.dashboardUser.select({
-        columns: ['id', 'createdAt', 'updatedAt', 'deleted', 'iid', 'userId', 'dashboardDefault', 'dashboardAtomId', 'dashboardName'],
+        columns: [
+          'id',
+          'createdAt',
+          'updatedAt',
+          'deleted',
+          'iid',
+          'userId',
+          'dashboardDefault',
+          'dashboardAtomId',
+          'dashboardName',
+        ],
         where: {
           userId: user.id,
           dashboardAtomId,
