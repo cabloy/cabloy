@@ -2,7 +2,7 @@ English | [简体中文](./README.md)
 
 # CabloyJS
 
-A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7
+A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7 + mysql
 
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
@@ -32,31 +32,31 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 
 ## Demonstration
 
-|Scene|Link/Qrcode|
-|--|--|
-|PC|https://test.cabloy.com/|
-|Mobile|![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png)|
+| Scene  | Link/Qrcode                                                        |
+| ------ | ------------------------------------------------------------------ |
+| PC     | https://test.cabloy.com/                                           |
+| Mobile | ![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png) |
 
-|Account Type|Name|Password|
-|--|--|--|
-|Admin User|admin|123456|
-|Normal User|tom|123456|
-|Normal User|jane|123456|
+| Account Type | Name  | Password |
+| ------------ | ----- | -------- |
+| Admin User   | admin | 123456   |
+| Normal User  | tom   | 123456   |
+| Normal User  | jane  | 123456   |
 
 ## More Websites Powered by CabloyJS
 
-|Website Type|Website Link|
-|--|--|
-|Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile Layout)|![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)|
-|||
-|Blog|[https://zhennann.com](https://zhennann.com)|
-|Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
-|Technical Documentations(Chinese)|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
-|Community(English)|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
-|Community(Chinese)|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
-|Cabloy Store(English)|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
-|Cabloy Store(Chinese)|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
+| Website Type                      | Website Link                                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Admin System(PC Layout)           | [https://admin.cabloy.com](https://admin.cabloy.com)                                           |
+| Admin System(Mobile Layout)       | ![cabloy-admin-qrcode](./docs/assets/images/cabloy-admin-qrcode.png)                           |
+|                                   |                                                                                                |
+| Blog                              | [https://zhennann.com](https://zhennann.com)                                                   |
+| Technical Documentations(English) | [https://cabloy.com/index.html](https://cabloy.com/index.html)                                 |
+| Technical Documentations(Chinese) | [https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)                     |
+| Community(English)                | [https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)             |
+| Community(Chinese)                | [https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html) |
+| Cabloy Store(English)             | [https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)                     |
+| Cabloy Store(Chinese)             | [https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)         |
 
 ## Features
 
@@ -109,19 +109,19 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 - [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
-### - CabloyJS官方交流群
+### - CabloyJS 官方交流群
 
 请添加个人微信，联系加群，备注：`加群`
 
-  ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
+![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
 
 ### - 文章
 
-- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+- [一文读懂 NodeJS 全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
 
 ### - 视频
 
-- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
+- [网易免费课程 - CabloyJS 全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
 
 ## License
 
