@@ -60,15 +60,35 @@ export default {
       const children = [];
       // comment
       if (item.atomStage === 0 || this.base.config.render.item.info.comment) {
-        children.push(<eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={item.commentCount} eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}></eb-link>);
+        children.push(
+          <eb-link
+            key="actionsLeft:comment"
+            iconMaterial="comment"
+            iconBadge={item.commentCount}
+            eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}
+          ></eb-link>
+        );
       }
       // attachment
       if (this.base.config.render.item.info.attachment) {
-        children.push(<eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={item.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}></eb-link>);
+        children.push(
+          <eb-link
+            key="actionsLeft:attachment"
+            iconMaterial="attachment"
+            iconBadge={item.attachmentCount}
+            eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}
+          ></eb-link>
+        );
       }
       // star
       if (item.atomStage === 1) {
-        children.push(<eb-link key="actionsLeft:star" iconMaterial={item.star ? 'star' : 'star_border'} propsOnPerform={this.info_onStarSwitch}></eb-link>);
+        children.push(
+          <eb-link
+            key="actionsLeft:star"
+            iconMaterial={item.star ? 'star' : 'star_border'}
+            propsOnPerform={this.info_onStarSwitch}
+          ></eb-link>
+        );
       }
       // labels
       if (item.atomStage === 1) {
@@ -76,10 +96,19 @@ export default {
         if (labels.length > 0) {
           for (const label of labels) {
             const _label = this.info_getLabel(label);
-            children.push(<eb-link key={label} text={_label.text} style={{ color: _label.color }} propsOnPerform={this.info_onLabel}></eb-link>);
+            children.push(
+              <eb-link
+                key={label}
+                text={_label.text}
+                style={{ color: _label.color }}
+                propsOnPerform={this.info_onLabel}
+              ></eb-link>
+            );
           }
         } else {
-          children.push(<eb-link key="actionsLeft:label" iconMaterial="label" propsOnPerform={this.info_onLabel}></eb-link>);
+          children.push(
+            <eb-link key="actionsLeft:label" iconMaterial="label" propsOnPerform={this.info_onLabel}></eb-link>
+          );
         }
       }
       // ok
@@ -91,9 +120,23 @@ export default {
       let small = false;
       if (item.userIdCreated !== item.userIdUpdated) {
         small = true;
-        children.push(<img key="avatar:one" class={`avatar ${small ? 'avatar12' : 'avatar16'}`} src={this.info_getItemMetaMedia(item.avatarUpdated)} title={item.userName} />);
+        children.push(
+          <img
+            key="avatar:one"
+            class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+            src={this.info_getItemMetaMedia(item.avatarUpdated)}
+            title={item.userName}
+          />
+        );
       }
-      children.push(<img key="avatar:two" class={`avatar ${small ? 'avatar12' : 'avatar16'}`} src={this.info_getItemMetaMedia(item.avatar)} title={item.userName} />);
+      children.push(
+        <img
+          key="avatar:two"
+          class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+          src={this.info_getItemMetaMedia(item.avatar)}
+          title={item.userName}
+        />
+      );
       return (
         <div key="avatar" class="info-avatar">
           {children}
