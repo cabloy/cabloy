@@ -91,7 +91,13 @@ export default {
       return '';
     },
     order_renderAction() {
-      return <eb-link iconMaterial="sort" propsOnPerform={event => this.order_onPerformPopover(event)}></eb-link>;
+      return (
+        <eb-link
+          iconMaterial="sort"
+          tooltip={this.$text('Sort')}
+          propsOnPerform={event => this.order_onPerformPopover(event)}
+        ></eb-link>
+      );
     },
     order_renderPopover() {
       if (!this.base.ready) return null;
@@ -99,7 +105,12 @@ export default {
       const children = [];
       for (const atomOrder of this.order_list) {
         children.push(
-          <eb-list-item key={this.order_getKey(atomOrder)} popoverClose link="#" propsOnPerform={event => this.order_onPerformChange(event, atomOrder)}>
+          <eb-list-item
+            key={this.order_getKey(atomOrder)}
+            popoverClose
+            link="#"
+            propsOnPerform={event => this.order_onPerformChange(event, atomOrder)}
+          >
             <f7-icon slot="media" material={this.order_getStatus(atomOrder)}></f7-icon>
             <div slot="title">{this.$text(atomOrder.title)}</div>
           </eb-list-item>

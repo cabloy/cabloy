@@ -187,7 +187,9 @@ export default {
     },
     filter_renderAction() {
       if (this.container.params && this.container.params.disableFilter === true) return null;
-      return <eb-link iconMaterial="search" propsOnPerform={this.filter_onPerform}></eb-link>;
+      return (
+        <eb-link iconMaterial="search" tooltip={this.$text('Filter')} propsOnPerform={this.filter_onPerform}></eb-link>
+      );
     },
   },
 };

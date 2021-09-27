@@ -169,6 +169,7 @@ export default {
   LayoutContent: '正文布局',
   LayoutMobile: '移动布局',
   LayoutPC: 'PC布局',
+  Sort: '排序',
   DataChangedReloadConfirm: '数据已变更，您想要重新加载吗？',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',

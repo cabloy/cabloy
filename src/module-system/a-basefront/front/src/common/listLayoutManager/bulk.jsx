@@ -93,6 +93,7 @@ export default {
           <eb-link
             key="actionsLeft:select"
             iconMaterial="grading"
+            tooltip={this.$text('Select')}
             propsOnPerform={this.bulk_onSelectingSwitch}
           ></eb-link>
         );
@@ -121,6 +122,7 @@ export default {
           key="actionsLeftB:select"
           iconMaterial="grading"
           iconBadge={this.bulk.selecting ? selectedAtoms.length.toString() : 0}
+          tooltip={this.$text('Select')}
           propsOnPerform={this.bulk_onSelectingSwitch}
         ></eb-link>
       );
