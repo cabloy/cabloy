@@ -39,8 +39,9 @@ export default {
         const _action = this.getAction(action);
         if (_action.stage) {
           const stages = _action.stage.split(',');
-          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage))
+          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
             continue;
+          }
         }
         // ok
         actions.push(action);
@@ -158,11 +159,13 @@ export default {
       if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
+        const actionTitle = this.container.mode === 'edit' ? 'Save' : 'Edit';
         children.push(
           <eb-link
             key={actionName}
             ref="buttonSave"
             iconMaterial={actionIcon}
+            tooltip={this.$text(actionTitle)}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
