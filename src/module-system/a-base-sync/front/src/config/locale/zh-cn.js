@@ -216,4 +216,5 @@ export default {
   'Resource Sorting': '资源排序',
   'Close Draft': '关闭草稿',
   'Block Not Found': '区块未发现',
+  'Flow Chart': '流程图',
 };

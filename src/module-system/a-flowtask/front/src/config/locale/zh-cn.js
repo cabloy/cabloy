@@ -5,6 +5,7 @@ export default {
   Current: '当前',
   Drafting: '起草',
   Pass: '通过',
+  Recall: '撤回',
   Reject: '驳回',
   Passed: '已通过',
   Rejected: '已驳回',
@@ -39,4 +40,5 @@ export default {
   'Allow Recall': '允许撤回',
   'User Task Options': '用户任务选项',
   'Condition Expression': '条件表达式',
+  'Flow Chart': '流程图',
 };

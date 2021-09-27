@@ -61,18 +61,47 @@ export default {
       } else {
         // comment
         if (this.base.config.render.item.info.comment) {
-          children.push(<eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={atom.commentCount} eb-href={`/a/basefront/comment/list?atomId=${atom.id}`}></eb-link>);
+          children.push(
+            <eb-link
+              key="actionsLeft:comment"
+              iconMaterial="comment"
+              iconBadge={atom.commentCount}
+              tooltip={this.$text('Comments')}
+              eb-href={`/a/basefront/comment/list?atomId=${atom.id}`}
+            ></eb-link>
+          );
         }
         // attachment
         if (this.base.config.render.item.info.attachment) {
-          children.push(<eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={atom.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${atom.id}`}></eb-link>);
+          children.push(
+            <eb-link
+              key="actionsLeft:attachment"
+              iconMaterial="attachment"
+              iconBadge={atom.attachmentCount}
+              tooltip={this.$text('Attachments')}
+              eb-href={`/a/basefront/attachment/list?atomId=${atom.id}`}
+            ></eb-link>
+          );
         }
         // flowChart
-        children.push(<eb-link key="actionsLeft:flowChart" iconMaterial="account_tree" propsOnPerform={this.info_onPerformFlowChart}></eb-link>);
+        children.push(
+          <eb-link
+            key="actionsLeft:flowChart"
+            iconMaterial="account_tree"
+            tooltip={this.$text('Flow Chart')}
+            propsOnPerform={this.info_onPerformFlowChart}
+          ></eb-link>
+        );
         // drafting again
         if (flow.flowStatus === 1 && flow.flowUserId === this.base_user.id) {
           children.push(
-            <eb-button key="actionsLeft:draftingAgain" color="orange" small outline propsOnPerform={this.info_onPerformDraftingAgain}>
+            <eb-button
+              key="actionsLeft:draftingAgain"
+              color="orange"
+              small
+              outline
+              propsOnPerform={this.info_onPerformDraftingAgain}
+            >
               {this.$text('DraftingAgain')}
             </eb-button>
           );
@@ -84,7 +113,14 @@ export default {
     info_renderAvatar() {
       const flow = this.base.data.flow;
       const children = [];
-      children.push(<img key="avatar:one" class="avatar avatar16" src={this.info_getItemMetaMedia(flow.avatar)} title={flow.userName} />);
+      children.push(
+        <img
+          key="avatar:one"
+          class="avatar avatar16"
+          src={this.info_getItemMetaMedia(flow.avatar)}
+          title={flow.userName}
+        />
+      );
       return (
         <div key="avatar" class="info-avatar">
           {children}
