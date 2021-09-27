@@ -61,7 +61,10 @@ module.exports = ctx => {
       if (userIdAssignee !== user.id) {
         const userFlow = await ctx.bean.user.get({ id: this.context._flow.flowUserId });
         const userAssignee = await ctx.bean.user.get({ id: userIdAssignee });
-        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(userAssignee.locale, this.contextNode._flowNode.flowNodeName)}`;
+        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(
+          userAssignee.locale,
+          this.contextNode._flowNode.flowNodeName
+        )}`;
         const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}&flowTaskId=${flowTaskId}`;
         const message = {
           userIdTo: userIdAssignee,
@@ -103,7 +106,9 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
       // taskVars
       this.contextTask._taskVars = new (VarsFn())();
-      this.contextTask._taskVars._vars = this.contextTask._flowTaskHistory.taskVars ? JSON.parse(this.contextTask._flowTaskHistory.taskVars) : {};
+      this.contextTask._taskVars._vars = this.contextTask._flowTaskHistory.taskVars
+        ? JSON.parse(this.contextTask._flowTaskHistory.taskVars)
+        : {};
       // utils
       this.contextTask._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
         context: this.context,
@@ -131,7 +136,9 @@ module.exports = ctx => {
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // check: not throw error
       // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
       if (flowTask.timeClaimed) {
@@ -220,7 +227,9 @@ module.exports = ctx => {
       // specificFlag must be 0
       if (flowTask.specificFlag !== 0) ctx.throw(403);
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
@@ -281,7 +290,9 @@ module.exports = ctx => {
       // specificFlag must be 1
       if (flowTask.specificFlag !== 1) ctx.throw(403);
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
@@ -329,7 +340,9 @@ module.exports = ctx => {
       // specificFlag must be 0
       if (flowTask.specificFlag !== 0) ctx.throw(403);
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // check handled
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // check if allowCancelFlow
@@ -377,7 +390,9 @@ module.exports = ctx => {
       // specificFlag must be 2
       if (flowTask.specificFlag !== 2) ctx.throw(403);
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
@@ -443,7 +458,9 @@ module.exports = ctx => {
       // specificFlag must be 1
       if (flowTask.specificFlag !== 1) ctx.throw(403);
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
@@ -532,7 +549,9 @@ module.exports = ctx => {
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        return ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // flowTaskStatus
       if (flowTask.flowTaskStatus === 1) return null;
       // actions
@@ -586,7 +605,9 @@ module.exports = ctx => {
       const flowTask = this.contextTask._flowTaskHistory;
       const flowTaskId = flowTask.flowTaskId;
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // must be the same flowId, means not outdated
       if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
       // special for write
@@ -685,7 +706,10 @@ module.exports = ctx => {
       };
       // listener
       const methodName = `getSchema${mode.replace(mode[0], mode[0].toUpperCase())}`;
-      const res = await this.flowInstance._flowListener[methodName](this.contextTask, this.contextNode, { schemaBase, schema });
+      const res = await this.flowInstance._flowListener[methodName](this.contextTask, this.contextNode, {
+        schemaBase,
+        schema,
+      });
       if (res) {
         schema = res;
       }

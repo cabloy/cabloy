@@ -8,4 +8,5 @@ export default {
   TaskRejectPrompt: 'Are you sure to reject this task?',
   RecallPrompt: 'Are you sure to recall this task?',
   FlowOrTaskNotExists: 'Work Flow or Task does not exist',
+  AppendRemark: 'Append Remark',
 };

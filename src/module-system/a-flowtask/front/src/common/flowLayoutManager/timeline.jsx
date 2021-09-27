@@ -105,6 +105,7 @@ export default {
           <eb-link
             key={actionBase.name}
             iconMaterial={actionBase.icon.material}
+            tooltip={this.$text(actionBase.title)}
             propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
           ></eb-link>
         );
@@ -167,7 +168,6 @@ export default {
         </div>
       );
       // domAfter
-
       const domActions = this._timeline_renderFlowTaskActions({ task });
       const domAfter = (
         <div slot="after" class="after">
