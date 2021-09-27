@@ -102,7 +102,11 @@ export default {
       for (const action of actions) {
         const actionBase = this._timeline_getActionBase(action);
         children.push(
-          <eb-link key={actionBase.name} iconMaterial={actionBase.icon.material} propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}></eb-link>
+          <eb-link
+            key={actionBase.name}
+            iconMaterial={actionBase.icon.material}
+            propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
+          ></eb-link>
         );
       }
       return children;
