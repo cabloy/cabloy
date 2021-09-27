@@ -65,6 +65,7 @@ export default {
             key="actionsLeft:comment"
             iconMaterial="comment"
             iconBadge={item.commentCount}
+            tooltip={this.$text('Comments')}
             eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}
           ></eb-link>
         );
@@ -76,6 +77,7 @@ export default {
             key="actionsLeft:attachment"
             iconMaterial="attachment"
             iconBadge={item.attachmentCount}
+            tooltip={this.$text('Attachments')}
             eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}
           ></eb-link>
         );
@@ -86,6 +88,7 @@ export default {
           <eb-link
             key="actionsLeft:star"
             iconMaterial={item.star ? 'star' : 'star_border'}
+            tooltip={this.$text('UserStar')}
             propsOnPerform={this.info_onStarSwitch}
           ></eb-link>
         );
@@ -101,13 +104,19 @@ export default {
                 key={label}
                 text={_label.text}
                 style={{ color: _label.color }}
+                tooltip={this.$text('UserLabels')}
                 propsOnPerform={this.info_onLabel}
               ></eb-link>
             );
           }
         } else {
           children.push(
-            <eb-link key="actionsLeft:label" iconMaterial="label" propsOnPerform={this.info_onLabel}></eb-link>
+            <eb-link
+              key="actionsLeft:label"
+              iconMaterial="label"
+              tooltip={this.$text('UserLabels')}
+              propsOnPerform={this.info_onLabel}
+            ></eb-link>
           );
         }
       }

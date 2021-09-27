@@ -46,6 +46,8 @@ export default {
   Label: '标签',
   Comment: '评论',
   Comments: '评论',
+  Attachment: '附件',
+  Attachments: '附件',
   Creator: '创建人',
   Username: '用户名',
   Realname: '真实姓名',
