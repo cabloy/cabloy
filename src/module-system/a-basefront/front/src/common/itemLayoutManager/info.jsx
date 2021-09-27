@@ -104,7 +104,7 @@ export default {
                 key={label}
                 text={_label.text}
                 style={{ color: _label.color }}
-                tooltip={this.$text('UserLabels')}
+                tooltip={this.$text('UserLabel')}
                 propsOnPerform={this.info_onLabel}
               ></eb-link>
             );

@@ -39,7 +39,8 @@ export default {
         const _action = this.getAction(action);
         if (_action.stage) {
           const stages = _action.stage.split(',');
-          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) continue;
+          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage))
+            continue;
         }
         // ok
         actions.push(action);
@@ -140,7 +141,15 @@ export default {
       if (actionLayout) {
         const actionName = 'layout';
         const actionIcon = 'view_list';
-        children.push(<eb-link key={actionName} ref="buttonLayout" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
+        children.push(
+          <eb-link
+            key={actionName}
+            ref="buttonLayout"
+            iconMaterial={actionIcon}
+            tooltip={this.$text('Layout')}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
       }
       // only show on draft
       const atomClosed = this.base.item.atomClosed === 1;
@@ -149,11 +158,20 @@ export default {
       if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
-        children.push(<eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
+        children.push(
+          <eb-link
+            key={actionName}
+            ref="buttonSave"
+            iconMaterial={actionIcon}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
       }
       //
       if (this.actions_listPopover) {
-        children.push(<f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>);
+        children.push(
+          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+        );
       }
       //
       return children;
@@ -166,7 +184,12 @@ export default {
         for (const action of actions) {
           const _action = this.getAction(action);
           children.push(
-            <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
+            <eb-list-item
+              key={action.id}
+              link="#"
+              popover-close
+              propsOnPerform={event => this.actions_onAction(event, action)}
+            >
               <f7-icon slot="media" material={_action.icon && _action.icon.material}></f7-icon>
               <div slot="title">{this.actions_getActionTitle(action)}</div>
             </eb-list-item>

@@ -158,6 +158,7 @@ export default {
   Modes: '模式',
   Custom: '自定义',
   Bulk: '批量',
+  Layout: '布局',
   LayoutAccordion: '折叠布局',
   LayoutTree: '树形布局',
   LayoutList: '列表布局',
