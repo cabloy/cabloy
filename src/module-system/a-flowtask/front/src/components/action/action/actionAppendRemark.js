@@ -5,10 +5,10 @@ export default {
       const { task, flowTaskId } = this.$data;
       const remark = await ctx.$view.dialog.prompt(this.$text('Please specify the handle remark'));
       if (!remark) return;
-      // await ctx.$api.post('/a/flowtask/task/appendRemark', {
-      //   flowTaskId,
-      //   handle: { remark },
-      // });
+      await ctx.$api.post('/a/flowtask/task/appendRemark', {
+        flowTaskId,
+        handle: { remark },
+      });
       task.handleRemark = remark;
     },
   },
