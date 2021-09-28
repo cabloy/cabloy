@@ -24,7 +24,13 @@ export default {
           name: 'appendRemark',
         });
       }
-      return actions;
+      // map
+      actions = actions.map(item => this._timeline_getActionBase(item));
+      // filter
+      const actionsBasic = actions.filter(item => item.basic);
+      const actionsMore = actions.filter(item => !item.basic);
+      // ok
+      return [actionsBasic, actionsMore];
     },
     async timeline_onPerformTaskAction(event, actionBase, task, ctxParent) {
       return await this.$meta.util.performAction({
@@ -106,10 +112,9 @@ export default {
     _timeline_renderFlowTaskActions_HandleView({ task, ctxParent }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
-      const actions = this._timeline_prepareActions({ task });
-      const actionHandle = actions.find(item => item.name === 'handleTask');
-      if (!actionHandle) return;
-      const actionBase = this._timeline_getActionBase(actionHandle);
+      const [actionsBasic] = this._timeline_prepareActions({ task });
+      const actionBase = actionsBasic.find(item => item.name === 'handleTask');
+      if (!actionBase) return;
       children.push(
         <eb-link
           key={actionBase.name}
@@ -123,9 +128,8 @@ export default {
     _timeline_renderFlowTaskActionsChildren({ task, ctxParent }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
-      const actions = this._timeline_prepareActions({ task });
-      for (const action of actions) {
-        const actionBase = this._timeline_getActionBase(action);
+      const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
+      for (const actionBase of actionsBasic) {
         children.push(
           <eb-link
             key={actionBase.name}
