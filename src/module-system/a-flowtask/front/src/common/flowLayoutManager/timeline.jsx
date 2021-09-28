@@ -5,13 +5,15 @@ export default {
     };
   },
   methods: {
-    _timeline_prepareActions({ task, enableView }) {
+    _timeline_prepareActions({ task }) {
       // actions
       let actions = [];
       // concat
-      actions = task._actions ? actions.concat(task._actions) : actions;
+      if (task._actions) {
+        actions = actions.concat(task._actions);
+      }
       // action view
-      if (enableView) {
+      if (task.specificFlag === 0) {
         actions.push({
           name: 'viewAtom',
         });
@@ -94,11 +96,28 @@ export default {
       }
       return <f7-badge color={status.color}>{text}</f7-badge>;
     },
-    // also be invoked by atomLayoutManager
-    _timeline_renderFlowTaskActionsChildren({ task, enableView, ctxParent }) {
+    // be invoked by atomLayoutManager
+    _timeline_renderFlowTaskActions_HandleView({ task, ctxParent }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
-      const actions = this._timeline_prepareActions({ task, enableView });
+      const actions = this._timeline_prepareActions({ task });
+      const actionHandle = actions.find(item => item.name === 'handleTask');
+      if (!actionHandle) return;
+      const actionBase = this._timeline_getActionBase(actionHandle);
+      children.push(
+        <eb-link
+          key={actionBase.name}
+          iconMaterial={actionBase.icon.material}
+          tooltip={this.$text(actionBase.title)}
+          propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
+        ></eb-link>
+      );
+      return children;
+    },
+    _timeline_renderFlowTaskActionsChildren({ task, ctxParent }) {
+      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
+      const children = [];
+      const actions = this._timeline_prepareActions({ task });
       for (const action of actions) {
         const actionBase = this._timeline_getActionBase(action);
         children.push(
@@ -114,8 +133,7 @@ export default {
     },
     _timeline_renderFlowTaskActions({ task }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
-      const enableView = task.specificFlag === 0;
-      const children = this._timeline_renderFlowTaskActionsChildren({ task, enableView });
+      const children = this._timeline_renderFlowTaskActionsChildren({ task });
       return <div class="task-actions">{children}</div>;
     },
     _timeline_getHandleRemark({ task }) {

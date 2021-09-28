@@ -552,10 +552,12 @@ module.exports = ctx => {
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
         return ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
       }
-      // flowTaskStatus
-      if (flowTask.flowTaskStatus === 1) return null;
       // actions
       const actions = [];
+      // flowTaskStatus
+      if (flowTask.flowTaskStatus === 1) {
+        return actions;
+      }
       // specificFlag
       if (flowTask.specificFlag === 1) {
         actions.push({
@@ -585,7 +587,7 @@ module.exports = ctx => {
           });
         }
       }
-      // others
+      // ok
       return actions;
     }
 

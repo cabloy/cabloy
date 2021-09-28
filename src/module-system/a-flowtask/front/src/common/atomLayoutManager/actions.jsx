@@ -53,24 +53,37 @@ export default {
       children.push(<actionHandleTask key="actionHandleTask" ref="actionHandleTask"></actionHandleTask>);
       return children;
     },
-    actions_renderHandle() {
+    actions_renderHandleEdit() {
       const children = [];
-      children.push(<eb-link key="save" ref="buttonSave" iconMaterial="save" propsOnPerform={event => this.actions_onPerformTaskHandleSave(event)}></eb-link>);
-      children.push(<eb-link key="submit" ref="buttonSubmit" iconMaterial="done" propsOnPerform={event => this.actions_onPerformTaskHandleSubmit(event)}></eb-link>);
+      children.push(
+        <eb-link
+          key="save"
+          ref="buttonSave"
+          iconMaterial="save"
+          propsOnPerform={event => this.actions_onPerformTaskHandleSave(event)}
+        ></eb-link>
+      );
+      children.push(
+        <eb-link
+          key="submit"
+          ref="buttonSubmit"
+          iconMaterial="done"
+          propsOnPerform={event => this.actions_onPerformTaskHandleSubmit(event)}
+        ></eb-link>
+      );
       return children;
     },
     actions_render() {
       if (!this.base_ready) return null;
       // view
       if (this.container.mode === 'view') {
-        return this.container_flowLayoutManager._timeline_renderFlowTaskActionsChildren({
+        return this.container_flowLayoutManager._timeline_renderFlowTaskActions_HandleView({
           task: this.container_task,
-          enableView: false,
           ctxParent: this,
         });
       }
       // edit
-      return this.actions_renderHandle();
+      return this.actions_renderHandleEdit();
     },
   },
 };
