@@ -18,6 +18,12 @@ export default {
           name: 'viewAtom',
         });
       }
+      // action: appendRemark
+      if (task.flowNodeType === 'startEventAtom' && task.flowTaskStatus === 1 && !task.handleRemark) {
+        actions.push({
+          name: 'appendRemark',
+        });
+      }
       return actions;
     },
     async timeline_onPerformTaskAction(event, actionBase, task, ctxParent) {
