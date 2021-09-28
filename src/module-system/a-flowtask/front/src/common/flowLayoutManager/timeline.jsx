@@ -32,6 +32,27 @@ export default {
       // ok
       return [actionsBasic, actionsMore];
     },
+    async timeline_onPerformTaskActionMore(event, task) {
+      const [, actionsMore] = this._timeline_prepareActions({ task });
+      const buttons = [];
+      for (const actionBase of actionsMore) {
+        const iconName = (actionBase.icon && actionBase.icon.material) || '';
+        buttons.push({
+          icon: `<i class="icon material-icons">${iconName}</i>`,
+          text: this.$text(actionBase.title),
+          data: actionBase,
+        });
+      }
+      // choose
+      const params = {
+        forceToPopover: true,
+        targetEl: event.target,
+        buttons,
+      };
+      const button = await this.$view.actions.choose(params);
+      const actionBase = button.data;
+      await this.timeline_onPerformTaskAction(event, actionBase, task);
+    },
     async timeline_onPerformTaskAction(event, actionBase, task, ctxParent) {
       return await this.$meta.util.performAction({
         ctx: ctxParent || this,
@@ -125,7 +146,7 @@ export default {
       );
       return children;
     },
-    _timeline_renderFlowTaskActionsChildren({ task, ctxParent }) {
+    _timeline_renderFlowTaskActionsChildren({ task }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
@@ -135,7 +156,16 @@ export default {
             key={actionBase.name}
             iconMaterial={actionBase.icon.material}
             tooltip={this.$text(actionBase.title)}
-            propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
+            propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task)}
+          ></eb-link>
+        );
+      }
+      if (actionsMore.length > 0) {
+        children.push(
+          <eb-link
+            key="actionsPopover"
+            iconMaterial="more_horiz"
+            propsOnPerform={event => this.timeline_onPerformTaskActionMore(event, task)}
           ></eb-link>
         );
       }
@@ -147,7 +177,6 @@ export default {
       return <div class="task-actions">{children}</div>;
     },
     _timeline_getHandleRemark({ task }) {
-      if (task.handleRemarkLocale) return task.handleRemarkLocale;
       if (task.flowTaskStatus === 0 && task.specificFlag === 1) {
         // assigneesConfirmation
         return this.$text('AssigneesConfirmationPrompt');
@@ -156,6 +185,8 @@ export default {
         // assigneesConfirmation
         return this.$text('Recall Available');
       }
+      // others
+      return task.handleRemarkLocale || task.handleRemark;
     },
     _timeline_renderFlowTask({ task }) {
       // check user

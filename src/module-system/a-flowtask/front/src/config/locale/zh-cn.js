@@ -41,4 +41,5 @@ export default {
   'User Task Options': '用户任务选项',
   'Condition Expression': '条件表达式',
   'Flow Chart': '流程图',
+  'Please specify the handle remark': '请指定处理意见',
 };
