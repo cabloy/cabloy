@@ -16,6 +16,10 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.complete({ flowTaskId, handle, formAtom, user });
     }
 
+    async appendHandleRemark({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.appendHandleRemark({ flowTaskId, handle, user });
+    }
+
     async assignees({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.assignees({ flowTaskId, user });
     }

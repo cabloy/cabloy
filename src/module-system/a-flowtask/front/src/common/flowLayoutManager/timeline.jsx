@@ -18,10 +18,15 @@ export default {
           name: 'viewAtom',
         });
       }
-      // action: appendRemark
-      if (task.flowNodeType === 'startEventAtom' && task.flowTaskStatus === 1 && !task.handleRemark) {
+      // action: appendHandleRemark
+      if (
+        task.flowNodeType === 'startEventAtom' &&
+        task.flowTaskStatus === 1 &&
+        !task.handleRemark
+        // && task.userIdAssignee === this.base_user.id
+      ) {
         actions.push({
-          name: 'appendRemark',
+          name: 'appendHandleRemark',
         });
       }
       // map

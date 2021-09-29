@@ -39,6 +39,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async appendHandleRemark() {
+      const res = await this.ctx.service.flowTask.appendHandleRemark({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async assignees() {
       const res = await this.ctx.service.flowTask.assignees({
         flowTaskId: this.ctx.request.body.flowTaskId,

@@ -44,6 +44,12 @@ module.exports = ctx => {
       await taskInstance._complete({ handle, formAtom });
     }
 
+    async appendHandleRemark({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history: true });
+      await taskInstance._appendHandleRemark({ handle });
+    }
+
     async assignees({ flowTaskId, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });

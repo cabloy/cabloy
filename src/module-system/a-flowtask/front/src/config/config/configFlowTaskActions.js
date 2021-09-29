@@ -34,9 +34,9 @@ const actions = {
     actionComponent: 'action',
     icon: { material: 'undo' },
   },
-  appendRemark: {
+  appendHandleRemark: {
     basic: false,
-    title: 'AppendRemark',
+    title: 'AppendHandleRemark',
     actionModule: 'a-flowtask',
     actionComponent: 'action',
     icon: { material: 'info' },

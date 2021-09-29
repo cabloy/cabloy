@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import ActionViewAtom from './action/actionViewAtom.js';
-import ActionAppendRemark from './action/actionAppendRemark.js';
+import ActionAppendHandleRemark from './action/actionAppendHandleRemark.js';
 import ActionAssigneesConfirmation from './action/actionAssigneesConfirmation.js';
 import ActionCancelFlow from './action/actionCancelFlow.js';
 import ActionHandleTask from './action/actionHandleTask.js';
@@ -14,7 +14,7 @@ export default {
   mixins: [
     ebActionBase, //
     ActionViewAtom,
-    ActionAppendRemark,
+    ActionAppendHandleRemark,
     ActionAssigneesConfirmation,
     ActionCancelFlow,
     ActionHandleTask,
@@ -48,8 +48,8 @@ export default {
         return await this._onActionHandleTask();
       } else if (action.name === 'recall') {
         return await this._onActionRecall();
-      } else if (action.name === 'appendRemark') {
-        return await this._onActionAppendRemark();
+      } else if (action.name === 'appendHandleRemark') {
+        return await this._onActionAppendHandleRemark();
       }
     },
   },
