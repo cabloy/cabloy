@@ -7,7 +7,7 @@ module.exports = app => {
       // atom
       const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
       // tasks
-      const tasks = await this._data_tasks({ flowId, user });
+      const tasks = await this._data_tasks({ flow, atom, flowId, user });
       // ok
       return { flow, atom, tasks };
     }
@@ -36,7 +36,9 @@ module.exports = app => {
       return atom;
     }
 
-    async _data_tasks({ flowId, user }) {
+    async _data_tasks({ flow, atom, flowId, user }) {
+      // flowOld
+      const flowOld = !atom || atom.atomFlowId !== flow.flowId;
       // select tasks
       const tasks = await this.ctx.bean.flowTask.select({
         options: {
@@ -58,7 +60,7 @@ module.exports = app => {
       // loop
       for (const task of tasks) {
         // actions
-        if (task.userIdAssignee === user.id && task.flowTaskStatus === 0) {
+        if (!flowOld) {
           task._actions = await this.ctx.bean.flowTask.actions({ flowTaskId: task.flowTaskId, user });
         }
       }

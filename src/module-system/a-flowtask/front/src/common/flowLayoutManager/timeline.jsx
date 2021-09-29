@@ -7,28 +7,7 @@ export default {
   methods: {
     _timeline_prepareActions({ task }) {
       // actions
-      let actions = [];
-      // concat
-      if (task._actions) {
-        actions = actions.concat(task._actions);
-      }
-      // action view
-      if (task.specificFlag === 0) {
-        actions.push({
-          name: 'viewAtom',
-        });
-      }
-      // action: appendHandleRemark
-      if (
-        task.flowNodeType === 'startEventAtom' &&
-        task.flowTaskStatus === 1 &&
-        !task.handleRemark
-        // && task.userIdAssignee === this.base_user.id
-      ) {
-        actions.push({
-          name: 'appendHandleRemark',
-        });
-      }
+      let actions = task._actions || [];
       // map
       actions = actions.map(item => this._timeline_getActionBase(item));
       // filter
@@ -152,7 +131,7 @@ export default {
       return children;
     },
     _timeline_renderFlowTaskActionsChildren({ task }) {
-      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
+      if (this.base_flowOld) return;
       const children = [];
       const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
       for (const actionBase of actionsBasic) {
