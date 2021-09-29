@@ -21,6 +21,8 @@ module.exports = {
       allowRejectTask: false,
       allowCancelFlow: true,
       allowRecall: false,
+      allowForward: false,
+      allowSubstitute: false,
       schema: {
         read: true,
         write: true,
@@ -46,6 +48,8 @@ module.exports = {
     allowRejectTask: true,
     allowCancelFlow: false,
     allowRecall: true,
+    allowForward: false,
+    allowSubstitute: false,
     schema: {
       read: true,
       write: false,

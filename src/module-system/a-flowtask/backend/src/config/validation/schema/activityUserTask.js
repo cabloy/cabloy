@@ -70,6 +70,16 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'Allow Recall',
       },
+      allowForward: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Forward',
+      },
+      allowSubstitute: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Substitute',
+      },
       schema: {
         type: 'object',
         ebType: 'component',
