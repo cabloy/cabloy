@@ -27,6 +27,8 @@ export default {
   RecallPrompt: '您确认要撤回本任务吗？',
   FlowOrTaskNotExists: '流程或任务已经不存在',
   AppendHandleRemark: '追加处理意见',
+  TaskActionTitleForward: '转办',
+  TaskActionTitleSubstitute: '代办',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
   'Recall Available': '可撤回',

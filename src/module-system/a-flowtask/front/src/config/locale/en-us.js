@@ -9,4 +9,6 @@ export default {
   RecallPrompt: 'Are you sure to recall this task?',
   FlowOrTaskNotExists: 'Work Flow or Task does not exist',
   AppendHandleRemark: 'Append Handle Remark',
+  TaskActionTitleForward: 'Forward',
+  TaskActionTitleSubstitute: 'Substitute',
 };

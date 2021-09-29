@@ -41,5 +41,17 @@ const actions = {
     actionComponent: 'action',
     icon: { material: 'info' },
   },
+  Forward: {
+    basic: false,
+    title: 'TaskActionTitleForward',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+  },
+  Substitute: {
+    basic: false,
+    title: 'TaskActionTitleSubstitute',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+  },
 };
 export default actions;
