@@ -12,7 +12,10 @@ export default {
       actions = actions.map(item => this._timeline_getActionBase(item));
       // filter
       const actionsBasic = actions.filter(item => item.basic);
-      const actionsMore = actions.filter(item => !item.basic);
+      const actionsMore = actions.filter(item => {
+        if (item.name === 'appendHandleRemark' && task.handleRemark) return false;
+        return !item.basic;
+      });
       // ok
       return [actionsBasic, actionsMore];
     },
