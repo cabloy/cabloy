@@ -569,7 +569,7 @@ module.exports = ctx => {
       // user
       const user = this.contextTask._user;
       // flowTask
-      const flowTask = this.contextTask._flowTask;
+      const flowTask = this.contextTask._flowTask || this.contextTask._flowTaskHistory;
       // const flowTaskId = flowTask.id;
       // // must be the same user
       // if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {

@@ -61,7 +61,11 @@ module.exports = app => {
       for (const task of tasks) {
         // actions
         if (!flowOld) {
-          task._actions = await this.ctx.bean.flowTask.actions({ flowTaskId: task.flowTaskId, user });
+          task._actions = await this.ctx.bean.flowTask.actions({
+            flowTaskId: task.flowTaskId,
+            user,
+            history: task.flowTaskStatus === 1,
+          });
         }
       }
       return tasks;

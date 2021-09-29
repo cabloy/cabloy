@@ -74,9 +74,9 @@ module.exports = ctx => {
       await taskInstance._cancelFlow({ handle });
     }
 
-    async actions({ flowTaskId, user }) {
+    async actions({ flowTaskId, user, history }) {
       // taskInstance
-      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history });
       return await taskInstance._actions();
     }
 
