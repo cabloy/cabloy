@@ -72,13 +72,13 @@ module.exports = ctx => {
       for (const task of tasks) {
         // actions
         if (task.userIdAssignee === user.id && !flowOld) {
-          task._actions = await this._flowData_task_actions({ nodeInstances, task, user });
+          task._actions = await this._flowData_task_actions({ nodeInstances, tasks, task, user });
         }
       }
       return tasks;
     }
 
-    async _flowData_task_actions({ nodeInstances, task, user }) {
+    async _flowData_task_actions({ nodeInstances, tasks, task, user }) {
       // info
       const isDone = task.flowTaskStatus === 1;
       // actions
@@ -137,8 +137,20 @@ module.exports = ctx => {
         if (options.allowForward) {
           // check if has forwarded
           if (!task.userIdForwardTo) {
+            actions.push({
+              name: 'forward',
+            });
+          } else {
+            // check if claimed
+            const taskTo = tasks.find(
+              item => item.flowNodeId === task.flowNodeId && item.userIdForwardFrom === task.userIdAssignee
+            );
+            if (!taskTo.timeClaimed) {
+              actions.push({
+                name: 'forwardRecall',
+              });
+            }
           }
-          // check if has forwanded and not claimed
         }
       }
       // 8. allowSubstitute

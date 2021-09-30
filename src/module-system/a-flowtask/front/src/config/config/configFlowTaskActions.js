@@ -41,13 +41,13 @@ const actions = {
     actionComponent: 'action',
     icon: { material: 'info' },
   },
-  Forward: {
+  forward: {
     basic: false,
     title: 'TaskActionTitleForward',
     actionModule: 'a-flowtask',
     actionComponent: 'action',
   },
-  Substitute: {
+  substitute: {
     basic: false,
     title: 'TaskActionTitleSubstitute',
     actionModule: 'a-flowtask',
