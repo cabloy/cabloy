@@ -134,7 +134,7 @@ export default {
       return children;
     },
     _timeline_renderFlowTaskActionsChildren({ task }) {
-      if (this.base_flowOld) return;
+      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
       for (const actionBase of actionsBasic) {

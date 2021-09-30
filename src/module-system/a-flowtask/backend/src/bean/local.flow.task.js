@@ -570,36 +570,31 @@ module.exports = ctx => {
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask || this.contextTask._flowTaskHistory;
-      // const flowTaskId = flowTask.id;
-      // // must be the same user
-      // if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-      //   return ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // }
-      // must be user
-      if (!user) {
-        return ctx.throw(403);
+      const flowTaskId = flowTask.id;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        return ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
       }
       // info
       const isDone = flowTask.flowTaskStatus === 1;
-      const isSameUser = user.id === flowTask.userIdAssignee;
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
       // actions
       const actions = [];
       // 1. assigneesConfirmation
-      if (!isDone && isSameUser && flowTask.specificFlag === 1) {
+      if (!isDone && flowTask.specificFlag === 1) {
         actions.push({
           name: 'assigneesConfirmation',
         });
       }
       // 2. recall
-      if (!isDone && isSameUser && flowTask.specificFlag === 2) {
+      if (!isDone && flowTask.specificFlag === 2) {
         actions.push({
           name: 'recall',
         });
       }
       // 3. handleTask
       // 4. cancelFlow
-      if (!isDone && isSameUser && flowTask.specificFlag === 0) {
+      if (!isDone && flowTask.specificFlag === 0) {
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
           actions.push({
@@ -618,13 +613,13 @@ module.exports = ctx => {
         }
       }
       // 5. viewAtom
-      if (isSameUser && flowTask.specificFlag === 0) {
+      if (flowTask.specificFlag === 0) {
         actions.push({
           name: 'viewAtom',
         });
       }
       // 6. appendHandleRemark
-      if (this.contextTask._nodeDef.type === 'startEventAtom' && isDone && isSameUser && !flowTask.handleRemark) {
+      if (this.contextTask._nodeDef.type === 'startEventAtom' && isDone && !flowTask.handleRemark) {
         actions.push({
           name: 'appendHandleRemark',
         });
