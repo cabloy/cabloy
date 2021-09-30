@@ -88,16 +88,20 @@ module.exports = ctx => {
         actions.push({
           name: 'assigneesConfirmation',
         });
+        // only one action
+        return actions;
       }
       // 2. recall
       if (!isDone && task.specificFlag === 2) {
         actions.push({
           name: 'recall',
         });
+        // only one action
+        return actions;
       }
       // 3. handleTask
       // 4. cancelFlow
-      if (!isDone && task.specificFlag === 0) {
+      if (!isDone) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
@@ -117,11 +121,9 @@ module.exports = ctx => {
         }
       }
       // 5. viewAtom
-      if (task.specificFlag === 0) {
-        actions.push({
-          name: 'viewAtom',
-        });
-      }
+      actions.push({
+        name: 'viewAtom',
+      });
       // 6. appendHandleRemark
       if (task.flowNodeType === 'startEventAtom' && isDone && !task.handleRemark) {
         actions.push({
@@ -129,6 +131,16 @@ module.exports = ctx => {
         });
       }
       // 7. allowForward
+      if (!isDone) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
+        // allowForward
+        if (options.allowForward) {
+          // check if has forwarded
+          if (!task.userIdForwardTo) {
+          }
+          // check if has forwanded and not claimed
+        }
+      }
       // 8. allowSubstitute
       // ok
       return actions;
