@@ -47,9 +47,21 @@ const actions = {
     actionModule: 'a-flowtask',
     actionComponent: 'action',
   },
+  forwardRecall: {
+    basic: false,
+    title: 'TaskActionTitleForwardRecall',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+  },
   substitute: {
     basic: false,
     title: 'TaskActionTitleSubstitute',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+  },
+  substituteRecall: {
+    basic: false,
+    title: 'TaskActionTitleSubstituteRecall',
     actionModule: 'a-flowtask',
     actionComponent: 'action',
   },

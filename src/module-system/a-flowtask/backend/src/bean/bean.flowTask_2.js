@@ -101,7 +101,7 @@ module.exports = ctx => {
       }
       // 3. handleTask
       // 4. cancelFlow
-      if (!isDone) {
+      if (!isDone && !task.userIdForwardTo && !task.userIdSubstituteTo) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
@@ -131,6 +131,7 @@ module.exports = ctx => {
         });
       }
       // 7. allowForward
+      // 8. allowSubstitute
       if (!isDone) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
         // allowForward
@@ -152,8 +153,26 @@ module.exports = ctx => {
             }
           }
         }
+        // allowSubstitute, allowed only once
+        if (options.allowSubstitute && !task.userIdSubstituteFrom) {
+          // check if has substituted
+          if (!task.userIdSubstituteTo) {
+            actions.push({
+              name: 'substitute',
+            });
+          } else {
+            // check if claimed
+            const taskTo = tasks.find(
+              item => item.flowNodeId === task.flowNodeId && item.userIdSubstituteFrom === task.userIdAssignee
+            );
+            if (!taskTo.timeClaimed) {
+              actions.push({
+                name: 'substituteRecall',
+              });
+            }
+          }
+        }
       }
-      // 8. allowSubstitute
       // ok
       return actions;
     }

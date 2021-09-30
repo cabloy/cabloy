@@ -11,4 +11,6 @@ export default {
   AppendHandleRemark: 'Append Handle Remark',
   TaskActionTitleForward: 'Forward',
   TaskActionTitleSubstitute: 'Substitute',
+  TaskActionTitleForwardRecall: 'Recall Forward',
+  TaskActionTitleSubstituteRecall: 'Recall Substitute',
 };
