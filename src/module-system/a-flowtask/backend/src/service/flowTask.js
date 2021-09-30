@@ -36,10 +36,6 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.cancelFlow({ flowTaskId, handle, user });
     }
 
-    async actions({ flowTaskId, user }) {
-      return await this.ctx.bean.flowTask.actions({ flowTaskId, user });
-    }
-
     async viewAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.viewAtom({ flowTaskId, user });
     }

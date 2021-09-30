@@ -74,12 +74,6 @@ module.exports = ctx => {
       await taskInstance._cancelFlow({ handle });
     }
 
-    async actions({ flowTaskId, user, history }) {
-      // taskInstance
-      const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history });
-      return await taskInstance._actions();
-    }
-
     // from history
     async viewAtom({ flowTaskId, user }) {
       // taskInstance
@@ -93,6 +87,8 @@ module.exports = ctx => {
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history: false });
       return await taskInstance._editAtom();
     }
+
+    async flowData({ flowId, user }) {}
 
     async _nodeDoneCheckLock({ flowNodeId }) {
       // load flow node

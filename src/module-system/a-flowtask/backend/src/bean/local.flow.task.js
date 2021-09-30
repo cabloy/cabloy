@@ -624,6 +624,8 @@ module.exports = ctx => {
           name: 'appendHandleRemark',
         });
       }
+      // 7. allowForward
+      // 8. allowSubstitute
       // ok
       return actions;
     }
