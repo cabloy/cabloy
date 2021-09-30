@@ -8,8 +8,8 @@ export default {
         context: {
           params: {
             onFetchUsers: ({ query, page }) => {
-              return this.$api.post('/a/flowchart/flowDef/userSelect', {
-                host: this.host,
+              return this.$api.post('/a/flowtask/task/userSelectForward', {
+                flowTaskId,
                 params: {
                   query,
                   page,
@@ -19,10 +19,8 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              const _user = this.assignees.users.find(item => item.id === data.id);
-              if (!_user) {
-                this.assignees.users.push(data);
-              }
+              console.log(data);
+              this._onActionForward_handle({ userId: data.id });
             }
           },
         },

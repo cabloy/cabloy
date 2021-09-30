@@ -702,16 +702,7 @@ module.exports = ctx => {
 
     async getAuthProvider({ subdomain, iid, id, module, providerName }) {
       // ctx.instance maybe not exists
-      const data = id
-        ? {
-            iid: iid || ctx.instance.id,
-            id,
-          }
-        : {
-            iid: iid || ctx.instance.id,
-            module,
-            providerName,
-          };
+      const data = id ? { iid: iid || ctx.instance.id, id } : { iid: iid || ctx.instance.id, module, providerName };
       const res = await ctx.db.get('aAuthProvider', data);
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
