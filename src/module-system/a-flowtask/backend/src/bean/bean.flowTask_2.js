@@ -26,8 +26,6 @@ module.exports = ctx => {
     }
 
     async _flowData_tasks({ flow, atom, flowId, user }) {
-      // flowOld
-      const flowOld = !atom || atom.atomFlowId !== flow.flowId;
       // select tasks
       const tasks = await ctx.bean.flowTask.select({
         options: {
@@ -46,50 +44,61 @@ module.exports = ctx => {
         user: null,
         pageForce: false,
       });
+      // flowOld
+      const flowOld = !atom || atom.atomFlowId !== flow.flowId;
+      // nodeInstances
+      const nodeInstances = {
+        _nodeInstances: {},
+        _options: {},
+        async get(flowNodeId) {
+          let nodeInstance = this._nodeInstances[flowNodeId];
+          if (!nodeInstance) {
+            nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+            this._nodeInstances[flowNodeId] = nodeInstance;
+          }
+          return nodeInstance;
+        },
+        async getOptions(flowNodeId) {
+          let options = this._options[flowNodeId];
+          if (!options) {
+            const nodeInstance = await this.get(flowNodeId);
+            options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
+            this._options[flowNodeId] = options;
+          }
+          return options;
+        },
+      };
       // loop
       for (const task of tasks) {
         // actions
         if (task.userIdAssignee === user.id && !flowOld) {
-          task._actions = await ctx.bean.flowTask.actions({
-            flowTaskId: task.flowTaskId,
-            user,
-            history: task.flowTaskStatus === 1,
-          });
+          task._actions = await this._flowData_task_actions({ nodeInstances, task, user });
         }
       }
       return tasks;
     }
 
-    async _flowData_task_actions() {
-      // user
-      const user = this.contextTask._user;
-      // flowTask
-      const flowTask = this.contextTask._flowTask || this.contextTask._flowTaskHistory;
-      const flowTaskId = flowTask.id;
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-        return ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      }
+    async _flowData_task_actions({ nodeInstances, task, user }) {
       // info
-      const isDone = flowTask.flowTaskStatus === 1;
-      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
+      const isDone = task.flowTaskStatus === 1;
       // actions
       const actions = [];
       // 1. assigneesConfirmation
-      if (!isDone && flowTask.specificFlag === 1) {
+      if (!isDone && task.specificFlag === 1) {
         actions.push({
           name: 'assigneesConfirmation',
         });
       }
       // 2. recall
-      if (!isDone && flowTask.specificFlag === 2) {
+      if (!isDone && task.specificFlag === 2) {
         actions.push({
           name: 'recall',
         });
       }
       // 3. handleTask
       // 4. cancelFlow
-      if (!isDone && flowTask.specificFlag === 0) {
+      if (!isDone && task.specificFlag === 0) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
           actions.push({
@@ -108,13 +117,13 @@ module.exports = ctx => {
         }
       }
       // 5. viewAtom
-      if (flowTask.specificFlag === 0) {
+      if (task.specificFlag === 0) {
         actions.push({
           name: 'viewAtom',
         });
       }
       // 6. appendHandleRemark
-      if (this.contextTask._nodeDef.type === 'startEventAtom' && isDone && !flowTask.handleRemark) {
+      if (task.flowNodeType === 'startEventAtom' && isDone && !task.handleRemark) {
         actions.push({
           name: 'appendHandleRemark',
         });
