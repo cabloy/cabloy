@@ -5,6 +5,7 @@ import ActionAssigneesConfirmation from './action/actionAssigneesConfirmation.js
 import ActionCancelFlow from './action/actionCancelFlow.js';
 import ActionHandleTask from './action/actionHandleTask.js';
 import ActionRecall from './action/actionRecall.js';
+import ActionForward from './action/actionForward.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -19,6 +20,7 @@ export default {
     ActionCancelFlow,
     ActionHandleTask,
     ActionRecall,
+    ActionForward,
   ],
   data() {
     return {
@@ -50,6 +52,8 @@ export default {
         return await this._onActionRecall();
       } else if (action.name === 'appendHandleRemark') {
         return await this._onActionAppendHandleRemark();
+      } else if (action.name === 'forward') {
+        return await this._onActionForward();
       }
     },
   },

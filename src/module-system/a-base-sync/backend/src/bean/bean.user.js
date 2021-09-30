@@ -311,7 +311,9 @@ module.exports = ctx => {
       const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
       const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
       const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
-      const queryWhere = query ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )` : '';
+      const queryWhere = query
+        ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
+        : '';
       const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
       const _limit = ctx.model._limit(page.size, page.index);
       // fields
@@ -335,6 +337,27 @@ module.exports = ctx => {
     }
 
     async select({ options, pageForce = true, count = 0 }) {
+      return await this._list({ options, pageForce, count });
+    }
+
+    async selectGeneral({ params, pageForce = true, count = 0 }) {
+      const { query, page } = params;
+      const options = {
+        where: {
+          'a.anonymous': 0,
+          'a.disabled': 0,
+        },
+        orders: [['a.userName', 'asc']],
+        page,
+        removePrivacy: true,
+      };
+      if (query) {
+        options.where.__or__ = [
+          { 'a.userName': { op: 'like', val: query } },
+          { 'a.realName': { op: 'like', val: query } },
+          { 'a.mobile': { op: 'like', val: query } },
+        ];
+      }
       return await this._list({ options, pageForce, count });
     }
 
@@ -408,7 +431,9 @@ module.exports = ctx => {
         authId = authItem.id;
         authUserId = authItem.userId;
       } else {
-        if (state === 'migrate' || profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
+        if (state === 'migrate' || profileUser.authShouldExists === true) {
+          ctx.throw.module(moduleInfo.relativeName, 1009);
+        }
         // add
         const res = await this.modelAuth.insert({
           providerId: providerItem.id,
@@ -527,15 +552,29 @@ module.exports = ctx => {
         data: { userIdFrom, userIdTo },
       });
       // aAuth: delete old records
-      const list = await ctx.model.query('select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?', [ctx.instance.id, userIdFrom]);
+      const list = await ctx.model.query(
+        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
+        [ctx.instance.id, userIdFrom]
+      );
       if (list.length > 0) {
         const providerIds = list.map(item => item.providerId).join(',');
-        await ctx.model.query(`delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`, [ctx.instance.id, userIdTo, providerIds]);
+        await ctx.model.query(
+          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
+          [ctx.instance.id, userIdTo, providerIds]
+        );
       }
       // aAuth: update records
-      await ctx.model.query('update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
+      await ctx.model.query('update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [
+        userIdTo,
+        ctx.instance.id,
+        userIdFrom,
+      ]);
       // aUserRole
-      await ctx.model.query('update aUserRole a set a.userId=? where a.iid=? and a.userId=?', [userIdTo, ctx.instance.id, userIdFrom]);
+      await ctx.model.query('update aUserRole a set a.userId=? where a.iid=? and a.userId=?', [
+        userIdTo,
+        ctx.instance.id,
+        userIdFrom,
+      ]);
       // delete user
       await this.model.delete({ id: userIdFrom });
     }

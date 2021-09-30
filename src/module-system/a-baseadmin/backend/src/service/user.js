@@ -1,18 +1,7 @@
 module.exports = app => {
   class User extends app.Service {
-    async select({ query, page }) {
-      return await this.ctx.bean.user.select({
-        options: {
-          where: {
-            'a.anonymous': 0,
-            'a.disabled': 0,
-            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
-          },
-          orders: [['a.userName', 'asc']],
-          page,
-          removePrivacy: true,
-        },
-      });
+    async select(params) {
+      return await this.ctx.bean.user.selectGeneral({ params });
     }
 
     async list({ roleId, query, anonymous, page }) {
