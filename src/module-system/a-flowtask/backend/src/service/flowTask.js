@@ -45,9 +45,9 @@ module.exports = app => {
     }
 
     async userSelectForward({ flowTaskId, params, user }) {
-      // check write right
-      const rightWrite = await this.__checkRightWrite({ host, user });
-      if (!rightWrite) this.ctx.throw(403);
+      // check right
+      const flowTask = await this.ctx.model.flowTask.get({ id: flowTaskId });
+      await this.ctx.bean.local.right.forward({ flowTask, user });
       // users
       return await this.ctx.bean.user.selectGeneral({ params });
     }
