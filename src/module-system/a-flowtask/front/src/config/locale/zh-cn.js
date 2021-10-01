@@ -15,6 +15,7 @@ export default {
   Outdated: '已过期',
   Remark: '说明',
   Submitted: '已提交',
+  Assignee: '参与人',
   Assignees: '参与人',
   Confirmation: '确认',
   Bidding: '竞标',

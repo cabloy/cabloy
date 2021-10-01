@@ -2,40 +2,26 @@ export default {
   methods: {
     async _onActionForward() {
       const { ctx } = this.$props;
-      const { flowTaskId } = this.$data;
-      ctx.$view.navigate('/a/baseadmin/user/select', {
-        // target: '_self',
+      // navigate options
+      const navigateOptions = {
         context: {
           params: {
-            onFetchUsers: ({ query, page }) => {
-              return this.$api.post('/a/flowtask/task/userSelectForward', {
-                flowTaskId,
-                params: {
-                  query,
-                  page,
-                },
-              });
-            },
+            flowTaskId: this.flowTaskId,
           },
-          callback: (code, data) => {
+          callback: code => {
             if (code === 200) {
-              this._onActionForward_handle({ userId: data.id });
+              this.flowLayoutManager.base_loadData().then(() => {});
             }
           },
         },
-      });
-    },
-    async _onActionForward_handle({ userId }) {
-      const { ctx } = this.$props;
-      const { flowLayoutManager, flowTaskId } = this.$data;
-      await ctx.$api.post('/a/flowtask/task/forward', {
-        flowTaskId,
-        handle: {
-          assignee: userId,
-          remark,
-        },
-      });
-      await flowLayoutManager.base_loadData();
+      };
+      if (ctx.$pageRoute.path === '/a/flowtask/flowTaskAtom') {
+        navigateOptions.target = '_self';
+        navigateOptions.reloadCurrent = true;
+      }
+      // navigate
+      const url = `/a/flowtask/flowTaskAction/forward?flowTaskId=${this.flowTaskId}`;
+      ctx.$view.navigate(url, navigateOptions);
     },
   },
 };
