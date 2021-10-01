@@ -11,4 +11,5 @@ module.exports = {
   1009: 'Task Assignees cannot be appended: %s',
   1010: 'Flow cannot be cancelled: %s',
   1011: 'Task Handle Remark cannot be appended: %s',
+  1012: 'Task has been forwarded: %s',
 };

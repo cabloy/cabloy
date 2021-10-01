@@ -139,7 +139,7 @@ module.exports = ctx => {
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
       // check right
-      const right = this.localRight.claim({ flowTask, user });
+      const right = await this.localRight.claim({ flowTask, user });
       if (right) return right;
       // flowTask
       const timeClaimed = new Date();

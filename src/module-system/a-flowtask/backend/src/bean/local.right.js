@@ -13,7 +13,13 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1002, flowTask.id);
       }
     }
-    claim({ flowTask, user }) {
+    async _getNodeOptions({ flowTask, nodeInstance }) {
+      if (!nodeInstance) {
+        nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
+      }
+      return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
+    }
+    async claim({ flowTask, user }) {
       // not complete
       this._check_notDone({ flowTask });
       // must be the same user
@@ -24,7 +30,17 @@ module.exports = ctx => {
         return { timeClaimed: flowTask.timeClaimed };
       }
     }
-    forward({ flowTask, user }) {}
+    async forward({ flowTask, user, nodeInstance }) {
+      // not complete
+      this._check_notDone({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // options
+      const options = await this._getNodeOptions({ flowTask, nodeInstance });
+      if (!options.allowForward || flowTask.userIdForwardTo) {
+        ctx.throw.module(moduleInfo.relativeName, 1012, flowTask.id);
+      }
+    }
   }
 
   return Right;
