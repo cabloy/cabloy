@@ -25,6 +25,9 @@ module.exports = ctx => {
     get modelFlowTaskHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
     }
+    get localRight() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.right');
+    }
 
     async init({ userIdAssignee, user }) {
       // create flowTask
@@ -135,15 +138,9 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      }
-      // check: not throw error
-      // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
-      if (flowTask.timeClaimed) {
-        return { timeClaimed: flowTask.timeClaimed };
-      }
+      // check right
+      const right = this.localRight.claim({ flowTask, user });
+      if (right) return right;
       // flowTask
       const timeClaimed = new Date();
       this.contextTask._flowTask.timeClaimed = timeClaimed;
