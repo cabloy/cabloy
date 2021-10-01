@@ -109,6 +109,15 @@ module.exports = app => {
       });
       this.ctx.successMore(items, page.index, page.size);
     }
+
+    async forward() {
+      const res = await this.ctx.service.flowTask.forward({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
   return FlowTaskController;
 };

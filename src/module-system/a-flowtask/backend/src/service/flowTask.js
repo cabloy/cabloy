@@ -51,6 +51,10 @@ module.exports = app => {
       // users
       return await this.ctx.bean.user.selectGeneral({ params });
     }
+
+    async forward({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.forward({ flowTaskId, handle, user });
+    }
   }
   return FlowTask;
 };

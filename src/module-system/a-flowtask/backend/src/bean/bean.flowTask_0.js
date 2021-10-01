@@ -88,6 +88,12 @@ module.exports = ctx => {
       return await taskInstance._editAtom();
     }
 
+    async forward({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._forward({ handle });
+    }
+
     async flowData({ flowId, user }) {
       // flow
       const flow = await this._flowData_flow({ flowId, user });
