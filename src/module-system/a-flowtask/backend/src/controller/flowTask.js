@@ -97,6 +97,18 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async userSelectForward() {
+      const { flowTaskId, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowTask.userSelectForward({
+        flowTaskId,
+        params,
+        user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
   }
   return FlowTaskController;
 };

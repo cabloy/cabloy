@@ -43,6 +43,14 @@ module.exports = app => {
     async editAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.editAtom({ flowTaskId, user });
     }
+
+    async userSelectForward({ flowTaskId, params, user }) {
+      // check write right
+      const rightWrite = await this.__checkRightWrite({ host, user });
+      if (!rightWrite) this.ctx.throw(403);
+      // users
+      return await this.ctx.bean.user.selectGeneral({ params });
+    }
   }
   return FlowTask;
 };

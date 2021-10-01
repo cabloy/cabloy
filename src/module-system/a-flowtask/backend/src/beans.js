@@ -5,6 +5,7 @@ const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js')
 const localContextTask = require('./bean/local.context.task.js');
 const localFlowTask = require('./bean/local.flow.task.js');
 const localProcedure = require('./bean/local.procedure.js');
+const localRight = require('./bean/local.right.js');
 const beanFlowTask = require('./bean/bean.flowTask.js');
 const statsTaskClaimings = require('./bean/stats.taskClaimings.js');
 const statsTaskHandlings = require('./bean/stats.taskHandlings.js');
@@ -42,6 +43,10 @@ module.exports = app => {
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
+    },
+    'local.right': {
+      mode: 'ctx',
+      bean: localRight,
     },
     // global
     flowTask: {
