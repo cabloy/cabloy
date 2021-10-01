@@ -25,7 +25,7 @@ export default {
         navigateOptions.reloadCurrent = true;
       }
       // navigate
-      const url = `/a/flowtask/assigneesConfirmation?flowTaskId=${this.flowTaskId}`;
+      const url = `/a/flowtask/flowTaskAction/assigneesConfirmation?flowTaskId=${this.flowTaskId}`;
       ctx.$view.navigate(url, navigateOptions);
     },
   },

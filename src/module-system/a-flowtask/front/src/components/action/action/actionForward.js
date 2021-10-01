@@ -19,7 +19,6 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              console.log(data);
               this._onActionForward_handle({ userId: data.id });
             }
           },
@@ -27,8 +26,15 @@ export default {
       });
     },
     async _onActionForward_handle({ userId }) {
-      const { flowLayoutManager, task, flowTaskId } = this.$data;
-
+      const { ctx } = this.$props;
+      const { flowLayoutManager, flowTaskId } = this.$data;
+      await ctx.$api.post('/a/flowtask/task/forward', {
+        flowTaskId,
+        handle: {
+          assignee: userId,
+          remark,
+        },
+      });
       await flowLayoutManager.base_loadData();
     },
   },
