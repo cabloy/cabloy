@@ -57,7 +57,9 @@ export default {
       // load flow & atom
       await this.flowLayoutManager.base_loadData();
       // pageDirty : save/submit(pass/reject)
-      this.atomLayoutManager.page_setDirty(false);
+      if (this.atomLayoutManager) {
+        this.atomLayoutManager.page_setDirty(false);
+      }
       // back
       if (handle) {
         if (this.pathThis === '/a/flowtask/flowTaskAtom') {
@@ -105,7 +107,13 @@ export default {
         </f7-toolbar>
         <f7-page-content>
           <eb-list form inline-labels no-hairlines-md onSubmit={event => this.onFormSubmit(event)}>
-            <eb-list-input label={this.$text('Remark')} type="text" clear-button placeholder={this.$text('Remark')} v-model={this.remark}></eb-list-input>
+            <eb-list-input
+              label={this.$text('Remark')}
+              type="text"
+              clear-button
+              placeholder={this.$text('Remark')}
+              v-model={this.remark}
+            ></eb-list-input>
           </eb-list>
         </f7-page-content>
       </f7-sheet>
