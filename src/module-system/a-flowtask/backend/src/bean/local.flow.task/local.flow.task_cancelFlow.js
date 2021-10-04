@@ -1,25 +1,13 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
     async _cancelFlow({ handle }) {
       // user
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 0
-      if (flowTask.specificFlag !== 0) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      }
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // check if allowCancelFlow
-      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-      if (!options.allowCancelFlow) {
-        ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
-      }
+      // check right
+      await this.localRight.cancelFlow({ flowTask, user, nodeInstance: this.nodeInstance });
       // handle
       await this._cancelFlow_handle({ handle });
     }

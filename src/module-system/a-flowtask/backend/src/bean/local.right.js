@@ -1,6 +1,15 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Right {
+    _check_specificFlag_0({ flowTask }) {
+      if (flowTask.specificFlag !== 0) ctx.throw(403);
+    }
+    _check_specificFlag_1({ flowTask }) {
+      if (flowTask.specificFlag !== 1) ctx.throw(403);
+    }
+    _check_specificFlag_2({ flowTask }) {
+      if (flowTask.specificFlag !== 2) ctx.throw(403);
+    }
     _check_sameUser({ flowTask, user }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
@@ -39,7 +48,7 @@ module.exports = ctx => {
     }
     async assignees({ flowTask, user }) {
       // specificFlag must be 1
-      if (flowTask.specificFlag !== 1) ctx.throw(403);
+      this._check_specificFlag_1({ flowTask });
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
@@ -50,6 +59,21 @@ module.exports = ctx => {
     async assigneesConfirmation({ flowTask, user }) {
       // same as assignees
       return await this.assignees({ flowTask, user });
+    }
+    async cancelFlow({ flowTask, user, nodeInstance }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // specificFlag must be 0
+      this._check_specificFlag_0({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // options
+      const options = await this._getNodeOptions({ flowTask, nodeInstance });
+      // check if allowCancelFlow
+      if (!options.allowCancelFlow) {
+        ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
+      }
     }
     async claim({ flowTask, user }) {
       // must be the same user
