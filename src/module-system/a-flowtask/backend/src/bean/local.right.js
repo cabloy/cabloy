@@ -47,6 +47,10 @@ module.exports = ctx => {
       // timeClaimed first
       this._check_claimed({ flowTask });
     }
+    async assigneesConfirmation({ flowTask, user }) {
+      // same as assignees
+      return await this.assignees({ flowTask, user });
+    }
     async claim({ flowTask, user }) {
       // must be the same user
       this._check_sameUser({ flowTask, user });
