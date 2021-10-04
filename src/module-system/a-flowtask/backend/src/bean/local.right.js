@@ -21,6 +21,15 @@ module.exports = ctx => {
       }
       return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
     }
+    async appendHandleRemark({ flowTask, user, nodeDef }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // more check
+      if (nodeDef.type !== 'startEventAtom' || flowTask.flowTaskStatus !== 1 || flowTask.handleRemark) {
+        ctx.throw.module(moduleInfo.relativeName, 1011, flowTaskId);
+      }
+    }
     async claim({ flowTask, user }) {
       // not complete
       this._check_notDone({ flowTask });
