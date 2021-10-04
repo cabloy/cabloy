@@ -101,7 +101,7 @@ module.exports = ctx => {
       }
       // 3. handleTask
       // 4. cancelFlow
-      if (!isDone && !task.userIdForwardTo && !task.userIdSubstituteTo) {
+      if (!isDone && !task.flowTaskIdForwardTo && !task.flowTaskIdSubstituteTo) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
         // allowPassTask allowRejectTask
         if (options.allowPassTask || options.allowRejectTask) {
@@ -137,14 +137,14 @@ module.exports = ctx => {
         // allowForward
         if (options.allowForward) {
           // check if has forwarded
-          if (!task.userIdForwardTo) {
+          if (!task.flowTaskIdForwardTo) {
             actions.push({
               name: 'forward',
             });
           } else {
             // check if claimed
             const taskTo = tasks.find(
-              item => item.flowNodeId === task.flowNodeId && item.userIdForwardFrom === task.userIdAssignee
+              item => item.flowNodeId === task.flowNodeId && item.flowTaskIdForwardFrom === task.flowTaskId
             );
             if (!taskTo.timeClaimed) {
               actions.push({
@@ -154,16 +154,16 @@ module.exports = ctx => {
           }
         }
         // allowSubstitute, allowed only once
-        if (options.allowSubstitute && !task.userIdSubstituteFrom) {
+        if (options.allowSubstitute && !task.flowTaskIdSubstituteFrom) {
           // check if has substituted
-          if (!task.userIdSubstituteTo) {
+          if (!task.flowTaskIdSubstituteTo) {
             actions.push({
               name: 'substitute',
             });
           } else {
             // check if claimed
             const taskTo = tasks.find(
-              item => item.flowNodeId === task.flowNodeId && item.userIdSubstituteFrom === task.userIdAssignee
+              item => item.flowNodeId === task.flowNodeId && item.flowTaskIdSubstituteFrom === task.flowTaskId
             );
             if (!taskTo.timeClaimed) {
               actions.push({

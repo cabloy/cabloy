@@ -129,7 +129,7 @@ module.exports = ctx => {
       this._check_notDone({ flowTask });
       // options
       const options = await this._getNodeOptions({ flowTask, nodeInstance });
-      if (!options.allowForward || flowTask.userIdForwardTo) {
+      if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
         ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
       }
     }

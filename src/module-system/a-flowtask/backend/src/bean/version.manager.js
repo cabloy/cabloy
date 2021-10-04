@@ -77,20 +77,20 @@ module.exports = app => {
         // aFlowTask
         sql = `
           ALTER TABLE aFlowTask
-            ADD COLUMN userIdForwardFrom int(11) DEFAULT '0',
-            ADD COLUMN userIdForwardTo int(11) DEFAULT '0',
-            ADD COLUMN userIdSubstituteFrom int(11) DEFAULT '0',
-            ADD COLUMN userIdSubstituteTo int(11) DEFAULT '0'
+            ADD COLUMN flowTaskIdForwardFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardTo int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteTo int(11) DEFAULT '0'
                 `;
         await this.ctx.model.query(sql);
 
         // aFlowTaskHistory
         sql = `
           ALTER TABLE aFlowTaskHistory
-            ADD COLUMN userIdForwardFrom int(11) DEFAULT '0',
-            ADD COLUMN userIdForwardTo int(11) DEFAULT '0',
-            ADD COLUMN userIdSubstituteFrom int(11) DEFAULT '0',
-            ADD COLUMN userIdSubstituteTo int(11) DEFAULT '0'
+            ADD COLUMN flowTaskIdForwardFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardTo int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteTo int(11) DEFAULT '0'
                 `;
         await this.ctx.model.query(sql);
       }
