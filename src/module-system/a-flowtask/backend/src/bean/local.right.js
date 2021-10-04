@@ -1,6 +1,9 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Right {
+    get modelFlowTask() {
+      return ctx.model.module(moduleInfo.relativeName).flowTask;
+    }
     _check_specificFlag_normal({ flowTask }) {
       if (flowTask.specificFlag === 1 || flowTask.specificFlag === 2) ctx.throw(403);
     }
@@ -40,6 +43,10 @@ module.exports = ctx => {
         nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
       }
       return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
+    }
+    async _getTask({ getTask, flowTaskId }) {
+      if (getTask) return await getTask(flowTaskId);
+      return await this.modelFlowTask.get({ id: flowTaskId });
     }
     async appendHandleRemark({ flowTask, user, flowNodeType }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
@@ -142,6 +149,23 @@ module.exports = ctx => {
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
         ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
+      }
+    }
+    async forwardRecall({ flowTask, user, getOptions, getTask }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // options
+      const options = await this._getNodeOptions({ getOptions, flowTask });
+      if (!options.allowForward || !flowTask.flowTaskIdForwardTo) {
+        ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
+      }
+      // check if claimed
+      const taskTo = await this._getTask({ getTask, flowTaskId: flowTask.flowTaskIdForwardTo });
+      if (taskTo.timeClaimed) {
+        ctx.throw(403);
       }
     }
   }

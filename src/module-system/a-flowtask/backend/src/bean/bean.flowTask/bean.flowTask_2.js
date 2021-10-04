@@ -161,29 +161,44 @@ module.exports = ctx => {
           name: 'appendHandleRemark',
         });
       }
-      // 7. allowForward
-      // 8. allowSubstitute
+      // 7.1 allowForward: forward
+      res = await this._flowData_task_checkRight(
+        this.localRight.forward({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'forward',
+        });
+      }
+      // 7.2 allowForward: forwardRecall
+      res = await this._flowData_task_checkRight(
+        this.localRight.forwardRecall({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          getTask: flowTaskIdForwardTo => {
+            return tasks.find(item => item.flowTaskId === flowTaskIdForwardTo);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'forwardRecall',
+        });
+      }
+      // 8.1 allowSubstitute: substitute
+
+      // 8.2 allowSubstitute: substituteRecall
       if (!isDone) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
-        // allowForward
-        if (options.allowForward) {
-          // check if has forwarded
-          if (!task.flowTaskIdForwardTo) {
-            actions.push({
-              name: 'forward',
-            });
-          } else {
-            // check if claimed
-            const taskTo = tasks.find(
-              item => item.flowNodeId === task.flowNodeId && item.flowTaskIdForwardFrom === task.flowTaskId
-            );
-            if (!taskTo.timeClaimed) {
-              actions.push({
-                name: 'forwardRecall',
-              });
-            }
-          }
-        }
         // allowSubstitute, allowed only once
         if (options.allowSubstitute && !task.flowTaskIdSubstituteFrom) {
           // check if has substituted
