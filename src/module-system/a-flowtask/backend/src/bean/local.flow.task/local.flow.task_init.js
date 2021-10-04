@@ -87,6 +87,16 @@ module.exports = ctx => {
       // user
       this.contextTask._user = user;
     }
+
+    async _hidden({ hidden }) {
+      // flowTask
+      const flowTaskHidden = hidden ? 1 : 0;
+      this.contextTask._flowTask.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // history
+      this.contextTask._flowTaskHistory.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
   }
   return FlowTask;
 };
