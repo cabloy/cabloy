@@ -101,7 +101,7 @@ module.exports = ctx => {
         return { timeClaimed: flowTask.timeClaimed };
       }
     }
-    async complete({ flowTask, user, handle, getOptions }) {
+    async complete({ flowTask, user, handle, getOptions, disableCheckTimeClaimed }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // specificFlag must be normal
       this._check_specificFlag_normal({ flowTask });
@@ -109,8 +109,10 @@ module.exports = ctx => {
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
-      // // timeClaimed first
-      // this._check_claimed({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
       // check if forward/substitute
       if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
         ctx.throw(403);

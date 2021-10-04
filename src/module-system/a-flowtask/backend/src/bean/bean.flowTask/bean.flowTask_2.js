@@ -119,6 +119,7 @@ module.exports = ctx => {
           getOptions: async () => {
             return await nodeInstances.getOptions(task.flowNodeId);
           },
+          disableCheckTimeClaimed: true,
         })
       );
       if (res) {
