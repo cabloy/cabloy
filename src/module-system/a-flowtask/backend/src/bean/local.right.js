@@ -1,6 +1,9 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Right {
+    _check_specificFlag_normal({ flowTask }) {
+      if (flowTask.specificFlag === 1 || flowTask.specificFlag === 2) ctx.throw(403);
+    }
     _check_specificFlag_0({ flowTask }) {
       if (flowTask.specificFlag !== 0) ctx.throw(403);
     }
@@ -62,8 +65,8 @@ module.exports = ctx => {
     }
     async cancelFlow({ flowTask, user, nodeInstance }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
-      // specificFlag must be 0
-      this._check_specificFlag_0({ flowTask });
+      // specificFlag must be normal
+      this._check_specificFlag_normal({ flowTask });
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
@@ -84,6 +87,28 @@ module.exports = ctx => {
       // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
       if (flowTask.timeClaimed) {
         return { timeClaimed: flowTask.timeClaimed };
+      }
+    }
+    async complete({ flowTask, user, nodeInstance, handle }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // specificFlag must be normal
+      this._check_specificFlag_normal({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+      // check if pass/reject
+      if (handle) {
+        // options
+        const options = await this._getNodeOptions({ flowTask, nodeInstance });
+        if (handle.status === 1 && !options.allowPassTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+        }
+        if (handle.status === 2 && !options.allowRejectTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
+        }
       }
     }
     async forward({ flowTask, user, nodeInstance }) {
