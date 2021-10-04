@@ -102,22 +102,24 @@ module.exports = ctx => {
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
-      // timeClaimed first
-      this._check_claimed({ flowTask });
+      // // timeClaimed first
+      // this._check_claimed({ flowTask });
       // check if forward/substitute
       if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
         ctx.throw(403);
       }
+      // options
+      const options = await this._getNodeOptions({ getOptions, flowTask });
       // check if pass/reject
       if (handle) {
-        // options
-        const options = await this._getNodeOptions({ getOptions, flowTask });
         if (handle.status === 1 && !options.allowPassTask) {
           ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
         }
         if (handle.status === 2 && !options.allowRejectTask) {
           ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
         }
+      } else if (!options.allowPassTask && !options.allowRejectTask) {
+        ctx.throw(403);
       }
     }
     async recall({ flowTask, user }) {

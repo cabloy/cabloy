@@ -113,32 +113,50 @@ module.exports = ctx => {
         return actions;
       }
       // 3. handleTask
-      // 4. cancelFlow
-      if (!isDone && !task.flowTaskIdForwardTo && !task.flowTaskIdSubstituteTo) {
+      res = await this._flowData_task_checkRight(
+        this.localRight.complete({
+          flowTask,
+          user,
+          handle: null,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+        })
+      );
+      if (res) {
         const options = await nodeInstances.getOptions(task.flowNodeId);
-        // allowPassTask allowRejectTask
-        if (options.allowPassTask || options.allowRejectTask) {
-          actions.push({
-            name: 'handleTask',
-            options: {
-              allowPassTask: options.allowPassTask,
-              allowRejectTask: options.allowRejectTask,
-            },
-          });
-        }
-        // allowCancelFlow
-        if (options.allowCancelFlow) {
-          actions.push({
-            name: 'cancelFlow',
-          });
-        }
+        actions.push({
+          name: 'handleTask',
+          options: {
+            allowPassTask: options.allowPassTask,
+            allowRejectTask: options.allowRejectTask,
+          },
+        });
+      }
+      // 4. cancelFlow
+      res = await this._flowData_task_checkRight(
+        this.localRight.cancelFlow({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'cancelFlow',
+        });
       }
       // 5. viewAtom
       actions.push({
         name: 'viewAtom',
       });
       // 6. appendHandleRemark
-      if (task.flowNodeType === 'startEventAtom' && isDone && !task.handleRemark) {
+      res = await this._flowData_task_checkRight(
+        this.localRight.appendHandleRemark({ flowTask, user, flowNodeType: task.flowNodeType })
+      );
+      if (res) {
         actions.push({
           name: 'appendHandleRemark',
         });
