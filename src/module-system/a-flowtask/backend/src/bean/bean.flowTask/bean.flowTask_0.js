@@ -7,7 +7,9 @@ module.exports = ctx => {
     get modelFlowTaskHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
     }
-
+    get localRight() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.right');
+    }
     get sqlProcedure() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }

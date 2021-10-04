@@ -78,13 +78,25 @@ module.exports = ctx => {
       return tasks;
     }
 
+    async _flowData_task_checkRight(fn) {
+      try {
+        await fn;
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
     async _flowData_task_actions({ nodeInstances, tasks, task, user }) {
       // info
       const isDone = task.flowTaskStatus === 1;
       // actions
       const actions = [];
+      const flowTask = task;
+      let res;
       // 1. assigneesConfirmation
-      if (!isDone && task.specificFlag === 1) {
+      res = await this._flowData_task_checkRight(this.localRight.assigneesConfirmation({ flowTask, user }));
+      if (res) {
         actions.push({
           name: 'assigneesConfirmation',
         });
@@ -92,7 +104,8 @@ module.exports = ctx => {
         return actions;
       }
       // 2. recall
-      if (!isDone && task.specificFlag === 2) {
+      res = await this._flowData_task_checkRight(this.localRight.recall({ flowTask, user }));
+      if (res) {
         actions.push({
           name: 'recall',
         });

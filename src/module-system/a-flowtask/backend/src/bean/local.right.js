@@ -71,6 +71,10 @@ module.exports = ctx => {
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
+      // check if forward/substitute
+      if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw(403);
+      }
       // options
       const options = await this._getNodeOptions({ flowTask, nodeInstance });
       // check if allowCancelFlow
@@ -99,6 +103,10 @@ module.exports = ctx => {
       this._check_notDone({ flowTask });
       // timeClaimed first
       this._check_claimed({ flowTask });
+      // check if forward/substitute
+      if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw(403);
+      }
       // check if pass/reject
       if (handle) {
         // options
