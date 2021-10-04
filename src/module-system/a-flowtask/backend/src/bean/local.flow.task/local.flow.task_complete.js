@@ -7,7 +7,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.complete({ flowTask, user, nodeInstance: this.nodeInstance, handle });
+      await this.localRight.complete({ flowTask, user, handle, getOptions: () => this._getNodeOptions() });
       // formAtom
       if (formAtom) {
         await this._complete_formAtom({ formAtom });

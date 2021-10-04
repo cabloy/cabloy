@@ -34,18 +34,19 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       }
     }
-    async _getNodeOptions({ flowTask, nodeInstance }) {
+    async _getNodeOptions({ getOptions, flowTask, nodeInstance }) {
+      if (getOptions) return await getOptions();
       if (!nodeInstance) {
         nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
       }
       return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
     }
-    async appendHandleRemark({ flowTask, user, nodeDef }) {
+    async appendHandleRemark({ flowTask, user, flowNodeType }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // more check
-      if (nodeDef.type !== 'startEventAtom' || flowTask.flowTaskStatus !== 1 || flowTask.handleRemark) {
+      if (flowNodeType !== 'startEventAtom' || flowTask.flowTaskStatus !== 1 || flowTask.handleRemark) {
         ctx.throw.module(moduleInfo.relativeName, 1011, flowTaskId);
       }
     }
@@ -63,7 +64,7 @@ module.exports = ctx => {
       // same as assignees
       return await this.assignees({ flowTask, user });
     }
-    async cancelFlow({ flowTask, user, nodeInstance }) {
+    async cancelFlow({ flowTask, user, getOptions }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // specificFlag must be normal
       this._check_specificFlag_normal({ flowTask });
@@ -76,7 +77,7 @@ module.exports = ctx => {
         ctx.throw(403);
       }
       // options
-      const options = await this._getNodeOptions({ flowTask, nodeInstance });
+      const options = await this._getNodeOptions({ getOptions, flowTask });
       // check if allowCancelFlow
       if (!options.allowCancelFlow) {
         ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
@@ -93,7 +94,7 @@ module.exports = ctx => {
         return { timeClaimed: flowTask.timeClaimed };
       }
     }
-    async complete({ flowTask, user, nodeInstance, handle }) {
+    async complete({ flowTask, user, handle, getOptions }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // specificFlag must be normal
       this._check_specificFlag_normal({ flowTask });
@@ -110,7 +111,7 @@ module.exports = ctx => {
       // check if pass/reject
       if (handle) {
         // options
-        const options = await this._getNodeOptions({ flowTask, nodeInstance });
+        const options = await this._getNodeOptions({ getOptions, flowTask });
         if (handle.status === 1 && !options.allowPassTask) {
           ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
         }
@@ -129,14 +130,14 @@ module.exports = ctx => {
       // timeClaimed first
       this._check_claimed({ flowTask });
     }
-    async forward({ flowTask, user, nodeInstance }) {
+    async forward({ flowTask, user, getOptions }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
       // options
-      const options = await this._getNodeOptions({ flowTask, nodeInstance });
+      const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
         ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
       }

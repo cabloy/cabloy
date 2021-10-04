@@ -7,7 +7,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTaskHistory;
       // check right
-      await this.localRight.appendHandleRemark({ flowTask, user, nodeDef: this.contextTask._nodeDef });
+      await this.localRight.appendHandleRemark({ flowTask, user, flowNodeType: this.contextTask._nodeDef.type });
       // only update flowTaskHistory
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);

@@ -106,6 +106,10 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.flowTaskHidden = flowTaskHidden;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
+
+    _getNodeOptions() {
+      return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
+    }
   }
   return FlowTask;
 };
