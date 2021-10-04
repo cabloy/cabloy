@@ -6,17 +6,8 @@ module.exports = ctx => {
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 1
-      if (flowTask.specificFlag !== 1) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      }
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // check right
+      await this.localRight.assignees({ flowTask, user });
       // handle
       return await this._assignees_handle();
     }
