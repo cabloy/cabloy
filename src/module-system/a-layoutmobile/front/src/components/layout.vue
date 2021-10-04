@@ -138,7 +138,13 @@ export default {
         // view
         const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
         // check if target===_view or in views
-        if (!$viewEl || target === '_view' || target === '_group' || scene === 'sidebar' || $viewEl.parents('.eb-layout-scene').length > 0) {
+        if (
+          !$viewEl ||
+          target === '_view' ||
+          target === '_group' ||
+          scene === 'sidebar' ||
+          $viewEl.parents('.eb-layout-scene').length > 0
+        ) {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {
@@ -175,9 +181,11 @@ export default {
       const promises = [];
       for (const resourceType of resourceTypes) {
         promises.push(
-          this.$store.dispatch('a/base/getResources', { resourceType: `a-layoutmobile:${resourceType.name}` }).then(data => {
-            this[resourceType.var] = data;
-          })
+          this.$store
+            .dispatch('a/base/getResources', { resourceType: `a-layoutmobile:${resourceType.name}` })
+            .then(data => {
+              this[resourceType.var] = data;
+            })
         );
       }
       return Promise.all(promises);
@@ -192,7 +200,11 @@ export default {
       this.__removeDynamicResources(value);
       // save
       const atomStaticKey = this.__getLayoutKey();
-      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutmobile', key: `layout:${atomStaticKey}`, value });
+      this.$store.commit('a/base/setLayoutConfigKey', {
+        module: 'a-layoutmobile',
+        key: `layout:${atomStaticKey}`,
+        value,
+      });
     },
     __removeDynamicResource(resources) {
       for (let index = resources.length - 1; index >= 0; index--) {
@@ -200,7 +212,9 @@ export default {
         if (!resource.atomStaticKey && !resource.module) {
           resources.splice(index, 1);
         } else {
-          resources[index] = resource.atomStaticKey ? { atomStaticKey: resource.atomStaticKey } : { module: resource.module, name: resource.name };
+          resources[index] = resource.atomStaticKey
+            ? { atomStaticKey: resource.atomStaticKey }
+            : { module: resource.module, name: resource.name };
         }
       }
     },
@@ -213,7 +227,7 @@ export default {
     __getLayoutKey() {
       if (this.layoutAtomStaticKey) return this.layoutAtomStaticKey;
       const presets = this.$config.layout.presets;
-      const layoutConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
+      const layoutConfig = !this.user || this.user.op.anonymous ? presets.anonymous : presets.authenticated;
       let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
       if (!atomStaticKey) {
         atomStaticKey = layoutConfig.scene.web;
@@ -309,7 +323,9 @@ export default {
       return this._resourceFullName(button);
     },
     _findButton(button) {
-      const _buttonIndex = this.layoutConfig.toolbar.buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      const _buttonIndex = this.layoutConfig.toolbar.buttons.findIndex(
+        item => this._buttonFullName(item) === this._buttonFullName(button)
+      );
       if (_buttonIndex === -1) return [null, -1];
       return [this.layoutConfig.toolbar.buttons[_buttonIndex], _buttonIndex];
     },

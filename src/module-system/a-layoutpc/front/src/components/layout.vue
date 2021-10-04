@@ -409,7 +409,7 @@ export default {
     __getLayoutKey() {
       if (this.layoutAtomStaticKey) return this.layoutAtomStaticKey;
       const presets = this.$config.layout.presets;
-      const layoutConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
+      const layoutConfig = !this.user || this.user.op.anonymous ? presets.anonymous : presets.authenticated;
       let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
       if (!atomStaticKey) {
         atomStaticKey = layoutConfig.scene.web;
