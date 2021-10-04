@@ -88,8 +88,6 @@ module.exports = ctx => {
     }
 
     async _flowData_task_actions({ nodeInstances, tasks, task, user }) {
-      // info
-      const isDone = task.flowTaskStatus === 1;
       // actions
       const actions = [];
       const flowTask = task;
@@ -195,29 +193,37 @@ module.exports = ctx => {
         });
       }
       // 8.1 allowSubstitute: substitute
-
+      res = await this._flowData_task_checkRight(
+        this.localRight.substitute({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'substitute',
+        });
+      }
       // 8.2 allowSubstitute: substituteRecall
-      if (!isDone) {
-        const options = await nodeInstances.getOptions(task.flowNodeId);
-        // allowSubstitute, allowed only once
-        if (options.allowSubstitute && !task.flowTaskIdSubstituteFrom) {
-          // check if has substituted
-          if (!task.flowTaskIdSubstituteTo) {
-            actions.push({
-              name: 'substitute',
-            });
-          } else {
-            // check if claimed
-            const taskTo = tasks.find(
-              item => item.flowNodeId === task.flowNodeId && item.flowTaskIdSubstituteFrom === task.flowTaskId
-            );
-            if (!taskTo.timeClaimed) {
-              actions.push({
-                name: 'substituteRecall',
-              });
-            }
-          }
-        }
+      res = await this._flowData_task_checkRight(
+        this.localRight.substituteRecall({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          getTask: flowTaskIdSubstituteTo => {
+            return tasks.find(item => item.flowTaskId === flowTaskIdSubstituteTo);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'substituteRecall',
+        });
       }
       // ok
       return actions;

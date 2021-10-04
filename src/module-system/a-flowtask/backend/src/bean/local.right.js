@@ -152,7 +152,6 @@ module.exports = ctx => {
       }
     }
     async forwardRecall({ flowTask, user, getOptions, getTask }) {
-      const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
@@ -160,10 +159,40 @@ module.exports = ctx => {
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || !flowTask.flowTaskIdForwardTo) {
-        ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
+        ctx.throw(403);
       }
       // check if claimed
       const taskTo = await this._getTask({ getTask, flowTaskId: flowTask.flowTaskIdForwardTo });
+      if (taskTo.timeClaimed) {
+        ctx.throw(403);
+      }
+    }
+    async substitute({ flowTask, user, getOptions }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // options
+      const options = await this._getNodeOptions({ getOptions, flowTask });
+      // allowed only once, so should check flowTaskIdSubstituteFrom
+      if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw.module(moduleInfo.relativeName, 1013, flowTaskId);
+      }
+    }
+    async substituteRecall({ flowTask, user, getOptions, getTask }) {
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // options
+      const options = await this._getNodeOptions({ getOptions, flowTask });
+      // allowed only once, so should check flowTaskIdSubstituteFrom
+      if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || !flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw(403);
+      }
+      // check if claimed
+      const taskTo = await this._getTask({ getTask, flowTaskId: flowTask.flowTaskIdSubstituteTo });
       if (taskTo.timeClaimed) {
         ctx.throw(403);
       }

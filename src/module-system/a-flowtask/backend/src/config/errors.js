@@ -12,4 +12,5 @@ module.exports = {
   1010: 'Flow cannot be cancelled: %s',
   1011: 'Task Handle Remark cannot be appended: %s',
   1012: 'Task has been forwarded: %s',
+  1013: 'Task has been substituted: %s',
 };
