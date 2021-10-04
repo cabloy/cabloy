@@ -4,6 +4,15 @@ const UtilsFn = require('../../common/utils.js');
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
+    async init({ userIdAssignee, user }) {
+      // create flowTask
+      const flowTaskId = await this._createFlowTask({ userIdAssignee, user });
+      // context init
+      await this._contextInit({ flowTaskId, user });
+      // event
+      await this.created();
+    }
+
     async _load({ flowTask, user, history }) {
       // context init
       await this._contextInit({ flowTaskId: flowTask.id, user, history });

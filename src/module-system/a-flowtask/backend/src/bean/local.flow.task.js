@@ -1,4 +1,5 @@
 const flowTask_0 = require('./local.flow.task/local.flow.task_0.js');
+const flowTask_appendHandleRemark = require('./local.flow.task/local.flow.task_appendHandleRemark.js');
 const flowTask_assignees = require('./local.flow.task/local.flow.task_assignees.js');
 const flowTask_cancelFlow = require('./local.flow.task/local.flow.task_cancelFlow.js');
 const flowTask_claim = require('./local.flow.task/local.flow.task_claim.js');
@@ -12,6 +13,7 @@ module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(
     flowTask_0,
     [
+      flowTask_appendHandleRemark,
       flowTask_assignees,
       flowTask_cancelFlow,
       flowTask_claim,

@@ -19,6 +19,27 @@ module.exports = ctx => {
       await this._saveVars();
     }
 
+    async _saveTaskVars() {
+      if (!this.contextTask._taskVars._dirty) return;
+      // flowTask
+      this.contextTask._flowTask.taskVars = JSON.stringify(this.contextTask._taskVars._vars);
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTask history
+      this.contextTask._flowTaskHistory.taskVars = this.contextTask._flowTask.taskVars;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // done
+      this.contextTask._taskVars._dirty = false;
+    }
+
+    async _saveVars() {
+      // save taskVars
+      await this._saveTaskVars();
+      // save nodeVars
+      await this.nodeInstance._saveNodeVars();
+      // save flowVars
+      await this.flowInstance._saveFlowVars();
+    }
+
     _notifyTaskClaimings(userId) {
       ctx.bean.flowTask._notifyTaskClaimings(userId);
     }
