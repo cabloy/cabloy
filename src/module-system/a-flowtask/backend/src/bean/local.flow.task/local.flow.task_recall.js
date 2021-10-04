@@ -1,22 +1,13 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
     async _recall() {
       // user
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 2
-      if (flowTask.specificFlag !== 2) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
-        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      }
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // check right
+      await this.localRight.recall({ flowTask, user });
       // handle
       await this._recall_handle();
       // notify

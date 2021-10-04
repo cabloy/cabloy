@@ -111,6 +111,16 @@ module.exports = ctx => {
         }
       }
     }
+    async recall({ flowTask, user }) {
+      // specificFlag must be 2
+      this._check_specificFlag_2({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+    }
     async forward({ flowTask, user, nodeInstance }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
