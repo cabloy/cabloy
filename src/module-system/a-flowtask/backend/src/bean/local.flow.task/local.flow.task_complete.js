@@ -76,6 +76,8 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // special for forward
       await this._complete_handle_checkForward();
+      // special for substitute
+      await this._complete_handle_checkSubstitute();
     }
 
     async _complete_handle_checkForward() {
@@ -91,6 +93,22 @@ module.exports = ctx => {
         this._notifyTaskHandlings(taskFrom.userIdAssignee);
         // next
         flowTaskIdForwardFrom = taskFrom.flowTaskIdForwardFrom;
+      }
+    }
+
+    async _complete_handle_checkSubstitute() {
+      let flowTaskIdSubstituteFrom = this.contextTask._flowTask.flowTaskIdSubstituteFrom;
+      if (!flowTaskIdSubstituteFrom) return;
+      while (flowTaskIdSubstituteFrom) {
+        const taskFrom = await this.modelFlowTask.get({ id: flowTaskIdSubstituteFrom });
+        await this.modelFlowTask.update({
+          id: flowTaskIdSubstituteFrom,
+          flowTaskStatus: 1,
+        });
+        // notify
+        this._notifyTaskHandlings(taskFrom.userIdAssignee);
+        // next
+        flowTaskIdSubstituteFrom = taskFrom.flowTaskIdSubstituteFrom;
       }
     }
   }
