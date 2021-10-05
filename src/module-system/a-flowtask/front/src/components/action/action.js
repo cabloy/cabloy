@@ -62,24 +62,29 @@ export default {
     },
     async _ensureClaimed(checkBidding) {
       const { ctx } = this.$props;
-      const { task, flowTaskId } = this.$data;
+      const { flowLayoutManager, task, flowTaskId } = this.$data;
       if (task.timeClaimed) {
         // do nothing
         return;
       }
+      //
+      const actionClaim = task._actions && task._actions.find(item => item.name === 'claim');
+      const optionsBidding = actionClaim && actionClaim.options && actionClaim.options.bidding;
       // check bidding
-      if (checkBidding && task._actions) {
-        const actionClaim = task._actions.find(item => item.name === 'claim');
-        if (actionClaim && actionClaim.options && actionClaim.options.bidding) {
-          // do nothing
-          return;
-        }
+      if (checkBidding && optionsBidding) {
+        // do nothing
+        return;
       }
       // claim
       const res = await ctx.$api.post('/a/flowtask/task/claim', {
         flowTaskId,
       });
       task.timeClaimed = res.timeClaimed;
+      // bidding
+      if (optionsBidding) {
+        // should reload data
+        await flowLayoutManager.base_loadData();
+      }
     },
   },
 };
