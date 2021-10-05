@@ -24,7 +24,10 @@ export default {
       this.$view.navigate(url);
     },
     _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.flowUserAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      const media =
+        (item._meta && item._meta.media) ||
+        item.flowUserAvatar ||
+        this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
     },
     _getItemMetaMediaLabel(item) {
@@ -37,6 +40,12 @@ export default {
     },
     _getItemMetaFlags(item) {
       const flags = [];
+      if (item.flowTaskIdForwardFrom || item.flowTaskIdForwardTo) {
+        flags.push('FWD');
+      }
+      if (item.flowTaskIdSubstituteFrom || item.flowTaskIdSubstituteTo) {
+        flags.push('SUBS');
+      }
       if (item.flowNodeNameLocale) {
         flags.push(item.flowNodeNameLocale);
       }
@@ -95,7 +104,12 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.flowTaskId} link="#" propsOnPerform={event => this.onItemClick(event, item)}>
+        <eb-list-item
+          class="item"
+          key={item.flowTaskId}
+          link="#"
+          propsOnPerform={event => this.onItemClick(event, item)}
+        >
           {domMedia}
           {domHeader}
           {domTitle}
