@@ -47,6 +47,19 @@ export default {
       // performAction
       return await this.$meta.util.performAction({ ctx: this, action: _action, item: atom });
     },
+    info_onPerformCommentList(event, atom) {
+      // navigate options
+      const navigateOptions = {
+        context: {
+          params: {
+            atom,
+          },
+        },
+      };
+      // navigate
+      const url = `/a/basefront/comment/list?atomId=${atom.id}`;
+      this.$view.navigate(url, navigateOptions);
+    },
     info_getItemMetaMedia(avatar) {
       const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 16);
@@ -67,7 +80,7 @@ export default {
               iconMaterial="comment"
               iconBadge={atom.commentCount}
               tooltip={this.$text('Comments')}
-              eb-href={`/a/basefront/comment/list?atomId=${atom.id}`}
+              propsOnPerform={event => this.info_onPerformCommentList(event, atom)}
             ></eb-link>
           );
         }

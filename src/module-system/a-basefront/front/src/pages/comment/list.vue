@@ -74,8 +74,9 @@
 <script>
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebAtomActions],
+  mixins: [ebAtomActions, ebPageContext],
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
@@ -152,9 +153,13 @@ export default {
       this.$refs.loadMore.reload();
     },
     async _loadAtom() {
-      this.atom = await this.$api.post('/a/base/atom/read', {
-        key: { atomId: this.atomId },
-      });
+      if (this.contextParams && this.contextParams.atom) {
+        this.atom = this.contextParams.atom;
+      } else {
+        this.atom = await this.$api.post('/a/base/atom/read', {
+          key: { atomId: this.atomId },
+        });
+      }
     },
     async onPerformViewAtom() {
       if (!this.atom) return;
