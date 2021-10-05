@@ -74,6 +74,24 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.handleStatus = handle.status;
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // special for forward
+      await this._complete_handle_checkForward();
+    }
+
+    async _complete_handle_checkForward() {
+      let flowTaskIdForwardFrom = this.contextTask._flowTask.flowTaskIdForwardFrom;
+      if (!flowTaskIdForwardFrom) return;
+      while (flowTaskIdForwardFrom) {
+        const taskFrom = await this.modelFlowTask.get({ id: flowTaskIdForwardFrom });
+        await this.modelFlowTask.update({
+          id: flowTaskIdForwardFrom,
+          flowTaskStatus: 1,
+        });
+        // notify
+        this._notifyTaskHandlings(taskFrom.userIdAssignee);
+        // next
+        flowTaskIdForwardFrom = taskFrom.flowTaskIdForwardFrom;
+      }
     }
   }
   return FlowTask;
