@@ -56,5 +56,15 @@ export default {
         return await this._onActionForward();
       }
     },
+    async _ensureClaimed() {
+      const { ctx } = this.$props;
+      const { task, flowTaskId } = this.$data;
+      if (!task.timeClaimed) {
+        const res = await ctx.$api.post('/a/flowtask/task/claim', {
+          flowTaskId,
+        });
+        task.timeClaimed = res.timeClaimed;
+      }
+    },
   },
 };

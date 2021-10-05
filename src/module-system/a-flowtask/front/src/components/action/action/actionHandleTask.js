@@ -3,13 +3,8 @@ export default {
     async _onActionHandleTask() {
       const { ctx, action } = this.$props;
       const { flowLayoutManager, task, flowTaskId } = this.$data;
-      // claim first
-      if (!task.timeClaimed) {
-        const res = await ctx.$api.post('/a/flowtask/task/claim', {
-          flowTaskId,
-        });
-        task.timeClaimed = res.timeClaimed;
-      }
+      // ensure claim
+      await this._ensureClaimed();
       // load schema and item
       if (task._editAtomData === undefined) {
         const data = await ctx.$api.post('/a/flowtask/task/editAtom', {
