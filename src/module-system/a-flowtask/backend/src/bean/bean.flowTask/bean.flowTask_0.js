@@ -102,6 +102,18 @@ module.exports = ctx => {
       await taskInstance._forwardRecall();
     }
 
+    async substitute({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._substitute({ handle });
+    }
+
+    async substituteRecall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._substituteRecall();
+    }
+
     async flowData({ flowId, user }) {
       // flow
       const flow = await this._flowData_flow({ flowId, user });
