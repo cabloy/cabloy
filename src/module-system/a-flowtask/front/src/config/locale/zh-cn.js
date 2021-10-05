@@ -28,6 +28,7 @@ export default {
   RecallPrompt: '您确认要撤回本任务吗？',
   FlowOrTaskNotExists: '流程或任务已经不存在',
   AppendHandleRemark: '追加处理意见',
+  TaskActionTitleClaim: '签收',
   TaskActionTitleForward: '转办',
   TaskActionTitleSubstitute: '代办',
   TaskActionTitleForwardRecall: '撤回转办',

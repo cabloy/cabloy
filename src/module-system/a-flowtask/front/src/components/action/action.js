@@ -56,15 +56,26 @@ export default {
         return await this._onActionForward();
       }
     },
-    async _ensureClaimed() {
+    async _ensureClaimed(checkBidding) {
       const { ctx } = this.$props;
       const { task, flowTaskId } = this.$data;
-      if (!task.timeClaimed) {
-        const res = await ctx.$api.post('/a/flowtask/task/claim', {
-          flowTaskId,
-        });
-        task.timeClaimed = res.timeClaimed;
+      if (task.timeClaimed) {
+        // do nothing
+        return;
       }
+      // check bidding
+      if (checkBidding && task._actions) {
+        const actionClaim = task._actions.find(item => item.name === 'claim');
+        if (actionClaim && actionClaim.options && actionClaim.options.bidding) {
+          // do nothing
+          return;
+        }
+      }
+      // claim
+      const res = await ctx.$api.post('/a/flowtask/task/claim', {
+        flowTaskId,
+      });
+      task.timeClaimed = res.timeClaimed;
     },
   },
 };

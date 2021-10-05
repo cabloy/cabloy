@@ -1,4 +1,11 @@
 const actions = {
+  claim: {
+    basic: true,
+    title: 'TaskActionTitleClaim',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+    icon: { material: 'mark_as_unread' },
+  },
   viewAtom: {
     basic: true,
     title: 'View',

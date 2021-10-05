@@ -88,6 +88,8 @@ module.exports = ctx => {
     }
 
     async _flowData_task_actions({ nodeInstances, tasks, task, user }) {
+      // info
+      const isDone = task.flowTaskStatus === 1;
       // actions
       const actions = [];
       const flowTask = task;
@@ -148,7 +150,17 @@ module.exports = ctx => {
           name: 'cancelFlow',
         });
       }
-      // 5. viewAtom
+      // 5.1 claim
+      if (!isDone && !task.timeClaimed) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
+        actions.push({
+          name: 'claim',
+          options: {
+            bidding: options.bidding,
+          },
+        });
+      }
+      // 5.2 viewAtom
       actions.push({
         name: 'viewAtom',
       });

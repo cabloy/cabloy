@@ -2,6 +2,8 @@ export default {
   methods: {
     async _onActionViewAtom() {
       const { ctx } = this.$props;
+      // ensure claim
+      await this._ensureClaimed(true);
       // load schema and item
       if (!this.task._viewAtomData) {
         const data = await ctx.$api.post('/a/flowtask/task/viewAtom', {
