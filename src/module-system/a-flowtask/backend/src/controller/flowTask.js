@@ -118,6 +118,14 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async forwardRecall() {
+      const res = await this.ctx.service.flowTask.forwardRecall({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
   return FlowTaskController;
 };

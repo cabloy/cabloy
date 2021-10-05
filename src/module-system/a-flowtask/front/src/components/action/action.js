@@ -58,6 +58,8 @@ export default {
         return await this._onActionAppendHandleRemark();
       } else if (action.name === 'forward') {
         return await this._onActionForward();
+      } else if (action.name === 'forwardRecall') {
+        return await this._onActionForwardRecall();
       }
     },
     async _ensureClaimed(checkBidding) {

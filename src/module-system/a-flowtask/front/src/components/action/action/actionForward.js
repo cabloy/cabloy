@@ -25,5 +25,13 @@ export default {
       const url = `/a/flowtask/flowTaskAction/forward?flowTaskId=${this.flowTaskId}`;
       ctx.$view.navigate(url, navigateOptions);
     },
+    async _onActionForwardRecall() {
+      const { ctx } = this.$props;
+      await ctx.$view.dialog.confirm(ctx.$text('ForwardRecallPrompt'));
+      await ctx.$api.post('/a/flowtask/task/forwardRecall', {
+        flowTaskId: this.flowTaskId,
+      });
+      await this.flowLayoutManager.base_loadData();
+    },
   },
 };

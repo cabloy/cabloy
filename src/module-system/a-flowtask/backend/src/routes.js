@@ -16,6 +16,7 @@ module.exports = app => {
     { method: 'post', path: 'task/editAtom', controller: 'flowTask' },
     { method: 'post', path: 'task/userSelectForward', controller: 'flowTask' },
     { method: 'post', path: 'task/forward', controller: 'flowTask' },
+    { method: 'post', path: 'task/forwardRecall', controller: 'flowTask' },
   ];
   return routes;
 };

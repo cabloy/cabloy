@@ -26,6 +26,7 @@ export default {
   TaskPassPrompt: '您确认要通过本任务吗？',
   TaskRejectPrompt: '您确认要驳回本任务吗？',
   RecallPrompt: '您确认要撤回本任务吗？',
+  ForwardRecallPrompt: '您确认要撤回转办的任务吗？',
   FlowOrTaskNotExists: '流程或任务已经不存在',
   AppendHandleRemark: '追加处理意见',
   TaskActionTitleClaim: '签收',

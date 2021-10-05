@@ -55,6 +55,8 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.flowTaskIdForwardTo = flowTaskIdForwardTo;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
+
+    async _forwardRecall() {}
   }
   return FlowTask;
 };

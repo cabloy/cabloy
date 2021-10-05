@@ -96,6 +96,12 @@ module.exports = ctx => {
       await taskInstance._forward({ handle });
     }
 
+    async forwardRecall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._forwardRecall();
+    }
+
     async flowData({ flowId, user }) {
       // flow
       const flow = await this._flowData_flow({ flowId, user });

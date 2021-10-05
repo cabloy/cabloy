@@ -55,6 +55,10 @@ module.exports = app => {
     async forward({ flowTaskId, handle, user }) {
       return await this.ctx.bean.flowTask.forward({ flowTaskId, handle, user });
     }
+
+    async forwardRecall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.forwardRecall({ flowTaskId, user });
+    }
   }
   return FlowTask;
 };
