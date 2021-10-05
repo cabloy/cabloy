@@ -30,6 +30,13 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       }
     }
+    _check_notDoneAndHandled({ flowTask }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // not complete and not handled
+      if (flowTask.flowTaskStatus === 1 || flowTask.handleStatus !== 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      }
+    }
     _check_claimed({ flowTask }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // timeClaimed first
@@ -63,7 +70,7 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       this._check_claimed({ flowTask });
     }
@@ -78,14 +85,10 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
-      }
-      // check if forward/substitute
-      if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
-        ctx.throw(403);
       }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
@@ -98,7 +101,7 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // check: not throw error
       // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
       if (flowTask.timeClaimed) {
@@ -112,14 +115,10 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
-      }
-      // check if forward/substitute
-      if (flowTask.flowTaskIdForwardTo || flowTask.flowTaskIdSubstituteTo) {
-        ctx.throw(403);
       }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
@@ -141,7 +140,7 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       this._check_claimed({ flowTask });
     }
@@ -150,14 +149,10 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
-      }
-      // check if forward/substitute
-      if (flowTask.flowTaskIdSubstituteTo) {
-        ctx.throw(403);
       }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
@@ -188,14 +183,10 @@ module.exports = ctx => {
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
-      this._check_notDone({ flowTask });
+      this._check_notDoneAndHandled({ flowTask });
       // timeClaimed first
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
-      }
-      // check if forward/substitute
-      if (flowTask.flowTaskIdForwardTo) {
-        ctx.throw(403);
       }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });

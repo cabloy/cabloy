@@ -14,4 +14,6 @@ export default {
   TaskActionTitleSubstitute: 'Substitute',
   TaskActionTitleForwardRecall: 'Recall Forward',
   TaskActionTitleSubstituteRecall: 'Recall Substitute',
+  FlowTaskHandleStatusForwarded: 'Forwarded',
+  FlowTaskHandleStatusSubstituted: 'Substituted',
 };

@@ -31,6 +31,14 @@ export default {
       color: 'gray',
       text: 'Cancelled',
     },
+    4: {
+      color: 'teal',
+      text: 'FlowTaskHandleStatusForwarded',
+    },
+    5: {
+      color: 'teal',
+      text: 'FlowTaskHandleStatusSubstituted',
+    },
   },
   flowHandleStatuses: {
     1: {
