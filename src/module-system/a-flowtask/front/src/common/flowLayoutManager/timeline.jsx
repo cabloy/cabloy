@@ -124,16 +124,20 @@ export default {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const [actionsBasic] = this._timeline_prepareActions({ task });
-      const actionBase = actionsBasic.find(item => item.name === 'handleTask');
-      if (!actionBase) return;
-      children.push(
-        <eb-link
-          key={actionBase.name}
-          iconMaterial={actionBase.icon.material}
-          tooltip={this.$text(actionBase.title)}
-          propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
-        ></eb-link>
-      );
+      // claim handleTask
+      for (const actionName of ['claim', 'handleTask']) {
+        const actionBase = actionsBasic.find(item => item.name === actionName);
+        if (actionBase) {
+          children.push(
+            <eb-link
+              key={actionBase.name}
+              iconMaterial={actionBase.icon.material}
+              tooltip={this.$text(actionBase.title)}
+              propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}
+            ></eb-link>
+          );
+        }
+      }
       return children;
     },
     _timeline_renderFlowTaskActionsChildren({ task }) {
