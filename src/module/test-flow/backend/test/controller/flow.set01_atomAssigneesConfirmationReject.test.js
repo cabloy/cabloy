@@ -108,6 +108,12 @@ describe('flow.set01_atomAssigneesConfirmationReject', () => {
     const flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
+    // claim
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+
     // complete
     result = await app
       .httpRequest()

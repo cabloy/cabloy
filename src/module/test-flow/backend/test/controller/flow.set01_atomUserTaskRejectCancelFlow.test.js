@@ -130,6 +130,12 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
     const flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
+    // claim
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+
     // cancelFlow
     result = await app
       .httpRequest()
