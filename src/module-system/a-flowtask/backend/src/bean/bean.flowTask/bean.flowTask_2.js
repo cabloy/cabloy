@@ -112,6 +112,16 @@ module.exports = ctx => {
         // only one action
         return actions;
       }
+      // 3. claim
+      if (!isDone && !task.timeClaimed) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
+        actions.push({
+          name: 'claim',
+          options: {
+            bidding: options.bidding,
+          },
+        });
+      }
       // 3. handleTask
       res = await this._flowData_task_checkRight(
         this.localRight.complete({
@@ -150,17 +160,7 @@ module.exports = ctx => {
           name: 'cancelFlow',
         });
       }
-      // 5.1 claim
-      if (!isDone && !task.timeClaimed) {
-        const options = await nodeInstances.getOptions(task.flowNodeId);
-        actions.push({
-          name: 'claim',
-          options: {
-            bidding: options.bidding,
-          },
-        });
-      }
-      // 5.2 viewAtom
+      // 5. viewAtom
       actions.push({
         name: 'viewAtom',
       });
