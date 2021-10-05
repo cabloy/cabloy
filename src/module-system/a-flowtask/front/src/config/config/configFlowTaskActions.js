@@ -59,6 +59,7 @@ const actions = {
     title: 'TaskActionTitleForwardRecall',
     actionModule: 'a-flowtask',
     actionComponent: 'action',
+    icon: { material: 'undo' },
   },
   substitute: {
     basic: false,
