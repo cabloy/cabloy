@@ -72,6 +72,7 @@ const actions = {
     title: 'TaskActionTitleSubstituteRecall',
     actionModule: 'a-flowtask',
     actionComponent: 'action',
+    icon: { material: 'undo' },
   },
 };
 export default actions;
