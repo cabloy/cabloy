@@ -56,7 +56,43 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
 
-    async _forwardRecall() {}
+    async _forwardRecall() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.forwardRecall({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      // handle
+      await this._forwardRecall_handle();
+    }
+
+    // 1. delete task
+    // 2. update task
+    async _forwardRecall_handle() {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // 1. delete task
+      const taskTo = await this.modelFlowTask.get({ id: flowTask.flowTaskIdForwardTo });
+      // delete flowTask and flowTaskHistory
+      await this.modelFlowTask.delete({ id: taskTo.id });
+      await this.modelFlowTaskHistory.delete({ flowTaskId: taskTo.id });
+      // notify
+      this._notifyTaskClaimings(taskTo.userIdAssignee);
+      // 2. update
+      // flowTask
+      this.contextTask._flowTask.timeHandled = null;
+      this.contextTask._flowTask.handleStatus = 0;
+      this.contextTask._flowTask.handleRemark = null;
+      this.contextTask._flowTask.flowTaskIdForwardTo = 0;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.timeHandled = null;
+      this.contextTask._flowTaskHistory.handleStatus = 0;
+      this.contextTask._flowTaskHistory.handleRemark = null;
+      this.contextTask._flowTaskHistory.flowTaskIdForwardTo = 0;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
   }
   return FlowTask;
 };
