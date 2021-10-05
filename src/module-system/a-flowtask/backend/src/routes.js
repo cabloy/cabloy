@@ -17,6 +17,9 @@ module.exports = app => {
     { method: 'post', path: 'task/userSelectForward', controller: 'flowTask' },
     { method: 'post', path: 'task/forward', controller: 'flowTask' },
     { method: 'post', path: 'task/forwardRecall', controller: 'flowTask' },
+    { method: 'post', path: 'task/userSelectSubstitute', controller: 'flowTask' },
+    { method: 'post', path: 'task/substitute', controller: 'flowTask' },
+    { method: 'post', path: 'task/substituteRecall', controller: 'flowTask' },
   ];
   return routes;
 };

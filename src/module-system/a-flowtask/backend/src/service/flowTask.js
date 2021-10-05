@@ -59,6 +59,22 @@ module.exports = app => {
     async forwardRecall({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.forwardRecall({ flowTaskId, user });
     }
+
+    async userSelectSubstitute({ flowTaskId, params, user }) {
+      // check right
+      const flowTask = await this.ctx.model.flowTask.get({ id: flowTaskId });
+      await this.ctx.bean.local.right.substitute({ flowTask, user });
+      // users
+      return await this.ctx.bean.user.selectGeneral({ params });
+    }
+
+    async substitute({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.substitute({ flowTaskId, handle, user });
+    }
+
+    async substituteRecall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.substituteRecall({ flowTaskId, user });
+    }
   }
   return FlowTask;
 };

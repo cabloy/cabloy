@@ -126,6 +126,35 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async userSelectSubstitute() {
+      const { flowTaskId, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowTask.userSelectSubstitute({
+        flowTaskId,
+        params,
+        user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async substitute() {
+      const res = await this.ctx.service.flowTask.substitute({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async substituteRecall() {
+      const res = await this.ctx.service.flowTask.substituteRecall({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
   return FlowTaskController;
 };
