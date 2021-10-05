@@ -36,8 +36,9 @@ module.exports = ctx => {
           },
           orders: [
             ['a.flowNodeId', 'desc'],
-            ['a.specificFlag', 'desc'],
+            // ['a.specificFlag', 'desc'], // need not
             ['a.flowTaskStatus', 'asc'],
+            ['a.createdAt', 'desc'],
           ],
           history: 1,
         },
