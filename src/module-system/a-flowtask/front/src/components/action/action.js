@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import ActionClaim from './action/actionClaim.js';
 import ActionViewAtom from './action/actionViewAtom.js';
 import ActionAppendHandleRemark from './action/actionAppendHandleRemark.js';
 import ActionAssigneesConfirmation from './action/actionAssigneesConfirmation.js';
@@ -14,6 +15,7 @@ export default {
   },
   mixins: [
     ebActionBase, //
+    ActionClaim,
     ActionViewAtom,
     ActionAppendHandleRemark,
     ActionAssigneesConfirmation,
@@ -40,7 +42,9 @@ export default {
     },
     async onAction() {
       const action = this.action;
-      if (action.name === 'viewAtom') {
+      if (action.name === 'claim') {
+        return await this._onActionClaim();
+      } else if (action.name === 'viewAtom') {
         return await this._onActionViewAtom();
       } else if (action.name === 'assigneesConfirmation') {
         return await this._onActionAssigneesConfirmation();

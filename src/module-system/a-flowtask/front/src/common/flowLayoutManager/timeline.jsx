@@ -11,7 +11,10 @@ export default {
       // map
       actions = actions.map(item => this._timeline_getActionBase(item));
       // filter
-      const actionsBasic = actions.filter(item => item.basic);
+      const actionsBasic = actions.filter(item => {
+        if (item.name === 'claim' && task.timeClaimed) return false;
+        return item.basic;
+      });
       const actionsMore = actions.filter(item => {
         if (item.name === 'appendHandleRemark' && task.handleRemark) return false;
         return !item.basic;
