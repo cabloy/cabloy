@@ -18,4 +18,6 @@ export default {
   TaskActionTitleSubstituteRecall: 'Recall Substitute',
   FlowTaskHandleStatusForwarded: 'Forwarded',
   FlowTaskHandleStatusSubstituted: 'Substituted',
+  ForwardAbbr: 'FWD',
+  SubstituteAbbr: 'SUBS',
 };

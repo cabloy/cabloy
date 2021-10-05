@@ -37,6 +37,8 @@ export default {
   TaskActionTitleSubstituteRecall: '撤回代办',
   FlowTaskHandleStatusForwarded: '已转办',
   FlowTaskHandleStatusSubstituted: '已代办',
+  ForwardAbbr: '转办',
+  SubstituteAbbr: '代办',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
   'Recall Available': '可撤回',

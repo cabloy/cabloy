@@ -118,6 +118,19 @@ export default {
         const taskFrom = this.base_tasks.find(item => item.flowTaskId === task.flowTaskIdForwardFrom);
         children.push(<f7-badge>{`From: ${taskFrom.userName}`}</f7-badge>);
       }
+      // substitute
+      if (task.flowTaskIdSubstituteTo) {
+        const taskTo = this.base_tasks.find(item => item.flowTaskId === task.flowTaskIdSubstituteTo);
+        if (taskTo) {
+          children.push(<f7-badge>{`To: ${taskTo.userName}`}</f7-badge>);
+        }
+      }
+      if (task.flowTaskIdSubstituteFrom) {
+        const taskFrom = this.base_tasks.find(item => item.flowTaskId === task.flowTaskIdSubstituteFrom);
+        if (taskFrom) {
+          children.push(<f7-badge>{`From: ${taskFrom.userName}`}</f7-badge>);
+        }
+      }
       // status
       const status = this._timeline_renderFlowTaskStatus({ task });
       if (status) {

@@ -41,10 +41,10 @@ export default {
     _getItemMetaFlags(item) {
       const flags = [];
       if (item.flowTaskIdForwardFrom || item.flowTaskIdForwardTo) {
-        flags.push('FWD');
+        flags.push(this.$text('ForwardAbbr'));
       }
       if (item.flowTaskIdSubstituteFrom || item.flowTaskIdSubstituteTo) {
-        flags.push('SUBS');
+        flags.push(this.$text('SubstituteAbbr'));
       }
       if (item.flowNodeNameLocale) {
         flags.push(item.flowNodeNameLocale);
