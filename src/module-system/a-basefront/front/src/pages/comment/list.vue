@@ -2,8 +2,15 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!user.anonymous" iconMaterial="add" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=0`"></eb-link>
-        <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
+        <eb-link
+          v-if="!user.anonymous"
+          iconMaterial="add"
+          :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=0`"
+        ></eb-link>
+        <eb-link
+          :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'"
+          :onPerform="onPerformSort"
+        ></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <div></div>
@@ -21,10 +28,32 @@
             <div class="date">#{{ item.sorting }} · {{ $meta.util.formatDateTimeRelative(item.createdAt) }}</div>
           </div>
           <div class="actions">
-            <eb-link v-if="item.userId === user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"></eb-link>
-            <eb-link v-if="item.userId === user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-            <eb-link class="action" :iconMaterial="item.heart ? 'favorite' : 'favorite_border'" :context="item" :onPerform="onPerformHeart">{{ item.heartCount }}</eb-link>
-            <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"></eb-link>
+            <eb-link
+              v-if="item.userId === user.id"
+              class="action"
+              iconMaterial="edit"
+              :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"
+            ></eb-link>
+            <eb-link
+              v-if="item.userId === user.id"
+              class="action"
+              iconMaterial="delete_forever"
+              :context="item"
+              :onPerform="onPerformDelete"
+            ></eb-link>
+            <eb-link
+              class="action"
+              :iconMaterial="item.heart ? 'favorite' : 'favorite_border'"
+              :context="item"
+              :onPerform="onPerformHeart"
+              >{{ item.heartCount }}</eb-link
+            >
+            <eb-link
+              v-if="!user.anonymous"
+              class="action"
+              iconMaterial="reply"
+              :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"
+            ></eb-link>
           </div>
         </f7-card-header>
         <f7-card-content padding>
@@ -32,7 +61,13 @@
         </f7-card-content>
       </f7-card>
     </template>
-    <eb-load-more :class="showSingle ? 'display-none' : ''" ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
+    <eb-load-more
+      :class="showSingle ? 'display-none' : ''"
+      ref="loadMore"
+      :onLoadClear="onLoadClear"
+      :onLoadMore="onLoadMore"
+      :autoInit="true"
+    ></eb-load-more>
     <eb-button v-if="showSingle" :onPerform="onPerformShowAllComments">{{ $text('ShowAllComments') }}</eb-button>
   </eb-page>
 </template>

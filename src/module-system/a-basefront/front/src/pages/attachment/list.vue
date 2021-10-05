@@ -6,7 +6,16 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId === user.id">
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.realName"
+        link="#"
+        :context="item"
+        :onPerform="onItemClick"
+        :swipeout="item.userId === user.id"
+      >
         <div slot="media">
           <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
@@ -102,7 +111,7 @@ export default {
               atomId: this.atomId,
               attachment: 1,
             },
-            callback: (code, data) => {
+            callback: code => {
               if (code === 200) {
                 this.$meta.eventHub.$emit('attachment:action', { action: 'create', atomId: this.atomId });
                 this.reload();
