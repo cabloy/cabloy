@@ -89,6 +89,14 @@ module.exports = ctx => {
           id: flowTaskIdForwardFrom,
           flowTaskStatus: 1,
         });
+        await this.modelFlowTaskHistory.update(
+          {
+            flowTaskStatus: 1,
+          },
+          {
+            flowTaskId: flowTaskIdForwardFrom,
+          }
+        );
         // notify
         this._notifyTaskHandlings(taskFrom.userIdAssignee);
         // next
@@ -105,6 +113,14 @@ module.exports = ctx => {
           id: flowTaskIdSubstituteFrom,
           flowTaskStatus: 1,
         });
+        await this.modelFlowTaskHistory.update(
+          {
+            flowTaskStatus: 1,
+          },
+          {
+            flowTaskId: flowTaskIdSubstituteFrom,
+          }
+        );
         // notify
         this._notifyTaskHandlings(taskFrom.userIdAssignee);
         // next
