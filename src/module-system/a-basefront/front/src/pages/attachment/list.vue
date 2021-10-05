@@ -88,19 +88,16 @@ export default {
     reload() {
       this.$refs.loadMore.reload();
     },
-    checkActionWrite() {
-      this.$api
-        .post('/a/base/atom/checkRightAction', {
-          key: { atomId: this.atomId },
-          action: 3,
-          stage: 'draft',
-          checkFlow: true,
-        })
-        .then(data => {
-          if (data && data.atomClosed === 0) {
-            this.actionWrite = data;
-          }
-        });
+    async checkActionWrite() {
+      const data = await this.$api.post('/a/base/atom/checkRightAction', {
+        key: { atomId: this.atomId },
+        action: 3,
+        stage: 'draft',
+        checkFlow: true,
+      });
+      if (data && data.atomClosed === 0) {
+        this.actionWrite = data;
+      }
     },
     onPerformAdd() {
       return new Promise((resolve, reject) => {
