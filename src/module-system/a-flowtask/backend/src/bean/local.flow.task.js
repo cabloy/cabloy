@@ -7,6 +7,7 @@ const flowTask_complete = require('./local.flow.task/local.flow.task_complete.js
 const flowTask_event = require('./local.flow.task/local.flow.task_event.js');
 const flowTask_init = require('./local.flow.task/local.flow.task_init.js');
 const flowTask_recall = require('./local.flow.task/local.flow.task_recall.js');
+const flowTask_forward = require('./local.flow.task/local.flow.task_forward.js');
 const flowTask_schema = require('./local.flow.task/local.flow.task_schema.js');
 
 module.exports = ctx => {
@@ -21,6 +22,7 @@ module.exports = ctx => {
       flowTask_event,
       flowTask_init,
       flowTask_recall,
+      flowTask_forward,
       flowTask_schema,
     ],
     ctx
