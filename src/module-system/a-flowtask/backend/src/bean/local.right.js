@@ -145,12 +145,16 @@ module.exports = ctx => {
       // timeClaimed first
       this._check_claimed({ flowTask });
     }
-    async forward({ flowTask, user, getOptions }) {
+    async forward({ flowTask, user, getOptions, disableCheckTimeClaimed }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
@@ -162,6 +166,8 @@ module.exports = ctx => {
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || !flowTask.flowTaskIdForwardTo) {
@@ -173,12 +179,16 @@ module.exports = ctx => {
         ctx.throw(403);
       }
     }
-    async substitute({ flowTask, user, getOptions }) {
+    async substitute({ flowTask, user, getOptions, disableCheckTimeClaimed }) {
       const flowTaskId = flowTask.flowTaskId || flowTask.id;
       // must be the same user
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       // allowed only once, so should check flowTaskIdSubstituteFrom
@@ -191,6 +201,8 @@ module.exports = ctx => {
       this._check_sameUser({ flowTask, user });
       // not complete
       this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       // allowed only once, so should check flowTaskIdSubstituteFrom

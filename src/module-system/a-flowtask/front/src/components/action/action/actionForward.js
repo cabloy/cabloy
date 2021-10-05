@@ -2,6 +2,8 @@ export default {
   methods: {
     async _onActionForward() {
       const { ctx } = this.$props;
+      // ensure claim
+      await this._ensureClaimed();
       // navigate options
       const navigateOptions = {
         context: {
