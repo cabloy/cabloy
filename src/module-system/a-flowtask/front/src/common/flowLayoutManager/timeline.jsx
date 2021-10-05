@@ -183,8 +183,6 @@ export default {
       return task.handleRemarkLocale || task.handleRemark;
     },
     _timeline_renderFlowTask({ task }) {
-      // check user
-      if (task.specificFlag > 0 && task.userIdAssignee !== this.base_user.id) return null;
       // taskCurrentClass
       const taskCurrentClass = task.id === this.container.flowTaskId ? 'item flowTaskCurrent' : 'item';
       // media

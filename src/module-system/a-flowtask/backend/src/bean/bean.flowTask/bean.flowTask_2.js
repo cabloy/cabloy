@@ -27,7 +27,7 @@ module.exports = ctx => {
 
     async _flowData_tasks({ flow, atom, flowId, user }) {
       // select tasks
-      const tasks = await ctx.bean.flowTask.select({
+      let tasks = await ctx.bean.flowTask.select({
         options: {
           where: {
             'a.flowId': flowId,
@@ -68,6 +68,11 @@ module.exports = ctx => {
           return options;
         },
       };
+      // filter
+      tasks = tasks.filter(task => {
+        if ((task.specificFlag === 1 || task.specificFlag === 2) && task.userIdAssignee !== user.id) return false;
+        return true;
+      });
       // loop
       for (const task of tasks) {
         // actions
