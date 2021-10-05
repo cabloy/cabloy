@@ -39,10 +39,10 @@ module.exports = ctx => {
       const task = tasks[0];
       const flowTaskId = task.id;
       const user = { id: task.userIdAssignee };
-      // claim automatically always
-      await ctx.bean.flowTask.claim({ flowTaskId, user });
       // complete automatically only on first-in
       if (this.contextNode._flowNode.flowNodeIdPrev === 0) {
+        //  claim automatically
+        await ctx.bean.flowTask.claim({ flowTaskId, user });
         await ctx.bean.flowTask.complete({
           flowTaskId,
           handle: { status: 1 },
