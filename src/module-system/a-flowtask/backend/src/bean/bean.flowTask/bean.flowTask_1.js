@@ -11,6 +11,7 @@ module.exports = ctx => {
       // task count
       const taskCountTotal = await this.modelFlowTask.count({
         flowNodeId,
+        ignoreMark: 0,
       });
       if (taskCountTotal === 0) {
         // means node has been checked and done
@@ -23,11 +24,13 @@ module.exports = ctx => {
         flowNodeId,
         flowTaskStatus: 1,
         handleStatus: 1,
+        ignoreMark: 0,
       });
       const taskCountRejected = await this.modelFlowTask.count({
         flowNodeId,
         flowTaskStatus: 1,
         handleStatus: 2,
+        ignoreMark: 0,
       });
       // check passed
       if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {

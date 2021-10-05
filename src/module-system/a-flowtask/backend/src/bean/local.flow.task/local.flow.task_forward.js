@@ -47,12 +47,14 @@ module.exports = ctx => {
       this.contextTask._flowTask.handleStatus = 4;
       this.contextTask._flowTask.handleRemark = handle.remark;
       this.contextTask._flowTask.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTask.ignoreMark = 1;
       await this.modelFlowTask.update(this.contextTask._flowTask);
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.timeHandled = timeHandled;
       this.contextTask._flowTaskHistory.handleStatus = 4;
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       this.contextTask._flowTaskHistory.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTaskHistory.ignoreMark = 1;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
 
@@ -85,12 +87,14 @@ module.exports = ctx => {
       this.contextTask._flowTask.handleStatus = 0;
       this.contextTask._flowTask.handleRemark = null;
       this.contextTask._flowTask.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTask.ignoreMark = 0;
       await this.modelFlowTask.update(this.contextTask._flowTask);
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.timeHandled = null;
       this.contextTask._flowTaskHistory.handleStatus = 0;
       this.contextTask._flowTaskHistory.handleRemark = null;
       this.contextTask._flowTaskHistory.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTaskHistory.ignoreMark = 0;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
   }
