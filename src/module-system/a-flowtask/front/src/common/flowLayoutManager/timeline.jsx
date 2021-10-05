@@ -107,6 +107,24 @@ export default {
         </f7-card>
       );
     },
+    _timeline_renderFlowTaskStatuses({ task }) {
+      const children = [];
+      // forward
+      if (task.flowTaskIdForwardTo) {
+        const taskTo = this.base_tasks.find(item => item.flowTaskId === task.flowTaskIdForwardTo);
+        children.push(<f7-badge>{`To: ${taskTo.userName}`}</f7-badge>);
+      }
+      if (task.flowTaskIdForwardFrom) {
+        const taskFrom = this.base_tasks.find(item => item.flowTaskId === task.flowTaskIdForwardFrom);
+        children.push(<f7-badge>{`From: ${taskFrom.userName}`}</f7-badge>);
+      }
+      // status
+      const status = this._timeline_renderFlowTaskStatus({ task });
+      if (status) {
+        children.push(status);
+      }
+      return children;
+    },
     _timeline_renderFlowTaskStatus({ task }) {
       if (task.handleStatus === 0) return;
       const flowTaskHandleStatuses = this.$meta.config.modules['a-flowtask'].flowTaskHandleStatuses;
@@ -196,13 +214,13 @@ export default {
       if (task.handleStatus > 0) {
         date = this.$meta.util.formatDateTime(task.timeHandled);
       }
-      const domStatus = this._timeline_renderFlowTaskStatus({ task });
+      const domStatuses = this._timeline_renderFlowTaskStatuses({ task });
       const domHeader = (
         <div slot="root-start" class="header">
           <div class="mediaLabel">
             <span>{date}</span>
           </div>
-          <div class="date">{domStatus}</div>
+          <div class="date">{domStatuses}</div>
         </div>
       );
       // domTitle
