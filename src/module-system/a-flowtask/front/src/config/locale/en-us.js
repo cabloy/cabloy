@@ -8,6 +8,7 @@ export default {
   TaskRejectPrompt: 'Are you sure to reject this task?',
   RecallPrompt: 'Are you sure to recall this task?',
   ForwardRecallPrompt: 'Are you sure to recall the forwarded task?',
+  SubstituteRecallPrompt: 'Are you sure to recall the substituted task?',
   FlowOrTaskNotExists: 'Work Flow or Task does not exist',
   AppendHandleRemark: 'Append Handle Remark',
   TaskActionTitleClaim: 'Claim',

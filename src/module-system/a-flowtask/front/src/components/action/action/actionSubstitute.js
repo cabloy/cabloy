@@ -27,8 +27,8 @@ export default {
     },
     async _onActionSubstituteRecall() {
       const { ctx } = this.$props;
-      await ctx.$view.dialog.confirm(ctx.$text('ForwardRecallPrompt'));
-      await ctx.$api.post('/a/flowtask/task/forwardRecall', {
+      await ctx.$view.dialog.confirm(ctx.$text('SubstituteRecallPrompt'));
+      await ctx.$api.post('/a/flowtask/task/substituteRecall', {
         flowTaskId: this.flowTaskId,
       });
       await this.flowLayoutManager.base_loadData();

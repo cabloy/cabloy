@@ -8,7 +8,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.forward({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.substitute({ flowTask, user, getOptions: () => this._getNodeOptions() });
       // handle
       await this._substitute_handle({ handle });
       // need not notify
@@ -29,31 +29,31 @@ module.exports = ctx => {
         userIdAssignee: handle.assignee,
         user,
       });
-      // specificFlag: 4
-      taskInstance.contextTask._flowTask.specificFlag = 4;
-      taskInstance.contextTask._flowTask.flowTaskIdForwardFrom = flowTaskId;
+      // specificFlag: 5
+      taskInstance.contextTask._flowTask.specificFlag = 5;
+      taskInstance.contextTask._flowTask.flowTaskIdSubstituteFrom = flowTaskId;
       await taskInstance.modelFlowTask.update(taskInstance.contextTask._flowTask);
       // history
-      taskInstance.contextTask._flowTaskHistory.specificFlag = 4;
-      taskInstance.contextTask._flowTaskHistory.flowTaskIdForwardFrom = flowTaskId;
+      taskInstance.contextTask._flowTaskHistory.specificFlag = 5;
+      taskInstance.contextTask._flowTaskHistory.flowTaskIdSubstituteFrom = flowTaskId;
       await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
       // notify
       taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
       // 2. update
       // flowTask
-      const flowTaskIdForwardTo = taskInstance.contextTask._flowTask.id;
+      const flowTaskIdSubstituteTo = taskInstance.contextTask._flowTask.id;
       const timeHandled = new Date();
       this.contextTask._flowTask.timeHandled = timeHandled;
-      this.contextTask._flowTask.handleStatus = 4;
+      this.contextTask._flowTask.handleStatus = 5;
       this.contextTask._flowTask.handleRemark = handle.remark;
-      this.contextTask._flowTask.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTask.flowTaskIdSubstituteTo = flowTaskIdSubstituteTo;
       this.contextTask._flowTask.ignoreMark = 1;
       await this.modelFlowTask.update(this.contextTask._flowTask);
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.timeHandled = timeHandled;
-      this.contextTask._flowTaskHistory.handleStatus = 4;
+      this.contextTask._flowTaskHistory.handleStatus = 5;
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
-      this.contextTask._flowTaskHistory.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTaskHistory.flowTaskIdSubstituteTo = flowTaskIdSubstituteTo;
       this.contextTask._flowTaskHistory.ignoreMark = 1;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
@@ -64,7 +64,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.forwardRecall({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.substituteRecall({ flowTask, user, getOptions: () => this._getNodeOptions() });
       // handle
       await this._substituteRecall_handle();
     }
@@ -75,7 +75,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // 1. delete task
-      const taskTo = await this.modelFlowTask.get({ id: flowTask.flowTaskIdForwardTo });
+      const taskTo = await this.modelFlowTask.get({ id: flowTask.flowTaskIdSubstituteTo });
       // delete flowTask and flowTaskHistory
       await this.modelFlowTask.delete({ id: taskTo.id });
       await this.modelFlowTaskHistory.delete({ flowTaskId: taskTo.id });
@@ -86,14 +86,14 @@ module.exports = ctx => {
       this.contextTask._flowTask.timeHandled = null;
       this.contextTask._flowTask.handleStatus = 0;
       this.contextTask._flowTask.handleRemark = null;
-      this.contextTask._flowTask.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTask.flowTaskIdSubstituteTo = 0;
       this.contextTask._flowTask.ignoreMark = 0;
       await this.modelFlowTask.update(this.contextTask._flowTask);
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.timeHandled = null;
       this.contextTask._flowTaskHistory.handleStatus = 0;
       this.contextTask._flowTaskHistory.handleRemark = null;
-      this.contextTask._flowTaskHistory.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTaskHistory.flowTaskIdSubstituteTo = 0;
       this.contextTask._flowTaskHistory.ignoreMark = 0;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }

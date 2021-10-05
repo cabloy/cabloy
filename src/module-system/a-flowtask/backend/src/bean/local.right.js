@@ -154,6 +154,10 @@ module.exports = ctx => {
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
       }
+      // check if flowTaskIdSubstituteFrom
+      if (flowTask.flowTaskIdSubstituteFrom) {
+        ctx.throw(403);
+      }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
