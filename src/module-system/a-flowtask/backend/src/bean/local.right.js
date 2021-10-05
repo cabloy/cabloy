@@ -155,6 +155,10 @@ module.exports = ctx => {
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
       }
+      // check if forward/substitute
+      if (flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw(403);
+      }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
@@ -188,6 +192,10 @@ module.exports = ctx => {
       // timeClaimed first
       if (!disableCheckTimeClaimed) {
         this._check_claimed({ flowTask });
+      }
+      // check if forward/substitute
+      if (flowTask.flowTaskIdForwardTo) {
+        ctx.throw(403);
       }
       // options
       const options = await this._getNodeOptions({ getOptions, flowTask });
