@@ -7,6 +7,7 @@ import ActionCancelFlow from './action/actionCancelFlow.js';
 import ActionHandleTask from './action/actionHandleTask.js';
 import ActionRecall from './action/actionRecall.js';
 import ActionForward from './action/actionForward.js';
+import ActionSubstitute from './action/actionSubstitute.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -23,6 +24,7 @@ export default {
     ActionHandleTask,
     ActionRecall,
     ActionForward,
+    ActionSubstitute,
   ],
   data() {
     return {
@@ -60,6 +62,10 @@ export default {
         return await this._onActionForward();
       } else if (action.name === 'forwardRecall') {
         return await this._onActionForwardRecall();
+      } else if (action.name === 'substitute') {
+        return await this._onActionSubstitute();
+      } else if (action.name === 'substituteRecall') {
+        return await this._onActionSubstituteRecall();
       }
     },
     async _ensureClaimed(checkBidding) {

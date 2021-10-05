@@ -14,4 +14,5 @@ export default [
   { path: 'flow/tabs', component: load('flowTabs') },
   { path: 'flowTaskAction/assigneesConfirmation', component: loadjsx('flowTaskAction/assigneesConfirmation') },
   { path: 'flowTaskAction/forward', component: loadjsx('flowTaskAction/forward') },
+  { path: 'flowTaskAction/substitute', component: loadjsx('flowTaskAction/substitute') },
 ];
