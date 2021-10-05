@@ -11,8 +11,8 @@ module.exports = ctx => {
       await this.localRight.forward({ flowTask, user, getOptions: () => this._getNodeOptions() });
       // handle
       await this._forward_handle({ handle });
-      // notify
-      this._notifyTaskHandlings(flowTask.userIdAssignee);
+      // need not notify
+      // this._notifyTaskHandlings(flowTask.userIdAssignee);
     }
 
     // 1. create a new task
