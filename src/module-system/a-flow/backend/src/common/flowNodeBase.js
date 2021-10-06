@@ -9,6 +9,7 @@ module.exports = class FlowNodeBase {
       this.nodeInstance = options.nodeInstance;
       this.context = options.context;
       this.contextNode = options.contextNode;
+      this.contextEdge = options.contextEdge;
     }
   }
 

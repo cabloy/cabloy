@@ -87,6 +87,7 @@ module.exports = ctx => {
       const nodeInstanceNext = await this._findNodeInstanceNext({
         nodeDefId: contextEdge._edgeDef.target,
         flowNodeIdPrev: contextEdge.contextNode._flowNodeId,
+        contextEdge,
       });
       // enter
       return await nodeInstanceNext.enter();
@@ -274,10 +275,11 @@ module.exports = ctx => {
       return flowId;
     }
 
-    _createNodeInstance2({ nodeDef }) {
+    _createNodeInstance2({ nodeDef, contextEdge }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
         flowInstance: this,
         context: this.context,
+        contextEdge,
         nodeDef,
       });
       return node;
@@ -291,8 +293,9 @@ module.exports = ctx => {
       return node;
     }
 
-    async _createNodeInstance({ nodeDef, flowNodeIdPrev }) {
-      const node = this._createNodeInstance2({ nodeDef });
+    // contextEdge maybe null
+    async _createNodeInstance({ nodeDef, flowNodeIdPrev, contextEdge }) {
+      const node = this._createNodeInstance2({ nodeDef, contextEdge });
       await node.init({ flowNodeIdPrev });
       return node;
     }
@@ -315,10 +318,11 @@ module.exports = ctx => {
       return nodeDef;
     }
 
-    async _findNodeInstanceNext({ nodeDefId, flowNodeIdPrev }) {
+    // contextEdge maybe null
+    async _findNodeInstanceNext({ nodeDefId, flowNodeIdPrev, contextEdge }) {
       const nodeDef = this._findNodeDef({ nodeDefId });
       if (!nodeDef) return null;
-      return await this._createNodeInstance({ nodeDef, flowNodeIdPrev });
+      return await this._createNodeInstance({ nodeDef, flowNodeIdPrev, contextEdge });
     }
 
     async _findNodeInstanceStartEvent({ startEventId }) {

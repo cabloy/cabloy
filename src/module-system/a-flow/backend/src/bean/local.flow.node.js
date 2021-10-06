@@ -4,14 +4,17 @@ const UtilsFn = require('../common/utils.js');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode {
-    constructor({ flowInstance, context, nodeDef }) {
+    // contextEdge maybe null
+    constructor({ flowInstance, context, contextEdge, nodeDef }) {
       this.flowInstance = flowInstance;
       this.context = context;
+      this.contextEdge = contextEdge;
       this._nodeBase = null;
       this._nodeBaseBean = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
         context,
+        contextEdge,
         nodeDef,
       });
     }
@@ -70,11 +73,14 @@ module.exports = ctx => {
       this.contextNode._flowNodeHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
       // nodeVars
       this.contextNode._nodeVars = new (VarsFn())();
-      this.contextNode._nodeVars._vars = this.contextNode._flowNodeHistory.nodeVars ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars) : {};
+      this.contextNode._nodeVars._vars = this.contextNode._flowNodeHistory.nodeVars
+        ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars)
+        : {};
       // utils
       this.contextNode._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
         context: this.context,
         contextNode: this.contextNode,
+        contextEdge: this.contextEdge,
       });
     }
 
@@ -194,6 +200,7 @@ module.exports = ctx => {
           nodeInstance: this,
           context: this.context,
           contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
         });
       }
       return this._nodeBaseBean;
