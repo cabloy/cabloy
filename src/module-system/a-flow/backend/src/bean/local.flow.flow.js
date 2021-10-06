@@ -47,7 +47,11 @@ module.exports = ctx => {
       await this._saveFlowVars();
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
-      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`);
+      if (!nodeInstanceStartEvent) {
+        throw new Error(
+          `startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`
+        );
+      }
       // node enter
       const finished = await nodeInstanceStartEvent.enter();
       if (!finished) {
@@ -98,7 +102,9 @@ module.exports = ctx => {
       this.context._flowHistory = await this.modelFlowHistory.get({ flowId });
       // flowVars
       this.context._flowVars = new (VarsFn())();
-      this.context._flowVars._vars = this.context._flowHistory.flowVars ? JSON.parse(this.context._flowHistory.flowVars) : {};
+      this.context._flowVars._vars = this.context._flowHistory.flowVars
+        ? JSON.parse(this.context._flowHistory.flowVars)
+        : {};
       // atom
       if (!this.context._atom && this.context._flowHistory.flowAtomId) {
         this.context._atom = await this._contextInit_atom({ atomId: this.context._flowHistory.flowAtomId });
@@ -191,7 +197,10 @@ module.exports = ctx => {
       const flowUserId = this.context._flow.flowUserId;
       if (flowUserId !== userOp.id) {
         const userFlow = await ctx.bean.user.get({ id: flowUserId });
-        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(userFlow.locale, this.context._flow.flowRemark || 'End')}`;
+        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(
+          userFlow.locale,
+          this.context._flow.flowRemark || 'End'
+        )}`;
         const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}`;
         const message = {
           userIdTo: flowUserId,
