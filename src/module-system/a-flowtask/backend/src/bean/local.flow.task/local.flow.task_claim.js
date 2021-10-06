@@ -52,7 +52,7 @@ module.exports = ctx => {
         const _tasks = await ctx.model.query(
           `
           select id,userIdAssignee from aFlowTask
-            where iid=? and deleted=0 and flowNodeId=? and id<>?
+            where iid=? and deleted=0 and flowNodeId=? and id<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
@@ -63,14 +63,14 @@ module.exports = ctx => {
         await ctx.model.query(
           `
           delete from aFlowTask
-            where iid=? and flowNodeId=? and id<>?
+            where iid=? and flowNodeId=? and id<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
         await ctx.model.query(
           `
           update aFlowTaskHistory set deleted=1
-            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
+            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
