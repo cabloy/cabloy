@@ -94,7 +94,9 @@ module.exports = ctx => {
             flowTaskStatus: 1,
           },
           {
-            flowTaskId: flowTaskIdForwardFrom,
+            where: {
+              flowTaskId: flowTaskIdForwardFrom,
+            },
           }
         );
         // notify
@@ -118,7 +120,9 @@ module.exports = ctx => {
             flowTaskStatus: 1,
           },
           {
-            flowTaskId: flowTaskIdSubstituteFrom,
+            where: {
+              flowTaskId: flowTaskIdSubstituteFrom,
+            },
           }
         );
         // notify
