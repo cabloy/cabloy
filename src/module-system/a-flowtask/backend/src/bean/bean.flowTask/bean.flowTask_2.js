@@ -69,8 +69,28 @@ module.exports = ctx => {
           return options;
         },
       };
+      // map
+      tasks = tasks.map(task => {
+        if (task.flowTaskIdSubstituteTo) {
+          const taskTo = tasks.find(item => item.flowTaskId === task.flowTaskIdSubstituteTo);
+          if (user.id !== task.userIdAssignee && user.id !== taskTo.userIdAssignee) {
+            taskTo.__remove = true;
+            return {
+              ...task,
+              timeHandled: taskTo.timeHandled,
+              handleStatus: taskTo.handleStatus,
+              handleRemark: taskTo.handleRemark,
+              handleRemarkLocale: taskTo.handleRemarkLocale,
+              flowTaskIdSubstituteTo: 0,
+              ignoreMark: 0,
+            };
+          }
+        }
+        return task;
+      });
       // filter
       tasks = tasks.filter(task => {
+        if (task.__remove) return false;
         if ((task.specificFlag === 1 || task.specificFlag === 2) && task.userIdAssignee !== user.id) return false;
         return true;
       });
