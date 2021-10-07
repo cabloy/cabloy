@@ -4,7 +4,14 @@
     <f7-list v-if="ready">
       <f7-list-group v-for="group of nodeBasesGroups" :key="group.name">
         <f7-list-item group-title :title="group.titleLocale"></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.type" :title="item.titleLocale" link="#" :context="item" :onPerform="onPerformNode">
+        <eb-list-item
+          v-for="item of group.items"
+          :key="item.type"
+          :title="item.titleLocale"
+          link="#"
+          :context="item"
+          :onPerform="onPerformNode"
+        >
           <div slot="media">
             <img class="media-node-base-icon" :src="getNodeMedia(item)" />
           </div>
@@ -37,6 +44,7 @@ export default {
         group.titleLocale = this.$text(group.title);
         group.items = [];
         for (const nodeType in this.nodeBases) {
+          if (nodeType.indexOf(':') === -1) continue;
           const nodeBase = this.nodeBases[nodeType];
           if (nodeBase.group === group.name) {
             group.items.push({
