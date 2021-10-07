@@ -92,6 +92,10 @@ module.exports = ctx => {
       });
     }
 
+    behaviorBases() {
+      return this._getFlowBehaviorBases();
+    }
+
     nodeBases() {
       return this._getFlowNodeBases();
     }
