@@ -2,12 +2,16 @@
 export default function (Vue) {
   return {
     state: {
+      behaviorBases: null,
       nodeBases: null,
       edgeBases: null,
       flowServiceBases: null,
     },
     getters: {},
     mutations: {
+      setBehaviorBases(state, behaviorBases) {
+        state.behaviorBases = behaviorBases;
+      },
       setNodeBases(state, nodeBases) {
         state.nodeBases = nodeBases;
       },
@@ -19,6 +23,21 @@ export default function (Vue) {
       },
     },
     actions: {
+      getBehaviorBases({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.behaviorBases) return resolve(state.behaviorBases);
+          Vue.prototype.$meta.api
+            .post('/a/flow/flowDef/behaviorBases')
+            .then(data => {
+              data = data || {};
+              commit('setBehaviorBases', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        });
+      },
       getNodeBases({ state, commit }) {
         return new Promise((resolve, reject) => {
           if (state.nodeBases) return resolve(state.nodeBases);
