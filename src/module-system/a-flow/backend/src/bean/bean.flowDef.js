@@ -1,3 +1,4 @@
+const __flowBehaviorBases = {};
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
 const __flowServiceBases = {};
@@ -110,6 +111,17 @@ module.exports = ctx => {
       return __flowServiceBases[ctx.locale];
     }
 
+    _getFlowBehaviorBases() {
+      if (!__flowBehaviorBases[ctx.locale]) {
+        __flowBehaviorBases[ctx.locale] = this._prepareFlowBehaviorBases();
+      }
+      return __flowBehaviorBases[ctx.locale];
+    }
+
+    _getFlowBehaviorBase(behaviorType) {
+      return this._getFlowBehaviorBases()[behaviorType];
+    }
+
     _getFlowNodeBases() {
       if (!__flowNodeBases[ctx.locale]) {
         __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
@@ -155,6 +167,32 @@ module.exports = ctx => {
         flowServiceBases[beanNameShort] = serviceBase;
       }
       return flowServiceBases;
+    }
+
+    _prepareFlowBehaviorBases() {
+      const flowBehaviorBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const behaviors = module.main.meta && module.main.meta.flow && module.main.meta.flow.behaviors;
+        if (!behaviors) continue;
+        for (const key in behaviors) {
+          const behavior = behaviors[key];
+          const beanName = behavior.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.flow.behavior.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.flow.behavior.${beanName.name}`;
+          }
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowBehaviorBases[fullKey] = flowBehaviorBases[key] = {
+            ...behavior,
+            beanFullName,
+            titleLocale: ctx.text(behavior.title),
+          };
+        }
+      }
+      return flowBehaviorBases;
     }
 
     _prepareFlowNodeBases() {
