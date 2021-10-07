@@ -1,4 +1,5 @@
 const __flowNodeBases = {};
+const __flowNodeBasesShort = {};
 const __flowEdgeBases = {};
 const __flowServiceBases = {};
 
@@ -112,12 +113,21 @@ module.exports = ctx => {
 
     _getFlowNodeBases() {
       if (!__flowNodeBases[ctx.locale]) {
-        __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
+        const [flowNodeBases, flowNodeBasesShort] = this._prepareFlowNodeBases();
+        __flowNodeBases[ctx.locale] = flowNodeBases;
+        __flowNodeBasesShort[ctx.locale] = flowNodeBasesShort;
       }
       return __flowNodeBases[ctx.locale];
     }
+    _getFlowNodeBasesShort() {
+      this._getFlowNodeBases();
+      return __flowNodeBasesShort[ctx.locale];
+    }
 
     _getFlowNodeBase(nodeType) {
+      if (nodeType.indexOf(':') === -1) {
+        return this._getFlowNodeBasesShort()[nodeType];
+      }
       return this._getFlowNodeBases()[nodeType];
     }
 
@@ -159,6 +169,7 @@ module.exports = ctx => {
 
     _prepareFlowNodeBases() {
       const flowNodeBases = {};
+      const flowNodeBasesShort = {};
       for (const module of ctx.app.meta.modulesArray) {
         const nodes = module.main.meta && module.main.meta.flow && module.main.meta.flow.nodes;
         if (!nodes) continue;
@@ -171,16 +182,16 @@ module.exports = ctx => {
           } else {
             beanFullName = `${beanName.module || module.info.relativeName}.flow.node.${beanName.name}`;
           }
-          // const fullKey = `${module.info.relativeName}:${key}`;
-          const fullKey = key;
-          flowNodeBases[fullKey] = {
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowNodeBases[fullKey] = flowNodeBasesShort[key] = {
             ...node,
             beanFullName,
             titleLocale: ctx.text(node.title),
           };
         }
       }
-      return flowNodeBases;
+      return [flowNodeBases, flowNodeBasesShort];
     }
 
     _getFlowEdgeBases() {
