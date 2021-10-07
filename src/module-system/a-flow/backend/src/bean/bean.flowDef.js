@@ -1,6 +1,7 @@
 const __flowNodeBases = {};
 const __flowNodeBasesShort = {};
 const __flowEdgeBases = {};
+const __flowEdgeBasesShort = {};
 const __flowServiceBases = {};
 
 module.exports = ctx => {
@@ -196,9 +197,15 @@ module.exports = ctx => {
 
     _getFlowEdgeBases() {
       if (!__flowEdgeBases[ctx.locale]) {
-        __flowEdgeBases[ctx.locale] = this._prepareFlowEdgeBases();
+        const [flowEdgeBases, flowEdgeBasesShort] = this._prepareFlowEdgeBases();
+        __flowEdgeBases[ctx.locale] = flowEdgeBases;
+        __flowEdgeBasesShort[ctx.locale] = flowEdgeBasesShort;
       }
       return __flowEdgeBases[ctx.locale];
+    }
+    _getFlowEdgeBasesShort() {
+      this._getFlowEdgeBases();
+      return __flowEdgeBasesShort[ctx.locale];
     }
 
     _getFlowEdgeBase(edgeType = 'sequence') {
@@ -207,6 +214,7 @@ module.exports = ctx => {
 
     _prepareFlowEdgeBases() {
       const flowEdgeBases = {};
+      const flowEdgeBasesShort = {};
       for (const module of ctx.app.meta.modulesArray) {
         const edges = module.main.meta && module.main.meta.flow && module.main.meta.flow.edges;
         if (!edges) continue;
@@ -219,16 +227,16 @@ module.exports = ctx => {
           } else {
             beanFullName = `${beanName.module || module.info.relativeName}.flow.edge.${beanName.name}`;
           }
-          // const fullKey = `${module.info.relativeName}:${key}`;
-          const fullKey = key;
-          flowEdgeBases[fullKey] = {
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowEdgeBases[fullKey] = flowEdgeBasesShort[key] = {
             ...edge,
             beanFullName,
             titleLocale: ctx.text(edge.title),
           };
         }
       }
-      return flowEdgeBases;
+      return [flowEdgeBases, flowEdgeBasesShort];
     }
 
     _combineFullKey({ flowDefKey }) {
