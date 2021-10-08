@@ -84,7 +84,28 @@ module.exports = appInfo => {
   // multipart
   config.multipart = {
     fileSize: '30mb',
-    fileExtensions: ['.txt', '.ini', '.md', '.apk', '.msi', '.rar', '.zip', '.tar', '.xls', '.xlsx', '.ppt', '.pptx', '.doc', '.docx', '.pdf', '.aac', '.ogg', '.m4a', '.mp3', '.wav'],
+    fileExtensions: [
+      '.txt',
+      '.ini',
+      '.md',
+      '.apk',
+      '.msi',
+      '.rar',
+      '.zip',
+      '.tar',
+      '.xls',
+      '.xlsx',
+      '.ppt',
+      '.pptx',
+      '.doc',
+      '.docx',
+      '.pdf',
+      '.aac',
+      '.ogg',
+      '.m4a',
+      '.mp3',
+      '.wav',
+    ],
   };
 
   // static
@@ -202,7 +223,7 @@ function getFullPath(ctx, dir, filename, options) {
   return fullPath;
 }
 
-function onQuery(hook, ms, sequence, args) {
+function onQuery(hook, ms, sequence /* , args*/) {
   if (!hook.meta.long_query_time || hook.meta.long_query_time < ms) {
     const message = `threadId: ${sequence._connection.threadId}, ${ms}ms ==> ${sequence.sql}`;
     console.log(chalk.keyword(hook.meta.color)(message));

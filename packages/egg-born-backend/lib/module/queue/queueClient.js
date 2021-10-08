@@ -186,9 +186,9 @@ module.exports = function (app) {
       // queue
       const queue = this._ensureQueue(info).queue;
       // job
-      const jobId = uuid.v4();
+      const jobId = (info.jobOptions && info.jobOptions.jobId) || uuid.v4();
       const jobName = info.jobName || jobId;
-      const _jobOptions = Object.assign({}, jobOptions, { jobId }, info.jobOptions);
+      const _jobOptions = Object.assign({}, jobOptions, info.jobOptions);
       // not async
       if (!isAsync) {
         // add job
@@ -196,6 +196,10 @@ module.exports = function (app) {
       }
       // async
       return new Promise((resolve, reject) => {
+        // jobId
+        if (!_jobOptions.jobId) {
+          _jobOptions.jobId = jobId;
+        }
         // callback
         this._queueCallbacks[jobId] = {
           info,
