@@ -3,7 +3,14 @@ module.exports = ctx => {
   class FlowTask {
     async _nodeDoneCheckLock({ flowNodeId }) {
       // load flow node
-      const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      let nodeInstance;
+      try {
+        nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      } catch (err) {}
+      if (!nodeInstance) {
+        // here means done
+        return;
+      }
       // options
       const options = this._getNodeDefOptionsTask({ nodeInstance });
       // completionCondition
