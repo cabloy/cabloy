@@ -17,7 +17,7 @@ module.exports = ctx => {
       const repeat = node.options && node.options.repeat;
       if (!repeat) return;
       // push
-      const jobName = `${flowDefId}.${node.id}`.replace(/:/g, '.');
+      const jobName = this._getJobName(flowDefId, node.id);
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
@@ -79,7 +79,7 @@ module.exports = ctx => {
       // check if changed
       const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
       const jobKeyConfig = ctx.app.meta.queue._getRepeatKey(
-        `${flowDefId}.${nodeConfig.id}`,
+        this._getJobName(flowDefId, nodeConfig.id),
         nodeConfig.options && nodeConfig.options.repeat
       );
       if (jobKeyActive !== jobKeyConfig) return false;
@@ -92,6 +92,10 @@ module.exports = ctx => {
       const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
       const repeat = await job.queue.repeat;
       await repeat.removeRepeatableByKey(jobKeyActive);
+    }
+
+    _getJobName(flowDefId, nodeId) {
+      return `${flowDefId}.${nodeId}`.replace(/:/g, '.');
     }
   }
 
