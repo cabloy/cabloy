@@ -63,7 +63,7 @@ module.exports = ctx => {
       // all startEvents
       for (const node of content.process.nodes) {
         const nodeType = node.type;
-        if (nodeType.indexOf('startEvent') !== 0) continue;
+        if (nodeType.indexOf('startEvent') === -1) continue;
         const _nodeBase = this._getFlowNodeBase(nodeType);
         const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
         if (_nodeBaseBean.deploy) {
