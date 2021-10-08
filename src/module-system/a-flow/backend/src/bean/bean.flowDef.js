@@ -42,18 +42,18 @@ module.exports = ctx => {
       return null;
     }
 
-    async deploy({ flowDefId }) {
+    async deploy({ flowDefId, undeploy }) {
       // queue
       await ctx.app.meta.queue.pushAsync({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'deploy',
         queueNameSub: flowDefId,
-        data: { flowDefId },
+        data: { flowDefId, undeploy },
       });
     }
 
-    async _deployQueue({ flowDefId }) {
+    async _deployQueue({ flowDefId, undeploy }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
@@ -68,7 +68,7 @@ module.exports = ctx => {
         const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
         if (_nodeBaseBean.deploy) {
           await _nodeBaseBean.deploy({
-            deploy: flowDef.atomDisabled === 0,
+            deploy: !undeploy && flowDef.atomDisabled === 0,
             flowDefId,
             node,
           });

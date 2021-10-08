@@ -11,7 +11,7 @@ module.exports = ctx => {
       if (deploy) {
         await this._addCondition({ flowDefId, node });
       } else {
-        // donot delete condition
+        await this._deleteCondition2({ flowDefId, node });
       }
     }
 
@@ -156,6 +156,14 @@ module.exports = ctx => {
     async _deleteCondition(context) {
       const { _condition } = context;
       await this.modelCondition.delete({ id: _condition.id });
+    }
+
+    async _deleteCondition2({ flowDefId, node }) {
+      const startEventId = node.id;
+      await this.modelCondition.delete({
+        flowDefId,
+        startEventId,
+      });
     }
   }
 

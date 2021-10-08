@@ -57,16 +57,15 @@ module.exports = app => {
 
       // deploy
       if (item.atomStage === 1) {
-        const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-        if (_atom.atomDisabled === 0) {
-          this.ctx.tail(async () => {
-            await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-          });
-        }
+        this.ctx.tail(async () => {
+          await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+        });
       }
     }
 
     async delete({ atomClass, key, user }) {
+      // deploy
+      await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
       // delete flowDef
       await this.ctx.model.flowDef.delete({
         id: key.itemId,
@@ -85,6 +84,15 @@ module.exports = app => {
       // deploy
       this.ctx.tail(async () => {
         await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+      });
+    }
+
+    async disable({ atomClass, key, user }) {
+      // super
+      await super.disable({ atomClass, key, user });
+      // deploy
+      this.ctx.tail(async () => {
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
       });
     }
 
