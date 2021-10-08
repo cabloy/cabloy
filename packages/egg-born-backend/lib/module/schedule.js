@@ -63,9 +63,11 @@ module.exports = function (loader /* , modules*/) {
     }
   }
 
-  loader.app.meta._loadSchedules = async ({ subdomain }) => {
-    // install
-    __installSchedules({ subdomain });
+  loader.app.meta._loadSchedules = async ({ ctx }) => {
+    const instances = await ctx.bean.instance.list({ where: {} });
+    for (const instance of instances) {
+      __installSchedules({ subdomain: instance.name });
+    }
   };
 
   loader.app.meta._runSchedule = async context => {
