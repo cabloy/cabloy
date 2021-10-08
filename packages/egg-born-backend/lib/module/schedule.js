@@ -1,4 +1,4 @@
-module.exports = function (loader, modules) {
+module.exports = function (loader /* , modules*/) {
   // all schedules
   const ebSchedules = (loader.app.meta.schedules = {});
 
