@@ -46,7 +46,10 @@ module.exports = function (app) {
 
       // create work
       const connectionWorker = app.redis.get('queue').duplicate();
-      const _workerOptions = Object.assign({}, app.config.queue.worker, workerOptions, { prefix, connection: connectionWorker });
+      const _workerOptions = Object.assign({}, app.config.queue.worker, workerOptions, {
+        prefix,
+        connection: connectionWorker,
+      });
       _worker.worker = new bull.Worker(
         queueKey,
         async job => {
@@ -124,7 +127,10 @@ module.exports = function (app) {
 
       // create queue
       const connectionScheduler = app.redis.get('queue'); // need not duplicate
-      const _schedulerOptions = Object.assign({}, app.config.queue.scheduler, schedulerOptions, { prefix, connection: connectionScheduler });
+      const _schedulerOptions = Object.assign({}, app.config.queue.scheduler, schedulerOptions, {
+        prefix,
+        connection: connectionScheduler,
+      });
       return new bull.QueueScheduler(queueKey, _schedulerOptions);
     }
 
