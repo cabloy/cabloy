@@ -75,8 +75,10 @@ module.exports = ctx => {
       return false;
     }
 
-    async clearRemains() {
+    async onNodeClear(options) {
       await ctx.bean.flowTask._clearRemains({ nodeInstance: this.nodeInstance });
+      // super
+      return await super.onNodeClear(options);
     }
 
     async _prepareAssignees({ options }) {

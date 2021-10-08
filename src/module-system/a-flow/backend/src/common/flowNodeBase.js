@@ -55,4 +55,9 @@ module.exports = class FlowNodeBase {
     await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     return true;
   }
+
+  async onNodeClear(options) {
+    await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
+    return true;
+  }
 };

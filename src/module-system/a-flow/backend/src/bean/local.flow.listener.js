@@ -74,6 +74,12 @@ module.exports = ctx => {
       }
     }
 
+    async onNodeClear(contextNode, { options }) {
+      if (this.flowListener && this.flowListener.onNodeClear) {
+        await this.flowListener.onNodeClear(contextNode, { options });
+      }
+    }
+
     async onEdgeEnter(contextEdge, contextNode) {
       if (this.flowListener && this.flowListener.onEdgeEnter) {
         await this.flowListener.onEdgeEnter(contextEdge, contextNode);

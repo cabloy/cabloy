@@ -116,11 +116,18 @@ module.exports = ctx => {
 
     async _clear(options) {
       options = options || {};
-      const flowNodeHandleStatus = options.flowNodeHandleStatus || 1;
-      const flowNodeRemark = options.flowNodeRemark || null;
-      const timeDone = new Date();
-      // clear
-      await this._setCurrent(true);
+      let flowNodeRemark;
+      let timeDone;
+      const flowNodeHandleStatus = options.flowNodeHandleStatus || 0;
+      if (flowNodeHandleStatus > 0) {
+        flowNodeRemark = options.flowNodeRemark || null;
+        timeDone = new Date();
+        // clear the current node
+        await this._setCurrent(true);
+      } else {
+        flowNodeRemark = null;
+        timeDone = null;
+      }
       // delete node
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
@@ -128,18 +135,6 @@ module.exports = ctx => {
       this.contextNode._flowNodeHistory.flowNodeHandleStatus = flowNodeHandleStatus;
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
-      await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
-    }
-
-    async _clearRemains() {
-      // clear taskRemains
-      if (this.nodeBaseBean.clearRemains) {
-        await this.nodeBaseBean.clearRemains();
-      }
-      // delete node
-      await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
-      // set nodeHistoryStatus
-      this.contextNode._flowNodeHistory.flowNodeStatus = 1;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
@@ -185,12 +180,16 @@ module.exports = ctx => {
       // raise event: onNodeLeave
       const res = await this.nodeBaseBean.onNodeLeave();
       await this._saveVars();
-      // clear
-      await this._clear();
-      // res
       if (!res) return false;
+      // clear with done
+      await this.clear({ flowNodeHandleStatus: 1 });
       // next
       return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+    }
+
+    async clear(options) {
+      await this.nodeBaseBean.onNodeClear(options);
+      await this._clear(options);
     }
 
     get nodeBaseBean() {

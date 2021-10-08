@@ -60,8 +60,6 @@ module.exports = ctx => {
     }
 
     async _nodeDoneCheckLock_passed({ nodeInstance }) {
-      // delete tasks
-      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // next stage of flow node: end
       return await nodeInstance.end();
     }
@@ -86,10 +84,8 @@ module.exports = ctx => {
         nodeDefId: rejectedNode,
         flowNodeIdPrev: flowNodeId,
       });
-      // delete tasks
-      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeHandleStatus: 2, flowNodeRemark });
+      await nodeInstance.clear({ flowNodeHandleStatus: 2, flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 
@@ -102,10 +98,6 @@ module.exports = ctx => {
           return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
         },
       });
-    }
-
-    async _nodeDoneCheckLock_deleteTasks({ nodeInstance }) {
-      await this._clearRemains({ nodeInstance });
     }
 
     async _list({ options: { where, orders, page, mode, history = 0 }, user, pageForce = true, count = 0 }) {

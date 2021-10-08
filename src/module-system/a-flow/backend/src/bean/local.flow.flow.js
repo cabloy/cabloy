@@ -237,7 +237,7 @@ module.exports = ctx => {
       });
       for (const flowNode of flowNodes) {
         const flowNodeInstance = await this._loadNodeInstance({ flowNode });
-        await flowNodeInstance._clearRemains();
+        await flowNodeInstance.clear();
       }
     }
 
