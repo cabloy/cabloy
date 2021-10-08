@@ -49,14 +49,14 @@ module.exports = appInfo => {
     registerPassport: {
       bean: 'registerPassport',
     },
+    loadSchedules: {
+      bean: 'loadSchedules',
+      // instance: true,
+      debounce: true,
+    },
     installAuthProviders: {
       bean: 'installAuthProviders',
       instance: true,
-    },
-    loadSchedules: {
-      bean: 'loadSchedules',
-      instance: true,
-      debounce: true,
     },
     loadAtomStatics: {
       bean: 'loadAtomStatics',

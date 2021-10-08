@@ -42,7 +42,7 @@ module.exports = function (loader /* , modules*/) {
       const schedule = ebSchedules[fullKey];
       if (!schedule.config.disable && schedule.config.repeat) {
         // push
-        const jobName = `${schedule.module}.${schedule.name}`; // not use :
+        const jobName = __getJobName(subdomain, schedule.module, schedule.name); // not use :
         loader.app.meta.queue.push({
           subdomain,
           module: 'a-base',
@@ -101,7 +101,7 @@ module.exports = function (loader /* , modules*/) {
 
   function __checkJobValid(context) {
     const job = context.job;
-    const { module, name } = context.data;
+    const { subdomain, module, name } = context.data;
     // schedule
     const fullKey = `${module}.${name}`;
     const schedule = ebSchedules[fullKey];
@@ -110,9 +110,14 @@ module.exports = function (loader /* , modules*/) {
     if (schedule.config.disable) return false;
     // check if changed
     const jobKeyActive = loader.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-    const jobKeyConfig = loader.app.meta.queue._getRepeatKey(job.data.jobName, schedule.config.repeat);
+    const jobNameConfig = __getJobName(subdomain, module, name);
+    const jobKeyConfig = loader.app.meta.queue._getRepeatKey(jobNameConfig, schedule.config.repeat);
     if (jobKeyActive !== jobKeyConfig) return false;
     // ok
     return true;
+  }
+
+  function __getJobName(subdomain, module, name) {
+    return `${subdomain}.${module}.${name}`;
   }
 };
