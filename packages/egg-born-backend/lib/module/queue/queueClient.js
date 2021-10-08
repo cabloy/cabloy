@@ -239,6 +239,14 @@ module.exports = function (app) {
         ctxParent,
       });
     }
+
+    _getRepeatKey(name, repeat) {
+      const endDate = repeat.endDate ? new Date(repeat.endDate).getTime() : '';
+      const tz = repeat.tz || '';
+      const suffix = (repeat.cron ? repeat.cron : String(repeat.every)) || '';
+      const jobId = repeat.jobId ? repeat.jobId : '';
+      return `${name}:${jobId}:${endDate}:${tz}:${suffix}`;
+    }
   }
 
   return QueueClient;

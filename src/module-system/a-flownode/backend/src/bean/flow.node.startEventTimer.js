@@ -77,8 +77,8 @@ module.exports = ctx => {
       const nodeConfig = content.process.nodes.find(item => item.id === node.id);
       if (!nodeConfig) return false;
       // check if changed
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-      const jobKeyConfig = getRepeatKey(
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+      const jobKeyConfig = ctx.app.meta.queue._getRepeatKey(
         `${flowDefId}.${nodeConfig.id}`,
         nodeConfig.options && nodeConfig.options.repeat
       );
@@ -89,7 +89,7 @@ module.exports = ctx => {
 
     async _deleteSchedule(context) {
       const job = context.job;
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
       const repeat = await job.queue.repeat;
       await repeat.removeRepeatableByKey(jobKeyActive);
     }
@@ -97,11 +97,3 @@ module.exports = ctx => {
 
   return FlowNode;
 };
-
-function getRepeatKey(name, repeat) {
-  const endDate = repeat.endDate ? new Date(repeat.endDate).getTime() : '';
-  const tz = repeat.tz || '';
-  const suffix = (repeat.cron ? repeat.cron : String(repeat.every)) || '';
-
-  return `${name}::${endDate}:${tz}:${suffix}`;
-}

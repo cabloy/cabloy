@@ -94,7 +94,7 @@ module.exports = function (loader /* , modules*/) {
 
   async function __deleteSchedule(context) {
     const job = context.job;
-    const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+    const jobKeyActive = loader.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
     const repeat = await job.queue.repeat;
     await repeat.removeRepeatableByKey(jobKeyActive);
   }
@@ -109,18 +109,10 @@ module.exports = function (loader /* , modules*/) {
     // check disable
     if (schedule.config.disable) return false;
     // check if changed
-    const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-    const jobKeyConfig = getRepeatKey(job.data.jobName, schedule.config.repeat);
+    const jobKeyActive = loader.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+    const jobKeyConfig = loader.app.meta.queue._getRepeatKey(job.data.jobName, schedule.config.repeat);
     if (jobKeyActive !== jobKeyConfig) return false;
     // ok
     return true;
   }
 };
-
-function getRepeatKey(name, repeat) {
-  const endDate = repeat.endDate ? new Date(repeat.endDate).getTime() : '';
-  const tz = repeat.tz || '';
-  const suffix = (repeat.cron ? repeat.cron : String(repeat.every)) || '';
-  const jobId = repeat.jobId ? repeat.jobId : '';
-  return `${name}:${jobId}:${endDate}:${tz}:${suffix}`;
-}
