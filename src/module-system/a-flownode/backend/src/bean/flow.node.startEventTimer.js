@@ -104,7 +104,8 @@ module.exports = ctx => {
         module: moduleInfo.relativeName,
         queueName: 'startEventTimer',
       });
-      await queue.removeRepeatableByKey(jobKeyActive);
+      const repeat = await queue.repeat;
+      await repeat.removeRepeatableByKey(jobKeyActive);
     }
 
     _getJobName(flowDefId, node) {
