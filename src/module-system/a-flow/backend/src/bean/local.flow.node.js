@@ -11,6 +11,7 @@ module.exports = ctx => {
       this.contextEdge = contextEdge;
       this._nodeBase = null;
       this._nodeBaseBean = null;
+      this._behaviors = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
         context,
@@ -82,6 +83,13 @@ module.exports = ctx => {
         contextNode: this.contextNode,
         contextEdge: this.contextEdge,
       });
+      // behaviors
+      this._prepareBehaviors();
+    }
+
+    _prepareBehaviors() {
+      const options = this.nodeBaseBean.getNodeDefOptions();
+      console.log(options);
     }
 
     async _saveNodeVars() {
