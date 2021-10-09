@@ -54,12 +54,9 @@ module.exports = app => {
           },
         }
       );
-
       // deploy
       if (item.atomStage === 1) {
-        this.ctx.tail(async () => {
-          await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-        });
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
       }
     }
 
@@ -85,18 +82,14 @@ module.exports = app => {
       // super
       await super.enable({ atomClass, key, user });
       // deploy
-      this.ctx.tail(async () => {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-      });
+      await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
     }
 
     async disable({ atomClass, key, user }) {
       // super
       await super.disable({ atomClass, key, user });
       // deploy
-      this.ctx.tail(async () => {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
-      });
+      await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
     }
 
     _getMeta(item) {

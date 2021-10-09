@@ -43,17 +43,6 @@ module.exports = ctx => {
     }
 
     async deploy({ flowDefId, undeploy }) {
-      // queue
-      await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'deploy',
-        queueNameSub: flowDefId,
-        data: { flowDefId, undeploy },
-      });
-    }
-
-    async _deployQueue({ flowDefId, undeploy }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
