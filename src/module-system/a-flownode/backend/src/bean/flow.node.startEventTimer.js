@@ -9,16 +9,16 @@ module.exports = ctx => {
       if (deploy) {
         await this._addSchedule({ flowDefId, node });
       } else {
-        // donot delete schedule
+        await this._deleteSchedule2({ flowDefId, node });
       }
     }
 
     async _addSchedule({ flowDefId, node }) {
-      const repeat = node.options && node.options.repeat;
+      const repeat = this._getJobRepeat(node);
       if (!repeat) return;
       if (!repeat.every && !repeat.cron) return;
       // push
-      const jobName = this._getJobName(flowDefId, node.id);
+      const jobName = this._getJobName(flowDefId, node);
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
@@ -80,8 +80,8 @@ module.exports = ctx => {
       // check if changed
       const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
       const jobKeyConfig = ctx.app.meta.queue._getRepeatKey(
-        this._getJobName(flowDefId, nodeConfig.id),
-        nodeConfig.options && nodeConfig.options.repeat
+        this._getJobName(flowDefId, nodeConfig),
+        this._getJobRepeat(nodeConfig)
       );
       if (jobKeyActive !== jobKeyConfig) return false;
       // ok
@@ -95,8 +95,23 @@ module.exports = ctx => {
       await repeat.removeRepeatableByKey(jobKeyActive);
     }
 
-    _getJobName(flowDefId, nodeId) {
-      return `${flowDefId}.${nodeId}`.replace(/:/g, '.');
+    async _deleteSchedule2({ flowDefId, node }) {
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(
+        this._getJobName(flowDefId, node),
+        this._getJobRepeat(node)
+      );
+      const queue = ctx.app.meta.queue._getQueue({
+        module: moduleInfo.relativeName,
+        queueName: 'startEventTimer',
+      });
+      await queue.removeRepeatableByKey(jobKeyActive);
+    }
+
+    _getJobName(flowDefId, node) {
+      return `${flowDefId}.${node.id}`.replace(/:/g, '.');
+    }
+    _getJobRepeat(node) {
+      return node.options && node.options.repeat;
     }
   }
 
