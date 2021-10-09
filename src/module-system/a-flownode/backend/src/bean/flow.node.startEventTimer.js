@@ -16,6 +16,7 @@ module.exports = ctx => {
     async _addSchedule({ flowDefId, node }) {
       const repeat = node.options && node.options.repeat;
       if (!repeat) return;
+      if (!repeat.every && !repeat.cron) return;
       // push
       const jobName = this._getJobName(flowDefId, node.id);
       ctx.app.meta.queue.push({
