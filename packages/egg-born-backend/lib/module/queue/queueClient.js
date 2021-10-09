@@ -167,6 +167,10 @@ module.exports = function (app) {
       return this._queues[queueKey];
     }
 
+    _getQueue(info) {
+      return this._ensureQueue(info).queue;
+    }
+
     _callCallback(jobId, failedReason, data) {
       const _callback = this._queueCallbacks[jobId];
       if (_callback) {
@@ -184,7 +188,7 @@ module.exports = function (app) {
       // queueConfig.options: queue/worker/job/limiter
       const jobOptions = (queueConfig.options && queueConfig.options.job) || null;
       // queue
-      const queue = this._ensureQueue(info).queue;
+      const queue = this._getQueue(info);
       // job
       const jobId = (info.jobOptions && info.jobOptions.jobId) || uuid.v4();
       const jobName = info.jobName || jobId;
