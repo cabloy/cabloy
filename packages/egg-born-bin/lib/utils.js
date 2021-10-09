@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const urllib = require('urllib');
-const semverDiff = require('semver-diff');
+const semver = require('semver');
 const chalk = require('chalk');
 const boxen = require('boxen');
 
@@ -53,11 +53,13 @@ const utils = {
   },
   versionPromptCabloy({ mode, moduleName, moduleVersion, moduleVersionCurrent }) {
     try {
-      const diffType = semverDiff(moduleVersion, moduleVersionCurrent);
-      if (!diffType) return;
+      const lt = semver.lt(moduleVersion, moduleVersionCurrent);
+      if (!lt) return;
       setTimeout(() => {
         // log
-        let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(moduleVersion)} → ${chalk.keyword('orange')(moduleVersionCurrent)}`;
+        let message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(
+          moduleVersion
+        )} → ${chalk.keyword('orange')(moduleVersionCurrent)}`;
         if (mode === 'lerna') {
           message += `\nRun ${chalk.keyword('orange')('> git pull <')} to update cabloy!`;
           message += `\nRun ${chalk.keyword('orange')('> lerna bootstrap <')} to install dependencies!`;

@@ -55,7 +55,7 @@
     "ora": "^4.0.3",
     "prettier": "2.3.2",
     "rimraf": "^3.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.3.5",
     "url-loader": "^4.1.1",
     "vue-eslint-parser": "^7.10.0",
     "vue-loader": "^15.9.5",

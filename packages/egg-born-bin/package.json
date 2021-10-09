@@ -32,7 +32,6 @@
     "egg-born-front": "^8.3.7",
     "egg-mock": "^3.25.1",
     "nock": "^11.7.2",
-    "semver-diff": "^3.1.1",
     "should": "^13.2.3",
     "urllib": "^2.34.2"
   }

@@ -79,7 +79,7 @@
     "prettier": "2.3.2",
     "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.3.5",
     "vue-eslint-parser": "^7.10.0"
   }
 }

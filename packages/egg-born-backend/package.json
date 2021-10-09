@@ -51,7 +51,7 @@
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "redlock": "^4.1.0",
-    "semver": "^7.1.2",
+    "semver": "^7.3.5",
     "supertest": "^4.0.2",
     "uuid": "^8.3.2"
   }

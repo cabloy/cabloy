@@ -8,7 +8,7 @@ const compressing = require('compressing');
 const rimraf = require('mz-modules/rimraf');
 const fse = require('fs-extra');
 const chalk = require('chalk');
-const semverDiff = require('semver-diff');
+const semver = require('semver');
 const Command = require('@zhennann/egg-bin').Command;
 
 class TestUpdateCommand extends Command {
@@ -81,8 +81,8 @@ class TestUpdateCommand extends Command {
     if (!fse.existsSync(_pkgFile)) return downloadUrl;
 
     const _pkg = require(_pkgFile);
-    const diffType = semverDiff(_pkg.version, version);
-    if (!diffType) return null;
+    const lt = semver.lt(_pkg.version, version);
+    if (!lt) return null;
 
     return downloadUrl;
   }
