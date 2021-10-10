@@ -109,7 +109,11 @@ module.exports = ctx => {
       const behaviors = behaviorsDef.map(behaviorDef => {
         const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
         const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
+          flowInstance: this.flowInstance,
           nodeInstance: this,
+          context: this.context,
+          contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
         });
         return {
           behaviorDef,
