@@ -199,7 +199,11 @@ module.exports = {
   },
 
   getVal(name) {
-    return (this.params && this.params[name]) || (this.query && this.query[name]) || (this.request.body && this.request.body[name]);
+    return (
+      (this.params && this.params[name]) ||
+      (this.query && this.query[name]) ||
+      (this.request.body && this.request.body[name])
+    );
   },
 
   getInt(name) {
@@ -235,7 +239,19 @@ function appCallback() {
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
 
-  return function handleRequest(ctxCaller, innerAccess, subdomain, req, res, resolve, reject, query, params, headers, body) {
+  return function handleRequest(
+    ctxCaller,
+    innerAccess,
+    subdomain,
+    req,
+    res,
+    resolve,
+    reject,
+    query,
+    params,
+    headers,
+    body
+  ) {
     res.statusCode = 404;
     const ctx = self.createContext(req, res);
     onFinished(res, ctx.onerror);

@@ -125,6 +125,7 @@ module.exports = app => {
             if (!obj) return dispatch(i + 1);
             receiver = obj.receiver;
             fn = obj.fn;
+            if (!fn) return new Error('fn is not defined');
           }
           if (i === chains.length) fn = next;
           if (!fn) return;
@@ -151,6 +152,7 @@ module.exports = app => {
             if (!obj) return dispatch(i + 1);
             receiver = obj.receiver;
             fn = obj.fn;
+            if (!fn) return Promise.reject(new Error('fn is not defined'));
           }
           if (i === chains.length) fn = next;
           if (!fn) return Promise.resolve();
