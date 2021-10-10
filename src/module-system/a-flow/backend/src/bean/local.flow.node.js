@@ -1,6 +1,11 @@
 const VarsFn = require('../common/vars.js');
 const UtilsFn = require('../common/utils.js');
 
+const __behaviorBaseDef = {
+  id: 'behavior_0',
+  name: 'Base',
+  type: 'base',
+};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode {
@@ -31,6 +36,12 @@ module.exports = ctx => {
     }
     get modelFlowNodeHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
+    }
+    get behaviors() {
+      if (!this._behaviors) {
+        this._behaviors = this._prepareBehaviors();
+      }
+      return this._behaviors;
     }
 
     async init({ flowNodeIdPrev }) {
@@ -88,8 +99,26 @@ module.exports = ctx => {
     }
 
     _prepareBehaviors() {
-      const options = this.nodeBaseBean.getNodeDefOptions();
-      console.log(options);
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // behaviorsDef
+      const behaviorsDef = nodeDef.behaviors || [];
+      // append base behavior
+      behaviorsDef.push(__behaviorBaseDef);
+      // behaviors
+      const behaviors = behaviorsDef.map(behaviorDef => {
+        const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
+        const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
+          nodeInstance: this,
+        });
+        return {
+          behaviorDef,
+          behaviorBase,
+          behaviorBean,
+        };
+      });
+      // ok
+      return behaviors;
     }
 
     async _saveNodeVars() {
