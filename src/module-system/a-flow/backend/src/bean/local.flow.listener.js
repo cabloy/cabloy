@@ -120,6 +120,7 @@ module.exports = ctx => {
       if (this.flowListener && this.flowListener.getNodeDefOptions) {
         return this.flowListener.getNodeDefOptions(contextNode, { options });
       }
+      return options;
     }
 
     async getSchemaRead(contextTask, contextNode, { schemaBase, schema }) {

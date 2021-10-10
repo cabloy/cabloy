@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('extend2');
-
 module.exports = class FlowNodeBase {
   constructor(ctx, options) {
     this.ctx = ctx;
@@ -13,22 +10,8 @@ module.exports = class FlowNodeBase {
     }
   }
 
-  getNodeDefOptions() {
-    // nodeDef
-    const nodeDef = this.contextNode._nodeDef;
-    // options
-    let options = nodeDef.options || {};
-    // default
-    const optionsDefault = this.nodeInstance.nodeBase.options.default;
-    if (optionsDefault) {
-      options = extend(true, {}, optionsDefault, options);
-    }
-    // listener
-    const res = this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
-    if (res) {
-      options = res;
-    }
-    return options;
+  getNodeDefOptions(options) {
+    return this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
   }
 
   async onNodeEnter() {

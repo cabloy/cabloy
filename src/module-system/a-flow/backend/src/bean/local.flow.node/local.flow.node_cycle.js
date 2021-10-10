@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -10,7 +13,23 @@ module.exports = ctx => {
 
   class FlowNode {
     getNodeDefOptions() {
-      return this.nodeBaseBean.getNodeDefOptions();
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // options
+      let options = nodeDef.options || {};
+      // default
+      const optionsDefault = this.nodeBase.options.default;
+      if (optionsDefault) {
+        options = extend(true, {}, optionsDefault, options);
+      }
+      // behavior
+      // context
+      const context = {
+        methodName: 'getNodeDefOptions',
+        options,
+      };
+      // invoke
+      return ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
     }
 
     async enter() {
@@ -23,43 +42,49 @@ module.exports = ctx => {
     }
 
     async begin() {
-      // raise event: onNodeBegin
-      const res = await this.nodeBaseBean.onNodeBegin();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.doing();
+      // context
+      const context = {
+        methodName: 'begin',
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
 
     async doing() {
-      // raise event: onNodeDoing
-      const res = await this.nodeBaseBean.onNodeDoing();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.end();
+      // context
+      const context = {
+        methodName: 'doing',
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
 
     async end() {
-      // raise event: onNodeEnd
-      const res = await this.nodeBaseBean.onNodeEnd();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.leave();
+      // context
+      const context = {
+        methodName: 'end',
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
 
     async leave() {
-      // raise event: onNodeLeave
-      const res = await this.nodeBaseBean.onNodeLeave();
-      await this._saveVars();
-      if (!res) return false;
-      // clear with done
-      await this.clear({ flowNodeHandleStatus: 1 });
-      // next
-      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      // context
+      const context = {
+        methodName: 'leave',
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
 
     async clear(options) {
-      await this.nodeBaseBean.onNodeClear(options);
-      await this._clear(options);
+      // context
+      const context = {
+        methodName: 'clear',
+        options,
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
   }
   return FlowNode;
