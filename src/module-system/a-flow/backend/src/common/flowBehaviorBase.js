@@ -10,31 +10,31 @@ module.exports = class FlowBehaviorBase {
     }
   }
 
-  // getNodeDefOptions(context, next) {
-  //   return next();
-  // }
+  getNodeDefOptions(context, next) {
+    return next();
+  }
 
-  // async enter(context, next) {
-  //   return await next();
-  // }
+  async enter(context, next) {
+    return await next();
+  }
 
-  // async begin(context, next) {
-  //   return await next();
-  // }
+  async begin(context, next) {
+    return await next();
+  }
 
-  // async doing(context, next) {
-  //   return await next();
-  // }
+  async doing(context, next) {
+    return await next();
+  }
 
-  // async end(context, next) {
-  //   return await next();
-  // }
+  async end(context, next) {
+    return await next();
+  }
 
-  // async leave(context, next) {
-  //   return await next();
-  // }
+  async leave(context, next) {
+    return await next();
+  }
 
-  // async clear(context, next) {
-  //   return await next();
-  // }
+  async clear(context, next) {
+    return await next();
+  }
 };
