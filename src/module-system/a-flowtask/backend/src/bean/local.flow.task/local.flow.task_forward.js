@@ -8,7 +8,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.forward({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.forward({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
       // handle
       await this._forward_handle({ handle });
       // need not notify
@@ -64,7 +64,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.forwardRecall({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.forwardRecall({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
       // handle
       await this._forwardRecall_handle();
     }

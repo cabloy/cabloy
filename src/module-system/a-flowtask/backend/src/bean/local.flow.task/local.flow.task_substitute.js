@@ -8,7 +8,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.substitute({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.substitute({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
       // handle
       await this._substitute_handle({ handle });
       // need not notify
@@ -64,7 +64,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.substituteRecall({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.substituteRecall({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
       // handle
       await this._substituteRecall_handle();
     }

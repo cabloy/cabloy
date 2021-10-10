@@ -44,7 +44,7 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       }
     }
-    async _getNodeOptions({ getOptions, flowTask, nodeInstance }) {
+    async _getNodeOptionsTask({ getOptions, flowTask, nodeInstance }) {
       if (getOptions) return await getOptions();
       if (!nodeInstance) {
         nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
@@ -91,7 +91,7 @@ module.exports = ctx => {
         this._check_claimed({ flowTask });
       }
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       // check if allowCancelFlow
       if (!options.allowCancelFlow) {
         ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
@@ -121,7 +121,7 @@ module.exports = ctx => {
         this._check_claimed({ flowTask });
       }
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       // check if pass/reject
       if (handle) {
         if (handle.status === 1 && !options.allowPassTask) {
@@ -159,7 +159,7 @@ module.exports = ctx => {
         ctx.throw(403);
       }
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
         ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
       }
@@ -172,7 +172,7 @@ module.exports = ctx => {
       // timeClaimed first
       this._check_claimed({ flowTask });
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       if (!options.allowForward || !flowTask.flowTaskIdForwardTo) {
         ctx.throw(403);
       }
@@ -193,7 +193,7 @@ module.exports = ctx => {
         this._check_claimed({ flowTask });
       }
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       // allowed only once, so should check flowTaskIdSubstituteFrom
       if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || flowTask.flowTaskIdSubstituteTo) {
         ctx.throw.module(moduleInfo.relativeName, 1013, flowTaskId);
@@ -207,7 +207,7 @@ module.exports = ctx => {
       // timeClaimed first
       this._check_claimed({ flowTask });
       // options
-      const options = await this._getNodeOptions({ getOptions, flowTask });
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
       // allowed only once, so should check flowTaskIdSubstituteFrom
       if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || !flowTask.flowTaskIdSubstituteTo) {
         ctx.throw(403);

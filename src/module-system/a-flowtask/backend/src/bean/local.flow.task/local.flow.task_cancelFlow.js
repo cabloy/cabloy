@@ -7,7 +7,7 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       // check right
-      await this.localRight.cancelFlow({ flowTask, user, getOptions: () => this._getNodeOptions() });
+      await this.localRight.cancelFlow({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
       // handle
       await this._cancelFlow_handle({ handle });
     }

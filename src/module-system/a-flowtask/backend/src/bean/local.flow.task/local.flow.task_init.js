@@ -107,7 +107,7 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
 
-    _getNodeOptions() {
+    _getNodeOptionsTask() {
       return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
     }
   }
