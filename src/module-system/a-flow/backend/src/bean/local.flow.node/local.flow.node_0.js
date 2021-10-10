@@ -94,8 +94,6 @@ module.exports = ctx => {
         contextNode: this.contextNode,
         contextEdge: this.contextEdge,
       });
-      // behaviors
-      this._prepareBehaviors();
     }
 
     _prepareBehaviors() {
@@ -103,26 +101,28 @@ module.exports = ctx => {
       const nodeDef = this.contextNode._nodeDef;
       // behaviorsDef
       const behaviorsDef = nodeDef.behaviors || [];
-      // append base behavior
-      behaviorsDef.push(__behaviorBaseDef);
       // behaviors
-      const behaviors = behaviorsDef.map(behaviorDef => {
-        const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
-        const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
-          flowInstance: this.flowInstance,
-          nodeInstance: this,
-          context: this.context,
-          contextNode: this.contextNode,
-          contextEdge: this.contextEdge,
-        });
-        return {
-          behaviorDef,
-          behaviorBase,
-          behaviorBean,
-        };
-      });
+      const behaviors = behaviorsDef.map(behaviorDef => this._prepareBehavior(behaviorDef));
+      // behavior base
+      behaviors.push(this._prepareBehavior(__behaviorBaseDef));
       // ok
       return behaviors;
+    }
+
+    _prepareBehavior(behaviorDef) {
+      const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
+      const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
+        flowInstance: this.flowInstance,
+        nodeInstance: this,
+        context: this.context,
+        contextNode: this.contextNode,
+        contextEdge: this.contextEdge,
+      });
+      return {
+        behaviorDef,
+        behaviorBase,
+        behaviorBean,
+      };
     }
 
     async _saveNodeVars() {
