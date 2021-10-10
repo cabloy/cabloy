@@ -1,18 +1,25 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
+  const __adapter = (context, chain) => {
+    return {
+      receiver: chain.behaviorBean,
+      fn: chain.behaviorBean[context.methodName],
+    };
+  };
+
   class FlowNode {
     getNodeDefOptions() {
       return this.nodeBaseBean.getNodeDefOptions();
     }
 
     async enter() {
-      // current
-      await this._setCurrent();
-      // raise event: onNodeEnter
-      const res = await this.nodeBaseBean.onNodeEnter();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.begin();
+      // context
+      const context = {
+        methodName: 'enter',
+      };
+      // invoke
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
 
     async begin() {
