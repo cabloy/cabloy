@@ -118,7 +118,8 @@ module.exports = ctx => {
 
     getNodeDefOptions(contextNode, { options }) {
       if (this.flowListener && this.flowListener.getNodeDefOptions) {
-        return this.flowListener.getNodeDefOptions(contextNode, { options });
+        const res = this.flowListener.getNodeDefOptions(contextNode, { options });
+        if (res) return res;
       }
       return options;
     }
