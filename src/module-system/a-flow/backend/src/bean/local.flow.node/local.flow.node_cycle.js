@@ -22,68 +22,55 @@ module.exports = ctx => {
       if (optionsDefault) {
         options = extend(true, {}, optionsDefault, options);
       }
-      // behavior
-      // context
-      const context = {
+      // invoke
+      return this._behaviorsInvoke({
         methodName: 'getNodeDefOptions',
         options,
-      };
-      // invoke
-      return ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
+      });
     }
 
     async enter() {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'enter',
-      };
-      // invoke
-      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+      });
     }
 
     async begin() {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'begin',
-      };
-      // invoke
-      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+      });
     }
 
     async doing() {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'doing',
-      };
-      // invoke
-      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+      });
     }
 
     async end() {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'end',
-      };
-      // invoke
-      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+      });
     }
 
     async leave() {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'leave',
-      };
-      // invoke
-      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+      });
     }
 
     async clear(options) {
-      // context
-      const context = {
+      return await this._behaviorsInvokeAsync({
         methodName: 'clear',
         options,
-      };
-      // invoke
+      });
+    }
+
+    _behaviorsInvoke(context) {
+      return ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
+    }
+
+    async _behaviorsInvokeAsync(context) {
       return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
     }
   }
