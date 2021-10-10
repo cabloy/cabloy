@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('flow.set00', () => {
+describe('flow.set00', () => {
   it('simple', async () => {
     app.mockSession({});
     // login as root
