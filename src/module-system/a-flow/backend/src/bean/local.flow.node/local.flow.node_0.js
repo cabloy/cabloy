@@ -129,7 +129,10 @@ module.exports = ctx => {
       if (!this.contextNode._nodeVars._dirty) return;
       // flowNode
       this.contextNode._flowNode.nodeVars = JSON.stringify(this.contextNode._nodeVars._vars);
-      await this.modelFlowNode.update(this.contextNode._flowNode);
+      // modelFlowNode maybe deleted when flowNodeStatus=1
+      if (this.contextNode._flowNodeHistory.flowNodeStatus === 0) {
+        await this.modelFlowNode.update(this.contextNode._flowNode);
+      }
       // flowNode history
       this.contextNode._flowNodeHistory.nodeVars = this.contextNode._flowNode.nodeVars;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);

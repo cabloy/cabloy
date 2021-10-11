@@ -124,7 +124,10 @@ module.exports = ctx => {
       if (!this.context._flowVars._dirty) return;
       // flow
       this.context._flow.flowVars = JSON.stringify(this.context._flowVars._vars);
-      await this.modelFlow.update(this.context._flow);
+      // modelFlow maybe deleted when flowStatus=1
+      if (this.context._flowHistory.flowStatus === 0) {
+        await this.modelFlow.update(this.context._flow);
+      }
       // flow history
       this.context._flowHistory.flowVars = this.context._flow.flowVars;
       await this.modelFlowHistory.update(this.context._flowHistory);

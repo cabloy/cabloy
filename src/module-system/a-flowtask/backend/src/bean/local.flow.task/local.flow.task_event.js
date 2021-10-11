@@ -23,7 +23,10 @@ module.exports = ctx => {
       if (!this.contextTask._taskVars._dirty) return;
       // flowTask
       this.contextTask._flowTask.taskVars = JSON.stringify(this.contextTask._taskVars._vars);
-      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // modelFlowTask maybe deleted when flowTaskStatus=1
+      if (this.contextTask._flowTaskHistory.flowTaskStatus === 0) {
+        await this.modelFlowTask.update(this.contextTask._flowTask);
+      }
       // flowTask history
       this.contextTask._flowTaskHistory.taskVars = this.contextTask._flowTask.taskVars;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
