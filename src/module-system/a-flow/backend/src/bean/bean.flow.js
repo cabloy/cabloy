@@ -83,7 +83,10 @@ module.exports = ctx => {
       }
       if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
       // flowDef: by key+revision
-      const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({ flowDefKey: flow.flowDefKey, flowDefRevision: flow.flowDefRevision });
+      const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({
+        flowDefKey: flow.flowDefKey,
+        flowDefRevision: flow.flowDefRevision,
+      });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
       // not check atomDisabled
       // flowInstance
