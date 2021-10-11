@@ -1,4 +1,5 @@
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowBehavior extends ctx.app.meta.FlowBehaviorBase {
     constructor(options) {
       super(ctx, options);
@@ -6,7 +7,7 @@ module.exports = ctx => {
 
     async enter(context, next) {
       // addJob
-      // await this._addJob();
+      await this._addJob();
       return await next();
     }
 
@@ -19,20 +20,28 @@ module.exports = ctx => {
         // do nothing
         return;
       }
+      // delay
+      let delay;
+      if (options.timeDuration) {
+        delay = options.timeDuration;
+      } else {
+        delay = options.timeDate - new Date();
+      }
       // push
       const jobName = this._getJobName(flowId, flowNodeId, behaviorDefId);
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'startEventTimer',
-        queueNameSub: flowDefId,
+        queueName: 'overtime',
+        queueNameSub: flowId,
         jobName,
         jobOptions: {
-          repeat,
+          delay,
         },
         data: {
-          flowDefId,
-          node,
+          flowId,
+          flowNodeId,
+          behaviorDefId,
         },
       });
     }
@@ -42,7 +51,7 @@ module.exports = ctx => {
     }
 
     _getJobName(flowId, flowNodeId, behaviorDefId) {
-      return `${flowDefId}.${node.id}`.replace(/:/g, '.');
+      return `${flowId}.${flowNodeId}.${behaviorDefId}`.replace(/:/g, '.');
     }
   }
 
