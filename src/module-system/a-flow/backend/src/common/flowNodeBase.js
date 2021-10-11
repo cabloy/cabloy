@@ -10,6 +10,10 @@ module.exports = class FlowNodeBase {
     }
   }
 
+  getBehaviorDefOptions({ behaviorDefId, options }) {
+    return this.flowInstance._flowListener.getBehaviorDefOptions(this.contextNode, { behaviorDefId, options });
+  }
+
   getNodeDefOptions(options) {
     return this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
   }

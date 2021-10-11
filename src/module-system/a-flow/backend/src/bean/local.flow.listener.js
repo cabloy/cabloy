@@ -116,6 +116,14 @@ module.exports = ctx => {
       }
     }
 
+    getBehaviorDefOptions(contextNode, { behaviorDefId, options }) {
+      if (this.flowListener && this.flowListener.getBehaviorDefOptions) {
+        const res = this.flowListener.getBehaviorDefOptions(contextNode, { behaviorDefId, options });
+        if (res) return res;
+      }
+      return options;
+    }
+
     getNodeDefOptions(contextNode, { options }) {
       if (this.flowListener && this.flowListener.getNodeDefOptions) {
         const res = this.flowListener.getNodeDefOptions(contextNode, { options });

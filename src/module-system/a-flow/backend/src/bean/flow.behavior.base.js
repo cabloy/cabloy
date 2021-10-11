@@ -4,6 +4,10 @@ module.exports = ctx => {
       super(ctx, options);
     }
 
+    getBehaviorDefOptions({ behaviorDefId, options }) {
+      return this.nodeInstance.nodeBaseBean.getBehaviorDefOptions({ behaviorDefId, options });
+    }
+
     getNodeDefOptions({ options }) {
       return this.nodeInstance.nodeBaseBean.getNodeDefOptions(options);
     }

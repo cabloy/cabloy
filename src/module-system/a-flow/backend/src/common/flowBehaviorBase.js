@@ -12,6 +12,10 @@ module.exports = class FlowBehaviorBase {
     }
   }
 
+  getBehaviorDefOptions(context, next) {
+    return next();
+  }
+
   getNodeDefOptions(context, next) {
     return next();
   }

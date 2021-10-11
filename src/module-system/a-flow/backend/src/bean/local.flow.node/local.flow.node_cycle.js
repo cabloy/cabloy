@@ -12,6 +12,30 @@ module.exports = ctx => {
   };
 
   class FlowNode {
+    getBehaviorDefOptions({ behaviorDefId }) {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // behaviorDef
+      let behaviorDef;
+      if (nodeDef.behaviors) {
+        behaviorDef = nodeDef.behaviors.find(item => item.id === behaviorDefId);
+      }
+      // options
+      let options = (behaviorDef && behaviorDef.options) || {};
+      // default
+      const behavior = this.behaviors.find(item => item.behaviorDef.id === behaviorDefId);
+      const optionsDefault = behavior.behaviorBase.options.default;
+      if (optionsDefault) {
+        options = extend(true, {}, optionsDefault, options);
+      }
+      // invoke
+      return this._behaviorsInvoke({
+        methodName: 'getBehaviorDefOptions',
+        behaviorDefId,
+        options,
+      });
+    }
+
     getNodeDefOptions() {
       // nodeDef
       const nodeDef = this.contextNode._nodeDef;
