@@ -113,7 +113,7 @@ describe('flow.set01_atomUserTask', () => {
           remark: 'Nice Work!',
         },
         formAtom: {
-          atomName: 'startEventAtom-test!!',
+          atomName: 'atomUserTask-test!!',
           description: 'modified by userTask',
           _flowDefKey: 'would not been modified',
         },
