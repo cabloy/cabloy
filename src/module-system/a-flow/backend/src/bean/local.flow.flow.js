@@ -66,8 +66,12 @@ module.exports = ctx => {
       await this._contextInit({ flowId: flow.id, history });
     }
 
-    async nextEdges({ contextNode }) {
-      const edgeInstances = await this._findEdgeInstancesNext({ nodeDefId: contextNode._nodeDef.id, contextNode });
+    async nextEdges({ contextNode, behaviorDefId }) {
+      const edgeInstances = await this._findEdgeInstancesNext({
+        nodeDefId: contextNode._nodeDef.id,
+        contextNode,
+        behaviorDefId,
+      });
       if (edgeInstances.length === 0) return true;
       for (const edgeInstance of edgeInstances) {
         // check if end
@@ -336,10 +340,10 @@ module.exports = ctx => {
       return await this._createNodeInstance({ nodeDef });
     }
 
-    async _findEdgeInstancesNext({ nodeDefId, contextNode }) {
+    async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
       const edges = [];
       for (const edgeDef of this.context._flowDefContent.process.edges) {
-        if (edgeDef.source === nodeDefId) {
+        if (edgeDef.source === nodeDefId && (edgeDef.behavior || '') === (behaviorDefId || '')) {
           const edge = await this._createEdgeInstance({ edgeDef, contextNode });
           edges.push(edge);
         }
