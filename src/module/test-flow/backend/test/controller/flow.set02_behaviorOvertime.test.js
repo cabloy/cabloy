@@ -36,7 +36,7 @@ describe.only('flow.set02_behaviorOvertime', () => {
       .send({
         key: keyDraft,
         item: {
-          atomName: 'atomUserTask-test',
+          atomName: 'behaviorOverTime-test',
           _flowDefKey: 'set02_behaviorOvertime',
         },
       });
@@ -46,8 +46,47 @@ describe.only('flow.set02_behaviorOvertime', () => {
     // sleep first
     await app.bean.util.sleep(5000);
 
-    // sleep second
-    await app.bean.util.sleep(5000);
+    // activity_1 will be overtime, and transfer to startEvent_1
+    // select task
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/flowtask/task/select'))
+      .send({
+        options: {
+          where: {
+            'a.flowId': flowId,
+            'a.flowTaskStatus': 0,
+            'a.specificFlag': 0,
+          },
+          history: 0,
+        },
+      });
+    assert(result.body.code === 0);
+    let flowTask = result.body.data.list[0];
+    assert.equal(flowTask.flowNodeDefId, 'startEvent_1');
+
+    // handle task and transfer to activity_1
+
+    // claim
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+
+    // complete
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/flowtask/task/complete'))
+      .send({
+        flowTaskId: flowTask.id,
+        handle: {
+          status: 1,
+          remark: 'Submit again!',
+        },
+      });
+    assert(result.body.code === 0);
+
+    // handle task immediately
 
     // select task
     result = await app
@@ -65,7 +104,7 @@ describe.only('flow.set02_behaviorOvertime', () => {
       });
     assert(result.body.code === 0);
     flowTask = result.body.data.list[0];
-    assert(!!flowTask);
+    assert.equal(flowTask.flowNodeDefId, 'activity_1');
 
     // claim
     result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
@@ -84,12 +123,15 @@ describe.only('flow.set02_behaviorOvertime', () => {
           remark: 'Nice Work!',
         },
         formAtom: {
-          atomName: 'startEventAtom-test!!',
+          atomName: 'behaviorOverTime-test!!',
           description: 'modified by userTask',
           _flowDefKey: 'would not been modified',
         },
       });
     assert(result.body.code === 0);
+
+    // sleep for verify the overtime job not running
+    await app.bean.util.sleep(5000);
 
     // select formal
     result = await app
