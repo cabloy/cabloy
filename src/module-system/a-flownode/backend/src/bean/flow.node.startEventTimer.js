@@ -23,7 +23,6 @@ module.exports = ctx => {
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'startEventTimer',
-        queueNameSub: flowDefId,
         jobName,
         jobOptions: {
           repeat,

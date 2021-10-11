@@ -6,6 +6,7 @@ module.exports = appInfo => {
   config.queues = {
     startEventTimer: {
       bean: 'startEventTimer',
+      concurrency: true,
     },
   };
 
