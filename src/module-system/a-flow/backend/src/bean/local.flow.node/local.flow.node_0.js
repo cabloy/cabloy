@@ -173,6 +173,10 @@ module.exports = ctx => {
         timeDone = null;
       }
       // delete node
+      this.contextNode._flowNode.flowNodeStatus = 1;
+      this.contextNode._flowNode.flowNodeHandleStatus = flowNodeHandleStatus;
+      this.contextNode._flowNode.flowNodeRemark = flowNodeRemark;
+      this.contextNode._flowNode.timeDone = timeDone;
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
