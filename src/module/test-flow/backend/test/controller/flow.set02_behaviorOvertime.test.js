@@ -43,40 +43,8 @@ describe.only('flow.set02_behaviorOvertime', () => {
     assert(result.body.code === 0);
     const flowId = result.body.data.flow.id;
 
-    // select nothing of achive
-    result = await app
-      .httpRequest()
-      .post(mockUrl('/a/base/atom/select'))
-      .send({
-        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
-        options: {
-          where: {
-            atomFlowId: flowId,
-          },
-          stage: 'formal',
-        },
-      });
-    assert(result.body.code === 0);
-    let formal = result.body.data.list[0];
-    // not found
-    assert(!formal);
-
-    // select task from history
-    result = await app
-      .httpRequest()
-      .post(mockUrl('/a/flowtask/task/select'))
-      .send({
-        options: {
-          where: {
-            'a.flowId': flowId,
-            'a.flowTaskStatus': 0,
-          },
-          history: 1,
-        },
-      });
-    assert(result.body.code === 0);
-    let flowTask = result.body.data.list[0];
-    assert(!!flowTask);
+    // sleep
+    await app.bean.util.sleep(5000);
 
     // select task
     result = await app
@@ -134,7 +102,7 @@ describe.only('flow.set02_behaviorOvertime', () => {
         },
       });
     assert(result.body.code === 0);
-    formal = result.body.data.list[0];
+    const formal = result.body.data.list[0];
     const keyFormal = { atomId: formal.atomId };
 
     // delete
