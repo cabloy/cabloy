@@ -5,13 +5,13 @@ module.exports = ctx => {
     }
 
     async enter(context, next) {
-      // nodeDef
-      // const nodeDef = this.contextNode._nodeDef;
-      // const flowDefId=this.context.
+      // addJob
+      await this._addJob();
       return await next();
     }
 
-    async _addTask() {
+    async _addJob() {
+      const flowId = this.context._flowId;
       const repeat = this._getJobRepeat(node);
       if (!repeat) return;
       if (!repeat.every && !repeat.cron) return;
@@ -33,7 +33,7 @@ module.exports = ctx => {
       });
     }
 
-    async _runTask(context) {
+    async _runJob(context) {
       console.log('----runDelayedTask', context);
     }
   }

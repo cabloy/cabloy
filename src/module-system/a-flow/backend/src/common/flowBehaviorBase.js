@@ -7,6 +7,8 @@ module.exports = class FlowBehaviorBase {
       this.context = options.context;
       this.contextNode = options.contextNode;
       this.contextEdge = options.contextEdge;
+      this._behaviorDef = options.behaviorDef;
+      this._behaviorBase = options.behaviorBase;
     }
   }
 

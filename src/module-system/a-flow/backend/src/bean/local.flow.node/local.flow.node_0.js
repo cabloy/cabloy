@@ -117,6 +117,8 @@ module.exports = ctx => {
         context: this.context,
         contextNode: this.contextNode,
         contextEdge: this.contextEdge,
+        behaviorDef,
+        behaviorBase,
       });
       return {
         behaviorDef,
