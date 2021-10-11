@@ -5,6 +5,9 @@ module.exports = ctx => {
     }
 
     async enter(context, next) {
+      // nodeDef
+      // const nodeDef = this.contextNode._nodeDef;
+      // const flowDefId=this.context.
       return await next();
     }
 
