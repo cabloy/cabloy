@@ -130,8 +130,8 @@ describe('flow.set02_behaviorOvertime', () => {
       });
     assert(result.body.code === 0);
 
-    // sleep for verify the overtime job not running
-    await app.bean.util.sleep(5000);
+    // // sleep for verifing the overtime job not running
+    // await app.bean.util.sleep(5000);
 
     // select formal
     result = await app
