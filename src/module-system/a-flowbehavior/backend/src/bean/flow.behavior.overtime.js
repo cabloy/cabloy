@@ -69,7 +69,28 @@ module.exports = ctx => {
     }
 
     async _runJob(context) {
-      console.log('----runDelayedTask', context);
+      const { flowNodeId, behaviorDefId } = context.data;
+      // load flow node
+      let nodeInstance;
+      try {
+        nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      } catch (err) {}
+      if (!nodeInstance) {
+        // here means done, so do nothing
+        return;
+      }
+      // options
+      const options = nodeInstance.getBehaviorDefOptions({ behaviorDefId });
+      if (options.cancelActivity) {
+        // clear
+        const remark = 'Overtime';
+        await nodeInstance.clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
+      }
+      // nextEdges
+      return await nodeInstance.flowInstance.nextEdges({
+        contextNode: nodeInstance.contextNode,
+        behaviorDefId,
+      });
     }
 
     _getJobName({ flowId, flowNodeId, behaviorDefId }) {

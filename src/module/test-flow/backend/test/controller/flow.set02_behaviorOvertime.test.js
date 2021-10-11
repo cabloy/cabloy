@@ -43,7 +43,10 @@ describe.only('flow.set02_behaviorOvertime', () => {
     assert(result.body.code === 0);
     const flowId = result.body.data.flow.id;
 
-    // sleep
+    // sleep first
+    await app.bean.util.sleep(5000);
+
+    // sleep second
     await app.bean.util.sleep(5000);
 
     // select task
