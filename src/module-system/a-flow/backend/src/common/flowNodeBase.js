@@ -14,7 +14,7 @@ module.exports = class FlowNodeBase {
     return this.flowInstance._flowListener.getBehaviorDefOptions(this.contextNode, { behaviorDefId, options });
   }
 
-  getNodeDefOptions(options) {
+  getNodeDefOptions({ options }) {
     return this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
   }
 
@@ -43,7 +43,7 @@ module.exports = class FlowNodeBase {
     return true;
   }
 
-  async onNodeClear(options) {
+  async onNodeClear({ options }) {
     await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
     return true;
   }

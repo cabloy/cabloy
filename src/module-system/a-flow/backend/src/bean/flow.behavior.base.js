@@ -9,7 +9,7 @@ module.exports = ctx => {
     }
 
     getNodeDefOptions({ options }) {
-      return this.nodeInstance.nodeBaseBean.getNodeDefOptions(options);
+      return this.nodeInstance.nodeBaseBean.getNodeDefOptions({ options });
     }
 
     async enter() {
@@ -33,7 +33,7 @@ module.exports = ctx => {
     }
 
     async clear({ options }) {
-      return await this.nodeInstance.nodeBaseBean.onNodeClear(options);
+      return await this.nodeInstance.nodeBaseBean.onNodeClear({ options });
     }
   }
 
