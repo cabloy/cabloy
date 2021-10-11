@@ -177,6 +177,8 @@ module.exports = ctx => {
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
+      // ok
+      return true;
     }
 
     get nodeBaseBean() {

@@ -30,40 +30,62 @@ module.exports = ctx => {
     }
 
     async enter() {
-      return await this._behaviorsInvokeAsync({
+      // current
+      await this._setCurrent();
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'enter',
       });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.begin();
     }
 
     async begin() {
-      return await this._behaviorsInvokeAsync({
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'begin',
       });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.doing();
     }
 
     async doing() {
-      return await this._behaviorsInvokeAsync({
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'doing',
       });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.end();
     }
 
     async end() {
-      return await this._behaviorsInvokeAsync({
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'end',
       });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.leave();
     }
 
     async leave() {
-      return await this._behaviorsInvokeAsync({
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'leave',
       });
+      await this._saveVars();
+      if (!res) return false;
+      // clear with done
+      await this.clear({ flowNodeHandleStatus: 1 });
+      // next
+      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
     }
 
     async clear(options) {
-      return await this._behaviorsInvokeAsync({
+      const res = await this._behaviorsInvokeAsync({
         methodName: 'clear',
         options,
       });
+      if (!res) return false;
+      return await this._clear(options);
     }
 
     _behaviorsInvoke(context) {

@@ -9,53 +9,27 @@ module.exports = ctx => {
     }
 
     async enter() {
-      // current
-      await this.nodeInstance._setCurrent();
-      // raise event: onNodeEnter
-      const res = await this.nodeInstance.nodeBaseBean.onNodeEnter();
-      await this.nodeInstance._saveVars();
-      if (!res) return false;
-      return await this.nodeInstance.begin();
+      return await this.nodeInstance.nodeBaseBean.onNodeEnter();
     }
 
     async begin() {
-      // raise event: onNodeBegin
-      const res = await this.nodeInstance.nodeBaseBean.onNodeBegin();
-      await this.nodeInstance._saveVars();
-      if (!res) return false;
-      return await this.nodeInstance.doing();
+      return await this.nodeInstance.nodeBaseBean.onNodeBegin();
     }
 
     async doing() {
-      // raise event: onNodeDoing
-      const res = await this.nodeInstance.nodeBaseBean.onNodeDoing();
-      await this.nodeInstance._saveVars();
-      if (!res) return false;
-      return await this.nodeInstance.end();
+      return await this.nodeInstance.nodeBaseBean.onNodeDoing();
     }
 
     async end() {
-      // raise event: onNodeEnd
-      const res = await this.nodeInstance.nodeBaseBean.onNodeEnd();
-      await this.nodeInstance._saveVars();
-      if (!res) return false;
-      return await this.nodeInstance.leave();
+      return await this.nodeInstance.nodeBaseBean.onNodeEnd();
     }
 
     async leave() {
-      // raise event: onNodeLeave
-      const res = await this.nodeInstance.nodeBaseBean.onNodeLeave();
-      await this.nodeInstance._saveVars();
-      if (!res) return false;
-      // clear with done
-      await this.nodeInstance.clear({ flowNodeHandleStatus: 1 });
-      // next
-      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      return await this.nodeInstance.nodeBaseBean.onNodeLeave();
     }
 
     async clear({ options }) {
-      await this.nodeInstance.nodeBaseBean.onNodeClear(options);
-      await this.nodeInstance._clear(options);
+      return await this.nodeInstance.nodeBaseBean.onNodeClear(options);
     }
   }
 
