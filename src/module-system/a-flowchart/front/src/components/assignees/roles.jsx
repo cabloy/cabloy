@@ -38,6 +38,7 @@ export default {
                 for (const role of roles) {
                   const _role = this.assignees.roles.find(item => item.id === role.id);
                   if (!_role) {
+                    // eslint-disable-next-line
                     this.assignees.roles.push(role);
                   }
                 }
@@ -48,6 +49,7 @@ export default {
       });
     },
     onPerformRemove(event, item, index) {
+      // eslint-disable-next-line
       this.assignees.roles.splice(index, 1);
       this.$meta.util.swipeoutClose(event.target);
     },

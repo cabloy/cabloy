@@ -1,6 +1,7 @@
 import actionUserTask from './components/action/actionUserTask.js';
 import renderAssignees from './components/flowDef/renderAssignees.jsx';
 import renderBeanFlowService from './components/flowDef/renderBeanFlowService.jsx';
+import renderBehaviors from './components/flowDef/renderBehaviors.jsx';
 import renderFlowDefContent from './components/flowDef/renderFlowDefContent.jsx';
 import renderRejectedNode from './components/flowDef/renderRejectedNode.jsx';
 import renderSchemaFields from './components/flowDef/renderSchemaFields.jsx';
@@ -14,6 +15,7 @@ export default {
   actionUserTask,
   renderAssignees,
   renderBeanFlowService,
+  renderBehaviors,
   renderFlowDefContent,
   renderRejectedNode,
   renderSchemaFields,
