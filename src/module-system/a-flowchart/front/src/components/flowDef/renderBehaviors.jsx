@@ -58,13 +58,38 @@ export default {
           callback: (code, data) => {
             if (code === 200) {
               if (data) {
-                const nodeId = this.context.getValue('id');
-                diagram.addBehavior(nodeId, data);
+                this._addBehavior(data);
               }
             }
           },
         },
       });
+    },
+    _addBehavior(behaviorBase) {
+      // contentChange
+      const behaviors = this.context.getValue() || [];
+      // id
+      const id = this.__getAvailableBehaviorId(behaviors, behaviorBase);
+      // name
+      const name = behaviorBase.titleLocale || behaviorBase.title;
+      // behavior
+      behaviors.push({
+        id,
+        name,
+        type: behaviorBase.type,
+      });
+      this.context.setValue(behaviors);
+    },
+    __getAvailableBehaviorId(behaviors, behaviorBase) {
+      let id = 0;
+      for (const cell of behaviors) {
+        if (!cell.id) continue;
+        const _id = parseInt(cell.id.split('_')[1] || 0);
+        if (_id > id) {
+          id = _id;
+        }
+      }
+      return `${behaviorBase.type}_${id + 1}`;
     },
     _getBehaviorMedia(item) {
       // diagram
