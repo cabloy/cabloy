@@ -40,6 +40,20 @@ export default {
       text: 'FlowTaskHandleStatusSubstituted',
     },
   },
+  flowNodeHandleStatuses: {
+    1: {
+      color: 'teal',
+      text: 'End',
+    },
+    2: {
+      color: 'gray',
+      text: 'Rejected',
+    },
+    3: {
+      color: 'gray',
+      text: 'Cancelled',
+    },
+  },
   flowHandleStatuses: {
     1: {
       color: 'teal',

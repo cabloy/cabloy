@@ -53,6 +53,7 @@ export default {
           group = {
             ...task,
             items: [],
+            __showStatus: this.base_checkFlowNodeShowStatus(task),
           };
           groups.push(group);
         }
@@ -74,6 +75,12 @@ export default {
     async base_init() {
       // layoutConfig
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+    },
+    base_checkFlowNodeShowStatus(flowNode) {
+      if (flowNode.flowNodeStatus === 0) return false;
+      const tasks = this.base_tasks;
+      if (!tasks) return false;
+      return !tasks.some(item => item.flowNodeId === flowNode.flowNodeId && item.handleStatus > 0);
     },
     base_getLayoutConfigKeyCurrent() {
       const atomClass = this.base_atomClass;

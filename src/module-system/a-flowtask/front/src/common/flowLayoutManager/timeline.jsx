@@ -78,12 +78,10 @@ export default {
       // title
       const domTitle = <span>{task.flowNodeNameLocale}</span>;
       // remark
-      let domRemark;
-      // if (task.flowNodeRemarkLocale) {
-      //   domRemark = (
-      //     <f7-badge color="gray">{task.flowNodeRemarkLocale}</f7-badge>
-      //   );
-      // }
+      let domStatuses;
+      if (task.__showStatus) {
+        domStatuses = this._timeline_renderFlowNodeStatuses({ task });
+      }
       // current
       let domCurrent;
       if (task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
@@ -99,13 +97,29 @@ export default {
               {domTitle}
             </div>
             <div>
-              {domRemark}
+              {domStatuses}
               {domCurrent}
             </div>
           </f7-card-header>
           <f7-card-content padding={false}>{items}</f7-card-content>
         </f7-card>
       );
+    },
+    _timeline_renderFlowNodeStatuses({ task }) {
+      const children = [];
+      // status
+      const status = this._timeline_renderFlowNodeStatus({ task });
+      if (status) {
+        children.push(status);
+      }
+      return children;
+    },
+    _timeline_renderFlowNodeStatus({ task }) {
+      if (task.flowNodeHandleStatus === 0) return;
+      const flowNodeHandleStatuses = this.$meta.config.modules['a-flowtask'].flowNodeHandleStatuses;
+      const status = flowNodeHandleStatuses[task.flowNodeHandleStatus];
+      const text = task.flowNodeRemarkLocale || this.$text(status.text);
+      return <f7-badge color={status.color}>{text}</f7-badge>;
     },
     _timeline_renderFlowTaskStatuses({ task }) {
       const children = [];
