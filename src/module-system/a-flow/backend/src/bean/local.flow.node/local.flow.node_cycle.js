@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const resourceRight = require('../../../../../a-baseadmin/backend/src/controller/resourceRight');
 const extend = require3('extend2');
 
 module.exports = ctx => {
