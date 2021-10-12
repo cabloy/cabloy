@@ -15,7 +15,7 @@ export default {
     behaviorBases() {
       const items = [];
       for (const behaviorType in this.diagram.behaviorBases) {
-        if (behaviorType.indexOf(':') === -1) continue;
+        if (behaviorType.indexOf(':') === -1 || behaviorType === 'a-flow:base') continue;
         const behaviorBase = this.diagram.behaviorBases[behaviorType];
         items.push({
           type: behaviorType,
@@ -30,19 +30,54 @@ export default {
     getNodeMedia(item) {
       return this.$meta.util.combineFetchStaticPath(item.icon);
     },
-    onPerformNode(event, nodeBase) {
-      // addNode
-      this.diagram.addNode(nodeBase);
-      // back
+    onItemClick(event, behaviorBase) {
+      this.contextCallback(200, behaviorBase);
       this.$f7router.back();
     },
-    _renderItems() {},
+    _getBehaviorMedia(item) {
+      // icon
+      if (item.icon.material) {
+        return <f7-icon color={item.color} material={item.icon.material}></f7-icon>;
+      }
+      // url
+      return (
+        <img
+          style={{ color: item.color }}
+          class="media-node-base-icon"
+          src={this.$meta.util.combineFetchStaticPath(item.icon)}
+        />
+      );
+    },
+    _renderItem(item) {
+      // media
+      const domMedia = <div slot="media">{this._getBehaviorMedia(item)}</div>;
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{item.titleLocale}</div>
+        </div>
+      );
+      // ok
+      return (
+        <eb-list-item class="item" key={item.type} link="#" propsOnPerform={event => this.onItemClick(event, item)}>
+          {domMedia}
+          {domTitle}
+        </eb-list-item>
+      );
+    },
+    _renderItems() {
+      const children = [];
+      for (const item of this.behaviorBases) {
+        children.push(this._renderItem(item));
+      }
+      return children;
+    },
   },
   render() {
     return (
       <eb-page>
         <eb-navbar title={this.$text('Add Behavior')} eb-back-link="Back"></eb-navbar>
-        <f7-list></f7-list>
+        <f7-list>{this._renderItems()}</f7-list>
       </eb-page>
     );
   },
