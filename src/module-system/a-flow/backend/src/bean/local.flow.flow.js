@@ -244,7 +244,7 @@ module.exports = ctx => {
       });
       for (const flowNode of flowNodes) {
         const flowNodeInstance = await this._loadNodeInstance({ flowNode });
-        await flowNodeInstance.clear();
+        await flowNodeInstance.clear({ flowNodeHandleStatus: 0 });
       }
     }
 
