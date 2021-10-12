@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('flow.set02_behaviorOvertime', () => {
+describe.only('flow.set02_behaviorOvertime', () => {
   it('behaviorOvertime', async () => {
     app.mockSession({});
 

@@ -187,7 +187,16 @@ module.exports = ctx => {
       }
       // flowTask delete
       await this.modelFlowTask.delete({ flowNodeId });
-      // flowTaskHistory close
+      // flowTaskHistory
+      //   1. delete specificFlag=2
+      await ctx.model.query(
+        `
+        update aFlowTaskHistory set deleted=1
+          where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0 and specificFlag=2 
+        `,
+        [ctx.instance.id, flowNodeId]
+      );
+      //   2. close
       //    flowTaskStatus:1
       //    handleStatus: not changed
       await ctx.model.query(
