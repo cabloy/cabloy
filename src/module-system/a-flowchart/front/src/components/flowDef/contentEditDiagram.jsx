@@ -225,7 +225,7 @@ export default {
       this.graph.fromJSON(model);
       this.graph.centerContent();
     },
-    __graphEvents(container) {
+    __graphEvents(/* container*/) {
       if (this.viewOnly) return;
       // connected
       this.graph.on('edge:connected', ({ isNew, edge }) => {
@@ -325,7 +325,7 @@ export default {
       const options = this.__registerNode();
       this.x6.Graph.registerNode('eb-flowchart-node', options, true);
     },
-    __registerEdge(edgeBase) {
+    __registerEdge(/* edgeBase*/) {
       const options = {
         inherit: 'edge',
         attrs: {

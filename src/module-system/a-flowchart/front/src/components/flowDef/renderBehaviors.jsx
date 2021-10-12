@@ -83,10 +83,16 @@ export default {
       const behaviorBase = diagram.behaviorBases[item.type];
       // icon
       if (behaviorBase.icon.material) {
-        return <f7-icon material={behaviorBase.icon.material}></f7-icon>;
+        return <f7-icon color={item.color} material={behaviorBase.icon.material}></f7-icon>;
       }
       // url
-      return <img class="media-node-base-icon" src={this.$meta.util.combineFetchStaticPath(behaviorBase.icon)} />;
+      return (
+        <img
+          style={{ color: item.color }}
+          class="media-node-base-icon"
+          src={this.$meta.util.combineFetchStaticPath(behaviorBase.icon)}
+        />
+      );
     },
     _renderTitle() {
       const { validate } = this.context;
