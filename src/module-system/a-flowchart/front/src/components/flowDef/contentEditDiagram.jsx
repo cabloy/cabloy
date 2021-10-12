@@ -28,6 +28,7 @@ export default {
       contentProcess: null,
       nodeBases: null,
       edgeBases: null,
+      behaviorBases: null,
       x6: null,
       xlayout: null,
       graph: null,
@@ -41,7 +42,7 @@ export default {
   },
   computed: {
     ready() {
-      return this.x6 && this.xlayout && this.nodeBases && this.edgeBases;
+      return this.x6 && this.xlayout && this.nodeBases && this.edgeBases && this.behaviorBases;
     },
     contentProcessRender() {
       if (!this.contentProcess) return;
@@ -101,6 +102,7 @@ export default {
       this.contentProcess = window.JSON5.parse(this.contentProcessStr);
       this.nodeBases = await this.$local.dispatch('getNodeBases');
       this.edgeBases = await this.$local.dispatch('getEdgeBases');
+      this.behaviorBases = await this.$local.dispatch('getBehaviorBases');
       await this.__prepareInstances();
       this.__registerNodes();
       this.__registerEdges();

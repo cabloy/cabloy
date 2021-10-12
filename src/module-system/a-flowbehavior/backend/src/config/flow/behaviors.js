@@ -7,7 +7,7 @@ module.exports = app => {
     overtime: {
       title: 'Overtime',
       bean: 'overtime',
-      icon: 'timer',
+      icon: { material: 'timer' },
       validator: {
         module: moduleInfo.relativeName,
         validator: 'overtime',

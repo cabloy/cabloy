@@ -35,6 +35,10 @@ export default {
   },
   created() {},
   methods: {
+    async onItemClick(event, item) {
+      return this.layoutManager.data.adapter.item_onItemClick(event, item);
+    },
+    onSwipeoutOpened(/* event, item*/) {},
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
         target: '_self',
@@ -69,6 +73,21 @@ export default {
         },
       });
     },
+    _getBehaviorMedia(item) {
+      const { validate } = this.context;
+      // container
+      const container = validate.host.container;
+      // diagram
+      const diagram = container.diagram;
+      // behaviorBase
+      const behaviorBase = diagram.behaviorBases[item.type];
+      // icon
+      if (behaviorBase.icon.material) {
+        return <f7-icon material={behaviorBase.icon.material}></f7-icon>;
+      }
+      // url
+      return <img class="media-node-base-icon" src={this.$meta.util.combineFetchStaticPath(behaviorBase.icon)} />;
+    },
     _renderTitle() {
       const { validate } = this.context;
       const { readOnly } = validate;
@@ -85,13 +104,55 @@ export default {
         </f7-list-item>
       );
     },
+    _renderBehavior(item) {
+      // media
+      const domMedia = <div slot="media">{this._getBehaviorMedia(item)}</div>;
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{item.name}</div>
+        </div>
+      );
+      // ok
+      return (
+        <eb-list-item
+          class="item"
+          key={item.id}
+          link="#"
+          propsOnPerform={event => this.onItemClick(event, item)}
+          swipeout
+          onSwipeoutOpened={event => {
+            this.onSwipeoutOpened(event, item);
+          }}
+          onContextmenuOpened={event => {
+            this.onSwipeoutOpened(event, item);
+          }}
+        >
+          {domMedia}
+          {domTitle}
+          {this._renderListItemContextMenu(item)}
+        </eb-list-item>
+      );
+    },
+    _renderListItemContextMenu(item) {
+      return null;
+    },
+    _renderBehaviors() {
+      const children = [];
+      const behaviors = this.context.getValue();
+      if (!behaviors) return null;
+      for (const behavior of behaviors) {
+        children.push(this._renderBehavior(behavior));
+      }
+      return children;
+    },
   },
   render() {
-    const { parcel, key, property } = this.context;
-    const propertyNew = this.$utils.extend({}, property, {
-      ebType: 'select',
-      ebOptions: this.ebOptions,
-    });
-    return <div>{this._renderTitle()}</div>;
+    return (
+      <div>
+        {this._renderTitle()}
+        {this._renderBehaviors()}
+      </div>
+    );
   },
 };
