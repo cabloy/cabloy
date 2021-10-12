@@ -27,6 +27,21 @@ const __schemaNode = {
       ebTitle: 'Type',
       ebReadOnly: true,
     },
+    __groupBehaviors: {
+      ebType: 'group-flatten',
+      ebTitle: 'Behaviors',
+      ebParams: {
+        titleHidden: true,
+      },
+    },
+    behaviors: {
+      ebType: 'component',
+      ebTitle: 'Behaviors',
+      ebRender: {
+        module: 'a-flowchart',
+        name: 'renderBehaviors',
+      },
+    },
   },
 };
 
@@ -124,7 +139,10 @@ export default {
       // data
       const data = this.type === 'node' ? this.diagram.__findNode(this.id) : this.diagram.__findEdge(this.id);
       // default base
-      const defaultBase = this.$meta.util.extend({}, this.type === 'node' ? this.$config.schema.default.base.node : this.$config.schema.default.base.edge);
+      const defaultBase = this.$meta.util.extend(
+        {},
+        this.type === 'node' ? this.$config.schema.default.base.node : this.$config.schema.default.base.edge
+      );
       // base
       const base = this.type === 'node' ? this.nodeBases[data.type] : this.edgeBases.sequence;
       // default
@@ -224,7 +242,16 @@ export default {
           },
         },
       };
-      return <eb-validate ref="validate" readOnly={this.readOnly} auto data={this.data} meta={meta} host={host}></eb-validate>;
+      return (
+        <eb-validate
+          ref="validate"
+          readOnly={this.readOnly}
+          auto
+          data={this.data}
+          meta={meta}
+          host={host}
+        ></eb-validate>
+      );
     },
   },
   render() {

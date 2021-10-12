@@ -6,6 +6,8 @@ export default {
   Activity: '活动',
   Variable: '变量',
   Variables: '变量',
+  Behavior: '行为',
+  Behaviors: '行为',
   FlowInitiator: '流程发起人',
   NotFoundStartEventAtom: '未发现：数据起草开始事件',
   NotSetStartEventAtom: '未设置：数据起草开始事件',
