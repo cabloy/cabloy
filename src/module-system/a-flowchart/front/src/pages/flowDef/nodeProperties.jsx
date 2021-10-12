@@ -35,6 +35,7 @@ const __schemaNode = {
       },
     },
     behaviors: {
+      type: 'array',
       ebType: 'component',
       ebTitle: 'Behaviors',
       ebRender: {
