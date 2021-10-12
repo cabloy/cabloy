@@ -10,7 +10,7 @@ module.exports = ctx => {
       // context init
       await this._contextInit({ flowTaskId, user });
       // event
-      await this.created();
+      await this.raiseEventCreated();
     }
 
     async _load({ flowTask, user, history }) {

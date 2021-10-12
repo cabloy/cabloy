@@ -76,7 +76,7 @@ module.exports = ctx => {
         );
       }
       // event: task.claimed
-      await this.claimed();
+      await this.raiseEventClaimed();
       // notify
       this._notifyTaskClaimings(flowTask.userIdAssignee);
       this._notifyTaskHandlings(flowTask.userIdAssignee);

@@ -16,7 +16,7 @@ module.exports = ctx => {
       if (handle) {
         await this._complete_handle({ handle });
         // event: task.completed
-        await this.completed();
+        await this.raiseEventCompleted();
         // check if node done
         ctx.tail(async () => {
           await this._complete_tail({ flowTask, user });
