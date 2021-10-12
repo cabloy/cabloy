@@ -2,20 +2,26 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
     async raiseEventCreated() {
-      // raise event: onTaskCreated
-      await this.flowInstance._flowListener.onTaskCreated(this.contextTask, this.contextNode);
+      await this.nodeInstance.change({
+        event: 'created',
+        taskInstance: this,
+      });
       await this._saveVars();
     }
 
     async raiseEventClaimed() {
-      // raise event: onTaskClaimed
-      await this.flowInstance._flowListener.onTaskClaimed(this.contextTask, this.contextNode);
+      await this.nodeInstance.change({
+        event: 'claimed',
+        taskInstance: this,
+      });
       await this._saveVars();
     }
 
     async raiseEventCompleted() {
-      // raise event: onTaskCompleted
-      await this.flowInstance._flowListener.onTaskCompleted(this.contextTask, this.contextNode);
+      await this.nodeInstance.change({
+        event: 'completed',
+        taskInstance: this,
+      });
       await this._saveVars();
     }
 

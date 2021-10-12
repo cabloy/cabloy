@@ -43,4 +43,8 @@ module.exports = class FlowBehaviorBase {
   async clear(context, next) {
     return await next();
   }
+
+  async change(context, next) {
+    return await next();
+  }
 };

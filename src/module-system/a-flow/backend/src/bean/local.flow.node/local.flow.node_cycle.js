@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const resourceRight = require('../../../../../a-baseadmin/backend/src/controller/resourceRight');
 const extend = require3('extend2');
 
 module.exports = ctx => {
@@ -107,6 +108,15 @@ module.exports = ctx => {
       await this._saveVars();
       if (!res) return false;
       return await this._clear(options);
+    }
+
+    async change(options) {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'change',
+        options,
+      });
+      await this._saveVars();
+      return res;
     }
 
     _behaviorsInvoke(context) {

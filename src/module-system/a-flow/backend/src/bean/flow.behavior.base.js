@@ -42,6 +42,10 @@ module.exports = ctx => {
     async clear({ options }) {
       return await this.nodeInstance.nodeBaseBean.onNodeClear({ options });
     }
+
+    async change({ options }) {
+      return await this.nodeInstance.nodeBaseBean.onNodeChange({ options });
+    }
   }
 
   return FlowBehavior;

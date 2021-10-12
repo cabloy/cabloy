@@ -81,6 +81,22 @@ module.exports = ctx => {
       return await super.onNodeClear({ options });
     }
 
+    async onNodeChange({ options }) {
+      const { event, taskInstance } = options;
+      if (event === 'created') {
+        await taskInstance.flowInstance._flowListener.onTaskCreated(taskInstance.contextTask, taskInstance.contextNode);
+      } else if (event === 'claimed') {
+        await taskInstance.flowInstance._flowListener.onTaskClaimed(taskInstance.contextTask, taskInstance.contextNode);
+      } else if (event === 'completed') {
+        await taskInstance.flowInstance._flowListener.onTaskCompleted(
+          taskInstance.contextTask,
+          taskInstance.contextNode
+        );
+      }
+      // super
+      return await super.onNodeChange({ options });
+    }
+
     async _prepareAssignees({ options }) {
       // check var: _assigneesConfirmation
       let assignees = this.contextNode.vars.get('_assigneesConfirmation');

@@ -47,4 +47,10 @@ module.exports = class FlowNodeBase {
     await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
     return true;
   }
+
+  async onNodeChange({ options }) {
+    // should not raise onNodeChange for flowListener
+    // await this.flowInstance._flowListener.onNodeChange(this.contextNode, { options });
+    return true;
+  }
 };
