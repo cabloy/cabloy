@@ -96,11 +96,7 @@ module.exports = ctx => {
         methodName: 'leave',
       });
       await this._saveVars();
-      if (!res) return false;
-      // clear with done
-      await this.clear({ flowNodeHandleStatus: 1 });
-      // next
-      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      return res;
     }
 
     async clear(options) {
@@ -108,6 +104,7 @@ module.exports = ctx => {
         methodName: 'clear',
         options,
       });
+      await this._saveVars();
       if (!res) return false;
       return await this._clear(options);
     }

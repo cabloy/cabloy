@@ -29,7 +29,12 @@ module.exports = ctx => {
     }
 
     async leave() {
-      return await this.nodeInstance.nodeBaseBean.onNodeLeave();
+      const res = await this.nodeInstance.nodeBaseBean.onNodeLeave();
+      if (!res) return false;
+      // clear with done
+      await this.nodeInstance.clear({ flowNodeHandleStatus: 1 });
+      // next
+      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
     }
 
     async clear({ options }) {
