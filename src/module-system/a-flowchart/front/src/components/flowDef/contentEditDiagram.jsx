@@ -448,6 +448,24 @@ export default {
       value.nodes.push(node);
       this.$emit('contentChange', { type: 'process', value });
     },
+    addBehavior(nodeId, behaviorBase) {
+      console.log(nodeId, behaviorBase);
+      return;
+      // id
+      const id = this.__getAvailableId(nodeBase);
+      // name
+      const name = nodeBase.titleLocale || nodeBase.title;
+      // node
+      const node = {
+        id,
+        name,
+        type: nodeBase.type,
+      };
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      value.nodes.push(node);
+      this.$emit('contentChange', { type: 'process', value });
+    },
     deleteNode(id) {
       // contentChange
       const value = this.$meta.util.extend({}, this.contentProcess);

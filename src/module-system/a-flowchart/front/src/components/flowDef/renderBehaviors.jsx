@@ -35,38 +35,31 @@ export default {
   },
   created() {},
   methods: {
+    getDiagram() {
+      const { validate } = this.context;
+      // container
+      const container = validate.host.container;
+      // diagram
+      return container.diagram;
+    },
     async onItemClick(event, item) {
       return this.layoutManager.data.adapter.item_onItemClick(event, item);
     },
     onSwipeoutOpened(/* event, item*/) {},
     onPerformAdd() {
-      this.$view.navigate('/a/baseadmin/role/select', {
+      // diagram
+      const diagram = this.getDiagram();
+      this.$view.navigate('/a/flowchart/flowDef/behaviors', {
         target: '_self',
         context: {
           params: {
-            roleIdStart: null,
-            multiple: true,
-            onFetchChildren: ({ roleId }) => {
-              return this.$api.post('/a/flowchart/flowDef/roleChildren', {
-                host: this.host,
-                params: {
-                  roleId,
-                  page: { size: 0 },
-                },
-              });
-            },
+            diagram,
           },
           callback: (code, data) => {
             if (code === 200) {
               if (data) {
-                const roles = data.map(item => item.data);
-                for (const role of roles) {
-                  const _role = this.assignees.roles.find(item => item.id === role.id);
-                  if (!_role) {
-                    // eslint-disable-next-line
-                    this.assignees.roles.push(role);
-                  }
-                }
+                const nodeId = this.context.getValue('id');
+                diagram.addBehavior(nodeId, data);
               }
             }
           },
@@ -74,11 +67,8 @@ export default {
       });
     },
     _getBehaviorMedia(item) {
-      const { validate } = this.context;
-      // container
-      const container = validate.host.container;
       // diagram
-      const diagram = container.diagram;
+      const diagram = this.getDiagram();
       // behaviorBase
       const behaviorBase = diagram.behaviorBases[item.type];
       // icon

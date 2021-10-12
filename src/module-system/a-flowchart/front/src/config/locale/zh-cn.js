@@ -22,4 +22,5 @@ export default {
   'Move Up': '上移',
   'Move Down': '下移',
   'Add Node': '添加节点',
+  'Add Behavior': '添加行为',
 };

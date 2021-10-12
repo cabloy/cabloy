@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Flow Chart')" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar :title="$text('Add Node')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
       <f7-list-group v-for="group of nodeBasesGroups" :key="group.name">
         <f7-list-item group-title :title="group.titleLocale"></f7-list-item>
