@@ -87,7 +87,7 @@ module.exports = ctx => {
         await nodeInstance.clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
       }
       // nextEdges
-      return await nodeInstance.flowInstance.nextEdges({
+      await nodeInstance.flowInstance.nextEdges({
         contextNode: nodeInstance.contextNode,
         behaviorDefId,
       });

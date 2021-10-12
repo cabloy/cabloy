@@ -66,17 +66,18 @@ module.exports = ctx => {
       await this._contextInit({ flowId: flow.id, history });
     }
 
+    // return true, means has one edge to be taken
     async nextEdges({ contextNode, behaviorDefId }) {
       const edgeInstances = await this._findEdgeInstancesNext({
         nodeDefId: contextNode._nodeDef.id,
         contextNode,
         behaviorDefId,
       });
-      if (edgeInstances.length === 0) return true;
+      if (edgeInstances.length === 0) return false;
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
-          return true;
+          return false;
         }
         // enter
         const res = await edgeInstance.enter();

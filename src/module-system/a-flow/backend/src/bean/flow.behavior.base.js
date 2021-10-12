@@ -34,7 +34,9 @@ module.exports = ctx => {
       // clear with done
       await this.nodeInstance.clear({ flowNodeHandleStatus: 1 });
       // next
-      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      // return false always, means the base(behavior) normal logic has done, shouldnot do anything else more
+      return false;
     }
 
     async clear({ options }) {

@@ -58,7 +58,9 @@ module.exports = ctx => {
       await this._saveVars();
       if (!res) return false;
       // next
-      return await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
+      await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
+      // return true always, means the edge confirmed to be taken
+      return true;
     }
 
     get edgeBaseBean() {
