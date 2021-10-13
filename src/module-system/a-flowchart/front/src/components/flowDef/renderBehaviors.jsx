@@ -1,4 +1,4 @@
-const __colorsStock = ['red', 'orange', 'purple', 'yellow', 'blue', 'green'];
+const __colorsStock = ['red', 'orange', 'purple', 'teal', 'blue', 'green'];
 export default {
   props: {
     context: {
@@ -96,7 +96,7 @@ export default {
       const behaviorBase = diagram.behaviorBases[item.type];
       // icon
       if (behaviorBase.icon.material) {
-        return <f7-icon color={item.color} material={behaviorBase.icon.material}></f7-icon>;
+        return <f7-icon style={{ color: item.color }} material={behaviorBase.icon.material}></f7-icon>;
       }
       // url
       return (
