@@ -216,7 +216,7 @@ export default {
       } else if (property.type === 'boolean') {
         _value = Boolean(value);
       } else if (property.type === 'string') {
-        _value = String(value);
+        _value = value === null ? null : String(value);
       } else {
         _value = value;
       }
