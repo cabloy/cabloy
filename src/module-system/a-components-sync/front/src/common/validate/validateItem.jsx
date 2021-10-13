@@ -366,7 +366,7 @@ export default {
         // datepicker
         return this.renderDatepicker(context);
       } else if (ebType === 'dateRange') {
-        // datepicker
+        // dateRange
         return this.renderDateRange(context);
       } else if (ebType === 'link') {
         // link
