@@ -71,12 +71,12 @@ export default {
     },
     __getAvailableBehaviorColor(behaviors) {
       let color;
-      // for (const colorStock of __colorsStock) {
-      //   if (!behaviors.some(behavior => behavior.color === colorStock)) {
-      //     color = colorStock;
-      //     break;
-      //   }
-      // }
+      for (const colorStock of __colorsStock) {
+        if (!behaviors.some(behavior => behavior.color === colorStock)) {
+          color = colorStock;
+          break;
+        }
+      }
       if (!color) {
         color = this.__randomColor();
       }
