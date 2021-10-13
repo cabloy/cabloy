@@ -20,7 +20,7 @@ module.exports = app => {
         ebTitle: 'OverTime_TimeDate',
         ebParams: {
           timePicker: true,
-          dateFormat: 'YYYY-MM-DD HH:mm:ss',
+          dateFormat: 'YYYY-MM-DD HH:mm:00',
           header: false,
           toolbar: false,
         },
