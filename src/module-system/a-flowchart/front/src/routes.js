@@ -7,6 +7,7 @@ function loadjsx(name) {
 
 export default [
   { path: 'flowDef/assigneesEdit', component: loadjsx('flowDef/assigneesEdit') },
+  { path: 'flowDef/behaviorEdit', component: loadjsx('flowDef/behaviorEdit') },
   { path: 'flowDef/behaviors', component: loadjsx('flowDef/behaviors') },
   { path: 'flowDef/contentEdit', component: load('flowDef/contentEdit') },
   { path: 'flowDef/contentProcessView', component: load('flowDef/contentProcessView') },

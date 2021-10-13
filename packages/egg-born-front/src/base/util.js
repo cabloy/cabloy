@@ -63,7 +63,9 @@ export default function (Vue) {
       return component;
     },
     _setComponentModule(component, module) {
-      component.__ebModuleRelativeName = module.info.relativeName;
+      if (component) {
+        component.__ebModuleRelativeName = module.info.relativeName;
+      }
     },
     _locationFullPathName() {
       return location.origin + location.pathname;
