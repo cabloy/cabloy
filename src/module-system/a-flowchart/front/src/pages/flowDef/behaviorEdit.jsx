@@ -44,7 +44,7 @@ export default {
       flowDefId: parseInt(this.$f7route.query.flowDefId),
       nodeId: this.$f7route.query.nodeId,
       behaviorId: this.$f7route.query.behaviorId,
-      behavior: null,
+      data: null,
       ready: false,
     };
   },
@@ -66,38 +66,54 @@ export default {
       return container.diagram;
     },
     page_title() {
-      let title = this.$text('Behavior');
-      if (this.behavior) {
-        title = `${title}: ${this.behavior.name}`;
-      }
+      const title = this.$text('Behavior');
       return this.page_getDirtyTitle(title);
-    },
-  },
-  watch: {
-    behavior: {
-      handler() {
-        if (!this.ready) return;
-        this.page_setDirty(true);
-      },
-      deep: true,
     },
   },
   created() {
     this.__load();
   },
+  beforeDestroy() {
+    if (this._unwatch) {
+      this._unwatch();
+      this._unwatch = null;
+    }
+  },
   methods: {
     async __load() {
       // data
-      this.behavior = this.$meta.util.extend({}, this.value);
+      this.__initData();
       // schema
       await this.__initSchema();
-      this.$nextTick(() => {
-        this.ready = true;
-      });
+      // ready
+      this.ready = true;
+    },
+    __initData() {
+      // type
+      const type = this.value.type;
+      // default base
+      const defaultBase = this.$meta.util.extend({}, this.$config.schema.default.base.behavior);
+      // base
+      const base = this.diagram.behaviorBases[type];
+      // default
+      const optionsDefault = base.options.default;
+      if (optionsDefault) {
+        defaultBase.options = optionsDefault;
+      }
+      // data
+      this.data = this.$meta.util.extend({}, defaultBase, this.value);
+      // watch
+      this._unwatch = this.$watch(
+        'data',
+        () => {
+          this.page_setDirty(true);
+        },
+        { deep: true }
+      );
     },
     async __initSchema() {
       // behaviorBase
-      const base = this.diagram.behaviorBases[this.behavior.type];
+      const base = this.diagram.behaviorBases[this.data.type];
       // schemaBase
       let schemaBase = __schemaBehavior;
       // schemaOptions
@@ -132,7 +148,7 @@ export default {
       };
     },
     onPerformDone() {
-      this.contextCallback(200, this.behavior);
+      this.contextCallback(200, this.data);
       this.page_setDirty(false);
       this.$f7router.back();
     },
@@ -160,7 +176,7 @@ export default {
           ref="validate"
           readOnly={this.readOnly}
           auto
-          data={this.behavior}
+          data={this.data}
           meta={meta}
           host={host}
         ></eb-validate>

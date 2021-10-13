@@ -53,6 +53,12 @@ export default {
   schema: {
     default: {
       base: {
+        behavior: {
+          id: '',
+          name: '',
+          type: '',
+          color: '',
+        },
         node: {
           id: '',
           name: '',

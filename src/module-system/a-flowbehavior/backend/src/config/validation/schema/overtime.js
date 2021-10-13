@@ -1,7 +1,7 @@
 module.exports = app => {
   const schemas = {};
-  // sequence
-  schemas.sequence = {
+  // overtime
+  schemas.overtime = {
     type: 'object',
     properties: {
       cancelActivity: {
