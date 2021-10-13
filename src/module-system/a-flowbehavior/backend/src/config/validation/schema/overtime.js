@@ -6,7 +6,7 @@ module.exports = app => {
     properties: {
       cancelActivity: {
         type: 'boolean',
-        ebType: 'Toggle',
+        ebType: 'toggle',
         ebTitle: 'OverTime_CancelActivity',
       },
       timeDuration: {

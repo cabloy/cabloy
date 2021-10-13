@@ -45,7 +45,7 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              const behaviors = this.context.getValue();
+              const behaviors = this.context.getValue().concat();
               const [index] = this._findBehavior(item.id);
               behaviors[index] = data;
               this.context.setValue(behaviors);
