@@ -8,6 +8,7 @@ import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
 import renderPanel from './render/renderPanel.jsx';
 import renderText from './render/renderText.jsx';
+import renderColorPicker from './render/renderColorPicker.jsx';
 import renderDatePicker from './render/renderDatePicker.jsx';
 import renderDateRange from './render/renderDateRange.jsx';
 import renderFile from './render/renderFile.jsx';
@@ -34,6 +35,7 @@ const __renderTypes = [
   ['toggle', 'renderToggle'],
   ['select', 'renderSelect'],
   ['file', 'renderFile'],
+  ['colorPicker', 'renderColorPicker'],
   ['datePicker', 'renderDatePicker'],
   ['dateRange', 'renderDateRange'],
   ['link', 'renderLink'],
@@ -67,6 +69,7 @@ export default {
     renderGroup,
     renderPanel,
     renderText,
+    renderColorPicker,
     renderDatePicker,
     renderDateRange,
     renderFile,

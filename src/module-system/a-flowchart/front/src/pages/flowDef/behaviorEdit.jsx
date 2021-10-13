@@ -30,7 +30,7 @@ const __schemaBehavior = {
     },
     color: {
       type: 'string',
-      ebType: 'colorpicker',
+      ebType: 'colorPicker',
       ebTitle: 'Color',
       notEmpty: true,
     },
