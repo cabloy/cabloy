@@ -26,7 +26,18 @@ export default {
     async onItemClick(event, item) {
       return this.layoutManager.data.adapter.item_onItemClick(event, item);
     },
-    _onActionDelete(event, item) {},
+    _findBehavior(behaviorId) {
+      const behaviors = this.context.getValue();
+      const index = behaviors.findIndex(item => item.id === behaviorId);
+      return [index, index === -1 ? null : behaviors[index]];
+    },
+    async _onActionDelete(event, item) {
+      await this.$view.dialog.confirm();
+      const behaviors = this.context.getValue();
+      const [index] = this._findBehavior(item.id);
+      behaviors.splice(index, 1);
+      this.context.setValue(behaviors);
+    },
     _onActionMoveUp(event, item) {},
     _onActionMoveDown(event, item) {},
     onSwipeoutOpened(/* event, item*/) {},
