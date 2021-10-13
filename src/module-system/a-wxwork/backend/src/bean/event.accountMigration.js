@@ -4,7 +4,11 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // aWxworkMember
-      await ctx.model.query('update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
+      await ctx.model.query('update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?', [
+        data.userIdTo,
+        ctx.instance.id,
+        data.userIdFrom,
+      ]);
       // next
       await next();
     }

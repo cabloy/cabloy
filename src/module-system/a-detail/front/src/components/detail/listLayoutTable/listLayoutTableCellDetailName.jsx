@@ -35,7 +35,9 @@ export default {
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
-            <eb-link propsOnPerform={event => this.onItemClick(event)}>{this.layoutManager.data.adapter.item_getDetailName(item)}</eb-link>
+            <eb-link propsOnPerform={event => this.onItemClick(event)}>
+              {this.layoutManager.data.adapter.item_getDetailName(item)}
+            </eb-link>
           </div>
           <div class="atomName-right">{domAfterMetaFlags}</div>
         </div>

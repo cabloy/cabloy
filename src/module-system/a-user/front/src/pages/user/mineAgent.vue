@@ -3,11 +3,27 @@
     <eb-navbar large largeTransparent :title="$text('Mine')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <eb-list-item :title="$text('Info')" link="#" eb-href="user/edit" eb-target="_self"></eb-list-item>
-      <eb-list-item v-if="configAccount.url.passwordChange" link="#" :title="$text('Change Password')" :eb-href="configAccount.url.passwordChange" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Authentications')" link="#" eb-href="user/authentications" eb-target="_self"></eb-list-item>
+      <eb-list-item
+        v-if="configAccount.url.passwordChange"
+        link="#"
+        :title="$text('Change Password')"
+        :eb-href="configAccount.url.passwordChange"
+        eb-target="_self"
+      ></eb-list-item>
+      <eb-list-item
+        :title="$text('Authentications')"
+        link="#"
+        eb-href="user/authentications"
+        eb-target="_self"
+      ></eb-list-item>
       <f7-list-item divider></f7-list-item>
       <eb-list-item :title="$text('Appearance')" link="#" eb-href="user/appearance" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Settings')" link="#" eb-href="/a/settings/user/list" eb-target="_self"></eb-list-item>
+      <eb-list-item
+        :title="$text('Settings')"
+        link="#"
+        eb-href="/a/settings/user/list"
+        eb-target="_self"
+      ></eb-list-item>
       <template v-if="!$config.agent.disabled">
         <f7-list-item divider></f7-list-item>
         <eb-list-item :title="$text('Agent')" link="#" eb-href="user/agent" eb-target="_self"></eb-list-item>

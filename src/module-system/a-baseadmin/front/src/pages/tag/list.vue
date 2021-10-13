@@ -6,7 +6,17 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.tagName" :badge="item.tagAtomCount" link="#" :context="item" :onPerform="onItemClick" swipeout>
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.tagName"
+        :badge="item.tagAtomCount"
+        link="#"
+        :context="item"
+        :onPerform="onItemClick"
+        swipeout
+      >
         <eb-context-menu>
           <div slot="right">
             <div color="orange" close :context="item" :onPerform="onPerformEdit">{{ $text('Edit') }}</div>

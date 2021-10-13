@@ -1,7 +1,13 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"> </eb-navbar>
-    <content-edit-diagram :viewOnly="true" :readOnly="true" :tabActive="true" :contentProcessStr="contentProcessStr" :flowNodeDefIds="flowNodeDefIds"></content-edit-diagram>
+    <content-edit-diagram
+      :viewOnly="true"
+      :readOnly="true"
+      :tabActive="true"
+      :contentProcessStr="contentProcessStr"
+      :flowNodeDefIds="flowNodeDefIds"
+    ></content-edit-diagram>
   </eb-page>
 </template>
 <script>

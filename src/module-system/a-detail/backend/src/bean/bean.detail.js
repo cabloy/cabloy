@@ -220,7 +220,12 @@ module.exports = ctx => {
           order by detailLineNo asc`;
       }
       // to
-      const detailTo = await ctx.model.queryOne(sql, [ctx.instance.id, detailFrom.atomId, detailFrom.detailClassId, detailFrom.detailLineNo]);
+      const detailTo = await ctx.model.queryOne(sql, [
+        ctx.instance.id,
+        detailFrom.atomId,
+        detailFrom.detailClassId,
+        detailFrom.detailLineNo,
+      ]);
       if (!detailTo) {
         // do nothing
         return null;
@@ -326,7 +331,16 @@ module.exports = ctx => {
       await this._loopDetailClasses({
         atomClass,
         fn: async ({ detailClass }) => {
-          await this._copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+          await this._copyDetails_Class({
+            detailClass,
+            atomClass,
+            target,
+            srcKeyAtom,
+            destKeyAtom,
+            destAtom,
+            options,
+            user,
+          });
         },
       });
     }
@@ -360,7 +374,19 @@ module.exports = ctx => {
           const srcItem = detailsSrc[indexSrc];
           const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
           const destKey = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
-          await this._copyDetail({ srcKey, srcItem, destKey, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+          await this._copyDetail({
+            srcKey,
+            srcItem,
+            destKey,
+            detailClass,
+            atomClass,
+            target,
+            srcKeyAtom,
+            destKeyAtom,
+            destAtom,
+            options,
+            user,
+          });
           // delete src
           detailsSrc.splice(indexSrc, 1);
         }
@@ -368,12 +394,35 @@ module.exports = ctx => {
       // append the remains
       for (const srcItem of detailsSrc) {
         const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
-        await this._copyDetail({ srcKey, srcItem, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user });
+        await this._copyDetail({
+          srcKey,
+          srcItem,
+          detailClass,
+          atomClass,
+          target,
+          srcKeyAtom,
+          destKeyAtom,
+          destAtom,
+          options,
+          user,
+        });
       }
     }
 
     // target: draft/formal/history/clone
-    async _copyDetail({ srcKey, srcItem, destKey, detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+    async _copyDetail({
+      srcKey,
+      srcItem,
+      destKey,
+      detailClass,
+      atomClass,
+      target,
+      srcKeyAtom,
+      destKeyAtom,
+      destAtom,
+      options,
+      user,
+    }) {
       // detailClass
       if (!detailClass) {
         detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: srcKey.detailId });
@@ -485,7 +534,12 @@ module.exports = ctx => {
 
     // detail
 
-    async _add({ atomKey, detailClass: { id, detailClassName }, detail: { detailItemId, detailName, detailLineNo, detailStatic = 0, detailStaticKey = null }, user }) {
+    async _add({
+      atomKey,
+      detailClass: { id, detailClassName },
+      detail: { detailItemId, detailName, detailLineNo, detailStatic = 0, detailStaticKey = null },
+      user,
+    }) {
       let detailClassId = id;
       if (!detailClassId) detailClassId = await this.getDetailClassId({ detailClassName });
       const res = await this.modelDetail.insert({
@@ -605,7 +659,11 @@ module.exports = ctx => {
     _checkSchemaValid({ schema, detailClass }) {
       for (const key in schema.properties) {
         const property = schema.properties[key];
-        if (property.ebType === 'details' && property.ebParams.detailClass.module === detailClass.module && property.ebParams.detailClass.detailClassName === detailClass.detailClassName) {
+        if (
+          property.ebType === 'details' &&
+          property.ebParams.detailClass.module === detailClass.module &&
+          property.ebParams.detailClass.detailClassName === detailClass.detailClassName
+        ) {
           return true;
         }
       }
@@ -638,7 +696,11 @@ module.exports = ctx => {
     async _checkRightAction({ flowTaskId, detailClass, atomId, atom, actionBase, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id: atom.atomClassId });
-      const atomActionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, name: actionBase.inherit });
+      const atomActionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: actionBase.inherit,
+      });
       // special check for stage
       if (actionBase.stage) {
         const stages = actionBase.stage.split(',');
@@ -673,7 +735,11 @@ module.exports = ctx => {
         detailClass = await this.getDetailClassDefault({ atomId });
       }
       // actionBase
-      const actionBase = ctx.bean.detailAction.action({ module: detailClass.module, detailClassName: detailClass.detailClassName, code: action });
+      const actionBase = ctx.bean.detailAction.action({
+        module: detailClass.module,
+        detailClassName: detailClass.detailClassName,
+        code: action,
+      });
       // atom
       const atom = await ctx.bean.atom.modelAtom.get({ id: atomId });
       // inherit

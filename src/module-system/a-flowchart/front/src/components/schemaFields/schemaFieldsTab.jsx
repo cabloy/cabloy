@@ -62,9 +62,16 @@ export default {
         // icon
         let icon;
         if (isCustom && item.property.ebType) {
-          icon = item.property.ebType === 'group-flatten' || item.property.ebType === 'group' ? 'menu' : 'radio_button_unchecked';
+          icon =
+            item.property.ebType === 'group-flatten' || item.property.ebType === 'group'
+              ? 'menu'
+              : 'radio_button_unchecked';
         } else {
-          icon = property ? (property.ebType === 'group-flatten' || property.ebType === 'group' ? 'menu' : 'radio_button_unchecked') : 'radio_button_unchecked';
+          icon = property
+            ? property.ebType === 'group-flatten' || property.ebType === 'group'
+              ? 'menu'
+              : 'radio_button_unchecked'
+            : 'radio_button_unchecked';
         }
         // ok
         return { key, title, icon };
@@ -312,8 +319,19 @@ export default {
     return (
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
-          <f7-list-item smartSelect={!this.readOnly} title={this.$text('Mode')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
-            <eb-select readOnly={this.readOnly} name="mode" value={this.valueMode} onInput={this.onInputMode} multiple={false} options={this.valueModes}></eb-select>
+          <f7-list-item
+            smartSelect={!this.readOnly}
+            title={this.$text('Mode')}
+            smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}
+          >
+            <eb-select
+              readOnly={this.readOnly}
+              name="mode"
+              value={this.valueMode}
+              onInput={this.onInputMode}
+              multiple={false}
+              options={this.valueModes}
+            ></eb-select>
           </f7-list-item>
         </f7-list-group>
         {this.renderMode_3()}

@@ -40,7 +40,10 @@ module.exports = ctx => {
       // log
       if (sceneTest) {
         const url = nodemailer.getTestMessageUrl(res);
-        const message = chalk.keyword('cyan')('Test Mail To: ') + chalk.keyword('yellow')(content.message.to) + chalk.keyword('orange')('\n' + url);
+        const message =
+          chalk.keyword('cyan')('Test Mail To: ') +
+          chalk.keyword('yellow')(content.message.to) +
+          chalk.keyword('orange')('\n' + url);
         console.log('\n' + boxen(message, boxenOptions));
       }
       // done

@@ -84,12 +84,28 @@ export default {
       if (actionWrite) {
         const actionIcon = 'save';
         const actionName = 'save';
-        children.push(<eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.actions_onAction(event, actionName)}></eb-link>);
-        children.push(<eb-link key="saveDone" ref="buttonSaveDone" iconMaterial="done" propsOnPerform={event => this.actions_onSaveDone(event)}></eb-link>);
+        children.push(
+          <eb-link
+            key={actionName}
+            ref="buttonSave"
+            iconMaterial={actionIcon}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
+        children.push(
+          <eb-link
+            key="saveDone"
+            ref="buttonSaveDone"
+            iconMaterial="done"
+            propsOnPerform={event => this.actions_onSaveDone(event)}
+          ></eb-link>
+        );
       }
       //
       if (this.actions_listPopover) {
-        children.push(<f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>);
+        children.push(
+          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+        );
       }
       //
       return children;
@@ -102,7 +118,12 @@ export default {
         for (const action of actions) {
           const _action = this.getDetailAction(action);
           children.push(
-            <eb-list-item key={action.code} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
+            <eb-list-item
+              key={action.code}
+              link="#"
+              popover-close
+              propsOnPerform={event => this.actions_onAction(event, action)}
+            >
               <f7-icon slot="media" material={_action.icon && _action.icon.material}></f7-icon>
               <div slot="title">{this.getDetailActionTitle(action)}</div>
             </eb-list-item>

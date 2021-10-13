@@ -89,7 +89,9 @@ export default {
       this.stats_onChange(value);
     },
     stats_getFullName() {
-      return this.stats_params.nameSub ? `${this.stats_params.name}.${this.stats_params.nameSub}` : this.stats_params.name;
+      return this.stats_params.nameSub
+        ? `${this.stats_params.name}.${this.stats_params.nameSub}`
+        : this.stats_params.name;
     },
     stats_getSubscribePath() {
       const fullName = this.stats_getFullName();

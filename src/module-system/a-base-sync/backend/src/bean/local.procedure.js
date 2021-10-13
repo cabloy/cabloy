@@ -1,6 +1,27 @@
 module.exports = ctx => {
   class Procedure {
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms }) {
+    selectAtoms({
+      iid,
+      userIdWho,
+      tableName,
+      where,
+      orders,
+      page,
+      star,
+      label,
+      comment,
+      file,
+      count,
+      stage,
+      language,
+      category,
+      tag,
+      mine,
+      resource,
+      resourceLocale,
+      mode,
+      cms,
+    }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -16,11 +37,68 @@ module.exports = ctx => {
       // draft
       if (stage === 0) {
         // userIdWho must be set
-        return this._selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mode, cms });
+        return this._selectAtoms_draft({
+          iid,
+          userIdWho,
+          tableName,
+          where,
+          orders,
+          page,
+          star,
+          label,
+          comment,
+          file,
+          count,
+          stage,
+          language,
+          category,
+          tag,
+          mode,
+          cms,
+        });
       }
-      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale, mode, cms });
+      if (userIdWho === 0)
+        return this._selectAtoms_0({
+          iid,
+          tableName,
+          where,
+          orders,
+          page,
+          comment,
+          file,
+          count,
+          stage,
+          language,
+          category,
+          tag,
+          resource,
+          resourceLocale,
+          mode,
+          cms,
+        });
       // formal/history
-      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms });
+      return this._selectAtoms({
+        iid,
+        userIdWho,
+        tableName,
+        where,
+        orders,
+        page,
+        star,
+        label,
+        comment,
+        file,
+        count,
+        stage,
+        language,
+        category,
+        tag,
+        mine,
+        resource,
+        resourceLocale,
+        mode,
+        cms,
+      });
     }
 
     _prepare_cms({ tableName, iid, mode, cms }) {
@@ -48,7 +126,25 @@ module.exports = ctx => {
       return { _cmsField, _cmsJoin, _cmsWhere };
     }
 
-    _selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mode, cms }) {
+    _selectAtoms_draft({
+      iid,
+      userIdWho,
+      tableName,
+      where,
+      orders,
+      page,
+      star,
+      label,
+      comment,
+      file,
+      count,
+      stage,
+      language,
+      category,
+      tag,
+      mode,
+      cms,
+    }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -231,7 +327,24 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag, resource, resourceLocale, mode, cms }) {
+    _selectAtoms_0({
+      iid,
+      tableName,
+      where,
+      orders,
+      page,
+      comment,
+      file,
+      count,
+      stage,
+      language,
+      category,
+      tag,
+      resource,
+      resourceLocale,
+      mode,
+      cms,
+    }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -389,7 +502,28 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine, resource, resourceLocale, mode, cms }) {
+    _selectAtoms({
+      iid,
+      userIdWho,
+      tableName,
+      where,
+      orders,
+      page,
+      star,
+      label,
+      comment,
+      file,
+      count,
+      stage,
+      language,
+      category,
+      tag,
+      mine,
+      resource,
+      resourceLocale,
+      mode,
+      cms,
+    }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass

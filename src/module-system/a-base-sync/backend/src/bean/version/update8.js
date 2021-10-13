@@ -83,7 +83,10 @@ module.exports = function (ctx) {
       // cache
       const mapUserAtomClassRole = {};
       // atoms
-      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0', [ctx.instance.id]);
+      const atoms = await ctx.model.query(
+        'select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
+        [ctx.instance.id]
+      );
       for (const atom of atoms) {
         const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
         let mapValue = mapUserAtomClassRole[mapKey];

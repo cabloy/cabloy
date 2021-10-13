@@ -9,7 +9,8 @@ function maybe(f) {
 }
 
 // Highlight with given language.
-const highlight = (hljs, code, lang) => maybe(() => hljs.highlight(code, { language: lang || 'plaintext', ignoreIllegals: true }).value) || '';
+const highlight = (hljs, code, lang) =>
+  maybe(() => hljs.highlight(code, { language: lang || 'plaintext', ignoreIllegals: true }).value) || '';
 
 const applyLineNumbers = code => {
   const lines = code.split(/\n/).slice(0, -1);

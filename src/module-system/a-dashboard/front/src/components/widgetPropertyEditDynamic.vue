@@ -1,10 +1,28 @@
 <template>
   <f7-list>
-    <f7-list-item smartSelect :smartSelectParams="{ openIn: 'sheet', closeOnSelect: true }" :title="$text('Source Widget')">
-      <eb-select name="sourceWidget" :value="bindCurrent.widgetId" :options="optionsSourceWidget" @input="onInputSourceWidget"></eb-select>
+    <f7-list-item
+      smartSelect
+      :smartSelectParams="{ openIn: 'sheet', closeOnSelect: true }"
+      :title="$text('Source Widget')"
+    >
+      <eb-select
+        name="sourceWidget"
+        :value="bindCurrent.widgetId"
+        :options="optionsSourceWidget"
+        @input="onInputSourceWidget"
+      ></eb-select>
     </f7-list-item>
-    <f7-list-item smartSelect :smartSelectParams="{ openIn: 'sheet', closeOnSelect: true }" :title="$text('Property Name')">
-      <eb-select name="propertyName" :value="bindCurrent.propertyName" :options="optionsPropertyName[this.bindCurrent.widgetId] || []" @input="onInputPropertyName"></eb-select>
+    <f7-list-item
+      smartSelect
+      :smartSelectParams="{ openIn: 'sheet', closeOnSelect: true }"
+      :title="$text('Property Name')"
+    >
+      <eb-select
+        name="propertyName"
+        :value="bindCurrent.propertyName"
+        :options="optionsPropertyName[this.bindCurrent.widgetId] || []"
+        @input="onInputPropertyName"
+      ></eb-select>
     </f7-list-item>
   </f7-list>
 </template>

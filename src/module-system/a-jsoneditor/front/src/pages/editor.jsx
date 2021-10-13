@@ -112,10 +112,24 @@ export default {
       // save/done
       if (!this.readOnly) {
         if (this.actionSave) {
-          children.push(<eb-link key="actionSave" ref="actionSave" iconMaterial="save" propsOnPerform={this.onPerformSave}></eb-link>);
+          children.push(
+            <eb-link
+              key="actionSave"
+              ref="actionSave"
+              iconMaterial="save"
+              propsOnPerform={this.onPerformSave}
+            ></eb-link>
+          );
         }
         if (this.actionDone) {
-          children.push(<eb-link key="actionDone" ref="actionDone" iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>);
+          children.push(
+            <eb-link
+              key="actionDone"
+              ref="actionDone"
+              iconMaterial="done"
+              propsOnPerform={this.onPerformDone}
+            ></eb-link>
+          );
         }
       }
       // actions
@@ -124,7 +138,14 @@ export default {
         if (action.readOnly === undefined || action.readOnly === this.readOnly) {
           const icon = action.icon && action.icon.material;
           const title = action.title ? this.$text(action.title) : null;
-          children.push(<eb-link key={action.name} iconMaterial={icon} text={title} propsOnPerform={event => this.onPerformAction(event, action)}></eb-link>);
+          children.push(
+            <eb-link
+              key={action.name}
+              iconMaterial={icon}
+              text={title}
+              propsOnPerform={event => this.onPerformAction(event, action)}
+            ></eb-link>
+          );
         }
       }
       // ok

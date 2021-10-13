@@ -252,7 +252,11 @@ export default function (Vue) {
     },
     _registerLocales(module) {
       Object.keys(module.options.locales).forEach(key => {
-        Vue.prototype.$meta.locales[key] = Vue.prototype.$utils.extend({}, module.options.locales[key], Vue.prototype.$meta.locales[key]);
+        Vue.prototype.$meta.locales[key] = Vue.prototype.$utils.extend(
+          {},
+          module.options.locales[key],
+          Vue.prototype.$meta.locales[key]
+        );
       });
     },
   };

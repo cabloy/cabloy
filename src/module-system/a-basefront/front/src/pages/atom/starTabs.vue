@@ -29,7 +29,12 @@
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.stars" :tabActive="tabName === 'stars'" data-ref="stars" @tab:show="tabName = 'stars'">
+      <eb-tab-page-content
+        :id="tabId.stars"
+        :tabActive="tabName === 'stars'"
+        data-ref="stars"
+        @tab:show="tabName = 'stars'"
+      >
         <atomTab ref="stars" slot="list" :container="getContainer('stars')"></atomTab>
       </eb-tab-page-content>
       <template v-if="userLabels">

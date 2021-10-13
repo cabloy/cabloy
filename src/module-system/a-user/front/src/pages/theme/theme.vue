@@ -2,10 +2,20 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Theme')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="theme && moduleThemes">
-      <eb-list-item radio :checked="theme.type === 'builtIn'" :title="$text('Built-in Theme')" @change="onChangeBuiltIn">
+      <eb-list-item
+        radio
+        :checked="theme.type === 'builtIn'"
+        :title="$text('Built-in Theme')"
+        @change="onChangeBuiltIn"
+      >
         <f7-link slot="after" @click="onClickBuiltIn">{{ $text('Edit') }}</f7-link>
       </eb-list-item>
-      <eb-list-item radio :checked="theme.type === 'thirdParty'" :title="$text('Third-party Theme')" @change="onChangeThirdParty">
+      <eb-list-item
+        radio
+        :checked="theme.type === 'thirdParty'"
+        :title="$text('Third-party Theme')"
+        @change="onChangeThirdParty"
+      >
         <a
           slot="after"
           ref="moduleThemes"
@@ -17,7 +27,12 @@
         >
           <select name="moduleThemes">
             <option value=""></option>
-            <option v-for="moduleName of Object.keys(moduleThemes)" :key="moduleName" :value="moduleName" :selected="moduleName === theme.thirdParty">
+            <option
+              v-for="moduleName of Object.keys(moduleThemes)"
+              :key="moduleName"
+              :value="moduleName"
+              :selected="moduleName === theme.thirdParty"
+            >
               {{ moduleThemes[moduleName].titleLocale }}
             </option>
           </select>

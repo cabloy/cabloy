@@ -67,7 +67,11 @@ export default {
             domActionTitle = <div slot="title">{this.item_getActionTitle(action)}</div>;
           }
           domActions.push(
-            <div key={action.code} color={this.item_getActionColor(action, index)} propsOnPerform={event => this.item_onAction(event, item, action)}>
+            <div
+              key={action.code}
+              color={this.item_getActionColor(action, index)}
+              propsOnPerform={event => this.item_onAction(event, item, action)}
+            >
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
               {domActionTitle}
             </div>

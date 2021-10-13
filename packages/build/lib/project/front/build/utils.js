@@ -6,7 +6,10 @@ const mglob = require('egg-born-mglob');
 module.exports = context => {
   return {
     assetsPath(_path) {
-      const assetsSubDirectory = process.env.NODE_ENV === 'production' ? context.config.build.assetsSubDirectory : context.config.dev.assetsSubDirectory;
+      const assetsSubDirectory =
+        process.env.NODE_ENV === 'production'
+          ? context.config.build.assetsSubDirectory
+          : context.config.dev.assetsSubDirectory;
       return path.posix.join(assetsSubDirectory, _path);
     },
     cssLoaders(options) {
@@ -71,7 +74,11 @@ module.exports = context => {
       const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 
       // modules
-      const { modules, modulesGlobal } = mglob.glob(context.config.projectPath, context.config.configProject.base.disabledModules, true);
+      const { modules, modulesGlobal } = mglob.glob(
+        context.config.projectPath,
+        context.config.configProject.base.disabledModules,
+        true
+      );
 
       // clear
       fse.emptyDirSync(runtimePath);

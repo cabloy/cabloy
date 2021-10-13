@@ -69,7 +69,13 @@ export default {
     },
     layout_renderComponent() {
       if (!this.base.ready) return null;
-      return <eb-component module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
+      return (
+        <eb-component
+          module={this.layout.config.component.module}
+          name={this.layout.config.component.name}
+          options={this.layout_getComponentOptions()}
+        ></eb-component>
+      );
     },
     layout_getBlockComponentOptions({ blockConfig }) {
       return {
@@ -85,7 +91,13 @@ export default {
       if (!this.layout.instance) return null;
       const blockConfig = this.layout.config.blocks[blockName];
       if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
+      return (
+        <eb-component
+          module={blockConfig.component.module}
+          name={blockConfig.component.name}
+          options={this.layout_getBlockComponentOptions({ blockConfig })}
+        ></eb-component>
+      );
     },
     layout_renderLayout() {
       return <div>{this.layout_renderComponent()}</div>;

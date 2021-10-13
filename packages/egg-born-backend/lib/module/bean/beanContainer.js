@@ -3,7 +3,9 @@ const is = require('is-type-of');
 module.exports = (app, ctx) => {
   const beanContainer = {
     _register(moduleName, beanName, beanClass) {
-      const beanFullName = beanClass.global ? beanName : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
+      const beanFullName = beanClass.global
+        ? beanName
+        : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
       let bean = beanClass.bean;
       if (beanClass.mode === 'app' && is.function(bean) && !is.class(bean)) {
         bean = bean(app);
@@ -267,6 +269,7 @@ function __getPropertyDescriptor(obj, prop) {
 }
 
 function __aopMatch(match, beanFullName) {
-  if (!Array.isArray(match)) return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));
+  if (!Array.isArray(match))
+    return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));
   return match.some(item => __aopMatch(item, beanFullName));
 }

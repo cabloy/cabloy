@@ -2,7 +2,16 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Exports')" eb-back-link="Back"></eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId === user.id">
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.realName"
+        link="#"
+        :context="item"
+        :onPerform="onItemClick"
+        :swipeout="item.userId === user.id"
+      >
         <div slot="media">
           <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>

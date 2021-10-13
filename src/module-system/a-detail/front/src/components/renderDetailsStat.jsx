@@ -25,7 +25,12 @@ export default {
     onActionChanged(data) {
       const { atomKey, detailClass, details } = data;
       const { parcel, property, validate } = this.context;
-      if (atomKey.atomId !== parcel.data.atomId || detailClass.module !== property.ebParams.detailClass.module || detailClass.detailClassName !== property.ebParams.detailClass.detailClassName) return;
+      if (
+        atomKey.atomId !== parcel.data.atomId ||
+        detailClass.module !== property.ebParams.detailClass.module ||
+        detailClass.detailClassName !== property.ebParams.detailClass.detailClassName
+      )
+        return;
 
       // evaluate
       const scope = { details };

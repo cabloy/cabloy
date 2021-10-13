@@ -524,15 +524,27 @@ module.exports = ctx => {
     }
 
     async readCount({ key, atom: { readCount = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [readCount, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [
+        readCount,
+        ctx.instance.id,
+        key.atomId,
+      ]);
     }
 
     async comment({ key, atom: { comment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?', [comment, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?', [
+        comment,
+        ctx.instance.id,
+        key.atomId,
+      ]);
     }
 
     async attachment({ key, atom: { attachment = 1 }, user }) {
-      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?', [attachment, ctx.instance.id, key.atomId]);
+      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?', [
+        attachment,
+        ctx.instance.id,
+        key.atomId,
+      ]);
     }
 
     async stats({ atomIds, user }) {
@@ -708,7 +720,12 @@ module.exports = ctx => {
       });
     }
 
-    async checkRightActionBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, action, stage, user }) {
+    async checkRightActionBulk({
+      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      action,
+      stage,
+      user,
+    }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);

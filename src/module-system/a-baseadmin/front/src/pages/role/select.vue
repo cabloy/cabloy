@@ -86,7 +86,9 @@ export default {
           return node;
         });
         if (this.catalogOnly) {
-          list = list.filter(item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id));
+          list = list.filter(
+            item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id)
+          );
         }
         return list;
       } catch (err) {

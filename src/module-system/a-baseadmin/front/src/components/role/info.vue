@@ -1,10 +1,25 @@
 <template>
   <eb-validate ref="validate" :data="role" :params="{ validator: 'role' }" :onPerform="onPerformValidate">
     <eb-list form inline-labels no-hairlines-md>
-      <eb-list-input type="text" :disabled="role.system === 1" :clear-button="role.system === 0" :placeholder="$text('Role Name')" v-model="role.roleName" dataPath="roleName">
+      <eb-list-input
+        type="text"
+        :disabled="role.system === 1"
+        :clear-button="role.system === 0"
+        :placeholder="$text('Role Name')"
+        v-model="role.roleName"
+        dataPath="roleName"
+      >
         <div slot="label" class="text-color-gray">{{ $text('Role Name') }}</div>
       </eb-list-input>
-      <eb-list-input :label="$text('Sorting')" type="text" clear-button :placeholder="$text('Sorting')" v-model="role.sorting" dataPath="sorting"> </eb-list-input>
+      <eb-list-input
+        :label="$text('Sorting')"
+        type="text"
+        clear-button
+        :placeholder="$text('Sorting')"
+        v-model="role.sorting"
+        dataPath="sorting"
+      >
+      </eb-list-input>
       <f7-list-item :title="$text('Leader')">
         <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>
       </f7-list-item>
@@ -40,7 +55,11 @@ export default {
           data: this.role,
         })
         .then(() => {
-          this.$meta.eventHub.$emit('role:save', { roleId: this.role.id, roleIdParent: this.role.roleIdParent, role: this.role });
+          this.$meta.eventHub.$emit('role:save', {
+            roleId: this.role.id,
+            roleIdParent: this.role.roleIdParent,
+            role: this.role,
+          });
           return true;
         });
     },
@@ -62,7 +81,11 @@ export default {
               const roleIdParent = data.id;
               if (this.role.roleIdParent !== roleIdParent) {
                 this.$api.post('role/move', { roleId: this.role.id, roleIdParent }).then(() => {
-                  this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
+                  this.$meta.eventHub.$emit('role:move', {
+                    roleId: this.role.id,
+                    roleIdFrom: this.role.roleIdParent,
+                    roleIdTo: roleIdParent,
+                  });
                   this.$meta.eventHub.$emit('role:dirty', { dirty: true });
                   this.$view.toast.show({ text: this.$text('Operation Succeeded') });
                 });

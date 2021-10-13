@@ -29,7 +29,9 @@ export default {
       await this.$store.dispatch('a/base/getAtomClasses');
     },
     base_getLayoutConfigKeyCurrent() {
-      const atomClassKey = this.container.atomClass ? `${this.container.atomClass.module}_${this.container.atomClass.atomClassName}` : null;
+      const atomClassKey = this.container.atomClass
+        ? `${this.container.atomClass.module}_${this.container.atomClass.atomClassName}`
+        : null;
       return `atom.${atomClassKey}.render.list.layout.current.${this.$view.size}`;
     },
     base_prepareReadOptions() {
@@ -53,7 +55,8 @@ export default {
       }
       // select
       if (this.container.scene === 'select') {
-        options.where['a.id'] = this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
+        options.where['a.id'] =
+          this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
       }
       // extend 1
       if (this.container.options) {

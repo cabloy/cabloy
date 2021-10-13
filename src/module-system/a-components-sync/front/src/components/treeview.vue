@@ -461,7 +461,8 @@ export default {
       const $target = this.$$(e.target);
 
       // selectable
-      const selectable = node.attrs.selectable === undefined ? this.treeviewRoot.attrs.selectable : node.attrs.selectable;
+      const selectable =
+        node.attrs.selectable === undefined ? this.treeviewRoot.attrs.selectable : node.attrs.selectable;
       if (selectable && !$target.is('.treeview-toggle')) {
         this.selectedItem = node;
       }
@@ -478,7 +479,8 @@ export default {
       // checkbox
       const disabled = node.attrs.disabled === undefined ? this.treeviewRoot.attrs.disabled : node.attrs.disabled;
       const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
-      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
+      const checkOnLabel =
+        node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
       if (!disabled && checkbox && checkOnLabel) {
         const radio = !this.treeviewRoot.attrs.multiple;
         if (radio) {

@@ -1,7 +1,15 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.roleIdInc}`" swipeout>
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.roleName"
+        link="#"
+        :eb-href="`role/edit?roleId=${item.roleIdInc}`"
+        swipeout
+      >
         <eb-context-menu>
           <div slot="right">
             <div color="red" :context="item" :onPerform="onRemove">{{ $text('Remove') }}</div>

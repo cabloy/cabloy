@@ -125,7 +125,11 @@ function installFactory(_Vue) {
                 };
                 this.updateClockText();
                 // save
-                this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'buttonClockOptions', value: this.options });
+                this.$store.commit('a/base/setLayoutConfigKey', {
+                  module: 'a-layoutpc',
+                  key: 'buttonClockOptions',
+                  value: this.options,
+                });
               }
             },
           },

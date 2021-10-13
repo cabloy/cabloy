@@ -7,7 +7,12 @@
           <div slot="after">
             <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{ $text('Config') }}</eb-link>
             <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-link>
-            <eb-link v-if="!!$device.desktop && !languageEnable" iconMaterial="visibility" :onPerform="onPerformPreview">{{ $text('Preview') }}</eb-link>
+            <eb-link
+              v-if="!!$device.desktop && !languageEnable"
+              iconMaterial="visibility"
+              :onPerform="onPerformPreview"
+              >{{ $text('Preview') }}</eb-link
+            >
           </div>
         </eb-list-item>
         <f7-list-group v-if="languageEnable">
@@ -33,22 +38,32 @@
               </f7-col>
               <f7-col v-if="!!atomClassBase.category" class="flex-direction-column text-align-center">
                 <div>
-                  <eb-link :eb-href="combineLinkCategoriesTags(item, '/a/baseadmin/category/tree')">{{ $text('Category') }}</eb-link>
+                  <eb-link :eb-href="combineLinkCategoriesTags(item, '/a/baseadmin/category/tree')">{{
+                    $text('Category')
+                  }}</eb-link>
                 </div>
                 <div>{{ getStat(item.value, 'categories') }}</div>
               </f7-col>
               <f7-col v-if="!!atomClassBase.tag" class="flex-direction-column text-align-center">
                 <div>
-                  <eb-link :eb-href="combineLinkCategoriesTags(item, '/a/baseadmin/tag/list')">{{ $text('Tag') }}</eb-link>
+                  <eb-link :eb-href="combineLinkCategoriesTags(item, '/a/baseadmin/tag/list')">{{
+                    $text('Tag')
+                  }}</eb-link>
                 </div>
                 <div>{{ getStat(item.value, 'tags') }}</div>
               </f7-col>
             </f7-row>
           </f7-card-content>
           <f7-card-footer v-if="languageEnable">
-            <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{ $text('Config') }}</eb-link>
-            <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{ $text('Build') }}</eb-link>
-            <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{ $text('Preview') }}</eb-link>
+            <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{
+              $text('Config')
+            }}</eb-link>
+            <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{
+              $text('Build')
+            }}</eb-link>
+            <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{
+              $text('Preview')
+            }}</eb-link>
           </f7-card-footer>
         </f7-card>
       </div>
@@ -124,7 +139,10 @@ export default {
           })
           .then(data => {
             const progressId = data.progressId;
-            this.$view.dialog.progressbar({ progressId, title: this.$text(this.languageEnable ? 'Build All Languages' : 'Build') });
+            this.$view.dialog.progressbar({
+              progressId,
+              title: this.$text(this.languageEnable ? 'Build All Languages' : 'Build'),
+            });
           });
       });
     },
@@ -150,7 +168,10 @@ export default {
           path: 'index.html',
         })
         .then(data => {
-          window.open(data, `cms_site_${this.atomClass.module}_${this.atomClass.atomClassName}_${language || 'default'}`);
+          window.open(
+            data,
+            `cms_site_${this.atomClass.module}_${this.atomClass.atomClassName}_${language || 'default'}`
+          );
         });
     },
     combineLinkArticles(language) {

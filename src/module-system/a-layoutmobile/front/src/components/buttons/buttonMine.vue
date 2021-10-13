@@ -1,5 +1,11 @@
 <template>
-  <eb-link-color :class="buttonClass" :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerformClick" :stats_params="{ module: 'a-user', name: 'user' }"></eb-link-color>
+  <eb-link-color
+    :class="buttonClass"
+    :iconMaterial="buttonIcon"
+    :text="buttonLabel"
+    :onPerform="onPerformClick"
+    :stats_params="{ module: 'a-user', name: 'user' }"
+  ></eb-link-color>
 </template>
 <script>
 // export

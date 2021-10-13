@@ -22,17 +22,22 @@ module.exports = function (loader, modules) {
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(typeof route.path === 'string' ? loader.app.meta.util.combineFetchPath(info, route.path) : route.path);
+        args.push(
+          typeof route.path === 'string' ? loader.app.meta.util.combineFetchPath(info, route.path) : route.path
+        );
 
         // constroller
         let controllerBeanFullName;
         let _route;
         if (route.controller) {
-          if (is.function(route.controller)) throw new Error(`Controller should be bean: ${info.relativeName}.${route.controller(loader.app).name}`);
+          if (is.function(route.controller))
+            throw new Error(`Controller should be bean: ${info.relativeName}.${route.controller(loader.app).name}`);
           if (typeof route.controller === 'string') {
             controllerBeanFullName = `${info.relativeName}.controller.${route.controller}`;
           } else {
-            controllerBeanFullName = `${route.controller.module || info.relativeName}.controller.${route.controller.name}`;
+            controllerBeanFullName = `${route.controller.module || info.relativeName}.controller.${
+              route.controller.name
+            }`;
           }
           // _route
           _route = {

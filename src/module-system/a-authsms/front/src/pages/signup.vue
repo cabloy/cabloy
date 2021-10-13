@@ -2,19 +2,50 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="getPageTitle()" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'signup' }" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
+      <eb-validate
+        ref="validate"
+        :auto="false"
+        :data="data"
+        :params="{ validator: 'signup' }"
+        :onPerform="onPerformValidate"
+        @schema:ready="onSchemaReady"
+      >
         <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha Code')" type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.tokenCode" dataPath="captcha/tokenCode">
+          <eb-list-input
+            :label="$text('Captcha Code')"
+            type="text"
+            clear-button
+            :placeholder="$text('Captcha Code')"
+            v-model="captcha.tokenCode"
+            dataPath="captcha/tokenCode"
+          >
             <div slot="content">
-              <eb-component ref="captchaContainerCode" module="a-captcha" name="captchaContainer" :options="captchaContainerOptionsCode"></eb-component>
+              <eb-component
+                ref="captchaContainerCode"
+                module="a-captcha"
+                name="captchaContainer"
+                :options="captchaContainerOptionsCode"
+              ></eb-component>
             </div>
           </eb-list-input>
-          <eb-list-input :label="$text('SMS Verification Code')" type="text" clear-button :placeholder="$text('SMS Verification Code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input
+            :label="$text('SMS Verification Code')"
+            type="text"
+            clear-button
+            :placeholder="$text('SMS Verification Code')"
+            v-model="captcha.token"
+            dataPath="captcha/token"
+          >
             <div slot="content">
-              <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
+              <eb-component
+                ref="captchaContainer"
+                module="a-captcha"
+                name="captchaContainer"
+                :options="captchaContainerOptions"
+              ></eb-component>
             </div>
           </eb-list-input>
           <f7-list-item divider>
@@ -95,7 +126,9 @@ export default {
         .post('auth/signup', {
           state: this.state,
           data: this.data,
-          captchaCode: this.$refs.captchaContainerCode.getComponentInstance().captchaData({ token: this.captcha.tokenCode }),
+          captchaCode: this.$refs.captchaContainerCode
+            .getComponentInstance()
+            .captchaData({ token: this.captcha.tokenCode }),
           captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
         })
         .then(() => {

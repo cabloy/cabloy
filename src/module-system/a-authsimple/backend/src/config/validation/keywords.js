@@ -29,7 +29,9 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (!res) {
-          const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') }];
+          const errors = [
+            { keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') },
+          ];
           throw new app.meta.ajv.ValidationError(errors);
         }
         return true;

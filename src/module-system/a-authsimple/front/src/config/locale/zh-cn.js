@@ -26,6 +26,8 @@ export default {
   'Normal User': '普通用户',
   'Email Confirmation': '邮件确认',
   'Send Confirmation Email': '发送确认邮件',
-  emailConfirmSentAlert: '确认链接已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
-  passwordResetEmailSentAlert: '密码重置邮件已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
+  emailConfirmSentAlert:
+    '确认链接已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
+  passwordResetEmailSentAlert:
+    '密码重置邮件已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
 };

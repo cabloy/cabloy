@@ -2,7 +2,15 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Basic Admin')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="functionsAll">
-      <eb-list-item v-for="item of functions" :key="item.atomId" link="#" :title="__getFunctionTitle(item)" :context="item" :onPerform="onPerformClick"> </eb-list-item>
+      <eb-list-item
+        v-for="item of functions"
+        :key="item.atomId"
+        link="#"
+        :title="__getFunctionTitle(item)"
+        :context="item"
+        :onPerform="onPerformClick"
+      >
+      </eb-list-item>
     </f7-list>
   </eb-page>
 </template>

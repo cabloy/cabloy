@@ -67,7 +67,18 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // if undefined then old
-      const fields = ['atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra'];
+      const fields = [
+        'atomLanguage',
+        'slug',
+        'editMode',
+        'content',
+        'sticky',
+        'keywords',
+        'description',
+        'sorting',
+        'flag',
+        'extra',
+      ];
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
@@ -141,7 +152,12 @@ module.exports = app => {
         }
       );
       // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [item.content, html, this.ctx.instance.id, key.atomId]);
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [
+        item.content,
+        html,
+        this.ctx.instance.id,
+        key.atomId,
+      ]);
 
       // render
       const ignoreRender = options && options.ignoreRender;

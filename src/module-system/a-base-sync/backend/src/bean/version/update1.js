@@ -35,7 +35,14 @@ module.exports = function (ctx) {
       }
 
       // views
-      const viewNames = ['aViewUserRoleRef', 'aViewUserRoleExpand', 'aViewUserRightAtomClass', 'aViewUserRightAtomClassUser', 'aViewUserRightAtom', 'aViewUserRightFunction'];
+      const viewNames = [
+        'aViewUserRoleRef',
+        'aViewUserRoleExpand',
+        'aViewUserRightAtomClass',
+        'aViewUserRightAtomClassUser',
+        'aViewUserRightAtom',
+        'aViewUserRightFunction',
+      ];
       for (const viewName of viewNames) {
         await ctx.model.query(update1Data.views[viewName]);
       }

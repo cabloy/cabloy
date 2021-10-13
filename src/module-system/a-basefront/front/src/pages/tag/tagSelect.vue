@@ -5,7 +5,16 @@
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
         <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
-      <f7-searchbar ref="searchbar" expandable @searchbar:search="onSearch" @searchbar:disable="onDisable" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
+      <f7-searchbar
+        ref="searchbar"
+        expandable
+        @searchbar:search="onSearch"
+        @searchbar:disable="onDisable"
+        :backdrop="false"
+        :disable-button="true"
+        :clear-button="true"
+        :custom-search="true"
+      >
       </f7-searchbar>
     </eb-navbar>
     <tagSelect

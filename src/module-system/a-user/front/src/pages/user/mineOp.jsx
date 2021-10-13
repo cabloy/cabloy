@@ -44,7 +44,9 @@ export default {
   },
   methods: {
     async __init() {
-      this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.resourceType });
+      this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {
+        resourceType: this.resourceType,
+      });
       this.treeData = await this.$store.dispatch('a/base/getResourceTree', { resourceType: this.resourceType });
     },
     __getMineItemsOfCategory(category) {
@@ -114,7 +116,12 @@ export default {
       const mineItems = this.__getMineItemsOfCategory(category);
       for (const mineItem of mineItems) {
         children.push(
-          <eb-list-item key={mineItem.atomStaticKey} link="#" title={mineItem.atomNameLocale} propsOnPerform={event => this.onPerformMineItem(event, mineItem)}>
+          <eb-list-item
+            key={mineItem.atomStaticKey}
+            link="#"
+            title={mineItem.atomNameLocale}
+            propsOnPerform={event => this.onPerformMineItem(event, mineItem)}
+          >
             <div slot="after">{this.renderStats(mineItem)}</div>
           </eb-list-item>
         );
@@ -138,10 +145,20 @@ export default {
       if (this.user.agent.anonymous) return;
       const children = [];
       // message
-      children.push(<eb-link-color key="messages" iconMaterial="message" eb-href="/a/message/group" eb-target="_self" stats_params={{ module: 'a-message', name: 'message' }}></eb-link-color>);
+      children.push(
+        <eb-link-color
+          key="messages"
+          iconMaterial="message"
+          eb-href="/a/message/group"
+          eb-target="_self"
+          stats_params={{ module: 'a-message', name: 'message' }}
+        ></eb-link-color>
+      );
       // settings
       if (!this.inAgent) {
-        children.push(<eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>);
+        children.push(
+          <eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
+        );
       }
       return children;
     },

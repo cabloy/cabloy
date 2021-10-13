@@ -1,11 +1,27 @@
 module.exports = app => {
   class Category extends app.Service {
     async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
-      return await this.ctx.bean.category.child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
+      return await this.ctx.bean.category.child({
+        atomClass,
+        language,
+        categoryId,
+        categoryName,
+        categoryHidden,
+        categoryFlag,
+        setLocale,
+      });
     }
 
     async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
-      return await this.ctx.bean.category.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
+      return await this.ctx.bean.category.children({
+        atomClass,
+        language,
+        categoryId,
+        categoryName,
+        categoryHidden,
+        categoryFlag,
+        setLocale,
+      });
     }
 
     async add({ atomClass, data }) {
@@ -29,7 +45,14 @@ module.exports = app => {
     }
 
     async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale }) {
-      return await this.ctx.bean.category.tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale });
+      return await this.ctx.bean.category.tree({
+        atomClass,
+        language,
+        categoryId,
+        categoryHidden,
+        categoryFlag,
+        setLocale,
+      });
     }
 
     async relativeTop({ categoryId, setLocale }) {

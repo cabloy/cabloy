@@ -157,12 +157,14 @@ export default function (Vue) {
     if (_dropElementEl !== dropElementNewEl) {
       // leave
       if (_dropElement) {
-        _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
+        _dropContext.onDropLeave &&
+          _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
         _dropElement.removeAttr('data-dragdrop-drop');
       }
       // enter
       if (dropElementNew) {
-        dropContextNew.onDropEnter && dropContextNew.onDropEnter({ $el: dropHandlerNew, context: dropContextNew, dropElement: dropElementNew });
+        dropContextNew.onDropEnter &&
+          dropContextNew.onDropEnter({ $el: dropHandlerNew, context: dropContextNew, dropElement: dropElementNew });
         dropElementNew.attr('data-dragdrop-drop', dropContextNew.scene);
       }
       // switch
@@ -287,12 +289,14 @@ export default function (Vue) {
       _stylesheet.innerHTML = '';
       // dropElement
       if (_dropElement) {
-        _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
+        _dropContext.onDropLeave &&
+          _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
         _dropElement.removeAttr('data-dragdrop-drop');
       }
       // dragElement
       if (_dragElement) {
-        _dragContext.onDragEnd && _dragContext.onDragEnd({ $el: _dragHandler, context: _dragContext, dragElement: _dragElement });
+        _dragContext.onDragEnd &&
+          _dragContext.onDragEnd({ $el: _dragHandler, context: _dragContext, dragElement: _dragElement });
         _dragElement.removeAttr('data-dragdrop-drag');
       }
     }

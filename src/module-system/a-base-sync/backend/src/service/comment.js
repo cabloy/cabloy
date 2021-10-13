@@ -64,7 +64,14 @@ module.exports = app => {
         updatedAt: new Date(),
       });
       // publish
-      await this._publish({ atomId: key.atomId, commentId, replyId: item.replyId, replyUserId: item.replyUserId, user, mode: 'edit' });
+      await this._publish({
+        atomId: key.atomId,
+        commentId,
+        replyId: item.replyId,
+        replyUserId: item.replyUserId,
+        user,
+        mode: 'edit',
+      });
       // ok
       return {
         action: 'update',
@@ -75,7 +82,10 @@ module.exports = app => {
 
     async save_add({ key, data: { replyId, content }, user }) {
       // sorting
-      const list = await this.ctx.model.query('select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?', [this.ctx.instance.id, key.atomId]);
+      const list = await this.ctx.model.query(
+        'select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?',
+        [this.ctx.instance.id, key.atomId]
+      );
       const sorting = (list[0].sorting || 0) + 1;
       // reply
       let reply;
@@ -85,7 +95,13 @@ module.exports = app => {
       // replyUserId
       const replyUserId = reply ? reply.userId : 0;
       // replyContent
-      const replyContent = !reply ? '' : this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
+      const replyContent = !reply
+        ? ''
+        : this._fullContent({
+            content: reply.content,
+            replyContent: reply.replyContent,
+            replyUserName: reply.replyUserName,
+          });
       // html
       const html = await this._renderContent({
         atomId: key.atomId,

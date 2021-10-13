@@ -115,7 +115,9 @@ export default {
       if (column.component.options) {
         options = this.$meta.util.extend({}, column.component.options, options);
       }
-      return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
+      return (
+        <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
+      );
     },
     _customRow(record) {
       return {

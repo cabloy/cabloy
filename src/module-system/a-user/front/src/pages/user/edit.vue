@@ -5,7 +5,14 @@
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :auto="false" :data="user" :params="{ module: 'a-base', validator: 'user' }" :onPerform="onPerformValidate" @validateItem:change="onValidateItemChange">
+    <eb-validate
+      ref="validate"
+      :auto="false"
+      :data="user"
+      :params="{ module: 'a-base', validator: 'user' }"
+      :onPerform="onPerformValidate"
+      @validateItem:change="onValidateItemChange"
+    >
       <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>

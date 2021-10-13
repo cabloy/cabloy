@@ -4,8 +4,12 @@
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
       <div class="category-node" slot="root-end" slot-scope="{ node }">
         <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{ $text('Add') }}</eb-link>
-        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{ $text('Move') }}</eb-link>
-        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{ $text('Delete') }}</eb-link>
+        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{
+          $text('Move')
+        }}</eb-link>
+        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{
+          $text('Delete')
+        }}</eb-link>
       </div>
     </eb-treeview>
   </eb-page>
@@ -171,7 +175,11 @@ export default {
       return this.$refs.tree.find(null, node => node.id === id);
     },
     onCategorySave(data) {
-      if (data.atomClass.module !== this.atomClass.module || data.atomClass.atomClassName !== this.atomClass.atomClassName) return;
+      if (
+        data.atomClass.module !== this.atomClass.module ||
+        data.atomClass.atomClassName !== this.atomClass.atomClassName
+      )
+        return;
       this._clearSystemCache();
       const node = this.findNode(data.categoryIdParent);
       this.reloadNode(node);

@@ -22,7 +22,9 @@ export default {
       this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
     },
     base_getLayoutConfigKeyCurrent() {
-      const detailClassKey = this.container.detailClass ? `${this.container.detailClass.module}_${this.container.detailClass.detailClassName}` : null;
+      const detailClassKey = this.container.detailClass
+        ? `${this.container.detailClass.module}_${this.container.detailClass.detailClassName}`
+        : null;
       return `detail.${detailClassKey}.render.list.layout.current.${this.$view.size}`;
     },
     base_prepareReadOptions() {

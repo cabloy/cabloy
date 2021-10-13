@@ -43,6 +43,16 @@ export default {
   },
   render() {
     if (!this.ready) return <div></div>;
-    return <eb-json-editor ref="jsonEditor" readOnly={this.readOnly} valueType="string" valueMode="js" value={this.contentListener} onInput={this.onInput} onSave={this.onSaveEditor}></eb-json-editor>;
+    return (
+      <eb-json-editor
+        ref="jsonEditor"
+        readOnly={this.readOnly}
+        valueType="string"
+        valueMode="js"
+        value={this.contentListener}
+        onInput={this.onInput}
+        onSave={this.onSaveEditor}
+      ></eb-json-editor>
+    );
   },
 };

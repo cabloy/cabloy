@@ -112,7 +112,10 @@ export default {
     },
     async onLoadChildren(node) {
       if (node.root) {
-        const treeChildren = await this.$store.dispatch('a/base/getCategoryTree', { atomClass: this.atomClass, language: this.language });
+        const treeChildren = await this.$store.dispatch('a/base/getCategoryTree', {
+          atomClass: this.atomClass,
+          language: this.language,
+        });
         // append root node
         if (this.categoryIdStart === undefined) {
           return this._createNodeRoot(treeChildren);
@@ -135,6 +138,13 @@ export default {
     },
   },
   render() {
-    return <eb-treeview ref="tree" auto={false} propsOnLoadChildren={this.onLoadChildren} onNodeChange={this.onNodeChange}></eb-treeview>;
+    return (
+      <eb-treeview
+        ref="tree"
+        auto={false}
+        propsOnLoadChildren={this.onLoadChildren}
+        onNodeChange={this.onNodeChange}
+      ></eb-treeview>
+    );
   },
 };

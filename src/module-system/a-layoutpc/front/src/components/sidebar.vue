@@ -222,7 +222,9 @@ export default {
       });
     },
     closePanel(panel) {
-      const view = this.views.find(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
+      const view = this.views.find(
+        item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel)
+      );
       if (view) {
         this._closeView(view.id);
       } else {
@@ -264,7 +266,9 @@ export default {
       }
     },
     _getPanelIndex(panel) {
-      return this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
+      return this.options.panels.findIndex(
+        item => this.layout._panelFullName(item) === this.layout._panelFullName(panel)
+      );
     },
     _getPanelAndIndex(panel) {
       const panelIndex = this._getPanelIndex(panel);

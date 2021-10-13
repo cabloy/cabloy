@@ -29,7 +29,15 @@ export default {
     _renderPagination() {
       const pageInfo = this.layoutManager.data.adapter.getPageInfo();
       if (!pageInfo) return null;
-      return <a-pagination value={pageInfo.pageCurrent} page-size={pageInfo.pageSize} total={pageInfo.total} disabled={false} onChange={this.onPageChange} />;
+      return (
+        <a-pagination
+          value={pageInfo.pageCurrent}
+          page-size={pageInfo.pageSize}
+          total={pageInfo.total}
+          disabled={false}
+          onChange={this.onPageChange}
+        />
+      );
     },
     _renderTotal() {
       let domTotal;

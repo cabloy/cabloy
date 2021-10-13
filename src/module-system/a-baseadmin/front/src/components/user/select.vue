@@ -1,7 +1,15 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" link="#" :context="item" :onPerform="onPerformItem">
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.userName"
+        link="#"
+        :context="item"
+        :onPerform="onPerformItem"
+      >
         <div slot="media">
           <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>

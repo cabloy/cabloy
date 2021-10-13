@@ -37,7 +37,23 @@ const __departmentFieldMap = [
     'sourceIdentifier',
     'ext',
   ],
-  ['number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string'],
+  [
+    'number',
+    'number',
+    'string',
+    'number',
+    'bool',
+    'bool',
+    'bool',
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+  ],
 ];
 
 // member
@@ -83,7 +99,26 @@ const __memberFieldMap = [
     'extattr',
     'hiredDate',
   ],
-  ['string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp'],
+  [
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+    'array',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'bool',
+    'bool',
+    'json',
+    'timestamp',
+  ],
 ];
 
 module.exports = app => {
@@ -192,7 +227,11 @@ module.exports = app => {
         res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---`,
+        });
         // local departments
         context.localDepartments = await this.ctx.model.department.select();
         context.localDepartmentsMap = {};
@@ -246,7 +285,11 @@ module.exports = app => {
         const res = await this.ctx.bean.dingtalk.app.selfBuilt.user.listAll(null, false);
         context.remoteMembers = res.userlist;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---`,
+        });
         // local members
         context.localMembers = await this.ctx.model.member.select();
         context.localMembersMap = {};
@@ -509,7 +552,9 @@ module.exports = app => {
       const memberId = res.insertId;
 
       // 5. send message: account migration
-      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/sendLinkAccountMigration' });
+      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({
+        name: '/groupInfo/sendLinkAccountMigration',
+      });
       if (sendLinkAccountMigration) {
         await this._sendLinkAccountMigration({ userId });
       }
@@ -554,8 +599,13 @@ module.exports = app => {
 
     // get role top
     async _getRoleTop() {
-      const roleContainer = await this.ctx.bean.role.parseRoleName({ roleName: this.ctx.config.sync.department.roleContainer });
-      const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+      const roleContainer = await this.ctx.bean.role.parseRoleName({
+        roleName: this.ctx.config.sync.department.roleContainer,
+      });
+      const roleTop = await this.ctx.bean.role.get({
+        roleName: this.ctx.config.sync.department.roleTop,
+        roleIdParent: roleContainer.id,
+      });
       if (roleTop) return roleTop;
       // create role
       const data = {

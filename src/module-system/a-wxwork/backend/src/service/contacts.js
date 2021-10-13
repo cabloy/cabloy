@@ -95,9 +95,57 @@ const __memberFieldMap = [
 ];
 
 const __memberFieldMap_XML = [
-  ['memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address'],
-  ['NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address'],
-  ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string'],
+  [
+    'memberIdNew',
+    'memberId',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'status',
+    'extattr',
+    'address',
+  ],
+  [
+    'NewUserID',
+    'UserID',
+    'Name',
+    'Alias',
+    'Mobile',
+    'Department',
+    'Position',
+    'Gender',
+    'Email',
+    'Telephone',
+    'IsLeaderInDept',
+    'Avatar',
+    'Status',
+    'ExtAttr',
+    'Address',
+  ],
+  [
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'number',
+    'string',
+    'string',
+    'string',
+    'string',
+    'number',
+    'json',
+    'string',
+  ],
 ];
 
 module.exports = app => {
@@ -166,9 +214,17 @@ module.exports = app => {
         // check if memberId changed
         if (member.memberIdNew) {
           // upate memberId of member
-          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [member.memberIdNew, this.ctx.instance.id, member.memberId]);
+          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [
+            member.memberIdNew,
+            this.ctx.instance.id,
+            member.memberId,
+          ]);
           // upate profileId of auth
-          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]);
+          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [
+            `wxwork:${member.memberIdNew}`,
+            this.ctx.instance.id,
+            `wxwork:${member.memberId}`,
+          ]);
         }
         // get member remotely
         const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
@@ -202,7 +258,11 @@ module.exports = app => {
         }
         context.remoteDepartments = res.department;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---`,
+        });
         // local departments
         context.localDepartments = await this.ctx.model.department.select();
         context.localDepartmentsMap = {};
@@ -259,7 +319,11 @@ module.exports = app => {
         }
         context.remoteMembers = res.userlist;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---`,
+        });
         // local members
         context.localMembers = await this.ctx.model.member.select();
         context.localMembersMap = {};
@@ -518,7 +582,9 @@ module.exports = app => {
       const memberId = res.insertId;
 
       // 5. send message: account migration
-      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/sendLinkAccountMigration' });
+      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({
+        name: '/groupInfo/sendLinkAccountMigration',
+      });
       if (sendLinkAccountMigration) {
         await this._sendLinkAccountMigration({ userId });
       }
@@ -561,8 +627,13 @@ module.exports = app => {
 
     // get role top
     async _getRoleTop() {
-      const roleContainer = await this.ctx.bean.role.parseRoleName({ roleName: this.ctx.config.sync.department.roleContainer });
-      const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+      const roleContainer = await this.ctx.bean.role.parseRoleName({
+        roleName: this.ctx.config.sync.department.roleContainer,
+      });
+      const roleTop = await this.ctx.bean.role.get({
+        roleName: this.ctx.config.sync.department.roleTop,
+        roleIdParent: roleContainer.id,
+      });
       if (roleTop) return roleTop;
       // create role
       const data = {

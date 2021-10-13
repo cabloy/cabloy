@@ -32,7 +32,15 @@ export default {
               caption: title,
             },
           ];
-          buttons.push(<f7-photo-browser key="photo-browser" ref={photoBrowserId} photos={photos} type="page" exposition={false}></f7-photo-browser>);
+          buttons.push(
+            <f7-photo-browser
+              key="photo-browser"
+              ref={photoBrowserId}
+              photos={photos}
+              type="page"
+              exposition={false}
+            ></f7-photo-browser>
+          );
           children.push(
             <div key="value" slot="after">
               {buttons}
@@ -97,7 +105,15 @@ export default {
             caption: title,
           },
         ];
-        buttons.push(<f7-photo-browser key="photo-browser" ref={photoBrowserId} photos={photos} type="page" exposition={false}></f7-photo-browser>);
+        buttons.push(
+          <f7-photo-browser
+            key="photo-browser"
+            ref={photoBrowserId}
+            photos={photos}
+            type="page"
+            exposition={false}
+          ></f7-photo-browser>
+        );
       }
       buttons.push(
         <eb-button

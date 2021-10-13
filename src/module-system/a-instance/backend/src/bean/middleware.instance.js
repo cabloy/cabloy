@@ -13,7 +13,10 @@ module.exports = ctx => {
       if (!instance) {
         // prompt
         if (ctx.app.meta.isLocal) {
-          const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
+          const urlInfo =
+            ctx.locale === 'zh-cn'
+              ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
+              : 'https://cabloy.com/articles/multi-instance.html';
           let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
           message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
           message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;

@@ -49,7 +49,8 @@ module.exports = ctx => {
 
     // get forward url
     getForwardUrl(path) {
-      const prefix = ctx.app.meta.isTest || ctx.app.meta.isLocal ? ctx.app.config.static.prefix + 'public/' : '/public/';
+      const prefix =
+        ctx.app.meta.isTest || ctx.app.meta.isLocal ? ctx.app.config.static.prefix + 'public/' : '/public/';
       return `${prefix}${ctx.instance.id}/${path}`;
     }
 
@@ -58,7 +59,9 @@ module.exports = ctx => {
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         return ctx.app.config.static.dir;
       }
-      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(require('os').homedir(), 'cabloy', ctx.app.name, 'public');
+      const dir =
+        ctx.config.module(moduleInfo.relativeName).publicDir ||
+        path.join(require('os').homedir(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }

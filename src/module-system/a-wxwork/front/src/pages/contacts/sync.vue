@@ -2,11 +2,19 @@
   <eb-page>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="syncStatus && ioHelper" :onPerform="onPerformSync">{{ syncStatus[type] ? $text('Sync Again') : $text('Sync Now') }}</eb-link>
+        <eb-link v-if="syncStatus && ioHelper" :onPerform="onPerformSync">{{
+          syncStatus[type] ? $text('Sync Again') : $text('Sync Now')
+        }}</eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" readonly="readonly" :value="progressResult" class="json-textarea json-textarea-margin"></textarea>
+      <textarea
+        ref="textarea"
+        type="textarea"
+        readonly="readonly"
+        :value="progressResult"
+        class="json-textarea json-textarea-margin"
+      ></textarea>
     </eb-box>
   </eb-page>
 </template>

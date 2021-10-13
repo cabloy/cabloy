@@ -5,7 +5,14 @@
         <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="category" :params="{ module: 'a-base', validator: 'category' }" :onPerform="onPerformValidate"> </eb-validate>
+    <eb-validate
+      ref="validate"
+      auto
+      :data="category"
+      :params="{ module: 'a-base', validator: 'category' }"
+      :onPerform="onPerformValidate"
+    >
+    </eb-validate>
   </eb-page>
 </template>
 <script>

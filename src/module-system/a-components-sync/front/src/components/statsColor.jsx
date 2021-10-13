@@ -33,6 +33,13 @@ export default {
     },
   },
   render() {
-    return <eb-stats stats_params={this.stats_params} stats_color={this.statsColor} propsOnAdjustValue={this.onAdjustValue} onChange={this.onChange}></eb-stats>;
+    return (
+      <eb-stats
+        stats_params={this.stats_params}
+        stats_color={this.statsColor}
+        propsOnAdjustValue={this.onAdjustValue}
+        onChange={this.onChange}
+      ></eb-stats>
+    );
   },
 };

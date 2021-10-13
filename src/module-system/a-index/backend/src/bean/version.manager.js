@@ -50,7 +50,9 @@ module.exports = app => {
           if (!map[fieldNameFirst]) {
             // too long
             // const sql = `create ${indexType} index idx_${tableName}_${fieldNameArray.join('_')} ON ${tableName} (${fieldNameArray.join(',')})`;
-            const sql = `create ${indexType} index idx_${tableName}_${fieldNameFirst} ON ${tableName} (${fieldNameArray.join(',')})`;
+            const sql = `create ${indexType} index idx_${tableName}_${fieldNameFirst} ON ${tableName} (${fieldNameArray.join(
+              ','
+            )})`;
             await this.ctx.model.query(sql);
           }
         }

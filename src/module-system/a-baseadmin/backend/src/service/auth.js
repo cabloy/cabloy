@@ -42,8 +42,12 @@ module.exports = app => {
       const authProvider = authProviders[`${item.module}:${item.providerName}`];
       if (authProvider.meta.mode === 'redirect') {
         const moduleInfo = mparse.parseInfo(item.module);
-        const loginURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
-        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+        const loginURL = this.ctx.bean.base.getAbsoluteUrl(
+          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`
+        );
+        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(
+          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`
+        );
         item._meta = {
           loginURL,
           callbackURL,

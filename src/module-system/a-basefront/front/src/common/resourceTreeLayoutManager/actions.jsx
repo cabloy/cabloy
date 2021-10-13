@@ -17,7 +17,13 @@ export default {
       if (!this.base_ready) return null;
       const children = [];
       // layout
-      children.push(<f7-link key="actionsLayout" iconMaterial="view_list" popover-open={`#${this.actions.layoutPopoverId}`}></f7-link>);
+      children.push(
+        <f7-link
+          key="actionsLayout"
+          iconMaterial="view_list"
+          popover-open={`#${this.actions.layoutPopoverId}`}
+        ></f7-link>
+      );
       //
       return children;
     },
@@ -34,7 +40,12 @@ export default {
         const layoutConfig = this.$meta.util.getProperty(this.base.config, `render.tree.layouts.${layout.name}`);
         if (!layoutConfig) continue;
         children.push(
-          <eb-list-item key={layout.name} link="#" popover-close propsOnPerform={event => this.actions_onActionLayout(event, layout)}>
+          <eb-list-item
+            key={layout.name}
+            link="#"
+            popover-close
+            propsOnPerform={event => this.actions_onActionLayout(event, layout)}
+          >
             <f7-icon slot="media" material={this.layout.current === layout.name ? 'done' : ''}></f7-icon>
             <div slot="title">{this.$text(layoutConfig.title)}</div>
           </eb-list-item>

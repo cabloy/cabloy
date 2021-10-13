@@ -37,7 +37,24 @@ module.exports = ctx => {
 
     // select
     //   donot set atomDisabled
-    async select({ atomClass, options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'formal', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
+    async select({
+      atomClass,
+      options: {
+        where,
+        orders,
+        page,
+        resourceType,
+        star = 0,
+        label = 0,
+        stage = 'formal',
+        category = 0,
+        tag = 0,
+        locale,
+      },
+      user,
+      pageForce = false,
+      count = 0,
+    }) {
       // atomClass
       atomClass = atomClass || __atomClass;
       // locale

@@ -52,7 +52,13 @@ export default {
       const children = [];
       for (const user of users) {
         children.push(
-          <eb-list-item class="item" key={user.id} checkbox checked={this._getItemChecked(user)} onChange={event => this.onItemChange(event, user)}>
+          <eb-list-item
+            class="item"
+            key={user.id}
+            checkbox
+            checked={this._getItemChecked(user)}
+            onChange={event => this.onItemChange(event, user)}
+          >
             <div slot="title" class="display-flex align-items-center">
               <img class="avatar avatar24" src={this._getItemMetaMedia(user)} />
               <span>{user.userName}</span>

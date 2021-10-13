@@ -29,11 +29,28 @@ module.exports = ctx => {
     }
 
     async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
-      const list = await this.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
+      const list = await this.children({
+        atomClass,
+        language,
+        categoryId,
+        categoryName,
+        categoryHidden,
+        categoryFlag,
+        setLocale,
+      });
       return list[0];
     }
 
-    async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale, count = 0 }) {
+    async children({
+      atomClass,
+      language,
+      categoryId,
+      categoryName,
+      categoryHidden,
+      categoryFlag,
+      setLocale,
+      count = 0,
+    }) {
       //
       const where = {};
       if (categoryId !== undefined) where.categoryIdParent = categoryId;
@@ -141,7 +158,14 @@ module.exports = ctx => {
       for (const item of list) {
         if (item.categoryCatalog) {
           // only categoryId
-          item.children = await this._treeChildren({ atomClass, language, categoryId: item.id, categoryHidden, categoryFlag, setLocale });
+          item.children = await this._treeChildren({
+            atomClass,
+            language,
+            categoryId: item.id,
+            categoryHidden,
+            categoryFlag,
+            setLocale,
+          });
         }
       }
       return list;

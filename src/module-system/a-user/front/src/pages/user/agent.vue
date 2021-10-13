@@ -5,9 +5,18 @@
       <eb-list-item :title="$text('Agent')" group-title></eb-list-item>
       <eb-list-item v-if="!agentsBy || agentsBy.length === 0" :title="$text('No Agents')"></eb-list-item>
       <template v-if="agentsBy && agentsBy.length > 0">
-        <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id === item.id" :title="item.userName">
+        <eb-list-item
+          v-for="item of agentsBy"
+          :key="item.id"
+          radio
+          disabled
+          :checked="user.op.id === item.id"
+          :title="item.userName"
+        >
           <div slot="after">
-            <eb-link v-if="user.op.id !== item.id" :context="item" :onPerform="onPerformSwitch">{{ $text('Switch') }}</eb-link>
+            <eb-link v-if="user.op.id !== item.id" :context="item" :onPerform="onPerformSwitch">{{
+              $text('Switch')
+            }}</eb-link>
           </div>
         </eb-list-item>
       </template>

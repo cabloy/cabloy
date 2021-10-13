@@ -133,9 +133,27 @@ module.exports = ctx => {
       middlewaresGet.push(authenticate);
       // mount routes
       const routes = [
-        { name: `get:${config.loginURL}`, method: 'get', path: '/' + config.loginURL, middlewares: middlewaresGet, meta: { auth: { enable: false } } },
-        { name: `post:${config.loginURL}`, method: 'post', path: '/' + config.loginURL, middlewares: middlewaresPost, meta: { auth: { enable: false } } },
-        { name: `get:${config.callbackURL}`, method: 'get', path: '/' + config.callbackURL, middlewares: middlewaresGet, meta: { auth: { enable: false } } },
+        {
+          name: `get:${config.loginURL}`,
+          method: 'get',
+          path: '/' + config.loginURL,
+          middlewares: middlewaresGet,
+          meta: { auth: { enable: false } },
+        },
+        {
+          name: `post:${config.loginURL}`,
+          method: 'post',
+          path: '/' + config.loginURL,
+          middlewares: middlewaresPost,
+          meta: { auth: { enable: false } },
+        },
+        {
+          name: `get:${config.callbackURL}`,
+          method: 'get',
+          path: '/' + config.callbackURL,
+          middlewares: middlewaresGet,
+          meta: { auth: { enable: false } },
+        },
         // { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
       ];
       for (const route of routes) {

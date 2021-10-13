@@ -13,7 +13,10 @@ export default {
         atomId: keyWrite.atomId,
         itemId: keyWrite.itemId,
       };
-      const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
+      const url = ctx.$meta.util.replaceTemplate(
+        '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
+        _item
+      );
       ctx.$view.navigate(url, action.navigateOptions);
       // event: neednot check atomStage
       // if (item.atomStage > 0) {

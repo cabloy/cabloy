@@ -25,7 +25,12 @@ export default {
       const { property } = context;
       if (!property.ebSearch) return null;
       return (
-        <div slot="after-title" staticClass={property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'}>
+        <div
+          slot="after-title"
+          staticClass={
+            property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'
+          }
+        >
           {this.__searchStates_render(context)}
         </div>
       );

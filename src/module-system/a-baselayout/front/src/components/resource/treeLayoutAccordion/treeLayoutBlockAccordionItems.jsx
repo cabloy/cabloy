@@ -55,9 +55,19 @@ export default {
     },
     _renderResources(categoryParent) {
       const children = [];
-      const resources = this.layoutManager.base.resourcesArrayAll.filter(item => item.atomCategoryId === categoryParent.id);
+      const resources = this.layoutManager.base.resourcesArrayAll.filter(
+        item => item.atomCategoryId === categoryParent.id
+      );
       for (const resource of resources) {
-        const domResource = <eb-list-item class="item" key={resource.atomId} link="#" title={resource.atomNameLocale} propsOnPerform={event => this.onItemClick(event, resource)}></eb-list-item>;
+        const domResource = (
+          <eb-list-item
+            class="item"
+            key={resource.atomId}
+            link="#"
+            title={resource.atomNameLocale}
+            propsOnPerform={event => this.onItemClick(event, resource)}
+          ></eb-list-item>
+        );
         children.push(domResource);
       }
       return children;
@@ -82,10 +92,16 @@ export default {
           <eb-list inset>{domListItems}</eb-list>
         </f7-accordion-content>
       );
-      const accordionItemOpened = this.accordionItemOpened === item.id || (this.accordionItemOpened === 0 && index === 0);
+      const accordionItemOpened =
+        this.accordionItemOpened === item.id || (this.accordionItemOpened === 0 && index === 0);
       // ok
       return (
-        <eb-list-item key={item.id} accordion-item accordion-item-opened={accordionItemOpened} onAccordionOpen={event => this.onAccordionOpen(event, item)}>
+        <eb-list-item
+          key={item.id}
+          accordion-item
+          accordion-item-opened={accordionItemOpened}
+          onAccordionOpen={event => this.onAccordionOpen(event, item)}
+        >
           {domTitle}
           {domAccordionContent}
         </eb-list-item>

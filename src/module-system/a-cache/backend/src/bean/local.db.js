@@ -74,7 +74,8 @@ module.exports = ctx => {
     }
 
     async _has(name) {
-      const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
+      const sql =
+        'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
       const res = await ctx.db.queryOne(sql, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name]);
       return res;
     }

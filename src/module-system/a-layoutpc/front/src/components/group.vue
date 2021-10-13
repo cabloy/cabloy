@@ -108,7 +108,13 @@ export default {
       // try
       if ((sizeWill === 'small' || sizeWill === 'medium') && this.views.length === 1) {
         sizeWill = 'large';
-      } else if (sizeWill === 'small' && this.views.length === 2 && indexCurrent === 0 && this.views[indexCurrent + 1].sizeWill === 'small' && this.layout.enoughLarge) {
+      } else if (
+        sizeWill === 'small' &&
+        this.views.length === 2 &&
+        indexCurrent === 0 &&
+        this.views[indexCurrent + 1].sizeWill === 'small' &&
+        this.layout.enoughLarge
+      ) {
         sizeWill = 'medium';
       } else if (
         sizeWill === 'small' &&
@@ -119,11 +125,16 @@ export default {
         this.layout.enoughMedium
       ) {
         sizeWill = 'medium';
-      } else if (sizeWill === 'large' && this.views.length > indexCurrent + 1 && this.views[indexCurrent + 1].sizeWill === 'small') {
+      } else if (
+        sizeWill === 'large' &&
+        this.views.length > indexCurrent + 1 &&
+        this.views[indexCurrent + 1].sizeWill === 'small'
+      ) {
         sizeWill = 'medium';
       }
       // adjust
-      if (sizeWill === 'large') return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
+      if (sizeWill === 'large')
+        return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
       if (sizeWill === 'medium') return this.layout.enoughMedium ? 'medium' : 'small';
       return 'small';
     },

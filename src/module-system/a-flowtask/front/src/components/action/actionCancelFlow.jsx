@@ -49,7 +49,13 @@ export default {
         </f7-toolbar>
         <f7-page-content>
           <eb-list form inline-labels no-hairlines-md onSubmit={event => this.onFormSubmit(event)}>
-            <eb-list-input label={this.$text('Remark')} type="text" clear-button placeholder={this.$text('Remark')} v-model={this.remark}></eb-list-input>
+            <eb-list-input
+              label={this.$text('Remark')}
+              type="text"
+              clear-button
+              placeholder={this.$text('Remark')}
+              v-model={this.remark}
+            ></eb-list-input>
           </eb-list>
         </f7-page-content>
       </f7-sheet>

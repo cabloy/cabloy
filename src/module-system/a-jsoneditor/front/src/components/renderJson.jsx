@@ -81,7 +81,12 @@ export default {
       const title = context.getTitle();
       // render
       return (
-        <eb-list-item key={key} class={property.ebReadOnly ? 'text-color-gray' : ''} link="#" propsOnPerform={this._onPerform}>
+        <eb-list-item
+          key={key}
+          class={property.ebReadOnly ? 'text-color-gray' : ''}
+          link="#"
+          propsOnPerform={this._onPerform}
+        >
           <div slot="title" class={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>

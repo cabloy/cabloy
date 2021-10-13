@@ -2,11 +2,22 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Attachment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
+        <eb-link
+          :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'"
+          :onPerform="onPerformSort"
+        ></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.i_realName" link="#" :context="item" :onPerform="onItemClick">
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.i_realName"
+        link="#"
+        :context="item"
+        :onPerform="onItemClick"
+      >
         <div slot="root-start" class="header">
           <div class="userName">
             <eb-link :context="item" :onPerform="onPerformViewAtom">{{ item.atomName }}</eb-link>

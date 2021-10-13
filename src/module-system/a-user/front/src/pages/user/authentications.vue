@@ -6,8 +6,12 @@
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.providerId" :title="authTitle(item)">
           <div slot="after">
-            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</eb-link>
-            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</eb-link>
+            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{
+              $text('Enable')
+            }}</eb-link>
+            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{
+              $text('Disable')
+            }}</eb-link>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -103,7 +107,11 @@ export default {
       const key = `${item.module}:${item.providerName}`;
       const provider = this.providersMap[key];
       // login
-      const login = provider.component.meta.login({ ctx: this, state: 'associate', hash: '/a/user/user/authentications' });
+      const login = provider.component.meta.login({
+        ctx: this,
+        state: 'associate',
+        hash: '/a/user/user/authentications',
+      });
       await this.$meta.util.wrapPromise(login);
     },
     checkIfEnable(item) {

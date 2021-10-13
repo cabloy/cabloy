@@ -141,7 +141,11 @@ module.exports = app => {
       let categoryIdParent = 0;
       if (category.categoryIdParent > 0) {
         const categoryParent = categories.find(item => item.id === category.categoryIdParent);
-        categoryIdParent = await this._update7Migration_cagetory({ mapCagetoryIds, categories, category: categoryParent });
+        categoryIdParent = await this._update7Migration_cagetory({
+          mapCagetoryIds,
+          categories,
+          category: categoryParent,
+        });
       }
       const categoryIdNew = await this.ctx.bean.category.add({
         atomClass: { id: category.atomClassId },

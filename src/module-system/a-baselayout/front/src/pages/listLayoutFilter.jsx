@@ -232,7 +232,9 @@ export default {
     _renderNavbarRight() {
       let domButtonSearch;
       if (!this.immediate) {
-        domButtonSearch = <eb-link ref="buttonSubmit" iconMaterial="done" propsOnPerform={this.onPerformSearch}></eb-link>;
+        domButtonSearch = (
+          <eb-link ref="buttonSubmit" iconMaterial="done" propsOnPerform={this.onPerformSearch}></eb-link>
+        );
       }
       return <f7-nav-right>{domButtonSearch}</f7-nav-right>;
     },

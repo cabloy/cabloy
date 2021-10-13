@@ -23,18 +23,38 @@
             :stats_params="{ module: 'a-flowtask', name: 'taskHandlings' }"
             @stats_change="onStatsChange($event, 'handlings')"
           ></eb-link>
-          <eb-link :tab-link="`#${tabId.completeds}`" :tabLinkActive="tabName === 'completeds'" icon-only icon-material="stop"></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.completeds}`"
+            :tabLinkActive="tabName === 'completeds'"
+            icon-only
+            icon-material="stop"
+          ></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.claimings" :tabActive="tabName === 'claimings'" data-ref="claimings" @tab:show="tabName = 'claimings'">
+      <eb-tab-page-content
+        :id="tabId.claimings"
+        :tabActive="tabName === 'claimings'"
+        data-ref="claimings"
+        @tab:show="tabName = 'claimings'"
+      >
         <flowTaskTab ref="claimings" slot="list" :container="getContainer('claimings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.handlings" :tabActive="tabName === 'handlings'" data-ref="handlings" @tab:show="tabName = 'handlings'">
+      <eb-tab-page-content
+        :id="tabId.handlings"
+        :tabActive="tabName === 'handlings'"
+        data-ref="handlings"
+        @tab:show="tabName = 'handlings'"
+      >
         <flowTaskTab ref="handlings" slot="list" :container="getContainer('handlings')"></flowTaskTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.completeds" :tabActive="tabName === 'completeds'" data-ref="completeds" @tab:show="tabName = 'completeds'">
+      <eb-tab-page-content
+        :id="tabId.completeds"
+        :tabActive="tabName === 'completeds'"
+        data-ref="completeds"
+        @tab:show="tabName = 'completeds'"
+      >
         <flowTaskTab ref="completeds" slot="list" :container="getContainer('completeds')"></flowTaskTab>
       </eb-tab-page-content>
     </f7-tabs>

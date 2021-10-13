@@ -177,7 +177,12 @@ module.exports = ctx => {
             // crop
             if (fields.cropped === 'true') {
               const cropbox = JSON.parse(fields.cropbox);
-              img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
+              img = img.crop(
+                parseInt(cropbox.width),
+                parseInt(cropbox.height),
+                parseInt(cropbox.x),
+                parseInt(cropbox.y)
+              );
             }
             // fixed
             if (fields.fixed) {
@@ -283,7 +288,10 @@ module.exports = ctx => {
         // redirect nginx
         // ctx.set('content-type', file.mime);
         ctx.set('content-transfer-encoding', file.encoding);
-        ctx.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`);
+        ctx.set(
+          'content-disposition',
+          `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`
+        );
         ctx.set('X-Accel-Redirect', forwardUrl);
         // ctx.success();
         ctx.response.status = 200;

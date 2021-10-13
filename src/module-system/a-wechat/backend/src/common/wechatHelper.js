@@ -94,7 +94,11 @@ module.exports = function (ctx) {
       const unionid = userInfo.unionid || '';
       if (unionid) {
         // update all
-        await ctx.model.query('update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?', [userId, ctx.instance.id, unionid]);
+        await ctx.model.query('update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?', [
+          userId,
+          ctx.instance.id,
+          unionid,
+        ]);
       } else {
         // update this
         await ctx.model.wechatUser.update({ id: userWechatId, userId });
@@ -128,7 +132,10 @@ module.exports = function (ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(`select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`, [ctx.instance.id, providerItem.id]);
+      const authItems = await ctx.model.query(
+        `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
+        [ctx.instance.id, providerItem.id]
+      );
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -157,7 +164,10 @@ module.exports = function (ctx) {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOthers = await ctx.model.query(`select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`, [ctx.instance.id, authId]);
+        const _authOthers = await ctx.model.query(
+          `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
+          [ctx.instance.id, authId]
+        );
         const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {
           // update userId for this auth

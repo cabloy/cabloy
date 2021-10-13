@@ -11,7 +11,10 @@ module.exports = function (ctx) {
       // token
       const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
       // prompt
-      const message = chalk.keyword('cyan')('Test SMS Verification Code To: ') + chalk.keyword('yellow')(context.mobile) + chalk.keyword('orange')('\n' + token);
+      const message =
+        chalk.keyword('cyan')('Test SMS Verification Code To: ') +
+        chalk.keyword('yellow')(context.mobile) +
+        chalk.keyword('orange')('\n' + token);
       console.log('\n' + boxen(message, boxenOptions));
       // ok
       return { token };

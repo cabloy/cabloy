@@ -4,11 +4,19 @@
     <f7-list form inline-labels no-hairlines-md v-if="ready">
       <f7-list-group v-for="group of itemsGroups" :key="group.id">
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.id" :link="getItemLink(item)" :eb-href="getItemHref(item)" swipeout>
+        <eb-list-item
+          v-for="item of group.items"
+          :key="item.id"
+          :link="getItemLink(item)"
+          :eb-href="getItemHref(item)"
+          swipeout
+        >
           <div slot="title" :class="{ 'text-color-gray': !item.meta }">{{ getItemTitle(item) }}</div>
           <eb-context-menu v-if="item.meta">
             <div slot="right">
-              <div v-if="item.disabled === 0" color="red" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</div>
+              <div v-if="item.disabled === 0" color="red" :context="item" :onPerform="onPerformDisable">
+                {{ $text('Disable') }}
+              </div>
               <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</div>
             </div>
           </eb-context-menu>

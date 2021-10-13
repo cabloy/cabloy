@@ -7,8 +7,20 @@ module.exports = app => {
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
 
     // messageMini
-    { method: 'get', path: 'messageMini/:scene', controller: 'messageMini', action: 'index', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'messageMini/:scene', controller: 'messageMini', action: 'index', meta: { auth: { enable: false } } },
+    {
+      method: 'get',
+      path: 'messageMini/:scene',
+      controller: 'messageMini',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
+    {
+      method: 'post',
+      path: 'messageMini/:scene',
+      controller: 'messageMini',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
   ];

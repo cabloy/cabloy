@@ -3,7 +3,12 @@
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title> </f7-list-item>
-        <eb-list-item class="item" v-for="item of group.items" :key="item._key" :title="item.atomNameLocale || item.atomName">
+        <eb-list-item
+          class="item"
+          v-for="item of group.items"
+          :key="item._key"
+          :title="item.atomNameLocale || item.atomName"
+        >
           <div slot="root-start" class="header">
             <div></div>
             <div>{{ $text('from') }}: {{ item.roleName }}</div>

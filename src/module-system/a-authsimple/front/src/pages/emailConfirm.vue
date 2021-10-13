@@ -4,7 +4,13 @@
     <f7-block>
       <template v-if="sent">{{ $text('emailConfirmSentAlert') }}</template>
       <template v-else>
-        <eb-validate ref="validate" :auto="false" :data="data" :params="{ validator: 'emailConfirm' }" :onPerform="onPerformValidate">
+        <eb-validate
+          ref="validate"
+          :auto="false"
+          :data="data"
+          :params="{ validator: 'emailConfirm' }"
+          :onPerform="onPerformValidate"
+        >
           <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>

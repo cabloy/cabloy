@@ -75,7 +75,9 @@ module.exports = ctx => {
         },
       };
       // config
-      const configTemplate = ctx.config.module(moduleInfo.relativeName).socketio.message.render.templates[channelFullName];
+      const configTemplate = ctx.config.module(moduleInfo.relativeName).socketio.message.render.templates[
+        channelFullName
+      ];
       // subject
       let subject = ctx.text.locale(user.locale, configTemplate.subject);
       subject = ctx.bean.util.replaceTemplate(subject, scope);

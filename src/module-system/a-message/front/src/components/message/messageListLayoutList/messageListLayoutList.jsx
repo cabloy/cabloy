@@ -82,7 +82,14 @@ export default {
       pageContent.scrollTop(0, 300, cb);
     },
     _renderLoadMore() {
-      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit></eb-load-more>;
+      return (
+        <eb-load-more
+          ref="loadMore"
+          propsOnLoadClear={this.onLoadClear}
+          propsOnLoadMore={this.onLoadMore}
+          autoInit
+        ></eb-load-more>
+      );
     },
   },
   render() {

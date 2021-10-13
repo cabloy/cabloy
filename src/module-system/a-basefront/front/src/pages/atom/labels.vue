@@ -8,7 +8,15 @@
     </eb-navbar>
     <f7-list class="label-edit-list" v-if="labelsAll">
       <f7-list-item group-title :title="item ? item.atomName : ''"></f7-list-item>
-      <eb-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event, key)" swipeout>
+      <eb-list-item
+        v-for="key of Object.keys(labelsAll)"
+        :key="key"
+        :title="labelsAll[key].text"
+        checkbox
+        :checked="labelChecked(key)"
+        @change="onLabelCheckChange($event, key)"
+        swipeout
+      >
         <div slot="media" :class="`label-media bg-color-${labelsAll[key].color}`"></div>
         <eb-context-menu>
           <div slot="right">
@@ -31,10 +39,25 @@
           <f7-badge :color="labelColor">{{ labelText || $text('PleaseInputText') }}</f7-badge>
         </div>
         <eb-list class="label-form" form inline-labels no-hairlines-md @submit="onFormSubmit">
-          <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="labelText"> </eb-list-input>
+          <eb-list-input
+            :label="$text('Text')"
+            type="text"
+            clear-button
+            :placeholder="$text('Text')"
+            v-model="labelText"
+          >
+          </eb-list-input>
           <f7-list-item>
             <div class="row label-colors">
-              <f7-button v-for="color of colors" :key="color.value" :class="`col-33 color-${color.value}`" small fill @click="onColorSelect(color)">{{ $text(color.name) }}</f7-button>
+              <f7-button
+                v-for="color of colors"
+                :key="color.value"
+                :class="`col-33 color-${color.value}`"
+                small
+                fill
+                @click="onColorSelect(color)"
+                >{{ $text(color.name) }}</f7-button
+              >
             </div>
           </f7-list-item>
         </eb-list>

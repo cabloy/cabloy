@@ -4,7 +4,15 @@
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
           <eb-list form no-hairlines-md @submit="onSubmit">
-            <eb-list-input :label="$text('Phone Number')" floating-label type="text" clear-button :placeholder="$text('Phone Number')" v-model="data.mobile" dataPath="mobile">
+            <eb-list-input
+              :label="$text('Phone Number')"
+              floating-label
+              type="text"
+              clear-button
+              :placeholder="$text('Phone Number')"
+              v-model="data.mobile"
+              dataPath="mobile"
+            >
               <f7-icon material="call" slot="media"></f7-icon>
             </eb-list-input>
             <eb-list-input
@@ -18,7 +26,12 @@
             >
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
-                <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
+                <eb-component
+                  ref="captchaContainer"
+                  module="a-captcha"
+                  name="captchaContainer"
+                  :options="captchaContainerOptions"
+                ></eb-component>
               </div>
             </eb-list-input>
             <f7-list-item :title="$text('Remember Me')">

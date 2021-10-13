@@ -10,18 +10,72 @@ module.exports = app => {
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
-    { method: 'post', path: 'atom/create', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'create' } } },
+    {
+      method: 'post',
+      path: 'atom/create',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'create' } },
+    },
     { method: 'post', path: 'atom/read', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },
-    { method: 'post', path: 'atom/write', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
-    { method: 'post', path: 'atom/openDraft', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write' } } },
-    { method: 'post', path: 'atom/submit', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
-    { method: 'post', path: 'atom/writeSubmit', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'write', stage: 'draft' } } },
-    { method: 'post', path: 'atom/delete', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'delete' } } },
-    { method: 'post', path: 'atom/clone', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'clone' } } },
-    { method: 'post', path: 'atom/enable', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'enable' } } },
-    { method: 'post', path: 'atom/disable', controller: 'atom', middlewares: 'transaction', meta: { right: { type: 'atom', action: 'disable' } } },
+    {
+      method: 'post',
+      path: 'atom/write',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/openDraft',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'write' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/submit',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/writeSubmit',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'write', stage: 'draft' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/delete',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'delete' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/clone',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'clone' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/enable',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'enable' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/disable',
+      controller: 'atom',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 'disable' } },
+    },
     {
       method: 'post',
       path: 'atom/deleteBulk',
@@ -44,7 +98,12 @@ module.exports = app => {
         right: { type: 'atom', action: 'read' },
       },
     },
-    { method: 'post', path: 'atom/readCount', controller: 'atom', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
+    {
+      method: 'post',
+      path: 'atom/readCount',
+      controller: 'atom',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
     { method: 'post', path: 'atom/stats', controller: 'atom' },
     {
       method: 'post',
@@ -62,8 +121,18 @@ module.exports = app => {
     { method: 'post', path: 'atom/checkRightAction', controller: 'atom' },
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
-    { method: 'post', path: 'comment/list', controller: 'comment', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
-    { method: 'post', path: 'comment/item', controller: 'comment', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
+    {
+      method: 'post',
+      path: 'comment/list',
+      controller: 'comment',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
+    {
+      method: 'post',
+      path: 'comment/item',
+      controller: 'comment',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
     {
       method: 'post',
       path: 'comment/save',
@@ -101,9 +170,24 @@ module.exports = app => {
     { method: 'post', path: 'resource/select', controller: 'resource' },
     { method: 'post', path: 'resource/read', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
-    { method: 'post', path: 'resource/resourceRoles', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
-    { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
-    { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource', meta: { right: { type: 'atom', action: 'authorize' } } },
+    {
+      method: 'post',
+      path: 'resource/resourceRoles',
+      controller: 'resource',
+      meta: { right: { type: 'atom', action: 'authorize' } },
+    },
+    {
+      method: 'post',
+      path: 'resource/resourceRoleRemove',
+      controller: 'resource',
+      meta: { right: { type: 'atom', action: 'authorize' } },
+    },
+    {
+      method: 'post',
+      path: 'resource/resourceRoleAdd',
+      controller: 'resource',
+      meta: { right: { type: 'atom', action: 'authorize' } },
+    },
     // atomClass
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },
@@ -117,7 +201,13 @@ module.exports = app => {
     // jwt
     { method: 'post', path: 'jwt/create', controller: 'jwt' },
     // util
-    { method: 'get', path: 'util/performAction', controller: 'util', middlewares: 'jsonp', meta: { auth: { enable: false } } },
+    {
+      method: 'get',
+      path: 'util/performAction',
+      controller: 'util',
+      middlewares: 'jsonp',
+      meta: { auth: { enable: false } },
+    },
     { method: 'post', path: 'util/performActions', controller: 'util' },
     // layoutConfig
     { method: 'post', path: 'layoutConfig/load', controller: 'layoutConfig' },
@@ -126,10 +216,30 @@ module.exports = app => {
     // category
     { method: 'post', path: 'category/child', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/children', controller: 'category' }, // not set function right
-    { method: 'post', path: 'category/add', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/delete', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/move', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/item', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'category/add',
+      controller: 'category',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'category/delete',
+      controller: 'category',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'category/move',
+      controller: 'category',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'category/item',
+      controller: 'category',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
     {
       method: 'post',
       path: 'category/save',
@@ -144,9 +254,24 @@ module.exports = app => {
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: 'tag' },
-    { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'tag/add',
+      controller: 'tag',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'tag/save',
+      controller: 'tag',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'tag/delete',
+      controller: 'tag',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
   ];
   return routes;
 };

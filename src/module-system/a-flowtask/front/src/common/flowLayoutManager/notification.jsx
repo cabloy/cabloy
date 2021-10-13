@@ -16,7 +16,10 @@ export default {
     };
     this.$meta.util.performAction({ ctx: this, action }).then(simple => {
       this.notification.simple = simple;
-      this.notification.callbackId = this.notification.simple.register('a-flow:workflow', this.notification_callback.bind(this));
+      this.notification.callbackId = this.notification.simple.register(
+        'a-flow:workflow',
+        this.notification_callback.bind(this)
+      );
     });
   },
   beforeDestroy() {

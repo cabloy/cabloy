@@ -11,7 +11,10 @@
       n.o(e, t) || Object.defineProperty(e, t, { enumerable: !0, get: o });
     }),
     (n.r = function (e) {
-      'undefined' != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }), Object.defineProperty(e, '__esModule', { value: !0 });
+      'undefined' != typeof Symbol &&
+        Symbol.toStringTag &&
+        Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+        Object.defineProperty(e, '__esModule', { value: !0 });
     }),
     (n.t = function (e, t) {
       if ((1 & t && (e = n(e)), 8 & t)) return e;
@@ -74,7 +77,11 @@
       (exports.getStartupParams = function () {
         return self.__appxStartupParams && self.__appxStartupParams.appId
           ? self.__appxStartupParams
-          : (self.AFAppX && self.AFAppX.bridge && self.AFAppX.bridge.callSync && self.AFAppX.bridge.callSync('getStartupParams')) || {};
+          : (self.AFAppX &&
+              self.AFAppX.bridge &&
+              self.AFAppX.bridge.callSync &&
+              self.AFAppX.bridge.callSync('getStartupParams')) ||
+              {};
       }),
       (exports.getBridge = function () {
         return self.AFAppX.bridge;
@@ -96,7 +103,11 @@
         appxImportListener.push(e);
     }),
       (exports.evaluateScript = function (expression) {
-        return 'function' == typeof eval ? eval(expression) : 'function' == typeof originEval ? ((self.eval = originEval), eval(expression)) : void 0;
+        return 'function' == typeof eval
+          ? eval(expression)
+          : 'function' == typeof originEval
+          ? ((self.eval = originEval), eval(expression))
+          : void 0;
       });
   },
   10: function (e, t, n) {
@@ -107,13 +118,25 @@
       s = n(2),
       a = n(5),
       i = function () {
-        r.getBridge().call('showRemoteDebugPanel', { status: 'connecting', text: '远程调试准备中', buttonTitle: '退出' });
+        r.getBridge().call('showRemoteDebugPanel', {
+          status: 'connecting',
+          text: '远程调试准备中',
+          buttonTitle: '退出',
+        });
       },
       c = function () {
-        r.getBridge().call('showRemoteDebugPanel', { status: 'connected', text: '远程调试已连接', buttonTitle: '退出' });
+        r.getBridge().call('showRemoteDebugPanel', {
+          status: 'connected',
+          text: '远程调试已连接',
+          buttonTitle: '退出',
+        });
       },
       u = function () {
-        r.getBridge().call('showRemoteDebugPanel', { status: 'disconnected', text: '远程调试已断开', buttonTitle: '退出' });
+        r.getBridge().call('showRemoteDebugPanel', {
+          status: 'disconnected',
+          text: '远程调试已断开',
+          buttonTitle: '退出',
+        });
       };
     t.SocketConn = {
       messageQueue: [],
@@ -133,7 +156,9 @@
           : this.messageQueue.push(n);
       },
       close: function () {
-        this.socketTask ? this.socketTask.close() : r.getBridge().showToast({ content: '请点击右上角关闭按钮退出', duration: 1e3 });
+        this.socketTask
+          ? this.socketTask.close()
+          : r.getBridge().showToast({ content: '请点击右上角关闭按钮退出', duration: 1e3 });
       },
       connect: function (e) {
         var t = this,
@@ -164,7 +189,9 @@
           var u = a.wssConfig.default.openchannel;
           s && a.wssConfig[s] && a.wssConfig[s].openchannel && (u = a.wssConfig[s].openchannel);
           var l = r.getBridge(),
-            p = c ? c + '/worker' : 'wss://' + u + '/group/connect/' + n + '?scene=tinyAppDebug&roleType=TINYAPP&roleId=0';
+            p = c
+              ? c + '/worker'
+              : 'wss://' + u + '/group/connect/' + n + '?scene=tinyAppDebug&roleType=TINYAPP&roleId=0';
           if ((o && (p += '?' + o.key + '=' + o.value), r.checkIOS() && !r.isLyra())) {
             this.connect(p);
             var f = l.connectSocket;
@@ -172,7 +199,12 @@
               if (e && e.multiple) return f(e);
               l.showToast({ content: 'iOS 真机调试暂不支持 connectSocket JSAPI', duration: 1e3 });
             }),
-              (l.onSocketOpen = l.offSocketOpen = l.onSocketMessage = l.offSocketMessage = l.closeSocket = function () {});
+              (l.onSocketOpen =
+                l.offSocketOpen =
+                l.onSocketMessage =
+                l.offSocketMessage =
+                l.closeSocket =
+                  function () {});
           } else
             setTimeout(function () {
               e.connect(p);
@@ -182,7 +214,17 @@
       onopen: function () {
         var e = r.getBridge(),
           t = e.getSystemInfoSync();
-        this.send({ method: s.RemoteXMethods.Connect, params: { userAgent: r.getUserAgent(), sdkVersion: e.SDKVersion, alipayVersion: t.version, model: t.model, system: t.system } }), c();
+        this.send({
+          method: s.RemoteXMethods.Connect,
+          params: {
+            userAgent: r.getUserAgent(),
+            sdkVersion: e.SDKVersion,
+            alipayVersion: t.version,
+            model: t.model,
+            system: t.system,
+          },
+        }),
+          c();
       },
       onmessage: function (e) {
         try {
@@ -276,11 +318,19 @@
                 return (
                   l && (t = c.call(this, e, t)),
                   u
-                    ? (m !== this && ((a = h - i.call(f, this) - 1), (h -= a), f.splice(h, f.length), p.splice(h - 1, p.length), (m = this)),
+                    ? (m !== this &&
+                        ((a = h - i.call(f, this) - 1),
+                        (h -= a),
+                        f.splice(h, f.length),
+                        p.splice(h - 1, p.length),
+                        (m = this)),
                       'object' == typeof t && t
                         ? (i.call(f, t) < 0 && f.push((m = t)),
                           (h = f.length),
-                          (a = i.call(d, t)) < 0 ? ((a = d.push(t) - 1), s ? (p.push(('' + e).replace(r, n)), (g[a] = '~' + p.join('~'))) : (g[a] = g[0])) : (t = g[a]))
+                          (a = i.call(d, t)) < 0
+                            ? ((a = d.push(t) - 1),
+                              s ? (p.push(('' + e).replace(r, n)), (g[a] = '~' + p.join('~'))) : (g[a] = g[0]))
+                            : (t = g[a]))
                         : 'string' == typeof t && s && (t = t.replace(n, o).replace('~', n)))
                     : (u = !0),
                   t
@@ -297,7 +347,11 @@
           (function (e) {
             return function (t, r) {
               var s = 'string' == typeof r;
-              return s && '~' === r.charAt(0) ? new c(r.slice(1)) : ('' === t && (r = u(r, r, {})), s && (r = r.replace(a, '$1~').replace(o, n)), e ? e.call(this, t, r) : r);
+              return s && '~' === r.charAt(0)
+                ? new c(r.slice(1))
+                : ('' === t && (r = u(r, r, {})),
+                  s && (r = r.replace(a, '$1~').replace(o, n)),
+                  e ? e.call(this, t, r) : r);
             };
           })(t)
         );
@@ -331,7 +385,9 @@
     s.runAfterAppx(function () {
       setTimeout(function () {
         s.debug('[bugme] run after appx'),
-          s.getStartupParams().isRemoteX || s.isLyra() ? (s.debug('[bugme] remotex mode'), o.registerRemoteX()) : (s.debug('[bugme] preview mode'), r.registerPreview());
+          s.getStartupParams().isRemoteX || s.isLyra()
+            ? (s.debug('[bugme] remotex mode'), o.registerRemoteX())
+            : (s.debug('[bugme] preview mode'), r.registerPreview());
       }, 1e3);
     });
   },
@@ -383,14 +439,28 @@
         c.test(e.url) ||
           s.SocketConn.send({
             method: o.RemoteXMethods.requestWillBeSent,
-            params: { reqId: e.requestId, url: e.url, method: (e.method || 'GET').toUpperCase(), body: e.postBody, headers: i(e.headers) },
+            params: {
+              reqId: e.requestId,
+              url: e.url,
+              method: (e.method || 'GET').toUpperCase(),
+              body: e.postBody,
+              headers: i(e.headers),
+            },
           });
       },
       l = function (e) {
-        c.test(e.url) || s.SocketConn.send({ method: o.RemoteXMethods.requestFinished, params: { reqId: e.requestId, url: e.url, status: e.status, body: e.body, headers: i(e.headers) } });
+        c.test(e.url) ||
+          s.SocketConn.send({
+            method: o.RemoteXMethods.requestFinished,
+            params: { reqId: e.requestId, url: e.url, status: e.status, body: e.body, headers: i(e.headers) },
+          });
       },
       p = function (e) {
-        c.test(e.url) || s.SocketConn.send({ method: o.RemoteXMethods.requestFinished, params: { reqId: e.requestId, url: e.url, status: null } });
+        c.test(e.url) ||
+          s.SocketConn.send({
+            method: o.RemoteXMethods.requestFinished,
+            params: { reqId: e.requestId, url: e.url, status: null },
+          });
       },
       f = function (e) {
         var t = {};
@@ -495,7 +565,10 @@
             if ('exec' === e.method) {
               try {
                 new a('requestId', 'sendBack', 'var res = ' + e.script + ';console.log(res);')(t, function (e) {
-                  return r.callInternalAPI('tinyDebugConsole', { type: 'msgFromWorkerToVConsole', content: o.stringify({ requestId: t, returnValue: e }, s) });
+                  return r.callInternalAPI('tinyDebugConsole', {
+                    type: 'msgFromWorkerToVConsole',
+                    content: o.stringify({ requestId: t, returnValue: e }, s),
+                  });
                 });
               } catch (e) {
                 console.error(e.name + ':' + e.message);
@@ -546,7 +619,10 @@
   5: function (e, t, n) {
     'use strict';
     Object.defineProperty(t, '__esModule', { value: !0 }),
-      (t.wssConfig = { default: { openchannel: 'openchannel.alipay.com', hpmweb: 'hpmweb.alipay.com' }, 1: { openchannel: 'miniprogram.alipay.com', hpmweb: 'hpmweb.alipay.com' } });
+      (t.wssConfig = {
+        default: { openchannel: 'openchannel.alipay.com', hpmweb: 'hpmweb.alipay.com' },
+        1: { openchannel: 'miniprogram.alipay.com', hpmweb: 'hpmweb.alipay.com' },
+      });
   },
 });
 if (!self.__appxInited) {

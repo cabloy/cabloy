@@ -440,7 +440,15 @@ module.exports = ctx => {
       // copy attachments
       await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
       // copy details
-      await ctx.bean.detail._copyDetails({ atomClass, target, srcKeyAtom: srcKey, destKeyAtom: destKey, destAtom: destItem, options, user });
+      await ctx.bean.detail._copyDetails({
+        atomClass,
+        target,
+        srcKeyAtom: srcKey,
+        destKeyAtom: destKey,
+        destAtom: destItem,
+        options,
+        user,
+      });
       // ok
       return destKey;
     }
@@ -581,7 +589,23 @@ module.exports = ctx => {
 
     async _list({
       tableName,
-      options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'formal', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale, mode },
+      options: {
+        where,
+        orders,
+        page,
+        star = 0,
+        label = 0,
+        comment = 0,
+        file = 0,
+        stage = 'formal',
+        language,
+        category = 0,
+        tag = 0,
+        mine = 0,
+        resource = 0,
+        resourceLocale,
+        mode,
+      },
       cms,
       user,
       pageForce = true,
@@ -622,10 +646,18 @@ module.exports = ctx => {
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // adjust for simple
       if (stage === 'draft' && _atom.atomSimple === 1) stage = 'formal';
-      if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)) return null;
+      if (
+        (stage === 'draft' && _atom.atomStage > 0) ||
+        ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)
+      )
+        return null;
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action });
+      const actionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        code: action,
+      });
       // if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
       if (!actionBase) {
         await ctx.bean.atomAction.model.delete({ atomClassId: atomClass.id, code: action });
@@ -633,7 +665,8 @@ module.exports = ctx => {
       }
       if (actionBase.stage) {
         const stages = actionBase.stage.split(',');
-        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) return null;
+        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage))
+          return null;
       }
       // actionBase.enableOnStatic
       if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
@@ -687,7 +720,11 @@ module.exports = ctx => {
       // not care about stage
       if (!stage) return actionRes;
       // action base
-      const actionBase = ctx.bean.base.action({ module: actionRes.module, atomClassName: actionRes.atomClassName, code: actionRes.code });
+      const actionBase = ctx.bean.base.action({
+        module: actionRes.module,
+        atomClassName: actionRes.atomClassName,
+        code: actionRes.code,
+      });
       if (!actionBase) {
         await ctx.bean.atomAction.model.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
         return null;

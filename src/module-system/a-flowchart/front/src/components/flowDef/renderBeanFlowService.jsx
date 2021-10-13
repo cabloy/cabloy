@@ -69,6 +69,8 @@ export default {
       ebType: 'select',
       ebOptions: this.ebOptions,
     });
-    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew} meta={meta}></eb-list-item-validate>;
+    return (
+      <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew} meta={meta}></eb-list-item-validate>
+    );
   },
 };

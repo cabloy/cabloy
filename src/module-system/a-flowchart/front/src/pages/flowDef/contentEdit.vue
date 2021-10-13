@@ -2,19 +2,42 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode">{{ $text('Add Node') }}</eb-link>
-        <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave">{{ $text('Save') }}</eb-link>
+        <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode">{{
+          $text('Add Node')
+        }}</eb-link>
+        <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave">{{
+          $text('Save')
+        }}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar>
-          <eb-link :tab-link="`#${tabId.diagram}`" :tabLinkActive="tabName === 'diagram'" :text="$text('flowDefDiagramTitle')"></eb-link>
-          <eb-link :tab-link="`#${tabId.source}`" :tabLinkActive="tabName === 'source'" :text="$text('flowDefSourceTitle')"></eb-link>
-          <eb-link :tab-link="`#${tabId.listener}`" :tabLinkActive="tabName === 'listener'" :text="$text('flowDefListenerTitle')"></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.diagram}`"
+            :tabLinkActive="tabName === 'diagram'"
+            :text="$text('flowDefDiagramTitle')"
+          ></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.source}`"
+            :tabLinkActive="tabName === 'source'"
+            :text="$text('flowDefSourceTitle')"
+          ></eb-link>
+          <eb-link
+            :tab-link="`#${tabId.listener}`"
+            :tabLinkActive="tabName === 'listener'"
+            :text="$text('flowDefListenerTitle')"
+          ></eb-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.diagram" :ptr="false" :infinite="false" :tabActive="tabName === 'diagram'" data-ref="diagram" @tab:show="tabName = 'diagram'">
+      <eb-tab-page-content
+        :id="tabId.diagram"
+        :ptr="false"
+        :infinite="false"
+        :tabActive="tabName === 'diagram'"
+        data-ref="diagram"
+        @tab:show="tabName = 'diagram'"
+      >
         <content-edit-diagram
           ref="diagram"
           :readOnly="readOnly"
@@ -24,11 +47,37 @@
           @contentChange="onContentChange"
         ></content-edit-diagram>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.source" :ptr="false" :infinite="false" :tabActive="tabName === 'source'" data-ref="source" @tab:show="tabName = 'source'">
-        <content-edit-source slot="list" :readOnly="readOnly" :contentProcessStr="contentProcessStr" :onSave="onSave" @contentChange="onContentChange"></content-edit-source>
+      <eb-tab-page-content
+        :id="tabId.source"
+        :ptr="false"
+        :infinite="false"
+        :tabActive="tabName === 'source'"
+        data-ref="source"
+        @tab:show="tabName = 'source'"
+      >
+        <content-edit-source
+          slot="list"
+          :readOnly="readOnly"
+          :contentProcessStr="contentProcessStr"
+          :onSave="onSave"
+          @contentChange="onContentChange"
+        ></content-edit-source>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.listener" :ptr="false" :infinite="false" :tabActive="tabName === 'listener'" data-ref="listener" @tab:show="tabName = 'listener'">
-        <content-edit-listener slot="list" :readOnly="readOnly" :contentListener="contentListener" :onSave="onSave" @contentChange="onContentChange"></content-edit-listener>
+      <eb-tab-page-content
+        :id="tabId.listener"
+        :ptr="false"
+        :infinite="false"
+        :tabActive="tabName === 'listener'"
+        data-ref="listener"
+        @tab:show="tabName = 'listener'"
+      >
+        <content-edit-listener
+          slot="list"
+          :readOnly="readOnly"
+          :contentListener="contentListener"
+          :onSave="onSave"
+          @contentChange="onContentChange"
+        ></content-edit-listener>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>

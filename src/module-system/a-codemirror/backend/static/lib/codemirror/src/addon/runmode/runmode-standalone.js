@@ -1,2 +1,2 @@
-import "./codemirror-standalone.js"
-import "../../../addon/runmode/runmode.js"
+import './codemirror-standalone.js';
+import '../../../addon/runmode/runmode.js';

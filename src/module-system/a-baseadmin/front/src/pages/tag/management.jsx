@@ -50,7 +50,14 @@ export default {
     renderAtomClasses() {
       const children = [];
       for (const item of this.atomClasses) {
-        children.push(<eb-list-item key={`${item.module}:${item.atomClassName}`} title={item.info.titleLocale} link="#" propsOnPerform={event => this.onPerformClick(event, item)}></eb-list-item>);
+        children.push(
+          <eb-list-item
+            key={`${item.module}:${item.atomClassName}`}
+            title={item.info.titleLocale}
+            link="#"
+            propsOnPerform={event => this.onPerformClick(event, item)}
+          ></eb-list-item>
+        );
       }
       return (
         <eb-list inline-labels no-hairlines-md>

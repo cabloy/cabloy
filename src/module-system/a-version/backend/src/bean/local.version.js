@@ -112,12 +112,17 @@ module.exports = app => {
           // fileVersionOld
           let fileVersionOld = 0; // default
           if (!options.scene) {
-            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [moduleName]);
+            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [
+              moduleName,
+            ]);
             if (res) {
               fileVersionOld = res.version;
             }
           } else {
-            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [options.subdomain, moduleName]);
+            const res = await this.ctx.db.queryOne(
+              'select * from aVersionInit where subdomain=? and module=? order by version desc',
+              [options.subdomain, moduleName]
+            );
             if (res) {
               fileVersionOld = res.version;
             }
@@ -258,7 +263,9 @@ module.exports = app => {
           const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
           if (dbs.length === 0) {
             databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-            await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+            await mysql.query(
+              `CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`
+            );
           } else {
             const db = dbs[0];
             databaseName = db[Object.keys(db)[0]];
@@ -281,7 +288,9 @@ module.exports = app => {
         }
         // create database
         const databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-        await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+        await mysql.query(
+          `CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`
+        );
         // create test mysql
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         mysqlConfig.database = databaseName;

@@ -118,7 +118,14 @@ var requirejs, require, define;
     if (source) {
       eachProp(source, function (value, prop) {
         if (force || !hasProp(target, prop)) {
-          if (deepStringMixin && typeof value === 'object' && value && !isArray(value) && !isFunction(value) && !(value instanceof RegExp)) {
+          if (
+            deepStringMixin &&
+            typeof value === 'object' &&
+            value &&
+            !isArray(value) &&
+            !isFunction(value) &&
+            !(value instanceof RegExp)
+          ) {
             if (!target[prop]) {
               target[prop] = {};
             }
@@ -376,7 +383,10 @@ var requirejs, require, define;
     function removeScript(name) {
       if (isBrowser) {
         each(scripts(), function (scriptNode) {
-          if (scriptNode.getAttribute('data-requiremodule') === name && scriptNode.getAttribute('data-requirecontext') === context.contextName) {
+          if (
+            scriptNode.getAttribute('data-requiremodule') === name &&
+            scriptNode.getAttribute('data-requirecontext') === context.contextName
+          ) {
             scriptNode.parentNode.removeChild(scriptNode);
             return true;
           }
@@ -1408,7 +1418,8 @@ var requirejs, require, define;
             //and remove any trailing .js, since different package
             //envs have different conventions: some use a module name,
             //some use a file name.
-            config.pkgs[name] = pkgObj.name + '/' + (pkgObj.main || 'main').replace(currDirRegExp, '').replace(jsSuffixRegExp, '');
+            config.pkgs[name] =
+              pkgObj.name + '/' + (pkgObj.main || 'main').replace(currDirRegExp, '').replace(jsSuffixRegExp, '');
           });
         }
 
@@ -1477,7 +1488,16 @@ var requirejs, require, define;
             id = map.id;
 
             if (!hasProp(defined, id)) {
-              return onError(makeError('notloaded', 'Module name "' + id + '" has not been loaded yet for context: ' + contextName + (relMap ? '' : '. Use require([])')));
+              return onError(
+                makeError(
+                  'notloaded',
+                  'Module name "' +
+                    id +
+                    '" has not been loaded yet for context: ' +
+                    contextName +
+                    (relMap ? '' : '. Use require([])')
+                )
+              );
             }
             return defined[id];
           }
@@ -1776,7 +1796,14 @@ var requirejs, require, define;
               });
             }
           });
-          return onError(makeError('scripterror', 'Script error for "' + data.id + (parents.length ? '", needed by: ' + parents.join(', ') : '"'), evt, [data.id]));
+          return onError(
+            makeError(
+              'scripterror',
+              'Script error for "' + data.id + (parents.length ? '", needed by: ' + parents.join(', ') : '"'),
+              evt,
+              [data.id]
+            )
+          );
         }
       },
     };
@@ -1911,7 +1938,9 @@ var requirejs, require, define;
    * Creates the node for the load command. Only used in browser envs.
    */
   req.createNode = function (config, moduleName, url) {
-    var node = config.xhtml ? document.createElementNS('http://www.w3.org/1999/xhtml', 'html:script') : document.createElement('script');
+    var node = config.xhtml
+      ? document.createElementNS('http://www.w3.org/1999/xhtml', 'html:script')
+      : document.createElement('script');
     node.type = config.scriptType || 'text/javascript';
     node.charset = 'utf-8';
     node.async = true;
@@ -2019,7 +2048,9 @@ var requirejs, require, define;
         //Account for anonymous modules
         context.completeLoad(moduleName);
       } catch (e) {
-        context.onError(makeError('importscripts', 'importScripts failed for ' + moduleName + ' at ' + url, e, [moduleName]));
+        context.onError(
+          makeError('importscripts', 'importScripts failed for ' + moduleName + ' at ' + url, e, [moduleName])
+        );
       }
     }
   };

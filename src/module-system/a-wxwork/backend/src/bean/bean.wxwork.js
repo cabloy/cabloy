@@ -165,7 +165,8 @@ module.exports = function (ctx) {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
+          const ok =
+            provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found

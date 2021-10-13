@@ -1,7 +1,15 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" link="#" :eb-href="`user/view?userId=${item.id}`" swipeout>
+      <eb-list-item
+        class="item"
+        v-for="item of items"
+        :key="item.id"
+        :title="item.userName"
+        link="#"
+        :eb-href="`user/view?userId=${item.id}`"
+        swipeout
+      >
         <div slot="media">
           <img class="avatar avatar32" :src="getItemMedia(item)" />
         </div>
@@ -12,8 +20,12 @@
         </div>
         <eb-context-menu>
           <div slot="right">
-            <div v-if="item.disabled === 0" color="orange" :context="item" :onPerform="onPerformDisable">{{ $text('Disable') }}</div>
-            <div v-if="item.disabled === 1" color="orange" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</div>
+            <div v-if="item.disabled === 0" color="orange" :context="item" :onPerform="onPerformDisable">
+              {{ $text('Disable') }}
+            </div>
+            <div v-if="item.disabled === 1" color="orange" :context="item" :onPerform="onPerformEnable">
+              {{ $text('Enable') }}
+            </div>
             <div color="red" :context="item" :onPerform="onPerformDelete">{{ $text('Delete') }}</div>
           </div>
         </eb-context-menu>

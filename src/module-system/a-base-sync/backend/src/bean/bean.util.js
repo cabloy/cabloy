@@ -16,7 +16,8 @@ module.exports = app => {
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
-      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize))) _page.size = pageSize;
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize)))
+        _page.size = pageSize;
       return _page;
     }
 

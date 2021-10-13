@@ -75,7 +75,11 @@ module.exports = ctx => {
 
     // by broadcast
     _clear() {
-      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain] && ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]) {
+      if (
+        ctx.app[CACHEMEMORY] &&
+        ctx.app[CACHEMEMORY][ctx.subdomain] &&
+        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]
+      ) {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }

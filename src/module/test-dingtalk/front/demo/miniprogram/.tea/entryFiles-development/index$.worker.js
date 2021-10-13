@@ -3,7 +3,10 @@ if (!self.__appxInited) {
 
   require('./config$');
 
-  if (navigator.userAgent && (navigator.userAgent.indexOf('LyraVM') > 0 || navigator.userAgent.indexOf('AlipayIDE') > 0)) {
+  if (
+    navigator.userAgent &&
+    (navigator.userAgent.indexOf('LyraVM') > 0 || navigator.userAgent.indexOf('AlipayIDE') > 0)
+  ) {
     var AFAppX = self.AFAppX.getAppContext ? self.AFAppX.getAppContext().AFAppX : self.AFAppX;
   } else {
     importScripts('https://appx/af-appx.worker.min.js');

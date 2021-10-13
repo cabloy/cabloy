@@ -51,7 +51,10 @@ export default {
             __level: level,
           },
         };
-        if (level <= this.layoutManager.container.maxLevelAutoOpened || this.layoutManager.container.maxLevelAutoOpened === -1) {
+        if (
+          level <= this.layoutManager.container.maxLevelAutoOpened ||
+          this.layoutManager.container.maxLevelAutoOpened === -1
+        ) {
           const children = await this.onLoadChildren(node);
           this.$refs.tree.childrenLoaded(node, children);
           node.attrs.loadChildren = false;
@@ -88,7 +91,14 @@ export default {
     },
     _renderTree() {
       if (!this.layoutManager.base_ready) return;
-      return <eb-treeview ref="tree" root={this.root} propsOnLoadChildren={this.onLoadChildren} propsOnNodePerform={this.onNodePerformClick}></eb-treeview>;
+      return (
+        <eb-treeview
+          ref="tree"
+          root={this.root}
+          propsOnLoadChildren={this.onLoadChildren}
+          propsOnNodePerform={this.onNodePerformClick}
+        ></eb-treeview>
+      );
     },
   },
   render() {

@@ -21,7 +21,10 @@ module.exports = context => {
       path: context.config.build.assetsRoot,
       filename: '[name].bundle.js',
       chunkFilename: '[name].bundle.js',
-      publicPath: process.env.NODE_ENV === 'production' ? context.config.build.assetsPublicPath : context.config.dev.assetsPublicPath,
+      publicPath:
+        process.env.NODE_ENV === 'production'
+          ? context.config.build.assetsPublicPath
+          : context.config.dev.assetsPublicPath,
     },
     resolve: {
       symlinks: false,
@@ -49,7 +52,9 @@ module.exports = context => {
           options: {
             limit: 1000,
             name(file) {
-              return hasHash(file) ? context.utils.assetsPath('img/[name].[ext]') : context.utils.assetsPath('img/[name].[contenthash].[ext]');
+              return hasHash(file)
+                ? context.utils.assetsPath('img/[name].[ext]')
+                : context.utils.assetsPath('img/[name].[contenthash].[ext]');
             },
             esModule: false,
           },
@@ -60,7 +65,9 @@ module.exports = context => {
           options: {
             limit: 1000,
             name(file) {
-              return hasHash(file) ? context.utils.assetsPath('font/[name].[ext]') : context.utils.assetsPath('font/[name].[contenthash].[ext]');
+              return hasHash(file)
+                ? context.utils.assetsPath('font/[name].[ext]')
+                : context.utils.assetsPath('font/[name].[contenthash].[ext]');
             },
             esModule: false,
           },
@@ -71,7 +78,9 @@ module.exports = context => {
           options: {
             limit: false,
             name(file) {
-              return hasHash(file) ? context.utils.assetsPath('file/[name].[ext]') : context.utils.assetsPath('file/[name].[contenthash].[ext]');
+              return hasHash(file)
+                ? context.utils.assetsPath('file/[name].[ext]')
+                : context.utils.assetsPath('file/[name].[contenthash].[ext]');
             },
             esModule: false,
           },

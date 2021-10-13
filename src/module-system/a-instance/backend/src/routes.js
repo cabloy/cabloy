@@ -1,6 +1,11 @@
 module.exports = [
   // instance
-  { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  {
+    method: 'post',
+    path: 'instance/item',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
   {
     method: 'post',
     path: 'instance/save',
@@ -11,6 +16,16 @@ module.exports = [
       right: { type: 'resource', module: 'a-settings', name: 'settings' },
     },
   },
-  { method: 'post', path: 'instance/getConfigsPreview', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-  { method: 'post', path: 'instance/reload', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  {
+    method: 'post',
+    path: 'instance/getConfigsPreview',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
+  {
+    method: 'post',
+    path: 'instance/reload',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
 ];

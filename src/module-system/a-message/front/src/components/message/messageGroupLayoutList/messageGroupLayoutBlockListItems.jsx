@@ -34,7 +34,12 @@ export default {
     _renderListItem(item) {
       // ok
       return (
-        <eb-list-item key={this._getMessageClassNameFull(item)} link="#" title={item.messageClass.info.titleLocale} propsOnPerform={event => this.onPerformItem(event, item)}>
+        <eb-list-item
+          key={this._getMessageClassNameFull(item)}
+          link="#"
+          title={item.messageClass.info.titleLocale}
+          propsOnPerform={event => this.onPerformItem(event, item)}
+        >
           <div slot="after">{this._renderStats(item)}</div>
         </eb-list-item>
       );

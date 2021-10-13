@@ -17,7 +17,8 @@ export default {
       return item.atomNameLocale || item.atomName;
     },
     item_getMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      const media =
+        (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 24);
     },
     item_getMetaMediaLabel(item) {
@@ -101,7 +102,11 @@ export default {
             domActionTitle = <div slot="title">{this.item_getActionTitle(action, item)}</div>;
           }
           domActions.push(
-            <div key={action.id} color={this.item_getActionColor(action, index)} propsOnPerform={event => this.item_onAction(event, item, action)}>
+            <div
+              key={action.id}
+              color={this.item_getActionColor(action, index)}
+              propsOnPerform={event => this.item_onAction(event, item, action)}
+            >
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
               {domActionTitle}
             </div>

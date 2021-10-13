@@ -76,7 +76,13 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.atomId} link="#" propsOnPerform={event => this.onItemClick(event, item)} swipeout>
+        <eb-list-item
+          class="item"
+          key={item.atomId}
+          link="#"
+          propsOnPerform={event => this.onItemClick(event, item)}
+          swipeout
+        >
           {domMedia}
           {domHeader}
           {domTitle}

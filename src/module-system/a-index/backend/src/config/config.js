@@ -12,7 +12,8 @@ module.exports = appInfo => {
       aAuthSimple: 'createdAt,updatedAt,userId',
     },
     'a-base': {
-      aAtom: 'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated,atomStaticKey,atomLanguage,atomCategoryId',
+      aAtom:
+        'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated,atomStaticKey,atomLanguage,atomCategoryId',
       aAtomAction: 'createdAt,updatedAt,atomClassId+code,name',
       aAtomClass: 'createdAt,updatedAt,module+atomClassName',
       aAtomLabel: 'createdAt,updatedAt,userId,atomId',

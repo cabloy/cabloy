@@ -52,7 +52,10 @@ export default {
       const selectedCategoryIds = [atomCategoryId];
       // select
       return new Promise(resolve => {
-        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(language));
+        const url = this.$meta.util.combineQueries(
+          '/a/basefront/category/select',
+          this.combineAtomClassAndLanguage(language)
+        );
         this.$view.navigate(url, {
           target: '_self',
           context: {

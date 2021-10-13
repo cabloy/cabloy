@@ -17,7 +17,11 @@ module.exports = app => {
       const config = this.ctx.config.account.dingtalk;
       const configApp = config.apps[appName];
       // dingtalk crypto
-      const encryptor = new DingTalkEncryptor(configApp.businessCallback.token, configApp.businessCallback.encodingAESKey, config.corpid);
+      const encryptor = new DingTalkEncryptor(
+        configApp.businessCallback.token,
+        configApp.businessCallback.encodingAESKey,
+        config.corpid
+      );
       // parse
       const message = await this._parseMessagePost({ query, encryptor });
       // handle
@@ -30,7 +34,12 @@ module.exports = app => {
     }
 
     async _parseMessagePost({ query, encryptor }) {
-      const plainText = encryptor.getDecryptMsg(query.signature, query.timestamp, query.nonce, this.ctx.request.body.encrypt);
+      const plainText = encryptor.getDecryptMsg(
+        query.signature,
+        query.timestamp,
+        query.nonce,
+        this.ctx.request.body.encrypt
+      );
       return JSON.parse(plainText);
     }
   }

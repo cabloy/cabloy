@@ -21,7 +21,8 @@ module.exports = function (loader, modules) {
         if (!ebBroadcasts[fullKey]) ebBroadcasts[fullKey] = [];
         // bean
         const implementationName = broadcastConfig.bean;
-        if (!implementationName) throw new Error(`bean not set for broadcast: ${module.info.relativeName}.${broadcastKey}`);
+        if (!implementationName)
+          throw new Error(`bean not set for broadcast: ${module.info.relativeName}.${broadcastKey}`);
         let bean;
         if (typeof implementationName === 'string') {
           bean = {

@@ -9,7 +9,12 @@
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{ atomClass && atomClass.title }}</div>
       </f7-list-item>
-      <f7-list-item v-if="atomClass" smartSelect :title="$text('Atom Action')" :smartSelectParams="{ openIn: 'page', closeOnSelect: true }">
+      <f7-list-item
+        v-if="atomClass"
+        smartSelect
+        :title="$text('Atom Action')"
+        :smartSelectParams="{ openIn: 'page', closeOnSelect: true }"
+      >
         <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">

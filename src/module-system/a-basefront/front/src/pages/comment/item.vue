@@ -7,7 +7,14 @@
     </eb-navbar>
     <template v-if="ready">
       <eb-box>
-        <eb-markdown-editor ref="editor" :readOnly="readOnly" :host="host" :value="content" @input="onInput" @save="onSave" />
+        <eb-markdown-editor
+          ref="editor"
+          :readOnly="readOnly"
+          :host="host"
+          :value="content"
+          @input="onInput"
+          @save="onSave"
+        />
       </eb-box>
     </template>
   </eb-page>

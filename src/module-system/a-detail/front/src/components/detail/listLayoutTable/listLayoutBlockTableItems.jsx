@@ -60,7 +60,9 @@ export default {
       if (column.component.options) {
         options = this.$meta.util.extend({}, column.component.options, options);
       }
-      return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
+      return (
+        <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
+      );
     },
     _customRow(record) {
       return {
@@ -92,7 +94,16 @@ export default {
     },
     _renderTable() {
       const items = this.layoutManager.data_getItems();
-      return <a-table bordered columns={this.columns} rowKey={item => item.detailId} dataSource={items} pagination={false} customRow={this._customRow}></a-table>;
+      return (
+        <a-table
+          bordered
+          columns={this.columns}
+          rowKey={item => item.detailId}
+          dataSource={items}
+          pagination={false}
+          customRow={this._customRow}
+        ></a-table>
+      );
     },
   },
   render() {

@@ -25,10 +25,20 @@
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs ref="tabs">
-      <eb-tab-page-content :id="tabId.drafts" :tabActive="tabName === 'drafts'" data-ref="drafts" @tab:show="tabName = 'drafts'">
+      <eb-tab-page-content
+        :id="tabId.drafts"
+        :tabActive="tabName === 'drafts'"
+        data-ref="drafts"
+        @tab:show="tabName = 'drafts'"
+      >
         <atomTab ref="drafts" slot="list" :container="getContainer('drafts')"></atomTab>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabId.draftsFlowing" :tabActive="tabName === 'draftsFlowing'" data-ref="draftsFlowing" @tab:show="tabName = 'draftsFlowing'">
+      <eb-tab-page-content
+        :id="tabId.draftsFlowing"
+        :tabActive="tabName === 'draftsFlowing'"
+        data-ref="draftsFlowing"
+        @tab:show="tabName = 'draftsFlowing'"
+      >
         <atomTab ref="draftsFlowing" slot="list" :container="getContainer('draftsFlowing')"></atomTab>
       </eb-tab-page-content>
     </f7-tabs>

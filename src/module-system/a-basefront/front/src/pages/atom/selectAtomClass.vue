@@ -2,7 +2,14 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Atom Class')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
-      <f7-list-item v-for="(item, index) of atomClasses" :key="index" radio :checked="module === item.module && atomClassName === item.atomClassName" :title="item.title" @click="onItemClick(item)">
+      <f7-list-item
+        v-for="(item, index) of atomClasses"
+        :key="index"
+        radio
+        :checked="module === item.module && atomClassName === item.atomClassName"
+        :title="item.title"
+        @click="onItemClick(item)"
+      >
         <div slot="after">{{ item.after }}</div>
       </f7-list-item>
     </f7-list>

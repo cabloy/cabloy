@@ -4,16 +4,45 @@
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
           <eb-list form no-hairlines-md @submit="onSubmit">
-            <eb-list-input :label="$text('Your Username/Mobile/Email')" floating-label type="text" clear-button :placeholder="$text('Your Username/Mobile/Email')" v-model="data.auth" dataPath="auth">
+            <eb-list-input
+              :label="$text('Your Username/Mobile/Email')"
+              floating-label
+              type="text"
+              clear-button
+              :placeholder="$text('Your Username/Mobile/Email')"
+              v-model="data.auth"
+              dataPath="auth"
+            >
               <f7-icon material="person_outline" slot="media"></f7-icon>
             </eb-list-input>
-            <eb-list-input :label="$text('Your Password')" floating-label type="password" clear-button :placeholder="$text('Your Password')" v-model="data.password" dataPath="password">
+            <eb-list-input
+              :label="$text('Your Password')"
+              floating-label
+              type="password"
+              clear-button
+              :placeholder="$text('Your Password')"
+              v-model="data.password"
+              dataPath="password"
+            >
               <f7-icon material="lock_outline" slot="media"></f7-icon>
             </eb-list-input>
-            <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
+            <eb-list-input
+              :label="$text('Captcha Code')"
+              floating-label
+              type="text"
+              clear-button
+              :placeholder="$text('Captcha Code')"
+              v-model="captcha.token"
+              dataPath="captcha/token"
+            >
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
-                <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
+                <eb-component
+                  ref="captchaContainer"
+                  module="a-captcha"
+                  name="captchaContainer"
+                  :options="captchaContainerOptions"
+                ></eb-component>
               </div>
             </eb-list-input>
             <f7-list-item :title="$text('Remember Me')">
@@ -25,7 +54,9 @@
         </eb-validate>
       </f7-card-content>
       <f7-card-footer>
-        <eb-link eb-href="/a/authsimple/passwordForgot" eb-target="_self" class="text-smaller">{{ $text('Forgot Password') }}</eb-link>
+        <eb-link eb-href="/a/authsimple/passwordForgot" eb-target="_self" class="text-smaller">{{
+          $text('Forgot Password')
+        }}</eb-link>
         <div></div>
         <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{ $text('Sign Up') }}</eb-link>
       </f7-card-footer>

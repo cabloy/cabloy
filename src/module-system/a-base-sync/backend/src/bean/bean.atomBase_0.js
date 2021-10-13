@@ -106,7 +106,11 @@ module.exports = app => {
       }
       // validate
       const ignoreValidate = options && options.ignoreValidate;
-      if (((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) && !target && !ignoreValidate) {
+      if (
+        ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) &&
+        !target &&
+        !ignoreValidate
+      ) {
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
           atomClass,
           key,

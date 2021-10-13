@@ -12,7 +12,10 @@ export default {
           atomId: keyDraft.atomId,
           itemId: keyDraft.itemId,
         };
-        const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
+        const url = ctx.$meta.util.replaceTemplate(
+          '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
+          _item
+        );
         let navigateOptions = action.navigateOptions;
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
           navigateOptions = { target: '_self' };

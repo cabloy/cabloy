@@ -13,7 +13,9 @@
         :custom-search="true"
       >
       </f7-searchbar>
-      <eb-link v-if="advanced" slot="title-large" class="search-advanced" @click="onClickAdvanced">{{ $text(advancedSearchTitle) }}</eb-link>
+      <eb-link v-if="advanced" slot="title-large" class="search-advanced" @click="onClickAdvanced">{{
+        $text(advancedSearchTitle)
+      }}</eb-link>
     </eb-navbar>
     <slot></slot>
   </eb-page>

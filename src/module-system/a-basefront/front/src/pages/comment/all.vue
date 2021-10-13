@@ -2,7 +2,10 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'" :onPerform="onPerformSort"></eb-link>
+        <eb-link
+          :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'"
+          :onPerform="onPerformSort"
+        ></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="moduleMarkdownRender">
@@ -16,13 +19,37 @@
               <div class="title">
                 <img class="avatar avatar32" :src="getItemMedia(item)" />
                 <div class="name">{{ item.h_userName }}</div>
-                <div class="date">#{{ item.h_sorting }} · {{ $meta.util.formatDateTimeRelative(item.h_createdAt) }}</div>
+                <div class="date">
+                  #{{ item.h_sorting }} · {{ $meta.util.formatDateTimeRelative(item.h_createdAt) }}
+                </div>
               </div>
               <div class="actions">
-                <eb-link v-if="item.h_userId === user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
-                <eb-link v-if="item.h_userId === user.id || rightDeleteComment" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-                <eb-link class="action" :iconMaterial="item.h_heart ? 'favorite' : 'favorite_border'" :context="item" :onPerform="onPerformHeart">{{ item.h_heartCount }}</eb-link>
-                <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
+                <eb-link
+                  v-if="item.h_userId === user.id"
+                  class="action"
+                  iconMaterial="edit"
+                  :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"
+                ></eb-link>
+                <eb-link
+                  v-if="item.h_userId === user.id || rightDeleteComment"
+                  class="action"
+                  iconMaterial="delete_forever"
+                  :context="item"
+                  :onPerform="onPerformDelete"
+                ></eb-link>
+                <eb-link
+                  class="action"
+                  :iconMaterial="item.h_heart ? 'favorite' : 'favorite_border'"
+                  :context="item"
+                  :onPerform="onPerformHeart"
+                  >{{ item.h_heartCount }}</eb-link
+                >
+                <eb-link
+                  v-if="!user.anonymous"
+                  class="action"
+                  iconMaterial="reply"
+                  :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"
+                ></eb-link>
               </div>
             </div>
           </div>

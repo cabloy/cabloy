@@ -639,7 +639,9 @@ module.exports = ctx => {
           scope = 0;
         } else {
           scope = [];
-          const scopeNames = Array.isArray(roleRight.scopeNames) ? roleRight.scopeNames : roleRight.scopeNames.split(',');
+          const scopeNames = Array.isArray(roleRight.scopeNames)
+            ? roleRight.scopeNames
+            : roleRight.scopeNames.split(',');
           for (const scopeName of scopeNames) {
             const roleScope = await this.get({ roleName: scopeName });
             scope.push(roleScope.id);
@@ -669,7 +671,9 @@ module.exports = ctx => {
     }
 
     async _buildRolesAdd({ iid, roleIdParent }, progress) {
-      const list = await ctx.model.query(`select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`);
+      const list = await ctx.model.query(
+        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
+      );
       for (const item of list) {
         // info
         const roleId = item.id;
@@ -705,7 +709,9 @@ module.exports = ctx => {
              values(${iid},${roleId},${roleIdParent},${level})
           `
         );
-        const item = await ctx.model.queryOne(`select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`);
+        const item = await ctx.model.queryOne(
+          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
+        );
         if (!item || !item.roleIdParent) {
           level = -1;
         } else {

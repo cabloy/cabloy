@@ -5,7 +5,15 @@
         <eb-link v-if="ready" ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit" @validateItem:change="onValidateItemChange"></eb-validate>
+    <eb-validate
+      ref="validate"
+      auto
+      :data="data"
+      :params="validateParams"
+      :onPerform="onPerformValidate"
+      @submit="onFormSubmit"
+      @validateItem:change="onValidateItemChange"
+    ></eb-validate>
   </eb-page>
 </template>
 <script>

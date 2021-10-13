@@ -83,7 +83,11 @@ export default {
           </f7-nav-right>
         </eb-navbar>
         <f7-list>
-          <eb-list-item title={this.$text('Tabbar Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'a-layoutmobile:button')}></eb-list-item>
+          <eb-list-item
+            title={this.$text('Tabbar Buttons')}
+            link="#"
+            propsOnPerform={event => this.onPerformResources(event, 'a-layoutmobile:button')}
+          ></eb-list-item>
         </f7-list>
       </eb-page>
     );
