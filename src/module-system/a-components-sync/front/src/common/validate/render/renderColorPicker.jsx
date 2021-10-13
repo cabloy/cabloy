@@ -46,6 +46,11 @@ export default {
         disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
         colorPickerParams,
       };
+      if (value) {
+        props.inputStyle = {
+          color: value.hex,
+        };
+      }
       // input
       return (
         <eb-list-input
