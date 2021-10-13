@@ -27,6 +27,34 @@ import renderAtomClass from './render/renderAtomClass.jsx';
 import renderDivider from './render/renderDivider.jsx';
 import renderUserLabel from './render/renderUserLabel.jsx';
 
+const __renderTypes = [
+  ['group', 'renderGroup'],
+  ['panel', 'renderPanel'],
+  ['text', 'renderText'],
+  ['toggle', 'renderToggle'],
+  ['select', 'renderSelect'],
+  ['file', 'renderFile'],
+  ['datepicker', 'renderDatepicker'],
+  ['dateRange', 'renderDateRange'],
+  ['link', 'renderLink'],
+  ['component', 'renderComponent'],
+  ['component-action', 'renderComponentAction'],
+  ['language', 'renderLanguage'],
+  ['category', 'renderCategory'],
+  ['tags', 'renderTags'],
+  ['resourceType', 'renderResourceType'],
+  ['json', 'renderJson'],
+  ['markdown', 'renderMarkdown'],
+  ['markdown-content', 'renderMarkdownContent'],
+  ['markdown-content-cms', 'renderMarkdownContentCms'],
+  ['details', 'renderDetails'],
+  ['detailsStat', 'renderDetailsStat'],
+  ['atom', 'renderAtom'],
+  ['atomClass', 'renderAtomClass'],
+  ['divider', 'renderDivider'],
+  ['userLabel', 'renderUserLabel'],
+];
+
 export default {
   mixins: [
     renderSearchStates,
@@ -344,84 +372,12 @@ export default {
         return null;
       }
       // render
-      if (ebType === 'group') {
-        // group
-        return this.renderGroup(context);
-      } else if (ebType === 'panel') {
-        // panel
-        return this.renderPanel(context);
-      } else if (ebType === 'text') {
-        // text
-        return this.renderText(context);
-      } else if (ebType === 'toggle') {
-        // toggle
-        return this.renderToggle(context);
-      } else if (ebType === 'select') {
-        // select
-        return this.renderSelect(context);
-      } else if (ebType === 'file') {
-        // file
-        return this.renderFile(context);
-      } else if (ebType === 'datepicker') {
-        // datepicker
-        return this.renderDatepicker(context);
-      } else if (ebType === 'dateRange') {
-        // dateRange
-        return this.renderDateRange(context);
-      } else if (ebType === 'link') {
-        // link
-        return this.renderLink(context);
-      } else if (ebType === 'component') {
-        // component
-        return this.renderComponent(context);
-      } else if (ebType === 'component-action') {
-        // component-action
-        return this.renderComponentAction(context);
-      } else if (ebType === 'language') {
-        // language
-        return this.renderLanguage(context);
-      } else if (ebType === 'category') {
-        // category
-        return this.renderCategory(context);
-      } else if (ebType === 'tags') {
-        // tags
-        return this.renderTags(context);
-      } else if (ebType === 'resourceType') {
-        // resourceType
-        return this.renderResourceType(context);
-      } else if (ebType === 'json') {
-        // json
-        return this.renderJson(context);
-      } else if (ebType === 'markdown') {
-        // json
-        return this.renderMarkdown(context);
-      } else if (ebType === 'markdown-content') {
-        // json
-        return this.renderMarkdownContent(context);
-      } else if (ebType === 'markdown-content-cms') {
-        // json
-        return this.renderMarkdownContentCms(context);
-      } else if (ebType === 'details') {
-        // details
-        return this.renderDetails(context);
-      } else if (ebType === 'detailsStat') {
-        // details
-        return this.renderDetailsStat(context);
-      } else if (ebType === 'atom') {
-        // atom
-        return this.renderAtom(context);
-      } else if (ebType === 'atomClass') {
-        // atomClass
-        return this.renderAtomClass(context);
-      } else if (ebType === 'divider') {
-        // divider
-        return this.renderDivider(context);
-      } else if (ebType === 'userLabel') {
-        // userLabel
-        return this.renderUserLabel(context);
+      const renderType = __renderTypes.find(item => item[0].toUpperCase() === ebType.toUpperCase());
+      if (!renderType) {
+        // not support
+        return <div>{`not support: ${ebType}`}</div>;
       }
-      // not support
-      return <div>{`not support: ${ebType}`}</div>;
+      return this[renderType[1]](context);
     },
     _handleComputedDisplay(parcel, key, property) {
       // check if specify ebDisplay
