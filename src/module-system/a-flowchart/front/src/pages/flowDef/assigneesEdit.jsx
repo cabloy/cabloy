@@ -4,8 +4,9 @@ import assigneesRoles from '../../components/assignees/roles.jsx';
 import assigneesUsers from '../../components/assignees/users.jsx';
 
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ebPageContext, ebPageDirty],
   components: {
     assigneesVars,
     assigneesRoles,
@@ -16,12 +17,10 @@ export default {
       flowDefId: parseInt(this.$f7route.query.flowDefId),
       nodeId: this.$f7route.query.nodeId,
       assignees: null,
+      ready: false,
     };
   },
   computed: {
-    ready() {
-      return !!this.assignees;
-    },
     context() {
       return this.contextParams.context;
     },
@@ -37,6 +36,18 @@ export default {
         nodeDefId: this.nodeId,
       };
     },
+    page_title() {
+      return this.page_getDirtyTitle(this.$text('Assignees'));
+    },
+  },
+  watch: {
+    assignees: {
+      handler() {
+        if (!this.ready) return;
+        this.page_setDirty(true);
+      },
+      deep: true,
+    },
   },
   created() {
     this.__load();
@@ -45,15 +56,13 @@ export default {
     async __load() {
       // data
       await this.__normalizeAssignees();
+      this.ready = true;
     },
     async __normalizeAssignees() {
       this.assignees = await this.$api.post('/a/flowchart/flowDef/normalizeAssignees', {
         host: this.host,
         assignees: this.value,
       });
-    },
-    __getPageTitle() {
-      return this.$text('Assignees');
     },
     onPerformDone() {
       const assignees = {};
@@ -83,6 +92,7 @@ export default {
       }
       // ok
       this.contextCallback(200, assignees);
+      this.page_setDirty(false);
       this.$f7router.back();
     },
     renderAssignees() {
@@ -104,7 +114,7 @@ export default {
     }
     return (
       <eb-page>
-        <eb-navbar title={this.__getPageTitle()} eb-back-link="Back">
+        <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{domDone}</f7-nav-right>
         </eb-navbar>
         {this.renderAssignees()}

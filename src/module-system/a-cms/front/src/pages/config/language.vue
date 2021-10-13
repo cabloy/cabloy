@@ -6,7 +6,15 @@
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-json-editor v-if="ready" ref="jsonEditor" :readOnly="false" valueType="object" :value="content" @input="onInput" @save="onSaveEditor"></eb-json-editor>
+    <eb-json-editor
+      v-if="ready"
+      ref="jsonEditor"
+      :readOnly="false"
+      valueType="object"
+      :value="content"
+      @input="onInput"
+      @save="onSaveEditor"
+    ></eb-json-editor>
   </eb-page>
 </template>
 <script>
