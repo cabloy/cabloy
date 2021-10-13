@@ -19,7 +19,8 @@ module.exports = app => {
         ebType: 'datePicker',
         ebTitle: 'OverTime_TimeDate',
         ebParams: {
-          dateFormat: 'YYYY-MM-DD',
+          timePicker: true,
+          dateFormat: 'YYYY-MM-DD HH:mm:ss',
           header: false,
           toolbar: false,
         },
