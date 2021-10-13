@@ -24,7 +24,35 @@ export default {
   created() {},
   methods: {
     async onItemClick(event, item) {
-      return this.layoutManager.data.adapter.item_onItemClick(event, item);
+      const { validate } = this.context;
+      // container
+      const container = validate.host.container;
+      // queries
+      const queries = {
+        flowDefId: container.flowDefId,
+        nodeId: container.id,
+        behaviorId: item.id,
+      };
+      // url
+      const url = this.$meta.util.combineQueries('/a/flowchart/flowDef/behaviorEdit', queries);
+      this.$view.navigate(url, {
+        target: '_self',
+        context: {
+          params: {
+            context: this.context,
+            readOnly: validate.readOnly,
+            value: item,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              const behaviors = this.context.getValue();
+              const [index] = this._findBehavior(item.id);
+              behaviors[index] = data;
+              this.context.setValue(behaviors);
+            }
+          },
+        },
+      });
     },
     _findBehavior(behaviorId) {
       const behaviors = this.context.getValue();
