@@ -1,3 +1,4 @@
+const __colorsStock = ['red', 'orange', 'purple', 'yellow', 'blue', 'green'];
 export default {
   props: {
     context: {
@@ -6,32 +7,6 @@ export default {
   },
   data() {
     return {};
-  },
-  computed: {
-    ebOptions() {
-      const { validate } = this.context;
-      // container
-      const container = validate.host.container;
-      // diagram
-      const diagram = container.diagram;
-      // nodeId
-      const nodeId = container.id;
-      // filter
-      const nodes = diagram.contentProcess.nodes
-        .filter(item => {
-          return item.id !== nodeId && (item.type === 'startEventAtom' || item.type === 'activityUserTask');
-        })
-        .map(item => {
-          return {
-            title: item.nameLocale || item.name,
-            value: item.id,
-          };
-        });
-      // default
-      nodes.unshift({ title: 'Default', value: '' });
-      // ok
-      return nodes;
-    },
   },
   created() {},
   methods: {
@@ -72,11 +47,14 @@ export default {
       const id = this.__getAvailableBehaviorId(behaviors, behaviorBase);
       // name
       const name = behaviorBase.titleLocale || behaviorBase.title;
+      // color
+      const color = this.__getAvailableBehaviorColor(behaviors);
       // behavior
       behaviors.push({
         id,
         name,
         type: behaviorBase.type,
+        color,
       });
       this.context.setValue(behaviors);
     },
@@ -90,6 +68,26 @@ export default {
         }
       }
       return `${behaviorBase.type}_${id + 1}`;
+    },
+    __getAvailableBehaviorColor(behaviors) {
+      let color;
+      // for (const colorStock of __colorsStock) {
+      //   if (!behaviors.some(behavior => behavior.color === colorStock)) {
+      //     color = colorStock;
+      //     break;
+      //   }
+      // }
+      if (!color) {
+        color = this.__randomColor();
+      }
+      return color;
+    },
+    __randomColor() {
+      const r = Math.floor(Math.random() * 150 + 50);
+      const g = Math.floor(Math.random() * 150 + 50);
+      const b = Math.floor(Math.random() * 150 + 50);
+      const color = '#' + r.toString(16) + g.toString(16) + b.toString(16);
+      return color.toUpperCase();
     },
     _getBehaviorMedia(item) {
       // diagram
