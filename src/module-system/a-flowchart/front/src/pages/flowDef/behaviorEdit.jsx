@@ -1,6 +1,42 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
+
+// schema behavior
+const __schemaBehavior = {
+  type: 'object',
+  properties: {
+    __groupBasic: {
+      ebType: 'group-flatten',
+      ebTitle: 'Basic',
+    },
+    id: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'ID',
+      ebReadOnly: true,
+    },
+    name: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Name',
+      notEmpty: true,
+    },
+    type: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Type',
+      ebReadOnly: true,
+    },
+    color: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Color',
+      notEmpty: true,
+    },
+  },
+};
+
 export default {
   mixins: [ebPageContext, ebPageDirty],
   data() {
@@ -21,6 +57,13 @@ export default {
     },
     value() {
       return this.contextParams.value;
+    },
+    diagram() {
+      const { validate } = this.context;
+      // container
+      const container = validate.host.container;
+      // diagram
+      return container.diagram;
     },
     page_title() {
       let title = this.$text('Behavior');
@@ -43,12 +86,50 @@ export default {
     this.__load();
   },
   methods: {
-    __load() {
+    async __load() {
       // data
       this.behavior = this.$meta.util.extend({}, this.value);
+      // schema
+      await this.__initSchema();
       this.$nextTick(() => {
         this.ready = true;
       });
+    },
+    async __initSchema() {
+      // behaviorBase
+      const base = this.diagram.behaviorBases[this.behavior.type];
+      // schemaBase
+      let schemaBase = __schemaBehavior;
+      // schemaOptions
+      let schemaOptions;
+      if (base.validator) {
+        schemaOptions = await this.$api.post('/a/validation/validation/schema', {
+          module: base.validator.module,
+          validator: base.validator.validator,
+          schema: null,
+        });
+      }
+      // combine
+      if (schemaOptions) {
+        const schemaGroupOptions = {
+          type: 'object',
+          properties: {
+            options: {
+              type: 'object',
+              ebType: 'group',
+              ebTitle: 'Options',
+              properties: schemaOptions.schema.properties,
+            },
+          },
+        };
+        schemaBase = this.$meta.util.extend({}, schemaBase, schemaGroupOptions);
+      }
+      // ok
+      this.schema = {
+        module: base.validator ? base.validator.module : 'a-flowchart',
+        validator: base.validator ? base.validator.validator : null,
+        schema: schemaBase,
+      };
     },
     onPerformDone() {
       this.contextCallback(200, this.behavior);
@@ -57,8 +138,33 @@ export default {
     },
     _renderProperties() {
       if (!this.ready) return;
-      // list
-      return <eb-list form inline-labels no-hairlines-md></eb-list>;
+      const host = {
+        container: this,
+      };
+      const meta = {
+        schema: this.schema,
+        properties: {
+          type: {
+            ebPatch: {
+              getValue: type => {
+                // behaviorBase
+                const behaviorBase = this.diagram.behaviorBases[type];
+                return behaviorBase.titleLocale;
+              },
+            },
+          },
+        },
+      };
+      return (
+        <eb-validate
+          ref="validate"
+          readOnly={this.readOnly}
+          auto
+          data={this.behavior}
+          meta={meta}
+          host={host}
+        ></eb-validate>
+      );
     },
   },
   render() {
