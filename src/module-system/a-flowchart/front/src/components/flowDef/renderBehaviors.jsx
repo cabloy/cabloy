@@ -182,28 +182,36 @@ export default {
           {domDeleteTitle}
         </div>
       );
+      // index
+      const behaviors = this.context.getValue();
+      const [index] = this._findBehavior(item.id);
       // moveUp
-      let domMoveUpTitle;
-      if (mode === 'menu' || (!mode && this.$device.desktop)) {
-        domMoveUpTitle = <div slot="title">{this.$text('Move Up')}</div>;
+      if (index > 0) {
+        let domMoveUpTitle;
+        if (mode === 'menu' || (!mode && this.$device.desktop)) {
+          domMoveUpTitle = <div slot="title">{this.$text('Move Up')}</div>;
+        }
+        domActions.push(
+          <div key="moveUp" color="teal" propsOnPerform={event => this._onActionMoveUp(event, item)}>
+            <f7-icon slot="media" material="arrow_upward"></f7-icon>
+            {domMoveUpTitle}
+          </div>
+        );
       }
-      domActions.push(
-        <div key="moveUp" color="teal" propsOnPerform={event => this._onActionMoveUp(event, item)}>
-          <f7-icon slot="media" material="arrow_upward"></f7-icon>
-          {domMoveUpTitle}
-        </div>
-      );
       // moveDown
-      let domMoveDownTitle;
-      if (mode === 'menu' || (!mode && this.$device.desktop)) {
-        domMoveDownTitle = <div slot="title">{this.$text('Move Down')}</div>;
+      if (index < behaviors.length - 1) {
+        let domMoveDownTitle;
+        if (mode === 'menu' || (!mode && this.$device.desktop)) {
+          domMoveDownTitle = <div slot="title">{this.$text('Move Down')}</div>;
+        }
+        domActions.push(
+          <div key="moveDown" color="teal" propsOnPerform={event => this._onActionMoveDown(event, item)}>
+            <f7-icon slot="media" material="arrow_downward"></f7-icon>
+            {domMoveDownTitle}
+          </div>
+        );
       }
-      domActions.push(
-        <div key="moveDown" color="teal" propsOnPerform={event => this._onActionMoveDown(event, item)}>
-          <f7-icon slot="media" material="arrow_downward"></f7-icon>
-          {domMoveDownTitle}
-        </div>
-      );
+      // right
       const domRight = <div slot="right">{domActions}</div>;
       return <eb-context-menu mode={mode}>{domRight}</eb-context-menu>;
     },
