@@ -43,12 +43,20 @@ export default {
       const behaviors = this.context.getValue();
       const [index] = this._findBehavior(item.id);
       if (index > 0) {
-        const item = value.splice(index, 1);
-        value.splice(index - 1, 0, item[0]);
+        const item = behaviors.splice(index, 1);
+        behaviors.splice(index - 1, 0, item[0]);
+        this.context.setValue(behaviors);
       }
       this.$meta.util.swipeoutClose(event.target);
     },
     _onActionMoveDown(event, item) {
+      const behaviors = this.context.getValue();
+      const [index] = this._findBehavior(item.id);
+      if (index < behaviors.length - 1) {
+        const item = behaviors.splice(index + 1, 1);
+        behaviors.splice(index, 0, item[0]);
+        this.context.setValue(behaviors);
+      }
       this.$meta.util.swipeoutClose(event.target);
     },
     onSwipeoutOpened(/* event, item*/) {},
