@@ -63,7 +63,7 @@ export default {
           {...{ props }}
           onColorPickerChange={value => {
             // date or array of date
-            context.setValue(value && value.hex ? value.hex.toUpperCase() : null);
+            context.setValue(value && value.hex ? value.hex.toUpperCase() : '');
           }}
         >
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
