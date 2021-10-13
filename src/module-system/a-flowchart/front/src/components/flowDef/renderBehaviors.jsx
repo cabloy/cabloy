@@ -1,4 +1,4 @@
-const __colorsStock = ['red', 'orange', 'purple', 'teal', 'blue', 'green'];
+const __colorsStock = ['#FF3B30', '#FF9500', '#9C27B0', '#009688', '#2196F3', '#4CD964'];
 export default {
   props: {
     context: {

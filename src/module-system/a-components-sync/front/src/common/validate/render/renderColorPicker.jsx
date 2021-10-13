@@ -5,50 +5,55 @@ export default {
       const title = this.getTitle(context);
       // value
       let value = context.getValue();
-      if (!value) {
-        value = [];
-      } else if (!Array.isArray(value)) {
-        value = [value];
+      if (!value || value.indexOf('#') === -1) {
+        value = null;
+      } else {
+        value = { hex: value };
       }
-      // should format date
-      // // the form is readOnly
-      // if (this.validate.readOnly || property.ebDisabled) {
-      //   return c('f7-list-item', {
-      //     key,
-      //     staticClass: '',
-      //     attrs: {
-      //       title,
-      //       after: value,
-      //     },
-      //   });
-      // }
+      // render
+      if (this.validate.readOnly || property.ebReadOnly) {
+        return (
+          <f7-list-item key={key} staticClass="" after={value}>
+            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+              {title}
+            </div>
+          </f7-list-item>
+        );
+      }
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
+      const colorPickerParams = this.$meta.util.extend(
+        {
+          formatValue: value => {
+            if (value && value.hex) {
+              return value.hex.toUpperCase();
+            }
+            return null;
+          },
+        },
+        this.$config.colorPicker.params.default,
+        property.ebParams
+      );
       const props = {
         floatingLabel: this.$config.form.floatingLabel,
-        type: 'datepicker',
+        type: 'colorpicker',
         placeholder,
         info,
         resizable: false,
         clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
         dataPath,
         value,
-        readonly: true, // always
         disabled: this.validate.readOnly || property.ebReadOnly || property.ebDisabled,
-        calendarParams: property.ebParams,
+        colorPickerParams,
       };
       // input
       return (
         <eb-list-input
           key={key}
           {...{ props }}
-          onCalendarChange={values => {
+          onColorPickerChange={value => {
             // date or array of date
-            if (property.type === 'array') {
-              context.setValue(values);
-            } else {
-              context.setValue(values[0] || null);
-            }
+            context.setValue(value && value.hex ? value.hex.toUpperCase() : null);
           }}
         >
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
