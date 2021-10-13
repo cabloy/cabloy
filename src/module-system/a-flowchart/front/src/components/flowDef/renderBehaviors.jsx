@@ -37,9 +37,20 @@ export default {
       const [index] = this._findBehavior(item.id);
       behaviors.splice(index, 1);
       this.context.setValue(behaviors);
+      this.$meta.util.swipeoutClose(event.target);
     },
-    _onActionMoveUp(event, item) {},
-    _onActionMoveDown(event, item) {},
+    _onActionMoveUp(event, item) {
+      const behaviors = this.context.getValue();
+      const [index] = this._findBehavior(item.id);
+      if (index > 0) {
+        const item = value.splice(index, 1);
+        value.splice(index - 1, 0, item[0]);
+      }
+      this.$meta.util.swipeoutClose(event.target);
+    },
+    _onActionMoveDown(event, item) {
+      this.$meta.util.swipeoutClose(event.target);
+    },
     onSwipeoutOpened(/* event, item*/) {},
     onPerformAdd() {
       this.$view.navigate('/a/flowchart/flowDef/behaviors', {

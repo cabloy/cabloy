@@ -157,7 +157,7 @@ export default {
       const flowTaskHandleStatuses = this.$meta.config.modules['a-flowtask'].flowTaskHandleStatuses;
       const status = flowTaskHandleStatuses[task.handleStatus];
       let text;
-      if (task.flowNodeType === 'startEventAtom') {
+      if (task.flowNodeType.indexOf('startEventAtom') > -1) {
         text = this.$text('Submitted');
       } else {
         text = this.$text(status.text);

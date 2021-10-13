@@ -71,7 +71,7 @@ export default {
       const nodeIdCaches = {};
       while (true) {
         // check first
-        if (nodePrevious.type === 'startEventAtom') return nodePrevious;
+        if (nodePrevious.type.indexOf('startEventAtom') > -1) return nodePrevious;
         // previous
         nodeIdCaches[nodeId] = true;
         nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });

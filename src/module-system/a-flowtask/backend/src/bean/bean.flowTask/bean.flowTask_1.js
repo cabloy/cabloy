@@ -102,7 +102,7 @@ module.exports = ctx => {
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
         flowNodeId,
         cb: ({ /* flowNode*/ nodeDef }) => {
-          return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
+          return nodeDef.type.indexOf('startEventAtom') > -1 || nodeDef.type.indexOf('activityUserTask') > -1;
         },
       });
     }
@@ -172,7 +172,7 @@ module.exports = ctx => {
       const nodeDef = nodeInstance.contextNode._nodeDef;
       // options
       const options = nodeInstance.getNodeDefOptions();
-      return nodeDef.type === 'startEventAtom' ? options.task : options;
+      return nodeDef.type.indexOf('startEventAtom') > -1 ? options.task : options;
     }
 
     async _clearRemains({ nodeInstance }) {

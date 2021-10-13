@@ -19,7 +19,10 @@ export default {
       // filter
       const nodes = diagram.contentProcess.nodes
         .filter(item => {
-          return item.id !== nodeId && (item.type === 'startEventAtom' || item.type === 'activityUserTask');
+          return (
+            item.id !== nodeId &&
+            (item.type.indexOf('startEventAtom') > -1 || item.type.indexOf('activityUserTask') > -1)
+          );
         })
         .map(item => {
           return {

@@ -31,7 +31,12 @@ module.exports = ctx => {
         options: {
           where: {
             'a.flowId': flowId,
-            'b.flowNodeType': ['startEventAtom', 'activityUserTask'],
+            'b.flowNodeType': [
+              'a-flowtask:startEventAtom',
+              'a-flowtask:activityUserTask',
+              'startEventAtom',
+              'activityUserTask',
+            ],
             __or__: [{ 'a.userIdAssignee': user.id }, { 'a.flowTaskHidden': 0 }],
           },
           orders: [
