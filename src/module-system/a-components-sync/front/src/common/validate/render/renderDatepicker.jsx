@@ -1,6 +1,6 @@
 export default {
   methods: {
-    renderDatepicker(context) {
+    renderDatePicker(context) {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       // value

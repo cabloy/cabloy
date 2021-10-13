@@ -109,7 +109,7 @@ export default {
       const { property } = context;
       const propertyDatepicker = {
         type: '',
-        ebType: 'datepicker',
+        ebType: 'datePicker',
         ebDescription: mode === 'begin' ? 'Begin Date' : 'End Date',
         ebRender: null,
         ebSearch: {
