@@ -12,10 +12,15 @@ export default {
       }
       // render
       if (this.validate.readOnly || property.ebReadOnly) {
+        const _value = value ? value.hex : '';
+        const style = _value ? { color: _value } : null;
         return (
-          <f7-list-item key={key} staticClass="" after={value}>
+          <f7-list-item key={key} staticClass="">
             <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
               {title}
+            </div>
+            <div slot="after" style={style}>
+              {_value}
             </div>
           </f7-list-item>
         );
