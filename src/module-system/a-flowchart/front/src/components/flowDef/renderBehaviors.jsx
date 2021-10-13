@@ -8,27 +8,34 @@ export default {
   data() {
     return {};
   },
-  created() {},
-  methods: {
-    getDiagram() {
+  computed: {
+    readOnly() {
+      const { validate } = this.context;
+      return validate.readOnly;
+    },
+    diagram() {
       const { validate } = this.context;
       // container
       const container = validate.host.container;
       // diagram
       return container.diagram;
     },
+  },
+  created() {},
+  methods: {
     async onItemClick(event, item) {
       return this.layoutManager.data.adapter.item_onItemClick(event, item);
     },
+    _onActionDelete(event, item) {},
+    _onActionMoveUp(event, item) {},
+    _onActionMoveDown(event, item) {},
     onSwipeoutOpened(/* event, item*/) {},
     onPerformAdd() {
-      // diagram
-      const diagram = this.getDiagram();
       this.$view.navigate('/a/flowchart/flowDef/behaviors', {
         target: '_self',
         context: {
           params: {
-            diagram,
+            diagram: this.diagram,
           },
           callback: (code, data) => {
             if (code === 200) {
@@ -90,10 +97,8 @@ export default {
       return color.toUpperCase();
     },
     _getBehaviorMedia(item) {
-      // diagram
-      const diagram = this.getDiagram();
       // behaviorBase
-      const behaviorBase = diagram.behaviorBases[item.type];
+      const behaviorBase = this.diagram.behaviorBases[item.type];
       // icon
       if (behaviorBase.icon.material) {
         return <f7-icon style={{ color: item.color }} material={behaviorBase.icon.material}></f7-icon>;
@@ -108,10 +113,8 @@ export default {
       );
     },
     _renderTitle() {
-      const { validate } = this.context;
-      const { readOnly } = validate;
       let domAdd;
-      if (!readOnly) {
+      if (!this.readOnly) {
         domAdd = <eb-link iconMaterial="add" propsOnPerform={this.onPerformAdd}></eb-link>;
       }
       return (
@@ -153,8 +156,45 @@ export default {
         </eb-list-item>
       );
     },
-    _renderListItemContextMenu(item) {
-      return null;
+    _renderListItemContextMenu(item, mode) {
+      if (this.readOnly) return null;
+      // domRight: delete/moveUp/moveDown
+      const domActions = [];
+      // delete
+      let domDeleteTitle;
+      if (mode === 'menu' || (!mode && this.$device.desktop)) {
+        domDeleteTitle = <div slot="title">{this.$text('Delete')}</div>;
+      }
+      domActions.push(
+        <div key="delete" color="red" propsOnPerform={event => this._onActionDelete(event, item)}>
+          <f7-icon slot="media" material="delete"></f7-icon>
+          {domDeleteTitle}
+        </div>
+      );
+      // moveUp
+      let domMoveUpTitle;
+      if (mode === 'menu' || (!mode && this.$device.desktop)) {
+        domMoveUpTitle = <div slot="title">{this.$text('Move Up')}</div>;
+      }
+      domActions.push(
+        <div key="moveUp" color="teal" propsOnPerform={event => this._onActionMoveUp(event, item)}>
+          <f7-icon slot="media" material="arrow_upward"></f7-icon>
+          {domMoveUpTitle}
+        </div>
+      );
+      // moveDown
+      let domMoveDownTitle;
+      if (mode === 'menu' || (!mode && this.$device.desktop)) {
+        domMoveDownTitle = <div slot="title">{this.$text('Move Down')}</div>;
+      }
+      domActions.push(
+        <div key="moveDown" color="teal" propsOnPerform={event => this._onActionMoveDown(event, item)}>
+          <f7-icon slot="media" material="arrow_downward"></f7-icon>
+          {domMoveDownTitle}
+        </div>
+      );
+      const domRight = <div slot="right">{domActions}</div>;
+      return <eb-context-menu mode={mode}>{domRight}</eb-context-menu>;
     },
     _renderBehaviors() {
       const children = [];
