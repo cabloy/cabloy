@@ -267,20 +267,56 @@ export default {
       }
       return this.dagreLayout.layout(this.contentProcessRender);
     },
-    __createNode(item) {
+    __createNodePorts(item) {
       // nodeBase
       const nodeBase = this.nodeBases[item.type];
-      // icons
-      const icon = this.$meta.util.combineFetchStaticPath(nodeBase.icon);
-      const iconSrc = this.$meta.util.escapeURL(icon);
-      const icons = `<div class="eb-flowchart-node-icons">
+      // items
+      const items = [];
+      // behavior base
+      const iconUrl = this.$meta.util.combineFetchStaticPath(nodeBase.icon);
+      const iconSrc = this.$meta.util.escapeURL(iconUrl);
+      const icon = `<div class="eb-flowchart-node-icon">
                       <img src="${iconSrc}" />
                     </div>`;
+      items.push({
+        id: 'behavior_0',
+        group: 'out',
+        markup: {
+          tagName: 'foreignObject',
+          selector: 'icon',
+        },
+        attrs: {
+          icon: {
+            html: icon,
+            pointerEvents: 'visiblePainted',
+            magnet: !this.readOnly,
+          },
+        },
+      });
+      // ok
+      return {
+        groups: {
+          out: {
+            position: {
+              name: 'top',
+              args: {
+                dx: -12,
+                dy: 6,
+              },
+            },
+          },
+        },
+        items,
+      };
+    },
+    __createNode(item) {
       // label
       const labelText = this.$meta.util.escapeHtml(item.nameLocale || item.name);
       const label = `<div class="eb-flowchart-node-label">
                       <span>${labelText}</span>
                     </div>`;
+      // ports
+      const ports = this.__createNodePorts(item);
       // node
       const node = {
         id: item.id,
@@ -293,39 +329,7 @@ export default {
             html: label,
           },
         },
-        ports: {
-          groups: {
-            out: {
-              position: {
-                name: 'top',
-                args: {
-                  dy: 15,
-                },
-              },
-            },
-          },
-          items: [
-            {
-              id: 'port1',
-              group: 'out',
-              markup: {
-                tagName: 'circle',
-                selector: 'circle',
-                attrs: {
-                  r: 10,
-                  stroke: '#31d0c6',
-                  strokeWidth: 2,
-                  fill: '#fff',
-                },
-              },
-              attrs: {
-                circle: {
-                  magnet: !this.readOnly,
-                },
-              },
-            },
-          ],
-        },
+        ports,
       };
       // highlight current node
       if (this.flowNodeDefIds && this.flowNodeDefIds.indexOf(item.id) > -1) {
