@@ -1,3 +1,4 @@
+const __behaviorBaseId = 'behavior_0';
 export default {
   meta: {
     global: false,
@@ -197,11 +198,22 @@ export default {
           router: {
             name: 'normal', // 'orth', // 'manhattan'
           },
-          createEdge: () => {
+          createEdge: context => {
+            const { sourceCell, sourceMagnet } = context;
+            const behaviorId = sourceMagnet.getAttribute('data-id');
+            let color;
+            if (!behaviorId) {
+              color = '#000';
+            } else {
+              const nodeId = sourceCell.id;
+              const node = this.__findNode(nodeId);
+              const behavior = node.behaviors.find(item => item.id === behaviorId);
+              color = behavior.color;
+            }
             return new this.x6.Shape.Edge({
               attrs: {
                 line: {
-                  stroke: '#000',
+                  stroke: color,
                   opacity: 0.4,
                 },
               },
@@ -297,7 +309,7 @@ export default {
                       <img src="${iconSrc}" />
                     </div>`;
       items.push({
-        id: 'behavior_0',
+        id: __behaviorBaseId,
         group: 'out',
         attrs: {
           icon: {
@@ -316,6 +328,7 @@ export default {
             attrs: {
               icon: {
                 html: icon,
+                'data-id': behavior.id,
               },
             },
           });
