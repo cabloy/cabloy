@@ -188,7 +188,10 @@ export default {
         connecting: {
           snap: true,
           allowBlank: false,
-          allowMulti: 'withPort',
+          allowMulti: context => {
+            const { sourceCell, sourcePort, targetCell } = context;
+            return !this.__checkEdgeExists(sourceCell.id, targetCell.id, sourcePort);
+          },
           allowLoop: false,
           allowNode: true,
           allowEdge: false,
@@ -241,8 +244,7 @@ export default {
         if (!isNew) return;
         const source = edge.getSourceCell();
         const target = edge.getTargetCell();
-        let behaviorId = edge.getSource().port;
-        if (behaviorId === __behaviorBaseId) behaviorId = null;
+        const behaviorId = edge.getSource().port;
         this.addEdge(source.id, target.id, behaviorId);
       });
       // node:click
@@ -525,13 +527,15 @@ export default {
         },
       });
     },
+    __checkEdgeExists(source, target, behaviorId) {
+      if (behaviorId === __behaviorBaseId) behaviorId = null;
+      return this.contentProcess.edges.some(item => {
+        return source === item.source && target === item.target && (behaviorId || '') === (item.behavior || '');
+      });
+    },
     addEdge(source, target, behaviorId) {
       // check if exists
-      if (
-        this.contentProcess.edges.some(item => {
-          return source === item.source && target === item.target && (behaviorId || '') === (item.behavior || '');
-        })
-      ) {
+      if (this.__checkEdgeExists(source, target, behaviorId)) {
         // do nothing
         return;
       }
