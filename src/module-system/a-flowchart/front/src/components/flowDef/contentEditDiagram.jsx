@@ -201,15 +201,7 @@ export default {
           createEdge: context => {
             const { sourceCell, sourceMagnet } = context;
             const behaviorId = sourceMagnet.getAttribute('data-id');
-            let color;
-            if (!behaviorId) {
-              color = '#000';
-            } else {
-              const nodeId = sourceCell.id;
-              const node = this.__findNode(nodeId);
-              const behavior = node.behaviors.find(item => item.id === behaviorId);
-              color = behavior.color;
-            }
+            const color = this.__getBehaviorColor(sourceCell.id, behaviorId);
             return new this.x6.Shape.Edge({
               attrs: {
                 line: {
@@ -249,7 +241,8 @@ export default {
         if (!isNew) return;
         const source = edge.getSourceCell();
         const target = edge.getTargetCell();
-        const behaviorId = edge.getSource().port;
+        let behaviorId = edge.getSource().port;
+        if (behaviorId === __behaviorBaseId) behaviorId = null;
         this.addEdge(source.id, target.id, behaviorId);
       });
       // node:click
@@ -359,6 +352,17 @@ export default {
         items,
       };
     },
+    __getBehaviorColor(nodeId, behaviorId) {
+      let color;
+      if (!behaviorId) {
+        color = '#000';
+      } else {
+        const node = this.__findNode(nodeId);
+        const behavior = node.behaviors.find(item => item.id === behaviorId);
+        color = behavior.color;
+      }
+      return color;
+    },
     __createNode(item) {
       // label
       const labelText = this.$meta.util.escapeHtml(item.nameLocale || item.name);
@@ -391,12 +395,19 @@ export default {
       return node;
     },
     __createEdge(item) {
+      const source = { cell: item.source, port: item.behavior };
+      const color = this.__getBehaviorColor(item.source, item.behavior);
       const edge = {
         id: item.id,
         shape: 'sequence',
-        source: item.source,
+        source,
         target: item.target,
         label: item.nameLocale || item.name,
+        attrs: {
+          line: {
+            stroke: color,
+          },
+        },
       };
       return edge;
     },
@@ -515,11 +526,20 @@ export default {
       });
     },
     addEdge(source, target, behaviorId) {
+      // check if exists
+      if (
+        this.contentProcess.edges.some(item => {
+          return source === item.source && target === item.target && (behaviorId || '') === (item.behavior || '');
+        })
+      ) {
+        // do nothing
+        return;
+      }
       // id
       const id = this.__getAvailableId(null);
       // edge
       const edge = { id, source, target };
-      if (behaviorId !== __behaviorBaseId) {
+      if (behaviorId && behaviorId !== __behaviorBaseId) {
         edge.behavior = behaviorId;
       }
       // contentChange
