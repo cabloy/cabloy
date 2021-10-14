@@ -360,7 +360,7 @@ export default {
         color = '#000';
       } else {
         const behavior = this.__findBehavior(nodeId, behaviorId);
-        color = behavior.color;
+        color = behavior ? behavior.color : '';
       }
       return color;
     },
@@ -574,6 +574,19 @@ export default {
       const nodeIndex = value.nodes.findIndex(item => item.id === id);
       if (nodeIndex > -1) {
         value.nodes.splice(nodeIndex, 1);
+      }
+      // emit
+      this.$emit('contentChange', { type: 'process', value });
+    },
+    deleteEdges(ids) {
+      // contentChange
+      const value = this.$meta.util.extend({}, this.contentProcess);
+      // delete edge: should not delete target node
+      for (const id of ids) {
+        const edgeIndex = value.edges.findIndex(item => item.id === id);
+        if (edgeIndex > -1) {
+          value.edges.splice(edgeIndex, 1);
+        }
       }
       // emit
       this.$emit('contentChange', { type: 'process', value });

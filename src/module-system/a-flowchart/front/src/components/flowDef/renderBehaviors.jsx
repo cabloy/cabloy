@@ -13,24 +13,28 @@ export default {
       const { validate } = this.context;
       return validate.readOnly;
     },
-    diagram() {
+    container() {
       const { validate } = this.context;
-      // container
-      const container = validate.host.container;
+      return validate.host.container;
+    },
+    flowDefId() {
+      return this.container.flowDefId;
+    },
+    nodeId() {
+      return this.container.id;
+    },
+    diagram() {
       // diagram
-      return container.diagram;
+      return this.container.diagram;
     },
   },
   created() {},
   methods: {
     async onItemClick(event, item) {
-      const { validate } = this.context;
-      // container
-      const container = validate.host.container;
       // queries
       const queries = {
-        flowDefId: container.flowDefId,
-        nodeId: container.id,
+        flowDefId: this.flowDefId,
+        nodeId: this.nodeId,
         behaviorId: item.id,
       };
       // url
@@ -40,7 +44,7 @@ export default {
         context: {
           params: {
             context: this.context,
-            readOnly: validate.readOnly,
+            readOnly: this.readOnly,
             value: item,
           },
           callback: (code, data) => {
@@ -61,11 +65,22 @@ export default {
     },
     async _onActionDelete(event, item) {
       await this.$view.dialog.confirm();
+      // delete edges
+      this._deleteEdges(item.id);
+      // delete behavior
       const behaviors = this.context.getValue();
       const [index] = this._findBehavior(item.id);
       behaviors.splice(index, 1);
       this.context.setValue(behaviors);
       this.$meta.util.swipeoutClose(event.target);
+    },
+    _deleteEdges(behaviorId) {
+      const edgeIds = this.diagram.contentProcess.edges
+        .filter(edge => {
+          return edge.source === this.nodeId && edge.behavior === behaviorId;
+        })
+        .map(edge => edge.id);
+      this.diagram.deleteEdges(edgeIds);
     },
     _onActionMoveUp(event, item) {
       const behaviors = this.context.getValue();
