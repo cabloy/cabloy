@@ -298,7 +298,9 @@ export default {
             out: {
               position: {
                 name: 'top',
-                args: {},
+                args: {
+                  dy: 15,
+                },
               },
             },
           },
