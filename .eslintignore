@@ -9,3 +9,4 @@ src/backend/run
 /coverage/**
 /docker-compose/**
 /packages/egg-born-template-*/**
+/src/module-system/a-codemirror/backend/static/lib/codemirror
