@@ -404,6 +404,7 @@ export default {
         attrs: {
           line: {
             stroke: color,
+            opacity: 0.6,
           },
         },
       };
