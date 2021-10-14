@@ -377,9 +377,6 @@ export default {
         id: item.id,
         shape: 'eb-flowchart-node',
         attrs: {
-          // icons: {
-          //   html: icons,
-          // },
           label: {
             html: label,
           },
@@ -449,10 +446,6 @@ export default {
             tagName: 'rect',
             selector: 'body',
           },
-          // {
-          //   tagName: 'foreignObject',
-          //   selector: 'icons',
-          // },
           {
             tagName: 'foreignObject',
             selector: 'label',
@@ -469,12 +462,6 @@ export default {
             refHeight: '100%',
             pointerEvents: 'visiblePainted',
           },
-          // icons: {
-          //   refWidth: '100%',
-          //   height: 32,
-          //   pointerEvents: 'visiblePainted',
-          //   magnet: !this.readOnly,
-          // },
           label: {
             y: 24,
             refWidth: '100%',
