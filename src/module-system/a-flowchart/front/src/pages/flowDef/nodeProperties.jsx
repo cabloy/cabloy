@@ -95,7 +95,7 @@ const __schemaEdge = {
       ebReadOnly: true,
       notEmpty: true,
       ebDisplay: {
-        expression: '!!behavior',
+        expression: 'typeof behavior!=="undefined"',
       },
     },
   },
