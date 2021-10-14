@@ -187,7 +187,7 @@ export default {
         connecting: {
           snap: true,
           allowBlank: false,
-          allowMulti: false,
+          allowMulti: 'withPort',
           allowLoop: false,
           allowNode: true,
           allowEdge: false,
@@ -286,12 +286,44 @@ export default {
         id: item.id,
         shape: 'eb-flowchart-node',
         attrs: {
-          icons: {
-            html: icons,
-          },
+          // icons: {
+          //   html: icons,
+          // },
           label: {
             html: label,
           },
+        },
+        ports: {
+          group: {
+            out: {
+              position: {
+                name: 'top',
+                args: {},
+              },
+            },
+          },
+          items: [
+            {
+              id: 'port1',
+              group: 'out',
+              zIndex: 1,
+              markup: {
+                tagName: 'circle',
+                selector: 'circle',
+                attrs: {
+                  r: 10,
+                  fill: '#fff',
+                  stroke: '#000',
+                },
+              },
+              attrs: {
+                circle: {
+                  magnet: !this.readOnly,
+                  r: 6,
+                },
+              },
+            },
+          ],
         },
       };
       // highlight current node
@@ -350,10 +382,10 @@ export default {
             tagName: 'rect',
             selector: 'body',
           },
-          {
-            tagName: 'foreignObject',
-            selector: 'icons',
-          },
+          // {
+          //   tagName: 'foreignObject',
+          //   selector: 'icons',
+          // },
           {
             tagName: 'foreignObject',
             selector: 'label',
