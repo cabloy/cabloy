@@ -26,6 +26,6 @@
     "require3": "^2.0.9"
   },
   "devDependencies": {
-    "@antv/x6": "^1.19.5"
+    "@antv/x6": "^1.28.1"
   }
 }

@@ -26,6 +26,6 @@
     "require3": "^2.0.9"
   },
   "devDependencies": {
-    "@antv/layout": "^0.1.12"
+    "@antv/layout": "^0.1.18"
   }
 }

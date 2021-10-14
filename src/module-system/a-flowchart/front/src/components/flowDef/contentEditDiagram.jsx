@@ -294,7 +294,7 @@ export default {
           },
         },
         ports: {
-          group: {
+          groups: {
             out: {
               position: {
                 name: 'top',
@@ -306,20 +306,19 @@ export default {
             {
               id: 'port1',
               group: 'out',
-              zIndex: 1,
               markup: {
                 tagName: 'circle',
                 selector: 'circle',
                 attrs: {
                   r: 10,
+                  stroke: '#31d0c6',
+                  strokeWidth: 2,
                   fill: '#fff',
-                  stroke: '#000',
                 },
               },
               attrs: {
                 circle: {
                   magnet: !this.readOnly,
-                  r: 6,
                 },
               },
             },
@@ -402,12 +401,12 @@ export default {
             refHeight: '100%',
             pointerEvents: 'visiblePainted',
           },
-          icons: {
-            refWidth: '100%',
-            height: 32,
-            pointerEvents: 'visiblePainted',
-            magnet: !this.readOnly,
-          },
+          // icons: {
+          //   refWidth: '100%',
+          //   height: 32,
+          //   pointerEvents: 'visiblePainted',
+          //   magnet: !this.readOnly,
+          // },
           label: {
             y: 24,
             refWidth: '100%',

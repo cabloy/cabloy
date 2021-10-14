@@ -26,6 +26,6 @@
     "require3": "^2.0.9"
   },
   "devDependencies": {
-    "ant-design-vue": "^1.6.5"
+    "ant-design-vue": "^1.7.8"
   }
 }
