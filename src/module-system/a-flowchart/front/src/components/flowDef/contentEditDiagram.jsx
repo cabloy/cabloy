@@ -100,13 +100,18 @@ export default {
   methods: {
     async __init() {
       this.contentProcess = window.JSON5.parse(this.contentProcessStr);
-      this.nodeBases = await this.$local.dispatch('getNodeBases');
-      this.edgeBases = await this.$local.dispatch('getEdgeBases');
-      this.behaviorBases = await this.$local.dispatch('getBehaviorBases');
+      await this.__initResources();
       await this.__prepareInstances();
       this.__registerNodes();
       this.__registerEdges();
       this.__updateChart({});
+    },
+    async __initResources() {
+      const promises = [];
+      promises.push(this.$local.dispatch('getNodeBases').then(data => (this.nodeBases = data)));
+      promises.push(this.$local.dispatch('getEdgeBases').then(data => (this.edgeBases = data)));
+      promises.push(this.$local.dispatch('getBehaviorBases').then(data => (this.behaviorBases = data)));
+      return await Promise.all(promises);
     },
     async __prepareInstances() {
       const promises = [];
