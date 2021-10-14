@@ -94,6 +94,9 @@ const __schemaEdge = {
       ebTitle: 'Behavior',
       ebReadOnly: true,
       notEmpty: true,
+      ebDisplay: {
+        expression: '!!behavior',
+      },
     },
   },
 };
