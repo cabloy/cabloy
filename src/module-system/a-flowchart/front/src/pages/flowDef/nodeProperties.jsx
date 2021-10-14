@@ -68,22 +68,31 @@ const __schemaEdge = {
     },
     source: {
       type: 'string',
-      ebType: 'component',
+      ebType: 'text',
       ebTitle: 'Source',
-      ebRender: {
-        module: 'a-flowchart',
-        name: 'renderSelectNode',
-      },
+      // ebRender: {
+      //   module: 'a-flowchart',
+      //   name: 'renderSelectNode',
+      // },
+      ebReadOnly: true,
       notEmpty: true,
     },
     target: {
       type: 'string',
-      ebType: 'component',
+      ebType: 'text',
       ebTitle: 'Target',
-      ebRender: {
-        module: 'a-flowchart',
-        name: 'renderSelectNode',
-      },
+      // ebRender: {
+      //   module: 'a-flowchart',
+      //   name: 'renderSelectNode',
+      // },
+      ebReadOnly: true,
+      notEmpty: true,
+    },
+    behavior: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Behavior',
+      ebReadOnly: true,
       notEmpty: true,
     },
   },
@@ -243,6 +252,25 @@ export default {
           },
         },
       };
+      if (this.type === 'edge') {
+        meta.properties.source = meta.properties.target = {
+          ebPatch: {
+            getValue: nodeId => {
+              const node = this.diagram.__findNode(nodeId);
+              return node.nameLocale || node.name;
+            },
+          },
+        };
+        meta.properties.behavior = {
+          ebPatch: {
+            getValue: behaviorId => {
+              const behavior = this.diagram.__findBehavior(this.data.source, behaviorId);
+              if (!behavior) return null;
+              return behavior.nameLocale || behavior.name;
+            },
+          },
+        };
+      }
       return (
         <eb-validate
           ref="validate"

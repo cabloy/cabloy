@@ -359,8 +359,7 @@ export default {
       if (!behaviorId) {
         color = '#000';
       } else {
-        const node = this.__findNode(nodeId);
-        const behavior = node.behaviors.find(item => item.id === behaviorId);
+        const behavior = this.__findBehavior(nodeId, behaviorId);
         color = behavior.color;
       }
       return color;
@@ -500,6 +499,10 @@ export default {
           },
         },
       });
+    },
+    __findBehavior(nodeId, behaviorId) {
+      const node = this.__findNode(nodeId);
+      return node.behaviors.find(item => item.id === behaviorId);
     },
     __findNode(id) {
       return this.contentProcess.nodes.find(item => item.id === id);
