@@ -267,6 +267,24 @@ export default {
       }
       return this.dagreLayout.layout(this.contentProcessRender);
     },
+    __getBehaviorIcon(item) {
+      // behaviorBase
+      const behaviorBase = this.behaviorBases[item.type];
+      // icon
+      const color = item.color ? this.$meta.util.escapeURL(item.color) : '';
+      const material = this.$meta.util.escapeURL(behaviorBase.icon.material);
+      if (behaviorBase.icon.material) {
+        return `<div class="eb-flowchart-node-icon">
+                  <i class="icon material-icons" style="color: ${color}">${material}</i>
+                </div>`;
+      }
+      // url
+      const iconUrl = this.$meta.util.combineFetchStaticPath(behaviorBase.icon);
+      const iconSrc = this.$meta.util.escapeURL(iconUrl);
+      return `<div class="eb-flowchart-node-icon">
+                <img src="${iconSrc}" />
+              </div>`;
+    },
     __createNodePorts(item) {
       // nodeBase
       const nodeBase = this.nodeBases[item.type];
@@ -281,22 +299,41 @@ export default {
       items.push({
         id: 'behavior_0',
         group: 'out',
-        markup: {
-          tagName: 'foreignObject',
-          selector: 'icon',
-        },
         attrs: {
           icon: {
             html: icon,
-            pointerEvents: 'visiblePainted',
-            magnet: !this.readOnly,
           },
         },
       });
+      // behaviors
+      const behaviors = item.behaviors;
+      if (behaviors) {
+        for (const behavior of behaviors) {
+          const icon = this.__getBehaviorIcon(behavior);
+          items.push({
+            id: behavior.id,
+            group: 'out',
+            attrs: {
+              icon: {
+                html: icon,
+              },
+            },
+          });
+        }
+      }
       // ok
       return {
         groups: {
           out: {
+            zIndex: 100,
+            markup: {
+              tagName: 'foreignObject',
+              selector: 'icon',
+              attrs: {
+                pointerEvents: 'visiblePainted',
+                magnet: !this.readOnly,
+              },
+            },
             position: {
               name: 'top',
               args: {
