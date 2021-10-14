@@ -325,7 +325,6 @@ export default {
       return {
         groups: {
           out: {
-            zIndex: 100,
             markup: {
               tagName: 'foreignObject',
               selector: 'icon',
