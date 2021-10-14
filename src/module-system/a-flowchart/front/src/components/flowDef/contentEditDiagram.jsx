@@ -249,7 +249,8 @@ export default {
         if (!isNew) return;
         const source = edge.getSourceCell();
         const target = edge.getTargetCell();
-        this.addEdge(source.id, target.id);
+        const behaviorId = edge.getSource().port;
+        this.addEdge(source.id, target.id, behaviorId);
       });
       // node:click
       this.graph.on('node:click', ({ node }) => {
@@ -513,11 +514,14 @@ export default {
         },
       });
     },
-    addEdge(source, target) {
+    addEdge(source, target, behaviorId) {
       // id
       const id = this.__getAvailableId(null);
       // edge
       const edge = { id, source, target };
+      if (behaviorId !== __behaviorBaseId) {
+        edge.behavior = behaviorId;
+      }
       // contentChange
       const value = this.$meta.util.extend({}, this.contentProcess);
       value.edges.push(edge);
