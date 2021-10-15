@@ -77,7 +77,7 @@ module.exports = ctx => {
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
-          return false;
+          ctx.throw.module(moduleInfo.relativeName, 1008, this.context._flowId);
         }
         // enter
         const res = await edgeInstance.enter();
