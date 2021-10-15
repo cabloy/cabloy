@@ -10,7 +10,8 @@ module.exports = ctx => {
 
     async onNodeEnter() {
       // super
-      await super.onNodeEnter();
+      let res = await super.onNodeEnter();
+      if (!res) return res;
 
       // options
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({
@@ -18,7 +19,7 @@ module.exports = ctx => {
       });
 
       // prepare assignees
-      const res = await this._prepareAssignees({ options });
+      res = await this._prepareAssignees({ options });
       if (!res) return false;
 
       // ok
@@ -27,7 +28,8 @@ module.exports = ctx => {
 
     async onNodeBegin() {
       // super
-      await super.onNodeBegin();
+      const res = await super.onNodeBegin();
+      if (!res) return res;
 
       // options
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({
@@ -69,7 +71,8 @@ module.exports = ctx => {
 
     async onNodeDoing() {
       // super
-      await super.onNodeDoing();
+      const res = await super.onNodeDoing();
+      if (!res) return res;
 
       // break
       return false;
