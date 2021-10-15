@@ -14,12 +14,16 @@ module.exports = ctx => {
       // return true on empty/null/undefined
       if (!conditionExpression && conditionExpression !== false) return true;
       if (conditionExpression === false) return false;
+      // contextNodePrevious
+      const contextNodePrevious = this.contextNode.contextEdge && this.contextNode.contextEdge.contextNode;
+      // evaluateExpression
       res = ctx.bean.flow.evaluateExpression({
         expression: conditionExpression,
         globals: {
           context: this.context,
           contextNode: this.contextNode,
           contextEdge: this.contextEdge,
+          contextNodePrevious,
         },
       });
       return !!res;
