@@ -85,7 +85,9 @@ module.exports = ctx => {
           return true;
         }
       }
-      return false;
+      // should throw exception
+      ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
+      // return false;
     }
 
     async nextNode({ contextEdge }) {

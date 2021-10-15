@@ -24,4 +24,5 @@ module.exports = {
   'Role not Found: %s': '角色未发现: %s',
   'Flow Completed: %s': '流程已结束: %s',
   'Flow Outdated: %s': '流程已过期: %s',
+  'NoMatchedFlowEdge: %s': '没有匹配的边: %s',
 };

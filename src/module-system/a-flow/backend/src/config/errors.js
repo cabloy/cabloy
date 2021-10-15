@@ -9,4 +9,5 @@ module.exports = {
   1007: 'Role not Found: %s',
   1008: 'Flow Completed: %s',
   1009: 'Flow Outdated: %s',
+  1010: 'NoMatchedFlowEdge: %s',
 };
