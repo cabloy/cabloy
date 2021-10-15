@@ -47,6 +47,7 @@ export default {
     groups: [
       { name: 'startEvent', title: 'Start Event' },
       { name: 'endEvent', title: 'End Event' },
+      { name: 'gateway', title: 'Gateway' },
       { name: 'activity', title: 'Activity' },
     ],
   },
