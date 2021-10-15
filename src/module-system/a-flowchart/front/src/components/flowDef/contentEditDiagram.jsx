@@ -278,10 +278,10 @@ export default {
     __getBehaviorIcon(item) {
       // behaviorBase
       const behaviorBase = this.behaviorBases[item.type];
-      // icon
       const color = item.color ? this.$meta.util.escapeURL(item.color) : '';
-      const material = this.$meta.util.escapeURL(behaviorBase.icon.material);
-      if (behaviorBase.icon.material) {
+      const material = behaviorBase.icon.material ? this.$meta.util.escapeURL(behaviorBase.icon.material) : '';
+      // icon
+      if (material) {
         return `<div class="eb-flowchart-node-icon">
                   <i class="icon material-icons" style="color: ${color}">${material}</i>
                 </div>`;
@@ -290,7 +290,7 @@ export default {
       const iconUrl = this.$meta.util.combineFetchStaticPath(behaviorBase.icon);
       const iconSrc = this.$meta.util.escapeURL(iconUrl);
       return `<div class="eb-flowchart-node-icon">
-                <img src="${iconSrc}" />
+                <img src="${iconSrc}" style="border: solid 1px ${color}" />
               </div>`;
     },
     __createNodePorts(item) {
