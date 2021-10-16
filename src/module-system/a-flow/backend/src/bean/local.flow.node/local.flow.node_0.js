@@ -57,6 +57,8 @@ module.exports = ctx => {
     }
 
     async _createFlowNode({ flowNodeIdPrev = 0 }) {
+      // behaviorDefId
+      const behaviorDefId = (this.contextEdge && this.contextEdge._edgeDef.behavior) || '';
       // flowNode
       const data = {
         flowId: this.context._flowId,
@@ -65,6 +67,7 @@ module.exports = ctx => {
         flowNodeType: this.contextNode._nodeDef.type,
         flowNodeIdPrev,
         nodeVars: '{}',
+        behaviorDefId,
       };
       const res = await this.modelFlowNode.insert(data);
       const flowNodeId = res.insertId;
