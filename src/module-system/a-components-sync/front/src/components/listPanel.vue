@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import validate from '../common/validate/validateCheck.js';
+import validateCheck from '../common/validate/validateCheck.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 export default {
   meta: {
@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-list-item-panel',
   extends: f7ListItem,
-  mixins: [validate],
+  mixins: [validateCheck],
   methods: {
     onValidateError(error) {
       const panel = this.$$(this.$el);

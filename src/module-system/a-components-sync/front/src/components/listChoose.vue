@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import validate from '../common/validate/validateCheck.js';
+import validateCheck from '../common/validate/validateCheck.js';
 import trimMessage from '../common/trimMessage.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 export default {
@@ -9,7 +9,7 @@ export default {
   },
   name: 'eb-list-item-choose',
   extends: f7ListItem,
-  mixins: [validate],
+  mixins: [validateCheck],
   props: {
     onChoose: {
       type: Function,

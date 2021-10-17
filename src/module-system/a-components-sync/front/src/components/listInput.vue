@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import validate from '../common/validate/validateCheck.js';
+import validateCheck from '../common/validate/validateCheck.js';
 const f7ListInput = Vue.options.components['f7-list-input'].extendOptions;
 export default {
   meta: {
@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-list-input',
   extends: f7ListInput,
-  mixins: [validate],
+  mixins: [validateCheck],
   mounted() {
     this.$nextTick(() => {
       this.checkEmptyState();

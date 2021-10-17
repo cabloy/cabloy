@@ -1,11 +1,11 @@
 <script>
-import validate from '../common/validate/validateCheck.js';
+import validateCheck from '../common/validate/validateCheck.js';
 export default {
   meta: {
     global: true,
   },
   name: 'eb-select',
-  mixins: [validate],
+  mixins: [validateCheck],
   props: {
     readOnly: {
       type: Boolean,
@@ -148,7 +148,7 @@ export default {
         moduleName = this.$page.$module.name;
         fetchUrl = this.$meta.util.combineApiPath(moduleName, this.optionsUrl);
       }
-      this.$meta.module.use(moduleName, module => {
+      this.$meta.module.use(moduleName, () => {
         this.$api.post(fetchUrl, this.optionsUrlParams).then(data => {
           this.changeOptions(data);
         });
