@@ -21,6 +21,12 @@ module.exports = app => {
         ebTitle: 'Dict Items',
         notEmpty: true,
       },
+      dictLocales: {
+        type: 'string',
+        ebType: 'json',
+        ebTitle: 'Dict Locales',
+        notEmpty: true,
+      },
     },
   };
   // dict search

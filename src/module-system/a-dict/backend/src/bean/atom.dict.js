@@ -12,7 +12,7 @@ module.exports = app => {
       await this.ctx.model.dictContent.insert({
         atomId: key.atomId,
         itemId,
-        dictContent: '{}',
+        dictContent: '[]',
         dictLocales: '{}',
       });
       // return key
