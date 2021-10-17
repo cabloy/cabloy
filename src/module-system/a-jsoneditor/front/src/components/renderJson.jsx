@@ -77,7 +77,7 @@ export default {
     },
     _renderJson() {
       const context = this.context;
-      const { key, property } = context;
+      const { key, property, dataPath } = context;
       const title = context.getTitle();
       // render
       return (
@@ -85,6 +85,7 @@ export default {
           key={key}
           class={property.ebReadOnly ? 'text-color-gray' : ''}
           link="#"
+          dataPath={dataPath}
           propsOnPerform={this._onPerform}
         >
           <div slot="title" class={property.ebReadOnly ? 'text-color-gray' : ''}>
