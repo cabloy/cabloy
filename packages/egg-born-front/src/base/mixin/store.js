@@ -18,6 +18,15 @@ export default function (Vue) {
     return value;
   };
 
+  // dispatch
+  const _dispatch = store.dispatch;
+  store.dispatch = async function (path, ...args) {
+    if (path.indexOf('auth/') === 0) return await _dispatch.call(store, path, ...args);
+    const info = Vue.prototype.$meta.util.parseModuleInfo(path);
+    await Vue.prototype.$meta.module.use(info.relativeName);
+    return await _dispatch.call(store, path, ...args);
+  };
+
   // register module: auth
   const auth = require('../auth.js').default(Vue);
   auth.namespaced = true;
