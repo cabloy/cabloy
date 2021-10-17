@@ -7,8 +7,16 @@ module.exports = app => {
       const res = await this.ctx.model.dict.insert({
         atomId: key.atomId,
       });
+      const itemId = res.insertId;
+      // add content
+      await this.ctx.model.dictContent.insert({
+        atomId: key.atomId,
+        itemId,
+        dictContent: '{}',
+        dictLocales: '{}',
+      });
       // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      return { atomId: key.atomId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
@@ -37,12 +45,28 @@ module.exports = app => {
       const data = await this.ctx.model.dict.prepareData(item);
       data.id = key.itemId;
       await this.ctx.model.dict.update(data);
+      // update content
+      await this.ctx.model.dictContent.update(
+        {
+          dictContent: item.dictContent,
+          dictLocales: item.dictLocales,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, user }) {
       // delete dict
       await this.ctx.model.dict.delete({
         id: key.itemId,
+      });
+      // delete content
+      await this.ctx.model.dictContent.delete({
+        itemId: key.itemId,
       });
       // super
       await super.delete({ atomClass, key, user });
