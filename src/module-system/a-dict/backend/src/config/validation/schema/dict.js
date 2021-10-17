@@ -15,7 +15,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
-      dictContent: {
+      dictItems: {
         type: 'string',
         ebType: 'json',
         ebTitle: 'Dict Items',

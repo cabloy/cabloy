@@ -12,7 +12,7 @@ module.exports = app => {
       await this.ctx.model.dictContent.insert({
         atomId: key.atomId,
         itemId,
-        dictContent: '[]',
+        dictItems: '[]',
         dictLocales: '{}',
       });
       // return key
@@ -48,7 +48,7 @@ module.exports = app => {
       // update content
       await this.ctx.model.dictContent.update(
         {
-          dictContent: item.dictContent,
+          dictItems: item.dictItems,
           dictLocales: item.dictLocales,
         },
         {

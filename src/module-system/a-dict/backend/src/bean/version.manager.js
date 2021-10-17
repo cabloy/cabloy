@@ -26,7 +26,7 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             itemId int(11) DEFAULT '0',
-            dictContent JSON DEFAULT NULL,
+            dictItems JSON DEFAULT NULL,
             dictLocales JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
@@ -35,7 +35,7 @@ module.exports = app => {
         // create view: aDictViewFull
         sql = `
           CREATE VIEW aDictViewFull as
-            select a.*,b.dictContent,b.dictLocales from aDict a
+            select a.*,b.dictItems,b.dictLocales from aDict a
               left join aDictContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
