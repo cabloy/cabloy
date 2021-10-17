@@ -15,6 +15,12 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      dictContent: {
+        type: 'string',
+        ebType: 'json',
+        ebTitle: 'Dict Items',
+        notEmpty: true,
+      },
     },
   };
   // dict search
