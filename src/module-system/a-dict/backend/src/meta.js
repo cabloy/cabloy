@@ -19,7 +19,11 @@ module.exports = app => {
             category: false,
             tag: false,
           },
-          actions: {},
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'dict',
           search: {
             validator: 'dictSearch',
