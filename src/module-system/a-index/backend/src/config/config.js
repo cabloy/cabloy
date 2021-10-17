@@ -57,6 +57,9 @@ module.exports = appInfo => {
       aDetail: 'createdAt,updatedAt,atomId,detailItemId,detailClassId,detailStaticKey',
       aDetailClass: 'createdAt,updatedAt,module+detailClassName',
     },
+    'a-dict': {
+      aDict: 'createdAt,updatedAt,atomId',
+    },
     'a-dingtalk': {
       aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
       aDingtalkMember: 'createdAt,updatedAt,userId,memberId',

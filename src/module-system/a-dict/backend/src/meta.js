@@ -12,9 +12,12 @@ module.exports = app => {
             bean: 'dict',
             title: 'Dict',
             tableName: 'aDict',
+            tableNameModes: {
+              full: 'aDictViewFull',
+            },
             language: false,
-            category: true,
-            tag: true,
+            category: false,
+            tag: false,
           },
           actions: {},
           validator: 'dict',
@@ -40,11 +43,6 @@ module.exports = app => {
       },
       keywords: {},
       schemas,
-    },
-    index: {
-      indexes: {
-        aDict: 'createdAt,updatedAt,atomId',
-      },
     },
   };
   return meta;
