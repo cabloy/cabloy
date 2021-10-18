@@ -1,7 +1,7 @@
+const __dicts = {};
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  const __dicts = {};
 
   class Dict extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
@@ -38,6 +38,7 @@ module.exports = ctx => {
         dictItemsMap: dict._dictItemsMap,
         codes: code.split('/'),
       });
+      if (!res) return null;
       const titleFull = dictItemsRes.map(item => item.title).join(separator);
       const titleLocaleFull = dictItemsRes.map(item => item.titleLocale).join(separator);
       dictItemRes = {
