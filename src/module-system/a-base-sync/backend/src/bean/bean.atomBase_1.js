@@ -43,11 +43,10 @@ module.exports = app => {
         const field = fields[fieldName];
         if (!field.translate) continue;
         //
-        const { titleFull, titleLocaleFull } = await this.ctx.bean.dict.find({
+        const { titleFull, titleLocaleFull } = await this.ctx.bean.dict.findItem({
           dictKey: field.dictKey,
           code: item[fieldName],
           options: {
-            translate: field.translate,
             separator: field.separator,
           },
         });
