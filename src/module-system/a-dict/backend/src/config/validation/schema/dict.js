@@ -4,6 +4,11 @@ module.exports = app => {
   schemas.dict = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -26,6 +31,24 @@ module.exports = app => {
         ebType: 'json',
         ebTitle: 'Dict Locales',
         notEmpty: true,
+      },
+      // Extra
+      __groupExtra: {
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      atomStaticKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'KeyForAtom',
+        ebReadOnly: true,
+        notEmpty: true,
+      },
+      atomRevision: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Revision',
+        ebReadOnly: true,
       },
     },
   };
