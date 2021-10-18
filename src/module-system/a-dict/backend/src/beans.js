@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const atomDict = require('./bean/atom.dict.js');
+const beanDict = require('./bean/bean.dict.js');
 
 module.exports = app => {
   const beans = {
@@ -12,6 +13,12 @@ module.exports = app => {
     'atom.dict': {
       mode: 'app',
       bean: atomDict,
+    },
+    // global
+    dict: {
+      mode: 'ctx',
+      bean: beanDict,
+      global: true,
     },
   };
   return beans;
