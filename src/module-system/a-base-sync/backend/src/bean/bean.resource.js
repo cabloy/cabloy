@@ -1,3 +1,5 @@
+let __atomClassesResource = null;
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -5,8 +7,6 @@ module.exports = ctx => {
     module: moduleInfo.relativeName,
     atomClassName: 'resource',
   };
-
-  let __atomClassesResource = null;
 
   class Resource extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
