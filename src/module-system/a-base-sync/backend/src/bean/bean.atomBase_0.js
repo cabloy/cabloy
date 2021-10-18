@@ -41,18 +41,28 @@ module.exports = app => {
     async read({ atomClass, options, key, user }) {
       // get
       const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      if (!item) return item;
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // dict translate
+      await this._dictTranslate({ item, _atomClass });
       // revision
-      if (item) {
-        this._appendRevisionToHistory({ item });
-      }
+      this._appendRevisionToHistory({ item });
       // flow
-      if (item && item.flowNodeNameCurrent) {
+      if (item.flowNodeNameCurrent) {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
       return item;
     }
 
-    async select({ /* atomClass,*/ options, items, user }) {
+    async select({ atomClass, options, items, user }) {
+      if (items.length === 0) return;
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // dict translate
+      for (const item of items) {
+        await this._dictTranslate({ item, _atomClass });
+      }
       // revision
       if (options.stage === 'history') {
         for (const item of items) {

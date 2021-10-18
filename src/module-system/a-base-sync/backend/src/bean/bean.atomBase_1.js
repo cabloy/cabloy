@@ -36,6 +36,22 @@ module.exports = app => {
       if (!item._meta.flags) item._meta.flags = [];
       item._meta.flags.push(`Rev.${item.atomRevision}`);
     }
+
+    async _dictTranslate({ item, _atomClass }) {
+      const fields = _atomClass.dict && _atomClass.dict.fields;
+      for (const fieldName in fields) {
+        const field = fields[fieldName];
+        if (!field.translate) continue;
+        //
+        const { title, titleLocale } = await this.ctx.bean.dict.translate({
+          dictKey: field.dictKey,
+          code: item[fieldName],
+          separator: field.separator,
+        });
+        item[`_${fieldName}Title`] = title;
+        item[`_${fieldName}TitleLocale`] = titleLocale;
+      }
+    }
   }
 
   return AtomBase;
