@@ -1,12 +1,5 @@
-const { locales } = require('../../../../../../node_modules/moment-timezone/index');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  const __atomClass = {
-    module: moduleInfo.relativeName,
-    atomClassName: 'dict',
-  };
 
   const __dicts = {};
 
