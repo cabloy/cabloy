@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, user }) {
       // super
@@ -39,6 +40,8 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      const atomStaticKey = item.atomStaticKey;
+      const atomStage = item.atomStage;
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update dict
@@ -57,9 +60,23 @@ module.exports = app => {
           },
         }
       );
+      // broadcast
+      if (atomStage === 1) {
+        this.ctx.tail(() => {
+          this.ctx.app.meta.broadcast.emit({
+            subdomain: this.ctx.subdomain,
+            module: moduleInfo.relativeName,
+            broadcastName: 'dictCacheRemove',
+            data: { dictKey: atomStaticKey },
+          });
+        });
+      }
     }
 
     async delete({ atomClass, key, user }) {
+      const item = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      const atomStaticKey = item.atomStaticKey;
+      const atomStage = item.atomStage;
       // delete dict
       await this.ctx.model.dict.delete({
         id: key.itemId,
@@ -70,6 +87,17 @@ module.exports = app => {
       });
       // super
       await super.delete({ atomClass, key, user });
+      // broadcast
+      if (atomStage === 1) {
+        this.ctx.tail(() => {
+          this.ctx.app.meta.broadcast.emit({
+            subdomain: this.ctx.subdomain,
+            module: moduleInfo.relativeName,
+            broadcastName: 'dictCacheRemove',
+            data: { dictKey: atomStaticKey },
+          });
+        });
+      }
     }
 
     _getMeta(item) {

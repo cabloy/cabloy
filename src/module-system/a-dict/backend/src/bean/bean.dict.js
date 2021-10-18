@@ -142,6 +142,10 @@ module.exports = ctx => {
       }
       return titleLocale;
     }
+
+    _broadcastDictCacheRemove({ dictKey }) {
+      delete __dicts[dictKey];
+    }
   }
 
   return Dict;
