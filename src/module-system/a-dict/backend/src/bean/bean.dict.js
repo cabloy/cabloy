@@ -1,3 +1,5 @@
+const { locales } = require('../../../../../../node_modules/moment-timezone/index');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -43,6 +45,7 @@ module.exports = ctx => {
       const dict = await this._prepareDict_load({ dictKey });
       // prepare
       await this._prepareDict_adjust({ dict, locale });
+      console.log(dict);
       // ok
       return dict;
     }
@@ -65,14 +68,46 @@ module.exports = ctx => {
 
     async _prepareDict_adjust({ dict, locale }) {
       // init
-      dict._dictItems = JSON.parse(dict._dictItems);
+      dict._dictItems = JSON.parse(dict.dictItems);
       dict._dictLocales = dict.dictLocales ? JSON.parse(dict.dictLocales) : null;
       dict._dictItemsMap = {};
       // adjust
-      await this._prepareDict_adjust_loop({ dict: dict._dictItems, locale });
+      await this._prepareDict_adjust_loop({
+        dict,
+        dictItemsMap: dict._dictItemsMap,
+        dictItems: dict._dictItems,
+        locale,
+      });
     }
 
-    async _prepareDict_adjust_loop({ dictItems, locale }) {}
+    async _prepareDict_adjust_loop({ dict, dictItemsMap, dictItems, locale }) {
+      for (const item of dictItems) {
+        // self
+        item.titleLocale = this._prepareDict_titleLocale({ dict, title: item.title, locale });
+        dictItemsMap[item.code] = item;
+        // children
+        if (item.children) {
+          item._childrenMap = {};
+          await this._prepareDict_adjust_loop({
+            dict,
+            dictItemsMap: item._childrenMap,
+            dictItems: item.children,
+            locale,
+          });
+        }
+      }
+    }
+
+    _prepareDict_titleLocale({ dict, title, locale }) {
+      let titleLocale = ctx.bean.util.getProperty(dict._dictLocales, `${locale}.${title}`);
+      if (!titleLocale && locale !== 'en-us') {
+        titleLocale = ctx.bean.util.getProperty(dict._dictLocales, `en-us.${title}`);
+      }
+      if (!titleLocale) {
+        titleLocale = ctx.text(title);
+      }
+      return titleLocale;
+    }
   }
 
   return Dict;
