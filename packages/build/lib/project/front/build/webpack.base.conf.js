@@ -34,6 +34,11 @@ module.exports = context => {
       },
     },
     module: {
+      parser: {
+        javascript: {
+          // commonjsMagicComments: true,
+        },
+      },
       rules: [
         {
           test: /\.vue$/,
