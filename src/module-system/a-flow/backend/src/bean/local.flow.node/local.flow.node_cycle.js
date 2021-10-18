@@ -1,16 +1,15 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 
+const __adapter = (context, chain) => {
+  return {
+    receiver: chain.behaviorBean,
+    fn: chain.behaviorBean[context.methodName],
+  };
+};
+
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  const __adapter = (context, chain) => {
-    return {
-      receiver: chain.behaviorBean,
-      fn: chain.behaviorBean[context.methodName],
-    };
-  };
-
   class FlowNode {
     getBehaviorDefOptions({ behaviorDefId }) {
       // nodeDef
