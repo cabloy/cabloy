@@ -3,7 +3,7 @@
   "version": "4.4.22",
   "title": "Party Test",
   "eggBornModule": {
-    "fileVersion": 1,
+    "fileVersion": 2,
     "cms": {
       "name": "Party",
       "theme": true
