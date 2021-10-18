@@ -49,7 +49,6 @@ module.exports = ctx => {
       };
       // cache
       dict._cache[code] = dictItemRes;
-      console.log('----dictItemsRes', res, dictItemRes);
       // ok
       return dictItemRes;
     }
@@ -82,7 +81,6 @@ module.exports = ctx => {
       const dict = await this._prepareDict_load({ dictKey });
       // prepare
       this._prepareDict_adjust({ dict, locale });
-      console.log(dict);
       // ok
       return dict;
     }
