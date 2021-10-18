@@ -26,25 +26,68 @@ module.exports = ctx => {
 
     // options: translate/separator
     async findItem({ dictKey, code, options }) {
+      if (!code) return null;
+      code = String(code);
+      // options
       options = options || { separator: '/' };
-      const dict = await this._getDict({ dictKey });
+      const separator = options.separator;
+      // locale
+      const locale = ctx.locale;
+      // dict
+      const dict = await this._getDict({ dictKey, locale });
+      if (!dict._cache) dict._cache = {};
+      let dictItemRes = dict._cache[code];
+      if (dictItemRes) return dictItemRes;
+      // find
+      const dictItemsRes = [];
+      const res = this._findItem_loop({
+        dictItemsRes,
+        dictItemsMap: dict._dictItemsMap,
+        codes: code.split('/'),
+      });
+      const titleFull = dictItemsRes.map(item => item.title).join(separator);
+      const titleLocaleFull = dictItemsRes.map(item => item.titleLocale).join(separator);
+      dictItemRes = {
+        ...dictItemsRes[dictItemsRes.length - 1],
+        codeFull: code,
+        titleFull,
+        titleLocaleFull,
+      };
+      // cache
+      dict._cache[code] = dictItemRes;
+      console.log('----dictItemsRes', res, dictItemRes);
+      // ok
+      return dictItemRes;
     }
 
-    async _getDict({ dictKey }) {
+    _findItem_loop({ dictItemsRes, dictItemsMap, codes }) {
+      const code = codes.shift();
+      const dictItem = dictItemsMap && dictItemsMap[code];
+      if (!dictItem) return false;
+      dictItemsRes.push(dictItem);
+      if (codes.length === 0) return true;
+      return this._findItem_loop({
+        dictItemsRes,
+        dictItemsMap: dictItem._childrenMap,
+        codes,
+      });
+    }
+
+    async _getDict({ dictKey, locale }) {
       if (!__dicts[dictKey]) {
         __dicts[dictKey] = {};
       }
-      if (!__dicts[dictKey][ctx.locale]) {
-        __dicts[dictKey][ctx.locale] = await this._prepareDict({ dictKey, locale: ctx.locale });
+      if (!__dicts[dictKey][locale]) {
+        __dicts[dictKey][locale] = await this._prepareDict({ dictKey, locale });
       }
-      return __dicts[dictKey][ctx.locale];
+      return __dicts[dictKey][locale];
     }
 
     async _prepareDict({ dictKey, locale }) {
       // load
       const dict = await this._prepareDict_load({ dictKey });
       // prepare
-      await this._prepareDict_adjust({ dict, locale });
+      this._prepareDict_adjust({ dict, locale });
       console.log(dict);
       // ok
       return dict;
@@ -66,13 +109,13 @@ module.exports = ctx => {
       return dict;
     }
 
-    async _prepareDict_adjust({ dict, locale }) {
+    _prepareDict_adjust({ dict, locale }) {
       // init
       dict._dictItems = JSON.parse(dict.dictItems);
       dict._dictLocales = dict.dictLocales ? JSON.parse(dict.dictLocales) : null;
       dict._dictItemsMap = {};
       // adjust
-      await this._prepareDict_adjust_loop({
+      this._prepareDict_adjust_loop({
         dict,
         dictItemsMap: dict._dictItemsMap,
         dictItems: dict._dictItems,
@@ -80,7 +123,7 @@ module.exports = ctx => {
       });
     }
 
-    async _prepareDict_adjust_loop({ dict, dictItemsMap, dictItems, locale }) {
+    _prepareDict_adjust_loop({ dict, dictItemsMap, dictItems, locale }) {
       for (const item of dictItems) {
         // self
         item.titleLocale = this._prepareDict_titleLocale({ dict, title: item.title, locale });
@@ -88,7 +131,7 @@ module.exports = ctx => {
         // children
         if (item.children) {
           item._childrenMap = {};
-          await this._prepareDict_adjust_loop({
+          this._prepareDict_adjust_loop({
             dict,
             dictItemsMap: item._childrenMap,
             dictItems: item.children,
