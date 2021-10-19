@@ -1,8 +1,8 @@
-// const demo = require('./service/demo.js');
+const dict = require('./service/dict.js');
 
 module.exports = app => {
   const services = {
-    // demo,
+    dict,
   };
   return services;
 };

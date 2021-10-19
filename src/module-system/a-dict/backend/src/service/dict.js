@@ -1,7 +1,7 @@
 module.exports = app => {
-  class Demo extends app.Service {
+  class Dict extends app.Service {
     async action() {}
   }
 
-  return Demo;
+  return Dict;
 };

@@ -1,8 +1,8 @@
-// const demo = require('./controller/demo.js');
+const dict = require('./controller/dict.js');
 
 module.exports = app => {
   const controllers = {
-    // demo,
+    dict,
   };
   return controllers;
 };
