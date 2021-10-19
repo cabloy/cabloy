@@ -1,30 +1,6 @@
+const citiesUSA = require('./cities/citiesUSA.json');
 module.exports = app => {
-  const dictItems = [
-    {
-      code: 1,
-      name: 'birthday',
-      title: 'Birthday',
-      options: {
-        emoji: '🎂',
-      },
-    },
-    {
-      code: 2,
-      name: 'dance',
-      title: 'Dance',
-      options: {
-        emoji: '💃',
-      },
-    },
-    {
-      code: 3,
-      name: 'garden',
-      title: 'Garden',
-      options: {
-        emoji: '🏡',
-      },
-    },
-  ];
+  const dictItems = citiesUSA;
   const dictLocales = {};
   const definition = {
     atomName: 'Cities USA',
