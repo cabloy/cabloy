@@ -11,7 +11,7 @@ export default function (Vue) {
     mutations: {
       authLogin(state) {
         // clear user
-        state.dashboardUsers = null;
+        state.dashboardUsers = {};
       },
       setDashboardUsers(state, { dashboardAtomId, dashboardUsers }) {
         state.dashboardUsers = {
