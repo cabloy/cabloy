@@ -28,7 +28,7 @@ export default function (Vue) {
             .post('/a/dict/dict/getDict', { dictKey })
             .then(data => {
               const dict = data;
-              commit('setDashboardUsers', { dictKey, dict });
+              commit('setDict', { dictKey, dict });
               resolve(dict);
             })
             .catch(err => {

@@ -2,10 +2,16 @@ module.exports = app => {
   class Dict extends app.Service {
     async getDict({ dictKey, user }) {
       // check right
-      const res = await this._prepareDict_load({ dictKey, user, returnDict: false });
+      const res = await this.ctx.bean.dict._prepareDict_load({ dictKey, user, returnDict: false });
       if (!res) this.ctx.throw(403);
       // get dict
-      return await this.ctx.bean.dict.getDict({ dictKey });
+      const dict = await this.ctx.bean.dict.getDict({ dictKey });
+      // short
+      return {
+        atomId: dict.atomId,
+        description: dict.description,
+        _dictItems: dict._dictItems,
+      };
     }
   }
 
