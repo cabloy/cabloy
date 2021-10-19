@@ -23,6 +23,7 @@ import renderJson from './render/renderJson.jsx';
 import renderMarkdown from './render/renderMarkdown.jsx';
 import renderDetails from './render/renderDetails.jsx';
 import renderDetailsStat from './render/renderDetailsStat.jsx';
+import renderDict from './render/renderDict.jsx';
 import renderAtom from './render/renderAtom.jsx';
 import renderAtomClass from './render/renderAtomClass.jsx';
 import renderDivider from './render/renderDivider.jsx';
@@ -51,6 +52,7 @@ const __renderTypes = [
   ['markdown-content-cms', 'renderMarkdownContentCms'],
   ['details', 'renderDetails'],
   ['detailsStat', 'renderDetailsStat'],
+  ['dict', 'renderDict'],
   ['atom', 'renderAtom'],
   ['atomClass', 'renderAtomClass'],
   ['divider', 'renderDivider'],
@@ -84,6 +86,7 @@ export default {
     renderMarkdown,
     renderDetails,
     renderDetailsStat,
+    renderDict,
     renderAtom,
     renderAtomClass,
     renderDivider,
