@@ -8,6 +8,13 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
+    get atomClass() {
+      return {
+        module: moduleInfo.relativeName,
+        atomClassName: 'dict',
+      };
+    }
+
     get model() {
       return ctx.model.module(moduleInfo.relativeName).dict;
     }
@@ -26,7 +33,7 @@ module.exports = ctx => {
       // locale
       const locale = ctx.locale;
       // dict
-      const dict = await this._getDict({ dictKey, locale });
+      const dict = await this.getDict({ dictKey, locale });
       if (!dict._cache) dict._cache = {};
       let dictItemRes = dict._cache[code];
       if (dictItemRes) return dictItemRes;
@@ -65,7 +72,8 @@ module.exports = ctx => {
       });
     }
 
-    async _getDict({ dictKey, locale }) {
+    async getDict({ dictKey, locale }) {
+      locale = locale || ctx.locale;
       if (!__dicts[dictKey]) {
         __dicts[dictKey] = {};
       }
@@ -77,22 +85,30 @@ module.exports = ctx => {
 
     async _prepareDict({ dictKey, locale }) {
       // load
-      const dict = await this._prepareDict_load({ dictKey });
+      const dict = await this._prepareDict_load({ dictKey, user: null, returnDict: true });
       // prepare
       this._prepareDict_adjust({ dict, locale });
       // ok
       return dict;
     }
 
-    async _prepareDict_load({ dictKey }) {
+    async _prepareDict_load({ dictKey, user, returnDict }) {
       if (!dictKey) return ctx.throw.module('a-base', 1002);
       // get atomId
+      const atomClass = await ctx.bean.atomClass.get(this.atomClass);
       const atom = await ctx.bean.atom.modelAtom.get({
+        atomClassId: atomClass.id,
         atomStaticKey: dictKey,
         atomStage: 1,
       });
       if (!atom) return ctx.throw.module('a-base', 1002);
       const atomId = atom.id;
+      // check resource right
+      if (user) {
+        const res = await ctx.bean.resource.checkRightResource({ resourceAtomId: atomId, user });
+        if (!res) ctx.throw(403);
+      }
+      if (!returnDict) return true;
       // read
       const dict = await ctx.bean.atom.read({ key: { atomId } });
       if (!dict) return ctx.throw.module('a-base', 1002);
