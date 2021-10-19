@@ -153,10 +153,11 @@ module.exports = ctx => {
       if (!titleLocale && locale !== 'en-us') {
         titleLocale = ctx.bean.util.getProperty(dict._dictLocales, `en-us.${title}`);
       }
-      if (!titleLocale) {
-        titleLocale = ctx.text(title);
-      }
-      return titleLocale;
+      // not use system locale
+      // if (!titleLocale) {
+      //   titleLocale = ctx.text(title);
+      // }
+      return titleLocale || title;
     }
 
     _broadcastDictCacheRemove({ dictKey }) {
