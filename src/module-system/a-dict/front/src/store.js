@@ -28,6 +28,7 @@ export default function (Vue) {
             .post('/a/dict/dict/getDict', { dictKey })
             .then(data => {
               const dict = data;
+              _adjustDict({ dict });
               commit('setDict', { dictKey, dict });
               resolve(dict);
             })
@@ -38,4 +39,30 @@ export default function (Vue) {
       },
     },
   };
+}
+
+function _adjustDict({ dict }) {
+  dict._dictItemsMap = {};
+  // adjust
+  _adjustDict_loop({
+    dict,
+    dictItemsMap: dict._dictItemsMap,
+    dictItems: dict._dictItems,
+  });
+}
+
+function _adjustDict_loop({ dict, dictItemsMap, dictItems }) {
+  for (const item of dictItems) {
+    // self
+    dictItemsMap[item.code] = item;
+    // children
+    if (item.children) {
+      item._childrenMap = {};
+      this._adjustDict_loop({
+        dict,
+        dictItemsMap: item._childrenMap,
+        dictItems: item.children,
+      });
+    }
+  }
 }
