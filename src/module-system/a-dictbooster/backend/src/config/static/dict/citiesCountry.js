@@ -1,7 +1,12 @@
 const citiesCountry = require('./cities/citiesCountry.json');
 module.exports = app => {
   const dictItems = citiesCountry;
-  const dictLocales = {};
+  const dictLocales = {
+    'zh-cn': {
+      USA: '美国',
+      China: '中国',
+    },
+  };
   const definition = {
     atomName: 'Countries',
     atomStaticKey: 'countries',
