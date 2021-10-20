@@ -10,11 +10,16 @@ export default {
     };
   },
   computed: {},
+  watch: {
+    context() {
+      this._loadDict();
+    },
+  },
   created() {
-    this.init();
+    this._loadDict();
   },
   methods: {
-    async init() {
+    async _loadDict() {
       const { property } = this.context;
       const dictKey = property.ebParams.dictKey;
       this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
