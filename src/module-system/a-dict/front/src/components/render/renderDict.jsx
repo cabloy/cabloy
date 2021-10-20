@@ -45,8 +45,10 @@ export default {
         const code = this.context.getValue();
         const options = property.ebParams && property.ebParams.options;
         const dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options });
+        this.dictItemTitle = dictItem ? dictItem.titleLocaleFull : null;
       }
     },
+    async onChooseDict() {},
     _renderAsSelect() {
       const { parcel, key, property } = this.context;
       const options = this.dict._dictItems.map(item => {
@@ -63,26 +65,28 @@ export default {
       return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
     },
     _renderAsTree() {
-      const { parcel, dataPath, property, validate } = this.context;
+      const { dataPath } = this.context;
       const title = this.context.getTitle();
-      const categoryName = parcel.data.atomCategoryNameLocale || parcel.data.atomCategoryName;
-      if (validate.readOnly || property.ebReadOnly) {
-        return (
-          <f7-list-item title={title}>
-            <div slot="after">{categoryName}</div>
-          </f7-list-item>
-        );
-      }
       return (
-        <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
-          <div slot="after">{categoryName}</div>
+        <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseDict}>
+          <div slot="after">{this.dictItemTitle}</div>
         </eb-list-item-choose>
       );
     },
   },
   render() {
+    const { property, validate } = this.context;
+    // readOnly
+    if (validate.readOnly || property.ebReadOnly) {
+      const title = this.context.getTitle();
+      return (
+        <f7-list-item title={title}>
+          <div slot="after">{this.dictItemTitle}</div>
+        </f7-list-item>
+      );
+    }
+    // write
     if (!this.dict) return <div></div>;
-    const { property } = this.context;
     const mode = property.ebParams && property.ebParams.mode;
     if (!mode || mode === 'select') {
       return this._renderAsSelect();
