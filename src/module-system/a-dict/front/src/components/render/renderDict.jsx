@@ -70,18 +70,7 @@ export default {
             },
             callback: async (code, node) => {
               if (code === 200) {
-                const fieldTitle = `_${key}Title`;
-                const fieldTitleLocale = `_${key}TitleLocale`;
-                if (node) {
-                  this.context.setValue(node.id, key);
-                  await this._loadDictItem();
-                  this.context.setValue(this.dictItem.titleFull, fieldTitle);
-                  this.context.setValue(this.dictItem.titleLocaleFull, fieldTitleLocale);
-                } else {
-                  this.context.setValue(null, key);
-                  this.context.setValue('', fieldTitle);
-                  this.context.setValue('', fieldTitleLocale);
-                }
+                this._onChangeDictItem(node.id);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -90,6 +79,24 @@ export default {
           },
         });
       });
+    },
+    onSelectChange(value) {
+      this._onChangeDictItem(value);
+    },
+    async _onChangeDictItem(value) {
+      const { key } = this.context;
+      const fieldTitle = `_${key}Title`;
+      const fieldTitleLocale = `_${key}TitleLocale`;
+      if (value) {
+        this.context.setValue(value, key);
+        await this._loadDictItem();
+        this.context.setValue(this.dictItem.titleFull, fieldTitle);
+        this.context.setValue(this.dictItem.titleLocaleFull, fieldTitleLocale);
+      } else {
+        this.context.setValue(null, key);
+        this.context.setValue('', fieldTitle);
+        this.context.setValue('', fieldTitleLocale);
+      }
     },
     _renderAsSelect() {
       const { parcel, key, property } = this.context;
@@ -104,7 +111,14 @@ export default {
         ebOptions: options,
         ebParams: null,
       });
-      return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
+      return (
+        <eb-list-item-validate
+          parcel={parcel}
+          dataKey={key}
+          property={propertyNew}
+          onChange={this.onSelectChange}
+        ></eb-list-item-validate>
+      );
     },
     _renderAsTree() {
       const { dataPath } = this.context;
