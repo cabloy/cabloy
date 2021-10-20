@@ -27,8 +27,8 @@ export default {
     onDisable() {
       this.$f7router.back();
     },
-    onSelect(event, item) {
-      this.contextCallback(200, item);
+    onNodeChange(node) {
+      this.contextCallback(200, node);
       this.$f7router.back();
     },
   },
@@ -40,6 +40,7 @@ export default {
           dict={this.dict}
           leafOnly={this.leafOnly}
           selectedCodes={this.selectedCodes}
+          onNodeChange={this.onNodeChange}
         ></dictSelect>
       </eb-search-page>
     );

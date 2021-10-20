@@ -7,6 +7,7 @@ export default {
   data() {
     return {
       dict: null,
+      dictItem: null,
       dictItemTitle: null,
     };
   },
@@ -44,8 +45,8 @@ export default {
       } else {
         const code = this.context.getValue();
         const separator = property.ebParams.separator;
-        const dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options: { separator } });
-        this.dictItemTitle = dictItem ? dictItem.titleLocaleFull : null;
+        this.dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options: { separator } });
+        this.dictItemTitle = this.dictItem ? this.dictItem.titleLocaleFull : null;
       }
     },
     async onChooseDictItem() {
@@ -67,14 +68,15 @@ export default {
               leafOnly,
               selectedCodes,
             },
-            callback: (code, node) => {
+            callback: async (code, node) => {
               if (code === 200) {
                 const fieldTitle = `_${key}Title`;
                 const fieldTitleLocale = `_${key}TitleLocale`;
                 if (node) {
-                  this.context.setValue(node.code, key);
-                  this.context.setValue(node.data.titleFull, fieldTitle);
-                  this.context.setValue(node.data.titleLocaleFull, fieldTitleLocale);
+                  this.context.setValue(node.id, key);
+                  await this._loadDictItem();
+                  this.context.setValue(this.dictItem.titleFull, fieldTitle);
+                  this.context.setValue(this.dictItem.titleLocaleFull, fieldTitleLocale);
                 } else {
                   this.context.setValue(null, key);
                   this.context.setValue('', fieldTitle);

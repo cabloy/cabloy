@@ -6,7 +6,9 @@ export default {
     selectedCodes: {},
   },
   data() {
-    return {};
+    return {
+      inited: false,
+    };
   },
   mounted() {
     this.init(this.selectedCodes);
@@ -31,6 +33,8 @@ export default {
       await tree.load(root);
       // checkNodes
       await tree.checkNodes(selectedCodes, true, true);
+      // inited
+      this.inited = true;
     },
     async reload() {
       await this.init(null);
@@ -108,6 +112,7 @@ export default {
       return this._createNodeChildren(node.data.children, node);
     },
     onNodeChange(node) {
+      if (!this.inited) return;
       this.$emit('node:change', node);
       this.$emit('nodeChange', node);
     },
