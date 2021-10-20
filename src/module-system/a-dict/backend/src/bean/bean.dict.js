@@ -23,7 +23,7 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).dictContent;
     }
 
-    // options: translate/separator
+    // options: separator
     async findItem({ dictKey, code, options }) {
       if (!code) return null;
       code = String(code);

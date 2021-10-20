@@ -41,7 +41,7 @@ module.exports = app => {
       const fields = _atomClass.dict && _atomClass.dict.fields;
       for (const fieldName in fields) {
         const field = fields[fieldName];
-        if (!field.translate) continue;
+        if (field.translate === false) continue;
         //
         const code = item[fieldName];
         if (!code) continue;
