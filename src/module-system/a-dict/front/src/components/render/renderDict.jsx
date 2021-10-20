@@ -50,7 +50,7 @@ export default {
       }
     },
     async onChooseDictItem() {
-      const { key, property } = this.context;
+      const { property } = this.context;
       const leafOnly = property.ebParams.separator;
       const title = this.context.getTitle();
       // selectedCategoryIds

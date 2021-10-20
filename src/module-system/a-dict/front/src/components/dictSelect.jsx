@@ -17,7 +17,7 @@ export default {
     getInstance() {
       return this.$refs.tree;
     },
-    async init(selectedCodes) {
+    async init(/* selectedCodes*/) {
       // root
       const root = {
         attrs: {
@@ -32,7 +32,8 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      await tree.checkNodes(selectedCodes, true, true);
+      //   should not implement this feature for performance
+      // await tree.checkNodes(selectedCodes, true, true);
       // inited
       this.inited = true;
     },
