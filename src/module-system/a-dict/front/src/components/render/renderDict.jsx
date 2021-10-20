@@ -43,12 +43,49 @@ export default {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
       } else {
         const code = this.context.getValue();
-        const options = property.ebParams && property.ebParams.options;
-        const dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options });
+        const separator = property.ebParams.separator;
+        const dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options: { separator } });
         this.dictItemTitle = dictItem ? dictItem.titleLocaleFull : null;
       }
     },
-    async onChooseDict() {},
+    async onChooseDict() {
+      const { key, property } = this.context;
+      const leafOnly = property.ebParams.separator;
+      // selectedCategoryIds
+      const code = this.value;
+      const selectedCodes = code ? [code] : [];
+      // select
+      return new Promise(resolve => {
+        const url = '/a/dict/dict/select';
+        this.$view.navigate(url, {
+          target: '_self',
+          context: {
+            params: {
+              leafOnly,
+              selectedCodes,
+            },
+            callback: (code, node) => {
+              if (code === 200) {
+                const fieldTitle = `_${key}Title`;
+                const fieldTitleLocale = `_${key}TitleLocale`;
+                if (node) {
+                  this.context.setValue(node.code, key);
+                  this.context.setValue(node.data.titleFull, fieldTitle);
+                  this.context.setValue(node.data.titleLocaleFull, fieldTitleLocale);
+                } else {
+                  this.context.setValue(null, key);
+                  this.context.setValue('', fieldTitle);
+                  this.context.setValue('', fieldTitleLocale);
+                }
+                resolve(true);
+              } else if (code === false) {
+                resolve(false);
+              }
+            },
+          },
+        });
+      });
+    },
     _renderAsSelect() {
       const { parcel, key, property } = this.context;
       const options = this.dict._dictItems.map(item => {

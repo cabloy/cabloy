@@ -1,9 +1,10 @@
 import Vue from 'vue';
+import dictSelect from '../components/dictSelect.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ebPageContext],
   components: {
-    users,
+    dictSelect,
   },
   computed: {
     title() {
