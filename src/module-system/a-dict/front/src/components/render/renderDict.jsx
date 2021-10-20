@@ -10,10 +10,17 @@ export default {
       dictItemTitle: null,
     };
   },
-  computed: {},
+  computed: {
+    value() {
+      return this.context.getValue();
+    },
+  },
   watch: {
     context() {
       this._loadDict();
+    },
+    value() {
+      this._loadDictItem();
     },
   },
   created() {
@@ -21,12 +28,23 @@ export default {
   },
   methods: {
     async _loadDict() {
+      const { property, validate } = this.context;
+      const dictKey = property.ebParams.dictKey;
+      if (!validate.readOnly && !property.ebReadOnly) {
+        this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
+      }
+      // load dict item
+      await this._loadDictItem();
+    },
+    async _loadDictItem() {
       const { key, property, validate } = this.context;
+      const dictKey = property.ebParams.dictKey;
       if (validate.readOnly || property.ebReadOnly) {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
       } else {
-        const dictKey = property.ebParams.dictKey;
-        this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
+        const code = this.context.getValue();
+        const options = property.ebParams && property.ebParams.options;
+        const dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options });
       }
     },
     _renderAsSelect() {
