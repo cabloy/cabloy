@@ -58,7 +58,7 @@ function _adjustDict_loop({ dict, dictItemsMap, dictItems }) {
     // children
     if (item.children) {
       item._childrenMap = {};
-      this._adjustDict_loop({
+      _adjustDict_loop({
         dict,
         dictItemsMap: item._childrenMap,
         dictItems: item.children,
