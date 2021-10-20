@@ -53,7 +53,7 @@ export default {
       const { property } = this.context;
       const leafOnly = property.ebParams.separator;
       const title = this.context.getTitle();
-      // selectedCategoryIds
+      // selectedCodes
       const code = this.value;
       const selectedCodes = code ? [code] : [];
       // select
