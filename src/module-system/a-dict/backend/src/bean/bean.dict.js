@@ -93,7 +93,7 @@ module.exports = ctx => {
     }
 
     async _prepareDict_load({ dictKey, user, returnDict }) {
-      if (!dictKey) return ctx.throw.module('a-base', 1002);
+      if (!dictKey) throw new Error('dictKey not set');
       // get atomId
       const atomClass = await ctx.bean.atomClass.get(this.atomClass);
       const atom = await ctx.bean.atom.modelAtom.get({
