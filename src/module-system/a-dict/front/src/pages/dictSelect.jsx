@@ -10,13 +10,16 @@ export default {
     title() {
       return this.contextParams.title;
     },
+    leafOnly() {
+      return this.contextParams.leafOnly;
+    },
+    selectedCodes() {
+      return this.contextParams.selectedCodes;
+    },
   },
   methods: {
     onSearch(query) {
-      this.$refs.list.onSearch(query);
-    },
-    onLoadMore() {
-      this.$refs.list.loadMore();
+      console.log(query);
     },
     onDisable() {
       this.$f7router.back();
@@ -34,7 +37,7 @@ export default {
         onLoadMore={this.onLoadMore}
         onDisable={this.onDisable}
       >
-        <div>sssss</div>
+        <dictSelect ref="tree" leafOnly={this.leafOnly} selectedCodes={this.selectedCodes}></dictSelect>
       </eb-search-page>
     );
   },

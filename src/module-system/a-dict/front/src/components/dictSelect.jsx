@@ -1,25 +1,11 @@
 export default {
   props: {
-    atomClass: {},
-    language: {},
-    categoryIdStart: {},
-    multiple: {},
-    catalogOnly: {},
     leafOnly: {},
     disabledCategoryIds: {},
-    selectedCategoryIds: {},
-    // setLocale: {},
+    selectedCodes: {},
   },
   data() {
     return {};
-  },
-  watch: {
-    atomClass() {
-      this.reload();
-    },
-    language() {
-      this.reload();
-    },
   },
   mounted() {
     this.init(this.selectedCategoryIds);

@@ -51,6 +51,7 @@ export default {
     async onChooseDict() {
       const { key, property } = this.context;
       const leafOnly = property.ebParams.separator;
+      const title = this.context.getTitle();
       // selectedCategoryIds
       const code = this.value;
       const selectedCodes = code ? [code] : [];
@@ -61,6 +62,7 @@ export default {
           target: '_self',
           context: {
             params: {
+              title,
               leafOnly,
               selectedCodes,
             },
