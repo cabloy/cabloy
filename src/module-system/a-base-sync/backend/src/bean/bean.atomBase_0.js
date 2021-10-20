@@ -58,10 +58,12 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       if (items.length === 0) return;
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const _atomClass = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
       // dict translate
-      for (const item of items) {
-        await this._dictTranslate({ item, _atomClass });
+      if (_atomClass) {
+        for (const item of items) {
+          await this._dictTranslate({ item, _atomClass });
+        }
       }
       // revision
       if (options.stage === 'history') {
