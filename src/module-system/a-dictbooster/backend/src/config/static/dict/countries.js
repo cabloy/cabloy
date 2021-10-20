@@ -1,6 +1,6 @@
-const citiesCountry = require('./cities/citiesCountry.json');
+const countries = require('./cities/countries.json');
 module.exports = app => {
-  const dictItems = citiesCountry;
+  const dictItems = countries;
   const dictLocales = {
     'zh-cn': {
       USA: '美国',

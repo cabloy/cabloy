@@ -1,10 +1,10 @@
-const citiesCountry = require('./dict/citiesCountry.js');
+const countries = require('./dict/countries.js');
 const citiesUSA = require('./dict/citiesUSA.js');
 const citiesChina = require('./dict/citiesChina.js');
 
 module.exports = app => {
   const dicts = [
-    citiesCountry(app), //
+    countries(app), //
     citiesUSA(app),
     citiesChina(app),
   ];
