@@ -10,6 +10,9 @@ export default {
     title() {
       return this.contextParams.title;
     },
+    dict() {
+      return this.contextParams.dict;
+    },
     leafOnly() {
       return this.contextParams.leafOnly;
     },
@@ -31,13 +34,13 @@ export default {
   },
   render() {
     return (
-      <eb-search-page
-        title={this.title}
-        onSearch={this.onSearch}
-        onLoadMore={this.onLoadMore}
-        onDisable={this.onDisable}
-      >
-        <dictSelect ref="tree" leafOnly={this.leafOnly} selectedCodes={this.selectedCodes}></dictSelect>
+      <eb-search-page title={this.title} onSearch={this.onSearch} onDisable={this.onDisable}>
+        <dictSelect
+          ref="tree"
+          dict={this.dict}
+          leafOnly={this.leafOnly}
+          selectedCodes={this.selectedCodes}
+        ></dictSelect>
       </eb-search-page>
     );
   },

@@ -48,7 +48,7 @@ export default {
         this.dictItemTitle = dictItem ? dictItem.titleLocaleFull : null;
       }
     },
-    async onChooseDict() {
+    async onChooseDictItem() {
       const { key, property } = this.context;
       const leafOnly = property.ebParams.separator;
       const title = this.context.getTitle();
@@ -63,6 +63,7 @@ export default {
           context: {
             params: {
               title,
+              dict: this.dict,
               leafOnly,
               selectedCodes,
             },
@@ -107,7 +108,7 @@ export default {
       const { dataPath } = this.context;
       const title = this.context.getTitle();
       return (
-        <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseDict}>
+        <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseDictItem}>
           <div slot="after">{this.dictItemTitle}</div>
         </eb-list-item-choose>
       );
