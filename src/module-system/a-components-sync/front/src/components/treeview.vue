@@ -313,7 +313,7 @@ export default {
       _node.attrs = this.$utils.extend({}, node.attrs);
       // attrs
       if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewRoot.attrs.itemToggle;
-      if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
+      // if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
       if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) _node.attrs.selected = this.selectedItem && this.selectedItem.id === node.id;
