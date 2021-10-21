@@ -34,6 +34,12 @@ export default {
         this.codesMatched = context.codesMatched;
       }
     },
+    onPerformCodeMatch(event, codeMatch) {
+      // close sheet
+      this.$refs.sheet.f7Sheet.close();
+      // expand
+      this.$emit('codeMatchClick', codeMatch);
+    },
     _search_loop(dictItems, context) {
       if (!dictItems || dictItems.length === 0) return false;
       const query = context.queries.shift();
@@ -90,7 +96,14 @@ export default {
     _renderList() {
       const children = [];
       for (const codeMatch of this.codesMatched) {
-        children.push(<eb-list-item key={codeMatch.code} title={codeMatch.titleLocale}></eb-list-item>);
+        children.push(
+          <eb-list-item
+            key={codeMatch.code}
+            title={codeMatch.titleLocale}
+            link="#"
+            propsOnPerform={event => this.onPerformCodeMatch(event, codeMatch)}
+          ></eb-list-item>
+        );
       }
       return (
         <eb-list form inline-labels no-hairlines-md>

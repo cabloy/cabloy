@@ -92,7 +92,7 @@ export default {
             toggle: isCatalog,
             loadChildren: isCatalog,
             checkbox,
-            checkOnLabel: checkbox,
+            checkOnLabel: false, // checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
             folder,
@@ -112,10 +112,25 @@ export default {
       // children
       return this._createNodeChildren(node.data.children, node);
     },
-    onNodeChange(node) {
-      if (!this.inited) return;
-      this.$emit('node:change', node);
-      this.$emit('nodeChange', node);
+    onNodeClick(node) {
+      this.$emit('dictItemClick', node);
+    },
+    async selectDictItem(codeMatch) {
+      const tree = this.getInstance();
+      const codes = codeMatch.code.split('/');
+      let nodeParent = tree.treeviewRoot;
+      for (let index = 0; index < codes.length; index++) {
+        // force load children
+        await tree._loadChildren(nodeParent);
+        // find
+        nodeParent = nodeParent.children.find(item => {
+          return item.id === codes.slice(0, index + 1).join('/');
+        });
+        if (!nodeParent) break;
+      }
+      if (nodeParent) {
+        await tree.checkNodes([nodeParent.id], false, true);
+      }
     },
   },
   render() {
@@ -124,7 +139,7 @@ export default {
         ref="tree"
         auto={false}
         propsOnLoadChildren={this.onLoadChildren}
-        onNodeChange={this.onNodeChange}
+        onNodeClick={this.onNodeClick}
       ></eb-treeview>
     );
   },

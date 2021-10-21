@@ -32,9 +32,12 @@ export default {
     onDisable() {
       this.$f7router.back();
     },
-    onNodeChange(node) {
+    onDictItemClick(node) {
       this.contextCallback(200, node);
       this.$f7router.back();
+    },
+    onCodeMatchClick(codeMatch) {
+      this.$refs.tree.selectDictItem(codeMatch);
     },
   },
   render() {
@@ -51,9 +54,9 @@ export default {
           dict={this.dict}
           leafOnly={this.leafOnly}
           selectedCodes={this.selectedCodes}
-          onNodeChange={this.onNodeChange}
+          onDictItemClick={this.onDictItemClick}
         ></dictSelect>
-        <dictFilterSheet ref="sheet" dict={this.dict}></dictFilterSheet>
+        <dictFilterSheet ref="sheet" dict={this.dict} onCodeMatchClick={this.onCodeMatchClick}></dictFilterSheet>
       </eb-search-page>
     );
   },
