@@ -5,16 +5,77 @@ export default {
   data() {
     return {
       codesMatched: [],
+      limit: 5,
     };
   },
 
   methods: {
     search(query) {
+      // sheet
       if (query) {
         this.$refs.sheet.f7Sheet.open();
       } else {
         this.$refs.sheet.f7Sheet.close();
       }
+      // search
+      if (!query) {
+        this.codesMatched = [];
+      } else {
+        const context = {
+          queries: query
+            .replace(/ /g, '/')
+            .split('/')
+            .filter(c => c),
+          codesMatched: [],
+          codeParent: '',
+          titleLocaleParent: '',
+        };
+        this._search_loop(this.dict._dictItems, context);
+        this.codesMatched = context.codesMatched;
+      }
+    },
+    _search_loop(dictItems, context) {
+      if (!dictItems || dictItems.length === 0) return false;
+      const query = context.queries.shift();
+      for (const dictItem of dictItems) {
+        const codeCurrent = context.codeParent ? `${context.codeParent}/${dictItem.code}` : dictItem.code;
+        const titleLocaleCurrent = context.titleLocaleParent
+          ? `${context.titleLocaleParent}/${dictItem.titleLocale}`
+          : dictItem.titleLocale;
+        let pos = dictItem.titleLocale.indexOf(query);
+        if (pos === -1 && dictItem.title !== dictItem.titleLocale) {
+          pos = dictItem.title.indexOf(query);
+        }
+        // find
+        if (pos > -1) {
+          if (context.queries.length === 0) {
+            // complete
+            context.codesMatched.push({
+              code: codeCurrent,
+              titleLocale: titleLocaleCurrent,
+            });
+            if (context.codesMatched.length >= this.limit) return true;
+          } else {
+            // children
+            const res = this._search_loop(dictItem.children, {
+              queries: context.queries.concat(),
+              codesMatched: context.codesMatched,
+              codeParent: codeCurrent,
+              titleLocaleParent: titleLocaleCurrent,
+            });
+            if (res) return true;
+          }
+        }
+        // children
+        const res = this._search_loop(dictItem.children, {
+          queries: [query, ...context.queries],
+          codesMatched: context.codesMatched,
+          codeParent: codeCurrent,
+          titleLocaleParent: titleLocaleCurrent,
+        });
+        if (res) return true;
+      }
+      return false;
     },
     _renderEmpty() {
       return (
@@ -27,15 +88,13 @@ export default {
       );
     },
     _renderList() {
+      const children = [];
+      for (const codeMatch of this.codesMatched) {
+        children.push(<eb-list-item key={codeMatch.code} title={codeMatch.titleLocale}></eb-list-item>);
+      }
       return (
         <eb-list form inline-labels no-hairlines-md>
-          <eb-list-input
-            label={this.$text('Remark')}
-            type="text"
-            clear-button
-            placeholder={this.$text('Remark')}
-            v-model={this.remark}
-          ></eb-list-input>
+          {children}
         </eb-list>
       );
     },
