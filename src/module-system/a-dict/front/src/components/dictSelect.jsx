@@ -74,17 +74,14 @@ export default {
         },
       ];
     },
-    _createNodeChildren(children, nodeParent) {
+    _createNodeChildren(children) {
       if (!children) return [];
       const nodes = children.map(item => {
         const isCatalog = !!item.children;
         const checkbox = !this.leafOnly || !isCatalog;
         const folder = !checkbox && isCatalog;
         const disabled = false;
-        let nodeId = item.code;
-        if (nodeParent) {
-          nodeId = `${nodeParent.id}/${nodeId}`;
-        }
+        const nodeId = item.code;
         const node = {
           id: nodeId,
           attrs: {
@@ -104,16 +101,24 @@ export default {
       });
       return nodes;
     },
+    _getCodeFromElementId(elementId) {
+      const arr = elementId.split('-');
+      arr.shift();
+      return arr.join('/');
+    },
     async onLoadChildren(node) {
       if (node.root) {
         const children = this.dict._dictItems;
         return this._createNodeChildren(children);
       }
       // children
-      return this._createNodeChildren(node.data.children, node);
+      return this._createNodeChildren(node.data.children);
     },
     onNodeClick(node) {
-      this.$emit('dictItemClick', node);
+      this.$emit('dictItemClick', {
+        ...node,
+        id: this._getCodeFromElementId(node.attrs.id),
+      });
     },
     async selectDictItem(codeMatch) {
       const tree = this.getInstance();
@@ -124,7 +129,8 @@ export default {
         await tree._loadChildren(nodeParent);
         // find
         nodeParent = nodeParent.children.find(item => {
-          return item.id === codes.slice(0, index + 1).join('/');
+          const nodeId = this._getCodeFromElementId(item.attrs.id);
+          return nodeId === codes.slice(0, index + 1).join('/');
         });
         if (!nodeParent) break;
       }
