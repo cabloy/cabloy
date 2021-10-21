@@ -51,7 +51,8 @@ export default {
     },
     async onChooseDictItem() {
       const { property } = this.context;
-      const leafOnly = property.ebParams.separator;
+      let leafOnly = property.ebParams.leafOnly;
+      if (leafOnly === undefined) leafOnly = true;
       const title = this.context.getTitle();
       // selectedCodes
       const code = this.value;
