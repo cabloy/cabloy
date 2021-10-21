@@ -1,4 +1,5 @@
 export default {
+  NoMatchedData: '没有匹配的数据',
   'No Data': '没有数据',
   'No More Data': '没有更多数据',
   'Load Error, Try Again': '加载失败，请重试',

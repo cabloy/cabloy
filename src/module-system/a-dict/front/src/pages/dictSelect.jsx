@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import dictSelect from '../components/dictSelect.jsx';
+import dictFilterSheet from '../components/dictFilterSheet.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ebPageContext],
   components: {
     dictSelect,
+    dictFilterSheet,
   },
   computed: {
     title() {
@@ -22,7 +24,7 @@ export default {
   },
   methods: {
     onSearch(query) {
-      console.log(query);
+      this.$refs.sheet.search(query);
     },
     onDisable() {
       this.$f7router.back();
@@ -42,6 +44,7 @@ export default {
           selectedCodes={this.selectedCodes}
           onNodeChange={this.onNodeChange}
         ></dictSelect>
+        <dictFilterSheet ref="sheet" dict={this.dict}></dictFilterSheet>
       </eb-search-page>
     );
   },
