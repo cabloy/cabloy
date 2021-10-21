@@ -37,7 +37,7 @@ export default {
       this.$f7router.back();
     },
     onCodeMatchClick(codeMatch) {
-      this.$refs.tree.selectDictItem(codeMatch);
+      this.$refs.tree.selectDictItem(codeMatch.code);
     },
   },
   render() {

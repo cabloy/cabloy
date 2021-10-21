@@ -17,7 +17,7 @@ export default {
     getInstance() {
       return this.$refs.tree;
     },
-    async init(/* selectedCodes*/) {
+    async init(selectedCodes) {
       // root
       const root = {
         attrs: {
@@ -32,8 +32,11 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      //   should not implement this feature for performance
-      // await tree.checkNodes(selectedCodes, true, true);
+      if (selectedCodes && selectedCodes.length > 0) {
+        for (const code of selectedCodes) {
+          await this.selectDictItem(code);
+        }
+      }
       // inited
       this.inited = true;
     },
@@ -120,9 +123,9 @@ export default {
         id: this._getCodeFromNodeId(node.id),
       });
     },
-    async selectDictItem(codeMatch) {
+    async selectDictItem(code) {
       const tree = this.getInstance();
-      const codes = codeMatch.code.split('/');
+      const codes = code.split('/');
       let nodeParent = tree.treeviewRoot;
       for (let index = 0; index < codes.length; index++) {
         // force load children
