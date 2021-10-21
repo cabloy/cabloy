@@ -103,6 +103,12 @@ export default {
     const domContent = this.codesMatched.length > 0 ? this._renderList() : this._renderEmpty();
     return (
       <f7-sheet ref="sheet" class="eb-sheet-no-backdrop" backdrop={false} fill>
+        <f7-toolbar>
+          <div></div>
+          <div class="right">
+            <f7-link sheet-close>{this.$text('Close')}</f7-link>
+          </div>
+        </f7-toolbar>
         <f7-page-content>{domContent}</f7-page-content>
       </f7-sheet>
     );
