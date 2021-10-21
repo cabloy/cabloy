@@ -23,6 +23,7 @@ export default {
       } else {
         const context = {
           queries: query
+            .toLowerCase()
             .replace(/ /g, '/')
             .split('/')
             .filter(c => c),
@@ -48,9 +49,9 @@ export default {
         const titleLocaleCurrent = context.titleLocaleParent
           ? `${context.titleLocaleParent}/${dictItem.titleLocale}`
           : dictItem.titleLocale;
-        let pos = dictItem.titleLocale.indexOf(query);
+        let pos = dictItem.titleLocale.toLowerCase().indexOf(query);
         if (pos === -1 && dictItem.title !== dictItem.titleLocale) {
-          pos = dictItem.title.indexOf(query);
+          pos = dictItem.title.toLowerCase().indexOf(query);
         }
         // find
         if (pos > -1) {
