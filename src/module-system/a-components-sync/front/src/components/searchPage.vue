@@ -6,6 +6,8 @@
         ref="searchbar"
         @searchbar:search="onSearch"
         @searchbar:disable="onDisable"
+        @focus="onFocus"
+        @blur="onBlur"
         :placeholder="$text(title)"
         :backdrop="false"
         :disable-button="disableButton"
@@ -44,6 +46,7 @@ export default {
   data() {
     return {
       disableButton: null,
+      query: '',
     };
   },
   mounted() {
@@ -54,6 +57,7 @@ export default {
   },
   methods: {
     onSearch: Vue.prototype.$meta.util.debounce(function (searchbar, query) {
+      this.query = query;
       this.$emit('search', query);
     }, 300),
     onDisable() {
@@ -64,6 +68,12 @@ export default {
     },
     onClickAdvanced() {
       this.$emit('searchAdvanced');
+    },
+    onFocus() {
+      this.$emit('focus');
+    },
+    onBlur() {
+      this.$emit('blur');
     },
   },
 };

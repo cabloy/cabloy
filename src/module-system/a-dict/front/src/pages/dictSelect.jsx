@@ -26,6 +26,9 @@ export default {
     onSearch(query) {
       this.$refs.sheet.search(query);
     },
+    onFocus() {
+      this.$refs.sheet.search(this.$refs.searchPage.query);
+    },
     onDisable() {
       this.$f7router.back();
     },
@@ -36,7 +39,13 @@ export default {
   },
   render() {
     return (
-      <eb-search-page title={this.title} onSearch={this.onSearch} onDisable={this.onDisable}>
+      <eb-search-page
+        ref="searchPage"
+        title={this.title}
+        onSearch={this.onSearch}
+        onDisable={this.onDisable}
+        onFocus={this.onFocus}
+      >
         <dictSelect
           ref="tree"
           dict={this.dict}
