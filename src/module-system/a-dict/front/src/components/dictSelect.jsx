@@ -138,10 +138,12 @@ export default {
         await tree.checkNodes([nodeParent.id], false, true);
         this.$nextTick(() => {
           const $el = tree.getElementByNode(nodeParent);
-          $el[0].scrollIntoView({
-            block: 'center',
-            behavior: 'smooth',
-          });
+          if ($el.length > 0) {
+            $el[0].scrollIntoView({
+              block: 'center',
+              behavior: 'smooth',
+            });
+          }
         });
       }
     },

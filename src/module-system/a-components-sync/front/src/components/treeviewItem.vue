@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     onContextMenu(event) {
-      const popover = this.$$(this.$el).find('.popover');
+      const popover = this.$$(this.$el).find('.popover').eq(0);
       if (popover.length === 0) return;
 
       event.stopPropagation();
@@ -41,14 +41,14 @@ export default {
     },
     getLinkEl() {
       // bypass the popover's link
-      const content = this.$$(this.$el).find('.treeview-item-content');
-      if (content.length === 0) return null;
-      return this.$$(content[0]).closest('a');
+      const $content = this.$$(this.$el).find('.treeview-item-content').eq(0);
+      if ($content.length === 0) return null;
+      return $content.closest('a');
     },
     _switchFolderIcon(el) {
       const $el = this.$$(el);
       // icon
-      const $icon = $el.find('i.icon.material-icons');
+      const $icon = $el.find('i.icon.material-icons').eq(0);
       if ($icon.length === 0) return;
       // text
       const text = $icon.text();
