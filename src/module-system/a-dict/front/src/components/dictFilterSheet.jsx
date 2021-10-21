@@ -17,7 +17,14 @@ export default {
       }
     },
     _renderEmpty() {
-      return <div>{this.$text('NoMatchedData')}</div>;
+      return (
+        <f7-card>
+          <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
+          <f7-card-content>
+            <div>{this.$text('NoMatchedData')}</div>
+          </f7-card-content>
+        </f7-card>
+      );
     },
     _renderList() {
       return (
@@ -36,7 +43,7 @@ export default {
   render() {
     const domContent = this.codesMatched.length > 0 ? this._renderList() : this._renderEmpty();
     return (
-      <f7-sheet ref="sheet" backdrop={false} fill>
+      <f7-sheet ref="sheet" class="eb-sheet-no-backdrop" backdrop={false} fill>
         <f7-page-content>{domContent}</f7-page-content>
       </f7-sheet>
     );

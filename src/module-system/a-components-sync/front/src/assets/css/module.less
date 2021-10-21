@@ -314,4 +314,19 @@ input[type='search']::-webkit-search-decoration {
   .after-title-search {
     margin: 0 10px;
   }
+
+  .sheet-modal.sheet-modal-bottom.eb-sheet-no-backdrop:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: auto;
+    width: 100%;
+    top: 0;
+    bottom: auto;
+    height: 8px;
+    pointer-events: none;
+    background: var(--f7-navbar-shadow-image);
+    transform-origin: none;
+    transform: none;
+  }
 }
