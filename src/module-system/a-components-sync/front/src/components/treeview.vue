@@ -339,6 +339,7 @@ export default {
       if (_node.attrs.checkbox && radio) {
         children.push(
           _h('f7-radio', {
+            key: '__radio',
             slot: 'content-start',
             attrs: {
               checked: _node.attrs.checked,
@@ -354,6 +355,7 @@ export default {
       } else if (_node.attrs.checkbox && !radio) {
         children.push(
           _h('f7-checkbox', {
+            key: '__checkbox',
             slot: 'content-start',
             attrs: {
               checked: _node.attrs.checked,
@@ -409,6 +411,7 @@ export default {
           _h(
             'template',
             {
+              key: `__slot:${key}`,
               slot: key,
             },
             [this.$scopedSlots[key]({ node })]
