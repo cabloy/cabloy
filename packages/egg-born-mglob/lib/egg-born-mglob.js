@@ -11,6 +11,15 @@ module.exports = {
 
 const __paths = [
   {
+    prefix: 'src/module-vendor/',
+    public: false,
+    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
+    backends: [
+      { js: 'backend/src/main.js', static: 'backend/static' },
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
+  {
     prefix: 'src/module/',
     public: false,
     fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
@@ -21,15 +30,6 @@ const __paths = [
   },
   {
     prefix: 'src/module-system/',
-    public: false,
-    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
-    backends: [
-      { js: 'backend/src/main.js', static: 'backend/static' },
-      { js: 'dist/backend.js', static: 'dist/staticBackend' },
-    ],
-  },
-  {
-    prefix: 'src/module-vendor/',
     public: false,
     fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
