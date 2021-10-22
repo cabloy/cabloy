@@ -1,4 +1,5 @@
-import chartjs from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 export default {
   meta: {
@@ -7,8 +8,8 @@ export default {
   methods: {
     onAction({ action }) {
       if (action.name === 'instance') {
-        if (!chartjs) throw new Error('chart.js should not be null');
-        return chartjs;
+        if (!Chart) throw new Error('chart.js should not be null');
+        return Chart;
       }
     },
   },
