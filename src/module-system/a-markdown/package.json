@@ -29,7 +29,7 @@
     "@zhennann/markdown-it-block": "^4.1.2",
     "@zhennann/prosemirror-utils": "^0.9.6",
     "codemirror": "^5.62.3",
-    "egg-born-mock": "^2.1.1",
+    "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
     "linkify-it": "^3.0.2",
     "prosemirror-commands": "^1.1.10",
