@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-codemirror",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "title": "codemirror",
   "eggBornModule": {
     "fileVersion": 0,
@@ -22,6 +22,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.1",
     "extend2": "^1.0.0",
-    "require3": "^2.1.1"
+    "require3": "^2.1.2"
   }
 }

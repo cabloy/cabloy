@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/socketio",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "socketio",
   "main": "dist/socketio.min.js",
   "publishConfig": {

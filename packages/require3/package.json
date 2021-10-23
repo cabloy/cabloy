@@ -1,6 +1,6 @@
 {
   "name": "require3",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "require3",
   "main": "index.js",
   "repository": {
@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/zhennann/require3#readme",
   "dependencies": {
-    "@zhennann/markdown": "^3.2.1",
-    "@zhennann/markdown-it-block": "^4.1.1",
-    "egg-born-mparse": "^2.1.1"
+    "@zhennann/markdown": "^3.2.2",
+    "@zhennann/markdown-it-block": "^4.1.2",
+    "egg-born-mparse": "^2.1.2"
   }
 }

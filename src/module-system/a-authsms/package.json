@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsms",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "title": "Auth-SMS",
   "eggBornModule": {
     "fileVersion": 0,
@@ -26,6 +26,6 @@
     "chalk": "^3.0.0",
     "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
-    "require3": "^2.1.1"
+    "require3": "^2.1.2"
   }
 }

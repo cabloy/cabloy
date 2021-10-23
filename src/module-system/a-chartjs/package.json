@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-chartjs",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "title": "a-chartjs",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,7 +23,7 @@
   "dependencies": {
     "egg-born-mock": "^2.1.2",
     "extend2": "^1.0.0",
-    "require3": "^2.1.1"
+    "require3": "^2.1.2"
   },
   "devDependencies": {
     "chart.js": "^3.5.1"

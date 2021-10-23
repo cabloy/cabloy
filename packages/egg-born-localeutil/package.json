@@ -1,6 +1,6 @@
 {
   "name": "egg-born-localeutil",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "egg-born-localeutil",
   "main": "dist/index.js",
   "scripts": {
