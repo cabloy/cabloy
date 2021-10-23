@@ -61,7 +61,7 @@ module.exports = Strategy;
 /***/ 952:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const chalk = require3('chalk');
 const boxen = require3('boxen');
 
@@ -140,7 +140,7 @@ module.exports = ctx => {
 /***/ 881:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const popCore = require3('@alicloud/pop-core');
 
 module.exports = function (ctx) {
@@ -198,7 +198,7 @@ module.exports = function (ctx) {
 /***/ 87:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const chalk = require3('chalk');
 const boxen = require3('boxen');
 
@@ -211,7 +211,10 @@ module.exports = function (ctx) {
       // token
       const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
       // prompt
-      const message = chalk.keyword('cyan')('Test SMS Verification Code To: ') + chalk.keyword('yellow')(context.mobile) + chalk.keyword('orange')('\n' + token);
+      const message =
+        chalk.keyword('cyan')('Test SMS Verification Code To: ') +
+        chalk.keyword('yellow')(context.mobile) +
+        chalk.keyword('orange')('\n' + token);
       console.log('\n' + boxen(message, boxenOptions));
       // ok
       return { token };
@@ -449,7 +452,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const passport = __webpack_require__(581);
-const util = __webpack_require__(669);
+const util = __webpack_require__(837);
 
 function Strategy(options, verify) {
   if (typeof options === 'function') {
@@ -949,7 +952,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
@@ -957,7 +960,7 @@ module.exports = require("require3");
 
 /***/ }),
 
-/***/ 669:
+/***/ 837:
 /***/ ((module) => {
 
 "use strict";

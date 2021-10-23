@@ -10,7 +10,9 @@ module.exports = ctx => {
     async verify(context) {
       const { data, dataInput } = context;
       if (!data) ctx.throw.module(moduleInfo.relativeName, 1001);
-      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) {
+        ctx.throw.module(moduleInfo.relativeName, 1002);
+      }
     }
   }
   return Captcha;
@@ -109,7 +111,7 @@ module.exports = app => {
 /***/ 820:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const captcha = require3('trek-captcha');
 
 module.exports = app => {
@@ -245,7 +247,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

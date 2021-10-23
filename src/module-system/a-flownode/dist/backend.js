@@ -23,18 +23,24 @@ module.exports = ctx => {
 
     async onEdgeEnter() {
       // super
-      await super.onEdgeEnter();
+      let res = await super.onEdgeEnter();
+      if (!res) return false;
       // check conditionExpression
-      const conditionExpression = this.contextEdge._edgeDef.options && this.contextEdge._edgeDef.options.conditionExpression;
+      const conditionExpression =
+        this.contextEdge._edgeDef.options && this.contextEdge._edgeDef.options.conditionExpression;
       // return true on empty/null/undefined
       if (!conditionExpression && conditionExpression !== false) return true;
       if (conditionExpression === false) return false;
-      const res = ctx.bean.flow.evaluateExpression({
+      // contextNodePrevious
+      const contextNodePrevious = this.contextNode.contextEdge && this.contextNode.contextEdge.contextNode;
+      // evaluateExpression
+      res = ctx.bean.flow.evaluateExpression({
         expression: conditionExpression,
         globals: {
           context: this.context,
           contextNode: this.contextNode,
           contextEdge: this.contextEdge,
+          contextNodePrevious,
         },
       });
       return !!res;
@@ -80,7 +86,9 @@ module.exports = ctx => {
       const parameterExpression = this.contextNode._nodeDef.options.parameterExpression;
       // check
       if (!bean) {
-        throw new Error(`flow service bean is not set: flow:${this.context._flowDef.atomName}, node:${this.contextNode._nodeDef.name}`);
+        throw new Error(
+          `flow service bean is not set: flow:${this.context._flowDef.atomName}, node:${this.contextNode._nodeDef.name}`
+        );
       }
       // executeService
       await ctx.bean.flow.executeService({
@@ -117,9 +125,10 @@ module.exports = ctx => {
       await this.flowInstance._endFlow({
         flowHandleStatus: 1,
         flowRemark: null,
-        atom: {
-          close: true,
-        },
+        // should not handle atom
+        // atom: {
+        //   close: true,
+        // },
       });
       // also true
       return true;
@@ -162,20 +171,20 @@ module.exports = ctx => {
       if (deploy) {
         await this._addSchedule({ flowDefId, node });
       } else {
-        // donot delete schedule
+        await this._deleteSchedule2({ flowDefId, node });
       }
     }
 
     async _addSchedule({ flowDefId, node }) {
-      const repeat = node.options && node.options.repeat;
+      const repeat = this._getJobRepeat(node);
       if (!repeat) return;
+      if (!repeat.every && !repeat.cron) return;
       // push
-      const jobName = `${flowDefId}.${node.id}`;
+      const jobName = this._getJobName(flowDefId, node);
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'startEventTimer',
-        queueNameSub: flowDefId,
         jobName,
         jobOptions: {
           repeat,
@@ -230,8 +239,11 @@ module.exports = ctx => {
       const nodeConfig = content.process.nodes.find(item => item.id === node.id);
       if (!nodeConfig) return false;
       // check if changed
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-      const jobKeyConfig = getRepeatKey(`${flowDefId}.${nodeConfig.id}`, nodeConfig.options && nodeConfig.options.repeat);
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+      const jobKeyConfig = ctx.app.meta.queue._getRepeatKey(
+        this._getJobName(flowDefId, nodeConfig),
+        this._getJobRepeat(nodeConfig)
+      );
       if (jobKeyActive !== jobKeyConfig) return false;
       // ok
       return true;
@@ -239,22 +251,34 @@ module.exports = ctx => {
 
     async _deleteSchedule(context) {
       const job = context.job;
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
       const repeat = await job.queue.repeat;
       await repeat.removeRepeatableByKey(jobKeyActive);
+    }
+
+    async _deleteSchedule2({ flowDefId, node }) {
+      const jobKeyActive = ctx.app.meta.queue._getRepeatKey(
+        this._getJobName(flowDefId, node),
+        this._getJobRepeat(node)
+      );
+      const queue = ctx.app.meta.queue._getQueue({
+        module: moduleInfo.relativeName,
+        queueName: 'startEventTimer',
+      });
+      const repeat = await queue.repeat;
+      await repeat.removeRepeatableByKey(jobKeyActive);
+    }
+
+    _getJobName(flowDefId, node) {
+      return `${flowDefId}.${node.id}`.replace(/:/g, '.');
+    }
+    _getJobRepeat(node) {
+      return node.options && node.options.repeat;
     }
   }
 
   return FlowNode;
 };
-
-function getRepeatKey(name, repeat) {
-  const endDate = repeat.endDate ? new Date(repeat.endDate).getTime() : '';
-  const tz = repeat.tz || '';
-  const suffix = (repeat.cron ? repeat.cron : String(repeat.every)) || '';
-
-  return `${name}::${endDate}:${tz}:${suffix}`;
-}
 
 
 /***/ }),
@@ -374,6 +398,7 @@ module.exports = appInfo => {
   config.queues = {
     startEventTimer: {
       bean: 'startEventTimer',
+      concurrency: true,
     },
   };
 

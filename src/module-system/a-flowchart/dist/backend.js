@@ -304,19 +304,7 @@ module.exports = app => {
       const rightWrite = await this.__checkRightWrite({ host, user });
       if (!rightWrite) this.ctx.throw(403);
       // users
-      const { query, page } = params;
-      return await this.ctx.bean.user.select({
-        options: {
-          where: {
-            'a.anonymous': 0,
-            'a.disabled': 0,
-            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
-          },
-          orders: [['a.userName', 'asc']],
-          page,
-          removePrivacy: true,
-        },
-      });
+      return await this.ctx.bean.user.selectGeneral({ params });
     }
 
     async __checkRightWrite({ host, user }) {

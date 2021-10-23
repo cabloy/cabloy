@@ -4,7 +4,7 @@
 /***/ 717:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const WechatAPI = require3('@zhennann/co-wechat-api');
 
 module.exports = function (ctx) {
@@ -143,7 +143,8 @@ module.exports = function (ctx) {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = provider.providerName === item || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
+          const ok =
+            provider.providerName === item || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -165,7 +166,11 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // aWechatUser
-      await ctx.model.query('update aWechatUser a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
+      await ctx.model.query('update aWechatUser a set a.userId=? where a.iid=? and a.userId=?', [
+        data.userIdTo,
+        ctx.instance.id,
+        data.userIdFrom,
+      ]);
       // next
       await next();
     }
@@ -180,7 +185,7 @@ module.exports = ctx => {
 /***/ 427:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 
 module.exports = ctx => {
@@ -387,7 +392,7 @@ module.exports = {
 /***/ 374:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = __webpack_require__(591);
@@ -483,7 +488,11 @@ module.exports = function (ctx) {
       const unionid = userInfo.unionid || '';
       if (unionid) {
         // update all
-        await ctx.model.query('update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?', [userId, ctx.instance.id, unionid]);
+        await ctx.model.query('update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?', [
+          userId,
+          ctx.instance.id,
+          unionid,
+        ]);
       } else {
         // update this
         await ctx.model.wechatUser.update({ id: userWechatId, userId });
@@ -517,7 +526,10 @@ module.exports = function (ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(`select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`, [ctx.instance.id, providerItem.id]);
+      const authItems = await ctx.model.query(
+        `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
+        [ctx.instance.id, providerItem.id]
+      );
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -546,7 +558,10 @@ module.exports = function (ctx) {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOthers = await ctx.model.query(`select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`, [ctx.instance.id, authId]);
+        const _authOthers = await ctx.model.query(
+          `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
+          [ctx.instance.id, authId]
+        );
         const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {
           // update userId for this auth
@@ -567,8 +582,8 @@ module.exports = function (ctx) {
 /***/ 290:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const crypto = __webpack_require__(417);
-const require3 = __webpack_require__(718);
+const crypto = __webpack_require__(113);
+const require3 = __webpack_require__(638);
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
@@ -776,7 +791,7 @@ module.exports = app => {
 /***/ 222:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const WechatCrypto = require3('wechat-crypto');
 const wechatUtils = __webpack_require__(290);
 
@@ -830,7 +845,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -857,7 +874,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -877,7 +896,7 @@ module.exports = app => {
 /***/ 266:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const WechatCrypto = require3('wechat-crypto');
 const wechatUtils = __webpack_require__(290);
 
@@ -921,7 +940,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -939,7 +960,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, messageIn.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -1081,7 +1104,7 @@ module.exports = app => {
 /***/ 441:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const strategy = require3('@zhennann/passport-wechat').Strategy;
 const WechatHelperFn = __webpack_require__(374);
 const authProviderScenes = __webpack_require__(591);
@@ -1206,8 +1229,20 @@ module.exports = app => {
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
 
     // messageMini
-    { method: 'get', path: 'messageMini/:scene', controller: 'messageMini', action: 'index', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'messageMini/:scene', controller: 'messageMini', action: 'index', meta: { auth: { enable: false } } },
+    {
+      method: 'get',
+      path: 'messageMini/:scene',
+      controller: 'messageMini',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
+    {
+      method: 'post',
+      path: 'messageMini/:scene',
+      controller: 'messageMini',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
   ];
@@ -1427,19 +1462,19 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 417:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("require3");
+
+/***/ }),
+
+/***/ 113:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");
 
 /***/ })
 

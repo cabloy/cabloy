@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 224:
+/***/ 5224:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -12,7 +12,21 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 302:
+/***/ 2302:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const flowTask_0 = __webpack_require__(9645);
+const flowTask_1 = __webpack_require__(9303);
+const flowTask_2 = __webpack_require__(267);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(flowTask_0, [flowTask_1, flowTask_2], ctx);
+};
+
+
+/***/ }),
+
+/***/ 9645:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -24,7 +38,9 @@ module.exports = ctx => {
     get modelFlowTaskHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
     }
-
+    get localRight() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.right');
+    }
     get sqlProcedure() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
@@ -61,6 +77,12 @@ module.exports = ctx => {
       await taskInstance._complete({ handle, formAtom });
     }
 
+    async appendHandleRemark({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history: true });
+      await taskInstance._appendHandleRemark({ handle });
+    }
+
     async assignees({ flowTaskId, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
@@ -85,12 +107,6 @@ module.exports = ctx => {
       await taskInstance._cancelFlow({ handle });
     }
 
-    async actions({ flowTaskId, user }) {
-      // taskInstance
-      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
-      return await taskInstance._actions();
-    }
-
     // from history
     async viewAtom({ flowTaskId, user }) {
       // taskInstance
@@ -105,9 +121,65 @@ module.exports = ctx => {
       return await taskInstance._editAtom();
     }
 
+    async forward({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._forward({ handle });
+    }
+
+    async forwardRecall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._forwardRecall();
+    }
+
+    async substitute({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._substitute({ handle });
+    }
+
+    async substituteRecall({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._substituteRecall();
+    }
+
+    async flowData({ flowId, user }) {
+      // flow
+      const flow = await this._flowData_flow({ flowId, user });
+      if (!flow) return null;
+      // atom
+      const atom = await this._flowData_atom({ flowId, atomId: flow.flowAtomId });
+      // tasks
+      const tasks = await this._flowData_tasks({ flow, atom, flowId, user });
+      // ok
+      return { flow, atom, tasks };
+    }
+  }
+
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 9303:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
     async _nodeDoneCheckLock({ flowNodeId }) {
       // load flow node
-      const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      let nodeInstance;
+      try {
+        nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      } catch (err) {}
+      if (!nodeInstance) {
+        // here means done
+        return;
+      }
       // options
       const options = this._getNodeDefOptionsTask({ nodeInstance });
       // completionCondition
@@ -115,6 +187,7 @@ module.exports = ctx => {
       // task count
       const taskCountTotal = await this.modelFlowTask.count({
         flowNodeId,
+        ignoreMark: 0,
       });
       if (taskCountTotal === 0) {
         // means node has been checked and done
@@ -127,11 +200,13 @@ module.exports = ctx => {
         flowNodeId,
         flowTaskStatus: 1,
         handleStatus: 1,
+        ignoreMark: 0,
       });
       const taskCountRejected = await this.modelFlowTask.count({
         flowNodeId,
         flowTaskStatus: 1,
         handleStatus: 2,
+        ignoreMark: 0,
       });
       // check passed
       if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {
@@ -161,8 +236,6 @@ module.exports = ctx => {
     }
 
     async _nodeDoneCheckLock_passed({ nodeInstance }) {
-      // delete tasks
-      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // next stage of flow node: end
       return await nodeInstance.end();
     }
@@ -187,10 +260,8 @@ module.exports = ctx => {
         nodeDefId: rejectedNode,
         flowNodeIdPrev: flowNodeId,
       });
-      // delete tasks
-      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
-      await nodeInstance._clear({ flowNodeHandleStatus: 2, flowNodeRemark });
+      await nodeInstance.clear({ flowNodeHandleStatus: 2, flowNodeRemark });
       return await nodeInstancePrev.enter();
     }
 
@@ -200,13 +271,9 @@ module.exports = ctx => {
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
         flowNodeId,
         cb: ({ /* flowNode*/ nodeDef }) => {
-          return nodeDef.type === 'startEventAtom' || nodeDef.type === 'activityUserTask';
+          return nodeDef.type.indexOf('startEventAtom') > -1 || nodeDef.type.indexOf('activityUserTask') > -1;
         },
       });
-    }
-
-    async _nodeDoneCheckLock_deleteTasks({ nodeInstance }) {
-      await this._clearRemains({ nodeInstance });
     }
 
     async _list({ options: { where, orders, page, mode, history = 0 }, user, pageForce = true, count = 0 }) {
@@ -274,7 +341,7 @@ module.exports = ctx => {
       const nodeDef = nodeInstance.contextNode._nodeDef;
       // options
       const options = nodeInstance.getNodeDefOptions();
-      return nodeDef.type === 'startEventAtom' ? options.task : options;
+      return nodeDef.type.indexOf('startEventAtom') > -1 ? options.task : options;
     }
 
     async _clearRemains({ nodeInstance }) {
@@ -289,7 +356,16 @@ module.exports = ctx => {
       }
       // flowTask delete
       await this.modelFlowTask.delete({ flowNodeId });
-      // flowTaskHistory close
+      // flowTaskHistory
+      //   1. delete specificFlag=2
+      await ctx.model.query(
+        `
+        update aFlowTaskHistory set deleted=1
+          where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0 and specificFlag=2 
+        `,
+        [ctx.instance.id, flowNodeId]
+      );
+      //   2. close
       //    flowTaskStatus:1
       //    handleStatus: not changed
       await ctx.model.query(
@@ -328,10 +404,297 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 892:
+/***/ 267:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async _flowData_flow({ flowId, user }) {
+      // select flow
+      const flow = await ctx.bean.flow.get({ flowId, history: true, user });
+      // not throw error
+      // if (!flow) ctx.throw(404);
+      // ok
+      return flow;
+    }
+
+    async _flowData_atom({ flowId, atomId }) {
+      // only read basic info
+      //   a.atomFlowId = {flowId}
+      const atom = await ctx.model.queryOne(
+        `
+        select a.*,a.id as atomId,b.module,b.atomClassName from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+             where a.deleted=0 and a.iid=? and a.id=?
+                   and a.atomFlowId=?
+        `,
+        [ctx.instance.id, atomId, flowId]
+      );
+      return atom;
+    }
+
+    async _flowData_tasks({ flow, atom, flowId, user }) {
+      // select tasks
+      let tasks = await ctx.bean.flowTask.select({
+        options: {
+          where: {
+            'a.flowId': flowId,
+            'b.flowNodeType': [
+              'a-flowtask:startEventAtom',
+              'a-flowtask:activityUserTask',
+              'startEventAtom',
+              'activityUserTask',
+            ],
+            __or__: [{ 'a.userIdAssignee': user.id }, { 'a.flowTaskHidden': 0 }],
+          },
+          orders: [
+            ['a.flowNodeId', 'desc'],
+            // ['a.specificFlag', 'desc'], // need not
+            ['a.flowTaskStatus', 'asc'],
+            ['a.createdAt', 'desc'],
+          ],
+          history: 1,
+        },
+        user: null,
+        pageForce: false,
+      });
+      // flowOld
+      const flowOld = !atom || atom.atomFlowId !== flow.flowId;
+      // nodeInstances
+      const nodeInstances = {
+        _nodeInstances: {},
+        _options: {},
+        async get(flowNodeId) {
+          let nodeInstance = this._nodeInstances[flowNodeId];
+          if (!nodeInstance) {
+            nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+            this._nodeInstances[flowNodeId] = nodeInstance;
+          }
+          return nodeInstance;
+        },
+        async getOptions(flowNodeId) {
+          let options = this._options[flowNodeId];
+          if (!options) {
+            const nodeInstance = await this.get(flowNodeId);
+            options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
+            this._options[flowNodeId] = options;
+          }
+          return options;
+        },
+      };
+      // map
+      tasks = tasks.map(task => {
+        if (task.flowTaskIdSubstituteTo) {
+          const taskTo = tasks.find(item => item.flowTaskId === task.flowTaskIdSubstituteTo);
+          if (user.id !== task.userIdAssignee && user.id !== taskTo.userIdAssignee) {
+            taskTo.__remove = true;
+            return {
+              ...task,
+              timeHandled: taskTo.timeHandled,
+              handleStatus: taskTo.handleStatus,
+              handleRemark: taskTo.handleRemark,
+              handleRemarkLocale: taskTo.handleRemarkLocale,
+              flowTaskIdSubstituteTo: 0,
+              ignoreMark: 0,
+            };
+          }
+        }
+        return task;
+      });
+      // filter
+      tasks = tasks.filter(task => {
+        if (task.__remove) return false;
+        if ((task.specificFlag === 1 || task.specificFlag === 2) && task.userIdAssignee !== user.id) return false;
+        return true;
+      });
+      // loop
+      for (const task of tasks) {
+        // actions
+        if (task.userIdAssignee === user.id && !flowOld) {
+          task._actions = await this._flowData_task_actions({ nodeInstances, tasks, task, user });
+        }
+      }
+      return tasks;
+    }
+
+    async _flowData_task_checkRight(fn) {
+      try {
+        await fn;
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async _flowData_task_actions({ nodeInstances, tasks, task, user }) {
+      // info
+      const isDone = task.flowTaskStatus === 1;
+      // actions
+      const actions = [];
+      const flowTask = task;
+      let res;
+      // 1. assigneesConfirmation
+      res = await this._flowData_task_checkRight(this.localRight.assigneesConfirmation({ flowTask, user }));
+      if (res) {
+        actions.push({
+          name: 'assigneesConfirmation',
+        });
+        // only one action
+        return actions;
+      }
+      // 2. recall
+      res = await this._flowData_task_checkRight(this.localRight.recall({ flowTask, user }));
+      if (res) {
+        actions.push({
+          name: 'recall',
+        });
+        // only one action
+        return actions;
+      }
+      // 3. claim
+      if (!isDone && !task.timeClaimed) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
+        actions.push({
+          name: 'claim',
+          options: {
+            bidding: options.bidding,
+          },
+        });
+      }
+      // 3. handleTask
+      res = await this._flowData_task_checkRight(
+        this.localRight.complete({
+          flowTask,
+          user,
+          handle: null,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          disableCheckTimeClaimed: true,
+        })
+      );
+      if (res) {
+        const options = await nodeInstances.getOptions(task.flowNodeId);
+        actions.push({
+          name: 'handleTask',
+          options: {
+            allowPassTask: options.allowPassTask,
+            allowRejectTask: options.allowRejectTask,
+          },
+        });
+      }
+      // 4. cancelFlow
+      res = await this._flowData_task_checkRight(
+        this.localRight.cancelFlow({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          disableCheckTimeClaimed: true,
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'cancelFlow',
+        });
+      }
+      // 5. viewAtom
+      actions.push({
+        name: 'viewAtom',
+      });
+      // 6. appendHandleRemark
+      res = await this._flowData_task_checkRight(
+        this.localRight.appendHandleRemark({ flowTask, user, flowNodeType: task.flowNodeType })
+      );
+      if (res) {
+        actions.push({
+          name: 'appendHandleRemark',
+        });
+      }
+      // 7.1 allowForward: forward
+      res = await this._flowData_task_checkRight(
+        this.localRight.forward({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          disableCheckTimeClaimed: true,
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'forward',
+        });
+      }
+      // 7.2 allowForward: forwardRecall
+      res = await this._flowData_task_checkRight(
+        this.localRight.forwardRecall({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          getTask: flowTaskIdForwardTo => {
+            return tasks.find(item => item.flowTaskId === flowTaskIdForwardTo);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'forwardRecall',
+        });
+      }
+      // 8.1 allowSubstitute: substitute
+      res = await this._flowData_task_checkRight(
+        this.localRight.substitute({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          disableCheckTimeClaimed: true,
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'substitute',
+        });
+      }
+      // 8.2 allowSubstitute: substituteRecall
+      res = await this._flowData_task_checkRight(
+        this.localRight.substituteRecall({
+          flowTask,
+          user,
+          getOptions: async () => {
+            return await nodeInstances.getOptions(task.flowNodeId);
+          },
+          getTask: flowTaskIdSubstituteTo => {
+            return tasks.find(item => item.flowTaskId === flowTaskIdSubstituteTo);
+          },
+        })
+      );
+      if (res) {
+        actions.push({
+          name: 'substituteRecall',
+        });
+      }
+      // ok
+      return actions;
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 4892:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const FlowNodeActivityUserTaskBase = __webpack_require__(271);
+const FlowNodeActivityUserTaskBase = __webpack_require__(3271);
 
 module.exports = ctx => {
   class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {}
@@ -342,7 +705,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 895:
+/***/ 5895:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -372,10 +735,10 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 252:
+/***/ 2252:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const FlowNodeActivityUserTaskBase = __webpack_require__(271);
+const FlowNodeActivityUserTaskBase = __webpack_require__(3271);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -388,7 +751,7 @@ module.exports = ctx => {
       if (deploy) {
         await this._addCondition({ flowDefId, node });
       } else {
-        // donot delete condition
+        await this._deleteCondition2({ flowDefId, node });
       }
     }
 
@@ -416,10 +779,10 @@ module.exports = ctx => {
       const task = tasks[0];
       const flowTaskId = task.id;
       const user = { id: task.userIdAssignee };
-      // claim automatically always
-      await ctx.bean.flowTask.claim({ flowTaskId, user });
       // complete automatically only on first-in
       if (this.contextNode._flowNode.flowNodeIdPrev === 0) {
+        //  claim automatically
+        await ctx.bean.flowTask.claim({ flowTaskId, user });
         await ctx.bean.flowTask.complete({
           flowTaskId,
           handle: { status: 1 },
@@ -534,6 +897,14 @@ module.exports = ctx => {
       const { _condition } = context;
       await this.modelCondition.delete({ id: _condition.id });
     }
+
+    async _deleteCondition2({ flowDefId, node }) {
+      const startEventId = node.id;
+      await this.modelCondition.delete({
+        flowDefId,
+        startEventId,
+      });
+    }
   }
 
   return FlowNode;
@@ -542,7 +913,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 723:
+/***/ 8723:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -553,7 +924,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 288:
+/***/ 5288:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -588,13 +959,47 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 962:
+/***/ 2895:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
-const extend = require3('extend2');
-const VarsFn = __webpack_require__(418);
-const UtilsFn = __webpack_require__(294);
+const flowTask_0 = __webpack_require__(726);
+const flowTask_appendHandleRemark = __webpack_require__(7953);
+const flowTask_assignees = __webpack_require__(5719);
+const flowTask_cancelFlow = __webpack_require__(6578);
+const flowTask_claim = __webpack_require__(6481);
+const flowTask_complete = __webpack_require__(793);
+const flowTask_event = __webpack_require__(3581);
+const flowTask_init = __webpack_require__(7411);
+const flowTask_recall = __webpack_require__(4050);
+const flowTask_forward = __webpack_require__(848);
+const flowTask_substitute = __webpack_require__(5927);
+const flowTask_schema = __webpack_require__(5441);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(
+    flowTask_0,
+    [
+      flowTask_appendHandleRemark,
+      flowTask_assignees,
+      flowTask_cancelFlow,
+      flowTask_claim,
+      flowTask_complete,
+      flowTask_event,
+      flowTask_init,
+      flowTask_recall,
+      flowTask_forward,
+      flowTask_substitute,
+      flowTask_schema,
+    ],
+    ctx
+  );
+};
+
+
+/***/ }),
+
+/***/ 726:
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -618,118 +1023,211 @@ module.exports = ctx => {
     get modelFlowTaskHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
     }
-
-    async init({ userIdAssignee, user }) {
-      // create flowTask
-      const flowTaskId = await this._createFlowTask({ userIdAssignee, user });
-      // context init
-      await this._contextInit({ flowTaskId, user });
-      // event
-      await this.created();
+    get localRight() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.right');
     }
+  }
+  return FlowTask;
+};
 
-    async _load({ flowTask, user, history }) {
-      // context init
-      await this._contextInit({ flowTaskId: flowTask.id, user, history });
-    }
 
-    async _createFlowTask({ userIdAssignee, user }) {
-      // flowTask
-      const data = {
-        flowId: this.context._flowId,
-        flowNodeId: this.contextNode._flowNodeId,
-        flowTaskStatus: 0,
-        userIdAssignee,
-        specificFlag: 0,
-        taskVars: '{}',
-      };
-      const res = await this.modelFlowTask.insert(data);
-      const flowTaskId = res.insertId;
-      // flowTaskHistory
-      data.flowTaskId = flowTaskId;
-      await this.modelFlowTaskHistory.insert(data);
-      // notify
-      this._notifyTaskClaimings(userIdAssignee);
-      // publish uniform message
-      if (userIdAssignee !== user.id) {
-        const userFlow = await ctx.bean.user.get({ id: this.context._flow.flowUserId });
-        const userAssignee = await ctx.bean.user.get({ id: userIdAssignee });
-        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(userAssignee.locale, this.contextNode._flowNode.flowNodeName)}`;
-        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}&flowTaskId=${flowTaskId}`;
-        const message = {
-          userIdTo: userIdAssignee,
-          content: {
-            issuerId: userFlow.id,
-            issuerName: userFlow.userName,
-            issuerAvatar: userFlow.avatar,
-            title,
-            body: this.context._flow.flowName,
-            actionPath,
-            params: {
-              flowId: this.context._flowId,
-              flowTaskId,
-            },
-          },
-        };
-        // jump out of the transaction
-        ctx.tail(async () => {
-          await ctx.bean.io.publish({
-            message,
-            messageClass: {
-              module: 'a-flow',
-              messageClassName: 'workflow',
-            },
-          });
-        });
-      }
-      // ok
-      return flowTaskId;
-    }
+/***/ }),
 
-    async _contextInit({ flowTaskId, user, history }) {
-      // flowTaskId
-      this.contextTask._flowTaskId = flowTaskId;
-      // flowTask
-      if (!history) {
-        this.contextTask._flowTask = await this.modelFlowTask.get({ id: flowTaskId });
-      }
-      this.contextTask._flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
-      // taskVars
-      this.contextTask._taskVars = new (VarsFn())();
-      this.contextTask._taskVars._vars = this.contextTask._flowTaskHistory.taskVars ? JSON.parse(this.contextTask._flowTaskHistory.taskVars) : {};
-      // utils
-      this.contextTask._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
-        context: this.context,
-        contextNode: this.contextNode,
-        contextTask: this.contextTask,
-      });
+/***/ 7953:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async _appendHandleRemark({ handle }) {
       // user
-      this.contextTask._user = user;
-    }
-
-    async _hidden({ hidden }) {
+      const user = this.contextTask._user;
       // flowTask
-      const flowTaskHidden = hidden ? 1 : 0;
-      this.contextTask._flowTask.flowTaskHidden = flowTaskHidden;
-      await this.modelFlowTask.update(this.contextTask._flowTask);
-      // history
-      this.contextTask._flowTaskHistory.flowTaskHidden = flowTaskHidden;
+      const flowTask = this.contextTask._flowTaskHistory;
+      // check right
+      await this.localRight.appendHandleRemark({ flowTask, user, flowNodeType: this.contextTask._nodeDef.type });
+      // only update flowTaskHistory
+      this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
+  }
+  return FlowTask;
+};
 
+
+/***/ }),
+
+/***/ 5719:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async _assignees() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.assignees({ flowTask, user });
+      // handle
+      return await this._assignees_handle();
+    }
+
+    async _assignees_handle() {
+      // assignees
+      const assignees = this.contextNode.vars.get('_assignees');
+      // users
+      let users;
+      if (!assignees || assignees.length === 0) {
+        users = [];
+      } else {
+        users = await ctx.bean.user.select({
+          options: {
+            where: {
+              'a.disabled': 0,
+              'a.id': assignees,
+            },
+            orders: [['a.userName', 'asc']],
+            removePrivacy: true,
+          },
+        });
+      }
+      // options
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
+      // ok
+      return {
+        users,
+        options: {
+          confirmationAllowAppend: options.confirmationAllowAppend,
+        },
+      };
+    }
+
+    async _assigneesConfirmation({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.assigneesConfirmation({ flowTask, user });
+      // handle
+      await this._assigneesConfirmation_handle({ handle });
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
+    }
+
+    async _assigneesConfirmation_handle({ handle }) {
+      // options
+      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
+      this.contextTask._flowTaskHistory.timeHandled = new Date();
+      this.contextTask._flowTaskHistory.handleStatus = handle.status;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // delete flowTask and flowTaskHistory
+      const flowTaskId = this.contextTask._flowTaskId;
+      await this.modelFlowTask.delete({ id: flowTaskId });
+      await this.modelFlowTaskHistory.delete({ flowTaskId });
+      // passed
+      if (handle.status === 1) {
+        // assignees
+        const assignees = await this.flowInstance._parseAssignees(handle.assignees);
+        if (!assignees || assignees.length === 0) {
+          ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
+        }
+        // check confirmationAllowAppend
+        if (!options.confirmationAllowAppend) {
+          const assigneesOld = this.contextNode.vars.get('_assignees');
+          if (!new Set(assigneesOld).isSuperset(new Set(assignees))) {
+            ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
+          }
+        }
+        // save var: _assigneesConfirmation
+        this.contextNode.vars.set('_assigneesConfirmation', assignees);
+        // next stage of flow node: begin
+        return await this.nodeInstance.begin();
+      }
+      // reject
+      if (handle.status === 2) {
+        return await ctx.bean.flowTask._gotoFlowNodePrevious({
+          nodeInstance: this.nodeInstance,
+          rejectedNode: null,
+        });
+      }
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 6578:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async _cancelFlow({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.cancelFlow({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
+      // handle
+      await this._cancelFlow_handle({ handle });
+    }
+
+    async _cancelFlow_handle({ handle }) {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // close draft
+      const atomId = this.context._flow.flowAtomId;
+      if (atomId) {
+        await ctx.bean.atom.closeDraft({ key: { atomId } });
+      }
+      // notify
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
+      // delete flowTask
+      await this.modelFlowTask.delete({ id: flowTaskId });
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
+      this.contextTask._flowTaskHistory.timeHandled = new Date();
+      this.contextTask._flowTaskHistory.handleStatus = 3;
+      this.contextTask._flowTaskHistory.handleRemark = handle.remark;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // node clear
+      //    not use handle.remark
+      const remark = 'Cancelled'; // handle.remark;
+      await this.nodeInstance.clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
+      // end flow
+      await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 6481:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
     async _claim() {
       // user
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // check: not throw error
-      // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
-      if (flowTask.timeClaimed) {
-        return { timeClaimed: flowTask.timeClaimed };
-      }
+      // check right
+      const right = await this.localRight.claim({ flowTask, user });
+      if (right) return right;
       // flowTask
       const timeClaimed = new Date();
       this.contextTask._flowTask.timeClaimed = timeClaimed;
@@ -772,7 +1270,7 @@ module.exports = ctx => {
         const _tasks = await ctx.model.query(
           `
           select id,userIdAssignee from aFlowTask
-            where iid=? and deleted=0 and flowNodeId=? and id<>?
+            where iid=? and deleted=0 and flowNodeId=? and id<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
@@ -783,51 +1281,46 @@ module.exports = ctx => {
         await ctx.model.query(
           `
           delete from aFlowTask
-            where iid=? and flowNodeId=? and id<>?
+            where iid=? and flowNodeId=? and id<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
         await ctx.model.query(
           `
           update aFlowTaskHistory set deleted=1
-            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
+            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>? and (flowTaskStatus=0 and handleStatus=0)
           `,
           [ctx.instance.id, flowTask.flowNodeId, flowTaskId]
         );
       }
       // event: task.claimed
-      await this.claimed();
+      await this.raiseEventClaimed();
       // notify
       this._notifyTaskClaimings(flowTask.userIdAssignee);
       this._notifyTaskHandlings(flowTask.userIdAssignee);
       // ok
       return { timeClaimed };
     }
+  }
+  return FlowTask;
+};
 
+
+/***/ }),
+
+/***/ 793:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
     async _complete({ handle, formAtom }) {
       // user
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 0
-      if (flowTask.specificFlag !== 0) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // check if pass/reject
-      if (handle) {
-        const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-        if (handle.status === 1 && !options.allowPassTask) {
-          ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
-        }
-        if (handle.status === 2 && !options.allowRejectTask) {
-          ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
-        }
-      }
+      // check right
+      await this.localRight.complete({ flowTask, user, handle, getOptions: () => this._getNodeOptionsTask() });
       // formAtom
       if (formAtom) {
         await this._complete_formAtom({ formAtom });
@@ -836,7 +1329,7 @@ module.exports = ctx => {
       if (handle) {
         await this._complete_handle({ handle });
         // event: task.completed
-        await this.completed();
+        await this.raiseEventCompleted();
         // check if node done
         ctx.tail(async () => {
           await this._complete_tail({ flowTask, user });
@@ -865,116 +1358,411 @@ module.exports = ctx => {
       });
     }
 
-    async _assignees() {
-      // user
+    async _complete_formAtom({ formAtom }) {
+      // schemaWrite
+      const schemaWrite = await this._getSchemaWrite();
+      if (!schemaWrite) return;
+      // write
+      const atomId = this.context._atom.atomId;
       const user = this.contextTask._user;
-      // flowTask
-      const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 1
-      if (flowTask.specificFlag !== 1) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // handle
-      return await this._assignees_handle();
+      await ctx.bean.atom.write({
+        key: { atomId },
+        item: formAtom,
+        options: { schema: schemaWrite },
+        user,
+      });
     }
 
-    async _assignees_handle() {
-      // assignees
-      const assignees = this.contextNode.vars.get('_assignees');
-      // users
-      let users;
-      if (!assignees || assignees.length === 0) {
-        users = [];
-      } else {
-        users = await ctx.bean.user.select({
-          options: {
-            where: {
-              'a.disabled': 0,
-              'a.id': assignees,
-            },
-            orders: [['a.userName', 'asc']],
-            removePrivacy: true,
-          },
-        });
-      }
-      // options
-      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-      // ok
-      return {
-        users,
-        options: {
-          confirmationAllowAppend: options.confirmationAllowAppend,
-        },
-      };
-    }
-
-    async _cancelFlow({ handle }) {
-      // user
-      const user = this.contextTask._user;
+    async _complete_handle({ handle }) {
+      const timeHandled = new Date();
       // flowTask
-      const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 0
-      if (flowTask.specificFlag !== 0) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // check if allowCancelFlow
-      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-      if (!options.allowCancelFlow) {
-        ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
-      }
-      // handle
-      await this._cancelFlow_handle({ handle });
-    }
-
-    async _cancelFlow_handle({ handle }) {
-      // flowTask
-      const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // close draft
-      const atomId = this.context._flow.flowAtomId;
-      if (atomId) {
-        await ctx.bean.atom.closeDraft({ key: { atomId } });
-      }
-      // notify
-      this._notifyTaskHandlings(flowTask.userIdAssignee);
-      // delete flowTask
-      await this.modelFlowTask.delete({ id: flowTaskId });
-      // flowTaskHistory update
+      this.contextTask._flowTask.flowTaskStatus = 1;
+      this.contextTask._flowTask.timeHandled = timeHandled;
+      this.contextTask._flowTask.handleStatus = handle.status;
+      this.contextTask._flowTask.handleRemark = handle.remark;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory
       this.contextTask._flowTaskHistory.flowTaskStatus = 1;
-      this.contextTask._flowTaskHistory.timeHandled = new Date();
-      this.contextTask._flowTaskHistory.handleStatus = 3;
+      this.contextTask._flowTaskHistory.timeHandled = timeHandled;
+      this.contextTask._flowTaskHistory.handleStatus = handle.status;
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
-      // node clear
-      //    not use handle.remark
-      const remark = 'Cancelled'; // handle.remark;
-      await this.nodeInstance._clear({ flowNodeHandleStatus: 3, flowNodeRemark: remark });
-      // end flow
-      await this.flowInstance._endFlow({ flowHandleStatus: 3, flowRemark: remark });
+      // special for forward
+      await this._complete_handle_checkForward();
+      // special for substitute
+      await this._complete_handle_checkSubstitute();
     }
 
+    async _complete_handle_checkForward() {
+      let flowTaskIdForwardFrom = this.contextTask._flowTask.flowTaskIdForwardFrom;
+      if (!flowTaskIdForwardFrom) return;
+      while (flowTaskIdForwardFrom) {
+        const taskFrom = await this.modelFlowTask.get({ id: flowTaskIdForwardFrom });
+        await this.modelFlowTask.update({
+          id: flowTaskIdForwardFrom,
+          flowTaskStatus: 1,
+        });
+        await this.modelFlowTaskHistory.update(
+          {
+            flowTaskStatus: 1,
+          },
+          {
+            where: {
+              flowTaskId: flowTaskIdForwardFrom,
+            },
+          }
+        );
+        // notify
+        this._notifyTaskHandlings(taskFrom.userIdAssignee);
+        // next
+        flowTaskIdForwardFrom = taskFrom.flowTaskIdForwardFrom;
+      }
+    }
+
+    async _complete_handle_checkSubstitute() {
+      let flowTaskIdSubstituteFrom = this.contextTask._flowTask.flowTaskIdSubstituteFrom;
+      if (!flowTaskIdSubstituteFrom) return;
+      while (flowTaskIdSubstituteFrom) {
+        const taskFrom = await this.modelFlowTask.get({ id: flowTaskIdSubstituteFrom });
+        await this.modelFlowTask.update({
+          id: flowTaskIdSubstituteFrom,
+          flowTaskStatus: 1,
+        });
+        await this.modelFlowTaskHistory.update(
+          {
+            flowTaskStatus: 1,
+          },
+          {
+            where: {
+              flowTaskId: flowTaskIdSubstituteFrom,
+            },
+          }
+        );
+        // notify
+        this._notifyTaskHandlings(taskFrom.userIdAssignee);
+        // next
+        flowTaskIdSubstituteFrom = taskFrom.flowTaskIdSubstituteFrom;
+      }
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 3581:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async raiseEventCreated() {
+      await this.nodeInstance.change({
+        event: 'created',
+        taskInstance: this,
+      });
+      await this._saveVars();
+    }
+
+    async raiseEventClaimed() {
+      await this.nodeInstance.change({
+        event: 'claimed',
+        taskInstance: this,
+      });
+      await this._saveVars();
+    }
+
+    async raiseEventCompleted() {
+      await this.nodeInstance.change({
+        event: 'completed',
+        taskInstance: this,
+      });
+      await this._saveVars();
+    }
+
+    async _saveTaskVars() {
+      if (!this.contextTask._taskVars._dirty) return;
+      // flowTask
+      this.contextTask._flowTask.taskVars = JSON.stringify(this.contextTask._taskVars._vars);
+      // modelFlowTask maybe deleted when flowTaskStatus=1
+      if (this.contextTask._flowTaskHistory.flowTaskStatus === 0) {
+        await this.modelFlowTask.update(this.contextTask._flowTask);
+      }
+      // flowTask history
+      this.contextTask._flowTaskHistory.taskVars = this.contextTask._flowTask.taskVars;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // done
+      this.contextTask._taskVars._dirty = false;
+    }
+
+    async _saveVars() {
+      // save taskVars
+      await this._saveTaskVars();
+      // save nodeVars
+      await this.nodeInstance._saveNodeVars();
+      // save flowVars
+      await this.flowInstance._saveFlowVars();
+    }
+
+    _notifyTaskClaimings(userId) {
+      ctx.bean.flowTask._notifyTaskClaimings(userId);
+    }
+
+    _notifyTaskHandlings(userId) {
+      ctx.bean.flowTask._notifyTaskHandlings(userId);
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 848:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    // handle: assignee/remark
+    async _forward({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.forward({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
+      // handle
+      await this._forward_handle({ handle });
+      // need not notify
+      // this._notifyTaskHandlings(flowTask.userIdAssignee);
+    }
+
+    // 1. create a new task
+    // 2. update handleStatus/handleRemark
+    async _forward_handle({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // 1. create a new task
+      const taskInstance = await ctx.bean.flowTask._createTaskInstance({
+        nodeInstance: this.nodeInstance,
+        userIdAssignee: handle.assignee,
+        user,
+      });
+      // specificFlag: 4
+      taskInstance.contextTask._flowTask.specificFlag = 4;
+      taskInstance.contextTask._flowTask.flowTaskIdForwardFrom = flowTaskId;
+      await taskInstance.modelFlowTask.update(taskInstance.contextTask._flowTask);
+      // history
+      taskInstance.contextTask._flowTaskHistory.specificFlag = 4;
+      taskInstance.contextTask._flowTaskHistory.flowTaskIdForwardFrom = flowTaskId;
+      await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
+      // notify
+      taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
+      // 2. update
+      // flowTask
+      const flowTaskIdForwardTo = taskInstance.contextTask._flowTask.id;
+      const timeHandled = new Date();
+      this.contextTask._flowTask.timeHandled = timeHandled;
+      this.contextTask._flowTask.handleStatus = 4;
+      this.contextTask._flowTask.handleRemark = handle.remark;
+      this.contextTask._flowTask.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTask.ignoreMark = 1;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.timeHandled = timeHandled;
+      this.contextTask._flowTaskHistory.handleStatus = 4;
+      this.contextTask._flowTaskHistory.handleRemark = handle.remark;
+      this.contextTask._flowTaskHistory.flowTaskIdForwardTo = flowTaskIdForwardTo;
+      this.contextTask._flowTaskHistory.ignoreMark = 1;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
+
+    async _forwardRecall() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.forwardRecall({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
+      // handle
+      await this._forwardRecall_handle();
+    }
+
+    // 1. delete task
+    // 2. update task
+    async _forwardRecall_handle() {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // 1. delete task
+      const taskTo = await this.modelFlowTask.get({ id: flowTask.flowTaskIdForwardTo });
+      // delete flowTask and flowTaskHistory
+      await this.modelFlowTask.delete({ id: taskTo.id });
+      await this.modelFlowTaskHistory.delete({ flowTaskId: taskTo.id });
+      // notify
+      this._notifyTaskClaimings(taskTo.userIdAssignee);
+      // 2. update
+      // flowTask
+      this.contextTask._flowTask.timeHandled = null;
+      this.contextTask._flowTask.handleStatus = 0;
+      this.contextTask._flowTask.handleRemark = null;
+      this.contextTask._flowTask.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTask.ignoreMark = 0;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.timeHandled = null;
+      this.contextTask._flowTaskHistory.handleStatus = 0;
+      this.contextTask._flowTaskHistory.handleRemark = null;
+      this.contextTask._flowTaskHistory.flowTaskIdForwardTo = 0;
+      this.contextTask._flowTaskHistory.ignoreMark = 0;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 7411:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const VarsFn = __webpack_require__(1418);
+const UtilsFn = __webpack_require__(9294);
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    async init({ userIdAssignee, user }) {
+      // create flowTask
+      const flowTaskId = await this._createFlowTask({ userIdAssignee, user });
+      // context init
+      await this._contextInit({ flowTaskId, user });
+      // event
+      await this.raiseEventCreated();
+    }
+
+    async _load({ flowTask, user, history }) {
+      // context init
+      await this._contextInit({ flowTaskId: flowTask.id, user, history });
+    }
+
+    async _createFlowTask({ userIdAssignee, user }) {
+      // flowTask
+      const data = {
+        flowId: this.context._flowId,
+        flowNodeId: this.contextNode._flowNodeId,
+        flowTaskStatus: 0,
+        userIdAssignee,
+        specificFlag: 0,
+        taskVars: '{}',
+      };
+      const res = await this.modelFlowTask.insert(data);
+      const flowTaskId = res.insertId;
+      // flowTaskHistory
+      data.flowTaskId = flowTaskId;
+      await this.modelFlowTaskHistory.insert(data);
+      // notify
+      this._notifyTaskClaimings(userIdAssignee);
+      // publish uniform message
+      if (userIdAssignee !== user.id) {
+        const userFlow = await ctx.bean.user.get({ id: this.context._flow.flowUserId });
+        const userAssignee = await ctx.bean.user.get({ id: userIdAssignee });
+        const title = `${ctx.text.locale(userAssignee.locale, 'Task')} - ${ctx.text.locale(
+          userAssignee.locale,
+          this.contextNode._flowNode.flowNodeName
+        )}`;
+        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}&flowTaskId=${flowTaskId}`;
+        const message = {
+          userIdTo: userIdAssignee,
+          content: {
+            issuerId: userFlow.id,
+            issuerName: userFlow.userName,
+            issuerAvatar: userFlow.avatar,
+            title,
+            body: this.context._flow.flowName,
+            actionPath,
+            params: {
+              flowId: this.context._flowId,
+              flowTaskId,
+            },
+          },
+        };
+        // jump out of the transaction
+        ctx.tail(async () => {
+          await ctx.bean.io.publish({
+            message,
+            messageClass: {
+              module: 'a-flow',
+              messageClassName: 'workflow',
+            },
+          });
+        });
+      }
+      // ok
+      return flowTaskId;
+    }
+
+    async _contextInit({ flowTaskId, user, history }) {
+      // flowTaskId
+      this.contextTask._flowTaskId = flowTaskId;
+      // flowTask
+      if (!history) {
+        this.contextTask._flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      }
+      this.contextTask._flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
+      // taskVars
+      this.contextTask._taskVars = new (VarsFn())();
+      this.contextTask._taskVars._vars = this.contextTask._flowTaskHistory.taskVars
+        ? JSON.parse(this.contextTask._flowTaskHistory.taskVars)
+        : {};
+      // utils
+      this.contextTask._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
+        context: this.context,
+        contextNode: this.contextNode,
+        contextTask: this.contextTask,
+      });
+      // user
+      this.contextTask._user = user;
+    }
+
+    async _hidden({ hidden }) {
+      // flowTask
+      const flowTaskHidden = hidden ? 1 : 0;
+      this.contextTask._flowTask.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // history
+      this.contextTask._flowTaskHistory.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
+
+    _getNodeOptionsTask() {
+      return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
+    }
+  }
+  return FlowTask;
+};
+
+
+/***/ }),
+
+/***/ 4050:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
     async _recall() {
       // user
       const user = this.contextTask._user;
       // flowTask
       const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 2
-      if (flowTask.specificFlag !== 2) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // check right
+      await this.localRight.recall({ flowTask, user });
       // handle
       await this._recall_handle();
       // notify
@@ -1026,143 +1814,22 @@ module.exports = ctx => {
         flowNodeRemark: 'Recalled',
       });
     }
+  }
+  return FlowTask;
+};
 
-    async _assigneesConfirmation({ handle }) {
-      // user
-      const user = this.contextTask._user;
-      // flowTask
-      const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // specificFlag must be 1
-      if (flowTask.specificFlag !== 1) ctx.throw(403);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // handle
-      await this._assigneesConfirmation_handle({ handle });
-      // notify
-      this._notifyTaskHandlings(flowTask.userIdAssignee);
-    }
 
-    async _assigneesConfirmation_handle({ handle }) {
-      // options
-      const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-      // flowTaskHistory update
-      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
-      this.contextTask._flowTaskHistory.timeHandled = new Date();
-      this.contextTask._flowTaskHistory.handleStatus = handle.status;
-      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
-      // delete flowTask and flowTaskHistory
-      const flowTaskId = this.contextTask._flowTaskId;
-      await this.modelFlowTask.delete({ id: flowTaskId });
-      await this.modelFlowTaskHistory.delete({ flowTaskId });
-      // passed
-      if (handle.status === 1) {
-        // assignees
-        const assignees = await this.flowInstance._parseAssignees(handle.assignees);
-        if (!assignees || assignees.length === 0) {
-          ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
-        }
-        // check confirmationAllowAppend
-        if (!options.confirmationAllowAppend) {
-          const assigneesOld = this.contextNode.vars.get('_assignees');
-          if (!new Set(assigneesOld).isSuperset(new Set(assignees))) {
-            ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
-          }
-        }
-        // save var: _assigneesConfirmation
-        this.contextNode.vars.set('_assigneesConfirmation', assignees);
-        // next stage of flow node: begin
-        return await this.nodeInstance.begin();
-      }
-      // reject
-      if (handle.status === 2) {
-        return await ctx.bean.flowTask._gotoFlowNodePrevious({
-          nodeInstance: this.nodeInstance,
-          rejectedNode: null,
-        });
-      }
-    }
+/***/ }),
 
-    async _complete_formAtom({ formAtom }) {
-      // schemaWrite
-      const schemaWrite = await this._getSchemaWrite();
-      if (!schemaWrite) return;
-      // write
-      const atomId = this.context._atom.atomId;
-      const user = this.contextTask._user;
-      await ctx.bean.atom.write({
-        key: { atomId },
-        item: formAtom,
-        options: { schema: schemaWrite },
-        user,
-      });
-    }
+/***/ 5441:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-    async _complete_handle({ handle }) {
-      const timeHandled = new Date();
-      // flowTask
-      this.contextTask._flowTask.flowTaskStatus = 1;
-      this.contextTask._flowTask.timeHandled = timeHandled;
-      this.contextTask._flowTask.handleStatus = handle.status;
-      this.contextTask._flowTask.handleRemark = handle.remark;
-      await this.modelFlowTask.update(this.contextTask._flowTask);
-      // flowTaskHistory
-      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
-      this.contextTask._flowTaskHistory.timeHandled = timeHandled;
-      this.contextTask._flowTaskHistory.handleStatus = handle.status;
-      this.contextTask._flowTaskHistory.handleRemark = handle.remark;
-      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
-    }
+const require3 = __webpack_require__(5638);
+const extend = require3('extend2');
 
-    async _actions() {
-      // user
-      const user = this.contextTask._user;
-      // flowTask
-      const flowTask = this.contextTask._flowTask;
-      const flowTaskId = flowTask.id;
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // flowTaskStatus
-      if (flowTask.flowTaskStatus === 1) return null;
-      // actions
-      const actions = [];
-      // specificFlag
-      if (flowTask.specificFlag === 1) {
-        actions.push({
-          name: 'assigneesConfirmation',
-        });
-      } else if (flowTask.specificFlag === 2) {
-        actions.push({
-          name: 'recall',
-        });
-      } else if (flowTask.specificFlag === 0) {
-        // options
-        const options = ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance: this.nodeInstance });
-        // allowPassTask allowRejectTask
-        if (options.allowPassTask || options.allowRejectTask) {
-          actions.push({
-            name: 'handleTask',
-            options: {
-              allowPassTask: options.allowPassTask,
-              allowRejectTask: options.allowRejectTask,
-            },
-          });
-        }
-        // allowCancelFlow
-        if (options.allowCancelFlow) {
-          actions.push({
-            name: 'cancelFlow',
-          });
-        }
-      }
-      // others
-      return actions;
-    }
-
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
     async _viewAtom() {
       return await this._getAtomAndSchema({ mode: 'read' });
     }
@@ -1179,7 +1846,9 @@ module.exports = ctx => {
       const flowTask = this.contextTask._flowTaskHistory;
       const flowTaskId = flowTask.flowTaskId;
       // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
       // must be the same flowId, means not outdated
       if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
       // special for write
@@ -1204,9 +1873,16 @@ module.exports = ctx => {
       fields.atomId = {};
       fields.module = {};
       fields.atomClassName = {};
+      fields.atomNameLocale = {};
       fields.atomCategoryName = {};
+      fields.atomCategoryNameLocale = {};
+      fields.flowNodeNameCurrent = {};
+      fields.flowNodeNameCurrentLocale = {};
+      fields._meta = {};
       for (const field in fields) {
-        item[field] = atom[field];
+        if (item[field] === undefined && atom[field] !== undefined) {
+          item[field] = atom[field];
+        }
       }
       // ok
       return { schema, item };
@@ -1271,7 +1947,10 @@ module.exports = ctx => {
       };
       // listener
       const methodName = `getSchema${mode.replace(mode[0], mode[0].toUpperCase())}`;
-      const res = await this.flowInstance._flowListener[methodName](this.contextTask, this.contextNode, { schemaBase, schema });
+      const res = await this.flowInstance._flowListener[methodName](this.contextTask, this.contextNode, {
+        schemaBase,
+        schema,
+      });
       if (res) {
         schema = res;
       }
@@ -1286,52 +1965,114 @@ module.exports = ctx => {
       });
       return schema;
     }
+  }
+  return FlowTask;
+};
 
-    async _saveTaskVars() {
-      if (!this.contextTask._taskVars._dirty) return;
+
+/***/ }),
+
+/***/ 5927:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowTask {
+    // handle: assignee/remark
+    async _substitute({ handle }) {
+      // user
+      const user = this.contextTask._user;
       // flowTask
-      this.contextTask._flowTask.taskVars = JSON.stringify(this.contextTask._taskVars._vars);
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.substitute({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
+      // handle
+      await this._substitute_handle({ handle });
+      // need not notify
+      // this._notifyTaskHandlings(flowTask.userIdAssignee);
+    }
+
+    // 1. create a new task
+    // 2. update handleStatus/handleRemark
+    async _substitute_handle({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // 1. create a new task
+      const taskInstance = await ctx.bean.flowTask._createTaskInstance({
+        nodeInstance: this.nodeInstance,
+        userIdAssignee: handle.assignee,
+        user,
+      });
+      // specificFlag: 5
+      taskInstance.contextTask._flowTask.specificFlag = 5;
+      taskInstance.contextTask._flowTask.flowTaskIdSubstituteFrom = flowTaskId;
+      await taskInstance.modelFlowTask.update(taskInstance.contextTask._flowTask);
+      // history
+      taskInstance.contextTask._flowTaskHistory.specificFlag = 5;
+      taskInstance.contextTask._flowTaskHistory.flowTaskIdSubstituteFrom = flowTaskId;
+      await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
+      // notify
+      taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
+      // 2. update
+      // flowTask
+      const flowTaskIdSubstituteTo = taskInstance.contextTask._flowTask.id;
+      const timeHandled = new Date();
+      this.contextTask._flowTask.timeHandled = timeHandled;
+      this.contextTask._flowTask.handleStatus = 5;
+      this.contextTask._flowTask.handleRemark = handle.remark;
+      this.contextTask._flowTask.flowTaskIdSubstituteTo = flowTaskIdSubstituteTo;
+      this.contextTask._flowTask.ignoreMark = 1;
       await this.modelFlowTask.update(this.contextTask._flowTask);
-      // flowTask history
-      this.contextTask._flowTaskHistory.taskVars = this.contextTask._flowTask.taskVars;
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.timeHandled = timeHandled;
+      this.contextTask._flowTaskHistory.handleStatus = 5;
+      this.contextTask._flowTaskHistory.handleRemark = handle.remark;
+      this.contextTask._flowTaskHistory.flowTaskIdSubstituteTo = flowTaskIdSubstituteTo;
+      this.contextTask._flowTaskHistory.ignoreMark = 1;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
-      // done
-      this.contextTask._taskVars._dirty = false;
     }
 
-    async _saveVars() {
-      // save taskVars
-      await this._saveTaskVars();
-      // save nodeVars
-      await this.nodeInstance._saveNodeVars();
-      // save flowVars
-      await this.flowInstance._saveFlowVars();
+    async _substituteRecall() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // check right
+      await this.localRight.substituteRecall({ flowTask, user, getOptions: () => this._getNodeOptionsTask() });
+      // handle
+      await this._substituteRecall_handle();
     }
 
-    async created() {
-      // raise event: onTaskCreated
-      await this.flowInstance._flowListener.onTaskCreated(this.contextTask, this.contextNode);
-      await this._saveVars();
-    }
-
-    async claimed() {
-      // raise event: onTaskClaimed
-      await this.flowInstance._flowListener.onTaskClaimed(this.contextTask, this.contextNode);
-      await this._saveVars();
-    }
-
-    async completed() {
-      // raise event: onTaskCompleted
-      await this.flowInstance._flowListener.onTaskCompleted(this.contextTask, this.contextNode);
-      await this._saveVars();
-    }
-
-    _notifyTaskClaimings(userId) {
-      ctx.bean.flowTask._notifyTaskClaimings(userId);
-    }
-
-    _notifyTaskHandlings(userId) {
-      ctx.bean.flowTask._notifyTaskHandlings(userId);
+    // 1. delete task
+    // 2. update task
+    async _substituteRecall_handle() {
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      // 1. delete task
+      const taskTo = await this.modelFlowTask.get({ id: flowTask.flowTaskIdSubstituteTo });
+      // delete flowTask and flowTaskHistory
+      await this.modelFlowTask.delete({ id: taskTo.id });
+      await this.modelFlowTaskHistory.delete({ flowTaskId: taskTo.id });
+      // notify
+      this._notifyTaskClaimings(taskTo.userIdAssignee);
+      // 2. update
+      // flowTask
+      this.contextTask._flowTask.timeHandled = null;
+      this.contextTask._flowTask.handleStatus = 0;
+      this.contextTask._flowTask.handleRemark = null;
+      this.contextTask._flowTask.flowTaskIdSubstituteTo = 0;
+      this.contextTask._flowTask.ignoreMark = 0;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory update
+      this.contextTask._flowTaskHistory.timeHandled = null;
+      this.contextTask._flowTaskHistory.handleStatus = 0;
+      this.contextTask._flowTaskHistory.handleRemark = null;
+      this.contextTask._flowTaskHistory.flowTaskIdSubstituteTo = 0;
+      this.contextTask._flowTaskHistory.ignoreMark = 0;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
   }
   return FlowTask;
@@ -1340,7 +2081,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 716:
+/***/ 2716:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1453,7 +2194,7 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `a.*,
-            b.flowNodeDefId,b.flowNodeName,b.flowNodeType,b.flowNodeStatus,b.flowNodeRemark,b.timeDone,
+            b.flowNodeDefId,b.flowNodeName,b.flowNodeType,b.flowNodeStatus,b.flowNodeHandleStatus,b.flowNodeRemark,b.timeDone,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
             d.userName,d.avatar,
             e.userName as flowUserName,e.avatar as flowUserAvatar
@@ -1488,7 +2229,238 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 951:
+/***/ 3751:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Right {
+    get modelFlowTask() {
+      return ctx.model.module(moduleInfo.relativeName).flowTask;
+    }
+    _check_specificFlag_normal({ flowTask }) {
+      if (flowTask.specificFlag === 1 || flowTask.specificFlag === 2) ctx.throw(403);
+    }
+    _check_specificFlag_0({ flowTask }) {
+      if (flowTask.specificFlag !== 0) ctx.throw(403);
+    }
+    _check_specificFlag_1({ flowTask }) {
+      if (flowTask.specificFlag !== 1) ctx.throw(403);
+    }
+    _check_specificFlag_2({ flowTask }) {
+      if (flowTask.specificFlag !== 2) ctx.throw(403);
+    }
+    _check_sameUser({ flowTask, user }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) {
+        ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      }
+    }
+    _check_notDone({ flowTask }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // not complete
+      if (flowTask.flowTaskStatus === 1) {
+        ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      }
+    }
+    _check_notDoneAndHandled({ flowTask }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // not complete and not handled
+      if (flowTask.flowTaskStatus === 1 || flowTask.handleStatus !== 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      }
+    }
+    _check_claimed({ flowTask }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // timeClaimed first
+      if (!flowTask.timeClaimed) {
+        ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      }
+    }
+    async _getNodeOptionsTask({ getOptions, flowTask, nodeInstance }) {
+      if (getOptions) return await getOptions();
+      if (!nodeInstance) {
+        nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
+      }
+      return ctx.bean.flowTask._getNodeDefOptionsTask({ nodeInstance });
+    }
+    async _getTask({ getTask, flowTaskId }) {
+      if (getTask) return await getTask(flowTaskId);
+      return await this.modelFlowTask.get({ id: flowTaskId });
+    }
+    async appendHandleRemark({ flowTask, user, flowNodeType }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // more check
+      if (flowNodeType !== 'startEventAtom' || flowTask.flowTaskStatus !== 1 || flowTask.handleRemark) {
+        ctx.throw.module(moduleInfo.relativeName, 1011, flowTaskId);
+      }
+    }
+    async assignees({ flowTask, user }) {
+      // specificFlag must be 1
+      this._check_specificFlag_1({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+    }
+    async assigneesConfirmation({ flowTask, user }) {
+      // same as assignees
+      return await this.assignees({ flowTask, user });
+    }
+    async cancelFlow({ flowTask, user, getOptions, disableCheckTimeClaimed }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // specificFlag must be normal
+      this._check_specificFlag_normal({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      // check if allowCancelFlow
+      if (!options.allowCancelFlow) {
+        ctx.throw.module(moduleInfo.relativeName, 1010, flowTaskId);
+      }
+    }
+    async claim({ flowTask, user }) {
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // check: not throw error
+      // if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
+      if (flowTask.timeClaimed) {
+        return { timeClaimed: flowTask.timeClaimed };
+      }
+    }
+    async complete({ flowTask, user, handle, getOptions, disableCheckTimeClaimed }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // specificFlag must be normal
+      this._check_specificFlag_normal({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      // check if pass/reject
+      if (handle) {
+        if (handle.status === 1 && !options.allowPassTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+        }
+        if (handle.status === 2 && !options.allowRejectTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
+        }
+      } else if (!options.allowPassTask && !options.allowRejectTask) {
+        ctx.throw(403);
+      }
+    }
+    async recall({ flowTask, user }) {
+      // specificFlag must be 2
+      this._check_specificFlag_2({ flowTask });
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+    }
+    async forward({ flowTask, user, getOptions, disableCheckTimeClaimed }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
+      // check if flowTaskIdSubstituteFrom
+      if (flowTask.flowTaskIdSubstituteFrom) {
+        ctx.throw(403);
+      }
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      if (!options.allowForward || flowTask.flowTaskIdForwardTo) {
+        ctx.throw.module(moduleInfo.relativeName, 1012, flowTaskId);
+      }
+    }
+    async forwardRecall({ flowTask, user, getOptions, getTask }) {
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      if (!options.allowForward || !flowTask.flowTaskIdForwardTo) {
+        ctx.throw(403);
+      }
+      // check if claimed
+      const taskTo = await this._getTask({ getTask, flowTaskId: flowTask.flowTaskIdForwardTo });
+      if (taskTo.timeClaimed) {
+        ctx.throw(403);
+      }
+    }
+    async substitute({ flowTask, user, getOptions, disableCheckTimeClaimed }) {
+      const flowTaskId = flowTask.flowTaskId || flowTask.id;
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDoneAndHandled({ flowTask });
+      // timeClaimed first
+      if (!disableCheckTimeClaimed) {
+        this._check_claimed({ flowTask });
+      }
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      // allowed only once, so should check flowTaskIdSubstituteFrom
+      if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw.module(moduleInfo.relativeName, 1013, flowTaskId);
+      }
+    }
+    async substituteRecall({ flowTask, user, getOptions, getTask }) {
+      // must be the same user
+      this._check_sameUser({ flowTask, user });
+      // not complete
+      this._check_notDone({ flowTask });
+      // timeClaimed first
+      this._check_claimed({ flowTask });
+      // options
+      const options = await this._getNodeOptionsTask({ getOptions, flowTask });
+      // allowed only once, so should check flowTaskIdSubstituteFrom
+      if (!options.allowSubstitute || flowTask.flowTaskIdSubstituteFrom || !flowTask.flowTaskIdSubstituteTo) {
+        ctx.throw(403);
+      }
+      // check if claimed
+      const taskTo = await this._getTask({ getTask, flowTaskId: flowTask.flowTaskIdSubstituteTo });
+      if (taskTo.timeClaimed) {
+        ctx.throw(403);
+      }
+    }
+  }
+
+  return Right;
+};
+
+
+/***/ }),
+
+/***/ 2951:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1512,7 +2484,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 843:
+/***/ 4843:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1536,7 +2508,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 899:
+/***/ 6899:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1611,6 +2583,32 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        let sql;
+
+        // aFlowTask
+        sql = `
+          ALTER TABLE aFlowTask
+            ADD COLUMN ignoreMark int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardTo int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteTo int(11) DEFAULT '0'
+                `;
+        await this.ctx.model.query(sql);
+
+        // aFlowTaskHistory
+        sql = `
+          ALTER TABLE aFlowTaskHistory
+            ADD COLUMN ignoreMark int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdForwardTo int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteFrom int(11) DEFAULT '0',
+            ADD COLUMN flowTaskIdSubstituteTo int(11) DEFAULT '0'
+                `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {}
@@ -1624,20 +2622,21 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 187:
+/***/ 5187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const versionManager = __webpack_require__(899);
-const flowNodeStartEventAtom = __webpack_require__(252);
-const flowNodeEndEventAtom = __webpack_require__(895);
-const flowNodeActivityUserTask = __webpack_require__(892);
-const localContextTask = __webpack_require__(288);
-const localFlowTask = __webpack_require__(962);
-const localProcedure = __webpack_require__(716);
-const beanFlowTask = __webpack_require__(302);
-const statsTaskClaimings = __webpack_require__(951);
-const statsTaskHandlings = __webpack_require__(843);
-const ioMessageWorkflow = __webpack_require__(723);
+const versionManager = __webpack_require__(6899);
+const flowNodeStartEventAtom = __webpack_require__(2252);
+const flowNodeEndEventAtom = __webpack_require__(5895);
+const flowNodeActivityUserTask = __webpack_require__(4892);
+const localContextTask = __webpack_require__(5288);
+const localFlowTask = __webpack_require__(2895);
+const localProcedure = __webpack_require__(2716);
+const localRight = __webpack_require__(3751);
+const beanFlowTask = __webpack_require__(2302);
+const statsTaskClaimings = __webpack_require__(2951);
+const statsTaskHandlings = __webpack_require__(4843);
+const ioMessageWorkflow = __webpack_require__(8723);
 
 module.exports = app => {
   const beans = {
@@ -1672,6 +2671,10 @@ module.exports = app => {
       mode: 'ctx',
       bean: localProcedure,
     },
+    'local.right': {
+      mode: 'ctx',
+      bean: localRight,
+    },
     // global
     flowTask: {
       mode: 'ctx',
@@ -1699,10 +2702,10 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 271:
+/***/ 3271:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(5638);
 const assert = require3('assert');
 
 module.exports = ctx => {
@@ -1714,7 +2717,8 @@ module.exports = ctx => {
 
     async onNodeEnter() {
       // super
-      await super.onNodeEnter();
+      let res = await super.onNodeEnter();
+      if (!res) return res;
 
       // options
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({
@@ -1722,7 +2726,7 @@ module.exports = ctx => {
       });
 
       // prepare assignees
-      const res = await this._prepareAssignees({ options });
+      res = await this._prepareAssignees({ options });
       if (!res) return false;
 
       // ok
@@ -1731,7 +2735,8 @@ module.exports = ctx => {
 
     async onNodeBegin() {
       // super
-      await super.onNodeBegin();
+      const res = await super.onNodeBegin();
+      if (!res) return res;
 
       // options
       const options = ctx.bean.flowTask._getNodeDefOptionsTask({
@@ -1773,14 +2778,33 @@ module.exports = ctx => {
 
     async onNodeDoing() {
       // super
-      await super.onNodeDoing();
+      const res = await super.onNodeDoing();
+      if (!res) return res;
 
       // break
       return false;
     }
 
-    async clearRemains() {
+    async onNodeClear({ options }) {
       await ctx.bean.flowTask._clearRemains({ nodeInstance: this.nodeInstance });
+      // super
+      return await super.onNodeClear({ options });
+    }
+
+    async onNodeChange({ options }) {
+      const { event, taskInstance } = options;
+      if (event === 'created') {
+        await taskInstance.flowInstance._flowListener.onTaskCreated(taskInstance.contextTask, taskInstance.contextNode);
+      } else if (event === 'claimed') {
+        await taskInstance.flowInstance._flowListener.onTaskClaimed(taskInstance.contextTask, taskInstance.contextNode);
+      } else if (event === 'completed') {
+        await taskInstance.flowInstance._flowListener.onTaskCompleted(
+          taskInstance.contextTask,
+          taskInstance.contextNode
+        );
+      }
+      // super
+      return await super.onNodeChange({ options });
     }
 
     async _prepareAssignees({ options }) {
@@ -1839,7 +2863,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 294:
+/***/ 9294:
 /***/ ((module) => {
 
 module.exports = ({ ctx /* flowInstance*/ }) => {
@@ -1868,7 +2892,7 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
 
 /***/ }),
 
-/***/ 418:
+/***/ 1418:
 /***/ ((module) => {
 
 module.exports = () => {
@@ -1910,7 +2934,7 @@ module.exports = () => {
 
 /***/ }),
 
-/***/ 76:
+/***/ 7076:
 /***/ ((module) => {
 
 // eslint-disable-next-line
@@ -1922,7 +2946,7 @@ module.exports = appInfo => {
 
 /***/ }),
 
-/***/ 624:
+/***/ 5624:
 /***/ ((module) => {
 
 // error code should start from 1001
@@ -1937,12 +2961,15 @@ module.exports = {
   1008: 'Task Assignees cannot be empty: %s',
   1009: 'Task Assignees cannot be appended: %s',
   1010: 'Flow cannot be cancelled: %s',
+  1011: 'Task Handle Remark cannot be appended: %s',
+  1012: 'Task has been forwarded: %s',
+  1013: 'Task has been substituted: %s',
 };
 
 
 /***/ }),
 
-/***/ 614:
+/***/ 3614:
 /***/ ((module) => {
 
 module.exports = {
@@ -1968,6 +2995,8 @@ module.exports = {
       allowRejectTask: false,
       allowCancelFlow: true,
       allowRecall: false,
+      allowForward: false,
+      allowSubstitute: false,
       schema: {
         read: true,
         write: true,
@@ -1993,6 +3022,8 @@ module.exports = {
     allowRejectTask: true,
     allowCancelFlow: false,
     allowRecall: true,
+    allowForward: false,
+    allowSubstitute: false,
     schema: {
       read: true,
       write: false,
@@ -2003,10 +3034,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 587:
+/***/ 8587:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const defaults = __webpack_require__(614);
+const defaults = __webpack_require__(3614);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2055,25 +3086,25 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 327:
+/***/ 6327:
 /***/ ((module) => {
 
 module.exports = {
-  StartEventAtom: 'StartEvent: Atom Draft',
-  EndEventAtom: 'EndEvent: Atom Submit',
+  StartEventAtom: 'StartEvent: Data Draft',
+  EndEventAtom: 'EndEvent: Data Submit',
   ActivityUserTask: 'Activity: User Task',
 };
 
 
 /***/ }),
 
-/***/ 72:
+/***/ 3072:
 /***/ ((module) => {
 
 module.exports = {
   Submitted: '已提交',
-  StartEventAtom: '原子起草开始事件',
-  EndEventAtom: '原子提交结束事件',
+  StartEventAtom: '数据起草开始事件',
+  EndEventAtom: '数据提交结束事件',
   ActivityUserTask: '用户任务活动',
   'Task not Found: %s': '任务未发现: %s',
   'Task cannot be accessed: %s': '任务无权访问: %s',
@@ -2085,6 +3116,9 @@ module.exports = {
   'Task Assignees cannot be empty: %s': '任务参与人不允许为空: %s',
   'Task Assignees cannot be appended: %s': '任务参与人不允许追加: %s',
   'Flow cannot be cancelled: %s': '流程无权被取消: %s',
+  'Task Handle Remark cannot be appended: %s': '任务处理意见不允许追加: %s',
+  'Task has been forwarded: %s': '任务已被转办: %s',
+  'Task has been substituted: %s': '任务已被代办: %s',
 };
 
 
@@ -2094,14 +3128,14 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
-  'en-us': __webpack_require__(327),
-  'zh-cn': __webpack_require__(72),
+  'en-us': __webpack_require__(6327),
+  'zh-cn': __webpack_require__(3072),
 };
 
 
 /***/ }),
 
-/***/ 526:
+/***/ 6526:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2176,6 +3210,16 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'Allow Recall',
       },
+      allowForward: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Forward',
+      },
+      allowSubstitute: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Substitute',
+      },
       schema: {
         type: 'object',
         ebType: 'component',
@@ -2194,7 +3238,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 818:
+/***/ 2818:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2208,6 +3252,9 @@ module.exports = app => {
         ebType: 'atomClass',
         ebTitle: 'Atom Class',
         notEmpty: true,
+        ebParams: {
+          simple: 0,
+        },
       },
       conditionExpression: {
         type: 'string',
@@ -2229,11 +3276,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 8232:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const startEventAtom = __webpack_require__(818);
-const activityUserTask = __webpack_require__(526);
+const startEventAtom = __webpack_require__(2818);
+const activityUserTask = __webpack_require__(6526);
 
 module.exports = app => {
   const schemas = {};
@@ -2311,6 +3358,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async appendHandleRemark() {
+      const res = await this.ctx.service.flowTask.appendHandleRemark({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async assignees() {
       const res = await this.ctx.service.flowTask.assignees({
         flowTaskId: this.ctx.request.body.flowTaskId,
@@ -2345,14 +3401,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async actions() {
-      const res = await this.ctx.service.flowTask.actions({
-        flowTaskId: this.ctx.request.body.flowTaskId,
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-
     async viewAtom() {
       const res = await this.ctx.service.flowTask.viewAtom({
         flowTaskId: this.ctx.request.body.flowTaskId,
@@ -2368,6 +3416,64 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async userSelectForward() {
+      const { flowTaskId, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowTask.userSelectForward({
+        flowTaskId,
+        params,
+        user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async forward() {
+      const res = await this.ctx.service.flowTask.forward({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async forwardRecall() {
+      const res = await this.ctx.service.flowTask.forwardRecall({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async userSelectSubstitute() {
+      const { flowTaskId, params } = this.ctx.request.body;
+      const user = this.ctx.state.user.op;
+      const page = params.page;
+      const items = await this.ctx.service.flowTask.userSelectSubstitute({
+        flowTaskId,
+        params,
+        user,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async substitute() {
+      const res = await this.ctx.service.flowTask.substitute({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async substituteRecall() {
+      const res = await this.ctx.service.flowTask.substituteRecall({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
   return FlowTaskController;
 };
@@ -2375,7 +3481,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 7095:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const flow = __webpack_require__(623);
@@ -2392,26 +3498,26 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 421:
+/***/ 9421:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const config = __webpack_require__(76);
+const config = __webpack_require__(7076);
 const locales = __webpack_require__(25);
-const errors = __webpack_require__(624);
+const errors = __webpack_require__(5624);
 
 module.exports = app => {
   // aops
-  const aops = __webpack_require__(224)(app);
+  const aops = __webpack_require__(5224)(app);
   // beans
-  const beans = __webpack_require__(187)(app);
+  const beans = __webpack_require__(5187)(app);
   // routes
-  const routes = __webpack_require__(825)(app);
+  const routes = __webpack_require__(3825)(app);
   // controllers
-  const controllers = __webpack_require__(95)(app);
+  const controllers = __webpack_require__(7095)(app);
   // services
-  const services = __webpack_require__(214)(app);
+  const services = __webpack_require__(7214)(app);
   // models
-  const models = __webpack_require__(230)(app);
+  const models = __webpack_require__(3230)(app);
   // meta
   const meta = __webpack_require__(458)(app);
 
@@ -2436,8 +3542,8 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  const schemas = __webpack_require__(232)(app);
-  const flowNodes = __webpack_require__(587)(app);
+  const schemas = __webpack_require__(8232)(app);
+  const flowNodes = __webpack_require__(8587)(app);
   const meta = {
     base: {
       atoms: {},
@@ -2486,7 +3592,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 514:
+/***/ 6514:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2501,7 +3607,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 688:
+/***/ 6688:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2531,11 +3637,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 230:
+/***/ 3230:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flowNodeStartEventAtomCondition = __webpack_require__(514);
-const flowTask = __webpack_require__(688);
+const flowNodeStartEventAtomCondition = __webpack_require__(6514);
+const flowTask = __webpack_require__(6688);
 const flowTaskHistory = __webpack_require__(761);
 
 module.exports = app => {
@@ -2550,7 +3656,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 825:
+/***/ 3825:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2562,13 +3668,19 @@ module.exports = app => {
     { method: 'post', path: 'task/count', controller: 'flowTask' },
     { method: 'post', path: 'task/claim', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/complete', controller: 'flowTask', middlewares: 'transaction' },
+    { method: 'post', path: 'task/appendHandleRemark', controller: 'flowTask' },
     { method: 'post', path: 'task/assignees', controller: 'flowTask' },
     { method: 'post', path: 'task/assigneesConfirmation', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/recall', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/cancelFlow', controller: 'flowTask', middlewares: 'transaction' },
-    { method: 'post', path: 'task/actions', controller: 'flowTask' },
     { method: 'post', path: 'task/viewAtom', controller: 'flowTask' },
     { method: 'post', path: 'task/editAtom', controller: 'flowTask' },
+    { method: 'post', path: 'task/userSelectForward', controller: 'flowTask' },
+    { method: 'post', path: 'task/forward', controller: 'flowTask' },
+    { method: 'post', path: 'task/forwardRecall', controller: 'flowTask' },
+    { method: 'post', path: 'task/userSelectSubstitute', controller: 'flowTask' },
+    { method: 'post', path: 'task/substitute', controller: 'flowTask' },
+    { method: 'post', path: 'task/substituteRecall', controller: 'flowTask' },
   ];
   return routes;
 };
@@ -2576,74 +3688,13 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 934:
+/***/ 4934:
 /***/ ((module) => {
 
 module.exports = app => {
   class Flow extends app.Service {
     async data({ flowId, user }) {
-      // flow
-      const flow = await this._data_flow({ flowId, user });
-      if (!flow) return null;
-      // atom
-      const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
-      // tasks
-      const tasks = await this._data_tasks({ flowId, user });
-      // ok
-      return { flow, atom, tasks };
-    }
-
-    async _data_flow({ flowId, user }) {
-      // select flow
-      const flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
-      // not throw error
-      // if (!flow) this.ctx.throw(404);
-      // ok
-      return flow;
-    }
-
-    async _data_atom({ flowId, atomId }) {
-      // only read basic info
-      //   a.atomFlowId = {flowId}
-      const atom = await this.ctx.model.queryOne(
-        `
-        select a.*,a.id as atomId,b.module,b.atomClassName from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
-             where a.deleted=0 and a.iid=? and a.id=?
-                   and a.atomFlowId=?
-        `,
-        [this.ctx.instance.id, atomId, flowId]
-      );
-      return atom;
-    }
-
-    async _data_tasks({ flowId, user }) {
-      // select tasks
-      const tasks = await this.ctx.bean.flowTask.select({
-        options: {
-          where: {
-            'a.flowId': flowId,
-            'b.flowNodeType': ['startEventAtom', 'activityUserTask'],
-            __or__: [{ 'a.userIdAssignee': user.id }, { 'a.flowTaskHidden': 0 }],
-          },
-          orders: [
-            ['a.flowNodeId', 'desc'],
-            ['a.specificFlag', 'desc'],
-            ['a.flowTaskStatus', 'asc'],
-          ],
-          history: 1,
-        },
-        user: null,
-        pageForce: false,
-      });
-      // loop
-      for (const task of tasks) {
-        // actions
-        if (task.userIdAssignee === user.id && task.flowTaskStatus === 0) {
-          task._actions = await this.ctx.bean.flowTask.actions({ flowTaskId: task.flowTaskId, user });
-        }
-      }
-      return tasks;
+      return await this.ctx.bean.flowTask.flowData({ flowId, user });
     }
   }
   return Flow;
@@ -2652,7 +3703,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 199:
+/***/ 3199:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2673,6 +3724,10 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.complete({ flowTaskId, handle, formAtom, user });
     }
 
+    async appendHandleRemark({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.appendHandleRemark({ flowTaskId, handle, user });
+    }
+
     async assignees({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.assignees({ flowTaskId, user });
     }
@@ -2689,16 +3744,44 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.cancelFlow({ flowTaskId, handle, user });
     }
 
-    async actions({ flowTaskId, user }) {
-      return await this.ctx.bean.flowTask.actions({ flowTaskId, user });
-    }
-
     async viewAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.viewAtom({ flowTaskId, user });
     }
 
     async editAtom({ flowTaskId, user }) {
       return await this.ctx.bean.flowTask.editAtom({ flowTaskId, user });
+    }
+
+    async userSelectForward({ flowTaskId, params, user }) {
+      // check right
+      const flowTask = await this.ctx.model.flowTask.get({ id: flowTaskId });
+      await this.ctx.bean.local.right.forward({ flowTask, user });
+      // users
+      return await this.ctx.bean.user.selectGeneral({ params });
+    }
+
+    async forward({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.forward({ flowTaskId, handle, user });
+    }
+
+    async forwardRecall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.forwardRecall({ flowTaskId, user });
+    }
+
+    async userSelectSubstitute({ flowTaskId, params, user }) {
+      // check right
+      const flowTask = await this.ctx.model.flowTask.get({ id: flowTaskId });
+      await this.ctx.bean.local.right.substitute({ flowTask, user });
+      // users
+      return await this.ctx.bean.user.selectGeneral({ params });
+    }
+
+    async substitute({ flowTaskId, handle, user }) {
+      return await this.ctx.bean.flowTask.substitute({ flowTaskId, handle, user });
+    }
+
+    async substituteRecall({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.substituteRecall({ flowTaskId, user });
     }
   }
   return FlowTask;
@@ -2707,11 +3790,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 214:
+/***/ 7214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flow = __webpack_require__(934);
-const flowTask = __webpack_require__(199);
+const flow = __webpack_require__(4934);
+const flowTask = __webpack_require__(3199);
 
 module.exports = app => {
   const services = {
@@ -2724,7 +3807,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 5638:
 /***/ ((module) => {
 
 "use strict";
@@ -2763,7 +3846,7 @@ module.exports = require("require3");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(421);
+/******/ 	var __webpack_exports__ = __webpack_require__(9421);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

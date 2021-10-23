@@ -4,9 +4,9 @@
 /***/ 283:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(622);
-const fs = __webpack_require__(747);
-const require3 = __webpack_require__(718);
+const path = __webpack_require__(17);
+const fs = __webpack_require__(147);
+const require3 = __webpack_require__(638);
 const sendToWormhole = require3('stream-wormhole');
 const uuid = require3('uuid');
 const gm = require3('gm');
@@ -183,7 +183,12 @@ module.exports = ctx => {
             // crop
             if (fields.cropped === 'true') {
               const cropbox = JSON.parse(fields.cropbox);
-              img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
+              img = img.crop(
+                parseInt(cropbox.width),
+                parseInt(cropbox.height),
+                parseInt(cropbox.x),
+                parseInt(cropbox.y)
+              );
             }
             // fixed
             if (fields.fixed) {
@@ -289,7 +294,10 @@ module.exports = ctx => {
         // redirect nginx
         // ctx.set('content-type', file.mime);
         ctx.set('content-transfer-encoding', file.encoding);
-        ctx.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`);
+        ctx.set(
+          'content-disposition',
+          `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`
+        );
         ctx.set('X-Accel-Redirect', forwardUrl);
         // ctx.success();
         ctx.response.status = 200;
@@ -899,7 +907,15 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 747:
+/***/ 638:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("require3");
+
+/***/ }),
+
+/***/ 147:
 /***/ ((module) => {
 
 "use strict";
@@ -907,19 +923,11 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 622:
+/***/ 17:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("path");
-
-/***/ }),
-
-/***/ 718:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

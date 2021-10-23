@@ -4,7 +4,7 @@
 /***/ 35:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
@@ -528,7 +528,13 @@ module.exports = ctx => {
         const beanMessage = this._getBeanMessage(messageClassBase);
         if (!beanMessage) return false;
         // render message content
-        const content = await beanMessage.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
+        const content = await beanMessage.onChannelRender({
+          channelFullName,
+          options,
+          message,
+          messageSync,
+          messageClass,
+        });
         if (!content) return false;
         // get channel base
         const beanChannel = this._getBeanChannel(channelFullName);
@@ -853,14 +859,23 @@ module.exports = ctx => {
       where.syncDeleted = 0;
       where.messageClassId = messageClass.id;
       where.userId = user ? user.id : 0;
-      where.messageRead = 0;
+      // messageRead
+      if (where.messageRead === null) {
+        delete where.messageRead;
+      } else if (where.messageRead === undefined) {
+        where.messageRead = 0;
+      }
+      // orders
+      const _orders = (options && options.orders) || [['id', 'asc']];
+      // offset
+      const _offset = (options && options.offset) || 0;
       // offset
       const res = await ctx.db.select('aSocketIOMessageView', {
         where,
         columns: ['id'],
-        orders: [['id', 'asc']],
+        orders: _orders,
         limit: 1,
-        offset: 0,
+        offset: _offset,
       });
       // offset - 1
       const offset = res[0] ? res[0].id - 1 : -1;
@@ -1008,7 +1023,7 @@ module.exports = ctx => {
 /***/ 45:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 
 const _cacheMessageClasses = {};
@@ -1267,9 +1282,13 @@ module.exports = ctx => {
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);
 
-      if (app.meta.isTest || app.meta.isLocal) app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
+      if (app.meta.isTest || app.meta.isLocal) {
+        app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
+      }
       await next();
-      if (app.meta.isTest || app.meta.isLocal) app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
+      if (app.meta.isTest || app.meta.isLocal) {
+        app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
+      }
 
       // execute when disconnect
       ctx.bean.io._unRegisterSocket(socketId);
@@ -2029,7 +2048,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

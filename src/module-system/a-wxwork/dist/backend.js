@@ -4,7 +4,7 @@
 /***/ 303:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
 const WechatAPI = require3('@zhennann/co-wechat-api');
 module.exports = function (ctx) {
@@ -171,7 +171,8 @@ module.exports = function (ctx) {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
+          const ok =
+            provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -193,7 +194,11 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // aWxworkMember
-      await ctx.model.query('update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
+      await ctx.model.query('update aWxworkMember a set a.userId=? where a.iid=? and a.userId=?', [
+        data.userIdTo,
+        ctx.instance.id,
+        data.userIdFrom,
+      ]);
       // next
       await next();
     }
@@ -208,7 +213,7 @@ module.exports = ctx => {
 /***/ 427:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 
 module.exports = ctx => {
@@ -513,8 +518,8 @@ module.exports = {
 /***/ 290:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const crypto = __webpack_require__(417);
-const require3 = __webpack_require__(718);
+const crypto = __webpack_require__(113);
+const require3 = __webpack_require__(638);
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
@@ -547,7 +552,7 @@ module.exports = {
 /***/ 546:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = __webpack_require__(591);
@@ -620,7 +625,10 @@ module.exports = function (ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?', [ctx.instance.id, providerItem.id, profileId]);
+      const authItems = await ctx.model.query(
+        'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
+        [ctx.instance.id, providerItem.id, profileId]
+      );
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -647,7 +655,10 @@ module.exports = function (ctx) {
         authUserId = authItem.userId;
       }
       // check if has userId for memberId
-      const _authOthers = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?', [ctx.instance.id, profileId, authId]);
+      const _authOthers = await ctx.model.query(
+        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
+        [ctx.instance.id, profileId, authId]
+      );
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
@@ -1026,7 +1037,7 @@ module.exports = app => {
 /***/ 98:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -1090,7 +1101,7 @@ module.exports = app => {
 /***/ 222:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const WechatCrypto = require3('wechat-crypto');
 const wechatUtils = __webpack_require__(290);
 
@@ -1117,7 +1128,9 @@ module.exports = app => {
       // encrypted: always true
       const encrypted = true; // query.encrypt_type === 'aes';
       // wechat crypto
-      const wechatCrypto = encrypted ? new WechatCrypto(configApp.token, configApp.encodingAESKey, config.corpid) : null;
+      const wechatCrypto = encrypted
+        ? new WechatCrypto(configApp.token, configApp.encodingAESKey, config.corpid)
+        : null;
       // parse
       let messageIn;
       if (this.ctx.method === 'GET') {
@@ -1157,7 +1170,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -1184,7 +1199,9 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+        valid =
+          query.signature ===
+          wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -1469,7 +1486,7 @@ module.exports = ctx => {
 /***/ 272:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const querystring = require3('querystring');
 
 const OAuth = function (appid, agentid) {
@@ -1510,7 +1527,7 @@ module.exports = OAuth;
 /***/ 821:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = __webpack_require__(272);
@@ -1621,8 +1638,18 @@ module.exports = app => {
     { method: 'get', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
     { method: 'post', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
     // contacts
-    { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'contacts/syncStatus', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'contacts/sync',
+      controller: 'contacts',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'contacts/syncStatus',
+      controller: 'contacts',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
 
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
@@ -1767,9 +1794,57 @@ const __memberFieldMap = [
 ];
 
 const __memberFieldMap_XML = [
-  ['memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address'],
-  ['NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address'],
-  ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string'],
+  [
+    'memberIdNew',
+    'memberId',
+    'name',
+    'alias',
+    'mobile',
+    'department',
+    'position',
+    'gender',
+    'email',
+    'telephone',
+    'is_leader_in_dept',
+    'avatar',
+    'status',
+    'extattr',
+    'address',
+  ],
+  [
+    'NewUserID',
+    'UserID',
+    'Name',
+    'Alias',
+    'Mobile',
+    'Department',
+    'Position',
+    'Gender',
+    'Email',
+    'Telephone',
+    'IsLeaderInDept',
+    'Avatar',
+    'Status',
+    'ExtAttr',
+    'Address',
+  ],
+  [
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'number',
+    'string',
+    'string',
+    'string',
+    'string',
+    'number',
+    'json',
+    'string',
+  ],
 ];
 
 module.exports = app => {
@@ -1838,9 +1913,17 @@ module.exports = app => {
         // check if memberId changed
         if (member.memberIdNew) {
           // upate memberId of member
-          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [member.memberIdNew, this.ctx.instance.id, member.memberId]);
+          await this.ctx.model.query('update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?', [
+            member.memberIdNew,
+            this.ctx.instance.id,
+            member.memberId,
+          ]);
           // upate profileId of auth
-          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [`wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}`]);
+          await this.ctx.model.query('update aAuth a set a.profileId=? where a.iid=? and a.profileId=?', [
+            `wxwork:${member.memberIdNew}`,
+            this.ctx.instance.id,
+            `wxwork:${member.memberId}`,
+          ]);
         }
         // get member remotely
         const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
@@ -1874,7 +1957,11 @@ module.exports = app => {
         }
         context.remoteDepartments = res.department;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---`,
+        });
         // local departments
         context.localDepartments = await this.ctx.model.department.select();
         context.localDepartmentsMap = {};
@@ -1931,7 +2018,11 @@ module.exports = app => {
         }
         context.remoteMembers = res.userlist;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---`,
+        });
         // local members
         context.localMembers = await this.ctx.model.member.select();
         context.localMembersMap = {};
@@ -2190,7 +2281,9 @@ module.exports = app => {
       const memberId = res.insertId;
 
       // 5. send message: account migration
-      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/sendLinkAccountMigration' });
+      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({
+        name: '/groupInfo/sendLinkAccountMigration',
+      });
       if (sendLinkAccountMigration) {
         await this._sendLinkAccountMigration({ userId });
       }
@@ -2233,8 +2326,13 @@ module.exports = app => {
 
     // get role top
     async _getRoleTop() {
-      const roleContainer = await this.ctx.bean.role.parseRoleName({ roleName: this.ctx.config.sync.department.roleContainer });
-      const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+      const roleContainer = await this.ctx.bean.role.parseRoleName({
+        roleName: this.ctx.config.sync.department.roleContainer,
+      });
+      const roleTop = await this.ctx.bean.role.get({
+        roleName: this.ctx.config.sync.department.roleTop,
+        roleIdParent: roleContainer.id,
+      });
       if (roleTop) return roleTop;
       // create role
       const data = {
@@ -2399,19 +2497,19 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 417:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("require3");
+
+/***/ }),
+
+/***/ 113:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");
 
 /***/ })
 

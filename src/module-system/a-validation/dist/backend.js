@@ -4,7 +4,7 @@
 /***/ 430:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const Ajv = require3('ajv');
 const AjvLocalize = require3('ajv-i18n');
 const AjvKeywords = require3('ajv-keywords');
@@ -59,10 +59,13 @@ module.exports = app => {
 };
 
 function createValidate(schemaRoot) {
-  return async function ({ ctx, schema, data }) {
+  return async function ({ ctx, schema, data, filterOptions }) {
     const validate = this.getSchema(schema || schemaRoot);
     try {
       const res = await validate.call(ctx, data);
+      if (filterOptions) {
+        _filterResult({ ajv: this, validate, data, filterOptions });
+      }
       return res;
     } catch (e) {
       if (!Array.isArray(e.errors)) throw e;
@@ -78,6 +81,35 @@ function createValidate(schemaRoot) {
       });
     }
   };
+}
+
+function _filterResult({ ajv, validate, data, filterOptions }) {
+  if (filterOptions === true) {
+    filterOptions = { type: true, ebReadOnly: true };
+  }
+  _filterSchema({ ajv, schema: validate.schema, data, filterOptions });
+}
+
+function _filterSchema({ ajv, schema, data, filterOptions }) {
+  _filterProperties({ ajv, properties: schema.properties, data, filterOptions });
+}
+
+function _filterProperties({ ajv, properties, data, filterOptions }) {
+  if (!data) return;
+  for (const key in properties) {
+    const property = properties[key];
+    if (data[key] === undefined) continue;
+    if (filterOptions.type && !property.type) {
+      delete data[key];
+    } else if (filterOptions.ebReadOnly && property.ebReadOnly === true) {
+      delete data[key];
+    } else if (property.type === 'object' && property.properties) {
+      _filterProperties({ ajv, properties: property.properties, data: data[key], filterOptions });
+    } else if (property.type === 'object' && property.$ref) {
+      const validate = ajv.getSchema(property.$ref);
+      _filterSchema({ ajv, schema: validate.schema, data: data[key], filterOptions });
+    }
+  }
 }
 
 
@@ -109,7 +141,9 @@ module.exports = {
       const items = await ctx.model.query(
         `
           select a.atomStage,a.id from aAtom a
-              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${
+                rootData.atomLanguage ? 'and a.atomLanguage=?' : ''
+              }
           `,
         [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
       );
@@ -132,7 +166,7 @@ module.exports = {
 /***/ 528:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const moment = require3('moment');
 
 module.exports = {
@@ -252,7 +286,9 @@ module.exports = {
         `
           select a.atomStage,a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${rootData.atomLanguage ? 'and a.atomLanguage=?' : ''}
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${
+                rootData.atomLanguage ? 'and a.atomLanguage=?' : ''
+              }
           `,
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
@@ -290,7 +326,7 @@ module.exports = {
 /***/ 728:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 module.exports = ctx => {
@@ -318,22 +354,22 @@ module.exports = ctx => {
       };
     }
 
-    async validate({ module, validator, schema, data }) {
+    async validate({ module, validator, schema, data, filterOptions }) {
       const _validator = this._checkValidator({ module, validator });
-      return await _validator.ajv.v({ ctx, schema, data });
+      return await _validator.ajv.v({ ctx, schema, data, filterOptions });
     }
 
-    async ajvFromSchemaAndValidate({ module, schema, options, data }) {
+    async ajvFromSchemaAndValidate({ module, schema, options, data, filterOptions }) {
       if (typeof schema === 'string') {
         const _schema = this.getSchema({ module, schema });
         schema = _schema.schema;
       }
       const ajv = this.ajvFromSchema({ module, schema, options });
-      return await this.ajvValidate({ ajv, schema: null, data });
+      return await this.ajvValidate({ ajv, schema: null, data, filterOptions });
     }
 
-    async ajvValidate({ ajv, schema, data }) {
-      return await ajv.v({ ctx, schema, data });
+    async ajvValidate({ ajv, schema, data, filterOptions }) {
+      return await ajv.v({ ctx, schema, data, filterOptions });
     }
 
     ajvFromSchema({ module, schema, options }) {
@@ -368,7 +404,12 @@ module.exports = ctx => {
         schemas[_schema] = meta.validation.schemas[_schema];
         schemas[_schema].$async = true;
       }
-      _validator.ajv = ctx.app.meta.ajv.create({ options: _validator.options, keywords: meta.validation.keywords, schemas, schemaRoot: _schemas[0] });
+      _validator.ajv = ctx.app.meta.ajv.create({
+        options: _validator.options,
+        keywords: meta.validation.keywords,
+        schemas,
+        schemaRoot: _schemas[0],
+      });
       return _validator;
     }
 
@@ -377,7 +418,7 @@ module.exports = ctx => {
       return schemas;
     }
 
-    async _validate({ atomClass, detailClass, data, options }) {
+    async _validate({ atomClass, detailClass, data, options, filterOptions }) {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
@@ -388,6 +429,7 @@ module.exports = ctx => {
             validator: optionsSchema.validator,
             schema: optionsSchema.schema,
             data,
+            filterOptions,
           });
         } else {
           // create validator dynamicly
@@ -395,6 +437,7 @@ module.exports = ctx => {
             module: optionsSchema.module,
             schema: optionsSchema.schema,
             data,
+            filterOptions,
           });
         }
       } else if (atomClass) {
@@ -406,6 +449,7 @@ module.exports = ctx => {
             validator: validator.validator,
             schema: validator.schema,
             data,
+            filterOptions,
           });
         }
       } else if (detailClass) {
@@ -417,6 +461,7 @@ module.exports = ctx => {
             validator: validator.validator,
             schema: validator.schema,
             data,
+            filterOptions,
           });
         }
       }
@@ -452,6 +497,7 @@ module.exports = ctx => {
         validator,
         schema,
         data,
+        filterOptions: true,
       });
       // next
       await next();
@@ -572,7 +618,6 @@ module.exports = {
   Required: '必需的',
   RequiredField: '不允许为空',
   ExistsValidation: '已存在',
-  'Atom Name': '原子名称',
   'Invalid Date': '无效的日期',
   'Not Expected Value': '不是期望的值',
   'Validator Not Specified': '没有指定validator',
@@ -600,6 +645,13 @@ module.exports = app => {
   class ValidationController extends app.Controller {
     schema() {
       const res = this.service.validation.schema(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+    async validate() {
+      const res = await this.service.validation.validate({
+        params: this.ctx.request.body.params,
+        data: this.ctx.request.body.data,
+      });
       this.ctx.success(res);
     }
   }
@@ -688,7 +740,10 @@ module.exports = {};
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [{ method: 'post', path: 'validation/schema', controller: 'validation' }];
+  const routes = [
+    { method: 'post', path: 'validation/schema', controller: 'validation' },
+    { method: 'post', path: 'validation/validate', controller: 'validation' },
+  ];
   return routes;
 };
 
@@ -702,6 +757,12 @@ module.exports = app => {
   class Validation extends app.Service {
     schema({ module, validator, schema }) {
       return this.ctx.bean.validation.getSchema({ module, validator, schema });
+    }
+    async validate({ params, data }) {
+      await this.ctx.bean.validation.validate({
+        ...params,
+        data,
+      });
     }
   }
 
@@ -723,7 +784,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

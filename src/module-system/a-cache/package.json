@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cache",
-  "version": "4.0.16",
+  "version": "4.1.0",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {
@@ -18,6 +18,6 @@
   "dependencies": {
     "assert": "^2.0.0",
     "egg-born-mock": "^2.1.2",
-    "require3": "^2.0.9"
+    "require3": "^2.1.0"
   }
 }

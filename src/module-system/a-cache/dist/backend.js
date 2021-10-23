@@ -155,7 +155,8 @@ module.exports = ctx => {
     }
 
     async _has(name) {
-      const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
+      const sql =
+        'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
       const res = await ctx.db.queryOne(sql, [ctx.instance ? ctx.instance.id : 0, this.moduleName, name]);
       return res;
     }
@@ -262,7 +263,11 @@ module.exports = ctx => {
 
     // by broadcast
     _clear() {
-      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain] && ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]) {
+      if (
+        ctx.app[CACHEMEMORY] &&
+        ctx.app[CACHEMEMORY][ctx.subdomain] &&
+        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]
+      ) {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }

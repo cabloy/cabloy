@@ -92,6 +92,15 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
       }
+
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'root', action: 'layout', scopeNames: 'root' }, //
+          { roleName: 'root', action: 'preview', scopeNames: 'root' }, //
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+      }
     }
 
     async test() {
@@ -100,9 +109,14 @@ module.exports = app => {
         atomClassName: 'post',
       };
       const categories = [
+        // en-us
         { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
         { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, categorySorting: 2 },
         { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, categorySorting: 3 },
+        // zh-cn
+        { categoryName: '分享', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: '问答', language: 'zh-cn', categoryIdParent: 0, categorySorting: 2 },
+        { categoryName: '公告', language: 'zh-cn', categoryIdParent: 0, categorySorting: 3 },
       ];
       const categoryIds = {};
       for (const item of categories) {
@@ -415,12 +429,8 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'markdown-content-cms',
         ebTitle: 'Content',
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleContent',
-        },
       },
       // Basic Info
       __groupBasicInfo: {
@@ -519,6 +529,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = __webpack_require__(232)(app);
   const staticFlowDefs = __webpack_require__(772)(app);
   const staticResources = __webpack_require__(429)(app);
@@ -540,7 +551,18 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {},
+          actions: {
+            preview: {
+              code: 101,
+              title: 'Preview',
+              actionModule: 'a-cms',
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'draft,formal',
+            },
+          },
           validator: 'post',
           search: {
             validator: 'postSearch',

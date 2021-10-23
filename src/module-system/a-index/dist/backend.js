@@ -4,7 +4,7 @@
 /***/ 899:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 const chalk = require3('chalk');
 
@@ -56,7 +56,9 @@ module.exports = app => {
           if (!map[fieldNameFirst]) {
             // too long
             // const sql = `create ${indexType} index idx_${tableName}_${fieldNameArray.join('_')} ON ${tableName} (${fieldNameArray.join(',')})`;
-            const sql = `create ${indexType} index idx_${tableName}_${fieldNameFirst} ON ${tableName} (${fieldNameArray.join(',')})`;
+            const sql = `create ${indexType} index idx_${tableName}_${fieldNameFirst} ON ${tableName} (${fieldNameArray.join(
+              ','
+            )})`;
             await this.ctx.model.query(sql);
           }
         }
@@ -110,7 +112,8 @@ module.exports = appInfo => {
       aAuthSimple: 'createdAt,updatedAt,userId',
     },
     'a-base': {
-      aAtom: 'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated,atomStaticKey,atomLanguage,atomCategoryId',
+      aAtom:
+        'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated,atomStaticKey,atomLanguage,atomCategoryId',
       aAtomAction: 'createdAt,updatedAt,atomClassId+code,name',
       aAtomClass: 'createdAt,updatedAt,module+atomClassName',
       aAtomLabel: 'createdAt,updatedAt,userId,atomId',
@@ -153,6 +156,9 @@ module.exports = appInfo => {
     'a-detail': {
       aDetail: 'createdAt,updatedAt,atomId,detailItemId,detailClassId,detailStaticKey',
       aDetailClass: 'createdAt,updatedAt,module+detailClassName',
+    },
+    'a-dict': {
+      aDict: 'createdAt,updatedAt,atomId',
     },
     'a-dingtalk': {
       aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
@@ -365,7 +371,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

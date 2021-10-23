@@ -4,7 +4,7 @@
 /***/ 697:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const DingtalkAPI = require3('@zhennann/node-dingtalk');
 
 module.exports = ctx => {
@@ -177,7 +177,8 @@ module.exports = ctx => {
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
         // find any match
         for (const item of scene) {
-          const ok = provider.providerName === item || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
+          const ok =
+            provider.providerName === item || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
           if (ok) return true;
         }
         // not found
@@ -199,7 +200,11 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // aDingtalkMember
-      await ctx.model.query('update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
+      await ctx.model.query('update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?', [
+        data.userIdTo,
+        ctx.instance.id,
+        data.userIdFrom,
+      ]);
       // next
       await next();
     }
@@ -214,7 +219,7 @@ module.exports = ctx => {
 /***/ 427:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 
 module.exports = ctx => {
@@ -601,7 +606,7 @@ module.exports = {
 /***/ 154:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = __webpack_require__(591);
@@ -674,7 +679,10 @@ module.exports = function (ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?', [ctx.instance.id, providerItem.id, profileId]);
+      const authItems = await ctx.model.query(
+        'select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId=?',
+        [ctx.instance.id, providerItem.id, profileId]
+      );
       const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
@@ -701,7 +709,10 @@ module.exports = function (ctx) {
         authUserId = authItem.userId;
       }
       // check if has userId for memberId
-      const _authOthers = await ctx.model.query('select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?', [ctx.instance.id, profileId, authId]);
+      const _authOthers = await ctx.model.query(
+        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
+        [ctx.instance.id, profileId, authId]
+      );
       const _authOther = _authOthers[0];
       if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
@@ -721,7 +732,7 @@ module.exports = function (ctx) {
 /***/ 474:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const crypto = __webpack_require__(417);
+const crypto = __webpack_require__(113);
 
 module.exports = {
   createNonceStr() {
@@ -1116,7 +1127,7 @@ module.exports = app => {
 /***/ 416:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const DingTalkEncryptor = require3('dingtalk-encrypt');
 const dingtalkUtils = __webpack_require__(474);
 
@@ -1135,7 +1146,11 @@ module.exports = app => {
       const config = this.ctx.config.account.dingtalk;
       const configApp = config.apps[appName];
       // dingtalk crypto
-      const encryptor = new DingTalkEncryptor(configApp.businessCallback.token, configApp.businessCallback.encodingAESKey, config.corpid);
+      const encryptor = new DingTalkEncryptor(
+        configApp.businessCallback.token,
+        configApp.businessCallback.encodingAESKey,
+        config.corpid
+      );
       // parse
       const message = await this._parseMessagePost({ query, encryptor });
       // handle
@@ -1148,7 +1163,12 @@ module.exports = app => {
     }
 
     async _parseMessagePost({ query, encryptor }) {
-      const plainText = encryptor.getDecryptMsg(query.signature, query.timestamp, query.nonce, this.ctx.request.body.encrypt);
+      const plainText = encryptor.getDecryptMsg(
+        query.signature,
+        query.timestamp,
+        query.nonce,
+        this.ctx.request.body.encrypt
+      );
       return JSON.parse(plainText);
     }
   }
@@ -1161,7 +1181,7 @@ module.exports = app => {
 /***/ 98:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -1555,7 +1575,7 @@ module.exports = ctx => {
 /***/ 272:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const querystring = require3('querystring');
 
 const OAuth = function (appkey) {
@@ -1583,7 +1603,7 @@ module.exports = OAuth;
 /***/ 947:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = __webpack_require__(272);
@@ -1692,15 +1712,31 @@ module.exports = app => {
     // message
     { method: 'post', path: 'callback/index', controller: 'callback', meta: { auth: { enable: false } } },
     // contacts
-    { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'contacts/syncStatus', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'contacts/sync',
+      controller: 'contacts',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'contacts/syncStatus',
+      controller: 'contacts',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
 
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
 
     // auth
     { method: 'post', path: 'auth/login', controller: 'auth', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'authMini/login', controller: 'auth', action: 'loginMini', meta: { auth: { enable: false } } },
+    {
+      method: 'post',
+      path: 'authMini/login',
+      controller: 'auth',
+      action: 'loginMini',
+      meta: { auth: { enable: false } },
+    },
   ];
   return routes;
 };
@@ -1822,7 +1858,23 @@ const __departmentFieldMap = [
     'sourceIdentifier',
     'ext',
   ],
-  ['number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string'],
+  [
+    'number',
+    'number',
+    'string',
+    'number',
+    'bool',
+    'bool',
+    'bool',
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+  ],
 ];
 
 // member
@@ -1868,7 +1920,26 @@ const __memberFieldMap = [
     'extattr',
     'hiredDate',
   ],
-  ['string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp'],
+  [
+    'string',
+    'string',
+    'bool',
+    'string',
+    'string',
+    'array',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'string',
+    'bool',
+    'bool',
+    'json',
+    'timestamp',
+  ],
 ];
 
 module.exports = app => {
@@ -1977,7 +2048,11 @@ module.exports = app => {
         res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---`,
+        });
         // local departments
         context.localDepartments = await this.ctx.model.department.select();
         context.localDepartmentsMap = {};
@@ -2031,7 +2106,11 @@ module.exports = app => {
         const res = await this.ctx.bean.dingtalk.app.selfBuilt.user.listAll(null, false);
         context.remoteMembers = res.userlist;
         // progress
-        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
+        await this._progressPublish({
+          context,
+          done: 0,
+          text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---`,
+        });
         // local members
         context.localMembers = await this.ctx.model.member.select();
         context.localMembersMap = {};
@@ -2294,7 +2373,9 @@ module.exports = app => {
       const memberId = res.insertId;
 
       // 5. send message: account migration
-      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/sendLinkAccountMigration' });
+      const sendLinkAccountMigration = await this.ctx.bean.settings.getInstance({
+        name: '/groupInfo/sendLinkAccountMigration',
+      });
       if (sendLinkAccountMigration) {
         await this._sendLinkAccountMigration({ userId });
       }
@@ -2339,8 +2420,13 @@ module.exports = app => {
 
     // get role top
     async _getRoleTop() {
-      const roleContainer = await this.ctx.bean.role.parseRoleName({ roleName: this.ctx.config.sync.department.roleContainer });
-      const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+      const roleContainer = await this.ctx.bean.role.parseRoleName({
+        roleName: this.ctx.config.sync.department.roleContainer,
+      });
+      const roleTop = await this.ctx.bean.role.get({
+        roleName: this.ctx.config.sync.department.roleTop,
+        roleIdParent: roleContainer.id,
+      });
       if (roleTop) return roleTop;
       // create role
       const data = {
@@ -2426,19 +2512,19 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 417:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("require3");
+
+/***/ }),
+
+/***/ 113:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");
 
 /***/ })
 

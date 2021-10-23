@@ -87,7 +87,6 @@ module.exports = {};
 
 module.exports = {
   User: '用户',
-  Atoms: '原子',
   Comments: '评论',
 };
 
@@ -331,7 +330,8 @@ module.exports = app => {
             module: 'a-user',
             name: 'user',
           },
-          dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
+          // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
+          dependencies: ['a-user:userRed', 'a-user:userOrange'],
         },
       },
     },
@@ -359,7 +359,13 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // user
-    { method: 'post', path: 'user/save', controller: 'user', middlewares: 'validate', meta: { validate: { module: 'a-base', validator: 'user' } } },
+    {
+      method: 'post',
+      path: 'user/save',
+      controller: 'user',
+      middlewares: 'validate',
+      meta: { validate: { module: 'a-base', validator: 'user' } },
+    },
     { method: 'post', path: 'user/saveAvatar', controller: 'user' },
     { method: 'post', path: 'user/saveLocale', controller: 'user' },
     { method: 'post', path: 'user/agent', controller: 'user' },

@@ -50,7 +50,7 @@ module.exports = ctx => {
 /***/ 857:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const nodemailer = require3('nodemailer');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
@@ -92,7 +92,10 @@ module.exports = ctx => {
       // log
       if (sceneTest) {
         const url = nodemailer.getTestMessageUrl(res);
-        const message = chalk.keyword('cyan')('Test Mail To: ') + chalk.keyword('yellow')(content.message.to) + chalk.keyword('orange')('\n' + url);
+        const message =
+          chalk.keyword('cyan')('Test Mail To: ') +
+          chalk.keyword('yellow')(content.message.to) +
+          chalk.keyword('orange')('\n' + url);
         console.log('\n' + boxen(message, boxenOptions));
       }
       // done
@@ -498,7 +501,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

@@ -4,7 +4,7 @@
 /***/ 730:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -787,14 +787,34 @@ module.exports = app => {
   const routes = [
     // dashboard
     { method: 'post', path: 'dashboard/itemByKey', controller: 'dashboard' },
-    { method: 'post', path: 'dashboard/item', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
+    {
+      method: 'post',
+      path: 'dashboard/item',
+      controller: 'dashboard',
+      meta: { right: { type: 'resource', useKey: true } },
+    },
     { method: 'post', path: 'dashboard/loadItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/saveItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/changeItemUserName', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/deleteItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
-    { method: 'post', path: 'dashboard/createItemUser', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
-    { method: 'post', path: 'dashboard/itemUsers', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
-    { method: 'post', path: 'dashboard/changeItemUserDefault', controller: 'dashboard', meta: { right: { type: 'resource', useKey: true } } },
+    {
+      method: 'post',
+      path: 'dashboard/createItemUser',
+      controller: 'dashboard',
+      meta: { right: { type: 'resource', useKey: true } },
+    },
+    {
+      method: 'post',
+      path: 'dashboard/itemUsers',
+      controller: 'dashboard',
+      meta: { right: { type: 'resource', useKey: true } },
+    },
+    {
+      method: 'post',
+      path: 'dashboard/changeItemUserDefault',
+      controller: 'dashboard',
+      meta: { right: { type: 'resource', useKey: true } },
+    },
   ];
   return routes;
 };
@@ -901,11 +921,14 @@ module.exports = app => {
     }
 
     async createItemUser({ dashboardAtomId, user }) {
+      // get system
+      const dashboardSystem = await this.ctx.bean.resource.read({
+        key: { atomId: dashboardAtomId },
+        user,
+      });
       // name
       const id = await this.sequence.next('dashboard');
-      const dashboardName = `${this.ctx.text('Dashboard')}-${id}`;
-      // content
-      const dashboardContent = await this.ctx.model.dashboardContent.get({ atomId: dashboardAtomId });
+      const dashboardName = `${dashboardSystem.atomNameLocale}-${id}`;
       // update old default
       await this.ctx.model.dashboardUser.update(
         {
@@ -919,22 +942,32 @@ module.exports = app => {
         }
       );
       // insert
-      const res = await this.ctx.model.dashboardUser.insert({
+      const data = {
         userId: user.id,
         dashboardDefault: 1,
         dashboardAtomId,
         dashboardName,
-        content: dashboardContent.content,
-      });
-      // ok
-      return {
-        dashboardUserId: res.insertId,
+        content: dashboardSystem.content,
       };
+      const res = await this.ctx.model.dashboardUser.insert(data);
+      data.id = res.insertId;
+      // ok
+      return data;
     }
 
     async itemUsers({ dashboardAtomId, user }) {
       return await this.ctx.model.dashboardUser.select({
-        columns: ['id', 'createdAt', 'updatedAt', 'deleted', 'iid', 'userId', 'dashboardDefault', 'dashboardAtomId', 'dashboardName'],
+        columns: [
+          'id',
+          'createdAt',
+          'updatedAt',
+          'deleted',
+          'iid',
+          'userId',
+          'dashboardDefault',
+          'dashboardAtomId',
+          'dashboardName',
+        ],
         where: {
           userId: user.id,
           dashboardAtomId,
@@ -983,7 +1016,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

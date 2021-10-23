@@ -4,7 +4,7 @@
 /***/ 564:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 const constants = __webpack_require__(479);
 
@@ -107,6 +107,7 @@ module.exports = ctx => {
         validator: validator.validator,
         schema: null,
         data,
+        filterOptions: true,
       });
       // update aSettings
       const _data = await this.modelSettings.get({
@@ -179,7 +180,11 @@ module.exports = ctx => {
     _getSchema({ scene, module, schemaName }) {
       const validator = this._getValidator({ scene, module });
       if (!validator) return null;
-      const schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
+      const schema = ctx.bean.validation.getSchema({
+        module: validator.module,
+        validator: validator.validator,
+        schema: schemaName,
+      });
       return extend(true, {}, schema);
     }
   }
@@ -527,9 +532,27 @@ module.exports = {
 module.exports = app => {
   const routes = [
     // settings:instance
-    { method: 'post', path: 'settings/instance/list', controller: 'settings', action: 'instanceList', meta: { right: { type: 'resource', name: 'settings' } } },
-    { method: 'post', path: 'settings/instance/load', controller: 'settings', action: 'instanceLoad', meta: { right: { type: 'resource', name: 'settings' } } },
-    { method: 'post', path: 'settings/instance/save', controller: 'settings', action: 'instanceSave', meta: { right: { type: 'resource', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'settings/instance/list',
+      controller: 'settings',
+      action: 'instanceList',
+      meta: { right: { type: 'resource', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'settings/instance/load',
+      controller: 'settings',
+      action: 'instanceLoad',
+      meta: { right: { type: 'resource', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'settings/instance/save',
+      controller: 'settings',
+      action: 'instanceSave',
+      meta: { right: { type: 'resource', name: 'settings' } },
+    },
     // settings:user
     { method: 'post', path: 'settings/user/list', controller: 'settings', action: 'userList' },
     { method: 'post', path: 'settings/user/load', controller: 'settings', action: 'userLoad' },
@@ -637,7 +660,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

@@ -74,7 +74,7 @@ module.exports = __webpack_require__(933);
 "use strict";
 
 
-var crypto = __webpack_require__(417);
+var crypto = __webpack_require__(113);
 
 var iterations = 10000;
 var password = function(password) {
@@ -156,9 +156,16 @@ module.exports = ctx => {
       const authSimple = await modelAuthSimple.get({ userId: data.userIdFrom });
       if (authSimple) {
         // delete old record
-        await ctx.model.query('delete from aAuthSimple where deleted=0 and iid=? and userId=?', [ctx.instance.id, data.userIdTo]);
+        await ctx.model.query('delete from aAuthSimple where deleted=0 and iid=? and userId=?', [
+          ctx.instance.id,
+          data.userIdTo,
+        ]);
         // update
-        await ctx.model.query('update aAuthSimple a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [data.userIdTo, ctx.instance.id, data.userIdFrom]);
+        await ctx.model.query('update aAuthSimple a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?', [
+          data.userIdTo,
+          ctx.instance.id,
+          data.userIdFrom,
+        ]);
       }
       // next
       await next();
@@ -497,7 +504,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const passport = __webpack_require__(581);
-const util = __webpack_require__(669);
+const util = __webpack_require__(837);
 
 function Strategy(options, verify) {
   if (typeof options === 'function') {
@@ -591,7 +598,9 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
         if (!res) {
-          const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') }];
+          const errors = [
+            { keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') },
+          ];
           throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
@@ -1006,9 +1015,27 @@ module.exports = [
       validate: { validator: 'passwordChange' },
     },
   },
-  { method: 'post', path: 'auth/passwordForgot', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'passwordForgot' } } },
-  { method: 'post', path: 'auth/passwordReset', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'passwordReset' } } },
-  { method: 'post', path: 'auth/emailConfirm', controller: 'auth', middlewares: 'validate', meta: { validate: { validator: 'emailConfirm' } } },
+  {
+    method: 'post',
+    path: 'auth/passwordForgot',
+    controller: 'auth',
+    middlewares: 'validate',
+    meta: { validate: { validator: 'passwordForgot' } },
+  },
+  {
+    method: 'post',
+    path: 'auth/passwordReset',
+    controller: 'auth',
+    middlewares: 'validate',
+    meta: { validate: { validator: 'passwordReset' } },
+  },
+  {
+    method: 'post',
+    path: 'auth/emailConfirm',
+    controller: 'auth',
+    middlewares: 'validate',
+    meta: { validate: { validator: 'emailConfirm' } },
+  },
   { method: 'get', path: 'auth/emailConfirmation', controller: 'auth' },
 ];
 
@@ -1018,9 +1045,9 @@ module.exports = [
 /***/ 300:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const util = __webpack_require__(669);
+const util = __webpack_require__(837);
 const passwordFn = __webpack_require__(907); // should compile
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -1329,15 +1356,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 417:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
@@ -1345,7 +1364,15 @@ module.exports = require("require3");
 
 /***/ }),
 
-/***/ 669:
+/***/ 113:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");
+
+/***/ }),
+
+/***/ 837:
 /***/ ((module) => {
 
 "use strict";

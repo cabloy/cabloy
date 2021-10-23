@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "The Ultimate Javascript Full Stack Framework",
   "preferGlobal": true,
   "bin": {

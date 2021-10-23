@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-basefront",
-  "version": "4.3.11",
+  "version": "4.4.0",
   "title": "Base Front",
   "eggBornModule": {
     "dependencies": {}
@@ -15,6 +15,6 @@
   "author": "zhennann",
   "dependencies": {
     "egg-born-mock": "^2.1.2",
-    "require3": "^2.0.9"
+    "require3": "^2.1.0"
   }
 }

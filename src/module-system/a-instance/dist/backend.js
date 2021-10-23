@@ -4,7 +4,7 @@
 /***/ 755:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 const async = require3('async');
 
@@ -256,7 +256,7 @@ module.exports = ctx => {
 /***/ 122:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const chalk = require3('chalk');
 const boxen = require3('boxen');
 
@@ -271,7 +271,10 @@ module.exports = ctx => {
       if (!instance) {
         // prompt
         if (ctx.app.meta.isLocal) {
-          const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
+          const urlInfo =
+            ctx.locale === 'zh-cn'
+              ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
+              : 'https://cabloy.com/articles/multi-instance.html';
           let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
           message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
           message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
@@ -699,7 +702,12 @@ module.exports = app => {
 
 module.exports = [
   // instance
-  { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  {
+    method: 'post',
+    path: 'instance/item',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
   {
     method: 'post',
     path: 'instance/save',
@@ -710,8 +718,18 @@ module.exports = [
       right: { type: 'resource', module: 'a-settings', name: 'settings' },
     },
   },
-  { method: 'post', path: 'instance/getConfigsPreview', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-  { method: 'post', path: 'instance/reload', controller: 'instance', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+  {
+    method: 'post',
+    path: 'instance/getConfigsPreview',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
+  {
+    method: 'post',
+    path: 'instance/reload',
+    controller: 'instance',
+    meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+  },
 ];
 
 
@@ -720,7 +738,7 @@ module.exports = [
 /***/ 878:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const extend = require3('extend2');
 
 const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
@@ -794,7 +812,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

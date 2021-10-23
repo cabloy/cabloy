@@ -219,7 +219,7 @@ module.exports = app => {
 /***/ 102:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const url = __webpack_require__(835);
+const url = __webpack_require__(310);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -278,7 +278,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 835:
+/***/ 310:
 /***/ ((module) => {
 
 "use strict";

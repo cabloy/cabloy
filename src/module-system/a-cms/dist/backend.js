@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 43:
+/***/ 4043:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -67,7 +67,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 762:
+/***/ 8762:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -78,11 +78,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 375:
+/***/ 9375:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(622);
-const require3 = __webpack_require__(718);
+const path = __webpack_require__(1017);
+const require3 = __webpack_require__(5638);
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
@@ -95,7 +95,7 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const less = require3('less');
-const utils = __webpack_require__(294);
+const utils = __webpack_require__(9294);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -710,6 +710,7 @@ module.exports = app => {
     }
 
     async _renderCSSJSes({ data, content }) {
+      data.js('plugins/cms-pluginbase/assets/js/lib/require.min.js');
       content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
       content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
       return content;
@@ -898,7 +899,8 @@ var env=${JSON.stringify(env, null, 2)};
           return require3(_path);
         },
         url(fileName, language) {
-          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return self.ctx.bean.util.escapeURL(fileName);
+          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0))
+            return self.ctx.bean.util.escapeURL(fileName);
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           const _url = self.getUrl(site, language || (site.language && site.language.current), _path);
@@ -1416,7 +1418,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 
 /***/ }),
 
-/***/ 806:
+/***/ 4806:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1553,13 +1555,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 698:
+/***/ 7698:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(5638);
 const fse = require3('fs-extra');
-
-let __blocks = null;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1720,79 +1720,6 @@ module.exports = ctx => {
       return stats;
     }
 
-    async blockSave({ blockName, item }) {
-      // block
-      const blocks = this.getBlocks();
-      const block = blocks[blockName];
-      // validate
-      await ctx.bean.validation.validate({
-        module: block.validator.module,
-        validator: block.validator.validator,
-        schema: null,
-        data: item,
-      });
-      // output
-      if (!block.output) return item;
-      return await block.output({ ctx, block, data: item });
-    }
-
-    getBlocks() {
-      if (!__blocks) {
-        __blocks = this._prepareBlocks();
-      }
-      return __blocks;
-    }
-
-    _prepareBlocks() {
-      const blocks = {};
-      // (X) modulesArray for block override
-      for (const module of ctx.app.meta.modulesArray) {
-        const _blocksModule = ctx.bean.util.getProperty(module, 'main.meta.cms.plugin.blocks');
-        if (_blocksModule) {
-          const blocksModule = this._prepareBlocksModule({ module, blocks: _blocksModule });
-          Object.assign(blocks, blocksModule);
-        }
-      }
-      return blocks;
-    }
-
-    _prepareBlocksModule({ module, blocks }) {
-      const blocksModule = {};
-      const moduleName = module.info.relativeName;
-      for (const key in blocks) {
-        const fullName = `${moduleName}:${key}`;
-        const block = blocks[key];
-        // validator
-        let validator = block.validator;
-        if (typeof validator === 'string') {
-          validator = {
-            module: moduleName,
-            validator,
-          };
-        } else {
-          validator = {
-            module: validator.module || moduleName,
-            validator: validator.validator,
-          };
-        }
-        // beanFullName
-        const beanName = block.bean;
-        let beanFullName;
-        if (typeof beanName === 'string') {
-          beanFullName = `${moduleName}.cms.block.${beanName}`;
-        } else {
-          beanFullName = `${beanName.module || moduleName}.cms.block.${beanName.name}`;
-        }
-        // ok
-        blocksModule[fullName] = {
-          ...block,
-          validator,
-          beanFullName,
-        };
-      }
-      return blocksModule;
-    }
-
     async checkFile({ atomId, file, mtime, user }) {
       // check right
       let mtimeCurrent;
@@ -1830,7 +1757,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 83:
+/***/ 9083:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1868,7 +1795,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 502:
+/***/ 7421:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1902,421 +1829,193 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 899:
+/***/ 6899:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
-const uuid = require3('uuid');
-const utils = __webpack_require__(294);
+const version_0 = __webpack_require__(3575);
+const update_1 = __webpack_require__(2180);
+const update_2 = __webpack_require__(713);
+const update_3 = __webpack_require__(302);
+const update_4 = __webpack_require__(1362);
+const update_5 = __webpack_require__(8679);
+const update_6 = __webpack_require__(2694);
+const update_7 = __webpack_require__(7936);
+const update_8 = __webpack_require__(6867);
+const update_9 = __webpack_require__(9741);
+const update_10 = __webpack_require__(7996);
+const update_11 = __webpack_require__(6085);
+const update_12 = __webpack_require__(6051);
+const init_1 = __webpack_require__(65);
+const init_12 = __webpack_require__(8894);
+const test = __webpack_require__(8775);
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const classes = [
+    update_1, //
+    update_2,
+    update_3,
+    update_4,
+    update_5,
+    update_6,
+    update_7,
+    update_8,
+    update_9,
+    update_10,
+    update_11,
+    update_12,
+    init_1,
+    init_12,
+    test,
+  ];
+  return app.meta.util.mixinClasses(version_0, classes, app);
+};
+
+
+/***/ }),
+
+/***/ 3575:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
     async update(options) {
       if (options.version === 1) {
-        // create table: aCmsArticle
-        let sql = `
-          CREATE TABLE aCmsArticle (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            categoryId int(11) DEFAULT '0',
-            language varchar(50) DEFAULT NULL,
-            sticky int(11) DEFAULT '0',
-            keywords varchar(255) DEFAULT NULL,
-            description text DEFAULT NULL,
-            summary text DEFAULT NULL,
-            url varchar(255) DEFAULT NULL,
-            editMode int(11) DEFAULT '0',
-            slug varchar(255) DEFAULT NULL,
-            sorting int(11) DEFAULT '0',
-            flag varchar(255) DEFAULT NULL,
-            extra json DEFAULT NULL,
-            imageFirst varchar(255) DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create table: aCmsContent
-        sql = `
-          CREATE TABLE aCmsContent (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            itemId int(11) DEFAULT '0',
-            content LONGTEXT DEFAULT NULL,
-            html LONGTEXT DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create table: aCmsCategory
-        sql = `
-          CREATE TABLE aCmsCategory (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            categoryName varchar(50) DEFAULT NULL,
-            language varchar(50) DEFAULT NULL,
-            catalog int(11) DEFAULT '0',
-            hidden int(11) DEFAULT '0',
-            sorting int(11) DEFAULT '0',
-            flag varchar(255) DEFAULT NULL,
-            categoryIdParent int(11) DEFAULT '0',
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aCmsArticleView
-        sql = `
-          CREATE VIEW aCmsArticleView as
-            select a.*,b.categoryName from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aCmsArticleViewFull
-        sql = `
-          CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aAtom d on a.atomId=d.id
-        `;
-        await this.ctx.model.query(sql);
+        await this._update_1(options);
       }
-
       if (options.version === 2) {
-        // create table: aCmsTag
-        let sql = `
-          CREATE TABLE aCmsTag (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            language varchar(50) DEFAULT NULL,
-            tagName varchar(50) DEFAULT NULL,
-            articleCount int(11) DEFAULT '0',
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create table: aCmsArticleTag
-        sql = `
-          CREATE TABLE aCmsArticleTag (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            itemId int(11) DEFAULT '0',
-            tags JSON DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create table: aCmsArticleTagRef
-        sql = `
-          CREATE TABLE aCmsArticleTagRef (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            itemId int(11) DEFAULT '0',
-            tagId int(11) DEFAULT '0',
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleView
-        await this.ctx.model.query('drop view aCmsArticleView');
-        sql = `
-          CREATE VIEW aCmsArticleView as
-            select a.*,b.categoryName,e.tags from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewFull
-        await this.ctx.model.query('drop view aCmsArticleViewFull');
-        sql = `
-          CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aCmsArticleViewSearch
-        sql = `
-          CREATE VIEW aCmsArticleViewSearch as
-            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aAtom d on a.atomId=d.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aCmsArticleViewTag
-        sql = `
-          CREATE VIEW aCmsArticleViewTag as
-            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-              left join aCmsArticleTagRef f on a.id=f.itemId
-        `;
-        await this.ctx.model.query(sql);
+        await this._update_2(options);
       }
-
       if (options.version === 3) {
-        // alter table: aCmsArticle
-        let sql = `
-        ALTER TABLE aCmsArticle
-          ADD COLUMN audioFirst varchar(255) DEFAULT NULL,
-          ADD COLUMN audioCoverFirst varchar(255) DEFAULT NULL
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleView
-        await this.ctx.model.query('drop view aCmsArticleView');
-        sql = `
-          CREATE VIEW aCmsArticleView as
-            select a.*,b.categoryName,e.tags from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewFull
-        await this.ctx.model.query('drop view aCmsArticleViewFull');
-        sql = `
-          CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewSearch
-        await this.ctx.model.query('drop view aCmsArticleViewSearch');
-        sql = `
-          CREATE VIEW aCmsArticleViewSearch as
-            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aAtom d on a.atomId=d.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewTag
-        await this.ctx.model.query('drop view aCmsArticleViewTag');
-        sql = `
-          CREATE VIEW aCmsArticleViewTag as
-            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-              left join aCmsArticleTagRef f on a.id=f.itemId
-        `;
-        await this.ctx.model.query(sql);
+        await this._update_3(options);
       }
-
       if (options.version === 4) {
-        // alter table: aCmsCategory
-        const sql = `
-        ALTER TABLE aCmsCategory
-          ADD COLUMN url varchar(255) DEFAULT NULL
-                  `;
-        await this.ctx.model.query(sql);
+        await this._update_4(options);
       }
-
       if (options.version === 5) {
-        // alter table: aCmsCategory
-        let sql = `
-        ALTER TABLE aCmsCategory
-          ADD COLUMN atomClassId int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-        // alter table: aCmsTag
-        sql = `
-        ALTER TABLE aCmsTag
-          ADD COLUMN atomClassId int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-
-        // atomClass
-        await this._update5AtomClassIds(options);
+        await this._update_5(options);
       }
-
       if (options.version === 6) {
-        // alter table: aCmsArticle
-        let sql = `
-        ALTER TABLE aCmsArticle
-          ADD COLUMN uuid varchar(50) DEFAULT NULL
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleView
-        await this.ctx.model.query('drop view aCmsArticleView');
-        sql = `
-          CREATE VIEW aCmsArticleView as
-            select a.*,b.categoryName,e.tags from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewFull
-        await this.ctx.model.query('drop view aCmsArticleViewFull');
-        sql = `
-          CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewSearch
-        await this.ctx.model.query('drop view aCmsArticleViewSearch');
-        sql = `
-          CREATE VIEW aCmsArticleViewSearch as
-            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsContent c on a.id=c.itemId
-              left join aAtom d on a.atomId=d.id
-              left join aCmsArticleTag e on a.id=e.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // alter view: aCmsArticleViewTag
-        await this.ctx.model.query('drop view aCmsArticleViewTag');
-        sql = `
-          CREATE VIEW aCmsArticleViewTag as
-            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
-              left join aCmsCategory b on a.categoryId=b.id
-              left join aCmsArticleTag e on a.id=e.itemId
-              left join aCmsArticleTagRef f on a.id=f.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // uuid
-        await this._update6Uuids(options);
+        await this._update_6(options);
       }
-
       if (options.version === 7) {
-        // update cms blocks
-        await this.ctx.model.query(`
-          update aCmsContent set content = replace (content,'cms-pluginblock:audio','cms-pluginblock:blockAudio') where content like '%cms-pluginblock:audio%'
-        `);
-        await this.ctx.model.query(`
-          update aCmsContent set content = replace (content,'cms-pluginblock:iframe','cms-pluginblock:blockIFrame') where content like '%cms-pluginblock:iframe%'
-        `);
-        // migration: languange/category/tag
-        await this._update7Migration(options);
+        await this._update_7(options);
       }
-
       if (options.version === 8) {
-        // schemas
-        await this._update7Migration_schemas(options);
+        await this._update_8(options);
       }
-
       if (options.version === 9) {
-        // drop column: aCmsContent.itemId
-        const sql = `
-          ALTER TABLE aCmsContent
-            DROP COLUMN itemId
-        `;
-        await this.ctx.db.query(sql);
-
-        // drop view: aCmsArticleViewFull
-        await this.ctx.model.query('drop view aCmsArticleViewFull');
-
-        // drop view: aCmsArticleViewSearch
-        await this.ctx.model.query('drop view aCmsArticleViewSearch');
+        await this._update_9(options);
       }
-
       if (options.version === 10) {
-        // alter table: aCmsArticle
-        const sql = `
-        ALTER TABLE aCmsArticle
-          ADD COLUMN imageCover varchar(255) DEFAULT NULL
-                  `;
-        await this.ctx.model.query(sql);
+        await this._update_10(options);
       }
-
       if (options.version === 11) {
-        // alter table: aCmsArticle
-        const sql = `
-        ALTER TABLE aCmsArticle
-          ADD COLUMN renderAt timestamp DEFAULT NULL
-                  `;
-        await this.ctx.model.query(sql);
+        await this._update_11(options);
+      }
+      if (options.version === 12) {
+        await this._update_12(options);
       }
     }
 
     async init(options) {
       if (options.version === 1) {
-        // create roles: cms-writer cms-publisher to template
-        const roles = ['cms-writer', 'cms-publisher'];
-        const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
-        const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
-        for (const roleName of roles) {
-          const roleId = await this.ctx.bean.role.add({
-            roleName,
-            roleIdParent: roleTemplate.id,
-          });
-          // role:superuser include cms-writer cms-publisher
-          await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
-        }
-        // build roles
-        await this.ctx.bean.role.setDirty(true);
-
-        // add role rights
-        const roleRights = [
-          { roleName: 'cms-writer', action: 'create' },
-          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'deleteBulk' },
-          { roleName: 'cms-writer', action: 'exportBulk' },
-          { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
-          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'root', action: 'read', scopeNames: 0 },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
+        await this._init_1(options);
+      }
+      if (options.version === 12) {
+        await this._init_12(options);
       }
     }
 
     async test() {
+      await this._test();
+    }
+  }
+
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 65:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _init_1(options) {
+      // create roles: cms-writer cms-publisher to template
+      const roles = ['cms-writer', 'cms-publisher'];
+      const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+      const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+      for (const roleName of roles) {
+        const roleId = await this.ctx.bean.role.add({
+          roleName,
+          roleIdParent: roleTemplate.id,
+        });
+        // role:superuser include cms-writer cms-publisher
+        await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+      }
+      // build roles
+      await this.ctx.bean.role.setDirty(true);
+
+      // add role rights
+      const roleRights = [
+        { roleName: 'cms-writer', action: 'create' },
+        { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+        { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
+        { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
+        { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
+        { roleName: 'cms-writer', action: 'deleteBulk' },
+        { roleName: 'cms-writer', action: 'exportBulk' },
+        { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
+        { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
+        { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+        { roleName: 'root', action: 'read', scopeNames: 0 },
+      ];
+      await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 8894:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _init_12(options) {
+      // add role rights
+      const roleRights = [
+        { roleName: 'root', action: 'layout', scopeNames: 'root' }, //
+        { roleName: 'root', action: 'preview', scopeNames: 'root' }, //
+      ];
+      await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 8775:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _test() {
       const atomClass = {
         module: moduleInfo.relativeName,
         atomClassName: 'article',
       };
+      // categories
       const categories = [
         // en-us
         { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
@@ -2351,6 +2050,492 @@ module.exports = app => {
         });
         categoryIds[item.categoryName] = categoryId;
       }
+      // tags
+      const tags = [
+        // en-us
+        { tagName: 'Life', language: 'en-us' },
+        { tagName: 'Study', language: 'en-us' },
+        { tagName: 'Work', language: 'en-us' },
+        // zh-cn
+        { tagName: '生活', language: 'zh-cn' },
+        { tagName: '学习', language: 'zh-cn' },
+        { tagName: '工作', language: 'zh-cn' },
+      ];
+      const tagIds = {};
+      for (const item of tags) {
+        // add
+        const tagId = await this.ctx.bean.tag.add({
+          atomClass,
+          data: {
+            language: item.language,
+            tagName: item.tagName,
+          },
+        });
+        tagIds[item.tagName] = tagId;
+      }
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 2180:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_1(options) {
+      // create table: aCmsArticle
+      let sql = `
+          CREATE TABLE aCmsArticle (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            categoryId int(11) DEFAULT '0',
+            language varchar(50) DEFAULT NULL,
+            sticky int(11) DEFAULT '0',
+            keywords varchar(255) DEFAULT NULL,
+            description text DEFAULT NULL,
+            summary text DEFAULT NULL,
+            url varchar(255) DEFAULT NULL,
+            editMode int(11) DEFAULT '0',
+            slug varchar(255) DEFAULT NULL,
+            sorting int(11) DEFAULT '0',
+            flag varchar(255) DEFAULT NULL,
+            extra json DEFAULT NULL,
+            imageFirst varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+      await this.ctx.model.query(sql);
+
+      // create table: aCmsContent
+      sql = `
+          CREATE TABLE aCmsContent (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            itemId int(11) DEFAULT '0',
+            content LONGTEXT DEFAULT NULL,
+            html LONGTEXT DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+      await this.ctx.model.query(sql);
+
+      // create table: aCmsCategory
+      sql = `
+          CREATE TABLE aCmsCategory (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            categoryName varchar(50) DEFAULT NULL,
+            language varchar(50) DEFAULT NULL,
+            catalog int(11) DEFAULT '0',
+            hidden int(11) DEFAULT '0',
+            sorting int(11) DEFAULT '0',
+            flag varchar(255) DEFAULT NULL,
+            categoryIdParent int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+      await this.ctx.model.query(sql);
+
+      // create view: aCmsArticleView
+      sql = `
+          CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+        `;
+      await this.ctx.model.query(sql);
+
+      // create view: aCmsArticleViewFull
+      sql = `
+          CREATE VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
+        `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 7996:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_10(options) {
+      // alter table: aCmsArticle
+      const sql = `
+      ALTER TABLE aCmsArticle
+        ADD COLUMN imageCover varchar(255) DEFAULT NULL
+                `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 6085:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_11(options) {
+      // alter table: aCmsArticle
+      const sql = `
+      ALTER TABLE aCmsArticle
+        ADD COLUMN renderAt timestamp DEFAULT NULL
+                `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 6051:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_12(options) {
+      await this._update12Migration(options);
+    }
+
+    async _update12Migration(options) {
+      // all instances
+      const instances = await this.ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await this.ctx.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: '_update12MigrationInstance',
+        });
+      }
+    }
+
+    async _update12MigrationInstance() {
+      // articles/post
+      await this._update12Migration_articles();
+    }
+
+    async _update12Migration_articles() {
+      // first, hold articles
+      const articles = await this.ctx.model.query(
+        `
+        select a.id as atomId,a.atomClassId,a.atomStage,a.userIdCreated,b.content
+           from aAtom a
+           left join aCmsContent b on a.id=b.atomId
+            where a.iid=? and a.deleted=0 and a.atomStage=1
+              and ( 
+                        b.content like '%cms-pluginblock:blockAudio%'
+                    or  b.content like '%cms-pluginblock:blockIFrame%'
+                    or  b.content like '%cabloy-dashboard:blockCourse%'
+                  )   
+        `,
+        [this.ctx.instance.id]
+      );
+      // then, update all articles
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:blockAudio','a-markdownblock:audio') where content like '%cms-pluginblock:blockAudio%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:blockIFrame','a-markdownblock:iframe') where content like '%cms-pluginblock:blockIFrame%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cabloy-dashboard:blockCourse','cabloy-dashboard:course') where content like '%cabloy-dashboard:blockCourse%'
+    `);
+      // loop
+      for (const article of articles) {
+        await this._update12Migration_article({ article });
+      }
+    }
+
+    async _update12Migration_article({ article }) {
+      // user
+      const user = { id: article.userIdCreated };
+      // open
+      const res = await this.ctx.bean.atom.openDraft({ key: { atomId: article.atomId }, user });
+      const draftKey = res.draft.key;
+      // content
+      let content = article.content;
+      content = content.replace(/cms-pluginblock:blockAudio/gi, 'a-markdownblock:audio');
+      content = content.replace(/cms-pluginblock:blockIFrame/gi, 'a-markdownblock:iframe');
+      content = content.replace(/cabloy-dashboard:blockCourse/gi, 'cabloy-dashboard:course');
+      console.log(content);
+      // write
+      await this.ctx.bean.atom.write({
+        key: draftKey,
+        target: null,
+        item: {
+          content,
+        },
+        options: {
+          ignoreRender: true,
+        },
+        user,
+      });
+      // submit
+      await this.ctx.bean.atom.submit({
+        key: draftKey,
+        options: {
+          ignoreRender: true,
+          ignoreFlow: true,
+        },
+        user,
+      });
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 713:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_2(options) {
+      // create table: aCmsTag
+      let sql = `
+      CREATE TABLE aCmsTag (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        deleted int(11) DEFAULT '0',
+        iid int(11) DEFAULT '0',
+        language varchar(50) DEFAULT NULL,
+        tagName varchar(50) DEFAULT NULL,
+        articleCount int(11) DEFAULT '0',
+        PRIMARY KEY (id)
+      )
+    `;
+      await this.ctx.model.query(sql);
+
+      // create table: aCmsArticleTag
+      sql = `
+      CREATE TABLE aCmsArticleTag (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        deleted int(11) DEFAULT '0',
+        iid int(11) DEFAULT '0',
+        atomId int(11) DEFAULT '0',
+        itemId int(11) DEFAULT '0',
+        tags JSON DEFAULT NULL,
+        PRIMARY KEY (id)
+      )
+    `;
+      await this.ctx.model.query(sql);
+
+      // create table: aCmsArticleTagRef
+      sql = `
+      CREATE TABLE aCmsArticleTagRef (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        deleted int(11) DEFAULT '0',
+        iid int(11) DEFAULT '0',
+        atomId int(11) DEFAULT '0',
+        itemId int(11) DEFAULT '0',
+        tagId int(11) DEFAULT '0',
+        PRIMARY KEY (id)
+      )
+    `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleView
+      await this.ctx.model.query('drop view aCmsArticleView');
+      sql = `
+      CREATE VIEW aCmsArticleView as
+        select a.*,b.categoryName,e.tags from aCmsArticle a
+          left join aCmsCategory b on a.categoryId=b.id
+          left join aCmsArticleTag e on a.id=e.itemId
+    `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewFull
+      await this.ctx.model.query('drop view aCmsArticleViewFull');
+      sql = `
+      CREATE VIEW aCmsArticleViewFull as
+        select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+          left join aCmsCategory b on a.categoryId=b.id
+          left join aCmsContent c on a.id=c.itemId
+          left join aCmsArticleTag e on a.id=e.itemId
+    `;
+      await this.ctx.model.query(sql);
+
+      // create view: aCmsArticleViewSearch
+      sql = `
+      CREATE VIEW aCmsArticleViewSearch as
+        select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+          left join aCmsCategory b on a.categoryId=b.id
+          left join aCmsContent c on a.id=c.itemId
+          left join aAtom d on a.atomId=d.id
+          left join aCmsArticleTag e on a.id=e.itemId
+    `;
+      await this.ctx.model.query(sql);
+
+      // create view: aCmsArticleViewTag
+      sql = `
+      CREATE VIEW aCmsArticleViewTag as
+        select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+          left join aCmsCategory b on a.categoryId=b.id
+          left join aCmsArticleTag e on a.id=e.itemId
+          left join aCmsArticleTagRef f on a.id=f.itemId
+    `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 302:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_3(options) {
+      // alter table: aCmsArticle
+      let sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN audioFirst varchar(255) DEFAULT NULL,
+          ADD COLUMN audioCoverFirst varchar(255) DEFAULT NULL
+                  `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleView
+      await this.ctx.model.query('drop view aCmsArticleView');
+      sql = `
+          CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName,e.tags from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewFull
+      await this.ctx.model.query('drop view aCmsArticleViewFull');
+      sql = `
+          CREATE VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewSearch
+      await this.ctx.model.query('drop view aCmsArticleViewSearch');
+      sql = `
+          CREATE VIEW aCmsArticleViewSearch as
+            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewTag
+      await this.ctx.model.query('drop view aCmsArticleViewTag');
+      sql = `
+          CREATE VIEW aCmsArticleViewTag as
+            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+              left join aCmsArticleTagRef f on a.id=f.itemId
+        `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 1362:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_4(options) {
+      // alter table: aCmsCategory
+      const sql = `
+      ALTER TABLE aCmsCategory
+        ADD COLUMN url varchar(255) DEFAULT NULL
+                `;
+      await this.ctx.model.query(sql);
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 8679:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const utils = __webpack_require__(9294);
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_5(options) {
+      // alter table: aCmsCategory
+      let sql = `
+      ALTER TABLE aCmsCategory
+        ADD COLUMN atomClassId int(11) DEFAULT '0'
+                `;
+      await this.ctx.model.query(sql);
+      // alter table: aCmsTag
+      sql = `
+      ALTER TABLE aCmsTag
+        ADD COLUMN atomClassId int(11) DEFAULT '0'
+                `;
+      await this.ctx.model.query(sql);
+
+      // atomClass
+      await this._update5AtomClassIds(options);
     }
 
     async _update5AtomClassIds(options) {
@@ -2382,6 +2567,77 @@ module.exports = app => {
         [atomClass.id, this.ctx.instance.id]
       );
     }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 2694:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const uuid = require3('uuid');
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_6(options) {
+      // alter table: aCmsArticle
+      let sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN uuid varchar(50) DEFAULT NULL
+                  `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleView
+      await this.ctx.model.query('drop view aCmsArticleView');
+      sql = `
+          CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName,e.tags from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewFull
+      await this.ctx.model.query('drop view aCmsArticleViewFull');
+      sql = `
+          CREATE VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewSearch
+      await this.ctx.model.query('drop view aCmsArticleViewSearch');
+      sql = `
+          CREATE VIEW aCmsArticleViewSearch as
+            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // alter view: aCmsArticleViewTag
+      await this.ctx.model.query('drop view aCmsArticleViewTag');
+      sql = `
+          CREATE VIEW aCmsArticleViewTag as
+            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+              left join aCmsArticleTagRef f on a.id=f.itemId
+        `;
+      await this.ctx.model.query(sql);
+
+      // uuid
+      await this._update6Uuids(options);
+    }
 
     async _update6Uuids(options) {
       // all instances
@@ -2408,6 +2664,42 @@ module.exports = app => {
       }
     }
 
+    _parseUuid(article) {
+      if (!article.url) return this._uuid();
+      const matches = article.url.match(/articles\/(.*)\.html/);
+      if (!matches) return this._uuid();
+      if (matches[1].length !== 32) return this._uuid();
+      return matches[1];
+    }
+
+    _uuid() {
+      return uuid.v4().replace(/-/g, '');
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 7936:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_7(options) {
+      // update cms blocks
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:audio','cms-pluginblock:blockAudio') where content like '%cms-pluginblock:audio%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cms-pluginblock:iframe','cms-pluginblock:blockIFrame') where content like '%cms-pluginblock:iframe%'
+    `);
+      // migration: languange/category/tag
+      await this._update7Migration(options);
+    }
+
     async _update7Migration(options) {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
@@ -2429,51 +2721,6 @@ module.exports = app => {
       const mapTagIds = await this._update7Migration_tags();
       // articles/post
       await this._update7Migration_articles({ mapCagetoryIds, mapTagIds });
-    }
-
-    async _update7Migration_schemas() {
-      let sql;
-      // aCmsArticle
-      sql = `
-        ALTER TABLE aCmsArticle
-          DROP COLUMN categoryId,
-          DROP COLUMN language
-        `;
-      await this.ctx.model.query(sql);
-      // aCmsArticleTag
-      sql = 'DROP TABLE aCmsArticleTag';
-      await this.ctx.model.query(sql);
-      // aCmsArticleTagRef
-      sql = 'DROP TABLE aCmsArticleTagRef';
-      await this.ctx.model.query(sql);
-      // aCmsCategory
-      sql = 'DROP TABLE aCmsCategory';
-      await this.ctx.model.query(sql);
-      // aCmsTag
-      sql = 'DROP TABLE aCmsTag';
-      await this.ctx.model.query(sql);
-      // aCmsArticleView
-      sql = 'DROP VIEW aCmsArticleView';
-      await this.ctx.model.query(sql);
-      // aCmsArticleViewFull
-      await this.ctx.model.query('drop view aCmsArticleViewFull');
-      sql = `
-          CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.content,b.html from aCmsArticle a
-              left join aCmsContent b on a.id=b.itemId
-        `;
-      await this.ctx.model.query(sql);
-      // aCmsArticleViewSearch
-      await this.ctx.model.query('drop view aCmsArticleViewSearch');
-      sql = `
-          CREATE VIEW aCmsArticleViewSearch as
-            select a.*,b.content,b.html,concat(c.atomName,',',b.content) contentSearch from aCmsArticle a
-              left join aCmsContent b on a.id=b.itemId
-              left join aAtom c on a.atomId=c.id
-        `;
-      await this.ctx.model.query(sql);
-      // aCmsArticleViewTag
-      await this.ctx.model.query('drop view aCmsArticleViewTag');
     }
 
     async _update7Migration_articles({ mapCagetoryIds, mapTagIds }) {
@@ -2581,7 +2828,11 @@ module.exports = app => {
       let categoryIdParent = 0;
       if (category.categoryIdParent > 0) {
         const categoryParent = categories.find(item => item.id === category.categoryIdParent);
-        categoryIdParent = await this._update7Migration_cagetory({ mapCagetoryIds, categories, category: categoryParent });
+        categoryIdParent = await this._update7Migration_cagetory({
+          mapCagetoryIds,
+          categories,
+          category: categoryParent,
+        });
       }
       const categoryIdNew = await this.ctx.bean.category.add({
         atomClass: { id: category.atomClassId },
@@ -2599,38 +2850,113 @@ module.exports = app => {
       mapCagetoryIds[category.id] = categoryIdNew;
       return categoryIdNew;
     }
-
-    _parseUuid(article) {
-      if (!article.url) return this._uuid();
-      const matches = article.url.match(/articles\/(.*)\.html/);
-      if (!matches) return this._uuid();
-      if (matches[1].length !== 32) return this._uuid();
-      return matches[1];
-    }
-
-    _uuid() {
-      return uuid.v4().replace(/-/g, '');
-    }
   }
-
   return Version;
 };
 
 
 /***/ }),
 
-/***/ 187:
+/***/ 6867:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_8(options) {
+      // schemas update for 7
+      await this._update7Migration_schemas(options);
+    }
+    async _update7Migration_schemas() {
+      let sql;
+      // aCmsArticle
+      sql = `
+        ALTER TABLE aCmsArticle
+          DROP COLUMN categoryId,
+          DROP COLUMN language
+        `;
+      await this.ctx.model.query(sql);
+      // aCmsArticleTag
+      sql = 'DROP TABLE aCmsArticleTag';
+      await this.ctx.model.query(sql);
+      // aCmsArticleTagRef
+      sql = 'DROP TABLE aCmsArticleTagRef';
+      await this.ctx.model.query(sql);
+      // aCmsCategory
+      sql = 'DROP TABLE aCmsCategory';
+      await this.ctx.model.query(sql);
+      // aCmsTag
+      sql = 'DROP TABLE aCmsTag';
+      await this.ctx.model.query(sql);
+      // aCmsArticleView
+      sql = 'DROP VIEW aCmsArticleView';
+      await this.ctx.model.query(sql);
+      // aCmsArticleViewFull
+      await this.ctx.model.query('drop view aCmsArticleViewFull');
+      sql = `
+          CREATE VIEW aCmsArticleViewFull as
+            select a.*,b.content,b.html from aCmsArticle a
+              left join aCmsContent b on a.id=b.itemId
+        `;
+      await this.ctx.model.query(sql);
+      // aCmsArticleViewSearch
+      await this.ctx.model.query('drop view aCmsArticleViewSearch');
+      sql = `
+          CREATE VIEW aCmsArticleViewSearch as
+            select a.*,b.content,b.html,concat(c.atomName,',',b.content) contentSearch from aCmsArticle a
+              left join aCmsContent b on a.id=b.itemId
+              left join aAtom c on a.atomId=c.id
+        `;
+      await this.ctx.model.query(sql);
+      // aCmsArticleViewTag
+      await this.ctx.model.query('drop view aCmsArticleViewTag');
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 9741:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Version {
+    async _update_9(options) {
+      // drop column: aCmsContent.itemId
+      const sql = `
+      ALTER TABLE aCmsContent
+        DROP COLUMN itemId
+    `;
+      await this.ctx.db.query(sql);
+
+      // drop view: aCmsArticleViewFull
+      await this.ctx.model.query('drop view aCmsArticleViewFull');
+
+      // drop view: aCmsArticleViewSearch
+      await this.ctx.model.query('drop view aCmsArticleViewSearch');
+    }
+  }
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 5187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const versionManager = __webpack_require__(899);
-const localBuild = __webpack_require__(375);
-const localRender = __webpack_require__(806);
-const localSite = __webpack_require__(698);
-const queueRender = __webpack_require__(83);
-const startupRegisterAllWatchers = __webpack_require__(502);
-const atomArticle = __webpack_require__(43);
+const versionManager = __webpack_require__(6899);
+const localBuild = __webpack_require__(9375);
+const localRender = __webpack_require__(4806);
+const localSite = __webpack_require__(7698);
+const queueRender = __webpack_require__(9083);
+const startupRegisterAllWatchers = __webpack_require__(7421);
+const atomArticle = __webpack_require__(4043);
 const beanCms = __webpack_require__(618);
-const ioMessageHotloadFile = __webpack_require__(762);
+const ioMessageHotloadFile = __webpack_require__(8762);
 
 module.exports = app => {
   const beans = {
@@ -2685,13 +3011,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 828:
+/***/ 4828:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(5638);
 const trimHtml = require3('@zhennann/trim-html');
-const markdown = require3('@zhennann/markdown');
-const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -2759,7 +3083,18 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // if undefined then old
-      const fields = ['atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra'];
+      const fields = [
+        'atomLanguage',
+        'slug',
+        'editMode',
+        'content',
+        'sticky',
+        'keywords',
+        'description',
+        'sorting',
+        'flag',
+        'extra',
+      ];
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
@@ -2787,7 +3122,7 @@ module.exports = app => {
       let audioFirst = '';
       let audioCoverFirst = '';
       if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:blockAudio([\s\S]*?)\$\$\$/);
+        const matches = item.content && item.content.match(/\$\$\$\s*a-markdownblock:audio([\s\S]*?)\$\$\$/);
         let options = matches && matches[1];
         if (options) {
           options = global.JSON5.parse(options);
@@ -2806,7 +3141,7 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const html = await this._renderContent({ item });
+      const html = await this._renderContent({ item, atomId: key.atomId });
       const summary = this._parseSummary({ item, html });
       // update article
       await this.modelArticle.update(
@@ -2833,7 +3168,12 @@ module.exports = app => {
         }
       );
       // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [item.content, html, this.ctx.instance.id, key.atomId]);
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?', [
+        item.content,
+        html,
+        this.ctx.instance.id,
+        key.atomId,
+      ]);
 
       // render
       const ignoreRender = options && options.ignoreRender;
@@ -2850,7 +3190,7 @@ module.exports = app => {
       }
     }
 
-    async _renderContent({ item }) {
+    async _renderContent({ item, atomId }) {
       // editMode
       const editMode = item.editMode;
       // html
@@ -2867,7 +3207,14 @@ module.exports = app => {
       } else if (editMode === 1) {
         // 1: markdown
         //   always renderMarkdown, for html maybe different for stage:0/1
-        html = await this._renderMarkdown({ item });
+        html = await this.ctx.bean.markdown.render({
+          host: {
+            atom: item,
+            atomId,
+          },
+          content: item.content,
+          locale: item.atomLanguage,
+        });
       } else if (editMode === 2) {
         // 2: html
         html = item.content || '';
@@ -2895,54 +3242,6 @@ module.exports = app => {
       }
       // ok
       return summary;
-    }
-
-    async _renderMarkdown({ item }) {
-      if (!item.content) return '';
-      // markdown
-      const md = markdown.create();
-      // markdown-it-block
-      const blocks = this.ctx.bean.cms.site.getBlocks();
-      // asyncs
-      const asyncs = {};
-      // block options
-      const blockOptions = {
-        ctx: this.ctx,
-        article: item,
-        utils: {
-          text: (...args) => {
-            return this.ctx.text.locale(item.atomLanguage || this.ctx.app.config.i18n.defaultLocale, ...args);
-          },
-          async: ({ block, content }) => {
-            const placeholder = `__cmsblockplaceholder__${uuid.v4().replace(/-/g, '')}`;
-            asyncs[placeholder] = { block, content };
-            return placeholder;
-          },
-        },
-        blocks,
-      };
-      md.use(markdonw_it_block, blockOptions);
-      // render
-      let itemContent = md.render(item.content);
-      // render async
-      for (const placeholder in asyncs) {
-        const { block, content } = asyncs[placeholder];
-        // bean
-        const beanInstance = this.ctx.bean._getBean(block.beanFullName);
-        if (!beanInstance) throw new Error(`bean not found: ${block.beanFullName}`);
-        // render
-        const res = await beanInstance.renderAsync({
-          md,
-          options: blockOptions,
-          block,
-          content,
-        });
-        // replace
-        const regexp = new RegExp(placeholder);
-        itemContent = itemContent.replace(regexp, res);
-      }
-      // ok
-      return itemContent;
     }
 
     async delete({ atomClass, key, user }) {
@@ -2991,7 +3290,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 294:
+/***/ 9294:
 /***/ ((module) => {
 
 module.exports = {
@@ -3026,10 +3325,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 985:
+/***/ 5985:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(5638);
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
 
@@ -3175,7 +3474,7 @@ module.exports = function (app) {
 
 /***/ }),
 
-/***/ 76:
+/***/ 7076:
 /***/ ((module) => {
 
 // eslint-disable-next-line
@@ -3269,7 +3568,7 @@ module.exports = appInfo => {
 
 /***/ }),
 
-/***/ 624:
+/***/ 5624:
 /***/ ((module) => {
 
 // error code should start from 1001
@@ -3285,7 +3584,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 327:
+/***/ 6327:
 /***/ ((module) => {
 
 module.exports = {
@@ -3301,7 +3600,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 72:
+/***/ 3072:
 /***/ ((module) => {
 
 module.exports = {
@@ -3363,14 +3662,14 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
-  'en-us': __webpack_require__(327),
-  'zh-cn': __webpack_require__(72),
+  'en-us': __webpack_require__(6327),
+  'zh-cn': __webpack_require__(3072),
 };
 
 
 /***/ }),
 
-/***/ 685:
+/***/ 3685:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -3387,7 +3686,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 397:
+/***/ 7397:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -3456,10 +3755,10 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 772:
+/***/ 1772:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const articlePublish = __webpack_require__(397);
+const articlePublish = __webpack_require__(7397);
 
 module.exports = app => {
   const flowDefs = [articlePublish(app)];
@@ -3469,7 +3768,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 429:
+/***/ 5429:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -3509,7 +3808,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 415:
+/***/ 2415:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -3520,11 +3819,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 8232:
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // article
   schemas.article = {
@@ -3548,12 +3847,8 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'markdown-content-cms',
         ebTitle: 'Content',
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleContent',
-        },
       },
       // Basic Info
       __groupBasicInfo: {
@@ -3663,10 +3958,10 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 885:
+/***/ 6885:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const utils = __webpack_require__(294);
+const utils = __webpack_require__(9294);
 
 module.exports = app => {
   class ArticleController extends app.Controller {
@@ -3706,10 +4001,10 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 261:
+/***/ 4261:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const utils = __webpack_require__(294);
+const utils = __webpack_require__(9294);
 
 module.exports = app => {
   class CommentController extends app.Controller {
@@ -3757,7 +4052,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 262:
+/***/ 8262:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -3972,10 +4267,10 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 683:
+/***/ 8683:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const utils = __webpack_require__(294);
+const utils = __webpack_require__(9294);
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -4074,14 +4369,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async blockSave() {
-      const res = await this.ctx.service.site.blockSave({
-        blockName: this.ctx.request.body.blockName,
-        item: this.ctx.request.body.item,
-      });
-      this.ctx.success(res);
-    }
-
     async getStats() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getStats({
@@ -4107,14 +4394,14 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 7095:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const article = __webpack_require__(885);
+const article = __webpack_require__(6885);
 const render = __webpack_require__(330);
-const site = __webpack_require__(683);
-const comment = __webpack_require__(261);
-const rss = __webpack_require__(262);
+const site = __webpack_require__(8683);
+const comment = __webpack_require__(4261);
+const rss = __webpack_require__(8262);
 
 module.exports = app => {
   const controllers = {
@@ -4130,14 +4417,14 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 421:
+/***/ 9421:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const config = __webpack_require__(76);
+const config = __webpack_require__(7076);
 const locales = __webpack_require__(25);
-const errors = __webpack_require__(624);
-const WatcherFn = __webpack_require__(985);
-const AtomCmsBaseFn = __webpack_require__(828);
+const errors = __webpack_require__(5624);
+const WatcherFn = __webpack_require__(5985);
+const AtomCmsBaseFn = __webpack_require__(4828);
 
 module.exports = app => {
   // watcher: only in development
@@ -4149,15 +4436,15 @@ module.exports = app => {
   app.meta.AtomCmsBase = AtomCmsBaseFn(app);
 
   // beans
-  const beans = __webpack_require__(187)(app);
+  const beans = __webpack_require__(5187)(app);
   // routes
-  const routes = __webpack_require__(825)(app);
+  const routes = __webpack_require__(3825)(app);
   // controllers
-  const controllers = __webpack_require__(95)(app);
+  const controllers = __webpack_require__(7095)(app);
   // services
-  const services = __webpack_require__(214)(app);
+  const services = __webpack_require__(7214)(app);
   // models
-  const models = __webpack_require__(230)(app);
+  const models = __webpack_require__(3230)(app);
   // meta
   const meta = __webpack_require__(458)(app);
 
@@ -4181,11 +4468,12 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  const keywords = __webpack_require__(415)(app);
-  const schemas = __webpack_require__(232)(app);
-  const socketioHotloadFile = __webpack_require__(685)(app);
-  const staticFlowDefs = __webpack_require__(772)(app);
-  const staticResources = __webpack_require__(429)(app);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const keywords = __webpack_require__(2415)(app);
+  const schemas = __webpack_require__(8232)(app);
+  const socketioHotloadFile = __webpack_require__(3685)(app);
+  const staticFlowDefs = __webpack_require__(1772)(app);
+  const staticResources = __webpack_require__(5429)(app);
   const meta = {
     base: {
       atoms: {
@@ -4204,7 +4492,18 @@ module.exports = app => {
             tag: true,
             cms: true,
           },
-          actions: {},
+          actions: {
+            preview: {
+              code: 101,
+              title: 'Preview',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'draft,formal',
+            },
+          },
           validator: 'article',
           search: {
             validator: 'articleSearch',
@@ -4260,7 +4559,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 645:
+/***/ 6645:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -4275,7 +4574,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 504:
+/***/ 2504:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -4290,11 +4589,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 230:
+/***/ 3230:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const article = __webpack_require__(645);
-const content = __webpack_require__(504);
+const article = __webpack_require__(6645);
+const content = __webpack_require__(2504);
 
 module.exports = app => {
   const models = {
@@ -4307,7 +4606,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 825:
+/***/ 3825:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -4318,23 +4617,77 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
     // render
-    { method: 'post', path: 'render/getArticleUrl', controller: 'render', meta: { right: { type: 'atom', action: 'read', checkFlow: true } } },
+    {
+      method: 'post',
+      path: 'render/getArticleUrl',
+      controller: 'render',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
     // site
-    { method: 'post', path: 'site/getConfigSiteBase', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/getConfigSite', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/setConfigSite', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/getConfigLanguagePreview', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/getConfigLanguage', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/setConfigLanguage', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguage', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguages', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'site/getConfigSiteBase',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/getConfigSite',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/setConfigSite',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/getConfigLanguagePreview',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/getConfigLanguage',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/setConfigLanguage',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/buildLanguage',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
+    {
+      method: 'post',
+      path: 'site/buildLanguages',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
     { method: 'post', path: 'site/getLanguages', controller: 'site' },
     { method: 'post', path: 'site/getUrl', controller: 'site' },
-    { method: 'post', path: 'site/blockSave', controller: 'site' },
-    { method: 'post', path: 'site/getStats', controller: 'site', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    {
+      method: 'post',
+      path: 'site/getStats',
+      controller: 'site',
+      meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
+    },
     // rss
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },
-    { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: 'rss', action: 'feedComments' },
+    {
+      method: 'get',
+      path: 'rss/feed/comments/:module/:atomClassName/:language',
+      controller: 'rss',
+      action: 'feedComments',
+    },
     { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: 'rss', action: 'feed' },
     // site
     { method: 'post', path: 'site/checkFile', controller: 'site' },
@@ -4345,7 +4698,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 20:
+/***/ 4020:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -4366,7 +4719,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 724:
+/***/ 9327:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -4421,14 +4774,6 @@ module.exports = app => {
       return await this.ctx.bean.cms.site.getStats({ atomClass, languages });
     }
 
-    async blockSave({ blockName, item }) {
-      return await this.ctx.bean.cms.site.blockSave({ blockName, item });
-    }
-
-    getBlocks() {
-      return this.ctx.bean.cms.site.getBlocks();
-    }
-
     async checkFile({ atomId, file, mtime, user }) {
       return await this.ctx.bean.cms.site.checkFile({ atomId, file, mtime, user });
     }
@@ -4440,11 +4785,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 214:
+/***/ 7214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const render = __webpack_require__(20);
-const site = __webpack_require__(724);
+const render = __webpack_require__(4020);
+const site = __webpack_require__(9327);
 
 module.exports = app => {
   const services = {
@@ -4457,19 +4802,19 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 622:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("path");
-
-/***/ }),
-
-/***/ 718:
+/***/ 5638:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("require3");
+
+/***/ }),
+
+/***/ 1017:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
 
 /***/ })
 
@@ -4504,7 +4849,7 @@ module.exports = require("require3");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(421);
+/******/ 	var __webpack_exports__ = __webpack_require__(9421);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

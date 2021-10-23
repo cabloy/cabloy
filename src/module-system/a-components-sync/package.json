@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-components-sync",
-  "version": "4.3.23",
+  "version": "4.4.0",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -15,6 +15,6 @@
   "dependencies": {
     "clipboard": "^2.0.4",
     "egg-born-mock": "^2.1.2",
-    "require3": "^2.0.9"
+    "require3": "^2.1.0"
   }
 }

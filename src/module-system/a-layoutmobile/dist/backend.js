@@ -140,7 +140,7 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'buttonAtom',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({

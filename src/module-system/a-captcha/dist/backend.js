@@ -4,7 +4,7 @@
 /***/ 760:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const mparse = require3('egg-born-mparse').default;
 const extend = require3('extend2');
 const uuid = require3('uuid');
@@ -24,7 +24,8 @@ module.exports = ctx => {
       const sceneDefault = configDefault.captcha.scenes.default;
       // module scene
       const configModule = ctx.config.module(module);
-      const sceneModule = (configModule.captcha && configModule.captcha.scenes && configModule.captcha.scenes[sceneName]) || null;
+      const sceneModule =
+        (configModule.captcha && configModule.captcha.scenes && configModule.captcha.scenes[sceneName]) || null;
       return extend(true, {}, sceneDefault, sceneModule);
     }
 
@@ -36,7 +37,9 @@ module.exports = ctx => {
       const providerInstanceId = uuid.v4().replace(/-/g, '');
       // cache
       const key = utils.getCacheKey({ ctx, providerInstanceId });
-      await ctx.cache.db.module(moduleInfo.relativeName).set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+      await ctx.cache.db
+        .module(moduleInfo.relativeName)
+        .set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
       // ok
       return { providerInstanceId, provider };
     }
@@ -59,7 +62,10 @@ module.exports = ctx => {
       const providerInstance = await this.getProviderInstance({ providerInstanceId });
       if (!providerInstance) ctx.throw(403);
       // provider
-      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      const provider = await this.getProvider({
+        module: providerInstance.module,
+        sceneName: providerInstance.sceneName,
+      });
       // update
       providerInstance.data = data;
       providerInstance.context = context;
@@ -76,7 +82,10 @@ module.exports = ctx => {
       // check if the same scene
       if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
       // provider
-      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      const provider = await this.getProvider({
+        module: providerInstance.module,
+        sceneName: providerInstance.sceneName,
+      });
       // invoke provider verify
       const _moduleInfo = mparse.parseInfo(provider.module);
       await ctx.executeBean({
@@ -443,7 +452,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";

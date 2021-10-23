@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 224:
+/***/ 5224:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -12,7 +12,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 885:
+/***/ 9885:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -71,19 +71,18 @@ module.exports = app => {
           },
         }
       );
-
       // deploy
       if (item.atomStage === 1) {
-        const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-        if (_atom.atomDisabled === 0) {
-          this.ctx.tail(async () => {
-            await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-          });
-        }
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
       }
     }
 
     async delete({ atomClass, key, user }) {
+      // deploy
+      const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      if (_atom.atomStage === 1) {
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
+      }
       // delete flowDef
       await this.ctx.model.flowDef.delete({
         id: key.itemId,
@@ -100,9 +99,14 @@ module.exports = app => {
       // super
       await super.enable({ atomClass, key, user });
       // deploy
-      this.ctx.tail(async () => {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-      });
+      await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+    }
+
+    async disable({ atomClass, key, user }) {
+      // super
+      await super.disable({ atomClass, key, user });
+      // deploy
+      await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
     }
 
     _getMeta(item) {
@@ -124,7 +128,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 869:
+/***/ 5869:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -212,7 +216,10 @@ module.exports = ctx => {
       }
       if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
       // flowDef: by key+revision
-      const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({ flowDefKey: flow.flowDefKey, flowDefRevision: flow.flowDefRevision });
+      const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({
+        flowDefKey: flow.flowDefKey,
+        flowDefRevision: flow.flowDefRevision,
+      });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
       // not check atomDisabled
       // flowInstance
@@ -403,9 +410,10 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 495:
+/***/ 5495:
 /***/ ((module) => {
 
+const __flowBehaviorBases = {};
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
 const __flowServiceBases = {};
@@ -449,18 +457,7 @@ module.exports = ctx => {
       return null;
     }
 
-    async deploy({ flowDefId }) {
-      // queue
-      await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'deploy',
-        queueNameSub: flowDefId,
-        data: { flowDefId },
-      });
-    }
-
-    async _deployQueue({ flowDefId }) {
+    async deploy({ flowDefId, undeploy }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
@@ -470,12 +467,12 @@ module.exports = ctx => {
       // all startEvents
       for (const node of content.process.nodes) {
         const nodeType = node.type;
-        if (nodeType.indexOf('startEvent') !== 0) continue;
+        if (nodeType.indexOf('startEvent') === -1) continue;
         const _nodeBase = this._getFlowNodeBase(nodeType);
         const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
         if (_nodeBaseBean.deploy) {
           await _nodeBaseBean.deploy({
-            deploy: flowDef.atomDisabled === 0,
+            deploy: !undeploy && flowDef.atomDisabled === 0,
             flowDefId,
             node,
           });
@@ -499,6 +496,10 @@ module.exports = ctx => {
       });
     }
 
+    behaviorBases() {
+      return this._getFlowBehaviorBases();
+    }
+
     nodeBases() {
       return this._getFlowNodeBases();
     }
@@ -516,6 +517,17 @@ module.exports = ctx => {
         __flowServiceBases[ctx.locale] = this._prepareFlowServiceBases();
       }
       return __flowServiceBases[ctx.locale];
+    }
+
+    _getFlowBehaviorBases() {
+      if (!__flowBehaviorBases[ctx.locale]) {
+        __flowBehaviorBases[ctx.locale] = this._prepareFlowBehaviorBases();
+      }
+      return __flowBehaviorBases[ctx.locale];
+    }
+
+    _getFlowBehaviorBase(behaviorType) {
+      return this._getFlowBehaviorBases()[behaviorType];
     }
 
     _getFlowNodeBases() {
@@ -565,6 +577,32 @@ module.exports = ctx => {
       return flowServiceBases;
     }
 
+    _prepareFlowBehaviorBases() {
+      const flowBehaviorBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const behaviors = module.main.meta && module.main.meta.flow && module.main.meta.flow.behaviors;
+        if (!behaviors) continue;
+        for (const key in behaviors) {
+          const behavior = behaviors[key];
+          const beanName = behavior.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.flow.behavior.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.flow.behavior.${beanName.name}`;
+          }
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowBehaviorBases[fullKey] = flowBehaviorBases[key] = {
+            ...behavior,
+            beanFullName,
+            titleLocale: ctx.text(behavior.title),
+          };
+        }
+      }
+      return flowBehaviorBases;
+    }
+
     _prepareFlowNodeBases() {
       const flowNodeBases = {};
       for (const module of ctx.app.meta.modulesArray) {
@@ -579,9 +617,9 @@ module.exports = ctx => {
           } else {
             beanFullName = `${beanName.module || module.info.relativeName}.flow.node.${beanName.name}`;
           }
-          // const fullKey = `${module.info.relativeName}:${key}`;
-          const fullKey = key;
-          flowNodeBases[fullKey] = {
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowNodeBases[fullKey] = flowNodeBases[key] = {
             ...node,
             beanFullName,
             titleLocale: ctx.text(node.title),
@@ -616,9 +654,9 @@ module.exports = ctx => {
           } else {
             beanFullName = `${beanName.module || module.info.relativeName}.flow.edge.${beanName.name}`;
           }
-          // const fullKey = `${module.info.relativeName}:${key}`;
-          const fullKey = key;
-          flowEdgeBases[fullKey] = {
+          // support fullKey and key
+          const fullKey = `${module.info.relativeName}:${key}`;
+          flowEdgeBases[fullKey] = flowEdgeBases[key] = {
             ...edge,
             beanFullName,
             titleLocale: ctx.text(edge.title),
@@ -648,7 +686,66 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 88:
+/***/ 6256:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class FlowBehavior extends ctx.app.meta.FlowBehaviorBase {
+    constructor(options) {
+      super(ctx, options);
+    }
+
+    getBehaviorDefOptions({ behaviorDefId, options }) {
+      return this.nodeInstance.nodeBaseBean.getBehaviorDefOptions({ behaviorDefId, options });
+    }
+
+    getNodeDefOptions({ options }) {
+      return this.nodeInstance.nodeBaseBean.getNodeDefOptions({ options });
+    }
+
+    async enter() {
+      return await this.nodeInstance.nodeBaseBean.onNodeEnter();
+    }
+
+    async begin() {
+      return await this.nodeInstance.nodeBaseBean.onNodeBegin();
+    }
+
+    async doing() {
+      return await this.nodeInstance.nodeBaseBean.onNodeDoing();
+    }
+
+    async end() {
+      return await this.nodeInstance.nodeBaseBean.onNodeEnd();
+    }
+
+    async leave() {
+      const res = await this.nodeInstance.nodeBaseBean.onNodeLeave();
+      if (!res) return false;
+      // clear with done
+      await this.nodeInstance.clear({ flowNodeHandleStatus: 1 });
+      // next
+      await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      // return false always, means the base(behavior) normal logic has done, shouldnot do anything else more
+      return false;
+    }
+
+    async clear({ options }) {
+      return await this.nodeInstance.nodeBaseBean.onNodeClear({ options });
+    }
+
+    async change({ options }) {
+      return await this.nodeInstance.nodeBaseBean.onNodeChange({ options });
+    }
+  }
+
+  return FlowBehavior;
+};
+
+
+/***/ }),
+
+/***/ 6088:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -672,7 +769,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 302:
+/***/ 5302:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -710,13 +807,15 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 901:
+/***/ 1901:
 /***/ ((module) => {
 
 module.exports = ctx => {
   class ContextNode {
-    constructor({ context, nodeDef }) {
+    // contextEdge maybe null
+    constructor({ context, contextEdge, nodeDef }) {
       this.context = context;
+      this.contextEdge = contextEdge;
       this._nodeDef = nodeDef;
       //
       this._flowNodeId = null;
@@ -742,10 +841,10 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 1:
+/***/ 6302:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const UtilsFn = __webpack_require__(294);
+const UtilsFn = __webpack_require__(9294);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -805,7 +904,9 @@ module.exports = ctx => {
       await this._saveVars();
       if (!res) return false;
       // next
-      return await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
+      await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
+      // return true always, means the edge confirmed to be taken
+      return true;
     }
 
     get edgeBaseBean() {
@@ -835,8 +936,8 @@ module.exports = ctx => {
 /***/ 59:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const VarsFn = __webpack_require__(418);
-const UtilsFn = __webpack_require__(294);
+const VarsFn = __webpack_require__(1418);
+const UtilsFn = __webpack_require__(9294);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -884,7 +985,11 @@ module.exports = ctx => {
       await this._saveFlowVars();
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
-      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`);
+      if (!nodeInstanceStartEvent) {
+        throw new Error(
+          `startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`
+        );
+      }
       // node enter
       const finished = await nodeInstanceStartEvent.enter();
       if (!finished) {
@@ -899,13 +1004,18 @@ module.exports = ctx => {
       await this._contextInit({ flowId: flow.id, history });
     }
 
-    async nextEdges({ contextNode }) {
-      const edgeInstances = await this._findEdgeInstancesNext({ nodeDefId: contextNode._nodeDef.id, contextNode });
-      if (edgeInstances.length === 0) return true;
+    // return true, means has one edge to be taken
+    async nextEdges({ contextNode, behaviorDefId }) {
+      const edgeInstances = await this._findEdgeInstancesNext({
+        nodeDefId: contextNode._nodeDef.id,
+        contextNode,
+        behaviorDefId,
+      });
+      if (edgeInstances.length === 0) return false;
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
-          return true;
+          ctx.throw.module(moduleInfo.relativeName, 1008, this.context._flowId);
         }
         // enter
         const res = await edgeInstance.enter();
@@ -913,13 +1023,16 @@ module.exports = ctx => {
           return true;
         }
       }
-      return false;
+      // should throw exception
+      ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
+      // return false;
     }
 
     async nextNode({ contextEdge }) {
       const nodeInstanceNext = await this._findNodeInstanceNext({
         nodeDefId: contextEdge._edgeDef.target,
         flowNodeIdPrev: contextEdge.contextNode._flowNodeId,
+        contextEdge,
       });
       // enter
       return await nodeInstanceNext.enter();
@@ -935,7 +1048,9 @@ module.exports = ctx => {
       this.context._flowHistory = await this.modelFlowHistory.get({ flowId });
       // flowVars
       this.context._flowVars = new (VarsFn())();
-      this.context._flowVars._vars = this.context._flowHistory.flowVars ? JSON.parse(this.context._flowHistory.flowVars) : {};
+      this.context._flowVars._vars = this.context._flowHistory.flowVars
+        ? JSON.parse(this.context._flowHistory.flowVars)
+        : {};
       // atom
       if (!this.context._atom && this.context._flowHistory.flowAtomId) {
         this.context._atom = await this._contextInit_atom({ atomId: this.context._flowHistory.flowAtomId });
@@ -954,7 +1069,10 @@ module.exports = ctx => {
       if (!this.context._flowVars._dirty) return;
       // flow
       this.context._flow.flowVars = JSON.stringify(this.context._flowVars._vars);
-      await this.modelFlow.update(this.context._flow);
+      // modelFlow maybe deleted when flowStatus=1
+      if (this.context._flowHistory.flowStatus === 0) {
+        await this.modelFlow.update(this.context._flow);
+      }
       // flow history
       this.context._flowHistory.flowVars = this.context._flow.flowVars;
       await this.modelFlowHistory.update(this.context._flowHistory);
@@ -1028,7 +1146,10 @@ module.exports = ctx => {
       const flowUserId = this.context._flow.flowUserId;
       if (flowUserId !== userOp.id) {
         const userFlow = await ctx.bean.user.get({ id: flowUserId });
-        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(userFlow.locale, this.context._flow.flowRemark || 'End')}`;
+        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(
+          userFlow.locale,
+          this.context._flow.flowRemark || 'End'
+        )}`;
         const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}`;
         const message = {
           userIdTo: flowUserId,
@@ -1064,7 +1185,7 @@ module.exports = ctx => {
       });
       for (const flowNode of flowNodes) {
         const flowNodeInstance = await this._loadNodeInstance({ flowNode });
-        await flowNodeInstance._clearRemains();
+        await flowNodeInstance.clear({ flowNodeHandleStatus: 0 });
       }
     }
 
@@ -1102,10 +1223,11 @@ module.exports = ctx => {
       return flowId;
     }
 
-    _createNodeInstance2({ nodeDef }) {
+    _createNodeInstance2({ nodeDef, contextEdge }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
         flowInstance: this,
         context: this.context,
+        contextEdge,
         nodeDef,
       });
       return node;
@@ -1119,8 +1241,9 @@ module.exports = ctx => {
       return node;
     }
 
-    async _createNodeInstance({ nodeDef, flowNodeIdPrev }) {
-      const node = this._createNodeInstance2({ nodeDef });
+    // contextEdge maybe null
+    async _createNodeInstance({ nodeDef, flowNodeIdPrev, contextEdge }) {
+      const node = this._createNodeInstance2({ nodeDef, contextEdge });
       await node.init({ flowNodeIdPrev });
       return node;
     }
@@ -1143,10 +1266,11 @@ module.exports = ctx => {
       return nodeDef;
     }
 
-    async _findNodeInstanceNext({ nodeDefId, flowNodeIdPrev }) {
+    // contextEdge maybe null
+    async _findNodeInstanceNext({ nodeDefId, flowNodeIdPrev, contextEdge }) {
       const nodeDef = this._findNodeDef({ nodeDefId });
       if (!nodeDef) return null;
-      return await this._createNodeInstance({ nodeDef, flowNodeIdPrev });
+      return await this._createNodeInstance({ nodeDef, flowNodeIdPrev, contextEdge });
     }
 
     async _findNodeInstanceStartEvent({ startEventId }) {
@@ -1157,10 +1281,10 @@ module.exports = ctx => {
       return await this._createNodeInstance({ nodeDef });
     }
 
-    async _findEdgeInstancesNext({ nodeDefId, contextNode }) {
+    async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
       const edges = [];
       for (const edgeDef of this.context._flowDefContent.process.edges) {
-        if (edgeDef.source === nodeDefId) {
+        if (edgeDef.source === nodeDefId && (edgeDef.behavior || '') === (behaviorDefId || '')) {
           const edge = await this._createEdgeInstance({ edgeDef, contextNode });
           edges.push(edge);
         }
@@ -1285,7 +1409,7 @@ module.exports = ctx => {
 /***/ 408:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(5638);
 const assert = require3('assert');
 
 module.exports = ctx => {
@@ -1361,6 +1485,12 @@ module.exports = ctx => {
       }
     }
 
+    async onNodeClear(contextNode, { options }) {
+      if (this.flowListener && this.flowListener.onNodeClear) {
+        await this.flowListener.onNodeClear(contextNode, { options });
+      }
+    }
+
     async onEdgeEnter(contextEdge, contextNode) {
       if (this.flowListener && this.flowListener.onEdgeEnter) {
         await this.flowListener.onEdgeEnter(contextEdge, contextNode);
@@ -1397,10 +1527,20 @@ module.exports = ctx => {
       }
     }
 
+    getBehaviorDefOptions(contextNode, { behaviorDefId, options }) {
+      if (this.flowListener && this.flowListener.getBehaviorDefOptions) {
+        const res = this.flowListener.getBehaviorDefOptions(contextNode, { behaviorDefId, options });
+        if (res) return res;
+      }
+      return options;
+    }
+
     getNodeDefOptions(contextNode, { options }) {
       if (this.flowListener && this.flowListener.getNodeDefOptions) {
-        return this.flowListener.getNodeDefOptions(contextNode, { options });
+        const res = this.flowListener.getNodeDefOptions(contextNode, { options });
+        if (res) return res;
       }
+      return options;
     }
 
     async getSchemaRead(contextTask, contextNode, { schemaBase, schema }) {
@@ -1422,23 +1562,44 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 154:
+/***/ 1154:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const VarsFn = __webpack_require__(418);
-const UtilsFn = __webpack_require__(294);
+const flowNode_0 = __webpack_require__(42);
+const flowNode_cycle = __webpack_require__(7293);
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(flowNode_0, [flowNode_cycle], ctx);
+};
 
+
+/***/ }),
+
+/***/ 42:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const VarsFn = __webpack_require__(1418);
+const UtilsFn = __webpack_require__(9294);
+
+const __behaviorBaseDef = {
+  id: 'behavior_0',
+  name: 'Base',
+  type: 'base',
+};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode {
-    constructor({ flowInstance, context, nodeDef }) {
+    // contextEdge maybe null
+    constructor({ flowInstance, context, contextEdge, nodeDef }) {
       this.flowInstance = flowInstance;
       this.context = context;
+      this.contextEdge = contextEdge;
       this._nodeBase = null;
       this._nodeBaseBean = null;
+      this._behaviors = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
         context,
+        contextEdge,
         nodeDef,
       });
     }
@@ -1455,6 +1616,12 @@ module.exports = ctx => {
     get modelFlowNodeHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
     }
+    get behaviors() {
+      if (!this._behaviors) {
+        this._behaviors = this._prepareBehaviors();
+      }
+      return this._behaviors;
+    }
 
     async init({ flowNodeIdPrev }) {
       // create flowNode
@@ -1469,6 +1636,8 @@ module.exports = ctx => {
     }
 
     async _createFlowNode({ flowNodeIdPrev = 0 }) {
+      // behaviorDefId
+      const behaviorDefId = (this.contextEdge && this.contextEdge._edgeDef.behavior) || '';
       // flowNode
       const data = {
         flowId: this.context._flowId,
@@ -1477,6 +1646,7 @@ module.exports = ctx => {
         flowNodeType: this.contextNode._nodeDef.type,
         flowNodeIdPrev,
         nodeVars: '{}',
+        behaviorDefId,
       };
       const res = await this.modelFlowNode.insert(data);
       const flowNodeId = res.insertId;
@@ -1497,19 +1667,56 @@ module.exports = ctx => {
       this.contextNode._flowNodeHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
       // nodeVars
       this.contextNode._nodeVars = new (VarsFn())();
-      this.contextNode._nodeVars._vars = this.contextNode._flowNodeHistory.nodeVars ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars) : {};
+      this.contextNode._nodeVars._vars = this.contextNode._flowNodeHistory.nodeVars
+        ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars)
+        : {};
       // utils
       this.contextNode._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
         context: this.context,
         contextNode: this.contextNode,
+        contextEdge: this.contextEdge,
       });
+    }
+
+    _prepareBehaviors() {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // behaviorsDef
+      const behaviorsDef = nodeDef.behaviors || [];
+      // behaviors
+      const behaviors = behaviorsDef.map(behaviorDef => this._prepareBehavior(behaviorDef));
+      // behavior base
+      behaviors.push(this._prepareBehavior(__behaviorBaseDef));
+      // ok
+      return behaviors;
+    }
+
+    _prepareBehavior(behaviorDef) {
+      const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
+      const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
+        flowInstance: this.flowInstance,
+        nodeInstance: this,
+        context: this.context,
+        contextNode: this.contextNode,
+        contextEdge: this.contextEdge,
+        behaviorDef,
+        behaviorBase,
+      });
+      return {
+        behaviorDef,
+        behaviorBase,
+        behaviorBean,
+      };
     }
 
     async _saveNodeVars() {
       if (!this.contextNode._nodeVars._dirty) return;
       // flowNode
       this.contextNode._flowNode.nodeVars = JSON.stringify(this.contextNode._nodeVars._vars);
-      await this.modelFlowNode.update(this.contextNode._flowNode);
+      // modelFlowNode maybe deleted when flowNodeStatus=1
+      if (this.contextNode._flowNodeHistory.flowNodeStatus === 0) {
+        await this.modelFlowNode.update(this.contextNode._flowNode);
+      }
       // flowNode history
       this.contextNode._flowNodeHistory.nodeVars = this.contextNode._flowNode.nodeVars;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
@@ -1537,12 +1744,23 @@ module.exports = ctx => {
 
     async _clear(options) {
       options = options || {};
-      const flowNodeHandleStatus = options.flowNodeHandleStatus || 1;
-      const flowNodeRemark = options.flowNodeRemark || null;
-      const timeDone = new Date();
-      // clear
-      await this._setCurrent(true);
+      let flowNodeRemark;
+      let timeDone;
+      const flowNodeHandleStatus = options.flowNodeHandleStatus || 0;
+      if (flowNodeHandleStatus > 0) {
+        flowNodeRemark = options.flowNodeRemark || null;
+        timeDone = new Date();
+        // clear the current node
+        await this._setCurrent(true);
+      } else {
+        flowNodeRemark = null;
+        timeDone = null;
+      }
       // delete node
+      this.contextNode._flowNode.flowNodeStatus = 1;
+      this.contextNode._flowNode.flowNodeHandleStatus = flowNodeHandleStatus;
+      this.contextNode._flowNode.flowNodeRemark = flowNodeRemark;
+      this.contextNode._flowNode.timeDone = timeDone;
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
@@ -1550,68 +1768,8 @@ module.exports = ctx => {
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
-    }
-
-    async _clearRemains() {
-      // clear taskRemains
-      if (this.nodeBaseBean.clearRemains) {
-        await this.nodeBaseBean.clearRemains();
-      }
-      // delete node
-      await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
-      // set nodeHistoryStatus
-      this.contextNode._flowNodeHistory.flowNodeStatus = 1;
-      await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
-    }
-
-    getNodeDefOptions() {
-      return this.nodeBaseBean.getNodeDefOptions();
-    }
-
-    async enter() {
-      // current
-      await this._setCurrent();
-      // raise event: onNodeEnter
-      const res = await this.nodeBaseBean.onNodeEnter();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.begin();
-    }
-
-    async begin() {
-      // raise event: onNodeBegin
-      const res = await this.nodeBaseBean.onNodeBegin();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.doing();
-    }
-
-    async doing() {
-      // raise event: onNodeDoing
-      const res = await this.nodeBaseBean.onNodeDoing();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.end();
-    }
-
-    async end() {
-      // raise event: onNodeEnd
-      const res = await this.nodeBaseBean.onNodeEnd();
-      await this._saveVars();
-      if (!res) return false;
-      return await this.leave();
-    }
-
-    async leave() {
-      // raise event: onNodeLeave
-      const res = await this.nodeBaseBean.onNodeLeave();
-      await this._saveVars();
-      // clear
-      await this._clear();
-      // res
-      if (!res) return false;
-      // next
-      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      // ok
+      return true;
     }
 
     get nodeBaseBean() {
@@ -1621,6 +1779,7 @@ module.exports = ctx => {
           nodeInstance: this,
           context: this.context,
           contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
         });
       }
       return this._nodeBaseBean;
@@ -1640,7 +1799,143 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 716:
+/***/ 7293:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const extend = require3('extend2');
+
+const __adapter = (context, chain) => {
+  return {
+    receiver: chain.behaviorBean,
+    fn: chain.behaviorBean[context.methodName],
+  };
+};
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowNode {
+    getBehaviorDefOptions({ behaviorDefId }) {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // behaviorDef
+      let behaviorDef;
+      if (nodeDef.behaviors) {
+        behaviorDef = nodeDef.behaviors.find(item => item.id === behaviorDefId);
+      }
+      // options
+      let options = (behaviorDef && behaviorDef.options) || {};
+      // default
+      const behavior = this.behaviors.find(item => item.behaviorDef.id === behaviorDefId);
+      const optionsDefault = behavior.behaviorBase.options.default;
+      if (optionsDefault) {
+        options = extend(true, {}, optionsDefault, options);
+      }
+      // invoke
+      return this._behaviorsInvoke({
+        methodName: 'getBehaviorDefOptions',
+        behaviorDefId,
+        options,
+      });
+    }
+
+    getNodeDefOptions() {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // options
+      let options = nodeDef.options || {};
+      // default
+      const optionsDefault = this.nodeBase.options.default;
+      if (optionsDefault) {
+        options = extend(true, {}, optionsDefault, options);
+      }
+      // invoke
+      return this._behaviorsInvoke({
+        methodName: 'getNodeDefOptions',
+        options,
+      });
+    }
+
+    async enter() {
+      // current
+      await this._setCurrent();
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'enter',
+      });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.begin();
+    }
+
+    async begin() {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'begin',
+      });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.doing();
+    }
+
+    async doing() {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'doing',
+      });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.end();
+    }
+
+    async end() {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'end',
+      });
+      await this._saveVars();
+      if (!res) return false;
+      return await this.leave();
+    }
+
+    async leave() {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'leave',
+      });
+      await this._saveVars();
+      return res;
+    }
+
+    async clear(options) {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'clear',
+        options,
+      });
+      await this._saveVars();
+      if (!res) return false;
+      return await this._clear(options);
+    }
+
+    async change(options) {
+      const res = await this._behaviorsInvokeAsync({
+        methodName: 'change',
+        options,
+      });
+      await this._saveVars();
+      return res;
+    }
+
+    _behaviorsInvoke(context) {
+      return ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
+    }
+
+    async _behaviorsInvokeAsync(context) {
+      return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+    }
+  }
+  return FlowNode;
+};
+
+
+/***/ }),
+
+/***/ 2716:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1836,24 +2131,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 541:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Queue extends app.meta.BeanBase {
-    async execute(context) {
-      const { flowDefId } = context.data;
-      await this.ctx.bean.flowDef._deployQueue({ flowDefId });
-    }
-  }
-
-  return Queue;
-};
-
-
-/***/ }),
-
-/***/ 329:
+/***/ 5329:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1875,7 +2153,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 899:
+/***/ 6899:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2050,6 +2328,24 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 3) {
+        let sql;
+
+        // alter table: aFlowNode
+        sql = `
+        ALTER TABLE aFlowNode
+          ADD COLUMN behaviorDefId varchar(255) DEFAULT '' 
+                  `;
+        await this.ctx.model.query(sql);
+
+        // alter table: aFlowNodeHistory
+        sql = `
+        ALTER TABLE aFlowNodeHistory
+          ADD COLUMN behaviorDefId varchar(255) DEFAULT ''
+                  `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
@@ -2085,23 +2381,23 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 187:
+/***/ 5187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const versionManager = __webpack_require__(899);
-const atomFlowDef = __webpack_require__(885);
-const queueDeploy = __webpack_require__(541);
-const localContextFlow = __webpack_require__(302);
-const localContextNode = __webpack_require__(901);
-const localContextEdge = __webpack_require__(88);
+const versionManager = __webpack_require__(6899);
+const atomFlowDef = __webpack_require__(9885);
+const flowBehaviorBase = __webpack_require__(6256);
+const localContextFlow = __webpack_require__(5302);
+const localContextNode = __webpack_require__(1901);
+const localContextEdge = __webpack_require__(6088);
 const localFlowFlow = __webpack_require__(59);
-const localFlowNode = __webpack_require__(154);
-const localFlowEdge = __webpack_require__(1);
+const localFlowNode = __webpack_require__(1154);
+const localFlowEdge = __webpack_require__(6302);
 const localFlowListener = __webpack_require__(408);
-const localProcedure = __webpack_require__(716);
-const beanFlow = __webpack_require__(869);
-const beanFlowDef = __webpack_require__(495);
-const statsFlowInitiateds = __webpack_require__(329);
+const localProcedure = __webpack_require__(2716);
+const beanFlow = __webpack_require__(5869);
+const beanFlowDef = __webpack_require__(5495);
+const statsFlowInitiateds = __webpack_require__(5329);
 
 module.exports = app => {
   const beans = {
@@ -2115,10 +2411,10 @@ module.exports = app => {
       mode: 'app',
       bean: atomFlowDef,
     },
-    // queue
-    'queue.deploy': {
-      mode: 'app',
-      bean: queueDeploy,
+    // flow behavior
+    'flow.behavior.base': {
+      mode: 'ctx',
+      bean: flowBehaviorBase,
     },
     // local
     'local.context.flow': {
@@ -2176,7 +2472,64 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 68:
+/***/ 7959:
+/***/ ((module) => {
+
+module.exports = class FlowBehaviorBase {
+  constructor(ctx, options) {
+    this.ctx = ctx;
+    if (options) {
+      this.flowInstance = options.flowInstance;
+      this.nodeInstance = options.nodeInstance;
+      this.context = options.context;
+      this.contextNode = options.contextNode;
+      this.contextEdge = options.contextEdge;
+      this._behaviorDef = options.behaviorDef;
+      this._behaviorBase = options.behaviorBase;
+    }
+  }
+
+  getBehaviorDefOptions(context, next) {
+    return next();
+  }
+
+  getNodeDefOptions(context, next) {
+    return next();
+  }
+
+  async enter(context, next) {
+    return await next();
+  }
+
+  async begin(context, next) {
+    return await next();
+  }
+
+  async doing(context, next) {
+    return await next();
+  }
+
+  async end(context, next) {
+    return await next();
+  }
+
+  async leave(context, next) {
+    return await next();
+  }
+
+  async clear(context, next) {
+    return await next();
+  }
+
+  async change(context, next) {
+    return await next();
+  }
+};
+
+
+/***/ }),
+
+/***/ 5068:
 /***/ ((module) => {
 
 module.exports = class FlowEdgeBase {
@@ -2210,11 +2563,8 @@ module.exports = class FlowEdgeBase {
 
 /***/ }),
 
-/***/ 389:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(718);
-const extend = require3('extend2');
+/***/ 6389:
+/***/ ((module) => {
 
 module.exports = class FlowNodeBase {
   constructor(ctx, options) {
@@ -2224,25 +2574,16 @@ module.exports = class FlowNodeBase {
       this.nodeInstance = options.nodeInstance;
       this.context = options.context;
       this.contextNode = options.contextNode;
+      this.contextEdge = options.contextEdge;
     }
   }
 
-  getNodeDefOptions() {
-    // nodeDef
-    const nodeDef = this.contextNode._nodeDef;
-    // options
-    let options = nodeDef.options || {};
-    // default
-    const optionsDefault = this.nodeInstance.nodeBase.options.default;
-    if (optionsDefault) {
-      options = extend(true, {}, optionsDefault, options);
-    }
-    // listener
-    const res = this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
-    if (res) {
-      options = res;
-    }
-    return options;
+  getBehaviorDefOptions({ behaviorDefId, options }) {
+    return this.flowInstance._flowListener.getBehaviorDefOptions(this.contextNode, { behaviorDefId, options });
+  }
+
+  getNodeDefOptions({ options }) {
+    return this.flowInstance._flowListener.getNodeDefOptions(this.contextNode, { options });
   }
 
   async onNodeEnter() {
@@ -2269,12 +2610,23 @@ module.exports = class FlowNodeBase {
     await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     return true;
   }
+
+  async onNodeClear({ options }) {
+    await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
+    return true;
+  }
+
+  async onNodeChange({ options }) {
+    // should not raise onNodeChange for flowListener
+    // await this.flowInstance._flowListener.onNodeChange(this.contextNode, { options });
+    return true;
+  }
 };
 
 
 /***/ }),
 
-/***/ 294:
+/***/ 9294:
 /***/ ((module) => {
 
 module.exports = ({ ctx /* flowInstance*/ }) => {
@@ -2303,7 +2655,7 @@ module.exports = ({ ctx /* flowInstance*/ }) => {
 
 /***/ }),
 
-/***/ 418:
+/***/ 1418:
 /***/ ((module) => {
 
 module.exports = () => {
@@ -2345,27 +2697,19 @@ module.exports = () => {
 
 /***/ }),
 
-/***/ 76:
+/***/ 7076:
 /***/ ((module) => {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
-
-  // queues
-  config.queues = {
-    deploy: {
-      bean: 'deploy',
-    },
-  };
-
   return config;
 };
 
 
 /***/ }),
 
-/***/ 479:
+/***/ 4479:
 /***/ ((module) => {
 
 module.exports = {
@@ -2380,7 +2724,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 624:
+/***/ 5624:
 /***/ ((module) => {
 
 // error code should start from 1001
@@ -2394,12 +2738,52 @@ module.exports = {
   1007: 'Role not Found: %s',
   1008: 'Flow Completed: %s',
   1009: 'Flow Outdated: %s',
+  1010: 'NoMatchedFlowEdge: %s',
 };
 
 
 /***/ }),
 
-/***/ 327:
+/***/ 7257:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const defaults = __webpack_require__(3614);
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const behaviors = {
+    // base
+    base: {
+      title: 'Base',
+      bean: 'base',
+    },
+  };
+
+  for (const key in behaviors) {
+    const behavior = behaviors[key];
+    behavior.options = {};
+    if (defaults[key]) {
+      behavior.options.default = defaults[key];
+    }
+  }
+
+  return behaviors;
+};
+
+
+/***/ }),
+
+/***/ 3614:
+/***/ ((module) => {
+
+module.exports = {
+  base: {},
+};
+
+
+/***/ }),
+
+/***/ 6327:
 /***/ ((module) => {
 
 module.exports = {
@@ -2407,12 +2791,13 @@ module.exports = {
   WorkFlow: 'Work Flow',
   WorkFlows: 'Work Flows',
   FlowInitiator: 'Flow Initiator',
+  'NoMatchedFlowEdge: %s': 'No matched flow edge: %s',
 };
 
 
 /***/ }),
 
-/***/ 72:
+/***/ 3072:
 /***/ ((module) => {
 
 module.exports = {
@@ -2441,6 +2826,7 @@ module.exports = {
   'Role not Found: %s': '角色未发现: %s',
   'Flow Completed: %s': '流程已结束: %s',
   'Flow Outdated: %s': '流程已过期: %s',
+  'NoMatchedFlowEdge: %s': '没有匹配的边: %s',
 };
 
 
@@ -2450,14 +2836,14 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
-  'en-us': __webpack_require__(327),
-  'zh-cn': __webpack_require__(72),
+  'en-us': __webpack_require__(6327),
+  'zh-cn': __webpack_require__(3072),
 };
 
 
 /***/ }),
 
-/***/ 459:
+/***/ 4836:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2484,7 +2870,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 429:
+/***/ 5429:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2524,7 +2910,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 8232:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2647,11 +3033,16 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 836:
+/***/ 6836:
 /***/ ((module) => {
 
 module.exports = app => {
   class FlowDefController extends app.Controller {
+    behaviorBases() {
+      const res = this.ctx.service.flowDef.behaviorBases();
+      this.ctx.success(res);
+    }
+
     nodeBases() {
       const res = this.ctx.service.flowDef.nodeBases();
       this.ctx.success(res);
@@ -2673,11 +3064,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 7095:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const flow = __webpack_require__(623);
-const flowDef = __webpack_require__(836);
+const flowDef = __webpack_require__(6836);
 
 module.exports = app => {
   const controllers = {
@@ -2690,33 +3081,35 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 421:
+/***/ 9421:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const config = __webpack_require__(76);
+const config = __webpack_require__(7076);
 const locales = __webpack_require__(25);
-const errors = __webpack_require__(624);
-const constants = __webpack_require__(479);
-const FlowNodeBase = __webpack_require__(389);
-const FlowEdgeBase = __webpack_require__(68);
+const errors = __webpack_require__(5624);
+const constants = __webpack_require__(4479);
+const FlowBehaviorBase = __webpack_require__(7959);
+const FlowNodeBase = __webpack_require__(6389);
+const FlowEdgeBase = __webpack_require__(5068);
 
 module.exports = app => {
-  // FlowNodeBase/FlowEdgeBase
+  // FlowBehaviorBase/FlowNodeBase/FlowEdgeBase
+  app.meta.FlowBehaviorBase = FlowBehaviorBase;
   app.meta.FlowNodeBase = FlowNodeBase;
   app.meta.FlowEdgeBase = FlowEdgeBase;
 
   // aops
-  const aops = __webpack_require__(224)(app);
+  const aops = __webpack_require__(5224)(app);
   // beans
-  const beans = __webpack_require__(187)(app);
+  const beans = __webpack_require__(5187)(app);
   // routes
-  const routes = __webpack_require__(825)(app);
+  const routes = __webpack_require__(3825)(app);
   // controllers
-  const controllers = __webpack_require__(95)(app);
+  const controllers = __webpack_require__(7095)(app);
   // services
-  const services = __webpack_require__(214)(app);
+  const services = __webpack_require__(7214)(app);
   // models
-  const models = __webpack_require__(230)(app);
+  const models = __webpack_require__(3230)(app);
   // meta
   const meta = __webpack_require__(458)(app);
 
@@ -2742,9 +3135,10 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  const schemas = __webpack_require__(232)(app);
-  const staticResources = __webpack_require__(429)(app);
-  const socketioWorkflow = __webpack_require__(459)(app);
+  const schemas = __webpack_require__(8232)(app);
+  const staticResources = __webpack_require__(5429)(app);
+  const socketioWorkflow = __webpack_require__(4836)(app);
+  const flowBehaviors = __webpack_require__(7257)(app);
   const meta = {
     base: {
       atoms: {
@@ -2804,6 +3198,9 @@ module.exports = app => {
         workflow: socketioWorkflow,
       },
     },
+    flow: {
+      behaviors: flowBehaviors,
+    },
   };
   return meta;
 };
@@ -2811,7 +3208,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 436:
+/***/ 8436:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2826,7 +3223,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 890:
+/***/ 2890:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2841,7 +3238,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 986:
+/***/ 6986:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2871,7 +3268,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 717:
+/***/ 6717:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2886,7 +3283,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 625:
+/***/ 9625:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2916,15 +3313,15 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 230:
+/***/ 3230:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flowDef = __webpack_require__(890);
-const flowDefContent = __webpack_require__(986);
+const flowDef = __webpack_require__(2890);
+const flowDefContent = __webpack_require__(6986);
 const flowDefFull = __webpack_require__(301);
-const flow = __webpack_require__(436);
-const flowHistory = __webpack_require__(717);
-const flowNode = __webpack_require__(625);
+const flow = __webpack_require__(8436);
+const flowHistory = __webpack_require__(6717);
+const flowNode = __webpack_require__(9625);
 const flowNodeHistory = __webpack_require__(515);
 
 module.exports = app => {
@@ -2943,7 +3340,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 825:
+/***/ 3825:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2952,6 +3349,7 @@ module.exports = app => {
     { method: 'post', path: 'flow/select', controller: 'flow' },
     { method: 'post', path: 'flow/count', controller: 'flow' },
     // flowDef
+    { method: 'post', path: 'flowDef/behaviorBases', controller: 'flowDef' },
     { method: 'post', path: 'flowDef/nodeBases', controller: 'flowDef' },
     { method: 'post', path: 'flowDef/edgeBases', controller: 'flowDef' },
     { method: 'post', path: 'flowDef/flowServiceBases', controller: 'flowDef' },
@@ -2962,7 +3360,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 934:
+/***/ 4934:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2981,11 +3379,15 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 875:
+/***/ 6875:
 /***/ ((module) => {
 
 module.exports = app => {
   class FlowDef extends app.Service {
+    behaviorBases() {
+      return this.ctx.bean.flowDef.behaviorBases();
+    }
+
     nodeBases() {
       return this.ctx.bean.flowDef.nodeBases();
     }
@@ -3004,11 +3406,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 214:
+/***/ 7214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const flow = __webpack_require__(934);
-const flowDef = __webpack_require__(875);
+const flow = __webpack_require__(4934);
+const flowDef = __webpack_require__(6875);
 
 module.exports = app => {
   const services = {
@@ -3021,7 +3423,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 5638:
 /***/ ((module) => {
 
 "use strict";
@@ -3060,7 +3462,7 @@ module.exports = require("require3");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(421);
+/******/ 	var __webpack_exports__ = __webpack_require__(9421);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

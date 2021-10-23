@@ -163,6 +163,7 @@ module.exports = ctx => {
       if (!__stats) {
         __statsDeps = {};
         __stats = this._collectStats();
+        this._collectStatsDependents();
       }
       const provider = __stats[fullKey];
       if (!provider) throw new Error(`stats provider not found: ${fullKey}`);
@@ -198,6 +199,18 @@ module.exports = ctx => {
       return stats;
     }
 
+    _collectStatsDependents() {
+      for (const module of ctx.app.meta.modulesArray) {
+        const providers = module.main.meta && module.main.meta.stats && module.main.meta.stats.providers;
+        if (!providers) continue;
+        for (const key in providers) {
+          const provider = providers[key];
+          const fullKey = `${module.info.relativeName}:${key}`;
+          this._parseDependents(fullKey, module, provider.dependents);
+        }
+      }
+    }
+
     _parseDependencies(fullKey, module, dependencies) {
       if (!dependencies) return null;
       if (!Array.isArray(dependencies)) {
@@ -212,6 +225,29 @@ module.exports = ctx => {
         __statsDeps[dep].push(fullKey);
       }
       return dependencies;
+    }
+
+    _parseDependents(fullKey, module, dependents) {
+      if (!dependents) return;
+      if (!Array.isArray(dependents)) {
+        dependents = dependents.split(',');
+      }
+      dependents = dependents.map(item => {
+        if (item.indexOf(':') > -1) return item;
+        return `${module.info.relativeName}:${item}`;
+      });
+      for (const dep of dependents) {
+        // deps
+        if (!__statsDeps[fullKey]) __statsDeps[fullKey] = [];
+        if (__statsDeps[fullKey].indexOf(dep) === -1) {
+          __statsDeps[fullKey].push(dep);
+        }
+        // stats
+        if (!__stats[dep].dependencies) __stats[dep].dependencies = [];
+        if (__stats[dep].dependencies.indexOf(fullKey) === -1) {
+          __stats[dep].dependencies.push(fullKey);
+        }
+      }
     }
   }
 

@@ -74,6 +74,16 @@ module.exports = {};
 
 /***/ }),
 
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {
+  'Atom Right Management': 'Data Right Management',
+};
+
+
+/***/ }),
+
 /***/ 72:
 /***/ ((module) => {
 
@@ -81,7 +91,7 @@ module.exports = {
   'Basic Admin': '基础管理',
   'User Management': '用户管理',
   'Role Management': '角色管理',
-  'Atom Right Management': '原子权限管理',
+  'Atom Right Management': '数据权限管理',
   'Resource Right Management': '资源权限管理',
   'Menu Right Management': '菜单权限管理',
   'Function Right Management': '功能权限管理',
@@ -98,6 +108,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
 };
 
@@ -136,7 +147,7 @@ module.exports = app => {
     {
       atomName: 'Atom Right Management',
       atomStaticKey: 'atomRight',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -735,15 +746,42 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // role
-    { method: 'post', path: 'role/children', controller: 'role', meta: { right: { type: 'resource,atom', name: 'role', action: 25 } } },
+    {
+      method: 'post',
+      path: 'role/children',
+      controller: 'role',
+      meta: { right: { type: 'resource,atom', name: 'role', action: 25 } },
+    },
     { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/save', controller: 'role', middlewares: 'validate', meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } } },
+    {
+      method: 'post',
+      path: 'role/save',
+      controller: 'role',
+      middlewares: 'validate',
+      meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
+    },
     { method: 'post', path: 'role/add', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/move', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/delete', controller: 'role', middlewares: 'transaction', meta: { right: { type: 'resource', name: 'role' } } },
+    {
+      method: 'post',
+      path: 'role/delete',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'resource', name: 'role' } },
+    },
     { method: 'post', path: 'role/includes', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/addRoleInc', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/removeRoleInc', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
+    {
+      method: 'post',
+      path: 'role/addRoleInc',
+      controller: 'role',
+      meta: { right: { type: 'resource', name: 'role' } },
+    },
+    {
+      method: 'post',
+      path: 'role/removeRoleInc',
+      controller: 'role',
+      meta: { right: { type: 'resource', name: 'role' } },
+    },
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     // user
@@ -754,24 +792,99 @@ module.exports = app => {
     { method: 'post', path: 'user/delete', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/roles', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/removeRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/atomRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/resourceRights', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    {
+      method: 'post',
+      path: 'user/removeRole',
+      controller: 'user',
+      meta: { right: { type: 'resource', name: 'user' } },
+    },
+    {
+      method: 'post',
+      path: 'user/atomRights',
+      controller: 'user',
+      meta: { right: { type: 'resource', name: 'user' } },
+    },
+    {
+      method: 'post',
+      path: 'user/resourceRights',
+      controller: 'user',
+      meta: { right: { type: 'resource', name: 'user' } },
+    },
     // atomRight
-    { method: 'post', path: 'atomRight/rights', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
-    { method: 'post', path: 'atomRight/add', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
-    { method: 'post', path: 'atomRight/delete', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
-    { method: 'post', path: 'atomRight/spreads', controller: 'atomRight', meta: { right: { type: 'resource', name: 'atomRight' } } },
+    {
+      method: 'post',
+      path: 'atomRight/rights',
+      controller: 'atomRight',
+      meta: { right: { type: 'resource', name: 'atomRight' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/add',
+      controller: 'atomRight',
+      meta: { right: { type: 'resource', name: 'atomRight' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/delete',
+      controller: 'atomRight',
+      meta: { right: { type: 'resource', name: 'atomRight' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/spreads',
+      controller: 'atomRight',
+      meta: { right: { type: 'resource', name: 'atomRight' } },
+    },
     // resourceRight
-    { method: 'post', path: 'resourceRight/rights', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
-    { method: 'post', path: 'resourceRight/add', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
-    { method: 'post', path: 'resourceRight/delete', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
-    { method: 'post', path: 'resourceRight/spreads', controller: 'resourceRight', meta: { right: { type: 'resource', name: 'resourceRight' } } },
+    {
+      method: 'post',
+      path: 'resourceRight/rights',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/add',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/delete',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/spreads',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
     // functionRight
-    { method: 'post', path: 'functionRight/rights', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
-    { method: 'post', path: 'functionRight/add', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
-    { method: 'post', path: 'functionRight/delete', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
-    { method: 'post', path: 'functionRight/spreads', controller: 'functionRight', meta: { right: { type: 'resource', name: 'functionRight' } } },
+    {
+      method: 'post',
+      path: 'functionRight/rights',
+      controller: 'functionRight',
+      meta: { right: { type: 'resource', name: 'functionRight' } },
+    },
+    {
+      method: 'post',
+      path: 'functionRight/add',
+      controller: 'functionRight',
+      meta: { right: { type: 'resource', name: 'functionRight' } },
+    },
+    {
+      method: 'post',
+      path: 'functionRight/delete',
+      controller: 'functionRight',
+      meta: { right: { type: 'resource', name: 'functionRight' } },
+    },
+    {
+      method: 'post',
+      path: 'functionRight/spreads',
+      controller: 'functionRight',
+      meta: { right: { type: 'resource', name: 'functionRight' } },
+    },
     // auth
     { method: 'post', path: 'auth/list', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/disable', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
@@ -824,7 +937,7 @@ module.exports = app => {
 /***/ 300:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(718);
+const require3 = __webpack_require__(638);
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
@@ -868,8 +981,12 @@ module.exports = app => {
       const authProvider = authProviders[`${item.module}:${item.providerName}`];
       if (authProvider.meta.mode === 'redirect') {
         const moduleInfo = mparse.parseInfo(item.module);
-        const loginURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
-        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+        const loginURL = this.ctx.bean.base.getAbsoluteUrl(
+          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`
+        );
+        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(
+          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`
+        );
         item._meta = {
           loginURL,
           callbackURL,
@@ -1000,19 +1117,8 @@ module.exports = app => {
 
 module.exports = app => {
   class User extends app.Service {
-    async select({ query, page }) {
-      return await this.ctx.bean.user.select({
-        options: {
-          where: {
-            'a.anonymous': 0,
-            'a.disabled': 0,
-            __or__: [{ 'a.userName': { op: 'like', val: query } }, { 'a.realName': { op: 'like', val: query } }, { 'a.mobile': { op: 'like', val: query } }],
-          },
-          orders: [['a.userName', 'asc']],
-          page,
-          removePrivacy: true,
-        },
-      });
+    async select(params) {
+      return await this.ctx.bean.user.selectGeneral({ params });
     }
 
     async list({ roleId, query, anonymous, page }) {
@@ -1081,7 +1187,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 718:
+/***/ 638:
 /***/ ((module) => {
 
 "use strict";
