@@ -4,6 +4,9 @@
   "command": {
     "bootstrap": {
       "hoist": "**"
+    },
+    "publish": {
+      "ignoreChanges": ["src/module-system/a-flownodebooster/**"]
     }
   }
 }
