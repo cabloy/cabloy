@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/markdown",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "markdown",
   "main": "index.js",
   "publishConfig": {
