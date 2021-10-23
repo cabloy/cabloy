@@ -113,6 +113,7 @@ module.exports = context => {
       for (const relativeName in modules) {
         const module = modules[relativeName];
         // jsFront
+        if (!module.js.front) console.log(module);
         const jsFront = module.js.front.replace(/\\/g, '/');
         // js
         if (module.info.monkey || module.info.sync) {
