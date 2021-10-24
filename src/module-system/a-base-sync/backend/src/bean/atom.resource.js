@@ -41,6 +41,8 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
+      // super
+      await super.delete({ atomClass, key, user });
       // delete resource
       await this.ctx.model.resource.delete({
         id: key.itemId,
@@ -49,8 +51,6 @@ module.exports = app => {
       await this.ctx.model.resourceLocale.delete({
         atomId: key.atomId,
       });
-      // super
-      await super.delete({ atomClass, key, user });
     }
 
     _getMeta(options, item, showSorting) {

@@ -40,12 +40,12 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
+      // super
+      await super.delete({ atomClass, key, user });
       // delete {{atomClassName}}
       await this.ctx.model.{{atomClassName}}.delete({
         id: key.itemId,
       });
-      // super
-      await super.delete({ atomClass, key, user });
     }
 
     _getMeta(item) {

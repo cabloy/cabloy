@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('[your demo tests start from here]', () => {
+describe('[your demo tests start from here]', () => {
   it('[demo]', async () => {
     app.mockSession({});
 

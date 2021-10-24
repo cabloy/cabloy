@@ -22,6 +22,7 @@
   "files.associations": {
     "*.js.ejs": "javascript",
     "*.css.ejs": "css",
-    "*.less.ejs": "less"
+    "*.less.ejs": "less",
+    "*.code-snippets": "text"
   }
 }
