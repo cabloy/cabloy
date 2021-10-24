@@ -8,7 +8,6 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
-[![NPM download][download-image]][download-url]
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
@@ -19,8 +18,6 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 [codecov-url]: https://codecov.io/gh/zhennann/cabloy
 [david-image]: https://img.shields.io/david/zhennann/cabloy.svg?style=flat-square
 [david-url]: https://david-dm.org/zhennann/cabloy
-[download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
-[download-url]: https://npmjs.org/package/cabloy
 
 ## Goals, History, Faith
 
