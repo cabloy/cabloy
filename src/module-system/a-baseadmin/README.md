@@ -1,1 +1,3 @@
-# egg-born-module-a-baseadmin
+## About
+
+The `Admin Management` of module `a-base-sync`
