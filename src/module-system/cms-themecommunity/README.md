@@ -1,10 +1,10 @@
-# egg-born-module-cms-themecommunity
+## About
 
-Cabloy-CMS Theme
+The First Community Theme
 
 ## Installation
 
-``` bash
+```bash
 $ npm i egg-born-module-cms-themecommunity
 ```
 
@@ -12,7 +12,7 @@ $ npm i egg-born-module-cms-themecommunity
 
 Changing languange's theme to `cms-themecommunity`
 
-``` javascript
+```javascript
 "language": {
   "default": "en-us",
   "items": "en-us"
@@ -22,3 +22,4 @@ Changing languange's theme to `cms-themecommunity`
 }
 ```
 
+> See Also：[Quick Start](https://cabloy.com/articles/557b4631f1114cc2880d2775a1670d1c.html)
