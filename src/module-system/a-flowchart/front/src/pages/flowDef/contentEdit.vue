@@ -2,9 +2,13 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!readOnly && tabName === 'diagram'" iconMaterial="add" :onPerform="onPerformAddNode">{{
-          $text('Add Node')
-        }}</eb-link>
+        <eb-link
+          v-if="!readOnly && tabName === 'diagram' && contentEditDiagramInit"
+          iconMaterial="add"
+          :onPerform="onPerformAddNode"
+        >
+          {{ $text('Add Node') }}
+        </eb-link>
         <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave">{{
           $text('Save')
         }}</eb-link>
@@ -45,6 +49,7 @@
           :flowDefId="flowDefId"
           :contentProcessStr="contentProcessStr"
           @contentChange="onContentChange"
+          @contentEditDiagramInit="onContentEditDiagramInit"
         ></content-edit-diagram>
       </eb-tab-page-content>
       <eb-tab-page-content
@@ -110,6 +115,7 @@ export default {
         listener: Vue.prototype.$meta.util.nextId('tab'),
       },
       tabName: 'diagram',
+      contentEditDiagramInit: false,
     };
   },
   computed: {
@@ -136,6 +142,9 @@ export default {
     this.contentListener = content.listener || this.$config.flowDef.default.listener;
   },
   methods: {
+    onContentEditDiagramInit() {
+      this.contentEditDiagramInit = true;
+    },
     onContentChange(data) {
       if (this.readOnly) return;
       const contentNew = {};

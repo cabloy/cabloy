@@ -106,6 +106,8 @@ export default {
       this.__registerNodes();
       this.__registerEdges();
       this.__updateChart({});
+      // emit
+      this.$emit('contentEditDiagramInit');
     },
     async __initResources() {
       const promises = [];
