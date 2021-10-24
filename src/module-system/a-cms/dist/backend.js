@@ -3249,15 +3249,6 @@ module.exports = app => {
       const atomOld = await this.ctx.bean.atom.read({ key, user });
 
       // delete article
-      await this.modelArticle.delete({
-        atomId: key.atomId,
-      });
-      // delete content
-      await this.modelContent.delete({
-        atomId: key.atomId,
-      });
-
-      // delete article
       //   always renderSync=false
       if (atomOld.atomStage === 0) {
         await this.ctx.bean.cms.render._deleteArticlePush({ atomClass, key, article: atomOld, inner: true });
@@ -3268,6 +3259,15 @@ module.exports = app => {
 
       // super
       await super.delete({ atomClass, key, user });
+
+      // delete article
+      await this.modelArticle.delete({
+        atomId: key.atomId,
+      });
+      // delete content
+      await this.modelContent.delete({
+        atomId: key.atomId,
+      });
     }
 
     _getMeta(item, showSorting) {

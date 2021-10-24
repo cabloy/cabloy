@@ -83,6 +83,8 @@ module.exports = app => {
       if (_atom.atomStage === 1) {
         await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
       }
+      // super
+      await super.delete({ atomClass, key, user });
       // delete flowDef
       await this.ctx.model.flowDef.delete({
         id: key.itemId,
@@ -91,8 +93,6 @@ module.exports = app => {
       await this.ctx.model.flowDefContent.delete({
         itemId: key.itemId,
       });
-      // super
-      await super.delete({ atomClass, key, user });
     }
 
     async enable({ atomClass, key, user }) {

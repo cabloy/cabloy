@@ -94,6 +94,8 @@ module.exports = app => {
       const item = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       const atomStaticKey = item.atomStaticKey;
       const atomStage = item.atomStage;
+      // super
+      await super.delete({ atomClass, key, user });
       // delete dict
       await this.ctx.model.dict.delete({
         id: key.itemId,
@@ -102,8 +104,6 @@ module.exports = app => {
       await this.ctx.model.dictContent.delete({
         itemId: key.itemId,
       });
-      // super
-      await super.delete({ atomClass, key, user });
       // broadcast
       if (atomStage === 1) {
         this.ctx.tail(() => {

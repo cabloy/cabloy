@@ -72,6 +72,8 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
+      // super
+      await super.delete({ atomClass, key, user });
       // delete dashboard
       await this.ctx.model.dashboard.delete({
         id: key.itemId,
@@ -80,8 +82,6 @@ module.exports = app => {
       await this.ctx.model.dashboardContent.delete({
         itemId: key.itemId,
       });
-      // super
-      await super.delete({ atomClass, key, user });
     }
 
     _getMeta(/* item*/) {}
