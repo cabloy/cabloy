@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/build",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Cabloy Build System",
   "main": "index.js",
   "publishConfig": {
