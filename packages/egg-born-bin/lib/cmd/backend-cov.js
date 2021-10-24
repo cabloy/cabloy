@@ -16,7 +16,7 @@ class BackendCovCommand extends CovCommand {
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
 
-    context.argv.x = ['src/**/backend/**/*.spec.js'];
+    context.argv.x = ['src/**/backend/**/*.spec.js', 'src/**/dist/backend.js'];
 
     yield super.run(context);
   }

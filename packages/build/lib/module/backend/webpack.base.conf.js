@@ -9,7 +9,7 @@ module.exports = context => {
   if (context.config.build.uglify) {
     rules.push({
       test: /\.js$/,
-      exclude: /node_modules/,
+      exclude: [/node_modules/, /\.spec\.js/],
       use: {
         loader: 'babel-loader',
         options: {
