@@ -19,7 +19,7 @@ module.exports = context => {
               '@babel/preset-env',
               {
                 targets: {
-                  node: '6',
+                  node: '8',
                 },
                 include: [
                   '@babel/plugin-transform-for-of',
