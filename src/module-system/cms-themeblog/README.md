@@ -1,10 +1,10 @@
-# egg-born-module-cms-themeblog
+# About
 
-Cabloy-CMS Theme
+The First Blog Theme
 
 ## Installation
 
-``` bash
+```bash
 $ npm i egg-born-module-cms-themeblog
 ```
 
@@ -12,7 +12,7 @@ $ npm i egg-born-module-cms-themeblog
 
 Changing languange's theme to `cms-themeblog`
 
-``` javascript
+```javascript
 "language": {
   "default": "en-us",
   "items": "en-us"
@@ -22,3 +22,4 @@ Changing languange's theme to `cms-themeblog`
 }
 ```
 
+> See Also：[cms-themeblog](https://cabloy.com/articles/ec464a265601499b9bc27b4d932f4f6f.html)

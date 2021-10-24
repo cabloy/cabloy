@@ -1,10 +1,10 @@
-# egg-born-module-cms-themedocs
+## About
 
-Cabloy-CMS Theme
+The First Documentation Theme
 
 ## Installation
 
-``` bash
+```bash
 $ npm i egg-born-module-cms-themedocs
 ```
 
@@ -12,7 +12,7 @@ $ npm i egg-born-module-cms-themedocs
 
 Changing languange's theme to `cms-themedocs`
 
-``` javascript
+```javascript
 "language": {
   "default": "en-us",
   "items": "en-us"
@@ -21,3 +21,5 @@ Changing languange's theme to `cms-themedocs`
   "en-us": "cms-themedocs"
 }
 ```
+
+> See Also：[cms-themedocs](https://cabloy.com/articles/74db84c2290c4db7ba617dd2c000a0f6.html)

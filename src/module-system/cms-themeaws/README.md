@@ -4,7 +4,7 @@ Cabloy-CMS Theme
 
 ## Installation
 
-``` bash
+```bash
 $ npm i egg-born-module-cms-themeaws
 ```
 
@@ -12,7 +12,7 @@ $ npm i egg-born-module-cms-themeaws
 
 Changing languange's theme to `cms-themeaws`
 
-``` javascript
+```javascript
 "language": {
   "default": "en-us",
   "items": "en-us"
@@ -22,3 +22,4 @@ Changing languange's theme to `cms-themeaws`
 }
 ```
 
+> See Also：[cms-themeaws](https://cabloy.com/articles/a612c337441e40c798ee62c6adc2562f.html)
