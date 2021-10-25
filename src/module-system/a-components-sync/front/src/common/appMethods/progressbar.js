@@ -24,6 +24,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
     buttons.push({
       text: ctx.$text('Abort'),
       keyCodes: [27],
+      close: false,
     });
   }
   //

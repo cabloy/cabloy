@@ -27,6 +27,7 @@ export default function (Vue, options, cb) {
         theme: 'md',
         modal: {
           moveToRoot: false,
+          queueDialogs: false,
         },
         calendar: {
           routableModals: false,
