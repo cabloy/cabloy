@@ -160,6 +160,14 @@ export default {
         </div>
       );
     },
+    layout_renderCaptionInit() {
+      if (this.base.ready) return null;
+      return (
+        <f7-nav-title>
+          <div>{this.page_title}</div>
+        </f7-nav-title>
+      );
+    },
     layout_renderPage() {
       return (
         <eb-page
@@ -171,6 +179,7 @@ export default {
           onInfinite={this.page_onInfinite}
         >
           <eb-navbar eb-back-link="Back">
+            {this.layout_renderCaptionInit()}
             {this.layout_renderBlock({ blockName: 'caption' })}
             {this.layout_renderBlock({ blockName: 'title' })}
             {this.layout_renderSubnavbar()}
