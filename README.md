@@ -7,7 +7,6 @@
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
@@ -16,8 +15,6 @@
 [test-url]: https://github.com/zhennann/cabloy/actions
 [codecov-image]: https://img.shields.io/codecov/c/github/zhennann/cabloy.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/zhennann/cabloy
-[david-image]: https://img.shields.io/david/zhennann/cabloy.svg?style=flat-square
-[david-url]: https://david-dm.org/zhennann/cabloy
 
 ## 文档
 
