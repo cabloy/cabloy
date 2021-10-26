@@ -29,35 +29,23 @@ miniprogram_npm
 
 /src/module/*
 
-!/src/module/test-note
-/src/module/test-note/backend/src
-/src/module/test-note/backend/static
-/src/module/test-note/build
-/src/module/test-note/front
-/src/module/test-note/.gitignore
+/src/module-vendor/test-note/backend/src
+/src/module-vendor/test-note/backend/static
+/src/module-vendor/test-note/build
+/src/module-vendor/test-note/front
+/src/module-vendor/test-note/.gitignore
 
-!/src/module/test-party
-/src/module/test-party/backend/src
-/src/module/test-party/backend/static
-/src/module/test-party/build
-/src/module/test-party/front
-/src/module/test-party/.gitignore
+/src/module-vendor/test-party/backend/src
+/src/module-vendor/test-party/backend/static
+/src/module-vendor/test-party/build
+/src/module-vendor/test-party/front
+/src/module-vendor/test-party/.gitignore
 
-!/src/module/test-partymonkey-monkey
-
-!/src/module/test-flow
-/src/module/test-flow/backend/src
-/src/module/test-flow/backend/static
-/src/module/test-flow/build
-/src/module/test-flow/front
-/src/module/test-flow/.gitignore
-
-!/src/module/test-hostsimple-sync
-!/src/module/test-localeone
-!/src/module/test-localetwo
-!/src/module/test-dingtalk
-!/src/module/test-wechat
-!/src/module/test-wxwork
+/src/module-vendor/test-flow/backend/src
+/src/module-vendor/test-flow/backend/static
+/src/module-vendor/test-flow/build
+/src/module-vendor/test-flow/front
+/src/module-vendor/test-flow/.gitignore
 
 /src/module-system/a-markdown/backend/src
 /src/module-system/a-markdown/backend/static
