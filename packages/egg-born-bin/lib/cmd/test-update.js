@@ -41,7 +41,10 @@ class TestUpdateCommand extends Command {
   }
 
   *__updateCabloyModules({ projectPath }) {
-    const prefix = `${projectPath}/src/module/`;
+    // force move
+    yield this.__forceMoveCabloyModulesToVendor({ projectPath });
+    // update
+    const prefix = `${projectPath}/src/module-vendor/`;
     const files = glob.sync(`${prefix}test-*`);
     for (const file of files) {
       const moduleName = file.substr(prefix.length);
@@ -51,7 +54,7 @@ class TestUpdateCommand extends Command {
 
   *__updateCabloyModule({ projectPath, moduleName }) {
     try {
-      const moduleDestDir = path.join(projectPath, 'src/module', moduleName);
+      const moduleDestDir = path.join(projectPath, 'src/module-vendor', moduleName);
       // check
       const downloadUrl = yield this.__checkCabloyModule({ moduleDestDir, moduleName });
       if (!downloadUrl) {
@@ -68,6 +71,18 @@ class TestUpdateCommand extends Command {
       console.log(chalk.cyan(`update module done: ${moduleName}\n`));
     } catch (err) {
       console.log(chalk.red(`update module failed and ignored: ${moduleName}\n`));
+    }
+  }
+
+  *__forceMoveCabloyModulesToVendor({ projectPath }) {
+    for (const moduleName of ['test-note', 'test-party', 'test-partymonkey-monkey', 'test-flow']) {
+      const moduleSrcDir = path.join(projectPath, 'src/module', moduleName);
+      const moduleDestDir = path.join(projectPath, 'src/module-vendor', moduleName);
+      if (fse.existsSync(moduleSrcDir)) {
+        // move
+        yield rimraf(moduleDestDir);
+        fse.moveSync(moduleSrcDir, moduleDestDir);
+      }
     }
   }
 
