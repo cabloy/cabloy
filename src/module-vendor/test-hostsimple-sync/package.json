@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-hostsimple-sync",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "title": "test-hostsimple-sync",
   "eggBornModule": {
     "fileVersion": 0,
