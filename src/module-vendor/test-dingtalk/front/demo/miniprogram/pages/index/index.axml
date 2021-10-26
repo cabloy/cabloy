@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="userinfo">
+  <block a:if="{{user}}">
+      <image class="userinfo-avatar" src="{{user.avatar}}" mode="scaleToFill"></image>
+      <text class="userinfo-nickname">{{user.userName}}</text>
+  </block>
+  </view>
+  <view class="testblock">
+    <button onTap="getMemberId">获取用户memberId</button>
+    <view>
+      <view>memberId: </view>
+      <view class="memberId">{{memberId || ''}}</view>
+    </view>
+  </view>
+</view>
