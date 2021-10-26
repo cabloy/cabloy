@@ -6,7 +6,7 @@
       "hoist": "**"
     },
     "publish": {
-      "ignoreChanges": ["src/module-system/a-flownodebooster/**", "src/module-vendor/**"]
+      "ignoreChanges": ["src/module-system/a-flownodebooster/**", "src/module/**"]
     }
   }
 }

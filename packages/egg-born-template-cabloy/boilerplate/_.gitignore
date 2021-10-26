@@ -27,6 +27,8 @@ node_modules
 /src/backend/run
 /src/front/config
 
+src/module-vendor/*
+
 # package-lock.json
 # yarn.lock
 
