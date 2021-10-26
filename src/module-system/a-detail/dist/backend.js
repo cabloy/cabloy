@@ -94,7 +94,7 @@ module.exports = ctx => {
       return list[0];
     }
 
-    async select({ atomKey, detailClass, options, user, pageForce = false, count = 0 }) {
+    async select({ atomKey, detailClass, options = {}, user, pageForce = false, count = 0 }) {
       // detailClass
       if (!detailClass) {
         // use default detail
@@ -284,15 +284,16 @@ module.exports = ctx => {
     }
 
     _prepareDetailClassFromName({ atomClass, detailClassName }) {
-      return typeof detailClassName === 'string'
-        ? {
-            module: atomClass.module,
-            detailClassName,
-          }
-        : {
-            module: detailClassName.module || atomClass.module,
-            detailClassName: detailClassName.detailClassName,
-          };
+      if (typeof detailClassName === 'string') {
+        return {
+          module: atomClass.module,
+          detailClassName,
+        };
+      }
+      return {
+        module: detailClassName.module || atomClass.module,
+        detailClassName: detailClassName.detailClassName,
+      };
     }
 
     async _loopDetailClasses({ atomClass, fn }) {
