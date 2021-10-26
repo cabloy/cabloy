@@ -52,6 +52,7 @@ module.exports = app => {
       if (item.flowNodeNameCurrent) {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
+      // ok
       return item;
     }
 

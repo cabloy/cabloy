@@ -45,7 +45,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // read: showSorting=true
-      this._getMeta(item, true);
+      this._getMeta(options, item, true);
       // ok
       return item;
     }
@@ -56,7 +56,7 @@ module.exports = app => {
       // select
       const showSorting = options && options.category;
       for (const item of items) {
-        this._getMeta(item, showSorting);
+        this._getMeta(options, item, showSorting);
       }
     }
 
@@ -254,14 +254,27 @@ module.exports = app => {
       });
     }
 
-    _getMeta(item, showSorting) {
+    _getMeta(options, item, showSorting) {
       // flags
       const flags = [];
       if (item.sticky) flags.push(this.ctx.text('Sticky'));
       if (item.sorting && showSorting) flags.push(item.sorting);
+      // atomCategoryName
+      let atomCategoryName;
+      const layout = options && options.layout;
+      if (layout === 'list' || layout === 'select' || layout === 'selecting') {
+        atomCategoryName = item.atomCategoryName;
+      } else if (layout === 'table') {
+        // donothing
+      }
+      // summary
+      const summaries = [];
+      if (atomCategoryName) summaries.push(atomCategoryName);
+      if (item.summary) summaries.push(item.summary);
+      const summary = summaries.join(' / ');
       // meta
       const meta = {
-        summary: item.summary,
+        summary,
         flags,
       };
       // ok
