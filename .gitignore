@@ -28,6 +28,7 @@ miniprogram_npm
 /src/front/config
 
 /src/module/*
+!/src/module/.gitkeep
 
 /src/module-vendor/test-note/backend/src
 /src/module-vendor/test-note/backend/static
