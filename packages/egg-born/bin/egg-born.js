@@ -107,29 +107,29 @@ co(function* () {
   };
 
   command.__moveCabloyModule = function (moduleName, moduleSrcDir, targetDir) {
-    const destDir = path.join(targetDir, 'src/module');
+    const destDir = path.join(targetDir, 'src/module-vendor');
     // move
     fse.moveSync(moduleSrcDir, path.join(destDir, moduleName));
     // delete .gitkeep
     fse.removeSync(path.join(destDir, '.gitkeep'));
 
-    // mergeDependencies
-    const targetPathProject = path.join(targetDir, 'package.json');
-    const sourcePathTest = path.join(destDir, `${moduleName}/package.json`);
-    this.mergeDependencies(targetPathProject, sourcePathTest);
+    // // mergeDependencies
+    // const targetPathProject = path.join(targetDir, 'package.json');
+    // const sourcePathTest = path.join(destDir, `${moduleName}/package.json`);
+    // this.mergeDependencies(targetPathProject, sourcePathTest);
   };
 
-  command.mergeDependencies = function (targetPathProject, sourcePathTest) {
-    const ignores = ['extend2', 'require3'];
-    const targetPackageProject = require(targetPathProject);
-    const sourcePackageTest = require(sourcePathTest);
-    for (const item of ignores) {
-      delete sourcePackageTest.dependencies[item];
-    }
-    Object.assign(targetPackageProject.dependencies, sourcePackageTest.dependencies);
-    // version save
-    fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
-  };
+  // command.mergeDependencies = function (targetPathProject, sourcePathTest) {
+  //   const ignores = ['extend2', 'require3'];
+  //   const targetPackageProject = require(targetPathProject);
+  //   const sourcePackageTest = require(sourcePathTest);
+  //   for (const item of ignores) {
+  //     delete sourcePackageTest.dependencies[item];
+  //   }
+  //   Object.assign(targetPackageProject.dependencies, sourcePackageTest.dependencies);
+  //   // version save
+  //   fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
+  // };
 
   // run
   yield command.run(process.cwd(), process.argv.slice(2));
