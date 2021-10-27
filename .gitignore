@@ -54,7 +54,11 @@ miniprogram_npm
 /src/module-vendor/a-markdown/front
 /src/module-vendor/a-markdown/.gitignore
 
-/src/module-vendor/a-flownodebooster
+/src/module-vendor/a-flownodebooster/backend
+/src/module-vendor/a-flownodebooster/build
+/src/module-vendor/a-flownodebooster/dist
+/src/module-vendor/a-flownodebooster/front
+/src/module-vendor/a-flownodebooster/.gitignore
 
 # package-lock.json
 # yarn.lock
