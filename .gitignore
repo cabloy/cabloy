@@ -48,13 +48,13 @@ miniprogram_npm
 /src/module-vendor/test-flow/front
 /src/module-vendor/test-flow/.gitignore
 
-/src/module-system/a-markdown/backend/src
-/src/module-system/a-markdown/backend/static
-/src/module-system/a-markdown/build
-/src/module-system/a-markdown/front
-/src/module-system/a-markdown/.gitignore
+/src/module-vendor/a-markdown/backend/src
+/src/module-vendor/a-markdown/backend/static
+/src/module-vendor/a-markdown/build
+/src/module-vendor/a-markdown/front
+/src/module-vendor/a-markdown/.gitignore
 
-/src/module-system/a-flownodebooster
+/src/module-vendor/a-flownodebooster
 
 # package-lock.json
 # yarn.lock
