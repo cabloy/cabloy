@@ -172,7 +172,10 @@ function __parseModules(projectPath) {
           js: {},
           static: {},
         };
-        modules[info.relativeName] = __parseModule(__path, moduleMeta);
+        const _moduleMeta = __parseModule(__path, moduleMeta);
+        if (_moduleMeta) {
+          modules[info.relativeName] = _moduleMeta;
+        }
       }
     }
   }
@@ -199,6 +202,8 @@ function __parseModule(__path, moduleMeta) {
       break;
     }
   }
+  // check if empty
+  if (!moduleMeta.js.front || !moduleMeta.js.backend) return null;
   // ok
   return moduleMeta;
 }
