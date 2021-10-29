@@ -3275,22 +3275,9 @@ module.exports = app => {
       const flags = [];
       if (item.sticky) flags.push(this.ctx.text('Sticky'));
       if (item.sorting && showSorting) flags.push(item.sorting);
-      // atomCategoryName
-      let atomCategoryName;
-      const layout = options && options.layout;
-      if (layout === 'list' || layout === 'select' || layout === 'selecting') {
-        atomCategoryName = item.atomCategoryName;
-      } else if (layout === 'table') {
-        // donothing
-      }
-      // summary
-      const summaries = [];
-      if (atomCategoryName) summaries.push(atomCategoryName);
-      if (item.summary) summaries.push(item.summary);
-      const summary = summaries.join(' / ');
       // meta
       const meta = {
-        summary,
+        summary: item.summary,
         flags,
       };
       // ok
