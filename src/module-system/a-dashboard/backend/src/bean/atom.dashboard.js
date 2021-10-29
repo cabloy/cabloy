@@ -78,7 +78,17 @@ module.exports = app => {
       });
     }
 
-    _getMeta(/* item*/) {}
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      // meta
+      const meta = {
+        summary: item.description,
+        flags,
+      };
+      // ok
+      item._meta = meta;
+    }
   }
 
   return Atom;
