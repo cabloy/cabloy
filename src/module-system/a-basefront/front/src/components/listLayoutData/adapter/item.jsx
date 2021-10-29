@@ -26,16 +26,34 @@ export default {
       return mediaLabel;
     },
     item_getMetaSummary(item) {
-      const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.container.atomClass) {
-        return summary;
+      const arr = [];
+      // atomClass
+      if (!this.layoutManager.container.atomClass) {
+        const atomClass = this.layoutManager.getAtomClass({
+          module: item.module,
+          atomClassName: item.atomClassName,
+        });
+        if (atomClass) {
+          arr.push(atomClass.titleLocale);
+        }
       }
-      const atomClass = this.layoutManager.getAtomClass({
-        module: item.module,
-        atomClassName: item.atomClassName,
-      });
-      if (!atomClass) return summary;
-      return `${atomClass.titleLocale} ${summary}`;
+      // resourceType
+      const resourceType = item.resourceTypeLocale;
+      if (resourceType) {
+        arr.push(resourceType);
+      }
+      // atomCategoryName
+      const atomCategoryName = item.atomCategoryNameLocale || item.atomCategoryName;
+      if (atomCategoryName) {
+        arr.push(atomCategoryName);
+      }
+      // summary
+      const summary = (item._meta && item._meta.summary) || '';
+      if (summary) {
+        arr.push(summary);
+      }
+      // join
+      return arr.join(' / ');
     },
     item_getMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];

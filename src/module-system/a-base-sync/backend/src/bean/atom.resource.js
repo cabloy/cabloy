@@ -67,25 +67,9 @@ module.exports = app => {
       if (showSorting) {
         flags.push(item.resourceSorting);
       }
-      // typeCategory
-      let typeCategory;
-      const layout = options && options.layout;
-      if (layout === 'list' || layout === 'select' || layout === 'selecting') {
-        // type/categary
-        if (resourceType) {
-          typeCategory = `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
-        }
-      } else if (layout === 'table') {
-        // donothing
-      }
-      // summary
-      const summaries = [];
-      if (typeCategory) summaries.push(typeCategory);
-      if (item.description) summaries.push(item.description);
-      const summary = summaries.join(' / ');
       // meta
       const meta = {
-        summary,
+        summary: item.description,
         flags,
       };
       // ok
