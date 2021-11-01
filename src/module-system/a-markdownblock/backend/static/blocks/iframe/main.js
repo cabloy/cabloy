@@ -1,9 +1,11 @@
 (function (global, factory) {
+  /* eslint-disable */
   typeof exports === 'object' && typeof module !== 'undefined'
     ? (module.exports = factory())
     : typeof define === 'function' && define.amd
     ? define(factory)
     : null;
+  /* eslint-enable */
 })(this, function () {
   class IFrame {
     constructor(host) {
