@@ -26,7 +26,7 @@ CabloyJS 是一款自带工作流引擎的 Node.js 全栈框架, `接单快手�
 
 | 场景      | 链接/二维码                                                        |
 | --------- | ------------------------------------------------------------------ |
-| PC 端     | https://test.cabloy.com/                                           |
+| PC 端     | [https://test.cabloy.com/](https://test.cabloy.com/)               |
 | Mobile 端 | ![cabloy-demo-qrcode](./docs/assets/images/cabloy-demo-qrcode.png) |
 
 | 账号类型 | 名称  | 密码   |
@@ -45,8 +45,9 @@ CabloyJS 是一款自带工作流引擎的 Node.js 全栈框架, `接单快手�
 
 ### 1. 功能三大亮点
 
-1. 自适应布局：
-   > pc = mobile + pad。请大家分别在 PC 端和移动端打开前面提供的`演示链接`，来体会与众不同的自适应机制
+1. 自适应布局：pc = mobile + pad
+   > 请大家分别在 PC 端和移动端打开前面提供的`演示链接`: [https://test.cabloy.com/](https://test.cabloy.com/) ，来体会与众不同的自适应机制
+   > 市面上大多数后台管理系统，都是优先适配 PC 端，然而移动端体验却极差，想必大家都深有同感
 2. 基于 JSON Schema 的表单自动渲染与数据验证引擎：
    > 通过在一处定义 JSON Schema，就可以同时支持前端的表单自动渲染和后端的数据验证，既能开箱即用又可灵活定制
 3. 内置 NodeJS 工作流引擎：
