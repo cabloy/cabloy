@@ -9740,6 +9740,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          disableInList: true,
           icon: { material: 'view_list' },
         },
         authorize: {
