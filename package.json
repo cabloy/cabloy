@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "scripts": {
+    "db:reset": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-db-reset",
     "dev:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
     "build:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
     "dev:backend": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-dev",
