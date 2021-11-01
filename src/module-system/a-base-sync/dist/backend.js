@@ -13069,13 +13069,14 @@ module.exports = app => {
       // replyUserId
       const replyUserId = reply ? reply.userId : 0;
       // replyContent
-      const replyContent = !reply
-        ? ''
-        : this._fullContent({
-            content: reply.content,
-            replyContent: reply.replyContent,
-            replyUserName: reply.replyUserName,
-          });
+      let replyContent = '';
+      if (reply) {
+        replyContent = this._fullContent({
+          content: reply.content,
+          replyContent: reply.replyContent,
+          replyUserName: reply.replyUserName,
+        });
+      }
       // html
       const html = await this._renderContent({
         atomId: key.atomId,
