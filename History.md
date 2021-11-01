@@ -1,6 +1,25 @@
 # History
 
-## 2021-07-01 ~ 2021-11-01, Version 4.12.0
+## 2021-11-01, Version 4.12.22
+
+- 增加 npm 指令，可以一个命令重建数据库
+
+```bash
+$ npm run db:reset
+```
+
+如果是旧项目，只需在项目的 package.json 中增加如下指令即可：
+
+```javascript
+{
+  "scripts": {
+    "db:reset": "egg-born-bin backend-db-reset",
+    ...
+  },
+}
+```
+
+## 2021-07-01 ~ 2021-10-31, Version 4.12.0
 
 - **特性**
   - atom：增加 `simple` 模式
