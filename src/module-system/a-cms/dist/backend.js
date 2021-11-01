@@ -3061,7 +3061,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // read: showSorting=true
-      this._getMeta(options, item, true);
+      this._cms_getMeta(options, item, true);
       // ok
       return item;
     }
@@ -3072,7 +3072,7 @@ module.exports = app => {
       // select
       const showSorting = options && options.category;
       for (const item of items) {
-        this._getMeta(options, item, showSorting);
+        this._cms_getMeta(options, item, showSorting);
       }
     }
 
@@ -3270,7 +3270,7 @@ module.exports = app => {
       });
     }
 
-    _getMeta(options, item, showSorting) {
+    _cms_getMeta(options, item, showSorting) {
       // flags
       const flags = [];
       if (item.sticky) flags.push(this.ctx.text('Sticky'));
