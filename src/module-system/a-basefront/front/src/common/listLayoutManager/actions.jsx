@@ -7,9 +7,14 @@ export default {
     async actions_fetchActions(item) {
       if (item._actions) return;
       // fetch
-      const actions = await this.$api.post('/a/base/atom/actions', {
+      let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
         basic: !this.$device.desktop,
+      });
+      // filter
+      actions = actions.filter(action => {
+        const _action = this.getAction(action);
+        return !_action.disableInList;
       });
       // workflow
       if (item.atomStage === 0 && item.atomFlowId > 0) {
