@@ -24,11 +24,11 @@ module.exports = ctx => {
       });
     }
 
-    async count({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
-      return await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag, count: 1 });
+    async count({ atomClass, language, categoryId, categoryHidden, categoryFlag, user }) {
+      return await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag, user, count: 1 });
     }
 
-    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
+    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale, user }) {
       const list = await this.children({
         atomClass,
         language,
@@ -37,6 +37,7 @@ module.exports = ctx => {
         categoryHidden,
         categoryFlag,
         setLocale,
+        user,
       });
       return list[0];
     }
@@ -50,8 +51,11 @@ module.exports = ctx => {
       categoryFlag,
       setLocale,
       count = 0,
+      user,
     }) {
-      //
+      // categoryHidden
+      categoryHidden = await this._checkRightForCategoryHidden({ categoryHidden, user });
+      // where
       const where = {};
       if (categoryId !== undefined) where.categoryIdParent = categoryId;
       // atomClassId
@@ -148,7 +152,10 @@ module.exports = ctx => {
       });
     }
 
-    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale }) {
+    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale, user }) {
+      // categoryHidden
+      categoryHidden = await this._checkRightForCategoryHidden({ categoryHidden, user });
+      // categoryId
       if (categoryId === undefined) categoryId = 0;
       return await this._treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale });
     }
@@ -250,6 +257,16 @@ module.exports = ctx => {
           categoryIdParent,
         },
       });
+    }
+
+    async _checkRightForCategoryHidden({ categoryHidden, user }) {
+      if (!user || user.id === 0) return categoryHidden;
+      if (categoryHidden === 0) return categoryHidden;
+      const res = await ctx.bean.resource.checkRightResource({
+        atomStaticKey: 'a-settings:settings',
+        user,
+      });
+      return res ? categoryHidden : 0;
     }
   }
   return Category;

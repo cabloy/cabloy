@@ -10,6 +10,7 @@ module.exports = app => {
         categoryHidden: this.ctx.request.body.categoryHidden,
         categoryFlag: this.ctx.request.body.categoryFlag,
         setLocale: this.ctx.request.body.setLocale,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -24,6 +25,21 @@ module.exports = app => {
         categoryHidden: this.ctx.request.body.categoryHidden,
         categoryFlag: this.ctx.request.body.categoryFlag,
         setLocale: this.ctx.request.body.setLocale,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success({ list });
+    }
+
+    async tree() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const list = await this.ctx.service.category.tree({
+        atomClass,
+        language: this.ctx.request.body.language,
+        categoryId: this.ctx.request.body.categoryId,
+        categoryHidden: this.ctx.request.body.categoryHidden,
+        categoryFlag: this.ctx.request.body.categoryFlag,
+        setLocale: this.ctx.request.body.setLocale,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success({ list });
     }
@@ -78,19 +94,6 @@ module.exports = app => {
         data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
-    }
-
-    async tree() {
-      const atomClass = this.ctx.request.body.atomClass;
-      const list = await this.ctx.service.category.tree({
-        atomClass,
-        language: this.ctx.request.body.language,
-        categoryId: this.ctx.request.body.categoryId,
-        categoryHidden: this.ctx.request.body.categoryHidden,
-        categoryFlag: this.ctx.request.body.categoryFlag,
-        setLocale: this.ctx.request.body.setLocale,
-      });
-      this.ctx.success({ list });
     }
 
     async relativeTop() {
