@@ -273,8 +273,11 @@ module.exports = app => {
       meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
     },
     // db
+    { method: 'post', path: 'db/insert', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/select', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/get', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/update', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/delete', controller: 'db', middlewares: 'test' },
   ];
   return routes;
 };

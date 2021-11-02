@@ -1,5 +1,14 @@
 module.exports = app => {
   class DbController extends app.Controller {
+    async insert() {
+      const { tableName, data } = this.ctx.request.body;
+      const res = await this.ctx.service.db.insert({
+        tableName,
+        data,
+      });
+      this.ctx.success(res);
+    }
+
     async select() {
       const { tableName, options } = this.ctx.request.body;
       const res = await this.ctx.service.db.select({
@@ -12,6 +21,25 @@ module.exports = app => {
     async get() {
       const { tableName, where } = this.ctx.request.body;
       const res = await this.ctx.service.db.get({
+        tableName,
+        where,
+      });
+      this.ctx.success(res);
+    }
+
+    async update() {
+      const { tableName, data, options } = this.ctx.request.body;
+      const res = await this.ctx.service.db.update({
+        tableName,
+        data,
+        options,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      const { tableName, where } = this.ctx.request.body;
+      const res = await this.ctx.service.db.delete({
         tableName,
         where,
       });
