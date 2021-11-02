@@ -1,9 +1,14 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('test/controller/test/feat/db.test.js', () => {
+describe.only('test/controller/test/feat/db.test.js', () => {
   it('action:db', async () => {
+    let result;
+    // iid
+    result = await app.httpRequest().post(mockUrl('/a/base/db/iid'));
+    const iid = result.body.data;
+    assert(iid > 0);
     // insert
-    const result = await app.httpRequest().post(mockUrl('/a/base/db/insert'), {
+    result = await app.httpRequest().post(mockUrl('/a/base/db/insert')).send({
       tableName: 'testParty',
       data: {},
     });
