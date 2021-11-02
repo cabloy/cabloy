@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('test/controller/test/feat/db.test.js', () => {
+describe('test/controller/test/feat/db.test.js', () => {
   it('action:db', async () => {
     let result;
     // iid
