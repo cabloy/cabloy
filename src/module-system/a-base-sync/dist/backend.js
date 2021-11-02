@@ -11461,6 +11461,77 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 2792:
+/***/ ((module) => {
+
+module.exports = app => {
+  class DbController extends app.Controller {
+    async insert() {
+      const { tableName, data } = this.ctx.request.body;
+      const res = await this.ctx.service.db.insert({
+        tableName,
+        data,
+      });
+      this.ctx.success(res);
+    }
+
+    async select() {
+      const { tableName, options } = this.ctx.request.body;
+      const res = await this.ctx.service.db.select({
+        tableName,
+        options,
+      });
+      this.ctx.success(res);
+    }
+
+    async get() {
+      const { tableName, where } = this.ctx.request.body;
+      const res = await this.ctx.service.db.get({
+        tableName,
+        where,
+      });
+      this.ctx.success(res);
+    }
+
+    async update() {
+      const { tableName, data, options } = this.ctx.request.body;
+      const res = await this.ctx.service.db.update({
+        tableName,
+        data,
+        options,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      const { tableName, where } = this.ctx.request.body;
+      const res = await this.ctx.service.db.delete({
+        tableName,
+        where,
+      });
+      this.ctx.success(res);
+    }
+
+    async query() {
+      const { sql, params } = this.ctx.request.body;
+      const res = await this.ctx.service.db.query({
+        sql,
+        params,
+      });
+      this.ctx.success(res);
+    }
+
+    async iid() {
+      const res = await this.ctx.service.db.iid();
+      this.ctx.success(res);
+    }
+  }
+  return DbController;
+};
+
+
+/***/ }),
+
 /***/ 7156:
 /***/ ((module) => {
 
@@ -11707,6 +11778,7 @@ const user = __webpack_require__(4922);
 const category = __webpack_require__(8615);
 const tag = __webpack_require__(3205);
 const util = __webpack_require__(6841);
+const db = __webpack_require__(2792);
 
 module.exports = app => {
   const controllers = {
@@ -11723,6 +11795,7 @@ module.exports = app => {
     category,
     tag,
     util,
+    db,
   };
   return controllers;
 };
@@ -12700,6 +12773,14 @@ module.exports = app => {
       controller: 'tag',
       meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } },
     },
+    // db
+    { method: 'post', path: 'db/insert', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/select', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/get', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/update', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/delete', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/query', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/iid', controller: 'db', middlewares: 'test' },
   ];
   return routes;
 };
@@ -13294,6 +13375,45 @@ ${sep}
 
 /***/ }),
 
+/***/ 7219:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Db extends app.Service {
+    async insert({ tableName, data }) {
+      return await this.ctx.db.insert(tableName, data);
+    }
+
+    async select({ tableName, options }) {
+      return await this.ctx.db.select(tableName, options);
+    }
+
+    async get({ tableName, where }) {
+      return await this.ctx.db.get(tableName, where);
+    }
+
+    async update({ tableName, data, options }) {
+      return await this.ctx.db.update(tableName, data, options);
+    }
+
+    async delete({ tableName, where }) {
+      return await this.ctx.db.delete(tableName, where);
+    }
+
+    async query({ sql, params }) {
+      return await this.ctx.db.query(sql, params);
+    }
+
+    async iid() {
+      return this.ctx.instance.id;
+    }
+  }
+  return Db;
+};
+
+
+/***/ }),
+
 /***/ 4506:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -13498,6 +13618,7 @@ const layoutConfig = __webpack_require__(2637);
 const category = __webpack_require__(4408);
 const tag = __webpack_require__(6295);
 const util = __webpack_require__(5102);
+const db = __webpack_require__(7219);
 
 module.exports = app => {
   const services = {
@@ -13514,6 +13635,7 @@ module.exports = app => {
     category,
     tag,
     util,
+    db,
   };
   return services;
 };
