@@ -19,6 +19,14 @@ module.exports = app => {
     async delete({ tableName, where }) {
       return await this.ctx.db.delete(tableName, where);
     }
+
+    async query({ sql, params }) {
+      return await this.ctx.db.query(sql, params);
+    }
+
+    async iid() {
+      return this.ctx.instance.id;
+    }
   }
   return Db;
 };
