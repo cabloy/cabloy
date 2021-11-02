@@ -11,6 +11,7 @@ const layoutConfig = require('./service/layoutConfig.js');
 const category = require('./service/category.js');
 const tag = require('./service/tag.js');
 const util = require('./service/util.js');
+const db = require('./service/db.js');
 
 module.exports = app => {
   const services = {
@@ -27,6 +28,7 @@ module.exports = app => {
     category,
     tag,
     util,
+    db,
   };
   return services;
 };

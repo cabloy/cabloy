@@ -11,6 +11,7 @@ const user = require('./controller/user.js');
 const category = require('./controller/category.js');
 const tag = require('./controller/tag.js');
 const util = require('./controller/util.js');
+const db = require('./controller/db.js');
 
 module.exports = app => {
   const controllers = {
@@ -27,6 +28,7 @@ module.exports = app => {
     category,
     tag,
     util,
+    db,
   };
   return controllers;
 };
