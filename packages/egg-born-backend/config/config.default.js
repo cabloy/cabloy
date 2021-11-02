@@ -147,6 +147,11 @@ module.exports = appInfo => {
 
   // mysql
   config.mysql = {
+    app: true,
+    agent: false,
+    default: {
+      connectionLimit: 100,
+    },
     clients: {
       // donnot change the name
       __ebdb: {
@@ -162,6 +167,16 @@ module.exports = appInfo => {
           },
         },
       },
+    },
+  };
+
+  // redis
+  config.redis = {
+    app: true,
+    agent: false,
+    default: {
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
     },
   };
 
