@@ -11493,6 +11493,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async count() {
+      const { tableName, where } = this.ctx.request.body;
+      const res = await this.ctx.service.db.count({
+        tableName,
+        where,
+      });
+      this.ctx.success(res);
+    }
+
     async update() {
       const { tableName, data, options } = this.ctx.request.body;
       const res = await this.ctx.service.db.update({
@@ -12777,6 +12786,7 @@ module.exports = app => {
     { method: 'post', path: 'db/insert', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/select', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/get', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/count', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/update', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/delete', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/query', controller: 'db', middlewares: 'test' },
@@ -13390,6 +13400,10 @@ module.exports = app => {
 
     async get({ tableName, where }) {
       return await this.ctx.db.get(tableName, where);
+    }
+
+    async count({ tableName, where }) {
+      return await this.ctx.db.count(tableName, where);
     }
 
     async update({ tableName, data, options }) {
