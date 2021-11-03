@@ -27,6 +27,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async count() {
+      const { tableName, where } = this.ctx.request.body;
+      const res = await this.ctx.service.db.count({
+        tableName,
+        where,
+      });
+      this.ctx.success(res);
+    }
+
     async update() {
       const { tableName, data, options } = this.ctx.request.body;
       const res = await this.ctx.service.db.update({

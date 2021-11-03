@@ -12,6 +12,10 @@ module.exports = app => {
       return await this.ctx.db.get(tableName, where);
     }
 
+    async count({ tableName, where }) {
+      return await this.ctx.db.count(tableName, where);
+    }
+
     async update({ tableName, data, options }) {
       return await this.ctx.db.update(tableName, data, options);
     }

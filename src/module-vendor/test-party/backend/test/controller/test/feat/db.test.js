@@ -62,6 +62,18 @@ describe('test/controller/test/feat/db.test.js', () => {
     assert.equal(result.body.code, 0);
     assert.equal(result.body.data.id, partyId);
     assert.equal(result.body.data.personCount, 9);
+    // count
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/db/count'))
+      .send({
+        tableName: 'testParty',
+        where: {
+          id: partyId,
+        },
+      });
+    assert.equal(result.body.code, 0);
+    assert.equal(result.body.data, 1);
     // delete
     result = await app
       .httpRequest()
