@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Create Dict',
       atomStaticKey: 'createDict',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:menu.Create',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -13,12 +13,12 @@ module.exports = app => {
         atomClassName: 'dict',
         atomAction: 'create',
       }),
-      resourceRoles: 'authenticated',
+      resourceRoles: 'template.system',
     },
     {
       atomName: 'Dict List',
       atomStaticKey: 'listDict',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:menu.List',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -26,7 +26,7 @@ module.exports = app => {
         atomClassName: 'dict',
         atomAction: 'read',
       }),
-      resourceRoles: 'authenticated',
+      resourceRoles: 'template.system',
     },
   ];
   return resources;
