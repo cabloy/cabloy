@@ -3874,6 +3874,7 @@ module.exports = ctx => {
 
     // roleA.roleB
     async parseRoleName({ roleName, roleIdParent, force = false }) {
+      if (!roleName) throw new Error('roleName should not be empty');
       const roleNames = roleName.split('.');
       let role;
       for (const _roleName of roleNames) {
