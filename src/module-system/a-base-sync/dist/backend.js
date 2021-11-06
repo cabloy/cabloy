@@ -2220,8 +2220,9 @@ module.exports = ctx => {
       if (
         (stage === 'draft' && _atom.atomStage > 0) ||
         ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)
-      )
+      ) {
         return null;
+      }
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       const actionBase = ctx.bean.base.action({
@@ -2236,8 +2237,9 @@ module.exports = ctx => {
       }
       if (actionBase.stage) {
         const stages = actionBase.stage.split(',');
-        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage))
+        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) {
           return null;
+        }
       }
       // actionBase.enableOnStatic
       if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
