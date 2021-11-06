@@ -28,6 +28,7 @@ import renderAtom from './render/renderAtom.jsx';
 import renderAtomClass from './render/renderAtomClass.jsx';
 import renderDivider from './render/renderDivider.jsx';
 import renderUserLabel from './render/renderUserLabel.jsx';
+import renderUser from './render/renderUser.jsx';
 
 const __renderTypes = [
   ['group', 'renderGroup'],
@@ -57,6 +58,7 @@ const __renderTypes = [
   ['atomClass', 'renderAtomClass'],
   ['divider', 'renderDivider'],
   ['userLabel', 'renderUserLabel'],
+  ['user', 'renderUser'],
 ];
 
 export default {
@@ -91,6 +93,7 @@ export default {
     renderAtomClass,
     renderDivider,
     renderUserLabel,
+    renderUser,
   ],
   props: {
     parcel: {
