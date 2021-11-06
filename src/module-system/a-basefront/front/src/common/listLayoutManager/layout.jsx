@@ -5,12 +5,44 @@ export default {
         current: null,
         config: null,
         instance: null,
+        instanceExtend: null,
       },
     };
   },
   created() {},
+  beforeDestroy() {
+    this.layout_destroyInstanceExtend();
+  },
   methods: {
-    layout_setInstance(instance) {
+    layout_destroyInstanceExtend() {
+      if (this.layout.instanceExtend) {
+        this.layout.instanceExtend.$destroy();
+        this.layout.instanceExtend = null;
+      }
+    },
+    async layout_createInstanceExtend() {
+      // config component
+      const configComponent = this.$meta.util.getProperty(this.layout.config, 'extend.component');
+      if (!configComponent) {
+        this.layout_destroyInstanceExtend();
+        return;
+      }
+      // load module
+      const moduleExtend = await this.$meta.module.use(configComponent.module);
+      // create extend
+      const options = {
+        propsData: {
+          layoutManager: this,
+        },
+      };
+      const component = moduleExtend.options.components[configComponent.name];
+      const instanceExtend = this.$meta.util.createComponentInstance(component, options);
+      // ready
+      this.layout_destroyInstanceExtend();
+      this.layout.instanceExtend = instanceExtend;
+    },
+    async layout_setInstance(instance) {
+      await this.layout_createInstanceExtend();
       this.layout.instance = instance;
     },
     layout_clearInstance(instance) {
@@ -19,16 +51,16 @@ export default {
       }
     },
     layout_extend_onTableColumns({ columns }) {
-      const layoutInstance = this.layout.instance;
-      if (layoutInstance && layoutInstance.onTableColumns) {
-        columns = layoutInstance.onTableColumns({ columns });
+      const instanceExtend = this.layout.instanceExtend;
+      if (instanceExtend && instanceExtend.onTableColumns) {
+        columns = instanceExtend.onTableColumns({ columns });
       }
       return columns;
     },
     layout_extend_onFilterSchema({ schema, type }) {
-      const layoutInstance = this.layout.instance;
-      if (layoutInstance && layoutInstance.onFilterSchema) {
-        schema = layoutInstance.onFilterSchema({ schema, type });
+      const instanceExtend = this.layout.instanceExtend;
+      if (instanceExtend && instanceExtend.onFilterSchema) {
+        schema = instanceExtend.onFilterSchema({ schema, type });
       }
       return schema;
     },
