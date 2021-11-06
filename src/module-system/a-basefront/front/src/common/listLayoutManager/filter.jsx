@@ -105,6 +105,8 @@ export default {
           searchStates: this.filter.data.searchStatesGeneral,
         });
         const clause = Object.assign({}, clause1, clause2);
+        // atomClass
+        delete clause.atomClass;
         // atomName、createdAt
         if (clause.__or__atomNameResource) {
           options.where.__or__atomNameResource = clause.__or__atomNameResource;
