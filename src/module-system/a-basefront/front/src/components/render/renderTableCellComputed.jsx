@@ -51,7 +51,13 @@ export default {
     evaluate() {
       // evaluate
       const { text, record, index, column } = this.info;
-      const scope = { text, record, index, options: column.component.options }; // { text, record, index, column }
+      const scope = {
+        text,
+        record,
+        index,
+        params: column.params,
+        options: column.component && column.component.options,
+      }; // { text, record, index, column }
       this.$meta.util.sandbox
         .evaluate(this.expression, scope)
         .then(value => {

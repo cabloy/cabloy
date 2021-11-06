@@ -24,13 +24,9 @@ const list = {
               dataIndex: 'resourceType',
               title: 'Resource Type',
               align: 'left',
-              component: {
-                module: 'a-basefront',
-                name: 'renderTableCellComputed',
-                options: {
-                  props: {
-                    expression: 'record.resourceTypeLocale',
-                  },
+              params: {
+                computed: {
+                  expression: 'record.resourceTypeLocale',
                 },
               },
             },

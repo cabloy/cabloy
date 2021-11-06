@@ -109,6 +109,12 @@ export default {
       };
       // default
       if (!column.component) {
+        // computed
+        if (column.params && column.params.computed) {
+          options.props.expression = column.params.computed.expression;
+          return <eb-component module="a-basefront" name="renderTableCellComputed" options={options}></eb-component>;
+        }
+        // default
         return <eb-component module="a-basefront" name="renderTableCellDefault" options={options}></eb-component>;
       }
       // component
