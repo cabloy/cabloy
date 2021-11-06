@@ -7161,24 +7161,41 @@ async function checkAtom(moduleInfo, options, ctx) {
 
 async function checkResource(moduleInfo, options, ctx) {
   if (ctx.innerAccess) return;
-  let resourceAtomId;
-  let atomStaticKey;
+  // useKey
   if (options.useKey) {
-    resourceAtomId = ctx.request.body.key.atomId;
-  } else {
-    atomStaticKey = options.atomStaticKey;
-    if (!atomStaticKey && options.name) {
-      atomStaticKey = `${options.module || ctx.module.info.relativeName}:${options.name}`;
-    }
+    const resourceAtomId = ctx.request.body.key.atomId;
+    const res = await _checkResource({ resourceAtomId, ctx });
+    if (!res) ctx.throw(403);
+    ctx.meta._resource = res;
+    return;
   }
-  if (!resourceAtomId && !atomStaticKey) ctx.throw(403);
-  const res = await ctx.bean.resource.checkRightResource({
+  // atomStaticKey/name
+  if (!options.atomStaticKey && !options.name) ctx.throw(403);
+  let atomStaticKeys = options.atomStaticKey;
+  if (!atomStaticKeys && options.name) {
+    const names = options.name.split(',');
+    atomStaticKeys = names.map(name => {
+      return `${options.module || ctx.module.info.relativeName}:${name}`;
+    });
+  }
+  if (!Array.isArray(atomStaticKeys)) {
+    atomStaticKeys = atomStaticKeys.split(',');
+  }
+  let res;
+  for (const atomStaticKey of atomStaticKeys) {
+    res = await _checkResource({ atomStaticKey, ctx });
+    if (res) break; // ok when any passed
+  }
+  if (!res) ctx.throw(403);
+  ctx.meta._resource = res;
+}
+
+async function _checkResource({ resourceAtomId, atomStaticKey, ctx }) {
+  return await ctx.bean.resource.checkRightResource({
     resourceAtomId,
     atomStaticKey,
     user: ctx.state.user.op,
   });
-  if (!res) ctx.throw(403);
-  ctx.meta._resource = res;
 }
 
 async function checkDetail(moduleInfo, options, ctx) {

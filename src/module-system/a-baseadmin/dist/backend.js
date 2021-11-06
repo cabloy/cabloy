@@ -99,6 +99,7 @@ module.exports = {
   'Menu Management': '菜单管理',
   'Category Management': '目录管理',
   'Tag Management': '标签管理',
+  'Select Users': '选择用户',
 };
 
 
@@ -197,6 +198,15 @@ module.exports = app => {
       resourceConfig: JSON.stringify({
         actionPath: '/a/baseadmin/tag/management',
       }),
+      resourceRoles: 'template.system',
+    },
+    {
+      atomName: 'Select Users',
+      atomStaticKey: 'selectUsers',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Basic',
+      resourceType: 'a-base:function',
+      resourceConfig: JSON.stringify({}),
       resourceRoles: 'template.system',
     },
   ];
@@ -785,7 +795,12 @@ module.exports = app => {
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     // user
-    { method: 'post', path: 'user/select', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    {
+      method: 'post',
+      path: 'user/select',
+      controller: 'user',
+      meta: { right: { type: 'resource', name: 'user,selectUsers' } },
+    },
     { method: 'post', path: 'user/list', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/item', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/disable', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
