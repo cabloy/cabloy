@@ -12,9 +12,9 @@ export default {
     },
     order_list() {
       // base
-      const ordersBase = this.base.configAtomBase.render.list.info.orders;
+      const ordersBase = this.$meta.util.getProperty(this.base.config, 'render.list.info.ordersBase');
       // atomClass
-      const ordersAtomClass = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.orders');
+      const ordersAtomClass = this.$meta.util.getProperty(this.base.config, 'render.list.info.orders');
       // atomOrders
       return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
     },

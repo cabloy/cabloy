@@ -29,7 +29,7 @@ const list = {
         },
       },
     },
-    orders: [
+    ordersBase: [
       { name: 'atomCreatedAt', title: 'Created Time', by: 'desc', tableAlias: '' },
       { name: 'atomUpdatedAt', title: 'Modification Time', by: 'desc', tableAlias: '' },
       { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
