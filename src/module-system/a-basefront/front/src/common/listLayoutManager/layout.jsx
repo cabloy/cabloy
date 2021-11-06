@@ -12,14 +12,14 @@ export default {
   methods: {
     layout_extend_onTableColumns({ columns }) {
       const layoutInstance = this.layout.instance;
-      if (layoutInstance.onTableColumns) {
+      if (layoutInstance && layoutInstance.onTableColumns) {
         columns = layoutInstance.onTableColumns({ columns });
       }
       return columns;
     },
     layout_extend_onFilterSchema({ schema, type }) {
       const layoutInstance = this.layout.instance;
-      if (layoutInstance.onFilterSchema) {
+      if (layoutInstance && layoutInstance.onFilterSchema) {
         schema = layoutInstance.onFilterSchema({ schema, type });
       }
       return schema;
