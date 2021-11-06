@@ -30,7 +30,7 @@ export default {
   computed: {
     columns() {
       const columns = this.blockConfig.columns;
-      const _columns = [];
+      let _columns = [];
       for (const column of columns) {
         if (column.visible === false) continue;
         // extend
@@ -48,6 +48,9 @@ export default {
         _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
         // push
         _columns.push(_column);
+      }
+      if (this.layout.onColumns) {
+        _columns = this.layout.onColumns({ columns: _columns });
       }
       return _columns;
     },
