@@ -10,10 +10,10 @@ export default {
   },
   created() {},
   methods: {
-    layout_extend_onColumns({ columns }) {
+    layout_extend_onTableColumns({ columns }) {
       const layoutInstance = this.layout.instance;
-      if (layoutInstance.onColumns) {
-        columns = layoutInstance.onColumns({ columns });
+      if (layoutInstance.onTableColumns) {
+        columns = layoutInstance.onTableColumns({ columns });
       }
       return columns;
     },

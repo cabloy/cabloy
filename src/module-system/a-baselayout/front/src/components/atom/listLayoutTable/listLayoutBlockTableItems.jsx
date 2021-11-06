@@ -49,7 +49,7 @@ export default {
         // push
         _columns.push(_column);
       }
-      return this.layoutManager.layout_extend_onColumns({ columns: _columns });
+      return this.layoutManager.layout_extend_onTableColumns({ columns: _columns });
     },
     rowSelection() {
       if (!this.layoutManager.bulk.selecting) return null;
