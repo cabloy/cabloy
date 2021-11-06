@@ -30,7 +30,7 @@ export default {
   computed: {
     columns() {
       const columns = this.blockConfig.columns;
-      let _columns = [];
+      const _columns = [];
       for (const column of columns) {
         if (column.visible === false) continue;
         // extend
@@ -49,10 +49,7 @@ export default {
         // push
         _columns.push(_column);
       }
-      if (this.layout.onColumns) {
-        _columns = this.layout.onColumns({ columns: _columns });
-      }
-      return _columns;
+      return this.layoutManager.layout_extend_onColumns({ columns: _columns });
     },
     rowSelection() {
       if (!this.layoutManager.bulk.selecting) return null;

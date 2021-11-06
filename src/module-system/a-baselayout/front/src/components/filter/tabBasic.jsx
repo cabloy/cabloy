@@ -27,7 +27,10 @@ export default {
       };
       // meta
       const meta = {
-        schema: this.filterContainer.schemaBasic,
+        schema: this.layoutManager.layout_extend_onFilterSchema({
+          schema: this.filterContainer.schemaBasic,
+          type: 'basic',
+        }),
         properties: {
           stage: {
             ebOptions: this.filterContainer.stages,
@@ -60,7 +63,10 @@ export default {
       };
       // meta
       const meta = {
-        schema: this.filterContainer.schemaSearch,
+        schema: this.layoutManager.layout_extend_onFilterSchema({
+          schema: this.filterContainer.schemaSearch,
+          type: 'atomClass',
+        }),
       };
       return (
         <eb-validate

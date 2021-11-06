@@ -27,7 +27,10 @@ export default {
       };
       // meta
       const meta = {
-        schema: this.filterContainer.schemaGeneral,
+        schema: this.layoutManager.layout_extend_onFilterSchema({
+          schema: this.filterContainer.schemaGeneral,
+          type: 'general',
+        }),
         properties: {},
       };
       // render

@@ -10,6 +10,20 @@ export default {
   },
   created() {},
   methods: {
+    layout_extend_onColumns({ columns }) {
+      const layoutInstance = this.layout.instance;
+      if (layoutInstance.onColumns) {
+        columns = layoutInstance.onColumns({ columns });
+      }
+      return columns;
+    },
+    layout_extend_onFilterSchema({ schema, type }) {
+      const layoutInstance = this.layout.instance;
+      if (layoutInstance.onFilterSchema) {
+        schema = layoutInstance.onFilterSchema({ schema, type });
+      }
+      return schema;
+    },
     async layout_prepareConfig() {
       const atomClass = this.container.atomClass;
       // configAtomBase
