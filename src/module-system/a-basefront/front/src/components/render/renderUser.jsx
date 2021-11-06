@@ -21,7 +21,9 @@ export default {
         this.$view.navigate(url, {
           target,
           context: {
-            params: {},
+            params: {
+              buttonClearUser: true,
+            },
             callback: (code, selectedUser) => {
               if (code === 200) {
                 // mapper

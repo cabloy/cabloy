@@ -1,5 +1,6 @@
 <template>
   <eb-search-page :title="$text('Select User')" @search="onSearch" @loadMore="onLoadMore" @disable="onDisable">
+    <eb-button v-if="buttonClearUser" :onPerform="onPerformClearUser">{{ this.$text('Clear User') }}</eb-button>
     <users ref="list" :onFetchUsers="onFetchUsers" :onSelect="onSelect"></users>
   </eb-search-page>
 </template>
@@ -16,6 +17,9 @@ export default {
     onFetchUsers() {
       return this.contextParams.onFetchUsers;
     },
+    buttonClearUser() {
+      return this.contextParams.buttonClearUser;
+    },
   },
   methods: {
     onSearch(query) {
@@ -30,6 +34,15 @@ export default {
     onSelect(event, item) {
       this.contextCallback(200, item);
       this.$f7router.back();
+    },
+    onPerformClearUser(event) {
+      const user = {
+        id: 0,
+        userName: null,
+        realName: null,
+        avatar: null,
+      };
+      this.onSelect(event, user);
     },
   },
 };
