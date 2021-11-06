@@ -10,6 +10,14 @@ export default {
   },
   created() {},
   methods: {
+    layout_setInstance(instance) {
+      this.layout.instance = instance;
+    },
+    layout_clearInstance(instance) {
+      if (this.layout.instance === instance) {
+        this.layout.instance = null;
+      }
+    },
     async layout_prepareConfig() {
       const atomClass = this.base.atomClass;
       // configAtomBase

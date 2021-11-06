@@ -17,10 +17,7 @@ export default {
     this.init();
   },
   beforeDestroy() {
-    if (this.layoutManager.layout.instance === this) {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = null;
-    }
+    this.layoutManager.layout_clearInstance(this);
   },
   methods: {
     async init() {
@@ -29,8 +26,8 @@ export default {
         providerName: 'all',
         autoInit: true,
       });
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = this;
+      // instance
+      this.layoutManager.layout_setInstance(this);
     },
   },
   render() {

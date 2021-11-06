@@ -18,14 +18,11 @@ export default {
   created() {
     // queueScroll
     this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = this;
+    // instance
+    this.layoutManager.layout_setInstance(this);
   },
   beforeDestroy() {
-    if (this.layoutManager.layout.instance === this) {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = null;
-    }
+    this.layoutManager.layout_clearInstance(this);
   },
   methods: {
     onPageRefresh(force) {

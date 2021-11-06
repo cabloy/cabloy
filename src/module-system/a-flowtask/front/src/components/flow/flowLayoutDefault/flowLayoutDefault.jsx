@@ -17,17 +17,14 @@ export default {
     this.init();
   },
   beforeDestroy() {
-    if (this.layoutManager.layout.instance === this) {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = null;
-    }
+    this.layoutManager.layout_clearInstance(this);
   },
   methods: {
     init() {
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = this;
+      // instance
+      this.layoutManager.layout_setInstance(this);
     },
   },
   render() {

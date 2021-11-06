@@ -16,15 +16,12 @@ export default {
     };
   },
   created() {
-    // eslint-disable-next-line
-    this.layoutManager.layout.instance = this;
+    // instance
+    this.layoutManager.layout_setInstance(this);
     this.onLoad();
   },
   beforeDestroy() {
-    if (this.layoutManager.layout.instance === this) {
-      // eslint-disable-next-line
-      this.layoutManager.layout.instance = null;
-    }
+    this.layoutManager.layout_clearInstance(this);
   },
   methods: {
     async onLoad() {
