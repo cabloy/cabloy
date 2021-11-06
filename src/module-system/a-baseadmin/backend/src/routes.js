@@ -40,7 +40,12 @@ module.exports = app => {
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     // user
-    { method: 'post', path: 'user/select', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    {
+      method: 'post',
+      path: 'user/select',
+      controller: 'user',
+      meta: { right: { type: 'resource', name: 'user,selectUsers' } },
+    },
     { method: 'post', path: 'user/list', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/item', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/disable', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
