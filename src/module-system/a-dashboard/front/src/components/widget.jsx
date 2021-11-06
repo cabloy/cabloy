@@ -148,7 +148,7 @@ export default {
     this.$emit('widget:destroy');
   },
   methods: {
-    __init() {
+    async __init() {
       // group
       if (this.options.group) return;
       // fullName
@@ -160,18 +160,20 @@ export default {
         return;
       }
       // component
-      this.$meta.module.use(this.resource.resourceConfig.module, module => {
-        let component = module.options.components[this.resource.resourceConfig.component];
-        if (!component) {
-          this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
-          this.ready = false;
-        } else {
-          component = this.$meta.util.createComponentOptions(component);
-          this.$options.components[fullName] = component;
-          this.ready = true;
-          this.errorMessage = null;
-        }
-      });
+      const module = await this.$meta.module.use(this.resource.resourceConfig.module);
+      let component = module.options.components[this.resource.resourceConfig.component];
+      if (!component) {
+        this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+        this.ready = false;
+      } else {
+        // uses
+        await this.$meta.util.createComponentOptionsUses(component);
+        // create
+        component = this.$meta.util.createComponentOptions(component);
+        this.$options.components[fullName] = component;
+        this.ready = true;
+        this.errorMessage = null;
+      }
     },
     __onWidgetRealReady(widgetReal) {
       this.dashboard.__onWidgetRealReady(this.options.id, widgetReal);

@@ -64,15 +64,19 @@ export default {
       // clear
       this.ready = false;
       this.errorMessage = null;
-      //
+      // module
       const moduleInstance = await this.$meta.module.use(this.module);
       this.moduleInstance = moduleInstance;
+      // component
       const fullName = this.__getFullName();
       let component = moduleInstance.options.components[this.name];
       if (!component) {
         this.errorMessage = `${this.$text('Component Not Found')}: ${fullName}`;
         this.ready = false;
       } else {
+        // uses
+        await this.$meta.util.createComponentOptionsUses(component);
+        // create
         component = this.$meta.util.createComponentOptions(component);
         this.$options.components[fullName] = component;
         this.ready = true;

@@ -78,25 +78,27 @@ export default {
     this.$emit('button:destroy');
   },
   methods: {
-    __init() {
+    async __init() {
       if (!this.options.resourceConfig) {
         // maybe disabled
         this.hide();
         return;
       }
-      this.$meta.module.use(this.options.resourceConfig.module, module => {
-        const fullName = this.layout._buttonFullName(this.options);
-        let component = module.options.components[this.options.resourceConfig.component];
-        if (!component) {
-          this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
-          this.ready = false;
-        } else {
-          component = this.$meta.util.createComponentOptions(component);
-          this.$options.components[fullName] = component;
-          this.ready = true;
-          this.errorMessage = null;
-        }
-      });
+      const module = await this.$meta.module.use(this.options.resourceConfig.module);
+      const fullName = this.layout._buttonFullName(this.options);
+      let component = module.options.components[this.options.resourceConfig.component];
+      if (!component) {
+        this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
+        this.ready = false;
+      } else {
+        // uses
+        await this.$meta.util.createComponentOptionsUses(component);
+        // create
+        component = this.$meta.util.createComponentOptions(component);
+        this.$options.components[fullName] = component;
+        this.ready = true;
+        this.errorMessage = null;
+      }
     },
     show() {
       this.showing = true;
