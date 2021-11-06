@@ -79,6 +79,15 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    {
+      atomName: 'Select Users',
+      atomStaticKey: 'selectUsers',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Basic',
+      resourceType: 'a-base:function',
+      resourceConfig: JSON.stringify({}),
+      resourceRoles: 'template.system',
+    },
   ];
   return resources;
 };

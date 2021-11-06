@@ -10,4 +10,5 @@ module.exports = {
   'Menu Management': '菜单管理',
   'Category Management': '目录管理',
   'Tag Management': '标签管理',
+  'Select Users': '选择用户',
 };
