@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baselayout",
-  "version": "4.2.5",
+  "version": "4.2.6",
   "title": "Base Layout",
   "eggBornModule": {
     "dependencies": {}
