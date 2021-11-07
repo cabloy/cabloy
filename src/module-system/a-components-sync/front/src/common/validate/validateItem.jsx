@@ -202,8 +202,15 @@ export default {
     _convertValueType(property, value) {
       if (!property) return value;
       // special for select empty
-      if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
+      if ((property.ebType === 'select' || property.ebType === 'dict') && this.checkIfEmptyForSelect(value)) {
         return null; // for distinguish from 0
+      }
+      // special for string
+      if (property.type !== 'string' && this.checkIfEmptyForSelect(value)) {
+        return null;
+      }
+      if (property.type === 'string' && (value === null || value === undefined)) {
+        return null;
       }
       // others
       let _value;
