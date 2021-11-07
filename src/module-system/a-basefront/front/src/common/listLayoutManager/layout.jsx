@@ -36,6 +36,7 @@ export default {
         },
       };
       const component = moduleExtend.options.components[configComponent.name];
+      if (!component) throw new Error(`extend.component not found: ${configComponent.module}:${configComponent.name}`);
       const instanceExtend = this.$meta.util.createComponentInstance(component, options);
       // ready
       this.layout_destroyInstanceExtend();

@@ -224,6 +224,7 @@ export default function (Vue) {
       return `/${moduleInfo.url}/${arg}`;
     },
     createComponentInstance(component, options) {
+      if (!component) throw new Error('component should not be null');
       // const _component = Object.assign({}, component, options);
       let _component = this.extend({}, component);
       _component = Object.assign(_component, options);
