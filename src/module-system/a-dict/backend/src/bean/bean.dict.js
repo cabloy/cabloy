@@ -25,7 +25,7 @@ module.exports = ctx => {
 
     // options: separator
     async findItem({ dictKey, code, options }) {
-      if (!code) return null;
+      if (this._checkIfEmptyForSelect(code)) return null;
       code = String(code);
       // options
       options = options || { separator: '/' };
@@ -162,6 +162,10 @@ module.exports = ctx => {
 
     _broadcastDictCacheRemove({ dictKey }) {
       delete __dicts[dictKey];
+    }
+
+    _checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
     }
   }
 

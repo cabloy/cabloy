@@ -88,7 +88,7 @@ export default {
       const { key } = this.context;
       const fieldTitle = `_${key}Title`;
       const fieldTitleLocale = `_${key}TitleLocale`;
-      if (value) {
+      if (!this._checkIfEmptyForSelect(value)) {
         this.context.setValue(value, key);
         await this._loadDictItem();
         this.context.setValue(this.dictItem.titleFull, fieldTitle);
@@ -98,6 +98,9 @@ export default {
         this.context.setValue('', fieldTitle);
         this.context.setValue('', fieldTitleLocale);
       }
+    },
+    _checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
     },
     _renderAsSelect() {
       const { parcel, key, property } = this.context;

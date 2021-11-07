@@ -30,7 +30,7 @@ export default function (Vue) {
         return dict;
       },
       async findItem({ state, dispatch }, { dictKey, code, options }) {
-        if (!code) return null;
+        if (_checkIfEmptyForSelect(code)) return null;
         code = String(code);
         // options
         options = options || { separator: '/' };
@@ -63,6 +63,10 @@ export default function (Vue) {
       },
     },
   };
+}
+
+function _checkIfEmptyForSelect(value) {
+  return value === '' || value === undefined || value === null;
 }
 
 function _adjustDict({ dict }) {
