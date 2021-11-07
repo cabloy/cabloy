@@ -242,7 +242,7 @@ module.exports = ctx => {
         atomStaticKey: dictKey,
         atomStage: 1,
       });
-      if (!atom) return ctx.throw.module('a-base', 1002);
+      if (!atom) throw new Error(`dict not found: ${dictKey}`);
       const atomId = atom.id;
       // check resource right
       if (user) {
