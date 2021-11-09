@@ -177,6 +177,14 @@ function __parseModules(projectPath) {
         };
         const _moduleMeta = __parseModule(__path, moduleMeta);
         if (_moduleMeta) {
+          // enhance check public
+          if (_moduleMeta.info.public) {
+            const file = _moduleMeta.js.front || !_moduleMeta.js.backend;
+            if (file.replace(/\\/g, '/').indexOf('/dist/') === -1) {
+              _moduleMeta.info.public = false;
+            }
+          }
+          // record
           modules[info.relativeName] = _moduleMeta;
         }
       }
