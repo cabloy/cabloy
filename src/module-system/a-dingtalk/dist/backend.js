@@ -944,6 +944,7 @@ module.exports = appInfo => {
       groupInfo: {
         sendLinkAccountMigration: false,
       },
+      groupFunction: {},
     },
   };
 
