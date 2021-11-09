@@ -5,7 +5,7 @@ export default {
       const title = this.getTitle(context, true);
       let value = context.parcel.data ? context.getValue() : undefined;
       // format
-      value = this._formatTextGeneral(value);
+      value = this._formatTextGeneral(property, value);
       // not use parcel.data
       let href = this.$meta.util.replaceTemplate(property.ebParams.href, this.parcel.data);
       if (!property.ebParams.external) {

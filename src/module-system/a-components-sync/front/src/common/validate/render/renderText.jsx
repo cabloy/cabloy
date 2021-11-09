@@ -29,7 +29,7 @@ export default {
       const title = this.getTitle(context);
       let value = context.getValue();
       // format
-      value = this._formatTextGeneral(value);
+      value = this._formatTextGeneral(property, value);
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return (
