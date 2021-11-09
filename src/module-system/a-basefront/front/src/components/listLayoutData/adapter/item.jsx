@@ -16,9 +16,16 @@ export default {
     item_getAtomName(item) {
       return item.atomNameLocale || item.atomName;
     },
-    item_getMetaMedia(item) {
-      const media =
-        (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+    item_getMetaMedia(item, avatarFieldName) {
+      let media;
+      if (!avatarFieldName) {
+        media = (item._meta && item._meta.media) || item.avatar;
+      } else {
+        media = item[avatarFieldName];
+      }
+      if (!media) {
+        media = this.$meta.config.modules['a-base'].user.avatar.default;
+      }
       return this.$meta.util.combineImageUrl(media, 24);
     },
     item_getMetaMediaLabel(item) {
@@ -143,8 +150,8 @@ export default {
         </eb-context-menu>
       );
     },
-    item_renderMedia(item, className) {
-      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item)} />;
+    item_renderMedia(item, className, avatarFieldName) {
+      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item, avatarFieldName)} />;
     },
     item_renderStats(item) {
       const children = [];
