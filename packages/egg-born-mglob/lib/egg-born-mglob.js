@@ -40,8 +40,11 @@ const __paths = [
   {
     prefix: 'node_modules/egg-born-module-',
     public: true,
-    fronts: [{ js: 'dist/front.js' }],
-    backends: [{ js: 'dist/backend.js', static: 'dist/staticBackend' }],
+    fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
+    backends: [
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+      { js: 'backend/src/main.js', static: 'backend/static' },
+    ],
   },
 ];
 
