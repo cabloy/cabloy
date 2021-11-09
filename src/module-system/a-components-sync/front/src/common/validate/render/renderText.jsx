@@ -8,10 +8,8 @@ export default {
       if (isNaN(value)) return value;
       return Number((Number(value) * 100).toFixed(0));
     },
-    renderText(context) {
-      const { key, property, dataPath } = context;
-      const title = this.getTitle(context);
-      let value = context.getValue();
+    _formatTextGeneral(property, value) {
+      if (this.checkIfEmptyForSelect(value)) return value;
       // currency
       if (property.ebCurrency) {
         value = this._formatValueCurrency(value);
@@ -24,6 +22,14 @@ export default {
       if (property.ebDateFormat) {
         value = this.$meta.util.formatDateTime(value, property.ebDateFormat);
       }
+      return value;
+    },
+    renderText(context) {
+      const { key, property, dataPath } = context;
+      const title = this.getTitle(context);
+      let value = context.getValue();
+      // format
+      value = this._formatTextGeneral(value);
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return (

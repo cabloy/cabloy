@@ -3,6 +3,9 @@ export default {
     renderLink(context) {
       const { key, property } = context;
       const title = this.getTitle(context, true);
+      let value = context.parcel.data ? context.getValue() : undefined;
+      // format
+      value = this._formatTextGeneral(value);
       // not use parcel.data
       let href = this.$meta.util.replaceTemplate(property.ebParams.href, this.parcel.data);
       if (!property.ebParams.external) {
@@ -13,6 +16,9 @@ export default {
         link: href,
         title,
       };
+      if (value) {
+        props.after = value;
+      }
       if (property.ebParams.external !== undefined) {
         props.external = property.ebParams.external;
       }
