@@ -344,7 +344,9 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
       if (!schema) {
-        const schemas = this._adjustSchemas(meta.validation.validators[validator].schemas);
+        const _validator = meta.validation.validators[validator];
+        if (!_validator) throw new Error(`validator not found: ${module}:${validator}`);
+        const schemas = this._adjustSchemas(_validator.schemas);
         schema = schemas[0];
       }
       return {
