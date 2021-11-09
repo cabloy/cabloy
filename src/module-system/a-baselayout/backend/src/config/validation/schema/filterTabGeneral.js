@@ -41,7 +41,7 @@ module.exports = app => {
         ebParams: {
           dateFormat: 'YYYY-MM-DD',
           header: false,
-          toolbar: false,
+          toolbar: true,
         },
         ebSearch: {
           tableAlias: 'a',

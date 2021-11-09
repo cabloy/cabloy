@@ -22,7 +22,7 @@ module.exports = app => {
           timePicker: true,
           dateFormat: 'YYYY-MM-DD HH:mm:00',
           header: false,
-          toolbar: false,
+          toolbar: true,
         },
         'x-date': true,
       },
