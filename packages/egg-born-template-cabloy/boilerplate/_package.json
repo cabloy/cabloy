@@ -22,7 +22,7 @@
   "author": "{{author}}",
   "devDependencies": {},
   "dependencies": {
-    "cabloy": "^4.12.48",
+    "cabloy": "^4.12.49",
     "lerna": "^4.0.0"
   }
 }
