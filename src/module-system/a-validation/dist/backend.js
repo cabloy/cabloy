@@ -396,12 +396,14 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
       const _validator = meta.validation.validators[validator];
+      if (!_validator) throw new Error(`validator not found: ${module}:${validator}`);
       if (_validator.ajv) return _validator;
       // create ajv
       const _schemas = this._adjustSchemas(_validator.schemas);
       const schemas = {};
       for (const _schema of _schemas) {
         schemas[_schema] = meta.validation.schemas[_schema];
+        if (!schemas[_schema]) throw new Error(`schema not found: ${module}:${_schema}`);
         schemas[_schema].$async = true;
       }
       _validator.ajv = ctx.app.meta.ajv.create({
