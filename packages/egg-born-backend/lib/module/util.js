@@ -218,6 +218,9 @@ module.exports = app => {
       }
       // bean
       const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;
+      if (!bean && beanFullName && !is.function(fn)) {
+        throw new Error(`bean not found: ${beanFullName}`);
+      }
       // execute
       let res;
       if (transaction) {
