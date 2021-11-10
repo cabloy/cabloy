@@ -44,6 +44,7 @@ export default {
         props.external = true;
         props.target = link.target;
       } else {
+        props.link = true;
         props.externalLink = true;
         props.external = false;
         props.ebTarget = link.target;
