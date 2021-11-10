@@ -1003,6 +1003,7 @@ module.exports = app => {
             ebTitle: 'Contacts Management',
             ebParams: {
               href: 'contacts/management',
+              target: '_self',
             },
           },
         },
