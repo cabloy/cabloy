@@ -3,7 +3,7 @@ export default {
     renderLink(context) {
       const { key, property } = context;
       const title = this.getTitle(context, true);
-      let value = context.parcel.data ? context.getValue() : undefined;
+      let value = context.getValue();
       // format
       value = this._formatTextGeneral(property, value);
       // not use parcel.data

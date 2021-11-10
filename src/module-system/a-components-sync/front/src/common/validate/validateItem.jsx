@@ -154,6 +154,7 @@ export default {
       });
     },
     getValue(parcel, key) {
+      if (!parcel.data) return undefined;
       const property = parcel.properties[key];
       const _value = parcel.data[key];
       if (!property) {
