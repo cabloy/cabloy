@@ -5,8 +5,9 @@ export default {
       const params = column.params || {};
       // null
       if (text === null || text === undefined) {
-        return params.default || '';
+        text = params.default || '';
       }
+      if (text === '') return text;
       // date
       if (typeof text === 'object' && text instanceof Date) {
         return this.$meta.util.formatDateTime(text, params.dateFormat);

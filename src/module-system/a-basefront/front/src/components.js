@@ -8,6 +8,7 @@ import renderTags from './components/render/renderTags.jsx';
 import renderResourceType from './components/render/renderResourceType.jsx';
 import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
+import renderTableCellLink from './components/render/renderTableCellLink.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUser from './components/render/renderUser.jsx';
 // category
@@ -34,6 +35,7 @@ export default {
   renderResourceType,
   renderTableCellDefault,
   renderTableCellComputed,
+  renderTableCellLink,
   renderUserLabel,
   renderUser,
   // category
