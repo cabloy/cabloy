@@ -12,6 +12,12 @@ export default {
   name: 'eb-link',
   extends: f7Link,
   mixins: [perform, link, stats],
+  props: {
+    link: {
+      type: [String, Boolean],
+      default: true,
+    },
+  },
   methods: {
     getLinkEl() {
       return this.$$(this.$el);

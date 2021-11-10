@@ -27,8 +27,9 @@ export default {
 
       // Prevent Router
       if (event && event.preventF7Router) return;
-      if ($clickedLinkEl && ($clickedLinkEl.hasClass('prevent-router') || $clickedLinkEl.hasClass('router-prevent')))
+      if ($clickedLinkEl && ($clickedLinkEl.hasClass('prevent-router') || $clickedLinkEl.hasClass('router-prevent'))) {
         return;
+      }
 
       // only once
       if (this._preloader) return;

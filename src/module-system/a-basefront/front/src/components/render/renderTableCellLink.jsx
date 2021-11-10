@@ -29,24 +29,33 @@ export default {
   methods: {
     _renderLink(link) {
       const { text, record, column } = this.info;
+      const props = {};
       // text
       let _text = this.$meta.util.replaceTemplate(link.text, record) || text || '';
       _text = this.formatText({ text: _text, column });
       // href
-      const href = this.$meta.util.replaceTemplate(link.href, record);
-      // target
-      const target = link.target;
-      // external
-      const external = link.external;
+      if (link.href) {
+        props.ebHref = this.$meta.util.replaceTemplate(link.href, record);
+      }
+      // target/external
+      if (link.external === true) {
+        props.link = false;
+        props.externalLink = false;
+        props.external = true;
+        props.target = link.target;
+      } else {
+        props.externalLink = true;
+        props.external = false;
+        props.ebTarget = link.target;
+      }
       // render
-      return (
-        <eb-link ebHref={href} ebTarget={target} externalLink={external}>
-          {_text}
-        </eb-link>
-      );
+      return <eb-link {...{ props }}>{_text}</eb-link>;
     },
   },
   render() {
+    if (!this.link && !this.links) {
+      return <div></div>;
+    }
     return <div class="eb-antdv-table-cell eb-antdv-table-cell-link">{this._renderLink(this.link)}</div>;
   },
 };
