@@ -22,6 +22,9 @@ export default {
     link: {
       type: Object, // text/href/target/external
     },
+    links: {
+      type: Array,
+    },
   },
   data() {
     return {};
@@ -50,13 +53,27 @@ export default {
         props.ebTarget = link.target;
       }
       // render
-      return <eb-link {...{ props }}>{_text}</eb-link>;
+      return (
+        <eb-link key={_text} {...{ props }}>
+          {_text}
+        </eb-link>
+      );
+    },
+    _renderLinks(links) {
+      const children = [];
+      for (const link of links) {
+        children.push(this._renderLink(link));
+      }
+      return children;
     },
   },
   render() {
     if (!this.link && !this.links) {
       return <div></div>;
     }
-    return <div class="eb-antdv-table-cell eb-antdv-table-cell-link">{this._renderLink(this.link)}</div>;
+    if (this.link) {
+      return <div class="eb-antdv-table-cell eb-antdv-table-cell-link">{this._renderLink(this.link)}</div>;
+    }
+    return <div class="eb-antdv-table-cell eb-antdv-table-cell-links">{this._renderLinks(this.links)}</div>;
   },
 };
