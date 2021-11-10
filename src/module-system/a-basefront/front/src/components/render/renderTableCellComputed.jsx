@@ -69,6 +69,10 @@ export default {
     },
   },
   render() {
-    return <span>{this.value}</span>;
+    return (
+      <div class="eb-antdv-table-cell" title={this.value}>
+        {this.value}
+      </div>
+    );
   },
 };

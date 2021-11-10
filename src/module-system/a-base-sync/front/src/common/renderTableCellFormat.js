@@ -7,7 +7,7 @@ export default {
       if (text === null || text === undefined) {
         return params.default || '';
       }
-      // data
+      // date
       if (typeof text === 'object' && text instanceof Date) {
         return this.$meta.util.formatDateTime(text, params.dateFormat);
       }
