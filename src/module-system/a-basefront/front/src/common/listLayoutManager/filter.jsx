@@ -44,20 +44,24 @@ export default {
       const configTabBasic = filterConfig.tabs.basic;
       // module
       await this.$meta.module.use(configTabBasic.schema.module);
-      return await this.$api.post('/a/validation/validation/schema', {
+      const schema = await this.$api.post('/a/validation/validation/schema', {
         module: configTabBasic.schema.module,
         schema: configTabBasic.schema.schema,
       });
+      await this.$meta.util.combineSearchClauseLoadModules({ schema });
+      return schema;
     },
     async filter_loadSchemaGeneral() {
       const filterConfig = this.filter_getConfig();
       const configTabGeneral = filterConfig.tabs.general;
       // module
       await this.$meta.module.use(configTabGeneral.schema.module);
-      return await this.$api.post('/a/validation/validation/schema', {
+      const schema = await this.$api.post('/a/validation/validation/schema', {
         module: configTabGeneral.schema.module,
         schema: configTabGeneral.schema.schema,
       });
+      await this.$meta.util.combineSearchClauseLoadModules({ schema });
+      return schema;
     },
     async filter_loadSchemaSearch(atomClass) {
       if (!atomClass) return null;
@@ -71,11 +75,13 @@ export default {
         },
       });
       // schema
-      return await this.$api.post('/a/validation/validation/schema', {
+      const schema = await this.$api.post('/a/validation/validation/schema', {
         module: validator.module,
         validator: validator.validator,
         schema: null,
       });
+      await this.$meta.util.combineSearchClauseLoadModules({ schema });
+      return schema;
     },
     filter_prepareSelectParams() {
       if (!this.filter.data) return null;

@@ -525,6 +525,23 @@ export default function (Vue) {
       const blob = new Blob(['(' + fn + ')()'], { type: 'text/javascript' });
       return URL.createObjectURL(blob);
     },
+    async combineSearchClauseLoadModules({ schema }) {
+      if (!schema) return;
+      const properties = schema.schema.properties;
+      for (const key in properties) {
+        const property = properties[key];
+        const ebSearch = property.ebSearch;
+        if (ebSearch === false) continue;
+        if (ebSearch && ebSearch.combine) {
+          const actionModule = ebSearch.combine.actionModule;
+          const actionComponent = ebSearch.combine.actionComponent;
+          if (!actionModule || !actionComponent) {
+            throw new Error(`ebSearch.combine not set properly for property: ${key}`);
+          }
+          await Vue.prototype.$meta.module.use(actionModule);
+        }
+      }
+    },
     combineSearchClause({ ctx, schema, data, searchStates }) {
       if (!schema || !data) return null;
       const clause = {};
