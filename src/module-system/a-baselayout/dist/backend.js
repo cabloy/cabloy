@@ -60,7 +60,7 @@ module.exports = app => {
           // ignoreValue:0,
           operators: 'like,likeLeft,likeRight,=', // {} } { =
           combine: {
-            actionModule: 'a-components',
+            actionModule: 'a-basefront',
             actionComponent: 'combineSearch',
             name: 'atomName',
           },
@@ -154,7 +154,7 @@ module.exports = app => {
         ebSearch: {
           tableAlias: 'a',
           combine: {
-            actionModule: 'a-components',
+            actionModule: 'a-basefront',
             actionComponent: 'combineSearch',
             name: 'dateRange',
           },
