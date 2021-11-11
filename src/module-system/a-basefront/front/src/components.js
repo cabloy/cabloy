@@ -1,3 +1,4 @@
+import combineSearch from './components/action/combineSearch.js';
 import componentAction from './components/render/componentAction.jsx';
 import renderAtom from './components/render/renderAtom.jsx';
 import renderAtomClass from './components/render/renderAtomClass.jsx';
@@ -25,6 +26,7 @@ import listLayoutDataProviderPaged from './components/listLayoutData/providerPag
 import developerTool from './components/tools/developerTool.js';
 
 export default {
+  combineSearch,
   componentAction,
   renderAtom,
   renderAtomClass,

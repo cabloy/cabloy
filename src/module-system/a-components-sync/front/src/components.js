@@ -1,4 +1,3 @@
-import combineSearch from './components/action/combineSearch.js';
 import loadMore from './components/loadMore.jsx';
 import view from './components/view2.vue';
 import page from './components/page.vue';
@@ -34,7 +33,6 @@ import stats from './components/stats.jsx';
 import statsColor from './components/statsColor.jsx';
 
 export default {
-  combineSearch,
   ebLoadMore: loadMore,
   ebView: view,
   ebPage: page,
