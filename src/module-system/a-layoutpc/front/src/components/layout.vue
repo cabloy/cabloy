@@ -300,15 +300,15 @@ export default {
     openLogin(routeTo, options) {
       this.$meta.vueApp.openLogin(routeTo, options);
     },
-    closeView(view) {
+    closeView(view, options) {
       if (view.$el.parents('.eb-layout-sidebar-left').length > 0) {
-        return this.$refs.sidebarLeft.closeView(view);
+        return this.$refs.sidebarLeft.closeView(view, options);
       } else if (view.$el.parents('.eb-layout-sidebar-right').length > 0) {
-        return this.$refs.sidebarRight.closeView(view);
+        return this.$refs.sidebarRight.closeView(view, options);
       } else if (view.$el.parents('.eb-layout-sidebar-bottom').length > 0) {
-        return this.$refs.sidebarBottom.closeView(view);
+        return this.$refs.sidebarBottom.closeView(view, options);
       }
-      this.$refs.groups.closeView(view);
+      this.$refs.groups.closeView(view, options);
     },
     closePanel(side, panel) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());

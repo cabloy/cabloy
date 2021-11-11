@@ -186,20 +186,31 @@ export default {
         }
       });
     },
-    closeView(view) {
+    async closeView(view, options) {
+      // options
+      options = options || {};
+      const disableCheckDirty = options.disableCheckDirty;
+      // remove next views
       const $view = this.$$(view.$el);
-      $view.addClass('eb-transition-close').animationEnd(() => {
-        const viewIndex = parseInt($view.data('index'));
-        const groupId = $view.parents('.eb-layout-group').data('groupId');
-        const group = this.getGroup({ id: groupId });
-        this._removeNextViews(groupId, viewIndex)
-          .then(() => {
-            if (group.views.length === 0) {
-              this.removeGroup(groupId);
-            }
-          })
-          .catch(() => {});
-      });
+      const viewIndex = parseInt($view.data('index'));
+      const groupId = $view.parents('.eb-layout-group').data('groupId');
+      const group = this.getGroup({ id: groupId });
+      try {
+        await this._removeNextViews(groupId, viewIndex + 1);
+        if (!disableCheckDirty) {
+          await this._viewDirtyConfirm(groupId, view.id);
+        }
+        $view.addClass('eb-transition-close').animationEnd(() => {
+          group.views.splice(viewIndex, 1);
+          if (group.views.length === 0) {
+            this.removeGroup(groupId);
+          } else {
+            this.reLayout(groupId);
+          }
+        });
+      } catch (err) {
+        // do nothing
+      }
     },
     async closeGroup(groupId, onlyRemove) {
       try {
@@ -212,12 +223,7 @@ export default {
         const group = this.getGroup({ id: groupId });
         if (!group) return;
         const view = group.views[0];
-        const viewVue = this.getView(group.id, view.id);
-        const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
-        if (dirty) {
-          // will throw error if cancelled
-          await viewVue.viewDirtyConfirm();
-        }
+        await this._viewDirtyConfirm(group.id, view.id);
         this.layout.navigate(group.url, {
           groupId,
           reloadGroup: true,
@@ -230,16 +236,19 @@ export default {
       for (let i = group.views.length - 1; i >= 0; i--) {
         if (i >= viewIndexStart) {
           const view = group.views[i];
-          const viewVue = this.getView(group.id, view.id);
-          const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
-          if (dirty) {
-            // will throw error if cancelled
-            await viewVue.viewDirtyConfirm();
-          }
+          await this._viewDirtyConfirm(group.id, view.id);
           group.views.splice(i, 1);
           // for show the viewDirtyConfirm dialog
           this.reLayout(groupId);
         }
+      }
+    },
+    async _viewDirtyConfirm(groupId, viewId) {
+      const viewVue = this.getView(groupId, viewId);
+      const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
+      if (dirty) {
+        // will throw error if cancelled
+        await viewVue.viewDirtyConfirm();
       }
     },
     onbeforeunload() {

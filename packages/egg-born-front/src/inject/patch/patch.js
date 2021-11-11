@@ -121,7 +121,7 @@ export default function (ctx, router) {
         }
       }
       // close view
-      ctx.$meta.vueLayout.closeView(view);
+      ctx.$meta.vueLayout.closeView(view, { disableCheckDirty: true });
     }
     return router;
   };
