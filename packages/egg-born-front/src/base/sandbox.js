@@ -47,7 +47,7 @@ export default function (Vue) {
     },
     __purgeValue(value) {
       if (!value) return value;
-      if (typeof value === 'object') {
+      if (typeof value === 'object' && !(value instanceof Date)) {
         const typeName = Object.getPrototypeOf(value).constructor.name;
         if (typeName === 'VueComponent' || typeName === 'Vue') {
           return undefined;
