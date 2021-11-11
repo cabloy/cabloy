@@ -59,7 +59,8 @@ module.exports = app => {
         read: {
           title: 'View',
           actionModule: moduleInfo.relativeName,
-          actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
+          actionComponent: 'action',
+          // actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
           icon: { material: 'visibility' },

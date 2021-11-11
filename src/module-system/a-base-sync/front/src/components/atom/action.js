@@ -1,5 +1,6 @@
 import ActionBase from '../../common/actionBase.js';
 import ActionCreate from './action/actionCreate.js';
+import ActionRead from './action/actionRead.js';
 import ActionDelete from './action/actionDelete.js';
 import ActionSave from './action/actionSave.js';
 import ActionSubmit from './action/actionSubmit.js';
@@ -22,6 +23,7 @@ export default {
   mixins: [
     ActionBase, //
     ActionCreate,
+    ActionRead,
     ActionDelete,
     ActionSave,
     ActionSubmit,
@@ -42,6 +44,8 @@ export default {
       const { action } = this.$props;
       if (action.name === 'create' || action.action === 'create') {
         return await this._onActionCreate();
+      } else if (action.name === 'read') {
+        return await this._onActionRead();
       } else if (action.name === 'delete') {
         return await this._onActionDelete();
       } else if (action.name === 'save') {
