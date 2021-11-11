@@ -30,6 +30,7 @@ export default {
       return res;
     },
     validate_onValidateItemChange() {
+      if (this.container.mode !== 'edit') return;
       this.page_setDirty(true);
     },
     validate_render() {

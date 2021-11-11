@@ -22,6 +22,7 @@ export default {
       return this.actions_onPerformValidate(event, data);
     },
     validate_onValidateItemChange() {
+      if (this.container.mode !== 'edit') return;
       this.page_setDirty(true);
     },
     validate_render() {
