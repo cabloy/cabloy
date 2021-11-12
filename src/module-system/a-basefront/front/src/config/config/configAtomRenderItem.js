@@ -51,7 +51,15 @@ const item = {
       },
     },
     default: {
-      title: 'LayoutDefault',
+      title: 'LayoutInfo',
+      component: {
+        module: 'a-baselayout',
+        name: 'itemLayoutDefault',
+      },
+      blocks: {},
+    },
+    content: {
+      title: 'LayoutContent',
       component: {
         module: 'a-baselayout',
         name: 'itemLayoutDefault',
