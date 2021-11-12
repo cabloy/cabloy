@@ -2259,6 +2259,7 @@ module.exports = app => {
               and ( 
                         b.content like '%cms-pluginblock:blockAudio%'
                     or  b.content like '%cms-pluginblock:blockIFrame%'
+                    or  b.content like '%cabloy-dashboard:blockCourse%'
                   )   
         `,
         [this.ctx.instance.id]
@@ -2269,6 +2270,9 @@ module.exports = app => {
     `);
       await this.ctx.model.query(`
       update aCmsContent set content = replace (content,'cms-pluginblock:blockIFrame','a-markdownblock:iframe') where content like '%cms-pluginblock:blockIFrame%'
+    `);
+      await this.ctx.model.query(`
+      update aCmsContent set content = replace (content,'cabloy-dashboard:blockCourse','cabloy-course:blockCourse') where content like '%cabloy-dashboard:blockCourse%'
     `);
       // loop
       for (const article of articles) {
@@ -2286,6 +2290,7 @@ module.exports = app => {
       let content = article.content;
       content = content.replace(/cms-pluginblock:blockAudio/gi, 'a-markdownblock:audio');
       content = content.replace(/cms-pluginblock:blockIFrame/gi, 'a-markdownblock:iframe');
+      content = content.replace(/cabloy-dashboard:blockCourse/gi, 'cabloy-course:blockCourse');
       // write
       await this.ctx.bean.atom.write({
         key: draftKey,
