@@ -99,8 +99,15 @@ const list = {
         item: {
           component: {
             module: 'a-baselayout',
+            name: 'listLayoutBlockCardItem',
+          },
+        },
+        itemHeader: {
+          component: {
+            module: 'a-baselayout',
             name: 'listLayoutBlockListItem',
           },
+          summary: false,
         },
       },
     },

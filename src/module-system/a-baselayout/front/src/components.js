@@ -1,6 +1,7 @@
 // listLayoutCard
 import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx';
 import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
+import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
 import listLayoutList from './components/atom/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
@@ -36,6 +37,7 @@ export default {
   // listLayoutCard
   listLayoutCard,
   listLayoutBlockCardItems,
+  listLayoutBlockCardItem,
   // listLayoutList
   listLayoutList,
   listLayoutBlockListCaption,
