@@ -1,3 +1,6 @@
+// listLayoutCard
+import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx';
+import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
 // listLayoutList
 import listLayoutList from './components/atom/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
@@ -30,6 +33,9 @@ import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLay
 import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
 
 export default {
+  // listLayoutCard
+  listLayoutCard,
+  listLayoutBlockCardItems,
   // listLayoutList
   listLayoutList,
   listLayoutBlockListCaption,

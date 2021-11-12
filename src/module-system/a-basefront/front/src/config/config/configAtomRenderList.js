@@ -83,6 +83,27 @@ const list = {
         },
       },
     },
+    card: {
+      title: 'LayoutCard',
+      component: {
+        module: 'a-baselayout',
+        name: 'listLayoutCard',
+      },
+      blocks: {
+        items: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockCardItems',
+          },
+        },
+        item: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockListItem',
+          },
+        },
+      },
+    },
     list: {
       title: 'LayoutList',
       component: {
