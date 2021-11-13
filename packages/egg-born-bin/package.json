@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "3.4.21",
+  "version": "3.4.22",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -34,12 +34,12 @@
     "chai": "^4.2.0",
     "chalk": "^3.0.0",
     "compressing": "^1.5.1",
-    "egg-born-backend": "^6.2.8",
+    "egg-born-backend": "^6.2.9",
     "egg-born-front": "^8.4.9",
     "egg-mock": "^3.25.1",
     "nock": "^11.7.2",
     "should": "^13.2.3",
-    "urllib": "^2.34.2",
-    "uglify-js": "^3.7.7"
+    "uglify-js": "^3.7.7",
+    "urllib": "^2.34.2"
   }
 }

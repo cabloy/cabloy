@@ -711,6 +711,7 @@ module.exports = app => {
 
     async _renderCSSJSes({ data, content }) {
       data.js('plugins/cms-pluginbase/assets/js/lib/require.min.js');
+      data.js('plugins/cms-pluginbase/assets/js/lib/regenerator-runtime/runtime.js');
       content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
       content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
       return content;
@@ -899,8 +900,9 @@ var env=${JSON.stringify(env, null, 2)};
           return require3(_path);
         },
         url(fileName, language) {
-          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0))
+          if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) {
             return self.ctx.bean.util.escapeURL(fileName);
+          }
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           const _url = self.getUrl(site, language || (site.language && site.language.current), _path);

@@ -18,29 +18,28 @@
       return '<div class="aplayer"></div>';
     }
 
-    mount() {
+    async mount() {
       const { $container, $content, $util } = this.host;
-      return this._loadAPlayer().then(APlayer => {
-        const $player = $container.querySelector('.aplayer');
-        // content
-        if (!$content.audio) return;
-        $content.container = $player;
-        $content.autoplay = !!$content.autoplay;
-        $content.loop = $content.loop ? 'all' : 'none';
-        // audio
-        if (!Array.isArray($content.audio)) {
-          $content.audio = [$content.audio];
-        }
-        for (const audio of $content.audio) {
-          audio.name = $util.escapeHtml(audio.name);
-          audio.url = $util.escapeURL(audio.url);
-          audio.artist = $util.escapeHtml(audio.artist);
-          audio.cover = $util.escapeURL(audio.cover);
-          if (!audio.cover) audio.cover = $util.url('api/static/a/base/img/audio_cover.jpg');
-        }
-        // create
-        this.playerInstance = new APlayer($content);
-      });
+      const $player = $container.querySelector('.aplayer');
+      // content
+      if (!$content.audio) return;
+      $content.container = $player;
+      $content.autoplay = !!$content.autoplay;
+      $content.loop = $content.loop ? 'all' : 'none';
+      // audio
+      if (!Array.isArray($content.audio)) {
+        $content.audio = [$content.audio];
+      }
+      for (const audio of $content.audio) {
+        audio.name = $util.escapeHtml(audio.name);
+        audio.url = $util.escapeURL(audio.url);
+        audio.artist = $util.escapeHtml(audio.artist);
+        audio.cover = $util.escapeURL(audio.cover);
+        if (!audio.cover) audio.cover = $util.url('api/static/a/base/img/audio_cover.jpg');
+      }
+      // create
+      const APlayer = await this._loadAPlayer();
+      this.playerInstance = new APlayer($content);
     }
 
     unmount() {
@@ -50,8 +49,8 @@
       }
     }
 
-    _loadAPlayer() {
-      if (this.APlayer) return Promise.resolve(this.APlayer);
+    async _loadAPlayer() {
+      if (this.APlayer) return this.APlayer;
       return new Promise(resolve => {
         require.config({
           paths: {
