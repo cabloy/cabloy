@@ -129,7 +129,10 @@ export default {
       const BlockClass = this.BlockClasses[params];
       if (BlockClass) return Promise.resolve(BlockClass);
       return new Promise(resolve => {
-        const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main.min`;
+        let block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main`;
+        if (this.$meta.config.env !== 'development') {
+          block_js += '.min';
+        }
         this.$meta.util.requirejs.require([block_js], BlockClass => {
           this.BlockClasses[params] = BlockClass;
           resolve(BlockClass);
