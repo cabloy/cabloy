@@ -19,14 +19,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/register": "^7.8.3",
     "@zhennann/ejs": "^3.0.1",
     "@zhennann/trim-html": "^0.1.12",
-    "babel-loader": "^8.2.2",
     "bluebird": "^3.7.2",
     "chokidar": "^2.1.8",
     "clean-css": "^4.2.3",
@@ -39,7 +33,6 @@
     "moment": "^2.24.0",
     "p-map": "^3.0.0",
     "require3": "^2.1.2",
-    "sha.js": "^2.4.11",
-    "uglify-js": "^3.7.7"
+    "sha.js": "^2.4.11"
   }
 }

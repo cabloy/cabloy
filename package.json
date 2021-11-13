@@ -35,7 +35,8 @@
     "commits": "./scripts/commits.sh",
     "commits-all": "./scripts/commits-all.sh",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\""
+    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
+    "tools:babel": "node ./packages/egg-born-bin/bin/egg-born-bin.js tools-babel"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
