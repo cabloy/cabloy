@@ -18,6 +18,15 @@ export default {
       blockInstances: [],
     };
   },
+  computed: {
+    host2() {
+      const host = Object.assign({}, this.host);
+      if (host.mode === undefined) {
+        host.mode = 'view';
+      }
+      return host;
+    },
+  },
   watch: {
     html(newValue) {
       if (newValue === this.htmlInner) return;
@@ -129,10 +138,10 @@ export default {
     },
     _getHost(blockContainer, blockContent) {
       const $util = this.$meta.util.hostUtil({
-        locale: this.$meta.util.getProperty(this.host, 'atom.atomLanguage'),
+        locale: this.$meta.util.getProperty(this.host2, 'atom.atomLanguage'),
       });
       return {
-        $host: this.host, // atomId/atom
+        $host: this.host2, // atomId/atom
         $container: blockContainer,
         $content: blockContent,
         $util,
