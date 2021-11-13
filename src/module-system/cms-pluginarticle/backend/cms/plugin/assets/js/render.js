@@ -60,6 +60,7 @@
     const $host = {
       atom: env.article,
       atomId: env.article && env.article.atomId,
+      mode: 'view-cms',
     };
     const $util = window.util.hostUtil({
       locale: $host.atom && $host.atom.atomLanguage,
