@@ -17,7 +17,8 @@
     "stop:backend": "egg-born-scripts backend-stop",
     "update:test": "egg-born-bin test-update",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\""
+    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
+    "tools:babel": "egg-born-bin tools-babel"
   },
   "author": "{{author}}",
   "devDependencies": {},
