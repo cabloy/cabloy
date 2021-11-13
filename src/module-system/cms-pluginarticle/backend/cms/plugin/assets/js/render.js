@@ -70,6 +70,7 @@
       $container: $blockContainer,
       $content: blockContent,
       $util,
+      $$: $,
     };
   }
 })();

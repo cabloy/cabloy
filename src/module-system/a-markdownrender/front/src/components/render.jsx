@@ -148,6 +148,7 @@ export default {
         $container: blockContainer,
         $content: blockContent,
         $util,
+        $$: this.$$,
       };
     },
   },
