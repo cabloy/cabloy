@@ -628,6 +628,7 @@ module.exports = app => {
 
     async _renderCSSJSes({ data, content }) {
       data.js('plugins/cms-pluginbase/assets/js/lib/require.min.js');
+      data.js('plugins/cms-pluginbase/assets/js/lib/regenerator-runtime/runtime.js');
       content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
       content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
       return content;

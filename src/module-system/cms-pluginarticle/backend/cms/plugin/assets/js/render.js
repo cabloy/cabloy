@@ -48,7 +48,7 @@
     const BlockClass = BlockClasses[params];
     if (BlockClass) return Promise.resolve(BlockClass);
     return new Promise(resolve => {
-      const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main`;
+      const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main.min`;
       window.requirejs([block_js], BlockClass => {
         BlockClasses[params] = BlockClass;
         resolve(BlockClass);
