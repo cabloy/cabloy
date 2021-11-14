@@ -16,8 +16,9 @@ module.exports = app => {
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
-      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize)))
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize))) {
         _page.size = pageSize;
+      }
       return _page;
     }
 
@@ -177,6 +178,9 @@ module.exports = app => {
           if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
           if (str[0] !== '/') str = '/' + str;
           return self.ctx.bean.base.getAbsoluteUrl(this.escapeURL(str));
+        },
+        urlFront(str) {
+          return this.url(str);
         },
         escapeHtml(str) {
           return self.escapeHtml(str);

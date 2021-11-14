@@ -27,8 +27,8 @@ export default function (Vue, util) {
       performAction({ method, url, body }) {
         return Vue.prototype.$meta.api[method.toLowerCase()](url, body);
       },
-      navigate(url, options) {
-        options.ctx.$view.navigate(url, options);
+      navigate(url, _options) {
+        options.ctx.$view.navigate(url, _options);
       },
     };
   };
