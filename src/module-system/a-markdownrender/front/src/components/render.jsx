@@ -141,6 +141,7 @@ export default {
     },
     _getHost(blockContainer, blockContent) {
       const $util = this.$meta.util.hostUtil({
+        ctx: this,
         locale: this.$meta.util.getProperty(this.host2, 'atom.atomLanguage'),
       });
       return {

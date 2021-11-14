@@ -132,7 +132,8 @@
     };
     if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
     for (const k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+      if (new RegExp('(' + k + ')').test(fmt))
+        fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
     }
     return fmt;
   };
@@ -179,7 +180,8 @@
 
         for (let i = 0; i < length; i += 1) {
           param = params[i].replace(/#\S+/g, '').split('=');
-          query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
+          query[decodeURIComponent(param[0])] =
+            typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
         }
       }
       return query;
@@ -351,7 +353,9 @@
           })
           .catch(err => {
             console.error(err);
-            const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
+            const $buttonTry = $(
+              '<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>'
+            );
             $buttonTry.click(() => {
               _onFetch();
             });
@@ -365,7 +369,10 @@
       // onScroll
       const _onScroll = function () {
         if (finished || fetching || error) return false;
-        if ($body.outerHeight() - $window.height() - $window.scrollTop() < threshold || $container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop() < threshold) {
+        if (
+          $body.outerHeight() - $window.height() - $window.scrollTop() < threshold ||
+          $container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop() < threshold
+        ) {
           _onFetch();
           return true;
         }
@@ -519,6 +526,9 @@
         },
         performAction({ method, url, body }) {
           return self.performAction({ method, url, body });
+        },
+        navigate(url /* , options*/) {
+          window.location.assign(url);
         },
       };
     },
