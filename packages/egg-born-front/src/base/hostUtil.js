@@ -12,6 +12,12 @@ export default function (Vue, util) {
         if (str[0] !== '/') str = '/' + str;
         return baseURL + this.escapeURL(str);
       },
+      urlFront(str) {
+        if (str && (str.indexOf('http://') === 0 || str.indexOf('https://') === 0)) return this.escapeURL(str);
+        const baseURL = window.location.origin;
+        if (str[0] !== '/') str = '/' + str;
+        return baseURL + this.escapeURL(str);
+      },
       escapeHtml(str) {
         return util.escapeHtml(str);
       },
