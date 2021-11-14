@@ -70,6 +70,7 @@
       $container: $blockContainer,
       $content: blockContent,
       $util,
+      $user: window.util.user,
       $$: $,
     };
   }
