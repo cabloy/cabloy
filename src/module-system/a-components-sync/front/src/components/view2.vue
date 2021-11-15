@@ -69,6 +69,21 @@ export default {
       const view = this.$$(this.$el);
       return view.is('.eb-layout-panel-view');
     },
+    returnTo(returnTo, options) {
+      if (!returnTo) {
+        const modeIfEmpty = options?.modeIfEmpty || 'back';
+        if (modeIfEmpty === 'back') {
+          this.$f7router.back();
+        } else {
+          this.$view.close();
+        }
+      } else if (returnTo.indexOf('http://') === 0 || returnTo.indexOf('https://') === 0) {
+        window.location.assign(returnTo);
+      } else {
+        const navigateOptions = options?.navigateOptions || { target: '_self', reloadCurrent: true };
+        this.$view.navigate(returnTo, navigateOptions);
+      }
+    },
   },
   mounted() {
     const self = this;
