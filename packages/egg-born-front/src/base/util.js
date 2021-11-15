@@ -374,7 +374,10 @@ export default function (Vue) {
       //
       let str = '';
       for (const key of Object.keys(queries)) {
-        str += `${key}=${encodeURIComponent(queries[key])}&`;
+        const value = queries[key];
+        if (value !== null && value !== undefined) {
+          str += `${key}=${encodeURIComponent(value)}&`;
+        }
       }
       if (str) {
         str = str.substr(0, str.length - 1);
