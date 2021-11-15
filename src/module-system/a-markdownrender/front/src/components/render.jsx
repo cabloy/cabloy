@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   meta: {
     global: true,
@@ -32,7 +33,7 @@ export default {
       if (newValue === this.htmlInner) return;
       this.htmlInner = newValue;
       this.$nextTick(() => {
-        this._setHtml(newValue);
+        this.__changeHtml();
       });
     },
   },
@@ -43,6 +44,11 @@ export default {
     this.init();
   },
   beforeDestroy() {
+    //
+    if (this._unwatch) {
+      this._unwatch();
+      this._unwatch = null;
+    }
     //
     this._unmountHtml();
     //
@@ -56,7 +62,16 @@ export default {
     async init() {
       await this.$meta.module.use(this.$meta.config.markdown.style.module);
       await this._setHtml(this.htmlInner);
+      // watch atom changed
+      if (this.host.atom) {
+        this._unwatch = this.$watch('host.atom', () => {
+          this.__changeHtml();
+        });
+      }
     },
+    __changeHtml: Vue.prototype.$meta.util.debounce(function () {
+      this._setHtml(this.htmlInner);
+    }, 100),
     _onClick(event) {
       const $clickedEl = this.$$(event.target);
       const $clickedLinkEl = $clickedEl.closest('a');
@@ -72,7 +87,7 @@ export default {
     async _setHtml(html) {
       await this._unmountHtml();
       this._$html.innerHTML = html;
-      this._mountHtml();
+      await this._mountHtml();
     },
     async _mountHtml() {
       const blocks = this.$$('.markdown-it-cabloy-block', this._$html);
