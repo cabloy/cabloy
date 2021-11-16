@@ -93,6 +93,10 @@ function _filterProperties({ ajv, properties, data, filterOptions }) {
   for (const key in properties) {
     const property = properties[key];
     if (data[key] === undefined) continue;
+    // special for json
+    if ((property.ebType = 'json' && property.type === 'string' && data[key] === '')) {
+      data[key] = null;
+    }
     if (filterOptions.type && !property.type) {
       delete data[key];
     } else if (filterOptions.ebReadOnly && property.ebReadOnly === true) {
