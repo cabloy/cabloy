@@ -1,6 +1,6 @@
 ## English
 
-Module `a-flowtask` implements the most important component in the workflow engine: `User Task Activity`, and surrounding tools, such as `Atom Start Event`, `Atom End Event`, and a large number of `front-end management pages`
+Module `a-flowtask` implements the most important component in the workflow engine: `User Task Activity`, and the surrounding tools, such as `Atom Start Event`, `Atom End Event`, and a large number of `front-end management pages`
 
 > How to obtain the complete source codes of the module `a-flowtask`, please go to: [Cabloy Store：a-flowtask](https://store.cabloy.com/articles/a-flowtask.html)
 
