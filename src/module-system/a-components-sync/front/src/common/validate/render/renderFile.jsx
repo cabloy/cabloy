@@ -1,6 +1,34 @@
 import Vue from 'vue';
 export default {
   methods: {
+    _renderFileButtonPhotoView(title, value) {
+      const photos = [
+        {
+          url: value,
+          caption: title,
+        },
+      ];
+      return (
+        <eb-button
+          key="button-view"
+          propsOnPerform={() => {
+            const params = {
+              photos,
+              type: 'page',
+              exposition: false,
+              view: this.$view.$el.f7View,
+            };
+            const f7PhotoBrowser = this.$f7.photoBrowser.create(params);
+            f7PhotoBrowser.open();
+            f7PhotoBrowser.once('photoBrowserClosed', () => {
+              f7PhotoBrowser.destroy();
+            });
+          }}
+        >
+          {this.$text('View')}
+        </eb-button>
+      );
+    },
     renderFile(context) {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
@@ -14,36 +42,10 @@ export default {
           </div>
         );
         if (mode === 1 && value) {
-          const buttons = [];
-          const photoBrowserId = Vue.prototype.$meta.util.nextId('photoBrowser');
-          buttons.push(
-            <eb-button
-              key="button-view"
-              propsOnPerform={() => {
-                this.$refs[photoBrowserId].open();
-              }}
-            >
-              {this.$text('View')}
-            </eb-button>
-          );
-          const photos = [
-            {
-              url: value,
-              caption: title,
-            },
-          ];
-          buttons.push(
-            <f7-photo-browser
-              key="photo-browser"
-              ref={photoBrowserId}
-              photos={photos}
-              type="page"
-              exposition={false}
-            ></f7-photo-browser>
-          );
+          const domButton = this._renderFileButtonPhotoView(title, value);
           children.push(
             <div key="value" slot="after">
-              {buttons}
+              {domButton}
             </div>
           );
         } else {
@@ -88,32 +90,7 @@ export default {
       const buttons = [];
       // view
       if (mode === 1 && value) {
-        const photoBrowserId = Vue.prototype.$meta.util.nextId('photoBrowser');
-        buttons.push(
-          <eb-button
-            key="button-view"
-            propsOnPerform={() => {
-              this.$refs[photoBrowserId].open();
-            }}
-          >
-            {this.$text('View')}
-          </eb-button>
-        );
-        const photos = [
-          {
-            url: value,
-            caption: title,
-          },
-        ];
-        buttons.push(
-          <f7-photo-browser
-            key="photo-browser"
-            ref={photoBrowserId}
-            photos={photos}
-            type="page"
-            exposition={false}
-          ></f7-photo-browser>
-        );
+        buttons.push(this._renderFileButtonPhotoView(title, value));
       }
       buttons.push(
         <eb-button
