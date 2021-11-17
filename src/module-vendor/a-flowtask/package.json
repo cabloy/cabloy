@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-flowtask",
   "version": "4.3.4",
-  "title": "a-flowtask",
+  "title": "Flow Task",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {
@@ -13,6 +13,10 @@
   "description": "",
   "keywords": [
     "Cabloy Module"
+  ],
+  "files": [
+    "dist",
+    "backend/test"
   ],
   "scripts": {
     "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",

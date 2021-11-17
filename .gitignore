@@ -48,6 +48,12 @@ miniprogram_npm
 /src/module-vendor/test-flow/front
 /src/module-vendor/test-flow/.gitignore
 
+/src/module-vendor/a-flowtask/backend/src
+/src/module-vendor/a-flowtask/backend/static
+/src/module-vendor/a-flowtask/build
+/src/module-vendor/a-flowtask/front
+/src/module-vendor/a-flowtask/.gitignore
+
 /src/module-vendor/a-markdown/backend/src
 /src/module-vendor/a-markdown/backend/static
 /src/module-vendor/a-markdown/build
