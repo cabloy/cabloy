@@ -1,4 +1,3 @@
-import Vue from 'vue';
 export default {
   methods: {
     _renderFileButtonPhotoView(title, value) {
