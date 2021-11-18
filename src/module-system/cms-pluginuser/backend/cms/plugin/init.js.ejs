@@ -1,110 +1,112 @@
-<%
-  let userLinks='';
-  const links=site.plugins['cms-pluginuser'].links;
-  for(const link of links){
-    let _url;
-    if(link.url.indexOf('https://')===0 || link.url.indexOf('http://')===0){
-      _url=link.url;
-    }else if(link.url.indexOf('/')===0){
-      _url=`${site.serverUrl}/#!${link.url}`;
-    }else if(link.url.indexOf('?')===0){
-      _url=`${site.serverUrl}/${link.url}`;
-    }else{
-      _url=`${url(link.url)}`;
+(function () {
+  <%
+    let userLinks='';
+    const links=site.plugins['cms-pluginuser'].links;
+    for(const link of links){
+      let _url;
+      if(link.url.indexOf('https://')===0 || link.url.indexOf('http://')===0){
+        _url=link.url;
+      }else if(link.url.indexOf('/')===0){
+        _url=`${site.serverUrl}/#!${link.url}`;
+      }else if(link.url.indexOf('?')===0){
+        _url=`${site.serverUrl}/${link.url}`;
+      }else{
+        _url=`${url(link.url)}`;
+      }
+      userLinks+=`<li class="nav-item"><a class="nav-link" href="${_url}">${text(link.title)}</a></li>`;
     }
-    userLinks+=`<li class="nav-item"><a class="nav-link" href="${_url}">${text(link.title)}</a></li>`;
+  %>
+
+  $(document).ready(function() {
+  });
+
+  $(document).on('echo-ready', function() {
+    _renderNavbarUser({ container: '.navbar-user' });
+    _renderStatsUser({ container: '.navbar-user' });
+  });
+
+  function _renderStatsUser({ container }){
+    if (util.user.op.anonymous) return;
+
+    window.setTimeout(() => {
+      const subscribePath = '/a/stats/stats/a-user/user';
+      util.io.subscribe(subscribePath,stats_onMessage,stats_onSubscribed);
+    }, 0);
+
+    function stats_onMessage({ message }) {
+      const content = JSON.parse(message.content);
+      stats_setValue(content.value);
+    }
+
+    function stats_onSubscribed() {
+      stats_loadValue();
+    }
+
+    function stats_loadValue() {
+      util.performAction({
+        method:'post',
+        url:'/a/stats/stats/get',
+        body:{
+          module: 'a-user',
+          name: 'user',
+          nameSub: null,
+        },
+      }).then(value=>{
+        stats_setValue(value);
+      });
+    }
+
+    function stats_setValue(value){
+      const $container = $(container);
+      if ($container.length === 0) return;
+      const $stats=$('.stats-user',$container);
+      if(!value || (!value.red && !value.orange)){
+        $stats.html('');
+      }else{
+        let html;
+        if(value.red){
+          html=`<span class="badge badge-danger">${value.red}</span>`;
+        }else{
+          html=`<span class="badge badge-warning">${value.orange}</span>`;
+        }
+        $stats.html(html);
+      }
+    }
   }
-%>
 
-$(document).ready(function() {
-});
-
-$(document).on('echo-ready', function() {
-  _renderNavbarUser({ container: '.navbar-user' });
-  _renderStatsUser({ container: '.navbar-user' });
-});
-
-function _renderStatsUser({ container }){
-  if (util.user.op.anonymous) return;
-
-  window.setTimeout(() => {
-    const subscribePath = '/a/stats/stats/a-user/user';
-    util.io.subscribe(subscribePath,stats_onMessage,stats_onSubscribed);
-  }, 0);
-
-  function stats_onMessage({ message }) {
-    const content = JSON.parse(message.content);
-    stats_setValue(content.value);
-  }
-
-  function stats_onSubscribed() {
-    stats_loadValue();
-  }
-
-  function stats_loadValue() {
-    util.performAction({
-      method:'post',
-      url:'/a/stats/stats/get',
-      body:{
-        module: 'a-user',
-        name: 'user',
-        nameSub: null,
-      },
-    }).then(value=>{
-      stats_setValue(value);
-    });
-  }
-
-  function stats_setValue(value){
+  function _renderNavbarUser({ container }) {
     const $container = $(container);
     if ($container.length === 0) return;
-    const $stats=$('.stats-user',$container);
-    if(!value || (!value.red && !value.orange)){
-      $stats.html('');
-    }else{
-      let html;
-      if(value.red){
-        html=`<span class="badge badge-danger">${value.red}</span>`;
-      }else{
-        html=`<span class="badge badge-warning">${value.orange}</span>`;
-      }
-      $stats.html(html);
+    const $menu=$('.navbar-nav',$container);
+    const $avatar=$('.avatar-user',$container);
+    if (util.user.op.anonymous) {
+      const avatar=util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+      $avatar.attr('src',avatar);
+      const html = `
+        <li class="nav-item user-signin"><a class="nav-link" href="${env.site.serverUrl}/#!${location.href}"><i class="fas fa-sign-in-alt"></i> <%=text('Sign In')%></a></li>
+      `;
+      $menu.append(html);
+    } else {
+      const avatar=util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+      $avatar.attr('src',avatar);
+      const html = `
+        <li class="nav-item user-name"><span class="navbar-text">${util.user.op.userName}</span></li>
+        <li class="nav-item dropdown-divider"></li>
+        <%- userLinks %>
+        <%- userLinks?'<li class="nav-item dropdown-divider"></li>':'' %>
+        <li class="nav-item user-logout"><a class="nav-link" href="#" onclick="return onClickUserLogout();"><i class="fas fa-sign-out-alt"></i> <%=text('Log Out')%></a></li>
+      `;
+      $menu.append(html);
     }
   }
-}
 
-function _renderNavbarUser({ container }) {
-  const $container = $(container);
-  if ($container.length === 0) return;
-  const $menu=$('.navbar-nav',$container);
-  const $avatar=$('.avatar-user',$container);
-  if (util.user.op.anonymous) {
-    const avatar=util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
-    $avatar.attr('src',avatar);
-    const html = `
-      <li class="nav-item user-signin"><a class="nav-link" href="${env.site.serverUrl}/#!${location.href}"><i class="fas fa-sign-in-alt"></i> <%=text('Sign In')%></a></li>
-    `;
-    $menu.append(html);
-  } else {
-    const avatar=util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
-    $avatar.attr('src',avatar);
-    const html = `
-      <li class="nav-item user-name"><span class="navbar-text">${util.user.op.userName}</span></li>
-      <li class="nav-item dropdown-divider"></li>
-      <%- userLinks %>
-      <%- userLinks?'<li class="nav-item dropdown-divider"></li>':'' %>
-      <li class="nav-item user-logout"><a class="nav-link" href="#" onclick="return onClickUserLogout();"><i class="fas fa-sign-out-alt"></i> <%=text('Log Out')%></a></li>
-    `;
-    $menu.append(html);
+  function onClickUserLogout() {
+    util.performAction({
+      method: 'post',
+      url: '/a/base/auth/logout',
+    }).then(() => {
+      location.reload();
+    });
+    return false;
   }
-}
-
-function onClickUserLogout() {
-  util.performAction({
-    method: 'post',
-    url: '/a/base/auth/logout',
-  }).then(() => {
-    location.reload();
-  });
-  return false;
-}
+})();

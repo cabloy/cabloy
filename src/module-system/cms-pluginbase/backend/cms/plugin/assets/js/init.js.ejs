@@ -1,90 +1,100 @@
-$(document).ready(function() {
-  // echo
-  util.echo();
-  // img delay
-  $.each($('.img-delay'), (index, item) => {
-    const $item = $(item);
-    const src = $item.data('src');
-    const width = $item.data('width');
-    const height = $item.data('height');
-    $item.attr('src', util.combineImageUrl(src, width, height));
-    $(item).removeClass('img-delay');
+(function () {
+  $(document).ready(function () {
+    // echo
+    util.echo();
+    // img delay
+    $.each($('.img-delay'), (index, item) => {
+      const $item = $(item);
+      const src = $item.data('src');
+      const width = $item.data('width');
+      const height = $item.data('height');
+      $item.attr('src', util.combineImageUrl(src, width, height));
+      $(item).removeClass('img-delay');
+    });
   });
-});
 
-$(document).on('echo-ready', function() {
-  if (util.user.op.anonymous) return;
-  // hotload file
-  let atomId;
-  let file;
-  let hotloadFile;
-  if (env.site.path === 'static/waiting') {
-    // query
-    const query = util.parseUrlQuery();
-    atomId = parseInt(query.atomId);
-    hotloadFile = `atom/${atomId}`;
-  } else if (env.article) {
-    if (env.article.userIdUpdated === util.user.op.id) {
-      atomId = env.article.atomId;
+  $(document).on('echo-ready', function () {
+    if (util.user.op.anonymous) return;
+    // hotload file
+    let atomId;
+    let file;
+    let hotloadFile;
+    if (env.site.path === 'static/waiting') {
+      // query
+      const query = util.parseUrlQuery();
+      atomId = parseInt(query.atomId);
       hotloadFile = `atom/${atomId}`;
-    }
-  } else {
-    file = env.site.hotloadFile;
-    hotloadFile = file;
-  }
-  if (!hotloadFile) return;
-  // subcribe
-  let __hotloadFileTime = 0;
-  window.setTimeout(() => {
-    const subscribePath = `/a/cms/hotloadFile/${hotloadFile}`;
-    util.io.subscribe(subscribePath, () => {
-      location.reload(true);
-    }, () => {
-      util.performAction({
-        method: 'post',
-        url: '/a/cms/site/checkFile',
-        body: {
-          atomId,
-          file,
-          mtime: __hotloadFileTime,
-        },
-      }).then(data => {
-        if (env.site.path === 'static/waiting') {
-          if (data && data.mtime) {
-            getArticleUrl(atomId, url => {
-              location.replace(url);
-            });
-          }
-        } else if (atomId) {
-          if (data && data.mtime > new Date(env.article.renderAt).getTime()) {
-            location.reload(true);
-          }
-        } else {
-          if (!__hotloadFileTime) {
-            if (data && data.mtime) {
-              __hotloadFileTime = data.mtime;
-            }
-          } else {
-            if (data && data.mtime !== __hotloadFileTime) {
-              location.reload(true);
-            }
-          }
-        }
-      });
-    });
-  }, 0);
-
-  function getArticleUrl(atomId, cb) {
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/render/getArticleUrl',
-      body: {
-        key: { atomId },
-      },
-    }).then(data => {
-      if (data && data.url) {
-        cb(data.url);
+    } else if (env.article) {
+      if (env.article.userIdUpdated === util.user.op.id) {
+        atomId = env.article.atomId;
+        hotloadFile = `atom/${atomId}`;
       }
-    });
-  }
-});
+    } else {
+      file = env.site.hotloadFile;
+      hotloadFile = file;
+    }
+    if (!hotloadFile) return;
+    // subcribe
+    let __hotloadFileTime = 0;
+    window.setTimeout(() => {
+      const subscribePath = `/a/cms/hotloadFile/${hotloadFile}`;
+      util.io.subscribe(
+        subscribePath,
+        () => {
+          location.reload(true);
+        },
+        () => {
+          util
+            .performAction({
+              method: 'post',
+              url: '/a/cms/site/checkFile',
+              body: {
+                atomId,
+                file,
+                mtime: __hotloadFileTime,
+              },
+            })
+            .then(data => {
+              if (env.site.path === 'static/waiting') {
+                if (data && data.mtime) {
+                  getArticleUrl(atomId, url => {
+                    location.replace(url);
+                  });
+                }
+              } else if (atomId) {
+                if (data && data.mtime > new Date(env.article.renderAt).getTime()) {
+                  location.reload(true);
+                }
+              } else {
+                if (!__hotloadFileTime) {
+                  if (data && data.mtime) {
+                    __hotloadFileTime = data.mtime;
+                  }
+                } else {
+                  if (data && data.mtime !== __hotloadFileTime) {
+                    location.reload(true);
+                  }
+                }
+              }
+            });
+        }
+      );
+    }, 0);
+
+    function getArticleUrl(atomId, cb) {
+      util
+        .performAction({
+          method: 'post',
+          url: '/a/cms/render/getArticleUrl',
+          body: {
+            key: { atomId },
+          },
+        })
+        .then(data => {
+          if (data && data.url) {
+            cb(data.url);
+          }
+        });
+    }
+  });
+})();

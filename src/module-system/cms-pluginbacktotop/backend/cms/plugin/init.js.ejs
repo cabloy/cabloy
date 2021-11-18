@@ -1,31 +1,33 @@
-$(document).ready(function() {
-  _backtotop();
-});
-
-function _backtotop() {
-  // init
-  const $window = $(window);
-  const $body = $('body');
-  const $htmlBody=$('html, body');
-  // button
-  const $button = $('<a class="backtotop"><i class="fas fa-angle-up"></i></a>');
-  $button.click(()=>{
-    $htmlBody.animate({scrollTop:0},<%=site.plugins['cms-pluginbacktotop'].animateSpeed%>);
+(function () {
+  $(document).ready(function () {
+    _backtotop();
   });
-  $body.append($button);
 
-  // onScroll
-  const _onScroll = function() {
-    const visible=$window.scrollTop()>$(window).height()/2;
-    if(visible){
-      $button.fadeIn();
-    }else{
-      $button.fadeOut();
-    }
-  };
+  function _backtotop() {
+    // init
+    const $window = $(window);
+    const $body = $('body');
+    const $htmlBody = $('html, body');
+    // button
+    const $button = $('<a class="backtotop"><i class="fas fa-angle-up"></i></a>');
+    $button.click(() => {
+      const animateSpeed = "<%=site.plugins['cms-pluginbacktotop'].animateSpeed%>";
+      $htmlBody.animate({ scrollTop: 0 }, parseInt(animateSpeed));
+    });
+    $body.append($button);
 
-  // bind event
-  $window.on('scroll.infinite resize.infinite', _onScroll);
-  _onScroll();
-};
+    // onScroll
+    const _onScroll = function () {
+      const visible = $window.scrollTop() > $(window).height() / 2;
+      if (visible) {
+        $button.fadeIn();
+      } else {
+        $button.fadeOut();
+      }
+    };
 
+    // bind event
+    $window.on('scroll.infinite resize.infinite', _onScroll);
+    _onScroll();
+  }
+})();

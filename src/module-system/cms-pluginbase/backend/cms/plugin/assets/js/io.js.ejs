@@ -1,58 +1,60 @@
-// socketio adapter
-const __socketioAdapter = {
-  _io: null,
-  initialize(io) {
-    const self = this;
-    self._io = io;
-    $(document).on('echo-ready', function () {
-      // reset
-      self._io.reset();
-    });
-    // visibilitychange
-    $(document).on('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') {
-        self._io.disconnect();
-      }
-      if (document.visibilityState === 'visible') {
-        self._io.connect();
-      }
-    });
-  },
-  subscribe({ subscribes, socketId }) {
-    return util.performAction({
-      method: 'post',
-      url: '/a/socketio/subscribe',
-      body: { subscribes, socketId },
-    });
-  },
-  unsubscribe({ subscribes }) {
-    return util.performAction({
-      method: 'post',
-      url: '/a/socketio/unsubscribe',
-      body: { subscribes },
-    });
-  },
-  socket() {
-    const url = '<%=site.serverUrl%>';
-    return window.io(url, { autoConnect: false });
-  },
-};
-
-// socketio
-Object.defineProperty(util, 'io', {
-  get() {
-    if (!util.__io) {
-      const _io = window.socketio.default(__socketioAdapter);
-      const _subscribe = _io.subscribe;
-      _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
-        options = options || {};
-        if (options.scene === undefined) {
-          options.scene = util.clientId;
+(function () {
+  // socketio adapter
+  const __socketioAdapter = {
+    _io: null,
+    initialize(io) {
+      const self = this;
+      self._io = io;
+      $(document).on('echo-ready', function () {
+        // reset
+        self._io.reset();
+      });
+      // visibilitychange
+      $(document).on('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') {
+          self._io.disconnect();
         }
-        return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
-      };
-      util.__io = _io;
-    }
-    return util.__io;
-  },
-});
+        if (document.visibilityState === 'visible') {
+          self._io.connect();
+        }
+      });
+    },
+    subscribe({ subscribes, socketId }) {
+      return util.performAction({
+        method: 'post',
+        url: '/a/socketio/subscribe',
+        body: { subscribes, socketId },
+      });
+    },
+    unsubscribe({ subscribes }) {
+      return util.performAction({
+        method: 'post',
+        url: '/a/socketio/unsubscribe',
+        body: { subscribes },
+      });
+    },
+    socket() {
+      const url = '<%=site.serverUrl%>';
+      return window.io(url, { autoConnect: false });
+    },
+  };
+
+  // socketio
+  Object.defineProperty(util, 'io', {
+    get() {
+      if (!util.__io) {
+        const _io = window.socketio.default(__socketioAdapter);
+        const _subscribe = _io.subscribe;
+        _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
+          options = options || {};
+          if (options.scene === undefined) {
+            options.scene = util.clientId;
+          }
+          return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
+        };
+        util.__io = _io;
+      }
+      return util.__io;
+    },
+  });
+})();

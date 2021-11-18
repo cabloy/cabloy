@@ -4,13 +4,21 @@
       item.userId !== util.user.op.id
         ? ''
         : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
+      <a href="${util.article.commentUrl({
+        atomId: item.atomId,
+        id: item.id,
+        replyId: 0,
+      })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
     const reply = !env.article.allowComment
       ? ''
       : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
+    <a href="${util.article.commentUrl({
+      atomId: item.atomId,
+      id: 0,
+      replyId: item.id,
+    })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
     const html = `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
@@ -45,18 +53,29 @@
       item.h_userId !== util.user.op.id
         ? ''
         : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
+      <a href="${util.article.commentUrl({
+        atomId: item.atomId,
+        id: item.h_id,
+        replyId: 0,
+      })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
       <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
     const reply = !item.allowComment
       ? ''
       : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
+    <a href="${util.article.commentUrl({
+      atomId: item.atomId,
+      id: 0,
+      replyId: item.h_id,
+    })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
     const html = `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
   <div class="header card-header">
-    <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.atomLanguage)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
+    <h5 class="article-title"><a target="_blank" href="${util.url(
+      item.url,
+      item.atomLanguage
+    )}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.h_avatar, 32, 32)}" />
       <h3 class="name panel-title">${util.escapeHtml(item.h_userName)}</h3>
@@ -119,7 +138,7 @@
             atom: { readCount: 1 },
           },
         })
-        .then(data => {
+        .then(() => {
           this._readCountInc(env.article.atomId, 1);
         });
     },
@@ -170,7 +189,9 @@
       this._switchOrder({ $container, order: orderInit, onParse: options.onParse });
     },
     commentUrl({ atomId, id, replyId }) {
-      return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
+      return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${
+        replyId || 0
+      }&returnTo=${encodeURIComponent(location.href)}`;
     },
     articleEdit(options) {
       if (window.self !== window.top) return;
@@ -190,7 +211,7 @@
       }
     },
     _commentActionDelete({ comment, atomId, id }) {
-      bootbox.confirm({
+      window.bootbox.confirm({
         message: '<%=text("Are You Sure?")%>',
         buttons: {
           confirm: {
@@ -222,7 +243,11 @@
       // check if anonymous
       if (util.user.op.anonymous) {
         // url
-        const url = `${env.site.serverUrl}/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
+        const url = `${
+          env.site.serverUrl
+        }/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(
+          location.href
+        )}`;
         location.assign(url);
       } else {
         util
@@ -316,8 +341,13 @@
         options.orders = [['p.sorting', type === 'prev' ? 'desc' : 'asc']];
       } else {
         // asc/desc for createdAt
-        options.where['a.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : order === 'desc' ? '<' : '>', val: article.atomCreatedAt };
-        options.orders = [['a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : order === 'desc' ? 'desc' : 'asc']];
+        options.where['a.createdAt'] = {
+          op: type === 'prev' ? (order === 'desc' ? '>' : '<') : order === 'desc' ? '<' : '>',
+          val: article.atomCreatedAt,
+        };
+        options.orders = [
+          ['a.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : order === 'desc' ? 'desc' : 'asc'],
+        ];
       }
       // select
       util
@@ -362,7 +392,9 @@
       // check if anonymous
       if (util.user.op.anonymous) {
         // url
-        const url = `${env.site.serverUrl}/#!/a/basefront/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
+        const url = `${env.site.serverUrl}/#!/a/basefront/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(
+          location.href
+        )}`;
         location.assign(url);
       } else {
         // star

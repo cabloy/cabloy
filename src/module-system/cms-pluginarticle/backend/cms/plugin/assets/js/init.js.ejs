@@ -1,14 +1,16 @@
-$(document).ready(function () {});
+(function () {
+  $(document).ready(function () {});
 
-$(document).on('echo-ready', function () {
-  // stats
-  util.article.stats();
-  // brothers
-  util.article.brothers({ container: '.brothers' });
-  // comments
-  util.article.comments({ container: '.comments' });
-  // article edit
-  util.article.articleEdit({ container: '.article-edit' });
-  // markdown render
-  util.article.mountMarkdown($('.article-body'));
-});
+  $(document).on('echo-ready', function () {
+    // stats
+    util.article.stats();
+    // brothers
+    util.article.brothers({ container: '.brothers' });
+    // comments
+    util.article.comments({ container: '.comments' });
+    // article edit
+    util.article.articleEdit({ container: '.article-edit' });
+    // markdown render
+    util.article.mountMarkdown($('.article-body'));
+  });
+})();

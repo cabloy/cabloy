@@ -20,8 +20,8 @@
     };
 
     // json5
-    const _json5Parse = JSON5.parse;
-    JSON5.parse = function (source, reviver) {
+    const _json5Parse = window.JSON5.parse;
+    window.JSON5.parse = function (source, reviver) {
       return _json5Parse(source, function (k, v) {
         return __jsonReviver(k, v, reviver);
       });
@@ -170,7 +170,6 @@
     parseUrlQuery(url) {
       const query = {};
       let urlToParse = url || window.location.href;
-      let i;
       let params;
       let param;
       let length;
