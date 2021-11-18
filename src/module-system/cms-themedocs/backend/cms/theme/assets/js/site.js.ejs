@@ -1,431 +1,456 @@
-$(document).ready(function() {
-  // query
-  const query = util.parseUrlQuery();
-  // title
-  title(query);
-  // menu active
-  menuActive(query);
-  // breadcrumb
-  breadcrumb(query);
-  // search text
-  if (query.search) {
-    $('form.search input').val(query.search);
-  }
-  // adjust container padding-top
-  _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'), $('.category-sidebar'));
-});
-
-$(document).on('echo-ready', function() {
-  // query
-  const query = util.parseUrlQuery();
-  // load more
-  loadMore(query);
-  // category tree
-  categoryTree($('.category-sidebar'));
-});
-
-// immediatly: category tree toggle
-categoryTreeToggle($('.category-sidebar-toggle'), $('.doc-container'));
-
-function categoryTreeToggle($toggle, $container) {
-  const _breakpointMd = 768;
-  const $window = $(window);
-  function _initOrSet(collapse) {
-    const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
-    if (collapse) {
-      $container.addClass(className);
-    } else {
-      $container.removeClass(className);
+(function () {
+  $(document).ready(function () {
+    // query
+    const query = util.parseUrlQuery();
+    // title
+    title(query);
+    // menu active
+    menuActive(query);
+    // breadcrumb
+    breadcrumb(query);
+    // search text
+    if (query.search) {
+      $('form.search input').val(query.search);
     }
-  }
-  function _toggle() {
-    const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
-    const collapse = $container.hasClass(className);
-    _initOrSet(!collapse);
-  }
-
-  $toggle.on('click', e => {
-    e.preventDefault();
-    _toggle();
+    // adjust container padding-top
+    _fixContainerSite($('nav.navbar'), $('.container-site'), $('footer'), $('.category-sidebar'));
   });
-  $window.resize(() => {
-    window.categoryTree_initOrSet();
+
+  $(document).on('echo-ready', function () {
+    // query
+    const query = util.parseUrlQuery();
+    // load more
+    loadMore(query);
+    // category tree
+    categoryTree($('.category-sidebar'));
   });
-  window.categoryTree_initOrSet = function() {
-    const category = _getRelativeTop();
-    if (!category) {
-      _initOrSet(true);
-      return;
-    }
-    if ($window.width() < _breakpointMd) {
-      _initOrSet(true);
-    } else {
-      _initOrSet(false);
-    }
-  };
-  window.categoryTree_initOrSet();
-}
 
-function categoryTree($treeContainer) {
-  if (!env.article) return;
-  const articleCategoryId = env.article.atomCategoryId;
+  // immediatly: category tree toggle
+  categoryTreeToggle($('.category-sidebar-toggle'), $('.doc-container'));
 
-  const $title = $('.title', $treeContainer);
-  const $tree = $('.tree', $treeContainer);
-  if ($tree.length === 0) return;
-
-  $tree.on('changed.jstree', function(e, data) {
-    const node = data.node;
-    if (!node) return e.preventDefault();
-    if (node.type === 'folder') return e.preventDefault();
-    if (node.type === 'file' && node.id === `${articleCategoryId}:${env.article.atomId}`) {
-      return window.location.href = '#';
-    }
-    window.location.href = node.a_attr.href;
-  }).on('load_node.jstree', function(e, data) {
-    if (data.status) {
-      const node = data.node;
-      if (String(node._id) === String(articleCategoryId) || String(node.id) === String(articleCategoryId)) {
-        // fill article's h2es
-        _fillArticleH2es($tree);
-        // open article
-        $tree.jstree(true).select_node(`${articleCategoryId}:${env.article.atomId}`, true);
-        $tree.jstree(true).open_node(`${articleCategoryId}:${env.article.atomId}`);
-      } else if (node.id === '#') {
-        // open article's parent category
-        $tree.jstree(true).open_node(articleCategoryId);
+  function categoryTreeToggle($toggle, $container) {
+    const _breakpointMd = 768;
+    const $window = $(window);
+    function _initOrSet(collapse) {
+      const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
+      if (collapse) {
+        $container.addClass(className);
+      } else {
+        $container.removeClass(className);
       }
     }
-  });
-  $tree.jstree({
-    plugins: [ 'types' ],
-    types: {
-      folder: {},
-      file: {
-        icon: 'jstree-icon jstree-file',
-      },
-      h2: {},
-    },
-    core: {
-      check_callback: true,
-      data(node, cb) {
-        const self = this;
-        if (node.id === '#') {
-          // articleCategoryTop
-          const category = _getRelativeTop();
-          if (!category) {
-            return cb.call(self, []);
+    function _toggle() {
+      const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
+      const collapse = $container.hasClass(className);
+      _initOrSet(!collapse);
+    }
+
+    $toggle.on('click', e => {
+      e.preventDefault();
+      _toggle();
+    });
+    $window.resize(() => {
+      window.categoryTree_initOrSet();
+    });
+    window.categoryTree_initOrSet = function () {
+      const category = _getRelativeTop();
+      if (!category) {
+        _initOrSet(true);
+        return;
+      }
+      if ($window.width() < _breakpointMd) {
+        _initOrSet(true);
+      } else {
+        _initOrSet(false);
+      }
+    };
+    window.categoryTree_initOrSet();
+  }
+
+  function categoryTree($treeContainer) {
+    if (!env.article) return;
+    const articleCategoryId = env.article.atomCategoryId;
+
+    const $title = $('.title', $treeContainer);
+    const $tree = $('.tree', $treeContainer);
+    if ($tree.length === 0) return;
+
+    $tree
+      .on('changed.jstree', function (e, data) {
+        const node = data.node;
+        if (!node) return e.preventDefault();
+        if (node.type === 'folder') return e.preventDefault();
+        if (node.type === 'file' && node.id === `${articleCategoryId}:${env.article.atomId}`) {
+          return (window.location.href = '#');
+        }
+        window.location.href = node.a_attr.href;
+      })
+      .on('load_node.jstree', function (e, data) {
+        if (data.status) {
+          const node = data.node;
+          if (String(node._id) === String(articleCategoryId) || String(node.id) === String(articleCategoryId)) {
+            // fill article's h2es
+            _fillArticleH2es($tree);
+            // open article
+            $tree.jstree(true).select_node(`${articleCategoryId}:${env.article.atomId}`, true);
+            $tree.jstree(true).open_node(`${articleCategoryId}:${env.article.atomId}`);
+          } else if (node.id === '#') {
+            // open article's parent category
+            $tree.jstree(true).open_node(articleCategoryId);
           }
-          // node._id
-          node._id = category.id;
-          // menu active
-          menuActive({ categoryId: category.id });
-          // title
-          $title.text(category.categoryName);
-          // tree
-          const tree = _getTree(category.id);
-          if (!tree) {
+        }
+      });
+    $tree.jstree({
+      plugins: ['types'],
+      types: {
+        folder: {},
+        file: {
+          icon: 'jstree-icon jstree-file',
+        },
+        h2: {},
+      },
+      core: {
+        check_callback: true,
+        data(node, cb) {
+          const self = this;
+          if (node.id === '#') {
+            // articleCategoryTop
+            const category = _getRelativeTop();
+            if (!category) {
+              return cb.call(self, []);
+            }
+            // node._id
+            node._id = category.id;
+            // menu active
+            menuActive({ categoryId: category.id });
+            // title
+            $title.text(category.categoryName);
+            // tree
+            const tree = _getTree(category.id);
+            if (!tree) {
+              // articles
+              _fetchArticlesOfCategory(category.id).then(res => {
+                const data = _prepareArtilesData(category.id, res.list);
+                cb.call(self, data);
+              });
+            } else {
+              // prepare tree data
+              const data = _prepareTreeData(tree);
+              cb.call(self, data || []);
+            }
+          } else {
             // articles
-            _fetchArticlesOfCategory(category.id).then(res => {
-              const data = _prepareArtilesData(category.id, res.list);
+            _fetchArticlesOfCategory(node.id).then(res => {
+              const data = _prepareArtilesData(node.id, res.list);
               cb.call(self, data);
             });
-          } else {
-            // prepare tree data
-            const data = _prepareTreeData(tree);
-            cb.call(self, data || []);
           }
-        } else {
-          // articles
-          _fetchArticlesOfCategory(node.id).then(res => {
-            const data = _prepareArtilesData(node.id, res.list);
-            cb.call(self, data);
-          });
-        }
+        },
       },
-    },
-  });
-}
+    });
+  }
 
-function _fetchArticlesOfCategory(categoryId) {
-  return _fetchArticles({
-    index: 0,
-    categoryId,
-    orders: [
-      [ 'p.sticky', 'desc' ],
-      [ 'p.sorting', 'asc' ],
-      [ 'a.createdAt', 'asc' ],
-    ],
-    pageForce: false,
-  });
-}
+  function _fetchArticlesOfCategory(categoryId) {
+    return _fetchArticles({
+      index: 0,
+      categoryId,
+      orders: [
+        ['p.sticky', 'desc'],
+        ['p.sorting', 'asc'],
+        ['a.createdAt', 'asc'],
+      ],
+      pageForce: false,
+    });
+  }
 
-function _getRelativeTop() {
-  return env._docTree && env._docTree.relativeTop;
-}
+  function _getRelativeTop() {
+    return env._docTree && env._docTree.relativeTop;
+  }
 
-function _getTree(categoryId) {
-  return _findTreeSub(window._categories.list, categoryId);
-}
+  function _getTree(categoryId) {
+    return _findTreeSub(window._categories.list, categoryId);
+  }
 
-function _findTreeSub(children, categoryId) {
-  const _category = children.find(item => item.id === categoryId);
-  if (_category) return _category.children;
-  for (let i = 0; i < children.length; i++) {
-    const item = children[i];
-    if (item.children) {
-      const _categories = _findTreeSub(item.children, categoryId);
-      if (_categories) return _categories;
+  function _findTreeSub(children, categoryId) {
+    const _category = children.find(item => item.id === categoryId);
+    if (_category) return _category.children;
+    for (let i = 0; i < children.length; i++) {
+      const item = children[i];
+      if (item.children) {
+        const _categories = _findTreeSub(item.children, categoryId);
+        if (_categories) return _categories;
+      }
+    }
+    return null;
+  }
+
+  function _fillArticleH2es($tree) {
+    const h2es = $('.article-body h2');
+    for (let i = 0; i < h2es.length; i++) {
+      const h2 = $(h2es[i]);
+      const h2link = $('a', h2);
+      const h2linkId = h2link.attr('id');
+      const _item = {
+        id: `${env.article.atomCategoryId}:${env.article.atomId}:${h2linkId}`,
+        text: h2.text(),
+        type: 'h2',
+        icon: false,
+        a_attr: {
+          href: `#${h2linkId}`,
+        },
+      };
+      $tree.jstree(true).create_node(`${env.article.atomCategoryId}:${env.article.atomId}`, _item);
     }
   }
-  return null;
-}
 
-function _fillArticleH2es($tree) {
-  const h2es = $('.article-body h2');
-  for (let i = 0; i < h2es.length; i++) {
-    const h2 = $(h2es[i]);
-    const h2link = $('a', h2);
-    const h2linkId = h2link.attr('id');
-    const _item = {
-      id: `${env.article.atomCategoryId}:${env.article.atomId}:${h2linkId}`,
-      text: h2.text(),
-      type: 'h2',
-      icon: false,
-      a_attr: {
-        href: `#${h2linkId}`,
+  function _prepareArtilesData(categoryId, list) {
+    const _list = [];
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const _item = {
+        id: `${categoryId}:${item.atomId}`,
+        text: util.escapeHtml(item.atomName),
+        type: 'file',
+        icon: false,
+        a_attr: {
+          href: util.url(item.url),
+        },
+      };
+      _list.push(_item);
+    }
+    return _list;
+  }
+
+  function _prepareTreeData(list) {
+    if (!list) return null;
+    if (list.length === 0) return [];
+    const _list = [];
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const _item = {
+        id: item.id,
+        text: util.escapeHtml(item.categoryName),
+        type: 'folder',
+        icon: false,
+        original: item,
+      };
+      if (item.categoryCatalog === 0) {
+        _item.children = true;
+      } else {
+        _item.children = this._prepareTreeData(item.children);
+      }
+      _list.push(_item);
+    }
+    return _list;
+  }
+
+  function title(query) {
+    if (env.site.path === 'static/articles') {
+      if (query.search !== undefined) {
+        document.title = `${query.search} | <%=text('Search')%> | ${env.base.title}`;
+      } else if (query.categoryId !== undefined) {
+        document.title = `${query.categoryName} | <%=text('Category')%> | ${env.base.title}`;
+      } else if (query.tagId !== undefined) {
+        document.title = `${query.tagName} | <%=text('Tag')%> | ${env.base.title}`;
+      }
+    } else if (env.site.path === 'static/comments') {
+      document.title = `<%=text('Comments')%> | ${env.base.title}`;
+    }
+  }
+
+  function menuActive(query) {
+    const categoryId = query.categoryId || (env.article && env.article.atomCategoryId);
+    if (categoryId) {
+      const link = $(`.category-${categoryId}`);
+      link.parents('li').addClass('active');
+    }
+  }
+
+  function breadcrumb(query) {
+    const $container = $('.breadcrumb-nav');
+    // nav
+    if (env.site.path === 'static/articles') {
+      if (query.search !== undefined) {
+        $('.parent', $container).text('<%=text("Search")%>');
+        $('.current', $container).text(query.search);
+      } else if (query.categoryId !== undefined) {
+        $('.parent', $container).text('<%=text("Category")%>');
+        $('.current', $container).text(query.categoryName);
+      } else if (query.tagId !== undefined) {
+        $('.parent', $container).text('<%=text("Tag")%>');
+        $('.current', $container).text(query.tagName);
+      }
+    } else if (env.site.path === 'static/comments') {
+      $('.parent', $container).text('<%=text("Comment")%>');
+      $('.current', $container).text('<%=text("All")%>');
+    } else if (env.site.path === 'main/article') {
+      $('.parent', $container).html(
+        `<a href="${util.url('static/articles.html')}?categoryId=${
+          env.article.atomCategoryId
+        }&categoryName=${encodeURIComponent(env.article.atomCategoryName)}">${util.escapeHtml(
+          env.article.atomCategoryName
+        )}</a>`
+      );
+      $('.current', $container).text(env.article.atomName);
+    }
+    // show
+    if (env.site.path !== 'main/index/index') {
+      $('.parent', $container).removeClass('d-none');
+      $('.current', $container).removeClass('d-none');
+    }
+  }
+
+  function loadMore(query) {
+    _loadMore({
+      categoryId: query.categoryId,
+      tagId: query.tagId,
+      search: query.search,
+    });
+  }
+
+  function _loadMore({ categoryId, tagId, search }) {
+    if ($('.article-list').length === 0) return;
+    util.loadMore({
+      container: '.article-list',
+      index: (env.index && env.index[env.site.path]) || 0,
+      onFetch({ index }) {
+        return _fetchArticles({ index, categoryId, tagId, search });
       },
-    };
-    $tree.jstree(true).create_node(`${env.article.atomCategoryId}:${env.article.atomId}`, _item);
-  }
-}
-
-function _prepareArtilesData(categoryId, list) {
-  const _list = [];
-  for (let i = 0; i < list.length; i++) {
-    const item = list[i];
-    const _item = {
-      id: `${categoryId}:${item.atomId}`,
-      text: util.escapeHtml(item.atomName),
-      type: 'file',
-      icon: false,
-      a_attr: {
-        href: util.url(item.url),
-      },
-    };
-    _list.push(_item);
-  }
-  return _list;
-}
-
-function _prepareTreeData(list) {
-  if (!list) return null;
-  if (list.length === 0) return [];
-  const _list = [];
-  for (let i = 0; i < list.length; i++) {
-    const item = list[i];
-    const _item = {
-      id: item.id,
-      text: util.escapeHtml(item.categoryName),
-      type: 'folder',
-      icon: false,
-      original: item,
-    };
-    if (item.categoryCatalog === 0) {
-      _item.children = true;
-    } else {
-      _item.children = this._prepareTreeData(item.children);
-    }
-    _list.push(_item);
-  }
-  return _list;
-}
-
-function title(query) {
-  if (env.site.path === 'static/articles') {
-    if (query.search !== undefined) {
-      document.title = `${query.search} | <%=text('Search')%> | ${env.base.title}`;
-    } else if (query.categoryId !== undefined) {
-      document.title = `${query.categoryName} | <%=text('Category')%> | ${env.base.title}`;
-    } else if (query.tagId !== undefined) {
-      document.title = `${query.tagName} | <%=text('Tag')%> | ${env.base.title}`;
-    }
-  } else if (env.site.path === 'static/comments') {
-    document.title = `<%=text('Comments')%> | ${env.base.title}`;
-  }
-}
-
-function menuActive(query) {
-  const categoryId = query.categoryId || (env.article && env.article.atomCategoryId);
-  if (categoryId) {
-    const link = $(`.category-${categoryId}`);
-    link.parents('li').addClass('active');
-  }
-}
-
-function breadcrumb(query) {
-  const $container = $('.breadcrumb-nav');
-  // nav
-  if (env.site.path === 'static/articles') {
-    if (query.search !== undefined) {
-      $('.parent', $container).text('<%=text("Search")%>');
-      $('.current', $container).text(query.search);
-    } else if (query.categoryId !== undefined) {
-      $('.parent', $container).text('<%=text("Category")%>');
-      $('.current', $container).text(query.categoryName);
-    } else if (query.tagId !== undefined) {
-      $('.parent', $container).text('<%=text("Tag")%>');
-      $('.current', $container).text(query.tagName);
-    }
-  } else if (env.site.path === 'static/comments') {
-    $('.parent', $container).text('<%=text("Comment")%>');
-    $('.current', $container).text('<%=text("All")%>');
-  } else if (env.site.path === 'main/article') {
-    $('.parent', $container).html(`<a href="${util.url('static/articles.html')}?categoryId=${env.article.atomCategoryId}&categoryName=${encodeURIComponent(env.article.atomCategoryName)}">${util.escapeHtml(env.article.atomCategoryName)}</a>`);
-    $('.current', $container).text(env.article.atomName);
-  }
-  // show
-  if (env.site.path !== 'main/index/index') {
-    $('.parent', $container).removeClass('d-none');
-    $('.current', $container).removeClass('d-none');
-  }
-}
-
-function loadMore(query) {
-  _loadMore({
-    categoryId: query.categoryId,
-    tagId: query.tagId,
-    search: query.search,
-  });
-}
-
-function _loadMore({ categoryId, tagId, search }) {
-  if ($('.article-list').length === 0) return;
-  util.loadMore({
-    container: '.article-list',
-    index: (env.index && env.index[env.site.path]) || 0,
-    onFetch({ index }) {
-      return _fetchArticles({ index, categoryId, tagId, search });
-    },
-    onParse(item) {
-      const sticky = !item.sticky ? '' : '<i class="fas fa-thumbtack"></i> ';
-      const audio = !item.audioFirst ? '' : '<i class="fas fa-music"></i> ';
-      const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
-      const mediaUrl = item.imageCover || item.imageFirst;
-      const media = !mediaUrl ? '' : `
+      onParse(item) {
+        const sticky = !item.sticky ? '' : '<i class="fas fa-thumbtack"></i> ';
+        const audio = !item.audioFirst ? '' : '<i class="fas fa-music"></i> ';
+        const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
+        const mediaUrl = item.imageCover || item.imageFirst;
+        const media = !mediaUrl
+          ? ''
+          : `
       <a class="media-right" target="_blank" href="${util.url(item.url)}">
         <img class="media-object" src="${util.combineImageUrl(mediaUrl, 125, 100)}">
       </a>
         `;
-      const category = (categoryId === undefined) ?
-        `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.atomCategoryId}&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(item.atomCategoryName)}</span></a>` : '';
-      // tags
-      let tagsText = '';
-      const tags = item.atomTags ? JSON.parse(item.atomTags) : null;
-      if (tags && tags.length > 0) {
-        tagsText += '<i class="fas fa-tags"></i> ';
-        for (let i = 0; i < tags.length; i++) {
-          const tagId = tags[i];
-          const tagName = util.sidebar.getTagName(tagId);
-          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tagId}&tagName=${encodeURIComponent(tagName)}"><span class="num tag">${util.escapeHtml(tagName)}</span></a>`;
+        const category =
+          categoryId === undefined
+            ? `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${
+                item.atomCategoryId
+              }&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(
+                item.atomCategoryName
+              )}</span></a>`
+            : '';
+        // tags
+        let tagsText = '';
+        const tags = item.atomTags ? JSON.parse(item.atomTags) : null;
+        if (tags && tags.length > 0) {
+          tagsText += '<i class="fas fa-tags"></i> ';
+          for (let i = 0; i < tags.length; i++) {
+            const tagId = tags[i];
+            const tagName = util.sidebar.getTagName(tagId);
+            tagsText += `<a target="_blank" href="${util.url(
+              'static/articles.html'
+            )}?tagId=${tagId}&tagName=${encodeURIComponent(tagName)}"><span class="num tag">${util.escapeHtml(
+              tagName
+            )}</span></a>`;
+          }
+          tagsText += '';
         }
-        tagsText += '';
-      }
-      const stat = `
+        const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
 ${category}
 <span class="num date">${util.formatDateTime(item.atomCreatedAt)}</span>
 <i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
 <i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
-<a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
+<a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${
+          item.commentCount
+        }</span></a>
 ${tagsText}
 </div>
         `;
-      return `
+        return `
       <li>
           <div class="article-list-section">
             <div class="article-list-content">
               ${media}
-              <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+              <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(
+          item.url
+        )}">${util.escapeHtml(item.atomName)}</a></h4>
               <p>${util.escapeHtml(item.description) || item.summary}</p>
             </div>
             ${stat}
           </div>
       </li>
         `;
-    },
-  });
-}
+      },
+    });
+  }
 
-function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = true }) {
-  const page = { index };
-  if (!pageForce) {
-    page.size = 0;
-  }
-  // options
-  const options = {
-    language: env.language && env.language.current,
-    where: {
-    },
-    orders: [
-      [ 'p.sticky', 'desc' ],
-      [ 'a.createdAt', 'desc' ],
-    ],
-    page,
-    mode: 'default',
-  };
-  // categoryId
-  if (categoryId) {
-    options.category = categoryId;
-    options.orders = orders || [
-      [ 'p.sticky', 'desc' ],
-      [ 'p.sorting', 'asc' ],
-      [ 'a.createdAt', 'desc' ],
-    ];
-  }
-  // tagId
-  if (tagId) {
-    options.tag = tagId;
-    options.orders = [
-      [ 'p.sticky', 'desc' ],
-      [ 'a.createdAt', 'desc' ],
-    ];
-  }
-  // search
-  if (search) {
-    options.where['q.html'] = { val: search, op: 'like' };
-    options.mode = 'search';
-  }
-  // select
-  return util.performAction({
-    method: 'post',
-    url: '/a/cms/article/list',
-    body: {
-      atomClass: env.site.atomClass,
-      options,
-    },
-  });
-}
-
-function _fixContainerSite($navbar, $containerSite, $footer, $categorySidebar) {
-  if (window.self !== window.top) return;
-  if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
-  // init
-  const $window = $(window);
-
-  // onScroll
-  const _onScroll = function() {
-    // $containerSite: min-height
-    const diff = $window.height() - ($footer.offset().top + $footer.outerHeight(true));
-    const height = $containerSite.outerHeight();
-    $containerSite.css('min-height', height + diff);
-    // $categorySidebar: top
-    if ($categorySidebar.length > 0) {
-      $categorySidebar.css('top', $navbar.outerHeight() || 0);
+  function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = true }) {
+    const page = { index };
+    if (!pageForce) {
+      page.size = 0;
     }
-  };
+    // options
+    const options = {
+      language: env.language && env.language.current,
+      where: {},
+      orders: [
+        ['p.sticky', 'desc'],
+        ['a.createdAt', 'desc'],
+      ],
+      page,
+      mode: 'default',
+    };
+    // categoryId
+    if (categoryId) {
+      options.category = categoryId;
+      options.orders = orders || [
+        ['p.sticky', 'desc'],
+        ['p.sorting', 'asc'],
+        ['a.createdAt', 'desc'],
+      ];
+    }
+    // tagId
+    if (tagId) {
+      options.tag = tagId;
+      options.orders = [
+        ['p.sticky', 'desc'],
+        ['a.createdAt', 'desc'],
+      ];
+    }
+    // search
+    if (search) {
+      options.where['q.html'] = { val: search, op: 'like' };
+      options.mode = 'search';
+    }
+    // select
+    return util.performAction({
+      method: 'post',
+      url: '/a/cms/article/list',
+      body: {
+        atomClass: env.site.atomClass,
+        options,
+      },
+    });
+  }
 
-  // bind event
-  $window.on('scroll.infinite resize.infinite', _onScroll);
-  _onScroll();
-}
+  function _fixContainerSite($navbar, $containerSite, $footer, $categorySidebar) {
+    if (window.self !== window.top) return;
+    if ($navbar.length === 0 || $containerSite.length === 0 || $footer.length === 0) return;
+    // init
+    const $window = $(window);
+
+    // onScroll
+    const _onScroll = function () {
+      // $containerSite: min-height
+      const diff = $window.height() - ($footer.offset().top + $footer.outerHeight(true));
+      const height = $containerSite.outerHeight();
+      $containerSite.css('min-height', height + diff);
+      // $categorySidebar: top
+      if ($categorySidebar.length > 0) {
+        $categorySidebar.css('top', $navbar.outerHeight() || 0);
+      }
+    };
+
+    // bind event
+    $window.on('scroll.infinite resize.infinite', _onScroll);
+    _onScroll();
+  }
+})();
