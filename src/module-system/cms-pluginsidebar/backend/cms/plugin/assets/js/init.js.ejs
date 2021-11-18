@@ -1,15 +1,16 @@
-$(document).ready(function() {
-});
+(function () {
+  $(document).ready(function () {});
 
-$(document).on('echo-ready', function() {
-  // tags
-  util.sidebar.tags({container:'.panel-tags'});
-  // recent comments
-  util.sidebar.commentsRecent({container:'.panel-comments-recent'});
-  // profile author
-  util.sidebar.profileAuthor({container:'.panel-profile-author'});
-  // article post
-  util.sidebar.articlePost({container:'.panel-article-post'});
-  // recent articles
-  util.sidebar.articlesRecent({container:'.panel-articles-recent'});
-});
+  $(document).on('echo-ready', function () {
+    // tags
+    util.sidebar.tags({ container: '.panel-tags' });
+    // recent comments
+    util.sidebar.commentsRecent({ container: '.panel-comments-recent' });
+    // profile author
+    util.sidebar.profileAuthor({ container: '.panel-profile-author' });
+    // article post
+    util.sidebar.articlePost({ container: '.panel-article-post' });
+    // recent articles
+    util.sidebar.articlesRecent({ container: '.panel-articles-recent' });
+  });
+})();
