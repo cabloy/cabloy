@@ -1,7 +1,6 @@
-version: "3.7"
+version: '3.7'
 
 services:
-
   app:
     depends_on:
       - mysql
@@ -11,12 +10,12 @@ services:
       dockerfile: docker-compose-dockerfile-app
     restart: always
     ports:
-      - "7202:7002"
+      - '7202:7002'
     volumes:
       - ./docker-compose/output/app/dist:/root/output/app/dist
       - ./docker-compose/output/app/cabloy:/root/cabloy
       - ./docker-compose/logs/app:/root/logs
-    command: ["./scripts/wait-for-it.sh", "mysql:3306", "redis:6379", "-s", "--", "./scripts/app-init.sh"]
+    command: ['./scripts/wait-for-it.sh', 'mysql:3306', 'redis:6379', '-s', '--', './scripts/app-init.sh']
 
   nginx:
     image: nginx:latest
@@ -24,7 +23,7 @@ services:
       - app
     restart: always
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./docker-compose/output/app/dist:/usr/share/nginx/app/dist
       - ./docker-compose/output/app/cabloy:/usr/share/nginx/app/cabloy
@@ -45,22 +44,22 @@ services:
       - --log-queries-not-using-indexes=1
     restart: always
     ports:
-      - "33306:3306"
+      - '33306:3306'
     volumes:
       - ./docker-compose/data/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "{{mysqlRootPassword}}"
-      MYSQL_DATABASE: {{name}}
-      MYSQL_USER: {{mysqlUserName}}
-      MYSQL_PASSWORD: "{{mysqlUserPassword}}"
+      MYSQL_ROOT_PASSWORD: '{{mysqlRootPassword}}'
+      MYSQL_DATABASE: '{{name}}'
+      MYSQL_USER: '{{mysqlUserName}}'
+      MYSQL_PASSWORD: '{{mysqlUserPassword}}'
     security_opt:
       - seccomp:unconfined
 
   redis:
     image: redis:latest
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ['redis-server', '--appendonly', 'yes']
     restart: always
     ports:
-      - "36379:6379"
+      - '36379:6379'
     volumes:
       - ./docker-compose/data/redis:/data
