@@ -21,6 +21,7 @@ CabloyJS 是一款自带工作流引擎的 Node.js 全栈框架, `接单快手�
 ## 文档
 
 - [官网 && 文档](https://cabloy.com)
+- [在线教程](https://cabloy.com/zh-cn/articles/tutorial-introduce.html)
 
 ## 在线演示
 
