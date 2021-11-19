@@ -237,7 +237,7 @@
       if (item.categoryCatalog === 0) {
         _item.children = true;
       } else {
-        _item.children = this._prepareTreeData(item.children);
+        _item.children = _prepareTreeData(item.children);
       }
       _list.push(_item);
     }
