@@ -5744,7 +5744,7 @@ module.exports = ctx => {
           cms,
         });
       }
-      if (userIdWho === 0)
+      if (userIdWho === 0) {
         return this._selectAtoms_0({
           iid,
           tableName,
@@ -5763,6 +5763,7 @@ module.exports = ctx => {
           mode,
           cms,
         });
+      }
       // formal/history
       return this._selectAtoms({
         iid,
