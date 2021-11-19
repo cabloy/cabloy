@@ -162,7 +162,7 @@ class TestUpdateCommand extends Command {
   getRegistryByType(key) {
     switch (key) {
       case 'china':
-        return 'https://registry.npm.taobao.org';
+        return 'https://registry.npmmirror.com';
       case 'npm':
         return 'https://registry.npmjs.org';
       default: {
@@ -173,7 +173,7 @@ class TestUpdateCommand extends Command {
         const home = homedir();
         let url = process.env.npm_registry || process.env.npm_config_registry || 'https://registry.npmjs.org';
         if (fse.existsSync(path.join(home, '.cnpmrc')) || fse.existsSync(path.join(home, '.tnpmrc'))) {
-          url = 'https://registry.npm.taobao.org';
+          url = 'https://registry.npmmirror.com';
         }
         url = url.replace(/\/$/, '');
         return url;

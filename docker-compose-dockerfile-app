@@ -26,8 +26,8 @@ RUN chmod +x  /opt/node/app/scripts/*.sh
 # RUN npm i -g lerna
 # RUN lerna bootstrap
 
-RUN npm i -g lerna --registry=https://registry.npm.taobao.org
-RUN lerna bootstrap --registry=https://registry.npm.taobao.org
+RUN npm i -g lerna --registry=https://registry.npmmirror.com
+RUN lerna bootstrap --registry=https://registry.npmmirror.com
 
 RUN npm run build:front
 
