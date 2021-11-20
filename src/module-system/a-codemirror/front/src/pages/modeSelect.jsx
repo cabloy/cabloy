@@ -2,7 +2,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 
 const ModesDefault =
-  'css,dart,dockerfile,go,html,javascript,lua,markdown,nginx,php,python,ruby,rust,shell,sql,swift,vue,xml,yaml';
+  'css,dart,diff,dockerfile,go,html,javascript,lua,markdown,nginx,php,python,ruby,rust,shell,sql,swift,vue,xml,yaml';
 export default {
   mixins: [ebPageContext],
   data() {
