@@ -429,6 +429,10 @@ module.exports = ctx => {
     }
 
     async clone({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // copy
       const keyDraft = await this._copy({
         target: 'clone',
         srcKey: { atomId: key.atomId },
@@ -437,7 +441,11 @@ module.exports = ctx => {
         user,
       });
       // ok
-      return { draft: { key: keyDraft } };
+      // get atom
+      const atom = await this.modelAtom.get({ id: keyDraft.atomId });
+      atom.module = atomClass.module;
+      atom.atomClassName = atomClass.atomClassName;
+      return { draft: { key: keyDraft, atom } };
     }
 
     async exportBulk({ atomClass, options, fields, user }) {
