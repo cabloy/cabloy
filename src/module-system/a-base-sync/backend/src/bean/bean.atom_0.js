@@ -56,7 +56,7 @@ module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, roleIdOwner, item, user }) {
+    async create({ atomClass, roleIdOwner, item, options, user }) {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
@@ -69,7 +69,7 @@ module.exports = ctx => {
       const res = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, item, user },
+        context: { atomClass, item, options, user },
         fn: 'create',
       });
       const { atomId, itemId } = res;
@@ -81,7 +81,10 @@ module.exports = ctx => {
       // notify
       this._notifyDrafts();
       // ok
-      return { atomId, itemId };
+      const key = { atomId, itemId };
+      const returnAtom = options?.returnAtom;
+      if (!returnAtom) return key;
+      return { key, atom: item };
     }
 
     // read

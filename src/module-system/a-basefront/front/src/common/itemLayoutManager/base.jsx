@@ -101,6 +101,9 @@ export default {
       if (!this.base.item) return null;
       const stage = this.base.item.atomStage;
       if (stage === undefined) return undefined;
+      return this.base_stageToString(stage);
+    },
+    base_stageToString(stage) {
       return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
     async base_onActionChanged(data) {

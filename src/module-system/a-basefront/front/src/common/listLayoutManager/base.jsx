@@ -96,6 +96,9 @@ export default {
       if (!stage) stage = 'formal';
       return stage;
     },
+    base_stageToString(stage) {
+      return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
+    },
     base_getExportFields() {
       return this.$meta.util.getProperty(this.base.config, 'render.list.info.export.fields');
     },

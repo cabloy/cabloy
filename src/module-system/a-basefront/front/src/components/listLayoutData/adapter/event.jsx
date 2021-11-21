@@ -13,7 +13,30 @@ export default {
       const action = data.action;
       // create
       if (action.name === 'create') {
-        // do nothing
+        // params
+        const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+        const paramsAtomClass = params.atomClass;
+        const paramsStage = params.options.stage;
+        // atom
+        const atom = data.atom;
+        // check stage
+        if (this.layoutManager.base_stageToString(atom.atomStage) !== paramsStage) {
+          // do nothing
+          return;
+        }
+        // check atomClass
+        if (
+          paramsAtomClass &&
+          (paramsAtomClass.module !== atom.module || paramsAtomClass.atomClassName !== atom.atomClassName)
+        ) {
+          // do nothing
+          return;
+        }
+        // refresh list
+        await this._loopProviders(async provider => {
+          this._callMethodProvider(provider, 'onPageRefresh');
+        });
+        // ok
         return;
       }
       // loop

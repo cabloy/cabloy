@@ -8,10 +8,12 @@ module.exports = app => {
       this.ctx.success(res);
     }
     async create() {
+      const options = this.ctx.request.body.options;
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
         item: this.ctx.request.body.item,
+        options,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

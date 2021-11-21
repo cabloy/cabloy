@@ -6,7 +6,7 @@ export default {
       const roleIdOwner = await this._onActionCreateGetRoleIdOwner();
       if (!roleIdOwner) return;
       // create
-      const key = await ctx.$api.post('/a/base/atom/create', {
+      const { key, atom } = await ctx.$api.post('/a/base/atom/create', {
         atomClass: {
           id: item.atomClassId,
           module: item.module,
@@ -14,9 +14,12 @@ export default {
         },
         roleIdOwner,
         item,
+        options: {
+          returnAtom: true,
+        },
       });
       // event
-      ctx.$meta.eventHub.$emit('atom:action', { key, action });
+      ctx.$meta.eventHub.$emit('atom:action', { key, action, atom });
       // menu
       if (!action.__noActionWrite) {
         const itemWrite = ctx.$utils.extend({}, item, key);
