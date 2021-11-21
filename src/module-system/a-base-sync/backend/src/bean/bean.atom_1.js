@@ -57,8 +57,12 @@ module.exports = ctx => {
       if (item.atomFlowId > 0) {
         this._notifyDraftsFlowing(user);
       }
+      // get formal atom
+      const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
+      atomFormal.module = atomClass.module;
+      atomFormal.atomClassName = atomClass.atomClassName;
       // return keyFormal
-      return { formal: { key: keyFormal } };
+      return { formal: { key: keyFormal, atom: atomFormal } };
     }
 
     async _switchToSimple({ atomClass, _atomClass, atom, user }) {

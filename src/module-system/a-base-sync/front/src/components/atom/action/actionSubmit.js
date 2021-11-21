@@ -9,6 +9,12 @@ export default {
         // delete draft
         if (item.atomStage === 0) {
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+          // list create
+          ctx.$meta.eventHub.$emit('atom:action', {
+            key: data.formal.key,
+            action: { name: 'create' },
+            atom: data.formal.atom,
+          });
         }
         // update formal
         ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' }, actionSource: ctx });
