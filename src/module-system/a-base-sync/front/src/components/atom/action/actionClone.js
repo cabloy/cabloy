@@ -7,18 +7,15 @@ export default {
         // clone
         const key = { atomId: item.atomId, itemId: item.itemId };
         const data = await ctx.$api.post('/a/base/atom/clone', { key });
-        const keyDraft = data.draft.key;
-        const _item = {
-          ...item,
-          atomId: keyDraft.atomId,
-          itemId: keyDraft.itemId,
-        };
+        const dataRes = data.draft || data.formal;
+        const keyDraft = dataRes.key;
+        const atomDraft = dataRes.atom;
         // event
-        ctx.$meta.eventHub.$emit('atom:action', { key: keyDraft, action: { name: 'create' }, atom: data.draft.atom });
+        ctx.$meta.eventHub.$emit('atom:action', { key: keyDraft, action: { name: 'create' }, atom: atomDraft });
         // open
         const url = ctx.$meta.util.replaceTemplate(
           '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
-          _item
+          atomDraft
         );
         let navigateOptions = action.navigateOptions;
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {

@@ -59,6 +59,7 @@ module.exports = ctx => {
       }
       // get formal atom
       const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
+      atomFormal.atomId = atomFormal.id;
       atomFormal.module = atomClass.module;
       atomFormal.atomClassName = atomClass.atomClassName;
       // return keyFormal
