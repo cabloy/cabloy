@@ -386,12 +386,29 @@ module.exports = ctx => {
       if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // check simple switch
       atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
+      // open draft
+      let res;
       if (atom.atomSimple) {
         // simple
-        return await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+        res = await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+      } else {
+        // not simple
+        res = await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
       }
-      // not simple
-      return await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
+      // ok
+      // get atom
+      const resData = res.draft || res.formal;
+      const keyDraft = resData.key;
+      atom = await this.modelAtom.get({ id: keyDraft.atomId });
+      atom.atomId = atom.id;
+      atom.module = atomClass.module;
+      atom.atomClassName = atomClass.atomClassName;
+      if (res.draft) {
+        res.draft.atom = atom;
+      } else {
+        res.formal.atom = atom;
+      }
+      return res;
     }
 
     async enable({ key, user }) {

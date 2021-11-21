@@ -5,17 +5,18 @@ export default {
       const key = { atomId: item.atomId, itemId: item.itemId };
       // openDraft
       const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
-      const keyWrite = data.draft ? data.draft.key : data.formal.key;
+      const dataRes = data.draft || data.formal;
+      const keyWrite = dataRes.key;
+      const atomWrite = dataRes.atom;
       const changed = data.changed;
+      // emit
+      if (changed) {
+        ctx.$meta.eventHub.$emit('atom:action', { key: keyWrite, action: { name: 'create' }, atom: atomWrite });
+      }
       // navigate
-      const _item = {
-        ...item,
-        atomId: keyWrite.atomId,
-        itemId: keyWrite.itemId,
-      };
       const url = ctx.$meta.util.replaceTemplate(
         '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
-        _item
+        atomWrite
       );
       ctx.$view.navigate(url, action.navigateOptions);
       // event: neednot check atomStage
