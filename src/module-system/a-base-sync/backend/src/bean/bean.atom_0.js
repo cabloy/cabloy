@@ -82,7 +82,7 @@ module.exports = ctx => {
       this._notifyDrafts();
       // ok
       const key = { atomId, itemId };
-      const returnAtom = options?.returnAtom;
+      const returnAtom = options && options.returnAtom;
       if (!returnAtom) return key;
       return { key, atom: item };
     }
