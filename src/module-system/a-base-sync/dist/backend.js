@@ -766,7 +766,7 @@ module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, roleIdOwner, item, user }) {
+    async create({ atomClass, roleIdOwner, item, options, user }) {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
@@ -779,7 +779,7 @@ module.exports = ctx => {
       const res = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, item, user },
+        context: { atomClass, item, options, user },
         fn: 'create',
       });
       const { atomId, itemId } = res;
@@ -791,7 +791,10 @@ module.exports = ctx => {
       // notify
       this._notifyDrafts();
       // ok
-      return { atomId, itemId };
+      const key = { atomId, itemId };
+      const returnAtom = options && options.returnAtom;
+      if (!returnAtom) return key;
+      return { key, atom: item };
     }
 
     // read
@@ -1093,12 +1096,29 @@ module.exports = ctx => {
       if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // check simple switch
       atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
+      // open draft
+      let res;
       if (atom.atomSimple) {
         // simple
-        return await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+        res = await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+      } else {
+        // not simple
+        res = await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
       }
-      // not simple
-      return await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
+      // ok
+      // get atom
+      const resData = res.draft || res.formal;
+      const keyDraft = resData.key;
+      atom = await this.modelAtom.get({ id: keyDraft.atomId });
+      atom.atomId = atom.id;
+      atom.module = atomClass.module;
+      atom.atomClassName = atomClass.atomClassName;
+      if (res.draft) {
+        res.draft.atom = atom;
+      } else {
+        res.formal.atom = atom;
+      }
+      return res;
     }
 
     async enable({ key, user }) {
@@ -1136,6 +1156,10 @@ module.exports = ctx => {
     }
 
     async clone({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // copy
       const keyDraft = await this._copy({
         target: 'clone',
         srcKey: { atomId: key.atomId },
@@ -1144,7 +1168,15 @@ module.exports = ctx => {
         user,
       });
       // ok
-      return { draft: { key: keyDraft } };
+      // get atom
+      const atom = await this.modelAtom.get({ id: keyDraft.atomId });
+      atom.atomId = atom.id;
+      atom.module = atomClass.module;
+      atom.atomClassName = atomClass.atomClassName;
+      // draft/formal
+      const res = { key: keyDraft, atom };
+      if (atom.atomStage === 0) return { draft: res };
+      return { formal: res };
     }
 
     async exportBulk({ atomClass, options, fields, user }) {
@@ -1628,8 +1660,13 @@ module.exports = ctx => {
       if (item.atomFlowId > 0) {
         this._notifyDraftsFlowing(user);
       }
+      // get formal atom
+      const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
+      atomFormal.atomId = atomFormal.id;
+      atomFormal.module = atomClass.module;
+      atomFormal.atomClassName = atomClass.atomClassName;
       // return keyFormal
-      return { formal: { key: keyFormal } };
+      return { formal: { key: keyFormal, atom: atomFormal } };
     }
 
     async _switchToSimple({ atomClass, _atomClass, atom, user }) {
@@ -10942,10 +10979,12 @@ module.exports = app => {
       this.ctx.success(res);
     }
     async create() {
+      const options = this.ctx.request.body.options;
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
         item: this.ctx.request.body.item,
+        options,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
@@ -12833,8 +12872,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.preferredRoles({ atomClass, user });
     }
 
-    async create({ atomClass, roleIdOwner, item, user }) {
-      return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, user });
+    async create({ atomClass, roleIdOwner, item, options, user }) {
+      return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, options, user });
     }
 
     async read({ key, options, user }) {
