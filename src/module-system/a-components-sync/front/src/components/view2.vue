@@ -71,7 +71,7 @@ export default {
     },
     returnTo(returnTo, options) {
       if (!returnTo) {
-        const modeIfEmpty = options?.modeIfEmpty || 'back';
+        const modeIfEmpty = (options && options.modeIfEmpty) || 'back';
         if (modeIfEmpty === 'back') {
           this.$f7router.back();
         } else {
@@ -80,7 +80,7 @@ export default {
       } else if (returnTo.indexOf('http://') === 0 || returnTo.indexOf('https://') === 0) {
         window.location.assign(returnTo);
       } else {
-        const navigateOptions = options?.navigateOptions || { target: '_self', reloadCurrent: true };
+        const navigateOptions = (options && options.navigateOptions) || { target: '_self', reloadCurrent: true };
         this.$view.navigate(returnTo, navigateOptions);
       }
     },
