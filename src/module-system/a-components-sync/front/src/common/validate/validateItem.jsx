@@ -161,8 +161,8 @@ export default {
         return _value;
       }
       this._handleComputedValue(parcel, key, property);
-      if (!this.checkIfEmptyForSelect(_value)) return _value;
-      if (this.checkIfEmptyForSelect(property.default)) return _value;
+      if (!this.checkIfNull(_value)) return _value;
+      if (this.checkIfNull(property.default)) return _value;
       // should change value so as to validate the default value
       if (!this.validate.readOnly && !property.ebReadOnly) {
         this.$nextTick(() => {
@@ -212,12 +212,16 @@ export default {
       if ((property.ebType === 'select' || property.ebType === 'dict') && this.checkIfEmptyForSelect(value)) {
         return null; // for distinguish from 0
       }
-      // special for string
-      if (property.type !== 'string' && this.checkIfEmptyForSelect(value)) {
+      // special for null
+      //   1. Number(null)=0
+      //   2. input text, should hold the current input state when backspace all chars
+      if (this.checkIfNull(value)) {
         return null;
       }
-      if (property.type === 'string' && (value === null || value === undefined)) {
-        return null;
+      // special for string
+      //   1. input text, should hold the current input state when backspace all chars
+      if (value === '') {
+        return value;
       }
       // others
       let _value;
@@ -242,6 +246,9 @@ export default {
       }
       // ok
       return _value;
+    },
+    checkIfNull(value) {
+      return value === undefined || value === null;
     },
     checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;

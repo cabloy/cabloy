@@ -69,10 +69,15 @@ export default {
           key={key}
           {...{ props }}
           onInput={valueNew => {
+            if (!property.ebCurrency) {
+              context.setValue(valueNew);
+            }
+          }}
+          onChange={valueNew => {
             if (property.ebCurrency) {
               valueNew = this._updateValueCurrency(valueNew);
+              context.setValue(valueNew);
             }
-            context.setValue(valueNew);
           }}
         >
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
