@@ -163,12 +163,13 @@ export default {
       this._handleComputedValue(parcel, key, property);
       if (!this.checkIfNull(_value)) return _value;
       if (this.checkIfNull(property.default)) return _value;
-      // should change value so as to validate the default value
-      if (!this.validate.readOnly && !property.ebReadOnly) {
-        this.$nextTick(() => {
-          this.setValue(parcel, key, property.default);
-        });
-      }
+      // #2025
+      // // should change value so as to validate the default value
+      // if (!this.validate.readOnly && !property.ebReadOnly) {
+      //   this.$nextTick(() => {
+      //     this.setValue(parcel, key, property.default);
+      //   });
+      // }
       return property.default;
     },
     setValue(parcel, key, value) {
