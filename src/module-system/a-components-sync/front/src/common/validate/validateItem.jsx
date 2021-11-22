@@ -191,6 +191,7 @@ export default {
       if (!property || property.type) {
         // change src
         this.$set(parcel.dataSrc, key, _value);
+        // #2025
         // emit changed
         if (property && !property.ebReadOnly && !this._checkIfEqual(_valueOld, _value)) {
           this.$emit('change', _value);
