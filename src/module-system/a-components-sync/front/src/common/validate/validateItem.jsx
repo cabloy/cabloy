@@ -163,6 +163,12 @@ export default {
       this._handleComputedValue(parcel, key, property);
       if (!this.checkIfEmptyForSelect(_value)) return _value;
       if (this.checkIfEmptyForSelect(property.default)) return _value;
+      // should change value so as to validate the default value
+      if (!this.validate.readOnly && !property.ebReadOnly) {
+        this.$nextTick(() => {
+          this.setValue(parcel, key, property.default);
+        });
+      }
       return property.default;
     },
     setValue(parcel, key, value) {
