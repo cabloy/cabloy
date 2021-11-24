@@ -16,30 +16,25 @@ export default {
   },
   methods: {
     onValidateError(error) {
-      const input = this._findText();
+      const input = this._findInputTextElement();
       input[0].setCustomValidity(error);
       input[0].ebCustomError = error;
       this.$f7.input.validate(input);
       this.checkEmptyState();
     },
     onInput(event) {
-      const input = this._findText();
-      input[0].ebCustomError = null;
       this.$emit('input', event.target.value);
-      this.clearValidateError();
+      this._clearValidateError_input();
     },
     onChange(event) {
       this.$emit('change', event.target.value);
+      this._clearValidateError_input();
     },
     onInputClear(event) {
       this.$emit('input:clear', event.target.value);
     },
     checkEmptyState() {
-      this.$f7.input.checkEmptyState(this._findText());
-    },
-    _findText() {
-      const tag = this.type === 'textarea' ? 'textarea' : 'input';
-      return this.$$(this.$el).find(tag);
+      this.$f7.input.checkEmptyState(this._findInputTextElement());
     },
   },
 };
