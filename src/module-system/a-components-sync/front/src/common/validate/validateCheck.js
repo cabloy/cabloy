@@ -52,18 +52,5 @@ export default {
     getDataPath() {
       return this.dataPath;
     },
-    _clearValidateError_input() {
-      this.$nextTick(() => {
-        const input = this._findInputTextElement();
-        if (input[0]) {
-          input[0].ebCustomError = null;
-        }
-        this.clearValidateError();
-      });
-    },
-    _findInputTextElement() {
-      const tag = this.type === 'textarea' ? 'textarea' : 'input';
-      return this.$$(this.$el).find(tag);
-    },
   },
 };
