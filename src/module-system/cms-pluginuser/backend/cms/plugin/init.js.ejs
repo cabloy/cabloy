@@ -100,7 +100,7 @@
     }
   }
 
-  function onClickUserLogout() {
+  window.onClickUserLogout = function() {
     util.performAction({
       method: 'post',
       url: '/a/base/auth/logout',
