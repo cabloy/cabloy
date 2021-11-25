@@ -101,6 +101,9 @@ module.exports = app => {
       if (item.editMode === 1) {
         const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
         imageFirst = (matches && matches[1]) || '';
+        if (imageFirst.length > 255) {
+          imageFirst = '';
+        }
       }
       // audio first
       let audioFirst = '';
@@ -120,6 +123,9 @@ module.exports = app => {
             }
           }
         }
+      }
+      if (audioCoverFirst.length > 255) {
+        audioCoverFirst = '';
       }
       if (audioCoverFirst && !imageFirst) {
         imageFirst = audioCoverFirst;
