@@ -195,13 +195,7 @@ module.exports = ctx => {
       const provider = info.user && info.user.provider;
       if (provider && provider.module === 'a-wechat') {
         info.config = extend(true, info.config, {
-          modules: {
-            'a-base': {
-              account: {
-                needActivation: false,
-              },
-            },
-          },
+          modules: {},
         });
       }
       // next
@@ -517,6 +511,7 @@ module.exports = function (ctx) {
           avatar: userInfo.headimgurl,
           profile: userInfo,
         },
+        autoActivate: true,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({

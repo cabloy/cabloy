@@ -229,13 +229,7 @@ module.exports = ctx => {
       const provider = info.user && info.user.provider;
       if (provider && provider.module === 'a-dingtalk') {
         info.config = extend(true, info.config, {
-          modules: {
-            'a-base': {
-              account: {
-                needActivation: false,
-              },
-            },
-          },
+          modules: {},
         });
       }
       // next
@@ -670,6 +664,7 @@ module.exports = function (ctx) {
           mobileVerified: true,
           profile: member,
         },
+        autoActivate: true,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({
