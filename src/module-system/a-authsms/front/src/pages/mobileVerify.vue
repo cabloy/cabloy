@@ -45,6 +45,7 @@ export default {
       captcha: {
         token: null,
       },
+      returnTo: this.$f7route.query.returnTo || null,
     };
   },
   computed: {
@@ -76,7 +77,7 @@ export default {
           captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
         })
         .then(() => {
-          this.$meta.vueApp.reload({ echo: true });
+          this.$meta.vueApp.reload({ echo: true, hash: this.returnTo });
         });
     },
     onPerformOk() {

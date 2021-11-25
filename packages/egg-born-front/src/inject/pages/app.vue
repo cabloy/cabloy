@@ -300,7 +300,8 @@ export default {
     _checkActivation() {
       //
       const hashInit = this.$store.state.auth.hashInit;
-      if (hashInit) return;
+      // should not return, as cause 403 when open hashInit
+      // if (hashInit) return;
       //
       const userAgent = this.$store.state.auth.user.agent;
       const configBase = this.$meta.config.modules['a-base'];
@@ -312,7 +313,14 @@ export default {
       const way = this._chooseActivationWay(account);
       if (!way) return;
       //
-      this.$store.commit('auth/setHashInit', way.url);
+      let url = way.url;
+      // need not check hashInit valid
+      if (hashInit) {
+        url = this.$meta.util.combineQueries(url, {
+          returnTo: hashInit,
+        });
+      }
+      this.$store.commit('auth/setHashInit', url);
     },
     _chooseActivationWay(account) {
       const ways = account.activationWays.split(',');
@@ -346,11 +354,12 @@ export default {
       const hashInit = this.$store.state.auth.hashInit;
       this.$store.commit('auth/setHashInit', null);
       //
-      const configLayout = this._getLayoutModuleConfig();
-      if (hashInit && hashInit !== '/' && hashInit !== configLayout.login) {
-        return hashInit;
-      }
+      if (this._hashInitValid(hashInit)) return hashInit;
       return null;
+    },
+    _hashInitValid(hashInit) {
+      const configLayout = this._getLayoutModuleConfig();
+      return hashInit && hashInit !== '/' && hashInit !== configLayout.login;
     },
     toLogin({ url, module, path, state, hash }) {
       // hash
