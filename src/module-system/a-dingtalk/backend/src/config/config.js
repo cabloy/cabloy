@@ -129,6 +129,11 @@ module.exports = appInfo => {
     },
   };
 
+  // auth
+  config.auth = {
+    autoActivate: true,
+  };
+
   // account
   config.account = {};
 

@@ -43,6 +43,8 @@ module.exports = function (ctx) {
 
     // profileId: wxwork:memberId
     async _ensureAuthUser({ scene, memberId, member }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName);
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
@@ -62,7 +64,7 @@ module.exports = function (ctx) {
           mobileVerified: true,
           profile: member,
         },
-        autoActivate: true,
+        autoActivate: config.auth.autoActivate,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({

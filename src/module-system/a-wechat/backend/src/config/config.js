@@ -50,6 +50,11 @@ module.exports = appInfo => {
     },
   };
 
+  // auth
+  config.auth = {
+    autoActivate: false,
+  };
+
   // account
   config.account = {};
 
