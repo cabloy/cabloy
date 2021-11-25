@@ -123,6 +123,7 @@ module.exports = function (ctx) {
           avatar: userInfo.headimgurl,
           profile: userInfo,
         },
+        autoActivate: true,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({

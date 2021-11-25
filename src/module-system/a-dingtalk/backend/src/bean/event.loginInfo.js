@@ -8,13 +8,7 @@ module.exports = ctx => {
       const provider = info.user && info.user.provider;
       if (provider && provider.module === 'a-dingtalk') {
         info.config = extend(true, info.config, {
-          modules: {
-            'a-base': {
-              account: {
-                needActivation: false,
-              },
-            },
-          },
+          modules: {},
         });
       }
       // next

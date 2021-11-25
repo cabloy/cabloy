@@ -62,6 +62,7 @@ module.exports = function (ctx) {
           mobileVerified: true,
           profile: member,
         },
+        autoActivate: true,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({

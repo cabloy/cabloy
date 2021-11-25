@@ -127,12 +127,12 @@ module.exports = ctx => {
       if (checkUser && ctx.state.user.op.anonymous) ctx.throw(401);
     }
 
-    async setActivated({ user }) {
+    async setActivated({ user, autoActivate }) {
       // save
       if (user.activated !== undefined) delete user.activated;
       await this.save({ user });
       // tryActivate
-      const tryActivate = user.emailConfirmed || user.mobileVerified;
+      const tryActivate = autoActivate || user.emailConfirmed || user.mobileVerified;
       if (tryActivate) {
         await this.userRoleStageActivate({ userId: user.id });
       }
@@ -513,7 +513,7 @@ module.exports = ctx => {
           userId = user.id;
         } else {
           // add user
-          userId = await this._addUserInfo(profileUser.profile, columns);
+          userId = await this._addUserInfo(profileUser.profile, columns, profileUser.autoActivate);
           user = await this.model.get({ id: userId });
           // update auth's userId
           await this.modelAuth.update({
@@ -627,7 +627,7 @@ module.exports = ctx => {
       profile._avatar = res2.downloadUrl;
     }
 
-    async _addUserInfo(profile, columns) {
+    async _addUserInfo(profile, columns, autoActivate) {
       const user = {};
       for (const column of columns) {
         // others
@@ -648,7 +648,7 @@ module.exports = ctx => {
         data.mobileVerified = 1;
       }
       // setActivated
-      await this.setActivated({ user: data });
+      await this.setActivated({ user: data, autoActivate });
       // ok
       return userId;
     }
