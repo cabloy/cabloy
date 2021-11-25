@@ -495,6 +495,8 @@ module.exports = function (ctx) {
 
     // profileId : unionid:openid
     async _ensureAuthUser({ scene, openid, userInfo }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName);
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
@@ -511,7 +513,7 @@ module.exports = function (ctx) {
           avatar: userInfo.headimgurl,
           profile: userInfo,
         },
-        autoActivate: true,
+        autoActivate: config.auth.autoActivate,
       };
       // provider
       const providerItem = await ctx.bean.user.getAuthProvider({
@@ -661,6 +663,11 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
+  };
+
+  // auth
+  config.auth = {
+    autoActivate: false,
   };
 
   // account
