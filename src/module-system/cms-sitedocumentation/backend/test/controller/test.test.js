@@ -1,7 +1,7 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('[your tests start from here]', () => {
-  it('[atom]', async () => {
+describe.only('test/controller/test.test.js', () => {
+  it('Document', async () => {
     app.mockSession({});
 
     // atomClass info
