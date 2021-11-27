@@ -37,7 +37,6 @@ describe('test/controller/test.test.js', () => {
         key: keyDraft,
         item: {
           atomName: 'test',
-          description: 'this is a test',
         },
       });
     assert(result.body.code === 0);
