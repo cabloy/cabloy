@@ -13,7 +13,7 @@ module.exports = app => {
         atomClassName: 'document',
         atomAction: 'create',
       }),
-      resourceRoles: 'authenticated',
+      resourceRoles: 'template.cms-documentation-writer',
     },
     {
       atomName: 'Document List',
@@ -26,7 +26,7 @@ module.exports = app => {
         atomClassName: 'document',
         atomAction: 'read',
       }),
-      resourceRoles: 'authenticated',
+      resourceRoles: 'root',
     },
   ];
   return resources;
