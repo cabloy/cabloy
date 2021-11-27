@@ -11,12 +11,24 @@ module.exports = app => {
           info: {
             bean: 'document',
             title: 'Document',
-            tableName: 'cmsDocument',
-            language: false,
+            tableName: '',
+            language: true,
             category: true,
             tag: true,
+            cms: true,
           },
-          actions: {},
+          actions: {
+            preview: {
+              code: 101,
+              title: 'Preview',
+              actionModule: 'a-cms',
+              actionComponent: 'action',
+              icon: { material: 'visibility' },
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'draft,formal',
+            },
+          },
           validator: 'document',
           search: {
             validator: 'documentSearch',
@@ -40,11 +52,6 @@ module.exports = app => {
       },
       keywords: {},
       schemas,
-    },
-    index: {
-      indexes: {
-        cmsDocument: 'createdAt,updatedAt,atomId',
-      },
     },
   };
   return meta;
