@@ -1,8 +1,4 @@
-const document = require('./model/document.js');
-
 module.exports = app => {
-  const models = {
-    document,
-  };
+  const models = {};
   return models;
 };
