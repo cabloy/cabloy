@@ -5,6 +5,4 @@ function loadjsx(name) {
   return require(`./pages/${name}.jsx`).default;
 }
 
-export default [
-  // { path: 'demo', component: load('demo') },
-];
+export default [];
