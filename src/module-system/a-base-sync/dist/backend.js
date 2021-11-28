@@ -4399,9 +4399,6 @@ module.exports = ctx => {
     //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-    //   { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
-    //   { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
-    //   { roleName: 'cms-publisher', action: 'publish', scopeNames: 'authenticated' },
     //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
     // ];
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {

@@ -1,7 +1,18 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 183:
+/***/ 224:
+/***/ ((module) => {
+
+module.exports = app => {
+  const aops = {};
+  return aops;
+};
+
+
+/***/ }),
+
+/***/ 957:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -56,65 +67,66 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // create roles: cms-community-writer to template
-        const roles = ['cms-community-writer'];
+        // create roles: cms-documentation-writer to template
+        const roles = ['cms-documentation-writer'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
-        const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
         for (const roleName of roles) {
           const roleId = await this.ctx.bean.role.add({
             roleName,
             roleIdParent: roleTemplate.id,
           });
-          // role:superuser include cms-community
+          // role:superuser include cms-documentation
           await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
-          // role:activated include cms-community-writer
-          if (roleName === 'cms-community-writer') {
-            await this.ctx.bean.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
-          }
         }
         // build roles
         await this.ctx.bean.role.setDirty(true);
 
         // add role rights
         const roleRights = [
-          { roleName: 'cms-community-writer', action: 'create' },
-          { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-community-writer', action: 'write', scopeNames: 0 },
-          { roleName: 'cms-community-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-community-writer', action: 'clone', scopeNames: 0 },
-          { roleName: 'cms-community-writer', action: 'deleteBulk' },
-          { roleName: 'cms-community-writer', action: 'exportBulk' },
+          { roleName: 'cms-documentation-writer', action: 'create' },
+          { roleName: 'cms-documentation-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-documentation-writer', action: 'write', scopeNames: 0 },
+          { roleName: 'cms-documentation-writer', action: 'delete', scopeNames: 0 },
+          { roleName: 'cms-documentation-writer', action: 'clone', scopeNames: 0 },
+          { roleName: 'cms-documentation-writer', action: 'deleteBulk' },
+          { roleName: 'cms-documentation-writer', action: 'exportBulk' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 0 },
+          { roleName: 'root', action: 'layout', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'preview', scopeNames: 'authenticated' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
-      }
-
-      if (options.version === 2) {
-        // add role rights
-        const roleRights = [
-          { roleName: 'root', action: 'layout', scopeNames: 'root' }, //
-          { roleName: 'root', action: 'preview', scopeNames: 'root' }, //
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'document', roleRights });
       }
     }
 
     async test() {
+      await this._test_categories_tags();
+    }
+
+    async _test_categories_tags() {
       const atomClass = {
         module: moduleInfo.relativeName,
-        atomClassName: 'post',
+        atomClassName: 'document',
       };
+      // categories
       const categories = [
         // en-us
-        { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
-        { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, categorySorting: 2 },
-        { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, categorySorting: 3 },
+        { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test2-2', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
         // zh-cn
-        { categoryName: '分享', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
-        { categoryName: '问答', language: 'zh-cn', categoryIdParent: 0, categorySorting: 2 },
-        { categoryName: '公告', language: 'zh-cn', categoryIdParent: 0, categorySorting: 3 },
+        { categoryName: '目录1', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2', language: 'zh-cn', categoryIdParent: 0 },
+        { categoryName: '目录2-1', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录2-2', language: 'zh-cn', categoryIdParent: '目录2' },
+        { categoryName: '目录3', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: '隐藏目录', language: 'zh-cn', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: '加标记的目录', language: 'zh-cn', categoryIdParent: 0, categoryFlag: 'Flag' },
       ];
       const categoryIds = {};
       for (const item of categories) {
@@ -132,6 +144,29 @@ module.exports = app => {
         });
         categoryIds[item.categoryName] = categoryId;
       }
+      // tags
+      const tags = [
+        // en-us
+        { tagName: 'Life', language: 'en-us' },
+        { tagName: 'Study', language: 'en-us' },
+        { tagName: 'Work', language: 'en-us' },
+        // zh-cn
+        { tagName: '生活', language: 'zh-cn' },
+        { tagName: '学习', language: 'zh-cn' },
+        { tagName: '工作', language: 'zh-cn' },
+      ];
+      const tagIds = {};
+      for (const item of tags) {
+        // add
+        const tagId = await this.ctx.bean.tag.add({
+          atomClass,
+          data: {
+            language: item.language,
+            tagName: item.tagName,
+          },
+        });
+        tagIds[item.tagName] = tagId;
+      }
     }
   }
 
@@ -145,7 +180,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const versionManager = __webpack_require__(899);
-const atomPost = __webpack_require__(183);
+const atomDocument = __webpack_require__(957);
 
 module.exports = app => {
   const beans = {
@@ -155,9 +190,9 @@ module.exports = app => {
       bean: versionManager,
     },
     // atom
-    'atom.post': {
+    'atom.document': {
       mode: 'app',
-      bean: atomPost,
+      bean: atomDocument,
     },
   };
   return beans;
@@ -177,21 +212,21 @@ module.exports = appInfo => {
   config.cms = {};
   config.cms.site = {
     base: {
-      title: 'Community',
+      title: 'Documentations',
       subTitle: 'Everything About CabloyJS',
       description: '',
       keywords: '',
     },
     host: {
       url: 'http://localhost',
-      rootPath: 'cms-test-community',
+      rootPath: 'cms-test-documentation',
     },
     language: {
       default: 'en-us',
       items: 'en-us',
     },
     themes: {
-      'en-us': 'cms-themecommunity',
+      'en-us': 'cms-themedocs',
     },
     edit: {
       mode: 1, // markdown
@@ -239,9 +274,7 @@ module.exports = {};
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {
-  Post2: 'Post',
-};
+module.exports = {};
 
 
 /***/ }),
@@ -250,11 +283,10 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  'CMS:Community': 'CMS:社区',
-  Post2: '帖子',
-  'Create Post': '新建帖子',
-  'Post List': '帖子列表',
-  'Post List(by Category)': '帖子列表(按目录)',
+  'CMS:Documentation': 'CMS:文档',
+  Document: '文档',
+  'Create Document': '新建文档',
+  'Document List': '文档列表',
 };
 
 
@@ -271,7 +303,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 801:
+/***/ 734:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -287,7 +319,7 @@ module.exports = app => {
           options: {
             atom: {
               module: moduleInfo.relativeName,
-              atomClassName: 'post',
+              atomClassName: 'document',
             },
             conditionExpression: null,
           },
@@ -331,9 +363,9 @@ module.exports = app => {
     },
   };
   const definition = {
-    atomName: 'Community Post Publish',
-    atomStaticKey: 'flowPostPublish',
-    atomRevision: 100,
+    atomName: 'CMS Document Publish',
+    atomStaticKey: 'flowDocumentPublish',
+    atomRevision: 0,
     description: '',
     content: JSON.stringify(content),
   };
@@ -346,10 +378,10 @@ module.exports = app => {
 /***/ 772:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const postPublish = __webpack_require__(801);
+const documentPublish = __webpack_require__(734);
 
 module.exports = app => {
-  const flowDefs = [postPublish(app)];
+  const flowDefs = [documentPublish(app)];
   return flowDefs;
 };
 
@@ -364,27 +396,27 @@ module.exports = app => {
   const resources = [
     // menu
     {
-      atomName: 'Create Post',
-      atomStaticKey: 'createPost',
+      atomName: 'Create Document',
+      atomStaticKey: 'createDocument',
       atomRevision: 0,
       atomCategoryId: 'a-base:menu.Create',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        atomClassName: 'post',
+        atomClassName: 'document',
         atomAction: 'create',
       }),
-      resourceRoles: 'template.cms-community-writer',
+      resourceRoles: 'template.cms-documentation-writer',
     },
     {
-      atomName: 'Post List',
-      atomStaticKey: 'listPost',
+      atomName: 'Document List',
+      atomStaticKey: 'listDocument',
       atomRevision: 0,
       atomCategoryId: 'a-base:menu.List',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        atomClassName: 'post',
+        atomClassName: 'document',
         atomAction: 'read',
       }),
       resourceRoles: 'root',
@@ -396,19 +428,16 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 672:
 /***/ ((module) => {
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
-  // post
-  schemas.post = {
+  // document
+  schemas.document = {
     type: 'object',
     properties: {
-      atomId: {
-        type: 'number',
-      },
       // title
       __groupTitle: {
         ebType: 'group-flatten',
@@ -434,7 +463,6 @@ module.exports = app => {
       __groupBasicInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
-        ebGroupWhole: true,
       },
       atomLanguage: {
         type: 'string',
@@ -453,10 +481,67 @@ module.exports = app => {
         ebType: 'tags',
         ebTitle: 'Tags',
       },
+      keywords: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Keywords',
+      },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Description',
+      },
+      imageCover: {
+        type: 'string',
+        ebType: 'file',
+        ebTitle: 'ArticleCover',
+        ebParams: { mode: 1 },
+      },
+      // Extra
+      __groupExtra: {
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      slug: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Slug',
+        'x-slug': true,
+      },
+      sticky: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Sticky',
+        default: false,
+      },
+      sorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
+      allowComment: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Comment',
+        default: true,
+      },
+      flag: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Flag',
+      },
+      extra: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Extra Attributes',
+      },
     },
   };
-  // post search
-  schemas.postSearch = {
+
+  // document search
+  schemas.documentSearch = {
     type: 'object',
     properties: {
       html: {
@@ -469,6 +554,23 @@ module.exports = app => {
       },
     },
   };
+
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const document = __webpack_require__(672);
+
+module.exports = app => {
+  const schemas = {};
+  // document
+  Object.assign(schemas, document(app));
+  // ok
   return schemas;
 };
 
@@ -494,6 +596,8 @@ const locales = __webpack_require__(25);
 const errors = __webpack_require__(624);
 
 module.exports = app => {
+  // aops
+  const aops = __webpack_require__(224)(app);
   // beans
   const beans = __webpack_require__(187)(app);
   // routes
@@ -508,6 +612,7 @@ module.exports = app => {
   const meta = __webpack_require__(458)(app);
 
   return {
+    aops,
     beans,
     routes,
     controllers,
@@ -527,23 +632,20 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // schemas
   const schemas = __webpack_require__(232)(app);
+  // static
   const staticFlowDefs = __webpack_require__(772)(app);
   const staticResources = __webpack_require__(429)(app);
+  // meta
   const meta = {
     base: {
       atoms: {
-        post: {
+        document: {
           info: {
-            bean: 'post',
-            title: 'Post2',
+            bean: 'document',
+            title: 'Document',
             tableName: '',
-            tableNameModes: {
-              default: '',
-              full: '',
-              search: '',
-            },
             language: true,
             category: true,
             tag: true,
@@ -561,9 +663,9 @@ module.exports = app => {
               stage: 'draft,formal',
             },
           },
-          validator: 'post',
+          validator: 'document',
           search: {
-            validator: 'postSearch',
+            validator: 'documentSearch',
           },
         },
       },
@@ -578,18 +680,15 @@ module.exports = app => {
     },
     validation: {
       validators: {
-        post: {
-          schemas: 'post',
+        document: {
+          schemas: 'document',
         },
-        postSearch: {
-          schemas: 'postSearch',
+        documentSearch: {
+          schemas: 'documentSearch',
         },
       },
       keywords: {},
-      schemas: {
-        post: schemas.post,
-        postSearch: schemas.postSearch,
-      },
+      schemas,
     },
   };
   return meta;

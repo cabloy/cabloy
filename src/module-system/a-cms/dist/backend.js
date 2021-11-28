@@ -1947,8 +1947,8 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version {
     async _init_1(options) {
-      // create roles: cms-writer cms-publisher to template
-      const roles = ['cms-writer', 'cms-publisher'];
+      // create roles: cms-writer to template
+      const roles = ['cms-writer'];
       const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
       const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
       for (const roleName of roles) {
@@ -1956,7 +1956,7 @@ module.exports = app => {
           roleName,
           roleIdParent: roleTemplate.id,
         });
-        // role:superuser include cms-writer cms-publisher
+        // role:superuser include cms-writer
         await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
       }
       // build roles
@@ -1971,8 +1971,6 @@ module.exports = app => {
         { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
         { roleName: 'cms-writer', action: 'deleteBulk' },
         { roleName: 'cms-writer', action: 'exportBulk' },
-        { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
-        { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
         { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         { roleName: 'root', action: 'read', scopeNames: 0 },
       ];
