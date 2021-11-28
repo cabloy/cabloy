@@ -38,6 +38,7 @@ describe('test/controller/test.test.js', () => {
         item: {
           atomName: 'test',
         },
+        options: { ignoreFlow: true },
       });
     assert(result.body.code === 0);
     const keyFormal = result.body.data.formal.key;
