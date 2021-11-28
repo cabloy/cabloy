@@ -2,6 +2,7 @@ module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
+  const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
@@ -36,6 +37,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-flow.flowDef': {
+          items: staticFlowDefs,
+        },
         'a-base.resource': {
           items: staticResources,
         },
