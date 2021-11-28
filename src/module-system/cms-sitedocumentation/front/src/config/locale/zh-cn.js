@@ -1,4 +1,3 @@
 export default {
-  Name: '名称',
-  Description: '描述',
+  'CMS:Documentation': 'CMS:文档',
 };
