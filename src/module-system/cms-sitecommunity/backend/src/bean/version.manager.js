@@ -10,7 +10,7 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // create roles: cms-community-writer to template
-        const roles = ['cms-community-writer', 'cms-community-publisher'];
+        const roles = ['cms-community-writer'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
         const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
@@ -38,8 +38,6 @@ module.exports = app => {
           { roleName: 'cms-community-writer', action: 'clone', scopeNames: 0 },
           { roleName: 'cms-community-writer', action: 'deleteBulk' },
           { roleName: 'cms-community-writer', action: 'exportBulk' },
-          { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 0 },
         ];

@@ -10,7 +10,6 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // create roles: cms-documentation-writer to template
-        //   need not 'cms-documentation-publisher'
         const roles = ['cms-documentation-writer'];
         const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
         const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
