@@ -52,7 +52,7 @@ module.exports = appInfo => {
 
   // auth
   config.auth = {
-    autoActivate: false,
+    autoActivate: true,
   };
 
   // account
