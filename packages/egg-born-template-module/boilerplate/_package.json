@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-{{name}}",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "title": "{{name}}",
   "eggBornModule": {
     "fileVersion": 0,
@@ -24,5 +24,8 @@
     "egg-born-mock": "^2.1.2",
     "require3": "^2.1.2",
     "extend2": "^1.0.0"
+  },
+  "peerDependencies": {
+    "cabloy": "^4.0.0"
   }
 }
