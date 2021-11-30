@@ -81,9 +81,23 @@
         if (!node) return e.preventDefault();
         if (node.type === 'folder') return e.preventDefault();
         if (node.type === 'file' && node.id === `${articleCategoryId}:${env.article.atomId}`) {
-          return (window.location.href = '#');
+          window.location.href = '#';
+          return;
         }
-        window.location.href = node.a_attr.href;
+        if (node.type === 'file') {
+          window.location.href = node.a_attr.href;
+          return;
+        }
+        if (node.type === 'h2') {
+          const $h2 = $(node.a_attr.href);
+          if ($h2.length > 0) {
+            $h2[0].scrollIntoView({
+              block: 'center',
+              behavior: 'smooth',
+            });
+          }
+          return;
+        }
       })
       .on('load_node.jstree', function (e, data) {
         if (data.status) {
@@ -107,7 +121,11 @@
         file: {
           icon: 'jstree-icon jstree-file',
         },
-        h2: {},
+        h2: {
+          li_attr: {
+            class: 'jstree-article-header',
+          },
+        },
       },
       core: {
         check_callback: true,
@@ -195,9 +213,6 @@
         text: h2.text(),
         type: 'h2',
         icon: false,
-        li_attr: {
-          class: 'jstree-article-header',
-        },
         a_attr: {
           href: `#${h2linkId}`,
         },
