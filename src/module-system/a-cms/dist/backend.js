@@ -3527,10 +3527,11 @@ module.exports = appInfo => {
     },
     language: {
       default: 'en-us',
-      items: 'en-us',
+      items: 'en-us,zh-cn',
     },
     themes: {
       'en-us': 'cms-themeblog',
+      'zh-cn': 'cms-themeblog',
     },
     edit: {
       mode: 1, // markdown
