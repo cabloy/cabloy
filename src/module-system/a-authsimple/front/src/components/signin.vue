@@ -45,7 +45,8 @@
                 ></eb-component>
               </div>
             </eb-list-input>
-            <f7-list-item :title="$text('Remember Me')">
+            <f7-list-item>
+              <div slot="title" class="eb-cursor-pointer" @click="onClickRememberMe">{{ $text('Remember Me') }}</div>
               <f7-icon slot="media"></f7-icon>
               <eb-toggle slot="after" v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
@@ -153,6 +154,9 @@ export default {
     },
     onSubmit() {
       this.$refs.buttonSubmit.onClick();
+    },
+    onClickRememberMe() {
+      this.data.rememberMe = !this.data.rememberMe;
     },
   },
 };
