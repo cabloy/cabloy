@@ -182,7 +182,14 @@
   }
 
   function _getRelativeTop() {
-    return env._docTree && env._docTree.relativeTop;
+    let category = env._docTree && env._docTree.relativeTop;
+    if (!category && env.article) {
+      category = {
+        id: env.article.atomCategoryId,
+        categoryName: env.article.atomCategoryName,
+      };
+    }
+    return category;
   }
 
   function _getTree(categoryId) {
