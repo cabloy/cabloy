@@ -10,10 +10,10 @@ export default function (Vue) {
       this._queue[relativeName].push(cb);
       return this._queue[relativeName].length === 1;
     },
-    pop(relativeName, module) {
+    pop(relativeName, module, err) {
       if (!this._queue[relativeName]) return;
       for (const cb of this._queue[relativeName]) {
-        cb(module);
+        cb(module, err);
       }
       delete this._queue[relativeName];
     },
@@ -54,17 +54,30 @@ export default function (Vue) {
         const moduleRepo = modulesRepo.modules[relativeName];
         if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
         if (loadingQueue.push(relativeName, cb)) {
-          if (moduleRepo.info.sync) {
-            this._require(relativeName, module => loadingQueue.pop(relativeName, module));
-          } else {
-            this._import(relativeName, module => loadingQueue.pop(relativeName, module));
+          try {
+            if (moduleRepo.info.sync) {
+              this._require(relativeName, module => loadingQueue.pop(relativeName, module));
+            } else {
+              this._import(relativeName)
+                .then(module => loadingQueue.pop(relativeName, module))
+                .catch(err => {
+                  loadingQueue.pop(relativeName, null, err);
+                });
+            }
+          } catch (err) {
+            loadingQueue.pop(relativeName, null, err);
           }
         }
       } else {
-        return new Promise(resolve => {
-          this.use(moduleName, module => {
-            resolve(module);
-          });
+        return new Promise((resolve, reject) => {
+          try {
+            this.use(moduleName, (module, err) => {
+              if (err) return reject(err);
+              resolve(module);
+            });
+          } catch (err) {
+            reject(err);
+          }
         });
       }
     },
@@ -113,25 +126,29 @@ export default function (Vue) {
       // install
       Vue.use(instance.default, callback, { moduleInfo });
     },
-    _import(relativeName, cb) {
-      const moduleRepo = modulesRepo.modules[relativeName];
-      if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
-      nprogress.start();
-      moduleRepo
-        .instance()
-        .then(instance => {
-          nprogress.done();
-          if (!instance || !instance.default || !instance.default.install) {
-            instance = window[relativeName];
-          }
-          this.install(instance, moduleRepo.info, module => {
-            cb(module);
+    async _import(relativeName) {
+      return new Promise((resolve, reject) => {
+        const moduleRepo = modulesRepo.modules[relativeName];
+        if (!moduleRepo) {
+          return reject(new Error(`Module ${relativeName} not exists`));
+        }
+        nprogress.start();
+        moduleRepo
+          .instance()
+          .then(instance => {
+            nprogress.done();
+            if (!instance || !instance.default || !instance.default.install) {
+              instance = window[relativeName];
+            }
+            this.install(instance, moduleRepo.info, module => {
+              resolve(module);
+            });
+          })
+          .catch(err => {
+            nprogress.done();
+            reject(err);
           });
-        })
-        .catch(err => {
-          nprogress.done();
-          throw err;
-        });
+      });
     },
     requireAllMonkeys() {
       for (const relativeName in modulesRepo.modulesMonkey) {
