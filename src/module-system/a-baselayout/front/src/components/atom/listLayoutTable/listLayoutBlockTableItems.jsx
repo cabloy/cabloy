@@ -61,15 +61,34 @@ export default {
     },
   },
   mounted() {
+    // queueScroll
+    this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
     this.layoutManager.$on('providerPaged:pageCurrentChanged', this.onPageCurrentChanged);
   },
   beforeDestroy() {
     this.layoutManager.$off('providerPaged:pageCurrentChanged', this.onPageCurrentChanged);
   },
   methods: {
-    onPageCurrentChanged() {
+    _scroll(init) {
+      this.$nextTick(() => {
+        this._queueScroll.push(init);
+      });
+    },
+    _queueTaskScroll(init, cb) {
+      let scrollTopNew;
       const $tableBody = this.$$('.ant-table-body', this.$$(this.$el));
-      $tableBody.animate({ scrollTop: 0 });
+      if (init) {
+        scrollTopNew = 0;
+      } else {
+        scrollTopNew = $tableBody[0].scrollHeight - $tableBody[0].offsetHeight;
+        if (scrollTopNew <= 0) return cb();
+      }
+      if ($tableBody.scrollTop() === scrollTopNew) return cb();
+      $tableBody.scrollTop(scrollTopNew, 300, cb);
+    },
+    onPageCurrentChanged() {
+      // always true
+      this._scroll(true);
     },
     onViewSizeChange(size) {
       this.tableHeight = size.height - _heightTableHeader;
