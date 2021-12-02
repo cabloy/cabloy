@@ -43,13 +43,14 @@ export default {
       // eslint-disable-next-line
       this.layoutManager.bulk_clearSelectedAtoms();
       // items
+      this.loading = false;
       this.itemsPages = {};
       this.info = {
         pageCurrent: 0,
         pageSize: 20,
         total: 0,
       };
-      this.loading = false;
+      this._changePageCurrent(0);
     },
     getItems() {
       return this.dataSource || [];
@@ -86,7 +87,7 @@ export default {
       this.layoutManager.bulk_clearSelectedAtoms();
       const items = this.itemsPages[pageNum];
       if (items) {
-        this.info.pageCurrent = pageNum;
+        this._changePageCurrent(pageNum);
         return;
       }
       // fetch
@@ -94,13 +95,13 @@ export default {
       this.loading = true;
       this._loadMore({ index, size: this.info.pageSize })
         .then(items => {
-          this.$set(this.itemsPages, pageNum, items);
-          this.info.pageCurrent = pageNum;
           this.loading = false;
+          this.$set(this.itemsPages, pageNum, items);
+          this._changePageCurrent(pageNum);
         })
         .catch(err => {
-          this.layoutManager.$view.toast.show({ text: err.message });
           this.loading = false;
+          this.layoutManager.$view.toast.show({ text: err.message });
         });
     },
     _loadTotal() {
@@ -130,6 +131,10 @@ export default {
       // fetch
       const res = await this.$api.post('/a/base/atom/select', params);
       return res.list;
+    },
+    _changePageCurrent(pageNum) {
+      this.info.pageCurrent = pageNum;
+      this.layoutManager.$emit('providerPaged:pageCurrentChanged', { pageCurrent: pageNum });
     },
   },
 };

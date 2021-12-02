@@ -60,7 +60,17 @@ export default {
       };
     },
   },
+  mounted() {
+    this.layoutManager.$on('providerPaged:pageCurrentChanged', this.onPageCurrentChanged);
+  },
+  beforeDestroy() {
+    this.layoutManager.$off('providerPaged:pageCurrentChanged', this.onPageCurrentChanged);
+  },
   methods: {
+    onPageCurrentChanged() {
+      const $tableBody = this.$$('.ant-table-body', this.$$(this.$el));
+      $tableBody.animate({ scrollTop: 0 });
+    },
     onViewSizeChange(size) {
       this.tableHeight = size.height - _heightTableHeader;
     },
