@@ -37,6 +37,8 @@ export default {
       const ebTextarea = this.$meta.util.getPropertyDeprecate(property, 'ebParams.textarea', 'ebTextarea');
       const ebSecure = this.$meta.util.getPropertyDeprecate(property, 'ebParams.secure', 'ebSecure');
       const ebInputType = this.$meta.util.getPropertyDeprecate(property, 'ebParams.inputType', 'ebInputType');
+      const ebImmediate = this.$meta.util.getPropertyDeprecate(property, 'ebParams.immediate', 'ebImmediate');
+      const immediate = ebImmediate !== false && !ebCurrency;
       // format
       value = this._formatTextGeneral(property, value);
       // render
@@ -78,12 +80,12 @@ export default {
           key={key}
           {...{ props }}
           onInput={valueNew => {
-            if (!ebCurrency) {
+            if (immediate) {
               context.setValue(valueNew);
             }
           }}
           onChange={valueNew => {
-            if (ebCurrency) {
+            if (!immediate) {
               valueNew = this._updateValueCurrency(valueNew);
               context.setValue(valueNew);
             }

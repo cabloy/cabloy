@@ -53,6 +53,9 @@ export default function (Vue, bGroup) {
         ebTitle: 'Height',
         ebClue: 'height',
         ebCategory: 'Basic',
+        ebParams: {
+          immediate: false,
+        },
       },
     },
   });
