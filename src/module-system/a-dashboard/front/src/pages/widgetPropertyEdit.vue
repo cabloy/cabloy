@@ -31,11 +31,12 @@ export default {
     const widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
     if (widgetReal) {
       const propertyReal = this.widget.__getPropertyReal(this.propertyName);
-      const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && propertyReal.type === 2);
+      const ebBindOnly = this._getWidgetParamsBindOnly();
+      const isDynamic = ebBindOnly || (propertyReal && propertyReal.type === 2);
       // navbar
       children.push(this._renderNavbar(c));
       // toolbar
-      if (this.propertySchema.ebBindArray) {
+      if (this._getWidgetParamsBindArray()) {
         children.push(this._renderToolbar(c));
       }
       // valueType
@@ -68,7 +69,7 @@ export default {
       this._setPropertyValue({ type: bDynamic ? 2 : 1 });
     },
     _onBindChange(bind) {
-      if (this.propertySchema.ebBindArray) {
+      if (this._getWidgetParamsBindArray()) {
         // array
         const propertyReal = this.widget.__getPropertyReal(this.propertyName);
         const binds = (propertyReal && propertyReal.binds) || [];
@@ -244,7 +245,7 @@ export default {
     },
     _renderValueDynamic(c, propertyReal) {
       // dynamic
-      if (this.propertySchema.ebBindArray) {
+      if (this._getWidgetParamsBindArray()) {
         // array
         return this._renderValueDynamicArray(c, propertyReal && propertyReal.binds);
       }
@@ -256,6 +257,12 @@ export default {
       const extra = widgetReal.getPropSchemaExtra(this.propertyName);
       if (!extra) return this.propertySchema;
       return Object.assign({}, this.propertySchema, extra);
+    },
+    _getWidgetParamsBindOnly() {
+      return this.$meta.util.getPropertyDeprecate(this.propertySchema, 'ebWidget.bindOnly', 'ebBindOnly');
+    },
+    _getWidgetParamsBindArray() {
+      return this.$meta.util.getPropertyDeprecate(this.propertySchema, 'ebWidget.bindArray', 'ebBindArray');
     },
     _renderValueStatic(c /* , propertyReal*/) {
       // schema extra
@@ -302,7 +309,8 @@ export default {
     _renderValueTypes(c, propertyReal, isDynamic) {
       const children = [];
       // static
-      if (!this.propertySchema.ebBindOnly) {
+      const ebBindOnly = this._getWidgetParamsBindOnly();
+      if (!ebBindOnly) {
         children.push(
           c('f7-radio', {
             props: {
