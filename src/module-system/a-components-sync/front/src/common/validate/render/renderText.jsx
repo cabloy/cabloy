@@ -1,3 +1,4 @@
+// Deprecate: ebCurrency\ebLocale\ebDateFormat\ebTextarea\ebSecure\ebInputType
 export default {
   methods: {
     _formatValueCurrency(value) {
@@ -11,16 +12,19 @@ export default {
     _formatTextGeneral(property, value) {
       if (this.checkIfEmptyForSelect(value)) return value;
       // currency
-      if (property.ebCurrency) {
+      const ebCurrency = this.$meta.util.getPropertyDeprecate(property, 'ebParams.currency', 'ebCurrency');
+      if (ebCurrency) {
         value = this._formatValueCurrency(value);
       }
       // locale
-      if (property.ebLocale) {
+      const ebLocale = this.$meta.util.getPropertyDeprecate(property, 'ebParams.locale', 'ebLocale');
+      if (ebLocale) {
         value = this.$text(value);
       }
       // date
-      if (property.ebDateFormat) {
-        value = this.$meta.util.formatDateTime(value, property.ebDateFormat);
+      const ebDateFormat = this.$meta.util.getPropertyDeprecate(property, 'ebParams.dateFormat', 'ebDateFormat');
+      if (ebDateFormat) {
+        value = this.$meta.util.formatDateTime(value, ebDateFormat);
       }
       return value;
     },
@@ -28,10 +32,15 @@ export default {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       let value = context.getValue();
+      // params
+      const ebCurrency = this.$meta.util.getPropertyDeprecate(property, 'ebParams.currency', 'ebCurrency');
+      const ebTextarea = this.$meta.util.getPropertyDeprecate(property, 'ebParams.textarea', 'ebTextarea');
+      const ebSecure = this.$meta.util.getPropertyDeprecate(property, 'ebParams.secure', 'ebSecure');
+      const ebInputType = this.$meta.util.getPropertyDeprecate(property, 'ebParams.inputType', 'ebInputType');
       // format
       value = this._formatTextGeneral(property, value);
       // render
-      if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
+      if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
         return (
           <f7-list-item key={key} staticClass="" after={value}>
             <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
@@ -43,12 +52,12 @@ export default {
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
-      if (property.ebSecure) {
+      if (ebSecure) {
         type = 'password';
-      } else if (property.ebTextarea) {
+      } else if (ebTextarea) {
         type = 'textarea';
-      } else if (property.ebInputType) {
-        type = property.ebInputType;
+      } else if (ebInputType) {
+        type = ebInputType;
       } else {
         type = 'text';
       }
@@ -58,7 +67,7 @@ export default {
         type,
         placeholder,
         info,
-        resizable: property.ebTextarea,
+        resizable: ebTextarea,
         clearButton: !this.validate.readOnly && !property.ebReadOnly && !property.ebDisabled,
         dataPath,
         value,
@@ -69,12 +78,12 @@ export default {
           key={key}
           {...{ props }}
           onInput={valueNew => {
-            if (!property.ebCurrency) {
+            if (!ebCurrency) {
               context.setValue(valueNew);
             }
           }}
           onChange={valueNew => {
-            if (property.ebCurrency) {
+            if (ebCurrency) {
               valueNew = this._updateValueCurrency(valueNew);
               context.setValue(valueNew);
             }

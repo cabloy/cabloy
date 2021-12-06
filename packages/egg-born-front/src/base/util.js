@@ -335,6 +335,16 @@ export default function (Vue) {
         obj[names[names.length - 1]] = value;
       }
     },
+    getPropertyDeprecate(obj, name, nameDeprecate, sep) {
+      let value = this.getProperty(obj, name, sep);
+      if (value !== undefined) return value;
+      value = this.getProperty(obj, nameDeprecate, sep);
+      if (value !== undefined) {
+        console.warn(`DeprecationWarning: \`${nameDeprecate}\` is deprecated. Use \`${name}\` instead.`);
+        return value;
+      }
+      return undefined;
+    },
     getProperty(obj, name, sep) {
       return this._getProperty(obj, name, sep, false);
     },
