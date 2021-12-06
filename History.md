@@ -1,5 +1,15 @@
 # History
 
+## 2021-12-06, Version 4.12.\*
+
+- **重构**
+  - schema ebType=text
+    - Deprecate: ebCurrency\ebLocale\ebDateFormat\ebTextarea\ebSecure\ebInputType
+    - use: ebParams.currency\locale\dateFormat\textarea\secure\inputType
+  - schema for dashboard widget:
+    - Deprecate: ebClue\ebCategory
+    - use: ebWidget.clue\category
+
 ## 2021-11-01, Version 4.12.22
 
 - 增加 npm 指令，可以一个命令重建数据库

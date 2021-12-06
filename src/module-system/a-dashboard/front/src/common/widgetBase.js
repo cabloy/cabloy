@@ -14,32 +14,40 @@ export default function (Vue, bGroup) {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Title',
-        ebClue: 'title',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'title',
+          category: 'Basic',
+        },
       },
       widthSmall: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Small)',
         ebOptions: _widthOptions,
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
       widthMedium: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Medium)',
         ebOptions: _widthOptions,
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
       widthLarge: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Large)',
         ebOptions: _widthOptions,
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
     },
   };
@@ -51,8 +59,10 @@ export default function (Vue, bGroup) {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Height',
-        ebClue: 'height',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'height',
+          category: 'Basic',
+        },
         ebParams: {
           immediate: false,
         },
@@ -66,23 +76,31 @@ export default function (Vue, bGroup) {
     properties: {
       attrTitle: {
         ebTitle: 'Title',
-        ebClue: 'title',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'title',
+          category: 'Basic',
+        },
       },
       attrWidthSmall: {
         ebTitle: 'Width(Small)',
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
       attrWidthMedium: {
         ebTitle: 'Width(Medium)',
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
       attrWidthLarge: {
         ebTitle: 'Width(Large)',
-        ebClue: 'width',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'width',
+          category: 'Basic',
+        },
       },
     },
   };
@@ -92,8 +110,10 @@ export default function (Vue, bGroup) {
     properties: {
       attrHeight: {
         ebTitle: 'Height',
-        ebClue: 'height',
-        ebCategory: 'Basic',
+        ebWidget: {
+          clue: 'height',
+          category: 'Basic',
+        },
       },
     },
   });
