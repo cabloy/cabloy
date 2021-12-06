@@ -1,6 +1,6 @@
 # History
 
-## 2021-12-06, Version 4.12.\*
+## 2021-12-06, Version 4.12.104
 
 - **重构**
   - schema ebType=text
