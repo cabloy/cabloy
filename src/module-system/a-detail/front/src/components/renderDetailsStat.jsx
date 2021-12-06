@@ -29,8 +29,9 @@ export default {
         atomKey.atomId !== parcel.data.atomId ||
         detailClass.module !== property.ebParams.detailClass.module ||
         detailClass.detailClassName !== property.ebParams.detailClass.detailClassName
-      )
+      ) {
         return;
+      }
 
       // evaluate
       const scope = { details };

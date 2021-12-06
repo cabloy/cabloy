@@ -32,8 +32,11 @@ export default {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = context.getValue();
+      // params
       const mode = property.ebParams.mode;
-      if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
+      const ebTextarea = this.$meta.util.getPropertyDeprecate(property, 'ebParams.textarea', 'ebTextarea');
+      const ebSecure = this.$meta.util.getPropertyDeprecate(property, 'ebParams.secure', 'ebSecure');
+      if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
         const children = [];
         children.push(
           <div key="title" slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
@@ -63,9 +66,9 @@ export default {
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
-      if (property.ebSecure) {
+      if (ebSecure) {
         type = 'password';
-      } else if (property.ebTextarea) {
+      } else if (ebTextarea) {
         type = 'textarea';
       } else {
         type = 'text';
@@ -135,7 +138,7 @@ export default {
         type,
         placeholder,
         info,
-        resizable: property.ebTextarea,
+        resizable: ebTextarea,
         clearButton: false, // !this.validate.readOnly && !property.ebReadOnly,
         dataPath,
         value,

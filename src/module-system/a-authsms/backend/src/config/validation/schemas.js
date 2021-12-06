@@ -19,7 +19,9 @@ module.exports = app => {
       mobile: {
         type: 'string',
         ebType: 'text',
-        ebInputType: 'tel',
+        ebParams: {
+          inputType: 'tel',
+        },
         ebTitle: 'Phone Number',
         notEmpty: true,
         'x-exists': true,
@@ -32,7 +34,9 @@ module.exports = app => {
       mobile: {
         type: 'string',
         ebType: 'text',
-        ebInputType: 'tel',
+        ebParams: {
+          inputType: 'tel',
+        },
         ebTitle: 'Phone Number',
         notEmpty: true,
       },
@@ -55,7 +59,9 @@ module.exports = app => {
       mobile: {
         type: 'string',
         ebType: 'text',
-        ebInputType: 'tel',
+        ebParams: {
+          inputType: 'tel',
+        },
         ebTitle: 'Phone Number',
         notEmpty: true,
         'x-exists': true,

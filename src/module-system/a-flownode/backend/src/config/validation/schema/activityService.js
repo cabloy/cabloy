@@ -19,7 +19,9 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Parameter Expression',
-        ebTextarea: true,
+        ebParams: {
+          textarea: true,
+        },
       },
     },
   };

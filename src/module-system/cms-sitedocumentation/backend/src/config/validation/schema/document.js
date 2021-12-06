@@ -56,7 +56,9 @@ module.exports = app => {
       description: {
         type: 'string',
         ebType: 'text',
-        ebTextarea: true,
+        ebParams: {
+          textarea: true,
+        },
         ebTitle: 'Description',
       },
       imageCover: {
@@ -101,7 +103,9 @@ module.exports = app => {
       extra: {
         type: 'string',
         ebType: 'text',
-        ebTextarea: true,
+        ebParams: {
+          textarea: true,
+        },
         ebTitle: 'Extra Attributes',
       },
     },
