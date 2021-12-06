@@ -73,7 +73,8 @@ export default {
       const optionsPropertyName = {};
       // propSchema
       const propSchema = this.widget._getPropSchema(this.widget.options, this.propertyName);
-      const propClues = (propSchema.ebClue || '').split(',');
+      const ebClue = this.$meta.util.getPropertyDeprecate(propSchema, 'ebWidget.clue', 'ebClue');
+      const propClues = (ebClue || '').split(',');
       // loop
       for (const widgetItem of this.dashboard.widgetsReal) {
         const widgetIdSource = widgetItem.widgetReal.widget.options.id;
@@ -109,7 +110,8 @@ export default {
       for (const attrKey in attrsSchema.properties) {
         if (!this._checkAttrValid(attrsSchemaDynamic, attrKey)) continue;
         const attrSource = attrsSchema.properties[attrKey];
-        const attrSourceClues = (attrSource.ebClue || '').split(',');
+        const ebClue = this.$meta.util.getPropertyDeprecate(attrSource, 'ebWidget.clue', 'ebClue');
+        const attrSourceClues = (ebClue || '').split(',');
         // intersection
         const intersection = propClues.filter(item => attrSourceClues.indexOf(item) > -1);
         if (intersection.length > 0) {

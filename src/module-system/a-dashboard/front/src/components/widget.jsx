@@ -340,7 +340,8 @@ export default {
       const propsCategories = {};
       for (const propertyName in propsSchema.properties) {
         const propSchema = propsSchema.properties[propertyName];
-        const category = propSchema.ebCategory || '';
+        const ebCategory = this.$meta.util.getPropertyDeprecate(propSchema, 'ebWidget.category', 'ebCategory');
+        const category = ebCategory || '';
         if (!propsCategories[category]) propsCategories[category] = {};
         propsCategories[category][propertyName] = propSchema;
       }
