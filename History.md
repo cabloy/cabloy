@@ -1,8 +1,15 @@
 # History
 
+## 2021-12-06, Version 4.12.105
+
+- **Refactor**
+  - schema for dashboard widget:
+    - Deprecate: ebBindOnly\ebBindArray
+    - use: ebWidget.bindOnly\bindArray
+
 ## 2021-12-06, Version 4.12.104
 
-- **重构**
+- **Refactor**
   - schema ebType=text
     - Deprecate: ebCurrency\ebLocale\ebDateFormat\ebTextarea\ebSecure\ebInputType
     - use: ebParams.currency\locale\dateFormat\textarea\secure\inputType
