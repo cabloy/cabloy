@@ -13,9 +13,28 @@ export default {
       // switch layout
       await this.layout_switchLayout(layout.name);
     },
+    async actions_onActionDashboard() {
+      const inPanel = this.$view.inPanel();
+      let navigateOptions;
+      if (inPanel) {
+        navigateOptions = {
+          scene: 'dashboard',
+          sceneOptions: { name: 'home' },
+        };
+      } else {
+        navigateOptions = {
+          target: '_self',
+        };
+      }
+      this.$view.navigate('/a/dashboard/dashboard?key=home', navigateOptions);
+    },
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
+      // dashboard
+      children.push(
+        <eb-link key="actionsDashboard" iconMaterial="home" propsOnPerform={this.actions_onActionDashboard}></eb-link>
+      );
       // layout
       children.push(
         <f7-link
