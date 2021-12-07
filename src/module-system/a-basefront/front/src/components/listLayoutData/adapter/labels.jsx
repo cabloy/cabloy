@@ -15,9 +15,12 @@ export default {
         return;
       }
       // navigate
-      this.layoutManager.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
-        // target: '_self',
-      });
+      const navigateOptions = {};
+      if (this.layoutManager.$view.inPanel()) {
+        navigateOptions.target = '_self';
+      }
+      this.layoutManager.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, navigateOptions);
+      // swipeoutClose
       this.$meta.util.swipeoutClose(event.target);
     },
     async labels_onChanged(data) {
