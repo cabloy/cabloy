@@ -2,7 +2,7 @@ export default {
   methods: {
     async _onActionSubmit() {
       const { ctx, item } = this.$props;
-      await ctx.$view.dialog.confirm();
+      await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));
       const key = { atomId: item.atomId, itemId: item.itemId };
       const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
       if (data.formal) {

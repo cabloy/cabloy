@@ -171,6 +171,7 @@ export default {
   LayoutPC: 'PC布局',
   Sort: '排序',
   DataChangedReloadConfirm: '数据已变更，您想要重新加载吗？',
+  AtomActionSubmitConfirm: '您确认要提交此草稿吗？',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '数据标记',

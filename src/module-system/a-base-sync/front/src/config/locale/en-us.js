@@ -27,6 +27,7 @@ export default {
   LayoutMobile: 'Mobile Layout',
   LayoutPC: 'PC Layout',
   DataChangedReloadConfirm: 'Data changed, do you want to reload it?',
+  AtomActionSubmitConfirm: 'Are you sure to submit this draft?',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',
