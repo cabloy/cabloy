@@ -40,7 +40,7 @@ export default function (ctx) {
   };
   // confirm
   dialog.confirm = function (text, title) {
-    if (!text) text = ctx.$text('Are you sure to perform this operation?');
+    if (!text) text = ctx.$text('GeneralPerformOperationConfirm');
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.confirm(
         ctx.getHostEl && ctx.getHostEl(),

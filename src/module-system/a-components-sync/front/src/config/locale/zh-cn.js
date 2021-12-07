@@ -4,7 +4,7 @@ export default {
   'No More Data': '没有更多数据',
   'Load Error, Try Again': '加载失败，请重试',
   'Operation Succeeded': '操作成功',
-  'Are you sure to perform this operation?': '您确认要执行此操作吗？',
+  GeneralPerformOperationConfirm: '您确认要执行此操作吗？',
   Cancel: '取消',
   OK: '确定',
   Username: '用户名',

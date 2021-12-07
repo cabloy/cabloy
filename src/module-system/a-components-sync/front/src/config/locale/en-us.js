@@ -7,4 +7,5 @@ export default {
   SearchEqual: 'Equal',
   SearchLeftMatch: 'Left Match',
   SearchRightMatch: 'Right Match',
+  GeneralPerformOperationConfirm: 'Are you sure to perform this operation?',
 };
