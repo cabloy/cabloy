@@ -12,22 +12,6 @@ export default {
     actions_listPopover() {
       if (!this.base_ready) return null;
       const actions = [];
-      const atomClosed = this.base.item.atomClosed === 1;
-      // submit: support simple
-      // const submit = this.actions_findAction('write') && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed;
-      // // adjust
-      // if (submit && this.base.item.atomSimple === 1 && this.container.mode === 'view') {
-      //   submit = false;
-      // }
-      const submit = this.actions_findAction('write') && this.base.item.atomStage === 0 && !atomClosed;
-      if (submit) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'submit',
-        });
-      }
-      // others
       for (const action of this.actions.list) {
         // layout
         if (action.name === 'layout') continue;
@@ -166,6 +150,19 @@ export default {
             ref="buttonSave"
             iconMaterial={actionIcon}
             tooltip={this.$text(actionTitle)}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
+      }
+      // submit
+      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
+        const actionName = 'submit';
+        children.push(
+          <eb-link
+            key={actionName}
+            ref="buttonSubmit"
+            iconMaterial="done"
+            tooltip={this.$text('Submit')}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
