@@ -4,6 +4,7 @@
 
 - **Features**
   - show dashboard button on menu page
+  - open user labels by `target: _self` in panel
 
 ## 2021-12-06, Version 4.12.105
 
