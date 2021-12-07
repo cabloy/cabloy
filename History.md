@@ -3,8 +3,9 @@
 ## 2021-12-07, Version 4.12.106
 
 - **Features**
-  - show dashboard button on menu page
-  - open user labels by `target: _self` in panel
+  - menu page: show `dashboard` button on menu page
+  - atom list: open user labels by `target: _self` in panel
+  - flow task: auto open `assignees confirmation` if needed
 - **Refactor**
   - atom draft: show `submit` button directly after `save` button
 
