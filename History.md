@@ -1,5 +1,10 @@
 # History
 
+## 2021-12-07, Version 4.12.106
+
+- **Features**
+  - show dashboard button on menu page
+
 ## 2021-12-06, Version 4.12.105
 
 - **Refactor**
