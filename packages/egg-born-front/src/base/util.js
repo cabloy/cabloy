@@ -5,6 +5,7 @@ import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
 import sandboxFn from './sandbox.js';
+import screenfull from './screenfull.jsx';
 import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
@@ -650,6 +651,8 @@ export default function (Vue) {
     escapeURL: _escape.escapeURL,
     hostUtil: hostUtil(Vue, util),
   });
+  // screenfull
+  util.screenfull = util.createComponentInstance(screenfull);
 
   // // test:
   // window.setTimeout(() => {

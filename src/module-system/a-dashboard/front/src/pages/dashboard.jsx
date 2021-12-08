@@ -198,6 +198,17 @@ export default {
           ></eb-link>
         );
       }
+      if (this.$device.desktop && this.$meta.util.screenfull.isEnabled) {
+        children.push(
+          <eb-link
+            key="dashboard-action-fullscreen"
+            class="dashboard-action-fullscreen"
+            iconMaterial={this.$meta.util.screenfull.isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+            propsOnPerform={event => this.onPerformFullscreen(event)}
+          ></eb-link>
+        );
+      }
+      // ok
       return children;
     },
     async __init() {
@@ -440,6 +451,9 @@ export default {
           },
         },
       });
+    },
+    onPerformFullscreen() {
+      this.$meta.util.screenfull.toggle(this.$el);
     },
     async onPerformProfileSwitch(event) {
       if (!this.dashboardUsers) return;
