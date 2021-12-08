@@ -1,5 +1,11 @@
 # History
 
+## 2021-12-08, Version 4.12.107
+
+- **Features**
+  - screenfull: this.$meta.util.screenfull
+    - used in: dashboard, header button for layout pc
+
 ## 2021-12-07, Version 4.12.106
 
 - **Features**
