@@ -1,13 +1,11 @@
 <template>
   <eb-link
     :class="buttonClass"
-    :iconMaterial="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+    :iconMaterial="this.$meta.util.screenfull.isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
     :onPerform="onPerform"
   ></eb-link>
 </template>
 <script>
-import screenfull from 'screenfull';
-
 // export
 export default {
   installFactory,
@@ -20,22 +18,16 @@ function installFactory(_Vue) {
   return {
     mixins: [ebLayoutButtonBase],
     data() {
-      return {
-        isFullscreen: false,
-      };
+      return {};
     },
     created() {
-      if (!screenfull.isEnabled) {
+      if (!this.$meta.util.screenfull.isEnabled) {
         this.button.hide();
-      } else {
-        screenfull.on('change', () => {
-          this.isFullscreen = screenfull.isFullscreen;
-        });
       }
     },
     methods: {
       onPerform() {
-        screenfull.toggle();
+        this.$meta.util.screenfull.toggle();
       },
     },
   };
