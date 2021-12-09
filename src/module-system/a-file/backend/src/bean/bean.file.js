@@ -157,7 +157,7 @@ module.exports = ctx => {
       if (ext.indexOf('svg') > -1) {
         ext = 'svg';
       }
-      const filename = `${data.title || 'aa'}.${ext}`;
+      const filename = `${data.title || '_none_'}.${ext}`;
       const encoding = data.encoding || '7bit';
       // content
       const fileContent = base64url.toBuffer(contentBase64);
@@ -180,6 +180,9 @@ module.exports = ctx => {
     async _upload({ fileContent, meta, user }) {
       // info
       const fileInfo = path.parse(meta.filename);
+      if (fileInfo.name === '_none_') {
+        fileInfo.name = '';
+      }
       const encoding = meta.encoding;
       const mime = meta.mime;
       const fields = meta.fields;
