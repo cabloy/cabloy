@@ -162,6 +162,8 @@ export default {
     onFileDrop(event) {
       event.preventDefault();
       event.stopPropagation();
+      const $target = this.$$(event.target);
+      $target.removeClass('fileDropPrompt');
       this.__setFile(event, event.dataTransfer.files[0]);
     },
     onClickClearCrop() {
@@ -211,6 +213,6 @@ export default {
 }
 
 .fileDropPrompt {
-  background: hsla(0, 0%, 100%, 0.32);
+  background: hsla(0, 0%, 60%, 0.32);
 }
 </style>
