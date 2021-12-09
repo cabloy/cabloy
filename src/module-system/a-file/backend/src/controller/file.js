@@ -46,6 +46,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async uploadDataUrl() {
+      const res = await this.service.file.uploadDataUrl({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async download() {
       await this.service.file.download({
         downloadId: this.ctx.params.downloadId,

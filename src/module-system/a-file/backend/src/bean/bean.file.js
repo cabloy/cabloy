@@ -8,6 +8,9 @@ const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
 const extend = require3('extend2');
+const base64url = require3('base64url');
+
+const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -141,6 +144,37 @@ module.exports = ctx => {
         await sendToWormhole(stream);
         throw e;
       }
+    }
+
+    async uploadDataUrl({ data, user }) {
+      const dataUrl = data.dataUrl || '';
+      const matches = dataUrl.match(REGEXP_DATA_URL);
+      if (!matches) return null;
+      // info
+      const mime = matches[1];
+      const contentBase64 = matches[2];
+      let ext = mime.split('/')[1];
+      if (ext.indexOf('svg') > -1) {
+        ext = 'svg';
+      }
+      const filename = `${data.title || 'aa'}.${ext}`;
+      const encoding = data.encoding || '7bit';
+      // content
+      const fileContent = base64url.toBuffer(contentBase64);
+      console.log('----fileContent: ', typeof fileContent);
+      // meta
+      const meta = {
+        filename,
+        encoding,
+        mime,
+        fields: {
+          mode: data.mode,
+          atomId: data.atomId,
+          attachment: data.attachment,
+          flag: data.flag,
+        },
+      };
+      return await this._upload({ fileContent, meta, user });
     }
 
     async _upload({ fileContent, meta, user }) {

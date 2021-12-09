@@ -18,6 +18,7 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "base64url": "^3.0.1",
     "bluebird": "^3.7.2",
     "cropperjs": "^1.5.6",
     "egg-born-mock": "^2.1.2",

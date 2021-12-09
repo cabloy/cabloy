@@ -22,6 +22,10 @@ module.exports = app => {
       return await this.ctx.bean.file.upload({ user });
     }
 
+    async uploadDataUrl({ data, user }) {
+      return await this.ctx.bean.file.uploadDataUrl({ data, user });
+    }
+
     async download({ downloadId, atomId, width, height, user }) {
       return await this.ctx.bean.file.download({ downloadId, atomId, width, height, user });
     }
