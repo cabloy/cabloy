@@ -81,6 +81,12 @@ module.exports = appInfo => {
     encrypt: true,
   };
 
+  // bodyParser
+  config.bodyParser = {
+    jsonLimit: '30mb',
+    formLimit: '30mb',
+  };
+
   // multipart
   config.multipart = {
     fileSize: '30mb',
