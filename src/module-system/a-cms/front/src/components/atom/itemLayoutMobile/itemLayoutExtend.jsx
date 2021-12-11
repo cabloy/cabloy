@@ -9,6 +9,12 @@ export default {
   },
   methods: {
     async onActionSaveBefore({ item }) {
+      await this._onActionCheckContent({ item });
+    },
+    async onActionSubmitBefore({ item }) {
+      await this._onActionCheckContent({ item });
+    },
+    async _onActionCheckContent({ item }) {
       const action = {
         actionModule: 'a-markdown',
         actionComponent: 'utils',
