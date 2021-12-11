@@ -9,7 +9,12 @@ export default {
   },
   methods: {
     async onActionSaveBefore({ item }) {
-      throw new Error('ssss');
+      const action = {
+        actionModule: 'a-markdown',
+        actionComponent: 'utils',
+        name: 'checkContent',
+      };
+      await this.$meta.util.performAction({ ctx: this.layoutManager, action, item });
     },
   },
 };
