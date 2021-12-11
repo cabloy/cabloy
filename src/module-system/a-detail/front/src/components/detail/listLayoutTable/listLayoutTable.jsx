@@ -30,7 +30,7 @@ export default {
         autoInit: true,
       });
       // instance
-      this.layoutManager.layout_setInstance(this);
+      await this.layoutManager.layout_setInstance(this);
     },
     _renderEmpty() {
       const loading = this.layoutManager.data_getLoading();

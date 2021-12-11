@@ -10,7 +10,7 @@ export default {
   },
   created() {},
   methods: {
-    layout_setInstance(instance) {
+    async layout_setInstance(instance) {
       this.layout.instance = instance;
     },
     layout_clearInstance(instance) {

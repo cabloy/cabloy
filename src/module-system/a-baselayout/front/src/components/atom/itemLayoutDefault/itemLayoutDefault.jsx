@@ -20,11 +20,11 @@ export default {
     this.layoutManager.layout_clearInstance(this);
   },
   methods: {
-    init() {
+    async init() {
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
       // instance
-      this.layoutManager.layout_setInstance(this);
+      await this.layoutManager.layout_setInstance(this);
     },
   },
   render() {

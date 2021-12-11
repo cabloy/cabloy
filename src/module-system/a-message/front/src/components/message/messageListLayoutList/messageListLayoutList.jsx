@@ -16,15 +16,18 @@ export default {
     };
   },
   created() {
-    // queueScroll
-    this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
-    // instance
-    this.layoutManager.layout_setInstance(this);
+    this.init();
   },
   beforeDestroy() {
     this.layoutManager.layout_clearInstance(this);
   },
   methods: {
+    async init() {
+      // queueScroll
+      this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
+      // instance
+      await this.layoutManager.layout_setInstance(this);
+    },
     onPageRefresh(force) {
       this.$refs.loadMore.reload(force);
     },

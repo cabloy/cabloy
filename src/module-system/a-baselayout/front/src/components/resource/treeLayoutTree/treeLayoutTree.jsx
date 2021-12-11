@@ -14,13 +14,17 @@ export default {
     return {};
   },
   created() {
-    // instance
-    this.layoutManager.layout_setInstance(this);
+    this.init();
   },
   beforeDestroy() {
     this.layoutManager.layout_clearInstance(this);
   },
-  methods: {},
+  methods: {
+    async init() {
+      // instance
+      await this.layoutManager.layout_setInstance(this);
+    },
+  },
   render() {
     return <div>{this.layoutManager.layout_renderBlock({ blockName: 'items' })}</div>;
   },

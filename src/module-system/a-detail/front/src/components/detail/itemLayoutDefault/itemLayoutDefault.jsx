@@ -20,9 +20,9 @@ export default {
     this.layoutManager.layout_clearInstance(this);
   },
   methods: {
-    init() {
+    async init() {
       // instance
-      this.layoutManager.layout_setInstance(this);
+      await this.layoutManager.layout_setInstance(this);
     },
   },
   render() {

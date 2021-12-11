@@ -42,7 +42,8 @@ export default {
       this.layout_destroyInstanceExtend();
       this.layout.instanceExtend = instanceExtend;
     },
-    layout_setInstance(instance) {
+    async layout_setInstance(instance) {
+      await this.layout_createInstanceExtend();
       this.layout.instance = instance;
     },
     layout_clearInstance(instance) {

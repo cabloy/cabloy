@@ -16,14 +16,17 @@ export default {
     };
   },
   created() {
-    // instance
-    this.layoutManager.layout_setInstance(this);
-    this.onLoad();
+    this.init();
   },
   beforeDestroy() {
     this.layoutManager.layout_clearInstance(this);
   },
   methods: {
+    async init() {
+      // instance
+      await this.layoutManager.layout_setInstance(this);
+      await this.onLoad();
+    },
     async onLoad() {
       // params
       const params = this.layoutManager.base_prepareSelectParams();

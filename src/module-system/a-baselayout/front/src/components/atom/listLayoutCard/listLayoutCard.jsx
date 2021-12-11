@@ -29,7 +29,7 @@ export default {
         autoInit: this.layoutManager.container.scene !== 'search',
       });
       // instance
-      this.layoutManager.layout_setInstance(this);
+      await this.layoutManager.layout_setInstance(this);
     },
   },
   render() {

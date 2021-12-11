@@ -21,6 +21,14 @@ const item = {
     },
   },
   layouts: {
+    base: {
+      extend: {
+        component: {
+          module: 'a-cms',
+          name: 'itemLayoutExtend',
+        },
+      },
+    },
     default: {
       title: 'LayoutInfo',
       component: {
