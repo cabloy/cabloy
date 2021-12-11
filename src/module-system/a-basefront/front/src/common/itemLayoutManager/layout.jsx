@@ -5,11 +5,43 @@ export default {
         current: null,
         config: null,
         instance: null,
+        instanceExtend: null,
       },
     };
   },
   created() {},
+  beforeDestroy() {
+    this.layout_destroyInstanceExtend();
+  },
   methods: {
+    layout_destroyInstanceExtend() {
+      if (this.layout.instanceExtend) {
+        this.layout.instanceExtend.$destroy();
+        this.layout.instanceExtend = null;
+      }
+    },
+    async layout_createInstanceExtend() {
+      // config component
+      const configComponent = this.$meta.util.getProperty(this.layout.config, 'extend.component');
+      if (!configComponent) {
+        this.layout_destroyInstanceExtend();
+        return;
+      }
+      // load module
+      const moduleExtend = await this.$meta.module.use(configComponent.module);
+      // create extend
+      const options = {
+        propsData: {
+          layoutManager: this,
+        },
+      };
+      const component = moduleExtend.options.components[configComponent.name];
+      if (!component) throw new Error(`extend.component not found: ${configComponent.module}:${configComponent.name}`);
+      const instanceExtend = this.$meta.util.createComponentInstance(component, options);
+      // ready
+      this.layout_destroyInstanceExtend();
+      this.layout.instanceExtend = instanceExtend;
+    },
     layout_setInstance(instance) {
       this.layout.instance = instance;
     },
