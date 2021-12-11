@@ -3,7 +3,8 @@ export default {
     async _onActionSave() {
       const { ctx, action, item } = this.$props;
       // onActionSaveBefore
-      if (ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {
+      //   ctx maybe not layoutManager
+      if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {
         await ctx.layout.instanceExtend.onActionSaveBefore(this.$props);
       }
       // write

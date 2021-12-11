@@ -3,7 +3,8 @@ export default {
     async _onActionSubmit() {
       const { ctx, item } = this.$props;
       // onActionSubmitBefore
-      if (ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
+      //   ctx maybe not layoutManager
+      if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
         await ctx.layout.instanceExtend.onActionSubmitBefore(this.$props);
       }
       // confirm

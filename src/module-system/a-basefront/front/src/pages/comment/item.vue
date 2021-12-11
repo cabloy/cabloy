@@ -91,6 +91,8 @@ export default {
     },
     async onPerformSave() {
       if (!this.content) return;
+      if (!this.$refs.editor) return;
+      await this.$refs.editor.checkContent();
       const data = await this.$api.post('/a/base/comment/save', {
         key: { atomId: this.atomId },
         data: {
