@@ -63,6 +63,12 @@ export default {
     onPerform: {
       type: Function,
     },
+    onPerformBefore: {
+      type: Function,
+    },
+    onPerformAfter: {
+      type: Function,
+    },
     dataPathRoot: {
       type: String,
       default: '/',
@@ -83,6 +89,8 @@ export default {
       schemaModuleName: null,
       renderModuleName: null,
       dataCopy: null,
+      callbacksPerformBefore: [],
+      callbacksPerformAfter: [],
     };
   },
   computed: {
@@ -127,6 +135,10 @@ export default {
   mounted() {
     this.fetchSchema();
   },
+  beforeDestroy() {
+    this.callbacksPerformBefore = [];
+    this.callbacksPerformAfter = [];
+  },
   methods: {
     schemaMaybeChanged() {
       this.custom = null;
@@ -144,12 +156,21 @@ export default {
     async perform(event, context) {
       if (this.auto && !this.ready) return null;
       if (!this.onPerform) return null;
+      // perform before, need not wrapper error/exception
+      await this._invokePerformBefore(event, context);
+      // perform
       try {
         const data = await this.onPerform(event, context);
         this.reset();
+        // perform after
+        await this._invokePerformAfter(event, context, null, data);
+        // ok
         return data;
       } catch (err) {
         if (err) {
+          // perform after, need not wrapper error/exception
+          await this._invokePerformAfter(event, context, err, null);
+          // inner handle
           if (err.code !== 422) throw err;
           this.verrors = err.message;
           this.$emit('errorsSet', this.verrors);
@@ -157,6 +178,52 @@ export default {
           _err.code = -422;
           throw _err;
         }
+      }
+    },
+    // not wrapper error/exception
+    async _invokePerformBefore(event, context) {
+      const params = { event, context };
+      // callbacks
+      if (this.callbacksPerformBefore && this.callbacksPerformBefore.length > 0) {
+        for (const cb of this.callbacksPerformBefore) {
+          await cb(params);
+        }
+      }
+      // prop
+      if (this.onPerformBefore) {
+        await this.onPerformBefore(params);
+      }
+    },
+    // not wrapper error/exception
+    async _invokePerformAfter(event, context, err, data) {
+      const params = { event, context, err, data };
+      // callbacks
+      if (this.callbacksPerformAfter && this.callbacksPerformAfter.length > 0) {
+        for (const cb of this.callbacksPerformAfter) {
+          await cb(params);
+        }
+      }
+      // prop
+      if (this.onPerformAfter) {
+        await this.onPerformAfter(params);
+      }
+    },
+    registerCallbackPerformBefore(callback) {
+      this.callbacksPerformBefore.push(callback);
+    },
+    unRegisterCallbackPerformBefore(callback) {
+      const index = this.callbacksPerformBefore.indexOf(callback);
+      if (index > -1) {
+        this.callbacksPerformBefore.splice(index, 1);
+      }
+    },
+    registerCallbackPerformAfter(callback) {
+      this.callbacksPerformAfter.push(callback);
+    },
+    unRegisterCallbackPerformAfter(callback) {
+      const index = this.callbacksPerformAfter.indexOf(callback);
+      if (index > -1) {
+        this.callbacksPerformAfter.splice(index, 1);
       }
     },
     getError(dataPath) {
