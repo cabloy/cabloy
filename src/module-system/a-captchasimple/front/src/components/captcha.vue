@@ -27,11 +27,13 @@ export default {
     this.changeSrc();
   },
   methods: {
-    changeSrc() {
+    async refresh() {
+      await this.changeSrc();
+    },
+    async changeSrc() {
       if (this.$meta.config.base.jwt) {
-        this.$api.post('/a/base/jwt/create').then(res => {
-          this._setSrc(res.jwt);
-        });
+        const res = await this.$api.post('/a/base/jwt/create');
+        this._setSrc(res.jwt);
       } else {
         this._setSrc(null);
       }

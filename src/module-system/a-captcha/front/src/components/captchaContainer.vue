@@ -8,6 +8,7 @@ export default {
     if (this.providerInstance) {
       children.push(
         c('eb-component', {
+          ref: 'captcha',
           props: {
             module: this.providerInstance.provider.module,
             name: this.providerInstance.provider.name,
@@ -46,22 +47,27 @@ export default {
     };
   },
   created() {
-    this.$api
-      .post('captcha/createProviderInstance', {
+    this.init();
+  },
+  methods: {
+    async init() {
+      this.providerInstance = await this.$api.post('captcha/createProviderInstance', {
         module: this.module,
         sceneName: this.sceneName,
         context: this.context,
-      })
-      .then(providerInstance => {
-        this.providerInstance = providerInstance;
       });
-  },
-  methods: {
+    },
     captchaData({ token }) {
       return {
         providerInstanceId: this.providerInstance.providerInstanceId,
         data: { token },
       };
+    },
+    async refresh() {
+      const captchaInstance = this.$refs.captcha && this.$refs.captcha.getComponentInstance();
+      if (captchaInstance) {
+        await captchaInstance.refresh();
+      }
     },
   },
 };

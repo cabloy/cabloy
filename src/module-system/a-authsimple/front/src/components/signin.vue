@@ -2,7 +2,7 @@
   <div>
     <f7-card>
       <f7-card-content>
-        <eb-validate ref="validate" :onPerform="onPerformValidate">
+        <eb-validate ref="validate" :onPerform="onPerformValidate" :onPerformAfter="onPerformAfterValidate">
           <eb-list form no-hairlines-md @submit="onSubmit">
             <eb-list-input
               :label="$text('Your Username/Mobile/Email')"
@@ -138,11 +138,31 @@ export default {
   },
   created() {},
   methods: {
+    _getCaptchaContainerInstance() {
+      return this.$refs.captchaContainer && this.$refs.captchaContainer.getComponentInstance();
+    },
+    async onPerformAfterValidate({ err }) {
+      if (!err) return;
+      if (err.code === 422 && Array.isArray(err.message)) {
+        const message = this._findErrorMessage(err.message, '/captcha/token');
+        if (message) {
+          this.captcha.token = null;
+          return;
+        }
+      }
+      // login error
+      this.data.password = null;
+      this.captcha.token = null;
+      const captchaContainerInstance = this._getCaptchaContainerInstance();
+      await captchaContainerInstance.refresh();
+    },
     async onPerformValidate() {
+      const captchaContainerInstance = this._getCaptchaContainerInstance();
+      if (!captchaContainerInstance) return;
       await this.$api.post('auth/signin', {
         data: this.data,
         state: this.state,
-        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+        captcha: captchaContainerInstance.captchaData({ token: this.captcha.token }),
       });
       this.$meta.vueApp.reload({ echo: true });
     },
@@ -154,6 +174,9 @@ export default {
     },
     onClickRememberMe() {
       this.data.rememberMe = !this.data.rememberMe;
+    },
+    _findErrorMessage(messages, dataPath) {
+      return messages.find(item => item.dataPath === dataPath);
     },
   },
 };
