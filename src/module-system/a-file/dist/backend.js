@@ -14,6 +14,9 @@ const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
 const extend = require3('extend2');
+const base64url = require3('base64url');
+
+const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -149,9 +152,43 @@ module.exports = ctx => {
       }
     }
 
+    async uploadDataUrl({ data, user }) {
+      const dataUrl = data.dataUrl || '';
+      const matches = dataUrl.match(REGEXP_DATA_URL);
+      if (!matches) return null;
+      // info
+      const mime = matches[1];
+      const contentBase64 = matches[2];
+      let ext = mime.split('/')[1];
+      if (ext.indexOf('svg') > -1) {
+        ext = 'svg';
+      }
+      const filename = `${data.title || '_none_'}.${ext}`;
+      const encoding = data.encoding || '7bit';
+      // content
+      const fileContent = base64url.toBuffer(contentBase64);
+      console.log('----fileContent: ', typeof fileContent);
+      // meta
+      const meta = {
+        filename,
+        encoding,
+        mime,
+        fields: {
+          mode: data.mode,
+          atomId: data.atomId,
+          attachment: data.attachment,
+          flag: data.flag,
+        },
+      };
+      return await this._upload({ fileContent, meta, user });
+    }
+
     async _upload({ fileContent, meta, user }) {
       // info
       const fileInfo = path.parse(meta.filename);
+      if (fileInfo.name === '_none_') {
+        fileInfo.name = '';
+      }
       const encoding = meta.encoding;
       const mime = meta.mime;
       const fields = meta.fields;
@@ -680,6 +717,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async uploadDataUrl() {
+      const res = await this.service.file.uploadDataUrl({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async download() {
       await this.service.file.download({
         downloadId: this.ctx.params.downloadId,
@@ -829,6 +874,7 @@ module.exports = app => {
   const routes = [
     // file
     { method: 'post', path: 'file/upload', controller: 'file', meta: { auth: { user: true } } },
+    { method: 'post', path: 'file/uploadDataUrl', controller: 'file', meta: { auth: { user: true } } },
     { method: 'get', path: 'file/download/:downloadId', controller: 'file', action: 'download' },
     { method: 'post', path: 'file/list', controller: 'file' },
     { method: 'post', path: 'file/update', controller: 'file' },
@@ -866,6 +912,10 @@ module.exports = app => {
 
     async upload({ user }) {
       return await this.ctx.bean.file.upload({ user });
+    }
+
+    async uploadDataUrl({ data, user }) {
+      return await this.ctx.bean.file.uploadDataUrl({ data, user });
     }
 
     async download({ downloadId, atomId, width, height, user }) {

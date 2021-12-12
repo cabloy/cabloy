@@ -2718,7 +2718,7 @@ module.exports = ctx => {
       }
       const dir =
         ctx.config.module(moduleInfo.relativeName).publicDir ||
-        path.join(__webpack_require__(2037).homedir(), 'cabloy', ctx.app.name, 'public');
+        path.join((__webpack_require__(2037).homedir)(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }
@@ -6895,7 +6895,7 @@ module.exports = ctx => {
 /***/ 5911:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const URL = __webpack_require__(7310).URL;
+const URL = (__webpack_require__(7310).URL);
 const require3 = __webpack_require__(5638);
 const extend = require3('extend2');
 const koaCors = require3('@koa/cors');
