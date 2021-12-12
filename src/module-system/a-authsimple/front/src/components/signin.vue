@@ -138,16 +138,13 @@ export default {
   },
   created() {},
   methods: {
-    onPerformValidate() {
-      return this.$api
-        .post('auth/signin', {
-          data: this.data,
-          state: this.state,
-          captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
-        })
-        .then(() => {
-          this.$meta.vueApp.reload({ echo: true });
-        });
+    async onPerformValidate() {
+      await this.$api.post('auth/signin', {
+        data: this.data,
+        state: this.state,
+        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
+      });
+      this.$meta.vueApp.reload({ echo: true });
     },
     signIn() {
       return this.$refs.validate.perform();
