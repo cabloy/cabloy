@@ -111,16 +111,22 @@ module.exports = ctx => {
         // hold user
         ctx.state.user.op = userOp;
         // agent
+        let userAgent;
         if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
-          const agent = await this.agent({ userId: ctx.user.op.id });
-          if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
-          if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-          if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-          // hold agent
-          ctx.state.user.agent = agent;
+          userAgent = await this.agent({ userId: ctx.user.op.id });
+          if (!userAgent) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (userAgent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
         } else {
-          // hold agent
-          ctx.state.user.agent = userOp;
+          userAgent = userOp;
+        }
+        // hold agent
+        ctx.state.user.agent = userAgent;
+        // only check locale for agent
+        if (!userAgent.locale && ctx.locale) {
+          const userData = { id: userAgent.id, locale: ctx.locale };
+          await this.save({ user: userData });
+          userAgent.locale = ctx.locale;
         }
       }
       // check user
