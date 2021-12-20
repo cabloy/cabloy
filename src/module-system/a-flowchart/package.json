@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-flowchart",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "title": "a-flowchart",
   "eggBornModule": {
     "fileVersion": 0,
@@ -21,7 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.2",
+    "egg-born-mock": "^2.1.3",
     "extend2": "^1.0.0",
     "require3": "^2.1.2"
   }
