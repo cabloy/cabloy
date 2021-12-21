@@ -1,5 +1,12 @@
 # History
 
+## 2021-12-20, Version 4.12.110
+
+- **Fix**
+
+  - Theme:
+    - 当使用 filled 风格的 navbar 时，large navbar 显示一片空白
+
 ## 2021-12-12, Version 4.12.108
 
 - **Features**
