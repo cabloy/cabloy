@@ -123,10 +123,17 @@ module.exports = ctx => {
         // hold agent
         ctx.state.user.agent = userAgent;
         // only check locale for agent
-        if (!userAgent.locale && ctx.locale) {
+        const checkDemo = ctx.bean.util.checkDemo(false);
+        if (checkDemo && !userAgent.locale && ctx.locale) {
+          // set
           const userData = { id: userAgent.id, locale: ctx.locale };
           await this.save({ user: userData });
           userAgent.locale = ctx.locale;
+        } else if (!checkDemo && userAgent.locale) {
+          // clear
+          const userData = { id: userAgent.id, locale: null };
+          await this.save({ user: userData });
+          userAgent.locale = null;
         }
       }
       // check user
