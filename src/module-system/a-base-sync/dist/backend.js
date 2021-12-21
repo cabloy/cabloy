@@ -4861,10 +4861,17 @@ module.exports = ctx => {
         // hold agent
         ctx.state.user.agent = userAgent;
         // only check locale for agent
-        if (!userAgent.locale && ctx.locale) {
+        const checkDemo = ctx.bean.util.checkDemo(false);
+        if (checkDemo && !userAgent.locale && ctx.locale) {
+          // set
           const userData = { id: userAgent.id, locale: ctx.locale };
           await this.save({ user: userData });
           userAgent.locale = ctx.locale;
+        } else if (!checkDemo && userAgent.locale) {
+          // clear
+          const userData = { id: userAgent.id, locale: null };
+          await this.save({ user: userData });
+          userAgent.locale = null;
         }
       }
       // check user
@@ -5633,11 +5640,14 @@ module.exports = app => {
       return `/${moduleInfo.url}/${arg}`;
     }
 
-    checkDemo() {
+    checkDemo(throwError = true) {
       const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
-      if (!demo.enable) return;
-      if (this.ctx.state.user.op.userName === 'root') return;
-      this.ctx.throw.module(moduleInfo.relativeName, 1014);
+      if (!demo.enable) return true;
+      if (this.ctx.state.user.op.userName === 'root') return true;
+      if (throwError) {
+        this.ctx.throw.module(moduleInfo.relativeName, 1014);
+      }
+      return false;
     }
 
     escapeHtml(str) {
