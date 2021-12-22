@@ -126,6 +126,14 @@ export default {
       ) {
         sizeWill = 'medium';
       } else if (
+        sizeWill === 'medium' &&
+        this.views.length >= 2 &&
+        indexCurrent === this.views.length - 1 &&
+        this.views[indexCurrent - 1].sizeWill !== 'small' &&
+        this.layout.enoughLarge
+      ) {
+        sizeWill = 'large';
+      } else if (
         sizeWill === 'large' &&
         this.views.length > indexCurrent + 1 &&
         this.views[indexCurrent + 1].sizeWill === 'small'
