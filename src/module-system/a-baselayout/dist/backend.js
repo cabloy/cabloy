@@ -116,6 +116,9 @@ module.exports = app => {
         type: 'number',
         ebType: 'toggle',
         ebTitle: 'Mine',
+        ebDisplay: {
+          expression: '!_meta.host.container.options || !_meta.host.container.options.mine',
+        },
         ebSearch: {
           tableAlias: null,
           ignoreValue: 0,

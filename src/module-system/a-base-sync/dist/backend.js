@@ -2312,6 +2312,18 @@ module.exports = ctx => {
       if (_atom.atomIdDraft) {
         _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
       }
+      // check draft for ( action 3 + atomStage 1)
+      //   not handle for history
+      if (
+        action === 3 &&
+        _atom.atomStage === 1 &&
+        _atomDraft &&
+        !_atomDraft.atomClosed &&
+        _atomDraft.userIdUpdated === user.id
+      ) {
+        return await this._checkRightAction({ atom: _atomDraft, action, stage, user, checkFlow });
+      }
+      // check enableOnOpened
       if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
