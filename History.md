@@ -1,5 +1,19 @@
 # History
 
+## 2021-12-22, Version 4.12.112
+
+- **Feat**
+
+  - PC 布局:
+    - 当需要时将 medium 尺寸的页面显示为 large 尺寸
+  - Atom 列表:
+    - 当关闭草稿时，更新 formal 数据
+
+- **Enhance**
+
+  - Atom 权限:
+    - 当草稿处于 opened 时，formal 数据仍然可以显示`再次编辑`按钮
+
 ## 2021-12-21, Version 4.12.111
 
 - **Feat**
