@@ -31,14 +31,15 @@ export default {
         actions.push(action);
       }
       // specials
-      //    draft: ignore simple
-      if (this.base.item.atomSimple === 0 && this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
-        actions.push({
-          module: this.base.atomClass.module,
-          atomClassName: this.base.atomClass.atomClassName,
-          name: 'draft',
-        });
-      }
+      //    need not append draft button again
+      //      draft: ignore simple
+      // if (this.base.item.atomSimple === 0 && this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
+      //   actions.push({
+      //     module: this.base.atomClass.module,
+      //     atomClassName: this.base.atomClass.atomClassName,
+      //     name: 'draft',
+      //   });
+      // }
       //    formal
       if (this.base.item.atomIdFormal) {
         actions.push({
