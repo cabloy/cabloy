@@ -1,4 +1,3 @@
-import Vue from 'vue';
 export default {
   meta: {
     global: true,
@@ -37,6 +36,11 @@ export default {
       });
     },
   },
+  created() {
+    this.__changeHtml = this.$meta.util.debounce(() => {
+      this._setHtml(this.htmlInner);
+    }, 100);
+  },
   mounted() {
     this._$html = this.$refs.html;
     this._handlerOnClick = this._onClick.bind(this);
@@ -69,9 +73,6 @@ export default {
         });
       }
     },
-    __changeHtml: Vue.prototype.$meta.util.debounce(function () {
-      this._setHtml(this.htmlInner);
-    }, 100),
     _onClick(event) {
       const $clickedEl = this.$$(event.target);
       const $clickedLinkEl = $clickedEl.closest('a');
