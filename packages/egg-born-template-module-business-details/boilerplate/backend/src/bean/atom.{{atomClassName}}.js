@@ -49,18 +49,13 @@ module.exports = app => {
     }
 
     _getMeta(item) {
-      // flags
-      const flags = [];
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
       if (item.detailsCount > 0) {
-        flags.push(item.detailsCount);
+        meta.flags.push(item.detailsCount);
       }
-      // meta
-      const meta = {
-        summary: item.description,
-        flags,
-      };
-      // ok
-      item._meta = meta;
+      // meta.summary
+      meta.summary = item.description;
     }
   }
 

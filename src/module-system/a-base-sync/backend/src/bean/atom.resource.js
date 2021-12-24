@@ -62,18 +62,14 @@ module.exports = app => {
       }
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
-      // flags
-      const flags = [];
-      if (showSorting) {
-        flags.push(item.resourceSorting);
-      }
       // meta
-      const meta = {
-        summary: item.description,
-        flags,
-      };
-      // ok
-      item._meta = meta;
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
+      if (showSorting) {
+        meta.flags.push(item.resourceSorting);
+      }
+      // meta.summary
+      meta.summary = item.description;
     }
   }
 
