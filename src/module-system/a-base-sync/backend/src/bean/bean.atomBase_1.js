@@ -30,12 +30,18 @@ module.exports = app => {
       await this.ctx.bean.atom._update({ atom, user });
     }
 
+    _ensureItemMeta(item) {
+      if (!item) return null;
+      if (!item._meta) item._meta = {};
+      if (!item._meta.flags) item._meta.flags = [];
+      return item._meta;
+    }
+
     _appendRevisionToHistory({ item }) {
       if (!item) return;
       if (!item.atomRevision || item.atomStage !== 2) return;
-      if (!item._meta) item._meta = {};
-      if (!item._meta.flags) item._meta.flags = [];
-      item._meta.flags.push(`Rev.${item.atomRevision}`);
+      const meta = this._ensureItemMeta(item);
+      meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
     async _dictTranslate({ item, _atomClass }) {
