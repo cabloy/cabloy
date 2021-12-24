@@ -46,6 +46,8 @@ module.exports = app => {
       const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       // dict translate
       await this._dictTranslate({ item, _atomClass });
+      // revision
+      this._appendRevisionToHistory({ item });
       // flow
       if (item.flowNodeNameCurrent) {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
@@ -62,6 +64,12 @@ module.exports = app => {
       if (_atomClass) {
         for (const item of items) {
           await this._dictTranslate({ item, _atomClass });
+        }
+      }
+      // revision
+      if (options.stage === 'history') {
+        for (const item of items) {
+          this._appendRevisionToHistory({ item });
         }
       }
       // flow
