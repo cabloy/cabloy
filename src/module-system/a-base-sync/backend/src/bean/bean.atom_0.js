@@ -101,6 +101,8 @@ module.exports = ctx => {
         context: { atomClass, options, key, user },
         fn: 'read',
       });
+      // revision
+      ctx.bean.atomBase._appendRevisionToHistory({ item });
       // ok
       return item;
     }
@@ -174,6 +176,12 @@ module.exports = ctx => {
           });
         } else {
           await ctx.bean.atomBase.select({ atomClass, options, items, user });
+        }
+        // revision
+        if (options.stage === 'history') {
+          for (const item of items) {
+            ctx.bean.atomBase._appendRevisionToHistory({ item });
+          }
         }
       }
       // ok

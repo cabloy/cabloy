@@ -31,6 +31,7 @@ module.exports = app => {
     }
 
     _appendRevisionToHistory({ item }) {
+      if (!item) return;
       if (!item.atomRevision || item.atomStage !== 2) return;
       if (!item._meta) item._meta = {};
       if (!item._meta.flags) item._meta.flags = [];
