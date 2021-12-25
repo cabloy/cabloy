@@ -98,7 +98,11 @@ export default {
     // click
     this.$f7.off('click', this._handleClicks);
   },
-  created() {},
+  created() {
+    this.__saveLayoutConfig = this.$meta.util.debounce(() => {
+      this.__saveLayoutConfigNow();
+    }, 1000);
+  },
   mounted() {
     this.$f7ready(() => {
       this.__init().then(() => {
@@ -443,9 +447,6 @@ export default {
       // inited
       this.sidebarInited = true;
     },
-    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function () {
-      this.__saveLayoutConfigNow();
-    }, 1000),
     __saveLayoutConfigNow() {
       // override
       const value = this.$meta.util.extend({}, this.layoutConfig);
