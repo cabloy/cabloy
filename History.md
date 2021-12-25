@@ -1,5 +1,16 @@
 # History
 
+## 2021-12-25, Version 4.12.113
+
+- **Refactor**
+
+  - 原子 meta 属性:
+    - 通过`const meta = this._ensureItemMeta(item)`设置并获取 meta 属性值
+
+- **Fix**
+  - 修复原子历史列表不显示`Rev`标签的问题
+  - 修复延迟函数实例化的问题
+
 ## 2021-12-22, Version 4.12.112
 
 - **Feat**
