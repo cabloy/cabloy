@@ -70,6 +70,10 @@ export default {
     },
   },
   created() {
+    this._onPanelResizeDelay = this.$meta.util.debounce(() => {
+      this.layout.onResize();
+    }, 300);
+    // side
     const side = this.side;
     const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
     // opened=false if cover
@@ -316,9 +320,6 @@ export default {
       // save
       this.layout.__saveLayoutConfig();
     },
-    _onPanelResizeDelay: Vue.prototype.$meta.util.debounce(function () {
-      this.layout.onResize();
-    }, 300),
     _getTopView(skip) {
       if (this.views.length === 0) return null;
       return this.views.reduce((prev, current) => {
