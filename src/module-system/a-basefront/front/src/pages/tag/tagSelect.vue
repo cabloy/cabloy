@@ -61,6 +61,11 @@ export default {
       return this.contextParams.showBlockCurrent !== false;
     },
   },
+  created() {
+    this.onSearch = this.$meta.util.debounce((searchbar, query) => {
+      this.searchQuery = query;
+    }, 200);
+  },
   methods: {
     onPerformDone() {
       const checked = this.$refs.tagSelect.checked();
@@ -70,9 +75,6 @@ export default {
     onPerformSearch() {
       this.$refs.searchbar.f7Searchbar.enable();
     },
-    onSearch: Vue.prototype.$meta.util.debounce(function (searchbar, query) {
-      this.searchQuery = query;
-    }, 200),
     onDisable() {
       this.searchQuery = null;
     },

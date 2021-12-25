@@ -49,6 +49,11 @@ export default {
       query: '',
     };
   },
+  created() {
+    this.onSearch = this.$meta.util.debounce((searchbar, query) => {
+      this._onSearch(query);
+    }, 300);
+  },
   mounted() {
     this.disableButton = this.$meta.vueLayout.backLink(this);
     this.$nextTick(() => {
@@ -56,10 +61,10 @@ export default {
     });
   },
   methods: {
-    onSearch: Vue.prototype.$meta.util.debounce(function (searchbar, query) {
+    _onSearch(query) {
       this.query = query;
       this.$emit('search', query);
-    }, 300),
+    },
     onDisable() {
       this.$emit('disable');
     },

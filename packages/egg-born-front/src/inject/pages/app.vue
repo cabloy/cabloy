@@ -65,6 +65,11 @@ export default {
       layoutPreferSwitchButton: null,
     };
   },
+  created() {
+    this.onResize = this.$meta.util.debounce(() => {
+      this.resize();
+    }, 300);
+  },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
     this._clearLayoutPreferNotification();
@@ -209,9 +214,6 @@ export default {
         this._reloadLayout();
       }
     },
-    onResize: Vue.prototype.$meta.util.debounce(function () {
-      this.resize();
-    }, 300),
     _authEchoInit() {
       this._authEcho().then(() => {
         // resize

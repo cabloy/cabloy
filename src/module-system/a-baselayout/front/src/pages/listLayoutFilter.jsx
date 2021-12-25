@@ -131,6 +131,9 @@ export default {
     this.layoutManager.$off('layoutManager:destroy', this.onLayoutManagerDestroy);
   },
   created() {
+    this.onFilterDebounce = this.$meta.util.debounce(() => {
+      this._onFilterDebounce();
+    }, 300);
     // filter data
     const filterData = this.$meta.util.getProperty(this.layoutManager, 'filter.data');
     this.form = this.$meta.util.extend({}, filterData.form);
@@ -189,7 +192,7 @@ export default {
         this.onFilterDebounce();
       }
     },
-    onFilterDebounce: Vue.prototype.$meta.util.debounce(function () {
+    _onFilterDebounce() {
       this.layoutManager.filter_onChanged({
         form: this.form,
         formAtomClass: this.formAtomClass,
@@ -200,7 +203,7 @@ export default {
         searchStatesGeneral: this.searchStatesGeneral,
         searchStatesSearch: this.searchStatesSearch,
       });
-    }, 300),
+    },
     onLayoutManagerDestroy() {
       this.$view.close();
     },
