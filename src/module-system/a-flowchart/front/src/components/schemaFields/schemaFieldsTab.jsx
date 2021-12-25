@@ -92,6 +92,10 @@ export default {
     },
   },
   created() {
+    this._onInputValueMode4Delay = this.$meta.util.debounce(data => {
+      this.__onInputValueMode4Delay(data);
+    }, 1000);
+    // init
     this.__init();
   },
   methods: {
@@ -186,16 +190,16 @@ export default {
     },
     onInputValueMode4(data) {
       this.valueMode4 = data;
-      this.__onInputValueMode4Delay(data);
+      this._onInputValueMode4Delay(data);
     },
-    __onInputValueMode4Delay: Vue.prototype.$meta.util.debounce(function (data) {
+    __onInputValueMode4Delay(data) {
       try {
         // eslint-disable-next-line
         this.valueSchema[this.mode] = window.JSON5.parse(data);
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
-    }, 1000),
+    },
     renderMode_3_item(mode3Item, index) {
       // domMedia
       const domMedia = <f7-icon material={mode3Item.icon} slot="media"></f7-icon>;

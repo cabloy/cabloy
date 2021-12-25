@@ -19,7 +19,11 @@ export default {
       ready: false,
     };
   },
-  created() {},
+  created() {
+    this.onInputDelay = this.$meta.util.debounce(value => {
+      this._onInputDelay(value);
+    }, 500);
+  },
   methods: {
     async reload() {
       // json editor
@@ -31,15 +35,15 @@ export default {
       this.onSave();
     },
     onInput(value) {
-      this._onInputDelay(value);
+      this.onInputDelay(value);
     },
-    _onInputDelay: Vue.prototype.$meta.util.debounce(function (value) {
+    _onInputDelay(value) {
       try {
         this.$emit('contentChange', { type: 'listener', value });
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
-    }, 500),
+    },
   },
   render() {
     if (!this.ready) return <div></div>;
