@@ -3276,17 +3276,12 @@ module.exports = app => {
     }
 
     _cms_getMeta(options, item, showSorting) {
-      // flags
-      const flags = [];
-      if (item.sticky) flags.push(this.ctx.text('Sticky'));
-      if (item.sorting && showSorting) flags.push(item.sorting);
-      // meta
-      const meta = {
-        summary: item.summary,
-        flags,
-      };
-      // ok
-      item._meta = meta;
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
+      if (item.sticky) meta.flags.push(this.ctx.text('Sticky'));
+      if (item.sorting && showSorting) meta.flags.push(item.sorting);
+      // meta.summary
+      meta.summary = item.summary;
     }
   }
   return AtomCmsBase;

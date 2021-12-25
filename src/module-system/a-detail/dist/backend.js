@@ -1349,6 +1349,13 @@ module.exports = app => {
       const detailLineNo = res.detailLineNo;
       return detailLineNo ? detailLineNo + 1 : 1;
     }
+
+    _ensureItemMeta(item) {
+      if (!item) return null;
+      if (!item._meta) item._meta = {};
+      if (!item._meta.flags) item._meta.flags = [];
+      return item._meta;
+    }
   }
   return DetailBase;
 };

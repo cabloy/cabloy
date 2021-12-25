@@ -156,18 +156,14 @@ module.exports = app => {
       }
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
-      // flags
-      const flags = [];
-      if (showSorting) {
-        flags.push(item.resourceSorting);
-      }
       // meta
-      const meta = {
-        summary: item.description,
-        flags,
-      };
-      // ok
-      item._meta = meta;
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
+      if (showSorting) {
+        meta.flags.push(item.resourceSorting);
+      }
+      // meta.summary
+      meta.summary = item.description;
     }
   }
 
@@ -564,11 +560,18 @@ module.exports = app => {
       await this.ctx.bean.atom._update({ atom, user });
     }
 
-    _appendRevisionToHistory({ item }) {
-      if (!item.atomRevision || item.atomStage !== 2) return;
+    _ensureItemMeta(item) {
+      if (!item) return null;
       if (!item._meta) item._meta = {};
       if (!item._meta.flags) item._meta.flags = [];
-      item._meta.flags.push(`Rev.${item.atomRevision}`);
+      return item._meta;
+    }
+
+    _appendRevisionToHistory({ item }) {
+      if (!item) return;
+      if (!item.atomRevision || item.atomStage !== 2) return;
+      const meta = this._ensureItemMeta(item);
+      meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
     async _dictTranslate({ item, _atomClass }) {

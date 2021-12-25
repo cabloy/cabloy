@@ -85,15 +85,10 @@ module.exports = app => {
     }
 
     _getMeta(item) {
-      // flags
-      const flags = [];
-      // meta
-      const meta = {
-        summary: item.description,
-        flags,
-      };
-      // ok
-      item._meta = meta;
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
+      // meta.summary
+      meta.summary = item.description;
     }
   }
 
