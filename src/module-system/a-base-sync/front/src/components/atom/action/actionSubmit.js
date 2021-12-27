@@ -16,15 +16,29 @@ export default {
         // delete draft
         if (item.atomStage === 0) {
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
-          // list create
+          if (item.atomIdFormal > 0) {
+            // update formal
+            ctx.$meta.eventHub.$emit('atom:action', {
+              key: data.formal.key,
+              action: { name: 'save' },
+              actionSource: ctx,
+            });
+          } else {
+            // list create
+            ctx.$meta.eventHub.$emit('atom:action', {
+              key: data.formal.key,
+              action: { name: 'create' },
+              atom: data.formal.atom,
+            });
+          }
+        } else {
+          // update formal
           ctx.$meta.eventHub.$emit('atom:action', {
             key: data.formal.key,
-            action: { name: 'create' },
-            atom: data.formal.atom,
+            action: { name: 'save' },
+            actionSource: ctx,
           });
         }
-        // update formal
-        ctx.$meta.eventHub.$emit('atom:action', { key: data.formal.key, action: { name: 'save' }, actionSource: ctx });
         // back
         ctx.page_setDirty(false); // should before navigate
         ctx.$f7router.back();
