@@ -12,6 +12,8 @@ miniprogram_npm
 *.tmp
 *.rdb
 
+/package-lock.json
+
 /docker-compose
 !/docker-compose/config
 !/docker-compose/data/mysql/.gitkeep
