@@ -47,12 +47,18 @@ export default function (Vue) {
     use(moduleName, cb) {
       if (cb) {
         const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
-        if (!moduleInfo) throw new Error(`invalid module name: ${moduleName}`);
+        if (!moduleInfo) {
+          const message = Vue.prototype.$text('InvalidModuleName');
+          throw new Error(`${message}: ${moduleName}`);
+        }
         const relativeName = moduleInfo.relativeName;
         const module = this._get(relativeName);
         if (module) return cb(module);
         const moduleRepo = modulesRepo.modules[relativeName];
-        if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+        if (!moduleRepo) {
+          const message = Vue.prototype.$text('ModuleNotExists');
+          throw new Error(`${message}: ${relativeName}`);
+        }
         if (loadingQueue.push(relativeName, cb)) {
           try {
             if (moduleRepo.info.sync) {

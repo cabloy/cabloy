@@ -30,4 +30,6 @@ export default {
   SearchEqual: '等于',
   SearchLeftMatch: '左匹配',
   SearchRightMatch: '右匹配',
+  ModuleNotExists: '模块不存在',
+  InvalidModuleName: '无效的模块名称',
 };
