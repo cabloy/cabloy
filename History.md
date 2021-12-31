@@ -1,5 +1,20 @@
 # History
 
+## 2021-12-31, Version 4.12.116
+
+- **Feat**
+
+  - 动态组件: 当动态加载组件时，显示 preloading
+
+- **Refactor**
+
+  - sandbox: 将基于 webworker 实现的 sandbox 提炼为一个独立的 npm 包
+    - sandbox-webworker: [https://github.com/zhennann/sandbox-webworker](https://github.com/zhennann/sandbox-webworker)
+
+- **Enhance**
+
+  - module: 增加国际化提示
+
 ## 2021-12-25, Version 4.12.113
 
 - **Refactor**
