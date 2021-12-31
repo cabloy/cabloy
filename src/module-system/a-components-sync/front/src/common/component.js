@@ -72,6 +72,11 @@ export default {
       });
     },
     renderLoading(c) {
+      // template
+      if (this.checkIfEmpty() || !this.showLoading) {
+        return c('template');
+      }
+      // preloader
       return c('f7-preloader', {
         props: {
           size: 16,
