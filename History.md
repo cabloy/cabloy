@@ -1,5 +1,11 @@
 # History
 
+## 2021-12-31, Version 4.12.117
+
+- **Fix**
+
+  - Markdown Editor: 从 MD 源文件解析 strikethrough 出错
+
 ## 2021-12-31, Version 4.12.116
 
 - **Feat**
