@@ -22,7 +22,7 @@
     "@zhennann/ejs": "^3.0.1",
     "@zhennann/trim-html": "^0.1.12",
     "bluebird": "^3.7.2",
-    "chokidar": "^2.1.8",
+    "chokidar": "^3.5.2",
     "clean-css": "^4.2.3",
     "debounce": "^1.2.0",
     "egg-born-mock": "^2.1.3",
