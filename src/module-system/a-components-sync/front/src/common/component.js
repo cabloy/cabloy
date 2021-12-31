@@ -15,6 +15,8 @@ export default {
       moduleInstance: null,
       ready: false,
       errorMessage: null,
+      showLoading: false,
+      debounceTimerId: 0,
     };
   },
   watch: {
@@ -35,6 +37,9 @@ export default {
   },
   created() {
     this.prepareComponent();
+  },
+  beforeDestroy() {
+    this.debounceStop();
   },
   methods: {
     renderSuccess(c) {
@@ -76,13 +81,33 @@ export default {
     checkIfEmpty() {
       return !this.module || !this.name;
     },
+    clearStatus() {
+      this.ready = false;
+      this.errorMessage = null;
+      this.debounceStop();
+    },
+    debounceStop() {
+      this.showLoading = false;
+      if (this.debounceTimerId) {
+        window.clearTimeout(this.debounceTimerId);
+        this.debounceTimerId = 0;
+      }
+    },
+    debounceStart() {
+      const debounce = this.$meta.config.nprogress.debounce;
+      this.debounceStop();
+      this.debounceTimerId = window.setTimeout(() => {
+        this.showLoading = true;
+      }, debounce);
+    },
     async prepareComponent() {
       try {
         // clear
-        this.ready = false;
-        this.errorMessage = null;
+        this.clearStatus();
         // check
         if (this.checkIfEmpty()) return;
+        // debounce
+        this.debounceStart();
         // module
         const moduleInstance = await this.$meta.module.use(this.module);
         this.moduleInstance = moduleInstance;
@@ -101,9 +126,13 @@ export default {
           this.ready = true;
           this.errorMessage = null;
         }
+        // debounce
+        this.debounceStop();
       } catch (err) {
         this.ready = false;
         this.errorMessage = err.message;
+        // debounce
+        this.debounceStop();
       }
     },
     getComponentInstance() {
