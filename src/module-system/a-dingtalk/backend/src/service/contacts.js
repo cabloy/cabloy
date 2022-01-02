@@ -167,14 +167,14 @@ module.exports = app => {
         // create
         await this._createRoleAndDepartment({ department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       } else if (message.EventType === 'org_dept_modify') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
       } else if (message.EventType === 'org_dept_remove') {
         await this._deleteRoleAndDepartment({ localDepartment: null, department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       }
     }
 
@@ -253,7 +253,7 @@ module.exports = app => {
           }
         }
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
         // progress done
         await this.ctx.bean.status.set('syncDepartments', true);
         await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
@@ -635,6 +635,12 @@ module.exports = app => {
       else if (type === 'json') return JSON.stringify(value);
       else if (type === 'timestamp') return new Date(value);
       return value;
+    }
+
+    _roleBuild() {
+      this.ctx.tail(async () => {
+        await this.ctx.bean.role.build();
+      });
     }
   }
 
