@@ -42,14 +42,10 @@ module.exports = app => {
 
     async build() {
       const progressId = await this.ctx.bean.progress.create();
-      this.ctx.runInBackground(async () => {
-        await this._buildInBackground({ progressId });
-      });
+      // build, not await
+      this.ctx.bean.role.build({ progressId });
+      // ok
       return { progressId };
-    }
-
-    async _buildInBackground({ progressId }) {
-      return await this.ctx.bean.role.build({ progressId });
     }
   }
 
