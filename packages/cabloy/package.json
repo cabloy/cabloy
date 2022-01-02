@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.12.118",
+  "version": "4.12.119",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "egg-born-module-a-authsimple": "^4.2.9",
     "egg-born-module-a-authsms": "^4.2.6",
     "egg-born-module-a-base-sync": "^4.5.31",
-    "egg-born-module-a-baseadmin": "^4.2.5",
+    "egg-born-module-a-baseadmin": "^4.2.6",
     "egg-born-module-a-basefront": "^4.4.26",
     "egg-born-module-a-baselayout": "^4.2.15",
     "egg-born-module-a-cache": "^4.1.4",
@@ -90,8 +90,8 @@
     "egg-born-module-cms-pluginsubmit": "^4.1.3",
     "egg-born-module-cms-plugintrack": "^4.1.5",
     "egg-born-module-cms-pluginuser": "^4.2.6",
-    "egg-born-module-cms-pluginwechatsdk": "^4.2.7",
-    "egg-born-module-cms-pluginwechatshare": "^4.2.7",
+    "egg-born-module-cms-pluginwechatsdk": "^4.2.8",
+    "egg-born-module-cms-pluginwechatshare": "^4.2.8",
     "egg-born-module-cms-themeaws": "^4.2.8",
     "egg-born-module-cms-themeblog": "^4.2.8",
     "egg-born-module-cms-themecommunity": "^4.2.8",

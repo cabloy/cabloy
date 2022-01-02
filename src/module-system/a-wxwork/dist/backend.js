@@ -673,115 +673,10 @@ module.exports = function (ctx) {
 /***/ }),
 
 /***/ 76:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const jsApiList = [
-  'checkJsApi',
-  'agentConfig',
-  'onMenuShareWechat',
-  // 'onMenuShareTimeline',
-  // 'onMenuShareAppMessage',
-  'startRecord',
-  'stopRecord',
-  'onVoiceRecordEnd',
-  'playVoice',
-  'pauseVoice',
-  'stopVoice',
-  'onVoicePlayEnd',
-  'uploadVoice',
-  'downloadVoice',
-  'chooseImage',
-  'previewImage',
-  'uploadImage',
-  'downloadImage',
-  'getLocalImgData',
-  'getNetworkType',
-  'onNetworkStatusChange',
-  'openLocation',
-  'getLocation',
-  'startAutoLBS',
-  'stopAutoLBS',
-  'onLocationChange',
-  'onHistoryBack',
-  'hideOptionMenu',
-  'showOptionMenu',
-  'hideMenuItems',
-  'showMenuItems',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'closeWindow',
-  'openDefaultBrowser',
-  'scanQRCode',
-  'selectEnterpriseContact',
-  'openEnterpriseChat',
-  'chooseInvoice',
-  'selectExternalContact',
-  'getCurExternalContact',
-  'openUserProfile',
-  'shareAppMessage',
-  'shareWechatMessage',
-  'startWifi',
-  'stopWifi',
-  'connectWifi',
-  'getWifiList',
-  'onGetWifiList',
-  'onWifiConnected',
-  'getConnectedWifi',
-  'setClipboardData',
-];
-
-const jsApiListAgent = [
-  'onMenuShareWechat',
-  // 'onMenuShareTimeline',
-  // 'onMenuShareAppMessage',
-  'startRecord',
-  'stopRecord',
-  'onVoiceRecordEnd',
-  'playVoice',
-  'pauseVoice',
-  'stopVoice',
-  'onVoicePlayEnd',
-  'uploadVoice',
-  'downloadVoice',
-  'chooseImage',
-  'previewImage',
-  'uploadImage',
-  'downloadImage',
-  'getLocalImgData',
-  'getNetworkType',
-  'onNetworkStatusChange',
-  'openLocation',
-  'getLocation',
-  'startAutoLBS',
-  'stopAutoLBS',
-  'onLocationChange',
-  'onHistoryBack',
-  'hideOptionMenu',
-  'showOptionMenu',
-  'hideMenuItems',
-  'showMenuItems',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'closeWindow',
-  'openDefaultBrowser',
-  'scanQRCode',
-  'selectEnterpriseContact',
-  'openEnterpriseChat',
-  'chooseInvoice',
-  'selectExternalContact',
-  'getCurExternalContact',
-  'openUserProfile',
-  'shareAppMessage',
-  'shareWechatMessage',
-  'startWifi',
-  'stopWifi',
-  'connectWifi',
-  'getWifiList',
-  'onGetWifiList',
-  'onWifiConnected',
-  'getConnectedWifi',
-  'setClipboardData',
-];
+const jsApiList = __webpack_require__(537);
+const jsApiListAgent = __webpack_require__(812);
 
 module.exports = appInfo => {
   const config = {};
@@ -870,6 +765,126 @@ module.exports = appInfo => {
 
   return config;
 };
+
+
+/***/ }),
+
+/***/ 537:
+/***/ ((module) => {
+
+module.exports = [
+  'checkJsApi',
+  'agentConfig',
+  'onMenuShareWechat',
+  // 'onMenuShareTimeline',
+  // 'onMenuShareAppMessage',
+  'startRecord',
+  'stopRecord',
+  'onVoiceRecordEnd',
+  'playVoice',
+  'pauseVoice',
+  'stopVoice',
+  'onVoicePlayEnd',
+  'uploadVoice',
+  'downloadVoice',
+  'chooseImage',
+  'previewImage',
+  'uploadImage',
+  'downloadImage',
+  'getLocalImgData',
+  'getNetworkType',
+  'onNetworkStatusChange',
+  'openLocation',
+  'getLocation',
+  'startAutoLBS',
+  'stopAutoLBS',
+  'onLocationChange',
+  'onHistoryBack',
+  'hideOptionMenu',
+  'showOptionMenu',
+  'hideMenuItems',
+  'showMenuItems',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'closeWindow',
+  'openDefaultBrowser',
+  'scanQRCode',
+  'selectEnterpriseContact',
+  'openEnterpriseChat',
+  'chooseInvoice',
+  'selectExternalContact',
+  'getCurExternalContact',
+  'openUserProfile',
+  'shareAppMessage',
+  'shareWechatMessage',
+  'startWifi',
+  'stopWifi',
+  'connectWifi',
+  'getWifiList',
+  'onGetWifiList',
+  'onWifiConnected',
+  'getConnectedWifi',
+  'setClipboardData',
+];
+
+
+/***/ }),
+
+/***/ 812:
+/***/ ((module) => {
+
+module.exports = [
+  'onMenuShareWechat',
+  // 'onMenuShareTimeline',
+  // 'onMenuShareAppMessage',
+  'startRecord',
+  'stopRecord',
+  'onVoiceRecordEnd',
+  'playVoice',
+  'pauseVoice',
+  'stopVoice',
+  'onVoicePlayEnd',
+  'uploadVoice',
+  'downloadVoice',
+  'chooseImage',
+  'previewImage',
+  'uploadImage',
+  'downloadImage',
+  'getLocalImgData',
+  'getNetworkType',
+  'onNetworkStatusChange',
+  'openLocation',
+  'getLocation',
+  'startAutoLBS',
+  'stopAutoLBS',
+  'onLocationChange',
+  'onHistoryBack',
+  'hideOptionMenu',
+  'showOptionMenu',
+  'hideMenuItems',
+  'showMenuItems',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'closeWindow',
+  'openDefaultBrowser',
+  'scanQRCode',
+  'selectEnterpriseContact',
+  'openEnterpriseChat',
+  'chooseInvoice',
+  'selectExternalContact',
+  'getCurExternalContact',
+  'openUserProfile',
+  'shareAppMessage',
+  'shareWechatMessage',
+  'startWifi',
+  'stopWifi',
+  'connectWifi',
+  'getWifiList',
+  'onGetWifiList',
+  'onWifiConnected',
+  'getConnectedWifi',
+  'setClipboardData',
+];
 
 
 /***/ }),
@@ -1888,14 +1903,14 @@ module.exports = app => {
         // create
         await this._createRoleAndDepartment({ department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       } else if (message.ChangeType === 'update_party') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
       } else if (message.ChangeType === 'delete_party') {
         await this._deleteRoleAndDepartment({ localDepartment: null, department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       }
     }
 
@@ -1987,7 +2002,7 @@ module.exports = app => {
           }
         }
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
         // progress done
         await this.ctx.bean.status.set('syncDepartments', true);
         await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
@@ -2364,6 +2379,12 @@ module.exports = app => {
       else if (type === 'array') return value.join(',');
       else if (type === 'json') return JSON.stringify(value);
       return value;
+    }
+
+    _roleBuild() {
+      this.ctx.tail(async () => {
+        await this.ctx.bean.role.build();
+      });
     }
   }
 

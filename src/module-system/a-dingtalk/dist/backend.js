@@ -760,100 +760,10 @@ module.exports = {
 /***/ }),
 
 /***/ 76:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const jsApiList = [
-  'device.base.getUUID',
-  'device.base.getInterface',
-  'device.nfc.nfcWrite',
-  'runtime.permission.requestOperateAuthCode',
-  'biz.util.scanCard',
-  'device.geolocation.get',
-  'device.geolocation.start',
-  'device.geolocation.stop',
-  'biz.map.locate',
-  'biz.map.search',
-  'biz.map.view',
-  'biz.clipboardData.setData',
-  'biz.util.ut',
-  'biz.util.open',
-  'biz.telephone.call',
-  'biz.telephone.showCallMenu',
-  'biz.telephone.checkBizCall',
-  'biz.telephone.quickCallList',
-  'biz.ding.create',
-  'biz.ding.post',
-  'biz.contact.choose',
-  'biz.contact.chooseMobileContacts',
-  'biz.contact.complexPicker',
-  'biz.contact.departmentsPicker',
-  'biz.contact.createGroup',
-  'biz.contact.setRule',
-  'biz.contact.externalComplexPicker',
-  'biz.contact.externalEditForm',
-  'biz.customContact.choose',
-  'biz.customContact.multipleChoose',
-  'biz.chat.pickConversation',
-  'biz.chat.chooseConversationByCorpId',
-  'biz.chat.openSingleChat',
-  'biz.chat.toConversation',
-  'biz.cspace.saveFile',
-  'biz.cspace.preview',
-  'biz.cspace.chooseSpaceDir',
-  'biz.util.uploadAttachment',
-  'device.audio.startRecord',
-  'device.audio.stopRecord',
-  'device.audio.onRecordEnd',
-  'device.audio.download',
-  'device.audio.play',
-  'device.audio.pause',
-  'device.audio.resume',
-  'device.audio.stop',
-  'device.audio.onPlayEnd',
-  'device.audio.translateVoice',
-  'biz.conference.videoConfCall',
-  'biz.alipay.pay',
-  'biz.util.encrypt',
-  'biz.util.decrypt',
-];
-
-const businessCallbackList = [
-  // 通讯录
-  'user_add_org',
-  'user_modify_org',
-  'user_leave_org',
-  'user_active_org',
-  'org_admin_add',
-  'org_admin_remove',
-  'org_dept_create',
-  'org_dept_modify',
-  'org_dept_remove',
-  'org_remove',
-  'org_change',
-  'label_user_change',
-  'label_conf_add',
-  'label_conf_del',
-  'label_conf_modify',
-  // 审批
-  'bpms_task_change',
-  'bpms_instance_change',
-  // 群会话
-  'chat_add_member',
-  'chat_remove_member',
-  'chat_quit',
-  'chat_update_owner',
-  'chat_update_title',
-  'chat_disband',
-  // 签到
-  'check_in',
-  // 考勤
-  'attendance_check_record',
-  'attendance_schedule_change',
-  'attendance_overtime_duration',
-  // 会议室
-  'meetingroom_book',
-  'meetingroom_room_info',
-];
+const jsApiList = __webpack_require__(537);
+const businessCallbackList = __webpack_require__(779);
 
 module.exports = appInfo => {
   const config = {};
@@ -952,6 +862,111 @@ module.exports = appInfo => {
 
   return config;
 };
+
+
+/***/ }),
+
+/***/ 779:
+/***/ ((module) => {
+
+module.exports = [
+  // 通讯录
+  'user_add_org',
+  'user_modify_org',
+  'user_leave_org',
+  'user_active_org',
+  'org_admin_add',
+  'org_admin_remove',
+  'org_dept_create',
+  'org_dept_modify',
+  'org_dept_remove',
+  'org_remove',
+  'org_change',
+  'label_user_change',
+  'label_conf_add',
+  'label_conf_del',
+  'label_conf_modify',
+  // 审批
+  'bpms_task_change',
+  'bpms_instance_change',
+  // 群会话
+  'chat_add_member',
+  'chat_remove_member',
+  'chat_quit',
+  'chat_update_owner',
+  'chat_update_title',
+  'chat_disband',
+  // 签到
+  'check_in',
+  // 考勤
+  'attendance_check_record',
+  'attendance_schedule_change',
+  'attendance_overtime_duration',
+  // 会议室
+  'meetingroom_book',
+  'meetingroom_room_info',
+];
+
+
+/***/ }),
+
+/***/ 537:
+/***/ ((module) => {
+
+module.exports = [
+  'device.base.getUUID',
+  'device.base.getInterface',
+  'device.nfc.nfcWrite',
+  'runtime.permission.requestOperateAuthCode',
+  'biz.util.scanCard',
+  'device.geolocation.get',
+  'device.geolocation.start',
+  'device.geolocation.stop',
+  'biz.map.locate',
+  'biz.map.search',
+  'biz.map.view',
+  'biz.clipboardData.setData',
+  'biz.util.ut',
+  'biz.util.open',
+  'biz.telephone.call',
+  'biz.telephone.showCallMenu',
+  'biz.telephone.checkBizCall',
+  'biz.telephone.quickCallList',
+  'biz.ding.create',
+  'biz.ding.post',
+  'biz.contact.choose',
+  'biz.contact.chooseMobileContacts',
+  'biz.contact.complexPicker',
+  'biz.contact.departmentsPicker',
+  'biz.contact.createGroup',
+  'biz.contact.setRule',
+  'biz.contact.externalComplexPicker',
+  'biz.contact.externalEditForm',
+  'biz.customContact.choose',
+  'biz.customContact.multipleChoose',
+  'biz.chat.pickConversation',
+  'biz.chat.chooseConversationByCorpId',
+  'biz.chat.openSingleChat',
+  'biz.chat.toConversation',
+  'biz.cspace.saveFile',
+  'biz.cspace.preview',
+  'biz.cspace.chooseSpaceDir',
+  'biz.util.uploadAttachment',
+  'device.audio.startRecord',
+  'device.audio.stopRecord',
+  'device.audio.onRecordEnd',
+  'device.audio.download',
+  'device.audio.play',
+  'device.audio.pause',
+  'device.audio.resume',
+  'device.audio.stop',
+  'device.audio.onPlayEnd',
+  'device.audio.translateVoice',
+  'biz.conference.videoConfCall',
+  'biz.alipay.pay',
+  'biz.util.encrypt',
+  'biz.util.decrypt',
+];
 
 
 /***/ }),
@@ -1992,14 +2007,14 @@ module.exports = app => {
         // create
         await this._createRoleAndDepartment({ department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       } else if (message.EventType === 'org_dept_modify') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
       } else if (message.EventType === 'org_dept_remove') {
         await this._deleteRoleAndDepartment({ localDepartment: null, department });
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
       }
     }
 
@@ -2078,7 +2093,7 @@ module.exports = app => {
           }
         }
         // build roles
-        await this.ctx.bean.role.build();
+        this._roleBuild();
         // progress done
         await this.ctx.bean.status.set('syncDepartments', true);
         await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
@@ -2460,6 +2475,12 @@ module.exports = app => {
       else if (type === 'json') return JSON.stringify(value);
       else if (type === 'timestamp') return new Date(value);
       return value;
+    }
+
+    _roleBuild() {
+      this.ctx.tail(async () => {
+        await this.ctx.bean.role.build();
+      });
     }
   }
 

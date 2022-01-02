@@ -611,47 +611,9 @@ module.exports = {
 /***/ }),
 
 /***/ 76:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const jsApiList = [
-  'checkJsApi',
-  'updateAppMessageShareData',
-  'updateTimelineShareData',
-  'onMenuShareWeibo',
-  // 'onMenuShareTimeline',
-  // 'onMenuShareAppMessage',
-  // 'onMenuShareQQ',
-  // 'onMenuShareQZone',
-  'hideMenuItems',
-  'showMenuItems',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'translateVoice',
-  'startRecord',
-  'stopRecord',
-  'onRecordEnd',
-  'playVoice',
-  'pauseVoice',
-  'stopVoice',
-  'uploadVoice',
-  'downloadVoice',
-  'chooseImage',
-  'previewImage',
-  'uploadImage',
-  'downloadImage',
-  'getNetworkType',
-  'openLocation',
-  'getLocation',
-  'hideOptionMenu',
-  'showOptionMenu',
-  'closeWindow',
-  'scanQRCode',
-  'chooseWXPay',
-  'openProductSpecificView',
-  'addCard',
-  'chooseCard',
-  'openCard',
-];
+const jsApiList = __webpack_require__(537);
 
 module.exports = appInfo => {
   const config = {};
@@ -710,6 +672,52 @@ module.exports = appInfo => {
 
   return config;
 };
+
+
+/***/ }),
+
+/***/ 537:
+/***/ ((module) => {
+
+module.exports = [
+  'checkJsApi',
+  'updateAppMessageShareData',
+  'updateTimelineShareData',
+  'onMenuShareWeibo',
+  // 'onMenuShareTimeline',
+  // 'onMenuShareAppMessage',
+  // 'onMenuShareQQ',
+  // 'onMenuShareQZone',
+  'hideMenuItems',
+  'showMenuItems',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'translateVoice',
+  'startRecord',
+  'stopRecord',
+  'onRecordEnd',
+  'playVoice',
+  'pauseVoice',
+  'stopVoice',
+  'uploadVoice',
+  'downloadVoice',
+  'chooseImage',
+  'previewImage',
+  'uploadImage',
+  'downloadImage',
+  'getNetworkType',
+  'openLocation',
+  'getLocation',
+  'hideOptionMenu',
+  'showOptionMenu',
+  'closeWindow',
+  'scanQRCode',
+  'chooseWXPay',
+  'openProductSpecificView',
+  'addCard',
+  'chooseCard',
+  'openCard',
+];
 
 
 /***/ }),
