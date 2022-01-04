@@ -151,6 +151,7 @@ module.exports = app => {
     }
 
     async _queueChangeContactDepartments({ message }) {
+      // console.log(message);
       for (const departmentId of message.DeptId) {
         await this._queueChangeContactDepartment({ message, departmentId });
       }
