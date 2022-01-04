@@ -140,7 +140,7 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       const syncStatus = await this.syncStatus();
-      console.log('------ type:', message.EventType);
+      // console.log('------ type:', message.EventType);
       if (message.EventType.indexOf('org_dept_') === 0) {
         if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartments({ message });
