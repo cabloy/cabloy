@@ -4876,8 +4876,9 @@ module.exports = ctx => {
         // hold agent
         ctx.state.user.agent = userAgent;
         // only check locale for agent
+        // not set locale for test env
         const checkDemo = ctx.bean.util.checkDemo(false);
-        if (checkDemo && !userAgent.locale && ctx.locale) {
+        if (checkDemo && !userAgent.locale && ctx.locale && !ctx.app.meta.isTest) {
           // set
           const userData = { id: userAgent.id, locale: ctx.locale };
           await this.save({ user: userData });

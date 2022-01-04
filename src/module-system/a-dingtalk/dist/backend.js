@@ -80,6 +80,7 @@ module.exports = ctx => {
         appsecret,
         corpid,
         sso,
+        // logger: console,
       },
       async function () {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
@@ -1980,6 +1981,7 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       const syncStatus = await this.syncStatus();
+      // console.log('------ type:', message.EventType);
       if (message.EventType.indexOf('org_dept_') === 0) {
         if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartments({ message });
@@ -1990,6 +1992,7 @@ module.exports = app => {
     }
 
     async _queueChangeContactDepartments({ message }) {
+      // console.log(message);
       for (const departmentId of message.DeptId) {
         await this._queueChangeContactDepartment({ message, departmentId });
       }
@@ -2066,6 +2069,7 @@ module.exports = app => {
         const department1 = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(1);
         res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
+        // console.log('-------all:', context.remoteDepartments);
         // progress
         await this._progressPublish({
           context,
@@ -2184,6 +2188,7 @@ module.exports = app => {
       // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
+      // console.log(remoteDepartment);
       const departmentId = department.departmentId;
       // check if local department exists
       const localDepartment = context.localDepartmentsMap[departmentId];
@@ -2255,6 +2260,7 @@ module.exports = app => {
     }
 
     async _updateRoleAndDepartment({ localDepartment, department }) {
+      // console.log(department);
       // localDepartment
       if (!localDepartment) {
         localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
@@ -2262,16 +2268,38 @@ module.exports = app => {
           this.ctx.throw(1004, department.departmentId);
         }
       }
-      // update role name
-      if (department.departmentName) {
-        await this.ctx.bean.role.save({
-          roleId: localDepartment.roleId,
-          data: { roleName: department.departmentName },
-        });
-      }
+      // update role
+      await this._updateRoleAndDepartment_role({ localDepartment, department });
       // update department
       department.id = localDepartment.id;
       await this.ctx.model.department.update(department);
+    }
+
+    async _updateRoleAndDepartment_role({ localDepartment, department }) {
+      // change role parent
+      if (department.departmentParentId && department.departmentParentId !== localDepartment.departmentParentId) {
+        const departmentParent = await this.ctx.model.department.get({ departmentId: department.departmentParentId });
+        if (!departmentParent) {
+          this.ctx.throw(1004, department.departmentParentId);
+        }
+        const roleIdParent = departmentParent.roleId;
+        // move
+        await this.ctx.bean.role.move({ roleId: localDepartment.roleId, roleIdParent });
+      }
+      // update role: name/order
+      const data = {};
+      if (department.departmentName) {
+        data.roleName = department.departmentName;
+      }
+      if (department.departmentOrder) {
+        data.sorting = department.departmentOrder;
+      }
+      if (Object.keys(data).length > 0) {
+        await this.ctx.bean.role.save({
+          roleId: localDepartment.roleId,
+          data,
+        });
+      }
     }
 
     async _updateUserRoles({ userId, departmentIdsOld, departmentIdsNew }) {
