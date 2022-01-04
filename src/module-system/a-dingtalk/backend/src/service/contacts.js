@@ -140,6 +140,7 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       const syncStatus = await this.syncStatus();
+      // console.log('------ type:', message.ChangeType);
       if (message.EventType.indexOf('org_dept_') === 0) {
         if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartments({ message });
@@ -226,6 +227,7 @@ module.exports = app => {
         const department1 = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(1);
         res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
+        // console.log('-------all:', context.remoteDepartments);
         // progress
         await this._progressPublish({
           context,
