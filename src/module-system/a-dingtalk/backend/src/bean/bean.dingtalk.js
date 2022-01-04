@@ -74,6 +74,7 @@ module.exports = ctx => {
         appsecret,
         corpid,
         sso,
+        // logger: console,
       },
       async function () {
         const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
