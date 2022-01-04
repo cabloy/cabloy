@@ -426,7 +426,25 @@ module.exports = app => {
           this.ctx.throw(1004, department.departmentId);
         }
       }
-      // update role name/order
+      // update role
+      await this._updateRoleAndDepartment_role({ localDepartment, department });
+      // update department
+      department.id = localDepartment.id;
+      await this.ctx.model.department.update(department);
+    }
+
+    async _updateRoleAndDepartment_role({ localDepartment, department }) {
+      // change role parent
+      if (department.departmentParentId && department.departmentParentId !== localDepartment.departmentParentId) {
+        const departmentParent = await this.ctx.model.department.get({ departmentId: department.departmentParentId });
+        if (!departmentParent) {
+          this.ctx.throw(1004, department.departmentParentId);
+        }
+        const roleIdParent = departmentParent.roleId;
+        // move
+        await this.ctx.bean.role.move({ roleId: localDepartment.roleId, roleIdParent });
+      }
+      // update role: name/order
       const data = {};
       if (department.departmentName) {
         data.roleName = department.departmentName;
@@ -440,9 +458,6 @@ module.exports = app => {
           data,
         });
       }
-      // update department
-      department.id = localDepartment.id;
-      await this.ctx.model.department.update(department);
     }
 
     async _updateUserRoles({ userId, departmentIdsOld, departmentIdsNew }) {
