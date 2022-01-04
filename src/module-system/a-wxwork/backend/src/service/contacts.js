@@ -167,6 +167,7 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       const syncStatus = await this.syncStatus();
+      // console.log('------ type:', message.ChangeType);
       if (message.ChangeType.indexOf('_party') > -1) {
         if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartment({ message });
@@ -180,6 +181,7 @@ module.exports = app => {
       // department
       const department = {};
       this._adjustFields(department, message, __departmentFieldMap_XML);
+      // console.log(department);
       // do
       if (message.ChangeType === 'create_party') {
         // create
@@ -257,6 +259,7 @@ module.exports = app => {
           throw new Error(res.errmsg);
         }
         context.remoteDepartments = res.department;
+        // console.log('-------all:', context.remoteDepartments);
         // progress
         await this._progressPublish({
           context,
@@ -452,11 +455,18 @@ module.exports = app => {
           this.ctx.throw(1004, department.departmentId);
         }
       }
-      // update role name
+      // update role: name/order
+      const data = {};
       if (department.departmentName) {
+        data.roleName = department.departmentName;
+      }
+      if (department.departmentOrder) {
+        data.sorting = department.departmentOrder;
+      }
+      if (Object.keys(data).length > 0) {
         await this.ctx.bean.role.save({
           roleId: localDepartment.roleId,
-          data: { roleName: department.departmentName },
+          data,
         });
       }
       // update department
