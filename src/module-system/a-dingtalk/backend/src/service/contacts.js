@@ -346,6 +346,8 @@ module.exports = app => {
       // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
+      // console.log(department);
+      // console.log(remoteDepartment);
       const departmentId = department.departmentId;
       // check if local department exists
       const localDepartment = context.localDepartmentsMap[departmentId];
@@ -424,11 +426,18 @@ module.exports = app => {
           this.ctx.throw(1004, department.departmentId);
         }
       }
-      // update role name
+      // update role name/order
+      const data = {};
       if (department.departmentName) {
+        data.roleName = department.departmentName;
+      }
+      if (department.departmentOrder) {
+        data.sorting = department.departmentOrder;
+      }
+      if (Object.keys(data).length > 0) {
         await this.ctx.bean.role.save({
           roleId: localDepartment.roleId,
-          data: { roleName: department.departmentName },
+          data,
         });
       }
       // update department
