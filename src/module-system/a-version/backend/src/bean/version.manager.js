@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const fse = require3('fs-extra');
+
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
@@ -17,6 +20,22 @@ module.exports = app => {
             PRIMARY KEY (id));
           `);
       }
+    }
+
+    async init(options) {
+      if (options.version === 1) {
+        // remove publicDir
+        await this._removePublicDir();
+      }
+    }
+
+    async _removePublicDir() {
+      // only for test/dev env
+      if (app.meta.isProd) return;
+      // path
+      const publicPath = await this.ctx.bean.base.getPath();
+      // remove
+      await fse.remove(publicPath);
     }
   }
 
