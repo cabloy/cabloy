@@ -140,7 +140,7 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       const syncStatus = await this.syncStatus();
-      // console.log('------ type:', message.ChangeType);
+      console.log('------ type:', message.EventType);
       if (message.EventType.indexOf('org_dept_') === 0) {
         if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartments({ message });
@@ -346,7 +346,6 @@ module.exports = app => {
       // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
-      // console.log(department);
       // console.log(remoteDepartment);
       const departmentId = department.departmentId;
       // check if local department exists
@@ -419,6 +418,7 @@ module.exports = app => {
     }
 
     async _updateRoleAndDepartment({ localDepartment, department }) {
+      // console.log(department);
       // localDepartment
       if (!localDepartment) {
         localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
