@@ -27,5 +27,6 @@ module.exports = {
         return s.toUpperCase();
       });
     },
+    silent: true,
   },
 };
