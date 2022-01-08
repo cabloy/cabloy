@@ -26,6 +26,7 @@ module.exports = appInfo => {
     department: {
       roleContainer: 'internal',
       roleTop: 'wxwork',
+      reverseOrder: true,
     },
   };
 

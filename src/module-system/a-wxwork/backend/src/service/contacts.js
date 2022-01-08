@@ -672,11 +672,15 @@ module.exports = app => {
     }
 
     _adjustFields(itemDest, itemSrc, fieldMap) {
+      const reverseOrder = this.ctx.config.sync.department.reverseOrder;
       for (const index in fieldMap[1]) {
         const field = fieldMap[1][index];
         if (itemSrc[field] !== undefined) {
           const fieldDest = fieldMap[0][index];
           itemDest[fieldDest] = this._adjustFieldType(itemSrc[field], fieldMap[2][index]);
+          if (fieldDest === 'departmentOrder' && reverseOrder) {
+            itemDest[fieldDest] = -itemDest[fieldDest];
+          }
         }
       }
     }
