@@ -1,5 +1,10 @@
 # History
 
+## 2022-01-10, Version 4.12.121
+
+- **Fix**
+  - remove `colors` module
+
 ## 2022-01-04, Version 4.12.120
 
 - **Fix**
