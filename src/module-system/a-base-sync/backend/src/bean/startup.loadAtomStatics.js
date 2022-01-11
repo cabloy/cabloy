@@ -66,6 +66,16 @@ module.exports = app => {
       }
     }
 
+    // ctx.text is not good for resource
+    //   so, support only for atomLanguage
+    _getAtomFieldValueByLocale(item, field) {
+      const value = item[field];
+      if (value && item.atomLanguage) {
+        return this.ctx.text.locale(item.atomLanguage, value);
+      }
+      return value;
+    }
+
     async _adjustItem({ moduleName, atomClass, item, register }) {
       // item
       item = {
@@ -73,10 +83,11 @@ module.exports = app => {
         atomStatic: 1,
         atomStaticKey: `${moduleName}:${item.atomStaticKey}`,
         atomRevision: item.atomRevision || 0,
-        // ctx.text is not good for resource
-        // atomName: this.ctx.text(item.atomName),
-        // description: this.ctx.text(item.description),
+        atomName: this._getAtomFieldValueByLocale(item, 'atomName'),
       };
+      if (item.description !== undefined) {
+        item.description = this._getAtomFieldValueByLocale(item, 'description');
+      }
       // atomLanguage,atomCategoryId,atomTags
       if (typeof item.atomCategoryId === 'string') {
         const category = await this.ctx.bean.category.parseCategoryName({
