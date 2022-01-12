@@ -52,6 +52,10 @@ module.exports = app => {
       if (item.flowNodeNameCurrent) {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
+      // atomLanguage
+      if (item.atomLanguage) {
+        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+      }
       // ok
       return item;
     }
@@ -78,6 +82,12 @@ module.exports = app => {
           if (item.flowNodeNameCurrent) {
             item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
           }
+        }
+      }
+      // atomLanguage
+      for (const item of items) {
+        if (item.atomLanguage) {
+          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
       }
     }

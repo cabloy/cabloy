@@ -330,6 +330,10 @@ module.exports = app => {
       if (item.flowNodeNameCurrent) {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
+      // atomLanguage
+      if (item.atomLanguage) {
+        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+      }
       // ok
       return item;
     }
@@ -356,6 +360,12 @@ module.exports = app => {
           if (item.flowNodeNameCurrent) {
             item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
           }
+        }
+      }
+      // atomLanguage
+      for (const item of items) {
+        if (item.atomLanguage) {
+          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
       }
     }
@@ -9977,6 +9987,12 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  // language/locale
+  'en-us': 'English',
+  'zh-cn': 'Chinese',
+  // English: 'English',
+  // Chinese: 'Chinese',
+  //
   Atom: 'Data',
   Atoms: 'Data',
   AtomName: 'Title',
@@ -10003,6 +10019,12 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  // language/locale
+  'en-us': '英语',
+  'zh-cn': '简体中文',
+  English: '英文',
+  Chinese: '简体中文',
+  //
   'Comment List': '评论列表',
   'Delete Comment': '删除评论',
   'Element Exists': '元素已存在',
@@ -10045,8 +10067,6 @@ module.exports = {
   History: '历史',
   Histories: '历史',
   Base: '基本',
-  English: '英文',
-  Chinese: '中文',
   Create: '新建',
   List: '列表',
   Tools: '工具',
