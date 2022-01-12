@@ -3589,8 +3589,6 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  'en-us': 'English',
-  'zh-cn': 'Chinese',
   PersonalProfile: 'Profile',
   AuthorProfile: 'Author Profile',
   ArticlePrevious: 'Previous',
@@ -3634,8 +3632,6 @@ module.exports = {
   'Recent Comments': '最近评论',
   'Theme %s:%s:%s not Set': '没有设置主题%s:%s:%s',
   'Theme %s not Found': '没有找到主题%s',
-  'en-us': '英语',
-  'zh-cn': '简体中文',
   'CMS Block': 'CMS区块',
   PersonalProfile: '个人信息',
   AuthorProfile: '作者信息',
