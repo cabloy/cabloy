@@ -1,9 +1,14 @@
 # History
 
+## 2022-01-12, Version 4.12.123
+
+- **Feat**
+  - 原子数据查询：如果 atomLanguage 字段不为空，那么就自动追加 atomLanguageLocale 值，从而方便前端显示
+
 ## 2022-01-11, Version 4.12.122
 
 - **Feat**
-  - 静态原子数据：如果有 atomLanguage 字段，那么自动转义以下字段的语言资源：atomName/description
+  - 静态原子数据：如果 atomLanguage 字段不为空，那么自动转义以下字段的语言资源：atomName/description
 
 ## 2022-01-10, Version 4.12.121
 
