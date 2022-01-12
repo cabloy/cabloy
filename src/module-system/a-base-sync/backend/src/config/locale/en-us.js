@@ -1,4 +1,10 @@
 module.exports = {
+  // language/locale
+  'en-us': 'English',
+  'zh-cn': 'Chinese',
+  // English: 'English',
+  // Chinese: 'Chinese',
+  //
   Atom: 'Data',
   Atoms: 'Data',
   AtomName: 'Title',

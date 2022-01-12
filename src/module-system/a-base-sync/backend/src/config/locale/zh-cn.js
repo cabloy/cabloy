@@ -1,4 +1,10 @@
 module.exports = {
+  // language/locale
+  'en-us': '英语',
+  'zh-cn': '简体中文',
+  English: '英文',
+  Chinese: '简体中文',
+  //
   'Comment List': '评论列表',
   'Delete Comment': '删除评论',
   'Element Exists': '元素已存在',
@@ -41,8 +47,6 @@ module.exports = {
   History: '历史',
   Histories: '历史',
   Base: '基本',
-  English: '英文',
-  Chinese: '中文',
   Create: '新建',
   List: '列表',
   Tools: '工具',
