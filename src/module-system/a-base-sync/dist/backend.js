@@ -591,7 +591,7 @@ module.exports = app => {
         if (field.translate === false) continue;
         //
         const code = item[fieldName];
-        if (!code) continue;
+        if (code === undefined) continue;
         const res = await this.ctx.bean.dict.findItem({
           dictKey: field.dictKey,
           code,
