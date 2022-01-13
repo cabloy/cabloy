@@ -1,5 +1,10 @@
 # History
 
+## 2022-01-13, Version 4.12.124
+
+- **Fix**
+  - 原子数据查询：自动转义字典字段时，对 code 的判断：!code 改为 code===undefined，从而支持 code=0 的情况
+
 ## 2022-01-12, Version 4.12.123
 
 - **Feat**
