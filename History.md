@@ -1,5 +1,10 @@
 # History
 
+## 2022-01-16, Version 4.12.125
+
+- **Feat**
+  - cms：增加工具函数：util.login / util.logout
+
 ## 2022-01-13, Version 4.12.124
 
 - **Fix**
