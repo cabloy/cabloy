@@ -101,18 +101,12 @@
   }
 
   window.onClickUserLogin = function() {
-    const url=`${env.site.serverUrl}/#!${location.href}`;
-    location.assign(url);
+    util.login();
     return false;
   }
 
   window.onClickUserLogout = function() {
-    util.performAction({
-      method: 'post',
-      url: '/a/base/auth/logout',
-    }).then(() => {
-      location.reload();
-    });
+    util.logout();
     return false;
   }
 })();
