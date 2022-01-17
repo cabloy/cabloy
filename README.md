@@ -6,17 +6,29 @@ CabloyJS 是一款自带`工作流引擎`的 Node.js 全栈框架，一款`面�
 
 CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱即用`到`灵活定制`的无缝衔接，包括：角色系统、用户认证、菜单权限、数据权限、表单渲染、表单验证、工作流引擎、字典、仪表板、在线推送、页面主题、多语言国际化、CMS 渲染引擎、微信接口、企业微信接口、钉钉接口，等等
 
+[![LICENSE MIT][license-image]][license-url]
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
+[![Lerna][lerna-image]][lerna-url]
+[![NPM download][download-image]][download-url]
+[![NPM Mirror download][download-image-mirror]][download-url-mirror]
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-url]: https://github.com/zhennann/cabloy/blob/master/LICENSE
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/cabloy
+[npm-url]: https://npmjs.com/package/cabloy
 [test-image]: https://github.com/zhennann/cabloy/workflows/actions-unittest/badge.svg
 [test-url]: https://github.com/zhennann/cabloy/actions
 [codecov-image]: https://img.shields.io/codecov/c/github/zhennann/cabloy.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/zhennann/cabloy
+[lerna-image]: https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg
+[lerna-url]: https://lernajs.io
+[download-image]: https://img.shields.io/npm/dm/cabloy?color=orange&label=npm%20downloads
+[download-url]: https://npmjs.com/package/cabloy
+[download-image-mirror]: https://npmmirror.com/badge/d/cabloy.svg
+[download-url-mirror]: https://npmmirror.com/package/cabloy
 
 ## 技术栈
 
