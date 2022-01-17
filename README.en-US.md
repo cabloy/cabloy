@@ -8,9 +8,9 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
-[![Lerna][lerna-image]][lerna-url]
 [![NPM download][download-image]][download-url]
 [![NPM Mirror download][download-image-mirror]][download-url-mirror]
+[![Lerna][lerna-image]][lerna-url]
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
