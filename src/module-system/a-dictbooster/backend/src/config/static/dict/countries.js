@@ -7,7 +7,7 @@ module.exports = app => {
       China: '中国',
     },
   };
-  const definition = {
+  const dict = {
     atomName: 'Countries',
     atomStaticKey: 'countries',
     atomRevision: 0,
@@ -16,5 +16,5 @@ module.exports = app => {
     dictLocales: JSON.stringify(dictLocales),
     resourceRoles: 'root',
   };
-  return definition;
+  return dict;
 };

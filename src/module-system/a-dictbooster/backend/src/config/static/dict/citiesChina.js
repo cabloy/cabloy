@@ -2,7 +2,7 @@ const citiesChina = require('./cities/citiesChina.json');
 module.exports = app => {
   const dictItems = citiesChina;
   const dictLocales = {};
-  const definition = {
+  const dict = {
     atomName: 'Cities China',
     atomStaticKey: 'citiesChina',
     atomRevision: 0,
@@ -11,5 +11,5 @@ module.exports = app => {
     dictLocales: JSON.stringify(dictLocales),
     resourceRoles: 'root',
   };
-  return definition;
+  return dict;
 };
