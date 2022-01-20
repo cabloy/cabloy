@@ -108,7 +108,7 @@ const citiesChina = __webpack_require__(639);
 module.exports = app => {
   const dictItems = citiesChina;
   const dictLocales = {};
-  const definition = {
+  const dict = {
     atomName: 'Cities China',
     atomStaticKey: 'citiesChina',
     atomRevision: 0,
@@ -117,7 +117,7 @@ module.exports = app => {
     dictLocales: JSON.stringify(dictLocales),
     resourceRoles: 'root',
   };
-  return definition;
+  return dict;
 };
 
 
@@ -130,7 +130,7 @@ const citiesUSA = __webpack_require__(293);
 module.exports = app => {
   const dictItems = citiesUSA;
   const dictLocales = {};
-  const definition = {
+  const dict = {
     atomName: 'Cities USA',
     atomStaticKey: 'citiesUSA',
     atomRevision: 0,
@@ -139,7 +139,7 @@ module.exports = app => {
     dictLocales: JSON.stringify(dictLocales),
     resourceRoles: 'root',
   };
-  return definition;
+  return dict;
 };
 
 
@@ -157,7 +157,7 @@ module.exports = app => {
       China: '中国',
     },
   };
-  const definition = {
+  const dict = {
     atomName: 'Countries',
     atomStaticKey: 'countries',
     atomRevision: 0,
@@ -166,7 +166,7 @@ module.exports = app => {
     dictLocales: JSON.stringify(dictLocales),
     resourceRoles: 'root',
   };
-  return definition;
+  return dict;
 };
 
 
