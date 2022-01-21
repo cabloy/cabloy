@@ -812,6 +812,7 @@ module.exports = ctx => {
 
     // read
     async read({ key, options, user }) {
+      options = options || {};
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atom bean
