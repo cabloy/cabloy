@@ -1,5 +1,10 @@
 # History
 
+## 2022-01-21, Version 4.12.128
+
+- **Enhance**
+  - ctx.bean.atom.read：options = options || {};
+
 ## 2022-01-16, Version 4.12.125
 
 - **Feat**
