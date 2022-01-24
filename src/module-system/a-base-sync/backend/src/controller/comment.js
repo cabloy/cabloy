@@ -25,6 +25,15 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async count() {
+      const count = await this.ctx.service.comment.count({
+        key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(count);
+    }
+
     async item() {
       const res = await this.ctx.service.comment.item({
         key: this.ctx.request.body.key,

@@ -129,6 +129,12 @@ module.exports = app => {
     },
     {
       method: 'post',
+      path: 'comment/count',
+      controller: 'comment',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
+    {
+      method: 'post',
       path: 'comment/item',
       controller: 'comment',
       meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
