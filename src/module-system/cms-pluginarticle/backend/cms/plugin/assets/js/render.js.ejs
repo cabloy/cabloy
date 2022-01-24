@@ -48,7 +48,8 @@
     const BlockClass = BlockClasses[params];
     if (BlockClass) return Promise.resolve(BlockClass);
     return new Promise(resolve => {
-      const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main.min`;
+      const ext = '<%=ctx.app.meta.isProd ? ".min" : ""%>';
+      const block_js = `api/static/${module.replace('-', '/')}/blocks/${blockName}/main${ext}`;
       window.requirejs([block_js], BlockClass => {
         BlockClasses[params] = BlockClass;
         resolve(BlockClass);
