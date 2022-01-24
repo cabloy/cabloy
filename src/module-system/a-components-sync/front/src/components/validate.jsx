@@ -268,6 +268,13 @@ export default {
         validator: this.params.validator,
         schema: this.params.schema,
       });
+      if (!data.schema) {
+        throw new Error(
+          `validator/schema not found: ${moduleName}:${this.params.validator}${
+            this.params.schema ? ':' + this.params.schema : ''
+          }`
+        );
+      }
       await this.__schemaReady(data.schema, moduleName);
     },
     async __schemaReady(schema, moduleMaybe) {
