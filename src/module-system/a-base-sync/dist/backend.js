@@ -11545,6 +11545,15 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async count() {
+      const count = await this.ctx.service.comment.count({
+        key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(count);
+    }
+
     async item() {
       const res = await this.ctx.service.comment.item({
         key: this.ctx.request.body.key,
@@ -12765,6 +12774,12 @@ module.exports = app => {
     },
     {
       method: 'post',
+      path: 'comment/count',
+      controller: 'comment',
+      meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
+    },
+    {
+      method: 'post',
       path: 'comment/item',
       controller: 'comment',
       meta: { right: { type: 'atom', action: 'read', checkFlow: true } },
@@ -13195,6 +13210,29 @@ const trimHtml = require3('@zhennann/trim-html');
 module.exports = app => {
   class Comment extends app.Service {
     async list({ key, options, user }) {
+      const _options = this._adjuctOptions({ key, options });
+      // sql
+      const _where = this.ctx.model._where(_options.where);
+      const _orders = this.ctx.model._orders(_options.orders);
+      const _limit = this.ctx.model._limit(_options.limit, _options.offset);
+      const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
+         ${_where} ${_orders} ${_limit}`;
+      // select
+      return await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
+    }
+
+    async count({ key, options, user }) {
+      const _options = this._adjuctOptions({ key, options });
+      // sql
+      const _where = this.ctx.model._where(_options.where);
+      const sql = `select count(*) as count from aViewComment a
+         ${_where}`;
+      // query
+      const res = await this.ctx.model.queryOne(sql);
+      return res.count;
+    }
+
+    _adjuctOptions({ key, options }) {
       const _options = {};
       // where
       _options.where = options.where || {};
@@ -13204,18 +13242,11 @@ module.exports = app => {
       // orders
       _options.orders = options.orders;
       // page
-      if (options.page.size !== 0) {
+      if (options.page && options.page.size !== 0) {
         _options.limit = options.page.size;
         _options.offset = options.page.index;
       }
-      // sql
-      const _where = this.ctx.model._where(_options.where);
-      const _orders = this.ctx.model._orders(_options.orders);
-      const _limit = this.ctx.model._limit(_options.limit, _options.offset);
-      const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
-         ${_where} ${_orders} ${_limit}`;
-      // select
-      return await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
+      return _options;
     }
 
     async item({ /* key,*/ data: { commentId }, user }) {
