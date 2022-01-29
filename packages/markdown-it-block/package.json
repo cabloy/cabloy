@@ -20,7 +20,7 @@
     "markdown"
   ],
   "devDependencies": {
-    "markdown-it": "^12.2.0",
+    "markdown-it": "^12.3.2",
     "markdown-it-testgen": "~0.1.6"
   }
 }
