@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-layoutpc",
-  "version": "4.2.10",
+  "version": "4.2.11",
   "title": "PC Layout",
   "eggBornModule": {
     "fileVersion": 3,
@@ -19,6 +19,6 @@
   "author": "zhennann",
   "dependencies": {
     "egg-born-mock": "^2.1.3",
-    "require3": "^2.1.2"
+    "require3": "^2.1.3"
   }
 }

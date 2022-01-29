@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-note",
-  "version": "4.0.18",
+  "version": "4.0.19",
   "title": "Note Test",
   "eggBornModule": {
     "fileVersion": 1,
@@ -28,6 +28,6 @@
   "dependencies": {
     "egg-born-mock": "^2.1.3",
     "extend2": "^1.0.0",
-    "require3": "^2.1.2"
+    "require3": "^2.1.3"
   }
 }

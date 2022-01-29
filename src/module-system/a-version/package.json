@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "4.1.5",
+  "version": "4.1.6",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {}
@@ -24,6 +24,6 @@
     "chalk": "^3.0.0",
     "egg-born-mock": "^2.1.3",
     "fs-extra": "^8.1.0",
-    "require3": "^2.1.2"
+    "require3": "^2.1.3"
   }
 }
