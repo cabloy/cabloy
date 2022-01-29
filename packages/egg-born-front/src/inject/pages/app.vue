@@ -338,6 +338,10 @@ export default {
     _getLayoutModuleConfig() {
       return this.getLayout().layoutConfig;
     },
+    _getUrlLogin() {
+      const configLayout = this._getLayoutModuleConfig();
+      return configLayout.login;
+    },
     _checkIfPasswordReset() {
       const hashInit = this.$store.state.auth.hashInit;
       if (!hashInit) return false;
@@ -360,8 +364,8 @@ export default {
       return null;
     },
     _hashInitValid(hashInit) {
-      const configLayout = this._getLayoutModuleConfig();
-      return hashInit && hashInit !== '/' && hashInit !== configLayout.login;
+      const urlLogin = this._getUrlLogin();
+      return hashInit && hashInit !== '/' && hashInit !== urlLogin;
     },
     toLogin({ url, module, path, state, hash }) {
       // hash
@@ -402,8 +406,7 @@ export default {
       // query
       const query = routeTo && routeTo.query;
       // url
-      const configLayout = this._getLayoutModuleConfig();
-      let url = configLayout.login;
+      let url = this._getUrlLogin();
       url = query ? this.$meta.util.combineQueries(url, query) : url;
       // navigate
       this.getLayout().navigate(url, options);

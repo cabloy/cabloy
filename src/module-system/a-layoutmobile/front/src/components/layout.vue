@@ -130,8 +130,12 @@ export default {
       if (!url) return;
       // check if http
       if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
-        return location.assign(url);
+        location.assign(url);
+        return;
       }
+      // check login
+      if (!this._checkUrlLogin(url)) return;
+      // options
       options = options || {};
       const ctx = options.ctx;
       const target = options.target;
@@ -161,6 +165,18 @@ export default {
           ctx.$view.f7View.router.navigate(url, options);
         }
       }
+    },
+    _checkUrlLogin(url) {
+      // not open login again
+      const urlLogin = this.$meta.vueApp._getUrlLogin();
+      if (url.indexOf(urlLogin) !== 0) return true;
+      // view url
+      const views = this.$refs.group.views;
+      if (views.length === 0) return true;
+      const viewUrl = views[views.length - 1].url || '';
+      if (viewUrl.indexOf(urlLogin) !== 0) return true;
+      // not open login again
+      return false;
     },
     openLogin(routeTo, options) {
       this.$meta.vueApp.openLogin(routeTo, options);

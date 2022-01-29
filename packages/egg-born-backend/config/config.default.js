@@ -189,7 +189,16 @@ module.exports = appInfo => {
   // onerror
   config.onerror = {
     appErrorFilter(err, ctx) {
+      // 422
       if (err && err.code === 422 && !ctx.app.meta.isTest) return false;
+      // 403
+      if (err && err.code === 403) {
+        const user = ctx && ctx.state && ctx.state.user;
+        if (user && user.op.anonymous) {
+          err.code = 401;
+          err.status = 401;
+        }
+      }
       return true;
     },
     json(err) {
