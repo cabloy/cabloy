@@ -44,56 +44,36 @@ export default {
       const providers = this.providers.filter(item => item.provider.meta.inline);
       if (providers.length === 0) return null;
       // check length
-      if (providers.length === 2) {
+      if (providers.length === 1) {
         const { provider } = providers[0];
         const options = { props: { state: this.state } };
         return <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
       }
       // >1
-      const buttons = [];
-      const tabs = [];
+      const domButtons = [];
+      const domTabs = [];
       for (const index in providers) {
-        const provider = providers[index];
-        buttons.push(
-          c('f7-link', {
-            attrs: {
-              'tab-link': `#tab-${index}`,
-              'tab-link-active': parseInt(index) === 0,
-              text: provider.provider.meta.titleLocale,
-            },
-          })
+        const { provider } = providers[index];
+        domButtons.push(
+          <f7-link tab-link={`#tab-${index}`} tab-link-active={parseInt(index) === 0}>
+            {provider.meta.titleLocale}
+          </f7-link>
         );
-        tabs.push(
-          c(
-            'f7-tab',
-            {
-              attrs: {
-                id: `tab-${index}`,
-                'tab-active': parseInt(index) === 0,
-              },
-            },
-            [
-              c(provider.component, {
-                props: {
-                  state: this.state,
-                },
-              }),
-            ]
-          )
+        const options = { props: { state: this.state } };
+        domTabs.push(
+          <f7-tab id={`tab-${index}`} tab-active={parseInt(index) === 0}>
+            <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
+          </f7-tab>
         );
       }
-      const tabbar = c(
-        'f7-toolbar',
-        {
-          attrs: {
-            top: true,
-            tabbar: true,
-          },
-        },
-        buttons
+      return (
+        <div>
+          <f7-toolbar top tabbar>
+            {domButtons}
+          </f7-toolbar>
+          <f7-tabs>{domTabs}</f7-tabs>
+        </div>
       );
-      const tabblock = c('f7-tabs', tabs);
-      return c('div', [tabbar, tabblock]);
     },
     combineLoginBottom(c) {
       return null;
