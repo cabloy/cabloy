@@ -53,15 +53,16 @@ export default {
       const domTabs = [];
       for (const index in providers) {
         const { provider } = providers[index];
-        const tabId = `${this.tabPrefix}_${this._getComponentFullName(provider)}`.replace(/[:-]/g, '_');
+        const fullName = this._getComponentFullName(provider);
+        const tabId = `${this.tabPrefix}_${fullName}`.replace(/[:-]/g, '_');
         domButtons.push(
-          <f7-link tab-link={`#${tabId}`} tab-link-active={parseInt(index) === 0}>
+          <f7-link key={fullName} tab-link={`#${tabId}`} tab-link-active={parseInt(index) === 0}>
             {provider.meta.titleLocale}
           </f7-link>
         );
         const options = { props: { state: this.state } };
         domTabs.push(
-          <f7-tab id={tabId} tab-active={parseInt(index) === 0}>
+          <f7-tab key={fullName} id={tabId} tab-active={parseInt(index) === 0}>
             <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
           </f7-tab>
         );
@@ -95,9 +96,15 @@ export default {
       const domButtons = [];
       for (const item of providers) {
         const { provider } = item;
+        const fullName = this._getComponentFullName(provider);
         const options = { attrs: { class: 'btn' } };
         domButtons.push(
-          <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>
+          <eb-component
+            key={fullName}
+            module={provider.module}
+            name={provider.meta.component}
+            options={options}
+          ></eb-component>
         );
       }
       return <div class="btns">{domButtons}</div>;
