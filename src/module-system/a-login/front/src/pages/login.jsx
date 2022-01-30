@@ -2,6 +2,8 @@ import Vue from 'vue';
 export default {
   meta: {
     title: 'Sign In',
+    size: 'small',
+    sizeFixed: true,
   },
   data() {
     return {
@@ -63,7 +65,7 @@ export default {
         const options = { props: { state: this.state } };
         domTabs.push(
           <f7-tab key={fullName} id={tabId} tab-active={parseInt(index) === 0}>
-            <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
+            <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>
           </f7-tab>
         );
       }

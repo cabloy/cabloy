@@ -5,7 +5,7 @@ export default {
     if (this.views) {
       for (let index = 0; index < this.views.length; index++) {
         const view = this.views[index];
-        const viewSize = this._combineViewSize(view.sizeWill, index);
+        const viewSize = this._combineViewSize(view, index);
         const viewSizeExtent = {
           width: this.size[viewSize],
           height: this.size.main,
@@ -78,6 +78,7 @@ export default {
         // width
         const meta = routeComponent.meta;
         const sizeWill = (meta && meta.size) || 'small';
+        const sizeFixed = meta && meta.sizeFixed;
         // title
         let title;
         const viewIndex = parseInt(this.$$(view.$el).data('index'));
@@ -87,6 +88,7 @@ export default {
         }
         // size
         _view.sizeWill = sizeWill;
+        _view.sizeFixed = sizeFixed;
         // reLayout
         this.reLayout();
         // callback must not be null
@@ -104,7 +106,11 @@ export default {
         this._reLayout();
       });
     },
-    _combineViewSize(sizeWill, indexCurrent) {
+    _combineViewSize(view, indexCurrent) {
+      let sizeWill = view.sizeWill;
+      const sizeFixed = view.sizeFixed;
+      // check if fixed
+      if (sizeFixed) return sizeWill;
       // try
       if ((sizeWill === 'small' || sizeWill === 'medium') && this.views.length === 1) {
         sizeWill = 'large';
@@ -151,9 +157,8 @@ export default {
       let space = this.size.width;
       let spacing = 0;
       for (let i = this.views.length - 1; i >= 0; i--) {
-        // const view = this.$refs[this.views[i].id];
         // width
-        const viewSize = this._combineViewSize(this.views[i].sizeWill, i);
+        const viewSize = this._combineViewSize(this.views[i], i);
         const width = this.size[viewSize];
         // space
         const space2 = space - width - spacing;
@@ -173,7 +178,7 @@ export default {
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
-        const viewSize = this._combineViewSize(this.views[i].sizeWill, i);
+        const viewSize = this._combineViewSize(this.views[i], i);
         const width = this.size[viewSize];
         // space
         left -= width + spacing;
