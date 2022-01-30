@@ -269,23 +269,24 @@ module.exports = ctx => {
       // instance
       const instance = await ctx.bean.instance.get({ subdomain: ctx.subdomain });
       if (!instance) {
-        // prompt
-        if (ctx.app.meta.isLocal) {
-          const urlInfo =
-            ctx.locale === 'zh-cn'
-              ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
-              : 'https://cabloy.com/articles/multi-instance.html';
-          let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
-          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
-          message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
-          console.log('\n' + boxen(message, boxenOptions));
-        }
-        return ctx.throw(423);
+        // prompt: should for local/prod
+        //if (ctx.app.meta.isLocal) {
+        const urlInfo =
+          ctx.locale === 'zh-cn'
+            ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
+            : 'https://cabloy.com/articles/multi-instance.html';
+        let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.[env].js')}`;
+        message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+        message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
+        console.log('\n' + boxen(message, boxenOptions));
+        //}
+        return ctx.fail(423); // not ctx.throw(423)
       }
       // check if disabled
       if (instance.disabled) {
         // locked
-        return ctx.throw(423);
+        console.log('instance disabled: ', ctx.subdomain);
+        return ctx.fail(423); // not ctx.throw(423)
       }
 
       // check instance startup ready
