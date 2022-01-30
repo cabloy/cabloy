@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   meta: {
     title: 'Sign In',
@@ -7,6 +8,7 @@ export default {
       state: this.$f7route.query.state || 'login',
       providers: null,
       showClose: false,
+      tabPrefix: Vue.prototype.$meta.util.nextId('tab'),
     };
   },
   computed: {
@@ -38,6 +40,9 @@ export default {
     onClose() {
       this.$f7router.back();
     },
+    _getComponentFullName(provider) {
+      return `${provider.module}:${provider.meta.component}`;
+    },
     _renderLoginTop_single(providers) {
       const { provider } = providers[0];
       const options = { props: { state: this.state } };
@@ -48,14 +53,15 @@ export default {
       const domTabs = [];
       for (const index in providers) {
         const { provider } = providers[index];
+        const tabId = `${this.tabPrefix}_${this._getComponentFullName(provider)}`.replace(/[:-]/g, '_');
         domButtons.push(
-          <f7-link tab-link={`#tab-${index}`} tab-link-active={parseInt(index) === 0}>
+          <f7-link tab-link={`#${tabId}`} tab-link-active={parseInt(index) === 0}>
             {provider.meta.titleLocale}
           </f7-link>
         );
         const options = { props: { state: this.state } };
         domTabs.push(
-          <f7-tab id={`tab-${index}`} tab-active={parseInt(index) === 0}>
+          <f7-tab id={tabId} tab-active={parseInt(index) === 0}>
             <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
           </f7-tab>
         );
