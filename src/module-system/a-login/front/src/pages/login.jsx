@@ -80,18 +80,21 @@ export default {
       }
       return this._renderLoginTop_multiple(providers);
     },
-    combineLoginBottom(c) {
-      return null;
+    _renderLoginBottom(c) {
       if (this.state === 'migrate') return null;
       if (!this.providers) return null;
       const providers = this.providers.filter(item => !item.provider.meta.inline);
       if (providers.length === 0) return null;
       // buttons
-      const children = [];
+      const domButtons = [];
       for (const item of providers) {
-        children.push(c(item.component, { staticClass: 'btn' }));
+        const { provider } = item;
+        const options = { attrs: { class: 'btn' } };
+        domButtons.push(
+          <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>
+        );
       }
-      return c('div', { staticClass: 'btns' }, children);
+      return <div class="btns">{domButtons}</div>;
     },
     _renderContainer() {
       if (!this.providers) return null;
@@ -116,7 +119,7 @@ export default {
       // loginTop
       const domLoginTop = this._renderLoginTop();
       // loginBottom
-      const domLoginBottom = this.combineLoginBottom();
+      const domLoginBottom = this._renderLoginBottom();
       // loginLine
       let domLoginLine;
       if (domLoginTop && domLoginBottom) {
