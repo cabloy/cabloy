@@ -78,7 +78,7 @@ export default {
         // width
         const meta = routeComponent.meta;
         const sizeWill = (meta && meta.size) || 'small';
-        const sizeFixed = meta && meta.sizeFixed;
+        const sizeFixed = (meta && meta.sizeFixed) || false;
         // title
         let title;
         const viewIndex = parseInt(this.$$(view.$el).data('index'));

@@ -108,6 +108,7 @@ export default {
               id: this.$meta.util.nextId('layoutgroupview'),
               url,
               sizeWill: 'small',
+              sizeFixed: false,
               callback: ({ view, title }) => {
                 // title
                 if (title) group.title = title;
