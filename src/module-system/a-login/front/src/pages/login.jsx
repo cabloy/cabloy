@@ -38,18 +38,12 @@ export default {
     onClose() {
       this.$f7router.back();
     },
-    _renderLoginTop() {
-      if (!this.providers) return null;
-      // providers
-      const providers = this.providers.filter(item => item.provider.meta.inline);
-      if (providers.length === 0) return null;
-      // check length
-      if (providers.length === 1) {
-        const { provider } = providers[0];
-        const options = { props: { state: this.state } };
-        return <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
-      }
-      // >1
+    _renderLoginTop_single(providers) {
+      const { provider } = providers[0];
+      const options = { props: { state: this.state } };
+      return <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
+    },
+    _renderLoginTop_multiple(providers) {
       const domButtons = [];
       const domTabs = [];
       for (const index in providers) {
@@ -74,6 +68,17 @@ export default {
           <f7-tabs>{domTabs}</f7-tabs>
         </div>
       );
+    },
+    _renderLoginTop() {
+      if (!this.providers) return null;
+      // providers
+      const providers = this.providers.filter(item => item.provider.meta.inline);
+      if (providers.length === 0) return null;
+      // check length
+      if (providers.length === 1) {
+        return this._renderLoginTop_single(providers);
+      }
+      return this._renderLoginTop_multiple(providers);
     },
     combineLoginBottom(c) {
       return null;
