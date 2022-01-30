@@ -1,4 +1,3 @@
-<script>
 export default {
   meta: {
     title: 'Sign In',
@@ -28,91 +27,27 @@ export default {
       this.providers = res;
     });
   },
-  render(c) {
-    const children = [];
-    if (this.providers) {
-      // close
-      if (this.showClose) {
-        children.push(
-          c('f7-link', {
-            staticClass: 'close',
-            props: {
-              iconMaterial: 'chevron_left',
-              text: this.$text('LookAround'),
-            },
-            on: {
-              click: this.onClose,
-            },
-          })
-        );
-      }
-      // title
-      children.push(
-        c('f7-login-screen-title', {
-          domProps: { innerText: this.title },
-        })
-      );
-      if (this.state === 'migrate') {
-        children.push(
-          c('f7-login-screen-title', {
-            staticClass: 'sub-title',
-            domProps: { innerText: this.$text('SignInTheTargetAccount') },
-          })
-        );
-      }
-      // loginTop
-      const loginTop = this.combineLoginTop(c);
-      // loginBottom
-      const loginBottom = this.combineLoginBottom(c);
-      // loginLine
-      let loginLine;
-      if (loginTop && loginBottom) {
-        loginLine = c('div', { staticClass: 'line' }, [
-          c('div', { staticClass: 'text', domProps: { innerText: this.$text('OR') } }),
-        ]);
-      }
-      // add top
-      if (loginTop) children.push(loginTop);
-      // add line and bottom
-      let lineAndBottom;
-      if (loginLine || loginBottom) {
-        const children = [];
-        if (loginLine) children.push(loginLine);
-        if (loginBottom) children.push(loginBottom);
-        lineAndBottom = c('f7-block', children);
-      }
-      if (lineAndBottom) children.push(lineAndBottom);
-    }
-    // page
-    return c(
-      'eb-page',
-      {
-        attrs: {
-          'login-screen': true,
-          'no-toolbar': false,
-          'no-navbar': true,
-          'no-swipeback': true,
-        },
-      },
-      children
+  render() {
+    return (
+      <eb-page login-screen={true} no-toolbar={false} no-navbar={true} no-swipeback={true}>
+        {this._renderContainer()}
+      </eb-page>
     );
   },
   methods: {
     onClose() {
       this.$f7router.back();
     },
-    combineLoginTop(c) {
+    _renderLoginTop() {
       if (!this.providers) return null;
+      // providers
       const providers = this.providers.filter(item => item.provider.meta.inline);
       if (providers.length === 0) return null;
       // check length
-      if (providers.length === 1) {
-        const provider = providers[0];
-        return c(provider.component, {
-          props: {
-            state: this.state,
-          },
-        });
+      if (providers.length === 2) {
+        const { provider } = providers[0];
+        const options = { props: { state: this.state } };
+        return <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
       }
       // >1
       const buttons = [];
@@ -161,6 +96,7 @@ export default {
       return c('div', [tabbar, tabblock]);
     },
     combineLoginBottom(c) {
+      return null;
       if (this.state === 'migrate') return null;
       if (!this.providers) return null;
       const providers = this.providers.filter(item => !item.provider.meta.inline);
@@ -172,7 +108,58 @@ export default {
       }
       return c('div', { staticClass: 'btns' }, children);
     },
+    _renderContainer() {
+      if (!this.providers) return null;
+      // close
+      let domClose;
+      if (this.showClose) {
+        domClose = (
+          <f7-link class="close" iconMaterial="chevron_left" onClick={this.onClose}>
+            {this.$text('LookAround')}
+          </f7-link>
+        );
+      }
+      // title
+      let domTitle = <f7-login-screen-title>{this.title}</f7-login-screen-title>;
+      // title sub
+      let domTitleSub;
+      if (this.state === 'migrate') {
+        domTitleSub = (
+          <f7-login-screen-title class="sub-title">{this.$text('SignInTheTargetAccount')}</f7-login-screen-title>
+        );
+      }
+      // loginTop
+      const domLoginTop = this._renderLoginTop();
+      // loginBottom
+      const domLoginBottom = this.combineLoginBottom();
+      // loginLine
+      let domLoginLine;
+      if (domLoginTop && domLoginBottom) {
+        domLoginLine = (
+          <div class="line">
+            <div class="text">{this.$text('OR')}</div>
+          </div>
+        );
+      }
+      // lineAndBottom
+      let domLineAndBottom;
+      if (domLoginLine || domLoginBottom) {
+        domLineAndBottom = (
+          <f7-block>
+            {domLoginLine}
+            {domLoginBottom}
+          </f7-block>
+        );
+      }
+      // container
+      return (
+        <div class="eb-login-container">
+          {domClose}
+          {domTitle}
+          {domLoginTop}
+          {domLineAndBottom}
+        </div>
+      );
+    },
   },
 };
-</script>
-<style></style>
