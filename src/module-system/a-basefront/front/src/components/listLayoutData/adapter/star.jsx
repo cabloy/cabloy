@@ -13,7 +13,7 @@ export default {
     async star_onSwitch2(event, item, star, swipeoutAction) {
       // anonymous
       if (this.layoutManager.base_user.anonymous) {
-        await this.$view.dialog.confirm(this.$text('Please Sign In'));
+        await this.layoutManager.$view.dialog.confirm(this.$text('Please Sign In'));
         // login
         this.$meta.vueLayout.openLogin();
         return;
