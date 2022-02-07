@@ -59,7 +59,16 @@ export default {
         },
       });
       if (!data) return;
-      window.open(data.url, `cms_article_${atomClass.module}_${atomId}`);
+      // open
+      const link = data.url;
+      const target = `cms_article_${atomClass.module}_${atomId}`;
+      if (this.$device.desktop) {
+        window.open(link, target);
+      } else {
+        const queries = { data: JSON.stringify({ title: this.$text('Preview'), link, target }) };
+        const url = ctx.$meta.util.combineQueries('/a/basefront/base/openLink', queries);
+        ctx.$view.navigate(url);
+      }
     },
   },
 };

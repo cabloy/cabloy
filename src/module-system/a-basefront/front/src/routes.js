@@ -24,6 +24,7 @@ export default [
   { path: 'attachment/all', component: load('attachment/all') },
   { path: 'base/alert', component: load('base/alert') },
   { path: 'base/about', component: load('base/about') },
+  { path: 'base/openLink', component: load('base/openLink') },
   { path: 'category/select', component: load('category/categorySelect') },
   { path: 'tag/select', component: load('tag/tagSelect') },
   { path: 'resource/tree', component: loadjsx('resource/tree') },
