@@ -3,9 +3,9 @@
     "allowUnknownTags": false
   },
   "source": {
-    "include": ["./src/"],
+    "include": ["./packages/", "./src/"],
     "includePattern": ".+\\.js(doc)?$",
-    "excludePattern": "(node_modules/|docs/|dist/|\\.min\\.js)"
+    "excludePattern": "(node_modules/|docs/|dist/|backend/static/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },
   "plugins": ["plugins/markdown"],
   "opts": {
