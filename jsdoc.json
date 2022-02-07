@@ -3,15 +3,15 @@
     "allowUnknownTags": false
   },
   "source": {
-    "include": ["packages", "src"],
+    "include": ["./src/"],
     "includePattern": ".+\\.js(doc)?$",
-    "excludePattern": "(node_modules/|docs)"
+    "excludePattern": "(node_modules/|docs/|dist/|\\.min\\.js)"
   },
   "plugins": ["plugins/markdown"],
   "opts": {
-    "template": "node_modules/docdash",
+    "template": "./node_modules/@zhennann/docdash",
     "encoding": "utf8",
-    "destination": "docs-api/",
+    "destination": "./docs-api/",
     "recurse": true,
     "verbose": true
   },

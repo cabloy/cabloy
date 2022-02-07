@@ -37,7 +37,7 @@
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "tools:babel": "node ./packages/egg-born-bin/bin/egg-born-bin.js tools-babel",
-    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
+    "generate-docs": "node_modules/.bin/jsdoc --package package.json -c jsdoc.json"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
