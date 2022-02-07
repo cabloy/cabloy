@@ -1,3 +1,5 @@
+/** @module a-base/front/mixins */
+
 import actionBase from './common/actionBase.js';
 import atomClasses from './common/atomClasses.js';
 import atomActions from './common/atomActions.js';
@@ -5,7 +7,12 @@ import detailActions from './common/detailActions.js';
 import modules from './common/modules.js';
 import renderTableCellFormat from './common/renderTableCellFormat.js';
 
-export default {
+/**
+ * The mixins of a-base
+ * @property {object} ebActionBase - This provides the basic members used for action handler
+ * @property {object} ebAtomClasses - This provide the members of atomClasses
+ */
+const mixins = {
   ebActionBase: actionBase,
   ebAtomClasses: atomClasses,
   ebAtomActions: atomActions,
@@ -13,3 +20,4 @@ export default {
   ebModules: modules,
   ebRenderTableCellFormat: renderTableCellFormat,
 };
+export default mixins;
