@@ -4,6 +4,7 @@
   },
   "source": {
     "include": ["./packages/", "./src/"],
+    "exclude": ["./packages/egg-born-front/src/vendors/requirejs/require.js", "./packages/egg-born-localeutil"],
     "includePattern": ".+\\.js(doc)?$",
     "excludePattern": "(node_modules/|docs/|dist/|backend/static/|plugin/assets/js/lib/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },

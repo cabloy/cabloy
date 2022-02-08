@@ -1,6 +1,6 @@
-/**
+/***
   escapeHtml: based on markdown-it
-**/
+*/
 
 const HTML_ESCAPE_TEST_RE = /[&<>"']/;
 const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
