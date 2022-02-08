@@ -5,7 +5,7 @@
   "source": {
     "include": ["./packages/", "./src/"],
     "includePattern": ".+\\.js(doc)?$",
-    "excludePattern": "(node_modules/|docs/|dist/|backend/static/|test-party/|test-flow/|test-note/|\\.min\\.js)"
+    "excludePattern": "(node_modules/|docs/|dist/|backend/static/|plugin/assets/js/lib/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },
   "plugins": ["plugins/markdown"],
   "opts": {
@@ -18,5 +18,22 @@
   "templates": {
     "cleverLinks": false,
     "monospaceLinks": false
+  },
+  "docdash": {
+    "search": true,
+    "menu": {
+      "Documentations": {
+        "href": "https://cabloy.com",
+        "target": "_blank",
+        "class": "menu-item",
+        "id": "documentations_link"
+      },
+      "Community": {
+        "href": "https://community.cabloy.com",
+        "target": "_blank",
+        "class": "menu-item",
+        "id": "community_link"
+      }
+    }
   }
 }
