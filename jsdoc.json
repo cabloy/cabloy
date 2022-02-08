@@ -35,6 +35,11 @@
         "class": "menu-item",
         "id": "community_link"
       }
+    },
+    "meta": {
+      "title": "CabloyJS API",
+      "description": "",
+      "keyword": ""
     }
   }
 }
