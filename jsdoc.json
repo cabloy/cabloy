@@ -4,7 +4,14 @@
   },
   "source": {
     "include": ["./packages/", "./src/"],
-    "exclude": ["./packages/egg-born-front/src/vendors/requirejs/require.js", "./packages/egg-born-localeutil"],
+    "exclude": [
+      "./packages/egg-born-front/src/vendors/requirejs/require.js",
+      "./packages/egg-born-localeutil",
+      "./packages/egg-born-template-cabloy",
+      "./packages/egg-born-template-module",
+      "./packages/egg-born-template-module-business",
+      "./packages/egg-born-template-module-business-details"
+    ],
     "includePattern": ".+\\.js(doc)?$",
     "excludePattern": "(node_modules/|docs/|dist/|backend/static/|plugin/assets/js/lib/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },
