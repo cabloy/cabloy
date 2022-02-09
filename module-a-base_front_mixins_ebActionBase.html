@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>a-base/front/mixins - CabloyJS API</title>
+    <title>a-base/front/mixins/ebActionBase - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">a-base/front/mixins</h1>
+    <h1 class="page-title">a-base/front/mixins/ebActionBase</h1>
     
 
     
@@ -75,7 +75,7 @@
 
     
 
-    <h4 class="name" id="module:a-base/front/mixins"><span class="type-signature"></span>module:a-base/front/mixins<span class="type-signature"></span></h4>
+    <h4 class="name" id="module:a-base/front/mixins/ebActionBase"><span class="type-signature"></span>module:a-base/front/mixins/ebActionBase<span class="type-signature"></span></h4>
 
     
 
@@ -85,13 +85,111 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>The mixins of a-base</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>ebActionBase</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_module-system_a-base-sync_front_src_mixins.js.html">src/module-system/a-base-sync/front/src/mixins.js</a>, <a href="src_module-system_a-base-sync_front_src_mixins.js.html#line18">line 18</a>
+        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line5">line 5</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".props"><span class="type-signature">(static) </span>props<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -154,7 +252,7 @@
 
         <tr>
             
-                <td class="name"><code>ebActionBase</code></td>
+                <td class="name"><code>props</code></td>
             
 
             <td class="type">
@@ -170,14 +268,55 @@
 
             
 
-            <td class="description last"><p>This provides the basic members used for action handler</p></td>
+            <td class="description last">
+                <h6>Properties</h6>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Generally speaking, it is the caller component</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>ebAtomClasses</code></td>
+                <td class="name"><code>action</code></td>
             
 
             <td class="type">
@@ -193,14 +332,14 @@
 
             
 
-            <td class="description last"><p>This provide the members of atomClasses</p></td>
+            <td class="description last"><p>Action info</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>ebAtomActions</code></td>
+                <td class="name"><code>item</code></td>
             
 
             <td class="type">
@@ -216,76 +355,14 @@
 
             
 
-            <td class="description last"><p>This provide the members of atomActions</p></td>
+            <td class="description last"><p>Action Parameters</p></td>
         </tr>
 
     
+    </tbody>
+</table>
 
-        <tr>
-            
-                <td class="name"><code>ebDetailActions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
             </td>
-
-            
-
-            
-
-            <td class="description last"><p>This provide the members of detailActions</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ebModules</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>This provide the members of modules</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ebRenderTableCellFormat</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>This provide the general logics of renderTableCellFormat</p></td>
         </tr>
 
     
@@ -304,41 +381,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
         
-        </div>
-    
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
     
 
     

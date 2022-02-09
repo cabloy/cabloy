@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>src/module-system/a-base-sync/front/src/config/config.js - CabloyJS API</title>
+    <title>src/module-system/a-base-sync/front/src/common/actionBase.js - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">src/module-system/a-base-sync/front/src/config/config.js</h1>
+    <h1 class="page-title">src/module-system/a-base-sync/front/src/common/actionBase.js</h1>
     
 
     
@@ -56,37 +56,36 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module a-base/front/config */
+            <pre class="prettyprint source linenums"><code>/** @module a-base/front/mixins/ebActionBase */
 
-import configResourceRenderList from './config/configResourceRenderList.js';
-import avatarUser from '../assets/img/user.png';
-
-/** The front config of a-base
- * @property {object} stage - The stages of atom.
- * @property {number} stage.draft - 0
- * @property {number} stage.formal - 1
- * @property {number} stage.history - 2
- * @property {object} user
- * @property {object} user.avatar
- * @property {string} user.avatar.default - The default avatar
+/** ebActionBase
  */
 export default {
-  stage: {
-    draft: 0,
-    formal: 1,
-    history: 2,
-  },
-  user: {
-    avatar: {
-      default: avatarUser,
+  /**
+   * @property {object} props
+   * @property {object} props.ctx - Generally speaking, it is the caller component
+   * @property {object} props.action - Action info
+   * @property {object} props.item - Action Parameters
+   */
+  props: {
+    ctx: {
+      type: Object,
+    },
+    action: {
+      type: Object,
+    },
+    item: {
+      type: Object,
     },
   },
-  atoms: {
-    resource: {
-      render: {
-        list: configResourceRenderList,
-      },
-    },
+  created() {
+    const { ctx } = this.$props;
+    if (ctx &amp;&amp; ctx.$createElement) {
+      this.$createElement = ctx.$createElement;
+    }
+  },
+  beforeDestroy() {
+    this.$createElement = null;
   },
 };
 </code></pre>
