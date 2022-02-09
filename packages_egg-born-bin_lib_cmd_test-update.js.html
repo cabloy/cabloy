@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>packages/egg-born-bin/lib/cmd/test-update.js - CabloyJS API</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content="CabloyJS API"/>
+    <meta property="og:type" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:site_name" content="CabloyJS API"/>
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://cabloy.com" target="_blank" class="menu-item" id="documentations_link" >Documentations</a></h2><h2><a href="https://community.cabloy.com" target="_blank" class="menu-item" id="community_link" >Community</a></h2><h3>Modules</h3><ul><li><a href="module-a-base_front_config.html">a-base/front/config</a></li><li><a href="module-a-base_front_mixins.html">a-base/front/mixins</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">packages/egg-born-bin/lib/cmd/test-update.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const path = require('path');
+const glob = require('glob');
+const urllib = require('urllib');
+const os = require('os');
+const assert = require('assert');
+const homedir = require('node-homedir');
+const compressing = require('compressing');
+const rimraf = require('mz-modules/rimraf');
+const fse = require('fs-extra');
+const chalk = require('chalk');
+const semver = require('semver');
+const Command = require('@zhennann/egg-bin').Command;
+
+class TestUpdateCommand extends Command {
+  constructor(rawArgv) {
+    super(rawArgv);
+    this.usage = 'Usage: egg-born-bin test-update';
+
+    this.httpClient = urllib.create();
+  }
+
+  *run({ cwd, argv }) {
+    this.log('update test modules at %s', cwd);
+
+    // detect registry url
+    this.registryUrl = this.getRegistryByType(argv.registry);
+    this.log(`use registry: ${this.registryUrl}`);
+
+    const projectPath = cwd;
+    const moduleName = argv.module;
+
+    if (moduleName) {
+      yield this.__updateCabloyModule({ projectPath, moduleName });
+    } else {
+      yield this.__updateCabloyModules({ projectPath });
+    }
+  }
+
+  description() {
+    return 'test update';
+  }
+
+  *__updateCabloyModules({ projectPath }) {
+    // force move
+    yield this.__forceMoveCabloyModulesToVendor({ projectPath });
+    // update
+    const prefix = `${projectPath}/src/module-vendor/`;
+    const files = glob.sync(`${prefix}test-*`);
+    for (const file of files) {
+      const moduleName = file.substr(prefix.length);
+      yield this.__updateCabloyModule({ projectPath, moduleName });
+    }
+  }
+
+  *__updateCabloyModule({ projectPath, moduleName }) {
+    try {
+      const moduleDestDir = path.join(projectPath, 'src/module-vendor', moduleName);
+      // check
+      const downloadUrl = yield this.__checkCabloyModule({ moduleDestDir, moduleName });
+      if (!downloadUrl) {
+        // not changed
+        console.log(chalk.cyan(`module is up to date: ${moduleName}\n`));
+        return;
+      }
+      // download
+      const moduleSrcDir = yield this.__downloadCabloyModule({ downloadUrl, moduleName });
+      // move
+      yield rimraf(moduleDestDir);
+      fse.moveSync(moduleSrcDir, moduleDestDir);
+      // done
+      console.log(chalk.cyan(`update module done: ${moduleName}\n`));
+    } catch (err) {
+      console.log(chalk.red(`update module failed and ignored: ${moduleName}\n`));
+    }
+  }
+
+  *__forceMoveCabloyModulesToVendor({ projectPath }) {
+    for (const moduleName of ['test-note', 'test-party', 'test-partymonkey-monkey', 'test-flow']) {
+      const moduleSrcDir = path.join(projectPath, 'src/module', moduleName);
+      const moduleDestDir = path.join(projectPath, 'src/module-vendor', moduleName);
+      if (fse.existsSync(moduleSrcDir)) {
+        // move
+        yield rimraf(moduleDestDir);
+        fse.moveSync(moduleSrcDir, moduleDestDir);
+      }
+    }
+  }
+
+  *__checkCabloyModule({ moduleDestDir, moduleName }) {
+    const pkgName = `egg-born-module-${moduleName}`;
+    const result = yield this.getPackageInfo(pkgName, false);
+    const downloadUrl = result.dist.tarball;
+    const version = result.version;
+
+    const _pkgFile = path.join(moduleDestDir, 'package.json');
+    if (!fse.existsSync(_pkgFile)) return downloadUrl;
+
+    const _pkg = require(_pkgFile);
+    const lt = semver.lt(_pkg.version, version);
+    if (!lt) return null;
+
+    return downloadUrl;
+  }
+
+  *__downloadCabloyModule({ downloadUrl, moduleName }) {
+    const pkgName = `egg-born-module-${moduleName}`;
+
+    this.log(`downloading ${downloadUrl}`);
+
+    const saveDir = path.join(os.tmpdir(), pkgName);
+    yield rimraf(saveDir);
+
+    const response = yield this.curl(downloadUrl, { streaming: true, followRedirect: true });
+    yield compressing.tgz.uncompress(response.res, saveDir);
+
+    this.log(`extract to ${saveDir}`);
+    return path.join(saveDir, '/package');
+  }
+
+  /**
+   * send curl to remote server
+   * @param {String} url - target url
+   * @param {Object} [options] - request options
+   * @return {Object} response data
+   */
+  *curl(url, options) {
+    return yield this.httpClient.request(url, options);
+  }
+
+  /**
+   * get package info from registry
+   *
+   * @param {String} pkgName - package name
+   * @param {Boolean} [withFallback] - when http request fail, whethe to require local
+   * @return {Object} pkgInfo
+   */
+  *getPackageInfo(pkgName, withFallback) {
+    this.log(`fetching npm info of ${pkgName}`);
+    try {
+      const result = yield this.curl(`${this.registryUrl}/${pkgName}/latest`, {
+        dataType: 'json',
+        followRedirect: true,
+        maxRedirects: 5,
+        timeout: 20000,
+      });
+      assert(result.status === 200, `npm info ${pkgName} got error: ${result.status}, ${result.data.reason}`);
+      return result.data;
+    } catch (err) {
+      if (withFallback) {
+        this.log(`use fallback from ${pkgName}`);
+        return require(`${pkgName}/package.json`);
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * get registryUrl by short name
+   * @param {String} key - short name, support `china / npm / npmrc`, default to read from .npmrc
+   * @return {String} registryUrl
+   */
+  getRegistryByType(key) {
+    switch (key) {
+      case 'china':
+        return 'https://registry.npmmirror.com';
+      case 'npm':
+        return 'https://registry.npmjs.org';
+      default: {
+        if (/^https?:/.test(key)) {
+          return key.replace(/\/$/, '');
+        }
+        // support .npmrc
+        const home = homedir();
+        let url = process.env.npm_registry || process.env.npm_config_registry || 'https://registry.npmjs.org';
+        if (fse.existsSync(path.join(home, '.cnpmrc')) || fse.existsSync(path.join(home, '.tnpmrc'))) {
+          url = 'https://registry.npmmirror.com';
+        }
+        url = url.replace(/\/$/, '');
+        return url;
+      }
+    }
+  }
+
+  /**
+   * log with prefix
+   */
+  log() {
+    const args = Array.prototype.slice.call(arguments);
+    console.log.apply(console, args);
+  }
+}
+
+module.exports = TestUpdateCommand;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Wed Feb 09 2022 03:35:32 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

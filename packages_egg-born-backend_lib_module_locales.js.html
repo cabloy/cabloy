@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>packages/egg-born-backend/lib/module/locales.js - CabloyJS API</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content="CabloyJS API"/>
+    <meta property="og:type" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:site_name" content="CabloyJS API"/>
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://cabloy.com" target="_blank" class="menu-item" id="documentations_link" >Documentations</a></h2><h2><a href="https://community.cabloy.com" target="_blank" class="menu-item" id="community_link" >Community</a></h2><h3>Modules</h3><ul><li><a href="module-a-base_front_config.html">a-base/front/config</a></li><li><a href="module-a-base_front_mixins.html">a-base/front/mixins</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">packages/egg-born-backend/lib/module/locales.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const fs = require('fs');
+const path = require('path');
+const extend = require('extend2');
+const localeutil = require('egg-born-localeutil').default;
+
+module.exports = function (loader, modules) {
+  // all locales
+  const ebLocales = {};
+
+  // load locales
+  loadLocales();
+
+  // patch service
+  patchCreateContext();
+
+  function patchCreateContext() {
+    const createContext = loader.app.createContext;
+    loader.app.createContext = (...args) => {
+      const context = createContext.call(loader.app, ...args);
+
+      // maybe /favicon.ico
+      if (context.module) {
+        const defaultLocale = loader.app.config.i18n.defaultLocale;
+        context.text = function (...args) {
+          return getText(context.locale || defaultLocale, ...args);
+        };
+        context.text.locale = function (locale, ...args) {
+          return getText(locale || defaultLocale, ...args);
+        };
+      }
+
+      return context;
+    };
+  }
+
+  function loadLocales() {
+    // module locales
+    Object.keys(modules).forEach(key => {
+      const module = modules[key];
+      const locales = module.main.locales;
+      if (locales) {
+        Object.keys(locales).forEach(key => {
+          let locale = ebLocales[key];
+          if (!locale) locale = ebLocales[key] = {};
+          extend(false, locale, locales[key]);
+        });
+      }
+    });
+
+    /**
+     * based on egg-i18n
+     *
+     * https://github.com/eggjs/egg-i18n/blob/master/app.js
+     *
+     */
+    // project locales
+    const localeDirs = loader.app.config.i18n.dirs;
+    for (let i = 0; i &lt; localeDirs.length; i++) {
+      const dir = localeDirs[i];
+
+      if (!fs.existsSync(dir)) {
+        continue;
+      }
+
+      const names = fs.readdirSync(dir);
+      for (let j = 0; j &lt; names.length; j++) {
+        const name = names[j];
+        const filepath = path.join(dir, name);
+        // support en_US.js => en-US.js
+        const key = formatLocale(name.split('.')[0]);
+        const resource = require(filepath);
+
+        let locale = ebLocales[key];
+        if (!locale) locale = ebLocales[key] = {};
+        extend(false, locale, resource);
+      }
+    }
+  }
+
+  /**
+   * based on koa-locales
+   *
+   * https://github.com/koajs/locales/blob/master/index.js
+   *
+   */
+
+  function getText(locale, ...args) {
+    const key = args[0];
+    if (!key) return null;
+
+    // try locale
+    let resource = ebLocales[locale] || {};
+    let text = resource[key];
+    if (text === undefined &amp;&amp; locale !== 'en-us') {
+      // try en-us
+      resource = ebLocales['en-us'] || {};
+      text = resource[key];
+    }
+    // equal key
+    if (text === undefined) {
+      text = key;
+    }
+    // format
+    args[0] = text;
+    return localeutil.getText.apply(localeutil, args);
+  }
+};
+
+function formatLocale(locale) {
+  // support zh_CN, en_US => zh-CN, en-US
+  return locale.replace('_', '-').toLowerCase();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Wed Feb 09 2022 03:35:32 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
