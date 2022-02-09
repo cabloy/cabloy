@@ -1,6 +1,5 @@
-/** @module a-base/front/mixins/ebActionBase */
-
 /** ebActionBase
+ * @exports a-base/front/mixins/ebActionBase
  */
 export default {
   /**

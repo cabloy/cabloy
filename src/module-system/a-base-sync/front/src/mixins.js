@@ -8,7 +8,7 @@ import modules from './common/modules.js';
 import renderTableCellFormat from './common/renderTableCellFormat.js';
 
 /** The mixins of a-base
- * @property {object} ebActionBase - This provides the basic members used for action handler
+ * @property {module:a-base/front/mixins/ebActionBase} ebActionBase - This provides the basic members used for action handler
  * @property {object} ebAtomClasses - This provide the members of atomClasses
  * @property {object} ebAtomActions - This provide the members of atomActions
  * @property {object} ebDetailActions - This provide the members of detailActions
