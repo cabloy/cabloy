@@ -13,7 +13,7 @@ jobs:
           source_dir:
           output_dir: ./docs-api
           config_file: jsdoc.json
-          template: @zhennann/docdash
+          template: '@zhennann/docdash'
           front_page:
 
       - name: Deploy
