@@ -40,6 +40,10 @@
       "title": "CabloyJS API",
       "description": "",
       "keyword": ""
+    },
+    "openGraph": {
+      "title": "CabloyJS API",
+      "site_name": "CabloyJS API"
     }
   }
 }
