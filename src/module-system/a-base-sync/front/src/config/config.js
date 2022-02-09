@@ -12,7 +12,7 @@ import avatarUser from '../assets/img/user.png';
  * @property {object} user.avatar
  * @property {string} user.avatar.default - The default avatar
  */
-const config = {
+export default {
   stage: {
     draft: 0,
     formal: 1,
@@ -31,4 +31,3 @@ const config = {
     },
   },
 };
-export default config;
