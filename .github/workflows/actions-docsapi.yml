@@ -24,3 +24,4 @@ jobs:
         with:
           deploy_key: ${{ secrets.ACTION_DEPLOY_KEY }}
           publish_dir: ./docs-api
+          cname: api.cabloy.com
