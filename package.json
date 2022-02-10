@@ -46,7 +46,7 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
-    "@zhennann/docdash": "^1.2.1",
+    "@zhennann/docdash": "^1.2.2",
     "@zhennann/extend": "^3.0.2",
     "@zhennann/framework7": "^5.7.28",
     "@zhennann/vue": "^2.6.15",
