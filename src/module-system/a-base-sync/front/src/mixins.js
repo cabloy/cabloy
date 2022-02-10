@@ -9,7 +9,7 @@ import renderTableCellFormat from './common/renderTableCellFormat.js';
 
 /** The mixins of a-base
  * @property {module:a-base/front/mixins/ebActionBase} ebActionBase - This provides the basic members used for action handler
- * @property {object} ebAtomClasses - This provide the members of atomClasses
+ * @property {module:a-base/front/mixins/ebAtomClasses} ebAtomClasses - This provide the members of atomClasses
  * @property {object} ebAtomActions - This provide the members of atomActions
  * @property {object} ebDetailActions - This provide the members of detailActions
  * @property {object} ebModules - This provide the members of modules

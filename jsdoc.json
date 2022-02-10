@@ -12,10 +12,10 @@
       "./packages/egg-born-template-module-business",
       "./packages/egg-born-template-module-business-details"
     ],
-    "includePattern": ".+\\.js(doc)?$",
+    "includePattern": "(.+\\.js(doc)?$|.+\\.vue$)",
     "excludePattern": "(node_modules/|docs/|dist/|backend/static/|plugin/assets/js/lib/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },
-  "plugins": ["plugins/markdown"],
+  "plugins": ["plugins/markdown", "./node_modules/@zhennann/docdash/jsdoc-vue"],
   "opts": {
     "template": "./node_modules/@zhennann/docdash",
     "encoding": "utf8",

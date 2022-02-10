@@ -14,14 +14,21 @@
   </eb-page>
 </template>
 <script>
+/** @module a-basefront/front/pages/base/alert */
 export default {
   components: {},
+  /**
+   * @property {object} data
+   */
   data() {
     const data = JSON.parse(this.$f7route.query.data);
     return {
       data,
     };
   },
+  /**
+   * @property {string} pageTitle
+   */
   computed: {
     pageTitle() {
       return this.$store.state.auth.instance.title;
