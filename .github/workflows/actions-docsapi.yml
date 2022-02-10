@@ -9,7 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: dependencies
+        run: npm install vue-template-compiler
       - name: Build
         uses: andstor/jsdoc-action@v1
         with:
