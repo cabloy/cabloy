@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>packages/egg-born-backend/lib/module/locales.js - CabloyJS API</title>
+    <title>src/module-system/a-base-sync/front/src/common/atomClasses.js - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">packages/egg-born-backend/lib/module/locales.js</h1>
+    <h1 class="page-title">src/module-system/a-base-sync/front/src/common/atomClasses.js</h1>
     
 
     
@@ -56,118 +56,36 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const fs = require('fs');
-const path = require('path');
-const extend = require('extend2');
-const localeutil = require('egg-born-localeutil').default;
+            <pre class="prettyprint source linenums"><code>/** @module a-base/front/mixins/ebAtomClasses */
 
-module.exports = function (loader, modules) {
-  // all locales
-  const ebLocales = {};
-
-  // load locales
-  loadLocales();
-
-  // patch service
-  patchCreateContext();
-
-  function patchCreateContext() {
-    const createContext = loader.app.createContext;
-    loader.app.createContext = (...args) => {
-      const context = createContext.call(loader.app, ...args);
-
-      // maybe /favicon.ico
-      if (context.module) {
-        const defaultLocale = loader.app.config.i18n.defaultLocale;
-        context.text = function (...args) {
-          return getText(context.locale || defaultLocale, ...args);
-        };
-        context.text.locale = function (locale, ...args) {
-          return getText(locale || defaultLocale, ...args);
-        };
-      }
-
-      return context;
-    };
-  }
-
-  function loadLocales() {
-    // module locales
-    Object.keys(modules).forEach(key => {
-      const module = modules[key];
-      const locales = module.main.locales;
-      if (locales) {
-        Object.keys(locales).forEach(key => {
-          let locale = ebLocales[key];
-          if (!locale) locale = ebLocales[key] = {};
-          extend(false, locale, locales[key]);
-        });
-      }
-    });
-
-    /**
-     * based on egg-i18n
-     *
-     * https://github.com/eggjs/egg-i18n/blob/master/app.js
-     *
-     */
-    // project locales
-    const localeDirs = loader.app.config.i18n.dirs;
-    for (let i = 0; i &lt; localeDirs.length; i++) {
-      const dir = localeDirs[i];
-
-      if (!fs.existsSync(dir)) {
-        continue;
-      }
-
-      const names = fs.readdirSync(dir);
-      for (let j = 0; j &lt; names.length; j++) {
-        const name = names[j];
-        const filepath = path.join(dir, name);
-        // support en_US.js => en-US.js
-        const key = formatLocale(name.split('.')[0]);
-        const resource = require(filepath);
-
-        let locale = ebLocales[key];
-        if (!locale) locale = ebLocales[key] = {};
-        extend(false, locale, resource);
-      }
-    }
-  }
-
+/** ebAtomClasses
+ */
+export default {
   /**
-   * based on koa-locales
-   *
-   * https://github.com/koajs/locales/blob/master/index.js
-   *
+   * @property {object} atomClassesAll - get all atomClasses
    */
-
-  function getText(locale, ...args) {
-    const key = args[0];
-    if (!key) return null;
-
-    // try locale
-    let resource = ebLocales[locale] || {};
-    let text = resource[key];
-    if (text === undefined &amp;&amp; locale !== 'en-us') {
-      // try en-us
-      resource = ebLocales['en-us'] || {};
-      text = resource[key];
-    }
-    // equal key
-    if (text === undefined) {
-      text = key;
-    }
-    // format
-    args[0] = text;
-    return localeutil.getText.apply(localeutil, args);
-  }
+  computed: {
+    atomClassesAll() {
+      return this.$store.getState('a/base/atomClasses');
+    },
+  },
+  methods: {
+    /**
+     * @function getAtomClass
+     * @param {object} atomClass
+     * @returns {object}
+     */
+    getAtomClass(atomClass) {
+      if (!this.atomClassesAll || !atomClass) return null;
+      return this.atomClassesAll[atomClass.module][atomClass.atomClassName];
+    },
+  },
+  created() {
+    this.$store.dispatch('a/base/getAtomClasses').then(() => {
+      this.onAtomClassesReady &amp;&amp; this.onAtomClassesReady();
+    });
+  },
 };
-
-function formatLocale(locale) {
-  // support zh_CN, en_US => zh-CN, en-US
-  return locale.replace('_', '-').toLowerCase();
-}
 </code></pre>
         </article>
     </section>
