@@ -1,8 +1,9 @@
+/** @module a-base/front/config */
+
 import configResourceRenderList from './config/configResourceRenderList.js';
 import avatarUser from '../assets/img/user.png';
 
 /** The front config of a-base
- * @exports a-base/front/config
  * @property {object} stage - The stages of atom.
  * @property {number} stage.draft - 0
  * @property {number} stage.formal - 1
