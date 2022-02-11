@@ -12,7 +12,7 @@
       "./packages/egg-born-template-module-business",
       "./packages/egg-born-template-module-business-details"
     ],
-    "includePattern": ".+\\.(vue|js|jsdoc)$",
+    "includePattern": ".+\\.(vue|js|jsx|jsdoc)$",
     "excludePattern": "(node_modules/|docs/|dist/|backend/static/|plugin/assets/js/lib/|test-party/|test-flow/|test-note/|\\.min\\.js)"
   },
   "plugins": ["plugins/markdown", "./scripts/jsdoc-vue"],

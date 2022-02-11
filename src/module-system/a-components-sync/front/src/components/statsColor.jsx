@@ -1,18 +1,41 @@
+/**
+ * @module a-components/front/components/eb-stats-color
+ */
 export default {
+  /**
+   * @event change
+   * @type {object} The stats value
+   */
+  /**
+   * @property {boolean} global - true
+   */
   meta: {
     global: true,
   },
+  /**
+   * @default eb-stats-color
+   */
   name: 'eb-stats-color',
+  /**
+   * @property {object} stats_params - The stats parameters
+   */
   props: {
     stats_params: {
       type: Object,
     },
   },
+  /**
+   * @name data
+   * @property {object} statsValue - The stats value
+   */
   data() {
     return {
       statsValue: null,
     };
   },
+  /**
+   * @property {string} statsColor - the stats color
+   */
   computed: {
     statsColor() {
       if (!this.statsValue) return null;
@@ -23,10 +46,20 @@ export default {
     },
   },
   methods: {
+    /**
+     * @function onChange
+     * @param {object} statsValue
+     * @fires change
+     */
     onChange(statsValue) {
       this.statsValue = statsValue;
       this.$emit('change', statsValue);
     },
+    /**
+     * @function onAdjustValue
+     * @param {object} statsValue
+     * @returns {number} The stats value which is adjusted
+     */
     onAdjustValue(statsValue) {
       if (!statsValue) return null;
       return statsValue.red || statsValue.orange || statsValue.gray || null;

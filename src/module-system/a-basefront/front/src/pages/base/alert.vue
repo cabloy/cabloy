@@ -18,6 +18,7 @@
 export default {
   components: {},
   /**
+   * @name data
    * @property {object} data
    */
   data() {
