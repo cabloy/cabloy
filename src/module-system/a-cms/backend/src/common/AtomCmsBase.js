@@ -266,7 +266,7 @@ module.exports = app => {
       if (item.sticky) meta.flags.push(this.ctx.text('Sticky'));
       if (item.sorting && showSorting) meta.flags.push(item.sorting);
       // meta.summary
-      meta.summary = item.summary;
+      meta.summary = item.description || item.summary;
     }
   }
   return AtomCmsBase;
