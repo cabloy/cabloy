@@ -23,6 +23,6 @@
   "author": "{{author}}",
   "devDependencies": {},
   "dependencies": {
-    "cabloy": "^4.12.132"
+    "cabloy": "^4.12.135"
   }
 }
