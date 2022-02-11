@@ -51,6 +51,7 @@
     "openGraph": {
       "title": "CabloyJS API",
       "site_name": "CabloyJS API"
-    }
+    },
+    "sectionOrder": ["Modules", "Tutorials"]
   }
 }
