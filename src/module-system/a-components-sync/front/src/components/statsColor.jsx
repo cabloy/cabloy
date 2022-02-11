@@ -9,7 +9,7 @@
  */
 /**
  * @event change
- * @property {StatsValue} statsValue - The stats value
+ * @property {module:a-components/front/components/eb-stats-color~StatsValue} statsValue - The stats value
  */
 export default {
   /**
@@ -32,7 +32,7 @@ export default {
   },
   /**
    * @name data
-   * @property {StatsValue} statsValue - The stats value
+   * @property {module:a-components/front/components/eb-stats-color~StatsValue} statsValue - The stats value
    */
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
   methods: {
     /**
      * @function onChange
-     * @param {StatsValue} statsValue
+     * @param {module:a-components/front/components/eb-stats-color~StatsValue} statsValue
      * @fires change
      */
     onChange(statsValue) {
@@ -63,7 +63,7 @@ export default {
     },
     /**
      * @function onAdjustValue
-     * @param {StatsValue} statsValue
+     * @param {module:a-components/front/components/eb-stats-color~StatsValue} statsValue
      * @returns {number} The stats value which is adjusted
      */
     onAdjustValue(statsValue) {
