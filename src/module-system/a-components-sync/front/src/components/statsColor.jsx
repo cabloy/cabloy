@@ -32,7 +32,7 @@ export default {
   },
   /**
    * @name data
-   * @property {object} statsValue - The stats value
+   * @property {StatsValue} statsValue - The stats value
    */
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
   methods: {
     /**
      * @function onChange
-     * @param {object} statsValue
+     * @param {StatsValue} statsValue
      * @fires change
      */
     onChange(statsValue) {
@@ -63,7 +63,7 @@ export default {
     },
     /**
      * @function onAdjustValue
-     * @param {object} statsValue
+     * @param {StatsValue} statsValue
      * @returns {number} The stats value which is adjusted
      */
     onAdjustValue(statsValue) {
