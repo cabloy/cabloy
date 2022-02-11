@@ -1,11 +1,17 @@
 /**
  * @module a-components/front/components/eb-stats-color
  */
+/**
+ * @typedef {object} StatsValue
+ * @property {number} red - The red number
+ * @property {number} orange - The orange number
+ * @property {number} gray - The gray number
+ */
+/**
+ * @event change
+ * @property {StatsValue} statsValue - The stats value
+ */
 export default {
-  /**
-   * @event change
-   * @type {object} The stats value
-   */
   /**
    * @property {boolean} global - true
    */
