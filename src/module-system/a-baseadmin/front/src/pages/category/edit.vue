@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link iconMaterial="save" ref="buttonSubmit" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate
@@ -11,12 +11,17 @@
       :data="category"
       :params="{ module: 'a-base', validator: 'category' }"
       :onPerform="onPerformValidate"
+      @submit="onSubmit"
+      @validateItem:change="onValidateItemChange"
     >
     </eb-validate>
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
+  mixins: [ebPageDirty],
   data() {
     const query = this.$f7route.query;
     const atomClass = {
@@ -34,9 +39,11 @@ export default {
   },
   computed: {
     pageTitle() {
-      const title = this.$text('Category');
-      if (!this.category) return title;
-      return `${title}: ${this.category.categoryName}`;
+      let title = this.$text('Category');
+      if (this.category) {
+        title = `${title}: ${this.category.categoryName}`;
+      }
+      return this.page_getDirtyTitle(title);
     },
   },
   created() {
@@ -45,6 +52,12 @@ export default {
     });
   },
   methods: {
+    onValidateItemChange() {
+      this.page_setDirty(true);
+    },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     async onPerformValidate() {
       await this.$api.post('/a/base/category/save', {
         categoryId: this.categoryId,
@@ -56,6 +69,9 @@ export default {
         categoryIdParent: this.category.categoryIdParent,
         category: this.category,
       });
+      // dirty
+      this.page_setDirty(false);
+      // back
       this.$f7router.back();
     },
     onPerformSave() {
