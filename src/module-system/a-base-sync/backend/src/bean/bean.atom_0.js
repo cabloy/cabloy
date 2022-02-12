@@ -854,7 +854,7 @@ module.exports = ctx => {
 
     async preferredRole({ atomClass, user }) {
       const roles = await this.preferredRoles({ atomClass, user });
-      return roles[0];
+      return roles.length === 0 ? null : roles[0];
     }
 
     async preferredRoleId({ atomClass, user }) {
