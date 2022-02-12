@@ -852,6 +852,16 @@ module.exports = ctx => {
       return roles;
     }
 
+    async preferredRole({ atomClass, user }) {
+      const roles = await this.preferredRoles({ atomClass, user });
+      return roles[0];
+    }
+
+    async preferredRoleId({ atomClass, user }) {
+      const role = await this.preferredRole({ atomClass, user });
+      return role ? role.roleIdWho : 0;
+    }
+
     async getTableName({ atomClass, atomClassBase, options, mode, user, action, key, count }) {
       const tableNameModes = atomClassBase.tableNameModes || {};
       let tableName;
