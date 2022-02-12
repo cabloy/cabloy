@@ -1,5 +1,19 @@
 # History
 
+## 2022-02-12, Version 4.12.136
+
+- **Enhance**
+  - atom bean: create 方法 增加 options 选项
+
+```diff
+class Atom extends app.meta.AtomBase {
+-  async create({ atomClass, item, user }) {
++  async create({ atomClass, item, options, user }) {
+    // super
+-    const key = await super.create({ atomClass, item, user });
++    const key = await super.create({ atomClass, item, options, user });
+```
+
 ## 2022-01-21, Version 4.12.131
 
 - **Enhance**
