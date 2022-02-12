@@ -5,7 +5,7 @@ const ExcelJS = require3('exceljs');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // atomClass
       const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       // atomName
@@ -29,9 +29,16 @@ module.exports = app => {
       }
       // roleIdOwner
       if (!item.roleIdOwner) {
-        const roleName = 'superuser';
-        const role = await this.ctx.bean.role.parseRoleName({ roleName });
-        item.roleIdOwner = role.id;
+        let roleId;
+        if (options.preferredRole) {
+          roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
+          if (!roleId) this.ctx.throw(403);
+        } else {
+          const roleName = 'superuser';
+          const role = await this.ctx.bean.role.parseRoleName({ roleName });
+          roleId = role.id;
+        }
+        item.roleIdOwner = roleId;
       }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });

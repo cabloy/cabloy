@@ -57,6 +57,7 @@ module.exports = ctx => {
 
     // create
     async create({ atomClass, roleIdOwner, item, options, user }) {
+      options = options || {};
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
@@ -82,7 +83,7 @@ module.exports = ctx => {
       this._notifyDrafts();
       // ok
       const key = { atomId, itemId };
-      const returnAtom = options && options.returnAtom;
+      const returnAtom = options.returnAtom;
       if (!returnAtom) return key;
       return { key, atom: item };
     }
