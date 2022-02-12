@@ -94,9 +94,9 @@ module.exports = app => {
 
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       // add resource
       const res = await this.ctx.model.resource.insert({
         atomId: key.atomId,
@@ -283,7 +283,7 @@ const ExcelJS = require3('exceljs');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // atomClass
       const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       // atomName
@@ -307,9 +307,16 @@ module.exports = app => {
       }
       // roleIdOwner
       if (!item.roleIdOwner) {
-        const roleName = 'superuser';
-        const role = await this.ctx.bean.role.parseRoleName({ roleName });
-        item.roleIdOwner = role.id;
+        let roleId;
+        if (options.preferredRole) {
+          roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
+          if (!roleId) this.ctx.throw(403);
+        } else {
+          const roleName = 'superuser';
+          const role = await this.ctx.bean.role.parseRoleName({ roleName });
+          roleId = role.id;
+        }
+        item.roleIdOwner = roleId;
       }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
@@ -780,6 +787,7 @@ module.exports = ctx => {
 
     // create
     async create({ atomClass, roleIdOwner, item, options, user }) {
+      options = options || {};
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
@@ -805,7 +813,7 @@ module.exports = ctx => {
       this._notifyDrafts();
       // ok
       const key = { atomId, itemId };
-      const returnAtom = options && options.returnAtom;
+      const returnAtom = options.returnAtom;
       if (!returnAtom) return key;
       return { key, atom: item };
     }
@@ -1573,6 +1581,16 @@ module.exports = ctx => {
         [ctx.instance.id, atomClass.id, user.id]
       );
       return roles;
+    }
+
+    async preferredRole({ atomClass, user }) {
+      const roles = await this.preferredRoles({ atomClass, user });
+      return roles.length === 0 ? null : roles[0];
+    }
+
+    async preferredRoleId({ atomClass, user }) {
+      const role = await this.preferredRole({ atomClass, user });
+      return role ? role.roleIdWho : 0;
     }
 
     async getTableName({ atomClass, atomClassBase, options, mode, user, action, key, count }) {
@@ -7189,15 +7207,15 @@ async function checkAtom(moduleInfo, options, ctx) {
       if (!res) ctx.throw(403);
       ctx.meta._atomClass = res;
     } else {
-      // retrieve default one
-      const roles = await ctx.bean.atom.preferredRoles({
+      // retrieve default one, must exists
+      const roleId = await ctx.bean.atom.preferredRoleId({
         atomClass: {
           id: atomClassId,
         },
         user: ctx.state.user.op,
       });
-      if (roles.length === 0) ctx.throw(403);
-      ctx.request.body.roleIdOwner = roles[0].roleIdWho;
+      if (roleId === 0) ctx.throw(403);
+      ctx.request.body.roleIdOwner = roleId;
       ctx.meta._atomClass = { id: atomClassId };
     }
     return;
@@ -9023,12 +9041,10 @@ module.exports = function (ctx) {
     }
 
     async _getRoleIdOwner(atomClassId, userId) {
-      const roles = await ctx.bean.atom.preferredRoles({
+      return await ctx.bean.atom.preferredRoleId({
         atomClass: { id: atomClassId },
         user: { id: userId },
       });
-      if (roles.length === 0) return 0;
-      return roles[0].roleIdWho;
     }
   }
 
@@ -11039,6 +11055,23 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async preferredRole() {
+      const res = await this.ctx.service.atom.preferredRole({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async preferredRoleId() {
+      const res = await this.ctx.service.atom.preferredRoleId({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async create() {
       const options = this.ctx.request.body.options;
       const res = await this.ctx.service.atom.create({
@@ -12655,6 +12688,8 @@ module.exports = app => {
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
+    { method: 'post', path: 'atom/preferredRole', controller: 'atom' },
+    { method: 'post', path: 'atom/preferredRoleId', controller: 'atom' },
     {
       method: 'post',
       path: 'atom/create',
@@ -12946,6 +12981,14 @@ module.exports = app => {
   class Atom extends app.Service {
     async preferredRoles({ atomClass, user }) {
       return await this.ctx.bean.atom.preferredRoles({ atomClass, user });
+    }
+
+    async preferredRole({ atomClass, user }) {
+      return await this.ctx.bean.atom.preferredRole({ atomClass, user });
+    }
+
+    async preferredRoleId({ atomClass, user }) {
+      return await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
     }
 
     async create({ atomClass, roleIdOwner, item, options, user }) {

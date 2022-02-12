@@ -9,9 +9,9 @@ const uuid = require3('uuid');
 
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       // add dashboard
       const res = await this.ctx.model.dashboard.insert({
         atomId: key.atomId,

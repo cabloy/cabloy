@@ -18,9 +18,9 @@ module.exports = app => {
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       // add dict
       const res = await this.ctx.model.dict.insert({
         atomId: key.atomId,

@@ -6,9 +6,9 @@
 
 module.exports = app => {
   class Atom extends app.meta.AtomCmsBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       return { atomId: key.atomId };
     }
 
@@ -3032,9 +3032,9 @@ module.exports = app => {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
 
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       // article
       const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
       const editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;

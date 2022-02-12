@@ -6,9 +6,9 @@
 
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, user });
+      const key = await super.create({ atomClass, item, options, user });
       // add layout
       const res = await this.ctx.model.layout.insert({
         atomId: key.atomId,
