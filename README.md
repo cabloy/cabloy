@@ -92,9 +92,9 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 
 ## CabloyJS 亮点介绍
 
-基于上述分析的问题，CabloyJS 实现了如下`功能三大亮点`和`架构三大亮点`
+基于上述分析的问题，CabloyJS 实现了如下`功能四大亮点`和`架构四大亮点`
 
-### 1. 功能三大亮点
+### 1. 功能四大亮点
 
 1. **自适应布局：pc = mobile + pad**
 
@@ -106,13 +106,17 @@ CabloyJS 首创`pc = mobile + pad`的自适应布局机制：只需要一套代�
 
 通过在一处定义`JSON Schema`，就可以同时支持前端的`表单自动渲染`和后端的`数据验证`，既能开箱即用又可灵活定制
 
-3. **内置 NodeJS 工作流引擎**
+3. **所见即所得的 Markdown 富文本编辑器及渲染引擎**
+
+CabloyJS 基于`ProseMirror`搭建出来的`Markdown富文本编辑器`兼顾易用性和灵活性。`一般用户`即便不懂 Markdown 语法也可以无痛的使用，而懂得 Markdown 语法的`专业用户`则可以享受更加`便捷高效`的输入体验
+
+4. **内置 NodeJS 工作流引擎**
 
 CabloyJS 充分利用 JS 语言的灵活性和 JSON 格式的便捷性，提供的 `NodeJS工作流引擎`远比 JAVA 领域的`Activiti` 简洁易用
 
 比如，我们一般只知道如何使用`Activiti`中提供的`活动节点`和`边界事件`，却很少有途径来了解如何开发`自定义的活动节点`和`自定义的边界事件`。由于`Activiti`的架构繁杂，大多数人甚至不愿意尝试去阅读源码。但是 CabloyJS 提供的`工作流引擎`却可以轻松的定制所有的工作流元素，而且源码层次清晰，易于学习
 
-### 2. 架构三大亮点
+### 2. 架构四大亮点
 
 作为一款面向开发者的低代码开发平台，为了将低代码的`开箱即用`和专业代码的`灵活定制`有机融合，CabloyJS 在架构层面主要做了以下几点：
 
@@ -122,20 +126,24 @@ CabloyJS 充分利用 JS 语言的灵活性和 JSON 格式的便捷性，提供�
 
 此外，业务模块内部的页面、数据、逻辑、路由、配置等元素均进行了命名空间隔离处理，从而避免模块之间的变量污染与冲突。换句话说，当我们在自己的业务模块中为某个资源命名时，不用担心其他业务模块是否存在相同名称的资源，从而减少心智负担
 
-2. **原生分布式架构**
+2. **原生分布式架构，支持集群部署**
 
 EggJS 的定位是框架的框架，CabloyJS 后端在 EggJS 的基础上采用`自定义Loader`机制扩展出来了一套适配业务场景的新特性
 
 比如，EggJS 原有的`Worker + Agent`进程模型，对于单机而言非常便利。但是面对多机集群，特别是基于`docker`的集群部署而言，`Agent进程`就失去了用武之地。更重要的是，如果一开始基于`Agent进程`进行开发，后续很难平滑的过渡到分布式场景。因此，CabloyJS 后端采用`Redis`，从框架底层就开始原生分布式的架构设计，并衍生出了`Broadcast、Queue、Schedule、Startup`等一系列分布式的开发组件，方便我们从一开始就进行分布式的开发。因此当系统起量后，可以轻松做集群扩展，参见：[Broadcast](https://cabloy.com/zh-cn/articles/broadcast.html), [Queue](https://cabloy.com/zh-cn/articles/queue.html), [Schedule](https://cabloy.com/zh-cn/articles/schedule.html), [Startup](https://cabloy.com/zh-cn/articles/startup.html)
 
-3. **前后端分离，全场景开发**
+3. **原生多实例/多域名/多租户设计，支援 SAAS 系统开发**
+
+CabloyJS 通过`多实例`的概念来支持`多域名/多租户`SAAS 系统的开发。只需启动一个后端服务，即可支持多个实例同时运行。实例`共享数据表架构`，但运行中产生的数据是`相互隔离`的
+
+4. **前后端分离，全场景跨端开发**
 
 通过前后端分离的架构设计，可以支持全场景业务的快速开发
 
 | 场景                   | 前端                         | 后端          |
 | ---------------------- | ---------------------------- | ------------- |
 | PC：Web                | CabloyJS 前端                | CabloyJS 后端 |
-| PC：Exe                | CabloyJS 前端 + Electron     | CabloyJS 后端 |
+| PC：Desktop            | CabloyJS 前端 + Electron     | CabloyJS 后端 |
 | Mobile：IOS            | CabloyJS 前端 + Cordova      | CabloyJS 后端 |
 | Mobile：Android        | CabloyJS 前端 + Cordova      | CabloyJS 后端 |
 | 微信公众号             | CabloyJS 前端 + 微信 API     | CabloyJS 后端 |
