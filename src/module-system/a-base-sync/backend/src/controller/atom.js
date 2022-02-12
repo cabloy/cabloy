@@ -7,6 +7,23 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async preferredRole() {
+      const res = await this.ctx.service.atom.preferredRole({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async preferredRoleId() {
+      const res = await this.ctx.service.atom.preferredRoleId({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async create() {
       const options = this.ctx.request.body.options;
       const res = await this.ctx.service.atom.create({

@@ -10,6 +10,8 @@ module.exports = app => {
     { method: 'post', path: 'base/themes', controller: 'base' },
     // atom
     { method: 'post', path: 'atom/preferredRoles', controller: 'atom' },
+    { method: 'post', path: 'atom/preferredRole', controller: 'atom' },
+    { method: 'post', path: 'atom/preferredRoleId', controller: 'atom' },
     {
       method: 'post',
       path: 'atom/create',

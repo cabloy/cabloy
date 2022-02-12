@@ -4,6 +4,14 @@ module.exports = app => {
       return await this.ctx.bean.atom.preferredRoles({ atomClass, user });
     }
 
+    async preferredRole({ atomClass, user }) {
+      return await this.ctx.bean.atom.preferredRole({ atomClass, user });
+    }
+
+    async preferredRoleId({ atomClass, user }) {
+      return await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
+    }
+
     async create({ atomClass, roleIdOwner, item, options, user }) {
       return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, options, user });
     }
