@@ -100,12 +100,10 @@ module.exports = function (ctx) {
     }
 
     async _getRoleIdOwner(atomClassId, userId) {
-      const roles = await ctx.bean.atom.preferredRoles({
+      return await ctx.bean.atom.preferredRoleId({
         atomClass: { id: atomClassId },
         user: { id: userId },
       });
-      if (roles.length === 0) return 0;
-      return roles[0].roleIdWho;
     }
   }
 
