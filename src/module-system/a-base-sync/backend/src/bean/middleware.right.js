@@ -80,15 +80,15 @@ async function checkAtom(moduleInfo, options, ctx) {
       if (!res) ctx.throw(403);
       ctx.meta._atomClass = res;
     } else {
-      // retrieve default one
-      const roles = await ctx.bean.atom.preferredRoles({
+      // retrieve default one, must exists
+      const roleId = await ctx.bean.atom.preferredRoleId({
         atomClass: {
           id: atomClassId,
         },
         user: ctx.state.user.op,
       });
-      if (roles.length === 0) ctx.throw(403);
-      ctx.request.body.roleIdOwner = roles[0].roleIdWho;
+      if (roleId === 0) ctx.throw(403);
+      ctx.request.body.roleIdOwner = roleId;
       ctx.meta._atomClass = { id: atomClassId };
     }
     return;
