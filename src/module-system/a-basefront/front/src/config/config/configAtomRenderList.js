@@ -34,6 +34,7 @@ const list = {
       { name: 'atomUpdatedAt', title: 'Modification Time', by: 'desc', tableAlias: '' },
       { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
     ],
+    orders: [],
     filter: {
       actionPath: '/a/baselayout/listLayoutFilter',
       tabs: {
