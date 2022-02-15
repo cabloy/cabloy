@@ -28,6 +28,7 @@
     "monospaceLinks": false
   },
   "docdash": {
+    "collapse": true,
     "search": true,
     "menu": {
       "Documentations": {
