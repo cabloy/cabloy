@@ -1,3 +1,18 @@
+/** @module egg-born-front/base/config */
+
+/** front base config
+ * @todo welcome to pr
+ * @name config
+ * @property {object} base
+ * @property {string} base.locale='en-us'
+ * @property {boolean} base.jwt=false
+ * @property {object} nprogress
+ * @property {number} nprogress.debounce=500
+ * @property {object} api
+ * @property {string} api.baseURL=''
+ * @property {boolean} api.debounce=200
+ */
+
 export default function (Vue) {
   // config
   const config = {
