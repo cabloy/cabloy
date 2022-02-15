@@ -112,7 +112,7 @@ function ParseUrlQuery(url) {
 //on search
 document
   .getElementById("nav-search")
-  .addEventListener("keyup", function (event) {
+  .addEventListener("input", function (event) {
     handleNavSearch(this.value);
   });
 
