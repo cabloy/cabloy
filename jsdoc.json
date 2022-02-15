@@ -3,7 +3,7 @@
     "allowUnknownTags": false
   },
   "source": {
-    "include": ["./packages/", "./src/"],
+    "include": ["./build", "./packages/", "./src/"],
     "exclude": [
       "./packages/egg-born-front/src/vendors/requirejs/require.js",
       "./packages/egg-born-localeutil",
