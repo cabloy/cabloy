@@ -18,7 +18,7 @@ jobs:
           output_dir: ./docs-api
           config_file: jsdoc.json
           template: '@zhennann/docdash'
-          front_page:
+          front_page: docs/jsdoc-readme.md
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
