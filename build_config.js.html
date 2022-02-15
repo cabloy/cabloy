@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>src/module-system/a-base-sync/front/src/mixins.js - CabloyJS API</title>
+    <title>build/config.js - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">src/module-system/a-base-sync/front/src/mixins.js</h1>
+    <h1 class="page-title">build/config.js</h1>
     
 
     
@@ -56,30 +56,44 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module a-base/front/mixins */
+            <pre class="prettyprint source linenums"><code>/** @module project/build/config */
 
-import actionBase from './common/actionBase.js';
-import atomClasses from './common/atomClasses.js';
-import atomActions from './common/atomActions.js';
-import detailActions from './common/detailActions.js';
-import modules from './common/modules.js';
-import renderTableCellFormat from './common/renderTableCellFormat.js';
-
-/** The mixins of a-base
- * @property {module:a-base/front/mixins/ebActionBase} ebActionBase - This provides the basic members used for action handler
- * @property {module:a-base/front/mixins/ebAtomClasses} ebAtomClasses - This provide the members of atomClasses
- * @property {object} ebAtomActions - This provide the members of atomActions
- * @property {object} ebDetailActions - This provide the members of detailActions
- * @property {object} ebModules - This provide the members of modules
- * @property {object} ebRenderTableCellFormat - This provide the general logics of renderTableCellFormat
+/** backend
+ * @property {object} backend
+ * @property {string} backend.hostname='0.0.0.0'
+ * @property {number} backend.port=7102
  */
-export default {
-  ebActionBase: actionBase,
-  ebAtomClasses: atomClasses,
-  ebAtomActions: atomActions,
-  ebDetailActions: detailActions,
-  ebModules: modules,
-  ebRenderTableCellFormat: renderTableCellFormat,
+const backend = {
+  port: 7102,
+  hostname: '0.0.0.0',
+};
+
+/** front
+ * @property {object} front
+ * @property {object} front.build - npm run build:front
+ * @property {boolean} front.build.productionSourceMap=true
+ * @property {boolean} front.build.uglify=true
+ * @property {object} front.dev - npm run dev:front
+ * @property {string} front.dev.hostname='localhost'
+ * @property {number} front.dev.port=9192
+ * @property {string} front.dev.proxyBaseURL='http://localhost:7102'
+ */
+const front = {
+  build: {
+    productionSourceMap: true,
+    uglify: true,
+  },
+  dev: {
+    // hostname: 'localhost',
+    // hostname: 'b.test.com',
+    port: 9192,
+    // proxyBaseURL: 'http://localhost:7102',
+  },
+};
+
+module.exports = {
+  front,
+  backend,
 };
 </code></pre>
         </article>
