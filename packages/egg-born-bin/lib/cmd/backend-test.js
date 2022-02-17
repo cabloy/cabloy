@@ -19,17 +19,13 @@ class BackendTestCommand extends TestCommand {
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
     if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
-    if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
+    context.argv._ = utils.combineTestPattern({
+      baseDir: context.env.EGG_BASE_DIR,
+      env: 'unittest',
+      pattern: context.argv._,
+    });
 
-    const testArgv = context.argv;
-
-    // collect test files
-    const pattern = testArgv._.slice();
-
-    // expand glob
-    testArgv._ = globby.sync(pattern);
-
-    if (!testArgv._.length) {
+    if (!context.argv._.length) {
       // options
       const options = {};
       options.baseDir = context.env.EGG_BASE_DIR;
@@ -56,6 +52,8 @@ class BackendTestCommand extends TestCommand {
   /**
    * format test args then change it to array style
    * @param {Object} context - { cwd, argv, ...}
+   * @param context.argv
+   * @param context.debugOptions
    * @return {Array} [ '--require=xxx', 'xx.test.js' ]
    * @protected
    */

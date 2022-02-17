@@ -14,7 +14,11 @@ class BackendCovCommand extends CovCommand {
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
     if (!context.env.EGG_FRAMEWORK) context.env.EGG_FRAMEWORK = utils.getModulePath('egg-born-backend');
 
-    if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
+    context.argv._ = utils.combineTestPattern({
+      baseDir: context.env.EGG_BASE_DIR,
+      env: 'unittest',
+      pattern: context.argv._,
+    });
 
     context.argv.x = ['src/**/backend/**/*.spec.js', 'src/**/dist/backend.js'];
 
@@ -24,6 +28,8 @@ class BackendCovCommand extends CovCommand {
   /**
    * format test args then change it to array style
    * @param {Object} context - { cwd, argv, ...}
+   * @param context.argv
+   * @param context.debugOptions
    * @return {Array} [ '--require=xxx', 'xx.test.js' ]
    * @protected
    */

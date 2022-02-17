@@ -37,6 +37,7 @@
     "egg-born-backend": "^6.2.17",
     "egg-born-front": "^8.4.23",
     "egg-mock": "^3.25.1",
+    "extend2": "^1.0.0",
     "nock": "^11.7.2",
     "should": "^13.2.3",
     "uglify-js": "^3.7.7",

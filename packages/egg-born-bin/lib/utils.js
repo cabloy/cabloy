@@ -4,6 +4,8 @@ const urllib = require('urllib');
 const semver = require('semver');
 const chalk = require('chalk');
 const boxen = require('boxen');
+const globby = require('globby');
+const extend = require('extend2');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
@@ -88,6 +90,27 @@ const utils = {
   getAppPackage() {
     const cwd = process.cwd();
     return require(path.join(cwd, 'package.json'));
+  },
+  loadEnvConfig({ baseDir, env }) {
+    const fileConfigDefault = path.join(baseDir, 'config/config.default.js');
+    const fileConfigEnv = path.join(baseDir, `config/config.${env}.js`);
+    const configDefault = require(fileConfigDefault)({});
+    const configEnv = require(fileConfigEnv)({});
+    return extend(true, {}, configDefault, configEnv);
+  },
+  combineTestPattern({ baseDir, env, pattern }) {
+    if (!pattern || pattern.length === 0) {
+      pattern = ['src/**/backend/test/**/*.test.js'];
+    }
+    const configEnv = this.loadEnvConfig({ baseDir, env });
+    const disabledModules = configEnv.disabledModules || [];
+    for (const relativeName of disabledModules) {
+      pattern.push(`!src/**/${relativeName}/**/*.test.js`);
+      pattern.push(`!src/**/${relativeName}-sync/**/*.test.js`);
+      pattern.push(`!src/**/${relativeName}-monkey/**/*.test.js`);
+    }
+    // expand glob
+    return globby.sync(pattern);
   },
 };
 module.exports = utils;
