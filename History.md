@@ -1,5 +1,10 @@
 # History
 
+## 2022-02-17, Version 4.12.142
+
+- **Feat**
+  - 允许在`测试环境`和`开发环境`禁用`测试模块`：[禁用模块](https://cabloy.com/zh-cn/articles/disabled-modules.html)
+
 ## 2022-02-12, Version 4.12.136
 
 - **Enhance**
