@@ -116,7 +116,7 @@ module.exports = app => {
       }
       // resourceRoles
       if (item.resourceRoles) {
-        item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles });
+        item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles, force: true });
       }
       // ok
       return item;
