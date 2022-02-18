@@ -45,6 +45,15 @@ module.exports = ctx => {
     }
 
     async _registerLock({ atomClassId, code }) {
+      const data = await this._registerLock_inner({ atomClassId, code });
+      if (code === 1) {
+        await this._registerLock_inner({ atomClassId, code: 2 });
+        await this._registerLock_inner({ atomClassId, code: 3 });
+      }
+      return data;
+    }
+
+    async _registerLock_inner({ atomClassId, code }) {
       // get
       const res = await this.model.get({ atomClassId, code });
       if (res) return res;
