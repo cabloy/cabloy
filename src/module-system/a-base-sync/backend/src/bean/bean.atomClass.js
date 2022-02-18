@@ -46,6 +46,17 @@ module.exports = ctx => {
     }
 
     async _registerLock({ module, atomClassName, atomClassIdParent }) {
+      // atom class
+      const data = await this._registerLock_inner({ module, atomClassName, atomClassIdParent });
+      // atom action: basics
+      for (const code of [1, 2, 3, 4]) {
+        await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
+      }
+      // ok
+      return data;
+    }
+
+    async _registerLock_inner({ module, atomClassName, atomClassIdParent }) {
       // get
       const res = await this.model.get({ module, atomClassName, atomClassIdParent });
       if (res) return res;
