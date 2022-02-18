@@ -15,7 +15,7 @@
       "  class ${TM_FILENAME_BASE}Controller extends app.Controller {",
       "",
       "    async action() {",
-      "      const res = await this.ctx.service.demo.action();",
+      "      const res = await this.ctx.service.${TM_FILENAME_BASE}.action();",
       "      this.ctx.success(res);",
       "    }",
       "",
