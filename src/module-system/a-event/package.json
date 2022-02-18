@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-event",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "eggBornModule": {
     "dependencies": {
       "a-instance": "4.0.0"
@@ -16,7 +16,7 @@
   "author": "zhennann",
   "dependencies": {
     "assert": "^2.0.0",
-    "egg-born-mock": "^2.1.3",
+    "egg-born-mock": "^2.1.4",
     "require3": "^2.1.4"
   }
 }

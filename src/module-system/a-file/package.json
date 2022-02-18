@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "4.3.7",
+  "version": "4.3.8",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 2,
@@ -21,7 +21,7 @@
     "base64url": "^3.0.1",
     "bluebird": "^3.7.2",
     "cropperjs": "^1.5.6",
-    "egg-born-mock": "^2.1.3",
+    "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.0",
     "fs-extra": "^8.1.0",
     "gm": "^1.23.1",

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-flow",
-  "version": "4.3.18",
+  "version": "4.3.19",
   "title": "WorkFlow Test",
   "eggBornModule": {
     "fileVersion": 2,
@@ -27,7 +27,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.3",
+    "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.0",
     "require3": "^2.1.4"
   }
