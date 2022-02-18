@@ -49,6 +49,7 @@ module.exports = ctx => {
       if (code === 1) {
         await this._registerLock_inner({ atomClassId, code: 2 });
         await this._registerLock_inner({ atomClassId, code: 3 });
+        await this._registerLock_inner({ atomClassId, code: 4 });
       }
       return data;
     }
