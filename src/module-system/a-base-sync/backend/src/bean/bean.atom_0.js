@@ -60,13 +60,15 @@ module.exports = ctx => {
       options = options || {};
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // atomSimple
+      const atomSimple = Number(Boolean(_atomClass.simple));
       // item
       item = item || {};
-      item.atomStage = atomStage || 0;
+      item.atomStage = atomStage || atomSimple;
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       const res = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,

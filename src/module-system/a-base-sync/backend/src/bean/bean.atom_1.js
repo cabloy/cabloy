@@ -316,7 +316,7 @@ module.exports = ctx => {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
-      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
+      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || atomSimple;
       if (target === 'clone') {
         atomStage = atomSimple; // support simple
       }
