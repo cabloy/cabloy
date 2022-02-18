@@ -313,16 +313,21 @@ module.exports = ctx => {
       if (!srcItem) {
         srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
       }
+      // atomSimple
+      const atomSimple = srcItem.atomSimple;
+      // atomStage
+      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
+      if (target === 'clone') {
+        atomStage = atomSimple; // support simple
+      }
       // destKey
       if (!destKey) {
-        destKey = await this.create({ atomClass, roleIdOwner: srcItem.roleIdOwner, item: null, user });
+        destKey = await this.create({ atomClass, atomStage, roleIdOwner: srcItem.roleIdOwner, item: null, user });
       }
       if (!destKey.itemId) {
         const _item = await this.modelAtom.get({ id: destKey.atomId });
         destKey.itemId = _item.itemId;
       }
-      // atomStage
-      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
       // atomClosed
       const atomClosed = 0;
       // atomIdDraft/atomIdFormal
@@ -338,7 +343,6 @@ module.exports = ctx => {
       const atomLanguage = srcItem.atomLanguage;
       const atomCategoryId = srcItem.atomCategoryId;
       const atomTags = srcItem.atomTags;
-      const atomSimple = srcItem.atomSimple;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
@@ -367,7 +371,6 @@ module.exports = ctx => {
         atomIdDraft = srcItem.atomIdDraft;
         atomIdFormal = srcItem.atomId;
       } else if (target === 'clone') {
-        atomStage = atomSimple; // support simple
         atomIdDraft = 0;
         atomIdFormal = 0;
         userIdUpdated = user.id;

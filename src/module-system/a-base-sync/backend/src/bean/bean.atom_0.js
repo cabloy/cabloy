@@ -56,12 +56,13 @@ module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, roleIdOwner, item, options, user }) {
+    async create({ atomClass, atomStage, roleIdOwner, item, options, user }) {
       options = options || {};
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
       item = item || {};
+      item.atomStage = atomStage || 0;
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
