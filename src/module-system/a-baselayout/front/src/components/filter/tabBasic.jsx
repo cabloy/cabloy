@@ -24,6 +24,7 @@ export default {
         hint: false,
         container: this.layoutManager.container,
         stages: this.filterContainer.stages,
+        stage: this.filterContainer.stage,
       };
       // meta
       const meta = {
@@ -60,6 +61,7 @@ export default {
       const host = {
         hint: false,
         container: this.layoutManager.container,
+        stage: this.filterContainer.stage,
       };
       // meta
       const meta = {

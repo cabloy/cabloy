@@ -24,6 +24,7 @@ export default {
         hint: false,
         container: this.layoutManager.container,
         atomClassBase: this.filterContainer.atomClassBase,
+        stage: this.filterContainer.stage,
       };
       // meta
       const meta = {

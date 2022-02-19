@@ -74,6 +74,9 @@ export default {
       if (!_atomClass) return '';
       return _atomClass.titleLocale;
     },
+    stage() {
+      return this.form.stage;
+    },
     stages() {
       const stages = [];
       const atomClassBase = this.atomClassBase;
