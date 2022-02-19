@@ -6,6 +6,7 @@ import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
 import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
+import renderGroupFlatten from './render/renderGroupFlatten.jsx';
 import renderPanel from './render/renderPanel.jsx';
 import renderText from './render/renderText.jsx';
 import renderColorPicker from './render/renderColorPicker.jsx';
@@ -32,6 +33,7 @@ import renderUser from './render/renderUser.jsx';
 
 const __renderTypes = [
   ['group', 'renderGroup'],
+  ['group-flatten', 'renderGroupFlatten'],
   ['panel', 'renderPanel'],
   ['text', 'renderText'],
   ['toggle', 'renderToggle'],
