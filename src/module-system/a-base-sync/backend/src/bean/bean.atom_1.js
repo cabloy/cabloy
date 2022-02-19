@@ -316,10 +316,13 @@ module.exports = ctx => {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
-      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || atomSimple;
-      if (target === 'clone') {
+      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target];
+      if (atomStage === undefined) {
         atomStage = atomSimple; // support simple
       }
+      // if (target === 'clone') {
+      //   atomStage = atomSimple; // support simple
+      // }
       // destKey
       if (!destKey) {
         destKey = await this.create({ atomClass, atomStage, roleIdOwner: srcItem.roleIdOwner, item: null, user });

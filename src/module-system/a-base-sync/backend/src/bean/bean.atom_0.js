@@ -65,7 +65,7 @@ module.exports = ctx => {
       const atomSimple = Number(Boolean(_atomClass.simple));
       // item
       item = item || {};
-      item.atomStage = atomStage || atomSimple;
+      item.atomStage = atomStage !== undefined ? atomStage : atomSimple;
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
