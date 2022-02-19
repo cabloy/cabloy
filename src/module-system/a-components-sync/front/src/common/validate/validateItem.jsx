@@ -73,6 +73,7 @@ export default {
     renderComponent,
     renderComponentAction,
     renderGroup,
+    renderGroupFlatten,
     renderPanel,
     renderText,
     renderColorPicker,
