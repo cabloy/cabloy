@@ -16,12 +16,15 @@ export default {
       if (target === undefined) target = '_self';
       // mapper
       const mapper = property.ebParams.mapper;
+      // apiFetchUsers
+      const apiFetchUsers = property.ebParams.apiFetchUsers;
       return new Promise(resolve => {
         const url = '/a/baseadmin/user/select';
         this.$view.navigate(url, {
           target,
           context: {
             params: {
+              apiFetchUsers,
               buttonClearUser: true,
             },
             callback: (code, selectedUser) => {

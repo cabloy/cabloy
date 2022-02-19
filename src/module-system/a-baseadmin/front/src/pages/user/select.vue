@@ -1,7 +1,7 @@
 <template>
   <eb-search-page :title="$text('Select User')" @search="onSearch" @loadMore="onLoadMore" @disable="onDisable">
     <eb-button v-if="buttonClearUser" :onPerform="onPerformClearUser">{{ this.$text('Clear User') }}</eb-button>
-    <users ref="list" :onFetchUsers="onFetchUsers" :onSelect="onSelect"></users>
+    <users ref="list" :apiFetchUsers="apiFetchUsers" :onFetchUsers="onFetchUsers" :onSelect="onSelect"></users>
   </eb-search-page>
 </template>
 <script>
@@ -14,6 +14,9 @@ export default {
     users,
   },
   computed: {
+    apiFetchUsers() {
+      return this.contextParams.apiFetchUsers;
+    },
     onFetchUsers() {
       return this.contextParams.onFetchUsers;
     },

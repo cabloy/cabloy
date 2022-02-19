@@ -28,6 +28,9 @@ export default {
     global: false,
   },
   props: {
+    apiFetchUsers: {
+      type: String,
+    },
     onFetchUsers: {
       type: Function,
     },
@@ -71,7 +74,8 @@ export default {
       if (this.onFetchUsers) {
         promise = this.onFetchUsers(params);
       } else {
-        promise = this.$api.post('user/select', params);
+        const url = this.apiFetchUsers || '/a/baseadmin/user/select';
+        promise = this.$api.post(url, params);
       }
       // then
       const data = await promise;
