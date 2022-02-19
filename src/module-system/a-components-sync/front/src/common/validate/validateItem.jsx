@@ -448,10 +448,13 @@ export default {
       return !!this.__computed_display_getValue(parcel, key);
     },
     _handleComputedDisplay_checkHost(ebDisplay, attr) {
-      const hostAttr = ebDisplay.host && ebDisplay.host[attr];
+      let hostAttr = ebDisplay.host && ebDisplay.host[attr];
       if (!hostAttr) return true;
+      if (!Array.isArray(hostAttr)) {
+        hostAttr = hostAttr.split(',');
+      }
       const current = this.validate.host && this.validate.host[attr];
-      return current === hostAttr;
+      return hostAttr.some(item => item === current);
     },
   },
 };
