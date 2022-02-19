@@ -810,7 +810,7 @@ module.exports = ctx => {
       const atomSimple = Number(Boolean(_atomClass.simple));
       // item
       item = item || {};
-      item.atomStage = atomStage || atomSimple;
+      item.atomStage = atomStage !== undefined ? atomStage : atomSimple;
       item.roleIdOwner = roleIdOwner;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -1969,10 +1969,13 @@ module.exports = ctx => {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
-      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || atomSimple;
-      if (target === 'clone') {
+      let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target];
+      if (atomStage === undefined) {
         atomStage = atomSimple; // support simple
       }
+      // if (target === 'clone') {
+      //   atomStage = atomSimple; // support simple
+      // }
       // destKey
       if (!destKey) {
         destKey = await this.create({ atomClass, atomStage, roleIdOwner: srcItem.roleIdOwner, item: null, user });
