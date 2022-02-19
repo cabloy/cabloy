@@ -315,7 +315,7 @@ export default {
       if (!metaValidateProperty && !meta) return property;
       return this.$meta.util.extend({}, property, metaValidateProperty, meta);
     },
-    getContext({ parcel, key, property, meta }) {
+    getContext({ parcel, key, property, meta, index }) {
       // dataPath
       const dataPath = parcel.pathParent + key;
       // property
@@ -334,6 +334,7 @@ export default {
         property,
         dataPath,
         meta,
+        index,
         getTitle: notHint => {
           return this.getTitle(context, notHint);
         },
