@@ -405,6 +405,11 @@ export default {
       if (!ebType) return null;
       // ebDisplay
       if (!this._handleComputedDisplay(parcel, key, property)) {
+        // check group flatten
+        if (property.ebType === 'group-flatten') {
+          this._skipFlattenItems(context);
+        }
+        // null
         return null;
       }
       // render
