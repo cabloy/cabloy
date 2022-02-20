@@ -9,7 +9,7 @@ export default {
       const count = keys.length;
       let index = 0;
       // groupCount
-      const groupCount = 0;
+      let groupCount = 0;
       while (index < count) {
         const key = keys[index];
         const property = parcel.properties[key];
@@ -31,6 +31,8 @@ export default {
             children.push(item);
           }
         }
+        // groupCount
+        groupCount = context2.groupCount;
         // next
         index = context2.index + 1;
       }

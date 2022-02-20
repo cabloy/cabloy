@@ -16,11 +16,21 @@ export default {
       }
       // group
       const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-      return (
+      const group = (
         <f7-list-group key={key} staticClass={className}>
           {children}
         </f7-list-group>
       );
+      if (!property.ebGroupWhole) {
+        context.groupCount++;
+        return group;
+      }
+      if (context.groupCount % 2 === 0) {
+        context.groupCount += 2;
+        return group;
+      }
+      context.groupCount += 3;
+      return [this.renderGroupEmpty(), group];
     },
   },
 };
