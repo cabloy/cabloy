@@ -19,7 +19,7 @@
         </div>
       </eb-list-item>
     </f7-list>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
   </div>
 </template>
 <script>
@@ -47,11 +47,12 @@ export default {
   methods: {
     onSearch(query) {
       this.query = query;
-      if (!this.query) {
-        this.items = [];
-      } else {
-        this.reload(true);
-      }
+      this.reload(true);
+      // if (!this.query) {
+      //   this.items = [];
+      // } else {
+      //   this.reload(true);
+      // }
     },
     reload(force) {
       this.$refs.loadMore.reload(force);
