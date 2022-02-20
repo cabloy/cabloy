@@ -38,6 +38,7 @@ export default {
       }
       // groupCount
       if (groupCount % 2 === 1) {
+        groupCount++;
         children.push(this.renderGroupEmpty());
       }
       // ok
