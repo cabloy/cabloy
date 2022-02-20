@@ -2,7 +2,7 @@
   position: relative;
   height: 100%;
   width: 100%;
-  background: #C3D4E7;
+  background: #c3d4e7;
 
   .eb-layout-header {
     position: position;
@@ -10,7 +10,7 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    background: #343D46;
+    background: #343d46;
     white-space: nowrap;
 
     &:after {
@@ -22,7 +22,14 @@
       bottom: auto;
       height: 10px;
       pointer-events: none;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.1) 40%,
+        rgba(0, 0, 0, 0.05) 50%,
+        rgba(0, 0, 0, 0) 80%,
+        rgba(0, 0, 0, 0) 100%
+      );
     }
 
     .title {
@@ -31,7 +38,7 @@
       height: 100%;
       /* if set, the width not expand automatically */
       /* min-width: 180px; */
-      color: #C3D4E7;
+      color: #c3d4e7;
       font-size: 30px;
       font-weight: 700;
       padding-left: 20px;
@@ -43,10 +50,10 @@
       align-items: center;
       flex-grow: 1;
       height: 100%;
-      background: #343D46 !important;
+      background: #343d46 !important;
 
       .tab-link {
-        color: #C3D4E7;
+        color: #c3d4e7;
         max-width: 200px;
         align-items: flex-start;
 
@@ -58,26 +65,27 @@
           height: 16px;
           line-height: 16px;
           font-size: 16px;
-          background: hsla(0, 0%, 100%, .12);
+          background: hsla(0, 0%, 100%, 0.12);
           border-radius: 8px;
           visibility: hidden;
-          color: #C3D4E7;
+          color: #c3d4e7;
         }
 
         &[data-dragdrop-drop] {
-          border-left: 1px solid #C3D4E7;
+          border-left: 1px solid #c3d4e7;
         }
       }
 
       .tab-link.tab-link-active {
         color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
 
-        .close {}
+        .close {
+        }
       }
 
       .tab-link:hover {
         color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
-        background: hsla(0, 0%, 100%, .12);
+        background: hsla(0, 0%, 100%, 0.12);
 
         .close {
           visibility: visible;
@@ -107,21 +115,21 @@
         justify-content: center;
 
         &[data-dragdrop-drop] {
-          border-left: 1px solid #C3D4E7;
+          border-left: 1px solid #c3d4e7;
         }
       }
 
       .button-separator {
-        border-left: 1px solid #414D5B;
+        border-left: 1px solid #414d5b;
       }
 
       a.link {
-        color: #C3D4E7;
+        color: #c3d4e7;
         padding: 6px;
       }
 
       a.link:hover {
-        background: hsla(0, 0%, 100%, .12);
+        background: hsla(0, 0%, 100%, 0.12);
         border-radius: 4px;
       }
 
@@ -142,13 +150,11 @@
           }
         }
 
-        .item+.item {
+        .item + .item {
           padding-left: 10px;
         }
-
       }
     }
-
   }
 
   .eb-layout-groups {
@@ -180,7 +186,6 @@
   .view.eb-layout-view.eb-transition-close {
     animation: md-page-current-to-next var(--f7-page-transition-duration) forwards;
   }
-
 }
 
 :root.theme-dark {
