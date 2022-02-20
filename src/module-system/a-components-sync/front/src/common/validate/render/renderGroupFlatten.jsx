@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderGroupFlatten(context) {
-      let { parcel, key, property, index } = context;
+      let { parcel, index } = context;
       // children
       let children = [];
       while (true) {
