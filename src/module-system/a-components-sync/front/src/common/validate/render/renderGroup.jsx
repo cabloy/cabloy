@@ -20,7 +20,9 @@ export default {
       // group
       const titleHidden = property.ebParams && property.ebParams.titleHidden;
       if (!titleHidden) {
-        const group = <f7-list-item groupTitle={true} title={this.getTitle(context)}></f7-list-item>;
+        const group = (
+          <f7-list-item key={key + '_groupTitle'} groupTitle={true} title={this.getTitle(context)}></f7-list-item>
+        );
         // combine
         children.unshift(group);
       }

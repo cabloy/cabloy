@@ -6,6 +6,7 @@ import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
 import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
+import renderGroupEmpty from './render/renderGroupEmpty.jsx';
 import renderGroupFlatten from './render/renderGroupFlatten.jsx';
 import renderPanel from './render/renderPanel.jsx';
 import renderText from './render/renderText.jsx';
@@ -33,6 +34,7 @@ import renderUser from './render/renderUser.jsx';
 
 const __renderTypes = [
   ['group', 'renderGroup'],
+  ['group-empty', 'renderGroupEmpty'],
   ['group-flatten', 'renderGroupFlatten'],
   ['panel', 'renderPanel'],
   ['text', 'renderText'],
@@ -73,6 +75,7 @@ export default {
     renderComponent,
     renderComponentAction,
     renderGroup,
+    renderGroupEmpty,
     renderGroupFlatten,
     renderPanel,
     renderText,
