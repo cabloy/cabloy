@@ -4360,7 +4360,7 @@ module.exports = ctx => {
       return list;
     }
 
-    async usersOfRoleParent({ roleId, disabled, page, removePrivacy }) {
+    async usersOfRoleParent({ roleId, disabled, page, removePrivacy, query }) {
       // disabled
       let _disabled = '';
       if (disabled !== undefined) {
@@ -4372,11 +4372,23 @@ module.exports = ctx => {
       // fields
       const fields = await ctx.bean.user.getFieldsSelect({ removePrivacy, alias: 'a' });
       // query
+      let where;
+      if (query) {
+        const clause = {};
+        clause.__or__ = [
+          { 'a.userName': { op: 'like', val: query } },
+          { 'a.realName': { op: 'like', val: query } },
+          { 'a.mobile': { op: 'like', val: query } },
+        ];
+        where = ctx.model._where(clause);
+      }
+      where = where ? `${where} AND` : ' WHERE';
+      // select
       const list = await ctx.model.query(
         `
         select ${fields} from aUser a
           inner join aViewUserRoleRef b on a.id=b.userId
-            where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
+            ${where} a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
             order by a.userName
             ${_limit}
         `,
