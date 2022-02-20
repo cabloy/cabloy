@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
+const extend = require3('extend2');
 
 const _usersAnonymous = {};
 
@@ -304,8 +305,9 @@ module.exports = ctx => {
     }
 
     async getFields({ removePrivacy }) {
-      const fields = await this.model.columns();
+      let fields = await this.model.columns();
       if (removePrivacy) {
+        fields = extend(true, {}, fields);
         const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
         for (const privacyField of privacyFields) {
           delete fields[privacyField];
