@@ -18,21 +18,7 @@ export default {
       // children
       const children = this.renderProperties(context2);
       // group
-      const titleHidden = property.ebParams && property.ebParams.titleHidden;
-      if (!titleHidden) {
-        const group = (
-          <f7-list-item key={key + '_groupTitle'} groupTitle={true} title={this.getTitle(context)}></f7-list-item>
-        );
-        // combine
-        children.unshift(group);
-      }
-      // group
-      const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-      return (
-        <f7-list-group key={key} staticClass={className}>
-          {children}
-        </f7-list-group>
-      );
+      return this._renderGroupCommon(context, children);
     },
   },
 };
