@@ -9,6 +9,7 @@ import renderTags from './components/render/renderTags.jsx';
 import renderResourceType from './components/render/renderResourceType.jsx';
 import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
+import renderTableCellDatetime from './components/render/renderTableCellDatetime.jsx';
 import renderTableCellLink from './components/render/renderTableCellLink.jsx';
 import renderTableCellButton from './components/render/renderTableCellButton.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
@@ -38,6 +39,7 @@ export default {
   renderResourceType,
   renderTableCellDefault,
   renderTableCellComputed,
+  renderTableCellDatetime,
   renderTableCellLink,
   renderTableCellButton,
   renderUserLabel,

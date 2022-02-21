@@ -143,6 +143,11 @@ export default {
           options.props.expression = column.params.computed.expression;
           return <eb-component module="a-basefront" name="renderTableCellComputed" options={options}></eb-component>;
         }
+        // dateFormat
+        if (column.params && column.params.dateFormat && typeof column.params.dateFormat === 'object') {
+          options.props.dateFormat = column.params.dateFormat;
+          return <eb-component module="a-basefront" name="renderTableCellDatetime" options={options}></eb-component>;
+        }
         // default
         return <eb-component module="a-basefront" name="renderTableCellDefault" options={options}></eb-component>;
       }
