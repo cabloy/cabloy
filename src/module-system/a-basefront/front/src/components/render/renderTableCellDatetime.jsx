@@ -43,9 +43,12 @@ export default {
     _renderDateLines() {
       const { text } = this.info;
       const children = [];
+      const valueToday = this.$meta.util.formatDate(null, this.dateFormat.dateSeparator);
       const valueDate = this.$meta.util.formatDate(text, this.dateFormat.dateSeparator);
       const valueTime = this.$meta.util.formatTime(text, this.dateFormat.timeSeparator);
-      children.push(<div key="date:one">{valueDate}</div>);
+      if (valueToday !== valueDate) {
+        children.push(<div key="date:one">{valueDate}</div>);
+      }
       children.push(<div key="date:two">{valueTime}</div>);
       const value = <div class="date-lines">{children}</div>;
       const title = `${valueDate} ${valueTime}`;
