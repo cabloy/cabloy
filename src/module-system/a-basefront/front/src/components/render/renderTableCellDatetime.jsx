@@ -48,8 +48,14 @@ export default {
     },
   },
   render() {
+    const { text, column } = this.info;
+    const { lines } = this.dateFormat;
+    // res
     let res;
-    if (this.dateFormat.lines) {
+    if (!text) {
+      const value = (column.params && column.params.default) || '';
+      res = { title: '', value };
+    } else if (lines) {
       res = this._renderDateLines();
     } else {
       res = this._renderDateDefault();
