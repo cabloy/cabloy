@@ -23,6 +23,11 @@ export default {
     return {};
   },
   methods: {
+    _renderDateEmpty() {
+      const { column } = this.info;
+      const value = (column.params && column.params.default) || '';
+      return { title: '', value };
+    },
     _renderDateDefault() {
       const { text } = this.info;
       let _default = this.dateFormat.default;
@@ -48,13 +53,12 @@ export default {
     },
   },
   render() {
-    const { text, column } = this.info;
+    const { text } = this.info;
     const { lines } = this.dateFormat;
     // res
     let res;
     if (!text) {
-      const value = (column.params && column.params.default) || '';
-      res = { title: '', value };
+      res = this._renderDateEmpty();
     } else if (lines) {
       res = this._renderDateLines();
     } else {
