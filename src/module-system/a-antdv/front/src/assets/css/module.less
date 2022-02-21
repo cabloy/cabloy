@@ -28,6 +28,17 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+
+        .date-lines {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          font-size: 8px;
+          > div {
+            line-height: 12px;
+          }
+        }
       }
 
       .eb-antdv-table-cell-links {
