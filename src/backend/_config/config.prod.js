@@ -33,7 +33,14 @@ module.exports = appInfo => {
   ];
 
   // modules
-  config.modules = {};
+  config.modules = {
+    'a-base': {
+      account: {
+        // warning: if set true, should setup the provider's account of mail/sms
+        needActivation: false,
+      },
+    },
+  };
 
   // mysql
   config.mysql = {
