@@ -47,12 +47,22 @@ const list = {
             {
               dataIndex: 'createdAt',
               title: 'Created Time',
-              align: 'left',
+              align: 'center',
+              params: {
+                dateFormat: {
+                  lines: true,
+                },
+              },
             },
             {
               dataIndex: 'updatedAt',
               title: 'Modification Time',
-              align: 'left',
+              align: 'center',
+              params: {
+                dateFormat: {
+                  lines: true,
+                },
+              },
             },
           ],
         },

@@ -34,12 +34,22 @@ export default {
                     {
                       dataIndex: 'atomCreatedAt',
                       title: 'Created Time',
-                      align: 'left',
+                      align: 'center',
+                      params: {
+                        dateFormat: {
+                          lines: true,
+                        },
+                      },
                     },
                     {
                       dataIndex: 'atomUpdatedAt',
                       title: 'Modification Time',
-                      align: 'left',
+                      align: 'center',
+                      params: {
+                        dateFormat: {
+                          lines: true,
+                        },
+                      },
                     },
                   ],
                 },
