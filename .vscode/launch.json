@@ -27,6 +27,14 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "cov:backend"]
+    },
+    {
+      "name": "build:backend:test-party",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/src/module-vendor/test-party",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "build:backend"]
     }
   ]
 }
