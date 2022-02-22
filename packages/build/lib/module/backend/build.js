@@ -7,6 +7,14 @@ const fse = require('fs-extra');
 const configFn = require('./config.js');
 const webpackConfigFn = require('./webpack.prod.conf');
 
+const moduleAlias = require('module-alias');
+moduleAlias.addAlias('@babel/generator', '@zhennann/babel-generator');
+moduleAlias.addAlias('@babel/helper-wrap-function', '@zhennann/babel-helper-wrap-function');
+moduleAlias.addAlias(
+  '@babel/plugin-transform-async-to-generator',
+  '@zhennann/babel-plugin-transform-async-to-generator'
+);
+
 module.exports = ({ modulePath }) => {
   // context
   const context = {
