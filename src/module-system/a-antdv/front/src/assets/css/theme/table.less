@@ -41,11 +41,15 @@
     }
 
     .ant-table.ant-table-bordered {
-      .ant-table-header > table,
-      .ant-table-body > table,
       .ant-table-fixed-left table,
       .ant-table-fixed-right table {
         border-left: 1px solid var(--f7-list-group-title-bg-color);
+      }
+
+      .ant-table-header > table,
+      .ant-table-body > table {
+        border-left: 1px solid var(--f7-list-group-title-bg-color);
+        border-top: 1px solid var(--f7-list-group-title-bg-color);
       }
 
       .ant-table-header > table {
