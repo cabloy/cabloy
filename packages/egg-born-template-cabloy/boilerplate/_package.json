@@ -18,7 +18,8 @@
     "update:test": "egg-born-bin test-update",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "tools:babel": "egg-born-bin tools-babel"
+    "tools:babel": "egg-born-bin tools-babel",
+    "tools:icons": "egg-born-bin tools-icons"
   },
   "author": "{{author}}",
   "devDependencies": {},
