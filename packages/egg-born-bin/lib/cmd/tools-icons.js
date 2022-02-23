@@ -29,14 +29,36 @@ class ToolsIconsCommand extends Command {
     // groups
     const groups = await this._resolveGroups({ iconsSrc });
     for (const group of groups) {
-      await this._generateIconsGroup({ modulePath, iconsSrc, group });
+      group.iconNames = await this._generateIconsGroup({ modulePath, iconsSrc, group });
     }
+    // write to front
+    const groupsFrontImport = [];
+    const groupsFrontExport = [];
+    for (const group of groups) {
+      groupsFrontImport.push(`import _${group.name} from '../assets/icons/groups/${group.name}.svg';`);
+      groupsFrontExport.push(`${group.name}: _${group.name},`);
+    }
+    const jsFront = `${groupsFrontImport.join('\n')}\n\nexport default {\n  ${groupsFrontExport.join('\n  ')}\n};\n`;
+    const pathFront = path.join(modulePath, 'front/src/config');
+    const fileFront = path.join(modulePath, 'front/src/config/icons.js');
+    await fse.ensureDir(pathFront);
+    await fse.writeFile(fileFront, jsFront);
+    // write to backend
+    const groupsBackend = [];
+    for (const group of groups) {
+      groupsBackend.push(`${group.name}: '${group.iconNames.join(',')}',`);
+    }
+    const jsBackend = `module.exports = {\n  ${groupsBackend.join('\n  ')}\n};\n`;
+    const pathBackend = path.join(modulePath, 'backend/src/config/icons');
+    const fileBackend = path.join(modulePath, 'backend/src/config/icons/groups.js');
+    await fse.ensureDir(pathBackend);
+    await fse.writeFile(fileBackend, jsBackend);
   }
 
   async _generateIconsGroup({ modulePath, iconsSrc, group }) {
     // icons
     const files = await bb.fromCallback(cb => {
-      glob(`${iconsSrc}/${group}/*.svg`, cb);
+      glob(`${iconsSrc}/${group.name}/*.svg`, cb);
     });
     const iconNames = files.map(item => path.basename(item, '.svg'));
     // symbols
@@ -54,8 +76,10 @@ class ToolsIconsCommand extends Command {
     // write
     const pathDest = path.join(modulePath, 'front/src/assets/icons', 'groups');
     await fse.ensureDir(pathDest);
-    const fileDest = path.join(pathDest, `${group}.svg`);
+    const fileDest = path.join(pathDest, `${group.name}.svg`);
     await fse.writeFile(fileDest, xml);
+    // ok
+    return iconNames;
   }
 
   async _combineSymbol({ file, iconName }) {
@@ -86,7 +110,11 @@ class ToolsIconsCommand extends Command {
     const groupPaths = await bb.fromCallback(cb => {
       glob(`${iconsSrc}/*`, cb);
     });
-    return groupPaths.map(item => path.basename(item));
+    return groupPaths.map(item => {
+      return {
+        name: path.basename(item),
+      };
+    });
   }
 
   async parseXML({ xml, trim = true, explicitArray = false, explicitRoot = false }) {

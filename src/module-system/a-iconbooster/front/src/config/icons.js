@@ -1,7 +1,7 @@
-import iconDefault from '../assets/icons/groups/default.svg';
-import iconFlow from '../assets/icons/groups/flow.svg';
+import _default from '../assets/icons/groups/default.svg';
+import _flow from '../assets/icons/groups/flow.svg';
 
 export default {
-  default: iconDefault,
-  flow: iconFlow,
+  default: _default,
+  flow: _flow,
 };
