@@ -8,12 +8,15 @@ function install(_Vue, cb) {
 
   Vue = _Vue;
 
+  const icons = require('./config/icons.js').default;
+  console.log(icons);
   return cb({
     routes: require('./routes.js').default,
     store: require('./store.js').default(Vue),
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: require('./components.js').default,
+    icons,
   });
 }
 
