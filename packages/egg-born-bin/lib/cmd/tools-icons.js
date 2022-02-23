@@ -48,7 +48,7 @@ class ToolsIconsCommand extends Command {
       symbols.push(symbol);
     }
     // xml
-    const xml = `<svg xmlns="http://www.w3.org/2000/svg">
+    const xml = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   ${symbols}
 </svg>`;
     // write
@@ -62,6 +62,9 @@ class ToolsIconsCommand extends Command {
     // svg
     const xml = await fse.readFile(file);
     const svg = await this.parseXML({ xml });
+    // patch
+    delete svg.defs;
+    delete svg.metadata;
     // root
     const domRoot = svg.$;
     const attrs = { id: iconName };
