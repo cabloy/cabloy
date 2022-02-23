@@ -19,7 +19,7 @@ module.exports = context => {
               '@babel/preset-env',
               {
                 targets: {
-                  node: '6',
+                  node: '12',
                 },
                 include: [
                   '@babel/plugin-transform-for-of',
@@ -28,6 +28,7 @@ module.exports = context => {
                   '@babel/plugin-transform-spread',
                   '@babel/plugin-transform-template-literals',
                   '@babel/plugin-proposal-object-rest-spread',
+                  '@babel/plugin-transform-destructuring',
                   '@babel/plugin-transform-async-to-generator',
                   '@babel/plugin-transform-regenerator',
                 ],
