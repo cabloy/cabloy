@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.12.157",
+  "version": "4.12.158",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "dependencies": {
     "egg-born-backend": "^6.2.18",
-    "egg-born-bin": "^3.4.45",
+    "egg-born-bin": "^3.4.46",
     "egg-born-front": "^8.4.24",
     "egg-born-module-a-antdv": "^4.1.10",
     "egg-born-module-a-antvg6": "^4.1.6",
@@ -53,7 +53,7 @@
     "egg-born-module-a-flowbehavior": "^4.1.8",
     "egg-born-module-a-flowchart": "^4.1.9",
     "egg-born-module-a-flownode": "^4.2.7",
-    "egg-born-module-a-flowtask": "^4.3.17",
+    "egg-born-module-a-flowtask": "^4.3.18",
     "egg-born-module-a-host": "^4.1.6",
     "egg-born-module-a-index": "^4.2.7",
     "egg-born-module-a-instance": "^4.2.8",
@@ -62,7 +62,7 @@
     "egg-born-module-a-layoutpc": "^4.2.16",
     "egg-born-module-a-login": "^4.1.8",
     "egg-born-module-a-mail": "^4.1.7",
-    "egg-born-module-a-markdown": "^4.1.28",
+    "egg-born-module-a-markdown": "^4.1.29",
     "egg-born-module-a-markdownblock": "^4.1.9",
     "egg-born-module-a-markdownrender": "^4.1.13",
     "egg-born-module-a-markdownstyle": "^4.1.11",
