@@ -1,4 +1,7 @@
+import Vue from 'vue';
+const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.mixins.ebClipboard;
 export default {
+  mixins: [ebClipboard],
   data() {
     return {
       iconsAll: null,
@@ -22,9 +25,20 @@ export default {
     },
     _onSearch(query) {
       this.query = query;
+      this._resetClipboards();
+    },
+    _resetClipboards() {
+      this.$nextTick(() => {
+        this.removeAllClipboardTriggers();
+        const domCells = this.$$('.icon-cell', this.$el);
+        for (let index = 0; index < domCells.length; index++) {
+          this.addClipboardTrigger(domCells[index]);
+        }
+      });
     },
     async _loadIcons() {
       this.iconsAll = await this.$api.post('icon/getIcons');
+      this._resetClipboards();
     },
     _renderIcons() {
       if (!this.iconsAll) return null;
@@ -69,7 +83,7 @@ export default {
         if (this.query && icon.indexOf(this.query) === -1) continue;
         const svg = `${moduleName}:${groupName}:${icon}`;
         children.push(
-          <div class="icon-cell" key={icon}>
+          <div key={icon} class="icon-cell" data-clipboard-text={svg}>
             <div class="icon-cell-icon">
               <f7-icon f7={svg} size="24"></f7-icon>
             </div>

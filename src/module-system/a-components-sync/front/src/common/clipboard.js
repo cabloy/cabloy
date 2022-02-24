@@ -6,10 +6,7 @@ export default {
     };
   },
   beforeDestroy() {
-    for (const clipboardId in this.clipboards) {
-      this.removeClipboardTrigger(clipboardId);
-    }
-    this.clipboards = {};
+    this.removeAllClipboardTriggers();
   },
   methods: {
     addClipboardTrigger(el, options) {
@@ -29,6 +26,12 @@ export default {
         clipboard.destroy();
         delete this.clipboards[clipboardId];
       }
+    },
+    removeAllClipboardTriggers() {
+      for (const clipboardId in this.clipboards) {
+        this.removeClipboardTrigger(clipboardId);
+      }
+      this.clipboards = {};
     },
   },
 };
