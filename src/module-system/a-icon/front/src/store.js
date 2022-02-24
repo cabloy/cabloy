@@ -7,6 +7,10 @@ export default function (Vue) {
     }
     // split module:group:name
     const parts = icon.split(':');
+    if (parts.length < 3) {
+      // just use as icon-f7
+      return icon;
+    }
     const moduleName = parts[0] || 'a-iconbooster';
     const group = parts[1] || 'default';
     const name = parts[2] || '';
