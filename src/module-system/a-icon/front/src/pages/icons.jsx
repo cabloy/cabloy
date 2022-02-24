@@ -2,6 +2,7 @@ export default {
   data() {
     return {
       iconsAll: null,
+      query: null,
     };
   },
   computed: {
@@ -20,7 +21,7 @@ export default {
       this.$refs.searchbar.f7Searchbar.enable(true);
     },
     _onSearch(query) {
-      console.log(query);
+      this.query = query;
     },
     async _loadIcons() {
       this.iconsAll = await this.$api.post('icon/getIcons');
@@ -52,6 +53,7 @@ export default {
           children.push(domGroup);
         }
       }
+      if (children.length === 0) return null;
       return (
         <f7-list-group key={moduleName}>
           <f7-list-item group-title title={moduleName}></f7-list-item>
@@ -64,9 +66,10 @@ export default {
       const children = [];
       groupIcons = groupIcons.split(',');
       for (const icon of groupIcons) {
+        if (this.query && icon.indexOf(this.query) === -1) continue;
         const svg = `${moduleName}:${groupName}:${icon}`;
         children.push(
-          <div class="icon-cell">
+          <div class="icon-cell" key={icon}>
             <div class="icon-cell-icon">
               <f7-icon f7={svg} size="24"></f7-icon>
             </div>
@@ -74,12 +77,16 @@ export default {
           </div>
         );
       }
+      // not found
+      if (children.length === 0) return null;
+      // single
       const domListItem = (
         <f7-list-item>
           <div class="icons-row">{children}</div>
         </f7-list-item>
       );
       if (groupSingle) return domListItem;
+      // multiple
       return (
         <f7-list-group key={groupName}>
           <f7-list-item group-title title={groupName}></f7-list-item>
