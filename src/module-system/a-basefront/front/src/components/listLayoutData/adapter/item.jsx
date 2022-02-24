@@ -156,7 +156,11 @@ export default {
     item_renderStats(item) {
       const children = [];
       if (item.star > 0) {
-        children.push(<span key="stat_star">⭐</span>);
+        children.push(
+          <span key="stat_star">
+            <f7-icon f7="::star-filled" size="14" color="orange"></f7-icon>
+          </span>
+        );
       }
       if (item.attachmentCount > 0) {
         children.push(<span key="stat_attachmentCount_icon">🧷</span>);

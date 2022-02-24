@@ -4,7 +4,11 @@
     <f7-list v-if="ready" form inline-labels no-hairlines-md>
       <f7-list-group v-for="group of itemsGroups" :key="group.id">
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.providerId" :title="authTitle(item)">
+        <eb-list-item v-for="item of group.items" :key="item.providerId">
+          <div slot="title">
+            <span>{{ item.meta.titleLocale }}</span>
+            <f7-icon v-if="isProviderCurrent(item)" f7="::star-filled" color="orange" size="24"></f7-icon>
+          </div>
           <div slot="after">
             <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{
               $text('Enable')
@@ -79,13 +83,6 @@ export default {
     },
     isProviderCurrent(item) {
       return this.user.provider.providerId === item.providerId;
-    },
-    authTitle(item) {
-      let title = item.meta.titleLocale;
-      if (this.isProviderCurrent(item)) {
-        title = `${title} ⭐`;
-      }
-      return title;
     },
     onPerformDisable(event, item) {
       return this.$view.dialog.confirm().then(() => {
