@@ -43,9 +43,11 @@ export default {
     },
     _renderIconsModule({ moduleName, moduleIcons }) {
       const children = [];
+      const groupKeys = Object.keys(moduleIcons);
+      const groupSingle = groupKeys.length === 1;
       for (const groupName in moduleIcons) {
         const groupIcons = moduleIcons[groupName];
-        const domGroup = this._renderIconsGroup({ moduleName, groupName, groupIcons });
+        const domGroup = this._renderIconsGroup({ moduleName, groupName, groupIcons, groupSingle });
         if (domGroup) {
           children.push(domGroup);
         }
@@ -57,7 +59,7 @@ export default {
         </f7-list-group>
       );
     },
-    _renderIconsGroup({ moduleName, groupName, groupIcons }) {
+    _renderIconsGroup({ moduleName, groupName, groupIcons, groupSingle }) {
       if (!groupIcons) return null;
       const children = [];
       groupIcons = groupIcons.split(',');
@@ -72,12 +74,16 @@ export default {
           </div>
         );
       }
+      const domListItem = (
+        <f7-list-item>
+          <div class="icons-row">{children}</div>
+        </f7-list-item>
+      );
+      if (groupSingle) return domListItem;
       return (
         <f7-list-group key={groupName}>
           <f7-list-item group-title title={groupName}></f7-list-item>
-          <f7-list-item>
-            <div class="icons-row">{children}</div>
-          </f7-list-item>
+          {domListItem}
         </f7-list-group>
       );
     },
