@@ -23,7 +23,6 @@
   </eb-page>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: true,
