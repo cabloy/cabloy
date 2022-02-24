@@ -13,7 +13,7 @@ export default function (Vue) {
     getters: {},
     mutations: {},
     actions: {
-      async getDict({ state, commit }, { icon }) {
+      async getIcon({ state, commit }, { icon }) {
         if (!icon) return null;
         if (state.icons[icon]) return state.icons[icon];
         // support backend api static
