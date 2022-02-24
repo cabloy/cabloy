@@ -71,7 +71,7 @@ class ToolsIconsCommand extends Command {
     }
     // xml
     const xml = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  ${symbols}
+${symbols.join('\n')}
 </svg>`;
     // write
     const pathDest = path.join(modulePath, 'front/src/assets/icons', 'groups');

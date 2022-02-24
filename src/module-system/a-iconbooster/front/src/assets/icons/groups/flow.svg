@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <symbol id="activity-none" viewBox="-894 -133 1920 1580">
+<symbol id="activity-none" viewBox="-894 -133 1920 1580">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -11,7 +11,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="activity-service" viewBox="40.000004 210.00002 1920 1580">
+</symbol>
+<symbol id="activity-service" viewBox="40.000004 210.00002 1920 1580">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -36,7 +37,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="activity-user-task" viewBox="40.000004 210.00002 1920 1580">
+</symbol>
+<symbol id="activity-user-task" viewBox="40.000004 210.00002 1920 1580">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -58,7 +60,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="end-event-atom" viewBox="98.41749 98.97955 1851.7283 1849.2777">
+</symbol>
+<symbol id="end-event-atom" viewBox="98.41749 98.97955 1851.7283 1849.2777">
   <g id="Canvas_1" fill="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" stroke="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -77,7 +80,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="end-event-none" viewBox="98.41749 98.97955 1851.7283 1849.2777">
+</symbol>
+<symbol id="end-event-none" viewBox="98.41749 98.97955 1851.7283 1849.2777">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -94,22 +98,26 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="gateway-exclusive" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
+</symbol>
+<symbol id="gateway-exclusive" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
   <g fill="none" stroke="currentColor" stroke-width="4">
     <path stroke-linejoin="round" d="M22.799 4.201L4.414 22.586a2 2 0 0 0 0 2.828L22.8 43.8a2 2 0 0 0 2.828 0l18.385-18.385a2 2 0 0 0 0-2.828L25.627 4.2a2 2 0 0 0-2.828 0Z"/>
     <path stroke-linecap="round" d="m18.043 29.987l12-11.962m-11.991-.01l11.982 11.981"/>
   </g>
-</symbol>,<symbol id="gateway-inclusive" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
+</symbol>
+<symbol id="gateway-inclusive" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
   <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
     <path d="M22.799 4.201L4.414 22.586a2 2 0 0 0 0 2.828L22.8 43.8a2 2 0 0 0 2.828 0l18.385-18.385a2 2 0 0 0 0-2.828L25.627 4.2a2 2 0 0 0-2.828 0Z"/>
     <path d="M24 32a8 8 0 1 0 0-16a8 8 0 0 0 0 16Z"/>
   </g>
-</symbol>,<symbol id="gateway-parallel" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
+</symbol>
+<symbol id="gateway-parallel" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
   <g fill="none" stroke="currentColor" stroke-width="4">
     <path stroke-linejoin="round" d="M22.799 4.201L4.414 22.586a2 2 0 0 0 0 2.828L22.8 43.8a2 2 0 0 0 2.828 0l18.385-18.385a2 2 0 0 0 0-2.828L25.627 4.2a2 2 0 0 0-2.828 0Z"/>
     <path stroke-linecap="round" d="M24.043 15.534v16.944m-8.472-8.472h16.944"/>
   </g>
-</symbol>,<symbol id="start-event-atom" viewBox="71.5 95.5 1850 1849.998">
+</symbol>
+<symbol id="start-event-atom" viewBox="71.5 95.5 1850 1849.998">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -120,7 +128,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="start-event-none" viewBox="99.08133 98.92314 1850.4658 1850.2586">
+</symbol>
+<symbol id="start-event-none" viewBox="99.08133 98.92314 1850.4658 1850.2586">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
@@ -131,7 +140,8 @@
       </g>
     </g>
   </g>
-</symbol>,<symbol id="start-event-timer" viewBox="51.5 80 1850 1849.998">
+</symbol>
+<symbol id="start-event-timer" viewBox="51.5 80 1850 1849.998">
   <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none">
     <title>Canvas 1</title>
     <g id="Canvas_1_Layer_1">
