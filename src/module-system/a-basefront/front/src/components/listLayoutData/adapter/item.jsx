@@ -169,10 +169,16 @@ export default {
         children.push(<span key="stat_attachmentCount_value">{`${item.attachmentCount}`}</span>);
       }
       if (item.commentCount > 0) {
-        children.push(<span key="stat_commentCount_icon">💬</span>);
-      }
-      if (item.commentCount > 1) {
-        children.push(<span key="stat_commentCount_value">{`${item.commentCount}`}</span>);
+        let domCommentCount;
+        if (item.commentCount > 1) {
+          domCommentCount = <sub key="stat_commentCount_value" class="text-color-orange">{`${item.commentCount}`}</sub>;
+        }
+        children.push(
+          <span key="stat_commentCount_icon">
+            <f7-icon f7="::comment-dots" size="14" color="orange"></f7-icon>
+            {domCommentCount}
+          </span>
+        );
       }
       return children;
     },
