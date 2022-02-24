@@ -55,6 +55,8 @@
     "egg-born-module-a-flownode": "^4.2.7",
     "egg-born-module-a-flowtask": "^4.3.18",
     "egg-born-module-a-host": "^4.1.6",
+    "egg-born-module-a-icon": "^4.0.0",
+    "egg-born-module-a-iconbooster": "^4.0.0",
     "egg-born-module-a-index": "^4.2.7",
     "egg-born-module-a-instance": "^4.2.8",
     "egg-born-module-a-jsoneditor": "^4.1.7",
