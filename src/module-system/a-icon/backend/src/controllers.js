@@ -1,4 +1,8 @@
+const icon = require('./controller/icon.js');
+
 module.exports = app => {
-  const controllers = {};
+  const controllers = {
+    icon,
+  };
   return controllers;
 };
