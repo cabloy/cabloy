@@ -1,6 +1,8 @@
 module.exports = app => {
   class icon extends app.Service {
-    async getIcons() {}
+    getIcons() {
+      return this.ctx.bean.icon.getIcons();
+    }
   }
 
   return icon;
