@@ -1,6 +1,8 @@
 export default {
   data() {
-    return {};
+    return {
+      icons: null,
+    };
   },
   computed: {
     pageTitle() {
@@ -11,6 +13,7 @@ export default {
     this.onSearchbarSearch = this.$meta.util.debounce((searchbar, query) => {
       this._onSearch(query);
     }, 300);
+    this._loadIcons();
   },
   methods: {
     onClickEnable() {
@@ -18,6 +21,10 @@ export default {
     },
     _onSearch(query) {
       console.log(query);
+    },
+    async _loadIcons() {
+      this.icons = await this.$api.post('icon/getIcons');
+      console.log(this.icons);
     },
   },
   render() {
