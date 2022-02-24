@@ -163,15 +163,21 @@ export default {
         );
       }
       if (item.attachmentCount > 0) {
-        children.push(<span key="stat_attachmentCount_icon">🧷</span>);
-      }
-      if (item.attachmentCount > 1) {
-        children.push(<span key="stat_attachmentCount_value">{`${item.attachmentCount}`}</span>);
+        let domAttachmentCount;
+        if (item.attachmentCount > 1) {
+          domAttachmentCount = <sub class="text-color-orange">{item.attachmentCount}</sub>;
+        }
+        children.push(
+          <span key="stat_attachmentCount_icon">
+            <f7-icon f7="::attachment-line" size="14" color="orange"></f7-icon>
+            {domAttachmentCount}
+          </span>
+        );
       }
       if (item.commentCount > 0) {
         let domCommentCount;
         if (item.commentCount > 1) {
-          domCommentCount = <sub key="stat_commentCount_value" class="text-color-orange">{`${item.commentCount}`}</sub>;
+          domCommentCount = <sub class="text-color-orange">{item.commentCount}</sub>;
         }
         children.push(
           <span key="stat_commentCount_icon">
