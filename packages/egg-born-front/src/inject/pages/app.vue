@@ -62,6 +62,10 @@ export default {
       layoutPrefer: null,
       layoutPreferNotification: null,
       layoutPreferSwitchButton: null,
+      icon: {
+        info: null,
+        error: null,
+      },
     };
   },
   created() {
@@ -130,7 +134,7 @@ export default {
           // options
           const title = this.$text(layoutPrefer === 'pc' ? 'AppLayoutSwitchPromptPC' : 'AppLayoutSwitchPromptMobile');
           const options = {
-            icon: '<i class="material-icons">info</i>',
+            icon: this.icon.info,
             title,
             text: `<div><button class="button AppLayoutSwitchNow">${this.$text('Switch Now')}</button></div>`,
             closeButton: true,
@@ -213,11 +217,15 @@ export default {
         this._reloadLayout();
       }
     },
-    _authEchoInit() {
-      this._authEcho().then(() => {
-        // resize
-        this.resize();
-      });
+    async _initIcons() {
+      this.icon.info = await this.$meta.util.combineIcon({ f7: '::info-circle-filled', size: 16 });
+      this.icon.error = await this.$meta.util.combineIcon({ f7: '::cross-circle-filled', size: 16 });
+    },
+    async _authEchoInit() {
+      await this._initIcons();
+      await this._authEcho();
+      // resize
+      this.resize();
     },
     _setTheme(theme) {
       return this.$meta.theme.set(theme);
@@ -270,7 +278,7 @@ export default {
         this.error = err.message;
         this.layout = null; // force to null
         const notification = this.$f7.notification.create({
-          icon: '<i class="material-icons">error</i>',
+          icon: this.icon.error,
           title: err.message,
           closeTimeout: 3000,
         });
