@@ -628,7 +628,7 @@ export default function (Vue) {
       if (!iconF7) return true;
       return iconF7.indexOf('/api/static/') === -1 && iconF7.split(':').length < 3;
     },
-    async combineIconHref({ material, f7, color, size }) {
+    async combineIcon({ material, f7, color, size }) {
       return await Vue.prototype.$meta.store.dispatch('a/icon/combineIcon', { material, icon: f7, color, size });
     },
   };
