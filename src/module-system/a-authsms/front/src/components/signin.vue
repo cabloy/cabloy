@@ -13,7 +13,7 @@
               v-model="data.mobile"
               dataPath="mobile"
             >
-              <f7-icon material="call" slot="media"></f7-icon>
+              <f7-icon f7=":login:call-outline" slot="media"></f7-icon>
             </eb-list-input>
             <eb-list-input
               :label="$text('SMS Verification Code')"

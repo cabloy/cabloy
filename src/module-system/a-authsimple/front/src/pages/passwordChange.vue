@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Change Password')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" ref="buttonSubmit" :onPerform="onPerformOk"></eb-link>
+        <eb-link iconF7=":login:done" ref="buttonSubmit" :onPerform="onPerformOk"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-block>
