@@ -54,7 +54,7 @@ module.exports = app => {
           actionComponent: 'action',
           bulk: true,
           select: false,
-          icon: { material: 'add' },
+          icon: { f7: '::add' },
         },
         read: {
           title: 'View',

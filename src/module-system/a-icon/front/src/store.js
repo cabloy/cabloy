@@ -1,6 +1,8 @@
 // eslint-disable-next-line
 export default function (Vue) {
   async function _parseIcon({ icon }) {
+    // for safe
+    icon = Vue.prototype.$meta.util.escapeURL(icon);
     // support backend api static
     if (icon.indexOf('/api/static/') === 0) {
       return Vue.prototype.$meta.util.combineFetchStaticPath(icon);
@@ -42,6 +44,22 @@ export default function (Vue) {
         const iconHref = await _parseIcon({ icon });
         commit('setIcon', { icon, iconHref });
         return iconHref;
+      },
+      async combineIcon({ state, dispatch }, { material, icon, color, size }) {
+        let _color = '';
+        if (color) {
+          _color = ` color-${Vue.prototype.$meta.util.escapeURL(color)}`;
+        }
+        const _size = parseInt(size || 24) + 'px';
+        // material icon
+        if (material) {
+          return `<i class="icon material-icons${_color}" style="font-size: ${_size}; width: ${_size}; height: ${_size};">${Vue.prototype.$meta.util.escapeHtml(
+            material
+          )}</i>`;
+        }
+        // f7 icon
+        const iconHref = await dispatch('getIcon', { icon });
+        return `<i class="icon f7-icons${_color}" style="font-size: ${_size}; width: ${_size}; height: ${_size};"><svg width="${_size}" height="${_size}" aria-hidden="true"><use href="${iconHref}" x="0" y="0" width="${_size}" height="${_size}"></use></svg></i>`;
       },
     },
   };

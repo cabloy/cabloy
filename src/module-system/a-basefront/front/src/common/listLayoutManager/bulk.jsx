@@ -152,6 +152,7 @@ export default {
               <eb-link
                 key={`actionsRight:${_action.name}`}
                 iconMaterial={_action.icon && _action.icon.material}
+                iconF7={_action.icon && _action.icon.f7}
                 tooltip={_action.icon && _action.titleLocale}
                 propsOnPerform={event => this.bulk_onAction(event, action)}
               >
