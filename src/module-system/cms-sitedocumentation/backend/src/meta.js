@@ -24,7 +24,7 @@ module.exports = app => {
               title: 'Preview',
               actionModule: 'a-cms',
               actionComponent: 'action',
-              icon: { material: 'visibility' },
+              icon: { f7: '::preview' },
               enableOnStatic: true,
               enableOnOpened: true,
               stage: 'draft,formal',

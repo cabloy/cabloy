@@ -63,7 +63,7 @@ module.exports = app => {
           // actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
-          icon: { material: 'visibility' },
+          icon: { f7: '::visibility' },
         },
         write: {
           title: 'Edit',
