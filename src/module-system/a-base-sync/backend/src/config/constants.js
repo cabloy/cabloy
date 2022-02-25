@@ -71,7 +71,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: false,
           enableOnOpened: false,
-          icon: { material: 'edit' },
+          icon: { f7: '::edit' },
         },
         delete: {
           title: 'Delete',

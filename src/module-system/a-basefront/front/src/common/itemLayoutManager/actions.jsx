@@ -126,12 +126,12 @@ export default {
       const actionLayout = this.actions_findAction('layout');
       if (actionLayout) {
         const actionName = 'layout';
-        const actionIcon = 'view_list';
+        const actionIcon = '::view-list';
         children.push(
           <eb-link
             key={actionName}
             ref="buttonLayout"
-            iconMaterial={actionIcon}
+            iconF7={actionIcon}
             tooltip={this.$text('Layout')}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
@@ -142,14 +142,14 @@ export default {
       const actionWrite = this.actions_findAction('write');
       // support simple
       if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
-        const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
+        const actionIcon = this.container.mode === 'edit' ? '::save' : '::edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
         const actionTitle = this.container.mode === 'edit' ? 'Save' : 'Edit';
         children.push(
           <eb-link
             key={actionName}
             ref="buttonSave"
-            iconMaterial={actionIcon}
+            iconF7={actionIcon}
             tooltip={this.$text(actionTitle)}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
@@ -162,7 +162,7 @@ export default {
           <eb-link
             key={actionName}
             ref="buttonSubmit"
-            iconMaterial="done"
+            iconF7="::done"
             tooltip={this.$text('Submit')}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
@@ -171,7 +171,7 @@ export default {
       //
       if (this.actions_listPopover) {
         children.push(
-          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+          <f7-link key="actionsPopover" iconF7="::more-horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
         );
       }
       //

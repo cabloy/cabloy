@@ -63,7 +63,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:comment"
-            iconMaterial="comment"
+            iconF7="::comment-dots"
             iconBadge={item.commentCount}
             tooltip={this.$text('Comments')}
             eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}
@@ -75,7 +75,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:attachment"
-            iconMaterial="attachment"
+            iconF7="::attachment-line"
             iconBadge={item.attachmentCount}
             tooltip={this.$text('Attachments')}
             eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}
@@ -87,7 +87,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:star"
-            iconMaterial={item.star ? 'star' : 'star_border'}
+            iconF7={item.star ? '::star-filled' : '::star-outline'}
             tooltip={this.$text('UserStar')}
             propsOnPerform={this.info_onStarSwitch}
           ></eb-link>
@@ -113,7 +113,7 @@ export default {
           children.push(
             <eb-link
               key="actionsLeft:label"
-              iconMaterial="label"
+              iconF7="::label-outline"
               tooltip={this.$text('UserLabels')}
               propsOnPerform={this.info_onLabel}
             ></eb-link>
