@@ -1,32 +1,9 @@
 const path = require('path');
 const fse = require('fs-extra');
+const toolsFn = require('../../../common/tools.js');
 
 module.exports = context => {
-  const svg_pattern1 = /\/([^\/]+)\/front\/src\/assets\/icons\/groups\/([^\/]+)\.svg/;
-  const svg_pattern2 = /icon\/([^\/]+)_([^\/]+)\.svg/;
-  function hasHash(file) {
-    file = file.replace(/\\/g, '/');
-    const name = path.basename(file);
-    return name.split('.').length - 1 > 1;
-  }
-  function combineHashFileName(file, dirname) {
-    return hasHash(file)
-      ? context.utils.assetsPath(`${dirname}/[name].[ext]`)
-      : context.utils.assetsPath(`${dirname}/[name].[contenthash].[ext]`);
-  }
-  function combineSvgFileName(file) {
-    file = file.replace(/\\/g, '/');
-    let match = file.match(svg_pattern1);
-    if (!match) {
-      match = file.match(svg_pattern2);
-    }
-    if (match) {
-      return `icon/${match[1]}_${match[2]}.svg`;
-    }
-    // default is img
-    return combineHashFileName(file, 'img');
-  }
-
+  const tools = toolsFn(context);
   // vue module path
   let vueModulePath = path.join(context.config.projectPath, 'node_modules/@zhennann/vue/dist/vue.esm.js');
   if (!fse.existsSync(vueModulePath)) {
@@ -77,7 +54,7 @@ module.exports = context => {
           options: {
             limit: false,
             name(file) {
-              return combineSvgFileName(file);
+              return tools.combineSvgFileName(file);
             },
             esModule: false,
           },
@@ -88,7 +65,7 @@ module.exports = context => {
           options: {
             limit: 1000,
             name(file) {
-              return combineHashFileName(file, 'img');
+              return tools.combineHashFileName(file, 'img');
             },
             esModule: false,
           },
@@ -99,7 +76,7 @@ module.exports = context => {
           options: {
             limit: 1000,
             name(file) {
-              return combineHashFileName(file, 'font');
+              return tools.combineHashFileName(file, 'font');
             },
             esModule: false,
           },
@@ -110,7 +87,7 @@ module.exports = context => {
           options: {
             limit: false,
             name(file) {
-              return combineHashFileName(file, 'file');
+              return tools.combineHashFileName(file, 'file');
             },
             esModule: false,
           },

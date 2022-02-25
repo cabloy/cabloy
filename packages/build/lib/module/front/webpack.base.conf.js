@@ -1,6 +1,8 @@
 const path = require('path');
+const toolsFn = require('../../common/tools.js');
 
 module.exports = context => {
+  const tools = toolsFn(context);
   const moduleInfo = context.utils.parseInfoFromPackage();
   const libraryName = moduleInfo.relativeName;
 
@@ -65,11 +67,24 @@ module.exports = context => {
           include: [path.join(context.modulePath, 'front/src')],
         },
         {
-          test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
+          test: /\.svg(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name(file) {
+              return tools.combineSvgFileName(file);
+            },
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
           loader: 'url-loader',
           options: {
             limit: 1000,
-            name: context.utils.assetsPath('img/[name].[contenthash].[ext]'),
+            name(file) {
+              return tools.combineHashFileName(file, 'img');
+            },
             esModule: false,
           },
         },
@@ -78,7 +93,9 @@ module.exports = context => {
           loader: 'url-loader',
           options: {
             limit: 1000,
-            name: context.utils.assetsPath('font/[name].[contenthash].[ext]'),
+            name(file) {
+              return tools.combineHashFileName(file, 'font');
+            },
             esModule: false,
           },
         },
@@ -87,7 +104,9 @@ module.exports = context => {
           loader: 'url-loader',
           options: {
             limit: false,
-            name: context.utils.assetsPath('file/[name].[contenthash].[ext]'),
+            name(file) {
+              return tools.combineHashFileName(file, 'file');
+            },
             esModule: false,
           },
         },
