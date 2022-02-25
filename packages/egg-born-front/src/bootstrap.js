@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import './assets/css/iconfont/framework7-icons.css';
 import './assets/css/iconfont/material-icons.css';
 import './assets/css/app.less';
 
