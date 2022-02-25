@@ -62,10 +62,6 @@ export default {
       layoutPrefer: null,
       layoutPreferNotification: null,
       layoutPreferSwitchButton: null,
-      icon: {
-        info: null,
-        error: null,
-      },
     };
   },
   created() {
@@ -131,36 +127,49 @@ export default {
           // force clear layoutPrefer and notification
           this._clearLayoutPreferNotification();
           this.layoutPrefer = layoutPrefer;
-          // options
-          const title = this.$text(layoutPrefer === 'pc' ? 'AppLayoutSwitchPromptPC' : 'AppLayoutSwitchPromptMobile');
-          const options = {
-            icon: this.icon.info,
-            title,
-            text: `<div><button class="button AppLayoutSwitchNow">${this.$text('Switch Now')}</button></div>`,
-            closeButton: true,
-            closeOnClick: false,
-            swipeToClose: false,
-            on: {
-              closed(notification) {
-                notification.destroy();
-              },
-            },
-          };
-          // closeTimeout
-          const closeTimeout = this.$meta.config.layout.notification.closeTimeout;
-          if (closeTimeout !== -1) {
-            options.closeTimeout = closeTimeout;
-          }
-          this.layoutPreferNotification = this.$f7.notification.create(options);
-          this.layoutPreferNotification.open();
-          this.layoutPreferSwitchButton = this.$$('.AppLayoutSwitchNow');
-          this.layoutPreferSwitchButton.on('click', () => {
-            this._switchPreferLayout();
-          });
+          this._showNotificationLayoutPrefer({ layoutPrefer });
         }
       }
       // ok
       return layoutReal;
+    },
+    async _showNotificationLayoutPrefer({ layoutPrefer }) {
+      // options
+      const title = this.$text(layoutPrefer === 'pc' ? 'AppLayoutSwitchPromptPC' : 'AppLayoutSwitchPromptMobile');
+      const icon = await this.$meta.util.combineIcon({ f7: '::info-circle-filled', size: 16 });
+      const options = {
+        icon,
+        title,
+        text: `<div><button class="button AppLayoutSwitchNow">${this.$text('Switch Now')}</button></div>`,
+        closeButton: true,
+        closeOnClick: false,
+        swipeToClose: false,
+        on: {
+          closed(notification) {
+            notification.destroy();
+          },
+        },
+      };
+      // closeTimeout
+      const closeTimeout = this.$meta.config.layout.notification.closeTimeout;
+      if (closeTimeout !== -1) {
+        options.closeTimeout = closeTimeout;
+      }
+      this.layoutPreferNotification = this.$f7.notification.create(options);
+      this.layoutPreferNotification.open();
+      this.layoutPreferSwitchButton = this.$$('.AppLayoutSwitchNow');
+      this.layoutPreferSwitchButton.on('click', () => {
+        this._switchPreferLayout();
+      });
+    },
+    async _showNotificationError({ title }) {
+      const icon = await this.$meta.util.combineIcon({ f7: '::cross-circle-filled', size: 16 });
+      const notification = this.$f7.notification.create({
+        icon,
+        title,
+        closeTimeout: 3000,
+      });
+      notification.open();
     },
     _switchPreferLayout() {
       if (!this.layoutPrefer) return;
@@ -217,12 +226,7 @@ export default {
         this._reloadLayout();
       }
     },
-    async _initIcons() {
-      this.icon.info = await this.$meta.util.combineIcon({ f7: '::info-circle-filled', size: 16 });
-      this.icon.error = await this.$meta.util.combineIcon({ f7: '::cross-circle-filled', size: 16 });
-    },
     async _authEchoInit() {
-      await this._initIcons();
       await this._authEcho();
       // resize
       this.resize();
@@ -277,12 +281,7 @@ export default {
         // err
         this.error = err.message;
         this.layout = null; // force to null
-        const notification = this.$f7.notification.create({
-          icon: this.icon.error,
-          title: err.message,
-          closeTimeout: 3000,
-        });
-        notification.open();
+        this._showNotificationError({ title: err.message });
         // should throw error
         throw err;
       }
