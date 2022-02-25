@@ -1,8 +1,8 @@
 const path = require('path');
 
 module.exports = context => {
-  const svg_pattern1 = /\/([^\/]+)\/front\/src\/assets\/icons\/groups\/([^\/]+)\.svg/;
-  const svg_pattern2 = /icon\/([^\/]+)_([^\/]+)\.svg/;
+  const svg_pattern1 = /\/front\/src\/assets\/icons\/groups\/[^\/]+\.svg/;
+  const svg_pattern2 = /\/icon\/[^\/]+\.svg/;
   const tools = {
     hasHash(file) {
       file = file.replace(/\\/g, '/');
@@ -18,15 +18,9 @@ module.exports = context => {
     },
     combineSvgFileName(file) {
       file = file.replace(/\\/g, '/');
-      let match = file.match(svg_pattern1);
-      if (!match) {
-        match = file.match(svg_pattern2);
-      }
-      if (match) {
-        return `icon/${match[1]}_${match[2]}.svg`;
-      }
-      // default is img
-      return this.combineHashFileName(file, 'img');
+      const match = file.match(svg_pattern1) || file.match(svg_pattern2);
+      const dirname = match ? 'icon' : 'img';
+      return this.combineHashFileName(file, dirname);
     },
     loaderRulesResource() {
       return [

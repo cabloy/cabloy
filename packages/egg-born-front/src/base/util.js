@@ -211,6 +211,9 @@ export default function (Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/api/static/${moduleInfo.url}/${arg}`;
     },
+    combineStaticPathFront(arg) {
+      return `${location.origin}${location.pathname}static/${arg}`;
+    },
     combineStorePath(moduleName, arg) {
       if (arg.substr(0) === '/') return arg.substr(1);
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
@@ -620,6 +623,10 @@ export default function (Vue) {
     },
     checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;
+    },
+    _checkIfIconF7Default(iconF7) {
+      if (!iconF7) return true;
+      return iconF7.indexOf('/api/static/') === -1 && iconF7.split(':').length < 3;
     },
   };
 
