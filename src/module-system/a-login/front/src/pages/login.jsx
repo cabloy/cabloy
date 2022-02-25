@@ -117,13 +117,13 @@ export default {
       let domClose;
       if (this.showClose) {
         domClose = (
-          <f7-link class="close" iconMaterial="chevron_left" onClick={this.onClose}>
+          <f7-link class="close" iconF7=":login:chevron-left" onClick={this.onClose}>
             {this.$text('LookAround')}
           </f7-link>
         );
       }
       // title
-      let domTitle = <f7-login-screen-title>{this.title}</f7-login-screen-title>;
+      const domTitle = <f7-login-screen-title>{this.title}</f7-login-screen-title>;
       // title sub
       let domTitleSub;
       if (this.state === 'migrate') {
