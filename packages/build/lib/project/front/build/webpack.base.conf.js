@@ -2,9 +2,29 @@ const path = require('path');
 const fse = require('fs-extra');
 
 module.exports = context => {
+  const svg_pattern1 = /\/([^\/]+)\/front\/src\/assets\/icons\/groups\/([^\/]+)\.svg/;
+  const svg_pattern2 = /icon\/([^\/]+)_([^\/]+)\.svg/;
   function hasHash(file) {
+    file = file.replace(/\\/g, '/');
     const name = path.basename(file);
     return name.split('.').length - 1 > 1;
+  }
+  function combineHashFileName(file, dirname) {
+    return hasHash(file)
+      ? context.utils.assetsPath(`${dirname}/[name].[ext]`)
+      : context.utils.assetsPath(`${dirname}/[name].[contenthash].[ext]`);
+  }
+  function combineSvgFileName(file) {
+    file = file.replace(/\\/g, '/');
+    let match = file.match(svg_pattern1);
+    if (!match) {
+      match = file.match(svg_pattern2);
+    }
+    if (match) {
+      return `icon/${match[1]}_${match[2]}.svg`;
+    }
+    // default is img
+    return combineHashFileName(file, 'img');
   }
 
   // vue module path
@@ -52,14 +72,23 @@ module.exports = context => {
           },
         },
         {
-          test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
+          test: /\.svg(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name(file) {
+              return combineSvgFileName(file);
+            },
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
           loader: 'url-loader',
           options: {
             limit: 1000,
             name(file) {
-              return hasHash(file)
-                ? context.utils.assetsPath('img/[name].[ext]')
-                : context.utils.assetsPath('img/[name].[contenthash].[ext]');
+              return combineHashFileName(file, 'img');
             },
             esModule: false,
           },
@@ -70,9 +99,7 @@ module.exports = context => {
           options: {
             limit: 1000,
             name(file) {
-              return hasHash(file)
-                ? context.utils.assetsPath('font/[name].[ext]')
-                : context.utils.assetsPath('font/[name].[contenthash].[ext]');
+              return combineHashFileName(file, 'font');
             },
             esModule: false,
           },
@@ -83,9 +110,7 @@ module.exports = context => {
           options: {
             limit: false,
             name(file) {
-              return hasHash(file)
-                ? context.utils.assetsPath('file/[name].[ext]')
-                : context.utils.assetsPath('file/[name].[contenthash].[ext]');
+              return combineHashFileName(file, 'file');
             },
             esModule: false,
           },

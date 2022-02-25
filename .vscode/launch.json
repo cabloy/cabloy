@@ -29,6 +29,14 @@
       "runtimeArgs": ["run", "cov:backend"]
     },
     {
+      "name": "dev:front",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:front"]
+    },
+    {
       "name": "build:backend:test-party",
       "type": "pwa-node",
       "request": "launch",
