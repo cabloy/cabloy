@@ -9,6 +9,8 @@ module.exports = context => {
   if (!fse.existsSync(vueModulePath)) {
     vueModulePath = path.join(context.config.frontPath, 'node_modules/@zhennann/vue/dist/vue.esm.js');
   }
+  // loaderRulesResource
+  const loaderRulesResource = tools.loaderRulesResource();
 
   return {
     entry: {
@@ -48,50 +50,7 @@ module.exports = context => {
             options: context.utils.babelLoaderOptions(),
           },
         },
-        {
-          test: /\.svg(\?.*)?$/,
-          loader: 'url-loader',
-          options: {
-            limit: false,
-            name(file) {
-              return tools.combineSvgFileName(file);
-            },
-            esModule: false,
-          },
-        },
-        {
-          test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
-          loader: 'url-loader',
-          options: {
-            limit: 1000,
-            name(file) {
-              return tools.combineHashFileName(file, 'img');
-            },
-            esModule: false,
-          },
-        },
-        {
-          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-          loader: 'url-loader',
-          options: {
-            limit: 1000,
-            name(file) {
-              return tools.combineHashFileName(file, 'font');
-            },
-            esModule: false,
-          },
-        },
-        {
-          test: /\.(doc|docx|xlsx?|odt|pdf|mp3|wma|wav|iso|ppt|pptx|csv|apk|exe|rar|zip|tar\.gz)(\?.*)?$/,
-          loader: 'url-loader',
-          options: {
-            limit: false,
-            name(file) {
-              return tools.combineHashFileName(file, 'file');
-            },
-            esModule: false,
-          },
-        },
+        ...loaderRulesResource,
       ],
     },
   };

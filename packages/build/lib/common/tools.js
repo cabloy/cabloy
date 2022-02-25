@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = context => {
   const svg_pattern1 = /\/([^\/]+)\/front\/src\/assets\/icons\/groups\/([^\/]+)\.svg/;
   const svg_pattern2 = /icon\/([^\/]+)_([^\/]+)\.svg/;
-  return {
+  const tools = {
     hasHash(file) {
       file = file.replace(/\\/g, '/');
       const name = path.basename(file);
@@ -28,5 +28,54 @@ module.exports = context => {
       // default is img
       return this.combineHashFileName(file, 'img');
     },
+    loaderRulesResource() {
+      return [
+        {
+          test: /\.svg(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name(file) {
+              return tools.combineSvgFileName(file);
+            },
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 1000,
+            name(file) {
+              return tools.combineHashFileName(file, 'img');
+            },
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 1000,
+            name(file) {
+              return tools.combineHashFileName(file, 'font');
+            },
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(doc|docx|xlsx?|odt|pdf|mp3|wma|wav|iso|ppt|pptx|csv|apk|exe|rar|zip|tar\.gz)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name(file) {
+              return tools.combineHashFileName(file, 'file');
+            },
+            esModule: false,
+          },
+        },
+      ];
+    },
   };
+  return tools;
 };
