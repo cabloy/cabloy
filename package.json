@@ -69,7 +69,6 @@
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.15.4",
     "extend2": "^1.0.0",
-    "framework7-icons": "^3.0.0",
     "fs-extra": "^8.1.0",
     "function-bind": "^1.1.1",
     "glob": "^7.1.6",
