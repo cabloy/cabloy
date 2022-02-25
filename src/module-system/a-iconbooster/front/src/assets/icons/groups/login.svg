@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="lock-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024">
+  <path fill="currentColor" d="M224 448a32 32 0 0 0-32 32v384a32 32 0 0 0 32 32h576a32 32 0 0 0 32-32V480a32 32 0 0 0-32-32H224zm0-64h576a96 96 0 0 1 96 96v384a96 96 0 0 1-96 96H224a96 96 0 0 1-96-96V480a96 96 0 0 1 96-96z"/>
+  <path fill="currentColor" d="M512 544a32 32 0 0 1 32 32v192a32 32 0 1 1-64 0V576a32 32 0 0 1 32-32zm192-160v-64a192 192 0 1 0-384 0v64h384zM512 64a256 256 0 0 1 256 256v128H256V320A256 256 0 0 1 512 64z"/>
+</symbol>
+<symbol id="person-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
+  <path fill="currentColor" fill-rule="evenodd" d="M24 24c4.42 0 8-3.58 8-8s-3.58-8-8-8s-8 3.58-8 8s3.58 8 8 8Zm10-8c0 5.525-4.475 10-10 10s-10-4.475-10-10S18.475 6 24 6s10 4.475 10 10ZM9.223 34.212C8.22 35.022 8 35.629 8 36v4h32v-4c0-.37-.22-.979-1.224-1.788c-.98-.791-2.442-1.545-4.214-2.197C31.02 30.712 26.753 30 24 30c-2.753 0-7.02.712-10.562 2.015c-1.772.652-3.234 1.406-4.215 2.197ZM24 28c-6.008 0-18 3.035-18 8v6h36v-6c0-4.965-11.992-8-18-8Z" clip-rule="evenodd"/>
+</symbol>
+</svg>

@@ -13,7 +13,7 @@
               v-model="data.auth"
               dataPath="auth"
             >
-              <f7-icon material="person_outline" slot="media"></f7-icon>
+              <f7-icon f7=":login:person-outline" slot="media"></f7-icon>
             </eb-list-input>
             <eb-list-input
               :label="$text('Your Password')"
@@ -24,7 +24,7 @@
               v-model="data.password"
               dataPath="password"
             >
-              <f7-icon material="lock_outline" slot="media"></f7-icon>
+              <f7-icon f7=":login:lock-outline" slot="media"></f7-icon>
             </eb-list-input>
             <eb-list-input
               :label="$text('Captcha Code')"
