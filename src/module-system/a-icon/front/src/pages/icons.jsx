@@ -40,6 +40,11 @@ export default {
       this.iconsAll = await this.$api.post('icon/getIcons');
       this._resetClipboards();
     },
+    _combineIconName(moduleName, groupName, icon) {
+      if (moduleName === 'a-iconbooster') moduleName = '';
+      if (groupName === 'default') groupName = '';
+      return `${moduleName}:${groupName}:${icon}`;
+    },
     _renderIcons() {
       if (!this.iconsAll) return null;
       const children = [];
@@ -81,7 +86,7 @@ export default {
       groupIcons = groupIcons.split(',');
       for (const icon of groupIcons) {
         if (this.query && icon.indexOf(this.query) === -1) continue;
-        const svg = `${moduleName}:${groupName}:${icon}`;
+        const svg = this._combineIconName(moduleName, groupName, icon);
         children.push(
           <div key={icon} class="icon-cell" data-clipboard-text={svg}>
             <div class="icon-cell-icon">
