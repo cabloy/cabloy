@@ -1,7 +1,8 @@
 <template>
   <eb-link-color
     :class="buttonClass"
-    :iconMaterial="buttonIcon"
+    :iconMaterial="buttonIcon && buttonIcon.material"
+    :iconF7="buttonIcon && buttonIcon.f7"
     :text="buttonLabel"
     :onPerform="onPerformClick"
     :stats_params="{ module: 'a-user', name: 'user' }"

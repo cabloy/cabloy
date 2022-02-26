@@ -1,5 +1,11 @@
 <template>
-  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="clockText" :onPerform="onPerform"></eb-link>
+  <eb-link
+    :class="buttonClass"
+    :iconMaterial="buttonIcon && buttonIcon.material"
+    :iconF7="buttonIcon && buttonIcon.f7"
+    :text="clockText"
+    :onPerform="onPerform"
+  ></eb-link>
 </template>
 <script>
 // export

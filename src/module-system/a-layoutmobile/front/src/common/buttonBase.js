@@ -15,7 +15,7 @@ export default function (Vue) {
         return this.button.options.resourceConfig;
       },
       buttonIcon() {
-        return this.buttonConfig.icon && this.buttonConfig.icon.material;
+        return this.buttonConfig.icon;
       },
       buttonShowLabel() {
         if (this.buttonConfig.showLabel !== undefined) return this.buttonConfig.showLabel;

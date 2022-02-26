@@ -1,5 +1,11 @@
 <template>
-  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerformClick"></eb-link>
+  <eb-link
+    :class="buttonClass"
+    :iconMaterial="buttonIcon && buttonIcon.material"
+    :iconF7="buttonIcon && buttonIcon.f7"
+    :text="buttonLabel"
+    :onPerform="onPerformClick"
+  ></eb-link>
 </template>
 <script>
 // export
