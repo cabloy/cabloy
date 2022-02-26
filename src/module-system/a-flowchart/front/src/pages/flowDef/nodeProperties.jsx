@@ -289,7 +289,7 @@ export default {
   render() {
     let domDelete;
     if (!this.readOnly) {
-      domDelete = <eb-link iconMaterial="delete" propsOnPerform={this.onPerformDelete}></eb-link>;
+      domDelete = <eb-link iconF7="::delete" propsOnPerform={this.onPerformDelete}></eb-link>;
     }
     return (
       <eb-page>

@@ -126,12 +126,12 @@ export default {
       if (!this.actions) return children;
       for (const action of this.actions) {
         if (action.readOnly === undefined || action.readOnly === this.readOnly) {
-          const icon = action.icon && action.icon.material;
           const title = action.title ? this.$text(action.title) : null;
           children.push(
             <eb-link
               key={action.name}
-              iconMaterial={icon}
+              iconMaterial={action.icon && action.icon.material}
+              iconF7={action.icon && action.icon.f7}
               text={title}
               propsOnPerform={event => this.onPerformAction(event, action)}
             ></eb-link>

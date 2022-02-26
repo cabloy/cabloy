@@ -82,13 +82,13 @@ export default {
       // only show on draft
       const actionWrite = this.actions_findAction('write');
       if (actionWrite) {
-        const actionIcon = 'save';
+        const actionIcon = '::save';
         const actionName = 'save';
         children.push(
           <eb-link
             key={actionName}
             ref="buttonSave"
-            iconMaterial={actionIcon}
+            iconF7={actionIcon}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
@@ -104,7 +104,7 @@ export default {
       //
       if (this.actions_listPopover) {
         children.push(
-          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+          <f7-link key="actionsPopover" iconF7="::more-horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
         );
       }
       //
