@@ -24,19 +24,22 @@
                 <eb-link
                   v-if="item.h_userId === user.id"
                   class="action"
-                  iconMaterial="edit"
+                  iconF7="::edit"
+                  iconSize="18"
                   :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"
                 ></eb-link>
                 <eb-link
                   v-if="item.h_userId === user.id || rightDeleteComment"
                   class="action"
-                  iconMaterial="delete_forever"
+                  iconF7="::delete-forever"
+                  iconSize="18"
                   :context="item"
                   :onPerform="onPerformDelete"
                 ></eb-link>
                 <eb-link
                   class="action"
-                  :iconMaterial="item.h_heart ? 'favorite' : 'favorite_border'"
+                  :iconF7="item.h_heart ? '::heart' : '::heart-outline'"
+                  iconSize="18"
                   :context="item"
                   :onPerform="onPerformHeart"
                   >{{ item.h_heartCount }}</eb-link
@@ -44,7 +47,8 @@
                 <eb-link
                   v-if="!user.anonymous"
                   class="action"
-                  iconMaterial="reply"
+                  iconF7="::reply"
+                  iconSize="18"
                   :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"
                 ></eb-link>
               </div>
