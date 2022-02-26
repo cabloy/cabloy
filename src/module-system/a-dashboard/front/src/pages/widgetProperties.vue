@@ -99,7 +99,7 @@ export default {
           c('eb-link', {
             key: 'action-addWidget',
             props: {
-              iconMaterial: 'add',
+              iconF7: '::add',
               text: this.$text('Add Widget'),
               onPerform: this.onPerformAddWidget,
             },

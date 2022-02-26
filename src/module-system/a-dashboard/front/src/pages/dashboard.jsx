@@ -152,7 +152,7 @@ export default {
           <eb-link
             key="dashboard-action-lock"
             class="dashboard-action-lock"
-            iconMaterial="lock"
+            iconF7="::lock"
             propsOnPerform={event => this.onPerformLock(event)}
           ></eb-link>
         );
@@ -161,7 +161,7 @@ export default {
             <eb-link
               key="dashboard-action-profileSwitch"
               class="dashboard-action-profileSwitch"
-              iconMaterial="view_list"
+              iconF7="::view-list"
               propsOnPerform={event => this.onPerformProfileSwitch(event)}
             ></eb-link>
           );
@@ -172,7 +172,7 @@ export default {
           <eb-link
             key="dashboard-action-unlock"
             class="dashboard-action-unlock"
-            iconMaterial="lock_open"
+            iconF7="::lock-open"
             propsOnPerform={event => this.onPerformUnlock(event)}
           ></eb-link>
         );
@@ -203,7 +203,7 @@ export default {
           <eb-link
             key="dashboard-action-fullscreen"
             class="dashboard-action-fullscreen"
-            iconMaterial={this.$meta.util.screenfull.isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+            iconF7={this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
             propsOnPerform={event => this.onPerformFullscreen(event)}
           ></eb-link>
         );
