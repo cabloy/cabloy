@@ -14,7 +14,7 @@ export default {
           key: 'expand_more',
           staticClass: this.layout.size.verySmall || this.layout.groups.length > 2 ? '' : 'display-none',
           props: {
-            iconMaterial: 'expand_more',
+            iconF7: '::expand-more',
             onPerform: event => {
               return this.onPerformExpandMore(event);
             },

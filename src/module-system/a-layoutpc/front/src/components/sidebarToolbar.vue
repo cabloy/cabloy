@@ -8,7 +8,8 @@ export default {
     children.push(
       c('f7-link', {
         props: {
-          iconMaterial: 'delete',
+          iconF7: '::delete',
+          tooltip: this.$text('PanelDelete'),
         },
         on: {
           click: this.onClickClose,
@@ -18,7 +19,8 @@ export default {
     children.push(
       c('f7-link', {
         props: {
-          iconMaterial: 'remove',
+          iconF7: '::remove',
+          tooltip: this.$text('PanelFold'),
         },
         on: {
           click: this.onClickHide,
@@ -26,10 +28,12 @@ export default {
       })
     );
     if (!this.layout.size.verySmall) {
+      const cover = this.layout[`sidebarCover${sideUpperCase}`];
       children.push(
         c('f7-link', {
           props: {
-            iconMaterial: this.layout[`sidebarCover${sideUpperCase}`] ? 'chevron_left' : 'expand_more',
+            iconF7: cover ? '::chevron-left' : '::expand-more',
+            tooltip: this.$text(cover ? 'PanelFloating' : 'PanelFixed'),
           },
           on: {
             click: this.onClickCover,
