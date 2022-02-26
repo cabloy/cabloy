@@ -321,9 +321,9 @@ export default {
       // attrs folder
       if (_node.attrs.folder) {
         if (_node.attrs.opened === true) {
-          _node.attrs.iconMaterial = 'folder_open';
+          _node.attrs.iconF7 = '::folder-open';
         } else {
-          _node.attrs.iconMaterial = 'folder';
+          _node.attrs.iconF7 = '::folder';
         }
       }
       // attrs onNodePerform

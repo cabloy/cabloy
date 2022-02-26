@@ -3,7 +3,7 @@
     <eb-navbar :title="page_title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSave" iconF7="::save" :onPerform="onPerformSave"></eb-link>
-        <eb-link iconMaterial="info" :eb-href="combineAtomClass('config/siteBase')"></eb-link>
+        <eb-link iconF7="::info-circle" :eb-href="combineAtomClass('config/siteBase')"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-json-editor

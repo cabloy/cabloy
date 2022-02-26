@@ -6,7 +6,7 @@
         <eb-list-item :title="$text('Site')">
           <div slot="after">
             <eb-link iconF7="::settings" :eb-href="combineAtomClass('config/site')">{{ $text('Config') }}</eb-link>
-            <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-link>
+            <eb-link iconF7="::build-circle-outline" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-link>
             <eb-link v-if="!!$device.desktop && !languageEnable" iconF7="::preview" :onPerform="onPerformPreview">{{
               $text('Preview')
             }}</eb-link>
@@ -55,7 +55,7 @@
             <eb-link iconF7="::settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{
               $text('Config')
             }}</eb-link>
-            <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{
+            <eb-link iconF7="::build-circle-outline" :context="item" :onPerform="onPerformBuildLanguage">{{
               $text('Build')
             }}</eb-link>
             <eb-link v-if="!!$device.desktop" iconF7="::preview" :context="item" :onPerform="onPerformPreview">{{
