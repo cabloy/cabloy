@@ -158,7 +158,7 @@ export default {
       if (item.star > 0) {
         children.push(
           <span key="stat_star">
-            <f7-icon f7="::star-filled" size="14" color="orange"></f7-icon>
+            <f7-icon f7="::star" size="14" color="orange"></f7-icon>
           </span>
         );
       }

@@ -136,7 +136,7 @@ export default {
     async _showNotificationLayoutPrefer({ layoutPrefer }) {
       // options
       const title = this.$text(layoutPrefer === 'pc' ? 'AppLayoutSwitchPromptPC' : 'AppLayoutSwitchPromptMobile');
-      const icon = await this.$meta.util.combineIcon({ f7: '::info-circle-filled', size: 16 });
+      const icon = await this.$meta.util.combineIcon({ f7: '::info-circle', size: 16 });
       const options = {
         icon,
         title,
@@ -163,7 +163,7 @@ export default {
       });
     },
     async _showNotificationError({ title }) {
-      const icon = await this.$meta.util.combineIcon({ f7: '::cross-circle-filled', size: 16 });
+      const icon = await this.$meta.util.combineIcon({ f7: '::cross-circle', size: 16 });
       const notification = this.$f7.notification.create({
         icon,
         title,
