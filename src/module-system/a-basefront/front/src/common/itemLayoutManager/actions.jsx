@@ -193,8 +193,8 @@ export default {
             >
               <f7-icon
                 slot="media"
-                f7={_action.icon && _action.icon.f7}
                 material={_action.icon && _action.icon.material}
+                f7={_action.icon && _action.icon.f7}
               ></f7-icon>
               <div slot="title">{this.actions_getActionTitle(action)}</div>
             </eb-list-item>

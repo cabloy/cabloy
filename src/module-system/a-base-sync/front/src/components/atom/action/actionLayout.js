@@ -2,6 +2,8 @@ export default {
   methods: {
     async _onActionLayout() {
       const { ctx, action } = this.$props;
+      // icon
+      const iconDone = await ctx.$meta.util.combineIcon({ f7: '::done' });
       // config
       const configViewSize = ctx.$meta.util.getProperty(ctx.base.config, 'render.item.info.layout.viewSize');
       let layouts = configViewSize[ctx.container.mode][ctx.$view.size];
@@ -14,9 +16,9 @@ export default {
       for (const layout of layouts) {
         const layoutConfig = ctx.$meta.util.getProperty(ctx.base.config, `render.item.layouts.${layout.name}`);
         if (!layoutConfig) continue;
-        const iconName = layoutCurrent === layout.name ? 'done' : '';
+        const icon = layoutCurrent === layout.name ? iconDone : '<i class="icon"></i>';
         buttons.push({
-          icon: `<i class="icon material-icons">${iconName}</i>`,
+          icon,
           text: ctx.$text(layoutConfig.title),
           data: layout,
         });
