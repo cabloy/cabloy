@@ -148,7 +148,7 @@ export default {
       children.push(
         <eb-link-color
           key="messages"
-          iconMaterial="message"
+          iconF7="::message"
           eb-href="/a/message/group"
           eb-target="_self"
           stats_params={{ module: 'a-message', name: 'message' }}

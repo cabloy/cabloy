@@ -1,7 +1,7 @@
 <template>
   <eb-link
     :class="buttonClass"
-    :iconMaterial="this.$meta.util.screenfull.isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+    :iconF7="this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'"
     :onPerform="onPerform"
   ></eb-link>
 </template>

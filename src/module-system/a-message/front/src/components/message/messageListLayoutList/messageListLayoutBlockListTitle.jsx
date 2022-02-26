@@ -26,7 +26,7 @@ export default {
   render() {
     return (
       <f7-nav-right>
-        <eb-link iconMaterial="mark_email_read" propsOnPerform={this.onPerformMarkAllAsRead}></eb-link>
+        <eb-link iconF7="::mark-email-read" propsOnPerform={this.onPerformMarkAllAsRead}></eb-link>
       </f7-nav-right>
     );
   },
