@@ -188,7 +188,7 @@ export default {
     _renderTitle() {
       let domAdd;
       if (!this.readOnly) {
-        domAdd = <eb-link iconMaterial="add" propsOnPerform={this.onPerformAdd}></eb-link>;
+        domAdd = <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>;
       }
       return (
         <f7-list-item group-title>

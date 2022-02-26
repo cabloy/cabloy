@@ -88,7 +88,7 @@ export default {
       <eb-page>
         <eb-navbar large largeTransparent title={this.$text('Select Code Mode')} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconMaterial="add" propsOnPerform={this.onPerformAdd}></eb-link>
+            <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>
           </f7-nav-right>
         </eb-navbar>
         <div class="eb-tag-select">{domModes}</div>

@@ -16,7 +16,7 @@
             <div class="actions-block actions-block-left">{{ $text('Profile List') }}</div>
             <eb-link
               class="actions-block actions-block-right"
-              iconMaterial="add"
+              iconF7="::add"
               :onPerform="onPerformProfileCreate"
             ></eb-link>
           </div>

@@ -4,7 +4,7 @@
       <f7-nav-right>
         <eb-link
           v-if="!readOnly && tabName === 'diagram' && contentEditDiagramInit"
-          iconMaterial="add"
+          iconF7="::add"
           :onPerform="onPerformAddNode"
         >
           {{ $text('Add Node') }}

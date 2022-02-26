@@ -2,7 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh">
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
+        <eb-link iconF7="::add" :onPerform="onPerformAdd"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
