@@ -96,7 +96,7 @@ export default {
           <eb-link
             key="saveDone"
             ref="buttonSaveDone"
-            iconMaterial="done"
+            iconF7="::done"
             propsOnPerform={event => this.actions_onSaveDone(event)}
           ></eb-link>
         );

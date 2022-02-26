@@ -110,7 +110,7 @@ export default {
   render() {
     let domDone;
     if (!this.readOnly) {
-      domDone = <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>;
+      domDone = <eb-link iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>;
     }
     return (
       <eb-page>

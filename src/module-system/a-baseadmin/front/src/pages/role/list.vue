@@ -3,8 +3,8 @@
     <eb-navbar large largeTransparent :title="$text('Role Management')" eb-back-link="Back"></eb-navbar>
     <role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></role-list>
     <f7-fab v-if="roleDirty" color="pink">
-      <f7-icon material="add"></f7-icon>
-      <f7-icon material="close"></f7-icon>
+      <f7-icon f7="::add"></f7-icon>
+      <f7-icon f7="::close"></f7-icon>
       <f7-fab-buttons>
         <eb-fab-button color="orange" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-fab-button>
       </f7-fab-buttons>

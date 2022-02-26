@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
+        <eb-link iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>

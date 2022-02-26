@@ -65,7 +65,7 @@ export default {
     return (
       <f7-nav-right>
         <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>
-        <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>
+        <eb-link iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>
       </f7-nav-right>
     );
   },

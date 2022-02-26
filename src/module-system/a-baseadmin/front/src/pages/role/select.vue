@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Roles')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
+        <eb-link iconF7="::done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>

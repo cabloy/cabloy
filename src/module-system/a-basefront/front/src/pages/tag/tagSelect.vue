@@ -3,7 +3,7 @@
     <eb-navbar large largeTransparent :title="$text('Select Tags')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
-        <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
+        <eb-link ref="buttonSubmit" iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
       <f7-searchbar
         ref="searchbar"

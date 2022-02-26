@@ -123,12 +123,7 @@ export default {
         }
         if (this.actionDone) {
           children.push(
-            <eb-link
-              key="actionDone"
-              ref="actionDone"
-              iconMaterial="done"
-              propsOnPerform={this.onPerformDone}
-            ></eb-link>
+            <eb-link key="actionDone" ref="actionDone" iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>
           );
         }
       }

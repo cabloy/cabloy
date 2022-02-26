@@ -39,7 +39,7 @@ export default {
       <f7-nav-right>
         <eb-link iconMaterial="sort" propsOnPerform={event => this.onPerformAtomOrders(event)}></eb-link>
         <eb-link iconMaterial="search" propsOnPerform={this.onPerformFilter}></eb-link>
-        {this.selectedAtoms.length > 0 && <eb-link iconMaterial="done" propsOnPerform={this.onPerformDone}></eb-link>}
+        {this.selectedAtoms.length > 0 && <eb-link iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>}
       </f7-nav-right>
     );
   },
