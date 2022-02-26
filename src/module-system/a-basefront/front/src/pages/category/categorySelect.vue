@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Category')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
+        <eb-link iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <categorySelect

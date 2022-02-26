@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="page_title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link ref="buttonSave" iconF7="::save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="ready">

@@ -4,13 +4,10 @@
       <f7-nav-right>
         <eb-link
           v-if="!user.anonymous"
-          iconMaterial="add"
+          iconF7="::add"
           :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=0`"
         ></eb-link>
-        <eb-link
-          :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'"
-          :onPerform="onPerformSort"
-        ></eb-link>
+        <eb-link :iconF7="order === 'desc' ? '::arrow-down' : '::arrow-up'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <div></div>
@@ -31,13 +28,15 @@
             <eb-link
               v-if="item.userId === user.id"
               class="action"
-              iconMaterial="edit"
+              iconF7="::edit"
+              iconSize="18"
               :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"
             ></eb-link>
             <eb-link
               v-if="item.userId === user.id"
               class="action"
-              iconMaterial="delete_forever"
+              iconF7="::delete-forever"
+              iconSize="18"
               :context="item"
               :onPerform="onPerformDelete"
             ></eb-link>

@@ -2,7 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Attachment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!!actionWrite" iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
+        <eb-link v-if="!!actionWrite" iconF7="::add" :onPerform="onPerformAdd"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>

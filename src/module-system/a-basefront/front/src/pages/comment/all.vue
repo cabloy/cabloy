@@ -2,10 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link
-          :iconMaterial="order === 'desc' ? 'arrow_downward' : 'arrow_upward'"
-          :onPerform="onPerformSort"
-        ></eb-link>
+        <eb-link :iconF7="order === 'desc' ? '::arrow-down' : '::arrow-up'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="moduleMarkdownRender">
