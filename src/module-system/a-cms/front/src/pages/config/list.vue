@@ -7,12 +7,9 @@
           <div slot="after">
             <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{ $text('Config') }}</eb-link>
             <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-link>
-            <eb-link
-              v-if="!!$device.desktop && !languageEnable"
-              iconMaterial="visibility"
-              :onPerform="onPerformPreview"
-              >{{ $text('Preview') }}</eb-link
-            >
+            <eb-link v-if="!!$device.desktop && !languageEnable" iconF7="::preview" :onPerform="onPerformPreview">{{
+              $text('Preview')
+            }}</eb-link>
           </div>
         </eb-list-item>
         <f7-list-group v-if="languageEnable">
@@ -61,7 +58,7 @@
             <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{
               $text('Build')
             }}</eb-link>
-            <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{
+            <eb-link v-if="!!$device.desktop" iconF7="::preview" :context="item" :onPerform="onPerformPreview">{{
               $text('Preview')
             }}</eb-link>
           </f7-card-footer>
