@@ -42,15 +42,18 @@
             ></eb-link>
             <eb-link
               class="action"
-              :iconMaterial="item.heart ? 'favorite' : 'favorite_border'"
+              :iconF7="item.heart ? '::heart' : '::heart-outline'"
+              iconSize="18"
+              :iconBadge="item.heartCount"
+              badgeColor="orange"
               :context="item"
               :onPerform="onPerformHeart"
-              >{{ item.heartCount }}</eb-link
-            >
+            ></eb-link>
             <eb-link
               v-if="!user.anonymous"
               class="action"
-              iconMaterial="reply"
+              iconF7="::reply"
+              iconSize="18"
               :eb-href="`/a/basefront/comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"
             ></eb-link>
           </div>
