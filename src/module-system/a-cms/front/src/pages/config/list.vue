@@ -5,7 +5,7 @@
       <f7-list>
         <eb-list-item :title="$text('Site')">
           <div slot="after">
-            <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{ $text('Config') }}</eb-link>
+            <eb-link iconF7="::settings" :eb-href="combineAtomClass('config/site')">{{ $text('Config') }}</eb-link>
             <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-link>
             <eb-link v-if="!!$device.desktop && !languageEnable" iconF7="::preview" :onPerform="onPerformPreview">{{
               $text('Preview')
@@ -52,7 +52,7 @@
             </f7-row>
           </f7-card-content>
           <f7-card-footer v-if="languageEnable">
-            <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{
+            <eb-link iconF7="::settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{
               $text('Config')
             }}</eb-link>
             <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{

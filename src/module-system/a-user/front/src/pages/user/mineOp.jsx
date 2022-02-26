@@ -157,7 +157,7 @@ export default {
       // settings
       if (!this.inAgent) {
         children.push(
-          <eb-link key="settings" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
+          <eb-link key="settings" iconF7="::settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
         );
       }
       return children;

@@ -133,7 +133,7 @@ export default {
           <eb-link
             key="dashboard-action-settings"
             class="dashboard-action-settings"
-            iconMaterial="settings"
+            iconF7="::settings"
             propsOnPerform={event => this.onPerformSettings(event)}
           ></eb-link>
         );
@@ -193,7 +193,7 @@ export default {
           <eb-link
             key="dashboard-action-settings"
             class="dashboard-action-settings"
-            iconMaterial="settings"
+            iconF7="::settings"
             propsOnPerform={event => this.onPerformSettings(event)}
           ></eb-link>
         );

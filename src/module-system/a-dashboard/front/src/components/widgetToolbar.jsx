@@ -5,11 +5,7 @@ export default {
       <eb-link key="remove" iconMaterial="remove" propsOnPerform={() => this.onWidgetDelete(this.widget)}></eb-link>
     );
     buttons.push(
-      <eb-link
-        key="settings"
-        iconMaterial="settings"
-        propsOnPerform={() => this.onWidgetProperties(this.widget)}
-      ></eb-link>
+      <eb-link key="settings" iconF7="::settings" propsOnPerform={() => this.onWidgetProperties(this.widget)}></eb-link>
     );
     const directives = [
       {
