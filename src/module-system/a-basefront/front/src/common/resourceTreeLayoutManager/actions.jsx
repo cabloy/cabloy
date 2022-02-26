@@ -33,15 +33,11 @@ export default {
       const children = [];
       // dashboard
       children.push(
-        <eb-link key="actionsDashboard" iconMaterial="home" propsOnPerform={this.actions_onActionDashboard}></eb-link>
+        <eb-link key="actionsDashboard" iconF7="::home" propsOnPerform={this.actions_onActionDashboard}></eb-link>
       );
       // layout
       children.push(
-        <f7-link
-          key="actionsLayout"
-          iconMaterial="view_list"
-          popover-open={`#${this.actions.layoutPopoverId}`}
-        ></f7-link>
+        <f7-link key="actionsLayout" iconF7="::view-list" popover-open={`#${this.actions.layoutPopoverId}`}></f7-link>
       );
       //
       return children;
@@ -65,7 +61,7 @@ export default {
             popover-close
             propsOnPerform={event => this.actions_onActionLayout(event, layout)}
           >
-            <f7-icon slot="media" material={this.layout.current === layout.name ? 'done' : ''}></f7-icon>
+            <f7-icon slot="media" f7={this.layout.current === layout.name ? '::done' : ''}></f7-icon>
             <div slot="title">{this.$text(layoutConfig.title)}</div>
           </eb-list-item>
         );
