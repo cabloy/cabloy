@@ -2,7 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('User Management')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="search" eb-target="_self" eb-href="user/search"></eb-link>
+        <eb-link iconF7="::search" eb-target="_self" eb-href="user/search"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <users ref="users"></users>
