@@ -125,7 +125,7 @@ export default {
           <eb-link
             key="dashboard-action-save"
             class="dashboard-action-save"
-            iconMaterial="save"
+            iconF7="::save"
             propsOnPerform={event => this.onPerformSaveManager(event)}
           ></eb-link>
         );
@@ -183,7 +183,7 @@ export default {
           <eb-link
             key="dashboard-action-save"
             class="dashboard-action-save"
-            iconMaterial="save"
+            iconF7="::save"
             propsOnPerform={event => this.onPerformSave(event)}
           ></eb-link>
         );

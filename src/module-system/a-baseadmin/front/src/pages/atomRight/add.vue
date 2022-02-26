@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('New Atom Right')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
+        <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">

@@ -113,12 +113,7 @@ export default {
       if (!this.readOnly) {
         if (this.actionSave) {
           children.push(
-            <eb-link
-              key="actionSave"
-              ref="actionSave"
-              iconMaterial="save"
-              propsOnPerform={this.onPerformSave}
-            ></eb-link>
+            <eb-link key="actionSave" ref="actionSave" iconF7="::save" propsOnPerform={this.onPerformSave}></eb-link>
           );
         }
         if (this.actionDone) {

@@ -9,7 +9,7 @@
         >
           {{ $text('Add Node') }}
         </eb-link>
-        <eb-link v-if="!readOnly" ref="buttonSave" iconMaterial="save" :onPerform="onPerformSave">{{
+        <eb-link v-if="!readOnly" ref="buttonSave" iconF7="::save" :onPerform="onPerformSave">{{
           $text('Save')
         }}</eb-link>
       </f7-nav-right>
