@@ -7,11 +7,13 @@
   <path fill="none" d="M0 0h36v36H0z"/>
 </symbol>
 <symbol id="checkbox-checked-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M7 5c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2H7zm0 12V7h10l.002 10H7z"/>
-  <path fill="currentColor" d="M10.996 12.556L9.7 11.285l-1.4 1.43l2.704 2.647l4.699-4.651l-1.406-1.422z"/>
+  <path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 2v14H5V5h14m-9 12l-4-4l1.41-1.42L10 14.17l6.59-6.59L18 9"/>
 </symbol>
 <symbol id="checkbox-checked" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M7 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7zm4 10.414l-2.707-2.707l1.414-1.414L11 12.586l3.793-3.793l1.414 1.414L11 15.414z"/>
+  <path fill="currentColor" d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m0-5H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
+</symbol>
+<symbol id="checkbox-intermediate" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 16H5V5h14v14m-2-2H7V7h10v10Z"/>
 </symbol>
 <symbol id="checkbox-minus-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M9.01 11h6v2h-6z"/>
@@ -20,15 +22,17 @@
 <symbol id="checkbox-minus" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M17 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-1 8H8v-2h8z"/>
 </symbol>
-<symbol id="checkbox-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M7 5c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2H7zm0 12V7h10l.002 10H7z"/>
+<symbol id="checkbox-off-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M22.11 21.46L2.39 1.73L1.11 3L3 4.9V19a2 2 0 0 0 2 2h14.1l1.74 1.73l1.27-1.27M5 19V6.89L17.11 19H5M8.2 5l-2-2H19a2 2 0 0 1 2 2v12.8l-2-2V5H8.2Z"/>
 </symbol>
-<symbol id="checkbox-square" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M9 9h6v6H9z"/>
-  <path fill="currentColor" d="M19 17V7c0-1.103-.897-2-2-2H7c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2zM7 7h10l.002 10H7V7z"/>
+<symbol id="checkbox-off" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M20.84 22.73L19.1 21H5a2 2 0 0 1-2-2V4.9L1.11 3l1.28-1.27l19.72 19.73l-1.27 1.27M21 5a2 2 0 0 0-2-2H6.2L21 17.8V5Z"/>
+</symbol>
+<symbol id="checkbox-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M19 3H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 2v14H5V5h14Z"/>
 </symbol>
 <symbol id="checkbox" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-  <path fill="currentColor" d="M7 19h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/>
+  <path fill="currentColor" d="M19 3H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
 </symbol>
 <symbol id="chevron-left" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20">
   <path fill="currentColor" d="M12.452 4.516c.446.436.481 1.043 0 1.576L8.705 10l3.747 3.908c.481.533.446 1.141 0 1.574c-.445.436-1.197.408-1.615 0c-.418-.406-4.502-4.695-4.502-4.695a1.095 1.095 0 0 1 0-1.576s4.084-4.287 4.502-4.695c.418-.409 1.17-.436 1.615 0z"/>
