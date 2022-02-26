@@ -2,11 +2,71 @@
 <symbol id="add" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
 </symbol>
+<symbol id="arrow-back" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="m8 5l-5 5l5 5"/>
+    <path d="M3 10h8c5.523 0 10 4.477 10 10v1"/>
+  </g>
+</symbol>
+<symbol id="arrow-cycle" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M22 12c0 6-4.39 10-9.806 10C7.792 22 4.24 19.665 3 16m-1-4C2 6 6.39 2 11.806 2C16.209 2 19.76 4.335 21 8"/>
+    <path d="m7 17l-4-1l-1 4M17 7l4 1l1-4"/>
+  </g>
+</symbol>
+<symbol id="arrow-down-left" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 8v10h10"/>
+</symbol>
+<symbol id="arrow-down-right" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 18L6 6m2 12h10V8"/>
+</symbol>
+<symbol id="arrow-down" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m-7 9l7 7l7-7"/>
+</symbol>
 <symbol id="arrow-drop-down" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="m7 10l5 5l5-5H7z"/>
 </symbol>
 <symbol id="arrow-drop-up" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="m7 14l5-5l5 5H7z"/>
+</symbol>
+<symbol id="arrow-forward" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="m16 5l5 5l-5 5"/>
+    <path d="M21 10h-8C7.477 10 3 14.477 3 20v1"/>
+  </g>
+</symbol>
+<symbol id="arrow-left" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m11 5l-7 7l7 7m-7-7h16"/>
+</symbol>
+<symbol id="arrow-repeat" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="m18 2l3 3l-3 3M6 22l-3-3l3-3"/>
+    <path d="M21 5H10a7 7 0 0 0-7 7m0 7h11a7 7 0 0 0 7-7"/>
+  </g>
+</symbol>
+<symbol id="arrow-right-left" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 6H3m18 0l-4 4m4-4l-4-4M3 18h18M3 18l4 4m-4-4l4-4"/>
+</symbol>
+<symbol id="arrow-right" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16m-7-7l7 7l-7 7"/>
+</symbol>
+<symbol id="arrow-shuffle" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+    <path d="M2 19h3.908a2 2 0 0 0 1.682-.919L11.5 12l3.91-6.082A2 2 0 0 1 17.091 5H22m0 14h-4.908a2 2 0 0 1-1.682-.919L13.428 15M2 5h3.908a2 2 0 0 1 1.682.918L9.571 9"/>
+    <path d="m19 2l3 3l-3 3m0 8l3 3l-3 3"/>
+  </g>
+</symbol>
+<symbol id="arrow-up-down" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v18M6 3l4 4M6 3L2 7m16 14V3m0 18l4-4m-4 4l-4-4"/>
+</symbol>
+<symbol id="arrow-up-left" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 6l12 12M16 6H6v10"/>
+</symbol>
+<symbol id="arrow-up-right" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M8 6h10v10"/>
+</symbol>
+<symbol id="arrow-up" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m-7 7l7-7l7 7"/>
 </symbol>
 <symbol id="attachment-line" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36">
   <path fill="currentColor" d="M8.42 32.6A6.3 6.3 0 0 1 4 30.79l-.13-.13A6.2 6.2 0 0 1 2 26.22a6.77 6.77 0 0 1 2-4.82L19.5 6.07a8.67 8.67 0 0 1 12.15-.35A8 8 0 0 1 34 11.44a9 9 0 0 1-2.7 6.36L17.37 31.6A1 1 0 1 1 16 30.18l13.89-13.8A7 7 0 0 0 32 11.44a6 6 0 0 0-1.76-4.3a6.67 6.67 0 0 0-9.34.35L5.45 22.82A4.78 4.78 0 0 0 4 26.22a4.21 4.21 0 0 0 1.24 3l.13.13a4.64 4.64 0 0 0 6.5-.21l13.35-13.2A2.7 2.7 0 0 0 26 14a2.35 2.35 0 0 0-.69-1.68a2.61 2.61 0 0 0-3.66.13l-9.2 9.12a1 1 0 1 1-1.41-1.42L20.28 11a4.62 4.62 0 0 1 6.48-.13A4.33 4.33 0 0 1 28 14a4.68 4.68 0 0 1-1.41 3.34L13.28 30.58a6.91 6.91 0 0 1-4.86 2.02Z" class="clr-i-outline clr-i-outline-path-1"/>

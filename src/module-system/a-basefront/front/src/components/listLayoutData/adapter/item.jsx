@@ -93,7 +93,11 @@ export default {
         }
         const domLeftStar = (
           <div color="teal" propsOnPerform={event => this.star_onSwitch(event, item)}>
-            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
+            <f7-icon
+              slot="media"
+              color={item.star ? 'orange' : ''}
+              f7={item.star ? '::star' : '::star-outline'}
+            ></f7-icon>
             {domLeftStarTitle}
           </div>
         );
@@ -104,7 +108,7 @@ export default {
         }
         const domLeftLabel = (
           <div color="blue" propsOnPerform={event => this.labels_onClick(event, item)}>
-            <f7-icon slot="media" material="label"></f7-icon>
+            <f7-icon slot="media" f7="::label"></f7-icon>
             {domLeftLabelTitle}
           </div>
         );
@@ -132,7 +136,11 @@ export default {
               color={this.item_getActionColor(action, index)}
               propsOnPerform={event => this.item_onAction(event, item, action)}
             >
-              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
+              <f7-icon
+                slot="media"
+                f7={_action.icon && _action.icon.f7}
+                material={_action.icon && _action.icon.material}
+              ></f7-icon>
               {domActionTitle}
             </div>
           );
