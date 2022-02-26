@@ -86,14 +86,14 @@ export default {
     order_getStatus(atomOrder) {
       const atomOrderCurrent = this.order_current;
       if (this.order_getKey(atomOrderCurrent) === this.order_getKey(atomOrder)) {
-        return atomOrderCurrent.by === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up';
+        return atomOrderCurrent.by === 'desc' ? '::arrow-drop-down' : '::arrow-drop-up';
       }
       return '';
     },
     order_renderAction() {
       return (
         <eb-link
-          iconMaterial="sort"
+          iconF7="::sort"
           tooltip={this.$text('Sort')}
           propsOnPerform={event => this.order_onPerformPopover(event)}
         ></eb-link>
@@ -111,7 +111,7 @@ export default {
             link="#"
             propsOnPerform={event => this.order_onPerformChange(event, atomOrder)}
           >
-            <f7-icon slot="media" material={this.order_getStatus(atomOrder)}></f7-icon>
+            <f7-icon slot="media" f7={this.order_getStatus(atomOrder)}></f7-icon>
             <div slot="title">{this.$text(atomOrder.title)}</div>
           </eb-list-item>
         );

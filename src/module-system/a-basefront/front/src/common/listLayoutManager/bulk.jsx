@@ -120,7 +120,7 @@ export default {
       children.push(
         <eb-link
           key="actionsLeftB:select"
-          iconMaterial="grading"
+          iconF7="::grading"
           iconBadge={this.bulk.selecting ? selectedAtoms.length.toString() : 0}
           tooltip={this.$text('Select')}
           propsOnPerform={this.bulk_onSelectingSwitch}
