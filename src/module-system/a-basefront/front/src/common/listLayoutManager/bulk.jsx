@@ -92,7 +92,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:select"
-            iconMaterial="grading"
+            iconF7="::grading"
             tooltip={this.$text('Select')}
             propsOnPerform={this.bulk_onSelectingSwitch}
           ></eb-link>
@@ -102,7 +102,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:selectChecking"
-            iconMaterial={selectedAtoms.length === 0 ? 'check_box_outline_blank' : 'check_box'}
+            iconF7={selectedAtoms.length === 0 ? '::checkbox-outline' : '::checkbox-checked'}
             iconBadge={selectedAtoms.length.toString()}
             propsOnPerform={this.bulk_onSelectingChecking}
           ></eb-link>
