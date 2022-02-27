@@ -46,20 +46,26 @@ export default function (Vue) {
         return iconHref;
       },
       async combineIcon({ state, dispatch }, { material, icon, color, size }) {
-        let _color = '';
+        let _colorClass = '';
+        let _colorStyle = '';
         if (color) {
-          _color = ` color-${Vue.prototype.$meta.util.escapeURL(color)}`;
+          const _color = Vue.prototype.$meta.util.escapeURL(color);
+          if (_color[0] === '#') {
+            _colorStyle = ` color: ${_color};`;
+          } else {
+            _colorClass = ` color-${_color}`;
+          }
         }
         const _size = parseInt(size || 24) + 'px';
         // material icon
         if (material) {
-          return `<i class="icon material-icons${_color}" style="font-size: ${_size}; width: ${_size}; height: ${_size};">${Vue.prototype.$meta.util.escapeHtml(
+          return `<i class="icon material-icons${_colorClass}" style="font-size: ${_size}; width: ${_size}; height: ${_size};${_colorStyle}">${Vue.prototype.$meta.util.escapeHtml(
             material
           )}</i>`;
         }
         // f7 icon
         const iconHref = await dispatch('getIcon', { icon });
-        return `<i class="icon f7-icons${_color}" style="font-size: ${_size}; width: ${_size}; height: ${_size};"><svg width="${_size}" height="${_size}" aria-hidden="true"><use href="${iconHref}" x="0" y="0" width="${_size}" height="${_size}"></use></svg></i>`;
+        return `<i class="icon f7-icons${_colorClass}" style="font-size: ${_size}; width: ${_size}; height: ${_size};${_colorStyle}"><svg width="${_size}" height="${_size}" aria-hidden="true"><use href="${iconHref}" x="0" y="0" width="${_size}" height="${_size}"></use></svg></i>`;
       },
     },
   };
