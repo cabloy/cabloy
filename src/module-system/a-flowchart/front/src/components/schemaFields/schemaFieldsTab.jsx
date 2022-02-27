@@ -64,17 +64,17 @@ export default {
         if (isCustom && item.property.ebType) {
           icon =
             item.property.ebType === 'group-flatten' || item.property.ebType === 'group'
-              ? 'menu'
-              : 'radio_button_unchecked';
+              ? '::menu'
+              : '::radio-button-unchecked';
         } else {
           icon = property
             ? property.ebType === 'group-flatten' || property.ebType === 'group'
-              ? 'menu'
-              : 'radio_button_unchecked'
-            : 'radio_button_unchecked';
+              ? '::menu'
+              : '::radio-button-unchecked'
+            : '::radio-button-unchecked';
         }
         // ok
-        return { key, title, icon };
+        return { key, title, icon: { f7: icon } };
       });
     },
     mode3SelectOptions() {
@@ -202,7 +202,13 @@ export default {
     },
     renderMode_3_item(mode3Item, index) {
       // domMedia
-      const domMedia = <f7-icon material={mode3Item.icon} slot="media"></f7-icon>;
+      const domMedia = (
+        <f7-icon
+          material={mode3Item.icon && mode3Item.icon.material}
+          f7={mode3Item.icon && mode3Item.icon.f7}
+          slot="media"
+        ></f7-icon>
+      );
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -223,13 +229,13 @@ export default {
       const domActions = [];
       domActions.push(
         <div key="moveUp" color="teal" propsOnPerform={event => this.onPerformMoveUpMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material="arrow_upward"></f7-icon>
+          <f7-icon slot="media" f7="::arrow-up"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Move Up')}</div>}
         </div>
       );
       domActions.push(
         <div key="moveDown" color="blue" propsOnPerform={event => this.onPerformMoveDownMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material="arrow_downward"></f7-icon>
+          <f7-icon slot="media" f7="::arrow-down"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Move Down')}</div>}
         </div>
       );
@@ -240,7 +246,7 @@ export default {
       const domActions = [];
       domActions.push(
         <div key="remove" color="red" propsOnPerform={event => this.onPerformRemoveMode3(event, mode3Item, index)}>
-          <f7-icon slot="media" material="delete"></f7-icon>
+          <f7-icon slot="media" f7="::delete"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Remove')}</div>}
         </div>
       );

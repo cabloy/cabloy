@@ -35,16 +35,19 @@ export default {
       this.$f7router.back();
     },
     _getBehaviorMedia(item) {
+      const material = item.icon.material;
+      const f7 = item.icon.f7;
+      const url = item.icon.url;
       // icon
-      if (item.icon.material) {
-        return <f7-icon color={item.color} material={item.icon.material}></f7-icon>;
+      if (material || f7) {
+        return <f7-icon color={item.color} material={material} f7={f7}></f7-icon>;
       }
       // url
       return (
         <img
           style={{ color: item.color }}
           class="media-node-base-icon"
-          src={this.$meta.util.combineFetchStaticPath(item.icon)}
+          src={this.$meta.util.combineFetchStaticPath(url)}
         />
       );
     },
