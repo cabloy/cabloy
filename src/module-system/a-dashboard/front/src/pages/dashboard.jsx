@@ -457,13 +457,14 @@ export default {
     },
     async onPerformProfileSwitch(event) {
       if (!this.dashboardUsers) return;
+      // icon
+      const iconDone = await this.$meta.util.combineIcon({ f7: '::done' });
       // buttons
       const dashboardUserIdCurrent = this.dashboardUserId;
       const buttons = [];
       for (const item of this.dashboardUsers) {
-        const iconName = dashboardUserIdCurrent === item.id ? 'done' : '';
         buttons.push({
-          icon: `<i class="icon material-icons">${iconName}</i>`,
+          icon: dashboardUserIdCurrent === item.id ? iconDone : '<i class="icon"></i>',
           text: item.dashboardName,
           disabled: dashboardUserIdCurrent === item.id,
           data: item,

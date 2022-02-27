@@ -4,10 +4,10 @@
     <f7-list>
       <template v-if="!dashboard.lock">
         <eb-list-item link="#" :title="$text('Add Widget')" :onPerform="onPerformAddWidget">
-          <f7-icon slot="media" material="add"></f7-icon>
+          <f7-icon slot="media" f7="::add"></f7-icon>
         </eb-list-item>
         <eb-list-item link="#" :title="$text('Add Group')" :onPerform="onPerformAddGroup">
-          <f7-icon slot="media" material="add"></f7-icon>
+          <f7-icon slot="media" f7="::add"></f7-icon>
         </eb-list-item>
       </template>
       <template v-if="dashboard.scene !== 'manager'">
