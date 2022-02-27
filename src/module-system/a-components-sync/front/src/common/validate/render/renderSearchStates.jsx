@@ -63,10 +63,12 @@ export default {
     },
     async __searchStates_onPerform(event, context, operatorCurrent, operators) {
       const { dataPath } = context;
+      // icon
+      const iconDone = await this.$meta.util.combineIcon({ f7: '::done' });
       // buttons
       const buttons = [];
       for (const item of operators) {
-        const icon = operatorCurrent.op === item.op ? '<i class="icon material-icons">done</i>' : item.text;
+        const icon = operatorCurrent.op === item.op ? iconDone : item.text;
         buttons.push({
           icon,
           text: item.title,

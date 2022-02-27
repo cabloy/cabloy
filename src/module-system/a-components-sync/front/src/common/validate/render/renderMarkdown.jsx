@@ -14,7 +14,7 @@ export default {
         name: 'cms-content-preview',
         actionModule: 'a-cms',
         actionComponent: 'action',
-        icon: { material: 'visibility' },
+        icon: { f7: '::preview' },
       };
       // actions
       if (!context.property.ebParams.actions) context.property.ebParams.actions = [];
