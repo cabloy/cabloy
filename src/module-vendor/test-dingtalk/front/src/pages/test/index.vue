@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Test')" eb-back-link="Back"></eb-navbar>
     <f7-messagebar ref="messagebar" class="test-messagebar" placeholder="Message" @submit="onSubmitSendMessage">
-      <f7-icon md="material:send" slot="send-link"></f7-icon>
+      <f7-icon f7="::send" slot="send-link"></f7-icon>
     </f7-messagebar>
     <eb-list v-if="dd" no-hairlines-md>
       <eb-list-item title="钉钉扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
