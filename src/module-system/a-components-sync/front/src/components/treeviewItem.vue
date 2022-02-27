@@ -48,17 +48,19 @@ export default {
     _switchFolderIcon(el) {
       const $el = this.$$(el);
       // icon
-      const $icon = $el.find('i.icon.material-icons').eq(0);
+      const $icon = $el.find('i.icon.f7-icons svg use').eq(0);
       if ($icon.length === 0) return;
-      // text
-      const text = $icon.text();
-      if (text !== 'folder' && text !== 'folder_open') return;
+      // iconName
+      const parts = $icon[0].href.baseVal.split('#');
+      let iconName = parts[1];
+      if (iconName !== 'folder' && iconName !== 'folder-open') return;
       // switch
       if ($el.hasClass('treeview-item-opened')) {
-        $icon.text('folder_open');
+        iconName = 'folder-open';
       } else {
-        $icon.text('folder');
+        iconName = 'folder';
       }
+      $icon[0].href.baseVal = [parts[0], iconName].join('#');
     },
     onOpen(el) {
       if (this.eventTargetEl !== el) return;
