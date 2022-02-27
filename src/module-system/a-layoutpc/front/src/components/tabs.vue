@@ -15,7 +15,7 @@ export default {
       const text = c('span', { domProps: { innerText: group.title } });
       const close = c('f7-icon', {
         staticClass: 'close',
-        attrs: { material: 'close' },
+        props: { f7: '::close', size: '16' },
         nativeOn: {
           click: event => {
             event.stopPropagation();

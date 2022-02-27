@@ -63,7 +63,7 @@ export default function (io) {
       // icon
       let icon;
       if (!content.issuerAvatar) {
-        icon = '<i class="material-icons">error</i>';
+        icon = await Vue.prototype.$meta.util.combineIcon({ f7: '::info-circle', size: '16' });
       } else {
         icon = `<img class="avatar avatar16" src="${content.issuerAvatar}">`;
       }

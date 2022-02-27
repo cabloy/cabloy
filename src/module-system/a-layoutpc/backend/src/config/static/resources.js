@@ -77,13 +77,13 @@ module.exports = app => {
     {
       atomName: 'Home',
       atomStaticKey: 'buttonHome',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: { material: 'home' },
+        icon: { f7: '::home' },
         actionPath: '/a/dashboard/dashboard?key=home',
         scene: 'dashboard',
         sceneOptions: { name: 'home' },
@@ -93,13 +93,13 @@ module.exports = app => {
     {
       atomName: 'Dashboard',
       atomStaticKey: 'buttonDashboard',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: { material: 'dashboard' },
+        icon: { f7: '::dashboard' },
         actionPath: '/a/dashboard/dashboard',
         scene: 'dashboard',
         sceneOptions: { name: 'dashboard' },
@@ -127,7 +127,7 @@ module.exports = app => {
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonMine',
-        icon: { material: 'person' },
+        icon: { f7: '::person' },
         actionPath: null,
         scene: 'sidebar',
         sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
