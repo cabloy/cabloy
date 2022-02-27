@@ -173,15 +173,18 @@ export default {
       // behaviorBase
       const behaviorBase = this.diagram.behaviorBases[item.type];
       // icon
-      if (behaviorBase.icon.material) {
-        return <f7-icon style={{ color: item.color }} material={behaviorBase.icon.material}></f7-icon>;
+      const material = behaviorBase.icon.material;
+      const f7 = behaviorBase.icon.f7;
+      const url = behaviorBase.icon.url;
+      if (material || f7) {
+        return <f7-icon style={{ color: item.color }} material={material} f7={f7}></f7-icon>;
       }
       // url
       return (
         <img
           style={{ color: item.color }}
           class="media-node-base-icon"
-          src={this.$meta.util.combineFetchStaticPath(behaviorBase.icon)}
+          src={this.$meta.util.combineFetchStaticPath(url)}
         />
       );
     },
@@ -240,7 +243,7 @@ export default {
       }
       domActions.push(
         <div key="delete" color="red" propsOnPerform={event => this._onActionDelete(event, item)}>
-          <f7-icon slot="media" material="delete"></f7-icon>
+          <f7-icon slot="media" f7="::delete"></f7-icon>
           {domDeleteTitle}
         </div>
       );
@@ -255,7 +258,7 @@ export default {
         }
         domActions.push(
           <div key="moveUp" color="teal" propsOnPerform={event => this._onActionMoveUp(event, item)}>
-            <f7-icon slot="media" material="arrow_upward"></f7-icon>
+            <f7-icon slot="media" f7="::arrow-up"></f7-icon>
             {domMoveUpTitle}
           </div>
         );
@@ -268,7 +271,7 @@ export default {
         }
         domActions.push(
           <div key="moveDown" color="teal" propsOnPerform={event => this._onActionMoveDown(event, item)}>
-            <f7-icon slot="media" material="arrow_downward"></f7-icon>
+            <f7-icon slot="media" f7="::arrow-down"></f7-icon>
             {domMoveDownTitle}
           </div>
         );

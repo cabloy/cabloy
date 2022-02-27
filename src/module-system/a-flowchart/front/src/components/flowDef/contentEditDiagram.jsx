@@ -284,13 +284,14 @@ export default {
       const color = item.color ? this.$meta.util.escapeURL(item.color) : '';
       const material = behaviorBase.icon.material;
       const f7 = behaviorBase.icon.f7;
+      const url = behaviorBase.icon.url;
       // icon
       if (material || f7) {
         const icon = await this.$meta.util.combineIcon({ material, f7, color });
         return `<div class="eb-flowchart-node-icon">${icon}</div>`;
       }
       // url
-      const iconUrl = this.$meta.util.combineFetchStaticPath(behaviorBase.icon);
+      const iconUrl = this.$meta.util.combineFetchStaticPath(url);
       const iconSrc = this.$meta.util.escapeURL(iconUrl);
       return `<div class="eb-flowchart-node-icon">
                 <img src="${iconSrc}" style="border: solid 1px ${color}" />
