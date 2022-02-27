@@ -48,7 +48,7 @@ export default {
       const domActions = [];
       domActions.push(
         <div key="remove" color="red" propsOnPerform={event => this.onPerformRemove(event, item, index)}>
-          <f7-icon slot="media" material="delete"></f7-icon>
+          <f7-icon slot="media" f7="::delete"></f7-icon>
           {this.$device.desktop && <div slot="title">{this.$text('Remove')}</div>}
         </div>
       );

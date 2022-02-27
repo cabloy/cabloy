@@ -45,22 +45,6 @@ export default {
     ready() {
       return this.x6 && this.xlayout && this.nodeBases && this.edgeBases && this.behaviorBases;
     },
-    contentProcessRender() {
-      if (!this.contentProcess) return;
-      // nodes
-      const nodes = [];
-      for (const item of this.contentProcess.nodes) {
-        const node = this.__createNode(item);
-        nodes.push(node);
-      }
-      // edges
-      const edges = [];
-      for (const item of this.contentProcess.edges) {
-        const edge = this.__createEdge(item);
-        edges.push(edge);
-      }
-      return { nodes, edges };
-    },
   },
   watch: {
     contentProcessStr() {
@@ -105,7 +89,7 @@ export default {
       await this.__prepareInstances();
       this.__registerNodes();
       this.__registerEdges();
-      this.__updateChart({});
+      await this.__updateChart({});
       // emit
       this.$emit('contentEditDiagramInit');
     },
@@ -138,11 +122,11 @@ export default {
     async __prepareInstance({ action }) {
       return await this.$meta.util.performAction({ ctx: this, action });
     },
-    __updateChart({ changeSize, changeData }) {
+    async __updateChart({ changeSize, changeData }) {
       if (!this.ready) return;
       // graph
       if (!this.graph) {
-        this.__createChart();
+        await this.__createChart();
       }
       // changeSize
       if (changeSize) {
@@ -151,12 +135,12 @@ export default {
       }
       // changeData
       if (changeData) {
-        const model = this.__createLayoutModel();
+        const model = await this.__createLayoutModel();
         this.graph.fromJSON(model);
         this.graph.centerContent();
       }
     },
-    __createChart() {
+    async __createChart() {
       // container
       const container = this.$refs.container;
       // graph
@@ -234,7 +218,7 @@ export default {
       // events
       this.__graphEvents(container);
       // model
-      const model = this.__createLayoutModel();
+      const model = await this.__createLayoutModel();
       // render
       this.graph.fromJSON(model);
       this.graph.centerContent();
@@ -262,7 +246,7 @@ export default {
         }, 300);
       });
     },
-    __createLayoutModel() {
+    async __createLayoutModel() {
       // layout
       if (!this.dagreLayout) {
         const directionHorizontal = this.size.width > this.size.height;
@@ -275,18 +259,35 @@ export default {
           controlPoints: true,
         });
       }
-      return this.dagreLayout.layout(this.contentProcessRender);
+      const contentProcessRender = await this._combineContentProcessRender();
+      return this.dagreLayout.layout(contentProcessRender);
     },
-    __getBehaviorIcon(item) {
+    async _combineContentProcessRender() {
+      if (!this.contentProcess) return;
+      // nodes
+      const nodes = [];
+      for (const item of this.contentProcess.nodes) {
+        const node = await this.__createNode(item);
+        nodes.push(node);
+      }
+      // edges
+      const edges = [];
+      for (const item of this.contentProcess.edges) {
+        const edge = this.__createEdge(item);
+        edges.push(edge);
+      }
+      return { nodes, edges };
+    },
+    async __getBehaviorIcon(item) {
       // behaviorBase
       const behaviorBase = this.behaviorBases[item.type];
       const color = item.color ? this.$meta.util.escapeURL(item.color) : '';
-      const material = behaviorBase.icon.material ? this.$meta.util.escapeURL(behaviorBase.icon.material) : '';
+      const material = behaviorBase.icon.material;
+      const f7 = behaviorBase.icon.f7;
       // icon
-      if (material) {
-        return `<div class="eb-flowchart-node-icon">
-                  <i class="icon material-icons" style="color: ${color}">${material}</i>
-                </div>`;
+      if (material || f7) {
+        const icon = await this.$meta.util.combineIcon({ material, f7, color });
+        return `<div class="eb-flowchart-node-icon">${icon}</div>`;
       }
       // url
       const iconUrl = this.$meta.util.combineFetchStaticPath(behaviorBase.icon);
@@ -295,7 +296,7 @@ export default {
                 <img src="${iconSrc}" style="border: solid 1px ${color}" />
               </div>`;
     },
-    __createNodePorts(item) {
+    async __createNodePorts(item) {
       // nodeBase
       const nodeBase = this.nodeBases[item.type];
       // items
@@ -319,7 +320,7 @@ export default {
       const behaviors = item.behaviors;
       if (behaviors) {
         for (const behavior of behaviors) {
-          const icon = this.__getBehaviorIcon(behavior);
+          const icon = await this.__getBehaviorIcon(behavior);
           items.push({
             id: behavior.id,
             group: 'out',
@@ -366,14 +367,14 @@ export default {
       }
       return color;
     },
-    __createNode(item) {
+    async __createNode(item) {
       // label
       const labelText = this.$meta.util.escapeHtml(item.nameLocale || item.name);
       const label = `<div class="eb-flowchart-node-label">
                       <span>${labelText}</span>
                     </div>`;
       // ports
-      const ports = this.__createNodePorts(item);
+      const ports = await this.__createNodePorts(item);
       // node
       const node = {
         id: item.id,
@@ -473,10 +474,10 @@ export default {
       };
       return options;
     },
-    onSize(size) {
+    async onSize(size) {
       this.size.height = size.height;
       this.size.width = size.width;
-      this.__updateChart({ changeSize: true });
+      await this.__updateChart({ changeSize: true });
     },
     onPerformAddNode() {
       if (!this.ready) return;

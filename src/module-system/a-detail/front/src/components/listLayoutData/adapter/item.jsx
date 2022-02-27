@@ -72,7 +72,11 @@ export default {
               color={this.item_getActionColor(action, index)}
               propsOnPerform={event => this.item_onAction(event, item, action)}
             >
-              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
+              <f7-icon
+                slot="media"
+                material={_action.icon && _action.icon.material}
+                f7={_action.icon && _action.icon.f7}
+              ></f7-icon>
               {domActionTitle}
             </div>
           );
