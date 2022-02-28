@@ -65,21 +65,15 @@ export default {
       const url = item.icon.url;
       // icon
       if (material || f7) {
-        return <f7-icon slot="media" material={material} f7={f7}></f7-icon>;
+        return <f7-icon material={material} f7={f7}></f7-icon>;
       }
       // url
-      const iconUrl = this.$meta.util.combineFetchStaticPath(url);
-      const iconSrc = this.$meta.util.escapeURL(iconUrl);
-      return (
-        <div slot="media">
-          <img class="media-node-base-icon" src={iconSrc} />
-        </div>
-      );
+      return <img class="media-node-base-icon" src={this.$meta.util.combineFetchStaticPath(url)} />;
     },
     _renderGroupItems({ group }) {
       const children = [];
       for (const item of group.items) {
-        const domNodeMedia = this._renderNodeMedia({ item });
+        const domNodeMedia = <div slot="media">{this._renderNodeMedia({ item })}</div>;
         children.push(
           <eb-list-item
             key={item.type}

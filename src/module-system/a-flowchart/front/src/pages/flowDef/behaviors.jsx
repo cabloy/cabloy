@@ -34,7 +34,7 @@ export default {
       this.contextCallback(200, behaviorBase);
       this.$f7router.back();
     },
-    _getBehaviorMedia(item) {
+    _renderBehaviorMedia(item) {
       const material = item.icon.material;
       const f7 = item.icon.f7;
       const url = item.icon.url;
@@ -53,7 +53,7 @@ export default {
     },
     _renderItem(item) {
       // media
-      const domMedia = <div slot="media">{this._getBehaviorMedia(item)}</div>;
+      const domMedia = <div slot="media">{this._renderBehaviorMedia(item)}</div>;
       // domTitle
       const domTitle = (
         <div slot="title" class="title">

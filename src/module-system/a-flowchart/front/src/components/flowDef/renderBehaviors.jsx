@@ -169,7 +169,7 @@ export default {
       const color = '#' + r.toString(16) + g.toString(16) + b.toString(16);
       return color.toUpperCase();
     },
-    _getBehaviorMedia(item) {
+    _renderBehaviorMedia(item) {
       // behaviorBase
       const behaviorBase = this.diagram.behaviorBases[item.type];
       // icon
@@ -204,7 +204,7 @@ export default {
     },
     _renderBehavior(item) {
       // media
-      const domMedia = <div slot="media">{this._getBehaviorMedia(item)}</div>;
+      const domMedia = <div slot="media">{this._renderBehaviorMedia(item)}</div>;
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
