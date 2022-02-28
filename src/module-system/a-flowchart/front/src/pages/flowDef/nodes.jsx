@@ -50,9 +50,6 @@ export default {
     onDiagramDestroy() {
       this.$view.close();
     },
-    getNodeMedia(item) {
-      return this.$meta.util.combineFetchStaticPath(item.icon);
-    },
     onPerformNode(event, nodeBase) {
       // addNode
       this.diagram.addNode(nodeBase);
@@ -62,9 +59,27 @@ export default {
         this.$f7router.back();
       }
     },
+    _renderNodeMedia({ item }) {
+      const material = item.icon.material;
+      const f7 = item.icon.f7;
+      const url = item.icon.url;
+      // icon
+      if (material || f7) {
+        return <f7-icon slot="media" material={material} f7={f7}></f7-icon>;
+      }
+      // url
+      const iconUrl = this.$meta.util.combineFetchStaticPath(url);
+      const iconSrc = this.$meta.util.escapeURL(iconUrl);
+      return (
+        <div slot="media">
+          <img class="media-node-base-icon" src={iconSrc} />
+        </div>
+      );
+    },
     _renderGroupItems({ group }) {
       const children = [];
       for (const item of group.items) {
+        const domNodeMedia = this._renderNodeMedia({ item });
         children.push(
           <eb-list-item
             key={item.type}
@@ -74,9 +89,7 @@ export default {
               this.onPerformNode(event, item);
             }}
           >
-            <div slot="media">
-              <img class="media-node-base-icon" src={this.getNodeMedia(item)} />
-            </div>
+            {domNodeMedia}
           </eb-list-item>
         );
       }
