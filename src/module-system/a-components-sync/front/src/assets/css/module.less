@@ -96,6 +96,10 @@ html.theme-dark {
   width: 48px;
 }
 
+.avatar24-wrapper {
+  height: 24px;
+}
+
 .eb-loadmore {
   text-align: center;
   color: var(--f7-block-footer-text-color);
@@ -279,10 +283,11 @@ input[type='search']::-webkit-search-decoration {
     color: var(--f7-list-item-after-text-color);
   }
 
-  .list .item-media {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
+  // should not set this styles, for inline-labels: align-self:flex-end
+  //.list .item-media {
+  //padding-top: 0;
+  //padding-bottom: 0;
+  //}
 
   textarea:disabled {
     font-size: var(--f7-list-item-after-font-size);

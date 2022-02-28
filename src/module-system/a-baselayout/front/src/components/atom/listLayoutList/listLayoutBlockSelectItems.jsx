@@ -40,7 +40,11 @@ export default {
     },
     _renderListItem(item) {
       // media
-      const domMedia = <div slot="media">{this.layoutManager.data.adapter.item_renderMedia(item)}</div>;
+      const domMedia = (
+        <div slot="media" class="avatar24-wrapper">
+          {this.layoutManager.data.adapter.item_renderMedia(item)}
+        </div>
+      );
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
