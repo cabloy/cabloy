@@ -303,17 +303,27 @@ export default {
       // items
       const items = [];
       // behavior base
-      const iconUrl = this.$meta.util.combineFetchStaticPath(nodeBase.icon);
-      const iconSrc = this.$meta.util.escapeURL(iconUrl);
-      const icon = `<div class="eb-flowchart-node-icon">
+      const material = nodeBase.icon.material;
+      const f7 = nodeBase.icon.f7;
+      const url = nodeBase.icon.url;
+      let iconHtml;
+      if (material || f7) {
+        const icon = await this.$meta.util.combineIcon({ material, f7 });
+        iconHtml = `<div class="eb-flowchart-node-icon">${icon}</div>`;
+      } else {
+        const iconUrl = this.$meta.util.combineFetchStaticPath(url);
+        const iconSrc = this.$meta.util.escapeURL(iconUrl);
+        iconHtml = `<div class="eb-flowchart-node-icon">
                       <img src="${iconSrc}" />
                     </div>`;
+      }
+
       items.push({
         id: __behaviorBaseId,
         group: 'out',
         attrs: {
           icon: {
-            html: icon,
+            html: iconHtml,
           },
         },
       });
