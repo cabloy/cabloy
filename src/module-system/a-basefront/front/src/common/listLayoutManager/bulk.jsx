@@ -102,7 +102,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:selectChecking"
-            iconF7={selectedAtoms.length === 0 ? '::checkbox-outline' : '::checkbox-checked'}
+            iconF7={selectedAtoms.length === 0 ? ':outline:checkbox-outline' : '::checkbox-checked'}
             iconBadge={selectedAtoms.length.toString()}
             propsOnPerform={this.bulk_onSelectingChecking}
           ></eb-link>

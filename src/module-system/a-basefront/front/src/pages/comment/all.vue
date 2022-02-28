@@ -38,7 +38,7 @@
                 ></eb-link>
                 <eb-link
                   class="action"
-                  :iconF7="item.h_heart ? '::heart' : '::heart-outline'"
+                  :iconF7="item.h_heart ? '::heart' : ':outline:heart-outline'"
                   iconSize="18"
                   :context="item"
                   :onPerform="onPerformHeart"

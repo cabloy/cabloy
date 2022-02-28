@@ -57,7 +57,7 @@ module.exports = app => {
           title: 'Clone',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
-          icon: { f7: '::copy-outline' },
+          icon: { f7: ':outline:copy-outline' },
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',

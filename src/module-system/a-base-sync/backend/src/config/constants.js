@@ -87,7 +87,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
-          icon: { f7: '::copy-outline' },
+          icon: { f7: ':outline:copy-outline' },
         },
         enable: {
           title: 'Enable',
@@ -168,21 +168,21 @@ module.exports = app => {
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,
-          icon: { f7: '::work-history-outline' },
+          icon: { f7: ':outline:work-history-outline' },
         },
         formal: {
           title: 'Formal',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,
-          icon: { f7: '::archive-outline' },
+          icon: { f7: ':outline:archive-outline' },
         },
         draft: {
           title: 'Draft',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,
-          icon: { f7: '::draft-outline' },
+          icon: { f7: ':outline:draft-outline' },
         },
         workflow: {
           title: 'WorkFlow',

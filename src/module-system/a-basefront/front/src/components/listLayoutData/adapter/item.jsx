@@ -96,7 +96,7 @@ export default {
             <f7-icon
               slot="media"
               color={item.star ? 'orange' : ''}
-              f7={item.star ? '::star' : '::star-outline'}
+              f7={item.star ? '::star' : ':outline:star-outline'}
             ></f7-icon>
             {domLeftStarTitle}
           </div>

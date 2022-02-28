@@ -90,7 +90,7 @@ export default {
         domAfterMetaFlags.push(<f7-badge key={flag}>{flag}</f7-badge>);
       }
       if (!item.messageRead) {
-        domAfterMetaFlags.push(<f7-icon key="messageRead" f7="::mail-outline"></f7-icon>);
+        domAfterMetaFlags.push(<f7-icon key="messageRead" f7=":outline:mail-outline"></f7-icon>);
       }
       const domAfter = (
         <div slot="after" class="after">

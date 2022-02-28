@@ -87,7 +87,7 @@ export default {
         children.push(
           <eb-link
             key="actionsLeft:star"
-            iconF7={item.star ? '::star' : '::star-outline'}
+            iconF7={item.star ? '::star' : ':outline:star-outline'}
             tooltip={this.$text('UserStar')}
             propsOnPerform={this.info_onStarSwitch}
           ></eb-link>
@@ -113,7 +113,7 @@ export default {
           children.push(
             <eb-link
               key="actionsLeft:label"
-              iconF7="::label-outline"
+              iconF7=":outline:label-outline"
               tooltip={this.$text('UserLabels')}
               propsOnPerform={this.info_onLabel}
             ></eb-link>

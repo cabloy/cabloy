@@ -42,7 +42,7 @@
             ></eb-link>
             <eb-link
               class="action"
-              :iconF7="item.heart ? '::heart' : '::heart-outline'"
+              :iconF7="item.heart ? '::heart' : ':outline:heart-outline'"
               iconSize="18"
               :iconBadge="item.heartCount"
               badgeColor="orange"
