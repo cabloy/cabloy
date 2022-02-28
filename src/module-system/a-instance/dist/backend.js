@@ -535,7 +535,7 @@ module.exports = app => {
               name: 'preview',
               actionModule: moduleInfo.relativeName,
               actionComponent: 'action',
-              icon: { material: 'visibility' },
+              icon: { f7: '::preview' },
               navigateOptions: { target: '_self' },
             },
           ],

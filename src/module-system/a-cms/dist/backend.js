@@ -4499,7 +4499,7 @@ module.exports = app => {
               title: 'Preview',
               actionModule: moduleInfo.relativeName,
               actionComponent: 'action',
-              icon: { material: 'visibility' },
+              icon: { f7: '::preview' },
               enableOnStatic: true,
               enableOnOpened: true,
               stage: 'draft,formal',

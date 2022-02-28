@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-layoutmobile",
-  "version": "4.2.10",
+  "version": "4.2.11",
   "title": "Mobile Layout",
   "eggBornModule": {
     "dependencies": {}

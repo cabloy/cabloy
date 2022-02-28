@@ -486,13 +486,13 @@ module.exports = app => {
       title: 'StartEventNone',
       group: 'startEvent',
       bean: 'startEventNone',
-      icon: '/api/static/a/flownode/bpmn/events/start-event-none.svg',
+      icon: { f7: ':flow:start-event-none' },
     },
     startEventTimer: {
       title: 'StartEventTimer',
       group: 'startEvent',
       bean: 'startEventTimer',
-      icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
+      icon: { f7: ':flow:start-event-timer' },
       validator: {
         module: moduleInfo.relativeName,
         validator: 'startEventTimer',
@@ -502,20 +502,20 @@ module.exports = app => {
       title: 'EndEventNone',
       group: 'endEvent',
       bean: 'endEventNone',
-      icon: '/api/static/a/flownode/bpmn/events/end-event-none.svg',
+      icon: { f7: ':flow:end-event-none' },
     },
     // activities
     activityNone: {
       title: 'ActivityNone',
       group: 'activity',
       bean: 'activityNone',
-      icon: '/api/static/a/flownode/bpmn/activities/activity-none.svg',
+      icon: { f7: ':flow:activity-none' },
     },
     activityService: {
       title: 'ActivityService',
       group: 'activity',
       bean: 'activityService',
-      icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
+      icon: { f7: ':flow:activity-service' },
       validator: {
         module: moduleInfo.relativeName,
         validator: 'activityService',

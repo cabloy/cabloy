@@ -126,13 +126,13 @@ module.exports = app => {
     {
       atomName: 'Home',
       atomStaticKey: 'buttonHome',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: { material: 'home' },
+        icon: { f7: '::home' },
         url: '/a/basefront/resource/tree',
       }),
       resourceRoles: 'root',
@@ -140,13 +140,13 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'buttonAtom',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: { material: 'group_work' },
+        icon: { f7: '::database' },
         url: '/a/basefront/atom/list',
       }),
       resourceRoles: 'root',
@@ -154,13 +154,13 @@ module.exports = app => {
     {
       atomName: 'Mine',
       atomStaticKey: 'buttonMine',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonMine',
-        icon: { material: 'person' },
+        icon: { f7: '::person' },
         url: '/a/user/user/mine',
         fixed: true,
       }),
