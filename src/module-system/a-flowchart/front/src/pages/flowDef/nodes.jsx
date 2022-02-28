@@ -1,26 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar :title="$text('Add Node')" eb-back-link="Back"> </eb-navbar>
-    <f7-list v-if="ready">
-      <f7-list-group v-for="group of nodeBasesGroups" :key="group.name">
-        <f7-list-item group-title :title="group.titleLocale"></f7-list-item>
-        <eb-list-item
-          v-for="item of group.items"
-          :key="item.type"
-          :title="item.titleLocale"
-          link="#"
-          :context="item"
-          :onPerform="onPerformNode"
-        >
-          <div slot="media">
-            <img class="media-node-base-icon" :src="getNodeMedia(item)" />
-          </div>
-        </eb-list-item>
-      </f7-list-group>
-    </f7-list>
-  </eb-page>
-</template>
-<script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
@@ -85,6 +62,51 @@ export default {
         this.$f7router.back();
       }
     },
+    _renderGroupItems({ group }) {
+      const children = [];
+      for (const item of group.items) {
+        children.push(
+          <eb-list-item
+            key={item.type}
+            title={item.titleLocale}
+            link="#"
+            propsOnPerform={event => {
+              this.onPerformNode(event, item);
+            }}
+          >
+            <div slot="media">
+              <img class="media-node-base-icon" src={this.getNodeMedia(item)} />
+            </div>
+          </eb-list-item>
+        );
+      }
+      return children;
+    },
+    _renderGroups() {
+      const children = [];
+      for (const group of this.nodeBasesGroups) {
+        const items = this._renderGroupItems({ group });
+        children.push(
+          <f7-list-group key={group.name}>
+            <f7-list-item group-title title={group.titleLocale}></f7-list-item>
+            {items}
+          </f7-list-group>
+        );
+      }
+      return children;
+    },
+    _renderList() {
+      if (!this.ready) return;
+      const children = this._renderGroups();
+      return <f7-list>{children}</f7-list>;
+    },
+  },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar title={this.$text('Add Node')} eb-back-link="Back"></eb-navbar>
+        {this._renderList()}
+      </eb-page>
+    );
   },
 };
-</script>

@@ -31,7 +31,7 @@ module.exports = app => {
       title: 'ActivityNone',
       group: 'activity',
       bean: 'activityNone',
-      icon: '/api/static/a/flownode/bpmn/activities/activity-none.svg',
+      icon: { f7: ':flow:activity-none' },
     },
     activityService: {
       title: 'ActivityService',
