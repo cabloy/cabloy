@@ -1,5 +1,5 @@
 const loadMeta = require('./meta.js');
-const loadModules = require('./module.js');
+const ModulesToolsFn = require('./module.js');
 const loadRoutes = require('./route.js');
 const loadControllers = require('./controller.js');
 const loadServices = require('./service.js');
@@ -27,7 +27,11 @@ module.exports = function (loader) {
   loadMessenger(loader);
 
   // modules
-  const modules = loadModules(loader);
+  const modulesTools = ModulesToolsFn(loader);
+  // load modules
+  const modules = modulesTools.loadModules();
+  // monkey modules
+  modulesTools.monkeyModules('moduleLoading');
 
   if (meta.inApp) {
     loadConfig(loader, modules);
@@ -50,4 +54,7 @@ module.exports = function (loader) {
     loadConfig(loader, modules);
     loadClusterAgent(loader, modules);
   }
+
+  // monkey modules
+  modulesTools.monkeyModules('moduleLoaded');
 };

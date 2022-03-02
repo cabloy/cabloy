@@ -64,6 +64,12 @@ module.exports = app => {
       return error;
     },
     monkeyModule(ebModulesMonkey, monkeyName, monkeyData) {
+      const module = monkeyData && monkeyData.module;
+      if (module) {
+        if (module.main.hook && module.main.hook[monkeyName]) {
+          module.main.hook[monkeyName](monkeyData);
+        }
+      }
       for (const key in ebModulesMonkey) {
         const moduleMonkey = ebModulesMonkey[key];
         if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {

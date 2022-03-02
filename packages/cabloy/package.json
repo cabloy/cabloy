@@ -69,6 +69,7 @@
     "egg-born-module-a-markdownrender": "^4.1.13",
     "egg-born-module-a-markdownstyle": "^4.1.11",
     "egg-born-module-a-message": "^4.1.9",
+    "egg-born-module-a-oauth": "^4.0.0",
     "egg-born-module-a-progress": "^4.1.7",
     "egg-born-module-a-sequence": "^4.1.7",
     "egg-born-module-a-settings": "^4.1.8",

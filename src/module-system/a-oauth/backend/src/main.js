@@ -17,6 +17,8 @@ module.exports = app => {
   const models = require('./models.js')(app);
   // meta
   const meta = require('./meta.js')(app);
+  // hook
+  const hook = require('./hook.js')(app);
 
   return {
     aops,
@@ -29,5 +31,6 @@ module.exports = app => {
     locales,
     errors,
     meta,
+    hook,
   };
 };
