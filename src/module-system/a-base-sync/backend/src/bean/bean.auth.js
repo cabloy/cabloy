@@ -239,8 +239,17 @@ module.exports = ctx => {
         return _user;
       }
       // save to redis
-      _user.token = uuid.v4().replace(/-/g, '');
       const key = this._getAuthRedisKey({ user });
+      if (!ctx.bean.util.checkDemo(false)) {
+        // demo, allowed to auth more times
+        _user.token = await this.redisAuth.get(key);
+      } else {
+        // create a new one
+        _user.token = null;
+      }
+      if (!_user.token) {
+        _user.token = uuid.v4().replace(/-/g, '');
+      }
       await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
       // ok
       return _user;
