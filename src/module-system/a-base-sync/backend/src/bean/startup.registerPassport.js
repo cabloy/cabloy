@@ -11,18 +11,11 @@ module.exports = app => {
       // serializeUser
       app.passport.serializeUser(async (ctx, user) => {
         ctx.state.user = user;
-        const _user = {
-          op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
-          provider: user.provider,
-        };
-        if (user.agent.id !== user.op.id) {
-          _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
-        }
-        return _user;
+        return await ctx.bean.auth.serializeUser({ user });
       });
       // deserializeUser
       app.passport.deserializeUser(async (ctx, user) => {
-        return user;
+        return await ctx.bean.auth.deserializeUser({ user });
       });
     }
   }

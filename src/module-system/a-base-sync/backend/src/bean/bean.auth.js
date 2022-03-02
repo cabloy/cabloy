@@ -7,6 +7,17 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class Auth {
+    constructor() {
+      this._redisAuth = null;
+    }
+
+    get redisAuth() {
+      if (!this._redisAuth) {
+        this._redisAuth = ctx.app.redis.get('auth') || ctx.app.redis.get('cache');
+      }
+      return this._redisAuth;
+    }
+
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
@@ -206,6 +217,50 @@ module.exports = ctx => {
         // unuse strategy
         ctx.app.passport.unuse(strategyName);
       }
+    }
+
+    _getAuthRedisKey({ user }) {
+      const userAgent = user.agent || user.op;
+      return `${ctx.instance ? ctx.instance.id : 0}:${userAgent.id}`;
+    }
+    _getAuthRedisField({ user }) {
+      return `${ctx.headers['x-scene']}:${user.provider.id}`;
+    }
+
+    async serializeUser({ user }) {
+      // _user
+      const _user = {
+        op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
+        provider: user.provider,
+      };
+      if (user.agent.id !== user.op.id) {
+        _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
+      }
+      // anonymous
+      if (user.op.anonymous) {
+        // not use redis
+        return _user;
+      }
+      // save to redis
+      _user.token = uuid.v4().replace(/-/g, '');
+      const key = this._getAuthRedisKey({ user });
+      const field = this._getAuthRedisField({ user });
+      await this.redisAuth.hset(key, field, _user.token);
+      // ok
+      return _user;
+    }
+
+    async deserializeUser({ user }) {
+      if (user.op.anonymous) return user;
+      // not throw 401: ctx.throw(401);
+      if (!user.token) return null;
+      // check token
+      const key = this._getAuthRedisKey({ user });
+      const field = this._getAuthRedisField({ user });
+      const token = await this.redisAuth.hget(key, field);
+      if (token !== user.token) return null;
+      // ready
+      return user;
     }
   }
 
