@@ -203,7 +203,7 @@ module.exports = app => {
     // auth
     { method: 'post', path: 'auth/echo', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: 'auth', meta: { auth: { user: true } } },
-    { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: true } } },
     // cors
     { method: 'options', path: /.*/ },
     // jwt

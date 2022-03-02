@@ -37,6 +37,8 @@ module.exports = ctx => {
     }
 
     async logout() {
+      const user = ctx.state.user;
+      await this._clearRedisAuth({ user });
       await ctx.logout();
       await ctx.bean.user.loginAsAnonymous();
       return await this.getLoginInfo();
@@ -265,6 +267,12 @@ module.exports = ctx => {
       if (token !== user.token) return null;
       // ready
       return user;
+    }
+
+    async _clearRedisAuth({ user }) {
+      if (!user) return;
+      const key = this._getAuthRedisKey({ user });
+      await this.redisAuth.del(key);
     }
   }
 
