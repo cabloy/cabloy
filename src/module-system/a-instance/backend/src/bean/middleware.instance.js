@@ -12,7 +12,7 @@ module.exports = ctx => {
       const instance = await ctx.bean.instance.get({ subdomain: ctx.subdomain });
       if (!instance) {
         // prompt: should for local/prod
-        //if (ctx.app.meta.isLocal) {
+        // if (ctx.app.meta.isLocal) {
         const urlInfo =
           ctx.locale === 'zh-cn'
             ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
@@ -21,7 +21,7 @@ module.exports = ctx => {
         message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
         message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
         console.log('\n' + boxen(message, boxenOptions));
-        //}
+        // }
         return ctx.fail(423); // not ctx.throw(423)
       }
       // check if disabled
