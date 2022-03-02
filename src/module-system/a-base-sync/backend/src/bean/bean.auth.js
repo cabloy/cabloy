@@ -221,10 +221,7 @@ module.exports = ctx => {
 
     _getAuthRedisKey({ user }) {
       const userAgent = user.agent || user.op;
-      return `${ctx.instance ? ctx.instance.id : 0}:${userAgent.id}`;
-    }
-    _getAuthRedisField({ user }) {
-      return `${ctx.headers['x-scene']}:${user.provider.id}`;
+      return `${ctx.instance.id}:${userAgent.id}:${ctx.headers['x-scene']}:${user.provider.id}`;
     }
 
     async serializeUser({ user }) {
@@ -244,8 +241,7 @@ module.exports = ctx => {
       // save to redis
       _user.token = uuid.v4().replace(/-/g, '');
       const key = this._getAuthRedisKey({ user });
-      const field = this._getAuthRedisField({ user });
-      await this.redisAuth.hset(key, field, _user.token);
+      await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
       // ok
       return _user;
     }
@@ -256,8 +252,7 @@ module.exports = ctx => {
       if (!user.token) return null;
       // check token
       const key = this._getAuthRedisKey({ user });
-      const field = this._getAuthRedisField({ user });
-      const token = await this.redisAuth.hget(key, field);
+      const token = await this.redisAuth.get(key);
       if (token !== user.token) return null;
       // ready
       return user;
