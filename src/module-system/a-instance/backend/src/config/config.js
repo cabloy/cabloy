@@ -4,15 +4,15 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    instance: {
-      bean: 'instance',
-      global: true,
-      dependencies: 'appReady',
-    },
-    appReady: {
-      bean: 'appReady',
-      global: true,
-    },
+    // instance: {
+    //   bean: 'instance',
+    //   global: true,
+    //   dependencies: 'appReady',
+    // },
+    // appReady: {
+    //   bean: 'appReady',
+    //   global: true,
+    // },
   };
 
   // broadcasts
