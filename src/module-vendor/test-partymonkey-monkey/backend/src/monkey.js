@@ -14,7 +14,7 @@ module.exports = app => {
   }
 
   const monkey = {
-    moduleLoaded({ module }) {
+    moduleLoading({ module }) {
       if (module.info.relativeName !== 'test-party') return;
       // route
       monkeyRoute(module, 'test/monkey/monkeyee/test', {
