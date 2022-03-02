@@ -40,11 +40,15 @@ module.exports = appInfo => {
   const __redisConnectionDefaultIO = Object.assign({}, __redisConnectionDefault, {
     keyPrefix: `io_${appInfo.name}:`,
   });
+  const __redisConnectionDefaultAuth = Object.assign({}, __redisConnectionDefault, {
+    keyPrefix: `auth_${appInfo.name}:`,
+  });
 
   config.redisConnection = {
     default: __redisConnectionDefault,
     cache: __redisConnectionDefaultCache,
     io: __redisConnectionDefaultIO,
+    auth: __redisConnectionDefaultAuth,
   };
 
   config.redis = {
@@ -55,6 +59,7 @@ module.exports = appInfo => {
       broadcast: config.redisConnection.default,
       cache: config.redisConnection.cache,
       io: config.redisConnection.io,
+      auth: config.redisConnection.auth,
     },
   };
 
