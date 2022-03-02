@@ -1,19 +1,38 @@
 module.exports = app => {
-  class SessionStore extends app.meta.BeanBase {
-    async get(key) {
-      // const res = await redis.get(key);
-      // if (!res) return null;
-      // return JSON.parse(res);
+  const ONE_DAY = 1000 * 60 * 60 * 24;
+  class SessionStore {
+    constructor() {
+      this._redis = null;
     }
 
-    async set(key, value, maxAge) {
-      // maxAge = typeof maxAge === 'number' ? maxAge : ONE_DAY;
-      // value = JSON.stringify(value);
-      // await redis.set(key, value, 'PX', maxAge);
+    get redis() {
+      if (!this._redis) {
+        this._redis = app.redis.get('auth') || app.redis.get('cache');
+      }
+      return this._redis;
     }
 
-    async destroy(key) {
-      // await redis.del(key);
+    _getKeyToken({ ctx, token }) {
+      return `${ctx.instance ? ctx.instance.id : 0}:${token}`;
+    }
+
+    async get(token, maxAge, { ctx }) {
+      const key = this._getKeyToken({ ctx, token });
+      const value = await this.redis.get(key);
+      return value ? JSON.parse(value) : undefined;
+    }
+
+    async set(token, value, maxAge, { ctx }) {
+      const key = this._getKeyToken({ ctx, token });
+      console.log(token, value, maxAge);
+      value = JSON.stringify(value);
+      maxAge = typeof maxAge === 'number' ? maxAge : ONE_DAY;
+      await this.redis.set(key, value, 'PX', maxAge);
+    }
+
+    async destroy(token, { ctx }) {
+      const key = this._getKeyToken({ ctx, token });
+      await this.redis.del(key);
     }
   }
 
