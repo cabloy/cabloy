@@ -73,7 +73,7 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      const maxAge = this.config.anonymous.maxAge;
+      const maxAge = this.config.auth.maxAge.anonymous;
       ctx.session.maxAge = maxAge;
       // ok
       return user;
@@ -83,7 +83,7 @@ module.exports = ctx => {
       let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
       if (!_anonymousId) {
         _anonymousId = uuid.v4().replace(/-/g, '');
-        const maxAge = this.config.anonymous.maxAge;
+        const maxAge = this.config.auth.maxAge.anonymous;
         ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
       }
       return _anonymousId;
@@ -543,10 +543,11 @@ module.exports = ctx => {
       }
 
       // restore maxAge
+      //   maxAge: 0,null/undefined,>0
       if (profileUser.maxAge === 0) {
-        ctx.session.maxAge = 0;
+        ctx.session.maxAge = this.config.auth.maxAge.default;
       } else {
-        ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
+        ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
       }
 
       // user verify event

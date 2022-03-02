@@ -106,14 +106,6 @@ module.exports = appInfo => {
     whiteList: 'http://localhost',
   };
 
-  // anonymous
-  config.anonymous = {
-    maxAge: 365 * 24 * 3600 * 1000, // 365 天
-  };
-  // authenticated or rememberMe
-  config.authenticated = {
-    maxAge: 30 * 24 * 3600 * 1000, // 30 天
-  };
   // checkUserName
   config.checkUserName = true;
   // account
@@ -156,6 +148,11 @@ module.exports = appInfo => {
     avatar: {
       timeout: 5000,
       default: 'https://cabloy.com/plugins/cms-pluginbase/assets/images/avatar_user.png',
+    },
+    maxAge: {
+      anonymous: 365 * 24 * 3600 * 1000, // 365 days
+      authenticated: 30 * 24 * 3600 * 1000, // 30 days // authenticated or rememberMe
+      default: 1 * 24 * 3600 * 1000, // default is one day
     },
   };
 
