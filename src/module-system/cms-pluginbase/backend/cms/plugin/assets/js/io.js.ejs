@@ -34,8 +34,17 @@
       });
     },
     socket() {
+      // url
       const url = '<%=site.serverUrl%>';
-      return window.io(url, { autoConnect: false });
+      // opts
+      const opts = {
+        autoConnect: false,
+      };
+      opts.query = {
+        'x-scene': 'web',
+        'x-clientid': util.clientId,
+      };
+      return window.io(url, opts);
     },
   };
 

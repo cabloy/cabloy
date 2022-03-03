@@ -39,11 +39,18 @@ export default {
     const opts = {
       autoConnect: false,
     };
+    // scene
+    opts.query = {
+      'x-scene': Vue.prototype.$meta.config.scene,
+    };
+    // clientId
+    const clientId = Vue.prototype.$meta.store.state.auth.clientId;
+    if (clientId) {
+      opts.query['x-clientid'] = clientId;
+    }
     // jwt
     if (Vue.prototype.$meta.config.base.jwt) {
-      opts.query = {
-        'eb-jwt': window.localStorage['eb-jwt'] || '',
-      };
+      opts.query['eb-jwt'] = window.localStorage['eb-jwt'] || '';
     }
     return ioc(url, opts);
   },
