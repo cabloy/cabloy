@@ -6,7 +6,7 @@ const MWSTATUS = Symbol('Context#__wmstatus');
 
 module.exports = function (loader, modules) {
   // load middlewares
-  const [ebMiddlewares, ebMiddlewaresGlobal] = loadMiddlewares(loader, modules);
+  const [ebMiddlewaresNormal, ebMiddlewaresGlobal] = loadMiddlewares(loader, modules);
 
   // patch router
   patchRouter();
@@ -67,8 +67,7 @@ module.exports = function (loader, modules) {
         args.push(fnStart);
 
         // middlewares: globals
-        ebMiddlewaresGlobal.forEach(key => {
-          const item = ebMiddlewares[key];
+        ebMiddlewaresGlobal.forEach(item => {
           args.push(wrapMiddleware(item, route));
         });
 
@@ -78,7 +77,7 @@ module.exports = function (loader, modules) {
           if (is.string(middlewares)) middlewares = middlewares.split(',');
           middlewares.forEach(key => {
             if (is.string(key)) {
-              const item = ebMiddlewares[key];
+              const item = ebMiddlewaresNormal[key];
               if (item) {
                 args.push(wrapMiddleware(item, route));
               } else {

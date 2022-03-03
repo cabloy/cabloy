@@ -4,36 +4,54 @@ module.exports = function (loader) {
 
   // all middlewares
   const ebMiddlewaresAll = (loader.app.meta.middlewares = []);
-  const ebMiddlewares = {};
+  const ebMiddlewaresNormal = (loader.app.meta.middlewaresNormal = {});
+  const ebMiddlewaresGlobal = (loader.app.meta.middlewaresGlobal = []);
+  const ebMiddlewaresSocketIoConnection = (loader.app.meta.middlewaresSocketIoConnection = []);
+  const ebMiddlewaresSocketIoPacket = (loader.app.meta.middlewaresSocketIoPacket = []);
 
   // load middlewares all
   loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader);
 
   // load middlewares
-  const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, ebMiddlewaresAll);
+  loadMiddlewares(
+    ebMiddlewaresAll,
+    ebMiddlewaresNormal,
+    ebMiddlewaresGlobal,
+    ebMiddlewaresSocketIoConnection,
+    ebMiddlewaresSocketIoPacket
+  );
 
-  return [ebMiddlewares, ebMiddlewaresGlobal];
+  return [ebMiddlewaresNormal, ebMiddlewaresGlobal];
 };
 
-function loadMiddlewares(ebMiddlewares, ebMiddlewaresAll) {
-  const globals = [];
-
+function loadMiddlewares(
+  ebMiddlewaresAll,
+  ebMiddlewaresNormal,
+  ebMiddlewaresGlobal,
+  ebMiddlewaresSocketIoConnection,
+  ebMiddlewaresSocketIoPacket
+) {
   // load
   for (const item of ebMiddlewaresAll) {
     // ignore other types, such as: socketio.connection/socketio.packet
-    if (!item.options.type) {
-      ebMiddlewares[item.name] = item;
-      if (item.options.global) globals.push(item.name);
+    const type = item.options.type;
+    if (!type) {
+      // normal
+      ebMiddlewaresNormal[item.name] = item;
+      if (item.options.global) {
+        ebMiddlewaresGlobal.push(item);
+      }
+    } else if (type === 'socketio.connection') {
+      ebMiddlewaresSocketIoConnection.push(item);
+    } else if (type === 'socketio.packet') {
+      ebMiddlewaresSocketIoPacket.push(item);
     }
   }
 
   // global order
-  // eslint-disable-next-line
-  while (true) {
-    if (!swap(ebMiddlewares, globals)) break;
-  }
-
-  return globals;
+  swap(ebMiddlewaresGlobal);
+  swap(ebMiddlewaresSocketIoConnection);
+  swap(ebMiddlewaresSocketIoPacket);
 }
 
 function loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader) {
@@ -68,15 +86,21 @@ function loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader) {
   }
 }
 
-function swap(ebMiddlewares, globals) {
+function swap(middlewares) {
+  // eslint-disable-next-line
+  while (true) {
+    if (!_swap(middlewares)) break;
+  }
+}
+
+function _swap(middlewares) {
   let result = false;
-  const globalsClone = globals.slice(0);
-  globalsClone.forEach(key => {
-    const item = ebMiddlewares[key];
+  const middlewaresClone = middlewares.slice(0);
+  middlewaresClone.forEach(item => {
     let deps = item.options.dependencies || [];
     if (typeof deps === 'string') deps = deps.split(',');
     deps.forEach(dep => {
-      if (swapDep(globals, dep, key)) result = true;
+      if (swapDep(middlewares, dep, item.name)) result = true;
     });
   });
   return result;
