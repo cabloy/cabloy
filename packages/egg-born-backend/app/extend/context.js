@@ -69,7 +69,12 @@ class DbTransaction {
 module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
-      const info = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
+      let url = this.req.mockUrl || this.req.url || '';
+      if (url.indexOf('/socket.io/') === 0) {
+        // support socket io
+        url = '/api/a/socketio/';
+      }
+      const info = mparse.parseInfo(mparse.parseName(url));
       this[MODULE] = info ? this.app.meta.modules[info.relativeName] : null;
     }
     return this[MODULE];
