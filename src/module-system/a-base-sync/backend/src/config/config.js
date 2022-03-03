@@ -42,6 +42,10 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
+    connectionAuth: {
+      bean: 'connectionAuth',
+      type: 'socketio.connection',
+    },
   };
 
   // startups

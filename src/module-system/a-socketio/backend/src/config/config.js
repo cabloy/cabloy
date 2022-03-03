@@ -7,6 +7,7 @@ module.exports = appInfo => {
     connection: {
       bean: 'connection',
       type: 'socketio.connection',
+      dependencies: 'connectionAuth',
     },
     packet: {
       bean: 'packet',
