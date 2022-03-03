@@ -5,9 +5,8 @@ module.exports = app => {
     const _middlewares = [];
 
     // all middlewares
-    const ebMiddlewaresAll = app.meta.middlewares;
-    for (const item of ebMiddlewaresAll) {
-      if (item.options.type !== 'socketio.packet') continue;
+    const ebMiddlewares = app.meta.middlewaresSocketIoPacket;
+    for (const item of ebMiddlewares) {
       _middlewares.push(wrapMiddleware(item));
     }
     return compose(_middlewares);
