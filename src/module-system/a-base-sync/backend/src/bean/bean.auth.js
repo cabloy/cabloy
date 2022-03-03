@@ -223,7 +223,8 @@ module.exports = ctx => {
 
     _getAuthRedisKey({ user }) {
       const userAgent = user.agent || user.op;
-      return `${ctx.instance.id}:${userAgent.id}:${ctx.headers['x-scene']}:${user.provider.id}`;
+      const scene = ctx.headers['x-scene'] || ctx.query['x-scene'];
+      return `${ctx.instance.id}:${userAgent.id}:${scene}:${user.provider.id}`;
     }
 
     async serializeUser({ user }) {
