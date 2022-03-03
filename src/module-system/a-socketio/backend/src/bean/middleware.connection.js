@@ -9,15 +9,19 @@ module.exports = ctx => {
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);
 
-      ctx.socket.conn.on('heartbeat', () => {
-        console.log('----heartbeat:');
-      });
+      const onHeartBeat = this._onHeartBeat.bind(this);
+      ctx.socket.conn.on('heartbeat', onHeartBeat);
       // next
       await this._next({ next, user, socketId });
+      ctx.socket.conn.off('heartbeat', onHeartBeat);
 
       // execute when disconnect
       ctx.bean.io._unRegisterSocket(socketId);
       await ctx.bean.io.unsubscribeWhenDisconnect({ iid, user, socketId });
+    }
+
+    async _onHeartBeat() {
+      // console.log('----heartbeat:', this._next);
     }
 
     async _next({ next, user, socketId }) {
