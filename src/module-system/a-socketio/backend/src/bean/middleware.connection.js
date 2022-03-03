@@ -3,10 +3,8 @@ module.exports = ctx => {
   class Middleware {
     async execute(options, next) {
       // cache userId/socketId for disconnect
-      console.log(ctx.state, ctx.user);
-      if (!ctx.session.passport || !ctx.session.passport.user) return ctx.throw(403);
-      const user = ctx.session.passport.user.op;
-      if (user.anonymous) return ctx.throw(403);
+      const user = ctx.state.user && ctx.state.user.op;
+      if (!user || user.anonymous) return ctx.throw(403);
       const iid = user.iid;
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);
