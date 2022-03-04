@@ -80,6 +80,7 @@
     "egg-born-module-a-themebrilliant": "^4.1.6",
     "egg-born-module-a-themehyacinth": "^4.1.6",
     "egg-born-module-a-user": "^4.2.9",
+    "egg-born-module-a-useronline": "^4.0.0",
     "egg-born-module-a-validation": "^4.2.12",
     "egg-born-module-a-version": "^4.1.8",
     "egg-born-module-cms-pluginarticle": "^4.2.16",
