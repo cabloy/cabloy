@@ -14,8 +14,8 @@ module.exports = app => {
             userId int(11) DEFAULT '0',
             loginCount int(11) DEFAULT '0',
             clientIPLast varchar(50) DEFAULT NULL,
-            loginTimeLast timestamp NOT NULL,
-            expireTime timestamp NOT NULL,
+            loginTimeLast timestamp DEFAULT NULL,
+            expireTime timestamp DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
