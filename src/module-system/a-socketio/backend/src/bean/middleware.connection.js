@@ -24,7 +24,8 @@ module.exports = ctx => {
       const user = ctx.state.user;
       const online = await ctx.bean.userOnline.heartBeat({ user: user.agent || user.op });
       if (!online) {
-        ctx.socket.close();
+        // close: false, so as to close friendly.
+        ctx.socket.disconnect(false);
       }
     }
 
