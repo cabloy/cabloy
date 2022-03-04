@@ -19,7 +19,10 @@ export default {
     // visibilitychange
     Vue.prototype.$meta.util.visibilityChange.$on('visibilityChange', visibilityState => {
       if (visibilityState) {
-        this._io.connect();
+        const user = Vue.prototype.$meta.store.state.auth.user.op;
+        if (!user.anonymous) {
+          this._io.connect();
+        }
       } else {
         this._io.disconnect();
       }
