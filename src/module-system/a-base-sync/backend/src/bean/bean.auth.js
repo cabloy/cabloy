@@ -223,8 +223,7 @@ module.exports = ctx => {
 
     _getAuthRedisKey({ user }) {
       const userAgent = user.agent || user.op;
-      const scene = ctx.headers['x-scene'] || ctx.query['x-scene'];
-      return `${ctx.instance.id}:${userAgent.id}:${scene}:${user.provider.id}`;
+      return `${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
     }
 
     async serializeUser({ user }) {
@@ -293,8 +292,10 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     if (ctx.url.indexOf(_config.callbackURL) === -1) {
       if (ctx.request.query && ctx.request.query.returnTo) {
         ctx.session.returnTo = ctx.request.query.returnTo;
+        ctx.session['x-scene'] = ctx.request.query['x-scene'];
       } else {
         delete ctx.session.returnTo; // force to delete
+        delete ctx.session['x-scene'];
       }
     }
 

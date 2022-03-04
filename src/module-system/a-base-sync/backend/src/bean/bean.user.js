@@ -465,6 +465,10 @@ module.exports = ctx => {
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
       };
+      const scene = ctx.headers['x-scene'] || ctx.request.query['x-scene'] || ctx.session['x-scene'];
+      if (scene) {
+        verifyUser.provider.scene = scene;
+      }
 
       // columns
       const columns = ['userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale'];

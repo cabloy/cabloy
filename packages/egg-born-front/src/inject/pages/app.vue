@@ -390,6 +390,7 @@ export default {
       url = this.$meta.util.combineQueries(url, {
         state: state || 'login',
         returnTo: this.$meta.util.combineHash(hash),
+        'x-scene': this.$meta.config.scene,
       });
       // go
       if (toApiPage) {
