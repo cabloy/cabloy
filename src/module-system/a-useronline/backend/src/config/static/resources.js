@@ -19,7 +19,7 @@ module.exports = app => {
       atomName: 'Online Users',
       atomStaticKey: 'listUserOnline',
       atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
@@ -28,19 +28,19 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
-    {
-      atomName: 'Online Users(History)',
-      atomStaticKey: 'listUserOnlineHistory',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
-      resourceType: 'a-base:menu',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        atomClassName: 'userOnlineHistory',
-        atomAction: 'read',
-      }),
-      resourceRoles: 'template.system',
-    },
+    // {
+    //   atomName: 'Online Users(History)',
+    //   atomStaticKey: 'listUserOnlineHistory',
+    //   atomRevision: 0,
+    //   atomCategoryId: 'a-base:menu.List',
+    //   resourceType: 'a-base:menu',
+    //   resourceConfig: JSON.stringify({
+    //     module: moduleInfo.relativeName,
+    //     atomClassName: 'userOnlineHistory',
+    //     atomAction: 'read',
+    //   }),
+    //   resourceRoles: 'template.system',
+    // },
   ];
   return resources;
 };
