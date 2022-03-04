@@ -2,14 +2,18 @@ import screenfull from 'screenfull';
 export default {
   data() {
     return {
-      isFullscreen: false,
+      isFullscreen: screenfull.isEnabled && screenfull.isFullscreen,
       isEnabled: screenfull.isEnabled,
     };
   },
   created() {
     if (this.isEnabled) {
       screenfull.on('change', () => {
-        this.isFullscreen = screenfull.isFullscreen;
+        const isFullscreen = screenfull.isFullscreen;
+        if (this.isFullscreen !== isFullscreen) {
+          this.isFullscreen = isFullscreen;
+          this.$emit('change', isFullscreen);
+        }
       });
     }
   },
