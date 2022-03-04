@@ -31,7 +31,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
             clientIP varchar(50) DEFAULT NULL,
-            loginTime timestamp NOT NULL,
+            loginTime timestamp DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

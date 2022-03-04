@@ -4,6 +4,10 @@ module.exports = ctx => {
     module: moduleInfo.relativeName,
     atomClassName: 'userOnline',
   };
+  const __atomClassUserOnlineHistory = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'userOnlineHistory',
+  };
   class UserOnline extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'userOnline');
@@ -36,7 +40,6 @@ module.exports = ctx => {
 
     async _insertUserOnline({ user, data }) {
       const userId = user.id;
-
       // check if exists
       const item = await this.modelUserOnline.get({ userId });
       if (item) {
@@ -65,9 +68,39 @@ module.exports = ctx => {
             loginCount: 1,
             ...data,
           },
+          options: {
+            ignoreValidate: true,
+          },
           user,
         });
       }
+    }
+
+    async _insertUserOnlineHistory({ user, data }) {
+      const userId = user.id;
+      //   atomName
+      const atomName = user.userName;
+      //   create
+      const atomKey = await ctx.bean.atom.create({
+        atomClass: __atomClassUserOnlineHistory,
+        user,
+        item: {
+          atomName,
+        },
+      });
+      //   write
+      await ctx.bean.atom.write({
+        key: atomKey,
+        item: {
+          userId,
+          clientIP: data.clientIPLast,
+          loginTime: data.loginTimeLast,
+        },
+        options: {
+          ignoreValidate: true,
+        },
+        user,
+      });
     }
   }
   return UserOnline;
