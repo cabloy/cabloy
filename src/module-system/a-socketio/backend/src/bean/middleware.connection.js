@@ -21,7 +21,11 @@ module.exports = ctx => {
     }
 
     async _onHeartBeat() {
-      // console.log('----heartbeat:', this._next);
+      const user = ctx.state.user;
+      const online = await ctx.bean.userOnline.heartBeat({ user: user.agent || user.op });
+      if (!online) {
+        ctx.socket.close();
+      }
     }
 
     async _next({ next, user, socketId }) {

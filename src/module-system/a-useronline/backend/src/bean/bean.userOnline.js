@@ -38,6 +38,21 @@ module.exports = ctx => {
       await this._insertUserOnlineHistory({ user, data });
     }
 
+    async heartBeat({ user }) {
+      const userId = user.id;
+      const item = await this.modelUserOnline.get({ userId });
+      if (!item) return false;
+      if (item.expireTime <= new Date()) return false;
+      // Renewal
+      const configExpired = this.configUserOnline.userOnline.expired;
+      const expireTime = new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
+      await this.modelUserOnline.update({
+        id: item.id,
+        expireTime,
+      });
+      return true;
+    }
+
     async _insertUserOnline({ user, data }) {
       const userId = user.id;
       // check if exists
