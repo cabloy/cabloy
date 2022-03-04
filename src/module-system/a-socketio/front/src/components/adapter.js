@@ -17,12 +17,11 @@ export default {
       this._io.reset();
     });
     // visibilitychange
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        this._io.disconnect();
-      }
-      if (document.visibilityState === 'visible') {
+    Vue.prototype.$meta.util.visibilityChange.$on('visibilityChange', visibilityState => {
+      if (visibilityState) {
         this._io.connect();
+      } else {
+        this._io.disconnect();
       }
     });
   },
