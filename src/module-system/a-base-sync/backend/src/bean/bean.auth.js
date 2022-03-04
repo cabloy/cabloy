@@ -276,8 +276,8 @@ module.exports = ctx => {
       // redis auth
       const key = this._getAuthRedisKey({ user });
       await this.redisAuth.del(key);
-      // user online
-      await ctx.bean.userOnline.unRegister({ user });
+      // should not clear user online
+      // await ctx.bean.userOnline.unRegister({ user });
     }
   }
 
