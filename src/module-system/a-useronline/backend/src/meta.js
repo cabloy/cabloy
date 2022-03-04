@@ -10,11 +10,13 @@ module.exports = app => {
         userOnline: {
           info: {
             bean: 'userOnline',
-            title: 'UserOnline',
+            title: 'Online Users',
             tableName: 'aUserOnline',
             language: false,
-            category: true,
-            tag: true,
+            category: false,
+            tag: false,
+            simple: true,
+            history: false,
           },
           actions: {},
           validator: 'userOnline',
@@ -43,7 +45,7 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aUserOnline: 'createdAt,updatedAt,atomId',
+        aUserOnline: 'createdAt,updatedAt,atomId,userId,loginTimeLast,expireTime',
       },
     },
   };

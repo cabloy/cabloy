@@ -11,7 +11,11 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
-            description varchar(255) DEFAULT NULL,
+            userId int(11) DEFAULT '0',
+            loginCount int(11) DEFAULT '0',
+            clientIPLast varchar(50) DEFAULT NULL,
+            loginTimeLast timestamp NOT NULL,
+            expireTime timestamp NOT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -23,13 +27,7 @@ module.exports = app => {
       if (options.version === 1) {
         // add role rights
         const roleRights = [
-          { roleName: 'authenticated', action: 'create' },
-          { roleName: 'authenticated', action: 'read', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'write', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'clone', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'deleteBulk' },
-          { roleName: 'authenticated', action: 'exportBulk' },
+          //
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });

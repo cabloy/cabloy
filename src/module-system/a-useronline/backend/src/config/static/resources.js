@@ -2,21 +2,21 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
     // menu
+    // {
+    //   atomName: 'Create UserOnline',
+    //   atomStaticKey: 'createUserOnline',
+    //   atomRevision: 0,
+    //   atomCategoryId: 'a-base:menu.Create',
+    //   resourceType: 'a-base:menu',
+    //   resourceConfig: JSON.stringify({
+    //     module: moduleInfo.relativeName,
+    //     atomClassName: 'userOnline',
+    //     atomAction: 'create',
+    //   }),
+    //   resourceRoles: 'authenticated',
+    // },
     {
-      atomName: 'Create UserOnline',
-      atomStaticKey: 'createUserOnline',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
-      resourceType: 'a-base:menu',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        atomClassName: 'userOnline',
-        atomAction: 'create',
-      }),
-      resourceRoles: 'authenticated',
-    },
-    {
-      atomName: 'UserOnline List',
+      atomName: 'Online Users',
       atomStaticKey: 'listUserOnline',
       atomRevision: 0,
       atomCategoryId: 'a-base:menu.List',
@@ -26,7 +26,7 @@ module.exports = app => {
         atomClassName: 'userOnline',
         atomAction: 'read',
       }),
-      resourceRoles: 'authenticated',
+      resourceRoles: 'template.system',
     },
   ];
   return resources;
