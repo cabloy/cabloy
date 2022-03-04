@@ -254,7 +254,7 @@ module.exports = ctx => {
       }
       await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
       // register user online
-      await ctx.bean.userOnline.register({ user: user.agent || user.op });
+      await ctx.bean.userOnline.register({ user });
       // ok
       return _user;
     }

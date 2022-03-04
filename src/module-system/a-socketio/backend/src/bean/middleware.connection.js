@@ -22,7 +22,7 @@ module.exports = ctx => {
 
     async _onHeartBeat() {
       const user = ctx.state.user;
-      const online = await ctx.bean.userOnline.heartBeat({ user: user.agent || user.op });
+      const online = await ctx.bean.userOnline.heartBeat({ user });
       if (!online) {
         // close: false, so as to close friendly.
         ctx.socket.disconnect(false);

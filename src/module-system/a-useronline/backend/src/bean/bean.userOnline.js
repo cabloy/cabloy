@@ -23,6 +23,7 @@ module.exports = ctx => {
     }
 
     async register({ user }) {
+      user = user.agent || user.op;
       // expireTime
       const configExpired = this.configUserOnline.userOnline.expired;
       const expireTime = new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
@@ -39,6 +40,7 @@ module.exports = ctx => {
     }
 
     async heartBeat({ user }) {
+      user = user.agent || user.op;
       const userId = user.id;
       const item = await this.modelUserOnline.get({ userId });
       if (!item) return false;
