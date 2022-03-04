@@ -24,6 +24,23 @@ module.exports = app => {
             validator: 'userOnlineSearch',
           },
         },
+        userOnlineHistory: {
+          info: {
+            bean: 'userOnlineHistory',
+            title: 'Online Users(History)',
+            tableName: 'aUserOnlineHistory',
+            language: false,
+            category: false,
+            tag: false,
+            simple: true,
+            history: false,
+          },
+          actions: {},
+          validator: 'userOnlineHistory',
+          search: {
+            validator: 'userOnlineHistorySearch',
+          },
+        },
       },
       statics: {
         'a-base.resource': {
@@ -39,6 +56,12 @@ module.exports = app => {
         userOnlineSearch: {
           schemas: 'userOnlineSearch',
         },
+        userOnlineHistory: {
+          schemas: 'userOnlineHistory',
+        },
+        userOnlineHistorySearch: {
+          schemas: 'userOnlineHistorySearch',
+        },
       },
       keywords: {},
       schemas,
@@ -46,6 +69,7 @@ module.exports = app => {
     index: {
       indexes: {
         aUserOnline: 'createdAt,updatedAt,atomId,userId,loginTimeLast,expireTime',
+        aUserOnlineHistory: 'createdAt,updatedAt,atomId,userId,loginTime',
       },
     },
   };

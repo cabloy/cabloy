@@ -1,5 +1,4 @@
 module.exports = {
   'Online Users': '在线用户',
-  'Create UserOnline': '新建UserOnline',
-  'UserOnline List': 'UserOnline列表',
+  'Online Users(History)': '在线用户（历史）',
 };
