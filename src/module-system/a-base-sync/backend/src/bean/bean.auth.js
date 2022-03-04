@@ -272,9 +272,12 @@ module.exports = ctx => {
     }
 
     async _clearRedisAuth({ user }) {
-      if (!user) return;
+      if (!user || user.agent.anonymous) return;
+      // redis auth
       const key = this._getAuthRedisKey({ user });
       await this.redisAuth.del(key);
+      // user online
+      await ctx.bean.userOnline.unRegister({ user });
     }
   }
 

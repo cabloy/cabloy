@@ -39,6 +39,21 @@ module.exports = ctx => {
       await this._insertUserOnlineHistory({ user, data });
     }
 
+    async unRegister({ user }) {
+      user = user.agent || user.op;
+      const userId = user.id;
+      await this.modelUserOnline.update(
+        {
+          expireTime: new Date(),
+        },
+        {
+          where: {
+            userId,
+          },
+        }
+      );
+    }
+
     async heartBeat({ user }) {
       user = user.agent || user.op;
       const userId = user.id;
