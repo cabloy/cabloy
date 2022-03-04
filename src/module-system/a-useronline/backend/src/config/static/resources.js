@@ -16,8 +16,8 @@ module.exports = app => {
     //   resourceRoles: 'authenticated',
     // },
     {
-      atomName: 'Online Users',
-      atomStaticKey: 'listUserOnline',
+      atomName: 'Users Status',
+      atomStaticKey: 'listUserStatus',
       atomRevision: 0,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
