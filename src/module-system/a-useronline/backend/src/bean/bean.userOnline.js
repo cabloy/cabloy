@@ -38,21 +38,6 @@ module.exports = ctx => {
       }
     }
 
-    async unRegister({ user }) {
-      user = user.agent || user.op;
-      const userId = user.id;
-      await this.modelUserOnline.update(
-        {
-          expireTime: new Date(),
-        },
-        {
-          where: {
-            userId,
-          },
-        }
-      );
-    }
-
     async heartBeat({ user }) {
       user = user.agent || user.op;
       const userId = user.id;
@@ -65,6 +50,39 @@ module.exports = ctx => {
         expireTime: this._combineExpireTime(),
       });
       return true;
+    }
+
+    async kickout({ user }) {
+      // redis
+      await ctx.bean.auth._clearRedisAuthAll({ user });
+      // unRegister
+      await this._offline({ user });
+      // publish
+      await this.sendMessageSystemLogout({ user, type: 'all' });
+    }
+
+    async _offline({ user }) {
+      const userId = user.id;
+      await this.modelUserOnline.update({ expireTime: new Date() }, { where: { userId } });
+    }
+
+    async sendMessageSystemLogout({ user, type, provider }) {
+      const userId = user.id;
+      // content
+      const content = {
+        code: 401,
+        message: 'logout',
+        type,
+      };
+      if (provider) {
+        content.provider = provider;
+      }
+      // send message-system
+      const message = {
+        userIdTo: userId,
+        content,
+      };
+      ctx.bean.io.publishMessageSystem({ message });
     }
 
     _combineExpireTime() {

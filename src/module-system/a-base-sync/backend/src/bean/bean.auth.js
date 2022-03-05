@@ -275,16 +275,11 @@ module.exports = ctx => {
     async _sendMessageSystemLogout({ user }) {
       if (!user || user.op.anonymous) return;
       // send message-system
-      const message = {
-        userIdTo: user.op.id, // should use user.op
-        content: {
-          code: 401,
-          message: 'logout',
-          type: 'provider',
-          provider: user.provider,
-        },
-      };
-      ctx.bean.io.publishMessageSystem({ message });
+      await ctx.bean.userOnline.sendMessageSystemLogout({
+        user: user.op, // should use user.op
+        type: 'provider',
+        provider: user.provider,
+      });
     }
 
     async _clearRedisAuth({ user }) {
@@ -292,8 +287,10 @@ module.exports = ctx => {
       // redis auth
       const key = this._getAuthRedisKey({ user });
       await this.redisAuth.del(key);
-      // should not clear user online
-      // await ctx.bean.userOnline.unRegister({ user });
+    }
+
+    async _clearRedisAuthAll({ user }) {
+      const userId = user.id;
     }
   }
 
