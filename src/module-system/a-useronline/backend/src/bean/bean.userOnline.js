@@ -83,6 +83,7 @@ module.exports = ctx => {
           user,
           item: {
             atomName: user.userName,
+            userId,
           },
         });
         item = {

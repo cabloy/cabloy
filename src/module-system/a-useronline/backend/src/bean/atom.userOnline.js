@@ -6,6 +6,7 @@ module.exports = app => {
       // add userOnline
       const res = await this.ctx.model.userOnline.insert({
         atomId: key.atomId,
+        userId: item.userId,
       });
       // return key
       return { atomId: key.atomId, itemId: res.insertId };
