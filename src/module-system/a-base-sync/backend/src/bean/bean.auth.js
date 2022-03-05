@@ -224,7 +224,11 @@ module.exports = ctx => {
 
     _getAuthRedisKey({ user }) {
       const userAgent = user.agent || user.op;
-      return `${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
+      return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
+    }
+
+    _getAuthRedisKeyPattern({ user, keyPrefix }) {
+      return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
     }
 
     async serializeUser({ user }) {
@@ -290,7 +294,13 @@ module.exports = ctx => {
     }
 
     async _clearRedisAuthAll({ user }) {
-      const userId = user.id;
+      const keyPrefix = this.redisAuth.options.keyPrefix;
+      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
+      const keys = await this.redisAuth.keys(keyPattern);
+      for (const fullKey of keys) {
+        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
+        await this.redisAuth.del(key);
+      }
     }
   }
 

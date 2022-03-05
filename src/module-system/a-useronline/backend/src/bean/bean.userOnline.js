@@ -55,7 +55,7 @@ module.exports = ctx => {
     async kickOut({ user }) {
       // redis
       await ctx.bean.auth._clearRedisAuthAll({ user });
-      // unRegister
+      // offline
       await this._offline({ user });
       // publish
       await this.sendMessageSystemLogout({ user, type: 'all' });
