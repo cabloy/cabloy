@@ -1,8 +1,8 @@
-// const demo = require('./service/demo.js');
+const userOnline = require('./service/userOnline.js');
 
 module.exports = app => {
   const services = {
-    // demo,
+    userOnline,
   };
   return services;
 };
