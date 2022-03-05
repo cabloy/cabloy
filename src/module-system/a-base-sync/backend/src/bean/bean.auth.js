@@ -276,7 +276,7 @@ module.exports = ctx => {
       if (!user || user.op.anonymous) return;
       // send message-system
       const message = {
-        userIdsTo: user.op.id, // should use user.op
+        userIdTo: user.op.id, // should use user.op
         content: {
           code: 401,
           message: 'logout',

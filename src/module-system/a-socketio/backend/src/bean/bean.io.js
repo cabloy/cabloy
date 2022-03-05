@@ -702,7 +702,7 @@ module.exports = ctx => {
     }
 
     async publishMessageSystem({ message }) {
-      await ctx.bean.io.publish({
+      await this.publish({
         path: '/a/socketio/messageSystem',
         message,
         messageClass: {
