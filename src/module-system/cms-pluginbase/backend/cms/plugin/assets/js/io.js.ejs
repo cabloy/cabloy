@@ -20,6 +20,8 @@
           }
         }
       });
+      // reset
+      self._io.reset();
     },
     subscribe({ subscribes, socketId }) {
       return util.performAction({

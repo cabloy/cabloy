@@ -221,7 +221,7 @@ export default adapter => {
       if (type === 'self' || type === 'all') {
         this._logout();
       } else if (type === 'provider') {
-        const user = adapter.user;
+        const user = adapter.user();
         if (user.op.anonymous) {
           this._logout();
         } else {
@@ -276,6 +276,13 @@ export default adapter => {
       this._subscribesPath = {};
 
       this.disconnect();
+
+      const user = adapter.user();
+      if (!user.op.anonymous) {
+        this.subscribe('/a/socketio/messageSystem', ({ message }) => {
+          this._onMessageSystem(JSON.parse(message.content));
+        });
+      }
     },
   };
   adapter.initialize(io);

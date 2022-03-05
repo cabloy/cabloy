@@ -27,6 +27,8 @@ export default {
         this._io.disconnect();
       }
     });
+    // reset
+    this._io.reset();
   },
   subscribe({ subscribes, socketId }) {
     return Vue.prototype.$meta.api.post('/a/socketio/subscribe', { subscribes, socketId });
