@@ -213,7 +213,7 @@ export default adapter => {
     },
     _onMessageSystem(data) {
       if (data.code === 401) {
-        this._onMessageSystem_401();
+        this._onMessageSystem_401(data);
       }
     },
     _onMessageSystem_401(data) {
