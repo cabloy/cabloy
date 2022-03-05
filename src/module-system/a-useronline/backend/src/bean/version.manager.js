@@ -33,7 +33,7 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
-            clientIP varchar(50) DEFAULT NULL,
+            onlineIP varchar(50) DEFAULT NULL,
             onlineTime timestamp DEFAULT NULL,
             isLogin int(11) DEFAULT '0',
             PRIMARY KEY (id)

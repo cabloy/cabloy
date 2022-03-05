@@ -22,21 +22,20 @@ module.exports = ctx => {
       return ctx.config.module(moduleInfo.relativeName);
     }
 
-    async register({ user, login }) {
+    async register({ user, isLogin }) {
       user = user.agent || user.op;
-      // expireTime
-      const configExpired = this.configUserOnline.userOnline.expired;
-      const expireTime = new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
       // data
       const data = {
-        clientIPLast: ctx.ip,
-        loginTimeLast: new Date(),
-        expireTime,
+        onlineIPLast: ctx.ip,
+        onlineTimeLast: new Date(),
+        expireTime: this._combineExpireTime(),
       };
       // userOnline
-      await this._insertUserOnline({ user, data });
-      // userOnlineHistory
-      await this._insertUserOnlineHistory({ user, data });
+      const res = await this._insertUserOnline({ user, data, isLogin });
+      if (res) {
+        // userOnlineHistory
+        await this._insertUserOnlineHistory({ user, data, isLogin });
+      }
     }
 
     async unRegister({ user }) {
@@ -61,54 +60,64 @@ module.exports = ctx => {
       if (!item) return false;
       if (item.expireTime <= new Date()) return false;
       // Renewal
-      const configExpired = this.configUserOnline.userOnline.expired;
-      const expireTime = new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
       await this.modelUserOnline.update({
         id: item.id,
-        expireTime,
+        expireTime: this._combineExpireTime(),
       });
       return true;
     }
 
-    async _insertUserOnline({ user, data }) {
+    _combineExpireTime() {
+      const configExpired = this.configUserOnline.userOnline.expired;
+      return new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
+    }
+
+    async _insertUserOnline({ user, data, isLogin }) {
       const userId = user.id;
       // check if exists
-      const item = await this.modelUserOnline.get({ userId });
-      if (item) {
-        // only modified: loginCount,clientIPLast,loginTimeLast,expireTime
-        await this.modelUserOnline.update({
-          id: item.id,
-          loginCount: item.loginCount + 1,
-          ...data,
-        });
-      } else {
-        //   atomName
-        const atomName = user.userName;
+      let item = await this.modelUserOnline.get({ userId });
+      if (!item) {
         //   create
         const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassUserOnline,
           user,
           item: {
-            atomName,
+            atomName: user.userName,
           },
         });
-        //   write
-        await ctx.bean.atom.write({
-          key: atomKey,
-          item: {
-            userId,
-            loginCount: 1,
-            ...data,
-          },
-          options: {
-            ignoreValidate: true,
-          },
-          user,
-        });
+        item = {
+          id: atomKey.itemId,
+          loginCount: 0,
+          onlineCount: 0,
+          expireTime: 0,
+        };
       }
+      // isLogin
+      if (isLogin) {
+        data = {
+          loginCount: item.loginCount + 1,
+          loginIPLast: data.onlineIPLast,
+          loginTimeLast: data.onlineTimeLast,
+          onlineCount: item.onlineCount + 1,
+          ...data,
+        };
+      } else {
+        // check expireTime
+        if (item.expireTime > new Date()) return false;
+        data = {
+          onlineCount: item.onlineCount + 1,
+          ...data,
+        };
+      }
+      // update
+      await this.modelUserOnline.update({
+        id: item.id,
+        ...data,
+      });
+      return true;
     }
 
-    async _insertUserOnlineHistory({ user, data }) {
+    async _insertUserOnlineHistory({ user, data, isLogin }) {
       const userId = user.id;
       //   atomName
       const atomName = user.userName;
@@ -125,8 +134,9 @@ module.exports = ctx => {
         key: atomKey,
         item: {
           userId,
-          clientIP: data.clientIPLast,
-          loginTime: data.loginTimeLast,
+          onlineIP: data.onlineIPLast,
+          onlineTime: data.onlineTimeLast,
+          isLogin,
         },
         options: {
           ignoreValidate: true,
