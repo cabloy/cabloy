@@ -3,7 +3,7 @@ module.exports = app => {
     async kickOut() {
       const res = await this.ctx.service.userOnline.kickOut({
         key: this.ctx.request.body.key,
-        user: this.ctx.state.user.op,
+        // user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
