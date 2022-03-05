@@ -745,7 +745,7 @@ module.exports = ctx => {
       // parse action code
       action = ctx.bean.atomAction.parseActionCode({
         action,
-        atomClass: _atomClass,
+        atomClass,
       });
       // check right
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
