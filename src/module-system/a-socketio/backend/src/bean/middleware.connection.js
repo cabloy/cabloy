@@ -4,7 +4,12 @@ module.exports = ctx => {
     async execute(options, next) {
       // cache userId/socketId for disconnect
       const user = ctx.state.user && ctx.state.user.op;
-      if (!user || user.anonymous) return ctx.throw(401);
+      if (!user || user.anonymous) {
+        // return ctx.throw(401);
+        ctx.socket.emit('message-system', { code: 401, message: 'logout' });
+        return;
+      }
+      // register
       const iid = user.iid;
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);

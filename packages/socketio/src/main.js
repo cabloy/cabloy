@@ -126,14 +126,18 @@ export default adapter => {
           // next
           this._doSubscribesWaiting();
         })
-        .catch(() => {
+        .catch(err => {
           // done
           this._subscribesWaitingDoing = false;
-          // timeout
-          this._subscribesWaitingTimeoutId = window.setTimeout(() => {
-            this._subscribesWaitingTimeoutId = 0;
-            this._doSubscribesWaiting();
-          }, 2000);
+          if (err.code === 401) {
+            this._logout();
+          } else {
+            // timeout
+            this._subscribesWaitingTimeoutId = window.setTimeout(() => {
+              this._subscribesWaitingTimeoutId = 0;
+              this._doSubscribesWaiting();
+            }, 2000);
+          }
         });
     },
     _doUnsubscribesWaiting() {
@@ -167,14 +171,18 @@ export default adapter => {
           // next
           this._doUnsubscribesWaiting();
         })
-        .catch(() => {
+        .catch(err => {
           // done
           this._unsubscribesWaitingDoing = false;
-          // timeout
-          this._unsubscribesWaitingTimeoutId = window.setTimeout(() => {
-            this._unsubscribesWaitingTimeoutId = 0;
-            this._doUnsubscribesWaiting();
-          }, 2000);
+          if (err.code === 401) {
+            this._logout();
+          } else {
+            // timeout
+            this._unsubscribesWaitingTimeoutId = window.setTimeout(() => {
+              this._unsubscribesWaitingTimeoutId = 0;
+              this._doUnsubscribesWaiting();
+            }, 2000);
+          }
         });
     },
     _getSocket() {
@@ -183,10 +191,15 @@ export default adapter => {
         this._socket.on('connect', this._onConnect.bind(this));
         this._socket.on('disconnect', this._onDisconnect.bind(this));
         this._socket.on('message', this._onMessage.bind(this));
-        this._socket.on('connect_error', this._onConnectError.bind(this));
         this._socket.on('message-system', this._onMessageSystem.bind(this));
       }
       return this._socket;
+    },
+    _logout() {
+      this.disconnect();
+      if (adapter.logout) {
+        adapter.logout();
+      }
     },
     _onMessage(data) {
       const _itemPath = this._subscribesPath[data.path];
@@ -200,10 +213,7 @@ export default adapter => {
     },
     _onMessageSystem(data) {
       if (data.code === 401) {
-        this.disconnect();
-        if (adapter.logout) {
-          adapter.logout();
-        }
+        this._logout();
       }
     },
     _onConnect() {
@@ -217,9 +227,6 @@ export default adapter => {
         }
         this._doSubscribesWaiting();
       }
-    },
-    _onConnectError(error) {
-      console.log(error);
     },
     _onDisconnect(reason) {
       this._subscribesWaiting = {};
@@ -241,9 +248,16 @@ export default adapter => {
     },
     reset() {
       this._unsubscribesWaiting = {};
+      this._unsubscribesWaitingTimeoutId = 0;
+      this._unsubscribesWaitingDoing = false;
+
       this._subscribesWaiting = {};
+      this._subscribesWaitingTimeoutId = 0;
+      this._subscribesWaitingDoing = false;
+
       this._subscribesAll = {};
       this._subscribesPath = {};
+
       this.disconnect();
     },
   };
