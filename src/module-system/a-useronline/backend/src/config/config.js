@@ -3,7 +3,7 @@ module.exports = appInfo => {
   const config = {};
   // userOnline
   config.userOnline = {
-    expired: 10 * 60 * 1000, // 10 minutes
+    expired: 20 * 60 * 1000, // 20 minutes
   };
   return config;
 };

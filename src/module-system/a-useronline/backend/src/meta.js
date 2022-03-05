@@ -68,8 +68,8 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aUserOnline: 'createdAt,updatedAt,atomId,userId,loginTimeLast,expireTime',
-        aUserOnlineHistory: 'createdAt,updatedAt,atomId,userId,loginTime',
+        aUserOnline: 'createdAt,updatedAt,atomId,userId,onlineTimeLast,expireTime',
+        aUserOnlineHistory: 'createdAt,updatedAt,atomId,userId,onlineTime',
       },
     },
   };

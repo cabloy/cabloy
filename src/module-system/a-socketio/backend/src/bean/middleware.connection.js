@@ -9,6 +9,9 @@ module.exports = ctx => {
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);
 
+      // register user online
+      await ctx.bean.userOnline.register({ user, login: false });
+      // heartbeat
       const onHeartBeat = this._onHeartBeat.bind(this);
       ctx.socket.conn.on('heartbeat', onHeartBeat);
       // next

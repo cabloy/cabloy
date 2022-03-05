@@ -13,8 +13,11 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
             loginCount int(11) DEFAULT '0',
-            clientIPLast varchar(50) DEFAULT NULL,
+            loginIPLast varchar(50) DEFAULT NULL,
             loginTimeLast timestamp DEFAULT NULL,
+            onlineCount int(11) DEFAULT '0',
+            onlineIPLast varchar(50) DEFAULT NULL,
+            onlineTimeLast timestamp DEFAULT NULL,
             expireTime timestamp DEFAULT NULL,
             PRIMARY KEY (id)
           )
@@ -31,7 +34,8 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
             clientIP varchar(50) DEFAULT NULL,
-            loginTime timestamp DEFAULT NULL,
+            onlineTime timestamp DEFAULT NULL,
+            isLogin int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

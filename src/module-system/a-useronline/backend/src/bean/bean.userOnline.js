@@ -22,7 +22,7 @@ module.exports = ctx => {
       return ctx.config.module(moduleInfo.relativeName);
     }
 
-    async register({ user }) {
+    async register({ user, login }) {
       user = user.agent || user.op;
       // expireTime
       const configExpired = this.configUserOnline.userOnline.expired;
