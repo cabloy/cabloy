@@ -46,11 +46,18 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // add role rights
-        const roleRights = [
+        let roleRights = [
+          //
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+          // custom
+          { roleName: 'system', action: 'kickOut', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });
+        //
+        roleRights = [
           //
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
       }
     }

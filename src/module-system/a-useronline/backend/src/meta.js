@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
@@ -18,7 +19,17 @@ module.exports = app => {
             simple: true,
             history: false,
           },
-          actions: {},
+          actions: {
+            kickOut: {
+              code: 101,
+              title: 'ActionKickOut',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { f7: ':outline:log-out-outline' },
+              // enableOnOpened: true,
+              stage: 'formal',
+            },
+          },
           validator: 'userOnline',
           search: {
             validator: 'userOnlineSearch',
