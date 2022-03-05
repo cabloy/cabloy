@@ -56,4 +56,8 @@ export default {
     }
     return ioc(url, opts);
   },
+  logout() {
+    // login
+    Vue.prototype.$meta.vueLayout.openLogin();
+  },
 };

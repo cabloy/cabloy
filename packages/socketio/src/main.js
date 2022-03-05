@@ -183,6 +183,8 @@ export default adapter => {
         this._socket.on('connect', this._onConnect.bind(this));
         this._socket.on('disconnect', this._onDisconnect.bind(this));
         this._socket.on('message', this._onMessage.bind(this));
+        this._socket.on('connect_error', this._onConnectError.bind(this));
+        this._socket.on('message-system', this._onMessageSystem.bind(this));
       }
       return this._socket;
     },
@@ -193,6 +195,14 @@ export default adapter => {
         const _subscribe = this._subscribesAll[subscribeId];
         if (_subscribe && _subscribe.cbMessage) {
           _subscribe.cbMessage({ message: data.message });
+        }
+      }
+    },
+    _onMessageSystem(data) {
+      if (data.code === 401) {
+        this.disconnect();
+        if (adapter.logout) {
+          adapter.logout();
         }
       }
     },
@@ -208,10 +218,13 @@ export default adapter => {
         this._doSubscribesWaiting();
       }
     },
+    _onConnectError(error) {
+      console.log(error);
+    },
     _onDisconnect(reason) {
       this._subscribesWaiting = {};
       // reconnect
-      if (reason === 'io server disconnect') {
+      if (reason === 'io server disconnect' || reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
         this._socket.connect();
       }
