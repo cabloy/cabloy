@@ -52,7 +52,7 @@ module.exports = ctx => {
       return true;
     }
 
-    async kickout({ user }) {
+    async kickOut({ user }) {
       // redis
       await ctx.bean.auth._clearRedisAuthAll({ user });
       // unRegister
