@@ -6,7 +6,7 @@ module.exports = ctx => {
       const user = ctx.state.user && ctx.state.user.op;
       if (!user || user.anonymous) {
         // return ctx.throw(401);
-        ctx.socket.emit('message-system', { code: 401, message: 'logout' });
+        ctx.socket.emit('message-system', { code: 401, message: 'logout', type: 'self' });
         return;
       }
       // register
@@ -32,7 +32,7 @@ module.exports = ctx => {
       const user = ctx.state.user;
       const online = await ctx.bean.userOnline.heartBeat({ user });
       if (!online) {
-        ctx.socket.emit('message-system', { code: 401, message: 'logout' });
+        ctx.socket.emit('message-system', { code: 401, message: 'logout', type: 'self' });
         // close the underlying connection
         // ctx.socket.disconnect(true);
       }

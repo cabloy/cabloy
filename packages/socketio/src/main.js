@@ -213,7 +213,24 @@ export default adapter => {
     },
     _onMessageSystem(data) {
       if (data.code === 401) {
+        this._onMessageSystem_401();
+      }
+    },
+    _onMessageSystem_401(data) {
+      const type = data.type;
+      if (type === 'self' || type === 'all') {
         this._logout();
+      } else if (type === 'provider') {
+        const user = adapter.user;
+        if (user.op.anonymous) {
+          this._logout();
+        } else {
+          const providerCurrent = user.provider;
+          const providerMessage = data.provider;
+          if (providerCurrent.scene === providerMessage.scene && providerCurrent.id === providerMessage.id) {
+            this._logout();
+          }
+        }
       }
     },
     _onConnect() {

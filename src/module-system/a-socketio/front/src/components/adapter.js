@@ -56,6 +56,9 @@ export default {
     }
     return ioc(url, opts);
   },
+  user() {
+    return Vue.prototype.$meta.store.state.auth.user;
+  },
   logout() {
     // login
     Vue.prototype.$meta.vueLayout.openLogin();

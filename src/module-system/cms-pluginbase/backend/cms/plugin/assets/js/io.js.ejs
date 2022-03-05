@@ -15,7 +15,9 @@
           self._io.disconnect();
         }
         if (document.visibilityState === 'visible') {
-          self._io.connect();
+          if (!util.user.op.anonymous) {
+            self._io.connect();
+          }
         }
       });
     },
@@ -41,10 +43,16 @@
         autoConnect: false,
       };
       opts.query = {
-        'x-scene': 'web',
+        'x-scene': util.user.provider.scene,
         'x-clientid': util.clientId,
       };
       return window.io(url, opts);
+    },
+    user() {
+      return util.user;
+    },
+    logout() {
+      location.reload(true);
     },
   };
 
