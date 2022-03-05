@@ -38,6 +38,7 @@ module.exports = ctx => {
 
     async logout() {
       const user = ctx.state.user;
+      await this._sendMessageSystemLogout({ user });
       await this._clearRedisAuth({ user });
       await ctx.logout();
       await ctx.bean.user.loginAsAnonymous();
@@ -269,6 +270,21 @@ module.exports = ctx => {
       if (token !== user.token) return null;
       // ready
       return user;
+    }
+
+    async _sendMessageSystemLogout({ user }) {
+      if (!user || user.op.anonymous) return;
+      // send message-system
+      const message = {
+        userIdsTo: user.op.id, // should use user.op
+        content: {
+          code: 401,
+          message: 'logout',
+          type: 'provider',
+          provider: user.provider,
+        },
+      };
+      ctx.bean.io.publishMessageSystem({ message });
     }
 
     async _clearRedisAuth({ user }) {

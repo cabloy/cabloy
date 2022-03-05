@@ -700,6 +700,17 @@ module.exports = ctx => {
         data: { path, message, workerId, socketId },
       });
     }
+
+    async publishMessageSystem({ message }) {
+      await ctx.bean.io.publish({
+        path: '/a/socketio/messageSystem',
+        message,
+        messageClass: {
+          module: moduleInfo.relativeName,
+          messageClassName: 'messageSystem',
+        },
+      });
+    }
   }
   return IO;
 };
