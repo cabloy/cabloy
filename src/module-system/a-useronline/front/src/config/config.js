@@ -25,19 +25,39 @@ export default {
                       },
                     },
                     {
-                      dataIndex: 'description',
-                      title: 'Description',
+                      dataIndex: 'onlineStatus',
+                      title: 'Status',
+                      align: 'left',
+                      params: {
+                        computed: {
+                          expression: 'record._onlineStatusTitleLocale',
+                        },
+                      },
+                    },
+                    {
+                      dataIndex: 'loginCount',
+                      title: 'LoginCount',
                       align: 'left',
                     },
                     {
-                      dataIndex: 'atomCreatedAt',
-                      title: 'Created Time',
+                      dataIndex: 'onlineCount',
+                      title: 'OnlineCount',
                       align: 'left',
                     },
                     {
-                      dataIndex: 'atomUpdatedAt',
-                      title: 'Modification Time',
+                      dataIndex: 'onlineIPLast',
+                      title: 'OnlineIPLast',
                       align: 'left',
+                    },
+                    {
+                      dataIndex: 'onlineTimeLast',
+                      title: 'OnlineTimeLast',
+                      align: 'center',
+                      params: {
+                        dateFormat: {
+                          lines: true,
+                        },
+                      },
                     },
                   ],
                 },
