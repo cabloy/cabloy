@@ -70,6 +70,7 @@ module.exports = function (cabloy) {
     __login_dingtalk(options) {
       return new Promise((resolve, reject) => {
         // 小程序登录
+        // eslint-disable-next-line
         dd.getAuthCode({
           success: res => {
             const scene = cabloy.config.base.scene;

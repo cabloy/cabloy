@@ -6,6 +6,7 @@ module.exports = function (cabloy, options) {
 
   // systemInfo
   const _wxSystemInfo = typeof wx !== 'undefined' && wx.getSystemInfoSync();
+  // eslint-disable-next-line
   const _ddSysmtemInfo = typeof dd !== 'undefined' && dd.getSystemInfoSync();
 
   // container

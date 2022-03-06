@@ -42,6 +42,7 @@ module.exports = function (cabloy) {
         };
         // request
         if (cabloy.data.dingtalk) {
+          // eslint-disable-next-line
           dd.httpRequest(options);
         } else {
           wx.request(options);
