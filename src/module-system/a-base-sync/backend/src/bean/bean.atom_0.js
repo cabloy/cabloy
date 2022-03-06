@@ -135,13 +135,14 @@ module.exports = ctx => {
     async select({ atomClass, options, user, pageForce = true, count = 0 }) {
       // atomClass
       let _atomClass;
+      let _moduleInfo;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
         _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        _moduleInfo = mparse.parseInfo(atomClass.module);
       }
       // selectBefore
       if (atomClass) {
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
         const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
         await ctx.executeBean({
           beanModule: _moduleInfo.relativeName,
@@ -180,7 +181,6 @@ module.exports = ctx => {
       // select items
       if (!count) {
         if (atomClass) {
-          const _moduleInfo = mparse.parseInfo(atomClass.module);
           const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
           await ctx.executeBean({
             beanModule: _moduleInfo.relativeName,

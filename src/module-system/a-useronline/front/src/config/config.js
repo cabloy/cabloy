@@ -6,7 +6,7 @@ export default {
           info: {
             ordersBase: [
               //
-              { name: 'onlineStatus', title: 'Status', by: 'desc', tableAlias: '', default: true },
+              { name: 'onlineStatus', title: 'Status', by: 'desc', tableAlias: 'f', default: true },
             ],
           },
           layouts: {

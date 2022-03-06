@@ -22,8 +22,19 @@ module.exports = app => {
       return item;
     }
 
+    async selectBefore({ atomClass, options, user }) {
+      // super
+      await super.selectBefore({ atomClass, options, user });
+      // orders
+      if (!options.orders) return;
+      for (const order of options.orders) {
+        if (order[0] === 'f.onlineStatus') {
+          order[0] = 'f.expireTime';
+        }
+      }
+    }
+
     async select({ atomClass, options, items, user }) {
-      console.log(options);
       // super
       await super.select({ atomClass, options, items, user });
       // meta
