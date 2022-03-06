@@ -249,6 +249,9 @@ module.exports = app => {
         res = await fn({ ctx, bean, context });
       } else {
         fn = fn || 'execute';
+        if (!bean[fn]) {
+          throw new Error(`bean method not found: ${bean.__beanFullName}:${fn}`);
+        }
         res = await bean[fn](context);
       }
       return res;

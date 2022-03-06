@@ -139,6 +139,17 @@ module.exports = ctx => {
         atomClass = await ctx.bean.atomClass.get(atomClass);
         _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       }
+      // selectBefore
+      if (atomClass) {
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, options, user },
+          fn: 'selectBefore',
+        });
+      }
       // tableName
       let tableName = '';
       if (_atomClass) {

@@ -23,6 +23,7 @@ module.exports = app => {
     }
 
     async select({ atomClass, options, items, user }) {
+      console.log(options);
       // super
       await super.select({ atomClass, options, items, user });
       // meta
