@@ -26,6 +26,9 @@ describe('test/controller/test.test.js', () => {
       .send({
         atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
       });
+    if (result.body.code !== 0) {
+      console.log(result);
+    }
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
 

@@ -67,6 +67,10 @@ module.exports = app => {
       return item;
     }
 
+    async selectBefore(/* { atomClass, options, user }*/) {
+      // donothing
+    }
+
     async select({ atomClass, options, items, user }) {
       if (items.length === 0) return;
       // atomClass
