@@ -6,12 +6,13 @@ module.exports = function (cabloy) {
         options.url = `${cabloy.config.api.baseURL}/api${options.url}`;
       }
       // jwt
+      const jwt = cabloy.util.getJwtAuthorization();
       if (cabloy.data.dingtalk) {
         if (!options.headers) options.headers = {};
-        options.headers.Authorization = `Bearer ${cabloy.data.jwt || ''}`;
+        options.headers.Authorization = `Bearer ${jwt}`;
       } else {
         if (!options.header) options.header = {};
-        options.header.Authorization = `Bearer ${cabloy.data.jwt || ''}`;
+        options.header.Authorization = `Bearer ${jwt}`;
       }
       // promise
       return new Promise((resolve, reject) => {
@@ -30,9 +31,9 @@ module.exports = function (cabloy) {
             error.message = res.data.message;
             return reject(error);
           }
-          // check jwt
-          if (res.data['eb-jwt']) {
-            cabloy.data.jwt = res.data['eb-jwt'];
+          // check jwt oauth
+          if (res.data['eb-jwt-oauth']) {
+            cabloy.data.oauth = res.data['eb-jwt-oauth'];
           }
           resolve(res.data.data);
         };

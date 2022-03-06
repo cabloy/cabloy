@@ -1,7 +1,7 @@
 module.exports = function (cabloy, options) {
   let _instance = null;
   let _user = null;
-  let _jwt = null;
+  let _oauth = null;
   let _locale = null;
 
   // systemInfo
@@ -34,11 +34,11 @@ module.exports = function (cabloy, options) {
     get wxwork() {
       return _container === 'wxwork';
     },
-    get jwt() {
-      return _jwt;
+    get oauth() {
+      return _oauth;
     },
-    set jwt(value) {
-      _jwt = value;
+    set oauth(value) {
+      _oauth = value;
     },
     get user() {
       return _user;

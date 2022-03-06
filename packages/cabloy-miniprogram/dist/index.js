@@ -21,12 +21,14 @@ module.exports = function (cabloy) {
         options.url = "".concat(cabloy.config.api.baseURL, "/api").concat(options.url);
       }
 
+      var jwt = cabloy.util.getJwtAuthorization();
+
       if (cabloy.data.dingtalk) {
         if (!options.headers) options.headers = {};
-        options.headers.Authorization = "Bearer ".concat(cabloy.data.jwt || '');
+        options.headers.Authorization = "Bearer ".concat(jwt);
       } else {
         if (!options.header) options.header = {};
-        options.header.Authorization = "Bearer ".concat(cabloy.data.jwt || '');
+        options.header.Authorization = "Bearer ".concat(jwt);
       }
 
       return new Promise(function (resolve, reject) {
@@ -47,8 +49,8 @@ module.exports = function (cabloy) {
             return reject(_error);
           }
 
-          if (res.data['eb-jwt']) {
-            cabloy.data.jwt = res.data['eb-jwt'];
+          if (res.data['eb-jwt-oauth']) {
+            cabloy.data.oauth = res.data['eb-jwt-oauth'];
           }
 
           resolve(res.data.data);
@@ -112,7 +114,7 @@ module.exports = function (cabloy, options) {
 module.exports = function (cabloy, options) {
   var _instance = null;
   var _user = null;
-  var _jwt = null;
+  var _oauth = null;
   var _locale = null;
 
   var _wxSystemInfo = typeof wx !== 'undefined' && wx.getSystemInfoSync();
@@ -150,12 +152,12 @@ module.exports = function (cabloy, options) {
       return _container === 'wxwork';
     },
 
-    get jwt() {
-      return _jwt;
+    get oauth() {
+      return _oauth;
     },
 
-    set jwt(value) {
-      _jwt = value;
+    set oauth(value) {
+      _oauth = value;
     },
 
     get user() {
@@ -274,7 +276,7 @@ module.exports = function (app, options) {
 /***/ 233:
 /***/ ((module) => {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 module.exports = function (cabloy) {
   return {
@@ -438,6 +440,12 @@ module.exports = function (cabloy) {
       }
 
       return to;
+    },
+    getJwtAuthorization: function getJwtAuthorization() {
+      var oauth = cabloy.data.oauth;
+      if (!oauth) return '';
+      oauth = JSON.parse(oauth);
+      return oauth.expireTime - Date.now() > 120 * 1000 ? oauth.accessToken : oauth.refreshToken;
     }
   };
 };
