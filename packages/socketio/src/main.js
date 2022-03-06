@@ -83,8 +83,7 @@ export default adapter => {
       delete this._subscribesAll[subscribeId];
 
       if (Object.keys(this._subscribesAll).length === 0) {
-        const _socket = this._getSocket();
-        _socket.disconnect();
+        this.disconnect();
       }
     },
     _doSubscribesWaiting() {
@@ -188,10 +187,10 @@ export default adapter => {
     _getSocket() {
       if (!this._socket) {
         this._socket = adapter.socket();
-        this._socket.on('connect', this._onConnect.bind(this));
-        this._socket.on('disconnect', this._onDisconnect.bind(this));
-        this._socket.on('message', this._onMessage.bind(this));
-        this._socket.on('message-system', this._onMessageSystem.bind(this));
+        this._socket.on('connect', this._onConnectBind);
+        this._socket.on('disconnect', this._onDisconnectBind);
+        this._socket.on('message', this._onMessageBind);
+        this._socket.on('message-system', this._onMessageSystemBind);
       }
       return this._socket;
     },
@@ -236,7 +235,7 @@ export default adapter => {
     _onConnect() {
       this._subscribesWaiting = {};
       if (Object.keys(this._subscribesPath).length === 0) {
-        this._socket.disconnect();
+        this.disconnect();
       } else {
         // -> waitings
         for (const path in this._subscribesPath) {
@@ -250,7 +249,7 @@ export default adapter => {
       // reconnect
       if (reason === 'io server disconnect' || reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
-        this._socket.connect();
+        this.connect();
       }
     },
     connect() {
@@ -277,6 +276,15 @@ export default adapter => {
 
       this.disconnect();
 
+      // should clear socket
+      if (this._socket) {
+        this._socket.off('connect', this._onConnectBind);
+        this._socket.off('disconnect', this._onDisconnectBind);
+        this._socket.off('message', this._onMessageBind);
+        this._socket.off('message-system', this._onMessageSystemBind);
+        this._socket = null;
+      }
+
       const user = adapter.user();
       if (!user.op.anonymous) {
         this.subscribe('/a/socketio/messageSystem', ({ message }) => {
@@ -285,6 +293,12 @@ export default adapter => {
       }
     },
   };
+  // bind
+  io._onConnectBind = io._onConnect.bind(io);
+  io._onDisconnectBind = io._onDisconnect.bind(io);
+  io._onMessageBind = io._onMessage.bind(io);
+  io._onMessageSystemBind = io._onMessageSystem.bind(io);
+  // initialize
   adapter.initialize(io);
   return io;
 };
