@@ -141,7 +141,13 @@ export default function (Vue) {
       return moment(date).fromNow();
     },
     formatDateTime(date, fmt) {
-      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      if (!fmt || fmt === true) {
+        fmt = 'YYYY-MM-DD HH:mm:ss';
+      } else if (fmt === 'date') {
+        fmt = 'YYYY-MM-DD';
+      } else if (fmt === 'time') {
+        fmt = 'HH:mm:ss';
+      }
       date = date || new Date();
       if (typeof date !== 'object') date = new Date(date);
       return moment(date).format(fmt);

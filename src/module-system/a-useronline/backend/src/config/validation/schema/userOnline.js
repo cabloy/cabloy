@@ -7,13 +7,39 @@ module.exports = app => {
       atomName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Name',
+        ebTitle: 'Username',
         notEmpty: true,
       },
-      description: {
+      loginCount: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'LoginCount',
+      },
+      onlineCount: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'OnlineCount',
+      },
+      onlineIPLast: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'OnlineIPLast',
+      },
+      onlineTimeLast: {
+        type: ['object', 'null'],
+        ebType: 'text',
+        ebTitle: 'OnlineTimeLast',
+        ebParams: {
+          dateFormat: true,
+        },
+      },
+      expireTime: {
+        type: ['object', 'null'],
+        ebType: 'text',
+        ebTitle: 'Status',
+        ebParams: {
+          dateFormat: true,
+        },
       },
     },
   };
