@@ -62,6 +62,7 @@ export default {
       layoutPrefer: null,
       layoutPreferNotification: null,
       layoutPreferSwitchButton: null,
+      layoutInstance: null,
     };
   },
   created() {
@@ -92,8 +93,11 @@ export default {
       // auth echo init
       this._authEchoInit();
     },
-    getLayout() {
-      return this.$refs.layout;
+    setLayoutInstance(layoutInstance) {
+      this.layoutInstance = layoutInstance;
+    },
+    getLayoutInstance() {
+      return this.layoutInstance;
     },
     _clearLayoutPreferNotification() {
       this.layoutPrefer = null;
@@ -197,7 +201,7 @@ export default {
     setLayout(layout) {
       // check if switch
       if (this.layout === layout) {
-        const component = this.getLayout();
+        const component = this.getLayoutInstance();
         if (component) component.onResize();
       } else {
         // load module layout
@@ -342,7 +346,7 @@ export default {
       return this.$meta.config.layout.items[layout];
     },
     _getLayoutModuleConfig() {
-      return this.getLayout().layoutConfig;
+      return this.getLayoutInstance().layoutConfig;
     },
     _getUrlLogin() {
       const configLayout = this._getLayoutModuleConfig();
@@ -396,7 +400,7 @@ export default {
       if (toApiPage) {
         location.assign(url);
       } else {
-        this.getLayout().navigate(url);
+        this.getLayoutInstance().navigate(url);
       }
     },
     openLogin(routeTo, options) {
@@ -416,7 +420,7 @@ export default {
       let url = this._getUrlLogin();
       url = query ? this.$meta.util.combineQueries(url, query) : url;
       // navigate
-      this.getLayout().navigate(url, options);
+      this.getLayoutInstance().navigate(url, options);
     },
     onClickTryAgain() {
       this.error = null;

@@ -94,16 +94,18 @@ export default {
       return this.$store.state.auth.user;
     },
   },
-  beforeDestroy() {
-    // click
-    this.$f7.off('click', this._handleClicks);
-  },
   created() {
     this.__saveLayoutConfig = this.$meta.util.debounce(() => {
       this.__saveLayoutConfigNow();
     }, 1000);
   },
+  beforeDestroy() {
+    this.$meta.vueApp.setLayoutInstance(null);
+    // click
+    this.$f7.off('click', this._handleClicks);
+  },
   mounted() {
+    this.$meta.vueApp.setLayoutInstance(this);
     this.$f7ready(() => {
       this.__init().then(() => {
         // click

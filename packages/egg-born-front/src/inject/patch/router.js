@@ -50,7 +50,7 @@ export default function (Vue) {
   Object.defineProperty(Vue.prototype.$meta, 'vueLayout', {
     get() {
       const app = Vue.prototype.$meta.vueApp;
-      return app ? app.getLayout() : null;
+      return app ? app.getLayoutInstance() : null;
     },
   });
 }

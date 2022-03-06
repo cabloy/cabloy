@@ -56,7 +56,11 @@ export default {
       this.__saveLayoutConfigNow();
     }, 1000);
   },
+  beforeDestroy() {
+    this.$meta.vueApp.setLayoutInstance(null);
+  },
   mounted() {
+    this.$meta.vueApp.setLayoutInstance(this);
     this.$f7ready(() => {
       this.__init().then(() => {
         this.$nextTick(() => {
