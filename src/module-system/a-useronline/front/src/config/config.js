@@ -15,21 +15,19 @@ export default {
                       component: {
                         module: 'a-baselayout',
                         name: 'listLayoutTableCellAtomName',
+                        options: {
+                          props: {
+                            mapper: {
+                              avatar: true,
+                            },
+                          },
+                        },
                       },
                     },
                     {
                       dataIndex: 'description',
                       title: 'Description',
                       align: 'left',
-                    },
-                    {
-                      dataIndex: 'userName',
-                      title: 'Creator',
-                      align: 'left',
-                      component: {
-                        module: 'a-baselayout',
-                        name: 'listLayoutTableCellUserName',
-                      },
                     },
                     {
                       dataIndex: 'atomCreatedAt',

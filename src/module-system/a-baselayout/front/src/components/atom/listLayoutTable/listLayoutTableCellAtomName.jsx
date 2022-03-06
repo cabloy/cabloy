@@ -15,6 +15,9 @@ export default {
     info: {
       type: Object,
     },
+    mapper: {
+      type: Object,
+    },
   },
   data() {
     return {};
@@ -24,6 +27,18 @@ export default {
     onItemClick(event) {
       return this.layoutManager.data.adapter.item_onActionView(event, this.info.record);
     },
+    _renderMedia() {
+      let avatarFieldName = this.mapper && this.mapper.avatar;
+      if (!avatarFieldName) return;
+      if (avatarFieldName === true) {
+        avatarFieldName = undefined;
+      }
+      return this.layoutManager.data.adapter.item_renderMedia(
+        this.info.record,
+        'avatar avatar24 eb-vertical-align',
+        avatarFieldName
+      );
+    },
   },
   render() {
     const item = this.info.record;
@@ -32,11 +47,14 @@ export default {
     const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
     // domSummary
     const domSummary = <div class="atomName-summary">{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>;
+    // domMedia
+    const domMedia = this._renderMedia();
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
             <eb-link propsOnPerform={event => this.onItemClick(event)}>
+              {domMedia}
               {this.layoutManager.data.adapter.item_getAtomName(item)}
             </eb-link>
           </div>
