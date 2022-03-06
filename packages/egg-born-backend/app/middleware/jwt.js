@@ -132,7 +132,6 @@ module.exports = (options, app) => {
       const oauth = __combineJwtTokens(app, options, token);
       if (!ctx.response.body) ctx.response.body = {};
       ctx.response.body['eb-jwt-oauth'] = oauth;
-      console.log('----------------------------------:', oauth);
       // clear response header
       ctx.res.removeHeader('set-cookie');
     }
