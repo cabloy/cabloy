@@ -42,6 +42,8 @@ export default {
     // opts
     const opts = {
       autoConnect: false,
+      withCredentials: true,
+      transports: ['websocket'],
     };
     // scene
     opts.query = {

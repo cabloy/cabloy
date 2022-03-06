@@ -12,7 +12,8 @@ class BackendStartCommand extends StartCommand {
       context.argv.framework = utils.getModulePath('egg-born-backend');
     }
 
-    if (context.argv.sticky === undefined) context.argv.sticky = true;
+    // need not sticky
+    // if (context.argv.sticky === undefined) context.argv.sticky = true;
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/backend'];
 

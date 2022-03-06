@@ -43,6 +43,8 @@
       // opts
       const opts = {
         autoConnect: false,
+        withCredentials: true,
+        transports: ['websocket'],
       };
       opts.query = {
         'x-scene': util.user.provider.scene,
