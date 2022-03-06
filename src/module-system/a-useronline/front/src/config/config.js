@@ -3,6 +3,12 @@ export default {
     userOnline: {
       render: {
         list: {
+          info: {
+            ordersBase: [
+              //
+              { name: 'onlineStatus', title: 'Status', by: 'desc', tableAlias: '', default: true },
+            ],
+          },
           layouts: {
             table: {
               blocks: {

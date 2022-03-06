@@ -45,14 +45,19 @@ export default {
         };
       } else {
         // others
-        atomOrder = {
-          name: 'atomUpdatedAt',
-          by: 'desc',
-          tableAlias: '',
-        };
+        atomOrder = this._order_default_others();
       }
       // ok
       return atomOrder;
+    },
+    _order_default_others() {
+      const item = this.order_list.find(item => item.default);
+      if (item) return item;
+      return {
+        name: 'atomUpdatedAt',
+        by: 'desc',
+        tableAlias: '',
+      };
     },
     order_onPerformPopover(event) {
       const popover = this.$refs.order_popover.$el;
