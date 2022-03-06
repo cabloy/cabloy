@@ -174,7 +174,7 @@ export default {
           {!this.loggedIn && <div class="mine-block status">{this.$text('Not LoggedIn')}</div>}
           <f7-segmented strong tag="div" class="login">
             {this.inAgent && <eb-button propsOnPerform={this.onPerformSwitchOff}>{this.$text('Quit Agent')}</eb-button>}
-            {!this.loggedIn && <eb-link propsOnPerform={this.onPerformLogin}>{this.$text('Sign In')}</eb-link>}
+            {!this.loggedIn && <eb-button propsOnPerform={this.onPerformLogin}>{this.$text('Sign In')}</eb-button>}
             {this.loggedIn && <eb-button propsOnPerform={this.onPerformLogout}>{this.$text('Log Out')}</eb-button>}
           </f7-segmented>
         </div>
