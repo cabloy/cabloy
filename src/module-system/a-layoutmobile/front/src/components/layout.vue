@@ -1,8 +1,6 @@
 <script>
 import TabViews from './tabViews.vue';
 import Group from './group.vue';
-
-import Vue from 'vue';
 export default {
   meta: {
     global: false,
