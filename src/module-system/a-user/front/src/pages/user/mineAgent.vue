@@ -73,12 +73,9 @@ export default {
     onPerformLogin() {
       this.$meta.vueLayout.openLogin();
     },
-    onPerformLogout() {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('/a/base/auth/logout').then(() => {
-          this.$meta.vueApp.reload({ echo: true });
-        });
-      });
+    async onPerformLogout() {
+      await this.$view.dialog.confirm();
+      await this.$meta.vueApp.logout();
     },
     onClickAvatar() {
       if (this.user.agent.anonymous || this.user.op.id !== this.user.agent.id) return;

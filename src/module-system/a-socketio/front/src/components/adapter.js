@@ -63,6 +63,6 @@ export default {
   },
   logout() {
     // login
-    Vue.prototype.$meta.vueLayout.openLogin();
+    Vue.prototype.$meta.vueApp.reload({ echo: true });
   },
 };

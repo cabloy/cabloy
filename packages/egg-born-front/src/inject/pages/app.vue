@@ -422,6 +422,10 @@ export default {
       this.error = null;
       this._authEchoInit();
     },
+    async logout() {
+      await this.$api.post('/a/base/auth/logout');
+      this.reload({ echo: true });
+    },
   },
 };
 </script>
