@@ -93,49 +93,58 @@ module.exports = (options, app) => {
   options.secret = options.secret || app.config.keys.split(',')[0];
   options.getToken = __getToken;
   const _koajwt = koajwt(options);
-  return async function jwt(ctx, next) {
-    await _koajwt(ctx, async () => {
-      // cookies
-      let cookiesJwt;
-      const useJwt = __checkIfJWT(ctx);
-      // set cookie
-      if (useJwt) {
-        // clear cookie forcely
-        ctx.request.headers.cookie = '';
-        if (ctx.state.jwt) {
-          // check exp
-          const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
-          if (isValid) {
-            // token
-            const token = ctx.state.jwt.token;
-            const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
-            cookiesJwt = res ? res.value.toString() : undefined;
-            if (cookiesJwt) {
-              // set cookie
-              ctx.request.headers.cookie = cookiesJwt;
-            }
+  async function _handleNext(ctx, next) {
+    // cookies
+    let cookiesJwt;
+    const useJwt = __checkIfJWT(ctx);
+    // set cookie
+    if (useJwt) {
+      // clear cookie forcely
+      ctx.request.headers.cookie = '';
+      if (ctx.state.jwt) {
+        // check exp
+        const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
+        if (isValid) {
+          // token
+          const token = ctx.state.jwt.token;
+          const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
+          cookiesJwt = res ? res.value.toString() : undefined;
+          if (cookiesJwt) {
+            // set cookie
+            ctx.request.headers.cookie = cookiesJwt;
           }
         }
       }
-      // next
+    }
+    // next
+    await next();
+    // check cookie
+    if (useJwt && ctx.response.get('set-cookie') && ctx.response.type === 'application/json') {
+      // parse
+      const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
+      const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
+      // assign
+      Object.assign(cookies, cookiesNew);
+      // combine
+      const cookiesRes = __combineCookies(cookies);
+      // jwt
+      const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
+      const oauth = __combineJwtTokens(app, options, token);
+      if (!ctx.response.body) ctx.response.body = {};
+      ctx.response.body['eb-jwt-oauth'] = oauth;
+      console.log('-----:', oauth);
+      // clear response header
+      ctx.res.removeHeader('set-cookie');
+    }
+  }
+  return async function jwt(ctx, next) {
+    try {
+      await _koajwt(ctx, async () => {
+        await _handleNext(ctx, next);
+      });
+    } catch (err) {
+      // next to get anonymous token
       await next();
-      // check cookie
-      if (useJwt && ctx.response.get('set-cookie') && ctx.response.type === 'application/json') {
-        // parse
-        const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
-        const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
-        // assign
-        Object.assign(cookies, cookiesNew);
-        // combine
-        const cookiesRes = __combineCookies(cookies);
-        // jwt
-        const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
-        const oauth = __combineJwtTokens(app, options, token);
-        if (!ctx.response.body) ctx.response.body = {};
-        ctx.response.body['eb-jwt-oauth'] = oauth;
-        // clear response header
-        ctx.res.removeHeader('set-cookie');
-      }
-    });
+    }
   };
 };
