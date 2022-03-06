@@ -23,15 +23,19 @@ export default {
     return {};
   },
   created() {},
-  methods: {},
+  methods: {
+    _renderMedia() {
+      const avatarFieldName = (this.mapper && this.mapper.avatar) || undefined;
+      return this.layoutManager.data.adapter.item_renderMedia(
+        this.info.record,
+        'avatar avatar24 eb-vertical-align',
+        avatarFieldName
+      );
+    },
+  },
   render() {
     // avatar
-    const avatarFieldName = (this.mapper && this.mapper.avatar) || undefined;
-    const domMedia = this.layoutManager.data.adapter.item_renderMedia(
-      this.info.record,
-      'avatar avatar24 eb-vertical-align',
-      avatarFieldName
-    );
+    const domMedia = this._renderMedia();
     // name
     const userNameFieldName = (this.mapper && this.mapper.userName) || undefined;
     const userName = userNameFieldName ? this.info.record[userNameFieldName] : this.info.text;

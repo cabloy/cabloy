@@ -10,7 +10,7 @@ export default {
                   columns: [
                     {
                       dataIndex: 'atomName',
-                      title: 'Atom Name',
+                      title: 'Username',
                       align: 'left',
                       component: {
                         module: 'a-baselayout',
