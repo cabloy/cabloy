@@ -16,7 +16,7 @@ module.exports = app => {
         notEmpty: true,
       },
       onlineStatus: {
-        type: 'boolean',
+        type: 'number',
         ebType: 'dict',
         ebTitle: 'Status',
         ebParams: {
@@ -59,7 +59,7 @@ module.exports = app => {
     type: 'object',
     properties: {
       onlineStatus: {
-        type: 'boolean',
+        type: 'number',
         ebType: 'dict',
         ebTitle: 'Status',
         ebParams: {

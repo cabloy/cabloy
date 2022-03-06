@@ -26,10 +26,24 @@ module.exports = app => {
       // super
       await super.selectBefore({ atomClass, options, user });
       // orders
-      if (!options.orders) return;
       for (const order of options.orders) {
         if (order[0] === 'f.onlineStatus') {
           order[0] = 'f.expireTime';
+        }
+      }
+      // where
+      for (const key of Object.keys(options.where)) {
+        if (key === 'f.onlineStatus') {
+          let clause = options.where[key];
+          if (clause.val === 1) {
+            // offline
+            clause = { op: '<=', val: new Date() };
+          } else {
+            // online
+            clause = { op: '>', val: new Date() };
+          }
+          delete options.where['f.onlineStatus'];
+          options.where['f.expireTime'] = clause;
         }
       }
     }

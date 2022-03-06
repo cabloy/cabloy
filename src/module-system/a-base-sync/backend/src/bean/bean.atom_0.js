@@ -133,6 +133,9 @@ module.exports = ctx => {
 
     // select
     async select({ atomClass, options, user, pageForce = true, count = 0 }) {
+      if (!options) options = {};
+      if (!options.where) options.where = {};
+      if (!options.orders) options.orders = [];
       // atomClass
       let _atomClass;
       let _moduleInfo;
@@ -164,7 +167,6 @@ module.exports = ctx => {
           count,
         });
         // 'where' should append atomClassId, such as article/post using the same table
-        if (!options.where) options.where = {};
         options.where['a.atomClassId'] = atomClass.id;
       }
       // cms
