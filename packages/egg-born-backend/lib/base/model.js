@@ -69,7 +69,6 @@ module.exports = app => {
     '_query',
     '_where',
     '_selectColumns',
-    '_orders',
     '_limit',
   ].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
@@ -188,6 +187,18 @@ module.exports = app => {
       get() {
         return function () {
           return _formatValue(this.ctx.db, arguments[0]);
+        };
+      },
+    });
+  });
+
+  ['_orders'].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function () {
+          const value = arguments[0];
+          if (!value || !Array.isArray(value) || value.length === 0) return null;
+          return this.ctx.db[method].apply(this.ctx.db, arguments);
         };
       },
     });

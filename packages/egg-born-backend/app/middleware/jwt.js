@@ -68,6 +68,27 @@ function __combineCookies(cookies) {
   return cookiesArray.join('; ');
 }
 
+function __combineJwtToken(app, options, token, key) {
+  const payload = {
+    token,
+    exp: Date.now() + app.config.jwt.oauth[key].maxAge,
+  };
+  return jsonwebtoken.sign(payload, options.secret);
+}
+
+function __combineJwtTokens(app, options, token) {
+  app.config.jwt;
+  // accessToken
+  const accessToken = __combineJwtToken(app, options, token, 'accessToken');
+  // refreshToken
+  const refreshToken = __combineJwtToken(app, options, token, 'refreshToken');
+  return {
+    accessToken,
+    expiresIn: app.config.jwt.scene.accessToken.maxAge / 1000,
+    refreshToken,
+  };
+}
+
 module.exports = (options, app) => {
   options.secret = options.secret || app.config.keys.split(',')[0];
   options.getToken = __getToken;
@@ -107,13 +128,11 @@ module.exports = (options, app) => {
         Object.assign(cookies, cookiesNew);
         // combine
         const cookiesRes = __combineCookies(cookies);
-        // jwt payload
-        const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
-        const payload = { token };
         // jwt
-        const jwtEncode = jsonwebtoken.sign(payload, options.secret);
+        const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
+        const oauth = __combineJwtTokens(app, options, token);
         if (!ctx.response.body) ctx.response.body = {};
-        ctx.response.body['eb-jwt'] = jwtEncode;
+        ctx.response.body['eb-jwt-oauth'] = oauth;
         // clear response header
         ctx.res.removeHeader('set-cookie');
       }

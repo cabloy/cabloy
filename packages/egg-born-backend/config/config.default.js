@@ -50,7 +50,16 @@ module.exports = appInfo => {
     property: 'jwt',
     scene: {
       query: {
-        maxAge: 60 * 1000, // 60s
+        maxAge: 2 * 60 * 1000, // 2m
+      },
+    },
+    // not placed in jwt.scene for security
+    oauth: {
+      accessToken: {
+        maxAge: 2 * 60 * 60 * 1000, // 2h
+      },
+      refreshToken: {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30d
       },
     },
   };
