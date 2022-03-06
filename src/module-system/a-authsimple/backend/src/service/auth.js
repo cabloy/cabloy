@@ -140,6 +140,10 @@ module.exports = app => {
       // verify
       const verifyUser = await this.ctx.bean.user.verify({ state: 'associate', profileUser });
       if (!verifyUser) this.ctx.throw(403);
+
+      // force kickout all login records
+      await this.ctx.bean.userOnline.kickOut({ user: { id: userId } });
+
       // login now
       //   always no matter login/associate
       // await this.ctx.login(verifyUser);
