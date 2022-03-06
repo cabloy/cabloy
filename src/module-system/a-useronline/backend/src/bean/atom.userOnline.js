@@ -17,7 +17,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      this._getMeta(item);
+      await this._getMeta(item);
       // ok
       return item;
     }
@@ -27,7 +27,7 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
       // meta
       for (const item of items) {
-        this._getMeta(item);
+        await this._getMeta(item);
       }
     }
 
@@ -49,7 +49,20 @@ module.exports = app => {
       });
     }
 
-    _getMeta(item) {
+    async _translate(item) {
+      item.onlineStatus = item.expireTime <= new Date() ? 1 : 2;
+      const dictItem = await this.ctx.bean.dict.findItem({
+        dictKey: 'a-dictbooster:dictOnlineStatus',
+        code: item.onlineStatus,
+      });
+      item._onlineStatusTitle = dictItem.titleFull;
+      item._onlineStatusTitleLocale = dictItem.titleLocaleFull;
+    }
+
+    async _getMeta(item) {
+      // online status
+      await this._translate(item);
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary

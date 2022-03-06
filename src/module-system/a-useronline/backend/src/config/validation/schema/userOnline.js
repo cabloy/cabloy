@@ -20,7 +20,7 @@ module.exports = app => {
         ebType: 'dict',
         ebTitle: 'Status',
         ebParams: {
-          dictKey: 'a-useronline:dictOnlineStatus',
+          dictKey: 'a-dictbooster:dictOnlineStatus',
           mode: 'select',
         },
       },
@@ -63,7 +63,7 @@ module.exports = app => {
         ebType: 'dict',
         ebTitle: 'Status',
         ebParams: {
-          dictKey: 'a-useronline:dictOnlineStatus',
+          dictKey: 'a-dictbooster:dictOnlineStatus',
           mode: 'select',
         },
         ebOptionsBlankAuto: true,
