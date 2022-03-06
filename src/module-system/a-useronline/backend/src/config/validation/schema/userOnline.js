@@ -4,11 +4,30 @@ module.exports = app => {
   schemas.userOnline = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
+      },
+      onlineStatus: {
+        type: 'boolean',
+        ebType: 'dict',
+        ebTitle: 'Status',
+        ebParams: {
+          dictKey: 'a-useronline:dictOnlineStatus',
+          mode: 'select',
+        },
+      },
+      // Online Info
+      __groupOnlineInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Online Info',
       },
       loginCount: {
         type: 'number',
@@ -33,24 +52,21 @@ module.exports = app => {
           dateFormat: true,
         },
       },
-      expireTime: {
-        type: ['object', 'null'],
-        ebType: 'text',
-        ebTitle: 'Status',
-        ebParams: {
-          dateFormat: true,
-        },
-      },
     },
   };
   // userOnline search
   schemas.userOnlineSearch = {
     type: 'object',
     properties: {
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
+      onlineStatus: {
+        type: 'boolean',
+        ebType: 'dict',
+        ebTitle: 'Status',
+        ebParams: {
+          dictKey: 'a-useronline:dictOnlineStatus',
+          mode: 'select',
+        },
+        ebOptionsBlankAuto: true,
       },
     },
   };
