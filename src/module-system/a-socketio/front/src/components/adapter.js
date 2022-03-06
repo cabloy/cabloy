@@ -54,7 +54,7 @@ export default {
     }
     // jwt
     if (Vue.prototype.$meta.config.base.jwt) {
-      opts.query['eb-jwt'] = window.localStorage['eb-jwt'] || '';
+      opts.query['eb-jwt'] = Vue.prototype.$meta.util.getJwtAuthorization();
     }
     return ioc(url, opts);
   },

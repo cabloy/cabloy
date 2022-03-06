@@ -22,8 +22,8 @@ export default function (Vue) {
           return Promise.reject(error);
         }
         // check jwt
-        if (Vue.prototype.$meta.config.base.jwt && response.data['eb-jwt']) {
-          window.localStorage['eb-jwt'] = response.data['eb-jwt'];
+        if (Vue.prototype.$meta.config.base.jwt && response.data['eb-jwt-oauth']) {
+          window.localStorage['eb-jwt-oauth'] = JSON.stringify(response.data['eb-jwt-oauth']);
         }
         // return data
         return response.data.data;
@@ -43,7 +43,7 @@ export default function (Vue) {
         // jwt
         if (Vue.prototype.$meta.config.base.jwt) {
           if (!config.headers) config.headers = {};
-          config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
+          config.headers.Authorization = `Bearer ${Vue.prototype.$meta.util.getJwtAuthorization()}`;
         }
         // scene
         config.headers['x-scene'] = Vue.prototype.$meta.config.scene;

@@ -84,7 +84,7 @@ function __combineJwtTokens(app, options, token) {
   const refreshToken = __combineJwtToken(app, options, token, 'refreshToken');
   return {
     accessToken,
-    expiresIn: app.config.jwt.scene.accessToken.maxAge / 1000,
+    expireTime: Date.now() + app.config.jwt.oauth.accessToken.maxAge,
     refreshToken,
   };
 }
@@ -132,19 +132,25 @@ module.exports = (options, app) => {
       const oauth = __combineJwtTokens(app, options, token);
       if (!ctx.response.body) ctx.response.body = {};
       ctx.response.body['eb-jwt-oauth'] = oauth;
-      console.log('-----:', oauth);
+      console.log('----------------------------------:', oauth);
       // clear response header
       ctx.res.removeHeader('set-cookie');
     }
   }
   return async function jwt(ctx, next) {
+    let error;
     try {
       await _koajwt(ctx, async () => {
-        await _handleNext(ctx, next);
+        try {
+          await _handleNext(ctx, next);
+        } catch (err) {
+          error = err;
+        }
       });
     } catch (err) {
       // next to get anonymous token
       await next();
     }
+    if (error) throw error;
   };
 };
