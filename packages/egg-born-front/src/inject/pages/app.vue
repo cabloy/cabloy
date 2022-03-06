@@ -63,6 +63,7 @@ export default {
       layoutPreferNotification: null,
       layoutPreferSwitchButton: null,
       layoutInstance: null,
+      reloading: false,
     };
   },
   created() {
@@ -214,20 +215,25 @@ export default {
         });
       }
     },
-    reload(ops) {
-      // ops
-      ops = ops || { echo: false, hash: null };
-      // hash
-      if (ops.hash && ops.hash !== '/') this.$store.commit('auth/setHashInit', ops.hash);
-      // reload
-      this.$store.commit('auth/setReload', true);
-      // echo
-      if (ops.echo) {
-        this._authEcho().then(() => {
+    async reload(ops) {
+      if (this.reloading) return;
+      this.reloading = true;
+      try {
+        // ops
+        ops = ops || { echo: false, hash: null };
+        // hash
+        if (ops.hash && ops.hash !== '/') this.$store.commit('auth/setHashInit', ops.hash);
+        // reload
+        this.$store.commit('auth/setReload', true);
+        // echo
+        if (ops.echo) {
+          await this._authEcho();
           this._reloadLayout();
-        });
-      } else {
-        this._reloadLayout();
+        } else {
+          this._reloadLayout();
+        }
+      } finally {
+        this.reloading = false;
       }
     },
     async _authEchoInit() {
@@ -428,7 +434,7 @@ export default {
     },
     async logout() {
       await this.$api.post('/a/base/auth/logout');
-      this.reload({ echo: true });
+      await this.reload({ echo: true });
     },
   },
 };
