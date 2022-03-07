@@ -89,6 +89,10 @@ function __combineJwtTokens(app, options, token) {
   };
 }
 
+function __checkIfRefreshToken(app, jwt) {
+  return !jwt.exp || jwt.exp - Date.now() > app.config.jwt.oauth.accessToken.maxAge;
+}
+
 module.exports = (options, app) => {
   options.secret = options.secret || app.config.keys.split(',')[0];
   options.getToken = __getToken;
@@ -96,6 +100,7 @@ module.exports = (options, app) => {
   async function _handleNext(ctx, next) {
     // cookies
     let cookiesJwt;
+    let isRefreshToken;
     const useJwt = __checkIfJWT(ctx);
     // set cookie
     if (useJwt) {
@@ -105,6 +110,7 @@ module.exports = (options, app) => {
         // check exp
         const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
         if (isValid) {
+          isRefreshToken = __checkIfRefreshToken(app, ctx.state.jwt);
           // token
           const token = ctx.state.jwt.token;
           const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
@@ -119,7 +125,7 @@ module.exports = (options, app) => {
     // next
     await next();
     // check cookie
-    if (useJwt && ctx.response.get('set-cookie') && ctx.response.type === 'application/json') {
+    if (useJwt && ctx.response.type === 'application/json' && (isRefreshToken || ctx.response.get('set-cookie'))) {
       // parse
       const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
       const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
