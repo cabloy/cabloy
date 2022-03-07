@@ -48,7 +48,6 @@ module.exports = app => {
         // add role rights
         let roleRights = [
           //
-          { roleName: 'system', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           // custom
           { roleName: 'system', action: 'kickOut', scopeNames: 'authenticated' },
