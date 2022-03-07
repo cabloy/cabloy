@@ -77,13 +77,14 @@ export default {
   },
   methods: {
     onItemClick(item) {
-      const data = item.module
-        ? {
-            module: item.module,
-            atomClassName: item.atomClassName,
-            title: item.title,
-          }
-        : null;
+      let data = null;
+      if (item.module) {
+        data = {
+          module: item.module,
+          atomClassName: item.atomClassName,
+          title: item.title,
+        };
+      }
       this.contextCallback(200, data);
       this.$f7router.back();
     },
