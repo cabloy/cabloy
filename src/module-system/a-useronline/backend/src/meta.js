@@ -18,6 +18,7 @@ module.exports = app => {
             tag: false,
             simple: true,
             history: false,
+            inner: true,
           },
           actions: {
             kickOut: {
@@ -45,6 +46,7 @@ module.exports = app => {
             tag: false,
             simple: true,
             history: false,
+            inner: true,
           },
           actions: {},
           validator: 'userOnlineHistory',
