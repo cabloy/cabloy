@@ -100,6 +100,11 @@ module.exports = app => {
       const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
       await versionUpdate8._updateAtomsInstance(options);
     }
+
+    async update12AtomClasses(options) {
+      const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
+      await versionUpdate12._updateAtomClassesInstance(options);
+    }
   }
 
   return Version;

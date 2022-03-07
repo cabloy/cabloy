@@ -1,12 +1,41 @@
 module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate12 {
-    async run() {
+    async run(options) {
       // aAtomClass: add atomClassInner
       const sql = `
         ALTER TABLE aAtomClass
           ADD COLUMN atomClassInner int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
+
+      // update exists atomClasses
+      await this._updateAtomClasses(options);
+    }
+
+    async _updateAtomClasses(options) {
+      // all instances
+      const instances = await ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await ctx.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update12AtomClasses',
+        });
+      }
+    }
+
+    async _updateAtomClassesInstance() {
+      // atomClasses
+      const atomClasses = await ctx.model.atomClass.select();
+      for (const atomClass of atomClasses) {
+        const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        if (_atomClass.inner) {
+          await ctx.model.atomClass.update({ id: atomClass.id, atomClassInner: 1 });
+        }
+      }
     }
   }
 
