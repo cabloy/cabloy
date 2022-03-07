@@ -67,6 +67,7 @@ module.exports = ctx => {
         module,
         atomClassName,
         atomClassIdParent,
+        atomClassInner: atomClass.inner ? 1 : 0,
       };
       // insert
       const res2 = await this.model.insert(data);

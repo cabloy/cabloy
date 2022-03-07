@@ -31,7 +31,7 @@ module.exports = function (ctx) {
       // atomClasses
       const atomClasses = await ctx.model.atomClass.select();
       for (const atomClass of atomClasses) {
-        const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        const _atomClass = ctx.bean.base.atomClass(atomClass);
         if (_atomClass.inner) {
           await ctx.model.atomClass.update({ id: atomClass.id, atomClassInner: 1 });
         }
