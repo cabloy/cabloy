@@ -385,7 +385,16 @@ function createRequest({ method, url }, ctxCaller) {
 }
 
 function getDbOriginal(ctx) {
-  return ctx.app.mysql.__ebdb_test || ctx.app.mysql.get('__ebdb');
+  const mysqlConfig = ctx.app.mysql.__ebdb_test;
+  if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
+  let dbs = ctx.app.mysql.__ebdb_test_dbs;
+  if (!dbs) {
+    dbs = ctx.app.mysql.__ebdb_test_dbs = [];
+  }
+  if (!dbs[0]) {
+    dbs[0] = ctx.app.mysql.createInstance(mysqlConfig);
+  }
+  return dbs[0];
 }
 
 function createDatabase(ctx) {
