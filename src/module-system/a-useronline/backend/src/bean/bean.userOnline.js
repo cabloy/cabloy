@@ -22,6 +22,10 @@ module.exports = ctx => {
       return ctx.config.module(moduleInfo.relativeName);
     }
 
+    get configUserOnlineExpired() {
+      return this.configUserOnline.userOnline.expired;
+    }
+
     async register({ user, isLogin }) {
       user = user.agent || user.op;
       // data
@@ -43,12 +47,14 @@ module.exports = ctx => {
       const userId = user.id;
       const item = await this.modelUserOnline.get({ userId });
       if (!item) return false;
-      if (item.expireTime <= new Date()) return false;
+      if (item.expireTime <= Date.now()) return false;
       // Renewal
-      await this.modelUserOnline.update({
-        id: item.id,
-        expireTime: this._combineExpireTime(),
-      });
+      if (item.expireTime - Date.now() < this.configUserOnlineExpired / 2) {
+        await this.modelUserOnline.update({
+          id: item.id,
+          expireTime: this._combineExpireTime(),
+        });
+      }
       return true;
     }
 
@@ -86,8 +92,7 @@ module.exports = ctx => {
     }
 
     _combineExpireTime() {
-      const configExpired = this.configUserOnline.userOnline.expired;
-      return new Date(ctx.bean.util.moment().unix() * 1000 + configExpired);
+      return new Date(Date.now() + this.configUserOnlineExpired);
     }
 
     async _insertUserOnline({ user, data, isLogin }) {
@@ -122,7 +127,7 @@ module.exports = ctx => {
         };
       } else {
         // check expireTime
-        if (item.expireTime > new Date()) return false;
+        if (item.expireTime > Date.now()) return false;
         data = {
           onlineCount: item.onlineCount + 1,
           ...data,
