@@ -54,6 +54,8 @@ export default {
         const atomClassesModule = this.atomClassesAll[moduleName];
         for (const atomClassName in atomClassesModule) {
           const atomClass = atomClassesModule[atomClassName];
+          // check inner
+          if (atomClass.inner) continue;
           // check resource
           if (this.resource && !atomClass.resource) continue;
           // check simple
