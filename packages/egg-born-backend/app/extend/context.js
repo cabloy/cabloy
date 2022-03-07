@@ -16,6 +16,7 @@ const INNERACCESS = Symbol.for('Context#__inneraccess');
 const SUBDOMAIN = Symbol.for('Context#__subdomain');
 const CTXCALLER = Symbol.for('Context#__ctxcaller');
 const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
+const DBLEVEL = Symbol.for('Context#__dblevel');
 
 class DbTransaction {
   constructor(ctx) {
@@ -108,6 +109,12 @@ module.exports = {
   },
   set innerAccess(value) {
     this[INNERACCESS] = value;
+  },
+  get dbLevel() {
+    return this[DBLEVEL] || 0;
+  },
+  set dbLevel(value) {
+    this[DBLEVEL] = value;
   },
   get subdomain() {
     return typeof this[SUBDOMAIN] === 'undefined' ? this.subdomains.join('.') : this[SUBDOMAIN];
@@ -385,16 +392,17 @@ function createRequest({ method, url }, ctxCaller) {
 }
 
 function getDbOriginal(ctx) {
+  const dbLevel = ctx.dbLevel;
   const mysqlConfig = ctx.app.mysql.__ebdb_test;
   if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
   let dbs = ctx.app.mysql.__ebdb_test_dbs;
   if (!dbs) {
     dbs = ctx.app.mysql.__ebdb_test_dbs = [];
   }
-  if (!dbs[0]) {
-    dbs[0] = ctx.app.mysql.createInstance(mysqlConfig);
+  if (!dbs[dbLevel]) {
+    dbs[dbLevel] = ctx.app.mysql.createInstance(mysqlConfig);
   }
-  return dbs[0];
+  return dbs[dbLevel];
 }
 
 function createDatabase(ctx) {
