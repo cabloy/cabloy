@@ -183,6 +183,8 @@ module.exports = ctx => {
 
       let _itemField, _itemJoin;
 
+      let _atomClassWhere;
+
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
@@ -273,6 +275,13 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      if (tableName || star || label) {
+        _atomClassWhere = '';
+      } else {
+        _atomClassWhere = ' and b.atomClassInner=0';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -309,6 +318,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -377,6 +387,8 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+
+      let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
 
@@ -455,6 +467,10 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      // eslint-disable-next-line
+      _atomClassWhere = ' and b.atomClassInner=0';
+
       // fields
       let _selectFields;
       if (count) {
@@ -486,6 +502,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -559,6 +576,8 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+
+      let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
 
@@ -658,6 +677,13 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      if (tableName || star || label) {
+        _atomClassWhere = '';
+      } else {
+        _atomClassWhere = ' and b.atomClassInner=0';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -730,6 +756,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
