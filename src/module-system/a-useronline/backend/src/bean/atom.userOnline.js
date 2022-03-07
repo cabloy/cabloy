@@ -17,7 +17,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      await this._getMeta(item);
+      await this._getMeta(item, options);
       // ok
       return item;
     }
@@ -53,7 +53,7 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
       // meta
       for (const item of items) {
-        await this._getMeta(item);
+        await this._getMeta(item, options);
       }
     }
 
@@ -85,12 +85,17 @@ module.exports = app => {
       item._onlineStatusTitleLocale = dictItem.titleLocaleFull;
     }
 
-    async _getMeta(item) {
+    async _getMeta(item, options) {
+      // layout: list/table/mobile/pc
+      const layout = options && options.layout;
       // online status
       await this._translate(item);
       // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
+      if (layout !== 'table' && item.onlineStatus === 2) {
+        meta.flags.push(item._onlineStatusTitleLocale);
+      }
       // meta.summary
       meta.summary = item.description;
     }
