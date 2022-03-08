@@ -11,11 +11,13 @@ module.exports = function (app) {
     }
 
     push(info) {
+      if (!info.dbLevel) info.dbLevel = 1;
       this._queuePush(info, false);
     }
 
     // { locale, subdomain, module, queueName,queueNameSub,data }
     pushAsync(info) {
+      if (!info.dbLevel) throw new Error('should specify the info.dbLevel');
       return this._queuePush(info, true);
     }
 

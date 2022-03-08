@@ -8,6 +8,13 @@ const is = require('is-type-of');
 
 module.exports = ctx => {
   const util = {
+    queuePush(info) {
+      ctx.app.meta.queue.push(info);
+    },
+    queuePushAsync(info) {
+      if (!info.dbLevel) info.dbLevel = ctx.dbLevel + 1;
+      return ctx.app.meta.queue.pushAsync(info);
+    },
     async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
       return await ctx.app.meta.util.executeBean({
         locale: locale === undefined ? ctx.locale : locale,
