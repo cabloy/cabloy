@@ -218,6 +218,9 @@ module.exports = app => {
       }
       // ctxParent
       if (ctxParent) {
+        if (!ctxParent.state) {
+          ctxParent.state = {};
+        }
         for (const property of ['cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
