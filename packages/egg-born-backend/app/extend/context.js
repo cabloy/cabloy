@@ -117,15 +117,26 @@ module.exports = {
   },
 
   async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
-    return await this.app.meta.util.executeBean({
-      locale: locale === undefined ? this.locale : locale,
-      subdomain: subdomain === undefined ? this.subdomain : subdomain,
+    return await this.meta.util.executeBean({
+      locale,
+      subdomain,
       context,
       beanModule,
       beanFullName,
       transaction,
       fn,
-      ctxCaller: this,
+    });
+  },
+
+  async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+    return await this.meta.util.executeBeanIsolate({
+      locale,
+      subdomain,
+      context,
+      beanModule,
+      beanFullName,
+      transaction,
+      fn,
     });
   },
 

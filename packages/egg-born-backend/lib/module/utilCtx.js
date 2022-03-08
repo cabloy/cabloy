@@ -8,6 +8,30 @@ const is = require('is-type-of');
 
 module.exports = ctx => {
   const util = {
+    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+      return await ctx.app.meta.util.executeBean({
+        locale: locale === undefined ? ctx.locale : locale,
+        subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
+        context,
+        beanModule,
+        beanFullName,
+        transaction,
+        fn,
+        ctxCaller: ctx,
+      });
+    },
+    async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+      return await ctx.app.meta.util.executeBean({
+        locale: locale === undefined ? ctx.locale : locale,
+        subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
+        context,
+        beanModule,
+        beanFullName,
+        transaction,
+        fn,
+        ctxParent: ctx,
+      });
+    },
     /**
      * perform action of this or that module
      * @param  {string} options options
