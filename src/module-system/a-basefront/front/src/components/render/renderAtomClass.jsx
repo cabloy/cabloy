@@ -35,6 +35,8 @@ export default {
       const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
       // simple
       const simple = this.$meta.util.getProperty(property, 'ebParams.simple');
+      // inner
+      const inner = this.$meta.util.getProperty(property, 'ebParams.inner');
       return new Promise(resolve => {
         const url = '/a/basefront/atom/selectAtomClass';
         this.$view.navigate(url, {
@@ -44,6 +46,7 @@ export default {
               atomClass: this.atomClass,
               optional,
               simple,
+              inner,
             },
             callback: (code, data) => {
               if (code === 200) {

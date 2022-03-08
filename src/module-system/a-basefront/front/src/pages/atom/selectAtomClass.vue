@@ -44,6 +44,13 @@ export default {
     resource() {
       return this.contextParams.resource;
     },
+    inner() {
+      return this.contextParams.inner;
+    },
+    inner2() {
+      if (this.inner === undefined) return false;
+      return this.inner; // null/true/false
+    },
     atomClasses() {
       const atomClasses = [];
       if (this.optional) {
@@ -55,7 +62,7 @@ export default {
         for (const atomClassName in atomClassesModule) {
           const atomClass = atomClassesModule[atomClassName];
           // check inner
-          if (atomClass.inner) continue;
+          if (this.inner2 !== null && Boolean(this.inner2) !== Boolean(atomClass.inner)) continue;
           // check resource
           if (this.resource && !atomClass.resource) continue;
           // check simple
