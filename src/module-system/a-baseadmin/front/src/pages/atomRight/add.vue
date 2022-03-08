@@ -98,6 +98,7 @@ export default {
           params: {
             atomClass: this.atomClass,
             optional: true,
+            inner: null,
           },
           callback: (code, data) => {
             if (code === 200) {

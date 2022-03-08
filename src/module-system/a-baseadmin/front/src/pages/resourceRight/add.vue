@@ -49,6 +49,7 @@ export default {
             atomClass: this.atomClass,
             optional: true,
             resource: true,
+            inner: null,
           },
           callback: (code, data) => {
             if (code === 200) {
