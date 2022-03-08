@@ -9,11 +9,22 @@ const is = require('is-type-of');
 module.exports = ctx => {
   const util = {
     queuePush(info) {
-      ctx.app.meta.queue.push(info);
+      const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
+      ctx.app.meta.queue.push({
+        ...info,
+        dbLevel,
+      });
     },
-    queuePushAsync(info) {
-      if (!info.dbLevel) info.dbLevel = ctx.dbLevel + 1;
-      return ctx.app.meta.queue.pushAsync(info);
+    async queuePushAsync(info) {
+      const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
+      const locale = info.locale === undefined ? ctx.locale : info.locale;
+      const subdomain = info.subdomain === undefined ? ctx.subdomain : info.subdomain;
+      return await ctx.app.meta.queue.pushAsync({
+        ...info,
+        dbLevel,
+        locale,
+        subdomain,
+      });
     },
     async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
       return await ctx.app.meta.util.executeBean({
