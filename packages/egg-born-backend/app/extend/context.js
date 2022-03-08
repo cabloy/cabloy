@@ -132,6 +132,8 @@ module.exports = {
     this.innerAccess = true;
     // transaction
     this.dbMeta = value.dbMeta;
+    // dbLevel
+    this.dbLevel = value.dbLevel;
   },
   get cache() {
     return this.bean.cache;
