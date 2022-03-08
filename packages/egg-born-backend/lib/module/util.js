@@ -221,6 +221,11 @@ module.exports = app => {
         for (const property of ['cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
+        ctx.dbLevel = (ctxParent.dbLevel || 0) + 1;
+      }
+      // dbLevel
+      if (!ctxCaller && !ctxParent) {
+        ctx.dbLevel = 1;
       }
       // bean
       const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;
