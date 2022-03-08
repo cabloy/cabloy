@@ -276,11 +276,13 @@ module.exports = ctx => {
       }
 
       // atomClassInner
-      if (tableName || star || label) {
-        _atomClassWhere = '';
-      } else {
-        _atomClassWhere = ' and b.atomClassInner=0';
-      }
+      // eslint-disable-next-line
+      _atomClassWhere = '';
+      // if (tableName || star || label) {
+      //   _atomClassWhere = '';
+      // } else {
+      //   _atomClassWhere = ' and b.atomClassInner=0';
+      // }
 
       // fields
       let _selectFields;
