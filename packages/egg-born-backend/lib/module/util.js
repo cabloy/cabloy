@@ -334,7 +334,7 @@ module.exports = app => {
       return classMain;
     },
     subdomainDesp(subdomain) {
-      if (subdomain === undefined) return '~';
+      if (subdomain === undefined || subdomain === null) return '~';
       return subdomain || '-';
     },
     deprecated(oldUsage, newUsage) {
