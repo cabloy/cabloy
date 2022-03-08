@@ -4,11 +4,11 @@ const onFinished = require('on-finished');
 const statuses = require('statuses');
 const isJSON = require('koa-is-json');
 const Stream = require('stream');
-const is = require('is-type-of');
 const raw = require('raw-body');
 const inflate = require('inflation');
 const mparse = require('egg-born-mparse').default;
 const metaCtxFn = require('../../lib/module/metaCtx.js');
+const DbTransaction = require('../../lib/base/dbTransaction.js');
 
 const MODULE = Symbol.for('Context#__module');
 const META = Symbol.for('Context#__meta');
@@ -19,55 +19,6 @@ const SUBDOMAIN = Symbol.for('Context#__subdomain');
 const CTXCALLER = Symbol.for('Context#__ctxcaller');
 const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 const DBLEVEL = Symbol.for('Context#__dblevel');
-
-class DbTransaction {
-  constructor(ctx) {
-    this._ctx = ctx;
-    this._transactionCounter = 0;
-    this._connection = null;
-  }
-  get inTransaction() {
-    return this._transactionCounter > 0;
-  }
-  get connection() {
-    return this._connection;
-  }
-  set connection(value) {
-    this._connection = value;
-  }
-  async begin(fn) {
-    let res;
-    const db = getDbOriginal(this._ctx);
-    try {
-      if (++this._transactionCounter === 1) {
-        this._connection = await db.beginTransaction();
-      }
-    } catch (err) {
-      this._transactionCounter--;
-      throw err;
-    }
-    try {
-      res = await fn();
-    } catch (err) {
-      if (--this._transactionCounter === 0) {
-        await this._connection.rollback();
-        this._connection = null;
-      }
-      throw err;
-    }
-    try {
-      if (--this._transactionCounter === 0) {
-        await this._connection.commit();
-        this._connection = null;
-      }
-    } catch (err) {
-      await this._connection.rollback();
-      this._connection = null;
-      throw err;
-    }
-    return res;
-  }
-}
 
 module.exports = {
   get module() {
@@ -86,7 +37,7 @@ module.exports = {
   },
   get db() {
     if (!this[DATABASE]) {
-      this[DATABASE] = createDatabase(this);
+      this[DATABASE] = this.meta.util.createDatabase();
     }
     return this[DATABASE];
   },
@@ -400,34 +351,4 @@ function createRequest({ method, url }, ctxCaller) {
     remotePort: _req.socket.remotePort,
   };
   return req;
-}
-
-function getDbOriginal(ctx) {
-  const dbLevel = ctx.dbLevel;
-  const mysqlConfig = ctx.app.mysql.__ebdb_test;
-  if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
-  let dbs = ctx.app.mysql.__ebdb_test_dbs;
-  if (!dbs) {
-    dbs = ctx.app.mysql.__ebdb_test_dbs = [];
-  }
-  if (!dbs[dbLevel]) {
-    dbs[dbLevel] = ctx.app.mysql.createInstance(mysqlConfig);
-  }
-  return dbs[dbLevel];
-}
-
-function createDatabase(ctx) {
-  const db = getDbOriginal(ctx);
-  return new Proxy(db, {
-    get(target, prop) {
-      const value = target[prop];
-      if (!is.function(value)) return value;
-      if (value.name !== 'createPromise') return value;
-      // check if use transaction
-      if (!ctx.dbMeta.transaction.inTransaction) return value;
-      return function (...args) {
-        return ctx.dbMeta.transaction.connection[prop].apply(ctx.dbMeta.transaction.connection, args);
-      };
-    },
-  });
 }
