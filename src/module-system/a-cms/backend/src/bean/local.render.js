@@ -41,9 +41,7 @@ module.exports = ctx => {
       }
       ctx.tail(async () => {
         // queue
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        await ctx.meta.util.queuePushAsync({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,

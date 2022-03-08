@@ -585,8 +585,7 @@ module.exports = ctx => {
     // build roles
     async build(options) {
       // queue
-      await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
+      await ctx.meta.util.queuePushAsync({
         module: moduleInfo.relativeName,
         queueName: 'roleBuild',
         data: { options },
