@@ -8,8 +8,10 @@ const is = require('is-type-of');
 const raw = require('raw-body');
 const inflate = require('inflation');
 const mparse = require('egg-born-mparse').default;
+const metaCtxFn = require('../../lib/module/metaCtx.js');
 
 const MODULE = Symbol.for('Context#__module');
+const META = Symbol.for('Context#__meta');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 const INNERACCESS = Symbol.for('Context#__inneraccess');
@@ -75,6 +77,12 @@ module.exports = {
       this[MODULE] = info ? this.app.meta.modules[info.relativeName] : null;
     }
     return this[MODULE];
+  },
+  get meta() {
+    if (!this[META]) {
+      this[META] = metaCtxFn(this);
+    }
+    return this[META];
   },
   get db() {
     if (!this[DATABASE]) {

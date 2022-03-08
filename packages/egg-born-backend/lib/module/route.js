@@ -56,7 +56,6 @@ module.exports = function (loader, modules) {
           // route
           ctx.route = _route;
           // dynamic options
-          if (!ctx.meta) ctx.meta = {};
           ctx.meta.middlewares = {};
           // next
           await next();
