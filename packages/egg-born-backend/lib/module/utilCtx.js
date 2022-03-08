@@ -10,9 +10,13 @@ module.exports = ctx => {
   const util = {
     queuePush(info) {
       const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
+      const locale = info.locale === undefined ? ctx.locale : info.locale;
+      const subdomain = info.subdomain === undefined ? ctx.subdomain : info.subdomain;
       ctx.app.meta.queue.push({
         ...info,
         dbLevel,
+        locale,
+        subdomain,
       });
     },
     async queuePushAsync(info) {

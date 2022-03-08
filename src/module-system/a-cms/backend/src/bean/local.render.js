@@ -62,9 +62,7 @@ module.exports = ctx => {
       }
       ctx.tail(() => {
         // queue
-        ctx.app.meta.queue.push({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
