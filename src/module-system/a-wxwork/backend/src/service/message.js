@@ -43,9 +43,7 @@ module.exports = app => {
 
     async contacts({ message }) {
       // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'contacts',
         data: {

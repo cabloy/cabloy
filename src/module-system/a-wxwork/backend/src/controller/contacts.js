@@ -8,9 +8,7 @@ module.exports = app => {
       // progress
       const progressId = uuid.v4().replace(/-/g, '');
       // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'contacts',
         data: {

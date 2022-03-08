@@ -31,9 +31,8 @@ module.exports = ctx => {
       const provider = this._findStatsProvider({ module, name });
       if (provider.user && !user) return;
       // queue
-      const method = async ? 'pushAsync' : 'push';
-      return ctx.app.meta.queue[method]({
-        subdomain: ctx.subdomain,
+      const method = async ? 'queuePushAsync' : 'queuePush';
+      return ctx.meta.util[method]({
         module: moduleInfo.relativeName,
         queueName: 'stats',
         queueNameSub: provider.user ? 'user' : 'instance',

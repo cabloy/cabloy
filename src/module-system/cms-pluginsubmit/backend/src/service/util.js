@@ -21,9 +21,7 @@ module.exports = app => {
       if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') return;
       // queue
       this.ctx.tail(() => {
-        this.ctx.app.meta.queue.push({
-          locale: this.ctx.locale,
-          subdomain: this.ctx.subdomain,
+        this.ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'submit',
           data: {
