@@ -161,7 +161,7 @@ module.exports = {
    * @return {promise}                response.body.data or throw error
    */
   performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
-    this.app.meta.util.deprecated('ctx.executeBeanIsolate', 'ctx.meta.util.executeBeanIsolate');
+    this.app.meta.util.deprecated('ctx.performAction', 'ctx.meta.util.performAction');
     return this.meta.util.performAction({ innerAccess, subdomain, method, url, query, params, headers, body });
   },
 
