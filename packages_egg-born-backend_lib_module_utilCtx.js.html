@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>packages/egg-born-backend/lib/module/utilCtx.js - CabloyJS API</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content="CabloyJS API"/>
+    <meta property="og:type" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:site_name" content="CabloyJS API"/>
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="search" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://cabloy.com" target="_blank" class="menu-item" id="documentations_link" >Documentations</a></h2><h2><a href="https://community.cabloy.com" target="_blank" class="menu-item" id="community_link" >Community</a></h2><h3>Modules</h3><ul><li><a href="module-a-base_front_config.html">a-base/front/config</a></li><li><a href="module-a-base_front_mixins.html">a-base/front/mixins</a></li><li><a href="module-a-base_front_mixins_ebActionBase.html">a-base/front/mixins/ebActionBase</a></li><li><a href="module-a-base_front_mixins_ebAtomClasses.html">a-base/front/mixins/ebAtomClasses</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-a-base_front_mixins_ebAtomClasses.html#getAtomClass#~getAtomClass">getAtomClass</a></li></ul></li><li><a href="module-a-basefront_front_pages_base_alert.html">a-basefront/front/pages/base/alert</a></li><li><a href="module-a-components_front_components_eb-stats-color.html">a-components/front/components/eb-stats-color</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-a-components_front_components_eb-stats-color.html#onAdjustValue#~onAdjustValue">onAdjustValue</a></li><li data-type='method' style='display: none;'><a href="module-a-components_front_components_eb-stats-color.html#onChange#~onChange">onChange</a></li></ul></li><li><a href="module-egg-born-front_base_config.html">egg-born-front/base/config</a></li><li><a href="module-project_build_config.html">project/build/config</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">packages/egg-born-backend/lib/module/utilCtx.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const http = require('http');
+const compose = require('koa-compose');
+const onFinished = require('on-finished');
+const statuses = require('statuses');
+const isJSON = require('koa-is-json');
+const Stream = require('stream');
+const is = require('is-type-of');
+
+module.exports = ctx => {
+  const util = {
+    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+      return await ctx.app.meta.util.executeBean({
+        locale: locale === undefined ? ctx.locale : locale,
+        subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
+        context,
+        beanModule,
+        beanFullName,
+        transaction,
+        fn,
+        ctxCaller: ctx,
+      });
+    },
+    async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+      return await ctx.app.meta.util.executeBean({
+        locale: locale === undefined ? ctx.locale : locale,
+        subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
+        context,
+        beanModule,
+        beanFullName,
+        transaction,
+        fn,
+        ctxParent: ctx,
+      });
+    },
+    /**
+     * perform action of this or that module
+     * @param  {string} options options
+     * @param  {string} options.method method
+     * @param  {string} options.url    url
+     * @param  {json} options.body   body(optional)
+     * @return {promise}                response.body.data or throw error
+     */
+    performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+      return new Promise((resolve, reject) => {
+        const handleRequest = appCallback.call(ctx.app);
+        const request = createRequest(
+          {
+            method,
+            url: ctx.app.meta.util.combineFetchPath(ctx.module &amp;&amp; ctx.module.info, url),
+          },
+          ctx
+        );
+        const response = new http.ServerResponse(request);
+        handleRequest(ctx, innerAccess, subdomain, request, response, resolve, reject, query, params, headers, body);
+      });
+    },
+    getDbOriginal() {
+      const dbLevel = ctx.dbLevel;
+      const mysqlConfig = ctx.app.mysql.__ebdb_test;
+      if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
+      let dbs = ctx.app.mysql.__ebdb_test_dbs;
+      if (!dbs) {
+        dbs = ctx.app.mysql.__ebdb_test_dbs = [];
+      }
+      if (!dbs[dbLevel]) {
+        dbs[dbLevel] = ctx.app.mysql.createInstance(mysqlConfig);
+      }
+      return dbs[dbLevel];
+    },
+    createDatabase() {
+      const db = this.getDbOriginal();
+      return new Proxy(db, {
+        get(target, prop) {
+          const value = target[prop];
+          if (!is.function(value)) return value;
+          if (value.name !== 'createPromise') return value;
+          // check if use transaction
+          if (!ctx.dbMeta.transaction.inTransaction) return value;
+          return function (...args) {
+            return ctx.dbMeta.transaction.connection[prop].apply(ctx.dbMeta.transaction.connection, args);
+          };
+        },
+      });
+    },
+  };
+  return util;
+};
+
+function appCallback() {
+  const fn = compose(this.middleware);
+  const self = this;
+
+  if (!this.listeners('error').length) this.on('error', this.onerror);
+
+  return function handleRequest(
+    ctxCaller,
+    innerAccess,
+    subdomain,
+    req,
+    res,
+    resolve,
+    reject,
+    query,
+    params,
+    headers,
+    body
+  ) {
+    res.statusCode = 404;
+    const ctx = self.createContext(req, res);
+    onFinished(res, ctx.onerror);
+
+    // subdomain
+    ctx.subdomain = typeof subdomain === 'undefined' ? ctxCaller.subdomain : subdomain;
+
+    // query params body
+    if (query) ctx.query = query;
+    if (params) ctx.params = params;
+    ctx.request.body = body || null; // not undefined
+
+    // headers
+    if (headers) Object.assign(ctx.headers, headers);
+
+    // multipart
+    ctx.multipart = function (options) {
+      return ctxCaller.multipart(options);
+    };
+
+    // cookies
+    delegateCookies(ctx, ctxCaller);
+
+    // ctxCaller
+    ctx.ctxCaller = ctxCaller;
+
+    // innerAccess
+    if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
+
+    // call
+    fn(ctx)
+      .then(function handleResponse() {
+        respond.call(ctx);
+        if (ctx.status === 200) {
+          if (!ctx.body || ctx.body.code === undefined) {
+            // not check code, e.g. text/xml
+            resolve(ctx.body);
+          } else {
+            if (ctx.body.code === 0) {
+              resolve(ctx.body.data);
+            } else {
+              const error = ctx.createError(ctx.body);
+              reject(error);
+            }
+          }
+        } else {
+          const error = ctx.createError({
+            code: ctx.status,
+            message: ctx.message || ctx.body,
+          });
+          reject(error);
+        }
+      })
+      .catch(err => {
+        const error = ctx.createError(err);
+        ctx.onerror(error);
+        reject(error);
+      });
+  };
+}
+
+function respond() {
+  // allow bypassing koa
+  if (this.respond === false) return;
+
+  const res = this.res;
+  if (res.headersSent || !this.writable) return;
+
+  let body = this.body;
+  const code = this.status;
+
+  // ignore body
+  if (statuses.empty[code]) {
+    // strip headers
+    this.body = null;
+    return res.end();
+  }
+
+  if (this.method === 'HEAD') {
+    if (isJSON(body)) this.length = Buffer.byteLength(JSON.stringify(body));
+    return res.end();
+  }
+
+  // status body
+  if (body == null) {
+    this.type = 'text';
+    body = this.message || String(code);
+    this.length = Buffer.byteLength(body);
+    return res.end(body);
+  }
+
+  // responses
+  if (Buffer.isBuffer(body)) return res.end(body);
+  if (typeof body === 'string') return res.end(body);
+  if (body instanceof Stream) return body.pipe(res);
+
+  // body: json
+  body = JSON.stringify(body);
+  this.length = Buffer.byteLength(body);
+  res.end(body);
+}
+
+function delegateCookies(ctx, ctxCaller) {
+  const _cookies = ctx.cookies;
+  Object.defineProperty(ctx, 'cookies', {
+    get() {
+      return ctxCaller.cookies || _cookies;
+    },
+  });
+}
+
+function createRequest({ method, url }, ctxCaller) {
+  // _req
+  const _req = ctxCaller.request;
+  // req
+  const req = new http.IncomingMessage();
+  req.headers = _req.headers;
+  req.host = _req.host;
+  req.hostname = _req.hostname;
+  req.protocol = _req.protocol;
+  req.secure = _req.secure;
+  req.method = method.toUpperCase();
+  req.url = url;
+  // path,
+  req.socket = {
+    remoteAddress: _req.socket.remoteAddress,
+    remotePort: _req.socket.remotePort,
+  };
+  return req;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Tue Mar 08 2022 08:57:13 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/collapse.js"></script>
+
+
+<script src="scripts/search.js"></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?702a5fbeaa29235d5d07e5233d8a591b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</body>
+</html>

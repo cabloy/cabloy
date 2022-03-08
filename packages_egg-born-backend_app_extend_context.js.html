@@ -56,18 +56,14 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const http = require('http');
-const compose = require('koa-compose');
-const onFinished = require('on-finished');
-const statuses = require('statuses');
-const isJSON = require('koa-is-json');
-const Stream = require('stream');
-const is = require('is-type-of');
-const raw = require('raw-body');
+            <pre class="prettyprint source linenums"><code>const raw = require('raw-body');
 const inflate = require('inflation');
 const mparse = require('egg-born-mparse').default;
+const metaCtxFn = require('../../lib/module/metaCtx.js');
+const DbTransaction = require('../../lib/base/dbTransaction.js');
 
 const MODULE = Symbol.for('Context#__module');
+const META = Symbol.for('Context#__meta');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 const INNERACCESS = Symbol.for('Context#__inneraccess');
@@ -75,55 +71,6 @@ const SUBDOMAIN = Symbol.for('Context#__subdomain');
 const CTXCALLER = Symbol.for('Context#__ctxcaller');
 const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 const DBLEVEL = Symbol.for('Context#__dblevel');
-
-class DbTransaction {
-  constructor(ctx) {
-    this._ctx = ctx;
-    this._transactionCounter = 0;
-    this._connection = null;
-  }
-  get inTransaction() {
-    return this._transactionCounter > 0;
-  }
-  get connection() {
-    return this._connection;
-  }
-  set connection(value) {
-    this._connection = value;
-  }
-  async begin(fn) {
-    let res;
-    const db = getDbOriginal(this._ctx);
-    try {
-      if (++this._transactionCounter === 1) {
-        this._connection = await db.beginTransaction();
-      }
-    } catch (err) {
-      this._transactionCounter--;
-      throw err;
-    }
-    try {
-      res = await fn();
-    } catch (err) {
-      if (--this._transactionCounter === 0) {
-        await this._connection.rollback();
-        this._connection = null;
-      }
-      throw err;
-    }
-    try {
-      if (--this._transactionCounter === 0) {
-        await this._connection.commit();
-        this._connection = null;
-      }
-    } catch (err) {
-      await this._connection.rollback();
-      this._connection = null;
-      throw err;
-    }
-    return res;
-  }
-}
 
 module.exports = {
   get module() {
@@ -134,9 +81,15 @@ module.exports = {
     }
     return this[MODULE];
   },
+  get meta() {
+    if (!this[META]) {
+      this[META] = metaCtxFn(this);
+    }
+    return this[META];
+  },
   get db() {
     if (!this[DATABASE]) {
-      this[DATABASE] = createDatabase(this);
+      this[DATABASE] = this.meta.util.createDatabase();
     }
     return this[DATABASE];
   },
@@ -222,15 +175,28 @@ module.exports = {
   },
 
   async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
-    return await this.app.meta.util.executeBean({
-      locale: locale === undefined ? this.locale : locale,
-      subdomain: subdomain === undefined ? this.subdomain : subdomain,
+    this.app.meta.util.deprecated('ctx.executeBean', 'ctx.meta.util.executeBean');
+    return await this.meta.util.executeBean({
+      locale,
+      subdomain,
       context,
       beanModule,
       beanFullName,
       transaction,
       fn,
-      ctxCaller: this,
+    });
+  },
+
+  async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+    this.app.meta.util.deprecated('ctx.executeBeanIsolate', 'ctx.meta.util.executeBeanIsolate');
+    return await this.meta.util.executeBeanIsolate({
+      locale,
+      subdomain,
+      context,
+      beanModule,
+      beanFullName,
+      transaction,
+      fn,
     });
   },
 
@@ -240,7 +206,7 @@ module.exports = {
   //   const ctx = this;
   //   ctx.runInBackground(() => {
   //     // performAction
-  //     return ctx.performAction(options);
+  //     return ctx.meta.util.performAction(options);
   //   });
   // },
 
@@ -253,18 +219,8 @@ module.exports = {
    * @return {promise}                response.body.data or throw error
    */
   performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
-    return new Promise((resolve, reject) => {
-      const handleRequest = appCallback.call(this.app);
-      const request = createRequest(
-        {
-          method,
-          url: this.app.meta.util.combineFetchPath(this.module &amp;&amp; this.module.info, url),
-        },
-        this
-      );
-      const response = new http.ServerResponse(request);
-      handleRequest(this, innerAccess, subdomain, request, response, resolve, reject, query, params, headers, body);
-    });
+    this.app.meta.util.deprecated('ctx.performAction', 'ctx.meta.util.performAction');
+    return this.meta.util.performAction({ innerAccess, subdomain, method, url, query, params, headers, body });
   },
 
   getVal(name) {
@@ -301,186 +257,6 @@ module.exports = {
     return await raw(inflate(this.req), options);
   },
 };
-
-function appCallback() {
-  const fn = compose(this.middleware);
-  const self = this;
-
-  if (!this.listeners('error').length) this.on('error', this.onerror);
-
-  return function handleRequest(
-    ctxCaller,
-    innerAccess,
-    subdomain,
-    req,
-    res,
-    resolve,
-    reject,
-    query,
-    params,
-    headers,
-    body
-  ) {
-    res.statusCode = 404;
-    const ctx = self.createContext(req, res);
-    onFinished(res, ctx.onerror);
-
-    // subdomain
-    ctx.subdomain = typeof subdomain === 'undefined' ? ctxCaller.subdomain : subdomain;
-
-    // query params body
-    if (query) ctx.query = query;
-    if (params) ctx.params = params;
-    ctx.request.body = body || null; // not undefined
-
-    // headers
-    if (headers) Object.assign(ctx.headers, headers);
-
-    // multipart
-    ctx.multipart = function (options) {
-      return ctxCaller.multipart(options);
-    };
-
-    // cookies
-    delegateCookies(ctx, ctxCaller);
-
-    // ctxCaller
-    ctx.ctxCaller = ctxCaller;
-
-    // innerAccess
-    if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
-
-    // call
-    fn(ctx)
-      .then(function handleResponse() {
-        respond.call(ctx);
-        if (ctx.status === 200) {
-          if (!ctx.body || ctx.body.code === undefined) {
-            // not check code, e.g. text/xml
-            resolve(ctx.body);
-          } else {
-            if (ctx.body.code === 0) {
-              resolve(ctx.body.data);
-            } else {
-              const error = ctx.createError(ctx.body);
-              reject(error);
-            }
-          }
-        } else {
-          const error = ctx.createError({
-            code: ctx.status,
-            message: ctx.message || ctx.body,
-          });
-          reject(error);
-        }
-      })
-      .catch(err => {
-        const error = ctx.createError(err);
-        ctx.onerror(error);
-        reject(error);
-      });
-  };
-}
-
-function respond() {
-  // allow bypassing koa
-  if (this.respond === false) return;
-
-  const res = this.res;
-  if (res.headersSent || !this.writable) return;
-
-  let body = this.body;
-  const code = this.status;
-
-  // ignore body
-  if (statuses.empty[code]) {
-    // strip headers
-    this.body = null;
-    return res.end();
-  }
-
-  if (this.method === 'HEAD') {
-    if (isJSON(body)) this.length = Buffer.byteLength(JSON.stringify(body));
-    return res.end();
-  }
-
-  // status body
-  if (body == null) {
-    this.type = 'text';
-    body = this.message || String(code);
-    this.length = Buffer.byteLength(body);
-    return res.end(body);
-  }
-
-  // responses
-  if (Buffer.isBuffer(body)) return res.end(body);
-  if (typeof body === 'string') return res.end(body);
-  if (body instanceof Stream) return body.pipe(res);
-
-  // body: json
-  body = JSON.stringify(body);
-  this.length = Buffer.byteLength(body);
-  res.end(body);
-}
-
-function delegateCookies(ctx, ctxCaller) {
-  const _cookies = ctx.cookies;
-  Object.defineProperty(ctx, 'cookies', {
-    get() {
-      return ctxCaller.cookies || _cookies;
-    },
-  });
-}
-
-function createRequest({ method, url }, ctxCaller) {
-  // _req
-  const _req = ctxCaller.request;
-  // req
-  const req = new http.IncomingMessage();
-  req.headers = _req.headers;
-  req.host = _req.host;
-  req.hostname = _req.hostname;
-  req.protocol = _req.protocol;
-  req.secure = _req.secure;
-  req.method = method.toUpperCase();
-  req.url = url;
-  // path,
-  req.socket = {
-    remoteAddress: _req.socket.remoteAddress,
-    remotePort: _req.socket.remotePort,
-  };
-  return req;
-}
-
-function getDbOriginal(ctx) {
-  const dbLevel = ctx.dbLevel;
-  const mysqlConfig = ctx.app.mysql.__ebdb_test;
-  if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
-  let dbs = ctx.app.mysql.__ebdb_test_dbs;
-  if (!dbs) {
-    dbs = ctx.app.mysql.__ebdb_test_dbs = [];
-  }
-  if (!dbs[dbLevel]) {
-    dbs[dbLevel] = ctx.app.mysql.createInstance(mysqlConfig);
-  }
-  return dbs[dbLevel];
-}
-
-function createDatabase(ctx) {
-  const db = getDbOriginal(ctx);
-  return new Proxy(db, {
-    get(target, prop) {
-      const value = target[prop];
-      if (!is.function(value)) return value;
-      if (value.name !== 'createPromise') return value;
-      // check if use transaction
-      if (!ctx.dbMeta.transaction.inTransaction) return value;
-      return function (...args) {
-        return ctx.dbMeta.transaction.connection[prop].apply(ctx.dbMeta.transaction.connection, args);
-      };
-    },
-  });
-}
 </code></pre>
         </article>
     </section>
@@ -495,7 +271,7 @@ function createDatabase(ctx) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Tue Mar 08 2022 03:44:24 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Tue Mar 08 2022 08:57:13 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
