@@ -133,6 +133,15 @@ module.exports = appInfo => {
     getFullPath,
   };
 
+  // appReady middleware
+  config.appReady = {
+    ignore: /\/api\/static\//,
+  };
+  // instance middleware
+  config.instance = {
+    ignore: /\/api\/static\//,
+  };
+
   // queue
   config.queue = {
     redlock: {
