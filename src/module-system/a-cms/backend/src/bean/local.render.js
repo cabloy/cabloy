@@ -83,9 +83,7 @@ module.exports = ctx => {
       }
       ctx.tail(async () => {
         // queue
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        await ctx.meta.util.queuePushAsync({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -105,9 +103,7 @@ module.exports = ctx => {
       }
       ctx.tail(() => {
         // queue
-        ctx.app.meta.queue.push({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,

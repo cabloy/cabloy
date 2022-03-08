@@ -75,9 +75,7 @@ module.exports = ctx => {
 
     buildLanguagesQueue({ atomClass, progressId }) {
       // queue
-      ctx.app.meta.queue.push({
-        locale: ctx.locale,
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -91,9 +89,7 @@ module.exports = ctx => {
 
     buildLanguageQueue({ atomClass, language, progressId }) {
       // queue
-      ctx.app.meta.queue.push({
-        locale: ctx.locale,
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,

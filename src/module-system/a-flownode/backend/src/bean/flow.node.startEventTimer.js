@@ -19,8 +19,7 @@ module.exports = ctx => {
       if (!repeat.every && !repeat.cron) return;
       // push
       const jobName = this._getJobName(flowDefId, node);
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'startEventTimer',
         jobName,

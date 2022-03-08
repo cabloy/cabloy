@@ -88,8 +88,7 @@ module.exports = ctx => {
     }
 
     async pushDirect({ content, channel, options }) {
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'pushDirect',
         data: {
@@ -164,8 +163,7 @@ module.exports = ctx => {
       _message.messageClassName = messageClass.messageClassName;
 
       // to queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'process',
         data: {
@@ -343,8 +341,7 @@ module.exports = ctx => {
       // to queue: delivery/push
       if (path) {
         // try delivery first, then try push if failed
-        ctx.app.meta.queue.push({
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'delivery',
           data: {
@@ -436,8 +433,7 @@ module.exports = ctx => {
       const pushEnable = await this._checkPushEnable({ options, message, messageSyncs, messageClass });
       if (!pushEnable) return;
       // queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'push',
         data: {
