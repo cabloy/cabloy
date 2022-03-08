@@ -224,7 +224,10 @@ module.exports = function (app) {
     }
 
     async _performTask(job) {
-      const { locale, subdomain, module, queueName, queueNameSub, data, ctxParent } = job.data;
+      let { locale, subdomain, module, queueName, queueNameSub, data, ctxParent, dbLevel } = job.data;
+      // ctxParent
+      if (!ctxParent) ctxParent = {};
+      ctxParent.dbLevel = dbLevel - 1;
       // context
       const context = { job, data };
       if (queueNameSub) {
