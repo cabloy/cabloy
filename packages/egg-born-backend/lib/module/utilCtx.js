@@ -88,13 +88,18 @@ module.exports = ctx => {
     },
     getDbOriginal() {
       const dbLevel = ctx.dbLevel;
-      const mysqlConfig = ctx.app.mysql.__ebdb_test;
+      let mysqlConfig = ctx.app.mysql.__ebdb_test;
       if (!mysqlConfig) return ctx.app.mysql.get('__ebdb');
       let dbs = ctx.app.mysql.__ebdb_test_dbs;
       if (!dbs) {
         dbs = ctx.app.mysql.__ebdb_test_dbs = [];
       }
       if (!dbs[dbLevel]) {
+        if (dbLevel > 0) {
+          const connectionLimit =
+            mysqlConfig.connectionLimitInner || ctx.app.mysql.options.default.connectionLimitInner;
+          mysqlConfig = Object.assign({}, mysqlConfig, { connectionLimit });
+        }
         dbs[dbLevel] = ctx.app.mysql.createInstance(mysqlConfig);
       }
       return dbs[dbLevel];

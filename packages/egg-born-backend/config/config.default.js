@@ -174,7 +174,8 @@ module.exports = appInfo => {
     app: true,
     agent: false,
     default: {
-      connectionLimit: 100,
+      connectionLimit: 10,
+      connectionLimitInner: 5,
     },
     clients: {
       // donnot change the name
