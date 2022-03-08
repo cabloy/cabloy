@@ -113,7 +113,7 @@ module.exports = ctx => {
         const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
         const _moduleInfo = mparse.parseInfo(atomClass.module);
         const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: keyDraft, user },
@@ -435,14 +435,14 @@ module.exports = ctx => {
         updatedAt: destItem.updatedAt,
       });
       // bean write
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, key: destKey, item: destItem, options, user },
         fn: 'write',
       });
       // bean copy
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, srcKey, srcItem, destKey, destItem, options, user },

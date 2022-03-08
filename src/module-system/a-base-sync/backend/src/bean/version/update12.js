@@ -17,7 +17,7 @@ module.exports = function (ctx) {
       // all instances
       const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,

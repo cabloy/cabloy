@@ -70,7 +70,7 @@ module.exports = ctx => {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const res = await ctx.executeBean({
+      const res = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, item, options, user },
@@ -100,7 +100,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const item = await ctx.executeBean({
+      const item = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, options, key, user },
@@ -147,7 +147,7 @@ module.exports = ctx => {
       // selectBefore
       if (atomClass) {
         const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, options, user },
@@ -184,7 +184,7 @@ module.exports = ctx => {
       if (!count) {
         if (atomClass) {
           const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, options, items, user },
@@ -232,7 +232,7 @@ module.exports = ctx => {
         atomSimple: _atomBasic.atomSimple,
         atomStage: _atomBasic.atomSimple ? 1 : 0,
       });
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, key, item: itemWrite, options, user },
@@ -282,7 +282,7 @@ module.exports = ctx => {
           },
         });
         for (const item of listHistory) {
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, user },
@@ -295,7 +295,7 @@ module.exports = ctx => {
           atomIdFormal: _atom.id,
         });
         if (itemDraft) {
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
@@ -305,7 +305,7 @@ module.exports = ctx => {
           this._notifyDrafts();
         }
         // delete formal
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
@@ -313,7 +313,7 @@ module.exports = ctx => {
         });
       } else if (_atom.atomStage === 2) {
         // delete history self
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
@@ -336,7 +336,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.executeBean({
+      return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, options, user },
@@ -381,7 +381,7 @@ module.exports = ctx => {
           });
         } else {
           // delete
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key, user },
@@ -438,7 +438,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, user },
@@ -455,7 +455,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, user },
@@ -499,7 +499,7 @@ module.exports = ctx => {
       // export
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const resExport = await ctx.executeBean({
+      const resExport = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, options, fields, items, user },
@@ -762,7 +762,7 @@ module.exports = ctx => {
       });
       // check right
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.executeBean({
+      return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atom: _atom, atomClass, action, stage, user, checkFlow },

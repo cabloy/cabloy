@@ -82,7 +82,7 @@ module.exports = ctx => {
       });
       // invoke provider verify
       const _moduleInfo = mparse.parseInfo(provider.module);
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName: `${_moduleInfo.relativeName}.captcha.provider.${provider.name}`,
         context: {

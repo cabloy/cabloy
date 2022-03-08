@@ -39,7 +39,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
-      const res = await ctx.executeBean({
+      const res = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomKey, detailClass, item, user },
@@ -64,7 +64,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(detailClass.module);
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
-      const item = await ctx.executeBean({
+      const item = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { detailClass, options, key, user },
@@ -128,7 +128,7 @@ module.exports = ctx => {
       if (!count) {
         const _moduleInfo = mparse.parseInfo(detailClass.module);
         const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomKey, detailClass, options, items, user },
@@ -159,7 +159,7 @@ module.exports = ctx => {
         detailItemId: key.detailItemId,
         atomStage: ctx.constant.module('a-base').atom.stage.draft,
       });
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { detailClass, target, key, item: itemDraft, options, user },
@@ -246,7 +246,7 @@ module.exports = ctx => {
       const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
       const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
       // delete
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { detailClass, target, key, user },
@@ -503,14 +503,14 @@ module.exports = ctx => {
       }
       await this.modelDetail.update(params);
       // detail write
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { detailClass, target, key: destKey, item: destItem, options, user },
         fn: 'write',
       });
       // detail copy
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: {
