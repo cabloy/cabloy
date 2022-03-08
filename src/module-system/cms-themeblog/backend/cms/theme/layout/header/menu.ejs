@@ -22,7 +22,7 @@ function _menuItems(categories,submenu) {
 // categories
 if (!site._categories) {
   // categories
-  const res = await ctx.performAction({
+  const res = await ctx.meta.util.performAction({
     method:'post',
     url: '/a/base/category/tree',
     body: {

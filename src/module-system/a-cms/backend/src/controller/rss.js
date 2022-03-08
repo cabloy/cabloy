@@ -19,7 +19,7 @@ module.exports = app => {
         mode: 'default',
       };
       // select
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/cms/article/list',
         body: { atomClass, options },
@@ -86,7 +86,7 @@ module.exports = app => {
         page: { index: 0 },
       };
       // select
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/cms/comment/all',
         body: { atomClass, options },
@@ -149,7 +149,7 @@ module.exports = app => {
         orders: [['updatedAt', 'desc']],
         page: { index: 0 },
       };
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/base/comment/list',
         body: {

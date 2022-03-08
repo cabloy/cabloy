@@ -59,7 +59,7 @@ module.exports = app => {
 
     // data: { auth, password, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: `passport/a-authsimple/authsimple?state=${state}`,
         body: { data },

@@ -18,7 +18,7 @@
             mode: 'default',
           };
           // select
-          const data=await ctx.performAction({
+          const data=await ctx.meta.util.performAction({
             method:'post',
             url: '/a/cms/article/list',
             body: {

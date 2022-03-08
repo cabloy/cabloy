@@ -7,7 +7,7 @@ module.exports = app => {
       // force innerAccess as false
       params.innerAccess = false;
       // performAction
-      return await this.ctx.performAction(params);
+      return await this.ctx.meta.util.performAction(params);
     }
 
     async performActions({ actions }) {

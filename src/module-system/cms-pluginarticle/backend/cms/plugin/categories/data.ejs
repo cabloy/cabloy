@@ -1,6 +1,6 @@
 <%
 // categories
-const categories = await ctx.performAction({
+const categories = await ctx.meta.util.performAction({
   method: 'post',
   url: '/a/base/category/tree',
   body: {

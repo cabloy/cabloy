@@ -148,7 +148,7 @@ module.exports = {
   //   const ctx = this;
   //   ctx.runInBackground(() => {
   //     // performAction
-  //     return ctx.performAction(options);
+  //     return ctx.meta.util.performAction(options);
   //   });
   // },
 

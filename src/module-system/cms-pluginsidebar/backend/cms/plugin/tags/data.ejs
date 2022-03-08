@@ -7,7 +7,7 @@ const options = {
   ],
 };
 // tags
-const tags = await ctx.performAction({
+const tags = await ctx.meta.util.performAction({
   method: 'post',
   url: '/a/base/tag/list',
   body: {

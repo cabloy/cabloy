@@ -52,7 +52,7 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      const listLogin = await this.ctx.performAction({
+      const listLogin = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/login/auth/list',
       });

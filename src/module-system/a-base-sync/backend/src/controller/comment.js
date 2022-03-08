@@ -3,7 +3,7 @@ module.exports = app => {
     async all() {
       const options = this.ctx.request.body.options;
       options.comment = 1;
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/base/atom/select',
         body: {

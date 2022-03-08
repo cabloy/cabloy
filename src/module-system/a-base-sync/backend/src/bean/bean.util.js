@@ -192,7 +192,7 @@ module.exports = app => {
           return self.escapeURL(str);
         },
         performAction({ method, url, body }) {
-          return self.ctx.performAction({ method, url, body });
+          return self.ctx.meta.util.performAction({ method, url, body });
         },
       };
     }
