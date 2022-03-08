@@ -117,6 +117,7 @@ module.exports = {
   },
 
   async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+    this.app.meta.util.deprecated('ctx.executeBean', 'ctx.meta.util.executeBean');
     return await this.meta.util.executeBean({
       locale,
       subdomain,
@@ -129,6 +130,7 @@ module.exports = {
   },
 
   async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+    this.app.meta.util.deprecated('ctx.executeBeanIsolate', 'ctx.meta.util.executeBeanIsolate');
     return await this.meta.util.executeBeanIsolate({
       locale,
       subdomain,
@@ -159,6 +161,7 @@ module.exports = {
    * @return {promise}                response.body.data or throw error
    */
   performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+    this.app.meta.util.deprecated('ctx.executeBeanIsolate', 'ctx.meta.util.executeBeanIsolate');
     return this.meta.util.performAction({ innerAccess, subdomain, method, url, query, params, headers, body });
   },
 

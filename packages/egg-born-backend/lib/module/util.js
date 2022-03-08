@@ -329,6 +329,13 @@ module.exports = app => {
       if (subdomain === undefined) return '~';
       return subdomain || '-';
     },
+    deprecated(oldUsage, newUsage) {
+      return console.warn(
+        '`'
+          .concat(oldUsage, '` is deprecated and will be removed in a later version. Use `')
+          .concat(newUsage, '` instead')
+      );
+    },
   };
 };
 
