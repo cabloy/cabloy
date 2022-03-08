@@ -78,12 +78,11 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[detailClass.module];
       const validator = _module.main.meta.detail.details[detailClass.detailClassName].validator;
-      return validator
-        ? {
-            module: detailClass.module,
-            validator,
-          }
-        : null;
+      if (!validator) return null;
+      return {
+        module: detailClass.module,
+        validator,
+      };
     }
 
     _prepareDetailClasses() {
