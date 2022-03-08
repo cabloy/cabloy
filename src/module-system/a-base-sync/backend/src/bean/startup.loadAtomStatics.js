@@ -127,8 +127,7 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.app.meta.util.executeBean({
-            subdomain: this.ctx.subdomain,
+          return await this.ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClass, atomIdFormal, atomIdDraft, item },
@@ -171,8 +170,7 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.app.meta.util.executeBean({
-            subdomain: this.ctx.subdomain,
+          return await this.ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClass, item },

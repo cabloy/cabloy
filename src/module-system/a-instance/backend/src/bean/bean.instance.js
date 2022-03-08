@@ -47,7 +47,8 @@ module.exports = ctx => {
       return await ctx.app.meta.util.lock({
         resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
+          return await ctx.meta.util.executeBeanIsolate({
+            subdomain: null,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'instance',
             context: { instanceBase },

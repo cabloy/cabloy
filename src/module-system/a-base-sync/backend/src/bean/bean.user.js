@@ -733,7 +733,7 @@ module.exports = ctx => {
         subdomain: _subdomain,
         resource: `${moduleInfo.relativeName}.authProvider.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
+          return await ctx.meta.util.executeBeanIsolate({
             subdomain: _subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'user',

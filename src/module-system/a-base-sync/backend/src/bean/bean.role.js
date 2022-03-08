@@ -168,8 +168,7 @@ module.exports = ctx => {
         subdomain: ctx.subdomain,
         resource: `${moduleInfo.relativeName}.role.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'role',
             context: { roleName, roleIdParent },

@@ -228,8 +228,7 @@ module.exports = ctx => {
         subdomain: ctx.subdomain,
         resource: `${moduleInfo.relativeName}.category.register.${atomClass.id}`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'category',
             context: { atomClass, language, categoryName, categoryIdParent },

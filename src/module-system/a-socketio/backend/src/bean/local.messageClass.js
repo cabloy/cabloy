@@ -27,8 +27,7 @@ module.exports = ctx => {
         subdomain: ctx.subdomain,
         resource: `${moduleInfo.relativeName}.messageClass.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             fn: async ({ ctx }) => {
               return await ctx.bean.io.messageClass._registerLock({ module, messageClassName });
