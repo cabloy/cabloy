@@ -50,7 +50,7 @@ export default {
       }
       // choose
       const params = {
-        targetEl: event.target,
+        targetEl: event.currentTarget,
         buttons,
       };
       const button = await this.$view.actions.choose(params);

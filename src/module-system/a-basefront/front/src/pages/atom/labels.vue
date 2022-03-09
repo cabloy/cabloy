@@ -142,9 +142,9 @@ export default {
     onLabelCheckChange(event, key) {
       // labels
       const index = this.labels.indexOf(key);
-      if (event.target.checked && index === -1) {
+      if (event.currentTarget.checked && index === -1) {
         this.labels.push(key);
-      } else if (!event.target.checked && index > -1) {
+      } else if (!event.currentTarget.checked && index > -1) {
         this.labels.splice(index, 1);
       }
       // sort

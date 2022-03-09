@@ -54,7 +54,7 @@ export default {
         actionModule: 'a-base',
         actionComponent: 'action',
         name: 'selectLocale',
-        targetEl: event.target,
+        targetEl: event.currentTarget,
       };
       let language;
       if (parcel.data.atomLanguage) {

@@ -19,7 +19,7 @@ export default {
       // action
       let _action = this.getAction(action);
       if (!_action) return;
-      _action = this.$utils.extend({}, _action, { targetEl: event.target });
+      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
       // item
       let item = {
         atomClassId: action.atomClassId,
@@ -66,9 +66,9 @@ export default {
     bulk_onItemChange(event, item) {
       const selectedAtoms = this.bulk.selectedAtoms;
       const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
-      if (event.target.checked && index === -1) {
+      if (event.currentTarget.checked && index === -1) {
         selectedAtoms.push(item);
-      } else if (!event.target.checked && index > -1) {
+      } else if (!event.currentTarget.checked && index > -1) {
         selectedAtoms.splice(index, 1);
       }
     },

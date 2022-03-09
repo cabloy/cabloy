@@ -64,7 +64,7 @@ export default {
       } else {
         action = resourceConfig;
       }
-      action = this.$utils.extend({}, action, { targetEl: event.target });
+      action = this.$utils.extend({}, action, { targetEl: event.currentTarget });
       return this.$meta.util.performAction({ ctx: this, action, item });
     },
   },

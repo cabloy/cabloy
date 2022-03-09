@@ -105,7 +105,7 @@ export default {
           resourceRoleId: item.id,
         },
       });
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
       const index = this.items.findIndex(_item => _item.id === item.id);
       if (index !== -1) {
         this.items.splice(index, 1);

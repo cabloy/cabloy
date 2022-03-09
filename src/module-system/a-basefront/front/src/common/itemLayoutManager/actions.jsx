@@ -109,7 +109,7 @@ export default {
       // action
       let _action = this.getAction(action);
       if (!_action) return;
-      _action = this.$utils.extend({}, _action, { targetEl: event.target });
+      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
       // for write
       if (action.name === 'write') {
         _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });

@@ -41,15 +41,15 @@ export default {
     select_onItemChange(event, item) {
       const selectMode = this.container.params.selectMode;
       if (selectMode === 'single') {
-        if (event.target.checked) {
+        if (event.currentTarget.checked) {
           this.select.selectedAtoms = [item];
         }
       } else {
         const selectedAtoms = this.select.selectedAtoms;
         const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
-        if (event.target.checked && index === -1) {
+        if (event.currentTarget.checked && index === -1) {
           selectedAtoms.push(item);
-        } else if (!event.target.checked && index > -1) {
+        } else if (!event.currentTarget.checked && index > -1) {
           selectedAtoms.splice(index, 1);
         }
       }

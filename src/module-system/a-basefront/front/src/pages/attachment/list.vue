@@ -130,7 +130,7 @@ export default {
             fileId: item.id,
           })
           .then(() => {
-            this.$meta.util.swipeoutClose(event.target);
+            this.$meta.util.swipeoutClose(event.currentTarget);
             this.$meta.eventHub.$emit('attachment:action', { action: 'delete', atomId: this.atomId, fileId: item.id });
             this.deleteItem(item.id);
           });

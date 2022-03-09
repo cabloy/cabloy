@@ -21,7 +21,7 @@ export default {
       }
       this.layoutManager.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, navigateOptions);
       // swipeoutClose
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     async labels_onChanged(data) {
       const atomId = data.key.atomId;

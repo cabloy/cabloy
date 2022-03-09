@@ -26,7 +26,7 @@ export default {
         atom: { star },
       });
       this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-      this.$meta.util[swipeoutAction](event.target);
+      this.$meta.util[swipeoutAction](event.currentTarget);
     },
     async star_onChanged(data) {
       const atomId = data.key.atomId;

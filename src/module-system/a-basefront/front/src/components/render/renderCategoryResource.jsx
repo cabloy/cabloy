@@ -34,7 +34,7 @@ export default {
         actionModule: 'a-base',
         actionComponent: 'action',
         name: 'selectResourceType',
-        targetEl: event.target,
+        targetEl: event.currentTarget,
       };
       let resourceType;
       if (parcel.data.resourceType) {

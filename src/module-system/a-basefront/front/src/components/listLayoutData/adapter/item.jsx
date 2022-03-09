@@ -4,7 +4,7 @@ export default {
       const _action = this.layoutManager.getAction(action);
       if (!_action) return;
       await this.$meta.util.performAction({ ctx: this.layoutManager, action: _action, item });
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     async item_onActionView(event, item) {
       return await this.item_onAction(event, item, {
