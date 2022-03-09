@@ -895,7 +895,7 @@ module.exports = app => {
 
     // data: { mobile, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: `passport/a-authsms/authsms?state=${state}`,
         body: { data },

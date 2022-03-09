@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-useronline",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "title": "Online Users",
   "eggBornModule": {
     "fileVersion": 1,
@@ -21,10 +21,9 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
     "egg-born-mock": "^2.1.4",
-    "require3": "^2.1.2",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^2.1.2"
   }
 }

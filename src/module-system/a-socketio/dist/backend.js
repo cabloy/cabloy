@@ -94,8 +94,7 @@ module.exports = ctx => {
     }
 
     async pushDirect({ content, channel, options }) {
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'pushDirect',
         data: {
@@ -170,8 +169,7 @@ module.exports = ctx => {
       _message.messageClassName = messageClass.messageClassName;
 
       // to queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'process',
         data: {
@@ -349,8 +347,7 @@ module.exports = ctx => {
       // to queue: delivery/push
       if (path) {
         // try delivery first, then try push if failed
-        ctx.app.meta.queue.push({
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'delivery',
           data: {
@@ -442,8 +439,7 @@ module.exports = ctx => {
       const pushEnable = await this._checkPushEnable({ options, message, messageSyncs, messageClass });
       if (!pushEnable) return;
       // queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'push',
         data: {
@@ -704,6 +700,17 @@ module.exports = ctx => {
         module: moduleInfo.relativeName,
         broadcastName: 'socketEmit',
         data: { path, message, workerId, socketId },
+      });
+    }
+
+    async publishMessageSystem({ message }) {
+      await this.publish({
+        path: '/a/socketio/messageSystem',
+        message,
+        messageClass: {
+          module: moduleInfo.relativeName,
+          messageClassName: 'messageSystem',
+        },
       });
     }
   }
@@ -1048,12 +1055,10 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !messageClassName) throw new Error('Invalid arguments');
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.messageClass.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             fn: async ({ ctx }) => {
               return await ctx.bean.io.messageClass._registerLock({ module, messageClassName });
@@ -1271,28 +1276,51 @@ module.exports = ctx => {
   const app = ctx.app;
   class Middleware {
     async execute(options, next) {
-      // should startup: true
-      const appReadyInstance = await ctx.bean.instance.checkAppReadyInstance({ startup: true });
-      if (!appReadyInstance) return ctx.throw(403);
       // cache userId/socketId for disconnect
-      if (!ctx.session.passport || !ctx.session.passport.user) return ctx.throw(403);
-      const user = ctx.session.passport.user.op;
-      if (user.anonymous) return ctx.throw(403);
+      const user = ctx.state.user && ctx.state.user.op;
+      if (!user || user.anonymous) {
+        // return ctx.throw(401);
+        ctx.socket.emit('message-system', { code: 401, message: 'logout', type: 'self' });
+        return;
+      }
+      // register
       const iid = user.iid;
       const socketId = ctx.socket.id;
       ctx.bean.io._registerSocket(socketId, ctx.socket);
 
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
-      }
-      await next();
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
-      }
+      // register user online
+      await ctx.bean.userOnline.register({ user: ctx.state.user, isLogin: false });
+      // heartbeat
+      const onHeartBeat = this._onHeartBeat.bind(this);
+      ctx.socket.conn.on('heartbeat', onHeartBeat);
+      // next
+      await this._next({ next, user, socketId });
+      ctx.socket.conn.off('heartbeat', onHeartBeat);
 
       // execute when disconnect
       ctx.bean.io._unRegisterSocket(socketId);
       await ctx.bean.io.unsubscribeWhenDisconnect({ iid, user, socketId });
+    }
+
+    async _onHeartBeat() {
+      const user = ctx.state.user;
+      const online = await ctx.bean.userOnline.heartBeat({ user });
+      if (!online) {
+        ctx.socket.emit('message-system', { code: 401, message: 'logout', type: 'self' });
+        // close the underlying connection
+        // ctx.socket.disconnect(true);
+      }
+    }
+
+    async _next({ next, user, socketId }) {
+      if (app.meta.isTest || app.meta.isLocal) {
+        app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
+      }
+      // next
+      await next();
+      if (app.meta.isTest || app.meta.isLocal) {
+        app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
+      }
     }
   }
   return Middleware;
@@ -1598,6 +1626,7 @@ module.exports = appInfo => {
     connection: {
       bean: 'connection',
       type: 'socketio.connection',
+      dependencies: 'connectionAuth',
     },
     packet: {
       bean: 'packet',
@@ -1670,6 +1699,22 @@ module.exports = {};
 
 module.exports = {
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 562:
+/***/ ((module) => {
+
+module.exports = app => {
+  const messageSystem = {
+    info: {
+      title: 'Message System',
+      persistence: false,
+    },
+  };
+  return messageSystem;
 };
 
 
@@ -1858,6 +1903,8 @@ module.exports = app => {
 
 module.exports = app => {
   const schemas = __webpack_require__(232)(app);
+  // socketio
+  const socketioMessageSystem = __webpack_require__(562)(app);
   const meta = {
     base: {
       atoms: {},
@@ -1866,6 +1913,11 @@ module.exports = app => {
       validators: {},
       keywords: {},
       schemas: {},
+    },
+    socketio: {
+      messages: {
+        messageSystem: socketioMessageSystem,
+      },
     },
   };
   return meta;

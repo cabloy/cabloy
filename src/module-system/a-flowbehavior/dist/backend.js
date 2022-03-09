@@ -58,8 +58,7 @@ module.exports = ctx => {
       // push
       const jobName = this._getJobName({ flowId, flowNodeId, behaviorDefId });
       const jobId = jobName;
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'overtime',
         queueNameSub: flowId,

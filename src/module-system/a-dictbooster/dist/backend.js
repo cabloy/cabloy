@@ -85,6 +85,7 @@ module.exports = {
   Countries: '国家',
   'Cities USA': '美国城市',
   'Cities China': '中国城市',
+  'Online Status': '在线状态',
 };
 
 
@@ -172,18 +173,55 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 461:
+/***/ ((module) => {
+
+module.exports = app => {
+  const dictItems = [
+    {
+      code: 1,
+      title: 'Offline',
+    },
+    {
+      code: 2,
+      title: 'Online',
+    },
+  ];
+  const dictLocales = {
+    'zh-cn': {
+      Offline: '离线',
+      Online: '在线',
+    },
+  };
+  const definition = {
+    atomName: 'Online Status',
+    atomStaticKey: 'dictOnlineStatus',
+    atomRevision: 0,
+    description: '',
+    dictItems: JSON.stringify(dictItems),
+    dictLocales: JSON.stringify(dictLocales),
+    resourceRoles: 'root',
+  };
+  return definition;
+};
+
+
+/***/ }),
+
 /***/ 715:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const countries = __webpack_require__(641);
 const citiesUSA = __webpack_require__(345);
 const citiesChina = __webpack_require__(568);
+const onlineStatus = __webpack_require__(461);
 
 module.exports = app => {
   const dicts = [
     countries(app), //
     citiesUSA(app),
     citiesChina(app),
+    onlineStatus(app),
   ];
   return dicts;
 };

@@ -38,12 +38,10 @@ module.exports = ctx => {
         });
       } else {
         if (queue) {
-          await ctx.app.meta.util.lock({
-            subdomain: ctx.subdomain,
+          await ctx.meta.util.lock({
             resource: `${moduleInfo.relativeName}.statusSet.${this.moduleName}.${name}`,
             fn: async () => {
-              return await ctx.app.meta.util.executeBean({
-                subdomain: ctx.subdomain,
+              return await ctx.meta.util.executeBeanIsolate({
                 beanModule: moduleInfo.relativeName,
                 fn: async ({ ctx }) => {
                   return await ctx.bean.status.module(this.moduleName)._set({ name, value, queue: false });

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "3.5.2",
+  "version": "3.5.3",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -35,8 +35,8 @@
     "chai": "^4.2.0",
     "chalk": "^3.0.0",
     "compressing": "^1.5.1",
-    "egg-born-backend": "^6.2.18",
-    "egg-born-front": "^8.5.2",
+    "egg-born-backend": "^6.3.0",
+    "egg-born-front": "^8.5.3",
     "egg-mock": "^3.25.1",
     "extend2": "^1.0.0",
     "glob": "^7.1.6",

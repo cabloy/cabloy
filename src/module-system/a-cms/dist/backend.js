@@ -1466,9 +1466,7 @@ module.exports = ctx => {
       }
       ctx.tail(async () => {
         // queue
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        await ctx.meta.util.queuePushAsync({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -1489,9 +1487,7 @@ module.exports = ctx => {
       }
       ctx.tail(() => {
         // queue
-        ctx.app.meta.queue.push({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -1512,9 +1508,7 @@ module.exports = ctx => {
       }
       ctx.tail(async () => {
         // queue
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        await ctx.meta.util.queuePushAsync({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -1534,9 +1528,7 @@ module.exports = ctx => {
       }
       ctx.tail(() => {
         // queue
-        ctx.app.meta.queue.push({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'render',
           queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -1637,9 +1629,7 @@ module.exports = ctx => {
 
     buildLanguagesQueue({ atomClass, progressId }) {
       // queue
-      ctx.app.meta.queue.push({
-        locale: ctx.locale,
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -1653,9 +1643,7 @@ module.exports = ctx => {
 
     buildLanguageQueue({ atomClass, language, progressId }) {
       // queue
-      ctx.app.meta.queue.push({
-        locale: ctx.locale,
-        subdomain: ctx.subdomain,
+      ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
@@ -2233,7 +2221,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
@@ -2541,7 +2529,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
@@ -2642,7 +2630,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
@@ -2703,7 +2691,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
@@ -4077,7 +4065,7 @@ module.exports = app => {
         mode: 'default',
       };
       // select
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/cms/article/list',
         body: { atomClass, options },
@@ -4144,7 +4132,7 @@ module.exports = app => {
         page: { index: 0 },
       };
       // select
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/cms/comment/all',
         body: { atomClass, options },
@@ -4207,7 +4195,7 @@ module.exports = app => {
         orders: [['updatedAt', 'desc']],
         page: { index: 0 },
       };
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/base/comment/list',
         body: {

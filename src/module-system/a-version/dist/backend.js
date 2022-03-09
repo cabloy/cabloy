@@ -117,7 +117,7 @@ module.exports = app => {
 
       // check if role dirty for init/test
       if (options.scene === 'init' || options.scene === 'test') {
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: options.subdomain,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.local.version`,
@@ -177,7 +177,7 @@ module.exports = app => {
 
       if (options.scene === 'test') {
         // test module
-        await this.ctx.executeBean({
+        await this.ctx.meta.util.executeBean({
           subdomain: options.subdomain,
           beanModule: module.info.relativeName,
           transaction: true,
@@ -215,7 +215,7 @@ module.exports = app => {
       try {
         if (!options.scene) {
           // update
-          await this.ctx.executeBean({
+          await this.ctx.meta.util.executeBean({
             beanModule: module.info.relativeName,
             transaction: true,
             fn: async ({ ctx }) => {
@@ -224,7 +224,7 @@ module.exports = app => {
           });
         } else {
           // init
-          await this.ctx.executeBean({
+          await this.ctx.meta.util.executeBean({
             subdomain: options.subdomain,
             beanModule: module.info.relativeName,
             transaction: true,
@@ -310,7 +310,7 @@ module.exports = app => {
           }
           // create test mysql
           mysqlConfig.database = databaseName;
-          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig); // database ready
+          app.mysql.__ebdb_test = mysqlConfig; // database ready
           this.ctx.db = null; // reset
           console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
         }
@@ -332,10 +332,14 @@ module.exports = app => {
         // create test mysql
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         mysqlConfig.database = databaseName;
-        app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
+        app.mysql.__ebdb_test = mysqlConfig;
         this.ctx.db = null; // reset
         // database ready
         console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
+      }
+      // default
+      if (!app.mysql.__ebdb_test) {
+        app.mysql.__ebdb_test = app.config.mysql.clients.__ebdb;
       }
     }
 

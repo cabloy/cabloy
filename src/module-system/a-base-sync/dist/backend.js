@@ -206,12 +206,10 @@ module.exports = ctx => {
       const res = await this.model.get(data);
       if (res) return res;
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomAction.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'atomAction',
             context: { atomClassId, code },
@@ -347,6 +345,10 @@ module.exports = app => {
       }
       // ok
       return item;
+    }
+
+    async selectBefore(/* { atomClass, options, user }*/) {
+      // donothing
     }
 
     async select({ atomClass, options, items, user }) {
@@ -659,12 +661,10 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomClass.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'atomClass',
             context: { module, atomClassName, atomClassIdParent },
@@ -696,6 +696,7 @@ module.exports = ctx => {
         module,
         atomClassName,
         atomClassIdParent,
+        atomClassInner: atomClass.inner ? 1 : 0,
       };
       // insert
       const res2 = await this.model.insert(data);
@@ -815,7 +816,7 @@ module.exports = ctx => {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const res = await ctx.executeBean({
+      const res = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, item, options, user },
@@ -845,7 +846,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const item = await ctx.executeBean({
+      const item = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, options, key, user },
@@ -878,11 +879,26 @@ module.exports = ctx => {
 
     // select
     async select({ atomClass, options, user, pageForce = true, count = 0 }) {
+      if (!options) options = {};
+      if (!options.where) options.where = {};
+      if (!options.orders) options.orders = [];
       // atomClass
       let _atomClass;
+      let _moduleInfo;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
         _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        _moduleInfo = mparse.parseInfo(atomClass.module);
+      }
+      // selectBefore
+      if (atomClass) {
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        await ctx.meta.util.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, options, user },
+          fn: 'selectBefore',
+        });
       }
       // tableName
       let tableName = '';
@@ -897,7 +913,6 @@ module.exports = ctx => {
           count,
         });
         // 'where' should append atomClassId, such as article/post using the same table
-        if (!options.where) options.where = {};
         options.where['a.atomClassId'] = atomClass.id;
       }
       // cms
@@ -914,9 +929,8 @@ module.exports = ctx => {
       // select items
       if (!count) {
         if (atomClass) {
-          const _moduleInfo = mparse.parseInfo(atomClass.module);
           const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, options, items, user },
@@ -964,7 +978,7 @@ module.exports = ctx => {
         atomSimple: _atomBasic.atomSimple,
         atomStage: _atomBasic.atomSimple ? 1 : 0,
       });
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, key, item: itemWrite, options, user },
@@ -1014,7 +1028,7 @@ module.exports = ctx => {
           },
         });
         for (const item of listHistory) {
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, user },
@@ -1027,7 +1041,7 @@ module.exports = ctx => {
           atomIdFormal: _atom.id,
         });
         if (itemDraft) {
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
@@ -1037,7 +1051,7 @@ module.exports = ctx => {
           this._notifyDrafts();
         }
         // delete formal
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
@@ -1045,7 +1059,7 @@ module.exports = ctx => {
         });
       } else if (_atom.atomStage === 2) {
         // delete history self
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
@@ -1068,7 +1082,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.executeBean({
+      return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, options, user },
@@ -1113,7 +1127,7 @@ module.exports = ctx => {
           });
         } else {
           // delete
-          await ctx.executeBean({
+          await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
             context: { atomClass, key, user },
@@ -1170,7 +1184,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, user },
@@ -1187,7 +1201,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, key, user },
@@ -1231,7 +1245,7 @@ module.exports = ctx => {
       // export
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const resExport = await ctx.executeBean({
+      const resExport = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, options, fields, items, user },
@@ -1490,11 +1504,11 @@ module.exports = ctx => {
       // parse action code
       action = ctx.bean.atomAction.parseActionCode({
         action,
-        atomClass: _atomClass,
+        atomClass,
       });
       // check right
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.executeBean({
+      return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atom: _atom, atomClass, action, stage, user, checkFlow },
@@ -1766,7 +1780,7 @@ module.exports = ctx => {
         const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
         const _moduleInfo = mparse.parseInfo(atomClass.module);
         const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
           context: { atomClass, key: keyDraft, user },
@@ -2088,14 +2102,14 @@ module.exports = ctx => {
         updatedAt: destItem.updatedAt,
       });
       // bean write
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, key: destKey, item: destItem, options, user },
         fn: 'write',
       });
       // bean copy
-      await ctx.executeBean({
+      await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, target, srcKey, srcItem, destKey, destItem, options, user },
@@ -2465,6 +2479,17 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   class Auth {
+    constructor() {
+      this._redisAuth = null;
+    }
+
+    get redisAuth() {
+      if (!this._redisAuth) {
+        this._redisAuth = ctx.app.redis.get('auth') || ctx.app.redis.get('cache');
+      }
+      return this._redisAuth;
+    }
+
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
@@ -2484,6 +2509,9 @@ module.exports = ctx => {
     }
 
     async logout() {
+      const user = ctx.state.user;
+      await this._sendMessageSystemLogout({ user });
+      await this._clearRedisAuth({ user });
       await ctx.logout();
       await ctx.bean.user.loginAsAnonymous();
       return await this.getLoginInfo();
@@ -2665,6 +2693,87 @@ module.exports = ctx => {
         ctx.app.passport.unuse(strategyName);
       }
     }
+
+    _getAuthRedisKey({ user }) {
+      const userAgent = user.agent || user.op;
+      return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
+    }
+
+    _getAuthRedisKeyPattern({ user, keyPrefix }) {
+      return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
+    }
+
+    async serializeUser({ user }) {
+      // _user
+      const _user = {
+        op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
+        provider: user.provider,
+      };
+      if (user.agent.id !== user.op.id) {
+        _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
+      }
+      // anonymous
+      if (user.op.anonymous) {
+        // not use redis
+        return _user;
+      }
+      // save to redis
+      const key = this._getAuthRedisKey({ user });
+      if (!ctx.bean.util.checkDemo(false)) {
+        // demo, allowed to auth more times
+        _user.token = await this.redisAuth.get(key);
+      } else {
+        // create a new one
+        _user.token = null;
+      }
+      if (!_user.token) {
+        _user.token = uuid.v4().replace(/-/g, '');
+      }
+      await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
+      // register user online
+      await ctx.bean.userOnline.register({ user, isLogin: true });
+      // ok
+      return _user;
+    }
+
+    async deserializeUser({ user }) {
+      if (user.op.anonymous) return user;
+      // not throw 401: ctx.throw(401);
+      if (!user.token) return null;
+      // check token
+      const key = this._getAuthRedisKey({ user });
+      const token = await this.redisAuth.get(key);
+      if (token !== user.token) return null;
+      // ready
+      return user;
+    }
+
+    async _sendMessageSystemLogout({ user }) {
+      if (!user || user.op.anonymous) return;
+      // send message-system
+      await ctx.bean.userOnline.sendMessageSystemLogout({
+        user: user.op, // should use user.op
+        type: 'provider',
+        provider: user.provider,
+      });
+    }
+
+    async _clearRedisAuth({ user }) {
+      if (!user || user.agent.anonymous) return;
+      // redis auth
+      const key = this._getAuthRedisKey({ user });
+      await this.redisAuth.del(key);
+    }
+
+    async _clearRedisAuthAll({ user }) {
+      const keyPrefix = this.redisAuth.options.keyPrefix;
+      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
+      const keys = await this.redisAuth.keys(keyPattern);
+      for (const fullKey of keys) {
+        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
+        await this.redisAuth.del(key);
+      }
+    }
   }
 
   return Auth;
@@ -2683,8 +2792,10 @@ function _createAuthenticate(moduleRelativeName, providerName, _config) {
     if (ctx.url.indexOf(_config.callbackURL) === -1) {
       if (ctx.request.query && ctx.request.query.returnTo) {
         ctx.session.returnTo = ctx.request.query.returnTo;
+        ctx.session['x-scene'] = ctx.request.query['x-scene'];
       } else {
         delete ctx.session.returnTo; // force to delete
+        delete ctx.session['x-scene'];
       }
     }
 
@@ -3300,12 +3411,10 @@ module.exports = ctx => {
 
     async _register({ atomClass, language, categoryName, categoryIdParent }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.category.register.${atomClass.id}`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'category',
             context: { atomClass, language, categoryName, categoryIdParent },
@@ -4013,12 +4122,10 @@ module.exports = ctx => {
     }
 
     async _register({ roleName, roleIdParent }) {
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.role.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'role',
             context: { roleName, roleIdParent },
@@ -4434,8 +4541,7 @@ module.exports = ctx => {
     // build roles
     async build(options) {
       // queue
-      await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
+      await ctx.meta.util.queuePushAsync({
         module: moduleInfo.relativeName,
         queueName: 'roleBuild',
         data: { options },
@@ -4778,12 +4884,10 @@ module.exports = ctx => {
 
     async _register({ atomClass, language, tagName }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.tag.register.${atomClass.id}`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'tag',
             context: { atomClass, language, tagName },
@@ -4891,7 +4995,7 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      const maxAge = this.config.anonymous.maxAge;
+      const maxAge = this.config.auth.maxAge.anonymous;
       ctx.session.maxAge = maxAge;
       // ok
       return user;
@@ -4901,7 +5005,7 @@ module.exports = ctx => {
       let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
       if (!_anonymousId) {
         _anonymousId = uuid.v4().replace(/-/g, '');
-        const maxAge = this.config.anonymous.maxAge;
+        const maxAge = this.config.auth.maxAge.anonymous;
         ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
       }
       return _anonymousId;
@@ -5283,6 +5387,10 @@ module.exports = ctx => {
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
       };
+      const scene = ctx.headers['x-scene'] || ctx.request.query['x-scene'] || ctx.session['x-scene'];
+      if (scene) {
+        verifyUser.provider.scene = scene;
+      }
 
       // columns
       const columns = ['userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale'];
@@ -5361,10 +5469,11 @@ module.exports = ctx => {
       }
 
       // restore maxAge
+      //   maxAge: 0,null/undefined,>0
       if (profileUser.maxAge === 0) {
-        ctx.session.maxAge = 0;
+        ctx.session.maxAge = this.config.auth.maxAge.default;
       } else {
-        ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
+        ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
       }
 
       // user verify event
@@ -5541,13 +5650,12 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
       // lock
-      const _subdomain = subdomain !== undefined ? subdomain : ctx.subdomain;
-      return await ctx.app.meta.util.lock({
-        subdomain: _subdomain,
+      return await ctx.meta.util.lock({
+        subdomain,
         resource: `${moduleInfo.relativeName}.authProvider.register`,
         fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: _subdomain,
+          return await ctx.meta.util.executeBeanIsolate({
+            subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'user',
             context: { module, providerName },
@@ -5781,7 +5889,7 @@ module.exports = app => {
           return self.escapeURL(str);
         },
         performAction({ method, url, body }) {
-          return self.ctx.performAction({ method, url, body });
+          return self.ctx.meta.util.performAction({ method, url, body });
         },
       };
     }
@@ -6003,6 +6111,8 @@ module.exports = ctx => {
 
       let _itemField, _itemJoin;
 
+      let _atomClassWhere;
+
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
@@ -6093,6 +6203,15 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      // eslint-disable-next-line
+      _atomClassWhere = '';
+      // if (tableName || star || label) {
+      //   _atomClassWhere = '';
+      // } else {
+      //   _atomClassWhere = ' and b.atomClassInner=0';
+      // }
+
       // fields
       let _selectFields;
       if (count) {
@@ -6129,6 +6248,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -6197,6 +6317,8 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+
+      let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
 
@@ -6275,6 +6397,10 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      // eslint-disable-next-line
+      _atomClassWhere = ' and b.atomClassInner=0';
+
       // fields
       let _selectFields;
       if (count) {
@@ -6306,6 +6432,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -6379,6 +6506,8 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+
+      let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
 
@@ -6478,6 +6607,13 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
+      // atomClassInner
+      if (tableName || star || label) {
+        _atomClassWhere = '';
+      } else {
+        _atomClassWhere = ' and b.atomClassInner=0';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -6550,6 +6686,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
              ${_tagWhere}
@@ -6974,6 +7111,24 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 3899:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Middleware {
+    async execute(options, next) {
+      // check
+      await ctx.bean.user.check(options);
+      // next
+      await next();
+    }
+  }
+  return Middleware;
+};
+
+
+/***/ }),
+
+/***/ 4334:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -7592,12 +7747,10 @@ module.exports = app => {
     }
 
     async _updateRevision({ atomClass, atomIdFormal, atomIdDraft, item }) {
-      return await this.ctx.app.meta.util.lock({
-        subdomain: this.ctx.subdomain,
+      return await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.app.meta.util.executeBean({
-            subdomain: this.ctx.subdomain,
+          return await this.ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClass, atomIdFormal, atomIdDraft, item },
@@ -7636,12 +7789,10 @@ module.exports = app => {
     }
 
     async _register({ atomClass, item }) {
-      return await this.ctx.app.meta.util.lock({
-        subdomain: this.ctx.subdomain,
+      return await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.app.meta.util.executeBean({
-            subdomain: this.ctx.subdomain,
+          return await this.ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClass, item },
@@ -7720,18 +7871,11 @@ module.exports = app => {
       // serializeUser
       app.passport.serializeUser(async (ctx, user) => {
         ctx.state.user = user;
-        const _user = {
-          op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
-          provider: user.provider,
-        };
-        if (user.agent.id !== user.op.id) {
-          _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
-        }
-        return _user;
+        return await ctx.bean.auth.serializeUser({ user });
       });
       // deserializeUser
       app.passport.deserializeUser(async (ctx, user) => {
-        return user;
+        return await ctx.bean.auth.deserializeUser({ user });
       });
     }
   }
@@ -7920,6 +8064,7 @@ const VersionUpdate8Fn = __webpack_require__(8984);
 const VersionUpdate9Fn = __webpack_require__(8963);
 const VersionUpdate10Fn = __webpack_require__(1626);
 const VersionUpdate11Fn = __webpack_require__(1910);
+const VersionUpdate12Fn = __webpack_require__(2504);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -7930,6 +8075,11 @@ const VersionInit9Fn = __webpack_require__(3460);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 12) {
+        const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
+        await versionUpdate12.run();
+      }
+
       if (options.version === 11) {
         const versionUpdate11 = new (VersionUpdate11Fn(this.ctx))();
         await versionUpdate11.run();
@@ -8006,6 +8156,11 @@ module.exports = app => {
     async update8Atoms(options) {
       const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
       await versionUpdate8._updateAtomsInstance(options);
+    }
+
+    async update12AtomClasses(options) {
+      const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
+      await versionUpdate12._updateAtomClassesInstance(options);
     }
   }
 
@@ -8431,6 +8586,56 @@ module.exports = function (ctx) {
   }
 
   return VersionUpdate11;
+};
+
+
+/***/ }),
+
+/***/ 2504:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate12 {
+    async run(options) {
+      // aAtomClass: add atomClassInner
+      const sql = `
+        ALTER TABLE aAtomClass
+          ADD COLUMN atomClassInner int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // update exists atomClasses
+      await this._updateAtomClasses(options);
+    }
+
+    async _updateAtomClasses(options) {
+      // all instances
+      const instances = await ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await ctx.meta.util.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update12AtomClasses',
+        });
+      }
+    }
+
+    async _updateAtomClassesInstance() {
+      // atomClasses
+      const atomClasses = await ctx.model.atomClass.select();
+      for (const atomClass of atomClasses) {
+        const _atomClass = ctx.bean.base.atomClass(atomClass);
+        if (_atomClass.inner) {
+          await ctx.model.atomClass.update({ id: atomClass.id, atomClassInner: 1 });
+        }
+      }
+    }
+  }
+
+  return VersionUpdate12;
 };
 
 
@@ -9048,7 +9253,7 @@ module.exports = function (ctx) {
       // all instances
       const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await ctx.executeBean({
+        await ctx.meta.util.executeBean({
           subdomain: instance.name,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
@@ -9364,6 +9569,7 @@ const middlewareAuth = __webpack_require__(3899);
 const middlewareRight = __webpack_require__(4087);
 const middlewareJsonp = __webpack_require__(9856);
 const middlewareHttpLog = __webpack_require__(4973);
+const middlewareconnectionAuth = __webpack_require__(4334);
 const beanLocal = __webpack_require__(2978);
 const beanAtomBase = __webpack_require__(6542);
 const beanAtom = __webpack_require__(5528);
@@ -9467,6 +9673,10 @@ module.exports = app => {
     'middleware.httpLog': {
       mode: 'ctx',
       bean: middlewareHttpLog,
+    },
+    'middleware.connectionAuth': {
+      mode: 'ctx',
+      bean: middlewareconnectionAuth,
     },
     // global
     local: {
@@ -9669,6 +9879,10 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
+    connectionAuth: {
+      bean: 'connectionAuth',
+      type: 'socketio.connection',
+    },
   };
 
   // startups
@@ -9733,14 +9947,6 @@ module.exports = appInfo => {
     whiteList: 'http://localhost',
   };
 
-  // anonymous
-  config.anonymous = {
-    maxAge: 365 * 24 * 3600 * 1000, // 365 天
-  };
-  // authenticated or rememberMe
-  config.authenticated = {
-    maxAge: 30 * 24 * 3600 * 1000, // 30 天
-  };
   // checkUserName
   config.checkUserName = true;
   // account
@@ -9783,6 +9989,11 @@ module.exports = appInfo => {
     avatar: {
       timeout: 5000,
       default: 'https://cabloy.com/plugins/cms-pluginbase/assets/images/avatar_user.png',
+    },
+    maxAge: {
+      anonymous: 365 * 24 * 3600 * 1000, // 365 days
+      authenticated: 30 * 24 * 3600 * 1000, // 30 days // authenticated or rememberMe
+      default: 1 * 24 * 3600 * 1000, // default is one day
     },
   };
 
@@ -11594,7 +11805,7 @@ module.exports = app => {
     async all() {
       const options = this.ctx.request.body.options;
       options.comment = 1;
-      const res = await this.ctx.performAction({
+      const res = await this.ctx.meta.util.performAction({
         method: 'post',
         url: '/a/base/atom/select',
         body: {
@@ -12919,7 +13130,7 @@ module.exports = app => {
     // auth
     { method: 'post', path: 'auth/echo', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: 'auth', meta: { auth: { user: true } } },
-    { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: true } } },
     // cors
     { method: 'options', path: /.*/ },
     // jwt
@@ -13826,7 +14037,7 @@ module.exports = app => {
       // force innerAccess as false
       params.innerAccess = false;
       // performAction
-      return await this.ctx.performAction(params);
+      return await this.ctx.meta.util.performAction(params);
     }
 
     async performActions({ actions }) {
