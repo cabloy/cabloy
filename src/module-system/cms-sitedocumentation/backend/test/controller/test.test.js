@@ -27,7 +27,11 @@ describe('test/controller/test.test.js', () => {
         atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
       });
     if (result.body.code !== 0) {
+      const session = app.context.session;
       console.log(result);
+      console.log(session);
+      console.log(session && session.passport && session.passport.user);
+      process.exit(0);
     }
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
