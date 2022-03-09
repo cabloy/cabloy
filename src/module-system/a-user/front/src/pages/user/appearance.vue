@@ -31,7 +31,7 @@ export default {
     },
     performAction(event, resourceConfig) {
       const action = this.$utils.extend({}, resourceConfig, {
-        targetEl: event.target,
+        targetEl: event.currentTarget,
         navigateOptions: { target: '_self' },
       });
       return this.$meta.util.performAction({ ctx: this, action, item: null });

@@ -116,7 +116,7 @@ export default {
       this.$refs.file.click();
     },
     onFileChange(event) {
-      this.__setFile(event, event.target.files[0]);
+      this.__setFile(event, event.currentTarget.files[0]);
     },
     __checkFileType(file) {
       const type = file.type;
@@ -134,7 +134,7 @@ export default {
       // set
       this.fileBlob = file;
       this.fileName = file.name;
-      event.target.value = '';
+      event.currentTarget.value = '';
       if (this.mode === 1) {
         const reader = new window.FileReader();
         reader.onload = () => {
@@ -150,19 +150,19 @@ export default {
     onFileDragenter(event) {
       event.preventDefault();
       event.stopPropagation();
-      const $target = this.$$(event.target);
+      const $target = this.$$(event.currentTarget);
       $target.addClass('fileDropPrompt');
     },
     onFileDragleave(event) {
       event.preventDefault();
       event.stopPropagation();
-      const $target = this.$$(event.target);
+      const $target = this.$$(event.currentTarget);
       $target.removeClass('fileDropPrompt');
     },
     onFileDrop(event) {
       event.preventDefault();
       event.stopPropagation();
-      const $target = this.$$(event.target);
+      const $target = this.$$(event.currentTarget);
       $target.removeClass('fileDropPrompt');
       this.__setFile(event, event.dataTransfer.files[0]);
     },

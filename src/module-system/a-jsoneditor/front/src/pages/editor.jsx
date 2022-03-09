@@ -103,7 +103,7 @@ export default {
     async onPerformAction(event, action) {
       action = {
         ...action,
-        targetEl: event.target,
+        targetEl: event.currentTarget,
       };
       await this.$meta.util.performAction({ ctx: this, action, item: this.context });
     },

@@ -5,7 +5,7 @@ export default {
     let events;
     if (tag === 'f7-input') {
       const onChange = function (event) {
-        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.target.value);
+        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.currentTarget.value);
       };
       events = {
         input: onChange,
@@ -13,14 +13,14 @@ export default {
       };
     } else if (tag === 'f7-toggle') {
       const onChange = function (event) {
-        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.target.checked);
+        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.currentTarget.checked);
       };
       events = {
         change: onChange,
       };
     } else if (tag === 'f7-radio') {
       const onChange = function (event) {
-        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.target.value);
+        vnode.context.$meta.util.setProperty(vnode.context, binding.expression, event.currentTarget.value);
       };
       events = {
         change: onChange,

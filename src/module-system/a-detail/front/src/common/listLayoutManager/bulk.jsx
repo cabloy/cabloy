@@ -15,7 +15,7 @@ export default {
       // action
       let _action = this.getDetailAction(action);
       if (!_action) return;
-      _action = this.$utils.extend({}, _action, { targetEl: event.target });
+      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
       // item
       const item = {
         atomId: this.container.atomId,
