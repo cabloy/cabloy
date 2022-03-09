@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.13.6",
+  "version": "4.13.7",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -61,7 +61,7 @@
     "egg-born-module-a-instance": "^4.2.10",
     "egg-born-module-a-jsoneditor": "^4.1.9",
     "egg-born-module-a-layoutmobile": "^4.2.12",
-    "egg-born-module-a-layoutpc": "^4.2.18",
+    "egg-born-module-a-layoutpc": "^4.2.19",
     "egg-born-module-a-login": "^4.1.9",
     "egg-born-module-a-mail": "^4.1.7",
     "egg-born-module-a-markdown": "^4.1.31",
