@@ -40,8 +40,7 @@ module.exports = ctx => {
         );
       } else {
         if (queue) {
-          await ctx.app.meta.util.lock({
-            subdomain: ctx.subdomain,
+          await ctx.meta.util.lock({
             resource: `${moduleInfo.relativeName}.cacheDbSet.${this.moduleName}.${name}`,
             fn: async () => {
               return await ctx.meta.util.executeBeanIsolate({

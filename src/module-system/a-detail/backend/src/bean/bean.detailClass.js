@@ -31,8 +31,7 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !detailClassName) ctx.throw.module('a-base', 1011);
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.detailClass.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

@@ -23,8 +23,7 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !messageClassName) throw new Error('Invalid arguments');
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.messageClass.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

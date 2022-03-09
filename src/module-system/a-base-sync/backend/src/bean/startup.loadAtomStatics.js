@@ -123,8 +123,7 @@ module.exports = app => {
     }
 
     async _updateRevision({ atomClass, atomIdFormal, atomIdDraft, item }) {
-      return await this.ctx.app.meta.util.lock({
-        subdomain: this.ctx.subdomain,
+      return await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
           return await this.ctx.meta.util.executeBeanIsolate({
@@ -166,8 +165,7 @@ module.exports = app => {
     }
 
     async _register({ atomClass, item }) {
-      return await this.ctx.app.meta.util.lock({
-        subdomain: this.ctx.subdomain,
+      return await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
           return await this.ctx.meta.util.executeBeanIsolate({

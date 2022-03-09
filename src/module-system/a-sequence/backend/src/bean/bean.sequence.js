@@ -26,8 +26,7 @@ module.exports = ctx => {
 
     async next(name) {
       const moduleName = this.moduleName;
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.sequence.${moduleName}.${name}`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

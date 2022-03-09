@@ -44,7 +44,7 @@ module.exports = ctx => {
       const instanceBase = this._getInstanceBase({ subdomain });
       if (!instanceBase) return null;
       // lock
-      return await ctx.app.meta.util.lock({
+      return await ctx.meta.util.lock({
         subdomain: null,
         resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
         fn: async () => {
