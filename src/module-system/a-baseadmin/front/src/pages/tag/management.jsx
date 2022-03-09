@@ -32,7 +32,7 @@ export default {
         actionModule: 'a-base',
         actionComponent: 'action',
         name: 'selectLocale',
-        targetEl: event.target,
+        targetEl: event.currentTarget,
       };
       const locale = await this.$meta.util.performAction({ ctx: this, action, item });
       // navigate

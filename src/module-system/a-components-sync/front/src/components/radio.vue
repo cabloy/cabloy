@@ -9,7 +9,7 @@ export default {
   extends: f7Radio,
   methods: {
     onChange(event) {
-      this.$emit('input', event.target.value);
+      this.$emit('input', event.currentTarget.value);
     },
   },
 };

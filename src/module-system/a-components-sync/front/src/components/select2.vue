@@ -158,7 +158,7 @@ export default {
       if (this.valueSetting) return;
       let value;
       if (!this.multiple) {
-        value = event.target.value;
+        value = event.currentTarget.value;
       } else {
         const f7Select = this.$$(this.$el).parents('.smart-select')[0].f7SmartSelect;
         const options = f7Select.getItemsData();

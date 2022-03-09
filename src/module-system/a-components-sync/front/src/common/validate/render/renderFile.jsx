@@ -149,7 +149,7 @@ export default {
           context.setValue(value);
         },
         focus: event => {
-          const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+          const upload = this.$$(event.currentTarget).closest('li').find('.eb-input-file-upload');
           const timeoutId = upload.data('timeoutId');
           if (timeoutId) {
             window.clearTimeout(timeoutId);
@@ -158,8 +158,8 @@ export default {
           upload.css('display', 'flex');
           // upload.show();
         },
-        blur: () => {
-          const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+        blur: event => {
+          const upload = this.$$(event.currentTarget).closest('li').find('.eb-input-file-upload');
           const timeoutId = window.setTimeout(() => {
             upload.data('timeoutId', 0);
             upload.hide();

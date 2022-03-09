@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     onChange(event) {
-      this.$emit('input', event.target.checked);
+      this.$emit('input', event.currentTarget.checked);
     },
   },
 };

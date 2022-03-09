@@ -13,15 +13,15 @@ export default {
       this.input_checkEmptyState();
     },
     onInput(event) {
-      this.$emit('input', event.target.value);
+      this.$emit('input', event.currentTarget.value);
       this.input_clearValidateError();
     },
     onChange(event) {
-      this.$emit('change', event.target.value);
+      this.$emit('change', event.currentTarget.value);
       this.input_clearValidateError();
     },
     onInputClear(event) {
-      this.$emit('input:clear', event.target.value);
+      this.$emit('input:clear', event.currentTarget.value);
     },
     input_checkEmptyState() {
       this.$f7.input.checkEmptyState(this.input_findTextElement());

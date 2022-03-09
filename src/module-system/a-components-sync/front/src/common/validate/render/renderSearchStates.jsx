@@ -79,7 +79,7 @@ export default {
       // choose
       const params = {
         forceToPopover: true,
-        targetEl: event.target,
+        targetEl: event.currentTarget,
         buttons,
       };
       const button = await this.$view.actions.choose(params);
