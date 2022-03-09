@@ -374,7 +374,7 @@ export default {
       return height;
     },
     _handleClicks(event) {
-      const $clickedEl = this.$$(event.currentTarget);
+      const $clickedEl = this.$$(event.target);
       const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
       if ($clickedSidebarEl.length === 0) {
         this._hideAllSidebars();
