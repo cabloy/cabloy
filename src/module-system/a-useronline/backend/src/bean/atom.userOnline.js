@@ -75,8 +75,24 @@ module.exports = app => {
       });
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      if (action !== 101) return res;
+      // kickOut
+      const item = await this.ctx.model.userOnline.get({ id: atom.itemId });
+      if (action === 101 && this._getOnlineStatus(item) === 2) return res;
+      return null;
+    }
+
+    _getOnlineStatus(item) {
+      return item.expireTime <= new Date() ? 1 : 2;
+    }
+
     async _translate(item) {
-      item.onlineStatus = item.expireTime <= new Date() ? 1 : 2;
+      item.onlineStatus = this._getOnlineStatus(item);
       const dictItem = await this.ctx.bean.dict.findItem({
         dictKey: 'a-dictbooster:dictOnlineStatus',
         code: item.onlineStatus,
