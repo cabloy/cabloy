@@ -170,7 +170,7 @@ export default {
     onPerformRemoveMode3(event, mode3Item, index) {
       const value = this.valueSchema[this.mode];
       value.splice(index, 1);
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     onPerformMoveUpMode3(event, mode3Item, index) {
       const value = this.valueSchema[this.mode];
@@ -178,7 +178,7 @@ export default {
         const item = value.splice(index, 1);
         value.splice(index - 1, 0, item[0]);
       }
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     onPerformMoveDownMode3(event, mode3Item, index) {
       const value = this.valueSchema[this.mode];
@@ -186,7 +186,7 @@ export default {
         const item = value.splice(index + 1, 1);
         value.splice(index, 0, item[0]);
       }
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     onInputValueMode4(data) {
       this.valueMode4 = data;

@@ -51,7 +51,7 @@ export default {
     onPerformRemove(event, item, index) {
       // eslint-disable-next-line
       this.assignees.roles.splice(index, 1);
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     _renderAssignee(item, index) {
       // domTitle

@@ -72,7 +72,7 @@ export default {
       const [index] = this._findBehavior(item.id);
       behaviors.splice(index, 1);
       this.context.setValue(behaviors);
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     _deleteEdges(behaviorId) {
       const edgeIds = this.diagram.contentProcess.edges
@@ -90,7 +90,7 @@ export default {
         behaviors.splice(index - 1, 0, item[0]);
         this.context.setValue(behaviors);
       }
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     _onActionMoveDown(event, item) {
       const behaviors = this.context.getValue();
@@ -100,7 +100,7 @@ export default {
         behaviors.splice(index, 0, item[0]);
         this.context.setValue(behaviors);
       }
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     onSwipeoutOpened(/* event, item*/) {},
     onPerformAdd() {

@@ -120,7 +120,7 @@ export default {
       await this.$view.dialog.confirm();
       await this.$api.post('/a/base/tag/delete', { tagId: item.id });
       this._clearSystemCache();
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
       const index = this.items.findIndex(_item => _item.id === item.id);
       if (index !== -1) {
         this.items.splice(index, 1);

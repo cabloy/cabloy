@@ -107,7 +107,7 @@ export default {
           })
           .then(() => {
             this.$meta.eventHub.$emit('user:delete', { userId: item.id });
-            this.$meta.util.swipeoutDelete(event.target);
+            this.$meta.util.swipeoutDelete(event.currentTarget);
             return true;
           });
       });
@@ -120,7 +120,7 @@ export default {
         })
         .then(() => {
           this.$meta.eventHub.$emit('user:disable', { userId: item.id, disabled });
-          this.$meta.util.swipeoutClose(event.target);
+          this.$meta.util.swipeoutClose(event.currentTarget);
           return true;
         });
     },

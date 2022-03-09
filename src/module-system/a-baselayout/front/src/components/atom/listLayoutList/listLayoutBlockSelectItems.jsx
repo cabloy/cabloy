@@ -22,7 +22,7 @@ export default {
     },
     onActionSelectRemove(event, item) {
       // close
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
       // remove from selectedAtomIds
       const selectedAtomIds = this.layoutManager.container.params.selectedAtomIds;
       if (selectedAtomIds) {

@@ -86,7 +86,7 @@ export default {
         return this.$api.post('user/removeRole', { id: item.id }).then(() => {
           this.onRoleDelete({ roleId: item.roleId });
           this.$meta.eventHub.$emit('user:removeRole', { userId: this.user.id, roleId: item.roleId });
-          this.$meta.util.swipeoutDelete(event.target);
+          this.$meta.util.swipeoutDelete(event.currentTarget);
           return true;
         });
       });

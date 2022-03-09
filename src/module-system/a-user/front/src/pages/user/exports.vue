@@ -104,7 +104,7 @@ export default {
       await this.$api.post('/a/file/file/delete', {
         fileId: item.id,
       });
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
       this.$meta.eventHub.$emit('export:action', { action: 'delete', fileId: item.id });
     },
     deleteItem(fileId) {

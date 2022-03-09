@@ -98,7 +98,7 @@ export default {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('resourceRight/delete', { id: item.id }).then(() => {
           this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
-          this.$meta.util.swipeoutDelete(event.target);
+          this.$meta.util.swipeoutDelete(event.currentTarget);
           return true;
         });
       });

@@ -42,7 +42,7 @@ export default {
     },
     onPerformRemove(event, item, index) {
       this.assignees.users.splice(index, 1);
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
     },
     getItemMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;

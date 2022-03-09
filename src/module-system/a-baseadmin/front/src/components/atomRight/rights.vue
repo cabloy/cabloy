@@ -120,7 +120,7 @@ export default {
             id: item.id,
             roleId: this.role.id,
           });
-          this.$meta.util.swipeoutDelete(event.target);
+          this.$meta.util.swipeoutDelete(event.currentTarget);
           return true;
         });
       });

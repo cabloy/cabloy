@@ -85,7 +85,7 @@ export default {
         return this.$api.post('role/removeRoleInc', { id: item.id }).then(() => {
           this.onRoleDelete({ roleId: item.roleIdInc });
           this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-          this.$meta.util.swipeoutDelete(event.target);
+          this.$meta.util.swipeoutDelete(event.currentTarget);
           return true;
         });
       });

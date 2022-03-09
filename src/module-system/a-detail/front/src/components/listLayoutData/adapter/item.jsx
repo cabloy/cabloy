@@ -13,7 +13,7 @@ export default {
           },
         },
       });
-      this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.currentTarget);
       return res;
     },
     async item_onItemClick(event, item) {

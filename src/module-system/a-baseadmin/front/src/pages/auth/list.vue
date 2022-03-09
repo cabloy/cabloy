@@ -85,7 +85,7 @@ export default {
         const index = this.items.findIndex(_item => _item.id === item.id);
         this.items[index].disabled = disabled;
         this.groupItems();
-        this.$meta.util.swipeoutClose(event.target);
+        this.$meta.util.swipeoutClose(event.currentTarget);
         return true;
       });
     },
