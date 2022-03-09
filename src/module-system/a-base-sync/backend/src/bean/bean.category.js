@@ -224,8 +224,7 @@ module.exports = ctx => {
 
     async _register({ atomClass, language, categoryName, categoryIdParent }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.category.register.${atomClass.id}`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

@@ -164,8 +164,7 @@ module.exports = ctx => {
     }
 
     async _register({ roleName, roleIdParent }) {
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.role.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

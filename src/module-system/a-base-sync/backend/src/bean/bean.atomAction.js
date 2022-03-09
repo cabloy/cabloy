@@ -15,8 +15,7 @@ module.exports = ctx => {
       const res = await this.model.get(data);
       if (res) return res;
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomAction.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

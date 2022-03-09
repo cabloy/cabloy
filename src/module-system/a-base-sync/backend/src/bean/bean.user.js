@@ -728,13 +728,12 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
       // lock
-      const _subdomain = subdomain !== undefined ? subdomain : ctx.subdomain;
-      return await ctx.app.meta.util.lock({
-        subdomain: _subdomain,
+      return await ctx.meta.util.lock({
+        subdomain,
         resource: `${moduleInfo.relativeName}.authProvider.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({
-            subdomain: _subdomain,
+            subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'user',
             context: { module, providerName },

@@ -30,8 +30,7 @@ module.exports = ctx => {
       if (res) return res;
       if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
       // lock
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomClass.register`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({

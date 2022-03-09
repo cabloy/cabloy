@@ -162,8 +162,7 @@ module.exports = ctx => {
 
     async _register({ atomClass, language, tagName }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.tag.register.${atomClass.id}`,
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({
