@@ -8,6 +8,10 @@ const is = require('is-type-of');
 
 module.exports = ctx => {
   const util = {
+    async lock({ subdomain, resource, fn, options, redlock }) {
+      if (subdomain === undefined) subdomain = ctx.subdomain;
+      return await ctx.app.meta.util.lock({ subdomain, resource, fn, options, redlock });
+    },
     queuePush(info) {
       const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
       const locale = info.locale === undefined ? ctx.locale : info.locale;
