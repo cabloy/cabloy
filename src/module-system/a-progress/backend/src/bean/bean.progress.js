@@ -99,7 +99,7 @@ module.exports = ctx => {
     }
 
     async done({ progressId, message }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisKey({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -108,7 +108,15 @@ module.exports = ctx => {
       // data
       const data = { message };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: 1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          done: 1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
@@ -123,7 +131,7 @@ module.exports = ctx => {
     }
 
     async error({ progressId, message }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisKey({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -132,7 +140,15 @@ module.exports = ctx => {
       // data
       const data = { message };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: -1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          done: -1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
