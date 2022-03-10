@@ -1,6 +1,6 @@
 const require3 = require('require3');
-const uuid = require3('uuid');
 const debug = require3('debug')('io');
+const uuid = require3('uuid');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 
