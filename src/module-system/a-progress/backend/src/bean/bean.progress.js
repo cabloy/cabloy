@@ -22,10 +22,24 @@ module.exports = ctx => {
       return `progress:${ctx.instance.id}:${progressId}`;
     }
 
-    async _setRedisValue({ progressId, data }) {
+    async _getRedisValue({ progressId }) {
+      const key = this._getRedisKey({ progressId });
+      const content = await this.redis.get(key);
+      return content ? JSON.parse(content) : null;
+    }
+
+    async _setRedisValue({ progressId, content, contentOld }) {
       const expireTime = this.configModule.progress.expireTime;
       const key = this._getRedisKey({ progressId });
-      await this.redis.set(key, JSON.stringify(data), 'PX', expireTime);
+      if (contentOld) {
+        content = Object.assign({}, contentOld, content);
+      }
+      await this.redis.set(key, JSON.stringify(content), 'PX', expireTime);
+    }
+
+    async _updateRedisValue({ progressId, content }) {
+      const contentOld = await this._getRedisKey({ progressId });
+      await this._setRedisValue({ progressId, content, contentOld });
     }
 
     async create() {
@@ -33,7 +47,7 @@ module.exports = ctx => {
       const progressId = uuid.v4().replace(/-/g, '');
       await this._setRedisValue({
         progressId,
-        data: {
+        content: {
           userId: ctx.state.user.op.id,
           counter: 0,
           done: 0,
@@ -46,7 +60,7 @@ module.exports = ctx => {
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisKey({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -58,13 +72,20 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1001);
       }
       // data
-      const data = item.data ? JSON.parse(item.data) : [];
+      const data = item.data || [];
       if (data.length > progressNo + 1) {
         data.splice(progressNo + 1, data.length - progressNo - 1);
       }
       data[progressNo] = { total, progress, text };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
