@@ -5,5 +5,10 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {};
 
+  // progress
+  config.progress = {
+    expireTime: 1 * 3600 * 1000, // default is one hour
+  };
+
   return config;
 };

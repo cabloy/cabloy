@@ -9,15 +9,39 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
     get redis() {
       if (!this._redis) this._redis = ctx.app.redis.get('io') || ctx.app.redis.get('cache');
       return this._redis;
     }
 
+    _getRedisKey({ progressId }) {
+      return `progress:${ctx.instance.id}:${progressId}`;
+    }
+
+    async _setRedisValue({ progressId, data }) {
+      const expireTime = this.configModule.progress.expireTime;
+      const key = this._getRedisKey({ progressId });
+      await this.redis.set(key, JSON.stringify(data), 'PX', expireTime);
+    }
+
     async create() {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
       const progressId = uuid.v4().replace(/-/g, '');
-      await this.modelProgress.insert({ progressId, userId: ctx.state.user.op.id });
+      await this._setRedisValue({
+        progressId,
+        data: {
+          userId: ctx.state.user.op.id,
+          counter: 0,
+          done: 0,
+          abort: 0,
+          data: null,
+        },
+      });
+      // ok
       return progressId;
     }
 
