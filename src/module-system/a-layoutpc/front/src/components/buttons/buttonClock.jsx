@@ -1,13 +1,3 @@
-<template>
-  <eb-link
-    :class="buttonClass"
-    :iconMaterial="buttonIcon && buttonIcon.material"
-    :iconF7="buttonIcon && buttonIcon.f7"
-    :text="clockText"
-    :onPerform="onPerform"
-  ></eb-link>
-</template>
-<script>
 // export
 export default {
   installFactory,
@@ -143,7 +133,16 @@ function installFactory(_Vue) {
         });
       },
     },
+    render() {
+      return (
+        <eb-link
+          class={this.buttonClass}
+          iconMaterial={this.buttonIcon && this.buttonIcon.material}
+          iconF7={this.buttonIcon && this.buttonIcon.f7}
+          text={this.clockText}
+          propsOnPerform={this.onPerform}
+        ></eb-link>
+      );
+    },
   };
 }
-</script>
-<style lang="less" scoped></style>

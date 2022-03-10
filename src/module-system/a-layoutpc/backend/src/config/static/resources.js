@@ -154,13 +154,13 @@ module.exports = app => {
     {
       atomName: 'Copyright',
       atomStaticKey: 'buttonCopyright',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: null,
+        icon: { f7: '::copyright' },
         actionPath: '/a/basefront/base/about',
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'about', title: 'About' },

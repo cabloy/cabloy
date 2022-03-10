@@ -3,6 +3,7 @@
     :class="buttonClass"
     :iconMaterial="buttonIcon && buttonIcon.material"
     :iconF7="buttonIcon && buttonIcon.f7"
+    iconSize="16"
     :text="buttonLabel"
     :onPerform="onPerformClick"
   ></eb-link>
