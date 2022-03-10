@@ -42,6 +42,11 @@ module.exports = ctx => {
       await this._setRedisValue({ progressId, content, contentOld });
     }
 
+    async _deleteRedisValue({ progressId }) {
+      const key = this._getRedisKey({ progressId });
+      await this.redis.del(key);
+    }
+
     async create() {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
       const progressId = uuid.v4().replace(/-/g, '');
@@ -160,6 +165,30 @@ module.exports = ctx => {
         },
       };
       await this._publish({ progressId, ioMessage });
+    }
+
+    async check({ progressId, counter, user }) {
+      const item = await this._getRedisKey({ progressId });
+      if (!item || item.userId !== user.id || item.counter <= counter) return null;
+      return item;
+    }
+
+    async abort({ progressId, user }) {
+      const item = await this._getRedisKey({ progressId });
+      if (!item || item.userId !== user.id) return null;
+      await this._setRedisValue({
+        progressId,
+        content: {
+          abort: 1,
+        },
+        contentOld: item,
+      });
+    }
+
+    async delete({ progressId, user }) {
+      const item = await this._getRedisKey({ progressId });
+      if (!item || item.userId !== user.id) return;
+      await this._deleteRedisValue({ progressId });
     }
 
     async _publish({ progressId, ioMessage }) {
