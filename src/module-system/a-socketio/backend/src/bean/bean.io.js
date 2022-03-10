@@ -52,7 +52,7 @@ module.exports = ctx => {
         if (!path) ctx.throw(403);
         const scene = item.scene || '';
         const key = `${ctx.instance.id}:${user.id}:${path}`;
-        const value = `${ctx.app.meta.workerId}:${socketId}`;
+        const value = socketId;
         debug('subscribe: key:%s, scene:%s, value:%s', key, scene, value);
         await this.redis.hset(key, scene, value);
       }
@@ -68,7 +68,7 @@ module.exports = ctx => {
         const key = `${ctx.instance.id}:${user.id}:${path}`;
         // check if socketId is consistent
         const value = await this.redis.hget(key, scene);
-        if (value && value.indexOf(socketId) > -1) {
+        if (value === socketId) {
           await this.redis.hdel(key, scene);
         }
       }
@@ -82,10 +82,10 @@ module.exports = ctx => {
         const key = fullKey.substr(keyPrefix.length);
         const values = await this.redis.hgetall(key);
         if (!values) continue;
-        for (const field in values) {
-          const value = values[field];
-          if (value && value.indexOf(socketId) > -1) {
-            await this.redis.hdel(key, field);
+        for (const scene in values) {
+          const value = values[scene];
+          if (value === socketId) {
+            await this.redis.hdel(key, scene);
           }
         }
       }
@@ -689,22 +689,12 @@ module.exports = ctx => {
         return !!isSender;
       }
       let bSent = false;
-      for (const field in values) {
-        if (!isSender || field !== messageScene) {
-          const value = values[field];
-          const [workerId, socketId] = value.split(':');
-          // check workerAlive
-          const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
-          if (workerAlive) {
-            debug('_emitScene message socket: workerId:%s, socketId:%s', workerId, socketId);
-            this._emitSocket({ path, message, workerId, socketId });
-            bSent = true;
-          } else {
-            // only del on production
-            if (ctx.app.meta.isProd) {
-              await this.redis.hdel(key, field);
-            }
-          }
+      for (const scene in values) {
+        if (!isSender || scene !== messageScene) {
+          const socketId = values[scene];
+          debug('_emitScene message socket: socketId:%s', socketId);
+          this._emitSocket({ path, message, socketId });
+          bSent = true;
         }
       }
       if (!bSent) {
@@ -716,13 +706,13 @@ module.exports = ctx => {
       return true;
     }
 
-    _emitSocket({ path, message, workerId, socketId }) {
+    _emitSocket({ path, message, socketId }) {
       // broadcast
       ctx.app.meta.broadcast.emit({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         broadcastName: 'socketEmit',
-        data: { path, message, workerId, socketId },
+        data: { path, message, socketId },
       });
     }
 
