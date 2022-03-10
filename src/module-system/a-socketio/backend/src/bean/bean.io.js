@@ -51,7 +51,7 @@ module.exports = ctx => {
         const path = item.path;
         if (!path) ctx.throw(403);
         const scene = item.scene || '';
-        const key = `${ctx.instance.id}:${user.id}:${path}`;
+        const key = `sub:${ctx.instance.id}:${user.id}:${path}`;
         const value = socketId;
         debug('subscribe: key:%s, scene:%s, value:%s', key, scene, value);
         await this.redis.hset(key, scene, value);
@@ -65,7 +65,7 @@ module.exports = ctx => {
         const scene = item.scene || '';
         const socketId = item.socketId;
         if (!socketId) continue;
-        const key = `${ctx.instance.id}:${user.id}:${path}`;
+        const key = `sub:${ctx.instance.id}:${user.id}:${path}`;
         // check if socketId is consistent
         const value = await this.redis.hget(key, scene);
         if (value === socketId) {
@@ -610,13 +610,14 @@ module.exports = ctx => {
     }
 
     async _getPathUsersOnline({ path }) {
+      const keyUserIndex = 2;
       const userIds = [];
       const keyPrefix = this.redis.options.keyPrefix;
-      const keyPatern = `${keyPrefix}${ctx.instance.id}:*:${path}`;
+      const keyPatern = `${keyPrefix}sub:${ctx.instance.id}:*:${path}`;
       const keys = await this.redis.keys(keyPatern);
       for (const fullKey of keys) {
         const key = fullKey.substr(keyPrefix.length);
-        userIds.push(parseInt(key.split(':')[1]));
+        userIds.push(parseInt(key.split(':')[keyUserIndex]));
       }
       return userIds;
     }
@@ -656,12 +657,11 @@ module.exports = ctx => {
     //   // ignore sender
     //   if (isSender) return true;
     //   // get hash value
-    //   const key = `${ctx.instance.id}:${userId}:${path}`;
-    //   const value = await this.redis.hget(key, messageScene);
-    //   if (!value) return false; // offline
+    //   const key = `sub:${ctx.instance.id}:${userId}:${path}`;
+    //   const socketId = await this.redis.hget(key, messageScene);
+    //   if (!socketId) return false; // offline
     //   // emit
-    //   const [ workerId, socketId ] = value.split(':');
-    //   this._emitSocket({ path, message, workerId, socketId });
+    //   this._emitSocket({ path, message, socketId });
     //   // done
     //   return true;
     // }
@@ -681,7 +681,7 @@ module.exports = ctx => {
         path
       );
       // get hash value
-      const key = `${ctx.instance.id}:${userId}:${path}`;
+      const key = `sub:${ctx.instance.id}:${userId}:${path}`;
       const values = await this.redis.hgetall(key);
       if (!values) {
         // offline
