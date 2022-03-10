@@ -86,9 +86,7 @@ module.exports = appInfo => {
     'a-mail': {
       aMail: 'createdAt,updatedAt,status',
     },
-    'a-progress': {
-      aProgress: 'createdAt,updatedAt,progressId,done',
-    },
+    'a-progress': {},
     'a-sequence': {
       aSequence: 'createdAt,updatedAt,module+name',
     },
