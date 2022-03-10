@@ -168,6 +168,40 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
+    {
+      atomName: 'ViewLayout',
+      atomStaticKey: 'buttonViewLayout',
+      atomRevision: 2,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: ':outline:layout-outline' },
+        actionPath: '/a/user/view/pc',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'viewLayout', title: 'ViewLayout' },
+        showLabel: false,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Theme',
+      atomStaticKey: 'buttonTheme',
+      atomRevision: 2,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: ':outline:theme-outline' },
+        actionPath: '/a/user/Theme',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'theme', title: 'Theme' },
+        showLabel: false,
+      }),
+      resourceRoles: 'root',
+    },
   ];
   return resources;
 };

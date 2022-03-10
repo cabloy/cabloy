@@ -16,6 +16,8 @@ export default {
   PanelFold: '折叠',
   PanelFloating: '浮动',
   PanelFixed: '固定',
+  ViewLayout: '视图',
+  Appearance: '外观',
   'Not LoggedIn': '未登录',
   'Sign In': '登录',
   'Log Out': '退出登录',
