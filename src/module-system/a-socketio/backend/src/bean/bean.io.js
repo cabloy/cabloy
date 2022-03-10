@@ -108,7 +108,7 @@ module.exports = ctx => {
       return await beanMessage.onPublish({ path, message, messageClass, options });
     }
 
-    // called by message base
+    // called by messageBase.onPublish
     async _publish({ path, message, messageClass, options }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -166,12 +166,15 @@ module.exports = ctx => {
 
       // debug
       debug(
-        '_publish: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, ',
+        '_publish message: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, userIdsTo:%j',
         _message.id,
         _message.messageScene,
         _message.userIdFrom,
-        _message.userIdTo
+        _message.userIdTo,
+        _message.userIdsTo
       );
+      debug('_publish path: %s', path);
+      debug('_publish content: %j', message.content);
 
       // to queue
       ctx.meta.util.queuePush({
@@ -348,6 +351,7 @@ module.exports = ctx => {
       }
     }
 
+    // called by messageBase.onProcess
     async _onProcessBase({ path, options, message, messageSyncs, messageClass }) {
       // to queue: delivery/push
       if (path) {
@@ -614,6 +618,7 @@ module.exports = ctx => {
       return userIds;
     }
 
+    // called by messageBase.onDelivery
     async delivery({ path, options, message, messageSync, messageClass }) {
       // ignore delivery online if !path
       if (path) {
@@ -663,6 +668,15 @@ module.exports = ctx => {
       // userId
       const userId = messageSync.userId;
       const isSender = message.userIdFrom === userId;
+      // debug
+      debug(
+        '_emitScene message: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, path:%s',
+        message.id,
+        messageScene,
+        message.userIdFrom,
+        userId,
+        path
+      );
       // get hash value
       const key = `${ctx.instance.id}:${userId}:${path}`;
       const values = await this.redis.hgetall(key);
@@ -679,6 +693,7 @@ module.exports = ctx => {
           // check workerAlive
           const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
           if (workerAlive) {
+            debug('_emitScene message socket: workerId:%s, socketId:%s', workerId, socketId);
             this._emitSocket({ path, message, workerId, socketId });
             bSent = true;
           } else {
