@@ -4,6 +4,7 @@ module.exports = appInfo => {
 
   // proxy
   config.proxy = true;
+  config.ipHeaders = 'x-real-ip,x-forwarded-for';
 
   // mysql
   config.mysql = {

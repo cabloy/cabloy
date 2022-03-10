@@ -6,6 +6,7 @@ module.exports = appInfo => {
 
   // proxy
   config.proxy = true;
+  config.ipHeaders = 'x-real-ip,x-forwarded-for';
 
   // queue
   config.queue = {

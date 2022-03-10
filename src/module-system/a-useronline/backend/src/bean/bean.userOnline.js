@@ -30,7 +30,7 @@ module.exports = ctx => {
       user = user.agent || user.op;
       // data
       const data = {
-        onlineIPLast: (ctx.socket && ctx.socket.remoteAddress) || ctx.ip,
+        onlineIPLast: ctx.ip,
         onlineTimeLast: new Date(),
         expireTime: this._combineExpireTime(),
       };
