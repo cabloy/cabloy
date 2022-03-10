@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const debug = require3('debug')('io');
+
 module.exports = ctx => {
   const app = ctx.app;
   class Middleware {
@@ -39,14 +42,10 @@ module.exports = ctx => {
     }
 
     async _next({ next, user, socketId }) {
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
-      }
+      debug(`socket io connected: user:${user.id}, socket:${socketId}`);
       // next
       await next();
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
-      }
+      debug(`socket io disconnected: user:${user.id}, socket:${socketId}`);
     }
   }
   return Middleware;

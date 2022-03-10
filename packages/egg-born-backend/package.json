@@ -31,6 +31,7 @@
     "bottleneck": "^2.19.5",
     "bullmq": "^1.57.3",
     "chalk": "^3.0.0",
+    "debug": "^4.3.3",
     "egg": "^2.33.1",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mglob": "^2.2.6",
