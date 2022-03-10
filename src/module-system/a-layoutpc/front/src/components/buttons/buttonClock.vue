@@ -36,6 +36,7 @@ const schema = {
       type: 'string',
       ebType: 'text',
       ebTitle: 'Custom Format',
+      ebHelp: 'YYYY-MM-DD HH:mm:ss',
     },
   },
 };
