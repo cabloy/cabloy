@@ -32,11 +32,13 @@ module.exports = ctx => {
     }
 
     _registerSocket(socketId, socket) {
+      debug('_registerSocket: workerId:%s, socketId:%s', ctx.app.meta.workerId, socketId);
       const socketsOnline = this._getSocketsOnline();
       socketsOnline[socketId] = socket;
     }
 
     _unRegisterSocket(socketId) {
+      debug('_unRegisterSocket: workerId:%s, socketId:%s', ctx.app.meta.workerId, socketId);
       const socketsOnline = this._getSocketsOnline();
       delete socketsOnline[socketId];
     }
@@ -51,6 +53,7 @@ module.exports = ctx => {
         const scene = item.scene || '';
         const key = `${ctx.instance.id}:${user.id}:${path}`;
         const value = `${ctx.app.meta.workerId}:${socketId}`;
+        debug('subscribe: key:%s, scene:%s, value:%s', key, scene, value);
         await this.redis.hset(key, scene, value);
       }
     }
