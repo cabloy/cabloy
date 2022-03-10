@@ -15,19 +15,63 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    get modelProgress() {
-      return ctx.model.module(moduleInfo.relativeName).progress;
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get redis() {
+      if (!this._redis) this._redis = ctx.app.redis.get('io') || ctx.app.redis.get('cache');
+      return this._redis;
+    }
+
+    _getRedisKey({ progressId }) {
+      return `progress:${ctx.instance.id}:${progressId}`;
+    }
+
+    async _getRedisValue({ progressId }) {
+      const key = this._getRedisKey({ progressId });
+      const content = await this.redis.get(key);
+      return content ? JSON.parse(content) : null;
+    }
+
+    async _setRedisValue({ progressId, content, contentOld }) {
+      const expireTime = this.configModule.progress.expireTime;
+      const key = this._getRedisKey({ progressId });
+      if (contentOld) {
+        content = Object.assign({}, contentOld, content);
+      }
+      await this.redis.set(key, JSON.stringify(content), 'PX', expireTime);
+    }
+
+    async _updateRedisValue({ progressId, content }) {
+      const contentOld = await this._getRedisValue({ progressId });
+      await this._setRedisValue({ progressId, content, contentOld });
+    }
+
+    async _deleteRedisValue({ progressId }) {
+      const key = this._getRedisKey({ progressId });
+      await this.redis.del(key);
     }
 
     async create() {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
       const progressId = uuid.v4().replace(/-/g, '');
-      await this.modelProgress.insert({ progressId, userId: ctx.state.user.op.id });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          userId: ctx.state.user.op.id,
+          counter: 0,
+          done: 0,
+          abort: 0,
+          data: null,
+        },
+      });
+      // ok
       return progressId;
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -39,13 +83,20 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1001);
       }
       // data
-      const data = item.data ? JSON.parse(item.data) : [];
+      const data = item.data || [];
       if (data.length > progressNo + 1) {
         data.splice(progressNo + 1, data.length - progressNo - 1);
       }
       data[progressNo] = { total, progress, text };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
@@ -59,7 +110,7 @@ module.exports = ctx => {
     }
 
     async done({ progressId, message }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -68,7 +119,15 @@ module.exports = ctx => {
       // data
       const data = { message };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: 1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          done: 1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
@@ -83,7 +142,7 @@ module.exports = ctx => {
     }
 
     async error({ progressId, message }) {
-      const item = await this.modelProgress.get({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -92,7 +151,15 @@ module.exports = ctx => {
       // data
       const data = { message };
       // update
-      await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: -1, data: JSON.stringify(data) });
+      await this._setRedisValue({
+        progressId,
+        content: {
+          counter: item.counter + 1,
+          done: -1,
+          data,
+        },
+        contentOld: item,
+      });
       // publish
       const ioMessage = {
         userIdTo: item.userId,
@@ -104,6 +171,30 @@ module.exports = ctx => {
         },
       };
       await this._publish({ progressId, ioMessage });
+    }
+
+    async check({ progressId, counter, user }) {
+      const item = await this._getRedisValue({ progressId });
+      if (!item || item.userId !== user.id || item.counter <= counter) return null;
+      return item;
+    }
+
+    async abort({ progressId, user }) {
+      const item = await this._getRedisValue({ progressId });
+      if (!item || item.userId !== user.id) return null;
+      await this._setRedisValue({
+        progressId,
+        content: {
+          abort: 1,
+        },
+        contentOld: item,
+      });
+    }
+
+    async delete({ progressId, user }) {
+      const item = await this._getRedisValue({ progressId });
+      if (!item || item.userId !== user.id) return;
+      await this._deleteRedisValue({ progressId });
     }
 
     async _publish({ progressId, ioMessage }) {
@@ -157,6 +248,11 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 3) {
+        // drop table: aProgress
+        await this.ctx.model.query('drop table if exists aProgress');
+      }
     }
 
     async init(options) {}
@@ -205,6 +301,11 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {};
+
+  // progress
+  config.progress = {
+    expireTime: 2 * 3600 * 1000, // default is 2 hours
+  };
 
   return config;
 };
@@ -375,30 +476,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 210:
+/***/ 230:
 /***/ ((module) => {
 
 module.exports = app => {
-  class Progress extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aProgress', options: { disableDeleted: true } });
-    }
-  }
-  return Progress;
-};
-
-
-/***/ }),
-
-/***/ 230:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const progress = __webpack_require__(210);
-
-module.exports = app => {
-  const models = {
-    progress,
-  };
+  const models = {};
   return models;
 };
 
@@ -427,33 +509,15 @@ module.exports = app => {
 module.exports = app => {
   class Progress extends app.Service {
     async check({ progressId, counter, user }) {
-      return await this.ctx.model.queryOne(
-        `
-        select * from aProgress a
-          where a.iid=? and a.progressId=? and a.counter>? and a.userId=?
-        `,
-        [this.ctx.instance.id, progressId, counter, user.id]
-      );
+      return await this.ctx.bean.progress.check({ progressId, counter, user });
     }
 
     async abort({ progressId, user }) {
-      await this.ctx.model.query(
-        `
-        update aProgress set abort=1
-          where iid=? and progressId=? and userId=?
-        `,
-        [this.ctx.instance.id, progressId, user.id]
-      );
+      return await this.ctx.bean.progress.abort({ progressId, user });
     }
 
     async delete({ progressId, user }) {
-      await this.ctx.model.query(
-        `
-        delete from aProgress
-          where iid=? and progressId=? and userId=?
-        `,
-        [this.ctx.instance.id, progressId, user.id]
-      );
+      return await this.ctx.bean.progress.delete({ progressId, user });
     }
   }
 

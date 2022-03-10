@@ -5,6 +5,7 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
+const debug = require3('debug')('io');
 const uuid = require3('uuid');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
@@ -37,11 +38,13 @@ module.exports = ctx => {
     }
 
     _registerSocket(socketId, socket) {
+      debug('_registerSocket: workerId:%s, socketId:%s', ctx.app.meta.workerId, socketId);
       const socketsOnline = this._getSocketsOnline();
       socketsOnline[socketId] = socket;
     }
 
     _unRegisterSocket(socketId) {
+      debug('_unRegisterSocket: workerId:%s, socketId:%s', ctx.app.meta.workerId, socketId);
       const socketsOnline = this._getSocketsOnline();
       delete socketsOnline[socketId];
     }
@@ -54,8 +57,9 @@ module.exports = ctx => {
         const path = item.path;
         if (!path) ctx.throw(403);
         const scene = item.scene || '';
-        const key = `${ctx.instance.id}:${user.id}:${path}`;
-        const value = `${ctx.app.meta.workerId}:${socketId}`;
+        const key = `sub:${ctx.instance.id}:${user.id}:${path}`;
+        const value = socketId;
+        debug('subscribe: key:%s, scene:%s, value:%s', key, scene, value);
         await this.redis.hset(key, scene, value);
       }
     }
@@ -67,10 +71,10 @@ module.exports = ctx => {
         const scene = item.scene || '';
         const socketId = item.socketId;
         if (!socketId) continue;
-        const key = `${ctx.instance.id}:${user.id}:${path}`;
+        const key = `sub:${ctx.instance.id}:${user.id}:${path}`;
         // check if socketId is consistent
         const value = await this.redis.hget(key, scene);
-        if (value && value.indexOf(socketId) > -1) {
+        if (value === socketId) {
           await this.redis.hdel(key, scene);
         }
       }
@@ -84,10 +88,10 @@ module.exports = ctx => {
         const key = fullKey.substr(keyPrefix.length);
         const values = await this.redis.hgetall(key);
         if (!values) continue;
-        for (const field in values) {
-          const value = values[field];
-          if (value && value.indexOf(socketId) > -1) {
-            await this.redis.hdel(key, field);
+        for (const scene in values) {
+          const value = values[scene];
+          if (value === socketId) {
+            await this.redis.hdel(key, scene);
           }
         }
       }
@@ -113,6 +117,7 @@ module.exports = ctx => {
       return await beanMessage.onPublish({ path, message, messageClass, options });
     }
 
+    // called by messageBase.onPublish
     async _publish({ path, message, messageClass, options }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -167,6 +172,18 @@ module.exports = ctx => {
       // messageClass
       _message.module = messageClass.module;
       _message.messageClassName = messageClass.messageClassName;
+
+      // debug
+      debug(
+        '_publish message: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, userIdsTo:%j',
+        _message.id,
+        _message.messageScene,
+        _message.userIdFrom,
+        _message.userIdTo,
+        _message.userIdsTo
+      );
+      debug('_publish path: %s', path);
+      debug('_publish content: %j', message.content);
 
       // to queue
       ctx.meta.util.queuePush({
@@ -343,6 +360,7 @@ module.exports = ctx => {
       }
     }
 
+    // called by messageBase.onProcess
     async _onProcessBase({ path, options, message, messageSyncs, messageClass }) {
       // to queue: delivery/push
       if (path) {
@@ -598,17 +616,19 @@ module.exports = ctx => {
     }
 
     async _getPathUsersOnline({ path }) {
+      const keyUserIndex = 2;
       const userIds = [];
       const keyPrefix = this.redis.options.keyPrefix;
-      const keyPatern = `${keyPrefix}${ctx.instance.id}:*:${path}`;
+      const keyPatern = `${keyPrefix}sub:${ctx.instance.id}:*:${path}`;
       const keys = await this.redis.keys(keyPatern);
       for (const fullKey of keys) {
         const key = fullKey.substr(keyPrefix.length);
-        userIds.push(parseInt(key.split(':')[1]));
+        userIds.push(parseInt(key.split(':')[keyUserIndex]));
       }
       return userIds;
     }
 
+    // called by messageBase.onDelivery
     async delivery({ path, options, message, messageSync, messageClass }) {
       // ignore delivery online if !path
       if (path) {
@@ -643,12 +663,11 @@ module.exports = ctx => {
     //   // ignore sender
     //   if (isSender) return true;
     //   // get hash value
-    //   const key = `${ctx.instance.id}:${userId}:${path}`;
-    //   const value = await this.redis.hget(key, messageScene);
-    //   if (!value) return false; // offline
+    //   const key = `sub:${ctx.instance.id}:${userId}:${path}`;
+    //   const socketId = await this.redis.hget(key, messageScene);
+    //   if (!socketId) return false; // offline
     //   // emit
-    //   const [ workerId, socketId ] = value.split(':');
-    //   this._emitSocket({ path, message, workerId, socketId });
+    //   this._emitSocket({ path, message, socketId });
     //   // done
     //   return true;
     // }
@@ -658,8 +677,17 @@ module.exports = ctx => {
       // userId
       const userId = messageSync.userId;
       const isSender = message.userIdFrom === userId;
+      // debug
+      debug(
+        '_emitScene message: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, path:%s',
+        message.id,
+        messageScene,
+        message.userIdFrom,
+        userId,
+        path
+      );
       // get hash value
-      const key = `${ctx.instance.id}:${userId}:${path}`;
+      const key = `sub:${ctx.instance.id}:${userId}:${path}`;
       const values = await this.redis.hgetall(key);
       if (!values) {
         // offline
@@ -667,21 +695,12 @@ module.exports = ctx => {
         return !!isSender;
       }
       let bSent = false;
-      for (const field in values) {
-        if (!isSender || field !== messageScene) {
-          const value = values[field];
-          const [workerId, socketId] = value.split(':');
-          // check workerAlive
-          const workerAlive = await ctx.app.bean.worker.getAlive({ id: workerId });
-          if (workerAlive) {
-            this._emitSocket({ path, message, workerId, socketId });
-            bSent = true;
-          } else {
-            // only del on production
-            if (ctx.app.meta.isProd) {
-              await this.redis.hdel(key, field);
-            }
-          }
+      for (const scene in values) {
+        if (!isSender || scene !== messageScene) {
+          const socketId = values[scene];
+          debug('_emitScene message socket: socketId:%s', socketId);
+          this._emitSocket({ path, message, socketId });
+          bSent = true;
         }
       }
       if (!bSent) {
@@ -693,13 +712,13 @@ module.exports = ctx => {
       return true;
     }
 
-    _emitSocket({ path, message, workerId, socketId }) {
+    _emitSocket({ path, message, socketId }) {
       // broadcast
       ctx.app.meta.broadcast.emit({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         broadcastName: 'socketEmit',
-        data: { path, message, workerId, socketId },
+        data: { path, message, socketId },
       });
     }
 
@@ -721,22 +740,24 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 472:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const debug = require3('debug')('io');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
     async execute(context) {
       const data = context.data;
-      if (app.meta.workerId === data.workerId) {
-        const socketsOnline = app[SOCKETSONLINE];
-        const socket = socketsOnline && socketsOnline[data.socketId];
-        if (socket) {
-          socket.emit('message', {
-            path: data.path,
-            message: data.message,
-          });
-        }
+      const socketsOnline = app[SOCKETSONLINE];
+      const socket = socketsOnline && socketsOnline[data.socketId];
+      debug('socketEmit broadcast: found:%d, workerId:%s, socketId:%s', !!socket, app.meta.workerId, data.socketId);
+      if (socket) {
+        socket.emit('message', {
+          path: data.path,
+          message: data.message,
+        });
       }
     }
   }
@@ -1270,7 +1291,10 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 405:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const debug = require3('debug')('io');
 
 module.exports = ctx => {
   const app = ctx.app;
@@ -1313,14 +1337,10 @@ module.exports = ctx => {
     }
 
     async _next({ next, user, socketId }) {
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io connected: user:${user.id}, socket:${socketId}`);
-      }
+      debug(`socket io connected: user:${user.id}, socket:${socketId}`);
       // next
       await next();
-      if (app.meta.isTest || app.meta.isLocal) {
-        app.logger.info(`socket io disconnected: user:${user.id}, socket:${socketId}`);
-      }
+      debug(`socket io disconnected: user:${user.id}, socket:${socketId}`);
     }
   }
   return Middleware;

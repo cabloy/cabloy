@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.13.7",
+  "version": "4.13.8",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "dependencies": {
-    "egg-born-backend": "^6.3.0",
-    "egg-born-bin": "^3.5.3",
+    "egg-born-backend": "^6.3.1",
+    "egg-born-bin": "^3.5.4",
     "egg-born-front": "^8.5.3",
     "egg-born-module-a-antdv": "^4.1.11",
     "egg-born-module-a-antvg6": "^4.1.6",
@@ -56,12 +56,12 @@
     "egg-born-module-a-flowtask": "^4.3.20",
     "egg-born-module-a-host": "^4.1.6",
     "egg-born-module-a-icon": "^4.0.4",
-    "egg-born-module-a-iconbooster": "^4.0.5",
-    "egg-born-module-a-index": "^4.2.7",
+    "egg-born-module-a-iconbooster": "^4.0.6",
+    "egg-born-module-a-index": "^4.2.8",
     "egg-born-module-a-instance": "^4.2.10",
     "egg-born-module-a-jsoneditor": "^4.1.9",
     "egg-born-module-a-layoutmobile": "^4.2.12",
-    "egg-born-module-a-layoutpc": "^4.2.19",
+    "egg-born-module-a-layoutpc": "^4.2.20",
     "egg-born-module-a-login": "^4.1.9",
     "egg-born-module-a-mail": "^4.1.7",
     "egg-born-module-a-markdown": "^4.1.31",
@@ -70,17 +70,17 @@
     "egg-born-module-a-markdownstyle": "^4.1.11",
     "egg-born-module-a-message": "^4.1.9",
     "egg-born-module-a-oauth": "^4.0.1",
-    "egg-born-module-a-progress": "^4.1.7",
+    "egg-born-module-a-progress": "^4.1.8",
     "egg-born-module-a-sequence": "^4.1.8",
     "egg-born-module-a-settings": "^4.1.8",
     "egg-born-module-a-share": "^4.1.6",
-    "egg-born-module-a-socketio": "^4.2.7",
+    "egg-born-module-a-socketio": "^4.2.8",
     "egg-born-module-a-stats": "^4.1.7",
     "egg-born-module-a-status": "^4.1.8",
     "egg-born-module-a-themebrilliant": "^4.1.6",
     "egg-born-module-a-themehyacinth": "^4.1.6",
     "egg-born-module-a-user": "^4.2.10",
-    "egg-born-module-a-useronline": "^4.0.1",
+    "egg-born-module-a-useronline": "^4.0.2",
     "egg-born-module-a-validation": "^4.2.12",
     "egg-born-module-a-version": "^4.1.9",
     "egg-born-module-cms-pluginarticle": "^4.2.17",
@@ -100,6 +100,6 @@
     "egg-born-module-cms-themeblog": "^4.2.12",
     "egg-born-module-cms-themecommunity": "^4.2.12",
     "egg-born-module-cms-themedocs": "^4.2.13",
-    "egg-born-scripts": "^3.3.20"
+    "egg-born-scripts": "^3.3.21"
   }
 }

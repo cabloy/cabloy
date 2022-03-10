@@ -220,7 +220,9 @@ module.exports = {};
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {};
+module.exports = {
+  ViewLayout: 'View',
+};
 
 
 /***/ }),
@@ -239,6 +241,9 @@ module.exports = {
   Buttons: '按钮',
   Panel: '面板',
   Panels: '面板',
+  ViewLayout: '视图',
+  Appearance: '外观',
+  Theme: '主题',
   'Sidebar Button': '边栏按钮',
   'Sidebar Panel': '边栏面板',
   'Create Layout': '新建布局',
@@ -290,6 +295,8 @@ module.exports = app => {
       bottom: {
         panels: [],
         buttons: [
+          { module: 'a-layoutpc', name: 'buttonViewLayout' },
+          { module: 'a-layoutpc', name: 'buttonTheme' },
           { module: 'a-layoutpc', name: 'buttonClock' },
           { module: 'a-layoutpc', name: 'buttonCopyright' },
         ],
@@ -299,7 +306,7 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 1,
+    atomRevision: 3,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',
@@ -530,17 +537,51 @@ module.exports = app => {
     {
       atomName: 'Copyright',
       atomStaticKey: 'buttonCopyright',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
-        icon: null,
+        icon: { f7: '::copyright' },
         actionPath: '/a/basefront/base/about',
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'about', title: 'About' },
         showLabel: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'ViewLayout',
+      atomStaticKey: 'buttonViewLayout',
+      atomRevision: 2,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: ':outline:layout-outline' },
+        actionPath: '/a/user/view/pc',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'viewLayout', title: 'ViewLayout' },
+        showLabel: false,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Theme',
+      atomStaticKey: 'buttonTheme',
+      atomRevision: 2,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: ':outline:theme-outline' },
+        actionPath: '/a/user/Theme',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'theme', title: 'Theme' },
+        showLabel: false,
       }),
       resourceRoles: 'root',
     },
