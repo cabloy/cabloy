@@ -9,8 +9,9 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    get modelProgress() {
-      return ctx.model.module(moduleInfo.relativeName).progress;
+    get redis() {
+      if (!this._redis) this._redis = ctx.app.redis.get('io') || ctx.app.redis.get('cache');
+      return this._redis;
     }
 
     async create() {

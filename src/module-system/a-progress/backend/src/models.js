@@ -1,8 +1,4 @@
-const progress = require('./model/progress.js');
-
 module.exports = app => {
-  const models = {
-    progress,
-  };
+  const models = {};
   return models;
 };

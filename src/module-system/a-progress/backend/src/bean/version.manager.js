@@ -29,6 +29,11 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 3) {
+        // drop table: aProgress
+        await this.ctx.model.query('drop table if exists aProgress');
+      }
     }
 
     async init(options) {}
