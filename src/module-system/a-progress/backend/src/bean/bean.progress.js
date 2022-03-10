@@ -38,7 +38,7 @@ module.exports = ctx => {
     }
 
     async _updateRedisValue({ progressId, content }) {
-      const contentOld = await this._getRedisKey({ progressId });
+      const contentOld = await this._getRedisValue({ progressId });
       await this._setRedisValue({ progressId, content, contentOld });
     }
 
@@ -65,7 +65,7 @@ module.exports = ctx => {
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -104,7 +104,7 @@ module.exports = ctx => {
     }
 
     async done({ progressId, message }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -136,7 +136,7 @@ module.exports = ctx => {
     }
 
     async error({ progressId, message }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
         // 1001: 'Operation Aborted',
@@ -168,13 +168,13 @@ module.exports = ctx => {
     }
 
     async check({ progressId, counter, user }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id || item.counter <= counter) return null;
       return item;
     }
 
     async abort({ progressId, user }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id) return null;
       await this._setRedisValue({
         progressId,
@@ -186,7 +186,7 @@ module.exports = ctx => {
     }
 
     async delete({ progressId, user }) {
-      const item = await this._getRedisKey({ progressId });
+      const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id) return;
       await this._deleteRedisValue({ progressId });
     }
