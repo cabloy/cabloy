@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
+const debug = require3('debug')('io');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 
@@ -107,6 +108,7 @@ module.exports = ctx => {
       return await beanMessage.onPublish({ path, message, messageClass, options });
     }
 
+    // called by message base
     async _publish({ path, message, messageClass, options }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -161,6 +163,15 @@ module.exports = ctx => {
       // messageClass
       _message.module = messageClass.module;
       _message.messageClassName = messageClass.messageClassName;
+
+      // debug
+      debug(
+        '_publish: id:%s, scene:%s, userIdFrom:%d, userIdTo:%d, ',
+        _message.id,
+        _message.messageScene,
+        _message.userIdFrom,
+        _message.userIdTo
+      );
 
       // to queue
       ctx.meta.util.queuePush({
