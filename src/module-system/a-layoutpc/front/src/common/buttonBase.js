@@ -21,6 +21,10 @@ export default function (Vue) {
         if (!this.buttonConfig.showLabel) return null;
         return this.button.options.titleLocale;
       },
+      buttonTooltip() {
+        if (this.buttonConfig.showLabel) return null;
+        return this.button.options.titleLocale;
+      },
       buttonClass() {
         return {
           'button-separator': this.buttonConfig.showSeparator,

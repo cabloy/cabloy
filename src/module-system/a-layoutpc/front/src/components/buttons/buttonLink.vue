@@ -5,6 +5,7 @@
     :iconF7="buttonIcon && buttonIcon.f7"
     iconSize="16"
     :text="buttonLabel"
+    :tooltip="buttonTooltip"
     :onPerform="onPerformClick"
   ></eb-link>
 </template>
