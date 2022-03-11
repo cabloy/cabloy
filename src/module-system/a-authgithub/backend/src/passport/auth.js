@@ -4,13 +4,22 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   function _createProvider() {
-    const config = ctx.config.module(moduleInfo.relativeName).account.github.apps.default;
-    if (!config.clientID || !config.clientSecret) return null;
     return {
       meta: {
         title: 'GitHub',
         mode: 'redirect',
-        component: 'buttongithub',
+        bean: {
+          module: moduleInfo.relativeName,
+          name: 'github',
+        },
+        render: {
+          module: moduleInfo.relativeName,
+          name: 'buttonGithub',
+        },
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'authGithub',
+        },
       },
       config: {},
       configFunctions: {
