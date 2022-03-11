@@ -3,7 +3,7 @@
     :class="buttonClass"
     :iconMaterial="buttonIcon && buttonIcon.material"
     :iconF7="buttonIcon && buttonIcon.f7"
-    iconSize="16"
+    :iconSize="buttonIconSize"
     :text="buttonLabel"
     :tooltip="buttonTooltip"
     :onPerform="onPerformClick"

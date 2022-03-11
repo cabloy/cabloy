@@ -17,6 +17,12 @@ export default function (Vue) {
       buttonIcon() {
         return this.buttonConfig.icon;
       },
+      buttonIconSize() {
+        const iconSize = this.buttonIcon && this.buttonIcon.size;
+        if (iconSize) return iconSize;
+        if (this.$$(this.button.$el).parents('.eb-layout-header').length > 0) return 24;
+        return 16;
+      },
       buttonLabel() {
         if (!this.buttonConfig.showLabel) return null;
         return this.button.options.titleLocale;
