@@ -7,8 +7,6 @@ export default {
   meta: {
     global: false,
     async disable({ ctx, state }) {
-      // jwt
-      if (ctx.$meta.config.base.jwt) return true;
       // only pc
       if (ctx.$device.iphone || ctx.$device.android || ctx.$device.wxwork || ctx.$device.wechat) {
         return true;

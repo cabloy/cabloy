@@ -41,7 +41,10 @@ export default {
         actionComponent: 'ebAuthProviders',
         name: 'loadAuthProviders',
       };
-      this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
+      const providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
+      this.providers = providers.filter(item => {
+        return !this.$meta.config.base.jwt || item.provider.meta.mode !== 'redirect';
+      });
     },
     _getComponentFullName(provider) {
       return `${provider.module}:${provider.meta.component}`;

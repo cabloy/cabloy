@@ -7,7 +7,6 @@ export default {
   meta: {
     global: false,
     async disable({ ctx, state }) {
-      if (ctx.$meta.config.base.jwt) return true;
       return false;
     },
     login({ ctx, state, hash }) {
