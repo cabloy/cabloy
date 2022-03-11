@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const atomResource = require('./bean/atom.resource.js');
 const localProcedure = require('./bean/local.procedure.js');
+const localAuthProviderBase = require('./bean/local.authProviderBase.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
@@ -54,6 +55,10 @@ module.exports = app => {
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
+    },
+    'local.authProviderBase': {
+      mode: 'ctx',
+      bean: localAuthProviderBase,
     },
     // broadcast
     'broadcast.authProviderChanged': {

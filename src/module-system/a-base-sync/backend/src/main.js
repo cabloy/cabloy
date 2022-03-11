@@ -2,11 +2,13 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const AtomBaseFn = require('./bean/bean.atomBase.js');
+const IAuthProviderBaseFn = require('./bean/local.authProviderBase.js');
 
 // eslint-disable-next-line
 module.exports = app => {
-  // atomBase
+  // base
   app.meta.AtomBase = AtomBaseFn(app);
+  app.meta.IAuthProviderBase = IAuthProviderBaseFn;
 
   // aops
   const aops = require('./aops.js')(app);
