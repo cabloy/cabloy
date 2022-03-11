@@ -2,6 +2,7 @@
   <eb-link
     :class="buttonClass"
     :iconF7="this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'"
+    :tooltip="this.$meta.util.screenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')"
     :onPerform="onPerform"
   ></eb-link>
 </template>

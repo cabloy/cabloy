@@ -18,6 +18,8 @@ export default {
   PanelFixed: '固定',
   ViewLayout: '视图',
   Appearance: '外观',
+  Fullscreen: '全屏',
+  'Exit Fullscreen': '退出全屏',
   'Not LoggedIn': '未登录',
   'Sign In': '登录',
   'Log Out': '退出登录',
