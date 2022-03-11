@@ -2473,7 +2473,6 @@ module.exports = ctx => {
 const require3 = __webpack_require__(5638);
 const uuid = require3('uuid');
 const extend = require3('extend2');
-const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2587,6 +2586,103 @@ module.exports = ctx => {
       return account;
     }
 
+    _getAuthRedisKey({ user }) {
+      const userAgent = user.agent || user.op;
+      return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
+    }
+
+    _getAuthRedisKeyPattern({ user, keyPrefix }) {
+      return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
+    }
+
+    async serializeUser({ user }) {
+      // _user
+      const _user = {
+        op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
+        provider: user.provider,
+      };
+      if (user.agent.id !== user.op.id) {
+        _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
+      }
+      // anonymous
+      if (user.op.anonymous) {
+        // not use redis
+        return _user;
+      }
+      // save to redis
+      const key = this._getAuthRedisKey({ user });
+      if (!ctx.bean.util.checkDemo(false)) {
+        // demo, allowed to auth more times
+        _user.token = await this.redisAuth.get(key);
+      } else {
+        // create a new one
+        _user.token = null;
+      }
+      if (!_user.token) {
+        _user.token = uuid.v4().replace(/-/g, '');
+      }
+      await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
+      // register user online
+      await ctx.bean.userOnline.register({ user, isLogin: true });
+      // ok
+      return _user;
+    }
+
+    async deserializeUser({ user }) {
+      if (user.op.anonymous) return user;
+      // not throw 401: ctx.throw(401);
+      if (!user.token) return null;
+      // check token
+      const key = this._getAuthRedisKey({ user });
+      const token = await this.redisAuth.get(key);
+      if (token !== user.token) return null;
+      // ready
+      return user;
+    }
+
+    async _sendMessageSystemLogout({ user }) {
+      if (!user || user.op.anonymous) return;
+      // send message-system
+      await ctx.bean.userOnline.sendMessageSystemLogout({
+        user: user.op, // should use user.op
+        type: 'provider',
+        provider: user.provider,
+      });
+    }
+
+    async _clearRedisAuth({ user }) {
+      if (!user || user.agent.anonymous) return;
+      // redis auth
+      const key = this._getAuthRedisKey({ user });
+      await this.redisAuth.del(key);
+    }
+
+    async _clearRedisAuthAll({ user }) {
+      const keyPrefix = this.redisAuth.options.keyPrefix;
+      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
+      const keys = await this.redisAuth.keys(keyPattern);
+      for (const fullKey of keys) {
+        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
+        await this.redisAuth.del(key);
+      }
+    }
+  }
+
+  return Auth;
+};
+
+
+/***/ }),
+
+/***/ 5525:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AuthProvider {
     async _installAuthProviders() {
       // registerAllRouters
       this._registerAllRouters();
@@ -2693,90 +2789,8 @@ module.exports = ctx => {
         ctx.app.passport.unuse(strategyName);
       }
     }
-
-    _getAuthRedisKey({ user }) {
-      const userAgent = user.agent || user.op;
-      return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
-    }
-
-    _getAuthRedisKeyPattern({ user, keyPrefix }) {
-      return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
-    }
-
-    async serializeUser({ user }) {
-      // _user
-      const _user = {
-        op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
-        provider: user.provider,
-      };
-      if (user.agent.id !== user.op.id) {
-        _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
-      }
-      // anonymous
-      if (user.op.anonymous) {
-        // not use redis
-        return _user;
-      }
-      // save to redis
-      const key = this._getAuthRedisKey({ user });
-      if (!ctx.bean.util.checkDemo(false)) {
-        // demo, allowed to auth more times
-        _user.token = await this.redisAuth.get(key);
-      } else {
-        // create a new one
-        _user.token = null;
-      }
-      if (!_user.token) {
-        _user.token = uuid.v4().replace(/-/g, '');
-      }
-      await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
-      // register user online
-      await ctx.bean.userOnline.register({ user, isLogin: true });
-      // ok
-      return _user;
-    }
-
-    async deserializeUser({ user }) {
-      if (user.op.anonymous) return user;
-      // not throw 401: ctx.throw(401);
-      if (!user.token) return null;
-      // check token
-      const key = this._getAuthRedisKey({ user });
-      const token = await this.redisAuth.get(key);
-      if (token !== user.token) return null;
-      // ready
-      return user;
-    }
-
-    async _sendMessageSystemLogout({ user }) {
-      if (!user || user.op.anonymous) return;
-      // send message-system
-      await ctx.bean.userOnline.sendMessageSystemLogout({
-        user: user.op, // should use user.op
-        type: 'provider',
-        provider: user.provider,
-      });
-    }
-
-    async _clearRedisAuth({ user }) {
-      if (!user || user.agent.anonymous) return;
-      // redis auth
-      const key = this._getAuthRedisKey({ user });
-      await this.redisAuth.del(key);
-    }
-
-    async _clearRedisAuthAll({ user }) {
-      const keyPrefix = this.redisAuth.options.keyPrefix;
-      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
-      const keys = await this.redisAuth.keys(keyPattern);
-      for (const fullKey of keys) {
-        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
-        await this.redisAuth.del(key);
-      }
-    }
   }
-
-  return Auth;
+  return AuthProvider;
 };
 
 function _createAuthenticate(moduleRelativeName, providerName, _config) {
@@ -5908,7 +5922,7 @@ module.exports = app => {
   class Broadcast extends app.meta.BeanBase {
     async execute(context) {
       const data = context.data;
-      await this.ctx.bean.auth._registerInstanceProvider(
+      await this.ctx.bean.authProvider._registerInstanceProvider(
         this.ctx.subdomain,
         this.ctx.instance.id,
         data.module,
@@ -7609,7 +7623,7 @@ module.exports = app => {
         await this.ctx.bean.base.authProvidersReset();
       }
       // register all authProviders
-      await this.ctx.bean.auth._installAuthProviders();
+      await this.ctx.bean.authProvider._installAuthProviders();
     }
   }
 
@@ -9576,6 +9590,7 @@ const beanAtom = __webpack_require__(5528);
 const beanAtomAction = __webpack_require__(3127);
 const beanAtomClass = __webpack_require__(9546);
 const beanAuth = __webpack_require__(452);
+const beanAuthProvider = __webpack_require__(5525);
 const beanBase = __webpack_require__(8677);
 const beanResource = __webpack_require__(7969);
 const beanRole = __webpack_require__(5625);
@@ -9707,6 +9722,11 @@ module.exports = app => {
     auth: {
       mode: 'ctx',
       bean: beanAuth,
+      global: true,
+    },
+    authProvider: {
+      mode: 'ctx',
+      bean: beanAuthProvider,
       global: true,
     },
     base: {
