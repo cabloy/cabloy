@@ -7,7 +7,7 @@ module.exports = app => {
         await this.ctx.bean.base.authProvidersReset();
       }
       // register all authProviders
-      await this.ctx.bean.auth._installAuthProviders();
+      await this.ctx.bean.authProvider._installAuthProviders();
     }
   }
 
