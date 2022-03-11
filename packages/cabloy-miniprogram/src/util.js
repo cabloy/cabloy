@@ -140,9 +140,8 @@ module.exports = function (cabloy) {
     },
 
     getJwtAuthorization() {
-      let oauth = cabloy.data.oauth;
+      const oauth = cabloy.data.oauth;
       if (!oauth) return '';
-      oauth = JSON.parse(oauth);
       return oauth.expireTime - Date.now() > 120 * 1000 ? oauth.accessToken : oauth.refreshToken;
     },
   };
