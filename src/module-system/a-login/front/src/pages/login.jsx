@@ -89,7 +89,7 @@ export default {
       }
       return this._renderLoginTop_multiple(providers);
     },
-    _renderLoginBottom(c) {
+    _renderLoginBottom() {
       if (this.state === 'migrate') return null;
       if (!this.providers) return null;
       const providers = this.providers.filter(item => !item.provider.meta.inline);
