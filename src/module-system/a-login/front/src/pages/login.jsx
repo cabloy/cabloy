@@ -22,14 +22,7 @@ export default {
     this.showClose = this.$meta.vueLayout.backLink(this);
   },
   created() {
-    const action = {
-      actionModule: 'a-login',
-      actionComponent: 'ebAuthProviders',
-      name: 'loadAuthProviders',
-    };
-    this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } }).then(res => {
-      this.providers = res;
-    });
+    this.loadAuthProviders();
   },
   render() {
     return (
@@ -41,6 +34,14 @@ export default {
   methods: {
     onClose() {
       this.$f7router.back();
+    },
+    async loadAuthProviders() {
+      const action = {
+        actionModule: 'a-login',
+        actionComponent: 'ebAuthProviders',
+        name: 'loadAuthProviders',
+      };
+      this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
     },
     _getComponentFullName(provider) {
       return `${provider.module}:${provider.meta.component}`;
