@@ -14,20 +14,22 @@ module.exports = ctx => {
     _registerAllRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
+        const authProvider = authProviders[key];
         const [moduleRelativeName, providerName] = key.split(':');
-        this._registerProviderRouters(moduleRelativeName, providerName);
+        this._registerProviderRouters(moduleRelativeName, providerName, authProvider);
       }
     }
 
-    _registerProviderRouters(moduleRelativeName, providerName) {
-      // config
+    _registerProviderRouters(moduleRelativeName, providerName, authProvider) {
+      // urls
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
-      const config = {
-        loginURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}`,
-        callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}/callback`,
+      const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
+      const urls = {
+        loginURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}${urlParamScene}`,
+        callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}${urlParamScene}/callback`,
       };
       // authenticate
-      const authenticate = _createAuthenticate(moduleRelativeName, providerName, config);
+      const authenticate = _createAuthenticate(moduleRelativeName, providerName, authProvider, urls);
       // middlewares
       const middlewaresPost = [];
       const middlewaresGet = [];
@@ -37,23 +39,23 @@ module.exports = ctx => {
       // mount routes
       const routes = [
         {
-          name: `get:${config.loginURL}`,
+          name: `get:${urls.loginURL}`,
           method: 'get',
-          path: '/' + config.loginURL,
+          path: '/' + urls.loginURL,
           middlewares: middlewaresGet,
           meta: { auth: { enable: false } },
         },
         {
-          name: `post:${config.loginURL}`,
+          name: `post:${urls.loginURL}`,
           method: 'post',
-          path: '/' + config.loginURL,
+          path: '/' + urls.loginURL,
           middlewares: middlewaresPost,
           meta: { auth: { enable: false } },
         },
         {
-          name: `get:${config.callbackURL}`,
+          name: `get:${urls.callbackURL}`,
           method: 'get',
-          path: '/' + config.callbackURL,
+          path: '/' + urls.callbackURL,
           middlewares: middlewaresGet,
           meta: { auth: { enable: false } },
         },
@@ -114,7 +116,7 @@ module.exports = ctx => {
   return AuthProvider;
 };
 
-function _createAuthenticate(moduleRelativeName, providerName, _config) {
+function _createAuthenticate(moduleRelativeName, providerName, authProvider, urls) {
   return async function (ctx, next) {
     // provider of db
     const providerItem = await ctx.bean.user.getAuthProvider({

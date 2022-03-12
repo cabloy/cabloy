@@ -53,14 +53,14 @@ module.exports = appInfo => {
     registerPassport: {
       bean: 'registerPassport',
     },
+    installAuthProviders: {
+      bean: 'installAuthProviders',
+      // instance: true,
+    },
     loadSchedules: {
       bean: 'loadSchedules',
       // instance: true,
       debounce: true,
-    },
-    installAuthProviders: {
-      bean: 'installAuthProviders',
-      instance: true,
     },
     loadAtomStatics: {
       bean: 'loadAtomStatics',
