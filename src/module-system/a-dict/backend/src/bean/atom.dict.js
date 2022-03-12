@@ -63,8 +63,7 @@ module.exports = app => {
       // broadcast
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.app.meta.broadcast.emit({
-            subdomain: this.ctx.subdomain,
+          this.ctx.meta.util.broadcastEmit({
             module: moduleInfo.relativeName,
             broadcastName: 'dictCacheRemove',
             data: { dictKey: atomStaticKey },
@@ -90,8 +89,7 @@ module.exports = app => {
       // broadcast
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.app.meta.broadcast.emit({
-            subdomain: this.ctx.subdomain,
+          this.ctx.meta.util.broadcastEmit({
             module: moduleInfo.relativeName,
             broadcastName: 'dictCacheRemove',
             data: { dictKey: atomStaticKey },

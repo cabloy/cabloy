@@ -708,8 +708,7 @@ module.exports = ctx => {
 
     _emitSocket({ path, message, socketId }) {
       // broadcast
-      ctx.app.meta.broadcast.emit({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.broadcastEmit({
         module: moduleInfo.relativeName,
         broadcastName: 'socketEmit',
         data: { path, message, socketId },

@@ -219,8 +219,7 @@ module.exports = ctx => {
             config: JSON.stringify(instance.config),
           });
           // broadcast
-          ctx.app.meta.broadcast.emit({
-            subdomain: ctx.subdomain,
+          ctx.meta.util.broadcastEmit({
             module: 'a-instance',
             broadcastName: 'resetCache',
             data: null,

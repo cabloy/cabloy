@@ -17,8 +17,7 @@ module.exports = app => {
         config: JSON.stringify(this.__configBlackFields(data.config)),
       });
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-instance',
         broadcastName: 'resetCache',
         data: null,
@@ -34,8 +33,7 @@ module.exports = app => {
 
     async reload() {
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-instance',
         broadcastName: 'reload',
         data: null,

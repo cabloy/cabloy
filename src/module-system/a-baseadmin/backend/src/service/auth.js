@@ -23,8 +23,7 @@ module.exports = app => {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-auth',
         broadcastName: 'authProviderChanged',
         data: {
@@ -63,8 +62,7 @@ module.exports = app => {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-auth',
         broadcastName: 'authProviderChanged',
         data: {
