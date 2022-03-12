@@ -2,8 +2,52 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthProvider {
+    get modelAuthProvider() {
+      return ctx.model.module(moduleInfo.relativeName).authProvider;
+    }
+
+    async getAuthProvider({ id, module, providerName }) {
+      // ctx.instance maybe not exists
+      const data = id ? { id } : { module, providerName };
+      const res = await this.modelAuthProvider.get(data);
+      if (res) return res;
+      if (!module || !providerName) throw new Error('Invalid arguments');
+      // lock
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.authProvider.register`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'authProvider',
+            context: { module, providerName },
+            fn: '_registerAuthProviderLock',
+          });
+        },
+      });
+    }
+
+    async _registerAuthProviderLock({ module, providerName }) {
+      // get
+      const res = await this.modelAuthProvider.get({ module, providerName });
+      if (res) return res;
+      // data
+      // const _authProviders = ctx.bean.base.authProviders();
+      // const _provider = _authProviders[`${module}:${providerName}`];
+      // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
+      const data = {
+        module,
+        providerName,
+        // config: JSON.stringify(_provider.config),
+        disabled: 0,
+      };
+      // insert
+      const res2 = await this.modelAuthProvider.insert(data);
+      data.id = res2.insertId;
+      return data;
+    }
+
     async _installAuthProviders() {
       // registerAllRouters
       this._registerAllRouters();
@@ -118,6 +162,7 @@ module.exports = ctx => {
 
 function _createAuthenticate(moduleRelativeName, providerName, authProvider, urls) {
   return async function (ctx, next) {
+    console.log('-------providerScene:', ctx.params);
     // provider of db
     const providerItem = await ctx.bean.user.getAuthProvider({
       module: moduleRelativeName,

@@ -308,6 +308,8 @@ module.exports = ctx => {
         const module = ctx.app.meta.modules[relativeName];
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
+        // todo: only check github
+        if (relativeName !== 'a-authgithub') continue;
         if (typeof metaAuth === 'function') {
           metaAuth = metaAuth(ctx.app);
         }

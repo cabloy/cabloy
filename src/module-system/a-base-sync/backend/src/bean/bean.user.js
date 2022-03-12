@@ -425,7 +425,7 @@ module.exports = ctx => {
       const verifyUser = {};
 
       // provider
-      const providerItem = await this.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: profileUser.module,
         providerName: profileUser.provider,
       });
@@ -719,48 +719,6 @@ module.exports = ctx => {
       if (value) {
         user[column] = value;
       }
-    }
-
-    async getAuthProvider({ subdomain, iid, id, module, providerName }) {
-      // ctx.instance maybe not exists
-      const data = id ? { iid: iid || ctx.instance.id, id } : { iid: iid || ctx.instance.id, module, providerName };
-      const res = await ctx.db.get('aAuthProvider', data);
-      if (res) return res;
-      if (!module || !providerName) throw new Error('Invalid arguments');
-      // lock
-      return await ctx.meta.util.lock({
-        subdomain,
-        resource: `${moduleInfo.relativeName}.authProvider.register`,
-        fn: async () => {
-          return await ctx.meta.util.executeBeanIsolate({
-            subdomain,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'user',
-            context: { module, providerName },
-            fn: '_registerAuthProviderLock',
-          });
-        },
-      });
-    }
-
-    async _registerAuthProviderLock({ module, providerName }) {
-      // get
-      const res = await this.modelAuthProvider.get({ module, providerName });
-      if (res) return res;
-      // data
-      // const _authProviders = ctx.bean.base.authProviders();
-      // const _provider = _authProviders[`${module}:${providerName}`];
-      // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
-      const data = {
-        module,
-        providerName,
-        // config: JSON.stringify(_provider.config),
-        disabled: 0,
-      };
-      // insert
-      const res2 = await this.modelAuthProvider.insert(data);
-      data.id = res2.insertId;
-      return data;
     }
   }
 
