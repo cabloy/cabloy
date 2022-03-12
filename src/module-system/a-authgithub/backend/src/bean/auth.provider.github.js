@@ -15,7 +15,7 @@ module.exports = function (ctx) {
       };
     }
     configProviderSceneValid() {
-      return true;
+      return !!this.configProviderScene.clientID && !!this.configProviderScene.clientSecret;
     }
     getStrategy() {
       return Strategy;
