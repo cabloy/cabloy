@@ -28,6 +28,19 @@ module.exports = ctx => {
       });
     }
 
+    createAuthProviderBean({ module, providerName, providerScene }) {
+      const providerFullName = `${module}:${providerName}`;
+      const authProviders = ctx.bean.base.authProviders();
+      const authProvider = authProviders[providerFullName];
+      const beanName = authProvider.meta.bean;
+      return ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, {
+        authProvider,
+        providerModule: module,
+        providerName,
+        providerScene,
+      });
+    }
+
     async _registerAuthProviderLock({ module, providerName }) {
       // get
       const res = await this.modelAuthProvider.get({ module, providerName });
@@ -167,9 +180,8 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
       throw new Error(`should set provider scene on callback url: ${providerFullName}`);
     }
     // bean
-    const beanName = authProvider.meta.bean;
-    const beanProvider = ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, providerScene);
-    await beanProvider.load();
+    const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
+    await beanProvider.loadConfigScene();
     // provider of db
     const providerItem = await ctx.bean.authProvider.getAuthProvider({
       module: moduleRelativeName,

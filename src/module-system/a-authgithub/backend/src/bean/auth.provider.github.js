@@ -14,7 +14,7 @@ module.exports = function (ctx) {
         locales: configGitHub.locales,
       };
     }
-    checkSceneValid() {
+    checkProviderSceneValid() {
       // return
     }
     getStrategy() {
