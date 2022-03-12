@@ -44,12 +44,34 @@ module.exports = ctx => {
       if (this.authProvider.meta.scene) {
         // scene: true
         const scene = configProvider.scenes[this.providerScene];
-        // this.configProviderScene=
+        const titleLocale = this._getTitleLocale({
+          locales: configProvider.locales,
+          title: scene.title,
+          locale: ctx.locale,
+        });
+        this.configProviderScene = { ...scene, titleLocale };
       } else {
         this.configProviderScene = this.configProvider;
       }
       // providerSceneValid
-      this.providerSceneValid = !this.providerItem.disabled && this.checkProviderSceneValid();
+      this.providerSceneValid =
+        !this.providerItem.disabled && !this.configProviderScene.disabled && this.configProviderSceneValid();
+    }
+
+    configProviderSceneValid() {
+      return true;
+    }
+
+    _getTitleLocale({ locales, title, locale }) {
+      let titleLocale = ctx.bean.util.getProperty(locales, `${locale}.${title}`);
+      if (!titleLocale && locale !== 'en-us') {
+        titleLocale = ctx.bean.util.getProperty(locales, `en-us.${title}`);
+      }
+      // not use system locale
+      // if (!titleLocale) {
+      //   titleLocale = ctx.text(title);
+      // }
+      return titleLocale || title;
     }
   }
   return IAuthProviderBase;
