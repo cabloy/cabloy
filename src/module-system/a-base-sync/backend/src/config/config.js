@@ -50,13 +50,6 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    registerPassport: {
-      bean: 'registerPassport',
-    },
-    installAuthProviders: {
-      bean: 'installAuthProviders',
-      // instance: true,
-    },
     loadSchedules: {
       bean: 'loadSchedules',
       // instance: true,

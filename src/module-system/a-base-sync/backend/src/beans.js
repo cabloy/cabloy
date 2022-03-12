@@ -4,7 +4,6 @@ const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
-const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
 const startupLoadAtomStatics = require('./bean/startup.loadAtomStatics.js');
@@ -69,10 +68,6 @@ module.exports = app => {
       bean: queueRoleBuild,
     },
     // startup
-    'startup.registerPassport': {
-      mode: 'app',
-      bean: startupRegisterPassport,
-    },
     'startup.installAuthProviders': {
       mode: 'app',
       bean: startupInstallAuthProviders,
