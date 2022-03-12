@@ -86,7 +86,7 @@ module.exports = app => {
       await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
 
       // auth
-      const providerItem = await this.ctx.bean.user.getAuthProvider({
+      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authsimple',
       });

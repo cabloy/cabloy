@@ -7,7 +7,7 @@ module.exports = function (ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
-    getConfigDefault() {
+    async getConfigDefault() {
       const configGitHub = this.configModule.account.github;
       return {
         scenes: configGitHub.scenes,

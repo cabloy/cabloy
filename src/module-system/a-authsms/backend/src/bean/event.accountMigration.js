@@ -4,7 +4,7 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // provider
-      const providerItem = await ctx.bean.user.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authsms',
       });

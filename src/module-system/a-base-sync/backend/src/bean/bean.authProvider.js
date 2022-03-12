@@ -125,9 +125,7 @@ module.exports = ctx => {
 
     async _registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName) {
       // provider of db
-      const providerItem = await ctx.bean.user.getAuthProvider({
-        subdomain,
-        iid,
+      const providerItem = await this.getAuthProvider({
         module: moduleRelativeName,
         providerName,
       });
@@ -162,9 +160,18 @@ module.exports = ctx => {
 
 function _createAuthenticate(moduleRelativeName, providerName, authProvider, urls) {
   return async function (ctx, next) {
-    console.log('-------providerScene:', ctx.params);
+    const providerFullName = `${moduleRelativeName}:${providerName}`;
+    // provider scene
+    const providerScene = ctx.params.scene;
+    if (authProvider.meta.scene && !providerScene) {
+      throw new Error(`should set provider scene on callback url: ${providerFullName}`);
+    }
+    // bean
+    const beanName = authProvider.meta.bean;
+    const beanProvider = ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, providerScene);
+    await beanProvider.load();
     // provider of db
-    const providerItem = await ctx.bean.user.getAuthProvider({
+    const providerItem = await ctx.bean.authProvider.getAuthProvider({
       module: moduleRelativeName,
       providerName,
     });

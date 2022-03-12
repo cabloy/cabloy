@@ -67,7 +67,7 @@ module.exports = function (ctx) {
         autoActivate: config.auth.autoActivate,
       };
       // provider
-      const providerItem = await ctx.bean.user.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: sceneInfo.authProvider,
       });
