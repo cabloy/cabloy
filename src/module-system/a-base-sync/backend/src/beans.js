@@ -1,7 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const atomResource = require('./bean/atom.resource.js');
 const localProcedure = require('./bean/local.procedure.js');
-const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
@@ -51,11 +50,6 @@ module.exports = app => {
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
-    },
-    // broadcast
-    'broadcast.authProviderChanged': {
-      mode: 'app',
-      bean: broadcastAuthProviderChanged,
     },
     // queue
     'queue.schedule': {

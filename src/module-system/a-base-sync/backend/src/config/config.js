@@ -77,13 +77,6 @@ module.exports = appInfo => {
     },
   };
 
-  // broadcasts
-  config.broadcasts = {
-    authProviderChanged: {
-      bean: 'authProviderChanged',
-    },
-  };
-
   // pageSize
   config.pageSize = 20;
 

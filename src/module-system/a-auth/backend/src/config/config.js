@@ -13,5 +13,12 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    authProviderChanged: {
+      bean: 'authProviderChanged',
+    },
+  };
+
   return config;
 };

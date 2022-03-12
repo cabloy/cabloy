@@ -25,7 +25,7 @@ module.exports = app => {
       // broadcast
       this.ctx.app.meta.broadcast.emit({
         subdomain: this.ctx.subdomain,
-        module: 'a-base',
+        module: 'a-auth',
         broadcastName: 'authProviderChanged',
         data: {
           module: item.module,
@@ -65,7 +65,7 @@ module.exports = app => {
       // broadcast
       this.ctx.app.meta.broadcast.emit({
         subdomain: this.ctx.subdomain,
-        module: 'a-base',
+        module: 'a-auth',
         broadcastName: 'authProviderChanged',
         data: {
           module: item.module,
