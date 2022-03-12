@@ -12,6 +12,15 @@ module.exports = ctx => {
       if (subdomain === undefined) subdomain = ctx.subdomain;
       return await ctx.app.meta.util.lock({ subdomain, resource, fn, options, redlock });
     },
+    broadcastEmit({ locale, subdomain, module, broadcastName, data }) {
+      ctx.app.meta.broadcast.emit({
+        locale: locale === undefined ? ctx.locale : locale,
+        subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
+        module,
+        broadcastName,
+        data,
+      });
+    },
     queuePush(info) {
       const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
       const locale = info.locale === undefined ? ctx.locale : info.locale;
