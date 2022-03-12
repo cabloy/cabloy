@@ -8,10 +8,11 @@ module.exports = ctx => {
       this.providerModule = providerModule;
       this.providerName = providerName;
       this.providerScene = providerScene;
-      this.configProvider = null;
       this.configProviderScene = null;
-      this.providerItem = null;
       this.providerSceneValid = false;
+    }
+    get configProviderCache() {
+      return ctx.bean.authProvider._getAuthProviderConfigCache(this.providerModule, this.providerName);
     }
     async loadConfigProvider() {
       // config default
@@ -21,26 +22,30 @@ module.exports = ctx => {
         module: this.providerModule,
         providerName: this.providerName,
       });
-      this.providerItem = providerItem;
+      // combine
+      let configProvider;
       if (this.authProvider.meta.scene) {
         // scene: true
         const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
         const itemLocales = providerItem.locales ? JSON.parse(providerItem.locales) : null;
         const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
         const locales = extend(true, {}, configDefault && configDefault.locales, itemLocales);
-        this.configProvider = {
+        configProvider = {
           scenes,
           locales,
         };
       } else {
         // scene: false
         const itemConfig = providerItem.config ? JSON.parse(providerItem.config) : null;
-        this.configProvider = extend(true, {}, configDefault, itemConfig);
+        configProvider = extend(true, {}, configDefault, itemConfig);
       }
-      return this.configProvider;
+      return {
+        configProvider,
+        providerItem,
+      };
     }
-    async loadConfigScene() {
-      const configProvider = await this.loadConfigProvider();
+    loadConfigScene() {
+      const { configProvider, providerItem } = this.configProviderCache;
       if (this.authProvider.meta.scene) {
         // scene: true
         const scene = configProvider.scenes[this.providerScene];
@@ -51,11 +56,11 @@ module.exports = ctx => {
         });
         this.configProviderScene = { ...scene, titleLocale };
       } else {
-        this.configProviderScene = this.configProvider;
+        this.configProviderScene = configProvider;
       }
       // providerSceneValid
       this.providerSceneValid =
-        !this.providerItem.disabled && !this.configProviderScene.disabled && this.configProviderSceneValid();
+        !providerItem.disabled && !this.configProviderScene.disabled && this.configProviderSceneValid();
     }
 
     configProviderSceneValid() {

@@ -68,6 +68,11 @@ module.exports = ctx => {
       __authProvidersConfigCache[ctx.subdomain][providerFullName] = await beanProvider.loadConfigProvider();
     }
 
+    _getAuthProviderConfigCache(module, providerName) {
+      const providerFullName = `${module}:${providerName}`;
+      return __authProvidersConfigCache[ctx.subdomain][providerFullName];
+    }
+
     async authProviderChanged(moduleRelativeName, providerName) {
       // change self
       await this._cacheAuthProviderConfig(moduleRelativeName, providerName);
@@ -219,7 +224,7 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
     }
     // bean
     const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
-    await beanProvider.loadConfigScene();
+    beanProvider.loadConfigScene();
     // provider of db
     const providerItem = await ctx.bean.authProvider.getAuthProvider({
       module: moduleRelativeName,
