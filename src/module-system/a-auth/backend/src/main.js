@@ -1,8 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const IAuthProviderBaseFn = require('./bean/local.authProviderBase.js');
 
 module.exports = app => {
+  // base
+  app.meta.IAuthProviderBase = IAuthProviderBaseFn;
+
   // aops
   const aops = require('./aops.js')(app);
   // beans
