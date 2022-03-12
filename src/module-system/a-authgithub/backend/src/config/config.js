@@ -7,10 +7,16 @@ module.exports = appInfo => {
 
   // account.github
   config.account.github = {
-    apps: {
+    scenes: {
       default: {
+        title: 'Default',
         clientID: '',
         clientSecret: '',
+      },
+    },
+    locales: {
+      'zh-cn': {
+        Default: '默认',
       },
     },
   };

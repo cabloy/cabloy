@@ -8,8 +8,14 @@ module.exports = function (ctx) {
       return ctx.config.module(moduleInfo.relativeName);
     }
     getConfigDefault() {
-      const config = this.configModule.account.github.apps[this.providerScene];
-      return { clientID: config.clientID, clientSecret: config.clientSecret };
+      const configGitHub = this.configModule.account.github;
+      return {
+        scenes: configGitHub.scenes,
+        locales: configGitHub.locales,
+      };
+    }
+    checkSceneValid() {
+      // return
     }
     getStrategy() {
       return Strategy;

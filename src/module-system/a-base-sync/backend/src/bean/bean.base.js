@@ -150,18 +150,10 @@ module.exports = ctx => {
     }
 
     authProviders() {
-      const subdomain = ctx.subdomain;
-      if (!_authProvidersLocales[subdomain]) _authProvidersLocales[subdomain] = {};
-      const authProvidersSubdomain = _authProvidersLocales[subdomain];
-      if (!authProvidersSubdomain[ctx.locale]) {
-        authProvidersSubdomain[ctx.locale] = this._prepareAuthProviders();
+      if (!_authProvidersLocales[ctx.locale]) {
+        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
       }
-      return authProvidersSubdomain[ctx.locale];
-    }
-
-    authProvidersReset() {
-      const subdomain = ctx.subdomain;
-      _authProvidersLocales[subdomain] = {};
+      return _authProvidersLocales[ctx.locale];
     }
 
     // inner methods
@@ -317,23 +309,19 @@ module.exports = ctx => {
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         if (typeof metaAuth === 'function') {
-          metaAuth = metaAuth(ctx);
+          metaAuth = metaAuth(ctx.app);
         }
         if (!metaAuth.providers) continue;
         // loop
         for (const providerName in metaAuth.providers) {
           const _authProvider = metaAuth.providers[providerName];
-          if (!_authProvider) continue;
-          const authProvider = {
-            meta: { ..._authProvider.meta }, // for titleLocale separately
-            config: _authProvider.config,
-            configFunctions: _authProvider.configFunctions,
-            handler: _authProvider.handler,
-          };
-          if (authProvider.meta && authProvider.meta.title) {
-            authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          const providerFullName = `${relativeName}:${providerName}`;
+          if (!_authProvider.meta.title) {
+            throw new Error(`should specify the title of auth provider: ${providerFullName}`);
           }
-          authProviders[`${relativeName}:${providerName}`] = authProvider;
+          const authProvider = extend(true, {}, _authProvider);
+          authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          authProviders[providerFullName] = authProvider;
         }
       }
       return authProviders;
