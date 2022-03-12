@@ -11,6 +11,10 @@ module.exports = appInfo => {
       bean: 'installAuthProviders',
       // instance: true,
     },
+    checkAuthProviders: {
+      bean: 'checkAuthProviders',
+      instance: true,
+    },
   };
 
   // broadcasts

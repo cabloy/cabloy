@@ -3,6 +3,7 @@ const localAuthProviderBase = require('./bean/local.authProviderBase.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
+const startupCacheAuthProviders = require('./bean/startup.cacheAuthProviders.js');
 const beanAuthProvider = require('./bean/bean.authProvider.js');
 
 module.exports = app => {
@@ -30,6 +31,10 @@ module.exports = app => {
     'startup.installAuthProviders': {
       mode: 'app',
       bean: startupInstallAuthProviders,
+    },
+    'startup.cacheAuthProviders': {
+      mode: 'app',
+      bean: startupCacheAuthProviders,
     },
     // global
     authProvider: {
