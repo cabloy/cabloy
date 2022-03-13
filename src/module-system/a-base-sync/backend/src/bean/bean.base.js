@@ -304,8 +304,8 @@ module.exports = ctx => {
 
     _prepareAuthProviders() {
       const authProviders = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
+      for (const module of ctx.app.meta.modulesArray) {
+        const relativeName = module.info.relativeName;
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         // todo: only check github
