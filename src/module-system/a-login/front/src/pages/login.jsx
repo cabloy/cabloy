@@ -47,8 +47,9 @@ export default {
         return !this.$meta.config.base.jwt || item.provider.meta.mode !== 'redirect';
       });
     },
-    _getComponentFullName(provider) {
-      return `${provider.module}:${provider.meta.component}`;
+    _getComponentFullName(provider, providerScene) {
+      const meta = provider.meta;
+      return `${meta.render.module}:${meta.render.name}:${providerScene}`;
     },
     _renderLoginTop_single(providers) {
       const { provider } = providers[0];
@@ -103,16 +104,22 @@ export default {
       const domButtons = [];
       for (const item of providers) {
         const { provider } = item;
-        const fullName = this._getComponentFullName(provider);
-        const options = { attrs: { class: 'btn' } };
-        domButtons.push(
-          <eb-component
-            key={fullName}
-            module={provider.module}
-            name={provider.meta.component}
-            options={options}
-          ></eb-component>
-        );
+        const meta = provider.meta;
+        for (const providerScene in provider.scenes) {
+          const fullName = this._getComponentFullName(provider, providerScene);
+          const options = {
+            attrs: { class: 'btn' },
+            props: { providerScene },
+          };
+          domButtons.push(
+            <eb-component
+              key={fullName}
+              module={meta.render.module}
+              name={meta.render.name}
+              options={options}
+            ></eb-component>
+          );
+        }
       }
       return <div class="btns">{domButtons}</div>;
     },
