@@ -65,8 +65,6 @@ module.exports = ctx => {
     async _installAuthProviders() {
       // registerAllRouters
       this._registerAllRouters();
-      // registerAllStrategies
-      await this.registerAllStrategies();
     }
 
     _registerAllRouters() {
@@ -124,61 +122,31 @@ module.exports = ctx => {
         ctx.app.meta.router.register(moduleInfo, route);
       }
     }
-
-    async registerAllStrategies() {
-      const authProviders = ctx.bean.base.authProviders();
-      for (const key in authProviders) {
-        const authProvider = authProviders[key];
-        const [moduleRelativeName, providerName] = key.split(':');
-        this._registerProviderStrategy(moduleRelativeName, providerName, authProvider);
-      }
-    }
-
-    async _registerProviderStrategy(moduleRelativeName, providerName, authProvider) {
-      // strategy
-      const strategyName = `${moduleRelativeName}:${providerName}`;
-      // bean
-      const beanProvider = this.createAuthProviderBean({
-        module: moduleRelativeName,
-        providerName,
-        providerScene: null,
-      });
-      const Strategy = beanProvider.getStrategy();
-      // config
-      const config = {};
-      config.passReqToCallback = true;
-      config.failWithError = false;
-      config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
-      // use strategy
-      ctx.app.passport.use(
-        strategyName,
-        new Strategy(config, _createStrategyCallback(moduleRelativeName, providerName, authProvider))
-      );
-    }
   }
   return AuthProvider;
 };
 
-function _createStrategyCallback(moduleRelativeName, providerName, authProvider) {
+function _createProviderStrategy(authProvider, beanProvider) {
+  // config
+  let config = {};
+  config.passReqToCallback = true;
+  config.failWithError = false;
+  config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+  config.beanProvider = beanProvider;
+  // combine
+  config = extend(true, {}, beanProvider.configProviderScene, config);
+  // strategy
+  const Strategy = beanProvider.getStrategy();
+  return new Strategy(config, _createStrategyCallback(beanProvider));
+}
+
+function _createStrategyCallback(beanProvider) {
   // req, ...args, done
   return async function (req, ...args) {
     const ctx = req.ctx;
     const done = args[args.length - 1];
     args = args.slice(0, args.length - 1);
     try {
-      const providerFullName = `${moduleRelativeName}:${providerName}`;
-      // provider scene
-      const providerScene = ctx.params.scene;
-      if (authProvider.meta.scene && !providerScene) {
-        throw new Error(`should set provider scene on callback url: ${providerFullName}`);
-      }
-      // bean
-      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
-        module: moduleRelativeName,
-        providerName,
-        providerScene,
-      });
-      if (!beanProvider.providerSceneValid) ctx.throw(423);
       // onVerify
       const verifyUser = await beanProvider.onVerify(...args);
       if (!verifyUser) {
@@ -219,7 +187,6 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
       ? urls.callbackURL.replace(':providerScene', providerScene)
       : urls.callbackURL;
     // returnTo
-
     if (ctx.url.indexOf(callbackURL) === -1) {
       if (ctx.request.query && ctx.request.query.returnTo) {
         ctx.session.returnTo = ctx.request.query.returnTo;
@@ -229,21 +196,18 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
         delete ctx.session['x-scene'];
       }
     }
-
     // config
-    let config = {};
+    const config = {};
     config.passReqToCallback = true;
     config.failWithError = false;
     config.loginURL = ctx.bean.base.getAbsoluteUrl(loginURL);
     config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
     config.state = ctx.request.query.state;
     config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
-    config.beanProvider = beanProvider;
-    // combine
-    config = extend(true, {}, beanProvider.configProviderScene, config);
+    // strategy
+    const strategy = _createProviderStrategy(authProvider, beanProvider);
     // invoke authenticate
-    const strategyName = providerFullName;
-    const authenticate = ctx.app.passport.authenticate(strategyName, config);
+    const authenticate = ctx.app.passport.authenticate(strategy, config);
     await authenticate(ctx, next);
   };
 }
