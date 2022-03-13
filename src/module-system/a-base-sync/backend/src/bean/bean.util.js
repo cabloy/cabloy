@@ -152,6 +152,19 @@ module.exports = app => {
       return utils.escapeURL(str);
     }
 
+    getTitleLocale({ locales, title, locale }) {
+      locale = locale || this.ctx.locale;
+      let titleLocale = this.getProperty(locales, `${locale}.${title}`);
+      if (!titleLocale && locale !== 'en-us') {
+        titleLocale = this.getProperty(locales, `en-us.${title}`);
+      }
+      // not use system locale
+      // if (!titleLocale) {
+      //   titleLocale = this.ctx.text(title);
+      // }
+      return titleLocale || title;
+    }
+
     evaluateExpression({ expression, globals, wrapper }) {
       if (!wrapper) {
         wrapper = 'none';

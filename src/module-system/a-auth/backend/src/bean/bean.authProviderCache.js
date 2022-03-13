@@ -131,18 +131,6 @@ module.exports = ctx => {
       // ok
       return configProviderScene;
     }
-
-    _getTitleLocale({ locales, title, locale }) {
-      let titleLocale = ctx.bean.util.getProperty(locales, `${locale}.${title}`);
-      if (!titleLocale && locale !== 'en-us') {
-        titleLocale = ctx.bean.util.getProperty(locales, `en-us.${title}`);
-      }
-      // not use system locale
-      // if (!titleLocale) {
-      //   titleLocale = ctx.text(title);
-      // }
-      return titleLocale || title;
-    }
   }
   return AuthProviderCache;
 };
