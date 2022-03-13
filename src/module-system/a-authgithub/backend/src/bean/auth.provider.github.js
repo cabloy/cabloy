@@ -21,7 +21,7 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(accessToken, refreshToken, params, profile) {
-      const user = {
+      return {
         module: moduleInfo.relativeName,
         provider: 'authgithub',
         providerScene: this.providerScene,
@@ -36,7 +36,6 @@ module.exports = function (ctx) {
           profile,
         },
       };
-      ctx.app.passport.doVerify(req, user, done);
     }
   }
 
