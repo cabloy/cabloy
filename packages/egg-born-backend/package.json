@@ -23,6 +23,7 @@
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
     "@zhennann/ali-rds": "^3.3.3",
+    "@zhennann/egg-passport": "^2.1.2",
     "@zhennann/egg-socket.io": "^5.0.4",
     "@zhennann/koa-static-cache": "^5.1.8",
     "@zhennann/passport-oauth2": "^1.6.3",

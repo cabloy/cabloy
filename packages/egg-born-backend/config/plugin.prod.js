@@ -13,7 +13,7 @@ module.exports = {
 
   passport: {
     enable: true,
-    package: 'egg-passport',
+    package: '@zhennann/egg-passport',
   },
 
   redis: {
