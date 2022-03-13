@@ -170,7 +170,7 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
   return async function (ctx, next) {
     const providerFullName = `${moduleRelativeName}:${providerName}`;
     // provider scene
-    const providerScene = ctx.params.scene;
+    const providerScene = ctx.params.providerScene;
     if (authProvider.meta.scene && !providerScene) {
       throw new Error(`should set provider scene on callback url: ${providerFullName}`);
     }

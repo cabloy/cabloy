@@ -23,7 +23,7 @@ module.exports = ctx => {
       throw new Error('onVerify not implemented');
     }
     get configProviderCache() {
-      return ctx.bean.authProvider.getAuthProviderConfigCache(this.providerModule, this.providerName);
+      return ctx.bean.authProviderCache.getAuthProviderConfigCache(this.providerModule, this.providerName);
     }
     get configProviderScene() {
       const { configProviderScenes } = this.configProviderCache;
