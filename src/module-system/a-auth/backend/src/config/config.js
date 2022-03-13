@@ -11,8 +11,8 @@ module.exports = appInfo => {
       bean: 'installAuthProviders',
       // instance: true,
     },
-    checkAuthProviders: {
-      bean: 'checkAuthProviders',
+    cacheAuthProviders: {
+      bean: 'cacheAuthProviders',
       instance: true,
     },
   };
