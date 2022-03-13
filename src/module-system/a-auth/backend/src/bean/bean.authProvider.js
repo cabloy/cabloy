@@ -81,8 +81,8 @@ module.exports = ctx => {
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
       const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
       const urls = {
-        loginURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}${urlParamScene}`,
-        callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}${urlParamScene}/callback`,
+        loginURL: `/api/a/auth/passport/${moduleRelativeName}/${providerName}${urlParamScene}`,
+        callbackURL: `/api/a/auth/passport/${moduleRelativeName}/${providerName}${urlParamScene}/callback`,
       };
       // authenticate
       const authenticate = _createAuthenticate(moduleRelativeName, providerName, authProvider, urls);

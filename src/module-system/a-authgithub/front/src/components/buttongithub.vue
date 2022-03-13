@@ -13,6 +13,9 @@ export default {
       ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
     },
   },
+  props: {
+    providerScene: String,
+  },
   data() {
     return {};
   },

@@ -109,7 +109,11 @@ export default {
           const fullName = this._getComponentFullName(provider, providerScene);
           const options = {
             attrs: { class: 'btn' },
-            props: { providerScene },
+            props: {
+              providerModule: provider.module,
+              providerName: provider.providerName,
+              providerScene,
+            },
           };
           domButtons.push(
             <eb-component
