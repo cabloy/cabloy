@@ -108,8 +108,8 @@ module.exports = ctx => {
     async _installAuthProviders() {
       // registerAllRouters
       this._registerAllRouters();
-      // registerAllProviders
-      await this._registerAllProviders();
+      // registerAllStrategies
+      await this.registerAllStrategies();
     }
 
     _registerAllRouters() {
@@ -168,52 +168,58 @@ module.exports = ctx => {
       }
     }
 
-    async _registerAllProviders() {
-      await this._registerInstanceProviders(ctx.instance.name, ctx.instance.id);
-    }
-
-    async _registerInstanceProviders(subdomain, iid) {
+    async registerAllStrategies() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
+        const authProvider = authProviders[key];
         const [moduleRelativeName, providerName] = key.split(':');
-        await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
+        this._registerProviderStrategy(moduleRelativeName, providerName, authProvider);
       }
     }
 
-    async _registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName) {
-      // provider of db
-      const providerItem = await this.getAuthProvider({
+    async _registerProviderStrategy(moduleRelativeName, providerName, authProvider) {
+      // strategy
+      const strategyName = `${moduleRelativeName}:${providerName}`;
+      // bean
+      const beanProvider = this.createAuthProviderBean({
         module: moduleRelativeName,
         providerName,
+        providerScene: null,
       });
-      if (!providerItem) return;
-      // strategy
-      const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
-      // unuse/use
-      if (providerItem.disabled === 0) {
-        // provider
-        const authProviders = ctx.bean.base.authProviders();
-        const provider = authProviders[`${moduleRelativeName}:${providerName}`];
-        if (provider.handler) {
-          // config
-          const config = provider.config;
-          config.passReqToCallback = true;
-          config.failWithError = false;
-          config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
-          // handler
-          const handler = provider.handler(ctx.app);
-          // use strategy
-          ctx.app.passport.unuse(strategyName);
-          ctx.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
-        }
-      } else {
-        // unuse strategy
-        ctx.app.passport.unuse(strategyName);
-      }
+      const Strategy = beanProvider.getStrategy();
+      // config
+      const config = {};
+      config.passReqToCallback = true;
+      config.failWithError = false;
+      config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+      // use strategy
+      ctx.app.passport.use(
+        strategyName,
+        new Strategy(config, _createStrategyCallback(moduleRelativeName, providerName, authProvider))
+      );
     }
   }
   return AuthProvider;
 };
+
+function _createStrategyCallback(moduleRelativeName, providerName, authProvider) {
+  return function (req, ...args, done) {
+    // ctx
+    const ctx=req.ctx;
+    // provider scene
+    const providerScene = ctx.params.scene;
+    if (authProvider.meta.scene && !providerScene) {
+      throw new Error(`should set provider scene on callback url: ${providerFullName}`);
+    }
+    // bean
+    const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
+    beanProvider.loadConfigScene();
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    // verify
+    
+    ctx.app.passport.doVerify(req, user, done);
+  };
+}
 
 function _createAuthenticate(moduleRelativeName, providerName, authProvider, urls) {
   return async function (ctx, next) {

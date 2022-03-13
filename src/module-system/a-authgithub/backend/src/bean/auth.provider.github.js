@@ -20,7 +20,7 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    onVerify(req, accessToken, refreshToken, params, profile, done) {
+    async onVerify(accessToken, refreshToken, params, profile) {
       const user = {
         module: moduleInfo.relativeName,
         provider: 'authgithub',

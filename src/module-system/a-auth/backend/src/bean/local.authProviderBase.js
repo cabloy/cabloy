@@ -11,6 +11,22 @@ module.exports = ctx => {
       this.configProviderScene = null;
       this.providerSceneValid = false;
     }
+    // should be overrided
+    async getConfigDefault() {
+      throw new Error('getConfigDefault not implemented');
+    }
+    // should be overrided
+    configProviderSceneValid() {
+      throw new Error('configProviderSceneValid not implemented');
+    }
+    // should be overrided
+    getStrategy() {
+      throw new Error('getStrategy not implemented');
+    }
+    // should be overrided
+    async onVerify() {
+      throw new Error('onVerify not implemented');
+    }
     get configProviderCache() {
       return ctx.bean.authProvider._getAuthProviderConfigCache(this.providerModule, this.providerName);
     }
@@ -61,10 +77,6 @@ module.exports = ctx => {
       // providerSceneValid
       this.providerSceneValid =
         !providerItem.disabled && !this.configProviderScene.disabled && this.configProviderSceneValid();
-    }
-
-    configProviderSceneValid() {
-      return true;
     }
 
     _getTitleLocale({ locales, title, locale }) {
