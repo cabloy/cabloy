@@ -24,5 +24,24 @@ module.exports = appInfo => {
     },
   };
 
+  // login
+  config.login = {
+    providers: [
+      {
+        module: 'a-authsimple',
+        provider: 'authsimple',
+      },
+      {
+        module: 'a-authsms',
+        provider: 'authsms',
+      },
+      {
+        // disable: true,
+        module: 'a-authgithub',
+        provider: 'authgithub',
+      },
+    ],
+  };
+
   return config;
 };

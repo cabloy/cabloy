@@ -1,7 +1,7 @@
 module.exports = app => {
   class Auth extends app.Service {
     async list() {
-      const list = this.ctx.bean.authProvider._getAuthProvidersConfigCache();
+      const list = this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin();
       console.log(list);
       // list map
       const listMap = {};
