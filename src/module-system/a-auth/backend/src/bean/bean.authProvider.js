@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
+const extend = require3('extend2');
 
 const __authProvidersConfigCache = {};
 
@@ -225,15 +226,15 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
     // bean
     const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
     beanProvider.loadConfigScene();
-    // provider of db
-    const providerItem = await ctx.bean.authProvider.getAuthProvider({
-      module: moduleRelativeName,
-      providerName,
-    });
-    if (!providerItem || providerItem.disabled !== 0) ctx.throw(423);
-
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    // urls
+    const loginURL = authProvider.meta.scene ? urls.loginURL.replace(':providerScene', providerScene) : urls.loginURL;
+    const callbackURL = authProvider.meta.scene
+      ? urls.callbackURL.replace(':providerScene', providerScene)
+      : urls.callbackURL;
     // returnTo
-    if (ctx.url.indexOf(_config.callbackURL) === -1) {
+
+    if (ctx.url.indexOf(callbackURL) === -1) {
       if (ctx.request.query && ctx.request.query.returnTo) {
         ctx.session.returnTo = ctx.request.query.returnTo;
         ctx.session['x-scene'] = ctx.request.query['x-scene'];
@@ -243,30 +244,18 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
       }
     }
 
-    // provider
-    const authProviders = ctx.bean.base.authProviders();
-    const provider = authProviders[`${moduleRelativeName}:${providerName}`];
-
     // config
-    const config = provider.config;
+    let config = {};
     config.passReqToCallback = true;
     config.failWithError = false;
-    config.loginURL = ctx.bean.base.getAbsoluteUrl(_config.loginURL);
-    config.callbackURL = ctx.bean.base.getAbsoluteUrl(_config.callbackURL);
+    config.loginURL = ctx.bean.base.getAbsoluteUrl(loginURL);
+    config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
     config.state = ctx.request.query.state;
-    config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
-
-    // config functions
-    if (provider.configFunctions) {
-      for (const key in provider.configFunctions) {
-        config[key] = function (...args) {
-          return provider.configFunctions[key](ctx, ...args);
-        };
-      }
-    }
-
+    config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+    // combine
+    config = extend(true, {}, beanProvider.configProviderScene, config);
     // invoke authenticate
-    const strategyName = `${ctx.instance.id}:${moduleRelativeName}:${providerName}`;
+    const strategyName = providerFullName;
     const authenticate = ctx.app.passport.authenticate(strategyName, config);
     await authenticate(ctx, next);
   };
