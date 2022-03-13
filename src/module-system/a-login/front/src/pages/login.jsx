@@ -22,6 +22,7 @@ export default {
     this.showClose = this.$meta.vueLayout.backLink(this);
   },
   created() {
+    // this.state = 'migrate';
     this.loadAuthProviders();
   },
   render() {
@@ -122,7 +123,7 @@ export default {
       if (this.showClose) {
         domClose = (
           <f7-link class="close" iconF7=":login:chevron-left" onClick={this.onClose}>
-            {this.$text('LookAround')}
+            {this.state === 'login' ? this.$text('LookAround') : ''}
           </f7-link>
         );
       }
@@ -163,6 +164,7 @@ export default {
         <div class="eb-login-container">
           {domClose}
           {domTitle}
+          {domTitleSub}
           {domLoginTop}
           {domLineAndBottom}
         </div>
