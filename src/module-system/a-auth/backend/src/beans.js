@@ -5,6 +5,7 @@ const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupCacheAuthProviders = require('./bean/startup.cacheAuthProviders.js');
 const beanAuthProvider = require('./bean/bean.authProvider.js');
+const beanAuthProviderCache = require('./bean/bean.authProviderCache.js');
 
 module.exports = app => {
   const beans = {
@@ -40,6 +41,11 @@ module.exports = app => {
     authProvider: {
       mode: 'ctx',
       bean: beanAuthProvider,
+      global: true,
+    },
+    authProviderCache: {
+      mode: 'ctx',
+      bean: beanAuthProviderCache,
       global: true,
     },
   };

@@ -2,8 +2,6 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 const extend = require3('extend2');
 
-const __authProvidersConfigCache = {};
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthProvider {
@@ -41,47 +39,6 @@ module.exports = ctx => {
         providerModule: module,
         providerName,
         providerScene,
-      });
-    }
-
-    async _cacheAuthProvidersConfig() {
-      if (!__authProvidersConfigCache[ctx.subdomain]) {
-        __authProvidersConfigCache[ctx.subdomain] = {};
-      }
-      const authProviders = ctx.bean.base.authProviders();
-      for (const key in authProviders) {
-        const [module, providerName] = key.split(':');
-        await this._cacheAuthProviderConfig(module, providerName);
-      }
-    }
-
-    async _cacheAuthProviderConfig(module, providerName) {
-      if (!__authProvidersConfigCache[ctx.subdomain]) {
-        __authProvidersConfigCache[ctx.subdomain] = {};
-      }
-      // bean
-      const providerFullName = `${module}:${providerName}`;
-      const beanProvider = this.createAuthProviderBean({
-        module,
-        providerName,
-        providerScene: null,
-      });
-      __authProvidersConfigCache[ctx.subdomain][providerFullName] = await beanProvider.loadConfigProvider();
-    }
-
-    _getAuthProviderConfigCache(module, providerName) {
-      const providerFullName = `${module}:${providerName}`;
-      return __authProvidersConfigCache[ctx.subdomain][providerFullName];
-    }
-
-    async authProviderChanged(moduleRelativeName, providerName) {
-      // change self
-      await this._cacheAuthProviderConfig(moduleRelativeName, providerName);
-      // broadcast
-      ctx.meta.util.broadcastEmit({
-        module: 'a-auth',
-        broadcastName: 'authProviderChanged',
-        data: { module: moduleRelativeName, providerName },
       });
     }
 

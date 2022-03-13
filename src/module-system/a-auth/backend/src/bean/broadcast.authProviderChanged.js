@@ -4,7 +4,7 @@ module.exports = app => {
       const sameAsCaller = context.sameAsCaller;
       const data = context.data;
       if (!sameAsCaller) {
-        await this.ctx.bean.authProvider._cacheAuthProviderConfig(data.module, data.providerName);
+        await this.ctx.bean.authProviderCache._cacheAuthProviderConfig(data.module, data.providerName);
       }
     }
   }
