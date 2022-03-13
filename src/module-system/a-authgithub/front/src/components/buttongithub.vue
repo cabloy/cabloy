@@ -2,6 +2,8 @@
   <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/github.png" /></eb-button>
 </template>
 <script>
+import Vue from 'vue';
+const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 const urlLogin = '/api/a/authgithub/passport/a-authgithub/authgithub';
 export default {
   meta: {
@@ -13,9 +15,7 @@ export default {
       ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
     },
   },
-  props: {
-    providerScene: String,
-  },
+  mixins: [ebAuthLoginBase],
   data() {
     return {};
   },
