@@ -252,6 +252,7 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
     config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
     config.state = ctx.request.query.state;
     config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+    config.beanProvider = beanProvider;
     // combine
     config = extend(true, {}, beanProvider.configProviderScene, config);
     // invoke authenticate
