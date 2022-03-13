@@ -203,21 +203,42 @@ module.exports = ctx => {
 };
 
 function _createStrategyCallback(moduleRelativeName, providerName, authProvider) {
-  return function (req, ...args, done) {
-    // ctx
-    const ctx=req.ctx;
-    // provider scene
-    const providerScene = ctx.params.scene;
-    if (authProvider.meta.scene && !providerScene) {
-      throw new Error(`should set provider scene on callback url: ${providerFullName}`);
+  // req, ...args, done
+  return async function (req, ...args) {
+    const ctx = req.ctx;
+    const done = args[args.length - 1];
+    args = args.slice(0, args.length - 1);
+    try {
+      const providerFullName = `${moduleRelativeName}:${providerName}`;
+      // provider scene
+      const providerScene = ctx.params.scene;
+      if (authProvider.meta.scene && !providerScene) {
+        throw new Error(`should set provider scene on callback url: ${providerFullName}`);
+      }
+      // bean
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleRelativeName,
+        providerName,
+        providerScene,
+      });
+      beanProvider.loadConfigScene();
+      if (!beanProvider.providerSceneValid) ctx.throw(423);
+      // onVerify
+      const verifyUser = await beanProvider.onVerify(...args);
+      if (!verifyUser) {
+        done(null, null);
+        return;
+      }
+      // check if verifyUser
+      if (verifyUser.op && verifyUser.agent && verifyUser.provider) {
+        done(null, verifyUser);
+        return;
+      }
+      // doVerify, because verifyUser is profileUser
+      ctx.app.passport.doVerify(req, verifyUser, done);
+    } catch (err) {
+      done(err, null);
     }
-    // bean
-    const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
-    beanProvider.loadConfigScene();
-    if (!beanProvider.providerSceneValid) ctx.throw(423);
-    // verify
-    
-    ctx.app.passport.doVerify(req, user, done);
   };
 }
 
@@ -230,7 +251,11 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
       throw new Error(`should set provider scene on callback url: ${providerFullName}`);
     }
     // bean
-    const beanProvider = this.createAuthProviderBean({ module: moduleRelativeName, providerName, providerScene });
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleRelativeName,
+      providerName,
+      providerScene,
+    });
     beanProvider.loadConfigScene();
     if (!beanProvider.providerSceneValid) ctx.throw(423);
     // urls
