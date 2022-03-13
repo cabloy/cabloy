@@ -24,12 +24,10 @@ module.exports = ctx => {
       if (!__authProvidersConfigCache_login[ctx.subdomain]) {
         __authProvidersConfigCache_login[ctx.subdomain] = {};
       }
-      if (!__authProvidersConfigCache_login[ctx.subdomain][ctx.locale]) {
-        __authProvidersConfigCache_login[ctx.subdomain][ctx.locale] = {};
-      }
       let providersConfigForLogin = __authProvidersConfigCache_login[ctx.subdomain][ctx.locale];
       if (!providersConfigForLogin) {
         const listMap = this._getAuthProvidersConfigForLogin_list();
+        if (!listMap) return null; // for try to get info at next time
         providersConfigForLogin = this._getAuthProvidersConfigForLogin_order(listMap);
         __authProvidersConfigCache_login[ctx.subdomain][ctx.locale] = providersConfigForLogin;
       }
@@ -50,7 +48,7 @@ module.exports = ctx => {
     _getAuthProvidersConfigForLogin_list() {
       const listMap = {};
       //
-      const providersConfigCache = this.getAuthProviderConfigCache();
+      const providersConfigCache = this.getAuthProvidersConfigCache();
       for (const providerFullName in providersConfigCache) {
         const providerConfigCache = providersConfigCache[providerFullName];
         const providerConfigForLogin = this._getAuthProviderConfigForLogin(providerFullName, providerConfigCache);
@@ -58,6 +56,7 @@ module.exports = ctx => {
           listMap[providerFullName] = providerConfigForLogin;
         }
       }
+      if (Object.keys(listMap).length === 0) return null;
       return listMap;
     }
 
@@ -82,7 +81,6 @@ module.exports = ctx => {
       const authProviders = ctx.bean.base.authProviders();
       const authProvider = authProviders[providerFullName];
       const providerConfigForLogin = {
-        title: ctx.text(authProvider.meta.title),
         meta: authProvider.meta,
         scenes: {},
       };
