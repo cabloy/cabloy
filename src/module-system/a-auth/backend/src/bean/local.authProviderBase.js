@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('extend2');
-
 module.exports = ctx => {
   class IAuthProviderBase {
     constructor({ authProvider, providerModule, providerName, providerScene }) {
@@ -16,50 +13,21 @@ module.exports = ctx => {
       throw new Error('getConfigDefault not implemented');
     }
     // should be overrided
-    configProviderSceneValid() {
-      throw new Error('configProviderSceneValid not implemented');
+    checkConfigValid(/* config */) {
+      throw new Error('checkConfigValid not implemented');
     }
     // should be overrided
     getStrategy() {
       throw new Error('getStrategy not implemented');
     }
     // should be overrided
-    async onVerify() {
+    async onVerify(/* ...args */) {
       throw new Error('onVerify not implemented');
     }
     get configProviderCache() {
-      return ctx.bean.authProvider._getAuthProviderConfigCache(this.providerModule, this.providerName);
+      return ctx.bean.authProvider.getAuthProviderConfigCache(this.providerModule, this.providerName);
     }
-    async loadConfigProvider() {
-      // config default
-      const configDefault = await this.getConfigDefault();
-      // provider item
-      const providerItem = await ctx.bean.authProvider.getAuthProvider({
-        module: this.providerModule,
-        providerName: this.providerName,
-      });
-      // combine
-      let configProvider;
-      if (this.authProvider.meta.scene) {
-        // scene: true
-        const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
-        const itemLocales = providerItem.locales ? JSON.parse(providerItem.locales) : null;
-        const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
-        const locales = extend(true, {}, configDefault && configDefault.locales, itemLocales);
-        configProvider = {
-          scenes,
-          locales,
-        };
-      } else {
-        // scene: false
-        const itemConfig = providerItem.config ? JSON.parse(providerItem.config) : null;
-        configProvider = extend(true, {}, configDefault, itemConfig);
-      }
-      return {
-        configProvider,
-        providerItem,
-      };
-    }
+    async loadConfigProvider() {}
     loadConfigScene() {
       const { configProvider, providerItem } = this.configProviderCache;
       if (this.authProvider.meta.scene) {

@@ -14,8 +14,8 @@ module.exports = function (ctx) {
         locales: configGitHub.locales,
       };
     }
-    configProviderSceneValid() {
-      return !!this.configProviderScene.clientID && !!this.configProviderScene.clientSecret;
+    checkConfigValid(config) {
+      return !!config.clientID && !!config.clientSecret;
     }
     getStrategy() {
       return Strategy;
