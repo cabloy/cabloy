@@ -178,7 +178,6 @@ function _createStrategyCallback(moduleRelativeName, providerName, authProvider)
         providerName,
         providerScene,
       });
-      beanProvider.loadConfigScene();
       if (!beanProvider.providerSceneValid) ctx.throw(423);
       // onVerify
       const verifyUser = await beanProvider.onVerify(...args);
@@ -213,7 +212,6 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
       providerName,
       providerScene,
     });
-    beanProvider.loadConfigScene();
     if (!beanProvider.providerSceneValid) ctx.throw(423);
     // urls
     const loginURL = authProvider.meta.scene ? urls.loginURL.replace(':providerScene', providerScene) : urls.loginURL;
