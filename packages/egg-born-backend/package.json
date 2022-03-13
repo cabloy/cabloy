@@ -39,7 +39,6 @@
     "egg-born-mock": "^2.1.4",
     "egg-born-mparse": "^2.1.2",
     "egg-mysql": "^3.0.0",
-    "egg-passport": "^2.0.0",
     "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.6",
     "extend2": "^1.0.0",
