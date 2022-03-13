@@ -112,7 +112,7 @@ export default {
             props: {
               providerModule: provider.module,
               providerName: provider.providerName,
-              providerScene,
+              providerScene: meta.scene ? providerScene : null,
             },
           };
           domButtons.push(

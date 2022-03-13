@@ -645,6 +645,7 @@ export default function (Vue) {
       return oauth.expireTime - Date.now() > 120 * 1000 ? oauth.accessToken : oauth.refreshToken;
     },
     combineLoginUrl({ providerModule, providerName, providerScene }) {
+      const urlParamScene = providerScene ? `/${providerScene}` : '';
       return `/api/a/auth/passport/${providerModule}/${providerName}${urlParamScene}`;
     },
   };

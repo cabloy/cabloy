@@ -1,6 +1,6 @@
 export default {
   props: {
-    provideModule: {
+    providerModule: {
       type: String,
     },
     providerName: {
@@ -10,5 +10,13 @@ export default {
       type: String,
     },
   },
-  methods: {},
+  methods: {
+    combineLoginUrl() {
+      return this.$meta.util.combineLoginUrl({
+        providerModule: this.providerModule,
+        providerName: this.providerName,
+        providerScene: this.providerScene,
+      });
+    },
+  },
 };
