@@ -33,7 +33,7 @@ module.exports = ctx => {
       return configProviderScenes.default;
     }
     get providerSceneValid() {
-      return this.configProviderScene.valid;
+      return this.configProviderScene.__valid;
     }
   }
   return IAuthProviderBase;

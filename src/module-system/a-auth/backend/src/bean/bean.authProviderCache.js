@@ -126,7 +126,7 @@ module.exports = ctx => {
         configProviderScene = { ...configProvider };
       }
       // providerSceneValid
-      configProviderScene.valid =
+      configProviderScene.__valid =
         !providerItem.disabled && !configProviderScene.disabled && beanProvider.checkConfigValid(configProviderScene);
       // ok
       return configProviderScene;
