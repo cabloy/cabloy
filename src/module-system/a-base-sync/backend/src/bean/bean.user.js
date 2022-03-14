@@ -480,7 +480,7 @@ module.exports = ctx => {
       if (providerScene) {
         verifyUser.provider.providerScene = providerScene;
       }
-      const scene = ctx.headers['x-scene'] || ctx.request.query['x-scene'] || ctx.session['x-scene'];
+      const scene = ctx.bean.util.getFrontScene();
       if (scene) {
         verifyUser.provider.scene = scene;
       }

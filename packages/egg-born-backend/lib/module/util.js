@@ -210,7 +210,7 @@ module.exports = app => {
         ctx.multipart = function (options) {
           return ctxCaller.multipart(options);
         };
-        for (const property of ['cookies', 'session', 'user', 'state']) {
+        for (const property of ['headers', 'cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxCaller, property);
         }
         // ctxCaller
@@ -218,10 +218,13 @@ module.exports = app => {
       }
       // ctxParent
       if (ctxParent) {
+        if (!ctxParent.headers) {
+          ctxParent.headers = {};
+        }
         if (!ctxParent.state) {
           ctxParent.state = {};
         }
-        for (const property of ['cookies', 'session', 'user', 'state']) {
+        for (const property of ['headers', 'cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
         ctx.dbLevel = (ctxParent.dbLevel || 0) + 1;

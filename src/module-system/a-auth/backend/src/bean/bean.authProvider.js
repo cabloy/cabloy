@@ -191,7 +191,7 @@ function _createAuthenticate(moduleRelativeName, providerName, authProvider, url
     if (ctx.url.indexOf(callbackURL) === -1) {
       if (ctx.request.query && ctx.request.query.returnTo) {
         ctx.session.returnTo = ctx.request.query.returnTo;
-        ctx.session['x-scene'] = ctx.request.query['x-scene'];
+        ctx.session['x-scene'] = ctx.bean.util.getFrontScene();
       } else {
         delete ctx.session.returnTo; // force to delete
         delete ctx.session['x-scene'];

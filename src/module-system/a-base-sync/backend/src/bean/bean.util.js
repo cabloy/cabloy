@@ -165,6 +165,10 @@ module.exports = app => {
       return titleLocale || title;
     }
 
+    getFrontScene() {
+      return this.ctx.request.query['x-scene'] || this.ctx.headers['x-scene'] || this.ctx.session['x-scene'];
+    }
+
     evaluateExpression({ expression, globals, wrapper }) {
       if (!wrapper) {
         wrapper = 'none';
