@@ -493,7 +493,7 @@ module.exports = ctx => {
       if (state === 'migrate') {
         // should check user so as to create ctx.state.user
         await this.check();
-        // check if ctx.user exists
+        // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
         userId = ctx.state.user.agent.id;
         // migrate
@@ -508,7 +508,7 @@ module.exports = ctx => {
       } else if (state === 'associate') {
         // should check user so as to create ctx.state.user
         await this.check();
-        // check if ctx.user exists
+        // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
         userId = ctx.state.user.agent.id;
         // associated
