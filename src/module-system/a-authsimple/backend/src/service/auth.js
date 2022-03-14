@@ -1,5 +1,3 @@
-const util = require('util');
-const passwordFn = require('password-hash-and-salt'); // should compile
 const require3 = require('require3');
 const uuid = require3('uuid');
 
@@ -70,7 +68,7 @@ module.exports = app => {
     async _addAuthSimple({ password }) {
       // hash
       password = password || this.ctx.config.defaultPassword;
-      const hash = await this._calcPassword({ password });
+      const hash = await this.ctx.bean.local.simple.calcPassword({ password });
       // auth simple
       const res = await this.ctx.model.authSimple.insert({
         userId: 0,
@@ -102,24 +100,9 @@ module.exports = app => {
       });
     }
 
-    async verify({ userId, password }) {
-      // check
-      if (!password) return false;
-      // authSimple
-      const authSimple = await this.ctx.model.authSimple.get({
-        userId,
-      });
-      if (!authSimple) return false;
-      // verify
-      const res = await this._verifyPassword({ password, hash: authSimple.hash });
-      if (!res) return false;
-      // ok
-      return authSimple;
-    }
-
     async passwordChange({ passwordOld, passwordNew, userId }) {
       // verify old
-      const authSimple = await this.verify({ userId, password: passwordOld });
+      const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
       if (!authSimple) this.ctx.throw(403);
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
@@ -154,7 +137,7 @@ module.exports = app => {
       const auth = await this.ctx.model.authSimple.get({
         userId,
       });
-      const hash = await this._calcPassword({ password: passwordNew });
+      const hash = await this.ctx.bean.local.simple.calcPassword({ password: passwordNew });
       await this.ctx.model.authSimple.update({
         id: auth.id,
         hash,
@@ -281,18 +264,6 @@ module.exports = app => {
       };
       const url = this.ctx.bean.base.getAlertUrl({ data });
       return this.ctx.redirect(url);
-    }
-
-    async _calcPassword({ password }) {
-      const _password = passwordFn(password.toString());
-      const hashFn = util.promisify(_password.hash);
-      return await hashFn.call(_password);
-    }
-
-    async _verifyPassword({ password, hash }) {
-      const _password = passwordFn(password.toString());
-      const verifyFn = util.promisify(_password.verifyAgainst);
-      return await verifyFn.call(_password, hash);
     }
   }
 
