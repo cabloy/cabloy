@@ -22,8 +22,8 @@ module.exports = function (ctx) {
     }
     async onVerify(accessToken, refreshToken, profile) {
       return {
-        module: moduleInfo.relativeName,
-        provider: 'authgithub',
+        module: this.providerModule,
+        provider: this.providerName,
         providerScene: this.providerScene,
         profileId: profile.id,
         profile: {

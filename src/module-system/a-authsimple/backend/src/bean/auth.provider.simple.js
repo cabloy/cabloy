@@ -25,11 +25,12 @@ module.exports = function (ctx) {
       // disabled
       if (user.disabled) return ctx.throw(1002);
       // verify
-      const authSimple = await ctx.service.auth.verify({ userId: user.id, password });
+      const authSimple = await ctx.bean.local.simple.verify({ userId: user.id, password });
       if (!authSimple) return ctx.throw(1001);
       return {
-        module: moduleInfo.relativeName,
-        provider,
+        module: this.providerModule,
+        provider: this.providerName,
+        providerScene: this.providerScene,
         profileId: authSimple.id,
         maxAge: rememberMe ? null : 0,
         authShouldExists: true,

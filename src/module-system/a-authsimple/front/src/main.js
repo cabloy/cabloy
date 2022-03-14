@@ -1,4 +1,4 @@
-import signin from './components/signin.vue';
+import blockSignin from './components/blockSignin.vue';
 import './assets/css/module.css';
 
 let Vue;
@@ -15,7 +15,7 @@ function install(_Vue, cb) {
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: {
-      signin,
+      blockSignin,
     },
   });
 }
