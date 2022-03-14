@@ -6,6 +6,9 @@ module.exports = function (ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
+    get localSimple() {
+      return ctx.bean.local.module(moduleInfo.relativeName).simple;
+    }
     async getConfigDefault() {
       return null;
     }
@@ -18,14 +21,14 @@ module.exports = function (ctx) {
     async onVerify(body) {
       const { auth, password, rememberMe } = body.data;
       // validate
-      await ctx.bean.validation.validate({ validator: 'signin', data: body.data });
+      await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
       // exists
       const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
       if (!user) return ctx.throw(1001);
       // disabled
       if (user.disabled) return ctx.throw(1002);
       // verify
-      const authSimple = await ctx.bean.local.simple.verify({ userId: user.id, password });
+      const authSimple = await this.localSimple.verify({ userId: user.id, password });
       if (!authSimple) return ctx.throw(1001);
       return {
         module: this.providerModule,
