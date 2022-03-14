@@ -445,11 +445,17 @@ module.exports = ctx => {
       let authId;
       let authUserId;
       if (authItem) {
-        // update
-        authItem.profile = JSON.stringify(profileUser.profile);
-        await this.modelAuth.update(authItem);
         authId = authItem.id;
         authUserId = authItem.userId;
+        // update profile
+        const _profile = JSON.stringify(profileUser.profile);
+        if (authItem.profile !== _profile) {
+          authItem.profile = _profile;
+          await this.modelAuth.update({
+            id: authId,
+            profile: _profile,
+          });
+        }
       } else {
         if (state === 'migrate' || profileUser.authShouldExists === true) {
           ctx.throw.module(moduleInfo.relativeName, 1009);
