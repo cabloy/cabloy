@@ -450,7 +450,6 @@ module.exports = ctx => {
         // update profile
         const _profile = JSON.stringify(profileUser.profile);
         if (authItem.profile !== _profile) {
-          authItem.profile = _profile;
           await this.modelAuth.update({
             id: authId,
             profile: _profile,
@@ -461,13 +460,16 @@ module.exports = ctx => {
           ctx.throw.module(moduleInfo.relativeName, 1009);
         }
         // add
+        const _profile = JSON.stringify(profileUser.profile);
         const res = await this.modelAuth.insert({
           providerId,
+          providerScene,
           profileId,
-          profile: JSON.stringify(profileUser.profile),
+          profile: _profile,
         });
         authId = res.insertId;
       }
+      // provider ready
       verifyUser.provider = {
         id: authId,
         providerId,
@@ -475,6 +477,9 @@ module.exports = ctx => {
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
       };
+      if (providerScene) {
+        verifyUser.provider.providerScene = providerScene;
+      }
       const scene = ctx.headers['x-scene'] || ctx.request.query['x-scene'] || ctx.session['x-scene'];
       if (scene) {
         verifyUser.provider.scene = scene;
@@ -698,16 +703,25 @@ module.exports = ctx => {
     }
 
     async _setUserInfoColumn(user, column, profile) {
-      // avatar / if empty
-      if (column === 'avatar' && !user[column] && profile._avatar2) {
-        user[column] = profile._avatar2;
+      // avatar / only if empty
+      if (column === 'avatar') {
+        const value = profile._avatar || profile._avatar2;
+        if (!user[column] && value) {
+          user[column] = value;
+        }
+        delete profile._avatar2;
         return;
       }
-      // avatar / if changed
-      if (column === 'avatar' && profile._avatar) {
-        user[column] = profile._avatar;
-        return;
-      }
+      // // avatar / if empty
+      // if (column === 'avatar' && !user[column] && profile._avatar2) {
+      //   user[column] = profile._avatar2;
+      //   return;
+      // }
+      // // avatar / if changed
+      // if (column === 'avatar' && profile._avatar) {
+      //   user[column] = profile._avatar;
+      //   return;
+      // }
       // value
       let value = profile[column];
       // only set when empty
