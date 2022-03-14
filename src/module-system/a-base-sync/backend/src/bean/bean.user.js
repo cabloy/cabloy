@@ -65,18 +65,13 @@ module.exports = ctx => {
     }
 
     async loginAsAnonymous() {
-      // check if nessasary
-      let userOp = ctx.user && ctx.user.op;
-      if (userOp && userOp.iid === ctx.instance.id && userOp.anonymous) {
-        // do nothing, so as not to change session
-        return ctx.user;
-      }
-      userOp = await this.anonymous();
+      const userOp = await this.anonymous();
       const user = {
         op: userOp,
         agent: userOp,
         provider: null,
       };
+      // login
       await ctx.login(user);
       // maxAge
       const maxAge = this.config.auth.maxAge.anonymous;
@@ -101,7 +96,7 @@ module.exports = ctx => {
       // always has anonymous id
       ctx.bean.user.anonymousId();
       // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
+      if (!ctx.user || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
         // anonymous
         await ctx.bean.user.loginAsAnonymous();
       } else {

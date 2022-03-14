@@ -27,7 +27,7 @@ module.exports = ctx => {
         return await this.getLoginInfo({ clientId: true });
       } catch (e) {
         // deleted,disabled
-        return await this.logout();
+        return await this._logout_inner();
       }
     }
 
@@ -39,6 +39,10 @@ module.exports = ctx => {
       const user = ctx.state.user;
       await this._sendMessageSystemLogout({ user });
       await this._clearRedisAuth({ user });
+      await this._logout_inner();
+    }
+
+    async _logout_inner() {
       await ctx.logout();
       await ctx.bean.user.loginAsAnonymous();
       return await this.getLoginInfo();
