@@ -20,7 +20,7 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, params, profile) {
+    async onVerify(accessToken, refreshToken, profile) {
       return {
         module: moduleInfo.relativeName,
         provider: 'authgithub',
@@ -32,7 +32,6 @@ module.exports = function (ctx) {
           avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
           accessToken,
           refreshToken,
-          params,
           profile,
         },
       };
