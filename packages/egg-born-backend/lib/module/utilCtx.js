@@ -178,6 +178,11 @@ function appCallback() {
     // cookies
     delegateCookies(ctx, ctxCaller);
 
+    // should not delegate session, because session._ctx related to ctx
+    // for (const property of ['session']) {
+    //   delegateProperty(ctx, ctxCaller, property);
+    // }
+
     // ctxCaller
     ctx.ctxCaller = ctxCaller;
 
@@ -265,6 +270,14 @@ function delegateCookies(ctx, ctxCaller) {
     },
   });
 }
+
+// function delegateProperty(ctx, ctxCaller, property) {
+//   Object.defineProperty(ctx, property, {
+//     get() {
+//       return ctxCaller[property];
+//     },
+//   });
+// }
 
 function createRequest({ method, url }, ctxCaller) {
   // _req

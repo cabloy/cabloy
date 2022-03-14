@@ -65,7 +65,13 @@ module.exports = ctx => {
     }
 
     async loginAsAnonymous() {
-      const userOp = await this.anonymous();
+      // check if nessasary
+      let userOp = ctx.user && ctx.user.op;
+      if (userOp && userOp.iid === ctx.instance.id && userOp.anonymous) {
+        // do nothing, so as not to change session
+        return ctx.user;
+      }
+      userOp = await this.anonymous();
       const user = {
         op: userOp,
         agent: userOp,

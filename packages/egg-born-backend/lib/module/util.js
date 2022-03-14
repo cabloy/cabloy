@@ -218,12 +218,6 @@ module.exports = app => {
       }
       // ctxParent
       if (ctxParent) {
-        if (!ctxParent.headers) {
-          ctxParent.headers = {};
-        }
-        if (!ctxParent.state) {
-          ctxParent.state = {};
-        }
         for (const property of ['headers', 'cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
@@ -353,7 +347,9 @@ module.exports = app => {
 function delegateProperty(ctx, ctxCaller, property) {
   Object.defineProperty(ctx, property, {
     get() {
-      return ctxCaller[property];
+      const value = ctxCaller[property];
+      if (value) return value;
+      return property === 'user' ? null : {};
     },
   });
 }
