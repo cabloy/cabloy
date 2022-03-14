@@ -523,6 +523,7 @@ module.exports = ctx => {
             // delete old record
             await this.modelAuth.delete({
               providerId,
+              providerScene,
               userId,
             });
             await this.modelAuth.update({
