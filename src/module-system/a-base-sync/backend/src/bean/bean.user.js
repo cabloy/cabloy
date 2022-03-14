@@ -431,9 +431,13 @@ module.exports = ctx => {
       });
 
       // check if auth exists
+      const providerId = providerItem.id;
+      const providerScene = profileUser.providerScene || null;
+      const profileId = profileUser.profileId;
       const authItem = await this.modelAuth.get({
-        providerId: providerItem.id,
-        profileId: profileUser.profileId,
+        providerId,
+        providerScene,
+        profileId,
       });
       // avatar
       await this._prepareAvatar({ authItem, profile: profileUser.profile });
@@ -452,15 +456,15 @@ module.exports = ctx => {
         }
         // add
         const res = await this.modelAuth.insert({
-          providerId: providerItem.id,
-          profileId: profileUser.profileId,
+          providerId,
+          profileId,
           profile: JSON.stringify(profileUser.profile),
         });
         authId = res.insertId;
       }
       verifyUser.provider = {
         id: authId,
-        providerId: providerItem.id,
+        providerId,
         module: profileUser.module,
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
@@ -507,7 +511,7 @@ module.exports = ctx => {
           } else {
             // delete old record
             await this.modelAuth.delete({
-              providerId: providerItem.id,
+              providerId,
               userId,
             });
             await this.modelAuth.update({
