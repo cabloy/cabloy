@@ -8,6 +8,10 @@ module.exports = app => {
           title: 'User/Password',
           inline: true,
           mode: 'direct',
+          bean: {
+            module: moduleInfo.relativeName,
+            name: 'simple',
+          },
           render: {
             module: moduleInfo.relativeName,
             name: 'blockSignin',
