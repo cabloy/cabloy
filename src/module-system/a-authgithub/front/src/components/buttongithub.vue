@@ -1,5 +1,7 @@
 <template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/github.png" /></eb-button>
+  <eb-button :tooltip="this.provider.meta.titleLocale" :onPerform="onPerformSignIn"
+    ><img src="../assets/img/github.png"
+  /></eb-button>
 </template>
 <script>
 import Vue from 'vue';

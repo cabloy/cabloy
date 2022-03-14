@@ -1,5 +1,11 @@
 export default {
   props: {
+    state: {
+      type: String,
+    },
+    provider: {
+      type: Object,
+    },
     providerModule: {
       type: String,
     },

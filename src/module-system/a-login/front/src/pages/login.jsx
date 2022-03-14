@@ -49,29 +49,48 @@ export default {
     },
     _getComponentFullName(provider, providerScene) {
       const meta = provider.meta;
-      return `${meta.render.module}:${meta.render.name}:${providerScene}`;
+      let fullName = `${meta.render.module}:${meta.render.name}`;
+      if (provider.meta.scene) {
+        fullName = `${fullName}:${providerScene}`;
+      }
+      return fullName;
+    },
+    _getComponentProps(provider, providerScene) {
+      return {
+        state: this.state,
+        provider,
+        providerModule: provider.module,
+        providerName: provider.providerName,
+        providerScene: provider.meta.scene ? providerScene : null,
+      };
     },
     _renderLoginTop_single(providers) {
       const { provider } = providers[0];
-      const options = { props: { state: this.state } };
-      return <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>;
+      const meta = provider.meta;
+      const providerScene = null;
+      const options = {
+        props: this._getComponentProps(provider, providerScene),
+      };
+      return <eb-component module={meta.render.module} name={meta.render.name} options={options}></eb-component>;
     },
     _renderLoginTop_multiple(providers) {
       const domButtons = [];
       const domTabs = [];
       for (const index in providers) {
         const { provider } = providers[index];
-        const fullName = this._getComponentFullName(provider);
+        const meta = provider.meta;
+        const providerScene = null;
+        const fullName = this._getComponentFullName(provider, providerScene);
         const tabId = `${this.tabPrefix}_${fullName}`.replace(/[:-]/g, '_');
         domButtons.push(
           <f7-link key={fullName} tab-link={`#${tabId}`} tab-link-active={parseInt(index) === 0}>
             {provider.meta.titleLocale}
           </f7-link>
         );
-        const options = { props: { state: this.state } };
+        const options = { props: this._getComponentProps(provider, providerScene) };
         domTabs.push(
           <f7-tab key={fullName} id={tabId} tab-active={parseInt(index) === 0}>
-            <eb-component module={provider.module} name={provider.meta.component} options={options}></eb-component>
+            <eb-component module={meta.render.module} name={meta.render.name} options={options}></eb-component>
           </f7-tab>
         );
       }
@@ -109,11 +128,7 @@ export default {
           const fullName = this._getComponentFullName(provider, providerScene);
           const options = {
             attrs: { class: 'btn' },
-            props: {
-              providerModule: provider.module,
-              providerName: provider.providerName,
-              providerScene: meta.scene ? providerScene : null,
-            },
+            props: this._getComponentProps(provider, providerScene),
           };
           domButtons.push(
             <eb-component
