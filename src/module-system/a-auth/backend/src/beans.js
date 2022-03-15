@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const localAuthProviderBase = require('./bean/local.authProviderBase.js');
+const localPassport = require('./bean/local.passport.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
@@ -18,6 +19,10 @@ module.exports = app => {
     'local.authProviderBase': {
       mode: 'ctx',
       bean: localAuthProviderBase,
+    },
+    'local.passport': {
+      mode: 'ctx',
+      bean: localPassport,
     },
     // broadcast
     'broadcast.authProviderChanged': {
