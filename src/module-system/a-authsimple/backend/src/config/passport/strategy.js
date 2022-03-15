@@ -46,9 +46,9 @@ Strategy.prototype.authenticate = function (req) {
 
   try {
     if (self._passReqToCallback) {
-      this._verify(req, ctx.body, verified);
+      this._verify(req, req.body, verified);
     } else {
-      this._verify(ctx.body, verified);
+      this._verify(req.body, verified);
     }
   } catch (ex) {
     return self.error(ex);

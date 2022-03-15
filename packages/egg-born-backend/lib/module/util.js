@@ -211,17 +211,16 @@ module.exports = app => {
         ctx.multipart = function (options) {
           return ctxCaller.multipart(options);
         };
-        for (const property of ['query', 'params', 'body', 'headers', 'cookies', 'session', 'user', 'state']) {
-          delegateProperty(ctx, ctxCaller, property);
-        }
+        // delegateProperties
+        delegateProperties(ctx, ctxCaller);
         // ctxCaller
         ctx.ctxCaller = ctxCaller;
       }
       // ctxParent
       if (ctxParent) {
-        for (const property of ['query', 'params', 'body', 'headers', 'cookies', 'session', 'user', 'state']) {
-          delegateProperty(ctx, ctxParent, property);
-        }
+        // delegateProperties
+        delegateProperties(ctx, ctxParent);
+        // dbLevel
         ctx.dbLevel = (ctxParent.dbLevel || 0) + 1;
       }
       // dbLevel
@@ -345,12 +344,25 @@ module.exports = app => {
   };
 };
 
+function delegateProperties(ctx, ctxCaller) {
+  for (const property of ['query', 'params', 'headers', 'cookies', 'session', 'user', 'state']) {
+    delegateProperty(ctx, ctxCaller, property);
+  }
+  for (const property of ['body']) {
+    delegateProperty(ctx.request, ctxCaller.request, property);
+  }
+}
 function delegateProperty(ctx, ctxCaller, property) {
   Object.defineProperty(ctx, property, {
     get() {
-      const value = ctxCaller[property];
+      const value = ctxCaller && ctxCaller[property];
       if (value) return value;
-      return property === 'user' || property === 'body' ? null : {};
+      if (property === 'user' || property === 'body') return value;
+      const key = `__executeBean__mock__${property}__`;
+      if (!ctx[key]) {
+        ctx[key] = {};
+      }
+      return ctx[key];
     },
   });
 }
