@@ -19,15 +19,11 @@ module.exports = ctx => {
       });
       if (!beanProvider.providerSceneValid) ctx.throw(423);
       // urls
-      const urls = this._combineAuthenticateUrls({
+      const { loginURL, callbackURL } = ctx.bean.authProvider._combineAuthenticateUrls({
         module,
         providerName,
-        authProvider,
+        providerScene,
       });
-      const loginURL = authProvider.meta.scene ? urls.loginURL.replace(':providerScene', providerScene) : urls.loginURL;
-      const callbackURL = authProvider.meta.scene
-        ? urls.callbackURL.replace(':providerScene', providerScene)
-        : urls.callbackURL;
       // returnTo
       if (ctx.url.indexOf(callbackURL) === -1) {
         if (ctx.request.query && ctx.request.query.returnTo) {
@@ -51,14 +47,6 @@ module.exports = ctx => {
       // invoke authenticate
       const authenticate = ctx.app.passport.authenticate(strategy, config);
       await authenticate(ctx, next || function () {});
-    }
-
-    _combineAuthenticateUrls({ module, providerName, authProvider }) {
-      const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
-      return {
-        loginURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}`,
-        callbackURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}/callback`,
-      };
     }
   }
   return Passport;

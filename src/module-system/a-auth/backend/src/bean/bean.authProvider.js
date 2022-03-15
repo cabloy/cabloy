@@ -11,6 +11,12 @@ module.exports = ctx => {
       return ctx.bean.local.module(moduleInfo.relativeName).passport;
     }
 
+    getAuthProviderBase({ module, providerName }) {
+      const providerFullName = `${module}:${providerName}`;
+      const authProviders = ctx.bean.base.authProviders();
+      return authProviders[providerFullName];
+    }
+
     async getAuthProvider({ id, module, providerName }) {
       // ctx.instance maybe not exists
       const data = id ? { id } : { module, providerName };
@@ -55,6 +61,24 @@ module.exports = ctx => {
       });
     }
 
+    _combineAuthenticateUrls({ module, providerName, providerScene }) {
+      const authProvider = this.getAuthProviderBase({ module, providerName });
+      const urlParamScene = authProvider.meta.scene ? `/${providerScene}` : '';
+      return {
+        loginURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}`,
+        callbackURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}/callback`,
+      };
+    }
+
+    _combineAuthenticateUrlPatterns({ module, providerName }) {
+      const authProvider = this.getAuthProviderBase({ module, providerName });
+      const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
+      return {
+        loginURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}`,
+        callbackURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}/callback`,
+      };
+    }
+
     async _registerAuthProviderLock({ module, providerName }) {
       // get
       const res = await this.modelAuthProvider.get({ module, providerName });
@@ -83,19 +107,17 @@ module.exports = ctx => {
     _registerAllRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
-        const authProvider = authProviders[key];
         const [moduleRelativeName, providerName] = key.split(':');
-        this._registerProviderRouters(moduleRelativeName, providerName, authProvider);
+        this._registerProviderRouters(moduleRelativeName, providerName);
       }
     }
 
-    _registerProviderRouters(moduleRelativeName, providerName, authProvider) {
+    _registerProviderRouters(moduleRelativeName, providerName) {
       // urls
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
-      const urls = this.localPassport._combineAuthenticateUrls({
+      const urls = this._combineAuthenticateUrlPatterns({
         module: moduleRelativeName,
         providerName,
-        authProvider,
       });
       // authenticate
       const authenticate = _createAuthenticate(moduleRelativeName, providerName);
