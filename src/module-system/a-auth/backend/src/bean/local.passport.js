@@ -5,8 +5,7 @@ module.exports = ctx => {
   class Passport {
     async authenticate({ module, providerName, providerScene, next }) {
       const providerFullName = `${module}:${providerName}`;
-      const authProviders = ctx.bean.base.authProviders();
-      const authProvider = authProviders[providerFullName];
+      const authProvider = ctx.bean.authProvider.getAuthProviderBase({ module, providerName });
       // provider scene
       if (authProvider.meta.scene && !providerScene) {
         throw new Error(`should set provider scene on callback url: ${providerFullName}`);

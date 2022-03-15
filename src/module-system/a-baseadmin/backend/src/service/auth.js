@@ -37,8 +37,10 @@ module.exports = app => {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
       // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      const authProvider = authProviders[`${item.module}:${item.providerName}`];
+      const authProvider = this.ctx.bean.authProvider.getAuthProviderBase({
+        module: item.module,
+        providerName: item.providerName,
+      });
       if (authProvider.meta.mode === 'redirect') {
         const moduleInfo = mparse.parseInfo(item.module);
         const loginURL = this.ctx.bean.base.getAbsoluteUrl(

@@ -79,8 +79,7 @@ module.exports = ctx => {
 
     _getAuthProviderConfigForLogin(providerFullName, providerConfigCache) {
       const [module, providerName] = providerFullName.split(':');
-      const authProviders = ctx.bean.base.authProviders();
-      const authProvider = authProviders[providerFullName];
+      const authProvider = ctx.bean.authProvider.getAuthProviderBase({ module, providerName });
       const providerConfigForLogin = {
         module,
         providerName,

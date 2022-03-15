@@ -39,8 +39,7 @@ module.exports = ctx => {
 
     createAuthProviderBean({ module, providerName, providerScene }) {
       const providerFullName = `${module}:${providerName}`;
-      const authProviders = ctx.bean.base.authProviders();
-      const authProvider = authProviders[providerFullName];
+      const authProvider = this.getAuthProviderBase({ module, providerName });
       const beanName = authProvider.meta.bean;
       if (!beanName) throw new Error(`auth provider bean not specified: ${providerFullName}`);
       return ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, {
