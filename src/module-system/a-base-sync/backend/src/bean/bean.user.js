@@ -563,6 +563,13 @@ module.exports = ctx => {
         verifyUser.agent = user;
       }
 
+      // user verify event
+      await ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'userVerify',
+        data: { verifyUser, profileUser },
+      });
+
       // restore maxAge
       //   maxAge: 0,null/undefined,>0
       if (profileUser.maxAge === 0) {
@@ -570,13 +577,6 @@ module.exports = ctx => {
       } else {
         ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
       }
-
-      // user verify event
-      await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName,
-        name: 'userVerify',
-        data: { verifyUser, profileUser },
-      });
 
       // ok
       return verifyUser;
