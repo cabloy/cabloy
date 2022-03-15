@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = ctx => {
   class Passport {
     async authenticate({ module, providerName, providerScene, next }) {
@@ -16,6 +19,11 @@ module.exports = ctx => {
       });
       if (!beanProvider.providerSceneValid) ctx.throw(423);
       // urls
+      const urls = this._combineAuthenticateUrls({
+        module,
+        providerName,
+        authProvider,
+      });
       const loginURL = authProvider.meta.scene ? urls.loginURL.replace(':providerScene', providerScene) : urls.loginURL;
       const callbackURL = authProvider.meta.scene
         ? urls.callbackURL.replace(':providerScene', providerScene)
@@ -55,3 +63,43 @@ module.exports = ctx => {
   }
   return Passport;
 };
+
+function _createProviderStrategy(authProvider, beanProvider) {
+  // config
+  let config = {};
+  config.passReqToCallback = true;
+  config.failWithError = false;
+  config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+  config.beanProvider = beanProvider;
+  // combine
+  config = extend(true, {}, beanProvider.configProviderScene, config);
+  // strategy
+  const Strategy = beanProvider.getStrategy();
+  return new Strategy(config, _createStrategyCallback(beanProvider));
+}
+
+function _createStrategyCallback(beanProvider) {
+  // req, ...args, done
+  return async function (req, ...args) {
+    const ctx = req.ctx;
+    const done = args[args.length - 1];
+    args = args.slice(0, args.length - 1);
+    try {
+      // onVerify
+      const verifyUser = await beanProvider.onVerify(...args);
+      if (!verifyUser) {
+        done(null, null);
+        return;
+      }
+      // check if verifyUser
+      if (verifyUser.op && verifyUser.agent && verifyUser.provider) {
+        done(null, verifyUser);
+        return;
+      }
+      // doVerify, because verifyUser is profileUser
+      ctx.app.passport.doVerify(req, verifyUser, done);
+    } catch (err) {
+      done(err, null);
+    }
+  };
+}
