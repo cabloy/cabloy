@@ -8,6 +8,9 @@ module.exports = ctx => {
     get modelAuthProvider() {
       return ctx.model.module(moduleInfo.relativeName).authProvider;
     }
+    get localPassport() {
+      return ctx.bean.local.module(moduleInfo.relativeName).passport;
+    }
 
     async getAuthProvider({ id, module, providerName }) {
       // ctx.instance maybe not exists
@@ -80,11 +83,11 @@ module.exports = ctx => {
     _registerProviderRouters(moduleRelativeName, providerName, authProvider) {
       // urls
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
-      const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
-      const urls = {
-        loginURL: `/api/a/auth/passport/${moduleRelativeName}/${providerName}${urlParamScene}`,
-        callbackURL: `/api/a/auth/passport/${moduleRelativeName}/${providerName}${urlParamScene}/callback`,
-      };
+      const urls = this.localPassport._combineAuthenticateUrls({
+        module: moduleRelativeName,
+        providerName,
+        authProvider,
+      });
       // authenticate
       const authenticate = _createAuthenticate(moduleRelativeName, providerName, authProvider, urls);
       // middlewares
@@ -167,48 +170,15 @@ function _createStrategyCallback(beanProvider) {
   };
 }
 
-function _createAuthenticate(moduleRelativeName, providerName, authProvider, urls) {
+function _createAuthenticate(moduleRelativeName, providerName) {
   return async function (ctx, next) {
-    const providerFullName = `${moduleRelativeName}:${providerName}`;
     // provider scene
     const providerScene = ctx.params.providerScene;
-    if (authProvider.meta.scene && !providerScene) {
-      throw new Error(`should set provider scene on callback url: ${providerFullName}`);
-    }
-    // bean
-    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+    await ctx.bean.local.module('a-auth').passport.authenticate({
       module: moduleRelativeName,
       providerName,
       providerScene,
+      next,
     });
-    if (!beanProvider.providerSceneValid) ctx.throw(423);
-    // urls
-    const loginURL = authProvider.meta.scene ? urls.loginURL.replace(':providerScene', providerScene) : urls.loginURL;
-    const callbackURL = authProvider.meta.scene
-      ? urls.callbackURL.replace(':providerScene', providerScene)
-      : urls.callbackURL;
-    // returnTo
-    if (ctx.url.indexOf(callbackURL) === -1) {
-      if (ctx.request.query && ctx.request.query.returnTo) {
-        ctx.session.returnTo = ctx.request.query.returnTo;
-        ctx.session['x-scene'] = ctx.bean.util.getFrontScene();
-      } else {
-        delete ctx.session.returnTo; // force to delete
-        delete ctx.session['x-scene'];
-      }
-    }
-    // config
-    const config = {};
-    config.passReqToCallback = true;
-    config.failWithError = false;
-    config.loginURL = ctx.bean.base.getAbsoluteUrl(loginURL);
-    config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
-    config.state = ctx.request.query.state;
-    config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
-    // strategy
-    const strategy = _createProviderStrategy(authProvider, beanProvider);
-    // invoke authenticate
-    const authenticate = ctx.app.passport.authenticate(strategy, config);
-    await authenticate(ctx, next);
   };
 }
