@@ -45,6 +45,16 @@ module.exports = ctx => {
       });
     }
 
+    async authenticateIsolate({ module, providerName, providerScene, next, ctxParent }) {
+      return await ctx.meta.util.executeBeanIsolate({
+        beanModule: moduleInfo.relativeName,
+        beanFullName: `${moduleInfo.relativeName}.local.passport`,
+        context: { module, providerName, providerScene, next },
+        fn: 'authenticate',
+        ctxParent,
+      });
+    }
+
     async _registerAuthProviderLock({ module, providerName }) {
       // get
       const res = await this.modelAuthProvider.get({ module, providerName });

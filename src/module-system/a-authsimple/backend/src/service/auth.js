@@ -57,10 +57,14 @@ module.exports = app => {
 
     // data: { auth, password, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: `/a/auth/passport/a-authsimple/authsimple?state=${state}`,
-        body: { data },
+      const res = await this.ctx.bean.authProvider.authenticateIsolate({
+        module: moduleInfo.relativeName,
+        providerName: 'authsimple',
+        ctxParent: {
+          headers: this.ctx.headers,
+          query: { state },
+          body: { data },
+        },
       });
       return res;
     }

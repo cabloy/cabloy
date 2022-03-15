@@ -182,6 +182,7 @@ module.exports = app => {
         method: 'post',
         url,
       });
+      ctx.req.ctx = ctx;
       // locale
       Object.defineProperty(ctx, 'locale', {
         get() {
@@ -210,7 +211,7 @@ module.exports = app => {
         ctx.multipart = function (options) {
           return ctxCaller.multipart(options);
         };
-        for (const property of ['headers', 'cookies', 'session', 'user', 'state']) {
+        for (const property of ['query', 'params', 'body', 'headers', 'cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxCaller, property);
         }
         // ctxCaller
@@ -218,7 +219,7 @@ module.exports = app => {
       }
       // ctxParent
       if (ctxParent) {
-        for (const property of ['headers', 'cookies', 'session', 'user', 'state']) {
+        for (const property of ['query', 'params', 'body', 'headers', 'cookies', 'session', 'user', 'state']) {
           delegateProperty(ctx, ctxParent, property);
         }
         ctx.dbLevel = (ctxParent.dbLevel || 0) + 1;
@@ -349,7 +350,7 @@ function delegateProperty(ctx, ctxCaller, property) {
     get() {
       const value = ctxCaller[property];
       if (value) return value;
-      return property === 'user' ? null : {};
+      return property === 'user' || property === 'body' ? null : {};
     },
   });
 }

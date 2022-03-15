@@ -24,11 +24,12 @@ util.inherits(Strategy, passport.Strategy);
 Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
+  const ctx = req.ctx;
 
   // check
   if (req.method === 'GET') {
     // not allow
-    return self.error(req.ctx.parseFail(403));
+    return self.error(ctx.parseFail(403));
   }
 
   // verified
@@ -39,15 +40,15 @@ Strategy.prototype.authenticate = function (req) {
     if (!user) {
       return self.fail(info);
     }
-    req.ctx.success(user);
+    ctx.success(user);
     self.success(user, info);
   }
 
   try {
     if (self._passReqToCallback) {
-      this._verify(req, req.body, verified);
+      this._verify(req, ctx.body, verified);
     } else {
-      this._verify(req.body, verified);
+      this._verify(ctx.body, verified);
     }
   } catch (ex) {
     return self.error(ex);
