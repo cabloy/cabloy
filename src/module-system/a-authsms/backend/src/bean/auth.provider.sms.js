@@ -16,26 +16,23 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(body) {
-      const { auth, password, rememberMe } = body.data;
+      const { mobile, rememberMe } = body.data;
       // validate
       await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
       // exists
-      const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
-      if (!user) return ctx.throw(1001);
+      const user = await ctx.bean.user.exists({ mobile });
+      if (!user) return ctx.throw.module(moduleInfo.relativeName, 1004);
       // disabled
-      if (user.disabled) return ctx.throw(1002);
-      // verify
-      const authSimple = await this.localSimple.verify({ userId: user.id, password });
-      if (!authSimple) return ctx.throw(1001);
+      if (user.disabled) return ctx.throw.module(moduleInfo.relativeName, 1005);
       return {
         module: this.providerModule,
         provider: this.providerName,
         providerScene: this.providerScene,
-        profileId: authSimple.id,
+        profileId: mobile,
         maxAge: rememberMe ? null : 0,
         authShouldExists: true,
         profile: {
-          authSimpleId: authSimple.id,
+          mobile,
           rememberMe,
         },
       };
