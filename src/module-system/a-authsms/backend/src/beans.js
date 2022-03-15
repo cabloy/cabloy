@@ -2,6 +2,7 @@ const eventAccountMigration = require('./bean/event.accountMigration.js');
 const smsProviderTest = require('./bean/sms.provider.test.js');
 const smsProviderAliyun = require('./bean/sms.provider.aliyun.js');
 const captchaProvider = require('./bean/captcha.provider.captcha.js');
+const authProviderSms = require('./bean/auth.provider.sms.js');
 
 module.exports = app => {
   const beans = {
@@ -23,6 +24,11 @@ module.exports = app => {
     'captcha.provider.captcha': {
       mode: 'ctx',
       bean: captchaProvider,
+    },
+    // auth.provider
+    'auth.provider.sms': {
+      mode: 'ctx',
+      bean: authProviderSms,
     },
   };
   return beans;

@@ -3,9 +3,9 @@ const Strategy = require('../config/passport/strategy.js');
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
-    get localSimple() {
-      return ctx.bean.local.module(moduleInfo.relativeName).simple;
-    }
+    // get localSimple() {
+    //   return ctx.bean.local.module(moduleInfo.relativeName).simple;
+    // }
     async getConfigDefault() {
       return null;
     }
