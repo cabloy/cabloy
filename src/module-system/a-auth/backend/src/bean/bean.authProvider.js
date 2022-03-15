@@ -46,7 +46,7 @@ module.exports = ctx => {
         authProvider,
         providerModule: module,
         providerName,
-        providerScene,
+        providerScene: authProvider.meta.scene ? providerScene : null,
       });
     }
 

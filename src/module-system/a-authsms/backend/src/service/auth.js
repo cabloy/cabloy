@@ -49,11 +49,22 @@ module.exports = app => {
 
     // data: { mobile, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: `passport/a-authsms/authsms?state=${state}`,
-        body: { data },
+      const res = await this.ctx.bean.authProvider.authenticateIsolate({
+        module: moduleInfo.relativeName,
+        providerName: 'authsms',
+        ctxParent: {
+          headers: this.ctx.headers,
+          session: this.ctx.session,
+          cookies: this.ctx.cookies,
+          query: { state },
+          request: { body: { data } },
+        },
       });
+      // const res = await this.ctx.meta.util.performAction({
+      //   method: 'post',
+      //   url: `/a/auth/passport/a-authsms/authsms?state=${state}`,
+      //   body: { data },
+      // });
       return res;
     }
 
