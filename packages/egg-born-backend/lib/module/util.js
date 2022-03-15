@@ -351,6 +351,10 @@ function delegateProperties(ctx, ctxCaller) {
   for (const property of ['body']) {
     delegateProperty(ctx.request, ctxCaller.request, property);
   }
+  const req = ctx.req;
+  if (ctx.session) req.session = ctx.session;
+  if (ctx.query) req.query = ctx.query;
+  if (ctx.request.body) req.body = ctx.request.body;
 }
 function delegateProperty(ctx, ctxCaller, property) {
   Object.defineProperty(ctx, property, {
