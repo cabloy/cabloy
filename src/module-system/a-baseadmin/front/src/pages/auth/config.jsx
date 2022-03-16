@@ -32,7 +32,30 @@ export default {
         validator: meta.validator.validator,
         schema: null,
       });
+      // combine schema
+      this._combineSchema(schema);
       console.log(schema);
+    },
+    _combineSchema(schema) {
+      schema.schema.properties = {
+        ...schema.schema.properties,
+        __groupUrlInfo: {
+          ebType: 'group-flatten',
+          ebTitle: 'URL Info',
+        },
+        loginURL: {
+          type: 'string',
+          ebType: 'text',
+          ebTitle: 'Login URL',
+          ebReadOnly: true,
+        },
+        callbackURL: {
+          type: 'string',
+          ebType: 'text',
+          ebTitle: 'Callback URL',
+          ebReadOnly: true,
+        },
+      };
     },
     clipboardCreate() {
       if (!this.meta) return;
