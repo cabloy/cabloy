@@ -62,6 +62,7 @@ export default {
       return true;
     },
     _renderItemDirect(item) {
+      const fullName = this.getItemFullName(item);
       let domAction;
       if (item.providerItem.disabled) {
         domAction = (
@@ -76,7 +77,6 @@ export default {
           </div>
         );
       }
-      const fullName = this.getItemFullName(item);
       return (
         <eb-list-item
           key={fullName}
@@ -91,16 +91,63 @@ export default {
         </eb-list-item>
       );
     },
-    _renderItem(item) {
-      if (!item.meta.scene) {
-        return this._renderItemDirect(item);
+    _renderItemScene(item, scene, sceneName) {
+      let domAction;
+      if (scene.disabled) {
+        domAction = (
+          <div color="orange" propsOnPerform={this.onPerformItemSceneEnable}>
+            {this.$text('Enable')}
+          </div>
+        );
+      } else {
+        domAction = (
+          <div color="red" propsOnPerform={this.onPerformItemSceneDisable}>
+            {this.$text('Disable')}
+          </div>
+        );
       }
+      return (
+        <eb-list-item
+          key={sceneName}
+          link="#"
+          propsOnPerform={event => this.onPerformItemScene(event, item, scene)}
+          swipeout
+        >
+          <div slot="title">{scene.titleLocale}</div>
+          <eb-context-menu>
+            <div slot="right">{domAction}</div>
+          </eb-context-menu>
+        </eb-list-item>
+      );
+    },
+    _renderItem(item) {
+      const fullName = this.getItemFullName(item);
+      const meta = item.meta;
+      const domItemDirect = this._renderItemDirect(item);
+      // scene: false
+      if (!meta.scene) {
+        return domItemDirect;
+      }
+      // scene: true
+      const childrenScenes = [];
+      for (const sceneName in item.scenes) {
+        const scene = item.scenes[sceneName];
+        childrenScenes.push(this._renderItemScene(item, scene, sceneName));
+      }
+      const children = [domItemDirect];
+      children.push(<f7-list-group key={fullName + ':scenes'}>{childrenScenes}</f7-list-group>);
+      return children;
     },
     _renderGroup(group) {
-      const children = [];
+      let children = [];
       children.push(<f7-list-item group-title title={`${group.title} (${group.items.length})`}></f7-list-item>);
       for (const item of group.items) {
-        children.push(this._renderItem(item));
+        const domItem = this._renderItem(item);
+        if (Array.isArray(domItem)) {
+          children = children.concat(domItem);
+        } else {
+          children.push(domItem);
+        }
       }
       return <f7-list-group key={group.id}>{children}</f7-list-group>;
     },
