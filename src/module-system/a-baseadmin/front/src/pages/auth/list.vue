@@ -42,26 +42,25 @@ export default {
     },
   },
   created() {
-    // fetch
-    return this.$api.post('auth/list').then(data => {
-      this.items = data;
-      this.groupItems();
-    });
+    this.load();
   },
   methods: {
+    async load() {
+      // fetch
+      this.items = await this.$api.post('auth/list');
+      this.groupItems();
+    },
     groupItems() {
       this.itemsGroups = [
         { id: 'enabled', title: this.$text('Enabled'), items: [] },
         { id: 'disabled', title: this.$text('Disabled'), items: [] },
-        { id: 'others', title: this.$text('Others'), items: [] },
       ];
-      for (const item of this.items) {
-        if (!item.meta) {
-          this.itemsGroups[2].items.push(item);
-        } else if (item.disabled === 0) {
-          this.itemsGroups[0].items.push(item);
-        } else if (item.disabled === 1) {
+      for (const providerFullName in this.items) {
+        const item = this.items[providerFullName];
+        if (item.providerItem.disabled) {
           this.itemsGroups[1].items.push(item);
+        } else {
+          this.itemsGroups[0].items.push(item);
         }
       }
     },
