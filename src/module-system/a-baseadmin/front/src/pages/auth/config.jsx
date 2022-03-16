@@ -10,11 +10,12 @@ export default {
     return {
       sceneName: this.$f7route.query.sceneName,
       schema: null,
+      data: null,
     };
   },
   computed: {
     ready() {
-      return !!this.schema;
+      return !!this.schema && !!this.data;
     },
     item() {
       return this.contextParams.item;
@@ -25,6 +26,10 @@ export default {
   },
   methods: {
     async init() {
+      await this._prepareScheme();
+      this._prepareData();
+    },
+    async _prepareScheme() {
       const meta = this.item.meta;
       // schema
       const schema = await this.$api.post('/a/validation/validation/schema', {
@@ -34,26 +39,47 @@ export default {
       });
       // combine schema
       this._combineSchema(schema);
-      console.log(schema);
+      this.schema = schema;
+    },
+    _prepareData() {
+      const data = {
+        ...this.item.scenes[this.sceneName],
+      };
+      this._combineAuthenticateUrls(data);
+      this.data = data;
+    },
+    _combineAuthenticateUrls(data) {
+      const meta = this.item.meta;
+      if (meta.mode !== 'redirect') return;
+      const urlParamScene = meta.scene ? `/${this.sceneName}` : '';
+      const urls = {
+        loginURL: `/api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}`,
+        callbackURL: `/api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}/callback`,
+      };
+      data.__groupUrlInfo = urls;
     },
     _combineSchema(schema) {
+      const meta = this.item.meta;
+      if (meta.mode !== 'redirect') return;
       schema.schema.properties = {
         ...schema.schema.properties,
         __groupUrlInfo: {
-          ebType: 'group-flatten',
+          ebType: 'group',
           ebTitle: 'URL Info',
-        },
-        loginURL: {
-          type: 'string',
-          ebType: 'text',
-          ebTitle: 'Login URL',
-          ebReadOnly: true,
-        },
-        callbackURL: {
-          type: 'string',
-          ebType: 'text',
-          ebTitle: 'Callback URL',
-          ebReadOnly: true,
+          properties: {
+            loginURL: {
+              type: 'string',
+              ebType: 'text',
+              ebTitle: 'Login URL',
+              ebReadOnly: true,
+            },
+            callbackURL: {
+              type: 'string',
+              ebType: 'text',
+              ebTitle: 'Callback URL',
+              ebReadOnly: true,
+            },
+          },
         },
       };
     },
@@ -70,12 +96,13 @@ export default {
       });
     },
     _renderValidate() {
+      if (!this.ready) return;
       return (
         <eb-validate
           ref="validate"
           auto
-          data={this.base.item}
-          params={this.base.validateParams}
+          data={this.data}
+          schema={this.schema}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={this.validate_onSubmit}
         ></eb-validate>
