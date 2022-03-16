@@ -13,7 +13,10 @@ module.exports = app => {
         disabled,
       });
       console.log(sceneNew);
-      item.scenes = JSON.stringify(sceneNew);
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      scenes[sceneName] = sceneNew;
+      item.scenes = JSON.stringify(scenes);
       await this.ctx.model.authProvider.update(item);
       // changed
       this.ctx.bean.authProviderCache.authProviderChanged({
