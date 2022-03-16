@@ -19,6 +19,8 @@ describe('test/controller/test.test.js', () => {
         },
       });
 
+    const sessionOld = JSON.stringify(app.context.session);
+
     // create
     let result = await app
       .httpRequest()
@@ -27,10 +29,9 @@ describe('test/controller/test.test.js', () => {
         atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
       });
     if (result.body.code !== 0) {
-      const session = app.context.session;
-      console.log(result);
-      console.log(session);
-      console.log(session && session.passport && session.passport.user);
+      const sessionNew = JSON.stringify(app.context.session);
+      console.log('sessionOld: ', sessionOld);
+      console.log('sessionNew: ', sessionNew);
       process.exit(0);
     }
     assert(result.body.code === 0);
