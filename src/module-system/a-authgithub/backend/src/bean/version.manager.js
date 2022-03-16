@@ -27,7 +27,15 @@ module.exports = app => {
     }
 
     async update8Auths(options) {
-      console.log('---------------         update8Auths');
+      const provideItem = await this.ctx.bean.authProvider.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authgithub',
+      });
+      await this.ctx.model.query('update aAuth a set a.providerScene=? where a.iid=? and a.providerId=?', [
+        'default',
+        this.ctx.instance.id,
+        provideItem.id,
+      ]);
     }
   }
 
