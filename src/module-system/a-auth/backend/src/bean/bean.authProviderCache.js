@@ -60,6 +60,13 @@ module.exports = ctx => {
       });
     }
 
+    purgeScene(scene) {
+      const res = extend(true, {}, scene);
+      delete res.__valid;
+      delete res.titleLocale;
+      return res;
+    }
+
     _getAuthProvidersConfigForLogin_list(forLogin) {
       const listMap = {};
       //

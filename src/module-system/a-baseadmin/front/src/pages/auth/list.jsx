@@ -68,7 +68,7 @@ export default {
       return this.onItemSceneDisable(event, item, scene, sceneName, 0);
     },
     async onItemSceneDisable(event, item, scene, sceneName, disabled) {
-      await this.$api.post('authScene/disable', { id: item.providerItem.id, scene: sceneName, disabled });
+      await this.$api.post('authScene/disable', { id: item.providerItem.id, sceneName, disabled });
       const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
       this.$set(this.items[index].scenes[sceneName], 'disabled', disabled);
       this.$meta.util.swipeoutClose(event.currentTarget);
