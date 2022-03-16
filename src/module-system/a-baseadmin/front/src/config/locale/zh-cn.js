@@ -43,7 +43,7 @@ export default {
   'Please Reload App': '请重新加载App',
   'Resource Class': '资源类别',
   'Clear User': '清除用户',
-  'Config Info': '配置信息',
+  'Auth Info': '认证信息',
   'URL Info': '链接信息',
   SelectedResources: '已选择的资源',
   ActionObsoletedTitle: '已废弃',

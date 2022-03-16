@@ -21,6 +21,10 @@ export default {
     item() {
       return this.contextParams.item;
     },
+    page_title() {
+      const title = this.$text('Config');
+      return this.page_getDirtyTitle(title);
+    },
   },
   created() {
     this.init();
@@ -88,12 +92,18 @@ export default {
               type: 'string',
               ebType: 'text',
               ebTitle: 'Login URL',
+              ebParams: {
+                textarea: true,
+              },
               ebReadOnly: true,
             },
             callbackURL: {
               type: 'string',
               ebType: 'text',
               ebTitle: 'Callback URL',
+              ebParams: {
+                textarea: true,
+              },
               ebReadOnly: true,
             },
           },
@@ -134,7 +144,7 @@ export default {
     }
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('Config')} eb-back-link="Back">
+        <eb-navbar large largeTransparent title={this.page_title} eb-back-link="Back">
           <f7-nav-right>{domSave}</f7-nav-right>
         </eb-navbar>
         {this._renderValidate()}

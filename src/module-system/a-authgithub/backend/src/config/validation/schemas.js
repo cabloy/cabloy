@@ -3,9 +3,9 @@ module.exports = app => {
   schemas.authGithub = {
     type: 'object',
     properties: {
-      __groupConfigInfo: {
+      __groupAuthInfo: {
         ebType: 'group-flatten',
-        ebTitle: 'Config Info',
+        ebTitle: 'Auth Info',
       },
       title: {
         type: 'string',
