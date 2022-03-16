@@ -21,7 +21,7 @@ export default [
   { path: 'resourceRight/edit', component: load('resourceRight/edit') },
   { path: 'resourceRight/add', component: load('resourceRight/add') },
   { path: 'auth/list', component: loadjsx('auth/list') },
-  { path: 'auth/config', component: load('auth/config') },
+  { path: 'auth/config', component: loadjsx('auth/config') },
   { path: 'settings/list', component: load('settings/list') },
   { path: 'category/management', component: loadjsx('category/management') },
   { path: 'category/tree', component: load('category/tree') },

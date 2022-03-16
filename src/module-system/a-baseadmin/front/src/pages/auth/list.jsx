@@ -47,6 +47,7 @@ export default {
       return `${item.module}:${item.providerName}`;
     },
     onPerformItem(event, item) {
+      if (!this.getItemLink(item)) return;
       this._editSceneConfig(item, 'default');
     },
     onPerformItemScene(event, item, sceneName) {
@@ -81,7 +82,7 @@ export default {
     },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(
-        `auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
+        `/a/baseadmin/auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
         {
           context: {
             params: {

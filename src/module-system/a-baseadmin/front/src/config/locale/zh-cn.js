@@ -50,6 +50,7 @@ export default {
   Build: '构建',
   Catalog: '目录',
   Children: '子项',
+  Config: '配置',
   Delete: '删除',
   Disable: '禁用',
   Disabled: '已禁用',
