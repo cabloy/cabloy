@@ -43,6 +43,9 @@ export default {
       const meta = item.meta;
       return meta.titleLocale;
     },
+    getItemFullName(item) {
+      return `${item.module}:${item.providerName}`;
+    },
     onPerformItem(event, item) {},
     onPerformItemDisable(event, item) {
       return this.onItemDisable(event, item, 1);
@@ -58,7 +61,7 @@ export default {
       this.$meta.util.swipeoutClose(event.currentTarget);
       return true;
     },
-    _renderItem(item) {
+    _renderItemDirect(item) {
       let domAction;
       if (item.providerItem.disabled) {
         domAction = (
@@ -73,9 +76,10 @@ export default {
           </div>
         );
       }
+      const fullName = this.getItemFullName(item);
       return (
         <eb-list-item
-          key={item.id}
+          key={fullName}
           link={this.getItemLink(item)}
           propsOnPerform={event => this.onPerformItem(event, item)}
           swipeout
@@ -86,6 +90,11 @@ export default {
           </eb-context-menu>
         </eb-list-item>
       );
+    },
+    _renderItem(item) {
+      if (!item.meta.scene) {
+        return this._renderItemDirect(item);
+      }
     },
     _renderGroup(group) {
       const children = [];
