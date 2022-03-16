@@ -1,31 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Auth Management')" eb-back-link="Back"></eb-navbar>
-    <f7-list form inline-labels no-hairlines-md v-if="ready">
-      <f7-list-group v-for="group of itemsGroups" :key="group.id">
-        <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
-        <eb-list-item
-          v-for="item of group.items"
-          :key="item.id"
-          :link="getItemLink(item)"
-          :eb-href="getItemHref(item)"
-          swipeout
-        >
-          <div slot="title" :class="{ 'text-color-gray': !item.meta }">{{ getItemTitle(item) }}</div>
-          <eb-context-menu v-if="item.meta">
-            <div slot="right">
-              <div v-if="item.disabled === 0" color="red" :context="item" :onPerform="onPerformDisable">
-                {{ $text('Disable') }}
-              </div>
-              <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{ $text('Enable') }}</div>
-            </div>
-          </eb-context-menu>
-        </eb-list-item>
-      </f7-list-group>
-    </f7-list>
-  </eb-page>
-</template>
-<script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
@@ -88,6 +60,57 @@ export default {
         return true;
       });
     },
+    _renderItem(item) {
+      let domAction;
+      if (item.providerItem.disabled) {
+        domAction = (
+          <div color="orange" propsOnPerform={this.onPerformEnable}>
+            {this.$text('Enable')}
+          </div>
+        );
+      } else {
+        domAction = (
+          <div color="red" propsOnPerform={this.onPerformDisable}>
+            {this.$text('Disable')}
+          </div>
+        );
+      }
+      return (
+        <eb-list-item key={item.id} link={this.getItemLink(item)} eb-href={this.getItemHref(item)} swipeout>
+          <div slot="title">{this.getItemTitle(item)}</div>
+          <eb-context-menu>
+            <div slot="right">{domAction}</div>
+          </eb-context-menu>
+        </eb-list-item>
+      );
+    },
+    _renderGroup(group) {
+      const children = [];
+      children.push(<f7-list-item group-title title={`${group.title} (${group.items.length})`}></f7-list-item>);
+      for (const item of group.items) {
+        children.push(this._renderItem(item));
+      }
+      return <f7-list-group key={group.id}>{children}</f7-list-group>;
+    },
+    _renderList() {
+      if (!this.ready) return;
+      const children = [];
+      for (const group of this.itemsGroups) {
+        children.push(this._renderGroup(group));
+      }
+      return (
+        <f7-list form inline-labels no-hairlines-md>
+          {children}
+        </f7-list>
+      );
+    },
+  },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar large largeTransparent title={this.$text('Auth Management')} eb-back-link="Back"></eb-navbar>
+        {this._renderList()}
+      </eb-page>
+    );
   },
 };
-</script>

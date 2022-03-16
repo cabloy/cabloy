@@ -20,7 +20,7 @@ export default [
   { path: 'resourceRight/list', component: load('resourceRight/list') },
   { path: 'resourceRight/edit', component: load('resourceRight/edit') },
   { path: 'resourceRight/add', component: load('resourceRight/add') },
-  { path: 'auth/list', component: load('auth/list') },
+  { path: 'auth/list', component: loadjsx('auth/list') },
   { path: 'auth/info', component: load('auth/info') },
   { path: 'settings/list', component: load('settings/list') },
   { path: 'category/management', component: loadjsx('category/management') },
