@@ -591,14 +591,13 @@ module.exports = ctx => {
       });
       // aAuth: delete old records
       const list = await ctx.model.query(
-        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
+        'select a.id,a.providerId,a.providerScene from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
         [ctx.instance.id, userIdFrom]
       );
-      if (list.length > 0) {
-        const providerIds = list.map(item => item.providerId).join(',');
+      for (const item of list) {
         await ctx.model.query(
-          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
-          [ctx.instance.id, userIdTo, providerIds]
+          'delete from aAuth where deleted=0 and iid=? and userId=? and providerId=? and providerScene=?',
+          [ctx.instance.id, userIdTo, item.providerId, item.providerScene]
         );
       }
       // aAuth: update records
