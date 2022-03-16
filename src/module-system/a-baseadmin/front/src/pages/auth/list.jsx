@@ -37,46 +37,49 @@ export default {
       }
     },
     getItemLink(item) {
-      return item.meta && item.meta.mode === 'redirect' ? '#' : false;
-    },
-    getItemHref(item) {
-      return item.meta && item.meta.mode === 'redirect' ? `auth/info?id=${item.id}` : '';
+      const meta = item.authProvider.meta;
+      return !meta.scene && meta.validator ? '#' : false;
     },
     getItemTitle(item) {
       return item.meta ? item.meta.titleLocale : `${item.module}:${item.providerName}`;
     },
-    onPerformDisable(event, item) {
-      return this.onDisable(event, item, 1);
+    onPerformItem(event, item) {},
+    onPerformItemDisable(event, item) {
+      return this.onItemDisable(event, item, 1);
     },
-    onPerformEnable(event, item) {
-      return this.onDisable(event, item, 0);
+    onPerformItemEnable(event, item) {
+      return this.onItemDisable(event, item, 0);
     },
-    onDisable(event, item, disabled) {
-      return this.$api.post('auth/disable', { id: item.id, disabled }).then(() => {
-        const index = this.items.findIndex(_item => _item.id === item.id);
-        this.items[index].disabled = disabled;
-        this.groupItems();
-        this.$meta.util.swipeoutClose(event.currentTarget);
-        return true;
-      });
+    async onItemDisable(event, item, disabled) {
+      await this.$api.post('auth/disable', { id: item.id, disabled });
+      const index = this.items.findIndex(_item => _item.id === item.id);
+      this.items[index].disabled = disabled;
+      this.groupItems();
+      this.$meta.util.swipeoutClose(event.currentTarget);
+      return true;
     },
     _renderItem(item) {
       let domAction;
       if (item.providerItem.disabled) {
         domAction = (
-          <div color="orange" propsOnPerform={this.onPerformEnable}>
+          <div color="orange" propsOnPerform={this.onPerformItemEnable}>
             {this.$text('Enable')}
           </div>
         );
       } else {
         domAction = (
-          <div color="red" propsOnPerform={this.onPerformDisable}>
+          <div color="red" propsOnPerform={this.onPerformItemDisable}>
             {this.$text('Disable')}
           </div>
         );
       }
       return (
-        <eb-list-item key={item.id} link={this.getItemLink(item)} eb-href={this.getItemHref(item)} swipeout>
+        <eb-list-item
+          key={item.id}
+          link={this.getItemLink(item)}
+          propsOnPerform={event => this.onPerformItem(event, item)}
+          swipeout
+        >
           <div slot="title">{this.getItemTitle(item)}</div>
           <eb-context-menu>
             <div slot="right">{domAction}</div>
