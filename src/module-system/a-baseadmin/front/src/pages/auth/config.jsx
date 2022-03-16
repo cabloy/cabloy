@@ -74,9 +74,11 @@ export default {
       if (meta.mode !== 'redirect') return;
       const urlParamScene = meta.scene ? `/${this.sceneName}` : '';
       const urls = {
-        loginURL: `/api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}`,
-        callbackURL: `/api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}/callback`,
+        loginURL: `//api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}`,
+        callbackURL: `//api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}/callback`,
       };
+      urls.loginURL = this.$meta.util.combineFetchPath(null, urls.loginURL);
+      urls.callbackURL = this.$meta.util.combineFetchPath(null, urls.callbackURL);
       data.__groupUrlInfo = urls;
     },
     _combineSchema(schema) {
