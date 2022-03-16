@@ -27,8 +27,7 @@ export default {
         { id: 'enabled', title: this.$text('Enabled'), items: [] },
         { id: 'disabled', title: this.$text('Disabled'), items: [] },
       ];
-      for (const providerFullName in this.items) {
-        const item = this.items[providerFullName];
+      for (const item of this.items) {
         if (item.providerItem.disabled) {
           this.itemsGroups[1].items.push(item);
         } else {
@@ -37,11 +36,12 @@ export default {
       }
     },
     getItemLink(item) {
-      const meta = item.authProvider.meta;
+      const meta = item.meta;
       return !meta.scene && meta.validator ? '#' : false;
     },
     getItemTitle(item) {
-      return item.meta ? item.meta.titleLocale : `${item.module}:${item.providerName}`;
+      const meta = item.meta;
+      return meta.titleLocale;
     },
     onPerformItem(event, item) {},
     onPerformItemDisable(event, item) {

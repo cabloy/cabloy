@@ -3,6 +3,7 @@ const extend = require3('extend2');
 
 const __authProvidersConfigCache = {};
 const __authProvidersConfigCache_login = {};
+const __authProvidersConfigCache_admin = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -26,12 +27,26 @@ module.exports = ctx => {
       }
       let providersConfigForLogin = __authProvidersConfigCache_login[ctx.subdomain][ctx.locale];
       if (!providersConfigForLogin) {
-        const listMap = this._getAuthProvidersConfigForLogin_list();
+        const listMap = this._getAuthProvidersConfigForLogin_list(true);
         if (!listMap) return null; // for try to get info at next time
         providersConfigForLogin = this._getAuthProvidersConfigForLogin_order(listMap);
         __authProvidersConfigCache_login[ctx.subdomain][ctx.locale] = providersConfigForLogin;
       }
       return providersConfigForLogin;
+    }
+
+    getAuthProvidersConfigForAdmin() {
+      if (!__authProvidersConfigCache_admin[ctx.subdomain]) {
+        __authProvidersConfigCache_admin[ctx.subdomain] = {};
+      }
+      let providersConfigForAdmin = __authProvidersConfigCache_admin[ctx.subdomain][ctx.locale];
+      if (!providersConfigForAdmin) {
+        const listMap = this._getAuthProvidersConfigForLogin_list(false);
+        if (!listMap) return null; // for try to get info at next time
+        providersConfigForAdmin = this._getAuthProvidersConfigForLogin_order(listMap);
+        __authProvidersConfigCache_admin[ctx.subdomain][ctx.locale] = providersConfigForAdmin;
+      }
+      return providersConfigForAdmin;
     }
 
     async authProviderChanged(moduleRelativeName, providerName) {
@@ -45,13 +60,17 @@ module.exports = ctx => {
       });
     }
 
-    _getAuthProvidersConfigForLogin_list() {
+    _getAuthProvidersConfigForLogin_list(forLogin) {
       const listMap = {};
       //
       const providersConfigCache = this.getAuthProvidersConfigCache();
       for (const providerFullName in providersConfigCache) {
         const providerConfigCache = providersConfigCache[providerFullName];
-        const providerConfigForLogin = this._getAuthProviderConfigForLogin(providerFullName, providerConfigCache);
+        const providerConfigForLogin = this._getAuthProviderConfigForLogin(
+          providerFullName,
+          providerConfigCache,
+          forLogin
+        );
         if (providerConfigForLogin) {
           listMap[providerFullName] = providerConfigForLogin;
         }
@@ -77,25 +96,39 @@ module.exports = ctx => {
       return list;
     }
 
-    _getAuthProviderConfigForLogin(providerFullName, providerConfigCache) {
+    _getAuthProviderConfigForLogin(providerFullName, providerConfigCache, forLogin) {
       const [module, providerName] = providerFullName.split(':');
       const authProvider = ctx.bean.authProvider.getAuthProviderBase({ module, providerName });
+      const { configProvider, providerItem, configProviderScenes } = providerConfigCache;
       const providerConfigForLogin = {
         module,
         providerName,
         meta: authProvider.meta,
         scenes: {},
       };
-      const { configProvider, configProviderScenes } = providerConfigCache;
+      if (!forLogin) {
+        // admin
+        providerConfigForLogin.providerItem = providerItem;
+      }
       for (const sceneName in configProviderScenes) {
         const configProviderScene = configProviderScenes[sceneName];
-        if (configProviderScene.__valid) {
-          providerConfigForLogin.scenes[sceneName] = {
-            title: configProviderScene.title,
-            titleLocale: ctx.bean.util.getTitleLocale({
-              locales: configProvider.locales,
+        const titleLocale = ctx.bean.util.getTitleLocale({
+          locales: configProvider.locales,
+          title: configProviderScene.title,
+        });
+        if (forLogin) {
+          // login
+          if (configProviderScene.__valid) {
+            providerConfigForLogin.scenes[sceneName] = {
               title: configProviderScene.title,
-            }),
+              titleLocale,
+            };
+          }
+        } else {
+          // admin
+          providerConfigForLogin.scenes[sceneName] = {
+            ...configProviderScene,
+            titleLocale,
           };
         }
       }
@@ -117,6 +150,7 @@ module.exports = ctx => {
     async _cacheAuthProviderConfig(module, providerName) {
       // clear login cache, because some provider changed
       __authProvidersConfigCache_login[ctx.subdomain] = {};
+      __authProvidersConfigCache_admin[ctx.subdomain] = {};
       //
       if (!__authProvidersConfigCache[ctx.subdomain]) {
         __authProvidersConfigCache[ctx.subdomain] = {};

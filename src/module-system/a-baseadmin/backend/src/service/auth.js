@@ -4,7 +4,7 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = app => {
   class Auth extends app.Service {
     async list() {
-      return this.ctx.bean.authProviderCache.getAuthProvidersConfigCache();
+      return this.ctx.bean.authProviderCache.getAuthProvidersConfigForAdmin();
     }
 
     async disable({ id, disabled }) {
