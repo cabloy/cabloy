@@ -7,12 +7,10 @@ module.exports = app => {
       const fullName = `${item.module}:${item.providerName}`;
       const { configProviderScenes } = providersConfigCache[fullName];
       const sceneOld = configProviderScenes[sceneName];
-      console.log(sceneOld);
       const sceneNew = this.ctx.bean.authProviderCache.purgeScene({
         ...sceneOld,
         disabled,
       });
-      console.log(sceneNew);
       // update
       const scenes = item.scenes ? JSON.parse(item.scenes) : {};
       scenes[sceneName] = sceneNew;
