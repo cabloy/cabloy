@@ -150,6 +150,13 @@ module.exports = app => {
     { method: 'post', path: 'auth/disable', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/item', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
+    // auth scene
+    {
+      method: 'post',
+      path: 'authScene/disable',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
   ];
   return routes;
 };

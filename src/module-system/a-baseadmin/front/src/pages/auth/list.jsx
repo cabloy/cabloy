@@ -67,6 +67,13 @@ export default {
     onPerformItemSceneEnable(event, item, scene, sceneName) {
       return this.onItemSceneDisable(event, item, scene, sceneName, 0);
     },
+    async onItemSceneDisable(event, item, scene, sceneName, disabled) {
+      await this.$api.post('authScene/disable', { id: item.providerItem.id, scene: sceneName, disabled });
+      const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
+      this.$set(this.items[index].scenes[sceneName], 'disabled', disabled);
+      this.$meta.util.swipeoutClose(event.currentTarget);
+      return true;
+    },
     _renderItemDirect(item) {
       const fullName = this.getItemFullName(item);
       let domAction;
@@ -112,6 +119,10 @@ export default {
           </div>
         );
       }
+      let domAfter;
+      if (scene.disabled) {
+        domAfter = <f7-badge>{this.$text('Disabled')}</f7-badge>;
+      }
       return (
         <eb-list-item
           key={sceneName}
@@ -120,6 +131,7 @@ export default {
           swipeout
         >
           <div slot="title">{scene.titleLocale}</div>
+          <div slot="after">{domAfter}</div>
           <eb-context-menu>
             <div slot="right">{domAction}</div>
           </eb-context-menu>
