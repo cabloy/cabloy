@@ -49,14 +49,14 @@ module.exports = ctx => {
       return providersConfigForAdmin;
     }
 
-    async authProviderChanged(moduleRelativeName, providerName) {
+    async authProviderChanged({ module, providerName }) {
       // change self
-      await this._cacheAuthProviderConfig(moduleRelativeName, providerName);
+      await this._cacheAuthProviderConfig(module, providerName);
       // broadcast
       ctx.meta.util.broadcastEmit({
         module: 'a-auth',
         broadcastName: 'authProviderChanged',
-        data: { module: moduleRelativeName, providerName },
+        data: { module, providerName },
       });
     }
 

@@ -54,25 +54,31 @@ export default {
       return this.onItemDisable(event, item, 0);
     },
     async onItemDisable(event, item, disabled) {
-      await this.$api.post('auth/disable', { id: item.id, disabled });
-      const index = this.items.findIndex(_item => _item.id === item.id);
-      this.items[index].disabled = disabled;
+      await this.$api.post('auth/disable', { id: item.providerItem.id, disabled });
+      const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
+      this.items[index].providerItem.disabled = disabled;
       this.groupItems();
       this.$meta.util.swipeoutClose(event.currentTarget);
       return true;
+    },
+    onPerformItemSceneDisable(event, item, scene, sceneName) {
+      return this.onItemSceneDisable(event, item, scene, sceneName, 1);
+    },
+    onPerformItemSceneEnable(event, item, scene, sceneName) {
+      return this.onItemSceneDisable(event, item, scene, sceneName, 0);
     },
     _renderItemDirect(item) {
       const fullName = this.getItemFullName(item);
       let domAction;
       if (item.providerItem.disabled) {
         domAction = (
-          <div color="orange" propsOnPerform={this.onPerformItemEnable}>
+          <div color="orange" propsOnPerform={event => this.onPerformItemEnable(event, item)}>
             {this.$text('Enable')}
           </div>
         );
       } else {
         domAction = (
-          <div color="red" propsOnPerform={this.onPerformItemDisable}>
+          <div color="red" propsOnPerform={event => this.onPerformItemDisable(event, item)}>
             {this.$text('Disable')}
           </div>
         );
@@ -95,13 +101,13 @@ export default {
       let domAction;
       if (scene.disabled) {
         domAction = (
-          <div color="orange" propsOnPerform={this.onPerformItemSceneEnable}>
+          <div color="orange" propsOnPerform={event => this.onPerformItemSceneEnable(event, item, scene, sceneName)}>
             {this.$text('Enable')}
           </div>
         );
       } else {
         domAction = (
-          <div color="red" propsOnPerform={this.onPerformItemSceneDisable}>
+          <div color="red" propsOnPerform={event => this.onPerformItemSceneDisable(event, item, scene, sceneName)}>
             {this.$text('Disable')}
           </div>
         );

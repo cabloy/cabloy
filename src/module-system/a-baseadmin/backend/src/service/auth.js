@@ -12,14 +12,10 @@ module.exports = app => {
       await this.ctx.model.authProvider.update({ id, disabled });
       // item
       const item = await this.ctx.model.authProvider.get({ id });
-      // broadcast
-      this.ctx.meta.util.broadcastEmit({
-        module: 'a-auth',
-        broadcastName: 'authProviderChanged',
-        data: {
-          module: item.module,
-          providerName: item.providerName,
-        },
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
       });
     }
 
