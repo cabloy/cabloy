@@ -44,12 +44,13 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      await this.$api.post('authScene/save', {
+      const res = await this.$api.post('authScene/save', {
         id: this.item.providerItem.id,
         sceneName: this.sceneName,
         data: this.data,
       });
       this.page_setDirty(false);
+      this.contextCallback(200, res);
       this.$f7router.back();
       return true; // toast on success
     },

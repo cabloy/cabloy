@@ -88,10 +88,17 @@ export default {
             params: {
               item,
             },
-            callback: (code, data) => {
+            callback: (code, res) => {
               if (code === 200) {
-                const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
-                this.items[index].scenes[sceneName] = data;
+                const sceneOld = item.scenes[sceneName];
+                const sceneNew = res.data;
+                item.scenes[sceneName] = {
+                  ...sceneOld,
+                  ...sceneNew,
+                };
+                if (sceneOld.title !== sceneNew.title) {
+                  item.scenes[sceneName].titleLocale = sceneNew.title;
+                }
               }
             },
           },

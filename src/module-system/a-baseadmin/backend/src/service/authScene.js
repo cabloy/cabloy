@@ -57,6 +57,8 @@ module.exports = app => {
         module: item.module,
         providerName: item.providerName,
       });
+      // ok
+      return { data };
     }
   }
 
