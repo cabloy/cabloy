@@ -46,7 +46,12 @@ export default {
     getItemFullName(item) {
       return `${item.module}:${item.providerName}`;
     },
-    onPerformItem(event, item) {},
+    onPerformItem(event, item) {
+      this._editSceneConfig(item, 'default');
+    },
+    onPerformItemScene(event, item, sceneName) {
+      this._editSceneConfig(item, sceneName);
+    },
     onPerformItemDisable(event, item) {
       return this.onItemDisable(event, item, 1);
     },
@@ -61,18 +66,36 @@ export default {
       this.$meta.util.swipeoutClose(event.currentTarget);
       return true;
     },
-    onPerformItemSceneDisable(event, item, scene, sceneName) {
-      return this.onItemSceneDisable(event, item, scene, sceneName, 1);
+    onPerformItemSceneDisable(event, item, sceneName) {
+      return this.onItemSceneDisable(event, item, sceneName, 1);
     },
-    onPerformItemSceneEnable(event, item, scene, sceneName) {
-      return this.onItemSceneDisable(event, item, scene, sceneName, 0);
+    onPerformItemSceneEnable(event, item, sceneName) {
+      return this.onItemSceneDisable(event, item, sceneName, 0);
     },
-    async onItemSceneDisable(event, item, scene, sceneName, disabled) {
+    async onItemSceneDisable(event, item, sceneName, disabled) {
       await this.$api.post('authScene/disable', { id: item.providerItem.id, sceneName, disabled });
       const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
       this.$set(this.items[index].scenes[sceneName], 'disabled', disabled);
       this.$meta.util.swipeoutClose(event.currentTarget);
       return true;
+    },
+    _editSceneConfig(item, sceneName) {
+      this.$view.navigate(
+        `auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
+        {
+          context: {
+            params: {
+              item,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                const index = this.items.findIndex(_item => _item.providerItem.id === item.providerItem.id);
+                this.items[index].scenes[sceneName] = data;
+              }
+            },
+          },
+        }
+      );
     },
     _renderItemDirect(item) {
       const fullName = this.getItemFullName(item);
@@ -108,13 +131,13 @@ export default {
       let domAction;
       if (scene.disabled) {
         domAction = (
-          <div color="orange" propsOnPerform={event => this.onPerformItemSceneEnable(event, item, scene, sceneName)}>
+          <div color="orange" propsOnPerform={event => this.onPerformItemSceneEnable(event, item, sceneName)}>
             {this.$text('Enable')}
           </div>
         );
       } else {
         domAction = (
-          <div color="red" propsOnPerform={event => this.onPerformItemSceneDisable(event, item, scene, sceneName)}>
+          <div color="red" propsOnPerform={event => this.onPerformItemSceneDisable(event, item, sceneName)}>
             {this.$text('Disable')}
           </div>
         );
@@ -127,7 +150,7 @@ export default {
         <eb-list-item
           key={sceneName}
           link="#"
-          propsOnPerform={event => this.onPerformItemScene(event, item, scene)}
+          propsOnPerform={event => this.onPerformItemScene(event, item, sceneName)}
           swipeout
         >
           <div slot="title">{scene.titleLocale}</div>
