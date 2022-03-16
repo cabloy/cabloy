@@ -44,10 +44,13 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      await this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
-        data: this.item,
+      await this.$api.post('authScene/save', {
+        id: this.item.providerItem.id,
+        sceneName: this.sceneName,
+        data: this.data,
       });
       this.page_setDirty(false);
+      this.$f7router.back();
       return true; // toast on success
     },
     async _prepareScheme() {
@@ -142,7 +145,7 @@ export default {
   render() {
     let domSave;
     if (this.ready) {
-      domSave = <eb-link ref="buttonSave" iconF7="::save" propsOnPerform={this.onPerformSave}></eb-link>;
+      domSave = <eb-link ref="buttonSave" iconF7="::done" propsOnPerform={this.onPerformSave}></eb-link>;
     }
     return (
       <eb-page>

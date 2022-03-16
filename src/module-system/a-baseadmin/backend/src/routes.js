@@ -157,6 +157,12 @@ module.exports = app => {
       controller: 'authScene',
       meta: { right: { type: 'resource', name: 'auth' } },
     },
+    {
+      method: 'post',
+      path: 'authScene/save',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
   ];
   return routes;
 };

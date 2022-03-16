@@ -10,6 +10,17 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.save({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
   }
 
   return authSceneController;
