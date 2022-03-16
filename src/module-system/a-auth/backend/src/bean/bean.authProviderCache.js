@@ -166,6 +166,7 @@ module.exports = ctx => {
         beanProvider
       );
       return {
+        authProvider,
         providerItem,
         configProvider,
         configProviderScenes,

@@ -4,17 +4,7 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = app => {
   class Auth extends app.Service {
     async list() {
-      // list
-      const list = await this.ctx.model.authProvider.select();
-      // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      for (const item of list) {
-        const key = `${item.module}:${item.providerName}`;
-        const authProvider = authProviders[key];
-        item.meta = authProvider ? authProvider.meta : null;
-      }
-      // ok
-      return list;
+      return this.ctx.bean.authProviderCache.getAuthProvidersConfigCache();
     }
 
     async disable({ id, disabled }) {
