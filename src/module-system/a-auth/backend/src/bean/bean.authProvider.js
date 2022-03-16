@@ -50,13 +50,19 @@ module.exports = ctx => {
       });
     }
 
-    async authenticateIsolate({ module, providerName, providerScene, next, ctxParent }) {
+    async authenticateDirect({ module, providerName, providerScene, query, body }) {
       return await ctx.meta.util.executeBeanIsolate({
         beanModule: moduleInfo.relativeName,
         beanFullName: `${moduleInfo.relativeName}.local.passport`,
-        context: { module, providerName, providerScene, next },
+        context: { module, providerName, providerScene },
         fn: 'authenticate',
-        ctxParent,
+        ctxParent: {
+          headers: ctx.headers,
+          session: ctx.session,
+          cookies: ctx.cookies,
+          query,
+          request: { body },
+        },
       });
     }
 
