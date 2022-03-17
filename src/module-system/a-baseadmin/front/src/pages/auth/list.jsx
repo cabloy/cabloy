@@ -186,7 +186,8 @@ export default {
             color="orange"
             propsOnPerform={event => this.onPerformItemSceneEnable(event, item, sceneName)}
           >
-            {this.$text('Enable')}
+            <f7-icon slot="media" f7="::play-arrow"></f7-icon>
+            <div slot="title">{this.$text('Enable')}</div>
           </div>
         );
       } else {
@@ -196,7 +197,8 @@ export default {
             color="red"
             propsOnPerform={event => this.onPerformItemSceneDisable(event, item, sceneName)}
           >
-            {this.$text('Disable')}
+            <f7-icon slot="media" f7="::stop"></f7-icon>
+            <div slot="title">{this.$text('Disable')}</div>
           </div>
         );
       }
@@ -206,7 +208,8 @@ export default {
           color="red"
           propsOnPerform={event => this.onPerformItemSceneDelete(event, item, sceneName)}
         >
-          {this.$text('Delete')}
+          <f7-icon slot="media" f7="::delete"></f7-icon>
+          <div slot="title">{this.$text('Delete')}</div>
         </div>
       );
       // after
