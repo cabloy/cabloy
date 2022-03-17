@@ -57,11 +57,11 @@ module.exports = ctx => {
         context: { module, providerName, providerScene },
         fn: 'authenticate',
         ctxParent: {
-          headers: ctx.headers,
           session: ctx.session,
           cookies: ctx.cookies,
-          query,
-          request: { body },
+          user: ctx.user,
+          state: ctx.state,
+          request: { headers: ctx.headers, query, body },
         },
       });
     }

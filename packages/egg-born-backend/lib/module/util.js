@@ -345,16 +345,17 @@ module.exports = app => {
 };
 
 function delegateProperties(ctx, ctxCaller) {
-  for (const property of ['query', 'params', 'headers', 'cookies', 'session', 'user', 'state']) {
+  const req = ctx.req;
+  for (const property of ['cookies', 'session', 'user', 'state']) {
     delegateProperty(ctx, ctxCaller, property);
   }
-  for (const property of ['body']) {
+  for (const property of ['query', 'params', 'headers', 'body']) {
     delegateProperty(ctx.request, ctxCaller.request, property);
+    if (ctx.request[property]) req[property] = ctx.request[property];
   }
-  const req = ctx.req;
   if (ctx.session) req.session = ctx.session;
-  if (ctx.query) req.query = ctx.query;
-  if (ctx.request.body) req.body = ctx.request.body;
+  // if (ctx.query) req.query = ctx.query;
+  // if (ctx.request.body) req.body = ctx.request.body;
 }
 function delegateProperty(ctx, ctxCaller, property) {
   Object.defineProperty(ctx, property, {
