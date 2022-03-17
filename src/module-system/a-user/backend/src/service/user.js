@@ -86,7 +86,11 @@ module.exports = app => {
 
     async authenticationDisable({ authId, user }) {
       // must use userId in where
-      await this.ctx.model.query('delete from aAuth where id=? and userId=?', [authId, user.id]);
+      await this.ctx.model.query('delete from aAuth where iid=? and id=? and userId=?', [
+        this.ctx.instance.id,
+        authId,
+        user.id,
+      ]);
     }
 
     async themeLoad({ user }) {

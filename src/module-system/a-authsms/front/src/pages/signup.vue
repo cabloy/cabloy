@@ -14,23 +14,7 @@
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
-          <eb-list-input
-            :label="$text('Captcha Code')"
-            type="text"
-            clear-button
-            :placeholder="$text('Captcha Code')"
-            v-model="captcha.tokenCode"
-            dataPath="captcha/tokenCode"
-          >
-            <div slot="content">
-              <eb-component
-                ref="captchaContainerCode"
-                module="a-captcha"
-                name="captchaContainer"
-                :options="captchaContainerOptionsCode"
-              ></eb-component>
-            </div>
-          </eb-list-input>
+
           <eb-list-input
             :label="$text('SMS Verification Code')"
             type="text"
@@ -45,6 +29,23 @@
                 module="a-captcha"
                 name="captchaContainer"
                 :options="captchaContainerOptions"
+              ></eb-component>
+            </div>
+          </eb-list-input>
+          <eb-list-input
+            :label="$text('Captcha Code')"
+            type="text"
+            clear-button
+            :placeholder="$text('Captcha Code')"
+            v-model="captcha.tokenCode"
+            dataPath="captcha/tokenCode"
+          >
+            <div slot="content">
+              <eb-component
+                ref="captchaContainerCode"
+                module="a-captcha"
+                name="captchaContainer"
+                :options="captchaContainerOptionsCode"
               ></eb-component>
             </div>
           </eb-list-input>
