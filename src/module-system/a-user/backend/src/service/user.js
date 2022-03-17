@@ -74,7 +74,7 @@ module.exports = app => {
         if (!provider.meta.scene) {
           provider.scenes.default.__authId = authId;
         } else {
-          const scene = provider.scenes[auth.providerName];
+          const scene = provider.scenes[auth.providerScene];
           // // maybe disabled
           if (!scene) continue;
           scene.__authId = authId;
