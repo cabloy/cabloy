@@ -12,7 +12,7 @@ describe('test/controller/test/function/right.test.js', () => {
       // login
       await app
         .httpRequest()
-        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
         .send({
           data: {
             auth: userName,

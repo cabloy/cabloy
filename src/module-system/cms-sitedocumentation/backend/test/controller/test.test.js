@@ -11,7 +11,7 @@ describe('test/controller/test.test.js', () => {
     // login as root
     await app
       .httpRequest()
-      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
       .send({
         data: {
           auth: 'root',

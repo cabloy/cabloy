@@ -6,7 +6,7 @@ describe('flow.set00', () => {
     // login as root
     await app
       .httpRequest()
-      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
       .send({
         data: {
           auth: 'root',
@@ -34,7 +34,7 @@ describe('flow.set00', () => {
     // login as root
     await app
       .httpRequest()
-      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
       .send({
         data: {
           auth: 'root',
@@ -74,7 +74,7 @@ describe('flow.set00', () => {
     // login as root
     await app
       .httpRequest()
-      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
       .send({
         data: {
           auth: 'root',
@@ -98,7 +98,7 @@ describe('flow.set00', () => {
     // login as root
     await app
       .httpRequest()
-      .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
       .send({
         data: {
           auth: 'root',
@@ -120,7 +120,7 @@ describe('flow.set00', () => {
   // it('startEventTimer', async () => {
   //   app.mockSession({});
   //   // login as root
-  //   await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+  //   await app.httpRequest().post(mockUrl('/a/auth/passport/a-authsimple/authsimple')).send({
   //     data: {
   //       auth: 'root',
   //       password: '123456',

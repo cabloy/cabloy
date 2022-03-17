@@ -14,7 +14,7 @@ describe('test/controller/test/auth/login.test.js', () => {
     for (const [userName, success] of users) {
       const res = await app
         .httpRequest()
-        .post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple'))
+        .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
         .send({
           data: {
             auth: userName,
