@@ -3,17 +3,12 @@ module.exports = app => {
     async disable({ id, sceneName, disabled }) {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
-      const providersConfigCache = this.ctx.bean.authProviderCache.getAuthProvidersConfigCache();
-      const fullName = `${item.module}:${item.providerName}`;
-      const { configProviderScenes } = providersConfigCache[fullName];
-      const sceneOld = configProviderScenes[sceneName];
-      const sceneNew = this.ctx.bean.authProviderCache.purgeScene({
-        ...sceneOld,
-        disabled,
-      });
       // update
       const scenes = item.scenes ? JSON.parse(item.scenes) : {};
-      scenes[sceneName] = sceneNew;
+      if (!scenes[sceneName]) {
+        scenes[sceneName] = {};
+      }
+      scenes[sceneName].disabled = disabled;
       item.scenes = JSON.stringify(scenes);
       await this.ctx.model.authProvider.update(item);
       // changed
@@ -26,9 +21,10 @@ module.exports = app => {
     async save({ id, sceneName, data }) {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
-      const providersConfigCache = this.ctx.bean.authProviderCache.getAuthProvidersConfigCache();
-      const fullName = `${item.module}:${item.providerName}`;
-      const { authProvider, configProviderScenes } = providersConfigCache[fullName];
+      const authProvider = this.ctx.bean.authProvider.getAuthProviderBase({
+        module: item.module,
+        providerName: item.providerName,
+      });
       // validate data
       const meta = authProvider.meta;
       await this.ctx.bean.validation.validate({
@@ -37,18 +33,18 @@ module.exports = app => {
         data,
         filterOptions: true,
       });
-      // combine
-      const sceneOld = configProviderScenes[sceneName];
-      const sceneNew = this.ctx.bean.authProviderCache.purgeScene({
-        ...sceneOld,
-        ...data,
-      });
       // update
       if (!meta.scene) {
-        item.config = JSON.stringify(sceneNew);
+        item.config = JSON.stringify(data);
       } else {
         const scenes = item.scenes ? JSON.parse(item.scenes) : {};
-        scenes[sceneName] = sceneNew;
+        if (!scenes[sceneName]) {
+          scenes[sceneName] = {};
+        }
+        scenes[sceneName] = {
+          ...data,
+          disabled: scenes[sceneName].disabled,
+        };
         item.scenes = JSON.stringify(scenes);
       }
       await this.ctx.model.authProvider.update(item);
