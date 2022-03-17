@@ -65,6 +65,8 @@ export default {
       });
       await this.$meta.util.wrapPromise(login);
     },
+    async onPerformItemEnable(event, item, sceneName) {},
+    async onPerformItemDisable(event, item, sceneName) {},
     checkIfCurrent(item, sceneName) {
       return this.user.provider.id === item.scenes[sceneName].__authId;
     },
@@ -109,9 +111,17 @@ export default {
       let domAfter;
       if (!meta.scene) {
         if (this.checkIfEnable(item, 'default')) {
-          domAfter = <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item)}></eb-link>;
+          domAfter = (
+            <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item, 'default')}>
+              {this.$text('Enable')}
+            </eb-link>
+          );
         } else if (this.checkIfDisable(item, 'default')) {
-          domAfter = <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}></eb-link>;
+          domAfter = (
+            <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item, 'default')}>
+              {this.$text('Disable')}
+            </eb-link>
+          );
         } else if (this.checkIfCurrent(item, 'default')) {
           domAfter = <span>{this.$text('Current')}</span>;
         }
@@ -133,9 +143,17 @@ export default {
       //
       let domAfter;
       if (this.checkIfEnable(item, sceneName)) {
-        domAfter = <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item)}></eb-link>;
+        domAfter = (
+          <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item, sceneName)}>
+            {this.$text('Enable')}
+          </eb-link>
+        );
       } else if (this.checkIfDisable(item, sceneName)) {
-        domAfter = <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}></eb-link>;
+        domAfter = (
+          <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item, sceneName)}>
+            {this.$text('Disable')}
+          </eb-link>
+        );
       } else if (this.checkIfCurrent(item, sceneName)) {
         domAfter = <span>{this.$text('Current')}</span>;
       }
