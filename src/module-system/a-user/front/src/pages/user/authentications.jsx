@@ -50,22 +50,27 @@ export default {
         });
       });
     },
-    async onPerformEnable(event, item) {
-      if (!this.providersMap) return;
+    async onPerformItemEnable(event, item, sceneName) {
       // confirm
       await this.$view.dialog.confirm();
       // provider
-      const key = `${item.module}:${item.providerName}`;
-      const provider = this.providersMap[key];
+      const fullName = this.getItemFullName(item);
+      const provider = this.providersMap[fullName];
+      // url
+      const url = this.$meta.util.combineLoginUrl({
+        providerModule: item.module,
+        providerName: item.providerName,
+        providerScene: sceneName,
+      });
       // login
       const login = provider.component.meta.login({
         ctx: this,
+        url,
         state: 'associate',
         hash: '/a/user/user/authentications',
       });
       await this.$meta.util.wrapPromise(login);
     },
-    async onPerformItemEnable(event, item, sceneName) {},
     async onPerformItemDisable(event, item, sceneName) {},
     checkIfCurrent(item, sceneName) {
       return this.user.provider.id === item.scenes[sceneName].__authId;
@@ -112,15 +117,11 @@ export default {
       if (!meta.scene) {
         if (this.checkIfEnable(item, 'default')) {
           domAfter = (
-            <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item, 'default')}>
-              {this.$text('Enable')}
-            </eb-link>
+            <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item)}>{this.$text('Enable')}</eb-link>
           );
         } else if (this.checkIfDisable(item, 'default')) {
           domAfter = (
-            <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item, 'default')}>
-              {this.$text('Disable')}
-            </eb-link>
+            <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}>{this.$text('Disable')}</eb-link>
           );
         } else if (this.checkIfCurrent(item, 'default')) {
           domAfter = <span>{this.$text('Current')}</span>;
