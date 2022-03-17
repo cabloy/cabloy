@@ -106,12 +106,8 @@ export default {
         id: item.providerItem.id,
         sceneName,
       });
-      // set
-      const scenes = {
-        ...item.scenes,
-      };
-      delete scenes[sceneName];
-      item.scenes = scenes;
+      // delete
+      this.$delete(item.scenes, sceneName);
     },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(
