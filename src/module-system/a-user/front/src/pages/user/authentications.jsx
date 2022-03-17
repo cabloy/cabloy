@@ -39,17 +39,6 @@ export default {
       }
       console.log(this.providers);
     },
-    onPerformDisable(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('user/authenticationDisable', { authId: item.authId }).then(() => {
-          // update
-          const index = this.items.findIndex(_item => _item.providerId === item.providerId);
-          item.authId = null;
-          Vue.set(this.items, index, item);
-          return true;
-        });
-      });
-    },
     async onPerformItemEnable(event, item, sceneName) {
       // confirm
       await this.$view.dialog.confirm();
@@ -71,20 +60,26 @@ export default {
       });
       await this.$meta.util.wrapPromise(login);
     },
-    async onPerformItemDisable(event, item, sceneName) {},
-    checkIfCurrent(item, sceneName) {
-      return this.user.provider.id === item.scenes[sceneName].__authId;
+    async onPerformItemDisable(event, item, sceneName) {
+      const authId = this.getAuthId(item, sceneName);
+      await this.$view.dialog.confirm();
+      await this.$api.post('user/authenticationDisable', { authId });
+      this.clearAuthId(item, sceneName);
+      return true;
     },
-    checkIfValid(item, sceneName) {
-      return item.scenes[sceneName].__authId;
+    checkIfCurrent(item, sceneName = 'default') {
+      return this.user.provider.id === this.getAuthId(item, sceneName);
     },
-    checkIfEnable(item, sceneName) {
+    checkIfValid(item, sceneName = 'default') {
+      return !!this.getAuthId(item, sceneName);
+    },
+    checkIfEnable(item, sceneName = 'default') {
       const fullName = this.getItemFullName(item);
       const provider = this.providersMap[fullName];
-      return !item.scenes[sceneName].__authId && provider && provider.provider.scenes[sceneName];
+      return !this.getAuthId(item, sceneName) && provider && provider.provider.scenes[sceneName];
     },
-    checkIfDisable(item, sceneName) {
-      return item.scenes[sceneName].__authId && !this.checkIfCurrent(item, sceneName);
+    checkIfDisable(item, sceneName = 'default') {
+      return !!this.getAuthId(item, sceneName) && !this.checkIfCurrent(item, sceneName);
     },
     async onPerformMigrate() {
       // confirm
@@ -94,6 +89,12 @@ export default {
         query: { state: 'migrate' },
         url: '/a/user/user/authentications',
       });
+    },
+    getAuthId(item, sceneName = 'default') {
+      return item.scenes[sceneName].__authId;
+    },
+    clearAuthId(item, sceneName = 'default') {
+      this.$delete(item.scenes[sceneName], '__authId');
     },
     getItemTitle(item) {
       const meta = item.meta;
@@ -108,22 +109,22 @@ export default {
       //
       let domMedia;
       if (!meta.scene) {
-        if (this.checkIfValid(item, 'default')) {
+        if (this.checkIfValid(item)) {
           domMedia = <f7-icon f7="::done"></f7-icon>;
         }
       }
       //
       let domAfter;
       if (!meta.scene) {
-        if (this.checkIfEnable(item, 'default')) {
+        if (this.checkIfEnable(item)) {
           domAfter = (
             <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item)}>{this.$text('Enable')}</eb-link>
           );
-        } else if (this.checkIfDisable(item, 'default')) {
+        } else if (this.checkIfDisable(item)) {
           domAfter = (
             <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}>{this.$text('Disable')}</eb-link>
           );
-        } else if (this.checkIfCurrent(item, 'default')) {
+        } else if (this.checkIfCurrent(item)) {
           domAfter = <span>{this.$text('Current')}</span>;
         }
       }
