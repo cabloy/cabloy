@@ -1,31 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
-    <f7-list v-if="ready" form inline-labels no-hairlines-md>
-      <f7-list-group v-for="group of itemsGroups" :key="group.id">
-        <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.providerId">
-          <div slot="title">
-            <span>{{ item.meta.titleLocale }}</span>
-            <f7-icon v-if="isProviderCurrent(item)" f7="::star" color="orange" size="24"></f7-icon>
-          </div>
-          <div slot="after">
-            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{
-              $text('Enable')
-            }}</eb-link>
-            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{
-              $text('Disable')
-            }}</eb-link>
-          </div>
-        </eb-list-item>
-      </f7-list-group>
-    </f7-list>
-    <f7-block v-if="ready">
-      <eb-button fill :onPerform="onPerformMigrate">{{ $text('MigrateToAnotherAccount') }}</eb-button>
-    </f7-block>
-  </eb-page>
-</template>
-<script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
@@ -47,27 +19,28 @@ export default {
     },
   },
   created() {
-    // items
-    this.$api.post('user/authentications').then(data => {
-      this.items = data;
-      this.groupItems();
-    });
-    // providers
-    const action = {
-      actionModule: 'a-login',
-      actionComponent: 'ebAuthProviders',
-      name: 'loadAuthProviders',
-    };
-    this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } }).then(res => {
-      this.providers = res;
-      this.providersMap = {};
-      for (const item of this.providers) {
-        const key = `${item.provider.module}:${item.provider.providerName}`;
-        this.providersMap[key] = item;
-      }
-    });
+    this.load();
   },
   methods: {
+    async load() {
+      // items
+      this.items = await this.$api.post('user/authentications');
+      this.groupItems();
+      // providers
+      const action = {
+        actionModule: 'a-login',
+        actionComponent: 'ebAuthProviders',
+        name: 'loadAuthProviders',
+      };
+      this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } }).then(res => {
+        this.providers = res;
+        this.providersMap = {};
+        for (const item of this.providers) {
+          const key = `${item.provider.module}:${item.provider.providerName}`;
+          this.providersMap[key] = item;
+        }
+      });
+    },
     groupItems() {
       this.itemsGroups = [
         { id: 'enabled', title: this.$text('Enabled'), items: [] },
@@ -128,6 +101,28 @@ export default {
         url: '/a/user/user/authentications',
       });
     },
+    _renderList() {
+      if (!this.ready) return;
+      return <f7-list form inline-labels no-hairlines-md></f7-list>;
+    },
+    _renderBlockMigrate() {
+      if (!this.ready) return;
+      return (
+        <f7-block>
+          <eb-button fill propsOnPerform={this.onPerformMigrate}>
+            {this.$text('MigrateToAnotherAccount')}
+          </eb-button>
+        </f7-block>
+      );
+    },
+  },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar large largeTransparent title={this.$text('Authentications')} eb-back-link="Back"></eb-navbar>
+        {this._renderList()}
+        {this._renderBlockMigrate()}
+      </eb-page>
+    );
   },
 };
-</script>

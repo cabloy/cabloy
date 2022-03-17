@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = app => {
   class User extends app.Service {
     async save({ data, user }) {
@@ -52,30 +55,33 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      const listLogin = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: '/a/login/auth/list',
-      });
+      const listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
       if (listLogin.length === 0) return [];
-      const ids = listLogin.map(item => item.id);
-      // 2. list with aAuth
+      // 2. list aAuth
       const sql = `
-        select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
-          left join aAuth b on a.id=b.providerId and b.userId=?
-            where a.id in (${ids.join(',')})
+        select a.id,a.providerScene,b.module,b.providerName from aAuth a
+          inner join aAuthProvider b on a.providerId=b.id
+          where a.iid=? and a.userId=?
       `;
-      const list = await this.ctx.model.query(sql, [user.id]);
-      // sort
-      list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
-      // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      for (const item of list) {
-        const key = `${item.module}:${item.providerName}`;
-        const authProvider = authProviders[key];
-        item.meta = authProvider.meta;
+      const list = await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
+      // 3. map
+      for (const auth of list) {
+        const authId = auth.id;
+        const provider = listLogin.find(item => item.module === auth.module && item.providerName === auth.providerName);
+        // maybe disabled
+        if (!provider) continue;
+        // meta
+        if (!provider.meta.scene) {
+          provider.scenes.default.__authId = authId;
+        } else {
+          const scene = provider.scenes[auth.providerName];
+          // // maybe disabled
+          if (!scene) continue;
+          scene.__authId = authId;
+        }
       }
       // ok
-      return list;
+      return listLogin;
     }
 
     async authenticationDisable({ authId, user }) {
