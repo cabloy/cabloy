@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const Strategy = require3('passport-github').Strategy;
+const StrategyMock = require('../passport/strategyMock.js');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -18,7 +19,7 @@ module.exports = function (ctx) {
       return !!config.clientID && !!config.clientSecret;
     }
     getStrategy() {
-      return Strategy;
+      return this.allowStrategyMock ? StrategyMock : Strategy;
     }
     async onVerify(accessToken, refreshToken, profile) {
       return {

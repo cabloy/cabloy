@@ -35,6 +35,9 @@ module.exports = ctx => {
     get providerSceneValid() {
       return this.configProviderScene.__valid;
     }
+    get allowStrategyMock() {
+      return (ctx.app.meta.isTest || ctx.app.meta.isLocal) && ctx.host.indexOf('localhost:') === 0;
+    }
   }
   return IAuthProviderBase;
 };
