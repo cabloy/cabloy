@@ -37,7 +37,6 @@ export default {
         const key = `${item.provider.module}:${item.provider.providerName}`;
         this.providersMap[key] = item;
       }
-      console.log(this.providers);
     },
     async onPerformItemEnable(event, item, sceneName) {
       // confirm
