@@ -14,11 +14,6 @@ module.exports = appInfo => {
         clientSecret: '',
       },
     },
-    locales: {
-      'zh-cn': {
-        Default: '默认',
-      },
-    },
   };
 
   return config;

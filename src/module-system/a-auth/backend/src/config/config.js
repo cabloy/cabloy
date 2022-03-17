@@ -24,6 +24,15 @@ module.exports = appInfo => {
     },
   };
 
+  // provider
+  config.provider = {
+    locales: {
+      'zh-cn': {
+        Default: '默认',
+      },
+    },
+  };
+
   // login
   config.login = {
     providers: [

@@ -190,7 +190,13 @@ module.exports = ctx => {
         const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
         const itemLocales = providerItem.locales ? JSON.parse(providerItem.locales) : null;
         const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
-        const locales = extend(true, {}, configDefault && configDefault.locales, itemLocales);
+        const locales = extend(
+          true,
+          {},
+          this.configModule.provider.locales,
+          configDefault && configDefault.locales,
+          itemLocales
+        );
         configProvider = {
           scenes,
           locales,
