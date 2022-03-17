@@ -125,7 +125,27 @@ export default {
       );
     },
     _renderItemScene(item, scene, sceneName) {
-      return [];
+      //
+      let domMedia;
+      if (this.checkIfValid(item, sceneName)) {
+        domMedia = <f7-icon f7="::done"></f7-icon>;
+      }
+      //
+      let domAfter;
+      if (this.checkIfEnable(item, sceneName)) {
+        domAfter = <eb-link propsOnPerform={event => this.onPerformItemEnable(event, item)}></eb-link>;
+      } else if (this.checkIfDisable(item, sceneName)) {
+        domAfter = <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}></eb-link>;
+      } else if (this.checkIfCurrent(item, sceneName)) {
+        domAfter = <span>{this.$text('Current')}</span>;
+      }
+      return (
+        <eb-list-item key={sceneName} link={false}>
+          <div slot="title">{scene.titleLocale}</div>
+          <div slot="media">{domMedia}</div>
+          <div slot="after">{domAfter}</div>
+        </eb-list-item>
+      );
     },
     _renderItem(item) {
       const fullName = this.getItemFullName(item);
