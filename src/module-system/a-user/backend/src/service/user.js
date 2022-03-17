@@ -59,7 +59,7 @@ module.exports = app => {
       if (listLogin.length === 0) return [];
       // 2. list aAuth
       const sql = `
-        select a.id,a.providerScene,b.module,b.providerName from aAuth a
+        select a.id,a.providerId,a.providerScene,b.module,b.providerName from aAuth a
           inner join aAuthProvider b on a.providerId=b.id
           where a.iid=? and a.userId=?
       `;
