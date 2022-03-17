@@ -16,7 +16,7 @@ module.exports = function (ctx) {
       };
     }
     checkConfigValid(config) {
-      return !!config.clientID && !!config.clientSecret;
+      return this.allowStrategyMock || (!!config.clientID && !!config.clientSecret);
     }
     getStrategy() {
       return this.allowStrategyMock ? StrategyMock : Strategy;
