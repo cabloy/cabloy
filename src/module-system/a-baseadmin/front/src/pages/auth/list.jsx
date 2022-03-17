@@ -145,13 +145,15 @@ export default {
       if (item.providerItem.disabled) {
         domAction = (
           <div color="orange" propsOnPerform={event => this.onPerformItemEnable(event, item)}>
-            {this.$text('Enable')}
+            <f7-icon slot="media" f7="::play-arrow"></f7-icon>
+            <div slot="title">{this.$text('Enable')}</div>
           </div>
         );
       } else {
         domAction = (
           <div color="red" propsOnPerform={event => this.onPerformItemDisable(event, item)}>
-            {this.$text('Disable')}
+            <f7-icon slot="media" f7="::stop"></f7-icon>
+            <div slot="title">{this.$text('Disable')}</div>
           </div>
         );
       }
