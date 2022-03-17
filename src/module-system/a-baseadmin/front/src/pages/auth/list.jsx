@@ -80,6 +80,22 @@ export default {
       this.$meta.util.swipeoutClose(event.currentTarget);
       return true;
     },
+    async onPerformItemSceneAdd(event, item) {
+      // sceneName
+      const sceneName = await this.$view.dialog.prompt(this.$text('Please specify the scene name'));
+      if (!sceneName || item.scenes[sceneName]) return;
+      // add
+      await this.$api.post('authScene/add', {
+        id: this.item.providerItem.id,
+        sceneName,
+      });
+      // set
+      const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
+      this.$set(item.scenes, sceneName, {
+        title,
+        titleLocale: title,
+      });
+    },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(
         `/a/baseadmin/auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
@@ -107,6 +123,7 @@ export default {
     },
     _renderItemDirect(item) {
       const fullName = this.getItemFullName(item);
+      const meta = item.meta;
       let domAction;
       if (item.providerItem.disabled) {
         domAction = (
@@ -121,6 +138,10 @@ export default {
           </div>
         );
       }
+      let domAfter;
+      if (meta.scene) {
+        domAfter = <eb-link iconF7="::add" propsOnPerform={event => this.onPerformItemSceneAdd(event, item)}></eb-link>;
+      }
       return (
         <eb-list-item
           key={fullName}
@@ -129,6 +150,7 @@ export default {
           swipeout
         >
           <div slot="title">{this.getItemTitle(item)}</div>
+          <div slot="after">{domAfter}</div>
           <eb-context-menu>
             <div slot="right">{domAction}</div>
           </eb-context-menu>

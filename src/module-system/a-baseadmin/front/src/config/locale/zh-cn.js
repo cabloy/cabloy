@@ -45,6 +45,7 @@ export default {
   'Clear User': '清除用户',
   'Auth Info': '认证信息',
   'URL Info': '链接信息',
+  'Please specify the scene name': '请指定场景名称',
   SelectedResources: '已选择的资源',
   ActionObsoletedTitle: '已废弃',
   Atoms: '数据',

@@ -22,7 +22,7 @@ export default {
       return this.contextParams.item;
     },
     page_title() {
-      const title = this.$text('Config');
+      const title = `${this.$text('Config')}: ${this.sceneName}`;
       return this.page_getDirtyTitle(title);
     },
   },
@@ -116,18 +116,18 @@ export default {
         },
       };
     },
-    clipboardCreate() {
-      if (!this.meta) return;
-      this.$nextTick(() => {
-        for (const btn of ['loginURL', 'callbackURL']) {
-          this.addClipboardTrigger(this.$refs[btn].$el, {
-            text: (/* trigger*/) => {
-              return this.meta[btn];
-            },
-          });
-        }
-      });
-    },
+    // clipboardCreate() {
+    //   if (!this.meta) return;
+    //   this.$nextTick(() => {
+    //     for (const btn of ['loginURL', 'callbackURL']) {
+    //       this.addClipboardTrigger(this.$refs[btn].$el, {
+    //         text: (/* trigger*/) => {
+    //           return this.meta[btn];
+    //         },
+    //       });
+    //     }
+    //   });
+    // },
     _renderValidate() {
       if (!this.ready) return;
       return (
