@@ -56,6 +56,21 @@ module.exports = app => {
       // ok
       return { data };
     }
+
+    async add({ id, sceneName, data }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      scenes[sceneName] = data;
+      item.scenes = JSON.stringify(scenes);
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+    }
   }
 
   return authScene;

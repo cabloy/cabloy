@@ -85,12 +85,15 @@ export default {
       const sceneName = await this.$view.dialog.prompt(this.$text('Please specify the scene name'));
       if (!sceneName || item.scenes[sceneName]) return;
       // add
+      const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
       await this.$api.post('authScene/add', {
-        id: this.item.providerItem.id,
+        id: item.providerItem.id,
         sceneName,
+        data: {
+          title,
+        },
       });
       // set
-      const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
       this.$set(item.scenes, sceneName, {
         title,
         titleLocale: title,
