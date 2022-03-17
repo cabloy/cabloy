@@ -71,6 +71,21 @@ module.exports = app => {
         providerName: item.providerName,
       });
     }
+
+    async delete({ id, sceneName }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      delete scenes[sceneName];
+      item.scenes = JSON.stringify(scenes);
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+    }
   }
 
   return authScene;

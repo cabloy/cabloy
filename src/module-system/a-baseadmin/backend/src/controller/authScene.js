@@ -32,6 +32,16 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.delete({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+      });
+      this.ctx.success(res);
+    }
   }
 
   return authSceneController;
