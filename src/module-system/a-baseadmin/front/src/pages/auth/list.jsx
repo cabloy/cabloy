@@ -99,7 +99,20 @@ export default {
         titleLocale: title,
       });
     },
-    onPerformItemSceneDelete(event, item, sceneName) {},
+    async onPerformItemSceneDelete(event, item, sceneName) {
+      await this.$view.dialog.confirm();
+      // delete
+      await this.$api.post('authScene/delete', {
+        id: item.providerItem.id,
+        sceneName,
+      });
+      // set
+      const scenes = {
+        ...item.scenes,
+      };
+      delete scenes[sceneName];
+      item.scenes = scenes;
+    },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(
         `/a/baseadmin/auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
