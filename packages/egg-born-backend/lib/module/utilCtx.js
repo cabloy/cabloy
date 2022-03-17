@@ -163,9 +163,13 @@ function appCallback() {
     ctx.subdomain = typeof subdomain === 'undefined' ? ctxCaller.subdomain : subdomain;
 
     // query params body
-    if (query) ctx.query = query;
-    if (params) ctx.params = params;
-    ctx.request.body = body || null; // not undefined
+    if (query) {
+      ctx.req.query = ctx.request.query = query;
+    }
+    if (params) {
+      ctx.req.params = ctx.request.params = params;
+    }
+    ctx.req.body = ctx.request.body = body || null; // not undefined
 
     // headers
     if (headers) Object.assign(ctx.headers, headers);
