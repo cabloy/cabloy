@@ -1,4 +1,4 @@
-import buttonGithub from './components/buttonGithub.vue';
+import buttonGithub from './components/buttonGithub.jsx';
 import './assets/css/module.css';
 
 let Vue;

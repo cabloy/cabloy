@@ -1,9 +1,3 @@
-<template>
-  <eb-button :tooltip="this.provider.meta.titleLocale" :onPerform="onPerformSignIn"
-    ><img src="../assets/img/github.png"
-  /></eb-button>
-</template>
-<script>
 import Vue from 'vue';
 const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 export default {
@@ -26,6 +20,12 @@ export default {
       this.$options.meta.login({ ctx: this, url });
     },
   },
+  render() {
+    const imgSrc = require('../assets/img/github.png');
+    return (
+      <eb-button tooltip={this.provider.meta.titleLocale} propsOnPerform={this.onPerformSignIn}>
+        <img src={imgSrc} />
+      </eb-button>
+    );
+  },
 };
-</script>
-<style scoped></style>
