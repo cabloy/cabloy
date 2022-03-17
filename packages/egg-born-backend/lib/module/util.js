@@ -358,16 +358,26 @@ function delegateProperties(ctx, ctxCaller) {
   // if (ctx.request.body) req.body = ctx.request.body;
 }
 function delegateProperty(ctx, ctxCaller, property) {
+  const keyMock = `__executeBean__mock__${property}__`;
+  const keyOriginal = `__executeBean__mock__${property}__original__`;
+  if (['cookies', 'session', 'headers'].includes(property)) {
+    ctx[keyOriginal] = ctx[property];
+  }
   Object.defineProperty(ctx, property, {
     get() {
       const value = ctxCaller && ctxCaller[property];
       if (value) return value;
-      if (property === 'user' || property === 'body') return value;
-      const key = `__executeBean__mock__${property}__`;
-      if (!ctx[key]) {
-        ctx[key] = {};
+      //
+      if (['user', 'body'].includes(property)) return value;
+      //
+      if (['cookies', 'session', 'headers'].includes(property)) {
+        return ctx[keyOriginal];
       }
-      return ctx[key];
+      //
+      if (!ctx[keyMock]) {
+        ctx[keyMock] = {};
+      }
+      return ctx[keyMock];
     },
   });
 }
