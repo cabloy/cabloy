@@ -99,6 +99,7 @@ export default {
         titleLocale: title,
       });
     },
+    onPerformItemSceneDelete(event, item, sceneName) {},
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(
         `/a/baseadmin/auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
@@ -161,20 +162,39 @@ export default {
       );
     },
     _renderItemScene(item, scene, sceneName) {
-      let domAction;
+      // actions
+      const domActions = [];
       if (scene.disabled) {
-        domAction = (
-          <div color="orange" propsOnPerform={event => this.onPerformItemSceneEnable(event, item, sceneName)}>
+        domActions.push(
+          <div
+            key="actionEnable"
+            color="orange"
+            propsOnPerform={event => this.onPerformItemSceneEnable(event, item, sceneName)}
+          >
             {this.$text('Enable')}
           </div>
         );
       } else {
-        domAction = (
-          <div color="red" propsOnPerform={event => this.onPerformItemSceneDisable(event, item, sceneName)}>
+        domActions.push(
+          <div
+            key="actionDisable"
+            color="red"
+            propsOnPerform={event => this.onPerformItemSceneDisable(event, item, sceneName)}
+          >
             {this.$text('Disable')}
           </div>
         );
       }
+      domActions.push(
+        <div
+          key="actionDelete"
+          color="red"
+          propsOnPerform={event => this.onPerformItemSceneDelete(event, item, sceneName)}
+        >
+          {this.$text('Delete')}
+        </div>
+      );
+      // after
       let domAfter;
       if (scene.disabled) {
         domAfter = <f7-badge>{this.$text('Disabled')}</f7-badge>;
@@ -189,7 +209,7 @@ export default {
           <div slot="title">{scene.titleLocale}</div>
           <div slot="after">{domAfter}</div>
           <eb-context-menu>
-            <div slot="right">{domAction}</div>
+            <div slot="right">{domActions}</div>
           </eb-context-menu>
         </eb-list-item>
       );
