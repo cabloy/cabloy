@@ -196,7 +196,7 @@ export default {
       }
       return (
         <f7-list form inline-labels no-hairlines-md>
-          {children}
+          <f7-list-group>{children}</f7-list-group>
         </f7-list>
       );
     },
