@@ -1,6 +1,5 @@
-const WechatHelperFn = require('../common/wechatHelper.js');
-
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthMini extends app.Service {
     async login({ scene, code, detail }) {
       let session_key;
@@ -40,9 +39,15 @@ module.exports = app => {
         userInfo.country = detail.userInfo.country;
         userInfo.headimgurl = detail.userInfo.avatarUrl;
       }
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'wechatmini',
+        providerScene: scene,
+      });
+      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // verify
-      const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: `wechatmini${scene}`, openid, userInfo, needLogin: true });
+      await this.ctx.bean.local.helper.verifyAuthUser({ beanProvider, openid, userInfo, needLogin: true });
       // save session_key, because ctx.state.user maybe changed
       await apiMini.saveSessionKey(session_key);
       // echo
