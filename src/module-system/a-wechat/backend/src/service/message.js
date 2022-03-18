@@ -1,16 +1,14 @@
-const WechatHelperFn = require('../common/wechatHelper.js');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
-    async index({ message }) {
+    async index({ message, config, beanProvider }) {
       let result;
       // event: subscribe
       if (message.MsgType === 'event') {
         if (message.Event === 'subscribe') {
-          result = await this._subscribeUser({ openid: message.FromUserName, message });
+          result = await this._subscribeUser({ openid: message.FromUserName, message, config, beanProvider });
         } else if (message.Event === 'unsubscribe') {
-          result = await this._unsubscribeUser({ openid: message.FromUserName, message });
+          result = await this._unsubscribeUser({ openid: message.FromUserName, message, config, beanProvider });
         }
       }
       // raise event
@@ -27,7 +25,7 @@ module.exports = app => {
               FromUserName: message.ToUserName,
               CreateTime: new Date().getTime(),
               MsgType: 'text',
-              Content: this.ctx.config.account.public.message.reply.default,
+              Content: config.message.reply.default,
             };
           }
           await next();
@@ -35,19 +33,18 @@ module.exports = app => {
       });
     }
 
-    async _subscribeUser({ openid, message }) {
+    async _subscribeUser({ openid, message, config, beanProvider }) {
       // user info
       const userInfo = await this.ctx.bean.wechat.app.getUser({ openid });
       // verify auth user
-      const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo, needLogin: true });
+      await this.ctx.bean.local.helper.verifyAuthUser({ beanProvider, openid, userInfo, needLogin: true });
       // ok
       return {
         ToUserName: message.FromUserName,
         FromUserName: message.ToUserName,
         CreateTime: new Date().getTime(),
         MsgType: 'text',
-        Content: this.ctx.config.account.public.message.reply.subscribe,
+        Content: config.message.reply.subscribe,
       };
     }
 
