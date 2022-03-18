@@ -4,12 +4,15 @@ const extend = require3('extend2');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Local {
-    // scene: wechat/wechatweb/wechatmini
-    async verifyAuthUser({ scene, openid, userInfo, state, needLogin = false }) {
+    get modelWechatUser() {
+      return ctx.model(moduleInfo.relativeName).wechatUser;
+    }
+
+    async verifyAuthUser({ beanProvider, openid, userInfo, state, needLogin = false }) {
       // ensure wechat user
-      const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
+      const userWechatId = await this._ensureWechatUser({ beanProvider, openid, userInfo });
       // ensure auth user
-      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo });
+      const profileUser = await this._ensureAuthUser({ beanProvider, openid, userInfo });
       // verify
       const verifyUser = await ctx.bean.user.verify({ state, profileUser });
       if (needLogin) {
@@ -21,10 +24,10 @@ module.exports = ctx => {
       return verifyUser;
     }
 
-    async _ensureWechatUser({ scene, openid, userInfo }) {
+    async _ensureWechatUser({ beanProvider, openid, userInfo }) {
       let userWechatId;
       // wechat user
-      let userWechat = await ctx.model.wechatUser.get({ openid });
+      let userWechat = await this.modelWechatUser.get({ openid });
       const exists = !!userWechat;
       if (!userWechat) {
         userWechat = {};
@@ -57,7 +60,7 @@ module.exports = ctx => {
         'qr_scene',
         'qr_scene_str',
       ];
-      userInfo.scene = scene;
+      userInfo.scene = beanProvider.providerScene;
       for (const field of fields) {
         if (userInfo[field] === undefined || userInfo[field] === userWechat[field]) {
           delete userWechat[field];
@@ -95,7 +98,7 @@ module.exports = ctx => {
     }
 
     // profileId : unionid:openid
-    async _ensureAuthUser({ scene, openid, userInfo }) {
+    async _ensureAuthUser({ beanProvider, openid, userInfo }) {
       // config
       const config = ctx.config.module(moduleInfo.relativeName);
       // model auth

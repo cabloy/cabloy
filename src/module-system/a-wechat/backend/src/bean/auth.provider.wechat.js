@@ -43,7 +43,7 @@ module.exports = function (ctx) {
     async onVerify(accessToken, refreshToken, userInfo) {
       const state = ctx.request.query.state || 'login';
       const verifyUser = await this.localHelper.verifyAuthUser({
-        scene: sceneInfo.scene,
+        beanProvider: this,
         openid: userInfo.openid,
         userInfo,
         state,
