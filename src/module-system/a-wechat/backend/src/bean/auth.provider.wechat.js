@@ -40,8 +40,7 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, userInfo) {
-      const state = ctx.request.query.state || 'login';
+    async onVerify(accessToken, refreshToken, userInfo, expires_in, state) {
       const verifyUser = await this.localHelper.verifyAuthUser({
         beanProvider: this,
         openid: userInfo.openid,

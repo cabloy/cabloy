@@ -73,6 +73,9 @@ function _createStrategyCallback(beanProvider) {
     const ctx = req.ctx;
     const done = args[args.length - 1];
     args = args.slice(0, args.length - 1);
+    // state: login/associate
+    const state = ctx.request.query.state || 'login';
+    args.push(state);
     try {
       // onVerify
       const verifyUser = await beanProvider.onVerify(...args);
