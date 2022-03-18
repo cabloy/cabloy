@@ -3,7 +3,12 @@ const WechatAPI = require3('@zhennann/co-wechat-api');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
+  function getCacheDb() {
+    return ctx.cache.db.module(moduleInfo.relativeName);
+  }
+  // bean.wechat.app
+  // bean.wechat.mini.{providerScene}
+  // bean.wechat.util
   return function () {
     return new Proxy(
       {},
@@ -20,7 +25,7 @@ module.exports = function (ctx) {
               {
                 get(obj, prop) {
                   if (!obj[prop]) {
-                    obj[prop] = _createWechatApiMini({ sceneShort: prop });
+                    obj[prop] = _createWechatApiMini({ providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -36,23 +41,31 @@ module.exports = function (ctx) {
     );
   };
 
+  // wechat
   function _createWechatApiApp() {
+    // bean provider
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleInfo.relativeName,
+      providerName: 'wechat',
+      providerScene: null,
+    });
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
     // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.public;
+    const config = beanProvider.configProviderScene;
     // api
     const api = new WechatAPI(
       config.appID,
       config.appSecret,
       async function () {
         const cacheKey = 'wechat-token';
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (token) {
         const cacheKey = 'wechat-token';
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -60,14 +73,14 @@ module.exports = function (ctx) {
     api.registerTicketHandle(
       async function (type) {
         const cacheKey = `wechat-jsticket:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
         const cacheKey = `wechat-jsticket:${type}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -75,23 +88,30 @@ module.exports = function (ctx) {
     return api;
   }
 
-  function _createWechatApiMini({ sceneShort }) {
+  function _createWechatApiMini({ providerScene }) {
+    // bean provider
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleInfo.relativeName,
+      providerName: 'wechatmini',
+      providerScene,
+    });
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
     // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
+    const config = beanProvider.configProviderScene;
     // api
     const api = new WechatAPI(
       config.appID,
       config.appSecret,
       async function () {
         const cacheKey = 'wechatmini-token';
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (token) {
         const cacheKey = 'wechatmini-token';
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -99,14 +119,14 @@ module.exports = function (ctx) {
     api.registerTicketHandle(
       async function (type) {
         const cacheKey = `wechatmini-jsticket:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
         const cacheKey = `wechatmini-jsticket:${type}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -114,11 +134,11 @@ module.exports = function (ctx) {
     api.registerSessionKeyHandle(
       async function () {
         const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (sessionKey) {
         const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
+        await getCacheDb().set(cacheKey, sessionKey);
       }
     );
     // ready
