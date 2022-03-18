@@ -1,9 +1,13 @@
 const require3 = require('require3');
 const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageMiniController extends app.Controller {
+    get localUtils() {
+      return this.ctx.bean.local.utils;
+    }
+
     async index() {
       // scene
       let scene = this.ctx.params.scene || 'default';
@@ -11,8 +15,15 @@ module.exports = app => {
       if (scene === 'index') scene = 'default';
       // query
       const query = this.ctx.query;
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'wechatmini',
+        providerScene: scene,
+      });
+      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // config
-      const config = this.ctx.config.account.minis[scene];
+      const config = beanProvider.configProviderScene;
       // encrypted
       const encrypted = query.encrypt_type === 'aes';
       // wechat crypto
@@ -28,7 +39,7 @@ module.exports = app => {
       } else {
         messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
-        await this.ctx.service.messageMini.index({ scene, message: messageIn });
+        await this.ctx.service.messageMini.index({ scene, message: messageIn, config, beanProvider });
         // ok
         this.ctx.status = 200;
         this.ctx.type = 'text/plain';
@@ -44,7 +55,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -64,7 +75,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          wechatUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
