@@ -9,7 +9,7 @@ module.exports = app => {
 
     async getOpenidMini() {
       const res = await this.service.test.getOpenidMini({
-        scene: this.ctx.request.body.scene,
+        providerScene: this.ctx.request.body.providerScene,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

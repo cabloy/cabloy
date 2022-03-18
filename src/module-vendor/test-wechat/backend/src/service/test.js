@@ -9,9 +9,9 @@ module.exports = app => {
       };
     }
 
-    async getOpenidMini({ scene, user }) {
+    async getOpenidMini({ providerScene, user }) {
       const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: `wechatmini${scene}` });
+      const wechatUser = await modelWechatUser.get({ userId: user.id, providerScene: `wechatmini${scene}` });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,

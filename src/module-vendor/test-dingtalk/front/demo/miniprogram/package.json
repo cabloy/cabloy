@@ -1,6 +1,6 @@
 {
   "name": "cabloy-miniprogram",
   "dependencies": {
-    "cabloy-miniprogram": "^2.0.2"
+    "cabloy-miniprogram": "^3.0.0"
   }
 }

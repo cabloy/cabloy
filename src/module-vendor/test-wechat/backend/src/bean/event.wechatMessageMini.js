@@ -3,13 +3,13 @@ module.exports = ctx => {
   class eventBean {
     async execute(context, next) {
       const data = context.data;
-      // scene
-      const scene = data.scene;
+      // providerScene
+      const providerScene = data.providerScene;
       // message
       const message = data.message;
       if (message.MsgType === 'text') {
         const text = `${ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-        await ctx.bean.wechat.mini[scene].sendText(message.FromUserName, text);
+        await ctx.bean.wechat.mini[providerScene].sendText(message.FromUserName, text);
         // break
         return;
       }
