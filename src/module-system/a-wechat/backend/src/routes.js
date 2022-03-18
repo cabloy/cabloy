@@ -9,14 +9,14 @@ module.exports = app => {
     // messageMini
     {
       method: 'get',
-      path: 'messageMini/:scene',
+      path: 'messageMini/:providerScene',
       controller: 'messageMini',
       action: 'index',
       meta: { auth: { enable: false } },
     },
     {
       method: 'post',
-      path: 'messageMini/:scene',
+      path: 'messageMini/:providerScene',
       controller: 'messageMini',
       action: 'index',
       meta: { auth: { enable: false } },

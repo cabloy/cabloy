@@ -147,7 +147,7 @@ module.exports = function (ctx) {
 
   function _createWechatApiUtil() {
     return {
-      // scene: empty/wechat/wechatweb/wechatmini/xxx,xxx,xxx
+      // providerScene: empty/wechat/wechatweb/wechatmini/xxx,xxx,xxx
       in({ providerName, providerScene }) {
         //  providerName is wechat
         if (!providerName) providerName = 'wechat';

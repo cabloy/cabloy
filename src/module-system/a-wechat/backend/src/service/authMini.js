@@ -1,13 +1,13 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthMini extends app.Service {
-    async login({ scene, code, detail }) {
+    async login({ providerScene, code, detail }) {
       let session_key;
       let openid;
       let unionid;
 
       // mini
-      const apiMini = this.ctx.bean.wechat.mini[scene];
+      const apiMini = this.ctx.bean.wechat.mini[providerScene];
 
       // code
       if (code) {
@@ -43,7 +43,7 @@ module.exports = app => {
       const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
         module: moduleInfo.relativeName,
         providerName: 'wechatmini',
-        providerScene: scene,
+        providerScene,
       });
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // verify
