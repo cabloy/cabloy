@@ -90,7 +90,7 @@ module.exports = function (cabloy) {
 
 var configDefault = {
   base: {
-    scene: 'default',
+    providerScene: 'default',
     locale: 'en-us'
   },
   api: {
@@ -302,11 +302,11 @@ module.exports = function (cabloy) {
       var _this = this;
 
       return new Promise(function (resolve, reject) {
-        var scene = cabloy.config.base.scene;
+        var providerScene = cabloy.config.base.providerScene;
 
         if (options && options.detail) {
           _this.__login({
-            scene: scene,
+            providerScene: providerScene,
             code: null,
             detail: options.detail
           }).then(resolve)["catch"](reject);
@@ -320,7 +320,7 @@ module.exports = function (cabloy) {
                     wx.getUserInfo({
                       success: function success(detail) {
                         _this.__login({
-                          scene: scene,
+                          providerScene: providerScene,
                           code: code,
                           detail: detail
                         }).then(resolve)["catch"](reject);
@@ -328,7 +328,7 @@ module.exports = function (cabloy) {
                     });
                   } else {
                     _this.__login({
-                      scene: scene,
+                      providerScene: providerScene,
                       code: code,
                       detail: null
                     }).then(resolve)["catch"](reject);
@@ -346,11 +346,11 @@ module.exports = function (cabloy) {
       return new Promise(function (resolve, reject) {
         wx.qy.login({
           success: function success(res) {
-            var scene = cabloy.config.base.scene;
+            var providerScene = cabloy.config.base.providerScene;
             var code = res.code;
 
             _this2.__login({
-              scene: scene,
+              providerScene: providerScene,
               code: code
             }).then(resolve)["catch"](reject);
           }
@@ -363,11 +363,11 @@ module.exports = function (cabloy) {
       return new Promise(function (resolve, reject) {
         dd.getAuthCode({
           success: function success(res) {
-            var scene = cabloy.config.base.scene;
+            var providerScene = cabloy.config.base.providerScene;
             var code = res.authCode;
 
             _this3.__login({
-              scene: scene,
+              providerScene: providerScene,
               code: code
             }).then(resolve)["catch"](reject);
           }
@@ -375,12 +375,12 @@ module.exports = function (cabloy) {
       });
     },
     __login: function __login(_ref) {
-      var scene = _ref.scene,
+      var providerScene = _ref.providerScene,
           code = _ref.code,
           detail = _ref.detail;
       var url = "/a/".concat(cabloy.data.container, "/authMini/login?locale=").concat(cabloy.data.locale);
       return cabloy.api.post(url, {
-        scene: scene,
+        providerScene: providerScene,
         code: code,
         detail: detail
       }).then(function (data) {

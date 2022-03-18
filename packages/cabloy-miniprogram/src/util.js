@@ -22,10 +22,10 @@ module.exports = function (cabloy) {
 
     __login_wechat(options) {
       return new Promise((resolve, reject) => {
-        const scene = cabloy.config.base.scene;
+        const providerScene = cabloy.config.base.providerScene;
         if (options && options.detail) {
           // 直接进行后台登录
-          this.__login({ scene, code: null, detail: options.detail }).then(resolve).catch(reject);
+          this.__login({ providerScene, code: null, detail: options.detail }).then(resolve).catch(reject);
         } else {
           // 小程序登录
           wx.login({
@@ -39,12 +39,12 @@ module.exports = function (cabloy) {
                     wx.getUserInfo({
                       success: detail => {
                         // 后台登录
-                        this.__login({ scene, code, detail }).then(resolve).catch(reject);
+                        this.__login({ providerScene, code, detail }).then(resolve).catch(reject);
                       },
                     });
                   } else {
                     // 虽然没有userInfo，但有openid，仍然可以进行后台登录
-                    this.__login({ scene, code, detail: null }).then(resolve).catch(reject);
+                    this.__login({ providerScene, code, detail: null }).then(resolve).catch(reject);
                   }
                 },
               });
@@ -59,9 +59,9 @@ module.exports = function (cabloy) {
         // 小程序登录
         wx.qy.login({
           success: res => {
-            const scene = cabloy.config.base.scene;
+            const providerScene = cabloy.config.base.providerScene;
             const code = res.code;
-            this.__login({ scene, code }).then(resolve).catch(reject);
+            this.__login({ providerScene, code }).then(resolve).catch(reject);
           },
         });
       });
@@ -73,18 +73,18 @@ module.exports = function (cabloy) {
         // eslint-disable-next-line
         dd.getAuthCode({
           success: res => {
-            const scene = cabloy.config.base.scene;
+            const providerScene = cabloy.config.base.providerScene;
             const code = res.authCode;
-            this.__login({ scene, code }).then(resolve).catch(reject);
+            this.__login({ providerScene, code }).then(resolve).catch(reject);
           },
         });
       });
     },
 
-    __login({ scene, code, detail }) {
+    __login({ providerScene, code, detail }) {
       // 后台登录
       const url = `/a/${cabloy.data.container}/authMini/login?locale=${cabloy.data.locale}`;
-      return cabloy.api.post(url, { scene, code, detail }).then(data => {
+      return cabloy.api.post(url, { providerScene, code, detail }).then(data => {
         // user
         cabloy.data.user = data.user;
         // instance

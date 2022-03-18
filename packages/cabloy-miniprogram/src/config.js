@@ -1,6 +1,6 @@
 const configDefault = {
   base: {
-    scene: 'default',
+    providerScene: 'default',
     locale: 'en-us',
   },
   api: {
