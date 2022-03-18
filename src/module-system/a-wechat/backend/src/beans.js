@@ -5,6 +5,7 @@ const middlewareInWechat = require('./bean/middleware.inWechat.js');
 const authProviderWechat = require('./bean/auth.provider.wechat.js');
 const authProviderWechatweb = require('./bean/auth.provider.wechatweb.js');
 const authProviderWechatmini = require('./bean/auth.provider.wechatmini.js');
+const localHelper = require('./bean/local.helper.js');
 const localUtils = require('./bean/local.utils.js');
 const beanWechat = require('./bean/bean.wechat.js');
 
@@ -43,6 +44,10 @@ module.exports = app => {
       bean: authProviderWechatmini,
     },
     // local
+    'local.helper': {
+      mode: 'ctx',
+      bean: localHelper,
+    },
     'local.utils': {
       mode: 'ctx',
       bean: localUtils,

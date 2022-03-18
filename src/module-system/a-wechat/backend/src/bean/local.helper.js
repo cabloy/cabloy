@@ -1,15 +1,10 @@
 const require3 = require('require3');
 const bb = require3('bluebird');
 const extend = require3('extend2');
-const authProviderScenes = require('./authProviderScenes.js');
 
-module.exports = function (ctx) {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class WechatHelper {
-    getSceneInfo(scene) {
-      return authProviderScenes.getScene(scene);
-    }
-
+  class Local {
     // scene: wechat/wechatweb/wechatmini
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state }) {
       // ensure wechat user
@@ -181,6 +176,5 @@ module.exports = function (ctx) {
       return profileUser;
     }
   }
-
-  return WechatHelper;
+  return Local;
 };
