@@ -42,7 +42,7 @@ module.exports = app => {
       }
       // verify
       const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: `wechatmini${scene}`, openid, userInfo });
+      await wechatHelper.verifyAuthUser({ scene: `wechatmini${scene}`, openid, userInfo, needLogin: true });
       // save session_key, because ctx.state.user maybe changed
       await apiMini.saveSessionKey(session_key);
       // echo

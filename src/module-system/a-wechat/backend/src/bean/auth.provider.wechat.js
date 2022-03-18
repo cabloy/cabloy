@@ -10,6 +10,9 @@ module.exports = function (ctx) {
     get cacheDb() {
       return ctx.cache.db.module(moduleInfo.relativeName);
     }
+    get localHelper() {
+      return ctx.bean.local.module(moduleInfo.relativeName).helper;
+    }
     async getConfigDefault() {
       return this.configModule.account.wechat;
     }
@@ -39,21 +42,14 @@ module.exports = function (ctx) {
     }
     async onVerify(accessToken, refreshToken, userInfo) {
       const state = ctx.request.query.state || 'login';
-      const wechatHelper = new (WechatHelperFn(ctx))();
-      wechatHelper
-        .verifyAuthUser({
-          scene: sceneInfo.scene,
-          openid: userInfo.openid,
-          userInfo,
-          state,
-          cbVerify: (profileUser, cb) => {
-            app.passport.doVerify(req, profileUser, cb);
-          },
-        })
-        .then(verifyUser => {
-          done(null, verifyUser);
-        })
-        .catch(done);
+      const verifyUser = await this.localHelper.verifyAuthUser({
+        scene: sceneInfo.scene,
+        openid: userInfo.openid,
+        userInfo,
+        state,
+        needLogin: false,
+      });
+      return verifyUser;
     }
   }
 

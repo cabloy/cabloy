@@ -40,7 +40,7 @@ module.exports = app => {
       const userInfo = await this.ctx.bean.wechat.app.getUser({ openid });
       // verify auth user
       const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo });
+      await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo, needLogin: true });
       // ok
       return {
         ToUserName: message.FromUserName,

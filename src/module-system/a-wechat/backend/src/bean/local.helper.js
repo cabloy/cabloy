@@ -1,25 +1,19 @@
 const require3 = require('require3');
-const bb = require3('bluebird');
 const extend = require3('extend2');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Local {
     // scene: wechat/wechatweb/wechatmini
-    async verifyAuthUser({ scene, openid, userInfo, cbVerify, state }) {
+    async verifyAuthUser({ scene, openid, userInfo, state, needLogin = false }) {
       // ensure wechat user
       const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
       // ensure auth user
       const profileUser = await this._ensureAuthUser({ scene, openid, userInfo });
       // verify
-      let verifyUser;
-      if (!cbVerify) {
-        verifyUser = await ctx.bean.user.verify({ state, profileUser });
+      const verifyUser = await ctx.bean.user.verify({ state, profileUser });
+      if (needLogin) {
         await ctx.login(verifyUser);
-      } else {
-        verifyUser = await bb.fromCallback(cb => {
-          cbVerify(profileUser, cb);
-        });
       }
       // update wechat userId
       await this._updateWechatUser({ userId: verifyUser.agent.id, userWechatId, userInfo });
