@@ -37,8 +37,7 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, userInfo, expires_in) {
-      const ctx = req.ctx;
+    async onVerify(accessToken, refreshToken, userInfo) {
       const state = ctx.request.query.state || 'login';
       const wechatHelper = new (WechatHelperFn(ctx))();
       wechatHelper
