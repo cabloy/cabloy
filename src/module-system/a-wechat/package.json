@@ -24,7 +24,7 @@
   "author": "zhennann",
   "dependencies": {
     "@zhennann/co-wechat-api": "^3.10.6",
-    "@zhennann/passport-wechat": "^3.0.4",
+    "@zhennann/passport-wechat": "^4.0.0",
     "egg-born-mock": "^2.1.4",
     "egg-born-module-a-hostwechat-sync": "^4.1.6",
     "extend2": "^1.0.0",
