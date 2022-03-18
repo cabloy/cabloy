@@ -7,15 +7,32 @@ module.exports = function (ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
+    get cacheDb() {
+      return ctx.cache.db.module(moduleInfo.relativeName);
+    }
     async getConfigDefault() {
-      const configGitHub = this.configModule.account.github;
-      return {
-        scenes: configGitHub.scenes,
-        locales: configGitHub.locales,
-      };
+      return this.configModule.account.wechat;
     }
     checkConfigValid(config) {
-      return !!config.clientID && !!config.clientSecret;
+      return !!config.appID && !!config.appSecret;
+    }
+    async adjustConfig(config) {
+      function getCacheKey(openid) {
+        return `wechat-webtoken:wechat:${openid}`;
+      }
+      config.getToken = (openid, cb) => {
+        this.cacheDb
+          .get(getCacheKey(openid))
+          .then(token => cb(null, token))
+          .catch(cb);
+      };
+      config.saveToken = (openid, token, cb) => {
+        this.cacheDb
+          .set(getCacheKey(openid), token, (token.expires_in - 10) * 1000)
+          .then(() => cb(null))
+          .catch(cb);
+      };
+      return config;
     }
     getStrategy() {
       return Strategy;
