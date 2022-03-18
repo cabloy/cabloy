@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const Strategy = require3('passport-github').Strategy;
-const StrategyMock = require('../passport/strategyMock.js');
+const StrategyMock = require('../config/passport/strategyMock.js');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
