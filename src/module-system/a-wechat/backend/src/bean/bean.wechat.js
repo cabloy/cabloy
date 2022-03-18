@@ -148,21 +148,21 @@ module.exports = function (ctx) {
   function _createWechatApiUtil() {
     return {
       // scene: empty/wechat/wechatweb/wechatmini/xxx,xxx,xxx
-      in(scene) {
-        // scene
-        if (!scene) scene = 'wechat';
-        if (typeof scene === 'string') scene = scene.split(',');
-        // provider
+      in({ providerName, providerScene }) {
+        //  providerName is wechat
+        if (!providerName) providerName = 'wechat';
+        // 1. provider
         const provider = ctx.state.user && ctx.state.user.provider;
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
-        // find any match
-        for (const item of scene) {
-          const ok =
-            provider.providerName === item || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
-          if (ok) return true;
-        }
-        // not found
-        return false;
+        // 2. wechat/wechatweb
+        if (['wechat', 'wechatweb'].includes(providerName) && provider.providerName === providerName) return true;
+        // 3. wechatmini
+        if (providerName !== 'wechatmini') return false;
+        // 3.1 null means all
+        if (!providerScene || providerScene === provider.providerScene) return true;
+        // 3.2 some scenes
+        if (!Array.isArray(providerScene)) providerScene = providerScene.split(',');
+        return providerScene.includes(provider.providerScene);
       },
     };
   }

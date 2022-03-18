@@ -9,7 +9,8 @@ module.exports = app => {
       middlewares: 'inWechat',
       meta: {
         inWechat: {
-          scene: 'wechatmini',
+          providerName: 'wechatmini',
+          providerScene: null,
         },
       },
     },
