@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const Strategy = require3('passport-github').Strategy;
+const Strategy = require3('@zhennann/passport-wechat').Strategy;
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -20,21 +20,24 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, profile) {
-      return {
-        module: this.providerModule,
-        provider: this.providerName,
-        providerScene: this.providerScene,
-        profileId: profile.id,
-        profile: {
-          userName: profile.username,
-          realName: profile.displayName,
-          avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
-          accessToken,
-          refreshToken,
-          profile,
-        },
-      };
+    async onVerify(accessToken, refreshToken, userInfo, expires_in) {
+      const ctx = req.ctx;
+      const state = ctx.request.query.state || 'login';
+      const wechatHelper = new (WechatHelperFn(ctx))();
+      wechatHelper
+        .verifyAuthUser({
+          scene: sceneInfo.scene,
+          openid: userInfo.openid,
+          userInfo,
+          state,
+          cbVerify: (profileUser, cb) => {
+            app.passport.doVerify(req, profileUser, cb);
+          },
+        })
+        .then(verifyUser => {
+          done(null, verifyUser);
+        })
+        .catch(done);
     }
   }
 

@@ -1,110 +1,76 @@
-const require3 = require('require3');
-const strategy = require3('@zhennann/passport-wechat').Strategy;
-const WechatHelperFn = require('../common/wechatHelper.js');
-const authProviders = require('../common/authProviders.js');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  function _createProvider(sceneInfo) {
-    const config = ctx.config.module(moduleInfo.relativeName).account[sceneInfo.configKey];
-    if (!config.appID || !config.appSecret) return null;
+  // wechat
+  function _createProviderWechat() {
     return {
       meta: {
-        title: sceneInfo.title,
+        title: 'Wechat Public',
         mode: 'redirect',
-        component: `button${sceneInfo.authProvider}`,
-      },
-      config: {
-        client: sceneInfo.client,
-        scope: sceneInfo.scope,
-      },
-      configFunctions: {
-        getConfig(ctx) {
-          const config = ctx.config.module(moduleInfo.relativeName).account[sceneInfo.configKey];
-          return { appID: config.appID, appSecret: config.appSecret };
+        bean: {
+          module: moduleInfo.relativeName,
+          name: 'wechat',
         },
-        getToken(ctx, openid, cb) {
-          const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
-          ctx.cache.db
-            .module(moduleInfo.relativeName)
-            .get(name)
-            .then(token => {
-              cb(null, token);
-            })
-            .catch(cb);
+        render: {
+          module: moduleInfo.relativeName,
+          name: 'buttonWechat',
         },
-        saveToken(ctx, openid, token, cb) {
-          const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
-          ctx.cache.db
-            .module(moduleInfo.relativeName)
-            .set(name, token, (token.expires_in - 10) * 1000)
-            .then(() => {
-              cb(null);
-            })
-            .catch(cb);
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'authWechat',
         },
-      },
-      handler: app => {
-        return {
-          strategy,
-          callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
-            const ctx = req.ctx;
-            const state = ctx.request.query.state || 'login';
-            const wechatHelper = new (WechatHelperFn(ctx))();
-            wechatHelper
-              .verifyAuthUser({
-                scene: sceneInfo.scene,
-                openid: userInfo.openid,
-                userInfo,
-                state,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              })
-              .then(verifyUser => {
-                done(null, verifyUser);
-              })
-              .catch(done);
-          },
-        };
       },
     };
   }
 
-  function _createProviderMini(sceneInfo, sceneShort) {
-    const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
-    if (!config.appID || !config.appSecret) return null;
+  // wechatweb
+  function _createProviderWechatweb() {
     return {
       meta: {
-        title: sceneInfo.title,
+        title: 'Wechat Web',
+        mode: 'redirect',
+        bean: {
+          module: moduleInfo.relativeName,
+          name: 'wechatweb',
+        },
+        render: {
+          module: moduleInfo.relativeName,
+          name: 'buttonWechatweb',
+        },
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'authWechatweb',
+        },
+      },
+    };
+  }
+
+  // wechatmini
+  function _createProviderWechatmini() {
+    return {
+      meta: {
+        title: 'Wechat Miniprogram',
         mode: 'direct',
         disableAssociate: true,
+        bean: {
+          module: moduleInfo.relativeName,
+          name: 'wechatmini',
+        },
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'authWechatmini',
+        },
       },
-      config: {},
-      handler: null,
     };
   }
 
   const metaAuth = {
     providers: {
-      _createProvider,
+      wechat: _createProviderWechat(),
+      wechatweb: _createProviderWechatweb(),
+      wechatmini: _createProviderWechatmini(),
     },
   };
-
-  // wechat/wechatweb
-  for (const scene of ['wechat', 'wechatweb']) {
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
-  }
-
-  // minis
-  const minis = ctx.config.module(moduleInfo.relativeName).account.minis;
-  for (const sceneShort in minis) {
-    const scene = `wechatmini${sceneShort}`;
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo, sceneShort);
-  }
 
   // ok
   return metaAuth;

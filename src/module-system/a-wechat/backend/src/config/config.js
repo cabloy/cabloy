@@ -20,8 +20,10 @@ module.exports = appInfo => {
   // account
   config.account = {};
 
-  // account.public
-  config.account.public = {
+  // account.wechat
+  config.account.wechat = {
+    client: 'wechat',
+    scope: 'snsapi_userinfo',
     appID: '',
     appSecret: '',
     token: appInfo.name,
@@ -39,19 +41,24 @@ module.exports = appInfo => {
     },
   };
 
-  // account.web
-  config.account.web = {
+  // account.wechatweb
+  config.account.wechatweb = {
+    client: 'wechatweb',
+    scope: 'snsapi_login',
     appID: '',
     appSecret: '',
   };
 
-  // account.minis
-  config.account.minis = {
-    default: {
-      appID: '',
-      appSecret: '',
-      token: appInfo.name,
-      encodingAESKey: '',
+  // account.wechatmini
+  config.account.wechatmini = {
+    scope: 'snsapi_userinfo',
+    scenes: {
+      default: {
+        appID: '',
+        appSecret: '',
+        token: appInfo.name,
+        encodingAESKey: '',
+      },
     },
   };
 
