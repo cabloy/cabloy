@@ -51,6 +51,7 @@ module.exports = app => {
       meta: {
         title: 'Wechat Miniprogram',
         mode: 'direct',
+        scene: true,
         disableAssociate: true,
         bean: {
           module: moduleInfo.relativeName,
