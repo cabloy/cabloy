@@ -1,7 +1,7 @@
 const require3 = require('require3');
 const strategy = require3('@zhennann/passport-wechat').Strategy;
 const WechatHelperFn = require('../common/wechatHelper.js');
-const authProviderScenes = require('../common/authProviderScenes.js');
+const authProviders = require('../common/authProviders.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -87,7 +87,9 @@ module.exports = app => {
   }
 
   const metaAuth = {
-    providers: {},
+    providers: {
+      _createProvider,
+    },
   };
 
   // wechat/wechatweb
