@@ -3,8 +3,8 @@ const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
 const middlewareInWechat = require('./bean/middleware.inWechat.js');
 const authProviderWechat = require('./bean/auth.provider.wechat.js');
-const authProviderWechatWeb = require('./bean/auth.provider.wechatWeb.js');
-const authProviderWechatMini = require('./bean/auth.provider.wechatMini.js');
+const authProviderWechatweb = require('./bean/auth.provider.wechatweb.js');
+const authProviderWechatmini = require('./bean/auth.provider.wechatmini.js');
 const beanWechat = require('./bean/bean.wechat.js');
 
 module.exports = app => {
@@ -33,13 +33,13 @@ module.exports = app => {
       mode: 'ctx',
       bean: authProviderWechat,
     },
-    'auth.provider.wechatWeb': {
+    'auth.provider.wechatweb': {
       mode: 'ctx',
-      bean: authProviderWechatWeb,
+      bean: authProviderWechatweb,
     },
-    'auth.provider.wechatMini': {
+    'auth.provider.wechatmini': {
       mode: 'ctx',
-      bean: authProviderWechatMini,
+      bean: authProviderWechatmini,
     },
     // global
     wechat: {

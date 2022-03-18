@@ -3,8 +3,8 @@ const strategy = require3('@zhennann/passport-wechat').Strategy;
 const WechatHelperFn = require('../common/wechatHelper.js');
 const authProviderScenes = require('../common/authProviderScenes.js');
 
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   function _createProvider(sceneInfo) {
     const config = ctx.config.module(moduleInfo.relativeName).account[sceneInfo.configKey];

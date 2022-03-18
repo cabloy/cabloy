@@ -1,6 +1,5 @@
 const _scenes = {
   wechat: {
-    scene: 'wechat',
     authProvider: 'wechat',
     title: 'Wechat Public',
     client: 'wechat',
@@ -8,7 +7,6 @@ const _scenes = {
     scope: 'snsapi_userinfo',
   },
   wechatweb: {
-    scene: 'wechatweb',
     authProvider: 'wechatweb',
     title: 'Wechat Web',
     client: 'wechatweb',
@@ -16,7 +14,6 @@ const _scenes = {
     scope: 'snsapi_login',
   },
   wechatmini: {
-    scene: 'wechatmini',
     authProvider: 'wechatmini',
     title: 'Wechat Miniprogram',
     scope: 'snsapi_userinfo',
