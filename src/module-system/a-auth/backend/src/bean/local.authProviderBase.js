@@ -10,6 +10,10 @@ module.exports = ctx => {
     async getConfigDefault() {
       throw new Error('getConfigDefault not implemented');
     }
+    //
+    async adjustConfig(config) {
+      return config;
+    }
     // should be overrided
     checkConfigValid(/* config */) {
       throw new Error('checkConfigValid not implemented');

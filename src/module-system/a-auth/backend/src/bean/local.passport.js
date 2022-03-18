@@ -42,7 +42,7 @@ module.exports = ctx => {
       config.state = ctx.request.query.state;
       config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
       // strategy
-      const strategy = _createProviderStrategy(authProvider, beanProvider);
+      const strategy = await _createProviderStrategy(authProvider, beanProvider);
       // invoke authenticate
       const authenticate = ctx.app.passport.authenticate(strategy, config);
       await authenticate(ctx, next || function () {});
@@ -51,7 +51,7 @@ module.exports = ctx => {
   return Passport;
 };
 
-function _createProviderStrategy(authProvider, beanProvider) {
+async function _createProviderStrategy(authProvider, beanProvider) {
   // config
   let config = {};
   config.passReqToCallback = true;
@@ -60,6 +60,8 @@ function _createProviderStrategy(authProvider, beanProvider) {
   config.beanProvider = beanProvider;
   // combine
   config = extend(true, {}, beanProvider.configProviderScene, config);
+  // adjust
+  config = beanProvider.adjustConfig(config);
   // strategy
   const Strategy = beanProvider.getStrategy();
   return new Strategy(config, _createStrategyCallback(beanProvider));
