@@ -44,9 +44,7 @@ module.exports = ctx => {
                     scene: sceneInfo.scene,
                     memberId,
                     state,
-                    cbVerify: (profileUser, cb) => {
-                      app.passport.doVerify(req, profileUser, cb);
-                    },
+                    needLogin: false,
                   })
                   .then(verifyUser => {
                     done(null, verifyUser);

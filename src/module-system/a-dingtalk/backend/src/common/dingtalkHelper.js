@@ -11,7 +11,7 @@ module.exports = function (ctx) {
     }
 
     // scene: dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini
-    async verifyAuthUser({ scene, memberId, member, cbVerify, state, needLogin = true }) {
+    async verifyAuthUser({ scene, memberId, member, state, needLogin = false }) {
       // userInfo(member)
       if (!member) {
         member = await this._getMemberByMemberId({ memberId });
@@ -20,16 +20,9 @@ module.exports = function (ctx) {
       // ensure auth user
       const profileUser = await this._ensureAuthUser({ scene, memberId: member.memberId, member });
       // verify
-      let verifyUser;
-      if (!cbVerify) {
-        verifyUser = await ctx.bean.user.verify({ state, profileUser });
-        if (needLogin) {
-          await ctx.login(verifyUser);
-        }
-      } else {
-        verifyUser = await bb.fromCallback(cb => {
-          cbVerify(profileUser, cb);
-        });
+      const verifyUser = await ctx.bean.user.verify({ state, profileUser });
+      if (needLogin) {
+        await ctx.login(verifyUser);
       }
       // ok
       return verifyUser;

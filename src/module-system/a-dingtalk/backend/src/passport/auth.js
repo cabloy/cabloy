@@ -64,9 +64,7 @@ module.exports = ctx => {
                         scene: 'dingtalkweb',
                         memberId,
                         state,
-                        cbVerify: (profileUser, cb) => {
-                          app.passport.doVerify(req, profileUser, cb);
-                        },
+                        needLogin: false,
                       })
                       .then(verifyUser => {
                         done(null, verifyUser);
@@ -117,9 +115,7 @@ module.exports = ctx => {
                     scene: 'dingtalkadmin',
                     memberId,
                     state,
-                    cbVerify: (profileUser, cb) => {
-                      app.passport.doVerify(req, profileUser, cb);
-                    },
+                    needLogin: false,
                   })
                   .then(verifyUser => {
                     done(null, verifyUser);

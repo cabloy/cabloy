@@ -9,7 +9,7 @@ module.exports = app => {
       const memberId = res.userid;
       // verify auth user
       const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
-      await dingtalkHelper.verifyAuthUser({ state, scene: 'dingtalk', memberId });
+      await dingtalkHelper.verifyAuthUser({ state, scene: 'dingtalk', memberId, needLogin: true });
       // echo
       return await this.ctx.bean.auth.echo();
     }

@@ -11,7 +11,7 @@ module.exports = app => {
       const memberId = res.userid;
       // verify
       const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId });
+      await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId, needLogin: true });
       // save session_key, because ctx.state.user maybe changed
       await this.ctx.bean.wxwork.mini[scene].saveSessionKey(session_key);
       // echo
