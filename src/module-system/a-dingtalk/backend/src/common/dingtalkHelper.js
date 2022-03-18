@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const bb = require3('bluebird');
 const extend = require3('extend2');
 const authProviderScenes = require('./authProviderScenes.js');
 
