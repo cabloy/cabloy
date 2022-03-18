@@ -92,14 +92,10 @@ module.exports = ctx => {
       const unionid = userInfo.unionid || '';
       if (unionid) {
         // update all
-        await ctx.model.query('update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?', [
-          userId,
-          ctx.instance.id,
-          unionid,
-        ]);
+        await this.modelWechatUser.update({ userId }, { where: { unionid } });
       } else {
         // update this
-        await ctx.model.wechatUser.update({ id: userWechatId, userId });
+        await this.modelWechatUser.update({ id: userWechatId, userId });
       }
     }
 
