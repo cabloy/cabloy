@@ -4,8 +4,14 @@ const extend = require3('extend2');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Local {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
     get modelWechatUser() {
       return ctx.model(moduleInfo.relativeName).wechatUser;
+    }
+    get modelAuth() {
+      return ctx.model.module('a-base').auth;
     }
 
     async verifyAuthUser({ beanProvider, openid, userInfo, state, needLogin = false }) {
@@ -72,10 +78,10 @@ module.exports = ctx => {
       // update
       if (needUpdate) {
         if (!exists) {
-          const res = await ctx.model.wechatUser.insert(userWechat);
+          const res = await this.modelWechatUser.insert(userWechat);
           userWechatId = res.insertId;
         } else {
-          await ctx.model.wechatUser.update(userWechat);
+          await this.modelWechatUser.update(userWechat);
         }
       }
       // ok
@@ -98,18 +104,16 @@ module.exports = ctx => {
     }
 
     // profileId : unionid:openid
+    //   1. force append unionid
+    //   2. prepare auth record
+    //   3. try to union user
     async _ensureAuthUser({ beanProvider, openid, userInfo }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName);
-      // model auth
-      const modelAuth = ctx.model.module('a-base').auth;
-      //
-      const sceneInfo = this.getSceneInfo(scene);
       const unionid = userInfo.unionid || '';
       const profileId = `${unionid}:${openid}`;
       const profileUser = {
-        module: moduleInfo.relativeName,
-        provider: sceneInfo.authProvider,
+        module: beanProvider.providerModule,
+        provider: beanProvider.providerName,
+        providerScene: beanProvider.providerScene,
         profileId,
         profile: {
           userName: userInfo.nickname,
@@ -117,28 +121,25 @@ module.exports = ctx => {
           avatar: userInfo.headimgurl,
           profile: userInfo,
         },
-        autoActivate: config.auth.autoActivate,
+        autoActivate: this.configModule.auth.autoActivate,
       };
       // provider
-      const providerItem = await ctx.bean.authProvider.getAuthProvider({
-        module: moduleInfo.relativeName,
-        providerName: sceneInfo.authProvider,
-      });
+      const { providerItem } = beanProvider.configProviderCache;
       // check auth
       let authId;
       let authUserId;
-      const authItems = await ctx.model.query(
-        `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
-        [ctx.instance.id, providerItem.id]
+      const authItem = await ctx.model.queryOne(
+        `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.providerScene=? and a.profileId like '%:${openid}'`,
+        [ctx.instance.id, providerItem.id, beanProvider.providerScene]
       );
-      const authItem = authItems[0];
       if (!authItem) {
         // always set avatar empty
         const _profile = extend(true, {}, profileUser.profile);
         delete _profile.avatar;
         // insert auth
-        const res = await modelAuth.insert({
+        const res = await this.modelAuth.insert({
           providerId: providerItem.id,
+          providerScene: beanProvider.providerScene,
           profileId,
           profile: JSON.stringify(_profile),
         });
@@ -149,7 +150,7 @@ module.exports = ctx => {
         const _profileOld = JSON.parse(authItem.profile);
         _profile.avatar = _profileOld.avatar;
         // always update
-        await modelAuth.update({
+        await this.modelAuth.update({
           id: authItem.id,
           profileId,
           profile: JSON.stringify(_profile),
@@ -159,14 +160,13 @@ module.exports = ctx => {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOthers = await ctx.model.query(
+        const _authOther = await ctx.model.queryOne(
           `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
           [ctx.instance.id, authId]
         );
-        const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {
           // update userId for this auth
-          await modelAuth.update({ id: authId, userId: _authOther.userId });
+          await this.modelAuth.update({ id: authId, userId: _authOther.userId });
         }
       }
       // ready
