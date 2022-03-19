@@ -38,7 +38,6 @@ module.exports = app => {
             type: 'string',
             ebType: 'text',
             ebTitle: 'encodingAESKey',
-            notEmpty: true,
           },
           reply: {
             type: 'object',
