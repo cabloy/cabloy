@@ -13,7 +13,7 @@ miniprogram_npm
 *.tmp
 *.rdb
 
-/package-lock.json
+package-lock.json
 
 /docker-compose
 !/docker-compose/config
