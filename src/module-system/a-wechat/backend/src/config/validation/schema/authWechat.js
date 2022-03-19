@@ -13,17 +13,59 @@ module.exports = app => {
         ebTitle: 'Title',
         notEmpty: true,
       },
-      clientID: {
+      appID: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Client ID',
+        ebTitle: 'App ID',
         notEmpty: true,
       },
-      clientSecret: {
+      appSecret: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Client Secret',
+        ebTitle: 'App Secret',
         notEmpty: true,
+      },
+      message: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Message Info',
+        properties: {
+          __groupMessageBasicInfo: {
+            ebType: 'group-flatten',
+            ebTitle: 'Basic Info',
+          },
+          token: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'token',
+            notEmpty: true,
+          },
+          encodingAESKey: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'encodingAESKey',
+            notEmpty: true,
+          },
+          reply: {
+            type: 'object',
+            ebType: 'group',
+            ebTitle: 'Reply Info',
+            properties: {
+              default: {
+                type: 'string',
+                ebType: 'text',
+                ebTitle: 'Default',
+                notEmpty: true,
+              },
+              subscribe: {
+                type: 'string',
+                ebType: 'text',
+                ebTitle: 'Subscribe',
+                notEmpty: true,
+              },
+            },
+          },
+        },
       },
     },
   };

@@ -27,7 +27,9 @@ module.exports = app => {
       // encrypted
       const encrypted = query.encrypt_type === 'aes';
       // wechat crypto
-      const wechatCrypto = encrypted ? new WechatCrypto(config.token, config.encodingAESKey, config.appID) : null;
+      const wechatCrypto = encrypted
+        ? new WechatCrypto(config.message.token, config.message.encodingAESKey, config.appID)
+        : null;
       // parse
       let messageIn;
       if (this.ctx.method === 'GET') {

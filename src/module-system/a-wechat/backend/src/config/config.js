@@ -26,9 +26,9 @@ module.exports = appInfo => {
     scope: 'snsapi_userinfo',
     appID: '',
     appSecret: '',
-    token: appInfo.name,
-    encodingAESKey: '',
     message: {
+      token: appInfo.name,
+      encodingAESKey: '',
       reply: {
         default: 'You are welcome!',
         subscribe: 'You are subscribed!',
@@ -56,8 +56,10 @@ module.exports = appInfo => {
       default: {
         appID: '',
         appSecret: '',
-        token: appInfo.name,
-        encodingAESKey: '',
+        message: {
+          token: appInfo.name,
+          encodingAESKey: '',
+        },
       },
     },
   };
