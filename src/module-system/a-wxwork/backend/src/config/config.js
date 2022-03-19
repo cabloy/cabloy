@@ -40,10 +40,11 @@ module.exports = appInfo => {
 
   // account.wxwork
   config.account.wxwork = {
-    corpid: '',
-    // apps
-    apps: {
+    // scenes
+    scenes: {
       selfBuilt: {
+        title: 'SelfBuilt',
+        corpid: '',
         agentid: '',
         secret: '',
         token: appInfo.name,
@@ -67,9 +68,23 @@ module.exports = appInfo => {
         encodingAESKey: '',
       },
     },
-    // minis
-    minis: {
+  };
+
+  // account.wxworkweb
+  config.account.wxworkweb = {
+    // scenes
+    scenes: {
+      selfBuilt: {
+        title: 'SelfBuilt',
+      },
+    },
+  };
+
+  // account.wxworkmini
+  config.account.wxworkmini = {
+    scenes: {
       default: {
+        title: 'Default',
         secret: '',
         appID: '',
         appSecret: '',
