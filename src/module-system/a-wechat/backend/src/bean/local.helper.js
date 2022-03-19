@@ -8,10 +8,10 @@ module.exports = ctx => {
       return ctx.config.module(moduleInfo.relativeName);
     }
     get modelWechatUser() {
-      return ctx.model(moduleInfo.relativeName).wechatUser;
+      return ctx.model.module(moduleInfo.relativeName).wechatUser;
     }
     get modelAuth() {
-      return ctx.model.module('a-base').auth;
+      return ctx.model.module('a-auth').auth;
     }
 
     async verifyAuthUser({ beanProvider, openid, userInfo, state, needLogin = false }) {

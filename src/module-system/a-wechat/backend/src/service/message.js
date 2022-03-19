@@ -1,6 +1,10 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
+    get modelWechatUser() {
+      return this.ctx.model.wechatUser;
+    }
+
     async index({ message, config, beanProvider }) {
       let result;
       // event: subscribe
@@ -50,9 +54,9 @@ module.exports = app => {
 
     async _unsubscribeUser({ openid, message }) {
       // wechat user
-      const userWechat = await this.ctx.model.wechatUser.get({ openid });
+      const userWechat = await this.modelWechatUser.get({ openid });
       if (userWechat) {
-        await this.ctx.model.wechatUser.update({
+        await this.modelWechatUser.update({
           id: userWechat.id,
           subscribe: 0,
         });

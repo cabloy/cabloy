@@ -1,8 +1,11 @@
 module.exports = app => {
   class Test extends app.Service {
+    get modelWechatUser() {
+      return this.ctx.model.module('a-wechat').wechatUser;
+    }
+
     async getOpenid({ user }) {
-      const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 'wechat' });
+      const wechatUser = await this.modelWechatUser.get({ userId: user.id, scene: 'wechat' });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,
@@ -10,8 +13,7 @@ module.exports = app => {
     }
 
     async getOpenidMini({ providerScene, user }) {
-      const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-      const wechatUser = await modelWechatUser.get({ userId: user.id, providerScene: `wechatmini${scene}` });
+      const wechatUser = await this.modelWechatUser.get({ userId: user.id, providerScene: `wechatmini${scene}` });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,
