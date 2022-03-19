@@ -1,15 +1,19 @@
 const authFn = require('./config/passport/auth.js');
 
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
       atoms: {},
     },
     validation: {
-      validators: {},
+      validators: {
+        authWechat: {
+          schemas: 'authWechat',
+        },
+      },
       keywords: {},
-      schemas: {},
+      schemas,
     },
     event: {
       declarations: {
