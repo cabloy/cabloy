@@ -22,7 +22,11 @@ export default {
       return this.contextParams.item;
     },
     page_title() {
-      const title = `${this.$text('Config')}: ${this.sceneName}`;
+      const meta = this.item.meta;
+      let title = this.$text('Config');
+      if (meta.scene) {
+        title = `${title}: ${this.sceneName}`;
+      }
       return this.page_getDirtyTitle(title);
     },
   },

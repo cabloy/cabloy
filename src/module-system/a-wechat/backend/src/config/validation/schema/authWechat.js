@@ -7,12 +7,6 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Auth Info',
       },
-      title: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Title',
-        notEmpty: true,
-      },
       appID: {
         type: 'string',
         ebType: 'text',
