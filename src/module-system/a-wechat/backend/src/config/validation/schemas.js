@@ -1,9 +1,9 @@
 const authWechat = require('./schema/authWechat.js');
+const authWechatweb = require('./schema/authWechatweb.js');
 
 module.exports = app => {
   const schemas = {};
-  // authWechat
   Object.assign(schemas, authWechat(app));
-  // ok
+  Object.assign(schemas, authWechatweb(app));
   return schemas;
 };

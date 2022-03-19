@@ -11,6 +11,9 @@ module.exports = app => {
         authWechat: {
           schemas: 'authWechat',
         },
+        authWechatweb: {
+          schemas: 'authWechatweb',
+        },
       },
       keywords: {},
       schemas,
