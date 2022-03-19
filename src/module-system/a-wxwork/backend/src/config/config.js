@@ -40,6 +40,7 @@ module.exports = appInfo => {
 
   // account.wxwork
   config.account.wxwork = {
+    client: 'wxwork',
     // scenes
     scenes: {
       selfBuilt: {
@@ -72,6 +73,7 @@ module.exports = appInfo => {
 
   // account.wxworkweb
   config.account.wxworkweb = {
+    client: 'wxworkweb',
     // scenes
     scenes: {
       selfBuilt: {

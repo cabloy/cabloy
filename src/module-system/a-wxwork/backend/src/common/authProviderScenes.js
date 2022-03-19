@@ -3,14 +3,14 @@ const _scenes = {
     scene: 'wxwork',
     authProvider: 'wxwork',
     title: 'Wechat Work',
-    client: 'wxwork',
+
     disableAssociate: false,
   },
   wxworkweb: {
     scene: 'wxworkweb',
     authProvider: 'wxworkweb',
     title: 'Wechat Work Web',
-    client: 'wxworkweb',
+
     disableAssociate: false,
   },
   wxworkmini: {
