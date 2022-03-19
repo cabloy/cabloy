@@ -1,5 +1,16 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
+    get modelWechatUser() {
+      return this.ctx.model.wechatUser;
+    }
+    get modelAuth() {
+      return this.ctx.model.module('a-auth').auth;
+    }
+    get modelAuthProvider() {
+      return this.ctx.model.module('a-auth').authProvider;
+    }
+
     async update(options) {
       if (options.version === 1) {
         // create table: aWechatUser
@@ -41,11 +52,105 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 3) {
+        const sql = `
+          ALTER TABLE aWechatUser
+            CHANGE COLUMN scene providerScene varchar(255) DEFAULT NULL,
+            ADD COLUMN providerName varchar(255) DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
+
+      if (options.version === 4) {
+        // all instances
+        const instances = await this.ctx.bean.instance.list({ where: {} });
+        for (const instance of instances) {
+          await this.ctx.meta.util.executeBean({
+            subdomain: instance.name,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: `${moduleInfo.relativeName}.version.manager`,
+            context: options,
+            fn: 'update4Auths',
+          });
+        }
+      }
     }
 
     async init(options) {}
 
     async test() {}
+
+    async update4Auths() {
+      await this.update4Auths_wechatUser();
+      await this.update4Auths_wechatmini();
+    }
+
+    async update4Auths_wechatUser() {
+      // scene -> providerName, providerScene
+      const items = await this.modelWechatUser.select({});
+      for (const item of items) {
+        if (item.providerName) continue;
+        const scene = item.providerScene;
+        if (['wechat', 'wechatweb'].includes(scene)) {
+          item.providerName = scene;
+          item.providerScene = null;
+          await this.modelWechatUser.update(item);
+        } else if (scene.indexOf('wechatmini') > -1) {
+          const providerScene = scene.substring('wechatmini'.length);
+          if (providerScene) {
+            item.providerName = 'wechatmini';
+            item.providerScene = providerScene;
+            await this.modelWechatUser.update(item);
+          }
+        } else {
+          // invalid data
+          await this.modelWechatUser.delete({ id: item.id });
+        }
+      }
+    }
+
+    async update4Auths_wechatmini() {
+      // wechatminiXXX
+      const providers = await this.ctx.model.query(
+        `
+        select * from aAuthProvider 
+          where iid=? and providerName like 'wechatmini%'
+        `,
+        [this.ctx.instance.id]
+      );
+      let providerDefault;
+      for (const provider of providers) {
+        const providerName = provider.providerName;
+        const providerScene = providerName.substring('wechatmini'.length);
+        if (!providerScene) continue;
+        if (providerScene === 'default') {
+          providerDefault = provider;
+          await this.modelAuthProvider.update({
+            id: provider.id,
+            providerName: 'wechatmini',
+          });
+        } else {
+          await this.modelAuthProvider.delete({ id: provider.id });
+        }
+      }
+      // auths
+      if (!providerDefault) {
+        // donothing
+      }
+      for (const provider of providers) {
+        const providerName = provider.providerName;
+        const providerScene = providerName.substring('wechatmini'.length);
+        if (!providerScene) continue;
+        await this.ctx.model.query(
+          `
+          update aAuth set providerId=? and providerScene=?
+            where iid=? and providerId=?
+          `,
+          [providerDefault.id, providerScene, this.ctx.instance.id, provider.id]
+        );
+      }
+    }
   }
 
   return Version;
