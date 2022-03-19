@@ -57,7 +57,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          this.localUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.message.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -77,7 +77,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          this.localUtils.calcSignature({ options: [config.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.message.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
