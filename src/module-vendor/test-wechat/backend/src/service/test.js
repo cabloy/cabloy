@@ -5,7 +5,7 @@ module.exports = app => {
     }
 
     async getOpenid({ user }) {
-      const wechatUser = await this.modelWechatUser.get({ userId: user.id, scene: 'wechat' });
+      const wechatUser = await this.modelWechatUser.get({ userId: user.id, providerName: 'wechat' });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,
@@ -13,7 +13,7 @@ module.exports = app => {
     }
 
     async getOpenidMini({ providerScene, user }) {
-      const wechatUser = await this.modelWechatUser.get({ userId: user.id, providerScene: `wechatmini${scene}` });
+      const wechatUser = await this.modelWechatUser.get({ userId: user.id, providerName: 'wechatmini', providerScene });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,
