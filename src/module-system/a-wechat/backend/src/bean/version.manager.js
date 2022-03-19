@@ -144,7 +144,7 @@ module.exports = app => {
         if (!providerScene) continue;
         await this.ctx.model.query(
           `
-          update aAuth set providerId=? and providerScene=?
+          update aAuth set providerId=?, providerScene=?
             where iid=? and providerId=?
           `,
           [providerDefault.id, providerScene, this.ctx.instance.id, provider.id]
