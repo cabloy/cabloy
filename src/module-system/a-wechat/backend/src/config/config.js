@@ -54,6 +54,7 @@ module.exports = appInfo => {
     scope: 'snsapi_userinfo',
     scenes: {
       default: {
+        title: 'Default',
         appID: '',
         appSecret: '',
         message: {
