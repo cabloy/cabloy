@@ -1,8 +1,11 @@
 (function () {
   <%
-  // config
-  const config = ctx.config.module('a-wechat').account.public;
-  const configExists=config.appID && config.appSecret;
+  // bean provider
+  const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+    module: 'a-wechat',
+    providerName: 'wechat',
+    providerScene: null,
+  });
   %>
 
   $(document).on('echo-ready', function() {
@@ -18,7 +21,7 @@
     // check iframe
     if(window.self !== window.top) return false;
     // check config
-    <%- `const _configExists=${configExists?'true':'false'};`  %>
+    <%- `const _configExists=${beanProvider.providerSceneValid?'true':'false'};`  %>
     if(!_configExists) return false;
     const ua = navigator.userAgent.toLowerCase();
     const inWechat = ua && (ua.indexOf('micromessenger') > -1 || ua.indexOf('micromessage') > -1);

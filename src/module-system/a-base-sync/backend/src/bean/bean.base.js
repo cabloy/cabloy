@@ -309,7 +309,7 @@ module.exports = ctx => {
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         // todo: only check github
-        if (relativeName !== 'a-authgithub' && relativeName !== 'a-authsimple' && relativeName !== 'a-authsms') {
+        if (!['a-authgithub', 'a-authsimple', 'a-authsms', 'a-wechat'].includes(relativeName)) {
           continue;
         }
         if (typeof metaAuth === 'function') {
