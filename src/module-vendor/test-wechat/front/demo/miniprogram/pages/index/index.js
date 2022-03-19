@@ -52,7 +52,7 @@ Page({
   getOpenid() {
     app.cabloy.api
       .post('/test/wechat/test/getOpenidMini', {
-        scene: app.cabloy.config.base.scene,
+        providerScene: app.cabloy.config.base.providerScene,
       })
       .then(data => {
         this.setData({

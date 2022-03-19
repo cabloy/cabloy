@@ -48,7 +48,8 @@ module.exports = ctx => {
       // check fields
       let needUpdate = false;
       const fields = [
-        'scene',
+        'providerName',
+        'providerScene',
         'openid',
         'unionid',
         'nickname',
@@ -66,7 +67,8 @@ module.exports = ctx => {
         'qr_scene',
         'qr_scene_str',
       ];
-      userInfo.scene = beanProvider.providerScene;
+      userInfo.providerName = beanProvider.providerName;
+      userInfo.providerScene = beanProvider.providerScene;
       for (const field of fields) {
         if (userInfo[field] === undefined || userInfo[field] === userWechat[field]) {
           delete userWechat[field];

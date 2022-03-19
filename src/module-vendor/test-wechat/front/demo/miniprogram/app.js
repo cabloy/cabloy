@@ -12,7 +12,7 @@ App({
     // 初始化cabloy
     const cabloyOptions = {
       base: {
-        scene: 'default',
+        providerScene: 'default',
         locale: 'en-us',
       },
       api: {
