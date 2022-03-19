@@ -61,6 +61,25 @@ module.exports = app => {
           },
         },
       },
+      jssdk: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'JSSDK Info',
+        properties: {
+          debug: {
+            type: 'boolean',
+            ebType: 'Toggle',
+            ebTitle: 'debug',
+            notEmpty: true,
+          },
+          jsApiList: {
+            type: 'array',
+            ebType: 'json',
+            ebTitle: 'jsApiList',
+            notEmpty: true,
+          },
+        },
+      },
     },
   };
   schemas.signin = {
