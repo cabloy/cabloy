@@ -1,5 +1,6 @@
 module.exports = {
-  SelfBuilt: '自建',
+  SelfBuiltApp: '自建应用',
+  Contacts: '通讯录',
   AccountMigration: '账户迁移',
   AccountMigrationDesp: '点击此链接迁移至现有账户',
   'Wechat Work': '企业微信',

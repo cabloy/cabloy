@@ -13,10 +13,14 @@ module.exports = function (ctx) {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }
     async getConfigDefault() {
-      return this.configModule.account.wechat;
+      const configWxwork = this.configModule.account.wxwork;
+      return {
+        scenes: configWxwork.scenes,
+        locales: configWxwork.locals,
+      };
     }
     checkConfigValid(config) {
-      return !!config.appID && !!config.appSecret;
+      return !!config.corpId && !!config.corpSecret && config.agentId;
     }
     async adjustConfigForCache(config) {
       config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/index`);

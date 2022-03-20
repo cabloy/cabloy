@@ -44,13 +44,13 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuilt',
-        corpid: '',
-        agentid: '',
-        secret: '',
-        token: appInfo.name,
-        encodingAESKey: '',
+        title: 'SelfBuiltApp',
+        corpId: '',
+        agentId: '',
+        corpSecret: '',
         message: {
+          token: appInfo.name,
+          encodingAESKey: '',
           reply: {
             default: 'You are welcome!',
           },
@@ -64,9 +64,21 @@ module.exports = appInfo => {
         },
       },
       contacts: {
-        secret: '',
-        token: appInfo.name,
-        encodingAESKey: '',
+        title: 'Contacts',
+        appSecret: '',
+        event: {
+          token: appInfo.name,
+          encodingAESKey: '',
+        },
+      },
+    },
+    locals: {
+      'en-us': {
+        SelfBuiltApp: 'Self Built App',
+      },
+      'zh-cn': {
+        SelfBuiltApp: '自建应用',
+        Contacts: '通讯录',
       },
     },
   };
@@ -77,7 +89,15 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuilt',
+        title: 'SelfBuiltApp',
+      },
+    },
+    locals: {
+      'en-us': {
+        SelfBuiltApp: 'Self Built App',
+      },
+      'zh-cn': {
+        SelfBuiltApp: '自建应用',
       },
     },
   };
@@ -87,7 +107,7 @@ module.exports = appInfo => {
     scenes: {
       default: {
         title: 'Default',
-        secret: '',
+        corpSecret: '',
         appID: '',
         appSecret: '',
       },

@@ -1,10 +1,8 @@
-const WxworkHelperFn = require('../../common/wxworkHelper.js');
-const authProviderScenes = require('../../common/authProviderScenes.js');
-
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  function _createProvider(sceneInfo) {
+  // wxwork
+  function _createProviderWxwork() {
     const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
     if (!config.corpid || !config.apps.selfBuilt.agentid) return null;
     return {
