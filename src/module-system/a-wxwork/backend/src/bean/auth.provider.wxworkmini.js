@@ -12,10 +12,10 @@ module.exports = function (ctx) {
       };
     }
     checkConfigValid(config) {
-      return !!config.appID && !!config.appSecret;
+      return !!config.corpId && !!config.secret && !!config.agentId && !!config.appID && !!config.appSecret;
     }
     async adjustConfigForCache(config) {
-      // corpId/corpSecret/agentId
+      // corpId/agentId/secret
       const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
         module: this.providerModule,
         providerName: 'wxwork',

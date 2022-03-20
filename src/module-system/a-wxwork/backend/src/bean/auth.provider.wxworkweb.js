@@ -19,7 +19,7 @@ module.exports = function (ctx) {
       };
     }
     checkConfigValid(config) {
-      return !!config.corpId && !!config.corpSecret && config.agentId;
+      return !!config.corpId && !!config.secret && !!config.agentId;
     }
     async adjustConfigForCache(config) {
       // from wxwork

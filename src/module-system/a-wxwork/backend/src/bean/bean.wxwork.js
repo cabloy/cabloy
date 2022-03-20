@@ -83,7 +83,7 @@ module.exports = function (ctx) {
     // api
     const api = new WxworkAPI.CorpAPI(
       config.corpId,
-      config.appSecret || config.corpSecret,
+      config.secret,
       async function () {
         const cacheKey = `wxwork-token:${appName || ''}`;
         return await getCacheDb().get(cacheKey);
