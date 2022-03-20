@@ -235,5 +235,11 @@ module.exports = ctx => {
 };
 
 function ctxHostValid(ctx) {
-  return !ctx.innerAccess && ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
+  return (
+    !ctx.innerAccess &&
+    ctx.host &&
+    ctx.protocol &&
+    !['127.0.0.1', 'localhost'].includes(ctx.host) &&
+    ['http', 'https'].includes(ctx.protocol)
+  );
 }
