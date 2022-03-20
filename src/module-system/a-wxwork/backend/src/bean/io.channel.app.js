@@ -9,9 +9,17 @@ module.exports = ctx => {
       const message = {
         ...content.data,
       };
+      // bean provider
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'wxwork',
+        providerScene: 'selfBuilt',
+      });
+      if (!beanProvider.providerSceneValid) return false;
+      // config
+      const config = beanProvider.configProviderScene;
       // agentid
-      const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-      message.agentid = config.apps.selfBuilt.agentid;
+      message.agentid = config.agentId;
       // userIds
       if (userIds && userIds.length > 0) {
         const modelMember = ctx.model.module(moduleInfo.relativeName).member;
