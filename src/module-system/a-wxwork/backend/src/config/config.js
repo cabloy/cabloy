@@ -73,7 +73,7 @@ module.exports = appInfo => {
         },
       },
     },
-    locals: {
+    locales: {
       'en-us': {
         SelfBuiltApp: 'Self Built App',
       },
@@ -93,7 +93,7 @@ module.exports = appInfo => {
         title: 'SelfBuiltApp',
       },
     },
-    locals: {
+    locales: {
       'en-us': {
         SelfBuiltApp: 'Self Built App',
       },

@@ -6,9 +6,6 @@ module.exports = function (ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
-    get cacheDb() {
-      return ctx.cache.db.module(moduleInfo.relativeName);
-    }
     get localHelper() {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }
@@ -16,7 +13,7 @@ module.exports = function (ctx) {
       const configWxwork = this.configModule.account.wxwork;
       return {
         scenes: configWxwork.scenes,
-        locales: configWxwork.locals,
+        locales: configWxwork.locales,
       };
     }
     checkConfigValid(config) {
