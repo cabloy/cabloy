@@ -8,6 +8,7 @@ const authProviderWxwork = require('./bean/auth.provider.wxwork.js');
 const authProviderWxworkweb = require('./bean/auth.provider.wxworkweb.js');
 const authProviderWxworkmini = require('./bean/auth.provider.wxworkmini.js');
 const localHelper = require('./bean/local.helper.js');
+const localUtils = require('./bean/local.utils.js');
 const beanWxwork = require('./bean/bean.wxwork.js');
 
 module.exports = app => {
@@ -58,6 +59,10 @@ module.exports = app => {
     'local.helper': {
       mode: 'ctx',
       bean: localHelper,
+    },
+    'local.utils': {
+      mode: 'ctx',
+      bean: localUtils,
     },
     // global
     wxwork: {
