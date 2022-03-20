@@ -1,6 +1,6 @@
 const strategy = require('./strategy-wxwork.js');
-const WxworkHelperFn = require('../common/wxworkHelper.js');
-const authProviderScenes = require('../common/authProviderScenes.js');
+const WxworkHelperFn = require('../../common/wxworkHelper.js');
+const authProviderScenes = require('../../common/authProviderScenes.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
