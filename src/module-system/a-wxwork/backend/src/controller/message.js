@@ -1,9 +1,12 @@
 const require3 = require('require3');
 const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
   class MessageController extends app.Controller {
+    get localUtils() {
+      return this.ctx.bean.local.utils;
+    }
+
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
         return await this.ctx.service.message.index({ message });
@@ -44,14 +47,14 @@ module.exports = app => {
         if (!messageOut) {
           resXML = '';
         } else {
-          resXML = wechatUtils.buildXML({ xml: messageOut });
+          resXML = this.localUtils.buildXML({ xml: messageOut });
           if (encrypted) {
             const wrap = {};
             wrap.Encrypt = wechatCrypto.encrypt(resXML);
-            wrap.TimeStamp = wechatUtils.createTimestamp();
-            wrap.Nonce = wechatUtils.createNonceStr();
+            wrap.TimeStamp = this.localUtils.createTimestamp();
+            wrap.Nonce = this.localUtils.createNonceStr();
             wrap.MsgSignature = wechatCrypto.getSignature(wrap.TimeStamp, wrap.Nonce, wrap.Encrypt);
-            resXML = wechatUtils.buildXML({ xml: wrap });
+            resXML = this.localUtils.buildXML({ xml: wrap });
           }
         }
         // ok
@@ -69,7 +72,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -90,7 +93,7 @@ module.exports = app => {
         xmlRaw = payload.toString();
       }
       // parse xml
-      let xml = await wechatUtils.parseXML({ xml: xmlRaw });
+      let xml = await this.localUtils.parseXML({ xml: xmlRaw });
       // check if valid
       let valid = false;
       if (encrypted) {
@@ -98,13 +101,13 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          wechatUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
       if (encrypted) {
         const res = wechatCrypto.decrypt(xml.Encrypt);
-        xml = await wechatUtils.parseXML({ xml: res.message });
+        xml = await this.localUtils.parseXML({ xml: res.message });
       }
       return xml;
     }

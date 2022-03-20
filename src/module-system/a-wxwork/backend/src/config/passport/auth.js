@@ -32,8 +32,8 @@ module.exports = ctx => {
   const metaAuth = {
     providers: {
       wxwork: _createProviderWxwork(),
-      wxworkweb: _createProviderWxworkweb(),
-      wxworkmini: _createProviderWxworkmini(),
+      // wxworkweb: _createProviderWxworkweb(),
+      // wxworkmini: _createProviderWxworkmini(),
     },
   };
 
