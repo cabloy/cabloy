@@ -23,12 +23,6 @@ module.exports = function (ctx) {
       });
       const configSelfBuilt = beanProvider.configProviderScene;
       if (!config.corpId) config.corpId = configSelfBuilt.corpId;
-      if (!config.corpSecret) config.corpSecret = configSelfBuilt.corpSecret;
-      if (!config.agentId) config.agentId = configSelfBuilt.agentId;
-      if (config.corpId) config.corpid = config.corpId;
-      if (config.corpSecret) config.corpsecret = config.corpSecret;
-      if (config.agentId) config.agentid = config.agentId;
-      if (config.appSecret) config.secret = config.appSecret;
       return config;
     }
     async adjustConfigForAuthenticate(config) {
