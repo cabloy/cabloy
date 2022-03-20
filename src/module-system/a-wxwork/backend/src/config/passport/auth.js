@@ -16,6 +16,20 @@ module.exports = ctx => {
     };
   }
 
+  // wxwork
+  function _createProviderWxworkweb() {
+    return {
+      meta: {
+        title: 'Wechat Work Web',
+        mode: 'redirect',
+        scene: true,
+        disableAssociate: false,
+        bean: 'wxworkweb',
+        render: 'buttonWxworkweb',
+      },
+    };
+  }
+
   function _createProviderMini(sceneInfo, sceneShort) {
     const config = ctx.config.module(moduleInfo.relativeName).account.wxwork.minis[sceneShort];
     if (!config.appID || !config.appSecret) return null;
@@ -33,7 +47,7 @@ module.exports = ctx => {
   const metaAuth = {
     providers: {
       wxwork: _createProviderWxwork(),
-      // wxworkweb: _createProviderWxworkweb(),
+      wxworkweb: _createProviderWxworkweb(),
       // wxworkmini: _createProviderWxworkmini(),
     },
   };
