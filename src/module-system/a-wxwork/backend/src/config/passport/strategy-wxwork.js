@@ -14,11 +14,20 @@ function WxworkStrategy(options, verify) {
     throw new TypeError('_verify must be function');
   }
 
+  if (!options.corpId) {
+    throw new TypeError('WxworkStrategy requires a corpId option');
+  }
+
+  if (!options.agentId) {
+    throw new TypeError('WxworkStrategy requires a agentId option');
+  }
+
   passport.Strategy.call(this, options, verify);
 
   this.name = options.name || 'wxwork';
   this._client = options.client || 'wxwork';
   this._verify = verify;
+  this._oauth = new OAuth(options.corpId, options.agentId);
   this._callbackURL = options.callbackURL;
   this._lang = options.lang || 'en';
   this._state = options.state;
@@ -41,9 +50,6 @@ WxworkStrategy.prototype.authenticate = function (req, options) {
   const self = this;
 
   options = options || {};
-
-  // oauth
-  const _oauth = this.getOAuth(options);
 
   // 校验完成信息
   function verified(err, user, info) {
@@ -87,7 +93,7 @@ WxworkStrategy.prototype.authenticate = function (req, options) {
     const scope = options.scope || self._scope;
 
     const methodName = this._client === 'wxwork' ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
-    const location = _oauth[methodName](callbackURL, state, scope);
+    const location = self._oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
   }
