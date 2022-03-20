@@ -1,9 +1,16 @@
 const require3 = require('require3');
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
 const WechatAPI = require3('@zhennann/co-wechat-api');
+
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
+  function getCacheDb() {
+    return ctx.cache.db.module(moduleInfo.relativeName);
+  }
+  // bean.wxwork.app.mini.{providerScene}
+  // bean.wxwork.app.selfBuilt
+  // bean.wxwork.mini.{providerScene}
+  // bean.wxwork.util
   return function () {
     return new Proxy(
       {},
@@ -24,7 +31,7 @@ module.exports = function (ctx) {
                         {
                           get(obj, prop) {
                             if (!obj[prop]) {
-                              obj[prop] = _createWxworkApiApp({ appName: prop, mini: true });
+                              obj[prop] = _createWxworkApiApp({ providerScene: prop, mini: true });
                             }
                             return obj[prop];
                           },
@@ -32,7 +39,7 @@ module.exports = function (ctx) {
                       );
                     } else {
                       // others
-                      obj[prop] = _createWxworkApiApp({ appName: prop });
+                      obj[prop] = _createWxworkApiApp({ providerScene: prop });
                     }
                   }
                   return obj[prop];
@@ -46,7 +53,7 @@ module.exports = function (ctx) {
               {
                 get(obj, prop) {
                   if (!obj[prop]) {
-                    obj[prop] = _createWxworkApiMini({ sceneShort: prop });
+                    obj[prop] = _createWxworkApiMini({ providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -62,24 +69,31 @@ module.exports = function (ctx) {
     );
   };
 
-  function _createWxworkApiApp({ appName, mini }) {
+  function _createWxworkApiApp({ providerScene, mini }) {
+    const appName = mini ? `mini-${providerScene}` : providerScene;
+    // bean provider
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleInfo.relativeName,
+      providerName: mini ? 'wxworkmini' : 'wxwork',
+      providerScene,
+    });
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
     // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-    const configApp = mini ? config.minis[appName] : config.apps[appName];
+    const config = beanProvider.configProviderScene;
     // api
     const api = new WxworkAPI.CorpAPI(
-      config.corpid,
-      configApp.secret,
+      config.corpId,
+      config.appSecret || config.corpSecret,
       async function () {
         const cacheKey = `wxwork-token:${appName || ''}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (token) {
         const cacheKey = `wxwork-token:${appName || ''}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -87,14 +101,14 @@ module.exports = function (ctx) {
     api.registerTicketHandle(
       async function (type) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
         const cacheKey = `wxwork-jsticket:${appName}:${type}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -102,51 +116,57 @@ module.exports = function (ctx) {
     return api;
   }
 
-  function _createWxworkApiMini({ sceneShort }) {
+  function _createWxworkApiMini({ providerScene }) {
+    // bean provider
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleInfo.relativeName,
+      providerName: 'wxworkmini',
+      providerScene,
+    });
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
     // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-    const configMini = config.minis[sceneShort];
+    const config = beanProvider.configProviderScene;
     // api
     const api = new WechatAPI(
-      configMini.appID,
-      configMini.appSecret,
+      config.appID,
+      config.appSecret,
       async function () {
-        const cacheKey = `wxworkmini-token:${sceneShort}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        const cacheKey = `wxworkmini-token:${providerScene}`;
+        return await getCacheDb().get(cacheKey);
       },
       async function (token) {
-        const cacheKey = `wxworkmini-token:${sceneShort}`;
+        const cacheKey = `wxworkmini-token:${providerScene}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
     // registerTicketHandle
     api.registerTicketHandle(
       async function (type) {
-        const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        const cacheKey = `wxworkmini-jsticket:${providerScene}:${type}`;
+        return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
-        const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
+        const cacheKey = `wxworkmini-jsticket:${providerScene}:${type}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
     // registerSessionKeyHandle
     api.registerSessionKeyHandle(
       async function () {
-        const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        const cacheKey = `wxworkmini-sessionKey:${providerScene}:${ctx.state.user.agent.id}`;
+        return await getCacheDb().get(cacheKey);
       },
       async function (sessionKey) {
-        const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
+        const cacheKey = `wxworkmini-sessionKey:${providerScene}:${ctx.state.user.agent.id}`;
+        await getCacheDb().set(cacheKey, sessionKey);
       }
     );
     // ready

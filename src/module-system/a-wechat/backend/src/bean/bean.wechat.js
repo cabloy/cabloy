@@ -103,11 +103,11 @@ module.exports = function (ctx) {
       config.appID,
       config.appSecret,
       async function () {
-        const cacheKey = 'wechatmini-token';
+        const cacheKey = `wechatmini-token:${providerScene}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (token) {
-        const cacheKey = 'wechatmini-token';
+        const cacheKey = `wechatmini-token:${providerScene}`;
         if (token) {
           await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
@@ -118,11 +118,11 @@ module.exports = function (ctx) {
     // registerTicketHandle
     api.registerTicketHandle(
       async function (type) {
-        const cacheKey = `wechatmini-jsticket:${type}`;
+        const cacheKey = `wechatmini-jsticket:${providerScene}:${type}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
-        const cacheKey = `wechatmini-jsticket:${type}`;
+        const cacheKey = `wechatmini-jsticket:${providerScene}:${type}`;
         if (token) {
           await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
@@ -133,11 +133,11 @@ module.exports = function (ctx) {
     // registerSessionKeyHandle
     api.registerSessionKeyHandle(
       async function () {
-        const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
+        const cacheKey = `wechatmini-sessionKey:${providerScene}:${ctx.state.user.agent.id}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (sessionKey) {
-        const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
+        const cacheKey = `wechatmini-sessionKey:${providerScene}:${ctx.state.user.agent.id}`;
         await getCacheDb().set(cacheKey, sessionKey);
       }
     );
