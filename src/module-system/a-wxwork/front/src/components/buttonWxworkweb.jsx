@@ -1,7 +1,5 @@
-<template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/wxwork-48.png" /></eb-button>
-</template>
-<script>
+import Vue from 'vue';
+const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 const urlLogin = '/api/a/wxwork/passport/a-wxwork/wxworkweb';
 export default {
   meta: {
@@ -17,6 +15,7 @@ export default {
       ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
     },
   },
+  mixins: [ebAuthLoginBase],
   data() {
     return {};
   },
@@ -25,6 +24,12 @@ export default {
       this.$options.meta.login({ ctx: this });
     },
   },
+  render() {
+    const imgSrc = require('../assets/img/wxwork-48.png');
+    return (
+      <eb-button tooltip={this.provider.meta.titleLocale} propsOnPerform={this.onPerformSignIn}>
+        <img src={imgSrc} />
+      </eb-button>
+    );
+  },
 };
-</script>
-<style scoped></style>
