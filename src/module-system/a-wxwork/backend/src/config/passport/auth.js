@@ -1,4 +1,3 @@
-const strategy = require('./strategy-wxwork.js');
 const WxworkHelperFn = require('../../common/wxworkHelper.js');
 const authProviderScenes = require('../../common/authProviderScenes.js');
 
