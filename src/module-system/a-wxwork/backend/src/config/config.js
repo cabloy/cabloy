@@ -47,8 +47,8 @@ module.exports = appInfo => {
       selfBuilt: {
         title: 'SelfBuiltApp',
         corpId: '',
-        corpSecret: '',
         agentId: '',
+        secret: '',
         message: {
           token: appInfo.name,
           encodingAESKey: '',
@@ -66,7 +66,7 @@ module.exports = appInfo => {
       },
       contacts: {
         title: 'Contacts',
-        appSecret: '',
+        secret: '',
         message: {
           token: appInfo.name,
           encodingAESKey: '',
@@ -109,6 +109,8 @@ module.exports = appInfo => {
     scenes: {
       default: {
         title: 'Default',
+        agentId: '',
+        secret: '',
         appID: '',
         appSecret: '',
       },
