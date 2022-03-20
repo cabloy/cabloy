@@ -23,35 +23,24 @@ module.exports = function (ctx) {
       return !!config.corpId && !!config.corpSecret && config.agentId;
     }
     async adjustConfigForCache(config) {
-      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/index`);
+      const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
+      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
       return config;
     }
     async adjustConfigForAuthenticate(config) {
-      function getCacheKey(openid) {
-        return `wechat-webtoken:wechat:${openid}`;
-      }
-      config.getToken = (openid, cb) => {
-        this.cacheDb
-          .get(getCacheKey(openid))
-          .then(token => cb(null, token))
-          .catch(cb);
-      };
-      config.saveToken = (openid, token, cb) => {
-        this.cacheDb
-          .set(getCacheKey(openid), token, (token.expires_in - 10) * 1000)
-          .then(() => cb(null))
-          .catch(cb);
-      };
       return config;
     }
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, userInfo, expires_in, state) {
+    async onVerify(code, state) {
+      // code/memberId
+      const res = await ctx.bean.wxwork.app.selfBuilt.getUserIdByCode(code);
+      if (res.errcode) throw new Error(res.errmsg);
+      const memberId = res.UserId;
       const verifyUser = await this.localHelper.verifyAuthUser({
         beanProvider: this,
-        openid: userInfo.openid,
-        userInfo,
+        memberId,
         state,
         needLogin: false,
       });

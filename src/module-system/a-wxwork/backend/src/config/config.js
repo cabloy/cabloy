@@ -41,13 +41,14 @@ module.exports = appInfo => {
   // account.wxwork
   config.account.wxwork = {
     client: 'wxwork',
+    scope: 'snsapi_base',
     // scenes
     scenes: {
       selfBuilt: {
         title: 'SelfBuiltApp',
         corpId: '',
-        agentId: '',
         corpSecret: '',
+        agentId: '',
         message: {
           token: appInfo.name,
           encodingAESKey: '',

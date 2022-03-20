@@ -1,9 +1,9 @@
-import buttonwxwork from './components/buttonwxwork.vue';
-import buttonwxworkweb from './components/buttonwxworkweb.vue';
+import buttonWxwork from './components/buttonWxwork.vue';
+import buttonWxworkweb from './components/buttonWxworkweb.vue';
 import jssdk from './components/jssdk.js';
 
 export default {
-  buttonwxwork,
-  buttonwxworkweb,
+  buttonWxwork,
+  buttonWxworkweb,
   jssdk,
 };

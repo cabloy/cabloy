@@ -3,54 +3,14 @@ module.exports = ctx => {
 
   // wxwork
   function _createProviderWxwork() {
-    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-    if (!config.corpid || !config.apps.selfBuilt.agentid) return null;
     return {
       meta: {
-        title: sceneInfo.title,
+        title: 'Wechat Work',
         mode: 'redirect',
-        disableAssociate: sceneInfo.disableAssociate,
-        component: `button${sceneInfo.authProvider}`,
-      },
-      config: {
-        client: sceneInfo.client,
-        scope: 'snsapi_base',
-      },
-      configFunctions: {
-        getConfig(ctx) {
-          const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-          return { corpid: config.corpid, agentid: config.apps.selfBuilt.agentid };
-        },
-      },
-      handler: app => {
-        return {
-          strategy,
-          callback: (req, code, done) => {
-            // ctx/state
-            const ctx = req.ctx;
-            const state = ctx.request.query.state || 'login';
-            // code/memberId
-            const wxworkHelper = new (WxworkHelperFn(ctx))();
-            ctx.bean.wxwork.app.selfBuilt
-              .getUserIdByCode(code)
-              .then(res => {
-                if (res.errcode) throw new Error(res.errmsg);
-                const memberId = res.UserId;
-                wxworkHelper
-                  .verifyAuthUser({
-                    scene: sceneInfo.scene,
-                    memberId,
-                    state,
-                    needLogin: false,
-                  })
-                  .then(verifyUser => {
-                    done(null, verifyUser);
-                  })
-                  .catch(done);
-              })
-              .catch(done);
-          },
-        };
+        disableAssociate: false,
+        bean: 'wxwork',
+        render: 'buttonWxwork',
+        validator: 'authWxwork',
       },
     };
   }
@@ -70,22 +30,12 @@ module.exports = ctx => {
   }
 
   const metaAuth = {
-    providers: {},
+    providers: {
+      wxwork: _createProviderWxwork(),
+      wxworkweb: _createProviderWxworkweb(),
+      wxworkmini: _createProviderWxworkmini(),
+    },
   };
-
-  // wxwork/wxworkweb
-  for (const scene of ['wxwork', 'wxworkweb']) {
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
-  }
-
-  // minis
-  const minis = ctx.config.module(moduleInfo.relativeName).account.wxwork.minis;
-  for (const sceneShort in minis) {
-    const scene = `wxworkmini${sceneShort}`;
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo, sceneShort);
-  }
 
   // ok
   return metaAuth;
