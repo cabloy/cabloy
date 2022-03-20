@@ -324,11 +324,25 @@ module.exports = ctx => {
             throw new Error(`should specify the title of auth provider: ${providerFullName}`);
           }
           const authProvider = extend(true, {}, _authProvider);
-          authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          this._prepareAuthProvider(relativeName, providerName, authProvider);
           authProviders[providerFullName] = authProvider;
         }
       }
       return authProviders;
+    }
+
+    _prepareAuthProvider(relativeName, providerName, authProvider) {
+      const meta = authProvider.meta;
+      meta.titleLocale = ctx.text(meta.title);
+      if (typeof meta.bean === 'string') {
+        meta.bean = { module: relativeName, name: meta.bean };
+      }
+      if (typeof meta.render === 'string') {
+        meta.render = { module: relativeName, name: meta.render };
+      }
+      if (typeof meta.validator === 'string') {
+        meta.validator = { module: relativeName, validator: meta.validator };
+      }
     }
   }
 
