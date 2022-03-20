@@ -1,8 +1,8 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
     get modelWechatUser() {
-      return ctx.model.module('a-wechat').wechatUser;
+      return ctx.model.module(moduleInfo.relativeName).wechatUser;
     }
 
     async execute(context, next) {
