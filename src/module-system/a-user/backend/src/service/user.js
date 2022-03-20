@@ -55,7 +55,7 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      const listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
+      let listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
       if (listLogin.length === 0) return [];
       // 2. list aAuth
       const sql = `
@@ -80,6 +80,17 @@ module.exports = app => {
           scene.__authId = authId;
         }
       }
+      // 4. filter disableAssociate:true and no __authId
+      listLogin = listLogin.filter(item => {
+        if (!item.meta.disableAssociate) return true;
+        for (const sceneName of Object.keys(item.scenes)) {
+          const scene = item.scenes[sceneName];
+          if (!scene.__authId) {
+            delete item.scenes[sceneName];
+          }
+        }
+        return Object.keys(item.scenes).length > 0;
+      });
       // ok
       return listLogin;
     }
