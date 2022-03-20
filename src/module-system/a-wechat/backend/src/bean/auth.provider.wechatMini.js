@@ -23,7 +23,7 @@ module.exports = function (ctx) {
     checkConfigValid(config) {
       return !!config.appID && !!config.appSecret;
     }
-    async adjustConfig(config) {
+    async adjustConfigForAuthenticate(config) {
       const configWechatmini = this.configModule.account.wechatmini;
       config.scope = configWechatmini.scope;
       return config;

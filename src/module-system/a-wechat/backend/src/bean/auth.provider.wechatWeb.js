@@ -19,7 +19,7 @@ module.exports = function (ctx) {
     checkConfigValid(config) {
       return !!config.appID && !!config.appSecret;
     }
-    async adjustConfig(config) {
+    async adjustConfigForAuthenticate(config) {
       function getCacheKey(openid) {
         return `wechat-webtoken:wechatweb:${openid}`;
       }

@@ -61,7 +61,7 @@ async function _createProviderStrategy(authProvider, beanProvider) {
   // combine
   config = extend(true, {}, beanProvider.configProviderScene, config);
   // adjust
-  config = await beanProvider.adjustConfig(config);
+  config = await beanProvider.adjustConfigForAuthenticate(config);
   // strategy
   const Strategy = beanProvider.getStrategy();
   return new Strategy(config, _createStrategyCallback(beanProvider));

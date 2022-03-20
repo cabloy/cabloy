@@ -11,7 +11,10 @@ module.exports = ctx => {
       throw new Error('getConfigDefault not implemented');
     }
     //
-    async adjustConfig(config) {
+    async adjustConfigForCache(config) {
+      return config;
+    }
+    async adjustConfigForAuthenticate(config) {
       return config;
     }
     // should be overrided
