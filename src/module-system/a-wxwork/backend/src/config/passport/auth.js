@@ -7,6 +7,7 @@ module.exports = ctx => {
       meta: {
         title: 'Wechat Work',
         mode: 'redirect',
+        scene: true,
         disableAssociate: false,
         bean: 'wxwork',
         render: 'buttonWxwork',

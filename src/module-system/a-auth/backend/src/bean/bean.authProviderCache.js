@@ -172,6 +172,8 @@ module.exports = ctx => {
       // config provider
       const configProviderCache = await this._cacheAuthProviderConfig_provider(module, providerName, beanProvider);
       __authProvidersConfigCache[ctx.subdomain][providerFullName] = configProviderCache;
+      // config provider scenes
+      await this._cacheAuthProviderConfig_providerScenes(configProviderCache, beanProvider);
     }
 
     async _cacheAuthProviderConfig_provider(module, providerName, beanProvider) {
@@ -206,22 +208,16 @@ module.exports = ctx => {
         const itemConfig = providerItem.config ? JSON.parse(providerItem.config) : null;
         configProvider = extend(true, {}, configDefault, itemConfig);
       }
-      // config provider scenes
-      const configProviderScenes = await this._cacheAuthProviderConfig_providerScenes(
-        configProvider,
-        providerItem,
-        beanProvider
-      );
       return {
         authProvider,
         providerItem,
         configProvider,
-        configProviderScenes,
+        configProviderScenes: {},
       };
     }
 
-    async _cacheAuthProviderConfig_providerScenes(configProvider, providerItem, beanProvider) {
-      const configProviderScenes = {};
+    async _cacheAuthProviderConfig_providerScenes(configProviderCache, beanProvider) {
+      const { configProviderScenes, configProvider, providerItem } = configProviderCache;
       const authProvider = beanProvider.authProvider;
       if (authProvider.meta.scene) {
         for (const sceneName in configProvider.scenes) {

@@ -23,17 +23,27 @@ module.exports = function (ctx) {
       return !!config.corpId && !!config.corpSecret && config.agentId;
     }
     async adjustConfigForCache(config) {
+      // corpId/corpSecret/agentId
       if (this.providerScene !== 'selfBuilt') {
         const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
           module: this.providerModule,
           providerName: this.providerName,
           providerScene: 'selfBuilt',
         });
-        console.log('--------find beanProvider:', !!beanProvider);
+        const configSelfBuilt = beanProvider.configProviderScene;
+        if (!config.corpId) config.corpId = configSelfBuilt.corpId;
+        if (!config.corpSecret) config.corpSecret = configSelfBuilt.corpSecret;
+        if (!config.agentId) config.agentId = configSelfBuilt.agentId;
       }
+      if (config.corpId) config.corpid = config.corpId;
+      if (config.corpSecret) config.corpsecret = config.corpSecret;
+      if (config.agentId) config.agentid = config.agentId;
+      if (config.appSecret) config.secret = config.appSecret;
       // message
-      const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
-      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
+      if (config.message) {
+        const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
+        config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
+      }
       // ok
       return config;
     }
