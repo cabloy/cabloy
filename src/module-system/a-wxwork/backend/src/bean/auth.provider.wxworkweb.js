@@ -25,7 +25,7 @@ module.exports = function (ctx) {
       // from wxwork
       const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
         module: this.providerModule,
-        providerName: this.providerName,
+        providerName: 'wxwork',
         providerScene: this.providerScene,
       });
       // config should be the last, as maybe disabled

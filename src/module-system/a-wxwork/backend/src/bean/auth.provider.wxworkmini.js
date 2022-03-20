@@ -1,41 +1,38 @@
-const require3 = require('require3');
-const Strategy = require3('@zhennann/passport-wechat').Strategy;
-
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
-    get cacheDb() {
-      return ctx.cache.db.module(moduleInfo.relativeName);
-    }
-    get localHelper() {
-      return ctx.bean.local.module(moduleInfo.relativeName).helper;
-    }
     async getConfigDefault() {
-      const configWechatmini = this.configModule.account.wechatmini;
+      const configWxworkmini = this.configModule.account.wxworkmini;
       return {
-        scenes: configWechatmini.scenes,
-        locales: configWechatmini.locales,
+        scenes: configWxworkmini.scenes,
+        locales: configWxworkmini.locales,
       };
     }
     checkConfigValid(config) {
       return !!config.appID && !!config.appSecret;
     }
     async adjustConfigForCache(config) {
-      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
-        `/api/${moduleInfo.url}/messageMini/${this.providerScene}`
-      );
+      // corpId/corpSecret/agentId
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: this.providerModule,
+        providerName: 'wxwork',
+        providerScene: 'selfBuilt',
+      });
+      const configSelfBuilt = beanProvider.configProviderScene;
+      if (!config.corpId) config.corpId = configSelfBuilt.corpId;
+      if (!config.corpSecret) config.corpSecret = configSelfBuilt.corpSecret;
+      if (!config.agentId) config.agentId = configSelfBuilt.agentId;
+      if (config.corpId) config.corpid = config.corpId;
+      if (config.corpSecret) config.corpsecret = config.corpSecret;
+      if (config.agentId) config.agentid = config.agentId;
+      if (config.appSecret) config.secret = config.appSecret;
       return config;
     }
     async adjustConfigForAuthenticate(config) {
-      const configWechatmini = this.configModule.account.wechatmini;
-      config.scope = configWechatmini.scope;
       return config;
-    }
-    getStrategy() {
-      return Strategy;
     }
   }
 
