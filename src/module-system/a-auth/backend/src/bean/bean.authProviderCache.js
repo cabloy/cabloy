@@ -207,7 +207,7 @@ module.exports = ctx => {
         configProvider = extend(true, {}, configDefault, itemConfig);
       }
       // config provider scenes
-      const configProviderScenes = this._cacheAuthProviderConfig_providerScenes(
+      const configProviderScenes = await this._cacheAuthProviderConfig_providerScenes(
         configProvider,
         providerItem,
         beanProvider
@@ -220,13 +220,13 @@ module.exports = ctx => {
       };
     }
 
-    _cacheAuthProviderConfig_providerScenes(configProvider, providerItem, beanProvider) {
+    async _cacheAuthProviderConfig_providerScenes(configProvider, providerItem, beanProvider) {
       const configProviderScenes = {};
       const authProvider = beanProvider.authProvider;
       if (authProvider.meta.scene) {
         for (const sceneName in configProvider.scenes) {
           const providerScene = configProvider.scenes[sceneName];
-          configProviderScenes[sceneName] = this._cacheAuthProviderConfig_providerScene(
+          configProviderScenes[sceneName] = await this._cacheAuthProviderConfig_providerScene(
             configProvider,
             providerItem,
             beanProvider,
@@ -234,7 +234,7 @@ module.exports = ctx => {
           );
         }
       } else {
-        configProviderScenes.default = this._cacheAuthProviderConfig_providerScene(
+        configProviderScenes.default = await this._cacheAuthProviderConfig_providerScene(
           configProvider,
           providerItem,
           beanProvider,
@@ -244,7 +244,7 @@ module.exports = ctx => {
       return configProviderScenes;
     }
 
-    _cacheAuthProviderConfig_providerScene(configProvider, providerItem, beanProvider, providerScene) {
+    async _cacheAuthProviderConfig_providerScene(configProvider, providerItem, beanProvider, providerScene) {
       const authProvider = beanProvider.authProvider;
       let configProviderScene;
       if (authProvider.meta.scene) {
@@ -256,6 +256,8 @@ module.exports = ctx => {
       // providerSceneValid
       configProviderScene.__valid =
         !providerItem.disabled && !configProviderScene.disabled && beanProvider.checkConfigValid(configProviderScene);
+      // adjustConfigForCache
+      configProviderScene = await beanProvider.adjustConfigForCache(configProviderScene);
       // ok
       return configProviderScene;
     }
