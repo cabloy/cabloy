@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   // wechat
   function _createProviderWechat() {
@@ -7,18 +7,9 @@ module.exports = app => {
       meta: {
         title: 'Wechat Public',
         mode: 'redirect',
-        bean: {
-          module: moduleInfo.relativeName,
-          name: 'wechat',
-        },
-        render: {
-          module: moduleInfo.relativeName,
-          name: 'buttonWechat',
-        },
-        validator: {
-          module: moduleInfo.relativeName,
-          validator: 'authWechat',
-        },
+        bean: 'wechat',
+        render: 'buttonWechat',
+        validator: 'authWechat',
       },
     };
   }
@@ -29,18 +20,9 @@ module.exports = app => {
       meta: {
         title: 'Wechat Web',
         mode: 'redirect',
-        bean: {
-          module: moduleInfo.relativeName,
-          name: 'wechatweb',
-        },
-        render: {
-          module: moduleInfo.relativeName,
-          name: 'buttonWechatweb',
-        },
-        validator: {
-          module: moduleInfo.relativeName,
-          validator: 'authWechatweb',
-        },
+        bean: 'wechatweb',
+        render: 'buttonWechatweb',
+        validator: 'authWechatweb',
       },
     };
   }
@@ -53,14 +35,8 @@ module.exports = app => {
         mode: 'direct',
         scene: true,
         disableAssociate: true,
-        bean: {
-          module: moduleInfo.relativeName,
-          name: 'wechatmini',
-        },
-        validator: {
-          module: moduleInfo.relativeName,
-          validator: 'authWechatmini',
-        },
+        bean: 'wechatmini',
+        validator: 'authWechatmini',
       },
     };
   }

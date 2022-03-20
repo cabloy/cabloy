@@ -8,14 +8,8 @@ module.exports = app => {
           title: 'SMS',
           inline: true,
           mode: 'direct',
-          bean: {
-            module: moduleInfo.relativeName,
-            name: 'sms',
-          },
-          render: {
-            module: moduleInfo.relativeName,
-            name: 'blockSignin',
-          },
+          bean: 'sms',
+          render: 'blockSignin',
         },
       },
     },
