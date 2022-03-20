@@ -39,7 +39,7 @@ util.inherits(WxworkStrategy, passport.Strategy);
 
 WxworkStrategy.prototype.getOAuth = function (options) {
   const _config = options.getConfig();
-  return new OAuth(_config.corpid, _config.agentid);
+  return new OAuth(_config.corpId, _config.agentId);
 };
 
 WxworkStrategy.prototype.authenticate = function (req, options) {
