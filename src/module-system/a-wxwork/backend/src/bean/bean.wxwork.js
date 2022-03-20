@@ -175,22 +175,25 @@ module.exports = function (ctx) {
 
   function _createWxworkApiUtil() {
     return {
-      // scene: empty/wxwork/wxworkweb/wxworkmini/wxworkminidefault/xxx,xxx,xxx
-      in(scene) {
-        // scene
-        if (!scene) scene = 'wxwork';
-        if (typeof scene === 'string') scene = scene.split(',');
-        // provider
+      // providerScene: empty/wxwork/wxworkweb/wxworkmini/xxx,xxx,xxx
+      in({ providerName, providerScene }) {
+        //  providerName is wxwork/selfBuilt
+        if (!providerName && !providerScene) {
+          providerName = 'wxwork';
+          providerScene = 'selfBuilt';
+        }
+        // 1. provider
         const provider = ctx.state.user && ctx.state.user.provider;
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
-        // find any match
-        for (const item of scene) {
-          const ok =
-            provider.providerName === item || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
-          if (ok) return true;
+        // 2. wxwork/wxworkweb/wxworkmini
+        if (!['wxwork', 'wxworkweb', 'wxworkmini'].includes(providerName) || provider.providerName !== providerName) {
+          return false;
         }
-        // not found
-        return false;
+        // 3. null means all
+        if (!providerScene || providerScene === provider.providerScene) return true;
+        // 3.2 some scenes
+        if (!Array.isArray(providerScene)) providerScene = providerScene.split(',');
+        return providerScene.includes(provider.providerScene);
       },
     };
   }
