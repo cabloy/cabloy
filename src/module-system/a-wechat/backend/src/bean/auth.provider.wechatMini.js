@@ -23,6 +23,12 @@ module.exports = function (ctx) {
     checkConfigValid(config) {
       return !!config.appID && !!config.appSecret;
     }
+    async adjustConfigForCache(config) {
+      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
+        `/api/${moduleInfo.url}/messageMini/${this.providerScene}`
+      );
+      return config;
+    }
     async adjustConfigForAuthenticate(config) {
       const configWechatmini = this.configModule.account.wechatmini;
       config.scope = configWechatmini.scope;

@@ -30,6 +30,15 @@ module.exports = app => {
         ebType: 'group',
         ebTitle: 'Message Info',
         properties: {
+          __messageURL: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Message URL',
+            ebParams: {
+              textarea: true,
+            },
+            ebReadOnly: true,
+          },
           token: {
             type: 'string',
             ebType: 'text',

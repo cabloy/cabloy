@@ -230,7 +230,8 @@ module.exports = ctx => {
             configProvider,
             providerItem,
             beanProvider,
-            providerScene
+            providerScene,
+            sceneName
           );
         }
       } else {
@@ -238,14 +239,25 @@ module.exports = ctx => {
           configProvider,
           providerItem,
           beanProvider,
+          null,
           null
         );
       }
       return configProviderScenes;
     }
 
-    async _cacheAuthProviderConfig_providerScene(configProvider, providerItem, beanProvider, providerScene) {
+    async _cacheAuthProviderConfig_providerScene(configProvider, providerItem, beanProvider, providerScene, sceneName) {
+      //
       const authProvider = beanProvider.authProvider;
+      // create new beanProvider as providerScene specified
+      if (authProvider.meta.scene) {
+        beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+          module: beanProvider.providerModule,
+          providerName: beanProvider.providerName,
+          providerScene: sceneName,
+        });
+      }
+      //
       let configProviderScene;
       if (authProvider.meta.scene) {
         // scene: true
