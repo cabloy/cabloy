@@ -1,7 +1,9 @@
-const WxworkHelperFn = require('../common/wxworkHelper.js');
-
 module.exports = app => {
   class AuthMini extends app.Service {
+    get localHelper() {
+      return this.ctx.bean.local.helper;
+    }
+
     async login({ scene, code }) {
       if (!code) return this.ctx.throw(403);
       const res = await this.ctx.bean.wxwork.app.mini[scene].code2Session(code);
@@ -10,8 +12,7 @@ module.exports = app => {
       const session_key = res.session_key;
       const memberId = res.userid;
       // verify
-      const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId, needLogin: true });
+      await this.localHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId, needLogin: true });
       // save session_key, because ctx.state.user maybe changed
       await this.ctx.bean.wxwork.mini[scene].saveSessionKey(session_key);
       // echo

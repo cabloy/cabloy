@@ -1,5 +1,3 @@
-const WxworkHelperFn = require('../common/wxworkHelper.js');
-
 // department
 
 const __departmentFieldMap = [
@@ -151,6 +149,10 @@ const __memberFieldMap_XML = [
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
+    get localHelper() {
+      return this.ctx.bean.local.helper;
+    }
+
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -586,8 +588,7 @@ module.exports = app => {
     async _createUserAndMember({ member }) {
       // 1. create user&auth
       // verify auth user
-      const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 'wxwork', member, needLogin: false });
+      const verifyUser = await this.localHelper.verifyAuthUser({ scene: 'wxwork', member, needLogin: false });
       const userId = verifyUser.agent.id;
 
       // 2. add user to role
