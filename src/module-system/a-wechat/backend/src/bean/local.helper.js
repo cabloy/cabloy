@@ -150,7 +150,7 @@ module.exports = ctx => {
         // always update
         await this.modelAuth.update({
           id: authItem.id,
-          profileId,
+          profileId, // force unionId to be saved
           profile: JSON.stringify(_profile),
         });
         authId = authItem.id;
