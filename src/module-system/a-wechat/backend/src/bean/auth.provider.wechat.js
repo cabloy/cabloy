@@ -19,6 +19,10 @@ module.exports = function (ctx) {
     checkConfigValid(config) {
       return !!config.appID && !!config.appSecret;
     }
+    async adjustConfigForCache(config) {
+      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/index`);
+      return config;
+    }
     async adjustConfigForAuthenticate(config) {
       function getCacheKey(openid) {
         return `wechat-webtoken:wechat:${openid}`;

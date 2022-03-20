@@ -28,6 +28,15 @@ module.exports = app => {
             ebType: 'group-flatten',
             ebTitle: 'Basic Info',
           },
+          __messageURL: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Message URL',
+            ebParams: {
+              textarea: true,
+            },
+            ebReadOnly: true,
+          },
           token: {
             type: 'string',
             ebType: 'text',
