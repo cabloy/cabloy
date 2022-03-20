@@ -87,6 +87,7 @@ module.exports = appInfo => {
   // account.wxworkweb
   config.account.wxworkweb = {
     client: 'wxworkweb',
+    scope: 'snsapi_base',
     // scenes
     scenes: {
       selfBuilt: {

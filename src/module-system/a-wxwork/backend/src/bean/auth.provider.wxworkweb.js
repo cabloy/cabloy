@@ -1,3 +1,5 @@
+const require3 = require('require3');
+const extend = require3('extend2');
 const Strategy = require('../config/passport/strategy-wxwork.js');
 
 module.exports = function (ctx) {
@@ -20,34 +22,21 @@ module.exports = function (ctx) {
       return !!config.corpId && !!config.corpSecret && config.agentId;
     }
     async adjustConfigForCache(config) {
-      // corpId/corpSecret/agentId
-      if (this.providerScene !== 'selfBuilt') {
-        const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
-          module: this.providerModule,
-          providerName: this.providerName,
-          providerScene: 'selfBuilt',
-        });
-        const configSelfBuilt = beanProvider.configProviderScene;
-        if (!config.corpId) config.corpId = configSelfBuilt.corpId;
-        if (!config.corpSecret) config.corpSecret = configSelfBuilt.corpSecret;
-        if (!config.agentId) config.agentId = configSelfBuilt.agentId;
-      }
-      if (config.corpId) config.corpid = config.corpId;
-      if (config.corpSecret) config.corpsecret = config.corpSecret;
-      if (config.agentId) config.agentid = config.agentId;
-      if (config.appSecret) config.secret = config.appSecret;
-      // message
-      if (config.message) {
-        const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
-        config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
-      }
+      // from wxwork
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: this.providerModule,
+        providerName: this.providerName,
+        providerScene: this.providerScene,
+      });
+      // config should be the last, as maybe disabled
+      config = extend(true, {}, beanProvider.configProviderScene, config);
       // ok
       return config;
     }
     async adjustConfigForAuthenticate(config) {
-      const configWxwork = this.configModule.account.wxwork;
-      config.client = configWxwork.client;
-      config.scope = configWxwork.scope;
+      const configWxworkweb = this.configModule.account.wxworkweb;
+      config.client = configWxworkweb.client;
+      config.scope = configWxworkweb.scope;
       return config;
     }
     getStrategy() {
