@@ -67,7 +67,7 @@ module.exports = appInfo => {
       contacts: {
         title: 'Contacts',
         appSecret: '',
-        event: {
+        message: {
           token: appInfo.name,
           encodingAESKey: '',
         },

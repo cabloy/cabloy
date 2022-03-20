@@ -23,11 +23,24 @@ module.exports = function (ctx) {
       return !!config.corpId && !!config.corpSecret && config.agentId;
     }
     async adjustConfigForCache(config) {
+      if (this.providerScene !== 'selfBuilt') {
+        const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+          module: this.providerModule,
+          providerName: this.providerName,
+          providerScene: 'selfBuilt',
+        });
+        console.log('--------find beanProvider:', !!beanProvider);
+      }
+      // message
       const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
       config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
+      // ok
       return config;
     }
     async adjustConfigForAuthenticate(config) {
+      const configWxwork = this.configModule.account.wxwork;
+      config.client = configWxwork.client;
+      config.scope = configWxwork.scope;
       return config;
     }
     getStrategy() {
