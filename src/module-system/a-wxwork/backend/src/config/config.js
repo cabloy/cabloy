@@ -109,7 +109,6 @@ module.exports = appInfo => {
     scenes: {
       default: {
         title: 'Default',
-        corpSecret: '',
         appID: '',
         appSecret: '',
       },

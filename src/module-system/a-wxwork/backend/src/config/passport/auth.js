@@ -16,7 +16,7 @@ module.exports = ctx => {
     };
   }
 
-  // wxwork
+  // wxworkweb
   function _createProviderWxworkweb() {
     return {
       meta: {
@@ -30,17 +30,17 @@ module.exports = ctx => {
     };
   }
 
-  function _createProviderMini(sceneInfo, sceneShort) {
-    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork.minis[sceneShort];
-    if (!config.appID || !config.appSecret) return null;
+  // wxworkmini
+  function _createProviderWxworkmini() {
     return {
       meta: {
-        title: sceneInfo.title,
+        title: 'Wechat Work Miniprogram',
         mode: 'direct',
+        scene: true,
         disableAssociate: true,
+        bean: 'wxworkmini',
+        validator: 'authWxworkmini',
       },
-      config: {},
-      handler: null,
     };
   }
 
@@ -48,7 +48,7 @@ module.exports = ctx => {
     providers: {
       wxwork: _createProviderWxwork(),
       wxworkweb: _createProviderWxworkweb(),
-      // wxworkmini: _createProviderWxworkmini(),
+      wxworkmini: _createProviderWxworkmini(),
     },
   };
 
