@@ -27,12 +27,14 @@ module.exports = app => {
       });
       // validate data
       const meta = authProvider.meta;
-      await this.ctx.bean.validation.validate({
-        module: meta.validator.module,
-        validator: meta.validator.validator,
-        data,
-        filterOptions: true,
-      });
+      if (meta.validator.validator !== 'json') {
+        await this.ctx.bean.validation.validate({
+          module: meta.validator.module,
+          validator: meta.validator.validator,
+          data,
+          filterOptions: true,
+        });
+      }
       // update
       if (!meta.scene) {
         item.config = JSON.stringify(data);
