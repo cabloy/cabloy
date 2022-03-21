@@ -11,7 +11,8 @@ module.exports = ctx => {
         disableAssociate: false,
         bean: 'wxwork',
         render: 'buttonWxwork',
-        validator: 'authWxwork',
+        validator: 'json',
+        icon: { f7: ':auth:wxwork-outline' },
       },
     };
   }
@@ -26,6 +27,7 @@ module.exports = ctx => {
         disableAssociate: false,
         bean: 'wxworkweb',
         render: 'buttonWxworkweb',
+        icon: { f7: ':auth:wxwork-outline' },
       },
     };
   }
@@ -40,6 +42,7 @@ module.exports = ctx => {
         disableAssociate: true,
         bean: 'wxworkmini',
         validator: 'authWxworkmini',
+        icon: { f7: ':auth:wxwork-outline' },
       },
     };
   }

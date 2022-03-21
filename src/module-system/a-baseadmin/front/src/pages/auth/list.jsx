@@ -157,6 +157,10 @@ export default {
       if (meta.scene) {
         domAfter = <eb-link iconF7="::add" propsOnPerform={event => this.onPerformItemSceneAdd(event, item)}></eb-link>;
       }
+      let domIcon;
+      if (meta.icon) {
+        domIcon = <f7-icon f7={meta.icon.f7} material={meta.icon.material}></f7-icon>;
+      }
       return (
         <eb-list-item
           key={fullName}
@@ -166,6 +170,7 @@ export default {
         >
           <div slot="title">{this.getItemTitle(item)}</div>
           <div slot="after">{domAfter}</div>
+          <div slot="media">{domIcon}</div>
           <eb-context-menu>
             <div slot="right">{domAction}</div>
           </eb-context-menu>
@@ -213,6 +218,8 @@ export default {
       if (scene.disabled) {
         domAfter = <f7-badge>{this.$text('Disabled')}</f7-badge>;
       }
+      // icon
+      const domIcon = <f7-icon f7="::dot"></f7-icon>;
       return (
         <eb-list-item
           key={sceneName}
@@ -222,6 +229,7 @@ export default {
         >
           <div slot="title">{scene.titleLocale}</div>
           <div slot="after">{domAfter}</div>
+          <div slot="media">{domIcon}</div>
           <eb-context-menu>
             <div slot="right">{domActions}</div>
           </eb-context-menu>

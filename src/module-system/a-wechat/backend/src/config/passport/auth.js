@@ -10,6 +10,7 @@ module.exports = app => {
         bean: 'wechat',
         render: 'buttonWechat',
         validator: 'authWechat',
+        icon: { f7: ':auth:wechat-outline' },
       },
     };
   }
@@ -23,6 +24,7 @@ module.exports = app => {
         bean: 'wechatweb',
         render: 'buttonWechatweb',
         validator: 'authWechatweb',
+        icon: { f7: ':auth:wechat-outline' },
       },
     };
   }
@@ -37,6 +39,7 @@ module.exports = app => {
         disableAssociate: true,
         bean: 'wechatmini',
         validator: 'authWechatmini',
+        icon: { f7: ':auth:wechat-outline' },
       },
     };
   }

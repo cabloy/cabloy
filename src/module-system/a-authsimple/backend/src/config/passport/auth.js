@@ -10,6 +10,7 @@ module.exports = app => {
           mode: 'direct',
           bean: 'simple',
           render: 'blockSignin',
+          icon: { f7: ':auth:password' },
         },
       },
     },

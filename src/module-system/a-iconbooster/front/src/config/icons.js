@@ -1,3 +1,4 @@
+import _auth from '../assets/icons/groups/auth.svg';
 import _default from '../assets/icons/groups/default.svg';
 import _editor from '../assets/icons/groups/editor.svg';
 import _flow from '../assets/icons/groups/flow.svg';
@@ -6,6 +7,7 @@ import _outline from '../assets/icons/groups/outline.svg';
 import _social from '../assets/icons/groups/social.svg';
 
 export default {
+  auth: _auth,
   default: _default,
   editor: _editor,
   flow: _flow,

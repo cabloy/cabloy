@@ -9,6 +9,7 @@ module.exports = app => {
         bean: 'github',
         render: 'buttonGithub',
         validator: 'authGithub',
+        icon: { f7: ':auth:github' },
       },
     };
   }
