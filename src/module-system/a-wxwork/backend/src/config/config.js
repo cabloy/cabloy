@@ -112,7 +112,6 @@ module.exports = appInfo => {
         agentId: '',
         secret: '',
         appID: '',
-        appSecret: '',
       },
     },
   };
