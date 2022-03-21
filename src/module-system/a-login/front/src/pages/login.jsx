@@ -52,22 +52,23 @@ export default {
       };
       this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
     },
-    _getTopInlineComponents() {
-      const inlineComponents = [];
+    _getRenderComponents({ inline }) {
+      const renderComponents = [];
       for (const provider of this.providers) {
         for (const providerScene in provider.renderComponents) {
           const renderComponent = provider.renderComponents[providerScene];
           const metaScene = this._getMetaScene(provider, providerScene);
-          if (metaScene.inline) {
-            inlineComponents.push({
-              provider,
-              providerScene,
-              renderComponent,
-            });
+          const item = {
+            provider,
+            providerScene,
+            renderComponent,
+          };
+          if (Boolean(inline) === Boolean(metaScene.inline)) {
+            renderComponents.push(item);
           }
         }
       }
-      return inlineComponents;
+      return renderComponents;
     },
     _getComponentFullName(provider, providerScene) {
       const meta = provider.meta;
@@ -132,7 +133,7 @@ export default {
     _renderLoginTop() {
       if (!this.providers) return null;
       // providers
-      const inlineComponents = this._getTopInlineComponents();
+      const inlineComponents = this._getRenderComponents({ inline: true });
       if (inlineComponents.length === 0) return null;
       // check length
       if (inlineComponents.length === 1) {
@@ -143,28 +144,26 @@ export default {
     _renderLoginBottom() {
       if (this.state === 'migrate') return null;
       if (!this.providers) return null;
-      const providers = this.providers.filter(item => !item.provider.meta.inline);
-      if (providers.length === 0) return null;
+      const buttonComponents = this._getRenderComponents({ inline: false });
+      if (buttonComponents.length === 0) return null;
       // buttons
       const domButtons = [];
-      for (const item of providers) {
-        const { provider } = item;
-        const meta = provider.meta;
-        for (const providerScene in provider.scenes) {
-          const fullName = this._getComponentFullName(provider, providerScene);
-          const options = {
-            attrs: { class: 'btn' },
-            props: this._getComponentProps(provider, providerScene),
-          };
-          domButtons.push(
-            <eb-component
-              key={fullName}
-              module={meta.render.module}
-              name={meta.render.name}
-              options={options}
-            ></eb-component>
-          );
-        }
+      for (const buttonComponent of buttonComponents) {
+        const { provider, providerScene } = buttonComponent;
+        const metaScene = this._getMetaScene(provider, providerScene);
+        const fullName = this._getComponentFullName(provider, providerScene);
+        const options = {
+          attrs: { class: 'btn' },
+          props: this._getComponentProps(provider, providerScene),
+        };
+        domButtons.push(
+          <eb-component
+            key={fullName}
+            module={metaScene.render.module}
+            name={metaScene.render.name}
+            options={options}
+          ></eb-component>
+        );
       }
       return <div class="btns">{domButtons}</div>;
     },
