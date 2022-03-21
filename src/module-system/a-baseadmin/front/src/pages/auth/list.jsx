@@ -219,7 +219,7 @@ export default {
         domAfter = <f7-badge>{this.$text('Disabled')}</f7-badge>;
       }
       // icon
-      const domIcon = <f7-icon f7="::dot"></f7-icon>;
+      const domIcon = <f7-icon color="gray" f7="::dot"></f7-icon>;
       return (
         <eb-list-item
           key={sceneName}

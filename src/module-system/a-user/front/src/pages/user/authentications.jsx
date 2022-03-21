@@ -109,8 +109,11 @@ export default {
       let domMedia;
       if (!meta.scene) {
         if (this.checkIfValid(item)) {
-          domMedia = <f7-icon f7="::done"></f7-icon>;
+          domMedia = <f7-icon color="green" f7="::done"></f7-icon>;
         }
+      }
+      if (!domMedia && meta.icon) {
+        domMedia = <f7-icon f7={meta.icon.f7} material={meta.icon.material}></f7-icon>;
       }
       //
       let domAfter;
@@ -124,7 +127,7 @@ export default {
             <eb-link propsOnPerform={event => this.onPerformItemDisable(event, item)}>{this.$text('Disable')}</eb-link>
           );
         } else if (this.checkIfCurrent(item)) {
-          domAfter = <span>{this.$text('Current')}</span>;
+          domAfter = <f7-badge>{this.$text('Current')}</f7-badge>;
         }
       }
       return (
@@ -139,7 +142,10 @@ export default {
       //
       let domMedia;
       if (this.checkIfValid(item, sceneName)) {
-        domMedia = <f7-icon f7="::done"></f7-icon>;
+        domMedia = <f7-icon color="green" f7="::done"></f7-icon>;
+      }
+      if (!domMedia) {
+        domMedia = <f7-icon color="gray" f7="::dot"></f7-icon>;
       }
       //
       let domAfter;
@@ -156,7 +162,7 @@ export default {
           </eb-link>
         );
       } else if (this.checkIfCurrent(item, sceneName)) {
-        domAfter = <span>{this.$text('Current')}</span>;
+        domAfter = <f7-badge>{this.$text('Current')}</f7-badge>;
       }
       return (
         <eb-list-item key={sceneName} link={false}>
