@@ -27,7 +27,7 @@ module.exports = ctx => {
       }
       let providersConfigForLogin = __authProvidersConfigCache_login[ctx.subdomain][ctx.locale];
       if (!providersConfigForLogin) {
-        const listMap = this._getAuthProvidersConfigForLogin_list(true);
+        const listMap = this._getAuthProvidersConfigForLogin_list({ forLogin: true });
         if (!listMap) return null; // for try to get info at next time
         providersConfigForLogin = this._getAuthProvidersConfigForLogin_order(listMap);
         __authProvidersConfigCache_login[ctx.subdomain][ctx.locale] = providersConfigForLogin;
@@ -41,7 +41,7 @@ module.exports = ctx => {
       }
       let providersConfigForAdmin = __authProvidersConfigCache_admin[ctx.subdomain][ctx.locale];
       if (!providersConfigForAdmin) {
-        const listMap = this._getAuthProvidersConfigForLogin_list(false);
+        const listMap = this._getAuthProvidersConfigForLogin_list({ forLogin: false });
         if (!listMap) return null; // for try to get info at next time
         providersConfigForAdmin = this._getAuthProvidersConfigForLogin_order(listMap);
         __authProvidersConfigCache_admin[ctx.subdomain][ctx.locale] = providersConfigForAdmin;
@@ -67,7 +67,7 @@ module.exports = ctx => {
       return res;
     }
 
-    _getAuthProvidersConfigForLogin_list(forLogin) {
+    _getAuthProvidersConfigForLogin_list({ forLogin }) {
       const listMap = {};
       //
       const providersConfigCache = this.getAuthProvidersConfigCache();
