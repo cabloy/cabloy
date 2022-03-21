@@ -33,8 +33,9 @@ module.exports = function (ctx) {
       }
       // message
       if (config.message) {
-        const action = this.providerScene === 'selfBuilt' ? 'index' : this.providerScene;
-        config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/${action}`);
+        config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
+          `/api/${moduleInfo.url}/message/${this.providerScene}`
+        );
       }
       // ok
       return config;

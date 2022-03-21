@@ -2,13 +2,19 @@ const require3 = require('require3');
 const WechatCrypto = require3('wechat-crypto');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageController extends app.Controller {
     get localUtils() {
       return this.ctx.bean.local.utils;
     }
 
     async index() {
-      await this._handleMessage('selfBuilt', async ({ message }) => {
+      // providerScene
+      let providerScene = this.ctx.params.providerScene || 'selfBuilt';
+      // compatible with the old 'index'
+      if (providerScene === 'index') providerScene = 'selfBuilt';
+      // handle message
+      await this._handleMessage(providerScene, async ({ message }) => {
         return await this.ctx.service.message.index({ message });
       });
     }
@@ -19,28 +25,34 @@ module.exports = app => {
       });
     }
 
-    async _handleMessage(appName, handler) {
+    async _handleMessage(providerScene, handler) {
       // query
       const query = this.ctx.query;
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'wxwork',
+        providerScene,
+      });
+      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // config
-      const config = this.ctx.config.account.wxwork;
-      const configApp = config.apps[appName];
+      const config = beanProvider.configProviderScene;
       // encrypted: always true
       const encrypted = true; // query.encrypt_type === 'aes';
       // wechat crypto
       const wechatCrypto = encrypted
-        ? new WechatCrypto(configApp.token, configApp.encodingAESKey, config.corpid)
+        ? new WechatCrypto(config.message.token, config.message.encodingAESKey, config.corpId)
         : null;
       // parse
       let messageIn;
       if (this.ctx.method === 'GET') {
-        messageIn = await this._parseMessageGet({ query, configApp, encrypted, wechatCrypto });
+        messageIn = await this._parseMessageGet({ query, config, encrypted, wechatCrypto });
         // ok
         this.ctx.status = 200;
         this.ctx.type = 'text/plain';
         this.ctx.body = messageIn.echostr;
       } else {
-        messageIn = await this._parseMessagePost({ query, configApp, encrypted, wechatCrypto });
+        messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
         let resXML;
         const messageOut = await handler({ message: messageIn });
@@ -64,7 +76,7 @@ module.exports = app => {
       }
     }
 
-    async _parseMessageGet({ query, configApp, encrypted, wechatCrypto }) {
+    async _parseMessageGet({ query, config, encrypted, wechatCrypto }) {
       // check if valid
       let valid = false;
       if (encrypted) {
@@ -72,7 +84,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          this.localUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.message.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -83,7 +95,7 @@ module.exports = app => {
       return { echostr: query.echostr };
     }
 
-    async _parseMessagePost({ query, configApp, encrypted, wechatCrypto }) {
+    async _parseMessagePost({ query, config, encrypted, wechatCrypto }) {
       // xml raw
       let xmlRaw;
       if (typeof this.ctx.request.body === 'string') {
@@ -101,7 +113,7 @@ module.exports = app => {
       } else {
         valid =
           query.signature ===
-          this.localUtils.calcSignature({ options: [configApp.token, query.timestamp, query.nonce].sort() });
+          this.localUtils.calcSignature({ options: [config.message.token, query.timestamp, query.nonce].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt

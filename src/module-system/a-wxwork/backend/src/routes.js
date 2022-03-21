@@ -1,10 +1,20 @@
 module.exports = app => {
   const routes = [
-    // message
-    { method: 'get', path: 'message/index', controller: 'message', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/index', controller: 'message', meta: { auth: { enable: false } } },
-    { method: 'get', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
+    // message: selfBuilt/contacts
+    {
+      method: 'get',
+      path: 'message/:providerScene',
+      controller: 'message',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
+    {
+      method: 'post',
+      path: 'message/:providerScene',
+      controller: 'message',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
     // contacts
     {
       method: 'post',
