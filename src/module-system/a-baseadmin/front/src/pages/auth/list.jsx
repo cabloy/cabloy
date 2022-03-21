@@ -145,7 +145,7 @@ export default {
       }
     },
     _editSceneConfig_json(item, sceneName) {
-      const data = this.$meta.util.extend({}, item.scenes[this.sceneName]);
+      const data = this.$meta.util.extend({}, item.scenes[sceneName]);
       // navigate
       this.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
         context: {
