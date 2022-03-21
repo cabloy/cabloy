@@ -110,10 +110,18 @@ export default {
       // delete
       this.$delete(item.scenes, sceneName);
     },
-    _editSceneConfig(item, sceneName) {
+    _getMetaScene(item, sceneName) {
       const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
+    },
+    _editSceneConfig(item, sceneName) {
+      const metaScene = this._getMetaScene(item, sceneName);
       // json
-      if (meta.validator.validator === 'json') {
+      if (metaScene.validator.validator === 'json') {
         return this._editSceneConfig_json(item, sceneName);
       }
       // schema
