@@ -110,25 +110,72 @@ export default {
       this.$delete(item.scenes, sceneName);
     },
     _editSceneConfig(item, sceneName) {
+      const meta = item.meta;
+      // json
+      if (meta.validator.validator === 'json') {
+        return this._editSceneConfig_json(item, sceneName);
+      }
+      // schema
+      this._editSceneConfig_schema(item, sceneName);
+    },
+    _editSceneConfig_getTitle(item, sceneName) {
+      const meta = item.meta;
+      let title = this.$text('Config');
+      if (meta.scene) {
+        title = `${title}: ${sceneName}`;
+      }
+      return title;
+    },
+    async _editSceneConfig_save(item, sceneName, data) {
+      // save
+      const res = await this.$api.post('authScene/save', {
+        id: item.providerItem.id,
+        sceneName,
+        data,
+      });
+      // change
+      const sceneOld = item.scenes[sceneName];
+      const sceneNew = res.data;
+      item.scenes[sceneName] = {
+        ...sceneOld,
+        ...sceneNew,
+      };
+      if (sceneOld.title !== sceneNew.title) {
+        item.scenes[sceneName].titleLocale = sceneNew.title;
+      }
+    },
+    _editSceneConfig_json(item, sceneName) {
+      const data = this.$meta.util.extend({}, item.scenes[this.sceneName]);
+      // navigate
+      this.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
+        context: {
+          params: {
+            value: data,
+            valueType: 'json',
+            title: this._editSceneConfig_getTitle(item, sceneName),
+            readOnly: false,
+            actionSave: false,
+            actionDone: true,
+          },
+          callback: (code, value) => {
+            if (code === 200) {
+              this._editSceneConfig_save(item, sceneName, value);
+            }
+          },
+        },
+      });
+    },
+    _editSceneConfig_schema(item, sceneName) {
       this.$view.navigate(
         `/a/baseadmin/auth/config?module=${item.module}&providerName=${item.providerName}&sceneName=${sceneName}`,
         {
           context: {
             params: {
               item,
-            },
-            callback: (code, res) => {
-              if (code === 200) {
-                const sceneOld = item.scenes[sceneName];
-                const sceneNew = res.data;
-                item.scenes[sceneName] = {
-                  ...sceneOld,
-                  ...sceneNew,
-                };
-                if (sceneOld.title !== sceneNew.title) {
-                  item.scenes[sceneName].titleLocale = sceneNew.title;
-                }
-              }
+              title: this._editSceneConfig_getTitle(item, sceneName),
+              onSaveScene: async data => {
+                await this._editSceneConfig_save(item, sceneName, data);
+              },
             },
           },
         }

@@ -21,13 +21,14 @@ export default {
     item() {
       return this.contextParams.item;
     },
+    title() {
+      return this.contextParams.title;
+    },
+    onSaveScene() {
+      return this.contextParams.onSaveScene;
+    },
     page_title() {
-      const meta = this.item.meta;
-      let title = this.$text('Config');
-      if (meta.scene) {
-        title = `${title}: ${this.sceneName}`;
-      }
-      return this.page_getDirtyTitle(title);
+      return this.page_getDirtyTitle(this.title);
     },
   },
   created() {
@@ -48,13 +49,9 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      const res = await this.$api.post('authScene/save', {
-        id: this.item.providerItem.id,
-        sceneName: this.sceneName,
-        data: this.data,
-      });
+      await this.onSaveScene(this.data);
       this.page_setDirty(false);
-      this.contextCallback(200, res);
+      this.contextCallback(200, null);
       this.$f7router.back();
       return true; // toast on success
     },
@@ -71,9 +68,7 @@ export default {
       this.schema = schema;
     },
     _prepareData() {
-      const data = {
-        ...this.item.scenes[this.sceneName],
-      };
+      const data = this.$meta.util.extend({}, this.item.scenes[this.sceneName]);
       this._combineAuthenticateUrls(data);
       this.data = data;
     },
