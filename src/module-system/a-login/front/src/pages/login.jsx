@@ -36,10 +36,10 @@ export default {
     onClose() {
       this.$f7router.back();
     },
-    _getMetaScene(item, sceneName) {
+    _getMetaScene(item, providerScene) {
       const meta = item.meta;
       if (meta.scene) {
-        const scene = item.metaScenes && item.metaScenes[sceneName];
+        const scene = item.metaScenes && item.metaScenes[providerScene];
         return (scene && scene.meta) || meta;
       }
       return meta;
@@ -50,14 +50,24 @@ export default {
         actionComponent: 'ebAuthProviders',
         name: 'loadAuthProviders',
       };
-      const providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
-      this.providers = providers.filter(item => {
-        // if(item.)
-        for (const sceneName of Object.keys(item.scenes)) {
-          const metaScene = this._getMetaScene(item, sceneName);
+      this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
+    },
+    _getTopInlineComponents() {
+      const inlineComponents = [];
+      for (const provider of this.providers) {
+        for (const providerScene in provider.renderComponents) {
+          const renderComponent = provider.renderComponents[providerScene];
+          const metaScene = this._getMetaScene(provider, providerScene);
+          if (metaScene.inline) {
+            inlineComponents.push({
+              provider,
+              providerScene,
+              renderComponent,
+            });
+          }
         }
-        return !this.$meta.config.base.jwt || item.provider.meta.mode !== 'redirect';
-      });
+      }
+      return inlineComponents;
     },
     _getComponentFullName(provider, providerScene) {
       const meta = provider.meta;
@@ -76,22 +86,22 @@ export default {
         providerScene: provider.meta.scene ? providerScene : null,
       };
     },
-    _renderLoginTop_single(providers) {
-      const { provider } = providers[0];
-      const meta = provider.meta;
-      const providerScene = null;
+    _renderLoginTop_single(inlineComponent) {
+      const { provider, providerScene } = inlineComponent;
+      const metaScene = this._getMetaScene(provider, providerScene);
       const options = {
         props: this._getComponentProps(provider, providerScene),
       };
-      return <eb-component module={meta.render.module} name={meta.render.name} options={options}></eb-component>;
+      return (
+        <eb-component module={metaScene.render.module} name={metaScene.render.name} options={options}></eb-component>
+      );
     },
-    _renderLoginTop_multiple(providers) {
+    _renderLoginTop_multiple(inlineComponents) {
       const domButtons = [];
       const domTabs = [];
-      for (const index in providers) {
-        const { provider } = providers[index];
-        const meta = provider.meta;
-        const providerScene = null;
+      for (const index in inlineComponents) {
+        const { provider, providerScene } = inlineComponents[index];
+        const metaScene = this._getMetaScene(provider, providerScene);
         const fullName = this._getComponentFullName(provider, providerScene);
         const tabId = `${this.tabPrefix}_${fullName}`.replace(/[:-]/g, '_');
         domButtons.push(
@@ -102,7 +112,11 @@ export default {
         const options = { props: this._getComponentProps(provider, providerScene) };
         domTabs.push(
           <f7-tab key={fullName} id={tabId} tab-active={parseInt(index) === 0}>
-            <eb-component module={meta.render.module} name={meta.render.name} options={options}></eb-component>
+            <eb-component
+              module={metaScene.render.module}
+              name={metaScene.render.name}
+              options={options}
+            ></eb-component>
           </f7-tab>
         );
       }
@@ -118,13 +132,13 @@ export default {
     _renderLoginTop() {
       if (!this.providers) return null;
       // providers
-      const providers = this.providers.filter(item => item.provider.meta.inline);
-      if (providers.length === 0) return null;
+      const inlineComponents = this._getTopInlineComponents();
+      if (inlineComponents.length === 0) return null;
       // check length
-      if (providers.length === 1) {
-        return this._renderLoginTop_single(providers);
+      if (inlineComponents.length === 1) {
+        return this._renderLoginTop_single(inlineComponents[0]);
       }
-      return this._renderLoginTop_multiple(providers);
+      return this._renderLoginTop_multiple(inlineComponents);
     },
     _renderLoginBottom() {
       if (this.state === 'migrate') return null;

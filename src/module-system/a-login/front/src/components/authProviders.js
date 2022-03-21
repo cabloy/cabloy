@@ -50,6 +50,7 @@ export default {
     async __checkAuthProviderComponent({ ctx, provider, state, sceneName }) {
       const metaScene = this._getMetaScene(provider, sceneName);
       if (!metaScene.render) return null;
+      if (this.$meta.config.base.jwt && metaScene.mode === 'redirect') return null;
       // load module
       const module = await this.$meta.module.use(metaScene.render.module);
       // checkIfDisable
