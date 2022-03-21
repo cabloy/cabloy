@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
-const WechatAPI = require3('@zhennann/co-wechat-api');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
