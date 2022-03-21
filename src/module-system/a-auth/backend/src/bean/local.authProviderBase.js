@@ -47,7 +47,8 @@ module.exports = ctx => {
     }
     get metaScene() {
       if (this.authProvider.meta.scene) {
-        return (this.authProvider.scenes && this.authProvider.scenes[this.providerScene]) || this.authProvider.meta;
+        const scene = this.authProvider.scenes && this.authProvider.scenes[this.providerScene];
+        return (scene && scene.meta) || this.authProvider.meta;
       }
       return this.authProvider.meta;
     }

@@ -15,13 +15,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async item() {
-      const res = await this.service.auth.item({
-        id: this.ctx.request.body.id,
-      });
-      this.ctx.success(res);
-    }
-
     async save() {
       // check demo
       this.ctx.bean.util.checkDemo();

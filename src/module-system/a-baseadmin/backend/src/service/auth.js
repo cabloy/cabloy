@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const mparse = require3('egg-born-mparse').default;
-
 module.exports = app => {
   class Auth extends app.Service {
     async list() {
@@ -17,31 +14,6 @@ module.exports = app => {
         module: item.module,
         providerName: item.providerName,
       });
-    }
-
-    async item({ id }) {
-      // item
-      const item = await this.ctx.model.authProvider.get({ id });
-      // meta
-      const authProvider = this.ctx.bean.authProvider.getAuthProviderBase({
-        module: item.module,
-        providerName: item.providerName,
-      });
-      if (authProvider.meta.mode === 'redirect') {
-        const moduleInfo = mparse.parseInfo(item.module);
-        const loginURL = this.ctx.bean.base.getAbsoluteUrl(
-          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`
-        );
-        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(
-          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`
-        );
-        item._meta = {
-          loginURL,
-          callbackURL,
-        };
-      }
-      // ok
-      return item;
     }
 
     async save({ id, config }) {

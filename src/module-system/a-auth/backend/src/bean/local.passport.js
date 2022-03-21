@@ -40,7 +40,8 @@ module.exports = ctx => {
       config.loginURL = ctx.bean.base.getAbsoluteUrl(loginURL);
       config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
       config.state = ctx.request.query.state;
-      config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+      config.successRedirect = config.successReturnToOrRedirect =
+        beanProvider.metaScene.mode === 'redirect' ? '/' : false;
       // strategy
       const strategy = await _createProviderStrategy(authProvider, beanProvider);
       // invoke authenticate
@@ -56,7 +57,7 @@ async function _createProviderStrategy(authProvider, beanProvider) {
   let config = {};
   config.passReqToCallback = true;
   config.failWithError = false;
-  config.successRedirect = config.successReturnToOrRedirect = authProvider.meta.mode === 'redirect' ? '/' : false;
+  config.successRedirect = config.successReturnToOrRedirect = beanProvider.metaScene.mode === 'redirect' ? '/' : false;
   config.beanProvider = beanProvider;
   // combine
   config = extend(true, {}, beanProvider.configProviderScene, config);
