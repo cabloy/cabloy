@@ -6,13 +6,28 @@ module.exports = ctx => {
     return {
       meta: {
         title: 'Wechat Work',
-        mode: 'redirect',
+        mode: 'direct',
         scene: true,
-        disableAssociate: false,
+        disableAssociate: true,
         bean: 'wxwork',
-        render: 'buttonWxwork',
+        render: null,
         validator: 'json',
         icon: { f7: ':auth:wxwork-outline' },
+      },
+      scenes: {
+        selfBuilt: {
+          meta: {
+            mode: 'redirect',
+            disableAssociate: false,
+            render: 'buttonWxwork',
+            validator: 'authWxworkSelfBuilt',
+          },
+        },
+        contacts: {
+          meta: {
+            validator: 'authWxworkSelfBuilt',
+          },
+        },
       },
     };
   }
