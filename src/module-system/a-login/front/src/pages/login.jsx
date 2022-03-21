@@ -36,6 +36,14 @@ export default {
     onClose() {
       this.$f7router.back();
     },
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
+    },
     async loadAuthProviders() {
       const action = {
         actionModule: 'a-login',
@@ -44,6 +52,10 @@ export default {
       };
       const providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } });
       this.providers = providers.filter(item => {
+        // if(item.)
+        for (const sceneName of Object.keys(item.scenes)) {
+          const metaScene = this._getMetaScene(item, sceneName);
+        }
         return !this.$meta.config.base.jwt || item.provider.meta.mode !== 'redirect';
       });
     },
