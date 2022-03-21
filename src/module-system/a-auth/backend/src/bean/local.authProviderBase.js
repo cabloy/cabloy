@@ -45,6 +45,12 @@ module.exports = ctx => {
     get allowStrategyMock() {
       return (ctx.app.meta.isTest || ctx.app.meta.isLocal) && ctx.host.indexOf('localhost:') === 0;
     }
+    get metaScene() {
+      if (this.authProvider.meta.scene) {
+        return (this.authProvider.scenes && this.authProvider.scenes[this.providerScene]) || this.authProvider.meta;
+      }
+      return this.authProvider.meta;
+    }
   }
   return IAuthProviderBase;
 };
