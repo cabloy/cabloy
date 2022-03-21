@@ -153,12 +153,12 @@ module.exports = app => {
       return this.ctx.bean.local.helper;
     }
 
-    get beanProviderSelfBuilt() {
+    get beanProviderContacts() {
       // bean provider
       const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
         module: moduleInfo.relativeName,
         providerName: 'wxwork',
-        providerScene: 'selfBuilt',
+        providerScene: 'contacts',
       });
       // if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       return beanProvider;
@@ -171,7 +171,7 @@ module.exports = app => {
     }
 
     async queueSync({ type, progressId, userOp }) {
-      if (!this.beanProviderSelfBuilt.providerSceneValid) this.ctx.throw(423);
+      if (!this.beanProviderContacts.providerSceneValid) this.ctx.throw(423);
       if (type === 'departments') {
         await this._queueSyncDepartments({ progressId, userOp });
       } else if (type === 'members') {
@@ -601,7 +601,7 @@ module.exports = app => {
       // 1. create user&auth
       // verify auth user
       const verifyUser = await this.localHelper.verifyAuthUser({
-        beanProvider: this.beanProviderSelfBuilt,
+        beanProvider: this.beanProviderContacts,
         member,
         needLogin: false,
       });
