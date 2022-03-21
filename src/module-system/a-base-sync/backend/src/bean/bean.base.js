@@ -342,8 +342,19 @@ module.exports = ctx => {
         for (const sceneName in scenes) {
           const scene = scenes[sceneName];
           this._prepareAuthProvider_meta(relativeName, scene.meta);
+          scene.meta = this._prepareAuthProvider_mergeMetaScene(scene.meta, meta);
         }
       }
+    }
+
+    _prepareAuthProvider_mergeMetaScene(metaScene, metaConfig) {
+      const _meta = {};
+      for (const key of ['mode', 'disableAssociate', 'render', 'validator']) {
+        if (metaConfig[key] !== undefined) {
+          _meta[key] = metaConfig[key];
+        }
+      }
+      return extend(true, {}, _meta, metaScene);
     }
 
     _prepareAuthProvider_meta(relativeName, meta) {
