@@ -107,7 +107,10 @@ module.exports = ctx => {
         // check if deleted,disabled,agent
         const userOp = await this.get({ id: ctx.user.op.id });
         // deleted
-        if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
+        if (!userOp) {
+          // ctx.throw.module(moduleInfo.relativeName, 1004);
+          ctx.throw(401);
+        }
         // disabled
         if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
         // hold user
@@ -116,7 +119,10 @@ module.exports = ctx => {
         let userAgent;
         if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
           userAgent = await this.agent({ userId: ctx.user.op.id });
-          if (!userAgent) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (!userAgent) {
+            // ctx.throw.module(moduleInfo.relativeName, 1006);
+            ctx.throw(401);
+          }
           if (userAgent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
           if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
         } else {

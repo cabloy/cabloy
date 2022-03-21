@@ -334,6 +334,19 @@ module.exports = ctx => {
     _prepareAuthProvider(relativeName, providerName, authProvider) {
       const meta = authProvider.meta;
       meta.titleLocale = ctx.text(meta.title);
+      // meta
+      this._prepareAuthProvider_meta(relativeName, meta);
+      // scenes
+      const scenes = authProvider.scenes;
+      if (scenes) {
+        for (const sceneName in scenes) {
+          const scene = scenes[sceneName];
+          this._prepareAuthProvider_meta(relativeName, scene.meta);
+        }
+      }
+    }
+
+    _prepareAuthProvider_meta(relativeName, meta) {
       if (typeof meta.bean === 'string') {
         meta.bean = { module: relativeName, name: meta.bean };
       }
