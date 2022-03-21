@@ -28,6 +28,7 @@ module.exports = app => {
     event: {
       declarations: {
         wxworkMessage: 'Wechat Work Message',
+        wxworkMessageGeneral: 'Wechat Work Message General',
       },
       implementations: {
         'a-base:loginInfo': 'loginInfo',

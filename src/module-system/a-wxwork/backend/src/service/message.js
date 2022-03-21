@@ -1,7 +1,28 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
-    async index({ message }) {
+    async general({ providerScene, message }) {
+      // result
+      let result;
+      // raise event
+      return await this.ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'wxworkMessageGeneral',
+        data: { providerScene, message },
+        result,
+        next: async (context, next) => {
+          // default
+          if (context.result === undefined) {
+            if (['selfBuilt', 'contacts'].includes(providerScene)) {
+              context.result = await this[providerScene]({ message });
+            }
+          }
+          await next();
+        },
+      });
+    }
+
+    async selfBuilt({ message }) {
       // config
       const config = this.ctx.config.account.wxwork;
       const configAppSelfBuilt = config.apps.selfBuilt;

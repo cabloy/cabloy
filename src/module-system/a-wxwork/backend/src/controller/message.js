@@ -15,13 +15,7 @@ module.exports = app => {
       if (providerScene === 'index') providerScene = 'selfBuilt';
       // handle message
       await this._handleMessage(providerScene, async ({ message }) => {
-        return await this.ctx.service.message.index({ message });
-      });
-    }
-
-    async contacts() {
-      await this._handleMessage('contacts', async ({ message }) => {
-        return await this.ctx.service.message.contacts({ message });
+        return await this.ctx.service.message.general({ providerScene, message });
       });
     }
 
