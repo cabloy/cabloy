@@ -111,6 +111,7 @@ module.exports = ctx => {
         module,
         providerName,
         meta: authProvider.meta,
+        metaScenes: authProvider.scenes,
         scenes: {},
       };
       if (!forLogin) {

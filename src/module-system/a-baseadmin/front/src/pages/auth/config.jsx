@@ -72,9 +72,18 @@ export default {
       this._combineAuthenticateUrls(data);
       this.data = data;
     },
+    _getMetaScene() {
+      const meta = this.item.meta;
+      if (meta.scene) {
+        const scene = this.item.metaScenes && this.item.metaScenes[this.sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
+    },
     _combineAuthenticateUrls(data) {
       const meta = this.item.meta;
-      if (meta.mode !== 'redirect') return;
+      const metaScene = this._getMetaScene();
+      if (metaScene.mode !== 'redirect') return;
       const urlParamScene = meta.scene ? `/${this.sceneName}` : '';
       const urls = {
         loginURL: `//api/a/auth/passport/${this.item.module}/${this.item.providerName}${urlParamScene}`,
@@ -85,8 +94,8 @@ export default {
       data.__groupUrlInfo = urls;
     },
     _combineSchema(schema) {
-      const meta = this.item.meta;
-      if (meta.mode !== 'redirect') return;
+      const metaScene = this._getMetaScene();
+      if (metaScene.mode !== 'redirect') return;
       schema.schema.properties = {
         ...schema.schema.properties,
         __groupUrlInfo: {
