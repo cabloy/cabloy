@@ -1,6 +1,17 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
+    get beanProviderSelfBuilt() {
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'wxwork',
+        providerScene: 'selfBuilt',
+      });
+      // if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      return beanProvider;
+    }
+
     async general({ providerScene, message }) {
       // result
       let result;
@@ -23,9 +34,6 @@ module.exports = app => {
     }
 
     async selfBuilt({ message }) {
-      // config
-      const config = this.ctx.config.account.wxwork;
-      const configAppSelfBuilt = config.apps.selfBuilt;
       // result
       let result;
       // event: subscribe
@@ -48,12 +56,13 @@ module.exports = app => {
           // default
           if (context.result === undefined) {
             if (message.MsgType !== 'event') {
+              const config = this.beanProviderSelfBuilt.configProviderScene;
               context.result = {
                 ToUserName: message.FromUserName,
                 FromUserName: message.ToUserName,
                 CreateTime: new Date().getTime(),
                 MsgType: 'text',
-                Content: configAppSelfBuilt.message.reply.default,
+                Content: config.message.reply.default,
               };
             }
           }
