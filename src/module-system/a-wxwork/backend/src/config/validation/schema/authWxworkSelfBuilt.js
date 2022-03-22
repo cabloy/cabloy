@@ -1,6 +1,6 @@
 module.exports = app => {
   const schemas = {};
-  schemas.authWechat = {
+  schemas.authWxworkSelfBuilt = {
     type: 'object',
     properties: {
       __groupAuthInfo: {
@@ -86,6 +86,19 @@ module.exports = app => {
             ebTitle: 'debug',
             notEmpty: true,
           },
+          jsApiList: {
+            type: 'array',
+            ebType: 'json',
+            ebTitle: 'jsApiList',
+            notEmpty: true,
+          },
+        },
+      },
+      jssdkAgent: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'JSSDK Agent Info',
+        properties: {
           jsApiList: {
             type: 'array',
             ebType: 'json',

@@ -13,4 +13,9 @@ export default {
   'Sync Now': '现在同步',
   'Sync Again': '再次同步',
   'Not Synchronized': '未同步',
+  'Message Info': '消息信息',
+  'Message URL': '消息URL',
+  'Reply Info': '回复信息',
+  'JSSDK Info': 'JSSDK信息',
+  'JSSDK Agent Info': 'JSSDK Agent信息',
 };
