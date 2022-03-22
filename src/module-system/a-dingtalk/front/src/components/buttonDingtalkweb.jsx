@@ -1,7 +1,3 @@
-<template>
-  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/dingtalk-40.png" /></eb-button>
-</template>
-<script>
 const urlLogin = '/api/a/dingtalk/passport/a-dingtalk/dingtalkweb';
 export default {
   meta: {
@@ -25,6 +21,12 @@ export default {
       return this.login();
     },
   },
+  render() {
+    const imgSrc = require('../assets/img/dingtalk-40.png');
+    return (
+      <eb-button tooltip={this.provider.meta.titleLocale} propsOnPerform={this.onPerformSignIn}>
+        <img src={imgSrc} />
+      </eb-button>
+    );
+  },
 };
-</script>
-<style scoped></style>

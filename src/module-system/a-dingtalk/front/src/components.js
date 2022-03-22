@@ -1,9 +1,9 @@
-import buttondingtalk from './components/buttondingtalk.vue';
-import buttondingtalkweb from './components/buttondingtalkweb.vue';
+import buttonDingtalk from './components/buttonDingtalk.jsx';
+import buttonDingtalkweb from './components/buttonDingtalkweb.jsx';
 import jssdk from './components/jssdk.js';
 
 export default {
-  buttondingtalk,
-  buttondingtalkweb,
+  buttonDingtalk,
+  buttonDingtalkweb,
   jssdk,
 };
