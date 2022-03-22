@@ -87,6 +87,8 @@ export default {
       return true;
     },
     async onPerformItemSceneAdd(event, item) {
+      // must close first
+      this.$meta.util.swipeoutClose(event.currentTarget);
       // sceneName
       const sceneName = await this.$view.dialog.prompt(this.$text('Please specify the scene name'));
       if (!sceneName || item.scenes[sceneName]) return;
@@ -198,25 +200,29 @@ export default {
     _renderItemDirect(item) {
       const fullName = this.getItemFullName(item);
       const meta = item.meta;
-      let domAction;
+      const domActions = [];
       if (item.providerItem.disabled) {
-        domAction = (
-          <div color="orange" propsOnPerform={event => this.onPerformItemEnable(event, item)}>
+        domActions.push(
+          <div key="enable" color="orange" propsOnPerform={event => this.onPerformItemEnable(event, item)}>
             <f7-icon slot="media" f7="::play-arrow"></f7-icon>
             <div slot="title">{this.$text('Enable')}</div>
           </div>
         );
       } else {
-        domAction = (
-          <div color="red" propsOnPerform={event => this.onPerformItemDisable(event, item)}>
+        domActions.push(
+          <div key="disable" color="red" propsOnPerform={event => this.onPerformItemDisable(event, item)}>
             <f7-icon slot="media" f7="::stop"></f7-icon>
             <div slot="title">{this.$text('Disable')}</div>
           </div>
         );
       }
-      let domAfter;
       if (meta.scene) {
-        domAfter = <eb-link iconF7="::add" propsOnPerform={event => this.onPerformItemSceneAdd(event, item)}></eb-link>;
+        domActions.push(
+          <div key="create" color="blue" propsOnPerform={event => this.onPerformItemSceneAdd(event, item)}>
+            <f7-icon slot="media" f7="::add"></f7-icon>
+            <div slot="title">{this.$text('Create')}</div>
+          </div>
+        );
       }
       let domIcon;
       if (meta.icon) {
@@ -230,10 +236,9 @@ export default {
           swipeout
         >
           <div slot="title">{item.meta.titleLocale}</div>
-          <div slot="after">{domAfter}</div>
           <div slot="media">{domIcon}</div>
           <eb-context-menu>
-            <div slot="right">{domAction}</div>
+            <div slot="right">{domActions}</div>
           </eb-context-menu>
         </eb-list-item>
       );
