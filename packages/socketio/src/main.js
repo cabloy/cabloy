@@ -195,10 +195,12 @@ export default adapter => {
       return this._socket;
     },
     _logout() {
-      this.disconnect();
-      if (adapter.logout) {
-        adapter.logout();
-      }
+      window.setTimeout(() => {
+        this.disconnect();
+        if (adapter.logout) {
+          adapter.logout();
+        }
+      }, 0);
     },
     _onMessage(data) {
       const _itemPath = this._subscribesPath[data.path];
