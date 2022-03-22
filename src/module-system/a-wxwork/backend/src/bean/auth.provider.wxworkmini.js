@@ -12,7 +12,7 @@ module.exports = function (ctx) {
       };
     }
     checkConfigValid(config) {
-      return !!config.corpId && !!config.secret && !!config.agentId && !!config.appID && !!config.appSecret;
+      return !!config.corpId && !!config.secret && !!config.agentId && !!config.appID;
     }
     async adjustConfigForCache(config) {
       // corpId/agentId/secret
