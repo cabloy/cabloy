@@ -1,17 +1,26 @@
+import Vue from 'vue';
+const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 export default {
   meta: {
     global: false,
-    async disable({ ctx, state }) {
+  },
+  mixins: [ebAuthLoginBase],
+  data() {
+    return {};
+  },
+  methods: {
+    async disable() {
+      const ctx = this.ctx;
       // in dingtalk
       if (!ctx.$device.dingtalk) return true;
       // associate
-      if (state === 'associate') return false;
+      if (this.state === 'associate') return false;
       // reload
       const reload = ctx.$store.state.auth.reload;
       if (reload) return false;
       // login direct for state=login
       try {
-        await this.login({ ctx, state });
+        await this.login();
       } catch (err) {
         ctx.$view.toast.show({ text: err.message });
         return false;
@@ -19,7 +28,8 @@ export default {
       // throw error on success
       throw new Error();
     },
-    async login({ ctx, state, hash }) {
+    async login(/* { hash }*/) {
+      const ctx = this.ctx;
       // jssdk config
       const action = {
         actionModule: 'a-dingtalk',
@@ -35,15 +45,7 @@ export default {
           corpId: config.corpId,
           onSuccess(info) {
             const code = info.code;
-            ctx.$api
-              .post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state })
-              .then(() => {
-                ctx.$meta.vueApp.reload({ echo: true });
-                resolve();
-              })
-              .catch(e => {
-                reject(e);
-              });
+            this._authLogin({ code }).then(resolve).catch(reject);
           },
           onFail(err) {
             reject(new Error(err.errorMessage || err.message));
@@ -51,11 +53,11 @@ export default {
         });
       });
     },
-  },
-  data() {
-    return {};
-  },
-  methods: {
+    async _authLogin({ code }) {
+      const ctx = this.ctx;
+      await ctx.$api.post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state: this.state });
+      ctx.$meta.vueApp.reload({ echo: true });
+    },
     onPerformSignIn() {
       return this.login();
     },
