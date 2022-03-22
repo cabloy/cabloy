@@ -71,8 +71,8 @@ export default {
       return renderComponents;
     },
     _getComponentFullName(provider, providerScene) {
-      const meta = provider.meta;
-      let fullName = `${meta.render.module}:${meta.render.name}`;
+      const metaScene = this._getMetaScene(provider, providerScene);
+      let fullName = `${metaScene.render.module}:${metaScene.render.name}`;
       if (provider.meta.scene) {
         fullName = `${fullName}:${providerScene}`;
       }
