@@ -36,12 +36,17 @@ export default {
       }
     },
     getItemLink(item, sceneName) {
-      const metaScene = this._getMetaScene(item, sceneName);
-      return metaScene.validator ? '#' : false;
-    },
-    getItemTitle(item) {
       const meta = item.meta;
-      return meta.titleLocale;
+      let validator;
+      if (!sceneName) {
+        // for item
+        validator = meta.scene ? null : meta.validator;
+      } else {
+        // for scene
+        const metaScene = this._getMetaScene(item, sceneName);
+        validator = metaScene.validator;
+      }
+      return validator ? '#' : false;
     },
     getItemFullName(item) {
       return `${item.module}:${item.providerName}`;
@@ -224,7 +229,7 @@ export default {
           propsOnPerform={event => this.onPerformItem(event, item)}
           swipeout
         >
-          <div slot="title">{this.getItemTitle(item)}</div>
+          <div slot="title">{item.meta.titleLocale}</div>
           <div slot="after">{domAfter}</div>
           <div slot="media">{domIcon}</div>
           <eb-context-menu>
