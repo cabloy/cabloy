@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     onPerformSignIn() {
-      return this.$options.meta.login({ ctx: this });
+      return this.login();
     },
   },
 };

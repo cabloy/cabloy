@@ -24,7 +24,7 @@ export default {
       throw new Error();
     },
     onPerformSignIn() {
-      this.$options.meta.login({ ctx: this });
+      return this.login();
     },
   },
   render() {

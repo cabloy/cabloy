@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     onPerformSignIn() {
-      this.$options.meta.login({ ctx: this });
+      return this.login();
     },
   },
 };
