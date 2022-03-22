@@ -14,6 +14,9 @@ module.exports = app => {
         authWxworkSelfBuilt: {
           schemas: 'authWxworkSelfBuilt',
         },
+        authWxworkContacts: {
+          schemas: 'authWxworkContacts',
+        },
         settingsInstance: {
           schemas: 'settingsInstance',
         },

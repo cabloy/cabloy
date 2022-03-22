@@ -27,7 +27,7 @@ module.exports = ctx => {
         },
         contacts: {
           meta: {
-            validator: 'authWxworkSelfBuilt',
+            validator: 'authWxworkContacts',
           },
         },
       },
