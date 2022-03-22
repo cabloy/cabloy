@@ -6,13 +6,13 @@ export default {
     return {
       items: null,
       itemsGroups: null,
-      providers: null,
-      providersMap: null,
+      providersLogin: null,
+      providersLoginMap: null,
     };
   },
   computed: {
     ready() {
-      return this.modulesAll && this.items && this.providers;
+      return this.modulesAll && this.items && this.providersLogin;
     },
     user() {
       return this.$store.state.auth.user;
@@ -25,33 +25,43 @@ export default {
     async load() {
       // items
       this.items = await this.$api.post('user/authentications');
-      // providers
+      // providers login
       const action = {
         actionModule: 'a-login',
         actionComponent: 'ebAuthProviders',
         name: 'loadAuthProviders',
       };
-      this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } });
-      this.providersMap = {};
-      for (const item of this.providers) {
+      this.providersLogin = await this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } });
+      this.providersLoginMap = {};
+      for (const item of this.providersLogin) {
         const key = `${item.provider.module}:${item.provider.providerName}`;
-        this.providersMap[key] = item;
+        this.providersLoginMap[key] = item;
       }
     },
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
+    },
     async onPerformItemEnable(event, item, sceneName) {
+      const meta = item.meta;
       // confirm
       await this.$view.dialog.confirm();
       // provider
       const fullName = this.getItemFullName(item);
-      const provider = this.providersMap[fullName];
+      const providerLogin = this.providersLoginMap[fullName];
       // url
       const url = this.$meta.util.combineLoginUrl({
         providerModule: item.module,
         providerName: item.providerName,
-        providerScene: sceneName,
+        providerScene: meta.scene ? sceneName : null,
       });
       // login
-      const login = provider.component.meta.login({
+      const componentLogin = providerLogin.renderComponents[sceneName || 'default'];
+      const login = componentLogin.meta.login({
         ctx: this,
         url,
         state: 'associate',
@@ -74,8 +84,8 @@ export default {
     },
     checkIfEnable(item, sceneName = 'default') {
       const fullName = this.getItemFullName(item);
-      const provider = this.providersMap[fullName];
-      return !this.getAuthId(item, sceneName) && provider && provider.provider.scenes[sceneName];
+      const providerLogin = this.providersLoginMap[fullName];
+      return !this.getAuthId(item, sceneName) && providerLogin && providerLogin.scenes[sceneName];
     },
     checkIfDisable(item, sceneName = 'default') {
       return !!this.getAuthId(item, sceneName) && !this.checkIfCurrent(item, sceneName);
