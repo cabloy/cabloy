@@ -8,6 +8,7 @@ module.exports = ctx => {
         title: 'Wechat Work',
         mode: 'direct',
         scene: true,
+        inner: true,
         disableAssociate: true,
         bean: 'wxwork',
         render: null,
@@ -18,6 +19,7 @@ module.exports = ctx => {
         selfBuilt: {
           meta: {
             mode: 'redirect',
+            inner: false,
             disableAssociate: false,
             render: 'buttonWxwork',
             validator: 'authWxworkSelfBuilt',

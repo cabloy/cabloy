@@ -349,7 +349,7 @@ module.exports = ctx => {
 
     _prepareAuthProvider_mergeMetaScene(metaScene, metaConfig) {
       const _meta = {};
-      for (const key of ['mode', 'inline', 'disableAssociate', 'render', 'validator']) {
+      for (const key of ['mode', 'inner', 'inline', 'disableAssociate', 'render', 'validator']) {
         if (metaConfig[key] !== undefined) {
           _meta[key] = metaConfig[key];
         }

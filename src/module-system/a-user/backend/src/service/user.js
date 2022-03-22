@@ -80,12 +80,12 @@ module.exports = app => {
           scene.__authId = authId;
         }
       }
-      // 4. filter disableAssociate:true and no __authId
+      // 4. filter inner || disableAssociate:true and no __authId
       listLogin = listLogin.filter(item => {
-        if (!item.meta.disableAssociate) return true;
         for (const sceneName of Object.keys(item.scenes)) {
           const scene = item.scenes[sceneName];
-          if (!scene.__authId) {
+          const metaScene = this._getMetaScene(item, sceneName);
+          if (metaScene.inner || (metaScene.disableAssociate && !scene.__authId)) {
             delete item.scenes[sceneName];
           }
         }
@@ -93,6 +93,15 @@ module.exports = app => {
       });
       // ok
       return listLogin;
+    }
+
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
     }
 
     async authenticationDisable({ authId, user }) {
