@@ -262,11 +262,11 @@ module.exports = ctx => {
       } else {
         configProviderScene = { ...configProvider };
       }
+      // adjustConfigForCache
+      configProviderScene = await beanProvider.adjustConfigForCache(configProviderScene);
       // providerSceneValid
       configProviderScene.__valid =
         !providerItem.disabled && !configProviderScene.disabled && beanProvider.checkConfigValid(configProviderScene);
-      // adjustConfigForCache
-      configProviderScene = await beanProvider.adjustConfigForCache(configProviderScene);
       // ok
       return configProviderScene;
     }
