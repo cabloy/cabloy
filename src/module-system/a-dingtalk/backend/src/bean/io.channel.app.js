@@ -11,9 +11,17 @@ module.exports = ctx => {
       const message = {
         ...content.data,
       };
+      // bean provider
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'dingtalk',
+        providerScene: 'selfBuilt',
+      });
+      if (!beanProvider.providerSceneValid) return false;
+      // config
+      const config = beanProvider.configProviderScene;
       // agentid
-      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-      message.agent_id = config.apps.selfBuilt.agentid;
+      message.agent_id = config.agentId;
       if (toAllUser) {
         message.to_all_user = true;
       } else {
