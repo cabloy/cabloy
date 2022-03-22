@@ -33,9 +33,9 @@ export default {
       };
       this.providersLogin = await this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } });
       this.providersLoginMap = {};
-      for (const item of this.providersLogin) {
-        const key = `${item.provider.module}:${item.provider.providerName}`;
-        this.providersLoginMap[key] = item;
+      for (const providerLogin of this.providersLogin) {
+        const key = `${providerLogin.module}:${providerLogin.providerName}`;
+        this.providersLoginMap[key] = providerLogin;
       }
     },
     _getMetaScene(item, sceneName) {
