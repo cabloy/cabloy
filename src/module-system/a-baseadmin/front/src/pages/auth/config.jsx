@@ -56,11 +56,11 @@ export default {
       return true; // toast on success
     },
     async _prepareScheme() {
-      const meta = this.item.meta;
+      const metaScene = this._getMetaScene();
       // schema
       const schema = await this.$api.post('/a/validation/validation/schema', {
-        module: meta.validator.module,
-        validator: meta.validator.validator,
+        module: metaScene.validator.module,
+        validator: metaScene.validator.validator,
         schema: null,
       });
       // combine schema

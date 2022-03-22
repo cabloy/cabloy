@@ -27,10 +27,11 @@ module.exports = app => {
       });
       // validate data
       const meta = authProvider.meta;
-      if (meta.validator.validator !== 'json') {
+      const metaScene = this._getMetaScene(authProvider, sceneName);
+      if (metaScene.validator.validator !== 'json') {
         await this.ctx.bean.validation.validate({
-          module: meta.validator.module,
-          validator: meta.validator.validator,
+          module: metaScene.validator.module,
+          validator: metaScene.validator.validator,
           data,
           filterOptions: true,
         });
@@ -87,6 +88,15 @@ module.exports = app => {
         module: item.module,
         providerName: item.providerName,
       });
+    }
+
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
     }
   }
 

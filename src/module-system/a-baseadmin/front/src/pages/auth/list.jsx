@@ -35,9 +35,9 @@ export default {
         }
       }
     },
-    getItemLink(item) {
-      const meta = item.meta;
-      return meta.validator ? '#' : false;
+    getItemLink(item, sceneName) {
+      const metaScene = this._getMetaScene(item, sceneName);
+      return metaScene.validator ? '#' : false;
     },
     getItemTitle(item) {
       const meta = item.meta;
@@ -279,7 +279,7 @@ export default {
       return (
         <eb-list-item
           key={sceneName}
-          link={this.getItemLink(item)}
+          link={this.getItemLink(item, sceneName)}
           propsOnPerform={event => this.onPerformItemScene(event, item, sceneName)}
           swipeout
         >
