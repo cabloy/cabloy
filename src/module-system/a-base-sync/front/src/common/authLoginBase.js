@@ -1,5 +1,8 @@
 export default {
   props: {
+    ctxCaller: {
+      type: Object,
+    },
     state: {
       type: String,
     },
@@ -16,6 +19,11 @@ export default {
       type: String,
     },
   },
+  computed: {
+    ctx() {
+      return this.ctxCaller || this;
+    },
+  },
   methods: {
     async disable() {
       return false;
@@ -30,10 +38,10 @@ export default {
       if (!url) {
         url = this.combineLoginUrl();
       }
-      this.$meta.vueApp.toLogin({ url, state: this.state, hash });
+      this.ctx.$meta.vueApp.toLogin({ url, state: this.state, hash });
     },
     combineLoginUrl() {
-      return this.$meta.util.combineLoginUrl({
+      return this.ctx.$meta.util.combineLoginUrl({
         providerModule: this.providerModule,
         providerName: this.providerName,
         providerScene: this.providerScene,

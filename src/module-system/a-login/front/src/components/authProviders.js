@@ -62,12 +62,18 @@ export default {
       return component;
     },
     async __checkAuthProviderDisable({ ctx, component, provider, state, sceneName }) {
-      if (!component.meta) return false; // default is false
-      if (typeof component.meta.disable !== 'function') return component.meta.disable;
-      const disable = await this.$meta.util.wrapPromise(
-        component.meta.disable({ ctx, state, provider, providerScene: sceneName })
-      );
-      return disable;
+      const options = {
+        propsData: {
+          ctxCaller: ctx,
+          state,
+          provider,
+          providerModule: provider.module,
+          providerName: provider.providerName,
+          providerScene: provider.meta.scene ? sceneName : null,
+        },
+      };
+      const componentInstance = ctx.$meta.util.createComponentInstance(component, options);
+      return await componentInstance.disable();
     },
   },
 };
