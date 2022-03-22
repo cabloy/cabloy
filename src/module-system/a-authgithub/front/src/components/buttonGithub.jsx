@@ -3,21 +3,17 @@ const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.
 export default {
   meta: {
     global: false,
-    async disable({ ctx, state }) {
-      return false;
-    },
-    login({ ctx, url, state, hash }) {
-      ctx.$meta.vueApp.toLogin({ url, state, hash });
-    },
   },
   mixins: [ebAuthLoginBase],
   data() {
     return {};
   },
   methods: {
+    async disable() {
+      return false;
+    },
     onPerformSignIn() {
-      const url = this.combineLoginUrl();
-      this.$options.meta.login({ ctx: this, url });
+      this.login();
     },
   },
   render() {
