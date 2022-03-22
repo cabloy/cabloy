@@ -51,7 +51,7 @@ export default {
       this._editSceneConfig(item, 'default');
     },
     onPerformItemScene(event, item, sceneName) {
-      if (!this.getItemLink(item)) return;
+      if (!this.getItemLink(item, sceneName)) return;
       this._editSceneConfig(item, sceneName);
     },
     onPerformItemDisable(event, item) {
