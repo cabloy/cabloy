@@ -47,27 +47,27 @@ export default {
       return meta;
     },
     async onPerformItemEnable(event, item, sceneName) {
-      const meta = item.meta;
       // confirm
       await this.$view.dialog.confirm();
       // provider
       const fullName = this.getItemFullName(item);
       const providerLogin = this.providersLoginMap[fullName];
-      // url
-      const url = this.$meta.util.combineLoginUrl({
-        providerModule: item.module,
-        providerName: item.providerName,
-        providerScene: meta.scene ? sceneName : null,
-      });
       // login
       const componentLogin = providerLogin.renderComponents[sceneName || 'default'];
-      const login = componentLogin.meta.login({
-        ctx: this,
-        url,
-        state: 'associate',
+      const options = {
+        propsData: {
+          ctxCaller: this,
+          state: 'associate',
+          provider: providerLogin,
+          providerModule: providerLogin.module,
+          providerName: providerLogin.providerName,
+          providerScene: providerLogin.meta.scene ? sceneName : null,
+        },
+      };
+      const componentInstance = this.$meta.util.createComponentInstance(componentLogin, options);
+      await componentInstance.login({
         hash: '/a/user/user/authentications',
       });
-      await this.$meta.util.wrapPromise(login);
     },
     async onPerformItemDisable(event, item, sceneName) {
       const authId = this.getAuthId(item, sceneName);

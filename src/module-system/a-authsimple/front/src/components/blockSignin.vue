@@ -95,24 +95,14 @@
   </div>
 </template>
 <script>
+import Vue from 'vue';
+const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 const urlLogin = '/a/authsimple/signup';
 export default {
   meta: {
     global: false,
-    async disable({ ctx, state }) {
-      return false;
-    },
-    login({ ctx, state, hash }) {
-      if (state === 'associate') {
-        ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
-      }
-    },
   },
-  props: {
-    state: {
-      type: String,
-    },
-  },
+  mixins: [ebAuthLoginBase],
   data() {
     return {
       data: {
@@ -138,6 +128,15 @@ export default {
   },
   created() {},
   methods: {
+    async disable() {
+      return false;
+    },
+    async login({ hash }) {
+      // only support associate here
+      if (this.state === 'associate') {
+        await this.loginDefault({ url: urlLogin, hash });
+      }
+    },
     _getCaptchaContainerInstance() {
       return this.$refs.captchaContainer && this.$refs.captchaContainer.getComponentInstance();
     },
