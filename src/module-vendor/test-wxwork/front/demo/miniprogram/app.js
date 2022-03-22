@@ -16,7 +16,7 @@ App({
         locale: 'en-us',
       },
       api: {
-        baseURL: 'https://yourdomain.com',
+        baseURL: 'https://demo.cabloy.com',
       },
     };
     this.cabloy = Cabloy(this, cabloyOptions);
