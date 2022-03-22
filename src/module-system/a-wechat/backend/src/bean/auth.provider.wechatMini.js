@@ -24,6 +24,8 @@ module.exports = function (ctx) {
       return !!config.appID && !!config.appSecret;
     }
     async adjustConfigForCache(config) {
+      // maybe a new scene
+      if (!config.message) config.message = {};
       config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
         `/api/${moduleInfo.url}/messageMini/${this.providerScene}`
       );

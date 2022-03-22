@@ -11,14 +11,15 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        authWxworkSelfBuilt: {
+          schemas: 'authWxworkSelfBuilt',
+        },
         settingsInstance: {
           schemas: 'settingsInstance',
         },
       },
       keywords: {},
-      schemas: {
-        settingsInstance: schemas.settingsInstance,
-      },
+      schemas,
     },
     settings: {
       instance: {

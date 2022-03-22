@@ -144,14 +144,14 @@ export default {
     },
     async _editSceneConfig_save(item, sceneName, data) {
       // save
-      const res = await this.$api.post('authScene/save', {
+      await this.$api.post('authScene/save', {
         id: item.providerItem.id,
         sceneName,
         data,
       });
       // change
       const sceneOld = item.scenes[sceneName];
-      const sceneNew = res.data;
+      const sceneNew = data; // res.data;
       item.scenes[sceneName] = {
         ...sceneOld,
         ...sceneNew,
