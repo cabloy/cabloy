@@ -1,22 +1,22 @@
-const urlLogin = '/api/a/dingtalk/passport/a-dingtalk/dingtalkweb';
+import Vue from 'vue';
+const ebAuthLoginBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAuthLoginBase;
 export default {
   meta: {
     global: false,
-    async disable({ ctx, state }) {
+  },
+  mixins: [ebAuthLoginBase],
+  data() {
+    return {};
+  },
+  methods: {
+    async disable() {
+      const ctx = this.ctx;
       // only pc
       if (ctx.$device.iphone || ctx.$device.android || ctx.$device.dingtalk) {
         return true;
       }
       return false;
     },
-    login({ ctx, state, hash }) {
-      ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
-    },
-  },
-  data() {
-    return {};
-  },
-  methods: {
     onPerformSignIn() {
       return this.login();
     },
