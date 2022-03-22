@@ -1,39 +1,13 @@
+// const authWechat = require('./schema/authWechat.js');
+// const authWechatweb = require('./schema/authWechatweb.js');
+// const authWechatmini = require('./schema/authWechatmini.js');
+const settingsInstance = require('./schema/settingsInstance.js');
+
 module.exports = app => {
   const schemas = {};
-
-  // settings instance
-  schemas.settingsInstance = {
-    type: 'object',
-    properties: {
-      groupInfo: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          sendLinkAccountMigration: {
-            type: 'boolean',
-            ebType: 'toggle',
-            ebTitle: 'SendLinkAccountMigration',
-          },
-        },
-      },
-      groupFunction: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Function Group',
-        properties: {
-          linkContacts: {
-            ebType: 'link',
-            ebTitle: 'Contacts Management',
-            ebParams: {
-              href: 'contacts/management',
-              target: '_self',
-            },
-          },
-        },
-      },
-    },
-  };
-
+  // Object.assign(schemas, authWechat(app));
+  // Object.assign(schemas, authWechatweb(app));
+  // Object.assign(schemas, authWechatmini(app));
+  Object.assign(schemas, settingsInstance(app));
   return schemas;
 };
