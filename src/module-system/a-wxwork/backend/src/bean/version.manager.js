@@ -1,6 +1,13 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
+    get modelAuth() {
+      return this.ctx.model.module('a-auth').auth;
+    }
+    get modelAuthProvider() {
+      return this.ctx.model.module('a-auth').authProvider;
+    }
+
     async update(options) {
       if (options.version === 1) {
         let sql;
