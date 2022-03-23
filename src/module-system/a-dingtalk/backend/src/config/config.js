@@ -47,14 +47,17 @@ module.exports = appInfo => {
   // account
   config.account = {};
 
+  // account.dingtalkadmin
+  config.account.dingtalkadmin = {
+    corpId: '',
+    ssoSecret: '',
+  };
   // account.dingtalk
   config.account.dingtalk = {
     // scenes
     scenes: {
       selfBuilt: {
         title: 'SelfBuiltApp',
-        corpId: '',
-        ssoSecret: '',
         agentId: '',
         appKey: '',
         appSecret: '',
