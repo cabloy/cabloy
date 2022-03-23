@@ -8,6 +8,7 @@ const ioChannelApp = require('./bean/io.channel.app.js');
 const authProviderDingtalkadmin = require('./bean/auth.provider.dingtalkadmin.js');
 const authProviderDingtalk = require('./bean/auth.provider.dingtalk.js');
 const authProviderDingtalkweb = require('./bean/auth.provider.dingtalkweb.js');
+const authProviderDingtalkmini = require('./bean/auth.provider.dingtalkmini.js');
 const beanDingtalk = require('./bean/bean.dingtalk.js');
 
 module.exports = app => {
@@ -58,6 +59,10 @@ module.exports = app => {
     'auth.provider.dingtalkweb': {
       mode: 'ctx',
       bean: authProviderDingtalkweb,
+    },
+    'auth.provider.dingtalkmini': {
+      mode: 'ctx',
+      bean: authProviderDingtalkmini,
     },
     // global
     dingtalk: {

@@ -1,7 +1,3 @@
-const strategy = require('./strategy-dingtalk.js');
-const DingtalkHelperFn = require('../../common/dingtalkHelper.js');
-const authProviderScenes = require('../../common/authProviderScenes.js');
-
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -62,17 +58,18 @@ module.exports = app => {
     };
   }
 
-  function _createProviderMini(sceneInfo, sceneShort) {
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis[sceneShort];
-    if (!config.appkey || !config.appsecret) return null;
+  // dingtalkmini
+  function _createProviderDingtalkmini() {
     return {
       meta: {
-        title: sceneInfo.title,
+        title: 'DingTalk Miniprogram',
         mode: 'direct',
+        scene: true,
         disableAssociate: true,
+        bean: 'dingtalkmini',
+        validator: 'authDingtalkmini',
+        icon: { f7: ':auth:dingtalk-square' },
       },
-      config: {},
-      handler: null,
     };
   }
 
@@ -81,16 +78,9 @@ module.exports = app => {
       dingtalkadmin: _createProviderDingtalkAdmin(),
       dingtalk: _createProviderDingtalk(),
       dingtalkweb: _createProviderDingtalkweb(),
+      dingtalkmini: _createProviderDingtalkmini(),
     },
   };
-
-  // minis
-  const minis = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis;
-  for (const sceneShort in minis) {
-    const scene = `dingtalkmini${sceneShort}`;
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo, sceneShort);
-  }
 
   // ok
   return metaAuth;
