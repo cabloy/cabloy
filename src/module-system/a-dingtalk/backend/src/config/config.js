@@ -1,5 +1,5 @@
 const jsApiList = require('./config/jsApiList.js');
-const businessCallbackList = require('./config/businessCallbackList.js');
+// const businessCallbackList = require('./config/businessCallbackList.js');
 
 module.exports = appInfo => {
   const config = {};
@@ -49,11 +49,13 @@ module.exports = appInfo => {
 
   // account.dingtalkadmin
   config.account.dingtalkadmin = {
+    client: 'dingtalkadmin',
     corpId: '',
     ssoSecret: '',
   };
   // account.dingtalk
   config.account.dingtalk = {
+    client: 'dingtalk',
     // scenes
     scenes: {
       selfBuilt: {
@@ -61,31 +63,54 @@ module.exports = appInfo => {
         agentId: '',
         appKey: '',
         appSecret: '',
+        message: {
+          token: appInfo.name,
+          encodingAESKey: '',
+        },
         jssdk: {
           type: 0,
           jsApiList,
         },
-        businessCallback: {
-          host: '',
-          token: appInfo.name,
-          encodingAESKey: '',
-          list: businessCallbackList,
-        },
       },
     },
-    // webs
-    webs: {
-      default: {
-        appid: '',
-        appsecret: '',
+    locales: {
+      'en-us': {
+        SelfBuiltApp: 'Self Built App',
+      },
+      'zh-cn': {
+        SelfBuiltApp: '自建应用',
       },
     },
-    // minis
-    minis: {
+  };
+
+  // account.dingtalkweb
+  config.account.dingtalkweb = {
+    client: 'dingtalkweb',
+    // scope: 'snsapi_base',
+    // scenes
+    scenes: {
+      selfBuilt: {
+        title: 'SelfBuiltApp',
+      },
+    },
+    locales: {
+      'en-us': {
+        SelfBuiltApp: 'Self Built App',
+      },
+      'zh-cn': {
+        SelfBuiltApp: '自建应用',
+      },
+    },
+  };
+
+  // account.dingtalkmini
+  config.account.dingtalkmini = {
+    scenes: {
       default: {
-        agentid: '',
-        appkey: '',
-        appsecret: '',
+        title: 'Default',
+        agentId: '',
+        appKey: '',
+        appSecret: '',
       },
     },
   };
