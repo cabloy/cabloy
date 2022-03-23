@@ -1,6 +1,6 @@
 const strategy = require('./strategy-dingtalk.js');
-const DingtalkHelperFn = require('../common/dingtalkHelper.js');
-const authProviderScenes = require('../common/authProviderScenes.js');
+const DingtalkHelperFn = require('../../common/dingtalkHelper.js');
+const authProviderScenes = require('../../common/authProviderScenes.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
