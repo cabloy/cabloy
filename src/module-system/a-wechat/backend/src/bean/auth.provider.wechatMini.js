@@ -17,7 +17,6 @@ module.exports = function (ctx) {
       const configWechatmini = this.configModule.account.wechatmini;
       return {
         scenes: configWechatmini.scenes,
-        locales: configWechatmini.locales,
       };
     }
     checkConfigValid(config) {

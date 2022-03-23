@@ -9,7 +9,7 @@ module.exports = appInfo => {
   config.account.github = {
     scenes: {
       default: {
-        title: 'Default',
+        title: 'AuthDefault',
         clientID: '',
         clientSecret: '',
       },

@@ -59,7 +59,7 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuiltApp',
+        title: 'AuthSelfBuiltApp',
         agentId: '',
         appKey: '',
         appSecret: '',
@@ -73,14 +73,6 @@ module.exports = appInfo => {
         },
       },
     },
-    locales: {
-      'en-us': {
-        SelfBuiltApp: 'Self Built App',
-      },
-      'zh-cn': {
-        SelfBuiltApp: '自建应用',
-      },
-    },
   };
 
   // account.dingtalkweb
@@ -90,15 +82,7 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuiltApp',
-      },
-    },
-    locales: {
-      'en-us': {
-        SelfBuiltApp: 'Self Built App',
-      },
-      'zh-cn': {
-        SelfBuiltApp: '自建应用',
+        title: 'AuthSelfBuiltApp',
       },
     },
   };
@@ -107,7 +91,7 @@ module.exports = appInfo => {
   config.account.dingtalkmini = {
     scenes: {
       default: {
-        title: 'Default',
+        title: 'AuthDefault',
         agentId: '',
         appKey: '',
         appSecret: '',

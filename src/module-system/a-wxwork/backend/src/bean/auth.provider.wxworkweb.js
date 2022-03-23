@@ -15,7 +15,6 @@ module.exports = function (ctx) {
       const configWxworkweb = this.configModule.account.wxworkweb;
       return {
         scenes: configWxworkweb.scenes,
-        locales: configWxworkweb.locales,
       };
     }
     checkConfigValid(config) {

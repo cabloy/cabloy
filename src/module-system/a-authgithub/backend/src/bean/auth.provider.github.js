@@ -12,7 +12,6 @@ module.exports = function (ctx) {
       const configGitHub = this.configModule.account.github;
       return {
         scenes: configGitHub.scenes,
-        locales: configGitHub.locales,
       };
     }
     checkConfigValid(config) {

@@ -45,7 +45,7 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuiltApp',
+        title: 'AuthSelfBuiltApp',
         corpId: '',
         agentId: '',
         secret: '',
@@ -73,15 +73,6 @@ module.exports = appInfo => {
         },
       },
     },
-    locales: {
-      'en-us': {
-        SelfBuiltApp: 'Self Built App',
-      },
-      'zh-cn': {
-        SelfBuiltApp: '自建应用',
-        Contacts: '通讯录',
-      },
-    },
   };
 
   // account.wxworkweb
@@ -91,15 +82,7 @@ module.exports = appInfo => {
     // scenes
     scenes: {
       selfBuilt: {
-        title: 'SelfBuiltApp',
-      },
-    },
-    locales: {
-      'en-us': {
-        SelfBuiltApp: 'Self Built App',
-      },
-      'zh-cn': {
-        SelfBuiltApp: '自建应用',
+        title: 'AuthSelfBuiltApp',
       },
     },
   };
@@ -108,7 +91,7 @@ module.exports = appInfo => {
   config.account.wxworkmini = {
     scenes: {
       default: {
-        title: 'Default',
+        title: 'AuthDefault',
         agentId: '',
         secret: '',
         appID: '',

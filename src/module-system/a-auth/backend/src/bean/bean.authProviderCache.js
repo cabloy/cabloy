@@ -120,10 +120,7 @@ module.exports = ctx => {
       }
       for (const sceneName in configProviderScenes) {
         const configProviderScene = configProviderScenes[sceneName];
-        const titleLocale = ctx.bean.util.getTitleLocale({
-          locales: configProvider.locales,
-          title: configProviderScene.title,
-        });
+        const titleLocale = ctx.text(configProviderScene.title);
         if (forLogin) {
           // login
           if (configProviderScene.__valid) {
@@ -191,18 +188,9 @@ module.exports = ctx => {
       if (authProvider.meta.scene) {
         // scene: true
         const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
-        const itemLocales = providerItem.locales ? JSON.parse(providerItem.locales) : null;
         const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
-        const locales = extend(
-          true,
-          {},
-          this.configModule.provider.locales,
-          configDefault && configDefault.locales,
-          itemLocales
-        );
         configProvider = {
           scenes,
-          locales,
         };
       } else {
         // scene: false

@@ -8,7 +8,6 @@ module.exports = function (ctx) {
       const configWxworkmini = this.configModule.account.wxworkmini;
       return {
         scenes: configWxworkmini.scenes,
-        locales: configWxworkmini.locales,
       };
     }
     checkConfigValid(config) {
