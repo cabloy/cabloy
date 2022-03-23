@@ -4,18 +4,19 @@ const DingtalkAPI = require3('@zhennann/node-dingtalk');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  // ctx.bean.dingtalk.app.selfBuilt
-  // ctx.bean.dingtalk.admin
-  // ctx.bean.dingtalk.web.default
-  // ctx.bean.dingtalk.mini.default
-  // ctx.bean.dingtalk.util
+  // bean.dingtalk.admin
+  // bean.dingtalk.app.{providerScene}
+  // bean.dingtalk.mini.{providerScene}
+  // bean.dingtalk.util
   return function () {
     return new Proxy(
       {},
       {
         get(obj, prop) {
           if (obj[prop]) return obj[prop];
-          if (prop === 'app') {
+          if (prop === 'admin') {
+            obj[prop] = _createDingtalkApiAdmin();
+          } else if (prop === 'app') {
             // app
             obj[prop] = new Proxy(
               {},
@@ -23,21 +24,6 @@ module.exports = ctx => {
                 get(obj, prop) {
                   if (!obj[prop]) {
                     obj[prop] = _createDingtalkApiApp({ appName: prop });
-                  }
-                  return obj[prop];
-                },
-              }
-            );
-          } else if (prop === 'admin') {
-            obj[prop] = _createDingtalkApiAdmin();
-          } else if (prop === 'web') {
-            // web
-            obj[prop] = new Proxy(
-              {},
-              {
-                get(obj, prop) {
-                  if (!obj[prop]) {
-                    obj[prop] = _createDingtalkApiWeb({ webName: prop });
                   }
                   return obj[prop];
                 },

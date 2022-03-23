@@ -1,8 +1,9 @@
-const dingtalkUtils = require('../common/dingtalkUtils.js');
+// ?? const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
     async execute() {
+      return;
       // config
       const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
       const host = config.host;

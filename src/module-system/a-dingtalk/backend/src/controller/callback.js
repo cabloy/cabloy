@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const DingTalkEncryptor = require3('dingtalk-encrypt');
-const dingtalkUtils = require('../common/dingtalkUtils.js');
+// ?? const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   class CallbackController extends app.Controller {
