@@ -5,6 +5,7 @@ const queueContacts = require('./bean/queue.contacts.js');
 const startupRegisterBusinessCallbackList = require('./bean/startup.registerBusinessCallbackList.js');
 const middlewareInDingtalk = require('./bean/middleware.inDingtalk.js');
 const ioChannelApp = require('./bean/io.channel.app.js');
+const authProviderDingtalkadmin = require('./bean/auth.provider.dingtalkadmin.js');
 const beanDingtalk = require('./bean/bean.dingtalk.js');
 
 module.exports = app => {
@@ -42,6 +43,11 @@ module.exports = app => {
     'io.channel.app': {
       mode: 'ctx',
       bean: ioChannelApp,
+    },
+    // auth.provider
+    'auth.provider.dingtalkadmin': {
+      mode: 'ctx',
+      bean: authProviderDingtalkadmin,
     },
     // global
     dingtalk: {

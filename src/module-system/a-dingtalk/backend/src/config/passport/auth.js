@@ -2,8 +2,22 @@ const strategy = require('./strategy-dingtalk.js');
 const DingtalkHelperFn = require('../../common/dingtalkHelper.js');
 const authProviderScenes = require('../../common/authProviderScenes.js');
 
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
+  // dingtalkadmin
+  function _createProviderDingtalkAdmin() {
+    return {
+      meta: {
+        title: 'DingTalk Admin',
+        mode: 'redirect',
+        disableAssociate: true,
+        bean: 'dingtalkadmin',
+        validator: 'authDingtalkadmin',
+        icon: { f7: ':auth:dingtalk-outline' },
+      },
+    };
+  }
 
   function _createProviderDingTalk() {
     const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.apps.selfBuilt;
@@ -80,55 +94,6 @@ module.exports = ctx => {
     };
   }
 
-  function _createProviderDingTalkAdmin() {
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-    if (!config.corpid || !config.ssosecret) return null;
-    return {
-      meta: {
-        title: 'DingTalk Admin',
-        mode: 'redirect',
-        disableAssociate: true,
-      },
-      config: {},
-      configFunctions: {
-        getConfig(ctx) {
-          const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-          return { appkey: config.corpid, appsecret: config.ssosecret };
-        },
-      },
-      handler: app => {
-        return {
-          strategy,
-          callback: (req, code, done) => {
-            // ctx/state
-            const ctx = req.ctx;
-            const state = ctx.request.query.state || 'login';
-            // code/memberId
-            const dingtalkHelper = new (DingtalkHelperFn(ctx))();
-            const api = ctx.bean.dingtalk;
-            api.admin.client
-              .getSSOUserInfo(null, code)
-              .then(res => {
-                const memberId = res.user_info.userid;
-                dingtalkHelper
-                  .verifyAuthUser({
-                    scene: 'dingtalkadmin',
-                    memberId,
-                    state,
-                    needLogin: false,
-                  })
-                  .then(verifyUser => {
-                    done(null, verifyUser);
-                  })
-                  .catch(done);
-              })
-              .catch(done);
-          },
-        };
-      },
-    };
-  }
-
   function _createProviderMini(sceneInfo, sceneShort) {
     const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis[sceneShort];
     if (!config.appkey || !config.appsecret) return null;
@@ -144,7 +109,9 @@ module.exports = ctx => {
   }
 
   const metaAuth = {
-    providers: {},
+    providers: {
+      dingtalkadmin: _createProviderDingtalkAdmin(),
+    },
   };
 
   // dingtalk
