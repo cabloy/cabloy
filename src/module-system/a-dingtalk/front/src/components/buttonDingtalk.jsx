@@ -55,7 +55,7 @@ export default {
     },
     async _authLogin({ code }) {
       const ctx = this.ctx;
-      await ctx.$api.post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state: this.state });
+      await ctx.$api.post('/a/dingtalk/auth/login', { providerScene: this.providerScene, code, state: this.state });
       ctx.$meta.vueApp.reload({ echo: true });
     },
     onPerformSignIn() {

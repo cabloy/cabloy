@@ -1,5 +1,3 @@
-const DingtalkHelperFn = require('../common/dingtalkHelper.js');
-
 // department
 
 const __departmentFieldMap = [
@@ -124,6 +122,30 @@ const __memberFieldMap = [
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
+    get modelMember() {
+      return this.ctx.model.member;
+    }
+    get modelDepartment() {
+      return this.ctx.model.department;
+    }
+    get modelAuth() {
+      return this.ctx.model.module('a-auth').auth;
+    }
+    get localHelper() {
+      return this.ctx.bean.local.helper;
+    }
+
+    get beanProviderSelfBuilt() {
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'dingtalk',
+        providerScene: 'selfBuilt',
+      });
+      // if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      return beanProvider;
+    }
+
     async syncStatus() {
       const departments = await this.ctx.bean.status.get('syncDepartments');
       const members = await this.ctx.bean.status.get('syncMembers');
@@ -558,8 +580,11 @@ module.exports = app => {
     async _createUserAndMember({ member }) {
       // 1. create user&auth
       // verify auth user
-      const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
-      const verifyUser = await dingtalkHelper.verifyAuthUser({ scene: 'dingtalk', member, needLogin: false });
+      const verifyUser = await this.localHelper.verifyAuthUser({
+        beanProvider: this.beanProviderSelfBuilt,
+        member,
+        needLogin: false,
+      });
       const userId = verifyUser.agent.id;
 
       // 2. add user to role

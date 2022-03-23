@@ -1,15 +1,21 @@
-const DingtalkHelperFn = require('../common/dingtalkHelper.js');
-
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
-    async login({ scene, code, state }) {
-      if (!scene || !code) return this.ctx.throw(403);
+    async login({ providerName, providerScene, code, state }) {
+      if (!providerScene || !code) return this.ctx.throw(403);
       // member
+      //   use dingtalk.app.selfBuilt
       const res = await this.ctx.bean.dingtalk.app.selfBuilt.user.getUserInfoByCode(code);
       const memberId = res.userid;
-      // verify auth user
-      const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
-      await dingtalkHelper.verifyAuthUser({ state, scene: 'dingtalk', memberId, needLogin: true });
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName,
+        providerScene,
+      });
+      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      // verify
+      await this.localHelper.verifyAuthUser({ beanProvider, state, memberId, needLogin: true });
       // echo
       return await this.ctx.bean.auth.echo();
     }
