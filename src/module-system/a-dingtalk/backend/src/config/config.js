@@ -49,14 +49,15 @@ module.exports = appInfo => {
 
   // account.dingtalk
   config.account.dingtalk = {
-    corpid: '',
-    ssosecret: '',
-    // apps
-    apps: {
+    // scenes
+    scenes: {
       selfBuilt: {
-        agentid: '',
-        appkey: '',
-        appsecret: '',
+        title: 'SelfBuiltApp',
+        corpId: '',
+        ssoSecret: '',
+        agentId: '',
+        appKey: '',
+        appSecret: '',
         jssdk: {
           type: 0,
           jsApiList,
