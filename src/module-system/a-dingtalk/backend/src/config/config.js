@@ -78,7 +78,7 @@ module.exports = appInfo => {
   // account.dingtalkweb
   config.account.dingtalkweb = {
     client: 'dingtalkweb',
-    // scope: 'snsapi_base',
+    scope: 'snsapi_login',
     // scenes
     scenes: {
       selfBuilt: {

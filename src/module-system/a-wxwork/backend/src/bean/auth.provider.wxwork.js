@@ -50,7 +50,7 @@ module.exports = function (ctx) {
     }
     async onVerify(code, state) {
       // code/memberId
-      const res = await ctx.bean.wxwork.app.selfBuilt.getUserIdByCode(code);
+      const res = await ctx.bean.wxwork.app[this.providerScene].getUserIdByCode(code);
       if (res.errcode) throw new Error(res.errmsg);
       const memberId = res.UserId;
       const verifyUser = await this.localHelper.verifyAuthUser({

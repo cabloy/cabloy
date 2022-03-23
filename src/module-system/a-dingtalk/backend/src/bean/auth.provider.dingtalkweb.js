@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const extend = require3('extend2');
-const Strategy = require('../config/passport/strategy-wxwork.js');
+const Strategy = require('../config/passport/strategy-dingtalk.js');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -12,19 +12,19 @@ module.exports = function (ctx) {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }
     async getConfigDefault() {
-      const configWxworkweb = this.configModule.account.wxworkweb;
+      const configDingtalkweb = this.configModule.account.dingtalkweb;
       return {
-        scenes: configWxworkweb.scenes,
+        scenes: configDingtalkweb.scenes,
       };
     }
     checkConfigValid(config) {
-      return !!config.corpId && !!config.secret && !!config.agentId;
+      return !!config.appKey && !!config.appSecret && !!config.agentId;
     }
     async adjustConfigForCache(config) {
-      // from wxwork
+      // from dingtalk
       const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
         module: this.providerModule,
-        providerName: 'wxwork',
+        providerName: 'dingtalk',
         providerScene: this.providerScene,
       });
       // config should be the last, as maybe disabled
@@ -33,19 +33,21 @@ module.exports = function (ctx) {
       return config;
     }
     async adjustConfigForAuthenticate(config) {
-      const configWxworkweb = this.configModule.account.wxworkweb;
-      config.client = configWxworkweb.client;
-      config.scope = configWxworkweb.scope;
+      const configDingtalkweb = this.configModule.account.dingtalkweb;
+      config.client = configDingtalkweb.client;
+      config.scope = configDingtalkweb.scope;
       return config;
     }
     getStrategy() {
       return Strategy;
     }
-    async onVerify(code, state) {
+    async onVerify(loginTmpCode, state) {
       // code/memberId
-      const res = await ctx.bean.wxwork.app[this.providerScene].getUserIdByCode(code);
-      if (res.errcode) throw new Error(res.errmsg);
-      const memberId = res.UserId;
+      let res = await ctx.bean.dingtalk.app[this.providerScene].client.getuserinfo_bycode(loginTmpCode);
+      const unionid = res.user_info.unionid;
+      res = await ctx.bean.dingtalk.app.selfBuilt.user.getUseridByUnionid(unionid);
+      if (res.contactType === 1) throw new Error('not support extcontact');
+      const memberId = res.userid;
       const verifyUser = await this.localHelper.verifyAuthUser({
         beanProvider: this,
         memberId,

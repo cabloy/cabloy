@@ -47,62 +47,17 @@ module.exports = app => {
     };
   }
 
-  function _createProviderDingTalkWeb() {
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.webs.default;
-    if (!config.appid || !config.appsecret) return null;
+  // dingtalkweb
+  function _createProviderDingtalkweb() {
     return {
       meta: {
         title: 'DingTalk Web',
         mode: 'redirect',
+        scene: true,
         disableAssociate: false,
-        component: 'buttondingtalkweb',
-      },
-      config: {
-        client: 'dingtalkweb',
-        scope: 'snsapi_login',
-      },
-      configFunctions: {
-        getConfig(ctx) {
-          const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.webs.default;
-          return { appkey: config.appid, appsecret: config.appsecret };
-        },
-      },
-      handler: app => {
-        return {
-          strategy,
-          callback: (req, loginTmpCode, done) => {
-            // ctx/state
-            const ctx = req.ctx;
-            const state = ctx.request.query.state || 'login';
-            // code/memberId
-            const dingtalkHelper = new (DingtalkHelperFn(ctx))();
-            const api = ctx.bean.dingtalk;
-            api.web.default.client
-              .getuserinfo_bycode(loginTmpCode)
-              .then(res => {
-                const unionid = res.user_info.unionid;
-                api.app.selfBuilt.user
-                  .getUseridByUnionid(unionid)
-                  .then(res => {
-                    if (res.contactType === 1) throw new Error('not support extcontact');
-                    const memberId = res.userid;
-                    dingtalkHelper
-                      .verifyAuthUser({
-                        scene: 'dingtalkweb',
-                        memberId,
-                        state,
-                        needLogin: false,
-                      })
-                      .then(verifyUser => {
-                        done(null, verifyUser);
-                      })
-                      .catch(done);
-                  })
-                  .catch(done);
-              })
-              .catch(done);
-          },
-        };
+        bean: 'dingtalkweb',
+        render: 'buttonDingtalkweb',
+        icon: { f7: ':auth:dingtalk-square' },
       },
     };
   }
@@ -125,15 +80,9 @@ module.exports = app => {
     providers: {
       dingtalkadmin: _createProviderDingtalkAdmin(),
       dingtalk: _createProviderDingtalk(),
+      dingtalkweb: _createProviderDingtalkweb(),
     },
   };
-
-  // dingtalk
-  metaAuth.providers.dingtalk = _createProviderDingTalk();
-  // dingtalkweb
-  metaAuth.providers.dingtalkweb = _createProviderDingTalkWeb();
-  // dingtalkadmin
-  metaAuth.providers.dingtalkadmin = _createProviderDingTalkAdmin();
 
   // minis
   const minis = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis;
