@@ -6,9 +6,6 @@ module.exports = function (ctx) {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
-    get cacheDb() {
-      return ctx.cache.db.module(moduleInfo.relativeName);
-    }
     get localHelper() {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }

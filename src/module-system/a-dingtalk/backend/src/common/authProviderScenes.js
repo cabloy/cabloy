@@ -1,22 +1,12 @@
 const _scenes = {
-  dingtalk: {
-    scene: 'dingtalk',
-    authProvider: 'dingtalk',
-    title: 'DingTalk',
-    client: 'dingtalk',
-  },
+  dingtalk: {},
   dingtalkweb: {
     scene: 'dingtalkweb',
     authProvider: 'dingtalkweb',
     title: 'DingTalk Web',
     client: 'dingtalkweb',
   },
-  dingtalkadmin: {
-    scene: 'dingtalkadmin',
-    authProvider: 'dingtalkadmin',
-    title: 'DingTalk Admin',
-    client: 'dingtalkadmin',
-  },
+  dingtalkadmin: {},
   dingtalkmini: {
     scene: 'dingtalkmini',
     authProvider: 'dingtalkmini',

@@ -19,18 +19,31 @@ module.exports = app => {
     };
   }
 
-  function _createProviderDingTalk() {
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.apps.selfBuilt;
-    if (!config.appkey || !config.appsecret) return null;
+  // dingtalk
+  function _createProviderDingtalk() {
     return {
       meta: {
         title: 'DingTalk',
         mode: 'direct',
-        disableAssociate: false,
-        component: 'buttondingtalk',
+        scene: true,
+        inner: true,
+        disableAssociate: true,
+        bean: 'dingtalk',
+        render: null,
+        validator: 'json',
+        icon: { f7: ':auth:dingtalk-square' },
       },
-      config: {},
-      handler: null,
+      scenes: {
+        selfBuilt: {
+          meta: {
+            mode: 'direct',
+            inner: false,
+            disableAssociate: false,
+            render: 'buttonDingtalk',
+            validator: 'authDingtalkSelfBuilt',
+          },
+        },
+      },
     };
   }
 
@@ -111,6 +124,7 @@ module.exports = app => {
   const metaAuth = {
     providers: {
       dingtalkadmin: _createProviderDingtalkAdmin(),
+      dingtalk: _createProviderDingtalk(),
     },
   };
 
