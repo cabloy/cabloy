@@ -14,7 +14,7 @@ module.exports = app => {
         disableAssociate: true,
         bean: 'dingtalkadmin',
         validator: 'authDingtalkadmin',
-        icon: { f7: ':auth:dingtalk-outline' },
+        icon: { f7: ':auth:dingtalk-square' },
       },
     };
   }
