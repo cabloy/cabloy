@@ -55,6 +55,7 @@ module.exports = ctx => {
   };
 
   function _createDingtalkApiGeneral({ providerName, providerScene, sso }) {
+    const appName = `${providerName}:${providerScene || ''}`;
     // bean provider
     const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
       module: moduleInfo.relativeName,
@@ -73,11 +74,11 @@ module.exports = ctx => {
         sso,
       },
       async function () {
-        const cacheKey = `dingtalk-token:${providerName}:${providerScene || ''}`;
+        const cacheKey = `dingtalk-token:${appName}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (token) {
-        const cacheKey = `dingtalk-token:${providerName}:${providerScene || ''}`;
+        const cacheKey = `dingtalk-token:${appName}`;
         if (token) {
           await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
@@ -88,11 +89,11 @@ module.exports = ctx => {
     // registerTicketHandle
     api.client.registerTicketHandle(
       async function (type) {
-        const cacheKey = `dingtalk-jsticket:${providerName}:${providerScene || ''}:${type}`;
+        const cacheKey = `dingtalk-jsticket:${appName}:${type}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
-        const cacheKey = `dingtalk-jsticket:${providerName}:${providerScene || ''}:${type}`;
+        const cacheKey = `dingtalk-jsticket:${appName}:${type}`;
         if (token) {
           await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {

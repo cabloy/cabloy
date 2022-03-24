@@ -23,7 +23,7 @@ module.exports = function (ctx) {
                 get(obj, prop) {
                   if (!obj[prop]) {
                     // others
-                    obj[prop] = _createWxworkApiApp({ providerScene: prop });
+                    obj[prop] = _createWxworkApiApp({ providerName: 'wxwork', providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -36,7 +36,7 @@ module.exports = function (ctx) {
               {
                 get(obj, prop) {
                   if (!obj[prop]) {
-                    obj[prop] = _createWxworkApiApp({ providerScene: prop, mini: true });
+                    obj[prop] = _createWxworkApiApp({ providerName: 'wxworkmini', providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -52,12 +52,12 @@ module.exports = function (ctx) {
     );
   };
 
-  function _createWxworkApiApp({ providerScene, mini }) {
-    const appName = mini ? `mini-${providerScene}` : providerScene;
+  function _createWxworkApiApp({ providerName, providerScene }) {
+    const appName = `${providerName}:${providerScene || ''}`;
     // bean provider
     const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
       module: moduleInfo.relativeName,
-      providerName: mini ? 'wxworkmini' : 'wxwork',
+      providerName,
       providerScene,
     });
     if (!beanProvider.providerSceneValid) ctx.throw(423);
@@ -68,11 +68,11 @@ module.exports = function (ctx) {
       config.corpId,
       config.secret,
       async function () {
-        const cacheKey = `wxwork-token:${appName || ''}`;
+        const cacheKey = `wxwork-token:${appName}`;
         return await getCacheDb().get(cacheKey);
       },
       async function (token) {
-        const cacheKey = `wxwork-token:${appName || ''}`;
+        const cacheKey = `wxwork-token:${appName}`;
         if (token) {
           await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
