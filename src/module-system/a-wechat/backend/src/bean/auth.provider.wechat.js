@@ -20,7 +20,12 @@ module.exports = function (ctx) {
       return !!config.appID && !!config.appSecret;
     }
     async adjustConfigForCache(config) {
-      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/message/index`);
+      // message
+      if (!config.message) config.message = {};
+      config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
+        `/api/${moduleInfo.url}/message/${this.providerName}/index`
+      );
+      // ok
       return config;
     }
     async adjustConfigForAuthenticate(config) {

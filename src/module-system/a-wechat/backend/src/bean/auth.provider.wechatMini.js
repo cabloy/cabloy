@@ -26,8 +26,9 @@ module.exports = function (ctx) {
       // maybe a new scene
       if (!config.message) config.message = {};
       config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
-        `/api/${moduleInfo.url}/messageMini/${this.providerScene}`
+        `/api/${moduleInfo.url}/message/${this.providerName}/${this.providerScene}`
       );
+      // ok
       return config;
     }
     async adjustConfigForAuthenticate(config) {

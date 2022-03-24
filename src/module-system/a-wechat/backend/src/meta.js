@@ -25,6 +25,7 @@ module.exports = app => {
       declarations: {
         wechatMessage: 'Wechat Message',
         wechatMessageMini: 'Miniprogram Message',
+        wechatMessageGeneral: 'Wechat Message General',
       },
       implementations: {
         'a-base:loginInfo': 'loginInfo',

@@ -1,26 +1,21 @@
 module.exports = app => {
   const routes = [
     // message
-    { method: 'get', path: 'message/index', controller: 'message', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/index', controller: 'message', meta: { auth: { enable: false } } },
-    // jsapi
-    { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
-
-    // messageMini
     {
       method: 'get',
-      path: 'messageMini/:providerScene',
-      controller: 'messageMini',
-      action: 'index',
+      path: 'message/:providerName/:providerScene',
+      controller: 'message',
       meta: { auth: { enable: false } },
     },
     {
       method: 'post',
-      path: 'messageMini/:providerScene',
-      controller: 'messageMini',
-      action: 'index',
+      path: 'message/:providerName/:providerScene',
+      controller: 'message',
       meta: { auth: { enable: false } },
     },
+    // jsapi
+    { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
+
     // authMini
     { method: 'post', path: 'authMini/login', controller: 'authMini' },
   ];

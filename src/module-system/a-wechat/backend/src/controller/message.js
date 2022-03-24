@@ -9,15 +9,29 @@ module.exports = app => {
     }
 
     async index() {
-      // query
-      const query = this.ctx.query;
+      // providerName
+      const providerName = this.ctx.params.providerName;
+      // providerScene
+      let providerScene = this.ctx.params.providerScene || 'default';
+      // wechat/wechatmini
+      if (providerName === 'wechat') providerScene = null;
+      if (providerName === 'wechatmini' && providerScene === 'index') providerScene = 'default';
       // bean provider
       const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
         module: moduleInfo.relativeName,
-        providerName: 'wechat',
-        providerScene: null,
+        providerName,
+        providerScene,
       });
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      // handle message
+      await this._handleMessage(beanProvider, async ({ message }) => {
+        return await this.ctx.service.message.general({ beanProvider, message });
+      });
+    }
+
+    async _handleMessage(beanProvider, handler) {
+      // query
+      const query = this.ctx.query;
       // config
       const config = beanProvider.configProviderScene;
       // encrypted
@@ -38,7 +52,7 @@ module.exports = app => {
         messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
         let resXML;
-        const messageOut = await this.ctx.service.message.index({ message: messageIn, config, beanProvider });
+        const messageOut = await handler({ message: messageIn });
         if (!messageOut) {
           resXML = '';
         } else {

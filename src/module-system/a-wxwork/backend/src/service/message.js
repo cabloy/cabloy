@@ -13,8 +13,9 @@ module.exports = app => {
         next: async (context, next) => {
           // default
           if (context.result === undefined) {
-            if (['selfBuilt', 'contacts'].includes(beanProvider.providerScene)) {
-              context.result = await this[beanProvider.providerScene]({ beanProvider, message });
+            const methodName = `${beanProvider.providerName}${beanProvider.providerScene}`;
+            if (this[methodName]) {
+              context.result = await this[methodName]({ beanProvider, message });
             }
           }
           await next();
@@ -22,7 +23,7 @@ module.exports = app => {
       });
     }
 
-    async selfBuilt({ beanProvider, message }) {
+    async wxworkselfBuilt({ beanProvider, message }) {
       // result
       let result;
       // event: subscribe
@@ -39,7 +40,7 @@ module.exports = app => {
       return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wxworkMessage',
-        data: { message },
+        data: { beanProvider, message },
         result,
         next: async (context, next) => {
           // default
@@ -60,7 +61,7 @@ module.exports = app => {
       });
     }
 
-    async contacts({ message }) {
+    async wxworkcontacts({ message }) {
       // queue
       this.ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
