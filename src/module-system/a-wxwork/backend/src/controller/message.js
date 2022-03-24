@@ -15,15 +15,6 @@ module.exports = app => {
       let providerScene = this.ctx.params.providerScene || 'selfBuilt';
       // compatible with the old 'index'
       if (providerScene === 'index') providerScene = 'selfBuilt';
-      // handle message
-      await this._handleMessage(providerName, providerScene, async ({ message }) => {
-        return await this.ctx.service.message.general({ providerName, providerScene, message });
-      });
-    }
-
-    async _handleMessage(providerName, providerScene, handler) {
-      // query
-      const query = this.ctx.query;
       // bean provider
       const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
         module: moduleInfo.relativeName,
@@ -31,6 +22,15 @@ module.exports = app => {
         providerScene,
       });
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      // handle message
+      await this._handleMessage(beanProvider, async ({ message }) => {
+        return await this.ctx.service.message.general({ beanProvider, message });
+      });
+    }
+
+    async _handleMessage(beanProvider, handler) {
+      // query
+      const query = this.ctx.query;
       // config
       const config = beanProvider.configProviderScene;
       // encrypted: always true
