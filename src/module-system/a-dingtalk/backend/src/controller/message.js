@@ -24,8 +24,7 @@ module.exports = app => {
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // handle message
       await this._handleMessage(beanProvider, async ({ message }) => {
-        return null;
-        // return await this.ctx.service.message.general({ beanProvider, message });
+        return await this.ctx.service.message.general({ beanProvider, message });
       });
     }
 
