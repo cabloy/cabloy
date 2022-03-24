@@ -129,22 +129,30 @@ module.exports = ctx => {
 
   function _createDingtalkApiUtil() {
     return {
-      // scene: empty/dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini/dingtalkminidefault/xxx,xxx,xxx
-      in(scene) {
-        // scene
-        if (!scene) scene = 'dingtalk';
-        if (typeof scene === 'string') scene = scene.split(',');
-        // provider
+      // providerScene: empty/dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini/xxx,xxx,xxx
+      in({ providerName, providerScene }) {
+        //  providerName is dingtalk/selfBuilt
+        if (!providerName && !providerScene) {
+          providerName = 'dingtalk';
+          providerScene = 'selfBuilt';
+        }
+        // 1. provider
         const provider = ctx.state.user && ctx.state.user.provider;
         if (!provider || provider.module !== moduleInfo.relativeName) return false;
-        // find any match
-        for (const item of scene) {
-          const ok =
-            provider.providerName === item || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
-          if (ok) return true;
+        // 2. dingtalkadmin
+        if (['dingtalkadmin'].includes(providerName) && provider.providerName === providerName) return true;
+        // 3. dingtalk/dingtalkweb/dingtalkmini
+        if (
+          !['dingtalk', 'dingtalkweb', 'dingtalkmini'].includes(providerName) ||
+          provider.providerName !== providerName
+        ) {
+          return false;
         }
-        // not found
-        return false;
+        // 4. null means all
+        if (!providerScene || providerScene === provider.providerScene) return true;
+        // 4.2 some scenes
+        if (!Array.isArray(providerScene)) providerScene = providerScene.split(',');
+        return providerScene.includes(provider.providerScene);
       },
     };
   }
