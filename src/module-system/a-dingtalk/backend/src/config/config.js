@@ -14,12 +14,12 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    registerBusinessCallbackList: {
-      bean: 'registerBusinessCallbackList',
-      instance: true,
-      debounce: true,
-      after: true,
-    },
+    // registerBusinessCallbackList: {
+    //   bean: 'registerBusinessCallbackList',
+    //   instance: true,
+    //   debounce: true,
+    //   after: true,
+    // },
   };
 
   // middlewares

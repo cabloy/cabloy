@@ -1,9 +1,6 @@
-// ?? const dingtalkUtils = require('../common/dingtalkUtils.js');
-
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
     async execute() {
-      return;
       // config
       const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
       const host = config.host;
@@ -27,7 +24,7 @@ module.exports = app => {
         // update
         const call_back_tag_setRemote = new Set(res.call_back_tag);
         const call_back_tag_setConfig = new Set(callbackList);
-        const diff = dingtalkUtils.symmetricDifference(call_back_tag_setRemote, call_back_tag_setConfig);
+        const diff = this.ctx.bean.local.utils.symmetricDifference(call_back_tag_setRemote, call_back_tag_setConfig);
         if (diff.size === 0) {
           // do nothing
         } else {
