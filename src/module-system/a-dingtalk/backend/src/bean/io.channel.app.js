@@ -45,7 +45,7 @@ module.exports = ctx => {
         }
       }
       // send
-      await ctx.bean.dingtalk.app.selfBuilt.message.sendMessage(message);
+      await ctx.bean.dingtalk.app.selfBuilt.oapi.message.sendMessage(message);
       // done
       return true;
     }
