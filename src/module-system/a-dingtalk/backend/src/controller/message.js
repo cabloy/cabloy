@@ -35,7 +35,7 @@ module.exports = app => {
       // config
       const config = beanProvider.configProviderScene;
       // dingtalk crypto
-      const encryptor = new DingTalkEncryptor(config.message.token, config.message.encodingAESKey, config.corpId);
+      const encryptor = new DingTalkEncryptor(config.message.token, config.message.encodingAESKey, config.appKey);
       // parse
       const message = await this._parseMessagePost({ query, encryptor });
       // handle
