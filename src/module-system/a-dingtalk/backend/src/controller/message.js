@@ -24,28 +24,28 @@ module.exports = app => {
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
       // handle message
       await this._handleMessage(beanProvider, async ({ message }) => {
-        return await this.ctx.service.message.general({ beanProvider, message });
+        return null;
+        // return await this.ctx.service.message.general({ beanProvider, message });
       });
     }
 
-    async _handleMessage(appName, handler) {
+    async _handleMessage(beanProvider, handler) {
       // query
       const query = this.ctx.query;
       // config
-      const config = this.ctx.config.account.dingtalk;
-      const configApp = config.apps[appName];
+      const config = beanProvider.configProviderScene;
       // dingtalk crypto
-      const encryptor = new DingTalkEncryptor(
-        configApp.businessCallback.token,
-        configApp.businessCallback.encodingAESKey,
-        config.corpid
-      );
+      const encryptor = new DingTalkEncryptor(config.message.token, config.message.encodingAESKey, config.corpId);
       // parse
       const message = await this._parseMessagePost({ query, encryptor });
       // handle
       await handler({ message });
       // ok
-      const res = encryptor.getEncryptedMap('success', dingtalkUtils.createTimestamp(), dingtalkUtils.createNonceStr());
+      const res = encryptor.getEncryptedMap(
+        'success',
+        this.localUtils.createTimestamp(),
+        this.localUtils.createNonceStr()
+      );
       this.ctx.status = 200;
       this.ctx.type = 'application/json';
       this.ctx.body = res;
