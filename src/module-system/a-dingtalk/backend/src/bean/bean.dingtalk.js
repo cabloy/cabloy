@@ -1,9 +1,11 @@
 const require3 = require('require3');
-const DingtalkAPI = require3('@zhennann/node-dingtalk');
+const DingtalkFn = require3('@zhennann/node-dingtalk');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
+  function getCacheDb() {
+    return ctx.cache.db.module(moduleInfo.relativeName);
+  }
   // bean.dingtalk.admin
   // bean.dingtalk.app.{providerScene}
   // bean.dingtalk.mini.{providerScene}
@@ -23,7 +25,7 @@ module.exports = ctx => {
               {
                 get(obj, prop) {
                   if (!obj[prop]) {
-                    obj[prop] = _createDingtalkApiApp({ appName: prop });
+                    obj[prop] = _createDingtalkApiApp({ providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -36,7 +38,7 @@ module.exports = ctx => {
               {
                 get(obj, prop) {
                   if (!obj[prop]) {
-                    obj[prop] = _createDingtalkApiMini({ sceneShort: prop });
+                    obj[prop] = _createDingtalkApiMini({ providerScene: prop });
                   }
                   return obj[prop];
                 },
@@ -52,41 +54,49 @@ module.exports = ctx => {
     );
   };
 
-  function _createDingtalkApiGeneral({ category, appName, appkey, appsecret, corpid, sso }) {
+  function _createDingtalkApiGeneral({ providerName, providerScene, sso }) {
+    // bean provider
+    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+      module: moduleInfo.relativeName,
+      providerName,
+      providerScene,
+    });
+    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    // config
+    const config = beanProvider.configProviderScene;
     // api
-    const api = new DingtalkAPI(
+    const api = DingtalkFn(
       {
-        appkey,
-        appsecret,
-        corpid,
+        appKey: sso ? config.corpId : config.appKey,
+        appSecret: sso ? config.ssoSecret : config.appSecret,
+        corpId: config.corpId,
         sso,
-        // logger: console,
       },
       async function () {
-        const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        const cacheKey = `dingtalk-token:${providerName}:${providerScene || ''}`;
+        return await getCacheDb().get(cacheKey);
       },
       async function (token) {
-        const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
+        const cacheKey = `dingtalk-token:${providerName}:${providerScene || ''}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
     // registerTicketHandle
     api.client.registerTicketHandle(
       async function (type) {
-        const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        const cacheKey = `dingtalk-jsticket:${providerName}:${providerScene || ''}:${type}`;
+        return await getCacheDb().get(cacheKey);
       },
       async function (type, token) {
-        const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
+        const cacheKey = `dingtalk-jsticket:${providerName}:${providerScene || ''}:${type}`;
         if (token) {
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          await getCacheDb().set(cacheKey, token, token.expireTime - Date.now());
         } else {
-          await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          await getCacheDb().remove(cacheKey);
         }
       }
     );
@@ -94,55 +104,25 @@ module.exports = ctx => {
     return api;
   }
 
-  function _createDingtalkApiApp({ appName }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-    const configApp = config.apps[appName];
+  function _createDingtalkApiApp({ providerScene }) {
     return _createDingtalkApiGeneral({
-      category: 'app',
-      appName,
-      appkey: configApp.appkey,
-      appsecret: configApp.appsecret,
-      corpid: config.corpid,
+      providerName: 'dingtalk',
+      providerScene,
     });
   }
 
   function _createDingtalkApiAdmin() {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
     return _createDingtalkApiGeneral({
-      category: 'admin',
-      appName: '',
-      appkey: config.corpid,
-      appsecret: config.ssosecret,
-      corpid: config.corpid,
+      providerName: 'dingtalkadmin',
+      providerScene: null,
       sso: true,
     });
   }
 
-  function _createDingtalkApiWeb({ webName }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-    const configWeb = config.webs[webName];
+  function _createDingtalkApiMini({ providerScene }) {
     return _createDingtalkApiGeneral({
-      category: 'web',
-      appName: webName,
-      appkey: configWeb.appid,
-      appsecret: configWeb.appsecret,
-      corpid: config.corpid,
-    });
-  }
-
-  function _createDingtalkApiMini({ sceneShort }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
-    const configMini = config.minis[sceneShort];
-    return _createDingtalkApiGeneral({
-      category: 'mini',
-      appName: sceneShort,
-      appkey: configMini.appkey,
-      appsecret: configMini.appsecret,
-      corpid: config.corpid,
+      providerName: 'dingtalkmini',
+      providerScene,
     });
   }
 
