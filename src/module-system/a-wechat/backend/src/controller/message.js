@@ -49,7 +49,7 @@ module.exports = app => {
         this.ctx.type = 'text/plain';
         this.ctx.body = messageIn.echostr;
       } else {
-        messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
+        messageIn = await this._parseMessagePostXML({ query, config, encrypted, wechatCrypto });
         // handle
         let resXML;
         const messageOut = await handler({ message: messageIn });
@@ -68,7 +68,7 @@ module.exports = app => {
         }
         // ok
         this.ctx.status = 200;
-        this.ctx.type = 'text/xml';
+        this.ctx.type = 'text/xml'; // 'text/plain';
         this.ctx.body = resXML;
       }
     }
@@ -92,7 +92,7 @@ module.exports = app => {
       return { echostr: query.echostr };
     }
 
-    async _parseMessagePost({ query, config, encrypted, wechatCrypto }) {
+    async _parseMessagePostXML({ query, config, encrypted, wechatCrypto }) {
       // xml raw
       let xmlRaw;
       if (typeof this.ctx.request.body === 'string') {
@@ -102,11 +102,11 @@ module.exports = app => {
         xmlRaw = payload.toString();
       }
       // parse xml
-      let xml = await this.localUtils.parseXML({ xml: xmlRaw });
+      let messageIn = await this.localUtils.parseXML({ xml: xmlRaw });
       // check if valid
       let valid = false;
       if (encrypted) {
-        valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
+        valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, messageIn.Encrypt);
       } else {
         valid =
           query.signature ===
@@ -115,10 +115,30 @@ module.exports = app => {
       if (!valid) this.ctx.throw(401);
       // decrypt
       if (encrypted) {
-        const res = wechatCrypto.decrypt(xml.Encrypt);
-        xml = await this.localUtils.parseXML({ xml: res.message });
+        const res = wechatCrypto.decrypt(messageIn.Encrypt);
+        messageIn = await this.localUtils.parseXML({ xml: res.message });
       }
-      return xml;
+      return messageIn;
+    }
+
+    async _parseMessagePostJSON({ query, config, encrypted, wechatCrypto }) {
+      let messageIn = this.ctx.request.body;
+      // check if valid
+      let valid = false;
+      if (encrypted) {
+        valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, messageIn.Encrypt);
+      } else {
+        valid =
+          query.signature ===
+          this.localUtils.calcSignature({ options: [config.message.token, query.timestamp, query.nonce].sort() });
+      }
+      if (!valid) this.ctx.throw(401);
+      // decrypt
+      if (encrypted) {
+        const res = wechatCrypto.decrypt(messageIn.Encrypt);
+        messageIn = JSON.parse(res.message);
+      }
+      return messageIn;
     }
   }
   return MessageController;
