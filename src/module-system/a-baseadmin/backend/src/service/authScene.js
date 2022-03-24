@@ -93,7 +93,7 @@ module.exports = app => {
     _getMetaScene(item, sceneName) {
       const meta = item.meta;
       if (meta.scene) {
-        const scene = item.metaScenes && item.metaScenes[sceneName];
+        const scene = item.scenes && item.scenes[sceneName];
         return (scene && scene.meta) || meta;
       }
       return meta;

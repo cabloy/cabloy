@@ -71,7 +71,6 @@ module.exports = app => {
             type: 'number',
             ebType: 'text',
             ebTitle: 'type',
-            notEmpty: true,
           },
           jsApiList: {
             type: 'array',
