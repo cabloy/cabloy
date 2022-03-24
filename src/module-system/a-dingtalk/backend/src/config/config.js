@@ -1,5 +1,4 @@
 const jsApiList = require('./config/jsApiList.js');
-// const businessCallbackList = require('./config/businessCallbackList.js');
 
 module.exports = appInfo => {
   const config = {};
@@ -10,16 +9,6 @@ module.exports = appInfo => {
       bean: 'contacts',
       transaction: true,
     },
-  };
-
-  // startups
-  config.startups = {
-    // registerBusinessCallbackList: {
-    //   bean: 'registerBusinessCallbackList',
-    //   instance: true,
-    //   debounce: true,
-    //   after: true,
-    // },
   };
 
   // middlewares

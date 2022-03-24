@@ -2,7 +2,6 @@ const versionManager = require('./bean/version.manager.js');
 const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
 const queueContacts = require('./bean/queue.contacts.js');
-const startupRegisterBusinessCallbackList = require('./bean/startup.registerBusinessCallbackList.js');
 const middlewareInDingtalk = require('./bean/middleware.inDingtalk.js');
 const ioChannelApp = require('./bean/io.channel.app.js');
 const authProviderDingtalkadmin = require('./bean/auth.provider.dingtalkadmin.js');
@@ -33,11 +32,6 @@ module.exports = app => {
     'queue.contacts': {
       mode: 'app',
       bean: queueContacts,
-    },
-    // startup
-    'startup.registerBusinessCallbackList': {
-      mode: 'app',
-      bean: startupRegisterBusinessCallbackList,
     },
     // middleware
     'middleware.inDingtalk': {
