@@ -49,7 +49,12 @@ module.exports = app => {
         this.ctx.type = 'text/plain';
         this.ctx.body = messageIn.echostr;
       } else {
-        messageIn = await this._parseMessagePostXML({ query, config, encrypted, wechatCrypto });
+        const contentTypeXML = (this.ctx.headers['content-type'] || '').indexOf('text/xml') > -1;
+        if (contentTypeXML) {
+          messageIn = await this._parseMessagePostXML({ query, config, encrypted, wechatCrypto });
+        } else {
+          messageIn = await this._parseMessagePostJSON({ query, config, encrypted, wechatCrypto });
+        }
         // handle
         let resXML;
         const messageOut = await handler({ message: messageIn });

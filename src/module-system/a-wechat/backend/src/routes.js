@@ -5,12 +5,14 @@ module.exports = app => {
       method: 'get',
       path: 'message/:providerName/:providerScene',
       controller: 'message',
+      action: 'index',
       meta: { auth: { enable: false } },
     },
     {
       method: 'post',
       path: 'message/:providerName/:providerScene',
       controller: 'message',
+      action: 'index',
       meta: { auth: { enable: false } },
     },
     // jsapi
