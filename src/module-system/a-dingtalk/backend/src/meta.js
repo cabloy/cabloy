@@ -26,7 +26,9 @@ module.exports = app => {
       },
     },
     event: {
-      declarations: {},
+      declarations: {
+        dingtalkMessageGeneral: 'Dingtalk Work Message General',
+      },
       implementations: {
         'a-base:loginInfo': 'loginInfo',
         'a-base:accountMigration': 'accountMigration',

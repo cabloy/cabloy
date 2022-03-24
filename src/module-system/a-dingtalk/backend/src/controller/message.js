@@ -1,12 +1,30 @@
 const require3 = require('require3');
 const DingTalkEncryptor = require3('dingtalk-encrypt');
-// ?? const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
-  class CallbackController extends app.Controller {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class MessageController extends app.Controller {
+    get localUtils() {
+      return this.ctx.bean.local.utils;
+    }
+
     async index() {
-      await this._handleMessage('selfBuilt', async ({ message }) => {
-        return await this.ctx.service.callback.index({ message });
+      // providerName
+      const providerName = this.ctx.params.providerName;
+      // providerScene
+      let providerScene = this.ctx.params.providerScene || 'selfBuilt';
+      // compatible with the old 'index'
+      if (providerScene === 'index') providerScene = 'selfBuilt';
+      // bean provider
+      const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName,
+        providerScene,
+      });
+      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      // handle message
+      await this._handleMessage(beanProvider, async ({ message }) => {
+        return await this.ctx.service.message.general({ beanProvider, message });
       });
     }
 
@@ -43,5 +61,5 @@ module.exports = app => {
       return JSON.parse(plainText);
     }
   }
-  return CallbackController;
+  return MessageController;
 };

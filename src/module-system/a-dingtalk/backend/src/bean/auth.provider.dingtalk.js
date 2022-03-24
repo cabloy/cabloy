@@ -28,7 +28,7 @@ module.exports = function (ctx) {
       // message
       if (config.message) {
         config.message.__messageURL = ctx.bean.base.getAbsoluteUrl(
-          `/api/${moduleInfo.url}/message/${this.providerScene}`
+          `/api/${moduleInfo.url}/message/${this.providerName}/${this.providerScene}`
         );
       }
       // ok

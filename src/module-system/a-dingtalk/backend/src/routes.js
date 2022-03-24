@@ -1,7 +1,20 @@
 module.exports = app => {
   const routes = [
     // message
-    { method: 'post', path: 'callback/index', controller: 'callback', meta: { auth: { enable: false } } },
+    {
+      method: 'get',
+      path: 'message/:providerName/:providerScene',
+      controller: 'message',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
+    {
+      method: 'post',
+      path: 'message/:providerName/:providerScene',
+      controller: 'message',
+      action: 'index',
+      meta: { auth: { enable: false } },
+    },
     // contacts
     {
       method: 'post',
