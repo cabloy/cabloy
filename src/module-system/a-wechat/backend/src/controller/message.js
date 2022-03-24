@@ -73,7 +73,7 @@ module.exports = app => {
         }
         // ok
         this.ctx.status = 200;
-        this.ctx.type = 'text/xml'; // 'text/plain';
+        this.ctx.type = 'text/xml';
         this.ctx.body = resXML;
       }
     }
