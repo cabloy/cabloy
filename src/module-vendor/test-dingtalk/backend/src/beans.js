@@ -1,5 +1,5 @@
 const eventLoginInfo = require('./bean/event.loginInfo.js');
-const eventDingtalkCallback = require('./bean/event.dingtalkCallback.js');
+const eventDingtalkMessageGeneral = require('./bean/event.dingtalkMessageGeneral.js');
 
 module.exports = app => {
   const beans = {
@@ -9,7 +9,7 @@ module.exports = app => {
     },
     'event.dingtalkCallback': {
       mode: 'ctx',
-      bean: eventDingtalkCallback,
+      bean: eventDingtalkMessageGeneral,
     },
   };
   return beans;
