@@ -14,13 +14,14 @@ function DingTalkStrategy(options, verify) {
     throw new TypeError('_verify must be function');
   }
 
-  if (!options.appKey) {
-    throw new TypeError('DingtalkStrategy requires a appKey option');
-  }
+  // support sso
+  // if (!options.appKey) {
+  //   throw new TypeError('DingtalkStrategy requires a appKey option');
+  // }
 
-  if (!options.appSecret) {
-    throw new TypeError('DingtalkStrategy requires a appSecret option');
-  }
+  // if (!options.appSecret) {
+  //   throw new TypeError('DingtalkStrategy requires a appSecret option');
+  // }
 
   passport.Strategy.call(this, options, verify);
 

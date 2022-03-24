@@ -23,7 +23,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@zhennann/node-dingtalk": "^3.0.2",
+    "@zhennann/node-dingtalk": "^3.0.3",
     "dingtalk-encrypt": "^1.2.1",
     "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.0",

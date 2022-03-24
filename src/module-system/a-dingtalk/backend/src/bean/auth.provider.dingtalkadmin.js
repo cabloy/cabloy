@@ -21,7 +21,7 @@ module.exports = function (ctx) {
     async onVerify(code, state) {
       // code/memberId
       const res = await ctx.bean.dingtalk.admin.oauth2.getSsoUserInfo({ code });
-      const memberId = res.user_info.userId;
+      const memberId = res.userId;
       const verifyUser = await this.localHelper.verifyAuthUser({
         beanProvider: this,
         memberId,
