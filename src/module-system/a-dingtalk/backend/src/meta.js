@@ -11,14 +11,21 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        authDingtalkadmin: {
+          schemas: 'authDingtalkadmin',
+        },
+        authDingtalkSelfBuilt: {
+          schemas: 'authDingtalkSelfBuilt',
+        },
+        authDingtalkmini: {
+          schemas: 'authDingtalkmini',
+        },
         settingsInstance: {
           schemas: 'settingsInstance',
         },
       },
       keywords: {},
-      schemas: {
-        settingsInstance: schemas.settingsInstance,
-      },
+      schemas,
     },
     settings: {
       instance: {
