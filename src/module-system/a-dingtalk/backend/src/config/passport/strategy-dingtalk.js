@@ -14,11 +14,20 @@ function DingTalkStrategy(options, verify) {
     throw new TypeError('_verify must be function');
   }
 
+  if (!options.appKey) {
+    throw new TypeError('DingtalkStrategy requires a appKey option');
+  }
+
+  if (!options.appSecret) {
+    throw new TypeError('DingtalkStrategy requires a appSecret option');
+  }
+
   passport.Strategy.call(this, options, verify);
 
   this.name = options.name || 'dingtalk';
   this._client = options.client || 'dingtalk';
   this._verify = verify;
+  this._oauth = new OAuth(options.appKey);
   this._callbackURL = options.callbackURL;
   this._lang = options.lang || 'en';
   this._state = options.state;
@@ -28,11 +37,6 @@ function DingTalkStrategy(options, verify) {
 
 util.inherits(DingTalkStrategy, passport.Strategy);
 
-DingTalkStrategy.prototype.getOAuth = function (options) {
-  const _config = options.getConfig();
-  return new OAuth(_config.appkey);
-};
-
 DingTalkStrategy.prototype.authenticate = function (req, options) {
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
@@ -41,9 +45,6 @@ DingTalkStrategy.prototype.authenticate = function (req, options) {
   const self = this;
 
   options = options || {};
-
-  // oauth
-  const _oauth = this.getOAuth(options);
 
   // 校验完成信息
   function verified(err, user, info) {
@@ -88,7 +89,7 @@ DingTalkStrategy.prototype.authenticate = function (req, options) {
 
     // only support dingtalkweb
     const methodName = this._client === 'dingtalkweb' ? 'getAuthorizeURLForWebsite' : '';
-    const location = _oauth[methodName](callbackURL, state, scope);
+    const location = self._oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
   }

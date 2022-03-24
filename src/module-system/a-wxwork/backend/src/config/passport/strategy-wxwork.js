@@ -37,11 +37,6 @@ function WxworkStrategy(options, verify) {
 
 util.inherits(WxworkStrategy, passport.Strategy);
 
-WxworkStrategy.prototype.getOAuth = function (options) {
-  const _config = options.getConfig();
-  return new OAuth(_config.corpId, _config.agentId);
-};
-
 WxworkStrategy.prototype.authenticate = function (req, options) {
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
