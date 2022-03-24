@@ -3,14 +3,14 @@ module.exports = app => {
     // message: selfBuilt/contacts
     {
       method: 'get',
-      path: 'message/:providerScene',
+      path: 'message/:providerName/:providerScene',
       controller: 'message',
       action: 'index',
       meta: { auth: { enable: false } },
     },
     {
       method: 'post',
-      path: 'message/:providerScene',
+      path: 'message/:providerName/:providerScene',
       controller: 'message',
       action: 'index',
       meta: { auth: { enable: false } },

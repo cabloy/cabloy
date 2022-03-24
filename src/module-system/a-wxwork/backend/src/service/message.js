@@ -12,14 +12,14 @@ module.exports = app => {
       return beanProvider;
     }
 
-    async general({ providerScene, message }) {
+    async general({ providerName, providerScene, message }) {
       // result
       let result;
       // raise event
       return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wxworkMessageGeneral',
-        data: { providerScene, message },
+        data: { providerName, providerScene, message },
         result,
         next: async (context, next) => {
           // default

@@ -9,23 +9,25 @@ module.exports = app => {
     }
 
     async index() {
+      // providerName
+      const providerName = this.ctx.params.providerName;
       // providerScene
       let providerScene = this.ctx.params.providerScene || 'selfBuilt';
       // compatible with the old 'index'
       if (providerScene === 'index') providerScene = 'selfBuilt';
       // handle message
-      await this._handleMessage(providerScene, async ({ message }) => {
-        return await this.ctx.service.message.general({ providerScene, message });
+      await this._handleMessage(providerName, providerScene, async ({ message }) => {
+        return await this.ctx.service.message.general({ providerName, providerScene, message });
       });
     }
 
-    async _handleMessage(providerScene, handler) {
+    async _handleMessage(providerName, providerScene, handler) {
       // query
       const query = this.ctx.query;
       // bean provider
       const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
         module: moduleInfo.relativeName,
-        providerName: 'wxwork',
+        providerName,
         providerScene,
       });
       if (!beanProvider.providerSceneValid) this.ctx.throw(423);
