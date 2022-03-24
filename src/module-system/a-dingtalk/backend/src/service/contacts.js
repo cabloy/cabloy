@@ -153,6 +153,7 @@ module.exports = app => {
     }
 
     async queueSync({ type, progressId, userOp }) {
+      if (!this.beanProviderSelfBuilt.providerSceneValid) this.ctx.throw(423);
       if (type === 'departments') {
         await this._queueSyncDepartments({ progressId, userOp });
       } else if (type === 'members') {
@@ -183,7 +184,7 @@ module.exports = app => {
       // department
       const department = { departmentId };
       if (message.EventType !== 'org_dept_remove') {
-        const remoteDepartment = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(departmentId);
+        const remoteDepartment = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.department.get(departmentId);
         this._adjustFields(department, remoteDepartment, __departmentFieldMap);
       }
       // do
@@ -212,7 +213,7 @@ module.exports = app => {
       // member
       const member = { memberId };
       if (message.EventType !== 'user_leave_org') {
-        const remoteMember = await this.ctx.bean.dingtalk.app.selfBuilt.user.get(memberId);
+        const remoteMember = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.user.get(memberId);
         this._adjustFields(member, remoteMember, __memberFieldMap);
       }
       // do
@@ -242,12 +243,12 @@ module.exports = app => {
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
         // remote departments
-        const res = await this.ctx.bean.dingtalk.app.selfBuilt.department.list({
+        const res = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.department.list({
           fetch_child: true,
           id: 1,
         });
         // special for departmentId=1
-        const department1 = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(1);
+        const department1 = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.department.get(1);
         res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
         // console.log('-------all:', context.remoteDepartments);
@@ -258,7 +259,7 @@ module.exports = app => {
           text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---`,
         });
         // local departments
-        context.localDepartments = await this.ctx.model.department.select();
+        context.localDepartments = await this.modelDepartment.select();
         context.localDepartmentsMap = {};
         for (const localDepartment of context.localDepartments) {
           localDepartment.__status = 0;
@@ -305,9 +306,9 @@ module.exports = app => {
         const syncStatus = await this.syncStatus();
         if (!syncStatus.departments) return this.ctx.throw(1006);
         // remote members
-        const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
+        const departmentRoot = await this.modelDepartment.get({ departmentParentId: 0 });
         if (!departmentRoot) return this.ctx.throw(1006);
-        const res = await this.ctx.bean.dingtalk.app.selfBuilt.user.listAll(null, false);
+        const res = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.user.listAll(null, false);
         context.remoteMembers = res.userlist;
         // progress
         await this._progressPublish({
@@ -316,7 +317,7 @@ module.exports = app => {
           text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---`,
         });
         // local members
-        context.localMembers = await this.ctx.model.member.select();
+        context.localMembers = await this.modelMember.select();
         context.localMembersMap = {};
         for (const localMember of context.localMembers) {
           localMember.__status = 0;
@@ -364,7 +365,7 @@ module.exports = app => {
 
     async _queueSyncDepartment({ context, remoteDepartment }) {
       // retrieve the department details
-      remoteDepartment = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
+      remoteDepartment = await this.ctx.bean.dingtalk.app.selfBuilt.oapi.department.get(remoteDepartment.id);
       if (remoteDepartment.id === 1) remoteDepartment.parentid = 0;
       // adjust
       const department = {};
@@ -414,7 +415,7 @@ module.exports = app => {
     async _deleteRoleAndDepartment({ localDepartment, department }) {
       // localDepartment
       if (!localDepartment) {
-        localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
+        localDepartment = await this.modelDepartment.get({ departmentId: department.departmentId });
         if (!localDepartment) {
           this.ctx.throw(1004, department.departmentId);
         }
@@ -422,13 +423,13 @@ module.exports = app => {
       // delete role
       await this.ctx.bean.role.delete({ roleId: localDepartment.roleId, force: true });
       // delete department
-      await this.ctx.model.department.delete({ id: localDepartment.id });
+      await this.modelDepartment.delete({ id: localDepartment.id });
     }
 
     async _deleteUserAndMember({ localMember, member }) {
       // localMember
       if (!localMember) {
-        localMember = await this.ctx.model.member.get({ memberId: member.memberId });
+        localMember = await this.modelMember.get({ memberId: member.memberId });
         if (!localMember) {
           this.ctx.throw(1005, member.memberId);
         }
@@ -437,14 +438,14 @@ module.exports = app => {
       // delete user: including roles/auth
       await this.ctx.bean.user.delete({ userId });
       // delete member
-      await this.ctx.model.member.delete({ id: localMember.id });
+      await this.modelMember.delete({ id: localMember.id });
     }
 
     async _updateRoleAndDepartment({ localDepartment, department }) {
       // console.log(department);
       // localDepartment
       if (!localDepartment) {
-        localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
+        localDepartment = await this.modelDepartment.get({ departmentId: department.departmentId });
         if (!localDepartment) {
           this.ctx.throw(1004, department.departmentId);
         }
@@ -453,13 +454,13 @@ module.exports = app => {
       await this._updateRoleAndDepartment_role({ localDepartment, department });
       // update department
       department.id = localDepartment.id;
-      await this.ctx.model.department.update(department);
+      await this.modelDepartment.update(department);
     }
 
     async _updateRoleAndDepartment_role({ localDepartment, department }) {
       // change role parent
       if (department.departmentParentId && department.departmentParentId !== localDepartment.departmentParentId) {
-        const departmentParent = await this.ctx.model.department.get({ departmentId: department.departmentParentId });
+        const departmentParent = await this.modelDepartment.get({ departmentId: department.departmentParentId });
         if (!departmentParent) {
           this.ctx.throw(1004, department.departmentParentId);
         }
@@ -505,7 +506,7 @@ module.exports = app => {
     async _updateUserAndMember({ localMember, member }) {
       // localMember
       if (!localMember) {
-        localMember = await this.ctx.model.member.get({ memberId: member.memberId });
+        localMember = await this.modelMember.get({ memberId: member.memberId });
         if (!localMember) {
           this.ctx.throw(1005, member.memberId);
         }
@@ -525,7 +526,7 @@ module.exports = app => {
       }
       // update member
       member.id = localMember.id;
-      await this.ctx.model.member.update(member);
+      await this.modelMember.update(member);
     }
 
     async _createRoleAndDepartment({ department }) {
@@ -548,7 +549,7 @@ module.exports = app => {
       });
       // creat department
       department.roleId = roleIdCurrent;
-      const res = await this.ctx.model.department.insert(department);
+      const res = await this.modelDepartment.insert(department);
       return res.insertId;
     }
 
@@ -600,7 +601,7 @@ module.exports = app => {
 
       // 4. create member
       member.userId = userId;
-      const res = await this.ctx.model.member.insert(member);
+      const res = await this.modelMember.insert(member);
       const memberId = res.insertId;
 
       // 5. send message: account migration
@@ -644,7 +645,7 @@ module.exports = app => {
         return await this._getRoleTop();
       }
       // department
-      const department = await this.ctx.model.department.get({ departmentId });
+      const department = await this.modelDepartment.get({ departmentId });
       if (!department) return null;
       return await this.ctx.bean.role.get({ id: department.roleId });
     }
