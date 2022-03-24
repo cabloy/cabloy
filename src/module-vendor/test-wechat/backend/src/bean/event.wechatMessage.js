@@ -2,8 +2,7 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
     async execute(context, next) {
-      const data = context.data;
-      const message = data.message;
+      const { message } = context.data;
       if (message.MsgType === 'text') {
         context.result = {
           ToUserName: message.FromUserName,

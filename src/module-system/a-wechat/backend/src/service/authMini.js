@@ -23,6 +23,7 @@ module.exports = app => {
       // openid/unionid
       if ((!openid || !unionid) && detail && detail.encryptedData) {
         const res = await apiMini.decryptMini(detail.encryptedData, detail.iv, session_key);
+        if (!res) this.ctx.throw(403);
         openid = res.openId;
         unionid = res.unionId;
       }
