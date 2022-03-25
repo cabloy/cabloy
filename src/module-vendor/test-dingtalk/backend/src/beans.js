@@ -7,7 +7,7 @@ module.exports = app => {
       mode: 'ctx',
       bean: eventLoginInfo,
     },
-    'event.dingtalkCallback': {
+    'event.dingtalkMessageGeneral': {
       mode: 'ctx',
       bean: eventDingtalkMessageGeneral,
     },
