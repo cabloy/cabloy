@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const mparse = require3('egg-born-mparse').default;
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthProvider {
@@ -75,15 +72,6 @@ module.exports = ctx => {
       };
     }
 
-    _combineAuthenticateUrlPatterns({ module, providerName }) {
-      const authProvider = this.getAuthProviderBase({ module, providerName });
-      const urlParamScene = authProvider.meta.scene ? '/:providerScene' : '';
-      return {
-        loginURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}`,
-        callbackURL: `/api/a/auth/passport/${module}/${providerName}${urlParamScene}/callback`,
-      };
-    }
-
     async _registerAuthProviderLock({ module, providerName }) {
       // get
       const res = await this.modelAuthProvider.get({ module, providerName });
@@ -105,22 +93,10 @@ module.exports = ctx => {
     }
 
     _registerRouters() {
-      const authProviders = ctx.bean.base.authProviders();
-      for (const key in authProviders) {
-        const [moduleRelativeName, providerName] = key.split(':');
-        this._registerProviderRouters(moduleRelativeName, providerName);
-      }
-    }
-
-    _registerProviderRouters(moduleRelativeName, providerName) {
-      // urls
-      const moduleInfo = mparse.parseInfo(moduleRelativeName);
-      const urls = this._combineAuthenticateUrlPatterns({
-        module: moduleRelativeName,
-        providerName,
-      });
+      // url pattern
+      const urlPattern = /\/api\/a\/auth\/passport\/(.+)$/;
       // authenticate
-      const authenticate = _createAuthenticate(moduleRelativeName, providerName);
+      const authenticate = _createAuthenticate();
       // middlewares
       const middlewaresPost = [];
       const middlewaresGet = [];
@@ -130,24 +106,17 @@ module.exports = ctx => {
       // mount routes
       const routes = [
         {
-          name: `get:${urls.loginURL}`,
+          name: 'get:api-a-auth-passport',
           method: 'get',
-          path: '/' + urls.loginURL,
+          path: urlPattern,
           middlewares: middlewaresGet,
           meta: { auth: { enable: false } },
         },
         {
-          name: `post:${urls.loginURL}`,
+          name: 'post:api-a-auth-passport',
           method: 'post',
-          path: '/' + urls.loginURL,
+          path: urlPattern,
           middlewares: middlewaresPost,
-          meta: { auth: { enable: false } },
-        },
-        {
-          name: `get:${urls.callbackURL}`,
-          method: 'get',
-          path: '/' + urls.callbackURL,
-          middlewares: middlewaresGet,
           meta: { auth: { enable: false } },
         },
         // { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
@@ -161,12 +130,16 @@ module.exports = ctx => {
   return AuthProvider;
 };
 
-function _createAuthenticate(moduleRelativeName, providerName) {
+function _createAuthenticate() {
   return async function (ctx, next) {
-    // provider scene
-    const providerScene = ctx.params.providerScene;
+    const urlPattern = ctx.params[0];
+    const [module, providerName, providerScene] = urlPattern.split('/');
+    ctx.params.module = module;
+    ctx.params.providerName = providerName;
+    ctx.params.providerScene = providerScene;
+    // authenticate
     await ctx.bean.local.module('a-auth').passport.authenticate({
-      module: moduleRelativeName,
+      module,
       providerName,
       providerScene,
       next,
