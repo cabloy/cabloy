@@ -41,9 +41,9 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(loginTmpCode, state) {
+    async onVerify(authCode, state) {
       // code/memberId
-      let res = await ctx.bean.dingtalk.app[this.providerScene].client.getuserinfo_bycode(loginTmpCode);
+      let res = await ctx.bean.dingtalk.app[this.providerScene].client.getuserinfo_bycode(authCode);
       const unionid = res.user_info.unionid;
       res = await ctx.bean.dingtalk.app.selfBuilt.oapi.user.getUseridByUnionid(unionid);
       if (res.contactType === 1) throw new Error('not support extcontact');

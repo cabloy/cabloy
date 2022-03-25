@@ -6,11 +6,11 @@ const OAuth = function (appKey) {
 };
 
 OAuth.prototype.getAuthorizeURLForWebsite = function (redirect, state) {
-  const url = 'https://oapi.dingtalk.com/connect/qrconnect';
+  const url = 'https://login.dingtalk.com/oauth2/auth';
   const info = {
-    appid: this.appKey,
+    client_id: this.appKey,
     response_type: 'code',
-    scope: 'snsapi_login',
+    scope: 'openid',
     state: state || '',
     redirect_uri: redirect,
   };

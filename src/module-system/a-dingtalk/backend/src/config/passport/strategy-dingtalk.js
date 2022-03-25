@@ -60,19 +60,20 @@ DingTalkStrategy.prototype.authenticate = function (req, options) {
 
   // 获取code授权成功
   if (req.url.indexOf('/callback') > -1) {
+    // sso/web
+    const code = req.query.code || req.query.authCode;
+
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
-    if (req.query && !req.query.code) {
+    if (req.query && !code) {
       return self.fail(401);
     }
 
     // Documentation states that if user rejects userinfo only state will be sent without code
     // In reality code equals "authdeny". Handle this case like the case above. (Fail authentication request).
-    if (req.query && req.query.code === 'authdeny') {
+    if (req.query && code === 'authdeny') {
       return self.fail(401);
     }
-
-    const code = req.query.code;
 
     try {
       if (self._passReqToCallback) {
