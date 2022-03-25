@@ -44,6 +44,7 @@ module.exports = ctx => {
         disableAssociate: false,
         bean: 'wxworkweb',
         render: 'buttonWxworkweb',
+        validator: 'authWxworkweb',
         icon: { f7: ':auth:wxwork-outline' },
       },
     };
