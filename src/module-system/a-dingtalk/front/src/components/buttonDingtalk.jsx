@@ -43,11 +43,11 @@ export default {
       return new Promise((resolve, reject) => {
         dd.runtime.permission.requestAuthCode({
           corpId: config.corpId,
-          onSuccess(info) {
+          onSuccess: info => {
             const code = info.code;
             this._authLogin({ code }).then(resolve).catch(reject);
           },
-          onFail(err) {
+          onFail: err => {
             reject(new Error(err.errorMessage || err.message));
           },
         });
