@@ -42,12 +42,27 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(authCode, state) {
+      // config
+      const config = this.configProviderScene;
       // code/memberId
-      let res = await ctx.bean.dingtalk.app[this.providerScene].client.getuserinfo_bycode(authCode);
-      const unionid = res.user_info.unionid;
-      res = await ctx.bean.dingtalk.app.selfBuilt.oapi.user.getUseridByUnionid(unionid);
-      if (res.contactType === 1) throw new Error('not support extcontact');
-      const memberId = res.userid;
+      //   use dingtalk.app.selfBuilt
+      const res = await ctx.bean.dingtalk.app[this.providerScene].oauth2.getUserToken(
+        {
+          clientId: config.appKey,
+          clientSecret: config.appSecret,
+          code: authCode,
+          grantType: 'authorization_code',
+          refreshToken: null,
+        },
+        { ignoreAccessToken: true }
+      );
+      let user = await ctx.bean.dingtalk.app[this.providerScene].contact.getUser('me', {
+        xAcsDingtalkAccessToken: res.accessToken,
+      });
+      const unionId = user.unionId;
+      user = await ctx.bean.dingtalk.app.selfBuilt.oapi.user.getUseridByUnionid(unionId);
+      if (user.contactType === 1) throw new Error('not support extcontact');
+      const memberId = user.userid;
       const verifyUser = await this.localHelper.verifyAuthUser({
         beanProvider: this,
         memberId,
