@@ -119,7 +119,6 @@ module.exports = ctx => {
           middlewares: middlewaresPost,
           meta: { auth: { enable: false } },
         },
-        // { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
       ];
       for (const route of routes) {
         ctx.app.meta.router.unRegister(route.name);
