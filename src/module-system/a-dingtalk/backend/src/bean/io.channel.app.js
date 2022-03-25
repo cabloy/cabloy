@@ -44,6 +44,10 @@ module.exports = ctx => {
           message.dept_id_list = list.map(item => item.departmentId).join(',');
         }
       }
+      // check target
+      if (!message.userid_list && !message.dept_id_list && !message.to_all_user) {
+        return false;
+      }
       // send
       await ctx.bean.dingtalk.app.selfBuilt.oapi.message.sendMessage(message);
       // done

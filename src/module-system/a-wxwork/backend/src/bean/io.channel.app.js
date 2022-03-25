@@ -38,6 +38,10 @@ module.exports = ctx => {
         });
         message.toparty = list.map(item => item.departmentId).join('|');
       }
+      // check target
+      if (!message.touser && !message.toparty) {
+        return false;
+      }
       // send
       await ctx.bean.wxwork.app.selfBuilt.sendMessage(message);
       // done
