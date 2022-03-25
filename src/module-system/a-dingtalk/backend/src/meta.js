@@ -17,6 +17,9 @@ module.exports = app => {
         authDingtalkSelfBuilt: {
           schemas: 'authDingtalkSelfBuilt',
         },
+        authDingtalkweb: {
+          schemas: 'authDingtalkweb',
+        },
         authDingtalkmini: {
           schemas: 'authDingtalkmini',
         },

@@ -53,6 +53,7 @@ module.exports = app => {
         disableAssociate: false,
         bean: 'dingtalkweb',
         render: 'buttonDingtalkweb',
+        validator: 'authDingtalkweb',
         icon: { f7: ':auth:dingtalk-square' },
       },
     };
