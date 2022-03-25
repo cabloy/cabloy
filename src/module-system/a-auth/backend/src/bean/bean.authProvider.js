@@ -104,12 +104,7 @@ module.exports = ctx => {
       return data;
     }
 
-    async _installAuthProviders() {
-      // registerAllRouters
-      this._registerAllRouters();
-    }
-
-    _registerAllRouters() {
+    _registerRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
         const [moduleRelativeName, providerName] = key.split(':');

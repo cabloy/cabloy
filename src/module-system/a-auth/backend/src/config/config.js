@@ -7,9 +7,8 @@ module.exports = appInfo => {
     registerPassport: {
       bean: 'registerPassport',
     },
-    installAuthProviders: {
-      bean: 'installAuthProviders',
-      // instance: true,
+    registerRouters: {
+      bean: 'registerRouters',
     },
     cacheAuthProviders: {
       bean: 'cacheAuthProviders',
