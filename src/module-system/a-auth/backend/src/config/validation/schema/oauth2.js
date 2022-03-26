@@ -1,6 +1,6 @@
 module.exports = app => {
   const schemas = {};
-  schemas.authGithub = {
+  schemas.oauth2 = {
     type: 'object',
     properties: {
       __groupAuthInfo: {
