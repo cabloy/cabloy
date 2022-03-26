@@ -8,7 +8,10 @@ module.exports = app => {
         scene: true,
         bean: 'github',
         render: 'buttonGithub',
-        validator: 'authGithub',
+        validator: {
+          module: 'a-auth',
+          validator: 'oauth2',
+        },
         icon: { f7: ':auth:github' },
       },
     };

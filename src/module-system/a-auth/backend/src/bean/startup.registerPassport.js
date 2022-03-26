@@ -15,6 +15,9 @@ module.exports = app => {
       });
       // deserializeUser
       app.passport.deserializeUser(async (ctx, user) => {
+        if (!ctx.instance) {
+          return null;
+        }
         return await ctx.bean.auth.deserializeUser({ user });
       });
     }

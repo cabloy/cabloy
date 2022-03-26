@@ -5,7 +5,11 @@ module.exports = app => {
       atoms: {},
     },
     validation: {
-      validators: {},
+      validators: {
+        oauth2: {
+          schemas: 'oauth2',
+        },
+      },
       keywords: {},
       schemas,
     },

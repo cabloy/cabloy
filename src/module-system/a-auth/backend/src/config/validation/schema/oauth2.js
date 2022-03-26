@@ -1,0 +1,31 @@
+module.exports = app => {
+  const schemas = {};
+  schemas.authGithub = {
+    type: 'object',
+    properties: {
+      __groupAuthInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Auth Info',
+      },
+      title: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Title',
+        notEmpty: true,
+      },
+      clientID: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Client ID',
+        notEmpty: true,
+      },
+      clientSecret: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Client Secret',
+        notEmpty: true,
+      },
+    },
+  };
+  return schemas;
+};

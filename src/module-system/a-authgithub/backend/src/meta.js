@@ -5,14 +5,8 @@ module.exports = app => {
   return {
     auth: authFn,
     validation: {
-      validators: {
-        authGithub: {
-          schemas: 'authGithub',
-        },
-      },
-      schemas: {
-        authGithub: schemas.authGithub,
-      },
+      validators: {},
+      schemas,
     },
   };
 };
