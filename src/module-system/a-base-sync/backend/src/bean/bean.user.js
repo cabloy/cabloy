@@ -95,8 +95,8 @@ module.exports = ctx => {
       const checkUser = options && options.user;
       // check if has ctx.state.user
       if (ctx.state.user) {
-        // force set ctx.user
-        ctx.user = ctx.bean.auth._pruneUser({ user: ctx.state.user });
+        // force set ctx.req.user
+        ctx.req.user = ctx.bean.auth._pruneUser({ user: ctx.state.user });
       } else {
         // always has anonymous id
         ctx.bean.user.anonymousId();
