@@ -127,15 +127,22 @@ module.exports = ctx => {
       return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
     }
 
-    async serializeUser({ user }) {
-      // _user
+    _pruneUser({ user }) {
       const _user = {
         op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
-        provider: user.provider,
       };
-      if (user.agent.id !== user.op.id) {
+      if (user.agent && user.agent.id !== user.op.id) {
         _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
       }
+      if (user.provider) {
+        _user.provider = user.provider;
+      }
+      return _user;
+    }
+
+    async serializeUser({ user }) {
+      // _user
+      const _user = this._pruneUser({ user });
       // anonymous
       if (user.op.anonymous) {
         // not use redis

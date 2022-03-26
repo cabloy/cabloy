@@ -18,6 +18,9 @@ module.exports = app => {
         if (!ctx.instance) {
           return null;
         }
+        if (ctx.state && ctx.state.user) {
+          return ctx.bean.auth._pruneUser({ user: ctx.state.user });
+        }
         return await ctx.bean.auth.deserializeUser({ user });
       });
     }

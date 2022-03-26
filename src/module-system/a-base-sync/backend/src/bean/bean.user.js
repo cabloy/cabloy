@@ -93,60 +93,72 @@ module.exports = ctx => {
     async check(options) {
       // options
       const checkUser = options && options.user;
-      // always has anonymous id
-      ctx.bean.user.anonymousId();
-      // check if has ctx.user
-      if (!ctx.user || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
-        // anonymous
-        await ctx.bean.user.loginAsAnonymous();
+      // check if has ctx.state.user
+      if (ctx.state.user) {
+        // force set ctx.user
+        ctx.user = ctx.bean.auth._pruneUser({ user: ctx.state.user });
       } else {
-        // state
-        ctx.state.user = {
-          provider: ctx.user.provider,
-        };
-        // check if deleted,disabled,agent
-        const userOp = await this.get({ id: ctx.user.op.id });
-        // deleted
-        if (!userOp) {
-          // ctx.throw.module(moduleInfo.relativeName, 1004);
-          ctx.throw(401);
-        }
-        // disabled
-        if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-        // hold user
-        ctx.state.user.op = userOp;
-        // agent
-        let userAgent;
-        if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
-          userAgent = await this.agent({ userId: ctx.user.op.id });
-          if (!userAgent) {
-            // ctx.throw.module(moduleInfo.relativeName, 1006);
-            ctx.throw(401);
-          }
-          if (userAgent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-          if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+        // always has anonymous id
+        ctx.bean.user.anonymousId();
+        // check if has ctx.user
+        if (!ctx.user || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
+          // anonymous
+          await ctx.bean.user.loginAsAnonymous();
         } else {
-          userAgent = userOp;
-        }
-        // hold agent
-        ctx.state.user.agent = userAgent;
-        // only check locale for agent
-        // not set locale for test env
-        const checkDemo = ctx.bean.util.checkDemo(false);
-        if (checkDemo && !userAgent.locale && ctx.locale && !ctx.app.meta.isTest) {
-          // set
-          const userData = { id: userAgent.id, locale: ctx.locale };
-          await this.save({ user: userData });
-          userAgent.locale = ctx.locale;
-        } else if (!checkDemo && userAgent.locale) {
-          // clear
-          const userData = { id: userAgent.id, locale: null };
-          await this.save({ user: userData });
-          userAgent.locale = null;
+          ctx.state.user = await this._check_getStateUser({ ctxUser: ctx.user });
         }
       }
       // check user
       if (checkUser && ctx.state.user.op.anonymous) ctx.throw(401);
+    }
+
+    async _check_getStateUser({ ctxUser }) {
+      // state
+      const stateUser = {
+        provider: ctxUser.provider,
+      };
+      // check if deleted,disabled,agent
+      const userOp = await this.get({ id: ctxUser.op.id });
+      // deleted
+      if (!userOp) {
+        // ctx.throw.module(moduleInfo.relativeName, 1004);
+        ctx.throw(401);
+      }
+      // disabled
+      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+      // hold user
+      stateUser.op = userOp;
+      // agent
+      let userAgent;
+      if (ctxUser.agent && ctxUser.agent.id !== ctxUser.op.id) {
+        userAgent = await this.agent({ userId: ctxUser.op.id });
+        if (!userAgent) {
+          // ctx.throw.module(moduleInfo.relativeName, 1006);
+          ctx.throw(401);
+        }
+        if (userAgent.id !== ctxUser.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+        if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+      } else {
+        userAgent = userOp;
+      }
+      // hold agent
+      stateUser.agent = userAgent;
+      // only check locale for agent
+      // not set locale for test env
+      const checkDemo = ctx.bean.util.checkDemo(false);
+      if (checkDemo && !userAgent.locale && ctx.locale && !ctx.app.meta.isTest) {
+        // set
+        const userData = { id: userAgent.id, locale: ctx.locale };
+        await this.save({ user: userData });
+        userAgent.locale = ctx.locale;
+      } else if (!checkDemo && userAgent.locale) {
+        // clear
+        const userData = { id: userAgent.id, locale: null };
+        await this.save({ user: userData });
+        userAgent.locale = null;
+      }
+      // ok
+      return stateUser;
     }
 
     async setActivated({ user, autoActivate }) {
