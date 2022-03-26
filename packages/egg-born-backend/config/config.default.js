@@ -62,6 +62,7 @@ module.exports = appInfo => {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30d
       },
     },
+    ignore: /\/api\/static\//,
   };
 
   // cookies
@@ -88,6 +89,17 @@ module.exports = appInfo => {
     key: 'CABLOY_SESS',
     httpOnly: true,
     encrypt: true,
+    ignore: /\/api\/static\//,
+  };
+
+  // passportInitialize
+  config.passportInitialize = {
+    ignore: /\/api\/static\//,
+  };
+
+  // passportSession
+  config.passportSession = {
+    ignore: /\/api\/static\//,
   };
 
   // bodyParser
