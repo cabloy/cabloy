@@ -205,6 +205,8 @@ module.exports = app => {
     async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxCaller, ctxParent }) {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
+      // innerAccess
+      ctx.innerAccess = true;
       // ctxCaller
       if (ctxCaller) {
         // multipart
