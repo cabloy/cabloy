@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const atomResource = require('./bean/atom.resource.js');
+const atomRole = require('./bean/atom.role.js');
 const localProcedure = require('./bean/local.procedure.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
@@ -45,6 +46,10 @@ module.exports = app => {
     'atom.resource': {
       mode: 'app',
       bean: atomResource,
+    },
+    'atom.role': {
+      mode: 'app',
+      bean: atomRole,
     },
     // local
     'local.procedure': {

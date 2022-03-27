@@ -32,6 +32,24 @@ module.exports = app => {
             validator: 'resourceSearch',
           },
         },
+        role: {
+          info: {
+            bean: 'role',
+            title: 'Role',
+            tableName: 'aRole',
+            tableNameModes: {},
+            resource: true,
+          },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
+          validator: 'role',
+          search: {
+            validator: 'roleSearch',
+          },
+        },
       },
       resources: {
         function: {

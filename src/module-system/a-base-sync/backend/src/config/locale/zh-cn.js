@@ -119,4 +119,5 @@ module.exports = {
   Purple: '紫色',
   Basic: '基本',
   Preview: '预览',
+  Role: '角色',
 };
