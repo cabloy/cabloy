@@ -9,17 +9,23 @@ const VersionUpdate10Fn = require('./version/update10.js');
 const VersionUpdate11Fn = require('./version/update11.js');
 const VersionUpdate12Fn = require('./version/update12.js');
 const VersionUpdate13Fn = require('./version/update13.js');
+const VersionUpdate14Fn = require('./version/update14.js');
 const VersionInit2Fn = require('./version/init2.js');
 const VersionInit4Fn = require('./version/init4.js');
 const VersionInit5Fn = require('./version/init5.js');
 const VersionInit7Fn = require('./version/init7.js');
 const VersionInit8Fn = require('./version/init8.js');
 const VersionInit9Fn = require('./version/init9.js');
-const VersionInit13Fn = require('./version/init13.js');
+const VersionInit14Fn = require('./version/init14.js');
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 14) {
+        const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+        await versionUpdate14.run();
+      }
+
       if (options.version === 13) {
         const versionUpdate13 = new (VersionUpdate13Fn(this.ctx))();
         await versionUpdate13.run();
@@ -101,9 +107,9 @@ module.exports = app => {
         const versionInit9 = new (VersionInit9Fn(this.ctx))();
         await versionInit9.run(options);
       }
-      if (options.version === 13) {
-        const versionInit13 = new (VersionInit13Fn(this.ctx))();
-        await versionInit13.run(options);
+      if (options.version === 14) {
+        const versionInit14 = new (VersionInit14Fn(this.ctx))();
+        await versionInit14.run(options);
       }
     }
 
