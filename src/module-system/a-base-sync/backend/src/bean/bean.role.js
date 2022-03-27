@@ -59,10 +59,10 @@ module.exports = ctx => {
         atomName: roleName,
         roleName,
         leader,
-        catalog: 0,
-        system,
         sorting,
-        roleIdParent,
+        // catalog: 0,
+        // system,
+        // roleIdParent,
       };
       await ctx.bean.atom.write({
         key: roleKey,
@@ -78,6 +78,14 @@ module.exports = ctx => {
 
       // roleId
       const roleId = roleKey.itemId;
+
+      // update readonly fields
+      await this.model.update({
+        id: roleId,
+        catalog: 0,
+        system,
+        roleIdParent,
+      });
 
       // adjust catalog
       await this.adjustCatalog(roleIdParent);
