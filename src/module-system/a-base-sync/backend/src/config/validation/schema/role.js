@@ -32,7 +32,7 @@ module.exports = app => {
         ebOptionsBlankAuto: true,
         ebParams: {
           dictKey: 'a-dictbooster:dictRoleType',
-          mode: 'select',
+          mode: 'tree',
         },
         notEmpty: {
           ignoreZero: true,
@@ -93,7 +93,7 @@ module.exports = app => {
         ebTitle: 'Role Type',
         ebParams: {
           dictKey: 'a-dictbooster:dictRoleType',
-          mode: 'select',
+          mode: 'tree',
         },
         ebOptionsBlankAuto: true,
       },

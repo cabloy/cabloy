@@ -108,7 +108,7 @@ export default {
       return nodes;
     },
     _getCodeFromNodeId(nodeId) {
-      return nodeId.replace(/_/g, '/');
+      return String(nodeId).replace(/_/g, '/');
     },
     async onLoadChildren(node) {
       if (node.root) {
@@ -125,7 +125,7 @@ export default {
     },
     async selectDictItem(code) {
       const tree = this.getInstance();
-      const codes = code.split('/');
+      const codes = String(code).split('/');
       let nodeParent = tree.treeviewRoot;
       for (let index = 0; index < codes.length; index++) {
         // force load children

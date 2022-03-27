@@ -9,6 +9,7 @@ export default {
       dict: null,
       dictItem: null,
       dictItemTitle: null,
+      dictItemOptions: null,
     };
   },
   computed: {
@@ -42,11 +43,13 @@ export default {
       const dictKey = property.ebParams.dictKey;
       if (validate.readOnly || property.ebReadOnly) {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
+        this.dictItemOptions = this.context.getValue(`_${key}Options`);
       } else {
         const code = this.context.getValue();
         const separator = property.ebParams.separator;
         this.dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options: { separator } });
         this.dictItemTitle = this.dictItem ? this.dictItem.titleLocaleFull : null;
+        this.dictItemOptions = this.dictItem ? this.dictItem.options : null;
       }
     },
     async onChooseDictItem() {
@@ -129,9 +132,18 @@ export default {
       const title = this.context.getTitle();
       return (
         <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseDictItem}>
-          <div slot="after">{this.dictItemTitle}</div>
+          <div slot="after">{this._renderItemTitle()}</div>
         </eb-list-item-choose>
       );
+    },
+    _renderItemTitle() {
+      const chidren = [];
+      const icon = this.dictItemOptions && this.dictItemOptions.icon;
+      if (icon) {
+        chidren.push(<f7-icon size="18" f7={icon.f7} material={icon.material}></f7-icon>);
+      }
+      chidren.push(<span>{this.dictItemTitle}</span>);
+      return chidren;
     },
   },
   render() {
@@ -141,7 +153,7 @@ export default {
       const title = this.context.getTitle();
       return (
         <f7-list-item title={title}>
-          <div slot="after">{this.dictItemTitle}</div>
+          <div slot="after">{this._renderItemTitle()}</div>
         </f7-list-item>
       );
     }
