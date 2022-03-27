@@ -10,13 +10,13 @@ module.exports = function (ctx) {
         Add COLUMN roleTypeCode INT(11) DEFAULT '0',
         Add COLUMN roleConfig JSON DEFAULT NULL
                 `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
       // aUserRole
       sql = `
       ALTER TABLE aUserRole
         Add COLUMN atomId int(11) DEFAULT '0'
                 `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
     }
   }
 

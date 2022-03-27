@@ -34,7 +34,7 @@ module.exports = function (ctx) {
         const roleId = role.id;
         console.log('---------:', roleId);
         // add atom
-        const atomKey = await this.ctx.bean.atom.create({
+        const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassRole,
           item: {
             itemId: roleId,
@@ -42,7 +42,7 @@ module.exports = function (ctx) {
           user: { id: 0 },
         });
         // submit
-        await this.ctx.bean.atom.submit({
+        await ctx.bean.atom.submit({
           key: atomKey,
           options: { ignoreFlow: true },
           user: { id: 0 },
