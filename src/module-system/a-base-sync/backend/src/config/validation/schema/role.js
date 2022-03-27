@@ -20,6 +20,32 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      roleTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Role Type',
+        ebOptionsBlankAuto: true,
+        ebParams: {
+          dictKey: 'a-dictbooster:dictRoleType',
+          mode: 'select',
+        },
+        notEmpty: true,
+      },
+      sorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
+      leader: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'Leader',
+      },
       // config
       __groupConfig: {
         ebType: 'group-flatten',
@@ -30,34 +56,46 @@ module.exports = app => {
         ebType: 'json',
         ebTitle: 'Config',
       },
-      // Basic Info
-      __groupBasicInfo: {
-        ebType: 'group-flatten',
-        ebTitle: 'Basic Info',
-      },
-      roleTypeCode: {
-        type: 'string',
-        ebType: 'resourceType',
-        ebTitle: 'Role Type',
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
-      },
       // Extra
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
       },
-      sorting: {
+      roleIdParent: {
         type: 'number',
         ebType: 'text',
-        ebTitle: 'Sorting',
+        ebTitle: 'RoleParent',
+        ebReadOnly: true,
+      },
+      catalog: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'Catalog',
+        ebReadOnly: true,
+      },
+      system: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'System',
+        ebReadOnly: true,
       },
     },
   };
   // role search
   schemas.roleSearch = {
     type: 'object',
-    properties: {},
+    properties: {
+      roleTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Role Type',
+        ebParams: {
+          dictKey: 'a-dictbooster:dictRoleType',
+          mode: 'select',
+        },
+        ebOptionsBlankAuto: true,
+      },
+    },
   };
   return schemas;
 };
