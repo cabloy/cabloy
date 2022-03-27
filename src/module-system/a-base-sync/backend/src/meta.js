@@ -42,6 +42,16 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            fields: {
+              custom: ['catalog', 'system', 'roleIdParent'],
+            },
+            dict: {
+              fields: {
+                roleTypeCode: {
+                  dictKey: 'a-dictbooster:dictRoleType',
+                },
+              },
+            },
           },
           actions: {
             write: {
