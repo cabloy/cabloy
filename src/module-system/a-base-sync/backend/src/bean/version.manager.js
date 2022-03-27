@@ -122,6 +122,11 @@ module.exports = app => {
       const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
       await versionUpdate12._updateAtomClassesInstance(options);
     }
+
+    async update14_adjustRoles(options) {
+      const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+      await versionUpdate14._adjustRolesInstance(options);
+    }
   }
 
   return Version;
