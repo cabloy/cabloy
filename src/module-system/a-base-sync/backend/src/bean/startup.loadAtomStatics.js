@@ -110,7 +110,7 @@ module.exports = app => {
       // only valid for register
       if (register) {
         // roleIdOwner
-        const roleName = item.roleIdOwner || 'superuser';
+        const roleName = item.roleIdOwner || 'template.system';
         const role = await this.ctx.bean.role.parseRoleName({ roleName });
         item.roleIdOwner = role.id;
       }
