@@ -28,7 +28,8 @@ module.exports = app => {
         item.atomStage = 0;
       }
       // roleIdOwner
-      if (!item.roleIdOwner) {
+      const bAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+      if (!item.roleIdOwner && !bAtomClassRole) {
         let roleId;
         if (options.preferredRole) {
           roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
