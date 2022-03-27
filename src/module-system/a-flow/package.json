@@ -3,7 +3,7 @@
   "version": "4.2.9",
   "title": "FlowTitle",
   "eggBornModule": {
-    "fileVersion": 3,
+    "fileVersion": 4,
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0"
