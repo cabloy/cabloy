@@ -52,16 +52,21 @@ module.exports = app => {
         //
         const code = item[fieldName];
         if (code === undefined) continue;
-        const res = await this.ctx.bean.dict.findItem({
+        const dictItem = await this.ctx.bean.dict.findItem({
           dictKey: field.dictKey,
           code,
           options: {
             separator: field.separator,
           },
         });
-        if (res) {
-          item[`_${fieldName}Title`] = res.titleFull;
-          item[`_${fieldName}TitleLocale`] = res.titleLocaleFull;
+        if (dictItem) {
+          item[`_${fieldName}Title`] = dictItem.titleFull;
+          item[`_${fieldName}TitleLocale`] = dictItem.titleLocaleFull;
+          if (dictItem.options && dictItem.options.icon) {
+            item[`_${fieldName}Options`] = {
+              icon: dictItem.options.icon,
+            };
+          }
         }
       }
     }

@@ -3,37 +3,51 @@ module.exports = app => {
     {
       code: 0,
       title: 'Role',
-      icon: { f7: ':role:role' },
+      options: {
+        icon: { f7: ':role:role' },
+      },
     },
     {
       code: 1,
       title: 'Organization',
-      icon: { f7: ':role:organization' },
+      options: {
+        icon: { f7: ':role:organization' },
+      },
     },
     {
       code: 2,
       title: 'Position',
-      icon: { f7: ':role:position' },
+      options: {
+        icon: { f7: ':role:position' },
+      },
     },
     {
       code: 3,
       title: 'Level',
-      icon: { f7: ':role:level' },
+      options: {
+        icon: { f7: ':role:level' },
+      },
     },
     {
       code: 4,
       title: 'Relation',
-      icon: { f7: ':role:relation' },
+      options: {
+        icon: { f7: ':role:relation' },
+      },
     },
     {
       code: 5,
       title: 'Role Template',
-      icon: { f7: ':role:template' },
+      options: {
+        icon: { f7: ':role:template' },
+      },
     },
     {
       code: 6,
       title: 'OpenAuthScene',
-      icon: { f7: ':role:shield-key' },
+      options: {
+        icon: { f7: ':role:shield-key' },
+      },
     },
   ];
   const dictLocales = {
@@ -53,7 +67,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Role Type',
     atomStaticKey: 'dictRoleType',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
