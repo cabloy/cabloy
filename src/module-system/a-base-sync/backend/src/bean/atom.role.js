@@ -1,6 +1,8 @@
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
+      // only support atomStage=1
+      if (item.atomStage !== 1) throw new Error('role only support atomStage=1');
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
@@ -15,6 +17,9 @@ module.exports = app => {
       } else {
         await this.ctx.model.role.update({ id: itemId, atomId });
       }
+      // update roleIdOwner
+      await this.ctx.model.atom.update({ id: atomId, roleIdOwner: itemId });
+      // ok
       return { atomId, itemId };
     }
 
