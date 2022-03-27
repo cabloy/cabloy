@@ -39,6 +39,9 @@ module.exports = app => {
             tableName: 'aRole',
             tableNameModes: {},
             resource: true,
+            simple: true,
+            history: false,
+            inner: true,
           },
           actions: {
             write: {
