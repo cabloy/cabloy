@@ -28,7 +28,7 @@ module.exports = app => {
       // options
       const options = this.ctx.request.body.options;
       // item
-      const item = this.ctx.request.body.item;
+      const item = this.ctx.request.body.item || {};
       // for safe
       delete item.atomId;
       delete item.itemId;
