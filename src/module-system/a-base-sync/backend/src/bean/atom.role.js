@@ -49,6 +49,7 @@ module.exports = app => {
       // update role
       const data = await this.ctx.model.role.prepareData(item);
       data.id = key.itemId;
+      if (item.atomName) data.roleName = item.atomName;
       await this.ctx.model.role.update(data);
     }
 

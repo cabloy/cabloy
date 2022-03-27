@@ -1,5 +1,10 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'role',
+  };
+
   class Role extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'role');
@@ -26,6 +31,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).roleRightRef;
     }
 
+    get modelAtom() {
+      return ctx.model.module(moduleInfo.relativeName).atom;
+    }
+
     async get(where) {
       return await this.model.get(where);
     }
@@ -39,15 +48,36 @@ module.exports = ctx => {
 
     // add role
     async add({ roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
-      const res = await this.model.insert({
+      const user = { id: 0 };
+      // create
+      const roleKey = await ctx.bean.atom.create({
+        atomClass: __atomClassRole,
+        user,
+      });
+      // write
+      const item = {
+        atomName: roleName,
         roleName,
         leader,
         catalog: 0,
         system,
         sorting,
         roleIdParent,
+      };
+      await ctx.bean.atom.write({
+        key: roleKey,
+        item,
+        user,
       });
-      const roleId = res.insertId;
+      // submit
+      await ctx.bean.atom.submit({
+        key: roleKey,
+        options: { ignoreFlow: true },
+        user,
+      });
+
+      // roleId
+      const roleId = roleKey.itemId;
 
       // adjust catalog
       await this.adjustCatalog(roleIdParent);
@@ -101,7 +131,7 @@ module.exports = ctx => {
       await this.modelRoleRightRef.delete({ roleId });
 
       // delete this
-      await this.model.delete({ id: roleId });
+      await ctx.bean.atom.delete({ key: { atomId: role.atomId } });
 
       // adjust catalog
       await this.adjustCatalog(roleIdParent);
@@ -315,6 +345,10 @@ module.exports = ctx => {
       if (sorting !== undefined) role.sorting = sorting;
       if (catalog !== undefined) role.catalog = catalog;
       await this.model.update(role);
+      // atomName
+      if (roleName !== undefined && role.roleName !== roleName) {
+        await this.modelAtom.update({ id: role.atomId, atomName: roleName });
+      }
     }
 
     // includes

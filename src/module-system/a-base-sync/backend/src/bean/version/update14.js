@@ -40,6 +40,13 @@ module.exports = function (ctx) {
           },
           user: { id: 0 },
         });
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item: {
+            atomName: role.roleName,
+          },
+          user: { id: 0 },
+        });
         // submit
         await ctx.bean.atom.submit({
           key: atomKey,
