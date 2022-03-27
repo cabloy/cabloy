@@ -47,11 +47,16 @@ module.exports = ctx => {
     }
 
     // add role
-    async add({ roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
+    async add({ module, roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
       const user = { id: 0 };
       // create
+      const itemCreate = {};
+      if (module && roleName) {
+        itemCreate.atomStaticKey = `${module}:role_${roleName}`;
+      }
       const roleKey = await ctx.bean.atom.create({
         atomClass: __atomClassRole,
+        item: itemCreate,
         user,
       });
       // write

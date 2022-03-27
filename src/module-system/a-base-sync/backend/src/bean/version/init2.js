@@ -3,6 +3,7 @@ const extend = require3('extend2');
 const initData = require('./initData2.js');
 
 module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionInit {
     async run(options) {
       // roles
@@ -21,7 +22,7 @@ module.exports = function (ctx) {
       roleIds.system = 0;
       // system roles
       for (const roleName of ctx.constant.systemRoles) {
-        const role = extend(true, {}, initData.roles[roleName]);
+        const role = extend(true, { module: moduleInfo.relativeName }, initData.roles[roleName]);
         role.roleIdParent = roleIds[role.roleIdParent];
         roleIds[roleName] = await ctx.bean.role.add(role);
       }

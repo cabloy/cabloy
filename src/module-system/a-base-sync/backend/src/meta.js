@@ -6,6 +6,7 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   // static
   const staticResources = require('./config/static/resources.js')(app);
+  const staticRoles = require('./config/static/roles.js')(app);
   // socketio
   const socketioComment = require('./config/socketio/comment.js')(app);
   // meta
@@ -79,6 +80,9 @@ module.exports = app => {
       statics: {
         'a-base.resource': {
           items: staticResources,
+        },
+        'a-base.role': {
+          items: staticRoles,
         },
       },
     },

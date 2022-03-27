@@ -32,6 +32,8 @@ module.exports = app => {
       // for safe
       delete item.atomId;
       delete item.itemId;
+      delete item.atomStaticKey;
+      delete item.atomRevision;
       // create
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,

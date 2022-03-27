@@ -32,18 +32,20 @@ module.exports = function (ctx) {
       const roles = await this.modelRole.select({ where: { atomId: 0 } });
       for (const role of roles) {
         const roleId = role.id;
+        const roleName = role.roleName;
         // add atom
         const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassRole,
           item: {
             itemId: roleId,
+            atomStaticKey: `${moduleInfo.relativeName}:role_${roleName}`,
           },
           user: { id: 0 },
         });
         await ctx.bean.atom.write({
           key: atomKey,
           item: {
-            atomName: role.roleName,
+            atomName: roleName,
           },
           user: { id: 0 },
         });
