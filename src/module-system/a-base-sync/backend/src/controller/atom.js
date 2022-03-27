@@ -25,11 +25,18 @@ module.exports = app => {
     }
 
     async create() {
+      // options
       const options = this.ctx.request.body.options;
+      // item
+      const item = this.ctx.request.body.item;
+      // for safe
+      delete item.atomId;
+      delete item.itemId;
+      // create
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
-        item: this.ctx.request.body.item,
+        item,
         options,
         user: this.ctx.state.user.op,
       });

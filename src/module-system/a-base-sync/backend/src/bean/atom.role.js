@@ -3,12 +3,19 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // super
       const key = await super.create({ atomClass, item, options, user });
+      const atomId = key.atomId;
       // add role
-      const res = await this.ctx.model.role.insert({
-        atomId: key.atomId,
-      });
-      const itemId = res.insertId;
-      return { atomId: key.atomId, itemId };
+      //   item.itemId only be set from inner access
+      let itemId = item.itemId;
+      if (!itemId) {
+        const res = await this.ctx.model.role.insert({
+          atomId: key.atomId,
+        });
+        itemId = res.insertId;
+      } else {
+        await this.ctx.model.role.update({ id: itemId, atomId });
+      }
+      return { atomId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
