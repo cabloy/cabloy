@@ -104,16 +104,17 @@ module.exports = app => {
         resourceSearch: {
           schemas: 'resourceSearch',
         },
+        role: {
+          schemas: 'role',
+        },
+        roleSearch: {
+          schemas: 'roleSearch',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
       },
-      schemas: {
-        user: schemas.user,
-        category: schemas.category,
-        resource: schemas.resource,
-        resourceSearch: schemas.resourceSearch,
-      },
+      schemas,
     },
     event: {
       declarations: {
