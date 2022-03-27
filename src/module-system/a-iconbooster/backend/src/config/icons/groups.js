@@ -5,5 +5,6 @@ module.exports = {
   flow: 'activity-none,activity-service,activity-user-task,end-event-atom,end-event-none,gateway-exclusive,gateway-inclusive,gateway-parallel,start-event-atom,start-event-none,start-event-timer',
   login: 'call-outline,chevron-left,done,lock-outline,person-outline',
   outline: 'archive-outline,build-circle-outline,calendar-today-outline,check-circle-outline,checkbox-checked-outline,checkbox-off-outline,checkbox-outline,copy-outline,delete-forever-outline,delete-outline,draft-outline,heart-outline,label-outline,layout-outline,log-out-outline,mail-outline,star-outline,theme-outline,timer-outline,work-history-outline',
+  role: 'level,organization,position,relation,role,shield-key,template',
   social: 'facebook,twitter',
 };
