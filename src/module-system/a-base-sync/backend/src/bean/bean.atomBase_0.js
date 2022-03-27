@@ -34,7 +34,7 @@ module.exports = app => {
           roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
           if (!roleId) this.ctx.throw(403);
         } else {
-          const roleName = 'superuser';
+          const roleName = 'template.system';
           const role = await this.ctx.bean.role.parseRoleName({ roleName });
           roleId = role.id;
         }
