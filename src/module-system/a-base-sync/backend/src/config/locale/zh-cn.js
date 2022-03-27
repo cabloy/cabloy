@@ -121,4 +121,16 @@ module.exports = {
   Basic: '基本',
   Preview: '预览',
   Role: '角色',
+  // role name
+  root: '根',
+  anonymous: '匿名',
+  authenticated: '已注册',
+  template: '模版',
+  system: '系统',
+  registered: '已注册',
+  activated: '已激活',
+  superuser: '超级用户',
+  organization: '组织',
+  internal: '内部',
+  external: '外部',
 };

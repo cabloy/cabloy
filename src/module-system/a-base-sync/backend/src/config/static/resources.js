@@ -42,7 +42,7 @@ module.exports = app => {
     {
       atomName: 'Role List',
       atomStaticKey: 'listRole',
-      atomRevision: 1,
+      atomRevision: 0,
       atomCategoryId: 'a-base:menu.List',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

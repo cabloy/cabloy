@@ -18,10 +18,14 @@ module.exports = app => {
     },
     {
       code: 4,
-      title: 'Role Template',
+      title: 'Relation',
     },
     {
       code: 5,
+      title: 'Role Template',
+    },
+    {
+      code: 6,
       title: 'OpenAuthScene',
     },
   ];
@@ -34,6 +38,7 @@ module.exports = app => {
       Organization: '组织',
       Position: '岗位',
       Level: '级别',
+      Relation: '关系',
       OpenAuthScene: '开放认证场景',
       'Role Template': '角色模版',
     },
