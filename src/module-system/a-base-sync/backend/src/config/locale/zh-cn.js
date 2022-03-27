@@ -30,6 +30,7 @@ module.exports = {
   'Cannot delete if has children': '有子元素时不允许删除',
   'Create Resource': '新建资源',
   'Resource List': '资源列表',
+  'Role List': '角色列表',
   'Move Up': '上移',
   'Move Down': '下移',
   'Developer Tool': '开发者工具',

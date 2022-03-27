@@ -34,7 +34,9 @@ module.exports = app => {
           dictKey: 'a-dictbooster:dictRoleType',
           mode: 'select',
         },
-        notEmpty: true,
+        notEmpty: {
+          ignoreZero: true,
+        },
       },
       sorting: {
         type: 'number',

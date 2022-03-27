@@ -40,6 +40,19 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
+      atomName: 'Role List',
+      atomStaticKey: 'listRole',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'role',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'template.system',
+    },
+    {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',
       atomRevision: 0,
