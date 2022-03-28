@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
     get beanRole() {
       return this.ctx.bean.role;
@@ -86,29 +87,32 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, options, user }) {
+      const roleId = key.itemId;
+      // force
+      const force = options && options.force;
       // role
-      const role = await this.get({ id: roleId });
+      const role = await this.beanRole.get({ id: roleId });
       // parent
       const roleIdParent = role.roleIdParent;
 
       // check if system
-      if (role.system) ctx.throw(403);
+      if (role.system) this.ctx.throw(403);
       // check if children
       if (role.catalog && !force) {
-        const children = await this.children({ roleId });
-        if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
+        const children = await this.beanRole.children({ roleId });
+        if (children.length > 0) this.ctx.throw.module(moduleInfo.relativeName, 1008);
       }
 
       // delete all includes
-      await this.modelRoleInc.delete({ roleId });
-      await this.modelRoleInc.delete({ roleIdInc: roleId });
+      await this.beanRole.modelRoleInc.delete({ roleId });
+      await this.beanRole.modelRoleInc.delete({ roleIdInc: roleId });
 
       // delete all users
-      await this.modelUserRole.delete({ roleId });
+      await this.beanRole.modelUserRole.delete({ roleId });
 
       // delete all atom rights
-      await this.modelRoleRight.delete({ roleId });
-      await this.modelRoleRightRef.delete({ roleId });
+      await this.beanRole.modelRoleRight.delete({ roleId });
+      await this.beanRole.modelRoleRightRef.delete({ roleId });
 
       // super
       await super.delete({ atomClass, key, options, user });
@@ -118,10 +122,10 @@ module.exports = app => {
       });
 
       // adjust catalog
-      await this.adjustCatalog(roleIdParent);
+      await this.beanRole.adjustCatalog(roleIdParent);
 
       // set dirty
-      await this.setDirty(true);
+      await this.beanRole.setDirty(true);
     }
 
     _getMeta(options, item, showSorting) {

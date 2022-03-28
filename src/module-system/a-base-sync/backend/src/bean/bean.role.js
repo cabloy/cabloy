@@ -109,7 +109,7 @@ module.exports = ctx => {
         roleAtomId = atom.id;
       }
       // delete this
-      await ctx.bean.atom.delete({ key: { atomId: roleAtomId } });
+      await ctx.bean.atom.delete({ key: { atomId: roleAtomId }, options: { force } });
     }
 
     // for donothing on roleId === 0
