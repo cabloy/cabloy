@@ -123,6 +123,9 @@ export default {
         id: this._getCodeFromNodeId(node.id),
       });
     },
+    onPerformClearSelected() {
+      this.$emit('dictItemClick', null);
+    },
     async selectDictItem(code) {
       const tree = this.getInstance();
       const codes = String(code).split('/');
@@ -150,6 +153,10 @@ export default {
         });
       }
     },
+    _renderClearSelected() {
+      if (!this.selectedCodes || this.selectedCodes.length === 0) return null;
+      return <eb-button propsOnPerform={this.onPerformClearSelected}>{this.$text('Clear Selected')}</eb-button>;
+    },
     _renderDictTree() {
       return (
         <eb-treeview
@@ -162,7 +169,13 @@ export default {
     },
   },
   render() {
+    const domClearSelected = this._renderClearSelected();
     const domDictTree = this._renderDictTree();
-    return <div>{domDictTree}</div>;
+    return (
+      <div>
+        {domClearSelected}
+        {domDictTree}
+      </div>
+    );
   },
 };
