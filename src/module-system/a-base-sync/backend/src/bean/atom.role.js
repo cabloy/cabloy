@@ -18,7 +18,7 @@ module.exports = app => {
         roleIdParent = role.id;
       }
       // check if write right of roleIdParent
-      const writeRight = await this.ctx.beanRole._checkRightWriteOfRole({
+      const writeRight = await this.beanRole._checkRightWriteOfRole({
         roleId: roleIdParent,
         user,
       });
@@ -49,9 +49,9 @@ module.exports = app => {
       // update roleIdOwner
       await this.ctx.model.atom.update({ id: atomId, roleIdOwner: itemId });
       // adjust catalog
-      await this.ctx.beanRole.adjustCatalog(roleIdParent);
+      await this.beanRole.adjustCatalog(roleIdParent);
       // set dirty
-      await this.ctx.beanRole.setDirty(true);
+      await this.beanRole.setDirty(true);
       // ok
       return { atomId, itemId };
     }
