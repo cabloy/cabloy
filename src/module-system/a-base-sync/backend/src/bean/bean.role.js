@@ -47,12 +47,17 @@ module.exports = ctx => {
     }
 
     // add role
-    async add({ module, roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
+    //  { module,roleName,...}
+    async add(data) {
       const user = { id: 0 };
       // create
-      const itemCreate = {};
-      if (module && roleName) {
-        itemCreate.atomStaticKey = `${module}:role_${roleName}`;
+      const itemCreate = {
+        catalog: 0,
+        system: data.system,
+        roleIdParent: data.roleIdParent,
+      };
+      if (data.module && data.roleName) {
+        itemCreate.atomStaticKey = `${data.module}:role_${data.roleName}`;
       }
       const roleKey = await ctx.bean.atom.create({
         atomClass: __atomClassRole,
@@ -61,13 +66,8 @@ module.exports = ctx => {
       });
       // write
       const item = {
-        atomName: roleName,
-        roleName,
-        leader,
-        sorting,
-        // catalog: 0,
-        // system,
-        // roleIdParent,
+        atomName: data.roleName,
+        ...data,
       };
       await ctx.bean.atom.write({
         key: roleKey,
@@ -80,24 +80,8 @@ module.exports = ctx => {
         options: { ignoreFlow: true },
         user,
       });
-
       // roleId
       const roleId = roleKey.itemId;
-
-      // update readonly fields
-      await this.model.update({
-        id: roleId,
-        catalog: 0,
-        system,
-        roleIdParent,
-      });
-
-      // adjust catalog
-      await this.adjustCatalog(roleIdParent);
-
-      // set dirty
-      await this.setDirty(true);
-
       return roleId;
     }
 
@@ -797,6 +781,22 @@ module.exports = ctx => {
               where a.iid=${iid} and a.roleId=${roleId}
         `
       );
+    }
+
+    async _checkRightWriteOfRole({ roleAtomId, roleId, user }) {
+      if (!user || user.id === 0) return true;
+      // roleId
+      if (!roleAtomId) {
+        const atom = await this.modelAtom.get({ itemId: roleId });
+        roleAtomId = atom.id;
+      }
+      // check
+      const res = await ctx.bean.atom.checkRightAction({
+        atom: { id: roleAtomId },
+        action: 'write',
+        user,
+      });
+      return !!res;
     }
   }
 

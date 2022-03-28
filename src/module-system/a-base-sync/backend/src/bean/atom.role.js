@@ -3,6 +3,21 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // only support atomStage=1
       if (item.atomStage !== 1) throw new Error('role only support atomStage=1');
+      // fields
+      const catalog = item.catalog || 0;
+      const system = item.system || 0;
+      let roleIdParent = item.roleIdParent || 0;
+      // roleIdParent maybe string
+      if (typeof roleIdParent === 'string') {
+        const role = await this.ctx.bean.role.parseRoleName({ roleName: roleIdParent, force: false });
+        roleIdParent = role.id;
+      }
+      // check if write right of roleIdParent
+      const writeRight = await this.ctx.bean.role._checkRightWriteOfRole({
+        roleId: roleIdParent,
+        user,
+      });
+      if (!writeRight) this.ctx.throw(403);
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
@@ -12,13 +27,26 @@ module.exports = app => {
       if (!itemId) {
         const res = await this.ctx.model.role.insert({
           atomId: key.atomId,
+          catalog,
+          system,
+          roleIdParent,
         });
         itemId = res.insertId;
       } else {
-        await this.ctx.model.role.update({ id: itemId, atomId });
+        await this.ctx.model.role.update({
+          id: itemId,
+          atomId,
+          catalog,
+          system,
+          roleIdParent,
+        });
       }
       // update roleIdOwner
       await this.ctx.model.atom.update({ id: atomId, roleIdOwner: itemId });
+      // adjust catalog
+      await this.ctx.bean.role.adjustCatalog(roleIdParent);
+      // set dirty
+      await this.ctx.bean.role.setDirty(true);
       // ok
       return { atomId, itemId };
     }

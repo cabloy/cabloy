@@ -39,6 +39,9 @@ module.exports = function (ctx) {
           item: {
             itemId: roleId,
             atomStaticKey: `${moduleInfo.relativeName}:role_${roleName}`,
+            catalog: role.catalog,
+            system: role.system,
+            roleIdParent: role.roleIdParent,
           },
           user: { id: 0 },
         });
