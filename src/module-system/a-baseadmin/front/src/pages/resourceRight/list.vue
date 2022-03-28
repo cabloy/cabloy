@@ -5,7 +5,7 @@
   </eb-page>
 </template>
 <script>
-import roleList from '../../components/role/list.vue';
+import roleList from '../../components/role/list.jsx';
 export default {
   components: {
     roleList,

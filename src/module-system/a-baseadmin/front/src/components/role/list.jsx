@@ -1,7 +1,3 @@
-<template>
-  <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick"> </eb-treeview>
-</template>
-<script>
 export default {
   meta: {
     global: false,
@@ -56,5 +52,14 @@ export default {
       this.$emit('nodeClick', node);
     },
   },
+  render() {
+    return (
+      <eb-treeview
+        ref="tree"
+        root={this.root}
+        propsOnLoadChildren={this.onLoadChildren}
+        onNodeClick={this.onNodeClick}
+      ></eb-treeview>
+    );
+  },
 };
-</script>

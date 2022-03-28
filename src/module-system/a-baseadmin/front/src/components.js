@@ -1,4 +1,4 @@
-import roleList from './components/role/list.vue';
+import roleList from './components/role/list.jsx';
 import roleInfo from './components/role/info.vue';
 import roleChildren from './components/role/children.vue';
 import roleIncludes from './components/role/includes.vue';
