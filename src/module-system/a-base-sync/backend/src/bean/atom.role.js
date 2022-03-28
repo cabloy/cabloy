@@ -77,6 +77,7 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      delete item.roleIdParent; // roleIdParent maybe string, so cause validate error
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update role
