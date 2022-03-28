@@ -3,9 +3,13 @@ module.exports = app => {
     // role
     {
       method: 'post',
+      path: 'role/childrenTop',
+      controller: 'role',
+    },
+    {
+      method: 'post',
       path: 'role/children',
       controller: 'role',
-      meta: { right: { type: 'resource,atom', name: 'role', action: 25 } },
     },
     { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     {

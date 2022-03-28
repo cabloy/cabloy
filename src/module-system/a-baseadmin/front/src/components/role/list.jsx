@@ -28,7 +28,7 @@ export default {
         let data;
         const roleId = node.root ? this.roleIdStart : node.id;
         if (roleId === 0) {
-          data = await this.$api.post('role/childrenTop', { roleId, page: { size: 0 } });
+          data = await this.$api.post('role/childrenTop', { page: { size: 0 } });
         } else {
           data = await this.$api.post('role/children', { roleId, page: { size: 0 } });
         }
