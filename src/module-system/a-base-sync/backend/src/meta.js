@@ -5,6 +5,7 @@ module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
+  const staticDicts = require('./config/static/dicts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   const staticRoles = require('./config/static/roles.js')(app);
   // socketio
@@ -49,7 +50,7 @@ module.exports = app => {
             dict: {
               fields: {
                 roleTypeCode: {
-                  dictKey: 'a-dictbooster:dictRoleType',
+                  dictKey: 'a-base:dictRoleType',
                 },
               },
             },
@@ -78,6 +79,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-dict.dict': {
+          items: staticDicts,
+        },
         'a-base.resource': {
           items: staticResources,
         },

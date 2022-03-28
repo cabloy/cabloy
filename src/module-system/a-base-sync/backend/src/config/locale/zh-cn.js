@@ -34,6 +34,7 @@ module.exports = {
   'Move Up': '上移',
   'Move Down': '下移',
   'Developer Tool': '开发者工具',
+  'Role Type': '角色类型',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',

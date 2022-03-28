@@ -31,7 +31,7 @@ module.exports = app => {
         ebTitle: 'Role Type',
         ebOptionsBlankAuto: true,
         ebParams: {
-          dictKey: 'a-dictbooster:dictRoleType',
+          dictKey: 'a-base:dictRoleType',
           mode: 'tree',
         },
         notEmpty: {
@@ -92,7 +92,7 @@ module.exports = app => {
         ebType: 'dict',
         ebTitle: 'Role Type',
         ebParams: {
-          dictKey: 'a-dictbooster:dictRoleType',
+          dictKey: 'a-base:dictRoleType',
           mode: 'tree',
         },
         ebOptionsBlankAuto: true,
