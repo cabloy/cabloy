@@ -470,8 +470,12 @@ module.exports = ctx => {
       }
 
       // atomClassInner
-      // eslint-disable-next-line
-      _atomClassWhere = ' and b.atomClassInner=0';
+      // atomClassInner
+      if (tableName) {
+        _atomClassWhere = '';
+      } else {
+        _atomClassWhere = ' and b.atomClassInner=0';
+      }
 
       // fields
       let _selectFields;

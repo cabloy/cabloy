@@ -27,6 +27,7 @@ module.exports = app => {
       if (!item.atomStaticKey) throw new Error('atomStaticKey cannot be empty');
       const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
       const atomRevision = item.atomRevision || 0;
+      // atomClassBase
       // get by key
       const atom = await this.ctx.bean.atom.readByStaticKey({
         atomClass,
