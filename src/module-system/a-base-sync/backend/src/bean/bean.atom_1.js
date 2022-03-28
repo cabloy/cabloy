@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const debug = require3('debug')('sql');
 const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
@@ -594,6 +595,7 @@ module.exports = ctx => {
         mode,
         cms,
       });
+      debug('===== getAtom =====\n%s', sql);
       // query
       return await ctx.model.queryOne(sql);
     }
@@ -646,6 +648,7 @@ module.exports = ctx => {
         mode,
         cms,
       });
+      debug('===== selectAtoms =====\n%s', sql);
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }

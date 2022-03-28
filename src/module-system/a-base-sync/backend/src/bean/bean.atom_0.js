@@ -1,4 +1,5 @@
 const require3 = require('require3');
+// const debug = require3('debug')('sql');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
