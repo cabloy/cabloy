@@ -5,7 +5,7 @@ export default {
   },
   data() {
     return {
-      roleIdStart: parseInt(this.$f7route.query.roleIdStart),
+      roleIdStart: parseInt(this.$f7route.query.roleIdStart || 0),
       roleDirty: false,
     };
   },
