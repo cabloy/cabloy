@@ -137,13 +137,16 @@ export default {
       );
     },
     _renderItemTitle() {
-      const chidren = [];
+      const domTitle = <span>{this.dictItemTitle}</span>;
       const icon = this.dictItemOptions && this.dictItemOptions.icon;
-      if (icon) {
-        chidren.push(<f7-icon size="18" f7={icon.f7} material={icon.material}></f7-icon>);
-      }
-      chidren.push(<span>{this.dictItemTitle}</span>);
-      return chidren;
+      if (!icon) return domTitle;
+      const domIcon = <f7-icon size="18" f7={icon.f7} material={icon.material}></f7-icon>;
+      return (
+        <div class="display-flex">
+          {domIcon}
+          {domTitle}
+        </div>
+      );
     },
   },
   render() {
