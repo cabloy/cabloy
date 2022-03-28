@@ -60,21 +60,14 @@ export default {
     onRoleDirty(data) {
       this.roleDirty = data.dirty;
     },
-    onPerformBuild() {
-      return this.$api.post('role/build').then(data => {
-        const progressId = data.progressId;
-        this.$view.dialog
-          .progressbar({ progressId, title: this.$text('Build') })
-          .then(() => {
-            this.roleDirty = false;
-          })
-          .catch(() => {});
-      });
+    async onPerformBuild() {
+      const data = await this.$api.post('role/build');
+      const progressId = data.progressId;
+      await this.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
+      this.roleDirty = false;
     },
-    checkRoleDirty() {
-      this.$api.post('role/dirty').then(dirty => {
-        this.roleDirty = dirty;
-      });
+    async checkRoleDirty() {
+      this.roleDirty = await this.$api.post('role/dirty');
     },
     _renderTab() {
       if (!this.roleDirty) return null;
