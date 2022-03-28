@@ -150,15 +150,19 @@ export default {
         });
       }
     },
+    _renderDictTree() {
+      return (
+        <eb-treeview
+          ref="tree"
+          auto={false}
+          propsOnLoadChildren={this.onLoadChildren}
+          onNodeClick={this.onNodeClick}
+        ></eb-treeview>
+      );
+    },
   },
   render() {
-    return (
-      <eb-treeview
-        ref="tree"
-        auto={false}
-        propsOnLoadChildren={this.onLoadChildren}
-        onNodeClick={this.onNodeClick}
-      ></eb-treeview>
-    );
+    const domDictTree = this._renderDictTree();
+    return <div>{domDictTree}</div>;
   },
 };
