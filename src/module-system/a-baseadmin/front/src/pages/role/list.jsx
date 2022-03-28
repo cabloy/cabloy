@@ -1,17 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Role Management')" eb-back-link="Back"></eb-navbar>
-    <role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></role-list>
-    <f7-fab v-if="roleDirty" color="pink">
-      <f7-icon f7="::add"></f7-icon>
-      <f7-icon f7="::close"></f7-icon>
-      <f7-fab-buttons>
-        <eb-fab-button color="orange" :onPerform="onPerformBuild">{{ $text('Build') }}</eb-fab-button>
-      </f7-fab-buttons>
-    </f7-fab>
-  </eb-page>
-</template>
-<script>
 import roleList from '../../components/role/list.vue';
 export default {
   components: {
@@ -90,6 +76,28 @@ export default {
         this.roleDirty = dirty;
       });
     },
+    _renderTab() {
+      if (!this.roleDirty) return null;
+      return (
+        <f7-fab color="pink">
+          <f7-icon f7="::add"></f7-icon>
+          <f7-icon f7="::close"></f7-icon>
+          <f7-fab-buttons>
+            <eb-fab-button color="orange" propsOnPerform={this.onPerformBuild}>
+              {this.$text('Build')}
+            </eb-fab-button>
+          </f7-fab-buttons>
+        </f7-fab>
+      );
+    },
+  },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar large largeTransparent title={this.$text('Role Management')} eb-back-link="Back"></eb-navbar>
+        <role-list ref="roleList" roleIdStart={this.roleIdStart} onNodeClick={this.onNodeClick}></role-list>
+        {this._renderTab()}
+      </eb-page>
+    );
   },
 };
-</script>

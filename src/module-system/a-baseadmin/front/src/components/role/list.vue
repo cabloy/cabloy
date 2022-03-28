@@ -53,6 +53,7 @@ export default {
     },
     onNodeClick(node) {
       this.$emit('node:click', node);
+      this.$emit('nodeClick', node);
     },
   },
 };
