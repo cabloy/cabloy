@@ -72,12 +72,12 @@ module.exports = app => {
       }
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       const item = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       const atomStaticKey = item.atomStaticKey;
       const atomStage = item.atomStage;
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete dict
       await this.ctx.model.dict.delete({
         id: key.itemId,

@@ -102,39 +102,14 @@ module.exports = ctx => {
       await this.setDirty(true);
     }
 
-    async delete({ roleId, force = false }) {
-      // role
-      const role = await this.get({ id: roleId });
-      // parent
-      const roleIdParent = role.roleIdParent;
-
-      // check if system
-      if (role.system) ctx.throw(403);
-      // check if children
-      if (role.catalog && !force) {
-        const children = await this.children({ roleId });
-        if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
+    async delete({ roleAtomId, roleId, force = false }) {
+      // roleId
+      if (!roleAtomId) {
+        const atom = await this.modelAtom.get({ itemId: roleId });
+        roleAtomId = atom.id;
       }
-
-      // delete all includes
-      await this.modelRoleInc.delete({ roleId });
-      await this.modelRoleInc.delete({ roleIdInc: roleId });
-
-      // delete all users
-      await this.modelUserRole.delete({ roleId });
-
-      // delete all atom rights
-      await this.modelRoleRight.delete({ roleId });
-      await this.modelRoleRightRef.delete({ roleId });
-
       // delete this
-      await ctx.bean.atom.delete({ key: { atomId: role.atomId } });
-
-      // adjust catalog
-      await this.adjustCatalog(roleIdParent);
-
-      // set dirty
-      await this.setDirty(true);
+      await ctx.bean.atom.delete({ key: { atomId: roleAtomId } });
     }
 
     // for donothing on roleId === 0

@@ -260,7 +260,7 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, user }) {
+    async delete({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!key.itemId) key.itemId = atomClass.itemId;
@@ -285,7 +285,7 @@ module.exports = ctx => {
           await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
-            context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, user },
+            context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, options, user },
             fn: 'delete',
           });
         }
@@ -298,7 +298,7 @@ module.exports = ctx => {
           await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
-            context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
+            context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, options, user },
             fn: 'delete',
           });
           // notify
@@ -308,7 +308,7 @@ module.exports = ctx => {
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, options, user },
           fn: 'delete',
         });
       } else if (_atom.atomStage === 2) {
@@ -316,7 +316,7 @@ module.exports = ctx => {
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, options, user },
           fn: 'delete',
         });
       }

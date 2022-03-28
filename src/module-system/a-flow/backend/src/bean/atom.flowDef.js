@@ -60,14 +60,14 @@ module.exports = app => {
       }
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // deploy
       const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 1) {
         await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
       }
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete flowDef
       await this.ctx.model.flowDef.delete({
         id: key.itemId,

@@ -24,9 +24,9 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
     }
   }
 

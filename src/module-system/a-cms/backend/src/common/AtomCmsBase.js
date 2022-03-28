@@ -234,7 +234,7 @@ module.exports = app => {
       return summary;
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
 
@@ -248,7 +248,7 @@ module.exports = app => {
       }
 
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
 
       // delete article
       await this.modelArticle.delete({

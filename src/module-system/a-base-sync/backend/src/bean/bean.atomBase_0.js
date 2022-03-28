@@ -104,7 +104,7 @@ module.exports = app => {
       }
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // atomClass
       const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       if (_atomClass.tag) {

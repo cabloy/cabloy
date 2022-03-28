@@ -1,5 +1,9 @@
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
+    get beanRole() {
+      return this.ctx.bean.role;
+    }
+
     async create({ atomClass, item, options, user }) {
       // only support atomStage=1
       if (item.atomStage !== 1) throw new Error('role only support atomStage=1');
@@ -9,11 +13,11 @@ module.exports = app => {
       let roleIdParent = item.roleIdParent || 0;
       // roleIdParent maybe string
       if (typeof roleIdParent === 'string') {
-        const role = await this.ctx.bean.role.parseRoleName({ roleName: roleIdParent, force: false });
+        const role = await this.beanRole.parseRoleName({ roleName: roleIdParent, force: false });
         roleIdParent = role.id;
       }
       // check if write right of roleIdParent
-      const writeRight = await this.ctx.bean.role._checkRightWriteOfRole({
+      const writeRight = await this.ctx.beanRole._checkRightWriteOfRole({
         roleId: roleIdParent,
         user,
       });
@@ -44,9 +48,9 @@ module.exports = app => {
       // update roleIdOwner
       await this.ctx.model.atom.update({ id: atomId, roleIdOwner: itemId });
       // adjust catalog
-      await this.ctx.bean.role.adjustCatalog(roleIdParent);
+      await this.ctx.beanRole.adjustCatalog(roleIdParent);
       // set dirty
-      await this.ctx.bean.role.setDirty(true);
+      await this.ctx.beanRole.setDirty(true);
       // ok
       return { atomId, itemId };
     }
@@ -81,13 +85,43 @@ module.exports = app => {
       await this.ctx.model.role.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
+      // role
+      const role = await this.get({ id: roleId });
+      // parent
+      const roleIdParent = role.roleIdParent;
+
+      // check if system
+      if (role.system) ctx.throw(403);
+      // check if children
+      if (role.catalog && !force) {
+        const children = await this.children({ roleId });
+        if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
+      }
+
+      // delete all includes
+      await this.modelRoleInc.delete({ roleId });
+      await this.modelRoleInc.delete({ roleIdInc: roleId });
+
+      // delete all users
+      await this.modelUserRole.delete({ roleId });
+
+      // delete all atom rights
+      await this.modelRoleRight.delete({ roleId });
+      await this.modelRoleRightRef.delete({ roleId });
+
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete role
       await this.ctx.model.role.delete({
         id: key.itemId,
       });
+
+      // adjust catalog
+      await this.adjustCatalog(roleIdParent);
+
+      // set dirty
+      await this.setDirty(true);
     }
 
     _getMeta(options, item, showSorting) {

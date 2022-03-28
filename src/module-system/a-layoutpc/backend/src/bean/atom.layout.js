@@ -60,9 +60,9 @@ module.exports = app => {
       );
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete layout
       await this.ctx.model.layout.delete({
         id: key.itemId,

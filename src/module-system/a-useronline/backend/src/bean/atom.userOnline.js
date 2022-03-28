@@ -66,9 +66,9 @@ module.exports = app => {
       await this.ctx.model.userOnline.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete userOnline
       await this.ctx.model.userOnline.delete({
         id: key.itemId,

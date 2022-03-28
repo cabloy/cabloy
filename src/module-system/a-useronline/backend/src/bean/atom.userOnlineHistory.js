@@ -39,9 +39,9 @@ module.exports = app => {
       await this.ctx.model.userOnlineHistory.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete userOnlineHistory
       await this.ctx.model.userOnlineHistory.delete({
         id: key.itemId,

@@ -40,9 +40,9 @@ module.exports = app => {
       await this.ctx.model.resource.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete resource
       await this.ctx.model.resource.delete({
         id: key.itemId,
