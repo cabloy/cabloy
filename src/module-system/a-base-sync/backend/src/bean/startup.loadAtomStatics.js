@@ -28,6 +28,7 @@ module.exports = app => {
       const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
       const atomRevision = item.atomRevision || 0;
       // atomClassBase
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // get by key
       const atom = await this.ctx.bean.atom.readByStaticKey({
         atomClass,
@@ -40,9 +41,20 @@ module.exports = app => {
           await this.ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
         } else {
           // check revision: not use !==
-          if (atomRevision > atom.atomRevision) {
+          const changed = this._ifChanged({
+            atomClassBase,
+            atomRevisionWill: atomRevision,
+            atomRevisionCurrent: atom.atomRevision,
+          });
+          if (changed) {
             item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-            await this._updateRevision({ atomClass, atomIdFormal: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+            await this._updateRevision({
+              atomClassBase,
+              atomClass,
+              atomIdFormal: atom.atomId,
+              atomIdDraft: atom.atomIdDraft,
+              item,
+            });
             await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
           }
         }
@@ -54,6 +66,16 @@ module.exports = app => {
           await this._addResourceRoles({ atomId, roles: item.resourceRoles });
         }
       }
+    }
+
+    _ifChanged({ atomClassBase, atomRevisionWill, atomRevisionCurrent }) {
+      let changed;
+      if (atomClassBase.simple) {
+        changed = atomRevisionWill >= atomRevisionCurrent;
+      } else {
+        changed = atomRevisionWill > atomRevisionCurrent;
+      }
+      return changed;
     }
 
     async _addResourceRoles({ atomId, roles }) {
@@ -123,46 +145,74 @@ module.exports = app => {
       return item;
     }
 
-    async _updateRevision({ atomClass, atomIdFormal, atomIdDraft, item }) {
+    async _updateRevision({ atomClassBase, atomClass, atomIdFormal, atomIdDraft, item }) {
       return await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
           return await this.ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
-            context: { atomClass, atomIdFormal, atomIdDraft, item },
+            context: { atomClassBase, atomClass, atomIdFormal, atomIdDraft, item },
             fn: '_updateRevisionLock',
           });
         },
       });
     }
 
-    async _updateRevisionLock({ atomIdDraft, item }) {
-      // get draft
-      const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomIdDraft });
-      if (item.atomRevision === atom.atomRevision) return;
+    async _updateRevisionLock({ atomClassBase, atomIdFormal, atomIdDraft, item }) {
+      // get atom/atomKey
       const atomKey = {
-        atomId: atomIdDraft,
-        itemId: atom.itemId,
+        atomId: atomClassBase.simple ? atomIdFormal : atomIdDraft,
       };
-      // update
-      await this.ctx.bean.atom.modelAtom.update({
-        id: atomIdDraft,
-        atomName: item.atomName,
-        atomRevision: item.atomRevision,
+      const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
+      atomKey.itemId = atom.itemId;
+      // check changed again
+      const changed = this._ifChanged({
+        atomClassBase,
+        atomRevisionWill: item.atomRevision,
+        atomRevisionCurrent: atom.atomRevision,
       });
-      // write
-      await this.ctx.bean.atom.write({
-        key: atomKey,
-        item,
-        user: { id: 0 },
-      });
-      // submit
-      await this.ctx.bean.atom.submit({
-        key: atomKey,
-        options: { ignoreFlow: true },
-        user: { id: 0 },
-      });
+      if (!changed) return;
+      // simple/normal
+      if (atomClassBase.simple) {
+        // write
+        await this.ctx.bean.atom.write({
+          key: atomKey,
+          item,
+          user: { id: 0 },
+        });
+        // submit
+        await this.ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+        // update
+        await this.ctx.bean.atom.modelAtom.update({
+          id: atomKey.atomId,
+          atomName: item.atomName,
+          atomRevision: item.atomRevision + 1,
+        });
+      } else {
+        // update
+        await this.ctx.bean.atom.modelAtom.update({
+          id: atomKey.atomId,
+          atomName: item.atomName,
+          atomRevision: item.atomRevision,
+        });
+        // write
+        await this.ctx.bean.atom.write({
+          key: atomKey,
+          item,
+          user: { id: 0 },
+        });
+        // submit
+        await this.ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+      }
     }
 
     async _register({ atomClass, item }) {
