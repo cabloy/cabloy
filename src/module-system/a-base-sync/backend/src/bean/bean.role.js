@@ -337,21 +337,26 @@ module.exports = ctx => {
         roleId = 0;
       }
       // where
-      const where = { roleIdParent: roleId };
-      if (roleName !== undefined) where.roleName = roleName;
-      // select
-      const options = {
-        where,
-        orders: [
-          ['sorting', 'asc'],
-          ['roleName', 'asc'],
-        ],
-      };
-      if (page.size !== 0) {
-        options.limit = page.size;
-        options.offset = page.index;
+      const where = { 'f.roleIdParent': roleId };
+      if (roleName !== undefined) {
+        where['f.roleName'] = roleName;
       }
-      return await this.model.select(options);
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassRole,
+        options: {
+          orders: [
+            ['f.sorting', 'asc'],
+            ['f.roleName', 'asc'],
+          ],
+          page,
+          stage: 'formal',
+          where,
+        },
+        user,
+        pageForce: false,
+      });
+      return list;
     }
 
     // save
