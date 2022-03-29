@@ -61,10 +61,12 @@ export default {
       this.roleDirty = data.dirty;
     },
     async onPerformBuild() {
-      const data = await this.$api.post('role/build');
-      const progressId = data.progressId;
-      await this.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
-      this.roleDirty = false;
+      const action = {
+        actionModule: 'a-baseadmin',
+        actionComponent: 'actionRole',
+        name: 'buildBulk',
+      };
+      await this.$meta.util.performAction({ ctx: this, action });
     },
     async checkRoleDirty() {
       this.roleDirty = await this.$api.post('role/dirty');

@@ -1,3 +1,4 @@
+import actionRole from './components/actionRole.js';
 import roleList from './components/role/list.jsx';
 import roleInfo from './components/role/info.vue';
 import roleChildren from './components/role/children.vue';
@@ -12,6 +13,7 @@ import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
+  actionRole,
   roleList,
   roleInfo,
   roleChildren,
