@@ -197,7 +197,7 @@ async function _checkAtomClassExpect({ options, ctx }) {
   if (atomClass && atomClassExpect && !_checkIfSameAtomClass(atomClass, atomClassExpect)) {
     ctx.throw(403);
   }
-  //
+  // neednot check !!atomClassExpect
   if (!atomClass) {
     atomClass = await ctx.bean.atomClass.get(atomClassExpect);
   }
