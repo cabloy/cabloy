@@ -1,6 +1,6 @@
 export default {
   methods: {
-    async _onActionPartyOverBulk() {
+    async _onActionBuildBulk() {
       const { ctx } = this.$props;
       // confirm
       await ctx.$view.dialog.confirm();

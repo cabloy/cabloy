@@ -97,10 +97,10 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async build() {
+    async buildBulk() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.build();
+      const res = await this.service.role.buildBulk();
       this.ctx.success(res);
     }
   }

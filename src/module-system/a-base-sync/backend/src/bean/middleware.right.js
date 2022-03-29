@@ -54,18 +54,12 @@ async function checkAtom(moduleInfo, options, ctx) {
   // constant
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
+  const { atomKey, atomClass } = _checkAtomClassExpect({ options, ctx });
+
   // create
   if (options.action === 'create' || options.action === constant.atom.action.create) {
     // atomClassId
-    let atomClassId = ctx.request.body.atomClass.id;
-    if (!atomClassId) {
-      const res = await ctx.bean.atomClass.get({
-        module: ctx.request.body.atomClass.module,
-        atomClassName: ctx.request.body.atomClass.atomClassName,
-        atomClassIdParent: ctx.request.body.atomClass.atomClassIdParent || 0,
-      });
-      atomClassId = res.id;
-    }
+    const atomClassId = atomClass.id;
     // roleIdOwner
     const roleIdOwner = ctx.request.body.roleIdOwner;
     if (roleIdOwner) {
@@ -78,7 +72,6 @@ async function checkAtom(moduleInfo, options, ctx) {
         user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
-      ctx.meta._atomClass = res;
     } else {
       // retrieve default one, must exists
       const roleId = await ctx.bean.atom.preferredRoleId({
@@ -89,7 +82,6 @@ async function checkAtom(moduleInfo, options, ctx) {
       });
       if (roleId === 0) ctx.throw(403);
       ctx.request.body.roleIdOwner = roleId;
-      ctx.meta._atomClass = { id: atomClassId };
     }
     return;
   }
@@ -97,40 +89,36 @@ async function checkAtom(moduleInfo, options, ctx) {
   // read
   if (options.action === 'read' || options.action === constant.atom.action.read) {
     const res = await ctx.bean.atom.checkRightRead({
-      atom: { id: ctx.request.body.key.atomId },
+      atom: { id: atomKey.atomId },
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
+    atomKey.itemId = res.itemId;
     return;
   }
 
   // other action (including write/delete)
-  if (!ctx.request.body.key && !ctx.request.body.atomClass) ctx.throw.module(moduleInfo.relativeName, 1011);
   const actionOther = options.action;
-  const bulk = !ctx.request.body.key;
+  const bulk = !atomKey;
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
-      atomClass: ctx.request.body.atomClass,
+      atomClass,
       action: actionOther,
       stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
-    ctx.meta._atomAction = res;
   } else {
     const res = await ctx.bean.atom.checkRightAction({
-      atom: { id: ctx.request.body.key.atomId },
+      atom: { id: atomKey.atomId },
       action: actionOther,
       stage: options.stage,
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
+    atomKey.itemId = res.itemId;
   }
 }
 
@@ -175,4 +163,50 @@ async function _checkResource({ resourceAtomId, atomStaticKey, ctx }) {
 
 async function checkDetail(moduleInfo, options, ctx) {
   await ctx.bean.detail._checkRightForMiddleware({ options });
+}
+
+function _parseAtomClass(atomClass) {
+  if (!atomClass) return atomClass;
+  if (typeof atomClass === 'string') {
+    const [module, atomClassName] = atomClass.split(':');
+    return { module, atomClassName };
+  }
+  return atomClass;
+}
+
+function _checkIfSameAtomClass(atomClassA, atomClassB) {
+  return atomClassA.module === atomClassB.module && atomClassA.atomClassName === atomClassB.atomClassName;
+}
+
+async function _checkAtomClassExpect({ options, ctx }) {
+  // atomClassExpect
+  const atomClassExpect = _parseAtomClass(options.atomClass);
+  // atomKey
+  const atomKey = ctx.request.body.key;
+  // key first, then atomClass
+  let atomClass;
+  if (atomKey) {
+    atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atomKey.atomId });
+  } else {
+    const _atomClass = ctx.request.body.atomClass;
+    if (_atomClass) {
+      atomClass = await ctx.bean.atomClass.get({
+        module: _atomClass.module,
+        atomClassName: _atomClass.atomClassName,
+        atomClassIdParent: _atomClass.atomClassIdParent || 0,
+      });
+    }
+  }
+  if (!atomClass && !atomClassExpect) ctx.throw(403);
+  if (atomClass && atomClassExpect && !_checkIfSameAtomClass(atomClass, atomClassExpect)) {
+    ctx.throw(403);
+  }
+  //
+  atomClass = atomClassExpect || atomClass;
+  ctx.request.body.atomClass = atomClass; // force consistent for safe
+  // ok
+  return {
+    atomKey,
+    atomClass,
+  };
 }

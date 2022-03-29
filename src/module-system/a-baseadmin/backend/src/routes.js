@@ -44,7 +44,7 @@ module.exports = app => {
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     {
       method: 'post',
-      path: 'role/build',
+      path: 'role/buildBulk',
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
     },

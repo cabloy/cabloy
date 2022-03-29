@@ -44,7 +44,7 @@ module.exports = app => {
       return await this.ctx.bean.role.getDirty();
     }
 
-    async build() {
+    async buildBulk() {
       const progressId = await this.ctx.bean.progress.create();
       // build, not await
       this.ctx.bean.role.build({ progressId });
