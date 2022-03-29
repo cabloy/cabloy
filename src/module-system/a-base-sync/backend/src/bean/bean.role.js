@@ -286,6 +286,7 @@ module.exports = ctx => {
 
     // childrenTop
     async childrenTop({ page, user }) {
+      if (!user) user = { id: 0 };
       // page
       page = ctx.bean.util.page(page, false);
       // atomClass
@@ -327,7 +328,9 @@ module.exports = ctx => {
     }
 
     // children
-    async children({ roleId, roleName, page }) {
+    async children({ roleId, roleName, page, user }) {
+      if (!user) user = { id: 0 };
+      // page
       page = ctx.bean.util.page(page, false);
       // roleId
       if (!roleId || roleId === 'root') {

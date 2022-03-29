@@ -14,6 +14,7 @@ module.exports = app => {
       const items = await this.service.role.children({
         roleId: this.ctx.request.body.roleId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }

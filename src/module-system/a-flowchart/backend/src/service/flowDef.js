@@ -14,7 +14,7 @@ module.exports = app => {
       if (!rightWrite) this.ctx.throw(403);
       // roles
       const { roleId, page } = params;
-      return await this.ctx.bean.role.children({ roleId, page });
+      return await this.ctx.bean.role.children({ roleId, page, user });
     }
 
     async userSelect({ host, params, user }) {

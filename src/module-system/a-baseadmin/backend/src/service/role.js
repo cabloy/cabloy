@@ -4,8 +4,8 @@ module.exports = app => {
       return await this.ctx.bean.role.childrenTop({ page, user });
     }
 
-    async children({ roleId, page }) {
-      return await this.ctx.bean.role.children({ roleId, page });
+    async children({ roleId, page, user }) {
+      return await this.ctx.bean.role.children({ roleId, page, user });
     }
 
     async item({ roleId }) {
