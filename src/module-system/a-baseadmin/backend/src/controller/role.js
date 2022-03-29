@@ -1,5 +1,14 @@
 module.exports = app => {
   class RoleController extends app.Controller {
+    async childrenTop() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.role.childrenTop({
+        page,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
     async children() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.children({

@@ -284,6 +284,48 @@ module.exports = ctx => {
       return list[0];
     }
 
+    // childrenTop
+    async childrenTop({ page, user }) {
+      // page
+      page = ctx.bean.util.page(page, false);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get(__atomClassRole);
+      // roles by authed
+      let roleIds;
+      if (user.id === 0) {
+        const roleRoot = await this.parseRoleName({ roleName: 'root' });
+        roleIds = [roleRoot.id];
+      } else {
+        const roles = await ctx.model.query(
+          `
+            select * from aViewUserRightRefAtomClass a 
+              where a.iid=? and a.userIdWho=? and a.atomClassId=? and a.action=2
+          `,
+          [ctx.instance.id, user.id, atomClass.id]
+        );
+        roleIds = roles.map(item => item.roleIdWhom);
+      }
+      if (roleIds.length === 0) return [];
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass,
+        options: {
+          orders: [['a.id', 'asc']],
+          page,
+          stage: 'formal',
+          where: {
+            'f.id': {
+              op: 'in',
+              val: roleIds,
+            },
+          },
+        },
+        user,
+        pageForce: false,
+      });
+      return list;
+    }
+
     // children
     async children({ roleId, roleName, page }) {
       page = ctx.bean.util.page(page, false);
