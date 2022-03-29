@@ -153,13 +153,14 @@ module.exports = app => {
         return;
       }
       // translate
-      await this._dictTranslateField({
+      const _item = await this._dictTranslateField({
         fieldName: 'roleTypeCode',
         code: item.roleTypeCode,
         field: {
           dictKey: 'a-base:dictRoleType',
         },
       });
+      Object.assign(item, _item);
     }
   }
 
