@@ -7,6 +7,7 @@ export default {
     return {
       roleIdStart: parseInt(this.$f7route.query.roleIdStart || 0),
       roleDirty: false,
+      hasRightBuildBulk: false,
     };
   },
   computed: {
@@ -69,10 +70,15 @@ export default {
       await this.$meta.util.performAction({ ctx: this, action });
     },
     async checkRoleDirty() {
-      this.roleDirty = await this.$api.post('role/dirty');
+      try {
+        this.roleDirty = await this.$api.post('role/dirty');
+        this.hasRightBuildBulk = true;
+      } catch (err) {
+        this.hasRightBuildBulk = false;
+      }
     },
-    _renderTab() {
-      if (!this.roleDirty) return null;
+    _renderFab() {
+      if (!this.hasRightBuildBulk || !this.roleDirty) return null;
       return (
         <f7-fab color="pink">
           <f7-icon f7="::add"></f7-icon>
@@ -91,7 +97,7 @@ export default {
       <eb-page>
         <eb-navbar large largeTransparent title={this.$text('Role Management')} eb-back-link="Back"></eb-navbar>
         <role-list ref="roleList" roleIdStart={this.roleIdStart} onNodeClick={this.onNodeClick}></role-list>
-        {this._renderTab()}
+        {this._renderFab()}
       </eb-page>
     );
   },
