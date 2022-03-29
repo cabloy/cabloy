@@ -54,7 +54,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   // constant
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
-  const { atomKey, atomClass } = _checkAtomClassExpect({ options, ctx });
+  const { atomKey, atomClass } = await _checkAtomClassExpect({ options, ctx });
 
   // create
   if (options.action === 'create' || options.action === constant.atom.action.create) {
@@ -202,7 +202,9 @@ async function _checkAtomClassExpect({ options, ctx }) {
     ctx.throw(403);
   }
   //
-  atomClass = atomClassExpect || atomClass;
+  if (!atomClass) {
+    atomClass = await ctx.bean.atomClass.get(atomClassExpect);
+  }
   ctx.request.body.atomClass = atomClass; // force consistent for safe
   // ok
   return {
