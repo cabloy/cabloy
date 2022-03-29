@@ -48,27 +48,36 @@ module.exports = app => {
       const fields = _atomClass.dict && _atomClass.dict.fields;
       for (const fieldName in fields) {
         const field = fields[fieldName];
-        if (field.translate === false) continue;
-        //
         const code = item[fieldName];
-        if (code === undefined) continue;
-        const dictItem = await this.ctx.bean.dict.findItem({
-          dictKey: field.dictKey,
-          code,
-          options: {
-            separator: field.separator,
-          },
-        });
-        if (dictItem) {
-          item[`_${fieldName}Title`] = dictItem.titleFull;
-          item[`_${fieldName}TitleLocale`] = dictItem.titleLocaleFull;
-          if (dictItem.options && dictItem.options.icon) {
-            item[`_${fieldName}Options`] = {
-              icon: dictItem.options.icon,
-            };
-          }
+        const _item = await this._dictTranslateField({ fieldName, code, field });
+        if (_item) {
+          Object.assign(item, _item);
         }
       }
+    }
+
+    async _dictTranslateField({ fieldName, code, field }) {
+      if (field.translate === false) return null;
+      if (code === undefined) return null;
+      //
+      const dictItem = await this.ctx.bean.dict.findItem({
+        dictKey: field.dictKey,
+        code,
+        options: {
+          separator: field.separator,
+        },
+      });
+      if (!dictItem) return null;
+      // res
+      const _item = {};
+      _item[`_${fieldName}Title`] = dictItem.titleFull;
+      _item[`_${fieldName}TitleLocale`] = dictItem.titleLocaleFull;
+      if (dictItem.options && dictItem.options.icon) {
+        _item[`_${fieldName}Options`] = {
+          icon: dictItem.options.icon,
+        };
+      }
+      return _item;
     }
   }
 
