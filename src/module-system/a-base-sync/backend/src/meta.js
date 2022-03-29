@@ -50,7 +50,8 @@ module.exports = app => {
             dict: {
               fields: {
                 roleTypeCode: {
-                  dictKey: 'a-base:dictRoleType',
+                  translate: false,
+                  // dictKey: 'a-base:dictRoleType',
                 },
               },
             },

@@ -61,7 +61,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      this._getMeta(options, item, true);
+      await this._getMeta(options, item, true);
       // ok
       return item;
     }
@@ -72,7 +72,7 @@ module.exports = app => {
       // meta
       const showSorting = !!(options && options.category);
       for (const item of items) {
-        this._getMeta(options, item, showSorting);
+        await this._getMeta(options, item, showSorting);
       }
     }
 
@@ -129,7 +129,7 @@ module.exports = app => {
       await this.beanRole.setDirty(true);
     }
 
-    _getMeta(options, item, showSorting) {
+    async _getMeta(options, item, showSorting) {
       // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
@@ -138,6 +138,28 @@ module.exports = app => {
       }
       // meta.summary
       meta.summary = item.description;
+      // translate
+      await this._getMetaTranslate({ item });
+    }
+
+    async _getMetaTranslate({ item }) {
+      const dictKey = 'a-base:dictRoleType';
+      const atomDict = await this.ctx.bean.atom.modelAtom.get({
+        atomStaticKey: dictKey,
+        atomStage: 1,
+      });
+      if (!atomDict) {
+        // do nothing
+        return;
+      }
+      // translate
+      await this._dictTranslateField({
+        fieldName: 'roleTypeCode',
+        code: item.roleTypeCode,
+        field: {
+          dictKey: 'a-base:dictRoleType',
+        },
+      });
     }
   }
 
