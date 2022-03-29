@@ -79,7 +79,7 @@ describe('test/controller/test/atom/right.test.js', () => {
         key: partyKeyDraft,
       });
       if (right) {
-        assert.equal(result.body.data.id, partyKeyDraft.atomId);
+        assert.equal(result.body.data.atomId, partyKeyDraft.atomId);
       } else {
         assert.equal(result.status, 403);
       }
@@ -106,7 +106,7 @@ describe('test/controller/test/atom/right.test.js', () => {
         key: partyKeyDraft,
       });
       if (right) {
-        assert.equal(result.body.data.id, partyKeyDraft.atomId);
+        assert.equal(result.body.data.atomId, partyKeyDraft.atomId);
       } else {
         assert.equal(result.status, 403);
       }
@@ -146,7 +146,7 @@ describe('test/controller/test/atom/right.test.js', () => {
     //     key: partyKeyFormal,
     //   });
     //   if (right) {
-    //     assert.equal(result.body.data.id, partyKeyFormal.atomId);
+    //     assert.equal(result.body.data.atomId, partyKeyFormal.atomId);
     //   } else {
     //     assert.equal(result.status, 403);
     //   }

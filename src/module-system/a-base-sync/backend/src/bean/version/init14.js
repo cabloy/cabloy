@@ -49,6 +49,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'authorize', scopeNames: 'root' },
         { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
+        { roleName: 'system', action: 'buildBulk' },
       ];
       await ctx.bean.role.addRoleRightBatch({ atomClassName: 'role', roleRights });
     }
