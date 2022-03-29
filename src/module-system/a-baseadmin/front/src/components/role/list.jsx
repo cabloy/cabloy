@@ -36,9 +36,10 @@ export default {
           const node = {
             id: item.id,
             attrs: {
-              label: item.roleName || `[${this.$text('New Role')}]`,
+              label: item.atomNameLocale || item.roleName || `[${this.$text('New Role')}]`,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
+              iconF7: item._roleTypeCodeOptions.icon.f7,
             },
             data: item,
           };
