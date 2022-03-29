@@ -190,11 +190,7 @@ async function _checkAtomClassExpect({ options, ctx }) {
   } else {
     const _atomClass = ctx.request.body.atomClass;
     if (_atomClass) {
-      atomClass = await ctx.bean.atomClass.get({
-        module: _atomClass.module,
-        atomClassName: _atomClass.atomClassName,
-        atomClassIdParent: _atomClass.atomClassIdParent || 0,
-      });
+      atomClass = await ctx.bean.atomClass.get(_atomClass);
     }
   }
   if (!atomClass && !atomClassExpect) ctx.throw(403);
