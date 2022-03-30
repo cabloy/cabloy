@@ -23,38 +23,47 @@ export default {
       },
     };
   },
+  computed: {
+    maxLevelAutoOpened() {
+      let maxLevelAutoOpened = this.layoutManager.container.maxLevelAutoOpened;
+      if (maxLevelAutoOpened === undefined) maxLevelAutoOpened = 2;
+      return maxLevelAutoOpened;
+    },
+    roleIdStart() {
+      return this.layoutManager.container.roleIdStart;
+    },
+  },
   mounted() {},
   beforeDestroy() {},
   methods: {
-    async _loadNodeCategories(node) {
+    async _loadNodeRoles(node) {
+      //
       const levelCurrent = (node.data && node.data.__level) || 0;
       const level = levelCurrent + 1;
-      let treeChildren;
-      if (node.root) {
-        treeChildren = this.layoutManager.base.treeData;
+      //
+      let data;
+      const roleId = node.root ? this.roleIdStart : node.id;
+      if (roleId === 0) {
+        data = await this.$api.post('/a/baseadmin/role/childrenTop', { page: { size: 0 } });
       } else {
-        treeChildren = node.data.children;
+        data = await this.$api.post('/a/baseadmin/role/children', { roleId, page: { size: 0 } });
       }
       const list = [];
-      for (const item of treeChildren) {
+      for (const item of data.list) {
         const node = {
           id: item.id,
           attrs: {
-            // link: '#',
-            label: item.categoryNameLocale,
-            toggle: true,
-            itemToggle: true,
-            loadChildren: true,
+            label: item.atomNameLocale || item.roleName || `[${this.$text('New Role')}]`,
+            toggle: item.catalog === 1,
+            loadChildren: item.catalog === 1,
+            iconF7: item._roleTypeCodeOptions.icon.f7,
           },
           data: {
             ...item,
             __level: level,
           },
         };
-        if (
-          level <= this.layoutManager.container.maxLevelAutoOpened ||
-          this.layoutManager.container.maxLevelAutoOpened === -1
-        ) {
+        if (item.catalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
           const children = await this.onLoadChildren(node);
           this.$refs.tree.childrenLoaded(node, children);
           node.attrs.loadChildren = false;
@@ -64,33 +73,14 @@ export default {
       }
       return list;
     },
-    async _loadNodeResources(node) {
-      const resources = this.layoutManager.base.resourcesArrayAll.filter(item => item.atomCategoryId === node.id);
-      return resources.map(item => {
-        const node = {
-          id: item.atomId,
-          attrs: {
-            link: '#',
-            label: item.atomNameLocale,
-            toggle: false,
-            loadChildren: false,
-          },
-          data: item,
-        };
-        return node;
-      });
-    },
     async onLoadChildren(node) {
-      if (node.root || node.data.categoryCatalog === 1) {
-        return await this._loadNodeCategories(node);
-      }
-      return await this._loadNodeResources(node);
+      return await this._loadNodeRoles(node);
     },
     onNodePerformClick(event, context, node) {
       return this.layoutManager.base_onPerformResource(event, node.data);
     },
     _renderTree() {
-      if (!this.layoutManager.base_ready) return;
+      if (!this.layoutManager.base.ready) return;
       return (
         <eb-treeview
           ref="tree"
