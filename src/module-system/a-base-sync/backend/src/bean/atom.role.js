@@ -137,9 +137,12 @@ module.exports = app => {
       if (target === 'clone') {
         await this.ctx.model.role.update({
           id: destKey.itemId,
-          catalog: srcItem.catalog,
-          system: srcItem.system,
+          catalog: 0, // srcItem.catalog,
+          system: 0, // srcItem.system,
           roleIdParent: srcItem.roleIdParent,
+        });
+        this.ctx.tail(async () => {
+          await this.ctx.bean.role.build();
         });
       }
     }
