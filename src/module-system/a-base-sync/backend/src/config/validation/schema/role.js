@@ -14,9 +14,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Role Name',
         ebDisplay: {
-          host: {
-            mode: 'edit',
-          },
+          expression: '_meta.host.mode==="edit" && system===0',
         },
         notEmpty: true,
       },
@@ -24,15 +22,14 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Role Name',
         ebDisplay: {
-          host: {
-            mode: 'view',
-          },
+          expression: '_meta.host.mode==="view" || system===1',
         },
         ebComputed: {
           expression: 'atomNameLocale',
           dependencies: ['atomName'],
           immediate: true,
         },
+        ebReadOnly: true,
         notEmpty: true,
       },
       description: {
