@@ -7,7 +7,7 @@ export default {
       const key = { atomId: item.atomId, itemId: item.itemId };
       const res = await ctx.$api.post('/a/baseadmin/role/delete', { key });
       const progressId = res.progressId;
-      await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Delete') });
+      await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       ctx.$meta.eventHub.$emit('atom:action', { key, action });
       // back
       if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
