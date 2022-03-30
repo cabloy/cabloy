@@ -37,15 +37,26 @@ export default {
       const children = [];
       for (const action of this.roleActions) {
         children.push(
-          <f7-button key={action.name} class="display-flex" outline iconF7={action.icon.f7}>
+          <eb-button
+            key={action.name}
+            class="display-flex"
+            outline
+            iconF7={action.icon.f7}
+            propsOnPerform={event => this.onPerformAction(event, action)}
+          >
             {action.titleLocale}
-          </f7-button>
+          </eb-button>
         );
       }
       if (children.length === 0) return null;
       return <f7-segmented tag="p">{children}</f7-segmented>;
     },
   },
+  onPerformAction(event, action) {
+    const method = `onPerformAction_${action.name}`;
+    return this[method](event, action);
+  },
+  onPerformAction_addChildRole(event, action) {},
   render() {
     const domToolbar = this._renderToolbar();
     const domValidate = this.layoutManager.validate_render();
