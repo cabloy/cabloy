@@ -14,16 +14,12 @@ module.exports = app => {
     },
     validation: {
       validators: {
-        role: {
-          schemas: 'role',
-        },
         auth: {
           schemas: 'auth',
         },
       },
       keywords: {},
       schemas: {
-        role: schemas.role,
         auth: schemas.auth,
       },
     },

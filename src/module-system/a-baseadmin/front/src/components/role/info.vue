@@ -1,37 +1,11 @@
 <template>
-  <eb-validate ref="validate" :data="role" :params="{ validator: 'role' }" :onPerform="onPerformValidate">
-    <eb-list form inline-labels no-hairlines-md>
-      <eb-list-input
-        type="text"
-        :disabled="role.system === 1"
-        :clear-button="role.system === 0"
-        :placeholder="$text('Role Name')"
-        v-model="role.roleName"
-        dataPath="roleName"
-      >
-        <div slot="label" class="text-color-gray">{{ $text('Role Name') }}</div>
-      </eb-list-input>
-      <eb-list-input
-        :label="$text('Sorting')"
-        type="text"
-        clear-button
-        :placeholder="$text('Sorting')"
-        v-model="role.sorting"
-        dataPath="sorting"
-      >
-      </eb-list-input>
-      <f7-list-item :title="$text('Leader')">
-        <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <span class="text-color-gray">{{ $text('Catalog') }}</span>
-        <eb-toggle :value="role.catalog" disabled dataPath="catalog"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <span class="text-color-gray">{{ $text('System') }}</span>
-        <eb-toggle :value="role.system" disabled dataPath="system"></eb-toggle>
-      </f7-list-item>
-    </eb-list>
+  <eb-validate
+    ref="validate"
+    auto
+    :data="role"
+    :params="{ module: 'a-base', validator: 'role' }"
+    :onPerform="onPerformValidate"
+  >
   </eb-validate>
 </template>
 <script>
