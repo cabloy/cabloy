@@ -30,7 +30,7 @@ export default {
     this.$meta.eventHub.$off('role:dirty', this.onRoleDirty);
   },
   created() {
-    this.checkRoleDirty();
+    // this.checkRoleDirty();
   },
   methods: {
     onNodeClick(node) {
@@ -93,11 +93,13 @@ export default {
     },
   },
   render() {
+    const domFab = null;
+    // const domFab=this._renderFab();
     return (
       <eb-page>
         <eb-navbar large largeTransparent title={this.$text('Role Management')} eb-back-link="Back"></eb-navbar>
         <role-list ref="roleList" roleIdStart={this.roleIdStart} onNodeClick={this.onNodeClick}></role-list>
-        {this._renderFab()}
+        {domFab}
       </eb-page>
     );
   },

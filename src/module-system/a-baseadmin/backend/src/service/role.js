@@ -17,7 +17,9 @@ module.exports = app => {
     }
 
     async add({ roleIdParent }) {
-      return await this.ctx.bean.role.add({ roleIdParent });
+      const res = await this.ctx.bean.role.add({ roleIdParent });
+      await this.ctx.bean.role.build();
+      return res;
     }
 
     async move({ roleId, roleIdParent }) {
