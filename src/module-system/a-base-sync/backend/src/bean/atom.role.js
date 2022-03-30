@@ -12,17 +12,20 @@ module.exports = app => {
       const catalog = item.catalog || 0;
       const system = item.system || 0;
       let roleIdParent = item.roleIdParent || 0;
-      // roleIdParent maybe string
-      if (typeof roleIdParent === 'string') {
-        const role = await this.beanRole.parseRoleName({ roleName: roleIdParent, force: false });
-        roleIdParent = role.id;
+      // is 0 when clone
+      if (roleIdParent !== 0) {
+        // roleIdParent maybe string
+        if (typeof roleIdParent === 'string') {
+          const role = await this.beanRole.parseRoleName({ roleName: roleIdParent, force: false });
+          roleIdParent = role.id;
+        }
+        // check if write right of roleIdParent
+        const writeRight = await this.beanRole._checkRightWriteOfRole({
+          roleId: roleIdParent,
+          user,
+        });
+        if (!writeRight) this.ctx.throw(403);
       }
-      // check if write right of roleIdParent
-      const writeRight = await this.beanRole._checkRightWriteOfRole({
-        roleId: roleIdParent,
-        user,
-      });
-      if (!writeRight) this.ctx.throw(403);
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
@@ -127,6 +130,18 @@ module.exports = app => {
 
       // set dirty
       await this.beanRole.setDirty(true);
+    }
+
+    async copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user }) {
+      await super.copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user });
+      if (target === 'clone') {
+        await this.ctx.model.role.update({
+          id: destKey.itemId,
+          catalog: srcItem.catalog,
+          system: srcItem.system,
+          roleIdParent: srcItem.roleIdParent,
+        });
+      }
     }
 
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
