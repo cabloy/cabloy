@@ -77,7 +77,7 @@ export default {
       return await this._loadNodeRoles(node);
     },
     onNodePerformClick(event, context, node) {
-      return this.layoutManager.base_onPerformResource(event, node.data);
+      return this.layoutManager.data.adapter.item_onActionView(event, node.data);
     },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
