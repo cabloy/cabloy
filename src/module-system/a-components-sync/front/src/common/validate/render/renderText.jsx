@@ -44,7 +44,7 @@ export default {
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
         return (
-          <f7-list-item key={key} staticClass="" after={value}>
+          <f7-list-item key={key} staticClass="" after={String(value)}>
             <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
               {title}
             </div>
