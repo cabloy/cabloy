@@ -22,6 +22,12 @@ const list = {
             name: 'roleListLayoutBlockTreeItems',
           },
         },
+        title: {
+          component: {
+            module: 'a-baseadmin',
+            name: 'roleListLayoutBlockTreeTitle',
+          },
+        },
       },
     },
     table: {

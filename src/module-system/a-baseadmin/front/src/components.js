@@ -1,6 +1,7 @@
 // listLayoutTree
 import roleListLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
 import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
+import roleListLayoutBlockTreeTitle from './components/role/listLayoutTree/listLayoutBlockTreeTitle.jsx';
 //
 import actionRole from './components/actionRole.js';
 import roleList from './components/role/list.jsx';
@@ -20,6 +21,7 @@ export default {
   // roleListLayoutTree
   roleListLayoutTree,
   roleListLayoutBlockTreeItems,
+  roleListLayoutBlockTreeTitle,
   //
   actionRole,
   roleList,

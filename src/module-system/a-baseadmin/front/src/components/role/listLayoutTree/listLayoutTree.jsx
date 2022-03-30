@@ -22,7 +22,10 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      this.layoutManager.subnavbar_policyDefault();
+      // eslint-disable-next-line
+      this.layoutManager.subnavbar.enable = false;
+      // eslint-disable-next-line
+      this.layoutManager.subnavbar.render = false;
       // instance
       await this.layoutManager.layout_setInstance(this);
     },
