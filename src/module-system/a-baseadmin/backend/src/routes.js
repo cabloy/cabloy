@@ -15,6 +15,14 @@ module.exports = app => {
     { method: 'post', path: 'role/itemActions', controller: 'role' },
     {
       method: 'post',
+      path: 'role/delete',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'delete' } },
+    },
+    //
+    {
+      method: 'post',
       path: 'role/dirty',
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
@@ -35,13 +43,7 @@ module.exports = app => {
     },
     { method: 'post', path: 'role/add', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/move', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    {
-      method: 'post',
-      path: 'role/delete',
-      controller: 'role',
-      middlewares: 'transaction',
-      meta: { right: { type: 'resource', name: 'role' } },
-    },
+
     { method: 'post', path: 'role/includes', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     {
       method: 'post',

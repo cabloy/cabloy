@@ -22,7 +22,7 @@ module.exports = app => {
 
     async add({ roleIdParent }) {
       const res = await this.ctx.bean.role.add({ roleIdParent });
-      await this.ctx.bean.role.build();
+      const progressId = await this._tailBuild();
       return res;
     }
 
@@ -30,8 +30,10 @@ module.exports = app => {
       return await this.ctx.bean.role.move({ roleId, roleIdParent });
     }
 
-    async delete({ roleId }) {
-      return await this.ctx.bean.role.delete({ roleId });
+    async delete({ roleAtomId, user }) {
+      await this.ctx.bean.role.delete({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
     }
 
     async includes({ roleId, page }) {
@@ -51,11 +53,16 @@ module.exports = app => {
     }
 
     async buildBulk() {
+      const progressId = await this._tailBuild();
+      // ok
+      return { progressId };
+    }
+
+    async _tailBuild() {
       const progressId = await this.ctx.bean.progress.create();
       // build, not await
       this.ctx.bean.role.build({ progressId });
-      // ok
-      return { progressId };
+      return progressId;
     }
   }
 

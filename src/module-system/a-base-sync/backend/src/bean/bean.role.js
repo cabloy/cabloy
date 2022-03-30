@@ -666,9 +666,16 @@ module.exports = ctx => {
 
     // build roles
     async build(options) {
+      options = options || {};
+      const progressId = options.progressId;
       // check dirty
       const dirty = await this.getDirty();
-      if (!dirty) return;
+      if (!dirty) {
+        // done
+        if (progressId) {
+          await ctx.bean.progress.done({ progressId });
+        }
+      }
       // queue
       await ctx.meta.util.queuePushAsync({
         module: moduleInfo.relativeName,
@@ -682,7 +689,12 @@ module.exports = ctx => {
       const progressId = options.progressId;
       // check dirty again
       const dirty = await this.getDirty();
-      if (!dirty) return;
+      if (!dirty) {
+        // done
+        if (progressId) {
+          await ctx.bean.progress.done({ progressId });
+        }
+      }
       // total
       let total;
       if (progressId) {

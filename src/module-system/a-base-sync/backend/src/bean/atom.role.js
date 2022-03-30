@@ -141,9 +141,6 @@ module.exports = app => {
           system: 0, // srcItem.system,
           roleIdParent: srcItem.roleIdParent,
         });
-        this.ctx.tail(async () => {
-          await this.ctx.bean.role.build();
-        });
       }
     }
 

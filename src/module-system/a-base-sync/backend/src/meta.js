@@ -62,6 +62,14 @@ module.exports = app => {
             write: {
               enableOnStatic: true,
             },
+            delete: {
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+            },
+            clone: {
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+            },
             // buildBulk: {
             //   code: 201,
             //   title: 'Build',
