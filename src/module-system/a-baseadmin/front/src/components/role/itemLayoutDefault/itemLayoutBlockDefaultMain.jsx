@@ -21,13 +21,13 @@ export default {
       return (
         <f7-segmented tag="p">
           <f7-button class="display-flex" outline iconF7="::add">
-            Add
+            {this.$text('Add Role')}
           </f7-button>
-          <f7-button class="display-flex" outline>
-            Outline
+          <f7-button class="display-flex" outline iconF7="::group">
+            {this.$text('Users')}
           </f7-button>
-          <f7-button class="display-flex" outline>
-            Active
+          <f7-button class="display-flex" outline iconF7=":role:role">
+            {this.$text('Includes')}
           </f7-button>
         </f7-segmented>
       );
