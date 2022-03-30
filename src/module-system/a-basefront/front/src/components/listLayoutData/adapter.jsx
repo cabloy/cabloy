@@ -48,7 +48,9 @@ export default {
     },
     async providerCreate(providerName) {
       // config component
-      const configComponent = this.getProviderConfig(providerName).component;
+      const provider = this.getProviderConfig(providerName);
+      if (!provider) throw new Error(`adapter provider not found: ${providerName}`);
+      const configComponent = provider.component;
       // load module
       const moduleProvider = await this.$meta.module.use(configComponent.module);
       // create provider
