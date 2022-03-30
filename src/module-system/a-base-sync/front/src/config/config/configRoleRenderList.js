@@ -8,6 +8,18 @@ const list = {
       },
     },
   },
+  data: {
+    adapter: {
+      providers: {
+        tree: {
+          component: {
+            module: 'a-baseadmin',
+            name: 'listLayoutDataProviderTree',
+          },
+        },
+      },
+    },
+  },
   layouts: {
     tree: {
       title: 'LayoutTree',

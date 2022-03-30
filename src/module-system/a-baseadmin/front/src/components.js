@@ -1,3 +1,5 @@
+// listLayoutData
+import listLayoutDataProviderTree from './components/listLayoutData/providerTree.jsx';
 // listLayoutTree
 import listLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
 //
@@ -16,6 +18,8 @@ import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
+  // listLayoutData
+  listLayoutDataProviderTree,
   // listLayoutTree
   listLayoutTree,
   //
