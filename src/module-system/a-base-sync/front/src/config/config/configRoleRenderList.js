@@ -8,24 +8,20 @@ const list = {
       },
     },
   },
-  data: {
-    adapter: {
-      providers: {
-        tree: {
-          component: {
-            module: 'a-baseadmin',
-            name: 'listLayoutDataProviderTree',
-          },
-        },
-      },
-    },
-  },
   layouts: {
     tree: {
       title: 'LayoutTree',
       component: {
         module: 'a-baseadmin',
-        name: 'listLayoutTree',
+        name: 'roleListLayoutTree',
+      },
+      blocks: {
+        items: {
+          component: {
+            module: 'a-baseadmin',
+            name: 'roleListLayoutBlockTreeItems',
+          },
+        },
       },
     },
     table: {

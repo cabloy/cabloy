@@ -1,7 +1,6 @@
-// listLayoutData
-import listLayoutDataProviderTree from './components/listLayoutData/providerTree.jsx';
 // listLayoutTree
-import listLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
+import roleListLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
+import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
 //
 import actionRole from './components/actionRole.js';
 import roleList from './components/role/list.jsx';
@@ -18,10 +17,9 @@ import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
-  // listLayoutData
-  listLayoutDataProviderTree,
-  // listLayoutTree
-  listLayoutTree,
+  // roleListLayoutTree
+  roleListLayoutTree,
+  roleListLayoutBlockTreeItems,
   //
   actionRole,
   roleList,

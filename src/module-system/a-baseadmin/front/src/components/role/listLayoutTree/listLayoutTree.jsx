@@ -23,11 +23,6 @@ export default {
     async init() {
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
-      // provider switch
-      await this.layoutManager.data_providerSwitch({
-        providerName: 'tree',
-        autoInit: this.layoutManager.container.scene !== 'search',
-      });
       // instance
       await this.layoutManager.layout_setInstance(this);
     },
