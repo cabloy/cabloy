@@ -20,8 +20,19 @@ module.exports = app => {
     }
 
     async item() {
+      const roleId = this.ctx.request.body.roleId;
+      const user = this.ctx.state.user.op;
+      // check right
+      const roleAtomId = await this.ctx.bean.role._forceRoleAtomId({ roleId });
+      const right = await this.ctx.bean.atom.checkRightRead({
+        atom: { id: roleAtomId },
+        user,
+      });
+      if (!right) this.ctx.throw(403);
+      // item
       const res = await this.service.role.item({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId,
+        roleId,
       });
       this.ctx.success(res);
     }

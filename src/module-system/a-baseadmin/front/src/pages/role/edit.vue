@@ -66,11 +66,12 @@ export default {
     };
   },
   created() {
-    this.$api.post('role/item', { roleId: this.roleId }).then(data => {
-      this.role = data;
-    });
+    this.loadRoleItem();
   },
   methods: {
+    async loadRoleItem() {
+      this.role = await this.$api.post('role/item', { roleId: this.roleId });
+    },
     getPageTitle() {
       let title = this.$text('Role');
       if (this.role) title = `${title}: ${this.role.roleName}`;

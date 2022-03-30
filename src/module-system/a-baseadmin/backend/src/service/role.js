@@ -8,8 +8,8 @@ module.exports = app => {
       return await this.ctx.bean.role.children({ roleId, page, user });
     }
 
-    async item({ roleId }) {
-      return await this.ctx.bean.role.get({ id: roleId });
+    async item({ roleAtomId, roleId }) {
+      return await this.ctx.bean.role.item({ roleAtomId, roleId });
     }
 
     async save({ roleId, data }) {

@@ -11,7 +11,7 @@ module.exports = app => {
       path: 'role/children',
       controller: 'role',
     },
-    { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
+    { method: 'post', path: 'role/item', controller: 'role' },
     {
       method: 'post',
       path: 'role/save',

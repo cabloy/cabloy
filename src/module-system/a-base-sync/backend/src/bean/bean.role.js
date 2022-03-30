@@ -103,11 +103,7 @@ module.exports = ctx => {
     }
 
     async delete({ roleAtomId, roleId, force = false }) {
-      // roleId
-      if (!roleAtomId) {
-        const atom = await this.modelAtom.get({ itemId: roleId });
-        roleAtomId = atom.id;
-      }
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
       // delete this
       await ctx.bean.atom.delete({ key: { atomId: roleAtomId }, options: { force } });
     }
@@ -276,6 +272,11 @@ module.exports = ctx => {
     async deleteRoleRight({ id }) {
       await this.modelRoleRight.delete({ id });
       await this.modelRoleRightRef.delete({ roleRightId: id });
+    }
+
+    async item({ roleAtomId, roleId }) {
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
+      return await ctx.bean.atom.read({ key: { atomId: roleAtomId } });
     }
 
     // child
@@ -814,13 +815,18 @@ module.exports = ctx => {
       );
     }
 
+    async _forceRoleAtomId({ roleAtomId, roleId }) {
+      if (!roleAtomId) {
+        const item = await this.get({ id: roleId });
+        roleAtomId = item.atomId;
+      }
+      return roleAtomId;
+    }
+
     async _checkRightWriteOfRole({ roleAtomId, roleId, user }) {
       if (!user || user.id === 0) return true;
       // roleId
-      if (!roleAtomId) {
-        const atom = await this.modelAtom.get({ itemId: roleId });
-        roleAtomId = atom.id;
-      }
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
       // check
       const res = await ctx.bean.atom.checkRightAction({
         atom: { id: roleAtomId },
