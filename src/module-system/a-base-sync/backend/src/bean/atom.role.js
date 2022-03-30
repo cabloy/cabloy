@@ -129,6 +129,20 @@ module.exports = app => {
       await this.beanRole.setDirty(true);
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      // delete
+      if (action === 4) {
+        const role = await this.ctx.model.role.get({ id: atom.itemId });
+        if (role.system === 1) return null;
+      }
+      // default
+      return res;
+    }
+
     async _getMeta(options, item, showSorting) {
       // meta
       const meta = this._ensureItemMeta(item);
