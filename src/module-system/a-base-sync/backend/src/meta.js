@@ -60,16 +60,16 @@ module.exports = app => {
             write: {
               enableOnStatic: true,
             },
-            buildBulk: {
-              code: 201,
-              title: 'Build',
-              actionModule: 'a-baseadmin',
-              actionComponent: 'actionRole',
-              icon: { f7: ':outline:build-circle-outline' },
-              bulk: true,
-              select: false,
-              stage: 'formal',
-            },
+            // buildBulk: {
+            //   code: 201,
+            //   title: 'Build',
+            //   actionModule: 'a-baseadmin',
+            //   actionComponent: 'actionRole',
+            //   icon: { f7: ':outline:build-circle-outline' },
+            //   bulk: true,
+            //   select: false,
+            //   stage: 'formal',
+            // },
           },
           validator: 'role',
           search: {

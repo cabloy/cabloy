@@ -4,8 +4,8 @@ module.exports = app => {
     // menu
     {
       atomName: 'Role Management',
-      atomStaticKey: 'listRoleManagement',
-      atomRevision: 2,
+      atomStaticKey: 'roleManagement',
+      atomRevision: 0,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
