@@ -1,3 +1,6 @@
+// listLayoutTree
+import listLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
+//
 import actionRole from './components/actionRole.js';
 import roleList from './components/role/list.jsx';
 import roleInfo from './components/role/info.vue';
@@ -13,6 +16,9 @@ import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
+  // listLayoutTree
+  listLayoutTree,
+  //
   actionRole,
   roleList,
   roleInfo,
