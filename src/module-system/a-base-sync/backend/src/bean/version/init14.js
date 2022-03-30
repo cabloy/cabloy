@@ -46,7 +46,7 @@ module.exports = function (ctx) {
         // { roleName: 'system', action: 'disable', scopeNames: 0 },
         // { roleName: 'system', action: 'disable', scopeNames: 'root' },
         // { roleName: 'system', action: 'authorize', scopeNames: 0 },
-        { roleName: 'system', action: 'authorize', scopeNames: 'root' },
+        // { roleName: 'system', action: 'authorize', scopeNames: 'root' },
         { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
         // { roleName: 'system', action: 'buildBulk' },
