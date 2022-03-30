@@ -1,6 +1,20 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
+    // menu
+    {
+      atomName: 'Role Management',
+      atomStaticKey: 'listRoleManagement',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.Tools',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: 'a-base',
+        atomClassName: 'role',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'template.system',
+    },
     // function
     {
       atomName: 'User Management',
@@ -16,7 +30,7 @@ module.exports = app => {
     {
       atomName: 'Role Management',
       atomStaticKey: 'role',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
