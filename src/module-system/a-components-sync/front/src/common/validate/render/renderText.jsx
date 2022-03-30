@@ -28,6 +28,10 @@ export default {
       }
       return value;
     },
+    _formatTextView(value) {
+      if (value === undefined || value === null) return '';
+      return String(value); // 0
+    },
     renderText(context) {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
@@ -43,8 +47,9 @@ export default {
       value = this._formatTextGeneral(property, value);
       // render
       if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
+        const valueView = this._formatTextView(value);
         return (
-          <f7-list-item key={key} staticClass="" after={String(value)}>
+          <f7-list-item key={key} staticClass="" after={valueView}>
             <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
               {title}
             </div>

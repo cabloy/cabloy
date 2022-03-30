@@ -13,6 +13,27 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Role Name',
+        ebDisplay: {
+          host: {
+            mode: 'edit',
+          },
+        },
+        notEmpty: true,
+      },
+      atomNameView: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Role Name',
+        ebDisplay: {
+          host: {
+            mode: 'view',
+          },
+        },
+        ebComputed: {
+          expression: 'atomNameLocale',
+          dependencies: ['atomName'],
+          immediate: true,
+        },
         notEmpty: true,
       },
       description: {
