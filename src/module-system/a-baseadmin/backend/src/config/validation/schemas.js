@@ -22,19 +22,19 @@ module.exports = app => {
   //     },
   //   },
   // };
-  // auth
-  schemas.auth = {
-    type: 'object',
-    properties: {
-      clientID: {
-        type: 'string',
-        ebType: 'text',
-      },
-      clientSecret: {
-        type: 'string',
-        ebType: 'text',
-      },
-    },
-  };
+  // // auth
+  // schemas.auth = {
+  //   type: 'object',
+  //   properties: {
+  //     clientID: {
+  //       type: 'string',
+  //       ebType: 'text',
+  //     },
+  //     clientSecret: {
+  //       type: 'string',
+  //       ebType: 'text',
+  //     },
+  //   },
+  // };
   return schemas;
 };

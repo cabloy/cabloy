@@ -13,15 +13,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        auth: {
-          schemas: 'auth',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        auth: schemas.auth,
-      },
+      schemas: {},
     },
     settings: {
       instance: {
