@@ -245,10 +245,7 @@ module.exports = app => {
     }
 
     async __after() {
-      const dirty = await this.ctx.bean.role.getDirty();
-      if (dirty) {
-        await this.ctx.bean.role.build();
-      }
+      await this.ctx.bean.role.build();
     }
 
     async __database() {
