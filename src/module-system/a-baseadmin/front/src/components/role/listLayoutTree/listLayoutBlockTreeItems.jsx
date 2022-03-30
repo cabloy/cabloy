@@ -30,7 +30,7 @@ export default {
       return maxLevelAutoOpened;
     },
     roleIdStart() {
-      return this.layoutManager.container.roleIdStart;
+      return this.layoutManager.container.roleIdStart || 0;
     },
   },
   mounted() {},
