@@ -29,23 +29,21 @@ export default {
   methods: {
     async _fetchRoleActions() {
       this.roleActions = await this.$api.post('/a/baseadmin/role/itemActions', {
-        key: { roleAtomId: this.roleAtomId },
+        key: { atomId: this.roleAtomId },
       });
     },
     _renderToolbar() {
-      return (
-        <f7-segmented tag="p">
-          <f7-button class="display-flex" outline iconF7="::add">
-            {this.$text('AddChildRole')}
+      if (!this.roleActions) return null;
+      const children = [];
+      for (const action of this.roleActions) {
+        children.push(
+          <f7-button key={action.name} class="display-flex" outline iconF7={action.icon.f7}>
+            {action.titleLocale}
           </f7-button>
-          <f7-button class="display-flex" outline iconF7="::group">
-            {this.$text('Users')}
-          </f7-button>
-          <f7-button class="display-flex" outline iconF7=":role:role">
-            {this.$text('Includes')}
-          </f7-button>
-        </f7-segmented>
-      );
+        );
+      }
+      if (children.length === 0) return null;
+      return <f7-segmented tag="p">{children}</f7-segmented>;
     },
   },
   render() {

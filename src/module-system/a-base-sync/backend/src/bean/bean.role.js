@@ -282,6 +282,28 @@ module.exports = ctx => {
     // addChildRole/users/includes
     async itemActions({ roleAtomId, user }) {
       // checkRightWrite first
+      const writeRight = await this._checkRightWriteOfRole({
+        roleAtomId,
+        user,
+      });
+      if (!writeRight) return [];
+      // checkRightCreate
+      const writeCreate = await ctx.bean.atom.checkRightCreate({ atomClass: __atomClassRole, user });
+      // array
+      let actions = [];
+      if (writeCreate) {
+        actions.push({ name: 'addChildRole', title: 'AddChildRole', icon: { f7: '::add' } });
+      }
+      actions.push({ name: 'users', title: 'Users', icon: { f7: '::group' } });
+      actions.push({ name: 'includes', title: 'Includes', icon: { f7: ':role:role' } });
+      actions = actions.map(item => {
+        return {
+          ...item,
+          titleLocale: ctx.text(item.title),
+        };
+      });
+      // ok
+      return actions;
     }
 
     // child

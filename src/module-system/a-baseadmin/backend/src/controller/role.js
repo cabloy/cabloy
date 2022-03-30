@@ -39,8 +39,8 @@ module.exports = app => {
 
     async itemActions() {
       // item
-      const res = await this.service.role.item({
-        roleAtomId: this.ctx.request.body.roleAtomId,
+      const res = await this.service.role.itemActions({
+        roleAtomId: this.ctx.request.body.key.atomId,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
