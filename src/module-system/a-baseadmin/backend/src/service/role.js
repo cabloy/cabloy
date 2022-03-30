@@ -12,6 +12,10 @@ module.exports = app => {
       return await this.ctx.bean.role.item({ roleAtomId, roleId });
     }
 
+    async itemActions({ roleAtomId, user }) {
+      return await this.ctx.bean.role.itemActions({ roleAtomId, user });
+    }
+
     async save({ roleId, data }) {
       return await this.ctx.bean.role.save({ roleId, data });
     }

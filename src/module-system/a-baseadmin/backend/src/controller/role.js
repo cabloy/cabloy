@@ -37,6 +37,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async itemActions() {
+      // item
+      const res = await this.service.role.item({
+        roleAtomId: this.ctx.request.body.roleAtomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async save() {
       // check demo
       this.ctx.bean.util.checkDemo();

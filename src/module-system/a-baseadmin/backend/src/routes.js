@@ -12,6 +12,20 @@ module.exports = app => {
       controller: 'role',
     },
     { method: 'post', path: 'role/item', controller: 'role' },
+    { method: 'post', path: 'role/itemActions', controller: 'role' },
+    {
+      method: 'post',
+      path: 'role/dirty',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
+    },
+    {
+      method: 'post',
+      path: 'role/buildBulk',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
+    },
+    //
     {
       method: 'post',
       path: 'role/save',
@@ -41,18 +55,7 @@ module.exports = app => {
       controller: 'role',
       meta: { right: { type: 'resource', name: 'role' } },
     },
-    {
-      method: 'post',
-      path: 'role/dirty',
-      controller: 'role',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
-    },
-    {
-      method: 'post',
-      path: 'role/buildBulk',
-      controller: 'role',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
-    },
+
     // user
     {
       method: 'post',

@@ -279,6 +279,11 @@ module.exports = ctx => {
       return await ctx.bean.atom.read({ key: { atomId: roleAtomId } });
     }
 
+    // addChildRole/users/includes
+    async itemActions({ roleAtomId, user }) {
+      // checkRightWrite first
+    }
+
     // child
     async child({ roleId, roleName }) {
       const list = await this.children({ roleId, roleName, page: false });
