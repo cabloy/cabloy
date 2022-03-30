@@ -88,4 +88,5 @@ export default {
   Copy: '复制',
   Copied: '已复制',
   Others: '其它',
+  AddChildRole: '添加子角色',
 };

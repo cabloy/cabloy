@@ -21,7 +21,7 @@ export default {
       return (
         <f7-segmented tag="p">
           <f7-button class="display-flex" outline iconF7="::add">
-            {this.$text('Add Role')}
+            {this.$text('AddChildRole')}
           </f7-button>
           <f7-button class="display-flex" outline iconF7="::group">
             {this.$text('Users')}

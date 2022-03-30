@@ -8,4 +8,5 @@ export default {
   'New Atom Right': 'New Data Right',
   'Atom Actions': 'Data Actions',
   Atoms: 'Data',
+  AddChildRole: 'Add Child',
 };
