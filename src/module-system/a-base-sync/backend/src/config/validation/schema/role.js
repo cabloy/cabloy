@@ -21,7 +21,6 @@ module.exports = app => {
         notEmpty: true,
       },
       atomNameView: {
-        type: 'string',
         ebType: 'text',
         ebTitle: 'Role Name',
         ebDisplay: {
@@ -84,10 +83,20 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
       },
-      roleIdParent: {
-        type: 'number',
+      // roleIdParent: {
+      //   type: 'number',
+      //   ebType: 'text',
+      //   ebTitle: 'RoleParent',
+      //   ebReadOnly: true,
+      // },
+      roleIdParentView: {
         ebType: 'text',
         ebTitle: 'RoleParent',
+        ebComputed: {
+          expression: 'roleNameParent',
+          dependencies: ['roleIdParent'],
+          immediate: true,
+        },
         ebReadOnly: true,
       },
       catalog: {

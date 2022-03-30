@@ -39,7 +39,9 @@ module.exports = app => {
             bean: 'role',
             title: 'Role',
             tableName: 'aRole',
-            tableNameModes: {},
+            tableNameModes: {
+              default: 'aRoleView',
+            },
             resource: true,
             simple: true,
             history: false,
