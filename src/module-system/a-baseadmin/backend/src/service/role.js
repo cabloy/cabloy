@@ -36,6 +36,12 @@ module.exports = app => {
       return { progressId };
     }
 
+    async clone({ roleAtomId, user }) {
+      const res = await this.ctx.bean.role.clone({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
+    }
+
     async includes({ roleId, page }) {
       return await this.ctx.bean.role.includes({ roleId, page });
     }

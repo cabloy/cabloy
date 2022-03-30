@@ -1,0 +1,37 @@
+export default {
+  methods: {
+    async _onActionClone() {
+      const { ctx, action, item } = this.$props;
+      await ctx.$view.dialog.confirm();
+      try {
+        // clone
+        const key = { atomId: item.atomId, itemId: item.itemId };
+        const data = await ctx.$api.post('/a/baseadmin/role/clone', { key });
+        const dataRes = data.draft || data.formal;
+        const keyDraft = dataRes.key;
+        const atomDraft = dataRes.atom;
+        // progress
+        const progressId = data.progressId;
+        await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
+        // event
+        // ctx.$meta.eventHub.$emit('atom:action', { key: keyDraft, action: { name: 'create' }, atom: atomDraft });
+        this.$meta.eventHub.$emit('role:add', { roleIdParent: item.roleIdParent, roleId: keyDraft.itemId });
+        // open
+        const url = ctx.$meta.util.replaceTemplate(
+          '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
+          atomDraft
+        );
+        let navigateOptions = action.navigateOptions;
+        if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+          navigateOptions = { target: '_self' };
+        }
+        ctx.$view.navigate(url, navigateOptions);
+      } catch (err) {
+        if (err.code === 422) {
+          throw new Error(err.message[0].message);
+        }
+        throw err;
+      }
+    },
+  },
+};

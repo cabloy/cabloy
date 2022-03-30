@@ -85,6 +85,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async clone() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.clone({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async includes() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.includes({

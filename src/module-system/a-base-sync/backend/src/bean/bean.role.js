@@ -108,6 +108,12 @@ module.exports = ctx => {
       await ctx.bean.atom.delete({ key: { atomId: roleAtomId }, options: { force } });
     }
 
+    async clone({ roleAtomId, roleId, user }) {
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
+      // delete this
+      return await ctx.bean.atom.clone({ key: { atomId: roleAtomId }, user });
+    }
+
     // for donothing on roleId === 0
     async adjustCatalog(roleId) {
       if (roleId === 0) return;

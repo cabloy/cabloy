@@ -20,6 +20,13 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'delete' } },
     },
+    {
+      method: 'post',
+      path: 'role/clone',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'clone' } },
+    },
     //
     {
       method: 'post',

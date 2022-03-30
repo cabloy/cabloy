@@ -5,8 +5,9 @@ export default {
       // delete
       await ctx.$view.dialog.confirm();
       const key = { atomId: item.atomId, itemId: item.itemId };
-      const res = await ctx.$api.post('/a/baseadmin/role/delete', { key });
-      const progressId = res.progressId;
+      const data = await ctx.$api.post('/a/baseadmin/role/delete', { key });
+      // progress
+      const progressId = data.progressId;
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       // ctx.$meta.eventHub.$emit('atom:action', { key, action });
       this.$meta.eventHub.$emit('role:delete', { roleId: item.itemId, roleIdParent: item.roleIdParent });
