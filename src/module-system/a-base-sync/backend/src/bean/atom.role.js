@@ -140,6 +140,10 @@ module.exports = app => {
       meta.summary = item.description;
       // translate
       await this._getMetaTranslate({ item });
+      // roleNameParent
+      if (item.roleNameParent) {
+        item.roleNameParentLocale = this.ctx.text(item.roleNameParent);
+      }
     }
 
     async _getMetaTranslate({ item }) {

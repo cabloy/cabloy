@@ -92,8 +92,11 @@ module.exports = app => {
       roleIdParentView: {
         ebType: 'text',
         ebTitle: 'RoleParent',
+        ebDisplay: {
+          expression: 'roleIdParent>0',
+        },
         ebComputed: {
-          expression: 'roleNameParent',
+          expression: 'roleNameParentLocale',
           dependencies: ['roleIdParent'],
           immediate: true,
         },
