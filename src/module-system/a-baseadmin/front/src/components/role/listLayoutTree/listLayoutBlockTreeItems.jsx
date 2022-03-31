@@ -79,8 +79,17 @@ export default {
     onNodePerformClick(event, context, node) {
       return this.layoutManager.data.adapter.item_onActionView(event, node.data);
     },
-    onNodePerformPopover(event, node) {
-      console.log(node);
+    async onNodePerformPopover(event, node) {
+      // todo: select first
+      const item = node.data;
+      const actions = await this.layoutManager.actions_fetchActions(item);
+    },
+    async onNodeContextmenuOpened(node) {
+      const item = node.data;
+      await this.layoutManager.actions_fetchActions(item);
+    },
+    _renderListItemContextMenu(item) {
+      return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
     },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
@@ -90,6 +99,7 @@ export default {
           root={this.root}
           propsOnLoadChildren={this.onLoadChildren}
           propsOnNodePerform={this.onNodePerformClick}
+          onNodeContextmenuOpened={this.onNodeContextmenuOpened}
           {...{
             scopedSlots: {
               'root-end': ({ node }) => {
@@ -99,6 +109,7 @@ export default {
                       iconF7="::more-horiz"
                       propsOnPerform={event => this.onNodePerformPopover(event, node)}
                     ></eb-link>
+                    {this._renderListItemContextMenu(node.data)}
                   </div>
                 );
               },

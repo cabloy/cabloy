@@ -391,6 +391,10 @@ export default {
             click: e => {
               this._onNodeClick(e, node);
             },
+            contextmenuOpened: e => {
+              this.$emit('node:contextmenuOpened', node, e);
+              this.$emit('nodeContextmenuOpened', node, e);
+            },
           },
         },
         children
