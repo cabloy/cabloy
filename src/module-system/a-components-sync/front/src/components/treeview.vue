@@ -173,6 +173,11 @@ export default {
     async toggleNodes(nodeIds, loadChildren, expandNode) {
       return await this._checkNodesGeneral('toggle', nodeIds, loadChildren, expandNode);
     },
+    async selectNode(nodeId, loadChildren, expandNode) {
+      const nodeIds = [nodeId];
+      const nodes = await this._checkNodesGeneral('select', nodeIds, loadChildren, expandNode);
+      return nodes[0];
+    },
     async _checkNodesGeneral(mode, nodeIds, loadChildren, expandNode) {
       const nodes = await this.findNodes(nodeIds, loadChildren);
       for (const node of nodes) {
@@ -182,6 +187,8 @@ export default {
           this._onNodeChange(node, false);
         } else if (mode === 'toggle') {
           this._onNodeChange(node, !node.attrs.checked);
+        } else if (mode === 'select') {
+          this._setSelectedNode(node);
         }
         if (expandNode) {
           this.expandNode(node);
@@ -392,6 +399,7 @@ export default {
               this._onNodeClick(e, node);
             },
             contextmenuOpened: e => {
+              this.selectNode(node.id);
               this.$emit('node:contextmenuOpened', node, e);
               this.$emit('nodeContextmenuOpened', node, e);
             },
@@ -463,15 +471,24 @@ export default {
         })
         .catch(done);
     },
+    _setSelectedNode(node) {
+      // selectable
+      const selectable =
+        node.attrs.selectable === undefined ? this.treeviewRoot.attrs.selectable : node.attrs.selectable;
+      if (selectable && this.selectedItem !== node) {
+        this.selectedItem = node;
+        // node:select
+        this.$emit('node:select', node);
+        this.$emit('nodeSelect', node);
+      }
+    },
     _onNodeClick(e, node) {
       // target
       const $target = this.$$(e.target);
 
       // selectable
-      const selectable =
-        node.attrs.selectable === undefined ? this.treeviewRoot.attrs.selectable : node.attrs.selectable;
-      if (selectable && !$target.is('.treeview-toggle')) {
-        this.selectedItem = node;
+      if (!$target.is('.treeview-toggle')) {
+        this._setSelectedNode(node);
       }
 
       // checkbox
