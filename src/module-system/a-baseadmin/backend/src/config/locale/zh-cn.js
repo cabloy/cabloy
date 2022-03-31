@@ -13,5 +13,5 @@ module.exports = {
   'Select Users': '选择用户',
   Users: '用户',
   Includes: '聚合',
-  AddChildRole: '添加子角色',
+  AddChild: '添加子项',
 };

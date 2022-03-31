@@ -285,7 +285,7 @@ module.exports = ctx => {
       return await ctx.bean.atom.read({ key: { atomId: roleAtomId } });
     }
 
-    // addChildRole/users/includes
+    // addChild/users/includes
     async itemActions({ roleAtomId, user }) {
       // checkRightWrite first
       const writeRight = await this._checkRightWriteOfRole({
@@ -298,7 +298,7 @@ module.exports = ctx => {
       // array
       let actions = [];
       if (writeCreate) {
-        actions.push({ name: 'addChildRole', title: 'AddChildRole', icon: { f7: '::add' } });
+        actions.push({ name: 'addChild', title: 'AddChild', icon: { f7: '::add' } });
       }
       actions.push({ name: 'users', title: 'Users', icon: { f7: '::group' } });
       actions.push({ name: 'includes', title: 'Includes', icon: { f7: ':role:role' } });
