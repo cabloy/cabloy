@@ -137,7 +137,8 @@ module.exports = app => {
     checkDemo(throwError = true) {
       const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
       if (!demo.enable) return true;
-      if (this.ctx.state.user.op.userName === 'root') return true;
+      const user = this.ctx.state.user;
+      if (user && user.op.userName === 'root') return true;
       if (throwError) {
         this.ctx.throw.module(moduleInfo.relativeName, 1014);
       }
