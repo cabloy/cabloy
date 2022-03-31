@@ -3,8 +3,8 @@ const list = {
     layout: {
       viewSize: {
         small: [{ name: 'tree' }],
-        medium: [{ name: 'table' }],
-        large: [{ name: 'table' }],
+        medium: [{ name: 'treeTable' }],
+        large: [{ name: 'treeTable' }],
       },
     },
   },
