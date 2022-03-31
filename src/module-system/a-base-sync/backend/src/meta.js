@@ -57,6 +57,12 @@ module.exports = app => {
                 },
               },
             },
+            layout: {
+              config: {
+                module: 'a-baseadmin',
+                name: 'role',
+              },
+            },
           },
           actions: {
             write: {

@@ -65,6 +65,15 @@ export default {
       }
       return schema;
     },
+    layout_getMetaLayoutConfig(atomClass) {
+      const atomClassBase = this.getAtomClass(atomClass);
+      const layoutConfig = this.$meta.util.getProperty(atomClassBase, 'layout.config');
+      if (layoutConfig) return layoutConfig;
+      return {
+        module: atomClass.module,
+        name: atomClass.atomClassName,
+      };
+    },
     async layout_prepareConfig() {
       const atomClass = this.container.atomClass;
       // configAtomBase
@@ -72,10 +81,11 @@ export default {
       // configAtom
       if (atomClass) {
         // load module
-        await this.$meta.module.use(atomClass.module);
+        const metaLayoutConfig = this.layout_getMetaLayoutConfig(atomClass);
+        await this.$meta.module.use(metaLayoutConfig.module);
         this.base.configAtom = this.$meta.util.getProperty(
-          this.$meta.config.modules[atomClass.module],
-          `atoms.${atomClass.atomClassName}`
+          this.$meta.config.modules[metaLayoutConfig.module],
+          `atoms.${metaLayoutConfig.name}`
         );
         // special for cms
         const atomClassBase = this.getAtomClass(atomClass);
