@@ -21,6 +21,26 @@ export default {
           ></eb-link>
         );
       }
+      // check write action
+      const actionWrite = this.layoutManager.actions_findAction('write');
+      if (actionWrite) {
+        children.push(
+          <eb-link
+            key="actionsLeft:users"
+            iconF7=":outline:group-outline"
+            tooltip={this.$text('Users')}
+            propsOnPerform={event => this.actions_onAction(event, { name: 'users' })}
+          ></eb-link>
+        );
+        children.push(
+          <eb-link
+            key="actionsLeft:includes"
+            iconF7=":role:role"
+            tooltip={this.$text('Includes')}
+            propsOnPerform={event => this.actions_onAction(event, { name: 'includes' })}
+          ></eb-link>
+        );
+      }
       // ok
       return children;
     },
