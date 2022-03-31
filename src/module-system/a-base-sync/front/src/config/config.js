@@ -1,8 +1,6 @@
 /** @module a-base/front/config */
 
 import configResourceRenderList from './config/configResourceRenderList.js';
-import configRoleRenderItem from './config/configRoleRenderItem.js';
-import configRoleRenderList from './config/configRoleRenderList.js';
 import avatarUser from '../assets/img/user.png';
 
 /** The front config of a-base
@@ -29,12 +27,6 @@ export default {
     resource: {
       render: {
         list: configResourceRenderList,
-      },
-    },
-    role: {
-      render: {
-        item: configRoleRenderItem,
-        list: configRoleRenderList,
       },
     },
   },
