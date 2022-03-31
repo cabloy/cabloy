@@ -79,6 +79,9 @@ export default {
     onNodePerformClick(event, context, node) {
       return this.layoutManager.data.adapter.item_onActionView(event, node.data);
     },
+    onNodePerformPopover(event, node) {
+      console.log(node);
+    },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
       return (
@@ -89,8 +92,15 @@ export default {
           propsOnNodePerform={this.onNodePerformClick}
           {...{
             scopedSlots: {
-              'root-end': scope => {
-                return <div>{scope.node.attrs.label}</div>;
+              'root-end': ({ node }) => {
+                return (
+                  <div class="treeview-item-root-end">
+                    <eb-link
+                      iconF7="::more-horiz"
+                      propsOnPerform={event => this.onNodePerformPopover(event, node)}
+                    ></eb-link>
+                  </div>
+                );
               },
             },
           }}
