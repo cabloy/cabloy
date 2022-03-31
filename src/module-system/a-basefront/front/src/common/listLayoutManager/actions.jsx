@@ -5,7 +5,7 @@ export default {
   },
   methods: {
     async actions_fetchActions(item) {
-      if (item._actions) return;
+      if (item._actions) return item._actions;
       // fetch
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
@@ -26,6 +26,7 @@ export default {
       }
       // set
       Vue.set(item, '_actions', actions);
+      return item._actions;
     },
   },
 };
