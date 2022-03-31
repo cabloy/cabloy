@@ -18,9 +18,13 @@ export default {
   },
   methods: {
     async load() {
-      // fetch
-      this.items = await this.$api.post('auth/list');
-      this.groupItems();
+      try {
+        // fetch
+        this.items = await this.$api.post('auth/list');
+        this.groupItems();
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+      }
     },
     groupItems() {
       this.itemsGroups = [

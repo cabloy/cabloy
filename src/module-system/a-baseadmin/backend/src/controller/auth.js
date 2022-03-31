@@ -1,6 +1,8 @@
 module.exports = app => {
   class AuthController extends app.Controller {
     async list() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.list();
       this.ctx.success(res);
     }
