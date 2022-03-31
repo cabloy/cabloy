@@ -12,7 +12,6 @@ module.exports = app => {
       controller: 'role',
     },
     { method: 'post', path: 'role/item', controller: 'role' },
-    { method: 'post', path: 'role/itemActions', controller: 'role' },
     {
       method: 'post',
       path: 'role/delete',

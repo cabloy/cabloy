@@ -19,9 +19,10 @@ module.exports = app => {
           const role = await this.beanRole.parseRoleName({ roleName: roleIdParent, force: false });
           roleIdParent = role.id;
         }
-        // check if write right of roleIdParent
-        const writeRight = await this.beanRole._checkRightWriteOfRole({
+        // check if addChild right of roleIdParent
+        const writeRight = await this.beanRole._checkRightActionOfRole({
           roleId: roleIdParent,
+          action: 'addChild',
           user,
         });
         if (!writeRight) this.ctx.throw(403);

@@ -14,24 +14,15 @@ export default {
     },
   },
   data() {
-    return {
-      roleActions: null,
-    };
+    return {};
   },
   computed: {
     roleAtomId() {
       return this.layoutManager.container.atomId;
     },
   },
-  created() {
-    this._fetchRoleActions();
-  },
+  created() {},
   methods: {
-    async _fetchRoleActions() {
-      this.roleActions = await this.$api.post('/a/baseadmin/role/itemActions', {
-        key: { atomId: this.roleAtomId },
-      });
-    },
     _renderToolbar() {
       if (!this.roleActions) return null;
       const children = [];

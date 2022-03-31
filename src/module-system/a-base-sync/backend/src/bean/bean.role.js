@@ -285,33 +285,6 @@ module.exports = ctx => {
       return await ctx.bean.atom.read({ key: { atomId: roleAtomId } });
     }
 
-    // addChild/users/includes
-    async itemActions({ roleAtomId, user }) {
-      // checkRightWrite first
-      const writeRight = await this._checkRightWriteOfRole({
-        roleAtomId,
-        user,
-      });
-      if (!writeRight) return [];
-      // checkRightCreate
-      const writeCreate = await ctx.bean.atom.checkRightCreate({ atomClass: __atomClassRole, user });
-      // array
-      let actions = [];
-      if (writeCreate) {
-        actions.push({ name: 'addChild', title: 'AddChild', icon: { f7: '::add' } });
-      }
-      actions.push({ name: 'users', title: 'Users', icon: { f7: '::group' } });
-      actions.push({ name: 'includes', title: 'Includes', icon: { f7: ':role:role' } });
-      actions = actions.map(item => {
-        return {
-          ...item,
-          titleLocale: ctx.text(item.title),
-        };
-      });
-      // ok
-      return actions;
-    }
-
     // child
     async child({ roleId, roleName }) {
       const list = await this.children({ roleId, roleName, page: false });
@@ -868,14 +841,14 @@ module.exports = ctx => {
       return roleAtomId;
     }
 
-    async _checkRightWriteOfRole({ roleAtomId, roleId, user }) {
+    async _checkRightActionOfRole({ roleAtomId, roleId, action, user }) {
       if (!user || user.id === 0) return true;
       // roleId
       roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
       // check
       const res = await ctx.bean.atom.checkRightAction({
         atom: { id: roleAtomId },
-        action: 'write',
+        action,
         user,
       });
       return !!res;
