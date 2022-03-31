@@ -345,4 +345,14 @@ input[type='search']::-webkit-search-decoration {
   .button {
     display: flex;
   }
+
+  .treeview-item .treeview-item-root-end {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+
+    .link + .link {
+      margin-left: 4px;
+    }
+  }
 }

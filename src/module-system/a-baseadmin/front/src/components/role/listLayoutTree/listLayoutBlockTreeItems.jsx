@@ -87,6 +87,13 @@ export default {
           root={this.root}
           propsOnLoadChildren={this.onLoadChildren}
           propsOnNodePerform={this.onNodePerformClick}
+          {...{
+            scopedSlots: {
+              'root-end': scope => {
+                return <div>{scope.node.attrs.label}</div>;
+              },
+            },
+          }}
         ></eb-treeview>
       );
     },

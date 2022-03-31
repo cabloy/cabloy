@@ -2,14 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
-      <div class="category-node" slot="root-end" slot-scope="{ node }">
-        <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{ $text('Add') }}</eb-link>
-        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{
-          $text('Move')
-        }}</eb-link>
-        <eb-link class="category-action" v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{
-          $text('Delete')
-        }}</eb-link>
+      <div class="treeview-item-root-end" slot="root-end" slot-scope="{ node }">
+        <eb-link :context="node" :onPerform="onPerformAdd">{{ $text('Add') }}</eb-link>
+        <eb-link v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{ $text('Move') }}</eb-link>
+        <eb-link v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{ $text('Delete') }}</eb-link>
       </div>
     </eb-treeview>
   </eb-page>
@@ -178,8 +174,9 @@ export default {
       if (
         data.atomClass.module !== this.atomClass.module ||
         data.atomClass.atomClassName !== this.atomClass.atomClassName
-      )
+      ) {
         return;
+      }
       this._clearSystemCache();
       const node = this.findNode(data.categoryIdParent);
       this.reloadNode(node);
@@ -199,14 +196,3 @@ export default {
   },
 };
 </script>
-<style lang="less" scoped>
-.category-node {
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-end;
-
-  .category-action + .category-action {
-    margin-left: 4px;
-  }
-}
-</style>
