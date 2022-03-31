@@ -3,6 +3,8 @@ import roleListLayoutTree from './components/role/listLayoutTree/listLayoutTree.
 import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
 import roleListLayoutBlockTreeTitle from './components/role/listLayoutTree/listLayoutBlockTreeTitle.jsx';
 // itemLayoutDefault
+import roleItemLayoutBlockDefaultTitle from './components/role/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
+import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
 import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
 //
 import actionRole from './components/actionRole.js';
@@ -25,6 +27,8 @@ export default {
   roleListLayoutBlockTreeItems,
   roleListLayoutBlockTreeTitle,
   // itemLayoutDefault
+  roleItemLayoutBlockDefaultTitle,
+  roleItemLayoutBlockDefaultSubnavbar,
   roleItemLayoutBlockDefaultMain,
   //
   actionRole,
