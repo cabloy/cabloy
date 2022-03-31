@@ -154,6 +154,11 @@ module.exports = app => {
         const role = await this.ctx.model.role.get({ id: atom.itemId });
         if (role.system === 1) return null;
       }
+      // clone
+      if (action === 5) {
+        const role = await this.ctx.model.role.get({ id: atom.itemId });
+        if (role.roleIdParent === 0) return null;
+      }
       // default
       return res;
     }
