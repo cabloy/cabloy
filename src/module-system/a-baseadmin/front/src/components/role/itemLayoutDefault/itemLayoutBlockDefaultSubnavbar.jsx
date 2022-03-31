@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixin: [itemLayoutBlockDefaultActions],
+  mixins: [itemLayoutBlockDefaultActions],
   props: {
     layoutManager: {
       type: Object,
@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     _renderActionsLeft() {
-      const children = this.layoutManager.info_renderActionsLeft();
+      const children = this.info_renderActionsLeft();
       return <div class="actions-block actions-block-left">{children}</div>;
     },
     _renderActionsRight() {

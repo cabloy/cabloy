@@ -85,10 +85,10 @@ module.exports = app => {
             },
             addChild: {
               code: 102,
-              title: 'Move',
+              title: 'AddChild',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
-              icon: { f7: ':outline:folder-transfer-outline' },
+              icon: { f7: ':outline:add-circle-outline' },
             },
             resourceAuthorization: {
               code: 103,

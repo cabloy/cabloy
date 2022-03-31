@@ -4,7 +4,7 @@ export default {
   meta: {
     global: false,
   },
-  mixin: [itemLayoutBlockDefaultActions],
+  mixins: [itemLayoutBlockDefaultActions],
   props: {
     layoutManager: {
       type: Object,

@@ -3,71 +3,23 @@ export default {
     return {};
   },
   methods: {
+    // addChild / users / includes
     info_renderActionsLeft() {
-      if (!this.base_ready) return;
-      const item = this.base.item;
+      if (!this.layoutManager.base_ready) return;
       const children = [];
-      // comment
-      if (item.atomStage === 0 || this.base.config.render.item.info.comment) {
+      // addChild
+      const actionAddChild = this.layoutManager.actions_findAction('addChild');
+      console.log(actionAddChild);
+      if (actionAddChild) {
+        const _action = this.layoutManager.getAction(actionAddChild);
         children.push(
           <eb-link
-            key="actionsLeft:comment"
-            iconF7="::comment-dots"
-            iconBadge={item.commentCount}
-            tooltip={this.$text('Comments')}
-            eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}
+            key={actionAddChild.id}
+            iconF7={_action.icon.f7}
+            tooltip={this.layoutManager.actions_getActionTitle(actionAddChild)}
+            propsOnPerform={event => this.actions_onAction(event, actionAddChild)}
           ></eb-link>
         );
-      }
-      // attachment
-      if (this.base.config.render.item.info.attachment) {
-        children.push(
-          <eb-link
-            key="actionsLeft:attachment"
-            iconF7="::attachment-line"
-            iconBadge={item.attachmentCount}
-            tooltip={this.$text('Attachments')}
-            eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}
-          ></eb-link>
-        );
-      }
-      // star
-      if (item.atomStage === 1) {
-        children.push(
-          <eb-link
-            key="actionsLeft:star"
-            iconF7={item.star ? '::star' : ':outline:star-outline'}
-            tooltip={this.$text('UserStar')}
-            propsOnPerform={this.info_onStarSwitch}
-          ></eb-link>
-        );
-      }
-      // labels
-      if (item.atomStage === 1) {
-        const labels = item.labels ? JSON.parse(item.labels) : [];
-        if (labels.length > 0) {
-          for (const label of labels) {
-            const _label = this.info_getLabel(label);
-            children.push(
-              <eb-link
-                key={label}
-                text={_label.text}
-                style={{ color: _label.color }}
-                tooltip={this.$text('UserLabel')}
-                propsOnPerform={this.info_onLabel}
-              ></eb-link>
-            );
-          }
-        } else {
-          children.push(
-            <eb-link
-              key="actionsLeft:label"
-              iconF7=":outline:label-outline"
-              tooltip={this.$text('UserLabels')}
-              propsOnPerform={this.info_onLabel}
-            ></eb-link>
-          );
-        }
       }
       // ok
       return children;
