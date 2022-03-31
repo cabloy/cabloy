@@ -19,14 +19,14 @@ export default {
   created() {},
   methods: {
     _renderNormal() {
-      return <f7-nav-right>{this.layoutManager.actions_render()}</f7-nav-right>;
+      return <f7-nav-right>{this.actions_render()}</f7-nav-right>;
     },
     _renderFull() {
       return (
         <f7-nav-right class="atom-item-title-info-container">
-          {this.layoutManager.info_renderActionsLeft()}
-          {this.layoutManager.info_renderActionsRight()}
-          {this.layoutManager.actions_render()}
+          {this.info_renderActionsLeft()}
+          {this.info_renderActionsRight()}
+          {this.actions_render()}
         </f7-nav-right>
       );
     },
