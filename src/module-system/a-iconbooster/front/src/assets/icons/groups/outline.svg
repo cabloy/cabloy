@@ -40,6 +40,9 @@
 <symbol id="draft-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M20 2a1 1 0 0 1 1 1v3.757l-2 2V4H5v16h14v-2.758l2-2V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h16zm1.778 6.808l1.414 1.414L15.414 18l-1.416-.002l.002-1.412l7.778-7.778zM13 12v2H8v-2h5zm3-4v2H8V8h8z"/>
 </symbol>
+<symbol id="folder-transfer-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M12.414 5H21a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7.414l2 2zM4 5v14h16V7h-8.414l-2-2H4zm8 7V9l4 4l-4 4v-3H8v-2h4z"/>
+</symbol>
 <symbol id="heart-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3C4.239 3 2 5.216 2 7.95c0 2.207.875 7.445 9.488 12.74a.985.985 0 0 0 1.024 0C21.125 15.395 22 10.157 22 7.95C22 5.216 19.761 3 17 3s-5 3-5 3s-2.239-3-5-3Z"/>
 </symbol>
