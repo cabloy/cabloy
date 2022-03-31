@@ -32,6 +32,7 @@ module.exports = function (ctx) {
     async _addRoleRightsRole() {
       // add role rights
       const roleRights = [
+        // { roleName: 'system', action: 'create' },
         // { roleName: 'system', action: 'read', scopeNames: 0 },
         // { roleName: 'system', action: 'write', scopeNames: 0 },
         // { roleName: 'system', action: 'delete', scopeNames: 0 },
@@ -42,12 +43,12 @@ module.exports = function (ctx) {
         // { roleName: 'system', action: 'disable', scopeNames: 'root' },
         // { roleName: 'system', action: 'authorize', scopeNames: 0 },
         // { roleName: 'system', action: 'authorize', scopeNames: 'root' },
-        { roleName: 'system', action: 'create' },
         { roleName: 'system', action: 'read', scopeNames: 'root' },
         { roleName: 'system', action: 'write', scopeNames: 'root' },
         { roleName: 'system', action: 'delete', scopeNames: 'root' },
         { roleName: 'system', action: 'clone', scopeNames: 'root' },
         { roleName: 'system', action: 'move', scopeNames: 'root' },
+        { roleName: 'system', action: 'addChild', scopeNames: 'root' },
         { roleName: 'system', action: 'resourceAuthorization', scopeNames: 'root' },
         { roleName: 'system', action: 'atomAuthorization', scopeNames: 'root' },
         { roleName: 'system', action: 'deleteBulk' },

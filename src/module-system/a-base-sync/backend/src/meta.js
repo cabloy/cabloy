@@ -83,15 +83,22 @@ module.exports = app => {
               actionComponent: 'actionRole',
               icon: { f7: ':outline:folder-transfer-outline' },
             },
-            resourceAuthorization: {
+            addChild: {
               code: 102,
+              title: 'Move',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:folder-transfer-outline' },
+            },
+            resourceAuthorization: {
+              code: 103,
               title: 'Resource Authorization',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:archive-lock-outline' },
             },
             atomAuthorization: {
-              code: 103,
+              code: 104,
               title: 'Data Authorization',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
