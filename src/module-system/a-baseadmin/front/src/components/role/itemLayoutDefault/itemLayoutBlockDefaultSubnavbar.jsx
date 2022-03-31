@@ -22,7 +22,7 @@ export default {
       return <div class="actions-block actions-block-left">{children}</div>;
     },
     _renderActionsRight() {
-      const children = this.layoutManager.info_renderActionsRight();
+      const children = this.info_renderActionsRight();
       return <div class="actions-block actions-block-right">{children}</div>;
     },
   },

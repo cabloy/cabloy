@@ -9,7 +9,6 @@ export default {
       const children = [];
       // addChild
       const actionAddChild = this.layoutManager.actions_findAction('addChild');
-      console.log(actionAddChild);
       if (actionAddChild) {
         const _action = this.layoutManager.getAction(actionAddChild);
         children.push(
@@ -44,30 +43,24 @@ export default {
       // ok
       return children;
     },
+    // resourceAuthorization/atomAuthorization
     info_renderActionsRight() {
-      if (!this.base_ready) return;
-      const item = this.base.item;
+      if (!this.layoutManager.base_ready) return;
       const children = [];
-      // atom closed
-      if (item.atomStage === 0 && item.atomClosed === 1) {
-        children.push(
-          <f7-badge key="atomClosed" color="orange">
-            {this.$text('Closed')}
-          </f7-badge>
-        );
+      for (const actionName of ['resourceAuthorization', 'atomAuthorization']) {
+        const action = this.layoutManager.actions_findAction(actionName);
+        if (action) {
+          const _action = this.layoutManager.getAction(action);
+          children.push(
+            <eb-link
+              key={action.id}
+              iconF7={_action.icon.f7}
+              tooltip={this.layoutManager.actions_getActionTitle(action)}
+              propsOnPerform={event => this.actions_onAction(event, action)}
+            ></eb-link>
+          );
+        }
       }
-      // flow
-      if (item.atomStage === 0 && item.flowNodeNameCurrentLocale) {
-        children.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
-      // avatar
-      children.push(this.info_renderAvatar());
-      // date
-      children.push(this.info_renderDate());
       // ok
       return children;
     },
