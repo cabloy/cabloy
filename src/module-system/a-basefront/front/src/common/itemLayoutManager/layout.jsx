@@ -51,14 +51,25 @@ export default {
         this.layout.instance = null;
       }
     },
+    layout_getMetaLayoutConfig(atomClass) {
+      const atomClassBase = this.getAtomClass(atomClass);
+      const layoutConfig = this.$meta.util.getProperty(atomClassBase, 'layout.config');
+      if (layoutConfig) return layoutConfig;
+      return {
+        module: atomClass.module,
+        name: atomClass.atomClassName,
+      };
+    },
     async layout_prepareConfig() {
       const atomClass = this.base.atomClass;
       // configAtomBase
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
+      const metaLayoutConfig = this.layout_getMetaLayoutConfig(atomClass);
+      await this.$meta.module.use(metaLayoutConfig.module);
       this.base.configAtom = this.$meta.util.getProperty(
-        this.$meta.config.modules[atomClass.module],
-        `atoms.${atomClass.atomClassName}`
+        this.$meta.config.modules[metaLayoutConfig.module],
+        `atoms.${metaLayoutConfig.name}`
       );
       // special for cms
       const atomClassBase = this.getAtomClass(atomClass);
