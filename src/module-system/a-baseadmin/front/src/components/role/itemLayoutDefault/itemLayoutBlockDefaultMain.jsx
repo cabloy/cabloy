@@ -39,7 +39,6 @@ export default {
         children.push(
           <eb-button
             key={action.name}
-            class="display-flex"
             outline
             iconF7={action.icon.f7}
             propsOnPerform={event => this.onPerformAction(event, action)}
