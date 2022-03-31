@@ -35,6 +35,8 @@ module.exports = {
   'Move Down': '下移',
   'Developer Tool': '开发者工具',
   'Role Type': '角色类型',
+  'Resource Authorization': '资源授权',
+  'Data Authorization': '数据授权',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
@@ -122,6 +124,7 @@ module.exports = {
   Basic: '基本',
   Preview: '预览',
   Role: '角色',
+  Move: '移动',
   // role name
   root: '根',
   anonymous: '匿名',

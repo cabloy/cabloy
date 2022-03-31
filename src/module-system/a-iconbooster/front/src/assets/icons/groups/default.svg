@@ -129,6 +129,9 @@
 <symbol id="draft" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M20 2a1 1 0 0 1 1 1v3.757l-8.999 9l-.006 4.238l4.246.006L21 15.242V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h16zm1.778 6.808l1.414 1.414L15.414 18l-1.416-.002l.002-1.412l7.778-7.778zM12 12H7v2h5v-2zm3-4H7v2h8V8z"/>
 </symbol>
+<symbol id="drive-file-move" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 12v-3h-4v-4h4V8l5 5l-5 5z"/>
+</symbol>
 <symbol id="edit" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M4.42 20.579a1 1 0 0 1-.737-.326a.988.988 0 0 1-.263-.764l.245-2.694L14.983 5.481l3.537 3.536L7.205 20.33l-2.694.245a.95.95 0 0 1-.091.004ZM19.226 8.31L15.69 4.774l2.121-2.121a1 1 0 0 1 1.415 0l2.121 2.121a1 1 0 0 1 0 1.415l-2.12 2.12l-.001.001Z"/>
 </symbol>

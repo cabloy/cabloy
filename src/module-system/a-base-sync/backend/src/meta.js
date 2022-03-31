@@ -76,6 +76,27 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
             },
+            move: {
+              code: 101,
+              title: 'Move',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: '::drive-file-move' },
+            },
+            resourceAuthorization: {
+              code: 102,
+              title: 'Resource Authorization',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: '::archive-lock-outline' },
+            },
+            atomAuthorization: {
+              code: 103,
+              title: 'Data Authorization',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: '::database-lock-outline' },
+            },
             // buildBulk: {
             //   code: 201,
             //   title: 'Build',
