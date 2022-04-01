@@ -46,7 +46,12 @@ export default {
       const node = this.refTree.find(null, item => {
         return item.data.atomId === atomId;
       });
-      return { item: node.data };
+      const nodeParent = node.parent;
+      const items = nodeParent.children.map(node => {
+        return node.data;
+      });
+      const index = items.findIndex(item => item.atomId === atomId);
+      return { items, index };
     },
     // spliceItem(items, index, howmany, ...args) {
     //   if (howmany === undefined) howmany = 1;
