@@ -36,8 +36,10 @@ export default {
     //
     const _h = this.$createElement;
     const props = this.props;
-    const { className, id, style } = props;
+    let { className, id, style } = props;
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
+
+    if (!id) id = this.treeviewId;
 
     // nodes
     const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children) : [];
@@ -60,7 +62,8 @@ export default {
       this.reload();
     },
   },
-  created() {
+  // not use created
+  mounted() {
     if (this.auto) {
       this.reload();
     }
@@ -435,13 +438,16 @@ export default {
     _needLoadChildren(node) {
       return this.onLoadChildren && node.attrs.loadChildren && !node._loaded;
     },
+    _calcNodeAttrId(nodeParent, node) {
+      return `${nodeParent.attrs.id}-${node.id}`;
+    },
     childrenLoaded(node, children) {
       this.$set(node, '_loaded', true);
       if (!node.children) node.children = [];
       const nodeChildren = node.children;
       for (const item of children) {
         // attrs id
-        item.attrs.id = `${node.attrs.id}-${item.id}`;
+        item.attrs.id = this._calcNodeAttrId(node, item);
         // children
         if (!item.children) item.children = [];
         // checked
