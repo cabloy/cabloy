@@ -30,7 +30,8 @@ export default {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', atomId);
         if (!res) return;
-        const { items, index } = res;
+        // item: support tree provider
+        const { items, index, item } = res;
         const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
         const label = params.options.label;
         if (label) {
@@ -45,8 +46,12 @@ export default {
           }
         } else {
           // just change
-          if (index !== -1) {
-            items[index].labels = JSON.stringify(data.labels);
+          if (item) {
+            item.labels = JSON.stringify(data.labels);
+          } else {
+            if (index !== -1) {
+              items[index].labels = JSON.stringify(data.labels);
+            }
           }
         }
       });

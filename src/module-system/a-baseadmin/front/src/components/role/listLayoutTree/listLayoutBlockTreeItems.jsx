@@ -91,6 +91,31 @@ export default {
     _renderListItemContextMenu(item) {
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
     },
+    _renderNodeLabelStar(node) {
+      if (!node.data.star) return;
+      return <f7-icon color="orange" size="16" f7="::star"></f7-icon>;
+    },
+    _renderNodeAfter(node) {
+      const item = node.data;
+      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
+      const domPopover = (
+        <eb-link
+          iconF7="::more-horiz"
+          iconColor="gray"
+          propsOnPerform={event => this.onNodePerformPopover(event, node)}
+        ></eb-link>
+      );
+      const domContextMenu = this._renderListItemContextMenu(item);
+      return (
+        <div class="treeview-item-root-end">
+          {domAfterMetaFlags}
+          {domAfterLabels}
+          {domPopover}
+          {domContextMenu}
+        </div>
+      );
+    },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
       return (
@@ -103,20 +128,10 @@ export default {
           {...{
             scopedSlots: {
               label: ({ node }) => {
-                if (!node.data.star) return;
-                return <f7-icon color="orange" size="16" f7="::star"></f7-icon>;
+                return this._renderNodeLabelStar(node);
               },
               'root-end': ({ node }) => {
-                return (
-                  <div class="treeview-item-root-end">
-                    <eb-link
-                      iconF7="::more-horiz"
-                      iconColor="gray"
-                      propsOnPerform={event => this.onNodePerformPopover(event, node)}
-                    ></eb-link>
-                    {this._renderListItemContextMenu(node.data)}
-                  </div>
-                );
+                return this._renderNodeAfter(node);
               },
             },
           }}

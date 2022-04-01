@@ -51,7 +51,6 @@ export default {
         } else {
           // just change
           if (item) {
-            console.log(item.star, data.star);
             item.star = data.star;
           } else {
             if (index !== -1) {
