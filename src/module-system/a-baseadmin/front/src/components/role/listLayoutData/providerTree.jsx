@@ -53,9 +53,9 @@ export default {
       const index = items.findIndex(item => item.atomId === atomId);
       return { items, index };
     },
-    // spliceItem(items, index, howmany, ...args) {
-    //   if (howmany === undefined) howmany = 1;
-    //   return items.splice(index, howmany, ...args);
-    // },
+    spliceItem(items, index, howmany, ...args) {
+      if (howmany === undefined) howmany = 1;
+      return items.splice(index, howmany, ...args);
+    },
   },
 };
