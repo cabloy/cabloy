@@ -27,15 +27,16 @@ export default {
   },
   methods: {
     onContextMenu(event) {
-      const popover = this.$$(this.$el).find('.popover').eq(0);
-      if (popover.length === 0) return;
+      const domPopover = this.$$(this.$el).find('.popover').eq(0);
+      const domRoot = this.$$(this.$el).find('.treeview-item-root').eq(0);
+      if (domPopover.length === 0 || domRoot.length === 0) return;
 
       event.stopPropagation();
       event.preventDefault();
 
       // finished the event immediately
       this.$nextTick(() => {
-        this.$f7.popover.open(popover, this.$el);
+        this.$f7.popover.open(domPopover[0], domRoot[0]);
         this.$emit('contextmenuOpened', event);
       });
     },

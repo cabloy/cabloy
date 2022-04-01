@@ -85,7 +85,7 @@ export default {
     },
     async onNodeContextmenuOpened(node) {
       const item = node.data;
-      await this.layoutManager.actions_fetchActions(item);
+      // await this.layoutManager.actions_fetchActions(item);
     },
     _renderListItemContextMenu(item) {
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
