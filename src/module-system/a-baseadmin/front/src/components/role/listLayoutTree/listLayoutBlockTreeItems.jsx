@@ -80,9 +80,8 @@ export default {
       return this.layoutManager.data.adapter.item_onActionView(event, node.data);
     },
     async onNodePerformPopover(event, node) {
-      // todo: select first
       const item = node.data;
-      const actions = await this.layoutManager.actions_fetchActions(item);
+      // open popover
     },
     async onNodeContextmenuOpened(node) {
       const item = node.data;
@@ -107,6 +106,7 @@ export default {
                   <div class="treeview-item-root-end">
                     <eb-link
                       iconF7="::more-horiz"
+                      iconColor="gray"
                       propsOnPerform={event => this.onNodePerformPopover(event, node)}
                     ></eb-link>
                     {this._renderListItemContextMenu(node.data)}
