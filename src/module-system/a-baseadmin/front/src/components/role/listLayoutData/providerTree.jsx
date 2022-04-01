@@ -48,9 +48,9 @@ export default {
       });
       return { item: node.data };
     },
-    spliceItem(items, index, howmany, ...args) {
-      if (howmany === undefined) howmany = 1;
-      return items.splice(index, howmany, ...args);
-    },
+    // spliceItem(items, index, howmany, ...args) {
+    //   if (howmany === undefined) howmany = 1;
+    //   return items.splice(index, howmany, ...args);
+    // },
   },
 };
