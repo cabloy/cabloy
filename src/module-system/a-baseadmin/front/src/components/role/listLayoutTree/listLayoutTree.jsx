@@ -26,6 +26,11 @@ export default {
       this.layoutManager.subnavbar.enable = false;
       // eslint-disable-next-line
       this.layoutManager.subnavbar.render = false;
+      // provider switch
+      await this.layoutManager.data_providerSwitch({
+        providerName: 'tree',
+        autoInit: false,
+      });
       // instance
       await this.layoutManager.layout_setInstance(this);
     },

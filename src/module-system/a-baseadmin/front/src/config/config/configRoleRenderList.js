@@ -7,6 +7,18 @@ const list = {
         large: [{ name: 'treeTable' }],
       },
     },
+    data: {
+      adapter: {
+        providers: {
+          tree: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'roleListLayoutDataProviderTree',
+            },
+          },
+        },
+      },
+    },
   },
   layouts: {
     tree: {
