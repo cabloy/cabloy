@@ -3,6 +3,9 @@ export default {
     return {};
   },
   methods: {
+    actions_onAction(event, actionName) {
+      return this.layoutManager.actions_onAction(event, actionName);
+    },
     // addChild / users / includes
     info_renderActionsLeft() {
       if (!this.layoutManager.base_ready) return;

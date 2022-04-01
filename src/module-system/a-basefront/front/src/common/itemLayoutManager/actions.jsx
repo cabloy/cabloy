@@ -142,9 +142,10 @@ export default {
       const actionWrite = this.actions_findAction('write');
       // support simple
       if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
-        const actionIcon = this.container.mode === 'edit' ? '::save' : '::edit';
-        const actionName = this.container.mode === 'edit' ? 'save' : 'write';
-        const actionTitle = this.container.mode === 'edit' ? 'Save' : 'Edit';
+        const mode = this.container.mode;
+        const actionIcon = mode === 'edit' ? '::save' : '::edit';
+        const actionName = mode === 'edit' ? 'save' : 'write';
+        const actionTitle = mode === 'edit' ? 'Save' : 'Edit';
         children.push(
           <eb-link
             key={actionName}
