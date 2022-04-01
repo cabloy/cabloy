@@ -1,6 +1,3 @@
-import Vue from 'vue';
-const ebLoadMore = Vue.prototype.$meta.module.get('a-components').options.components.ebLoadMore;
-
 export default {
   props: {
     layoutManager: {
@@ -10,60 +7,31 @@ export default {
   data() {
     return {
       inited: false,
-      loadMoreComponent: null,
-      items: [],
+      refTree: null,
     };
   },
   beforeDestroy() {
-    if (this.loadMoreComponent) {
-      this.loadMoreComponent.$destroy();
-      this.loadMoreComponent = null;
-    }
+    this.refTree = null;
   },
   methods: {
     async switch(options) {
       // only inited once
       if (this.inited) return;
-      // load more
-      const componentOptions = {
-        propsData: {
-          onLoadClear: this.onLoadClear,
-          onLoadMore: this.onLoadMore,
-          autoInit: options.autoInit,
-        },
-      };
-      this.loadMoreComponent = this.$meta.util.createComponentInstance(ebLoadMore, componentOptions);
       // inited
       this.inited = true;
     },
-    onPageRefresh(force) {
-      this.loadMoreComponent.reload(force);
+    onPageRefresh() {
+      this.onPageClear();
     },
     onPageInfinite() {
-      this.loadMoreComponent.loadMore();
+      // do nothing
     },
-    onPageClear() {
-      this.loadMoreComponent.clear();
-    },
-    onLoadClear(done) {
-      // eslint-disable-next-line
-      this.layoutManager.bulk_clearSelectedAtoms();
-      // items
-      this.items = [];
-      done();
-    },
-    async onLoadMore({ index }) {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // index
-      params.options.page = { index };
-      // fetch
-      const res = await this.$api.post('/a/base/atom/select', params);
-      this.items = this.items.concat(res.list);
-      return res;
+    onPageClear() {},
+    setTreeInstance(refTree) {
+      this.refTree = refTree;
     },
     getItems() {
-      return this.items;
+      // return this.items;
     },
     getLoading() {
       return false;
@@ -75,16 +43,14 @@ export default {
       // do nothing
     },
     findItem(atomId) {
-      const index = this.items.findIndex(item => item.atomId === atomId);
-      return { pageNum: 1, items: this.items, index };
+      const item = this.refTree.find(null, item => {
+        return item.data.atomId === atomId;
+      });
+      return { item };
     },
     spliceItem(items, index, howmany, ...args) {
       if (howmany === undefined) howmany = 1;
       return items.splice(index, howmany, ...args);
-    },
-    renderLoadMore() {
-      if (!this.loadMoreComponent) return null;
-      return this.loadMoreComponent.renderContent();
     },
   },
 };

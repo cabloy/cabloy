@@ -33,7 +33,9 @@ export default {
       return this.layoutManager.container.roleIdStart || 0;
     },
   },
-  mounted() {},
+  mounted() {
+    this.layoutManager.data.adapter._callMethod('setTreeInstance', this.$refs.tree);
+  },
   beforeDestroy() {},
   methods: {
     async _loadNodeRoles(node) {

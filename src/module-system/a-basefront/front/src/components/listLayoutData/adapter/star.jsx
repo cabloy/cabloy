@@ -35,7 +35,8 @@ export default {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', atomId);
         if (!res) return;
-        const { items, index } = res;
+        // item: support tree provider
+        const { items, index, item } = res;
         const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
         const star = params.options.star;
         if (star) {
@@ -49,8 +50,13 @@ export default {
           }
         } else {
           // just change
-          if (index !== -1) {
-            items[index].star = data.star;
+          if (item) {
+            console.log(item.star, data.star);
+            item.star = data.star;
+          } else {
+            if (index !== -1) {
+              items[index].star = data.star;
+            }
           }
         }
       });
