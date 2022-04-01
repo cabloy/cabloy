@@ -346,13 +346,20 @@ input[type='search']::-webkit-search-decoration {
     display: flex;
   }
 
-  .treeview-item .treeview-item-root-end {
-    flex-grow: 1;
-    display: flex;
-    justify-content: flex-end;
+  .treeview-item {
+    .treeview-item-root-end {
+      flex-grow: 1;
+      display: flex;
+      justify-content: flex-end;
 
-    .link + .link {
-      margin-left: 4px;
+      .link + .link {
+        margin-left: 4px;
+      }
+    }
+
+    .treeview-item-label {
+      display: flex;
+      align-items: center;
     }
   }
 }

@@ -102,6 +102,10 @@ export default {
           onNodeContextmenuOpened={this.onNodeContextmenuOpened}
           {...{
             scopedSlots: {
+              label: ({ node }) => {
+                if (!node.data.star) return;
+                return <f7-icon color="orange" size="16" f7="::star"></f7-icon>;
+              },
               'root-end': ({ node }) => {
                 return (
                   <div class="treeview-item-root-end">
