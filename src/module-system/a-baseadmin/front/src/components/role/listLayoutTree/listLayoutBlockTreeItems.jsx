@@ -79,12 +79,12 @@ export default {
       return this.layoutManager.data.adapter.item_onActionView(event, node.data);
     },
     async onNodePerformPopover(event, node) {
-      const item = node.data;
-      // open popover
+      const refTree = this.$refs.tree;
+      refTree._openNodeContextMenu(node);
     },
     async onNodeContextmenuOpened(node) {
       const item = node.data;
-      // await this.layoutManager.actions_fetchActions(item);
+      await this.layoutManager.actions_fetchActions(item);
     },
     _renderListItemContextMenu(item) {
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');

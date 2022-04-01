@@ -215,6 +215,28 @@ export default {
       const $el = this.getElementByNode(node);
       this.$f7.treeview.open($el);
     },
+    _openNodeContextMenu(node) {
+      return this._onNodeContextMenuOpened(null, node);
+    },
+    _onNodeContextMenuOpened(e, node) {
+      // popover
+      const domNode = this.getElementByNode(node);
+      const domPopover = domNode.find('.popover').eq(0);
+      let domTarget = domNode.find('.treeview-item-root-end').eq(0);
+      if (domTarget.length === 0) {
+        domTarget = domNode.find('.treeview-item-root').eq(0);
+      }
+      if (domPopover.length === 0 || domTarget.length === 0) return false;
+      // open
+      this.$f7.popover.open(domPopover[0], domTarget[0]);
+      // select
+      this.selectNode(node.id);
+      // event
+      this.$emit('node:contextmenuOpened', node, e);
+      this.$emit('nodeContextmenuOpened', node, e);
+      // ok
+      return true;
+    },
     getElementByNode(node) {
       const elementId = node.attrs.id;
       return this.$$(`#${elementId}`);
@@ -402,9 +424,7 @@ export default {
               this._onNodeClick(e, node);
             },
             contextmenuOpened: e => {
-              this.selectNode(node.id);
-              this.$emit('node:contextmenuOpened', node, e);
-              this.$emit('nodeContextmenuOpened', node, e);
+              this._onNodeContextMenuOpened(e, node);
             },
           },
         },
