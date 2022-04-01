@@ -29,7 +29,7 @@ export default {
     async _loadNodeCategories(node) {
       const refTree = this.$refs.tree;
       //
-      const levelCurrent = (node.data && node.data.__level) || 0;
+      const levelCurrent = node.__level || 0;
       const level = levelCurrent + 1;
       let treeChildren;
       if (node.root) {
@@ -49,10 +49,8 @@ export default {
             itemToggle: true,
             loadChildren: true,
           },
-          data: {
-            ...item,
-            __level: level,
-          },
+          data: item,
+          __level: level,
         };
         if (
           level <= this.layoutManager.container.maxLevelAutoOpened ||
