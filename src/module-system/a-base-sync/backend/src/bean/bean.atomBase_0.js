@@ -155,6 +155,7 @@ module.exports = app => {
         await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
       }
+      // --- item is filtered by validation
       // write atom
       await this._writeAtom({ key, item, user, atomSimple, atomStage });
       // tag
@@ -165,7 +166,7 @@ module.exports = app => {
         }
       }
       // resource: update locales
-      if (_atomClass.resource && item.atomStage === 1) {
+      if (_atomClass.resource && atomStage === 1 && item.atomName) {
         await this.ctx.bean.resource.setLocales({
           atomId: key.atomId,
           atomName: item.atomName,
