@@ -69,7 +69,8 @@ export default {
     validate_errorsReset() {
       this.validate.errors = null;
     },
-    validate_render() {
+    validate_render(options) {
+      options = options || {};
       if (!this.base_ready) return null;
       return (
         <eb-validate
@@ -81,7 +82,7 @@ export default {
           params={this.base.validateParams}
           errors={this.validate.errors}
           propsOnPerform={this.validate_onPerformValidate}
-          onSubmit={this.validate_onSubmit}
+          onSubmit={options.validate_onSubmit || this.validate_onSubmit}
           onValidateItemChange={this.validate_onValidateItemChange}
           onErrorsSet={this.validate_errorsSet}
           onErrorsReset={this.validate_errorsReset}

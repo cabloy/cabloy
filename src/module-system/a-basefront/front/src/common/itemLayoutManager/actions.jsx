@@ -119,6 +119,46 @@ export default {
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
     },
+    actions_renderButtonSave() {
+      // only show on draft
+      const atomClosed = this.base.item.atomClosed === 1;
+      const actionWrite = this.actions_findAction('write');
+      // support simple
+      if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
+        const mode = this.container.mode;
+        const actionIcon = mode === 'edit' ? '::save' : '::edit';
+        const actionName = mode === 'edit' ? 'save' : 'write';
+        const actionTitle = mode === 'edit' ? 'Save' : 'Edit';
+        return (
+          <eb-link
+            key={actionName}
+            ref="buttonSave"
+            iconF7={actionIcon}
+            tooltip={this.$text(actionTitle)}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
+      }
+      return null;
+    },
+    actions_renderButtonSubmit() {
+      const atomClosed = this.base.item.atomClosed === 1;
+      const actionWrite = this.actions_findAction('write');
+      // submit
+      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
+        const actionName = 'submit';
+        return (
+          <eb-link
+            key={actionName}
+            ref="buttonSubmit"
+            iconF7="::done"
+            tooltip={this.$text('Submit')}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
+      }
+      return null;
+    },
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
@@ -138,38 +178,11 @@ export default {
         );
       }
       // only show on draft
-      const atomClosed = this.base.item.atomClosed === 1;
-      const actionWrite = this.actions_findAction('write');
-      // support simple
-      if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
-        const mode = this.container.mode;
-        const actionIcon = mode === 'edit' ? '::save' : '::edit';
-        const actionName = mode === 'edit' ? 'save' : 'write';
-        const actionTitle = mode === 'edit' ? 'Save' : 'Edit';
-        children.push(
-          <eb-link
-            key={actionName}
-            ref="buttonSave"
-            iconF7={actionIcon}
-            tooltip={this.$text(actionTitle)}
-            propsOnPerform={event => this.actions_onAction(event, actionName)}
-          ></eb-link>
-        );
-      }
-      // submit
-      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
-        const actionName = 'submit';
-        children.push(
-          <eb-link
-            key={actionName}
-            ref="buttonSubmit"
-            iconF7="::done"
-            tooltip={this.$text('Submit')}
-            propsOnPerform={event => this.actions_onAction(event, actionName)}
-          ></eb-link>
-        );
-      }
-      //
+      const buttonSave = this.actions_renderButtonSave();
+      if (buttonSave) children.push(buttonSave);
+      const buttonSubmit = this.actions_renderButtonSubmit();
+      if (buttonSubmit) children.push(buttonSubmit);
+      // popover
       if (this.actions_listPopover) {
         children.push(
           <f7-link key="actionsPopover" iconF7="::more-horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>

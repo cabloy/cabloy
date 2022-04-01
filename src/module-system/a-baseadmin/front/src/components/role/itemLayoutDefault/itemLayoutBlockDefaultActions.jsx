@@ -47,23 +47,8 @@ export default {
       if (!this.layoutManager.base_ready) return null;
       const children = [];
       // write
-      const actionWrite = this.layoutManager.actions_findAction('write');
-      // support simple
-      if (actionWrite) {
-        const mode = this.layoutManager.container.mode;
-        const actionIcon = mode === 'edit' ? '::save' : '::edit';
-        const actionName = mode === 'edit' ? 'save' : 'write';
-        const actionTitle = mode === 'edit' ? 'Save' : 'Edit';
-        children.push(
-          <eb-link
-            key={actionName}
-            ref="buttonSave"
-            iconF7={actionIcon}
-            tooltip={this.$text(actionTitle)}
-            propsOnPerform={event => this.actions_onAction(event, actionName)}
-          ></eb-link>
-        );
-      }
+      const buttonSave = this.layoutManager.actions_renderButtonSave();
+      if (buttonSave) children.push(buttonSave);
       // delete / clone / move
       this._renderActionsGeneral(children, ['delete', 'clone', 'move']);
       // ok
