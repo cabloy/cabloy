@@ -468,6 +468,19 @@ export default {
       const data = await this.onLoadChildren(node);
       return this.childrenLoaded(node, data);
     },
+    async _preloadChildren(node, options) {
+      // attrs.id
+      if (!node.attrs.id) throw new Error(`node.attrs.id must be set: ${node.attrs.label}, ${node.id}`);
+      // options attrs
+      options = options || {};
+      const optionsAttrs = options.attrs || { loadChildren: false, opened: true };
+      // _loadChildren
+      const data = await this._loadChildren(node);
+      // set attrs
+      Object.assign(node.attrs, optionsAttrs);
+      // ok
+      return data;
+    },
     _onNodeLoadChildren(e, done, node) {
       this._loadChildren(node)
         .then(() => {

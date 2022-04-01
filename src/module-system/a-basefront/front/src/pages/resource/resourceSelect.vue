@@ -107,10 +107,7 @@ export default {
           },
         };
         if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
-          const children = await this.onLoadChildren(nodeChild);
-          refTree.childrenLoaded(nodeChild, children);
-          nodeChild.attrs.loadChildren = false;
-          nodeChild.attrs.opened = true;
+          await refTree._preloadChildren(nodeChild);
         }
         list.push(nodeChild);
       }
