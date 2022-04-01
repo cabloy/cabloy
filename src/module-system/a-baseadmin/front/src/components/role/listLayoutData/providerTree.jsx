@@ -43,10 +43,10 @@ export default {
       // do nothing
     },
     findItem(atomId) {
-      const item = this.refTree.find(null, item => {
+      const node = this.refTree.find(null, item => {
         return item.data.atomId === atomId;
       });
-      return { item };
+      return { item: node.data };
     },
     spliceItem(items, index, howmany, ...args) {
       if (howmany === undefined) howmany = 1;
