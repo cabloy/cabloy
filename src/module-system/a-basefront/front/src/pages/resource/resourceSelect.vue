@@ -75,6 +75,8 @@ export default {
       return queries;
     },
     async _loadNodeCategories(node) {
+      const refTree = this.$refs.tree;
+      //
       const levelCurrent = (node.data && node.data.__level) || 0;
       const level = levelCurrent + 1;
       let treeChildren;
@@ -86,9 +88,10 @@ export default {
       const list = [];
       for (const item of treeChildren) {
         const checkbox = false;
-        const node = {
+        const nodeChild = {
           id: item.id,
           attrs: {
+            id: refTree._calcNodeAttrId(node, item),
             // link: '#',
             label: item.categoryNameLocale,
             toggle: true,
@@ -104,12 +107,12 @@ export default {
           },
         };
         if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
-          const children = await this.onLoadChildren(node);
-          this.$refs.tree.childrenLoaded(node, children);
-          node.attrs.loadChildren = false;
-          node.attrs.opened = true;
+          const children = await this.onLoadChildren(nodeChild);
+          refTree.childrenLoaded(nodeChild, children);
+          nodeChild.attrs.loadChildren = false;
+          nodeChild.attrs.opened = true;
         }
-        list.push(node);
+        list.push(nodeChild);
       }
       return list;
     },
