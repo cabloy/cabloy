@@ -34,7 +34,7 @@ export default {
         }
         // refresh list
         await this._loopProviders(async provider => {
-          this._callMethodProvider(provider, 'onPageRefresh');
+          this._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
         });
         // ok
         return;

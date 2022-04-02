@@ -78,12 +78,13 @@ export default {
       await this._loadChildren(this.treeviewRoot);
     },
     async reloadNode(node, nodeNew) {
-      if (node.root) return;
+      // support root
+      // if (node.root) return;
       // empty
       node.children.splice(0, node.children.length);
       // splice
       const nodeParent = node.parent;
-      if (nodeNew) {
+      if (nodeNew && nodeParent) {
         const index = nodeParent.children.findIndex(item => item.id === node.id);
         node = this.$utils.extend({}, node, nodeNew);
         nodeParent.children.splice(index, 1, node);

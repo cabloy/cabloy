@@ -20,8 +20,12 @@ export default {
       // inited
       this.inited = true;
     },
-    onPageRefresh() {
-      this.onPageClear();
+    onPageRefresh(bundle) {
+      bundle = bundle || {};
+      const item = bundle.item;
+      const roleIdParent = item ? item.roleIdParent : 0;
+      const nodeParent = this._getNodeParent(roleIdParent);
+      this._reloadNode(nodeParent);
     },
     onPageInfinite() {
       // do nothing
@@ -43,10 +47,9 @@ export default {
       // do nothing
     },
     findItem(atomId) {
-      const node = this.refTree.find(null, item => {
-        return item.data.atomId === atomId;
-      });
-      return { item: node.data };
+      const node = this._findNodeByAtomId(atomId);
+      const item = node ? node.data : null;
+      return { item };
       // const node = this.refTree.find(null, item => {
       //   return item.data.atomId === atomId;
       // });
@@ -68,7 +71,7 @@ export default {
       const itemOld = node.data;
       if (itemOld.sorting !== itemNew.sorting) {
         // reload parent
-        this._reloadNode(this._getNodeParent(node));
+        this._reloadNode(this._getNodeParent(itemOld.roleIdParent));
       } else {
         // change current
         node.data = itemNew;
@@ -78,8 +81,15 @@ export default {
       if (!node) return;
       this.refTree.reloadNode(node);
     },
-    _getNodeParent(node) {
-      return this.refTree.find(null, _node => _node.id === node.data.roleIdParent);
+    _findNodeByAtomId(atomId) {
+      if (!atomId) return null;
+      return this.refTree.find(null, item => {
+        return item.data.atomId === atomId;
+      });
+    },
+    _getNodeParent(roleIdParent) {
+      if (!roleIdParent) return this.refTree.treeviewRoot;
+      return this.refTree.find(null, node => node.id === roleIdParent);
     },
   },
 };
