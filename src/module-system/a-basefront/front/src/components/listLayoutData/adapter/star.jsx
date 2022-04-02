@@ -33,30 +33,30 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const res = this._callMethodProvider(provider, 'findItem', atomId);
-        if (!res) return;
+        const bundle = this._callMethodProvider(provider, 'findItem', atomId);
         // item: support tree provider
-        const { items, index, item } = res;
+        const { item } = bundle;
+        const foundItem = !!item;
         const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
         const star = params.options.star;
         if (star) {
           // switch
-          if (data.star === 0 && index !== -1) {
-            this._callMethodProvider(provider, 'spliceItem', { items, index, item });
-          } else if (data.star === 1 && index === -1) {
+          if (data.star === 0 && foundItem) {
+            this._callMethodProvider(provider, 'spliceItem', bundle);
+          } else if (data.star === 1 && !foundItem) {
             this._callMethodProvider(provider, 'onPageRefresh');
-          } else if (index !== -1) {
-            items[index].star = data.star;
+          } else if (foundItem) {
+            this._callMethodProvider(provider, 'replaceItem', bundle, {
+              ...item,
+              star: data.star,
+            });
           }
         } else {
           // just change
-          if (item) {
-            item.star = data.star;
-          } else {
-            if (index !== -1) {
-              items[index].star = data.star;
-            }
-          }
+          this._callMethodProvider(provider, 'replaceItem', bundle, {
+            ...item,
+            star: data.star,
+          });
         }
       });
     },

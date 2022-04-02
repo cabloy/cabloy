@@ -29,8 +29,8 @@ export default {
       await this._loopProviders(async provider => {
         // findItem
         const bundle = this._callMethodProvider(provider, 'findItem', atomId);
-        const { item } = bundle;
         // item: support tree provider
+        const { item } = bundle;
         const foundItem = !!item;
         const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
         const label = params.options.label;
