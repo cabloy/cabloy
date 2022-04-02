@@ -65,23 +65,25 @@ export default {
       for (const pageNum in this.itemsPages) {
         const items = this.itemsPages[pageNum];
         const index = items.findIndex(item => item.atomId === atomId);
+        const item = index === -1 ? null : items[index];
         if (index !== -1) {
           return {
             pageNum: parseInt(pageNum),
             items,
             index,
+            item,
           };
         }
       }
-      return { pageNum: null, items: null, index: -1 };
+      return { pageNum: null, items: null, index: -1, item: null };
     },
-    spliceItem(items, index, howmany, ...args) {
+    spliceItem(bundle, howmany, ...args) {
       if (howmany === undefined) howmany = 1;
       this.info.total -= howmany - args.length;
-      return items.splice(index, howmany, ...args);
+      return bundle.items.splice(bundle.index, howmany, ...args);
     },
-    replaceItem(items, index, atomNew) {
-      this.$set(items, index, atomNew);
+    replaceItem(bundle, atomNew) {
+      this.$set(bundle.items, bundle.index, atomNew);
     },
     gotoPage(pageNum) {
       // check if same

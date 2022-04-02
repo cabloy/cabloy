@@ -28,31 +28,31 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const res = this._callMethodProvider(provider, 'findItem', atomId);
-        if (!res) return;
+        const bundle = this._callMethodProvider(provider, 'findItem', atomId);
+        const { item } = bundle;
         // item: support tree provider
-        const { items, index, item } = res;
+        const foundItem = !!item;
         const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
         const label = params.options.label;
         if (label) {
           // switch
           const exists = data.labels.indexOf(String(label)) > -1;
-          if (!exists && index !== -1) {
-            this._callMethodProvider(provider, 'spliceItem', items, index);
-          } else if (exists && index === -1) {
+          if (!exists && foundItem) {
+            this._callMethodProvider(provider, 'spliceItem', bundle);
+          } else if (exists && !foundItem) {
             this._callMethodProvider(provider, 'onPageRefresh');
-          } else if (index !== -1) {
-            items[index].labels = JSON.stringify(data.labels);
+          } else if (foundItem) {
+            this._callMethodProvider(provider, 'replaceItem', bundle, {
+              ...item,
+              labels: JSON.stringify(data.labels),
+            });
           }
         } else {
           // just change
-          if (item) {
-            item.labels = JSON.stringify(data.labels);
-          } else {
-            if (index !== -1) {
-              items[index].labels = JSON.stringify(data.labels);
-            }
-          }
+          this._callMethodProvider(provider, 'replaceItem', bundle, {
+            ...item,
+            labels: JSON.stringify(data.labels),
+          });
         }
       });
     },

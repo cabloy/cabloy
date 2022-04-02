@@ -116,11 +116,11 @@ export default {
       return { pageNum: null, items: null, index: -1 };
     },
     // items,index,howmany[,...item]
-    spliceItem(items, index, howmany, ...args) {
-      return this._callMethod('spliceItem', items, index, howmany, ...args);
+    spliceItem(bundle, howmany, ...args) {
+      return this._callMethod('spliceItem', bundle, howmany, ...args);
     },
-    replaceItem(items, index, atomNew) {
-      return this._callMethod('replaceItem', items, index, atomNew);
+    replaceItem(bundle, atomNew) {
+      return this._callMethod('replaceItem', bundle, atomNew);
     },
     renderLoadMore() {
       return this._callMethod('renderLoadMore');

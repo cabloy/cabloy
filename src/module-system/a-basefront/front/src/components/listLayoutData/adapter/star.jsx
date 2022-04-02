@@ -42,7 +42,7 @@ export default {
         if (star) {
           // switch
           if (data.star === 0 && index !== -1) {
-            this._callMethodProvider(provider, 'spliceItem', items, index);
+            this._callMethodProvider(provider, 'spliceItem', { items, index, item });
           } else if (data.star === 1 && index === -1) {
             this._callMethodProvider(provider, 'onPageRefresh');
           } else if (index !== -1) {

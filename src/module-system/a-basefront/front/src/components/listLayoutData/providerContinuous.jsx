@@ -76,14 +76,15 @@ export default {
     },
     findItem(atomId) {
       const index = this.items.findIndex(item => item.atomId === atomId);
-      return { pageNum: 1, items: this.items, index };
+      const item = index === -1 ? null : this.items[index];
+      return { pageNum: 1, items: this.items, index, item };
     },
-    spliceItem(items, index, howmany, ...args) {
+    spliceItem(bundle, howmany, ...args) {
       if (howmany === undefined) howmany = 1;
-      return items.splice(index, howmany, ...args);
+      return bundle.items.splice(bundle.index, howmany, ...args);
     },
-    replaceItem(items, index, atomNew) {
-      this.$set(items, index, atomNew);
+    replaceItem(bundle, atomNew) {
+      this.$set(bundle.items, bundle.index, atomNew);
     },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;

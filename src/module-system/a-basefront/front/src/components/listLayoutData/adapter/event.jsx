@@ -42,10 +42,10 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const { items, index } = this.findItemProvier(provider, key.atomId);
-        if (index === -1) return;
+        const { items, index, item } = this.findItemProvier(provider, key.atomId);
+        if (!item && index === -1) return;
         if (action.name === 'delete') {
-          this._callMethodProvider(provider, 'spliceItem', items, index);
+          this._callMethodProvider(provider, 'spliceItem', { items, index, item });
           return;
         }
         // other actions
@@ -55,7 +55,7 @@ export default {
           key,
           options,
         });
-        this._callMethodProvider(provider, 'replaceItem', items, index, atomNew);
+        this._callMethodProvider(provider, 'replaceItem', { items, index, item }, atomNew);
       });
     },
     async event_onActionsChanged(data) {
@@ -63,9 +63,7 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const res = this._callMethodProvider(provider, 'findItem', key.atomId);
-        if (!res) return;
-        const { items, index, item } = res;
+        const { items, index, item } = this._callMethodProvider(provider, 'findItem', key.atomId);
         if (!item && index === -1) return;
         if (item) {
           this.$set(item, '_actions', null);
