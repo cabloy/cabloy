@@ -62,7 +62,10 @@ export default {
       return items.splice(index, howmany, ...args);
     },
     replaceItem(items, index, atomNew) {
-      this.$set(items, index, atomNew);
+      const node = this.refTree.find(null, item => {
+        return item.data.atomId === atomNew.atomId;
+      });
+      node.data = atomNew;
     },
   },
 };
