@@ -64,7 +64,22 @@ export default {
       const node = this.refTree.find(null, item => {
         return item.data.atomId === itemNew.atomId;
       });
-      node.data = itemNew;
+      if (!node) return;
+      const itemOld = node.data;
+      if (itemOld.sorting !== itemNew.sorting) {
+        // reload parent
+        this._reloadNode(this._getNodeParent(node));
+      } else {
+        // change current
+        node.data = itemNew;
+      }
+    },
+    _reloadNode(node) {
+      if (!node) return;
+      this.refTree.reloadNode(node);
+    },
+    _getNodeParent(node) {
+      return this.refTree.find(null, _node => _node.id === node.data.roleIdParent);
     },
   },
 };
