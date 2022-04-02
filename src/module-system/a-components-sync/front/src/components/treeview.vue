@@ -493,7 +493,8 @@ export default {
       if (!node.attrs.id) throw new Error(`node.attrs.id must be set: ${node.attrs.label}, ${node.id}`);
       // options attrs
       options = options || {};
-      const optionsAttrs = options.attrs || { loadChildren: false, opened: true };
+      //   donot set attrs.loadChildren:false
+      const optionsAttrs = options.attrs || { opened: true };
       // _loadChildren
       const data = await this._loadChildren(node);
       // set attrs
