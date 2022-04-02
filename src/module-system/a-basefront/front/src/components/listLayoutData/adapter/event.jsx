@@ -65,7 +65,7 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const bundle = this._callMethodProvider(provider, 'findItem', key.atomId);
+        const bundle = this.findItemProvier(provider, key.atomId);
         // item: support tree provider
         const { item } = bundle;
         if (!item) return;

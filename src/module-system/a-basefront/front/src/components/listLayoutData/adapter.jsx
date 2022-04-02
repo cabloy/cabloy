@@ -108,12 +108,12 @@ export default {
     findItem(atomId) {
       const res = this._callMethod('findItem', atomId);
       if (res) return res;
-      return { pageNum: null, items: null, index: -1 };
+      return { pageNum: null, items: null, index: -1, item: null };
     },
     findItemProvier(provider, atomId) {
       const res = this._callMethodProvider(provider, 'findItem', atomId);
       if (res) return res;
-      return { pageNum: null, items: null, index: -1 };
+      return { pageNum: null, items: null, index: -1, item: null };
     },
     // items,index,howmany[,...item]
     spliceItem(bundle, howmany, ...args) {
