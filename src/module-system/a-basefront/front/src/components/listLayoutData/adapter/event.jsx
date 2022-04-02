@@ -42,10 +42,12 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const { items, index, item } = this.findItemProvier(provider, key.atomId);
-        if (!item && index === -1) return;
+        const bundle = this.findItemProvier(provider, key.atomId);
+        // item: support tree provider
+        const { item } = bundle;
+        if (!item) return;
         if (action.name === 'delete') {
-          this._callMethodProvider(provider, 'spliceItem', { items, index, item });
+          this._callMethodProvider(provider, 'spliceItem', bundle);
           return;
         }
         // other actions
@@ -55,7 +57,7 @@ export default {
           key,
           options,
         });
-        this._callMethodProvider(provider, 'replaceItem', { items, index, item }, atomNew);
+        this._callMethodProvider(provider, 'replaceItem', bundle, atomNew);
       });
     },
     async event_onActionsChanged(data) {
@@ -63,13 +65,14 @@ export default {
       // loop
       await this._loopProviders(async provider => {
         // findItem
-        const { items, index, item } = this._callMethodProvider(provider, 'findItem', key.atomId);
-        if (!item && index === -1) return;
-        if (item) {
-          this.$set(item, '_actions', null);
-        } else {
-          this.$set(items[index], '_actions', null);
-        }
+        const bundle = this._callMethodProvider(provider, 'findItem', key.atomId);
+        // item: support tree provider
+        const { item } = bundle;
+        if (!item) return;
+        this._callMethodProvider(provider, 'replaceItem', bundle, {
+          ...item,
+          _actions: null,
+        });
       });
     },
   },
