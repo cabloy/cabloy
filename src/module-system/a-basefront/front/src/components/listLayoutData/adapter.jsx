@@ -119,6 +119,9 @@ export default {
     spliceItem(items, index, howmany, ...args) {
       return this._callMethod('spliceItem', items, index, howmany, ...args);
     },
+    replaceItem(items, index, atomNew) {
+      return this._callMethod('replaceItem', items, index, atomNew);
+    },
     renderLoadMore() {
       return this._callMethod('renderLoadMore');
     },

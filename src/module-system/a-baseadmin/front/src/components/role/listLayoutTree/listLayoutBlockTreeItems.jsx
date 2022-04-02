@@ -57,7 +57,7 @@ export default {
           id: item.id,
           attrs: {
             id: refTree._calcNodeAttrId(node, item),
-            label: item.atomNameLocale || item.roleName || `[${this.$text('New Role')}]`,
+            // label: item.atomNameLocale || item.roleName || `[${this.$text('New Role')}]`,
             toggle: item.catalog === 1,
             loadChildren: item.catalog === 1,
             iconF7: item._roleTypeCodeOptions.icon.f7,
@@ -88,6 +88,10 @@ export default {
     },
     _renderListItemContextMenu(item) {
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
+    },
+    _renderNodeLabelStart(node) {
+      const item = node.data;
+      return item.atomNameLocale || item.roleName;
     },
     _renderNodeLabelStar(node) {
       if (!node.data.star) return;
@@ -125,6 +129,9 @@ export default {
           onNodeContextmenuOpened={this.onNodeContextmenuOpened}
           {...{
             scopedSlots: {
+              'label-start': ({ node }) => {
+                return this._renderNodeLabelStart(node);
+              },
               label: ({ node }) => {
                 return this._renderNodeLabelStar(node);
               },

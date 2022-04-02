@@ -55,7 +55,7 @@ export default {
           key,
           options,
         });
-        this.$set(items, index, atomNew);
+        this._callMethodProvider(provider, 'replaceItem', items, index, atomNew);
       });
     },
     async event_onActionsChanged(data) {

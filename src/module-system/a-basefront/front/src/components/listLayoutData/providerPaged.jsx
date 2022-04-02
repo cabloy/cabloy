@@ -80,6 +80,9 @@ export default {
       this.info.total -= howmany - args.length;
       return items.splice(index, howmany, ...args);
     },
+    replaceItem(items, index, atomNew) {
+      this.$set(items, index, atomNew);
+    },
     gotoPage(pageNum) {
       // check if same
       if (this.info.pageCurrent === pageNum) return;

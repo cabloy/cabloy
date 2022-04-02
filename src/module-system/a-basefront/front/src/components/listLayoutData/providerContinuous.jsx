@@ -82,6 +82,9 @@ export default {
       if (howmany === undefined) howmany = 1;
       return items.splice(index, howmany, ...args);
     },
+    replaceItem(items, index, atomNew) {
+      this.$set(items, index, atomNew);
+    },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;
       return this.loadMoreComponent.renderContent();
