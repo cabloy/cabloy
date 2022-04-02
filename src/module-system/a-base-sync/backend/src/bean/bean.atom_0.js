@@ -89,6 +89,8 @@ module.exports = ctx => {
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
       if (!returnAtom) return key;
+      // read
+      item = await this.read({ key, user });
       return { key, atom: item };
     }
 
