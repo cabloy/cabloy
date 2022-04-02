@@ -480,10 +480,7 @@ module.exports = ctx => {
       });
       // ok
       // get atom
-      const atom = await this.modelAtom.get({ id: keyDraft.atomId });
-      atom.atomId = atom.id;
-      atom.module = atomClass.module;
-      atom.atomClassName = atomClass.atomClassName;
+      const atom = await this.read({ key: keyDraft, user });
       // draft/formal
       const res = { key: keyDraft, atom };
       if (atom.atomStage === 0) return { draft: res };
