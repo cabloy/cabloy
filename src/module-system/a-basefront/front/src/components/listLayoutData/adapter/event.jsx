@@ -65,9 +65,13 @@ export default {
         // findItem
         const res = this._callMethodProvider(provider, 'findItem', key.atomId);
         if (!res) return;
-        const { items, index } = res;
-        if (index === -1) return;
-        this.$set(items[index], '_actions', null);
+        const { items, index, item } = res;
+        if (!item && index === -1) return;
+        if (item) {
+          this.$set(item, '_actions', null);
+        } else {
+          this.$set(items[index], '_actions', null);
+        }
       });
     },
   },
