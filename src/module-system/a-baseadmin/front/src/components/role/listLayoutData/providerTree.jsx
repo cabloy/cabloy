@@ -60,11 +60,11 @@ export default {
     spliceItem(/* bundle*/) {
       //
     },
-    replaceItem(bundle, atomNew) {
+    replaceItem(bundle, itemNew) {
       const node = this.refTree.find(null, item => {
-        return item.data.atomId === atomNew.atomId;
+        return item.data.atomId === itemNew.atomId;
       });
-      node.data = atomNew;
+      node.data = itemNew;
     },
   },
 };

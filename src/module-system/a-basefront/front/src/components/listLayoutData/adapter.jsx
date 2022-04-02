@@ -119,8 +119,8 @@ export default {
     spliceItem(bundle, howmany, ...args) {
       return this._callMethod('spliceItem', bundle, howmany, ...args);
     },
-    replaceItem(bundle, atomNew) {
-      return this._callMethod('replaceItem', bundle, atomNew);
+    replaceItem(bundle, itemNew) {
+      return this._callMethod('replaceItem', bundle, itemNew);
     },
     renderLoadMore() {
       return this._callMethod('renderLoadMore');

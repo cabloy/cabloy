@@ -83,8 +83,8 @@ export default {
       if (howmany === undefined) howmany = 1;
       return bundle.items.splice(bundle.index, howmany, ...args);
     },
-    replaceItem(bundle, atomNew) {
-      this.$set(bundle.items, bundle.index, atomNew);
+    replaceItem(bundle, itemNew) {
+      this.$set(bundle.items, bundle.index, itemNew);
     },
     renderLoadMore() {
       if (!this.loadMoreComponent) return null;

@@ -53,11 +53,11 @@ export default {
         // other actions
         // fetch new atom
         const options = this.layoutManager.base_prepareReadOptions();
-        const atomNew = await this.$api.post('/a/base/atom/read', {
+        const itemNew = await this.$api.post('/a/base/atom/read', {
           key,
           options,
         });
-        this._callMethodProvider(provider, 'replaceItem', bundle, atomNew);
+        this._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
       });
     },
     async event_onActionsChanged(data) {
