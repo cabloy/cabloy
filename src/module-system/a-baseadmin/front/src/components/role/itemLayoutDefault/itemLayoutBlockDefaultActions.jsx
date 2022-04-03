@@ -3,8 +3,17 @@ export default {
     return {};
   },
   methods: {
-    actions_onAction(event, actionName) {
-      return this.layoutManager.actions_onAction(event, actionName);
+    actions_onAction(event, action) {
+      return this.layoutManager.actions_onAction(event, action);
+    },
+    actions_onAction_custom(event, action) {
+      const _action = {
+        actionModule: 'a-baseadmin',
+        actionComponent: 'actionRole',
+        name: action.name,
+        targetEl: event.currentTarget,
+      };
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.layoutManager.base.item });
     },
     // addChild / users / includes
     info_renderActionsLeft() {
@@ -20,18 +29,12 @@ export default {
             key="actionsLeft:users"
             iconF7=":outline:group-outline"
             tooltip={this.$text('Users')}
-            propsOnPerform={event => this.actions_onAction(event, { name: 'users' })}
-          ></eb-link>
-        );
-        children.push(
-          <eb-link
-            key="actionsLeft:includes"
-            iconF7=":role:role"
-            tooltip={this.$text('Includes')}
-            propsOnPerform={event => this.actions_onAction(event, { name: 'includes' })}
+            propsOnPerform={event => this.actions_onAction_custom(event, { name: 'users' })}
           ></eb-link>
         );
       }
+      // includes
+      this._renderActionsGeneral(children, ['includes']);
       // ok
       return children;
     },
