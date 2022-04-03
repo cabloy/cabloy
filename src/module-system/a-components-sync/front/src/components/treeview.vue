@@ -92,8 +92,8 @@ export default {
       // load again
       if (node._loaded) {
         node._loaded = false;
-        await this._loadChildren(node);
       }
+      await this._loadChildren(node);
     },
     removeNode(node) {
       if (node.root) return;
