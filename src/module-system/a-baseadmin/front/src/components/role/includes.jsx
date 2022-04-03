@@ -75,6 +75,7 @@ export default {
       for (const item of this.items) {
         children.push(
           <eb-list-item class="item" key={item.id} title={item.atomNameLocale || item.roleName} link="#" swipeout>
+            <f7-icon slot="media" f7={item._roleTypeCodeOptions.icon.f7}></f7-icon>
             <eb-context-menu>
               <div slot="right">
                 <div color="red" propsOnPerform={event => this.onPerformRemove(event, item)}>
