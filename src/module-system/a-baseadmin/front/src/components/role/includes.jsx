@@ -1,47 +1,16 @@
-<template>
-  <div>
-    <f7-list>
-      <eb-list-item
-        class="item"
-        v-for="item of items"
-        :key="item.id"
-        :title="item.roleName"
-        link="#"
-        :eb-href="`role/edit?roleId=${item.roleIdInc}`"
-        swipeout
-      >
-        <eb-context-menu>
-          <div slot="right">
-            <div color="red" :context="item" :onPerform="onRemove">{{ $text('Remove') }}</div>
-          </div>
-        </eb-context-menu>
-      </eb-list-item>
-    </f7-list>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
-  </div>
-</template>
-<script>
 export default {
-  meta: {
-    global: false,
-  },
   props: {
-    role: {
-      type: Object,
+    roleAtomId: {
+      type: Number,
+    },
+    roleId: {
+      type: Number,
     },
   },
   data() {
     return {
       items: [],
     };
-  },
-  mounted() {
-    this.$meta.eventHub.$on('role:save', this.onRoleSave);
-    this.$meta.eventHub.$on('role:delete', this.onRoleDelete);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('role:save', this.onRoleSave);
-    this.$meta.eventHub.$off('role:delete', this.onRoleDelete);
   },
   methods: {
     reload(force) {
@@ -90,15 +59,35 @@ export default {
         });
       });
     },
-    onRoleSave(data) {
-      const index = this.items.findIndex(item => item.roleIdInc === data.roleId);
-      if (index > -1) this.reload();
-    },
-    onRoleDelete(data) {
-      const index = this.items.findIndex(item => item.roleIdInc === data.roleId);
-      if (index > -1) this.items.splice(index, 1);
+    _renderList() {
+      const children = [];
+      for (const item of this.items) {
+        children.push(
+          <eb-list-item class="item" key={item.id} title={item.atomNameLocale || item.roleName} link="#" swipeout>
+            <eb-context-menu>
+              <div slot="right">
+                <div color="red" propsOnPerform={event => this.onPerformRemove(event, item)}>
+                  {this.$text('Remove')}
+                </div>
+              </div>
+            </eb-context-menu>
+          </eb-list-item>
+        );
+      }
+      return <f7-list>{children}</f7-list>;
     },
   },
+  render() {
+    return (
+      <div>
+        {this._renderList()}
+        <eb-load-more
+          ref="loadMore"
+          propsOnLoadClear={this.onLoadClear}
+          propsOnLoadMore={this.onLoadMore}
+          autoInit={true}
+        ></eb-load-more>
+      </div>
+    );
+  },
 };
-</script>
-<style scoped></style>

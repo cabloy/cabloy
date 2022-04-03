@@ -1,4 +1,4 @@
-import roleIncludes from '../../components/role/includes.vue';
+import roleIncludes from '../../components/role/includes.jsx';
 export default {
   components: {
     roleIncludes,

@@ -42,7 +42,7 @@
 import Vue from 'vue';
 import info from '../../components/role/info.vue';
 import roleChildren from '../../components/role/children.vue';
-import roleIncludes from '../../components/role/includes.vue';
+import roleIncludes from '../../components/role/includes.jsx';
 import roleUsers from '../../components/user/list.vue';
 export default {
   meta: {

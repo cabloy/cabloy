@@ -13,7 +13,7 @@ import actionRole from './components/actionRole.js';
 import roleList from './components/role/list.jsx';
 import roleInfo from './components/role/info.vue';
 import roleChildren from './components/role/children.vue';
-import roleIncludes from './components/role/includes.vue';
+import roleIncludes from './components/role/includes.jsx';
 import userInfo from './components/user/info.vue';
 import userList from './components/user/list.vue';
 import userRoles from './components/user/roles.vue';
