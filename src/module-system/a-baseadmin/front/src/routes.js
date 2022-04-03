@@ -9,6 +9,7 @@ export default [
   { path: 'role/list', component: loadjsx('role/list') },
   { path: 'role/edit', component: load('role/edit') },
   { path: 'role/select', component: load('role/select') },
+  { path: 'role/includes', component: loadjsx('role/includes') },
   { path: 'user/list', component: load('user/list') },
   { path: 'user/view', component: load('user/view') },
   { path: 'user/search', component: load('user/search') },
