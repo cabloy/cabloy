@@ -15,7 +15,6 @@ export default {
         await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
         // event
         ctx.$meta.eventHub.$emit('atom:action', { key: keyDraft, action: { name: 'create' }, atom: atomDraft });
-        this.$meta.eventHub.$emit('role:add', { roleIdParent: item.roleIdParent, roleId: keyDraft.itemId });
         // open
         const url = ctx.$meta.util.replaceTemplate(
           '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
