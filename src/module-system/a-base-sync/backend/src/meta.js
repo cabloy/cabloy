@@ -19,9 +19,7 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {
-              includes: 'aRoleIncludesView',
-            },
+            tableNameModes: {},
             category: true,
             tag: true,
             resource: true,
@@ -43,6 +41,7 @@ module.exports = app => {
             tableName: 'aRole',
             tableNameModes: {
               default: 'aRoleView',
+              includes: 'aRoleIncludesView',
             },
             resource: true,
             simple: true,
