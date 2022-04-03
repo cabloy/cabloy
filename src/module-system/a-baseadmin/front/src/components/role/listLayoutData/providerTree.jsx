@@ -60,8 +60,12 @@ export default {
       // const index = items.findIndex(item => item.atomId === atomId);
       // return { items, index };
     },
-    spliceItem(/* bundle*/) {
-      //
+    spliceItem(bundle) {
+      const item = bundle.item;
+      const node = this._findNodeByAtomId(item.atomId);
+      if (node) {
+        this.refTree.removeNode(node);
+      }
     },
     replaceItem(bundle, itemNew) {
       const node = this.refTree.find(null, item => {
