@@ -42,6 +42,12 @@ module.exports = app => {
       return { ...res, progressId };
     }
 
+    async removeRoleInc({ roleAtomId, roleIdInc, user }) {
+      await this.ctx.bean.role.removeRoleInc({ roleAtomId, roleIdInc, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
+    }
+
     // ////////////////
 
     async item({ roleAtomId, roleId }) {
@@ -50,10 +56,6 @@ module.exports = app => {
 
     async save({ roleId, data }) {
       return await this.ctx.bean.role.save({ roleId, data });
-    }
-
-    async removeRoleInc({ id }) {
-      return await this.ctx.bean.role.removeRoleInc({ id });
     }
 
     async dirty() {

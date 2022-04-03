@@ -81,6 +81,17 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async removeRoleInc() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.removeRoleInc({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleIdInc: this.ctx.request.body.roleIdInc,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     // //////
 
     async item() {
@@ -109,15 +120,6 @@ module.exports = app => {
         data: this.ctx.request.body.data,
       });
       this.ctx.success();
-    }
-
-    async removeRoleInc() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.removeRoleInc({
-        id: this.ctx.request.body.id,
-      });
-      this.ctx.success(res);
     }
 
     async dirty() {

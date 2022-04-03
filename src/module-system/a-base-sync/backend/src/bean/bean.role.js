@@ -403,8 +403,9 @@ module.exports = ctx => {
     }
 
     // remove role include
-    async removeRoleInc({ id }) {
-      await this.modelRoleInc.delete({ id });
+    async removeRoleInc({ roleAtomId, roleId, roleIdInc }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      await this.modelRoleInc.delete({ roleId, roleIdInc });
 
       // set dirty
       await this.setDirty(true);

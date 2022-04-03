@@ -60,15 +60,15 @@ export default {
         },
       });
     },
-    onPerformRemove(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('role/removeRoleInc', { id: item.id }).then(() => {
-          this.onRoleDelete({ roleId: item.roleIdInc });
-          this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-          this.$meta.util.swipeoutDelete(event.currentTarget);
-          return true;
-        });
-      });
+    async onPerformRemove(event, item) {
+      await this.$view.dialog.confirm();
+      const data = await this.$api.post('role/removeRoleInc', { key: this.roleKey, roleIdInc: item.roleIdInc });
+      // progress
+      const progressId = data.progressId;
+      await this.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
+      // swipeoutDelete
+      this.$meta.util.swipeoutDelete(event.currentTarget);
+      return true;
     },
     _renderList() {
       const children = [];
