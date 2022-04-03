@@ -70,6 +70,7 @@ export default {
         const data = await promise;
         let list = data.list.map(item => {
           const checkbox = !this.leafOnly || item.catalog === 0;
+          const disabled = this.roleIdDisable && this.roleIdDisable === item.id;
           const node = {
             id: item.id,
             attrs: {
@@ -80,16 +81,17 @@ export default {
               checkOnLabel: checkbox,
               selectable: checkbox,
               itemToggle: !checkbox,
+              disabled,
             },
             data: item,
           };
           return node;
         });
+        // filter
         if (this.catalogOnly) {
-          list = list.filter(
-            item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id)
-          );
+          list = list.filter(item => item.data.catalog === 1);
         }
+        // ok
         return list;
       } catch (err) {
         this.$view.toast.show({ text: err.message });
