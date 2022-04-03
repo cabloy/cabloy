@@ -140,15 +140,17 @@ export default {
         // do nothing
         return;
       }
-      // not check delete
+      // not check delete for draft
       //    for: delete on atom list but not delete on atom when atomClosed=1
-      // // delete
-      // if (action.name === 'delete') {
-      //   this.base.item = null;
-      //   this.base.notfound = true;
-      //   this.base.ready = false;
-      //   return;
-      // }
+      // delete
+      if (action.name === 'delete') {
+        if (this.base.item.atomStage !== 0 || this.base.item.atomIdFormal === 0) {
+          this.base.item = null;
+          this.base.notfound = true;
+          this.base.ready = false;
+          return;
+        }
+      }
       // others
       await this.base_loadItem();
     },
