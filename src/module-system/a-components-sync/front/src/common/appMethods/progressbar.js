@@ -120,9 +120,9 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
       window.setTimeout(() => {
         dialog.close();
         onDestroy();
+        // resolve: should after the dialog closed
+        resolve(data);
       }, app.params.toast.closeTimeout);
-      // resolve
-      resolve(data);
     }
   }
   //

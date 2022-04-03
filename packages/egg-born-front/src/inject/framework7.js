@@ -33,7 +33,7 @@ export default function (Vue, options, cb) {
           routableModals: false,
         },
         toast: {
-          closeTimeout: 3000,
+          closeTimeout: 2000,
         },
         swipeout: {
           removeElements: false,
