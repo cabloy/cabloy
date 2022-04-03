@@ -12,6 +12,11 @@ export default {
       items: [],
     };
   },
+  computed: {
+    roleKey() {
+      return { atomId: this.roleAtomId, itemId: this.roleId };
+    },
+  },
   methods: {
     reload(force) {
       this.$refs.loadMore.reload(force);
@@ -24,10 +29,19 @@ export default {
       done();
     },
     async onLoadMore({ index }) {
-      const key = { atomId: this.roleAtomId, itemId: this.roleId };
-      const data = await this.$api.post('role/includes', { key, page: { index } });
+      const data = await this.$api.post('role/includes', { key: this.roleKey, page: { index } });
       this.items = this.items.concat(data.list);
       return data;
+    },
+    async _addRoleInc(roleIdInc) {
+      const data = await this.$api.post('role/addRoleInc', { key: this.roleKey, roleIdInc });
+      // progress
+      const progressId = data.progressId;
+      await this.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
+      // reload
+      this.reload();
+      // toast
+      this.$view.toast.show({ text: this.$text('Operation Succeeded') });
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
@@ -36,20 +50,17 @@ export default {
           params: {
             roleIdStart: null,
             multiple: false,
+            roleIdsDisable: [this.roleId],
           },
           callback: (code, data) => {
             if (code === 200) {
-              this.$api.post('role/addRoleInc', { roleId: this.role.id, roleIdInc: data.id }).then(data => {
-                this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-                this.reload();
-                this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-              });
+              this._addRoleInc(data.id);
             }
           },
         },
       });
     },
-    onRemove(event, item) {
+    onPerformRemove(event, item) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('role/removeRoleInc', { id: item.id }).then(() => {
           this.onRoleDelete({ roleId: item.roleIdInc });
