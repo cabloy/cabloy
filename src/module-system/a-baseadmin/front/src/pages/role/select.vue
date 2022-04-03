@@ -57,10 +57,11 @@ export default {
         if (this.onFetchChildren) {
           promise = this.onFetchChildren({ roleId });
         } else {
-          promise = this.$api.post('role/children', {
-            roleId,
-            page: { size: 0 },
-          });
+          if (roleId === 0) {
+            promise = this.$api.post('/a/baseadmin/role/childrenTop', { page: { size: 0 } });
+          } else {
+            promise = this.$api.post('/a/baseadmin/role/children', { roleId, page: { size: 0 } });
+          }
         }
         // then
         const data = await promise;
@@ -70,9 +71,10 @@ export default {
           const node = {
             id: item.id,
             attrs: {
-              label: item.roleName,
+              label: item.atomNameLocale || item.roleName,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
+              iconF7: item._roleTypeCodeOptions.icon.f7,
               checkbox,
               checkOnLabel: checkbox,
               selectable: checkbox,
