@@ -34,11 +34,14 @@ module.exports = app => {
       //   item.itemId only be set from inner access
       let itemId = item.itemId;
       if (!itemId) {
+        const _atomNew = await this.ctx.bean.atom.modelAtom.get({ id: atomId });
+        const roleName = _atomNew.atomName;
         const res = await this.ctx.model.role.insert({
           atomId: key.atomId,
           catalog,
           system,
           roleIdParent,
+          roleName,
         });
         itemId = res.insertId;
       } else {

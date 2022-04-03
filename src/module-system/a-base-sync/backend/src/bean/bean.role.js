@@ -67,10 +67,10 @@ module.exports = ctx => {
         user,
       });
       // write
-      const item = {
-        atomName: data.roleName,
-        ...data,
-      };
+      const item = { ...data };
+      if (data.roleName) {
+        item.atomName = data.roleName;
+      }
       await ctx.bean.atom.write({
         key: roleKey,
         item,
