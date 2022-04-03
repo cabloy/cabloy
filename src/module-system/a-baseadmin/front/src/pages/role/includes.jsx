@@ -10,13 +10,26 @@ export default {
     };
   },
   methods: {
+    page_onRefresh(done) {
+      done();
+      this.$refs.includes.reload();
+    },
+    page_onInfinite() {
+      this.$refs.includes.loadMore();
+    },
     onPerformAdd() {
       return this.$refs.includes.onPerformAdd();
     },
   },
   render() {
     return (
-      <eb-page>
+      <eb-page
+        ptr
+        onPtrRefresh={this.page_onRefresh}
+        infinite
+        infinitePreloader={false}
+        onInfinite={this.page_onInfinite}
+      >
         <eb-navbar large largeTransparent title={this.$text('Includes')} eb-back-link="Back">
           <f7-nav-right>
             <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>
