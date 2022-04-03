@@ -150,15 +150,20 @@ module.exports = app => {
       const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
       if (atom.atomStage !== 1) return res;
+      if (![4, 5, 101].includes(action)) return res;
+      // role
+      const role = await this.ctx.model.role.get({ id: atom.itemId });
       // delete
       if (action === 4) {
-        const role = await this.ctx.model.role.get({ id: atom.itemId });
         if (role.system === 1) return null;
       }
       // clone
       if (action === 5) {
-        const role = await this.ctx.model.role.get({ id: atom.itemId });
         if (role.roleIdParent === 0) return null;
+      }
+      // move
+      if (action === 101) {
+        if (role.system === 1) return null;
       }
       // default
       return res;
