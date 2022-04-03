@@ -77,12 +77,18 @@ export default {
         node.data = itemNew;
       }
     },
-    onActionExt({ key, action, atom }) {
+    onActionExt({ /* key,*/ action, atom }) {
       if (action.name === 'addChild') {
         const roleIdParent = atom ? atom.roleIdParent : 0;
-        const nodeParent = this._getNodeParent(roleIdParent);
-        this._reloadNode(nodeParent);
+        this._addChild(roleIdParent);
+      } else if (action.name === 'move') {
+        this.spliceItem({ item: atom });
+        this._addChild(atom.roleIdParent);
       }
+    },
+    _addChild(roleIdParent) {
+      const nodeParent = this._getNodeParent(roleIdParent);
+      this._reloadNode(nodeParent);
     },
     _reloadNode(node) {
       if (!node) return;

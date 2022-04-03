@@ -16,8 +16,7 @@ export default {
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       // action: create/delete/save
       const atom = { ...item, roleIdParent };
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'create' }, atom });
+      ctx.$meta.eventHub.$emit('atom:action:ext', { key, action: { name: 'move' }, atom });
       ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' }, actionSource: ctx });
     },
     async _onActionMove_selectRole({ ctx, item }) {
