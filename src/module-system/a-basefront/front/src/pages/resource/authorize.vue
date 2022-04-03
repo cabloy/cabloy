@@ -61,7 +61,6 @@ export default {
           params: {
             roleIdStart: null,
             multiple: true,
-            resourceAtomId: this.atomId,
           },
           callback: (code, data) => {
             if (code === 200) {

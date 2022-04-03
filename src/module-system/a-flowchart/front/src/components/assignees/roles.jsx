@@ -21,15 +21,6 @@ export default {
           params: {
             roleIdStart: null,
             multiple: true,
-            onFetchChildren: ({ roleId }) => {
-              return this.$api.post('/a/flowchart/flowDef/roleChildren', {
-                host: this.host,
-                params: {
-                  roleId,
-                  page: { size: 0 },
-                },
-              });
-            },
           },
           callback: (code, data) => {
             if (code === 200) {

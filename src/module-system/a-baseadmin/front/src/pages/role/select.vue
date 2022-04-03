@@ -32,9 +32,6 @@ export default {
     roleIdsDisable() {
       return this.contextParams.roleIdsDisable;
     },
-    resourceAtomId() {
-      return this.contextParams.resourceAtomId;
-    },
     onFetchChildren() {
       return this.contextParams.onFetchChildren;
     },
@@ -51,7 +48,7 @@ export default {
     },
   },
   methods: {
-    async onLoadChildren(node) {
+    async _loadNodeRoles(node) {
       try {
         // roleId
         const roleId = node.root ? this.roleIdStart : node.id;
@@ -63,7 +60,6 @@ export default {
           promise = this.$api.post('role/children', {
             roleId,
             page: { size: 0 },
-            key: { atomId: this.resourceAtomId },
           });
         }
         // then
@@ -97,6 +93,9 @@ export default {
         this.$view.toast.show({ text: err.message });
         throw err;
       }
+    },
+    async onLoadChildren(node) {
+      return await this._loadNodeRoles(node);
     },
     onDone() {
       const checked = this.$refs.tree.checked();

@@ -8,15 +8,6 @@ module.exports = app => {
       return await this.ctx.bean.flow.normalizeAssignees(assignees);
     }
 
-    async roleChildren({ host, params, user }) {
-      // check write right
-      const rightWrite = await this.__checkRightWrite({ host, user });
-      if (!rightWrite) this.ctx.throw(403);
-      // roles
-      const { roleId, page } = params;
-      return await this.ctx.bean.role.children({ roleId, page, user });
-    }
-
     async userSelect({ host, params, user }) {
       // check write right
       const rightWrite = await this.__checkRightWrite({ host, user });
