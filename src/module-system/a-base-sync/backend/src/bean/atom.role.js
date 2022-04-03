@@ -150,6 +150,7 @@ module.exports = app => {
       const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
       if (atom.atomStage !== 1) return res;
+      // delete/clone/move
       if (![4, 5, 101].includes(action)) return res;
       // role
       const role = await this.ctx.model.role.get({ id: atom.itemId });

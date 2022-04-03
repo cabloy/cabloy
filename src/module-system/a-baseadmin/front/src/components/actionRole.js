@@ -2,6 +2,7 @@ import Vue from 'vue';
 import ActionDelete from './actionRole/actionDelete.js';
 import ActionClone from './actionRole/actionClone.js';
 import ActionMove from './actionRole/actionMove.js';
+import ActionAddChild from './actionRole/actionAddChild.js';
 import ActionBuildBulk from './actionRole/actionBuildBulk.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
@@ -14,6 +15,7 @@ export default {
     ActionDelete,
     ActionClone,
     ActionMove,
+    ActionAddChild,
     ActionBuildBulk,
   ],
   methods: {
@@ -24,6 +26,8 @@ export default {
         return await this._onActionClone();
       } else if (this.action.name === 'move') {
         return await this._onActionMove();
+      } else if (this.action.name === 'addChild') {
+        return await this._onActionAddChild();
       } else if (this.action.name === 'buildBulk') {
         return await this._onActionBuildBulk();
       }
