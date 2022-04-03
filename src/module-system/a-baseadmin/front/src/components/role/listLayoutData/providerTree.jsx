@@ -22,6 +22,7 @@ export default {
     },
     onPageRefresh() {
       // do nothing
+      this.refTree.reload();
     },
     onPageInfinite() {
       // do nothing
