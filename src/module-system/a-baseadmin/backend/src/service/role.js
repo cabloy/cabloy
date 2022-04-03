@@ -32,6 +32,10 @@ module.exports = app => {
       return { ...res, progressId };
     }
 
+    async includes({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.includes({ roleAtomId, page, user });
+    }
+
     // ////////////////
 
     async item({ roleAtomId, roleId }) {
@@ -40,10 +44,6 @@ module.exports = app => {
 
     async save({ roleId, data }) {
       return await this.ctx.bean.role.save({ roleId, data });
-    }
-
-    async includes({ roleId, page }) {
-      return await this.ctx.bean.role.includes({ roleId, page });
     }
 
     async addRoleInc({ roleId, roleIdInc }) {

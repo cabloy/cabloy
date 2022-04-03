@@ -31,6 +31,13 @@ module.exports = function (ctx) {
               left join aRole b on a.roleIdParent=b.id
         `;
       await ctx.model.query(sql);
+      // view: aRoleIncludesView
+      sql = `
+          CREATE VIEW aRoleIncludesView as
+            select a.*,b.id as roleIncId,b.roleId as roleIdWho,b.roleIdInc from aRole a
+              left join aRoleInc b on a.id=b.roleIdInc
+        `;
+      await ctx.model.query(sql);
     }
   }
 

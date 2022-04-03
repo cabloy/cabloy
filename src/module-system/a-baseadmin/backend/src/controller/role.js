@@ -60,6 +60,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async includes() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.role.includes({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        page,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
     // //////
 
     async item() {
@@ -88,15 +98,6 @@ module.exports = app => {
         data: this.ctx.request.body.data,
       });
       this.ctx.success();
-    }
-
-    async includes() {
-      const page = this.ctx.request.body.page;
-      const items = await this.service.role.includes({
-        roleId: this.ctx.request.body.roleId,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
     }
 
     async addRoleInc() {

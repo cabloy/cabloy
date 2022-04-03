@@ -389,18 +389,24 @@ module.exports = ctx => {
     }
 
     // includes
-    async includes({ roleId, page }) {
+    async includes({ roleAtomId, roleId, page, user }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(
-        `
-        select a.*,b.roleName from aRoleInc a
-          left join aRole b on a.roleIdInc=b.id
-            where a.iid=? and a.roleId=?
-            ${_limit}
-        `,
-        [ctx.instance.id, roleId]
-      );
+      // where
+      const where = { 'f.roleIdWho': roleId };
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassRole,
+        options: {
+          orders: [['f.roleName', 'asc']],
+          page,
+          stage: 'formal',
+          where,
+          mode: 'includes',
+        },
+        user,
+      });
+      return list;
     }
 
     // role rights

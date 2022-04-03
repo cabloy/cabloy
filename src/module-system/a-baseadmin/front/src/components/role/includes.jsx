@@ -23,11 +23,11 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
-      return this.$api.post('role/includes', { roleId: this.role.id, page: { index } }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+    async onLoadMore({ index }) {
+      const key = { atomId: this.roleAtomId, itemId: this.roleId };
+      const data = await this.$api.post('role/includes', { key, page: { index } });
+      this.items = this.items.concat(data.list);
+      return data;
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {

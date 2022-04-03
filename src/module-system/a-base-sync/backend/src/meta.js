@@ -19,7 +19,9 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {},
+            tableNameModes: {
+              includes: 'aRoleIncludesView',
+            },
             category: true,
             tag: true,
             resource: true,
