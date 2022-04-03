@@ -50,6 +50,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async addChild() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.addChild({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     // //////
 
     async item() {
@@ -78,15 +88,6 @@ module.exports = app => {
         data: this.ctx.request.body.data,
       });
       this.ctx.success();
-    }
-
-    async add() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.add({
-        roleIdParent: this.ctx.request.body.roleIdParent,
-      });
-      this.ctx.success(res);
     }
 
     async includes() {

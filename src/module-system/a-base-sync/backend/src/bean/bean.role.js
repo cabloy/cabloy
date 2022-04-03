@@ -48,8 +48,10 @@ module.exports = ctx => {
 
     // add role
     //  { module,roleName,...}
-    async add(data) {
-      const user = { id: 0 };
+    async add(data, user, returnKey) {
+      if (!user) {
+        user = { id: 0 };
+      }
       // create
       const itemCreate = {
         catalog: 0,
@@ -80,9 +82,15 @@ module.exports = ctx => {
         options: { ignoreFlow: true },
         user,
       });
-      // roleId
-      const roleId = roleKey.itemId;
-      return roleId;
+      // ok
+      return returnKey ? roleKey : roleKey.itemId;
+    }
+
+    async addChild({ roleAtomId, roleId, user }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      const key = await this.add({ roleIdParent: roleId }, user, true);
+      const atom = await ctx.bean.atom.read({ key, user });
+      return { key, atom };
     }
 
     async move({ roleAtomId, roleId, roleIdParent }) {

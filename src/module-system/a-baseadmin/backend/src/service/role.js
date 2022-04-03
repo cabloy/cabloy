@@ -26,18 +26,20 @@ module.exports = app => {
       return { progressId };
     }
 
+    async addChild({ roleAtomId, user }) {
+      const res = await this.ctx.bean.role.addChild({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
+    }
+
+    // ////////////////
+
     async item({ roleAtomId, roleId }) {
       return await this.ctx.bean.role.item({ roleAtomId, roleId });
     }
 
     async save({ roleId, data }) {
       return await this.ctx.bean.role.save({ roleId, data });
-    }
-
-    async add({ roleIdParent }) {
-      const res = await this.ctx.bean.role.add({ roleIdParent });
-      const progressId = await this._tailBuild();
-      return res;
     }
 
     async includes({ roleId, page }) {

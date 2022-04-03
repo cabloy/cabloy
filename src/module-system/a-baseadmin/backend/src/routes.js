@@ -36,6 +36,13 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'move' } },
     },
+    {
+      method: 'post',
+      path: 'role/addChild',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'addChild' } },
+    },
 
     //
     {
@@ -60,7 +67,6 @@ module.exports = app => {
       middlewares: 'validate',
       meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
     },
-    { method: 'post', path: 'role/add', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
 
     { method: 'post', path: 'role/includes', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     {

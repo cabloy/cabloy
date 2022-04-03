@@ -6,18 +6,17 @@ export default {
         // add
         const key = { atomId: item.atomId, itemId: item.itemId };
         const data = await ctx.$api.post('/a/baseadmin/role/addChild', { key });
-        const dataRes = data.draft || data.formal;
-        const keyDraft = dataRes.key;
-        const atomDraft = dataRes.atom;
+        const keyChild = data.key;
+        const atomChild = data.atom;
         // progress
         const progressId = data.progressId;
         await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
         // event
-        ctx.$meta.eventHub.$emit('atom:action:ext', { key: keyDraft, action: { name: 'addChild' }, atom: atomDraft });
+        ctx.$meta.eventHub.$emit('atom:action:ext', { key: keyChild, action: { name: 'addChild' }, atom: atomChild });
         // open
         const url = ctx.$meta.util.replaceTemplate(
           '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
-          atomDraft
+          atomChild
         );
         let navigateOptions = action.navigateOptions;
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
