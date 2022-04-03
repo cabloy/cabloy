@@ -10,7 +10,6 @@ export default {
       const progressId = data.progressId;
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       ctx.$meta.eventHub.$emit('atom:action', { key, action });
-      this.$meta.eventHub.$emit('role:delete', { roleId: item.itemId, roleIdParent: item.roleIdParent });
       // back
       if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
         ctx.$f7router.back();

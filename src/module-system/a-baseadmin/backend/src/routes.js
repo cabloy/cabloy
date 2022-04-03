@@ -1,17 +1,18 @@
 module.exports = app => {
   const routes = [
-    // role
+    // role/childrenTop
     {
       method: 'post',
       path: 'role/childrenTop',
       controller: 'role',
     },
+    // role/children
     {
       method: 'post',
       path: 'role/children',
       controller: 'role',
     },
-    { method: 'post', path: 'role/item', controller: 'role' },
+    // role/delete
     {
       method: 'post',
       path: 'role/delete',
@@ -19,6 +20,7 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'delete' } },
     },
+    // role/clone
     {
       method: 'post',
       path: 'role/clone',
@@ -26,6 +28,7 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'clone' } },
     },
+
     //
     {
       method: 'post',
@@ -39,7 +42,9 @@ module.exports = app => {
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'buildBulk' } },
     },
+
     //
+    { method: 'post', path: 'role/item', controller: 'role' },
     {
       method: 'post',
       path: 'role/save',
