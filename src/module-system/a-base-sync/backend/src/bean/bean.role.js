@@ -200,28 +200,6 @@ module.exports = ctx => {
       return await this.add({ roleName, roleIdParent });
     }
 
-    // add role include
-    async addRoleInc({ roleId, roleIdInc }) {
-      const res = await this.modelRoleInc.insert({
-        roleId,
-        roleIdInc,
-      });
-      const id = res.insertId;
-
-      // set dirty
-      await this.setDirty(true);
-
-      return id;
-    }
-
-    // remove role include
-    async removeRoleInc({ id }) {
-      await this.modelRoleInc.delete({ id });
-
-      // set dirty
-      await this.setDirty(true);
-    }
-
     // add user role
     async addUserRole({ userId, roleId }) {
       const res = await this.modelUserRole.insert({
@@ -407,6 +385,29 @@ module.exports = ctx => {
         user,
       });
       return list;
+    }
+
+    // add role include
+    async addRoleInc({ roleAtomId, roleId, roleIdInc }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      const res = await this.modelRoleInc.insert({
+        roleId,
+        roleIdInc,
+      });
+      const id = res.insertId;
+
+      // set dirty
+      await this.setDirty(true);
+
+      return id;
+    }
+
+    // remove role include
+    async removeRoleInc({ id }) {
+      await this.modelRoleInc.delete({ id });
+
+      // set dirty
+      await this.setDirty(true);
     }
 
     // role rights

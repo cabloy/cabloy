@@ -51,6 +51,13 @@ module.exports = app => {
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
     },
+    // role/addRoleInc
+    {
+      method: 'post',
+      path: 'role/addRoleInc',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
+    },
 
     //
     {
@@ -76,12 +83,6 @@ module.exports = app => {
       meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
     },
 
-    {
-      method: 'post',
-      path: 'role/addRoleInc',
-      controller: 'role',
-      meta: { right: { type: 'resource', name: 'role' } },
-    },
     {
       method: 'post',
       path: 'role/removeRoleInc',
