@@ -20,12 +20,8 @@ export default {
       // inited
       this.inited = true;
     },
-    onPageRefresh(bundle) {
-      bundle = bundle || {};
-      const item = bundle.item;
-      const roleIdParent = item ? item.roleIdParent : 0;
-      const nodeParent = this._getNodeParent(roleIdParent);
-      this._reloadNode(nodeParent);
+    onPageRefresh() {
+      // do nothing
     },
     onPageInfinite() {
       // do nothing
@@ -79,6 +75,13 @@ export default {
       } else {
         // change current
         node.data = itemNew;
+      }
+    },
+    onActionExt({ key, action, atom }) {
+      if (action.name === 'addChild') {
+        const roleIdParent = atom ? atom.roleIdParent : 0;
+        const nodeParent = this._getNodeParent(roleIdParent);
+        this._reloadNode(nodeParent);
       }
     },
     _reloadNode(node) {

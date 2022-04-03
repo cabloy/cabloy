@@ -1,10 +1,12 @@
 export default {
   created() {
     this.$meta.eventHub.$on('atom:action', this.event_onActionChanged);
+    this.$meta.eventHub.$on('atom:action:ext', this.event_onActionExtChanged);
     this.$meta.eventHub.$on('atom:actions', this.event_onActionsChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:action', this.event_onActionChanged);
+    this.$meta.eventHub.$off('atom:action:ext', this.event_onActionExtChanged);
     this.$meta.eventHub.$off('atom:actions', this.event_onActionsChanged);
   },
   methods: {
@@ -58,6 +60,12 @@ export default {
           options,
         });
         this._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
+      });
+    },
+    async event_onActionExtChanged(bundle) {
+      // loop
+      await this._loopProviders(async provider => {
+        this._callMethodProvider(provider, 'onActionExt', bundle);
       });
     },
     async event_onActionsChanged(data) {
