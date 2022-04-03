@@ -19,6 +19,39 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.delete({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async clone() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.clone({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async move() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.move({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleIdParent: this.ctx.request.body.data.roleIdParent,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    // //////
+
     async item() {
       const roleId = this.ctx.request.body.roleId;
       const user = this.ctx.state.user.op;
@@ -52,36 +85,6 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.role.add({
         roleIdParent: this.ctx.request.body.roleIdParent,
-      });
-      this.ctx.success(res);
-    }
-
-    async move() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.move({
-        roleId: this.ctx.request.body.roleId,
-        roleIdParent: this.ctx.request.body.roleIdParent,
-      });
-      this.ctx.success(res);
-    }
-
-    async delete() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.delete({
-        roleAtomId: this.ctx.request.body.key.atomId,
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-
-    async clone() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.clone({
-        roleAtomId: this.ctx.request.body.key.atomId,
-        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

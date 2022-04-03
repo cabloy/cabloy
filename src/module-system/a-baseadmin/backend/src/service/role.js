@@ -8,6 +8,24 @@ module.exports = app => {
       return await this.ctx.bean.role.children({ roleId, page, user });
     }
 
+    async delete({ roleAtomId, user }) {
+      await this.ctx.bean.role.delete({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
+    }
+
+    async clone({ roleAtomId, user }) {
+      const res = await this.ctx.bean.role.clone({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
+    }
+
+    async move({ roleAtomId, roleIdParent, user }) {
+      await this.ctx.bean.role.move({ roleAtomId, roleIdParent, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
+    }
+
     async item({ roleAtomId, roleId }) {
       return await this.ctx.bean.role.item({ roleAtomId, roleId });
     }
@@ -20,22 +38,6 @@ module.exports = app => {
       const res = await this.ctx.bean.role.add({ roleIdParent });
       const progressId = await this._tailBuild();
       return res;
-    }
-
-    async move({ roleId, roleIdParent }) {
-      return await this.ctx.bean.role.move({ roleId, roleIdParent });
-    }
-
-    async delete({ roleAtomId, user }) {
-      await this.ctx.bean.role.delete({ roleAtomId, user });
-      const progressId = await this._tailBuild();
-      return { progressId };
-    }
-
-    async clone({ roleAtomId, user }) {
-      const res = await this.ctx.bean.role.clone({ roleAtomId, user });
-      const progressId = await this._tailBuild();
-      return { ...res, progressId };
     }
 
     async includes({ roleId, page }) {

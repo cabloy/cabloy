@@ -5,8 +5,12 @@ export default {
       const key = { atomId: item.atomId, itemId: item.itemId };
       // select role
       const roleIdParent = await this._onActionMove_selectRole({ ctx, item });
+      if (!roleIdParent) return;
       // move
-      const data = await ctx.$api.post('/a/baseadmin/role/move', { key });
+      const data = await ctx.$api.post('/a/baseadmin/role/move', {
+        key,
+        data: { roleIdParent },
+      });
       // progress
       const progressId = data.progressId;
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
@@ -17,7 +21,7 @@ export default {
       }
     },
     async _onActionMove_selectRole({ ctx, item }) {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         let target;
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
           target = '_self';
@@ -28,16 +32,14 @@ export default {
             params: {
               roleIdStart: null,
               multiple: false,
-              roleIdDisable: item.itemId,
+              roleIdsDisable: [item.itemId, item.roleIdParent],
               // catalogOnly: true,
             },
             callback: (code, data) => {
               if (code === 200) {
-                const roleIdParent = data.id;
-                if (item.roleIdParent === roleIdParent) {
-                  reject(new Error());
-                }
-                resolve(roleIdParent);
+                resolve(data.id);
+              } else if (code === false) {
+                resolve();
               }
             },
           },

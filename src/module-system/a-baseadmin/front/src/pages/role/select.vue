@@ -29,8 +29,8 @@ export default {
     leafOnly() {
       return this.contextParams.leafOnly;
     },
-    roleIdDisable() {
-      return this.contextParams.roleIdDisable;
+    roleIdsDisable() {
+      return this.contextParams.roleIdsDisable;
     },
     resourceAtomId() {
       return this.contextParams.resourceAtomId;
@@ -70,7 +70,7 @@ export default {
         const data = await promise;
         let list = data.list.map(item => {
           const checkbox = !this.leafOnly || item.catalog === 0;
-          const disabled = this.roleIdDisable && this.roleIdDisable === item.id;
+          const disabled = this.roleIdsDisable && this.roleIdsDisable.indexOf(item.id) > -1;
           const node = {
             id: item.id,
             attrs: {
