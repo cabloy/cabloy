@@ -59,8 +59,18 @@ export default {
     spliceItem(bundle) {
       const item = bundle.item;
       const node = this._findNodeByAtomId(item.atomId);
+      const nodeParent = node.parent;
       if (node) {
         this.refTree.removeNode(node);
+      }
+      // adjust parent's catalog->false if no children
+      if (nodeParent.children.length === 0) {
+        this._reloadNode(nodeParent, {
+          attrs: {
+            toggle: false,
+            loadChildren: false,
+          },
+        });
       }
     },
     replaceItem(bundle, itemNew) {
@@ -71,7 +81,7 @@ export default {
       const itemOld = node.data;
       if (itemOld.sorting !== itemNew.sorting) {
         // reload parent
-        this._reloadNode(this._getNodeParent(itemOld.roleIdParent));
+        this._reloadNode(this._findNodeByRoleId(itemOld.roleIdParent));
       } else {
         // change current
         node.data = itemNew;
@@ -79,30 +89,32 @@ export default {
     },
     onActionExt({ /* key,*/ action, atom }) {
       if (action.name === 'addChild') {
-        const roleIdParent = atom ? atom.roleIdParent : 0;
-        this._addChild(roleIdParent);
+        this._addChild(atom.roleIdParent);
       } else if (action.name === 'move') {
         this.spliceItem({ item: atom });
         this._addChild(atom.roleIdParent);
       }
     },
     _addChild(roleIdParent) {
-      const nodeParent = this._getNodeParent(roleIdParent);
-      this._reloadNode(nodeParent);
+      const nodeParent = this._findNodeByRoleId(roleIdParent);
+      this._reloadNode(nodeParent, {
+        attrs: {
+          toggle: true,
+          loadChildren: true,
+        },
+      });
     },
-    _reloadNode(node) {
+    _reloadNode(node, nodeNew) {
       if (!node) return;
-      this.refTree.reloadNode(node);
+      this.refTree.reloadNode(node, nodeNew);
     },
     _findNodeByAtomId(atomId) {
       if (!atomId) return null;
-      return this.refTree.find(null, item => {
-        return item.data.atomId === atomId;
-      });
+      return this.refTree.find(null, item => item.data.atomId === atomId);
     },
-    _getNodeParent(roleIdParent) {
-      if (!roleIdParent) return this.refTree.treeviewRoot;
-      return this.refTree.find(null, node => node.id === roleIdParent);
+    _findNodeByRoleId(roleId) {
+      if (!roleId) return null;
+      return this.refTree.find(null, node => node.id === roleId);
     },
   },
 };
