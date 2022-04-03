@@ -83,6 +83,9 @@ export default {
         };
         // actions
         await this.actions_fetchActions();
+        // found
+        this.base.notfound = false;
+        // ok
         return true;
       } catch (err) {
         this.base.notfound = true;

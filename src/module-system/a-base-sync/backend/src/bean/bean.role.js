@@ -85,14 +85,14 @@ module.exports = ctx => {
       return roleId;
     }
 
-    async move({ roleId, roleIdParent }) {
+    async move({ roleAtomId, roleId, roleIdParent }) {
       // role
-      const role = await this.get({ id: roleId });
+      const role = await this._forceRole({ roleAtomId, roleId });
       // roleIdParentOld
       const roleIdParentOld = role.roleIdParent;
       if (roleIdParentOld === roleIdParent) return;
       // update
-      await this.model.update({ id: roleId, roleIdParent });
+      await this.model.update({ id: role.id, roleIdParent });
 
       // adjust catalog
       await this.adjustCatalog(roleIdParentOld);
@@ -110,7 +110,7 @@ module.exports = ctx => {
 
     async clone({ roleAtomId, roleId, user }) {
       roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
-      // delete this
+      // clone
       return await ctx.bean.atom.clone({ key: { atomId: roleAtomId }, user });
     }
 
@@ -839,6 +839,21 @@ module.exports = ctx => {
         roleAtomId = item.atomId;
       }
       return roleAtomId;
+    }
+
+    async _forceRoleId({ roleAtomId, roleId }) {
+      if (!roleId) {
+        const item = await this.get({ atomId: roleAtomId });
+        roleId = item.id;
+      }
+      return roleId;
+    }
+
+    async _forceRole({ roleAtomId, roleId }) {
+      if (roleAtomId) {
+        return await this.get({ atomId: roleAtomId });
+      }
+      return await this.get({ id: roleId });
     }
 
     async _checkRightActionOfRole({ roleAtomId, roleId, action, user }) {
