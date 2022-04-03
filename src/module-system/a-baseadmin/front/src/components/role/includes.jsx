@@ -62,10 +62,15 @@ export default {
     },
     async onPerformRemove(event, item) {
       await this.$view.dialog.confirm();
-      const data = await this.$api.post('role/removeRoleInc', { key: this.roleKey, roleIdInc: item.roleIdInc });
+      // remove
+      const roleIdInc = item.roleIdInc;
+      const data = await this.$api.post('role/removeRoleInc', { key: this.roleKey, roleIdInc });
       // progress
       const progressId = data.progressId;
       await this.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
+      // remove
+      const index = this.items.findIndex(item => item.roleIdInc === roleIdInc);
+      if (index > -1) this.items.splice(index, 1);
       // swipeoutDelete
       this.$meta.util.swipeoutDelete(event.currentTarget);
       return true;
