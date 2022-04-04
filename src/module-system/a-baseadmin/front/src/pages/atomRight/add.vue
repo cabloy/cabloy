@@ -61,7 +61,7 @@ export default {
     },
     scopeTitle() {
       if (!this.scope) return null;
-      return this.scope.map(item => item.data.roleName).join(',');
+      return this.scope.map(item => item.data.atomNameLocale).join(',');
     },
     scopeSelfEnable() {
       const action = this.actionCurrent;
