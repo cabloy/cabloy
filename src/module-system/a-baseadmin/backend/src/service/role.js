@@ -58,10 +58,6 @@ module.exports = app => {
       return await this.ctx.bean.role.save({ roleId, data });
     }
 
-    async dirty() {
-      return await this.ctx.bean.role.getDirty();
-    }
-
     async buildBulk() {
       const progressId = await this._tailBuild();
       // ok

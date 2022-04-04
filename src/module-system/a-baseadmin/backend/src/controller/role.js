@@ -122,11 +122,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async dirty() {
-      const res = await this.service.role.dirty();
-      this.ctx.success(res);
-    }
-
     async buildBulk() {
       // check demo
       this.ctx.bean.util.checkDemo();
