@@ -127,6 +127,11 @@ module.exports = app => {
       const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
       await versionUpdate14._adjustRolesInstance(options);
     }
+
+    async update14_adjustUserRoles(options) {
+      const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+      await versionUpdate14._adjustUserRolesInstance(options);
+    }
   }
 
   return Version;

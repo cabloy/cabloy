@@ -128,6 +128,31 @@ module.exports = app => {
             validator: 'roleSearch',
           },
         },
+        userRole: {
+          info: {
+            bean: 'userRole',
+            title: 'User',
+            tableName: 'aUserRole',
+            tableNameModes: {
+              default: 'aUserRoleView',
+            },
+            resource: false,
+            simple: true,
+            history: false,
+            inner: true,
+            layout: {
+              config: {
+                module: 'a-baseadmin',
+                name: 'userRole',
+              },
+            },
+          },
+          actions: {},
+          validator: 'userRole',
+          search: {
+            validator: 'userRoleSearch',
+          },
+        },
       },
       resources: {
         function: {
