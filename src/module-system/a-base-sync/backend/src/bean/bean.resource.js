@@ -198,7 +198,7 @@ module.exports = ctx => {
     }
 
     async resourceRoles({ key /* , user */ }) {
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
         select a.*,b.roleName from aResourceRole a
           left join aRole b on a.roleId=b.id
@@ -207,7 +207,12 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, key.atomId]
       );
-      return list;
+      // locale
+      for (const item of items) {
+        item.roleNameLocale = ctx.text(item.roleName);
+      }
+      // ok
+      return items;
     }
 
     // add resource role
@@ -244,10 +249,10 @@ module.exports = ctx => {
     }
 
     // delete resource role
-    async deleteResourceRole({ roleAtomId, roleId, resourceRightId }) {
+    async deleteResourceRole({ roleAtomId, roleId, resourceRoleId }) {
       roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       // id + roleId for safety
-      await this.modelResourceRole.delete({ id: resourceRightId, roleId });
+      await this.modelResourceRole.delete({ id: resourceRoleId, roleId });
     }
 
     async _getAtomClassesResource() {

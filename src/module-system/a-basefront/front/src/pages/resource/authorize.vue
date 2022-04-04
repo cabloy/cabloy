@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" swipeout>
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleNameLocale" swipeout>
         <eb-context-menu>
           <div slot="right">
             <div color="red" :context="item" :onPerform="onPerformRemove">{{ $text('Remove') }}</div>

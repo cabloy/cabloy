@@ -102,7 +102,7 @@ export default {
     },
     async onPerformDelete(event, item) {
       await this.$view.dialog.confirm();
-      await this.$api.post('resourceRight/delete', { key: this.roleKey, resourceRightId: item.id });
+      await this.$api.post('resourceRight/delete', { key: this.roleKey, resourceRoleId: item.id });
       this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
       this.$meta.util.swipeoutDelete(event.currentTarget);
       return true;
