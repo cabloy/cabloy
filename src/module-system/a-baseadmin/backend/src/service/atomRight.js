@@ -18,8 +18,8 @@ module.exports = app => {
       });
     }
 
-    async delete({ id }) {
-      return await this.ctx.bean.role.deleteRoleRight({ id });
+    async delete({ roleAtomId, roleRightId, user }) {
+      return await this.ctx.bean.role.deleteRoleRight({ roleAtomId, roleRightId, user });
     }
 
     async spreads({ roleId, page }) {

@@ -28,7 +28,9 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.delete({
-        id: this.ctx.request.body.id,
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleRightId: this.ctx.request.body.roleRightId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

@@ -263,9 +263,11 @@ module.exports = ctx => {
     }
 
     // delete role right
-    async deleteRoleRight({ id }) {
-      await this.modelRoleRight.delete({ id });
-      await this.modelRoleRightRef.delete({ roleRightId: id });
+    async deleteRoleRight({ roleAtomId, roleId, roleRightId }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      // id + roleId for safety
+      await this.modelRoleRight.delete({ id: roleRightId, roleId });
+      await this.modelRoleRightRef.delete({ roleRightId, roleId });
     }
 
     async item({ roleAtomId, roleId }) {
