@@ -65,9 +65,6 @@ module.exports = app => {
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
     },
 
-    //
-    { method: 'post', path: 'role/item', controller: 'role' },
-
     // user
     {
       method: 'post',
