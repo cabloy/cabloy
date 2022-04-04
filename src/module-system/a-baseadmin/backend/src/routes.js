@@ -67,13 +67,6 @@ module.exports = app => {
 
     //
     { method: 'post', path: 'role/item', controller: 'role' },
-    {
-      method: 'post',
-      path: 'role/save',
-      controller: 'role',
-      middlewares: 'validate',
-      meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
-    },
 
     // user
     {

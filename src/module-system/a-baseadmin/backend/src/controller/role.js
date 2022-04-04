@@ -111,16 +111,6 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-
-    async save() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      await this.service.role.save({
-        roleId: this.ctx.request.body.roleId,
-        data: this.ctx.request.body.data,
-      });
-      this.ctx.success();
-    }
   }
   return RoleController;
 };
