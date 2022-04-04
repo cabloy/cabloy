@@ -45,13 +45,11 @@ export default {
   },
   methods: {
     async loadRole() {
-      this.$api.post('role/item', { roleId: this.roleId }).then(data => {
-        this.role = data;
-      });
+      this.role = await this.$api.post('/a/base/atom/read', { key: { atomId: this.roleAtomId } });
     },
     getPageTitle() {
-      let title = this.$text('Resource Right');
-      if (this.role) title = `${title}: ${this.role.roleName}`;
+      let title = this.$text('Resource Authorization');
+      if (this.role) title = `${title}: ${this.role.atomNameLocale || this.role.atomName}`;
       return title;
     },
     onPerformRightsAdd() {
