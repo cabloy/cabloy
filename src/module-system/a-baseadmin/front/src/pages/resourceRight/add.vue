@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('New Resource Rights')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="getPageTitle('New Authorizations')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!!atoms" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -24,10 +24,11 @@
   </eb-page>
 </template>
 <script>
+import roleItemBase from '../../components/role/roleItemBase.js';
 export default {
+  mixins: [roleItemBase],
   data() {
     return {
-      roleId: parseInt(this.$f7route.query.roleId),
       atomClass: null,
       atoms: null,
     };
@@ -80,7 +81,7 @@ export default {
     async onSave() {
       if (!this.atoms) return;
       await this.$api.post('resourceRight/add', {
-        roleId: this.roleId,
+        key: this.roleKey,
         atomIds: this.atoms.map(item => item.atomId),
       });
       this.$meta.eventHub.$emit('resourceRight:add', { roleId: this.roleId });

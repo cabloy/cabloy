@@ -236,7 +236,8 @@ module.exports = ctx => {
     }
 
     // add resource roles
-    async addResourceRoles({ atomIds, roleId }) {
+    async addResourceRoles({ roleAtomId, roleId, atomIds }) {
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       for (const atomId of atomIds) {
         await this.addResourceRole({ atomId, roleId });
       }

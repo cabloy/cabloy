@@ -4,8 +4,8 @@ module.exports = app => {
       return await this.ctx.bean.resource.resourceRights({ roleAtomId, page, user });
     }
 
-    async add({ roleId, atomIds }) {
-      return await this.ctx.bean.resource.addResourceRoles({ roleId, atomIds });
+    async add({ roleAtomId, atomIds, user }) {
+      return await this.ctx.bean.resource.addResourceRoles({ roleAtomId, atomIds, user });
     }
 
     async delete({ id }) {
