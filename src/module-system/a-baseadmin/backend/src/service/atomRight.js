@@ -4,16 +4,17 @@ module.exports = app => {
       return await this.ctx.bean.role.roleRights({ roleAtomId, page, user });
     }
 
-    async add({ roleId, atomClass, actionCode, scopeSelf, scope }) {
+    async add({ roleAtomId, atomClass, actionCode, scopeSelf, scope, user }) {
       const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
       if (scopeSelf) {
         scope = 0;
       }
       return await this.ctx.bean.role.addRoleRight({
-        roleId,
+        roleAtomId,
         atomClassId: _atomClass.id,
         action: actionCode,
         scope,
+        user,
       });
     }
 

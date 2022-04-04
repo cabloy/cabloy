@@ -226,7 +226,9 @@ module.exports = ctx => {
     }
 
     // add role right
-    async addRoleRight({ roleId, atomClassId, action, scope }) {
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      // scope
       if (scope) {
         if (typeof scope === 'string') {
           scope = scope.split(',');
@@ -416,7 +418,7 @@ module.exports = ctx => {
 
     // role rights
     async roleRights({ roleAtomId, roleId, page }) {
-      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(

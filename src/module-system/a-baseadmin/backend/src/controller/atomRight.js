@@ -14,11 +14,12 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.add({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         atomClass: this.ctx.request.body.atomClass,
         actionCode: this.ctx.request.body.actionCode,
         scopeSelf: this.ctx.request.body.scopeSelf,
         scope: this.ctx.request.body.scope,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
