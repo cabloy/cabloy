@@ -23,7 +23,7 @@ export default {
       this._renderActionsGeneral(children, ['addChild']);
       // check write action
       const actionWrite = this.layoutManager.actions_findAction('write');
-      if (actionWrite) {
+      if (this.layoutManager.base.item.catalog === 0 && actionWrite) {
         children.push(
           <eb-link
             key="actionsLeft:users"
