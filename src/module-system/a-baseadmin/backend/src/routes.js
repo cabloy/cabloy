@@ -64,6 +64,31 @@ module.exports = app => {
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
     },
+    // resourceRight
+    {
+      method: 'post',
+      path: 'resourceRight/rights',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/add',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/delete',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
+    {
+      method: 'post',
+      path: 'resourceRight/spreads',
+      controller: 'resourceRight',
+      meta: { right: { type: 'resource', name: 'resourceRight' } },
+    },
 
     // user
     {
@@ -120,31 +145,6 @@ module.exports = app => {
       path: 'atomRight/spreads',
       controller: 'atomRight',
       meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    // resourceRight
-    {
-      method: 'post',
-      path: 'resourceRight/rights',
-      controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
-    },
-    {
-      method: 'post',
-      path: 'resourceRight/add',
-      controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
-    },
-    {
-      method: 'post',
-      path: 'resourceRight/delete',
-      controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
-    },
-    {
-      method: 'post',
-      path: 'resourceRight/spreads',
-      controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
     },
     // functionRight
     {

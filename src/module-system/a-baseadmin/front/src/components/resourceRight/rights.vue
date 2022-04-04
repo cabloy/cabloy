@@ -85,11 +85,13 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
-      return this.$api.post('resourceRight/rights', { roleId: this.role.id, page: { index } }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
+    async onLoadMore({ index }) {
+      const data = await this.$api.post('resourceRight/rights', {
+        key: this.roleKey,
+        page: { index },
       });
+      this.items = this.items.concat(data.list);
+      return data;
     },
     onPerformAdd() {
       this.$view.navigate(`/a/baseadmin/resourceRight/add?roleId=${this.role.id}`);
@@ -103,7 +105,7 @@ export default {
         });
       });
     },
-    onResourceRightAdd(data) {
+    onResourceRightAdd() {
       this.reload();
     },
     onResourceRightDelete(data) {

@@ -17,7 +17,7 @@
       </eb-tab-page-content>
     </f7-tabs>
     <f7-toolbar v-if="tabName === 'rights'" bottom-md>
-      <eb-link :onPerform="onPerformRightsAdd">{{ $text('New Resource Rights') }}</eb-link>
+      <eb-link :onPerform="onPerformRightsAdd">{{ $text('New Authorizations') }}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>

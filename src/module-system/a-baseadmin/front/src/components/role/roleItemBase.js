@@ -6,6 +6,11 @@ export default {
       role: null,
     };
   },
+  computed: {
+    roleKey() {
+      return { atomId: this.roleAtomId, itemId: this.roleId };
+    },
+  },
   created() {
     this.loadRole();
   },
