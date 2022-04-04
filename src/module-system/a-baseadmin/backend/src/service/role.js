@@ -58,12 +58,6 @@ module.exports = app => {
       return await this.ctx.bean.role.save({ roleId, data });
     }
 
-    async buildBulk() {
-      const progressId = await this._tailBuild();
-      // ok
-      return { progressId };
-    }
-
     async _tailBuild() {
       const progressId = await this.ctx.bean.progress.create();
       // build, not await

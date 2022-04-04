@@ -121,13 +121,6 @@ module.exports = app => {
       });
       this.ctx.success();
     }
-
-    async buildBulk() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.buildBulk();
-      this.ctx.success(res);
-    }
   }
   return RoleController;
 };

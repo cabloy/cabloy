@@ -4,7 +4,6 @@ import ActionClone from './actionRole/actionClone.js';
 import ActionMove from './actionRole/actionMove.js';
 import ActionAddChild from './actionRole/actionAddChild.js';
 import ActionIncludes from './actionRole/actionIncludes.js';
-import ActionBuildBulk from './actionRole/actionBuildBulk.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -18,7 +17,6 @@ export default {
     ActionMove,
     ActionAddChild,
     ActionIncludes,
-    ActionBuildBulk,
   ],
   methods: {
     async onAction() {
@@ -32,8 +30,6 @@ export default {
         return await this._onActionAddChild();
       } else if (this.action.name === 'includes') {
         return await this._onActionIncludes();
-      } else if (this.action.name === 'buildBulk') {
-        return await this._onActionBuildBulk();
       }
     },
   },
