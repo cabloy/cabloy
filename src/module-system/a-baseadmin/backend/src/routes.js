@@ -146,31 +146,6 @@ module.exports = app => {
       controller: 'atomRight',
       meta: { right: { type: 'resource', name: 'atomRight' } },
     },
-    // functionRight
-    {
-      method: 'post',
-      path: 'functionRight/rights',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
-    },
-    {
-      method: 'post',
-      path: 'functionRight/add',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
-    },
-    {
-      method: 'post',
-      path: 'functionRight/delete',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
-    },
-    {
-      method: 'post',
-      path: 'functionRight/spreads',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
-    },
     // auth
     { method: 'post', path: 'auth/list', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/disable', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
