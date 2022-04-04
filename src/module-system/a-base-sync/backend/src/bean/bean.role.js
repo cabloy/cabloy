@@ -415,7 +415,8 @@ module.exports = ctx => {
     }
 
     // role rights
-    async roleRights({ roleId, page }) {
+    async roleRights({ roleAtomId, roleId, page }) {
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(
@@ -488,13 +489,17 @@ module.exports = ctx => {
 
     async _scopeRoles({ scope }) {
       if (!scope || scope.length === 0) return null;
-      return await ctx.model.query(
+      const list = await ctx.model.query(
         `
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
             `,
         [ctx.instance.id]
       );
+      for (const item of list) {
+        item.roleNameLocale = ctx.text(item.roleName);
+      }
+      return list;
     }
 
     async getUserRolesDirect({ userId }) {

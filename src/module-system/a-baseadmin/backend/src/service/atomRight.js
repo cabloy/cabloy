@@ -1,7 +1,7 @@
 module.exports = app => {
   class AtomRight extends app.Service {
-    async rights({ roleId, page }) {
-      return await this.ctx.bean.role.roleRights({ roleId, page });
+    async rights({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.roleRights({ roleAtomId, page, user });
     }
 
     async add({ roleId, atomClass, actionCode, scopeSelf, scope }) {

@@ -3,8 +3,9 @@ module.exports = app => {
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.atomRight.rights({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }

@@ -7,7 +7,9 @@
           <div slot="after">
             <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{ $text('Self') }}</f7-badge>
             <template v-if="item.scopeRoles">
-              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{ scopeRole.roleName }}</f7-badge>
+              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">
+                {{ scopeRole.roleNameLocale }}
+              </f7-badge>
             </template>
           </div>
           <eb-context-menu>
@@ -47,6 +49,9 @@ export default {
   computed: {
     ready() {
       return this.modulesAll && this.atomClassesAll && this.actionsAll;
+    },
+    roleKey() {
+      return { atomId: this.role.atomId, itemId: this.role.itemId };
     },
     itemGroups() {
       if (!this.items) return [];
@@ -104,11 +109,13 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
-      return this.$api.post('atomRight/rights', { roleId: this.role.id, page: { index } }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
+    async onLoadMore({ index }) {
+      const data = await this.$api.post('atomRight/rights', {
+        key: this.roleKey,
+        page: { index },
       });
+      this.items = this.items.concat(data.list);
+      return data;
     },
     onPerformAdd() {
       this.$view.navigate(`/a/baseadmin/atomRight/add?roleId=${this.role.id}`);
@@ -125,7 +132,7 @@ export default {
         });
       });
     },
-    onAtomRightAdd(data) {
+    onAtomRightAdd() {
       this.reload();
     },
     onAtomRightDelete(data) {

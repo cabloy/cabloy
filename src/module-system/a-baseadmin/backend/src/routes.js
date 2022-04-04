@@ -89,6 +89,31 @@ module.exports = app => {
       controller: 'resourceRight',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorization' } },
     },
+    // atomRight
+    {
+      method: 'post',
+      path: 'atomRight/rights',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/add',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/delete',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/spreads',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+    },
 
     // user
     {
@@ -120,31 +145,6 @@ module.exports = app => {
       path: 'user/resourceRights',
       controller: 'user',
       meta: { right: { type: 'resource', name: 'user' } },
-    },
-    // atomRight
-    {
-      method: 'post',
-      path: 'atomRight/rights',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/add',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/delete',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/spreads',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
     },
     // auth
     { method: 'post', path: 'auth/list', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
