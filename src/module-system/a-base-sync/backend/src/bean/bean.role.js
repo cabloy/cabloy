@@ -502,17 +502,17 @@ module.exports = ctx => {
 
     async _scopeRoles({ scope }) {
       if (!scope || scope.length === 0) return null;
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
             `,
         [ctx.instance.id]
       );
-      for (const item of list) {
+      for (const item of items) {
         item.roleNameLocale = ctx.text(item.roleName);
       }
-      return list;
+      return items;
     }
 
     async getUserRolesDirect({ userId }) {
