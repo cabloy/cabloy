@@ -13,7 +13,6 @@ export default [
   { path: 'user/search', component: load('user/search') },
   { path: 'user/select', component: load('user/select') },
   { path: 'user/rights', component: load('user/rights') },
-  { path: 'atomRight/list', component: load('atomRight/list') },
   { path: 'atomRight/edit', component: load('atomRight/edit') },
   { path: 'atomRight/add', component: load('atomRight/add') },
   { path: 'resourceRight/edit', component: load('resourceRight/edit') },
