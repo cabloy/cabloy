@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="getPageTitle()" eb-back-link="Back">
+    <eb-navbar :title="getPageTitle('Resource Authorization')" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" top tabbar>
           <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>{{ $text('Rights') }}</f7-link>
@@ -23,35 +23,23 @@
 </template>
 <script>
 import Vue from 'vue';
+import roleItemBase from '../../components/role/roleItemBase.js';
 import rights from '../../components/resourceRight/rights.vue';
 import spreads from '../../components/resourceRight/spreads.vue';
 export default {
+  mixins: [roleItemBase],
   components: {
     rights,
     spreads,
   },
   data() {
     return {
-      roleAtomId: parseInt(this.$f7route.query.roleAtomId),
-      roleId: parseInt(this.$f7route.query.roleId),
-      role: null,
       tabIdRights: Vue.prototype.$meta.util.nextId('tab'),
       tabIdSpreads: Vue.prototype.$meta.util.nextId('tab'),
       tabName: 'rights',
     };
   },
-  created() {
-    this.loadRole();
-  },
   methods: {
-    async loadRole() {
-      this.role = await this.$api.post('/a/base/atom/read', { key: { atomId: this.roleAtomId } });
-    },
-    getPageTitle() {
-      let title = this.$text('Resource Authorization');
-      if (this.role) title = `${title}: ${this.role.atomNameLocale || this.role.atomName}`;
-      return title;
-    },
     onPerformRightsAdd() {
       return this.$refs.rights.onPerformAdd();
     },
