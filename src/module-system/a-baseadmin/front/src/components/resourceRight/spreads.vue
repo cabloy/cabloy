@@ -114,10 +114,10 @@ export default {
         return data;
       });
     },
-    onResourceRightAdd(data) {
+    onResourceRightAdd() {
       this.reload();
     },
-    onResourceRightDelete(data) {
+    onResourceRightDelete() {
       this.reload();
     },
     getTypeCategory(item) {
