@@ -32,6 +32,7 @@ export default {
   },
   data() {
     return {
+      roleAtomId: parseInt(this.$f7route.query.roleAtomId),
       roleId: parseInt(this.$f7route.query.roleId),
       role: null,
       tabIdRights: Vue.prototype.$meta.util.nextId('tab'),
@@ -40,11 +41,14 @@ export default {
     };
   },
   created() {
-    this.$api.post('role/item', { roleId: this.roleId }).then(data => {
-      this.role = data;
-    });
+    this.loadRole();
   },
   methods: {
+    async loadRole() {
+      this.$api.post('role/item', { roleId: this.roleId }).then(data => {
+        this.role = data;
+      });
+    },
     getPageTitle() {
       let title = this.$text('Resource Right');
       if (this.role) title = `${title}: ${this.role.roleName}`;
