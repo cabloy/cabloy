@@ -368,6 +368,9 @@ module.exports = ctx => {
 
     // includes
     async includes({ roleAtomId, roleId, page, user }) {
+      // user, not check user right scope
+      user = { id: 0 };
+      //
       roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       // where
@@ -884,6 +887,23 @@ module.exports = ctx => {
       });
       return !!res;
     }
+
+    // // includes
+    // async includes({ roleAtomId, roleId, page, user }) {
+    //   roleId = await this._forceRoleId({ roleAtomId, roleId });
+    //   page = ctx.bean.util.page(page, false);
+    //   const _limit = ctx.model._limit(page.size, page.index);
+    //   const list = await ctx.model.query(
+    //     `
+    //     select a.*,b.roleName from aRoleInc a
+    //       left join aRole b on a.roleIdInc=b.id
+    //         where a.iid=? and a.roleId=?
+    //         ${_limit}
+    //     `,
+    //     [ctx.instance.id, roleId]
+    //   );
+    //   return list;
+    // }
   }
 
   return Role;
