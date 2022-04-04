@@ -128,7 +128,7 @@ module.exports = {
   // role name
   root: '根',
   anonymous: '匿名',
-  authenticated: '已注册',
+  authenticated: '已验证',
   template: '模版',
   system: '系统',
   registered: '已注册',
