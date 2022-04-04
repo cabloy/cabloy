@@ -5,7 +5,7 @@ export default {
       // resourceAuthorization
       // open
       const url = ctx.$meta.util.replaceTemplate(
-        '/a/baseadmin/resourceRight/list?roleAtomId={{atomId}}&roleId={{itemId}}',
+        '/a/baseadmin/resourceRight/edit?roleAtomId={{atomId}}&roleId={{itemId}}',
         item
       );
       let navigateOptions = action.navigateOptions;

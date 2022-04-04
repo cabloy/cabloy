@@ -107,7 +107,7 @@ module.exports = app => {
             },
             atomAuthorization: {
               code: 105,
-              title: 'Data Authorization',
+              title: 'Atom Authorization',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:database-lock-outline' },

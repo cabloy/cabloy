@@ -36,7 +36,7 @@ module.exports = {
   'Developer Tool': '开发者工具',
   'Role Type': '角色类型',
   'Resource Authorization': '资源授权',
-  'Data Authorization': '数据授权',
+  'Atom Authorization': '数据授权',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',

@@ -22,4 +22,5 @@ module.exports = {
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Cannot delete if has atoms': 'Cannot delete if has data',
+  'Atom Authorization': 'Data Authorization',
 };
