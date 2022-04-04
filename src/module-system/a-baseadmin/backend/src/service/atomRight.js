@@ -22,8 +22,8 @@ module.exports = app => {
       return await this.ctx.bean.role.deleteRoleRight({ roleAtomId, roleRightId, user });
     }
 
-    async spreads({ roleId, page }) {
-      return await this.ctx.bean.role.roleSpreads({ roleId, page });
+    async spreads({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.roleSpreads({ roleAtomId, page, user });
     }
   }
 

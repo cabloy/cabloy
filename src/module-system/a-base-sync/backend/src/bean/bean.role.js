@@ -443,12 +443,13 @@ module.exports = ctx => {
     }
 
     // role spreads
-    async roleSpreads({ roleId, page }) {
+    async roleSpreads({ roleAtomId, roleId, page }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aRoleRight a
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRoleExpand d on a.roleId=d.roleIdBase
@@ -459,21 +460,19 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, roleId]
       );
-      // scope
-      for (const item of list) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
-      return list;
+      // locale
+      await this._atomRightsLocale({ items });
+      // ok
+      return items;
     }
 
     // atom rights of user
     async atomRightsOfUser({ userId, page }) {
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
-        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aViewUserRightAtomClass a
+        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aViewUserRightAtomClass a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRole e on a.roleIdBase=e.id
@@ -483,12 +482,22 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, userId]
       );
-      // scope
-      for (const item of list) {
+      // locale
+      await this._atomRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async _atomRightsLocale({ items }) {
+      for (const item of items) {
+        // scope
         const scope = JSON.parse(item.scope);
         item.scopeRoles = await this._scopeRoles({ scope });
+        // roleNameBase
+        if (item.roleNameBase) {
+          item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        }
       }
-      return list;
     }
 
     async _scopeRoles({ scope }) {
