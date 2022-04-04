@@ -21,6 +21,7 @@ export default {
   'Menu Right Management': '菜单权限管理',
   'Panel Right Management': '边栏权限管理',
   'Widget Right Management': '部件权限管理',
+  'New Authorization': '新建授权',
   'New Authorizations': '新建授权',
   'New Atom Right': '新建数据权限',
   'New Resource Rights': '新建资源权限',

@@ -101,6 +101,7 @@ export default {
       await this.$api.post('/a/base/resource/resourceRoleRemove', {
         key: { atomId: this.atomId },
         data: {
+          resourceRoleId: item.id,
           roleId: item.roleId,
         },
       });

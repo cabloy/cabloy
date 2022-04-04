@@ -118,7 +118,8 @@ export default {
       return data;
     },
     onPerformAdd() {
-      this.$view.navigate(`/a/baseadmin/atomRight/add?roleId=${this.role.id}`);
+      const url = `/a/baseadmin/atomRight/add?roleAtomId=${this.roleKey.atomId}&roleId=${this.roleKey.itemId}`;
+      this.$view.navigate(url);
     },
     onPerformDelete(event, item) {
       return this.$view.dialog.confirm().then(() => {

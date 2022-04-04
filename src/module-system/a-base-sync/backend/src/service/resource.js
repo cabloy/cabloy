@@ -16,8 +16,11 @@ module.exports = app => {
       return await this.ctx.bean.resource.resourceRoles({ key, user });
     }
 
-    async resourceRoleRemove({ key, data /* , user*/ }) {
-      return await this.ctx.bean.resource.deleteResourceRole({ atomId: key.atomId, roleId: data.roleId });
+    async resourceRoleRemove({ /* key,*/ data /* , user*/ }) {
+      return await this.ctx.bean.resource.deleteResourceRole({
+        resourceRoleId: data.resourceRoleId,
+        roleId: data.roleId,
+      });
     }
 
     async resourceRoleAdd({ key, data /* , user*/ }) {
