@@ -75,11 +75,29 @@ export default {
       this.$meta.util.swipeoutDelete(event.currentTarget);
       return true;
     },
+    async onPerformItem(event, item) {
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'read',
+        navigateOptions: {
+          target: '_self',
+        },
+      };
+      await this.$meta.util.performAction({ ctx: this, action, item });
+    },
     _renderList() {
       const children = [];
       for (const item of this.items) {
         children.push(
-          <eb-list-item class="item" key={item.id} title={item.atomNameLocale || item.roleName} link="#" swipeout>
+          <eb-list-item
+            class="item"
+            key={item.id}
+            title={item.atomNameLocale || item.roleName}
+            link="#"
+            propsOnPerform={event => this.onPerformItem(event, item)}
+            swipeout
+          >
             <f7-icon slot="media" f7={item._roleTypeCodeOptions.icon.f7}></f7-icon>
             <eb-context-menu>
               <div slot="right">
