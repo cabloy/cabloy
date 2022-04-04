@@ -95,6 +95,8 @@ module.exports = function (ctx) {
           atomClass: __atomClassUserRole,
           item: {
             itemId: userRoleId,
+            userId: item.userId,
+            roleId: item.roleId,
           },
           user: { id: 0 },
         });

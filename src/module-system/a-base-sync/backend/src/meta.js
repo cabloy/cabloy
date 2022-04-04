@@ -140,6 +140,9 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            fields: {
+              custom: ['userId', 'roleId'],
+            },
             layout: {
               config: {
                 module: 'a-baseadmin',

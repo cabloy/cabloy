@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const atomResource = require('./bean/atom.resource.js');
 const atomRole = require('./bean/atom.role.js');
+const atomUserRole = require('./bean/atom.userRole.js');
 const localProcedure = require('./bean/local.procedure.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
@@ -26,6 +27,7 @@ const beanBase = require('./bean/bean.base.js');
 const beanResource = require('./bean/bean.resource.js');
 const beanRole = require('./bean/bean.role.js');
 const beanUser = require('./bean/bean.user.js');
+const beanUserRole = require('./bean/bean.userRole.js');
 const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
@@ -50,6 +52,10 @@ module.exports = app => {
     'atom.role': {
       mode: 'app',
       bean: atomRole,
+    },
+    'atom.userRole': {
+      mode: 'app',
+      bean: atomUserRole,
     },
     // local
     'local.procedure': {
@@ -164,6 +170,11 @@ module.exports = app => {
     user: {
       mode: 'ctx',
       bean: beanUser,
+      global: true,
+    },
+    userRole: {
+      mode: 'ctx',
+      bean: beanUserRole,
       global: true,
     },
     util: {
