@@ -35,7 +35,7 @@ module.exports = function (ctx) {
       sql = `
           CREATE VIEW aRoleIncludesView as
             select a.*,b.id as roleIncId,b.roleId as roleIdWho,b.roleIdInc from aRole a
-              left join aRoleInc b on a.id=b.roleIdInc
+              inner join aRoleInc b on a.id=b.roleIdInc
         `;
       await ctx.model.query(sql);
     }
