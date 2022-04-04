@@ -108,7 +108,7 @@ export default {
         }
         const domLeftLabel = (
           <div color="blue" propsOnPerform={event => this.labels_onClick(event, item)}>
-            <f7-icon slot="media" f7="::label"></f7-icon>
+            <f7-icon slot="media" f7=":outline:label-outline"></f7-icon>
             {domLeftLabelTitle}
           </div>
         );
