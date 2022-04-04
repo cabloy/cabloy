@@ -10,8 +10,6 @@ import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/
 import roleListLayoutDataProviderTree from './components/role/listLayoutData/providerTree.jsx';
 //
 import actionRole from './components/actionRole.js';
-import roleList from './components/role/list.jsx';
-import roleInfo from './components/role/info.vue';
 import roleIncludes from './components/role/includes.jsx';
 import userInfo from './components/user/info.vue';
 import userList from './components/user/list.vue';
@@ -35,8 +33,6 @@ export default {
   roleListLayoutDataProviderTree,
   //
   actionRole,
-  roleList,
-  roleInfo,
   roleIncludes,
   userInfo,
   userList,

@@ -5,10 +5,10 @@
   </eb-page>
 </template>
 <script>
-import roleList from '../../components/role/list.jsx';
+// import roleList from '../../components/role/list.jsx';
 export default {
   components: {
-    roleList,
+    // roleList,
   },
   data() {
     return {
