@@ -100,14 +100,12 @@ export default {
       const url = `/a/baseadmin/resourceRight/add?roleAtomId=${this.roleKey.atomId}&roleId=${this.roleKey.itemId}`;
       this.$view.navigate(url);
     },
-    onPerformDelete(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('resourceRight/delete', { id: item.id }).then(() => {
-          this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
-          this.$meta.util.swipeoutDelete(event.currentTarget);
-          return true;
-        });
-      });
+    async onPerformDelete(event, item) {
+      await this.$view.dialog.confirm();
+      await this.$api.post('resourceRight/delete', { key: this.roleKey, atomId: item.atomId });
+      this.$meta.eventHub.$emit('resourceRight:delete', { id: item.id, roleId: this.role.id });
+      this.$meta.util.swipeoutDelete(event.currentTarget);
+      return true;
     },
     onResourceRightAdd() {
       this.reload();

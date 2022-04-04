@@ -244,8 +244,9 @@ module.exports = ctx => {
     }
 
     // delete resource role
-    async deleteResourceRole({ id }) {
-      await this.modelResourceRole.delete({ id });
+    async deleteResourceRole({ roleAtomId, roleId, atomId }) {
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
+      await this.modelResourceRole.delete({ atomId, roleId });
     }
 
     async _getAtomClassesResource() {

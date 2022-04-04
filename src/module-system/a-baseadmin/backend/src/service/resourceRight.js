@@ -8,8 +8,8 @@ module.exports = app => {
       return await this.ctx.bean.resource.addResourceRoles({ roleAtomId, atomIds, user });
     }
 
-    async delete({ id }) {
-      return await this.ctx.bean.resource.deleteResourceRole({ id });
+    async delete({ roleAtomId, atomId, user }) {
+      return await this.ctx.bean.resource.deleteResourceRole({ roleAtomId, atomId, user });
     }
 
     async spreads({ roleId, page }) {
