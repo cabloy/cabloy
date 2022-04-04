@@ -69,7 +69,7 @@ module.exports = app => {
       method: 'post',
       path: 'resourceRight/rights',
       controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorization' } },
     },
     {
       method: 'post',

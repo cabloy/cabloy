@@ -42,6 +42,9 @@ export default {
     ready() {
       return this.modulesAll && this.atomClassesAll;
     },
+    roleKey() {
+      return { atomId: this.role.atomId, itemId: this.role.itemId };
+    },
     itemGroups() {
       if (!this.items) return [];
       const groups = [];

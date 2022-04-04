@@ -1,7 +1,7 @@
 module.exports = app => {
   class ResourceRight extends app.Service {
-    async rights({ roleId, page }) {
-      return await this.ctx.bean.resource.resourceRights({ roleId, page });
+    async rights({ roleAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceRights({ roleAtomId, page, user });
     }
 
     async add({ roleId, atomIds }) {

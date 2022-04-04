@@ -267,10 +267,11 @@ module.exports = ctx => {
 
     // admin
 
-    async resourceRights({ roleId, page }) {
+    async resourceRights({ roleAtomId, roleId, page }) {
       // check locale
       const locale = ctx.locale;
       // items
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
