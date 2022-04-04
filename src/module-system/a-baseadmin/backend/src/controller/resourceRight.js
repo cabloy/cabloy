@@ -35,8 +35,9 @@ module.exports = app => {
     async spreads() {
       const page = this.ctx.request.body.page;
       const items = await this.service.resourceRight.spreads({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }

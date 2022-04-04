@@ -11,7 +11,7 @@
         >
           <div slot="root-start" class="header">
             <div></div>
-            <div>{{ $text('from') }}: {{ item.roleName }}</div>
+            <div>{{ $text('from') }}: {{ item.roleNameBaseLocale }}</div>
           </div>
           <div slot="after">
             <f7-badge v-if="item.resourceType">{{ getTypeCategory(item) }}</f7-badge>
@@ -47,6 +47,9 @@ export default {
   computed: {
     ready() {
       return this.modulesAll && this.atomClassesAll;
+    },
+    roleKey() {
+      return { atomId: this.role.atomId, itemId: this.role.itemId };
     },
     itemGroups() {
       if (!this.items) return [];
@@ -100,19 +103,20 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
+    async onLoadMore({ index }) {
       if (this.role) {
         // role
-        return this.$api.post('resourceRight/spreads', { roleId: this.role.id, page: { index } }).then(data => {
-          this.items = this.items.concat(data.list);
-          return data;
+        const data = await this.$api.post('resourceRight/spreads', {
+          key: this.roleKey,
+          page: { index },
         });
-      }
-      // user
-      return this.$api.post('user/resourceRights', { userId: this.user.id, page: { index } }).then(data => {
         this.items = this.items.concat(data.list);
         return data;
-      });
+      }
+      // user
+      const data = await this.$api.post('user/resourceRights', { userId: this.user.id, page: { index } });
+      this.items = this.items.concat(data.list);
+      return data;
     },
     onResourceRightAdd() {
       this.reload();

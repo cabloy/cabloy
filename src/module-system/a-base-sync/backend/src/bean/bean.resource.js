@@ -301,10 +301,11 @@ module.exports = ctx => {
       return items;
     }
 
-    async resourceSpreads({ roleId, page }) {
+    async resourceSpreads({ roleAtomId, roleId, page }) {
       // check locale
       const locale = ctx.locale;
       // items
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
@@ -314,7 +315,7 @@ module.exports = ctx => {
                f.categoryName as atomCategoryName,
                c.module,c.atomClassName,
                d.atomNameLocale,e.resourceType,
-               h.roleName
+               h.roleName as roleNameBase
           from aResourceRole a
             inner join aAtom b on a.atomId=b.id
             inner join aAtomClass c on b.atomClassId=c.id
@@ -348,7 +349,7 @@ module.exports = ctx => {
                f.categoryName as atomCategoryName,
                c.module,c.atomClassName,
                d.atomNameLocale,e.resourceType,
-               h.roleName
+               h.roleName as roleNameBase
           from aViewUserRightResource a
             inner join aAtom b on a.resourceAtomId=b.id
             inner join aAtomClass c on b.atomClassId=c.id
@@ -380,6 +381,10 @@ module.exports = ctx => {
         }
         // category name
         item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
+        // roleNameBase
+        if (item.roleNameBase) {
+          item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        }
       }
     }
 

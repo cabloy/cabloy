@@ -12,8 +12,8 @@ module.exports = app => {
       return await this.ctx.bean.resource.deleteResourceRole({ roleAtomId, atomId, user });
     }
 
-    async spreads({ roleId, page }) {
-      return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
+    async spreads({ roleAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceSpreads({ roleAtomId, page, user });
     }
   }
 
