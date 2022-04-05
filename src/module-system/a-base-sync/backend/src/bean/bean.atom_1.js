@@ -584,6 +584,8 @@ module.exports = ctx => {
       });
       // cms
       const cms = _atomClass && _atomClass.cms;
+      // forAtomUser
+      const forAtomUser = tableName === 'aUser';
       // sql
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
@@ -594,6 +596,7 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
       });
       debug('===== getAtom =====\n%s', sql);
       // query
@@ -626,6 +629,7 @@ module.exports = ctx => {
     }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
+      const forAtomUser = tableName === 'aUser';
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
@@ -647,6 +651,7 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
       });
       debug('===== selectAtoms =====\n%s', sql);
       const res = await ctx.model.query(sql);

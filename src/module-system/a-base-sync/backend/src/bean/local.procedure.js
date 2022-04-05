@@ -21,6 +21,7 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
     }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -75,6 +76,7 @@ module.exports = ctx => {
           resourceLocale,
           mode,
           cms,
+          forAtomUser,
         });
       }
       // formal/history
@@ -99,6 +101,7 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
       });
     }
 
@@ -357,6 +360,7 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
     }) {
       // -- tables
       // -- a: aAtom
@@ -393,6 +397,8 @@ module.exports = ctx => {
       let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -477,6 +483,15 @@ module.exports = ctx => {
         _atomClassWhere = ' and b.atomClassInner=0';
       }
 
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -487,7 +502,7 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
@@ -495,7 +510,7 @@ module.exports = ctx => {
       // sql
       const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
@@ -547,6 +562,7 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
     }) {
       // -- tables
       // -- a: aAtom
@@ -586,6 +602,8 @@ module.exports = ctx => {
       let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -690,6 +708,15 @@ module.exports = ctx => {
         _atomClassWhere = ' and b.atomClassInner=0';
       }
 
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -700,7 +727,7 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
@@ -747,7 +774,7 @@ module.exports = ctx => {
       // sql
       const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
@@ -783,7 +810,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms }) {
+    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -811,6 +838,8 @@ module.exports = ctx => {
       let _itemField, _itemJoin;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // star
       if (userIdWho) {
@@ -855,13 +884,22 @@ module.exports = ctx => {
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
+
       // sql
       const _sql = `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField}
                 ${_labelField}
@@ -871,7 +909,7 @@ module.exports = ctx => {
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
