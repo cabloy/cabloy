@@ -77,23 +77,21 @@ module.exports = ctx => {
       userName = userName || '';
       email = email || '';
       mobile = mobile || '';
-      if (this.config.checkUserName === true) {
-        if (!userName && !email && !mobile) return null;
-      } else {
-        if (!email && !mobile) return null;
+      if (this.config.checkUserName !== true) {
         userName = '';
       }
-      if (this.config.checkUserName === true && userName) {
-        return await this.model.queryOne(
-          `select * from aUser
-             where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ctx.instance.id, userName, email, email, mobile, mobile]
-        );
-      }
+      // where
+      const clause = {};
+      clause.__or__ = [];
+      if (userName) clause.__or__.push({ userName });
+      if (email) clause.__or__.push({ email });
+      if (mobile) clause.__or__.push({ mobile });
+      if (clause.__or__.length === 0) return null;
+      const where = ctx.model._where(clause);
       return await this.model.queryOne(
         `select * from aUser
-             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ctx.instance.id, email, email, mobile, mobile]
+            ${where} and iid=? and deleted=0`,
+        [ctx.instance.id]
       );
     }
 
