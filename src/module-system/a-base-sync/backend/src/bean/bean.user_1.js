@@ -36,8 +36,12 @@ module.exports = ctx => {
         user = { id: 0 };
       }
       // create
+      const itemCreate = {
+        atomName: userName,
+      };
       const userKey = await ctx.bean.atom.create({
         atomClass: __atomClassUser,
+        item: itemCreate,
         user,
       });
       // write

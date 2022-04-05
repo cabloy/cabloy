@@ -11,9 +11,9 @@ module.exports = function (ctx) {
         Add COLUMN roleConfig JSON DEFAULT NULL
                 `;
       await ctx.model.query(sql);
-      // aUserRole
+      // aUser
       sql = `
-      ALTER TABLE aUserRole
+      ALTER TABLE aUser
         Add COLUMN atomId int(11) DEFAULT '0'
                 `;
       await ctx.model.query(sql);

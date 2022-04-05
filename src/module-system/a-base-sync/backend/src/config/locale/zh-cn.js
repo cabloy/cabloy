@@ -9,6 +9,7 @@ module.exports = {
   'Delete Comment': '删除评论',
   'Element Exists': '元素已存在',
   'Element does not Exist': '元素不存在',
+  'User Exists': '用户已存在',
   'Operation Failed': '操作失败',
   'User does not Exist': '用户不存在',
   'User is Disabled': '用户被禁用',

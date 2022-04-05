@@ -4,6 +4,11 @@ module.exports = app => {
   schemas.user = {
     type: 'object',
     properties: {
+      // title
+      __groupTitle: {
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
       userName: {
         type: 'string',
         ebType: 'text',
@@ -17,6 +22,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Realname',
         notEmpty: true,
+      },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
       },
       email: {
         type: 'string',
