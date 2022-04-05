@@ -3,30 +3,21 @@ const extend = require3('extend2');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassUser = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'user',
+  };
+
   class User {
     async get(where) {
       return await this.model.get(where);
     }
 
-    async exists({ userName, email, mobile }) {
-      userName = userName || '';
-      email = email || '';
-      mobile = mobile || '';
-      if (this.config.checkUserName === true && userName) {
-        return await this.model.queryOne(
-          `select * from aUser
-             where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ctx.instance.id, userName, email, email, mobile, mobile]
-        );
-      }
-      return await this.model.queryOne(
-        `select * from aUser
-             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ctx.instance.id, email, email, mobile, mobile]
-      );
-    }
-
-    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
+    async add(
+      { disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 },
+      user,
+      returnKey
+    ) {
       // check if incomplete information
       let needCheck;
       if (anonymous) {
@@ -41,8 +32,16 @@ module.exports = ctx => {
         const res = await this.exists({ userName, email, mobile });
         if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
       }
-      // insert
-      const res = await this.model.insert({
+      if (!user) {
+        user = { id: 0 };
+      }
+      // create
+      const userKey = await ctx.bean.atom.create({
+        atomClass: __atomClassUser,
+        user,
+      });
+      // write
+      const item = {
         disabled,
         userName,
         realName,
@@ -52,8 +51,47 @@ module.exports = ctx => {
         motto,
         locale,
         anonymous,
+      };
+      if (userName) {
+        item.atomName = userName;
+      }
+      await ctx.bean.atom.write({
+        key: userKey,
+        item,
+        user,
       });
-      return res.insertId;
+      // submit
+      await ctx.bean.atom.submit({
+        key: userKey,
+        options: { ignoreFlow: true },
+        user,
+      });
+      // ok
+      return returnKey ? userKey : userKey.itemId;
+    }
+
+    async exists({ userName, email, mobile }) {
+      userName = userName || '';
+      email = email || '';
+      mobile = mobile || '';
+      if (this.config.checkUserName === true) {
+        if (!userName && !email && !mobile) return null;
+      } else {
+        if (!email && !mobile) return null;
+        userName = '';
+      }
+      if (this.config.checkUserName === true && userName) {
+        return await this.model.queryOne(
+          `select * from aUser
+             where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
+          [ctx.instance.id, userName, email, email, mobile, mobile]
+        );
+      }
+      return await this.model.queryOne(
+        `select * from aUser
+             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
+        [ctx.instance.id, email, email, mobile, mobile]
+      );
     }
 
     async save({ user }) {
