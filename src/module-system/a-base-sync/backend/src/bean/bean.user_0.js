@@ -53,7 +53,7 @@ module.exports = ctx => {
         return _userAnonymous;
       }
       // add user
-      const userId = await this.add({ disabled: 0, anonymous: 1 });
+      const userId = await this.add({ userName: 'anonymous', disabled: 0, anonymous: 1 });
       // addRole
       const role = await ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
       await ctx.bean.role.addUserRole({ userId, roleId: role.id });

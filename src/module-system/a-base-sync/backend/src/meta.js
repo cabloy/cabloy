@@ -138,6 +138,9 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            fields: {
+              custom: ['disabled', 'anonymous'],
+            },
             layout: {
               config: {
                 module: 'a-baseadmin',
@@ -146,9 +149,9 @@ module.exports = app => {
             },
           },
           actions: {},
-          validator: 'user',
+          validator: 'userAdmin',
           search: {
-            validator: 'userSearch',
+            validator: 'userAdminSearch',
           },
         },
       },
@@ -198,6 +201,9 @@ module.exports = app => {
       validators: {
         user: {
           schemas: 'user',
+        },
+        userAdmin: {
+          schemas: 'userAdmin',
         },
         category: {
           schemas: 'category',

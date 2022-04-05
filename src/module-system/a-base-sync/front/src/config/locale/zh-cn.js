@@ -55,6 +55,7 @@ export default {
   Mobile: '手机号',
   Motto: '箴言',
   Locale: '本地化',
+  Avatar: '头像',
   Search: '搜索',
   Link: '链接',
   Select: '选择',

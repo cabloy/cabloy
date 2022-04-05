@@ -96,6 +96,8 @@ module.exports = function (ctx) {
           atomClass: __atomClassUser,
           item: {
             itemId: userId,
+            disabled: item.disabled,
+            anonymous: item.anonymous,
           },
           user: { id: 0 },
         });

@@ -37,7 +37,8 @@ module.exports = ctx => {
       }
       // create
       const itemCreate = {
-        atomName: userName,
+        disabled,
+        anonymous,
       };
       const userKey = await ctx.bean.atom.create({
         atomClass: __atomClassUser,
@@ -46,7 +47,6 @@ module.exports = ctx => {
       });
       // write
       const item = {
-        disabled,
         userName,
         realName,
         email,
@@ -54,7 +54,6 @@ module.exports = ctx => {
         avatar,
         motto,
         locale,
-        anonymous,
       };
       if (userName) {
         item.atomName = userName;

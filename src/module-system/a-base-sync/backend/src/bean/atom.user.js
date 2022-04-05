@@ -8,6 +8,9 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // only support atomStage=1
       if (item.atomStage !== 1) throw new Error('user only support atomStage=1');
+      // fields
+      const disabled = item.disabled || 0;
+      const anonymous = item.anonymous || 0;
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
@@ -19,12 +22,16 @@ module.exports = app => {
         const userName = _atomNew.atomName;
         const res = await this.ctx.model.user.insert({
           atomId: key.atomId,
+          disabled,
+          anonymous,
           userName,
         });
         itemId = res.insertId;
       } else {
         await this.ctx.model.user.update({
           id: itemId,
+          disabled,
+          anonymous,
           atomId,
         });
       }
