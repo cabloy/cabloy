@@ -27,7 +27,6 @@ const beanBase = require('./bean/bean.base.js');
 const beanResource = require('./bean/bean.resource.js');
 const beanRole = require('./bean/bean.role.js');
 const beanUser = require('./bean/bean.user.js');
-const beanUserRole = require('./bean/bean.userRole.js');
 const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
