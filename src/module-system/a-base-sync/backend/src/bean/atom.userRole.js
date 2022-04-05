@@ -30,7 +30,7 @@ module.exports = app => {
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
-      // add role
+      // add user role
       //   item.itemId only be set from inner access
       let itemId = item.itemId;
       if (!itemId) {
