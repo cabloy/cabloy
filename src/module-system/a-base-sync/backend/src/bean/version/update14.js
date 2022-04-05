@@ -4,23 +4,23 @@ module.exports = function (ctx) {
     module: moduleInfo.relativeName,
     atomClassName: 'role',
   };
-  const __atomClassUserRole = {
+  const __atomClassUser = {
     module: moduleInfo.relativeName,
-    atomClassName: 'userRole',
+    atomClassName: 'user',
   };
   class VersionUpdate14 {
     get modelRole() {
       return ctx.model.role;
     }
-    get modelUserRole() {
-      return ctx.model.userRole;
+    get modelUser() {
+      return ctx.model.user;
     }
 
     async run(options) {
       // adjustRoles
       await this._adjustRoles(options);
-      // adjustUserRoles
-      await this._adjustUserRoles(options);
+      // adjustUsers
+      await this._adjustUsers(options);
     }
 
     async _adjustRoles(options) {
@@ -37,7 +37,7 @@ module.exports = function (ctx) {
       }
     }
 
-    async _adjustUserRoles(options) {
+    async _adjustUsers(options) {
       // all instances
       const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
@@ -46,7 +46,7 @@ module.exports = function (ctx) {
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
           context: options,
-          fn: 'update14_adjustUserRoles',
+          fn: 'update14_adjustUsers',
         });
       }
     }
@@ -85,18 +85,16 @@ module.exports = function (ctx) {
       }
     }
 
-    async _adjustUserRolesInstance() {
+    async _adjustUsersInstance() {
       // select all roles where atomId=0
       const items = await this.modelUserRole.select({ where: { atomId: 0 } });
       for (const item of items) {
-        const userRoleId = item.id;
+        const userId = item.id;
         // add atom
         const atomKey = await ctx.bean.atom.create({
-          atomClass: __atomClassUserRole,
+          atomClass: __atomClassUser,
           item: {
-            itemId: userRoleId,
-            userId: item.userId,
-            roleId: item.roleId,
+            itemId: userId,
           },
           user: { id: 0 },
         });

@@ -123,7 +123,10 @@ module.exports = {
   Purple: '紫色',
   Basic: '基本',
   Preview: '预览',
+  User: '用户',
+  Users: '用户',
   Role: '角色',
+  Roles: '角色',
   Move: '移动',
   // role name
   root: '根',
