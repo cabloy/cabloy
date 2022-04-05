@@ -155,15 +155,15 @@ module.exports = ctx => {
       return await ctx.model.query(sql, [ctx.instance.id]);
     }
 
-    async count({ options }) {
-      return await this.select({ options, count: 1 });
+    async count({ options, user }) {
+      return await this.select({ options, user, count: 1 });
     }
 
-    async select({ options, pageForce = true, count = 0 }) {
-      return await this._list({ options, pageForce, count });
+    async select({ options, user, pageForce = true, count = 0 }) {
+      return await this._list({ options, user, pageForce, count });
     }
 
-    async selectGeneral({ params, pageForce = true, count = 0 }) {
+    async selectGeneral({ params, user, pageForce = true, count = 0 }) {
       const { query, page } = params;
       const options = {
         where: {
@@ -181,24 +181,31 @@ module.exports = ctx => {
           { 'a.mobile': { op: 'like', val: query } },
         ];
       }
-      return await this._list({ options, pageForce, count });
+      return await this._list({ options, user, pageForce, count });
     }
 
-    async _list({ options: { where, orders, page, removePrivacy }, pageForce = true, count = 0 }) {
-      page = ctx.bean.util.page(page, pageForce);
+    // options: { where, orders, page, removePrivacy, ... }
+    async _list({ options, user, pageForce = true, count = 0 }) {
+      // select
+      const items = await ctx.bean.atom.select({ atomClass: __atomClassUser, options, user, pageForce, count });
+      // count
+      if (count) return items;
+      // removePrivacy
+      const removePrivacy = options.removePrivacy;
+      if (!removePrivacy) return items;
       // fields
-      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
-      // sql
-      const sql = this.sqlProcedure.selectUsers({
-        iid: ctx.instance.id,
-        where,
-        orders,
-        page,
-        count,
-        fields,
-      });
-      const res = await ctx.model.query(sql);
-      return count ? res[0]._count : res;
+      const fields = await this.getFields({ removePrivacy });
+      const fieldNames = Object.keys(fields);
+      const itemsRes = [];
+      for (const item of items) {
+        const itemRes = {};
+        for (const fieldName of fieldNames) {
+          itemRes[fieldName] = item[fieldName];
+        }
+        itemsRes.push(itemRes);
+      }
+      // ok
+      return itemsRes;
     }
 
     async disable({ userId, disabled }) {

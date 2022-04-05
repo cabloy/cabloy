@@ -5,6 +5,7 @@ module.exports = app => {
       const items = await this.service.user.select({
         query: this.ctx.request.body.query,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }

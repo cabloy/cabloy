@@ -1,7 +1,7 @@
 module.exports = app => {
   class User extends app.Service {
-    async select(params) {
-      return await this.ctx.bean.user.selectGeneral({ params });
+    async select({ query, page, user }) {
+      return await this.ctx.bean.user.selectGeneral({ params: { query, page }, user });
     }
 
     async list({ roleId, query, anonymous, page }) {

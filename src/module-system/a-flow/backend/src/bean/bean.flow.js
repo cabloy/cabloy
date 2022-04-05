@@ -137,10 +137,10 @@ module.exports = ctx => {
       return await ctx.bean.user.select({
         options: {
           where: {
-            'a.disabled': 0,
-            'a.id': userIds,
+            'f.disabled': 0,
+            'f.id': userIds,
           },
-          orders: [['a.userName', 'asc']],
+          orders: [['f.userName', 'asc']],
           removePrivacy: true,
         },
       });

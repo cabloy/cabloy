@@ -13,7 +13,7 @@ module.exports = app => {
       const rightWrite = await this.__checkRightWrite({ host, user });
       if (!rightWrite) this.ctx.throw(403);
       // users
-      return await this.ctx.bean.user.selectGeneral({ params });
+      return await this.ctx.bean.user.selectGeneral({ params, user });
     }
 
     async __checkRightWrite({ host, user }) {
