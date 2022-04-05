@@ -15,8 +15,11 @@ module.exports = app => {
       //   item.itemId only be set from inner access
       let itemId = item.itemId;
       if (!itemId) {
+        const _atomNew = await this.ctx.bean.atom.modelAtom.get({ id: atomId });
+        const userName = _atomNew.atomName;
         const res = await this.ctx.model.user.insert({
           atomId: key.atomId,
+          userName,
         });
         itemId = res.insertId;
       } else {
@@ -54,6 +57,7 @@ module.exports = app => {
       // update user
       const data = await this.ctx.model.user.prepareData(item);
       data.id = key.itemId;
+      if (item.atomName) data.userName = item.atomName;
       await this.ctx.model.user.update(data);
     }
 

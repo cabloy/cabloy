@@ -90,11 +90,19 @@ module.exports = function (ctx) {
       const items = await this.modelUserRole.select({ where: { atomId: 0 } });
       for (const item of items) {
         const userId = item.id;
+        const userName = item.userName;
         // add atom
         const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassUser,
           item: {
             itemId: userId,
+          },
+          user: { id: 0 },
+        });
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item: {
+            atomName: userName,
           },
           user: { id: 0 },
         });
