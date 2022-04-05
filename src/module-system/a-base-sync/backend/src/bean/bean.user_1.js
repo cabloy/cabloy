@@ -96,9 +96,19 @@ module.exports = ctx => {
     }
 
     async save({ user }) {
-      if (Object.keys(user).length > 1) {
-        await this.model.update(user);
+      // userKey
+      const userAtomId = await this._forceUserAtomId({ userId: user.id });
+      const userKey = { atomId: userAtomId };
+      // item
+      const item = { ...user };
+      if (user.userName) {
+        item.atomName = user.userName;
       }
+      await ctx.bean.atom.write({
+        key: userKey,
+        item,
+        user: { id: 0 },
+      });
     }
 
     async getFields({ removePrivacy }) {
@@ -214,6 +224,29 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, userId]
       );
+    }
+
+    async _forceUserAtomId({ userAtomId, userId }) {
+      if (!userAtomId) {
+        const item = await this.get({ id: userId });
+        userAtomId = item.atomId;
+      }
+      return userAtomId;
+    }
+
+    async _forceUserId({ userAtomId, userId }) {
+      if (!userId) {
+        const item = await this.get({ atomId: userAtomId });
+        userId = item.id;
+      }
+      return userId;
+    }
+
+    async _forceUser({ userAtomId, userId }) {
+      if (userAtomId) {
+        return await this.get({ atomId: userAtomId });
+      }
+      return await this.get({ id: userId });
     }
   }
   return User;
