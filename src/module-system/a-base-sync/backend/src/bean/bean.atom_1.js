@@ -585,7 +585,7 @@ module.exports = ctx => {
       // cms
       const cms = _atomClass && _atomClass.cms;
       // forAtomUser
-      const forAtomUser = atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // sql
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
@@ -601,6 +601,11 @@ module.exports = ctx => {
       debug('===== getAtom =====\n%s', sql);
       // query
       return await ctx.model.queryOne(sql);
+    }
+
+    // forAtomUser
+    _checkForAtomUser(atomClass) {
+      return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
     }
 
     async _list({

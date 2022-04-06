@@ -175,7 +175,7 @@ module.exports = ctx => {
       // cms
       const cms = _atomClass && _atomClass.cms;
       // forAtomUser
-      const forAtomUser = atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // select
       const items = await this._list({
         tableName,
@@ -718,6 +718,10 @@ module.exports = ctx => {
       // draft: only userIdUpdated
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // check right
       if (_atom.atomStage === 0) {
         // self
         const bSelf = _atom.userIdUpdated === user.id;
@@ -739,11 +743,14 @@ module.exports = ctx => {
         // others
         return null;
       }
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId: id,
+        forAtomUser,
       });
       return await ctx.model.queryOne(sql);
     }
