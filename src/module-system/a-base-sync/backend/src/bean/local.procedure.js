@@ -523,6 +523,8 @@ module.exports = ctx => {
       }
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
       }
 
       // sql
@@ -812,6 +814,8 @@ module.exports = ctx => {
       }
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
       }
 
       // sql
