@@ -752,17 +752,21 @@ module.exports = ctx => {
         `;
         let _others;
         if (forAtomUser) {
-          let _roleWhere;
           if (role) {
-            _roleWhere = ` and c.roleIdParent=${role}`;
+            _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c
+                  inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
+                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
           } else {
-            _roleWhere = '';
+            _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
           }
-          _others = `
-            exists(
-              select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho} ${_roleWhere}
-            )
-          `;
         } else {
           _others = `
             exists(

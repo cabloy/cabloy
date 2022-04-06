@@ -29,7 +29,7 @@ module.exports = function (ctx) {
       sql = `
       create view aViewUserRightAtomClassUser as
         select a.iid,a.userId as userIdWho,b.atomClassId,b.action,c.userId as userIdWhom,
-               a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+               a.roleIdBase,c.roleId,c.roleIdParent,c.level as roleIdParentLevel
           from aViewUserRoleExpand a
             inner join aRoleRightRef b on a.roleIdBase=b.roleId
             inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
