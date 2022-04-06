@@ -6,12 +6,6 @@ module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(procedure_atom, [procedure_atomRight, procedure_resource], ctx);
 };
 
-module.exports = ctx => {
-  class Procedure {}
-
-  return Procedure;
-};
-
 // /* backup */
 
 // selectUsers({ iid, where, orders, page, count, fields }) {
