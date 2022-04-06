@@ -746,12 +746,15 @@ module.exports = ctx => {
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId: atom.id,
         action,
+        forAtomUser,
       });
       return await ctx.model.queryOne(sql);
     }
