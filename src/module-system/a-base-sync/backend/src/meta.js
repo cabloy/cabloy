@@ -139,7 +139,7 @@ module.exports = app => {
             history: false,
             inner: true,
             fields: {
-              custom: ['disabled', 'anonymous'],
+              custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
             },
             layout: {
               config: {
