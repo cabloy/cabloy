@@ -8,7 +8,6 @@ function loadjsx(name) {
 export default [
   { path: 'role/select', component: load('role/select') },
   { path: 'role/includes', component: loadjsx('role/includes') },
-  { path: 'user/view', component: load('user/view') },
   { path: 'user/select', component: load('user/select') },
   { path: 'user/rights', component: load('user/rights') },
   { path: 'atomRight/edit', component: load('atomRight/edit') },
