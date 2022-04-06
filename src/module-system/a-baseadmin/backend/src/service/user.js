@@ -4,10 +4,6 @@ module.exports = app => {
       return await this.ctx.bean.user.selectGeneral({ params: { query, page }, user });
     }
 
-    async delete({ userId }) {
-      return await this.ctx.bean.user.delete({ userId });
-    }
-
     async roles({ userId, page }) {
       return await this.ctx.bean.user.roles({ userId, page });
     }

@@ -10,15 +10,6 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async delete() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.delete({
-        userId: this.ctx.request.body.userId,
-      });
-      this.ctx.success(res);
-    }
-
     async roles() {
       const page = this.ctx.request.body.page;
       const items = await this.service.user.roles({
