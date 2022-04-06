@@ -705,11 +705,18 @@ module.exports = ctx => {
 
     async checkRoleRightRead({ atom: { id }, roleId }) {
       // not check draft
+      const atomId = id;
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history
       const sql = this.sqlProcedure.checkRoleRightRead({
         iid: ctx.instance.id,
         roleIdWho: roleId,
-        atomId: id,
+        atomId,
+        forAtomUser,
       });
       return await ctx.model.queryOne(sql);
     }
