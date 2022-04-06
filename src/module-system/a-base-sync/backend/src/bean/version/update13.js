@@ -51,7 +51,6 @@ module.exports = function (ctx) {
         `;
       await ctx.model.query(sql);
       // aViewRoleRightAtomClassRole
-      await ctx.model.query('drop view aViewRoleRightAtomClassRole');
       sql = `
       create view aViewRoleRightAtomClassRole as
         select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,
