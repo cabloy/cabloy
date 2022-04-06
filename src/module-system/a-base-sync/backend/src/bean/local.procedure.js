@@ -156,7 +156,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -370,7 +370,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -589,7 +589,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -786,7 +786,8 @@ module.exports = ctx => {
         } else {
           _others = `
             exists(
-              select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+              select c.roleIdWhom from aViewUserRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
             )
           `;
         }

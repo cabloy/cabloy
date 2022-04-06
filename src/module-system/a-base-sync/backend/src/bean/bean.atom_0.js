@@ -175,7 +175,7 @@ module.exports = ctx => {
       // cms
       const cms = _atomClass && _atomClass.cms;
       // forAtomUser
-      const forAtomUser = atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
+      const forAtomUser = atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
       // select
       const items = await this._list({
         tableName,

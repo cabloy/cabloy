@@ -28,7 +28,7 @@ module.exports = app => {
         item.atomStage = 0;
       }
       // roleIdOwner
-      const bAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+      const bAtomClassRole = atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
       if (!item.roleIdOwner && !bAtomClassRole) {
         let roleId;
         if (options.preferredRole) {
