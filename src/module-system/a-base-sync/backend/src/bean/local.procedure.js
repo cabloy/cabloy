@@ -512,6 +512,19 @@ module.exports = ctx => {
                 ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
+      // _rightWhere
+      let _rightWhere;
+      if (forAtomUser && role) {
+        _rightWhere = `
+        exists(
+          select c2.userId from aViewUserRoleRef c2 where c2.iid=${iid} and a.itemId=c2.userId and c2.roleIdParent=${role}
+        )
+      `;
+      }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      }
+
       // sql
       const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
@@ -536,6 +549,7 @@ module.exports = ctx => {
              ${_fileWhere}
              ${_resourceWhere}
              ${_cmsWhere}
+             ${_rightWhere}
            )
 
           ${count ? '' : _orders}
@@ -738,7 +752,7 @@ module.exports = ctx => {
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
-      // mine
+      // _rightWhere
       let _rightWhere;
       if (resource) {
         _rightWhere = `
@@ -796,6 +810,9 @@ module.exports = ctx => {
           `;
         }
       }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      }
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
@@ -825,7 +842,7 @@ module.exports = ctx => {
              ${_fileWhere}
              ${_resourceWhere}
              ${_cmsWhere}
-             and ( ${_rightWhere} )
+             ${_rightWhere}
            )
 
           ${count ? '' : _orders}
