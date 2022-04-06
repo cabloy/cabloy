@@ -35,6 +35,17 @@ module.exports = function (ctx) {
             inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
         `;
       await ctx.model.query(sql);
+      // aViewRoleRightAtomClassUser
+      await ctx.model.query('drop view aViewRoleRightAtomClassUser');
+      sql = `
+      create view aViewRoleRightAtomClassUser as
+        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,c.userId as userIdWhom,
+               a.roleIdBase,c.roleId,c.roleIdParent,c.level as roleIdParentLevel
+          from aRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+        `;
+      await ctx.model.query(sql);
       // view: aRoleView
       sql = `
           CREATE VIEW aRoleView as
