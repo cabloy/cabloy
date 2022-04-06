@@ -113,22 +113,6 @@ module.exports = ctx => {
       }
     }
 
-    // async save({ user }) {
-    //   // userKey
-    //   const userAtomId = await this._forceUserAtomId({ userId: user.id });
-    //   const userKey = { atomId: userAtomId };
-    //   // item
-    //   const item = { ...user };
-    //   if (user.userName) {
-    //     item.atomName = user.userName;
-    //   }
-    //   await ctx.bean.atom.write({
-    //     key: userKey,
-    //     item,
-    //     user: { id: 0 },
-    //   });
-    // }
-
     async getFields({ removePrivacy }) {
       let fields = await this.model.columns();
       if (removePrivacy) {
@@ -146,31 +130,6 @@ module.exports = ctx => {
       return Object.keys(fields)
         .map(item => (alias ? `${alias}.${item}` : item))
         .join(',');
-    }
-
-    async list({ roleId, query, anonymous, page, removePrivacy }) {
-      const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
-      const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
-      const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
-      const queryWhere = query
-        ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
-        : '';
-      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
-      const _limit = ctx.model._limit(page.size, page.index);
-      // fields
-      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
-      // sql
-      const sql = `
-        select ${fields} from aUser a
-          ${roleJoin}
-            where a.iid=? and a.deleted=0
-                  ${anonymousWhere}
-                  ${roleWhere}
-                  ${queryWhere}
-            order by a.userName asc
-            ${_limit}
-      `;
-      return await ctx.model.query(sql, [ctx.instance.id]);
     }
 
     async count({ options, user }) {
@@ -282,3 +241,44 @@ module.exports = ctx => {
   }
   return User;
 };
+
+// async save({ user }) {
+//   // userKey
+//   const userAtomId = await this._forceUserAtomId({ userId: user.id });
+//   const userKey = { atomId: userAtomId };
+//   // item
+//   const item = { ...user };
+//   if (user.userName) {
+//     item.atomName = user.userName;
+//   }
+//   await ctx.bean.atom.write({
+//     key: userKey,
+//     item,
+//     user: { id: 0 },
+//   });
+// }
+
+// async list({ roleId, query, anonymous, page, removePrivacy }) {
+//   const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
+//   const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
+//   const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
+//   const queryWhere = query
+//     ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
+//     : '';
+//   const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
+//   const _limit = ctx.model._limit(page.size, page.index);
+//   // fields
+//   const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
+//   // sql
+//   const sql = `
+//     select ${fields} from aUser a
+//       ${roleJoin}
+//         where a.iid=? and a.deleted=0
+//               ${anonymousWhere}
+//               ${roleWhere}
+//               ${queryWhere}
+//         order by a.userName asc
+//         ${_limit}
+//   `;
+//   return await ctx.model.query(sql, [ctx.instance.id]);
+// }

@@ -4,14 +4,6 @@ module.exports = app => {
       return await this.ctx.bean.user.selectGeneral({ params: { query, page }, user });
     }
 
-    async list({ roleId, query, anonymous, page }) {
-      return await this.ctx.bean.user.list({ roleId, query, anonymous, page });
-    }
-
-    async item({ userId }) {
-      return await this.ctx.bean.user.get({ id: userId });
-    }
-
     async disable({ userId, disabled }) {
       return await this.ctx.bean.user.disable({ userId, disabled });
     }

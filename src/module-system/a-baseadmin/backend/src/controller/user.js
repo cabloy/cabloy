@@ -10,24 +10,6 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async list() {
-      const page = this.ctx.bean.util.page(this.ctx.request.body.page);
-      const items = await this.service.user.list({
-        roleId: this.ctx.request.body.roleId,
-        query: this.ctx.request.body.query,
-        anonymous: this.ctx.request.body.anonymous,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
-    async item() {
-      const res = await this.service.user.item({
-        userId: this.ctx.request.body.userId,
-      });
-      this.ctx.success(res);
-    }
-
     async disable() {
       // check demo
       this.ctx.bean.util.checkDemo();
