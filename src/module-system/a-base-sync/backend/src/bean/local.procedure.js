@@ -773,13 +773,13 @@ module.exports = ctx => {
               exists(
                 select c.userIdWhom from aViewUserRightAtomClassUser c
                   inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
-                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
               )
             `;
           } else {
             _others = `
               exists(
-                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
               )
             `;
           }
@@ -1013,7 +1013,7 @@ module.exports = ctx => {
       if (forAtomUser) {
         _others = `
           exists(
-            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
           )
         `;
       } else {
@@ -1065,7 +1065,7 @@ module.exports = ctx => {
       if (forAtomUser) {
         _others = `
           exists(
-            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=${action} and c.userIdWho=${userIdWho}
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=${action} and c.userIdWho=${userIdWho}
           )
         `;
       } else {
