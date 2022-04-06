@@ -195,10 +195,10 @@ module.exports = ctx => {
       }
     }
 
-    async delete({ userId }) {
-      await ctx.bean.role.deleteAllUserRoles({ userId });
-      await this.modelAuth.delete({ userId });
-      await this.model.delete({ id: userId });
+    async delete({ userAtomId, userId }) {
+      userAtomId = await this._forceUserAtomId({ userAtomId, userId });
+      // delete this
+      await ctx.bean.atom.delete({ key: { atomId: userAtomId } });
     }
 
     // roles

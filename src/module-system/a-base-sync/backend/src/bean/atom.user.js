@@ -69,12 +69,15 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, options, user }) {
+      const userId = key.itemId;
       // super
       await super.delete({ atomClass, key, options, user });
+
+      await this.ctx.bean.role.deleteAllUserRoles({ userId });
+      await this.ctx.bean.user.modelAuth.delete({ userId });
+
       // delete user
-      await this.ctx.model.user.delete({
-        id: key.itemId,
-      });
+      await this.ctx.model.user.delete({ id: userId });
     }
 
     async enable({ atomClass, key, user }) {
