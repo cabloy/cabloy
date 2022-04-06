@@ -15,11 +15,24 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    {
+      atomName: 'User Management',
+      atomStaticKey: 'userManagement',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Tools',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: 'a-base',
+        atomClassName: 'user',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'template.system',
+    },
     // function
     {
       atomName: 'User Management',
       atomStaticKey: 'user',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({

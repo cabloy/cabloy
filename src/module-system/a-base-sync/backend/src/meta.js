@@ -205,6 +205,9 @@ module.exports = app => {
         userAdmin: {
           schemas: 'userAdmin',
         },
+        userAdminSearch: {
+          schemas: 'userAdminSearch',
+        },
         category: {
           schemas: 'category',
         },

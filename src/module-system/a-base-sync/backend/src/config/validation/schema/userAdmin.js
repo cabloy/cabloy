@@ -56,5 +56,27 @@ module.exports = app => {
       },
     },
   };
+  // userAdminSearch
+  schemas.userAdminSearch = {
+    type: 'object',
+    properties: {
+      realName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Realname',
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        // format: 'email',
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Mobile',
+      },
+    },
+  };
   return schemas;
 };

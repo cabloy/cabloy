@@ -65,11 +65,11 @@ module.exports = function (ctx) {
       const roleRights = [
         { roleName: 'system', action: 'read', scopeNames: 'root' },
         { roleName: 'system', action: 'write', scopeNames: 'root' },
-        { roleName: 'system', action: 'delete', scopeNames: 'root' },
+        // { roleName: 'system', action: 'delete', scopeNames: 'root' },
         // { roleName: 'system', action: 'clone', scopeNames: 'root' },
         { roleName: 'system', action: 'enable', scopeNames: 'root' },
         { roleName: 'system', action: 'disable', scopeNames: 'root' },
-        { roleName: 'system', action: 'deleteBulk' },
+        // { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
       ];
       await ctx.bean.role.addRoleRightBatch({ atomClassName: 'user', roleRights });
