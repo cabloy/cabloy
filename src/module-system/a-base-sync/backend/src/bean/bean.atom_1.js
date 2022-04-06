@@ -620,6 +620,7 @@ module.exports = ctx => {
         mine = 0,
         resource = 0,
         resourceLocale,
+        role = 0,
         mode,
       },
       cms,
@@ -652,6 +653,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        role,
       });
       debug('===== selectAtoms =====\n%s', sql);
       const res = await ctx.model.query(sql);

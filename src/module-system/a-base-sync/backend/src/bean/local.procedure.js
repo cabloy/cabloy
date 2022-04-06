@@ -22,6 +22,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      role,
     }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -34,6 +35,7 @@ module.exports = ctx => {
       tag = parseInt(tag);
       mine = parseInt(mine);
       resource = parseInt(resource);
+      role = parseInt(role);
 
       // draft
       if (stage === 0) {
@@ -77,6 +79,7 @@ module.exports = ctx => {
           mode,
           cms,
           forAtomUser,
+          role,
         });
       }
       // formal/history
@@ -102,6 +105,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        role,
       });
     }
 
@@ -361,6 +365,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      role,
     }) {
       // -- tables
       // -- a: aAtom
@@ -563,6 +568,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      role,
     }) {
       // -- tables
       // -- a: aAtom
@@ -744,11 +750,21 @@ module.exports = ctx => {
         const _mine = `
           (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
         `;
-        const _others = `
-          exists(
-            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-          )
-        `;
+        let _others;
+        if (forAtomUser) {
+          _others = `
+            exists(
+              select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.action=2 and c.userIdWho=${userIdWho}
+            )
+          `;
+        } else {
+          _others = `
+            exists(
+              select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+            )
+          `;
+        }
+        //
         if (mine) {
           _rightWhere = _mine;
         } else if (star || label) {
