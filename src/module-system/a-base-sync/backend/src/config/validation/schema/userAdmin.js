@@ -53,6 +53,7 @@ module.exports = app => {
         ebType: 'select',
         ebTitle: 'Locale',
         ebOptionsUrl: '/a/base/base/locales',
+        ebOptionsBlankAuto: true,
       },
     },
   };

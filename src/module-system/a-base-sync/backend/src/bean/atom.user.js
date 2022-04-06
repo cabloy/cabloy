@@ -77,6 +77,26 @@ module.exports = app => {
       });
     }
 
+    async enable({ atomClass, key, user }) {
+      // super
+      await super.enable({ atomClass, key, user });
+      // enable
+      await this.ctx.model.user.update({
+        id: key.itemId,
+        disabled: 0,
+      });
+    }
+
+    async disable({ atomClass, key, user }) {
+      // super
+      await super.disable({ atomClass, key, user });
+      // disable
+      await this.ctx.model.user.update({
+        id: key.itemId,
+        disabled: 1,
+      });
+    }
+
     async _getMeta(/* options, item*/) {
       // // meta
       // const meta = this._ensureItemMeta(item);
