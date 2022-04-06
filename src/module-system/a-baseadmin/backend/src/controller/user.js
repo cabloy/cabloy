@@ -10,16 +10,6 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async disable() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.disable({
-        userId: this.ctx.request.body.userId,
-        disabled: this.ctx.request.body.disabled,
-      });
-      this.ctx.success(res);
-    }
-
     async delete() {
       // check demo
       this.ctx.bean.util.checkDemo();
