@@ -226,8 +226,14 @@ module.exports = ctx => {
       return itemsRes;
     }
 
-    async disable({ userId, disabled }) {
-      await this.model.update({ id: userId, disabled });
+    async disable({ userAtomId, userId, disabled }) {
+      const item = await this._forceUser({ userAtomId, userId });
+      const key = { atomId: item.atomId, itemId: item.id };
+      if (disabled) {
+        await this.ctx.bean.atom.disable({ key, user: { id: 0 } });
+      } else {
+        await this.ctx.bean.atom.enable({ key, user: { id: 0 } });
+      }
     }
 
     async delete({ userId }) {
