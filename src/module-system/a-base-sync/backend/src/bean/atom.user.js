@@ -97,6 +97,20 @@ module.exports = app => {
       });
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      // write/enable/disable
+      if (![3, 6, 7].includes(action)) return res;
+      // item
+      const item = await this.ctx.model.user.get({ id: atom.itemId });
+      if (item.anonymous) return null;
+      // default
+      return res;
+    }
+
     async _getMeta(/* options, item*/) {
       // // meta
       // const meta = this._ensureItemMeta(item);
