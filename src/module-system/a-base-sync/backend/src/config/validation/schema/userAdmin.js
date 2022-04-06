@@ -22,8 +22,9 @@ module.exports = app => {
       },
       avatar: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'file',
         ebTitle: 'Avatar',
+        ebParams: { mode: 1 },
       },
       // Basic Info
       __groupBasicInfo: {
