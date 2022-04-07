@@ -50,6 +50,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'clone', scopeNames: 'root' },
         { roleName: 'system', action: 'move', scopeNames: 'root' },
         { roleName: 'system', action: 'addChild', scopeNames: 'root' },
+        { roleName: 'system', action: 'userRoles', scopeNames: 'root' },
         { roleName: 'system', action: 'includes', scopeNames: 'root' },
         { roleName: 'system', action: 'resourceAuthorization', scopeNames: 'root' },
         { roleName: 'system', action: 'atomAuthorization', scopeNames: 'root' },

@@ -154,7 +154,7 @@ module.exports = app => {
       if (!res) return res;
       if (atom.atomStage !== 1) return res;
       // delete/clone/move
-      if (![4, 5, 101].includes(action)) return res;
+      if (![4, 5, 101, 103].includes(action)) return res;
       // role
       const role = await this.ctx.model.role.get({ id: atom.itemId });
       // delete
@@ -168,6 +168,10 @@ module.exports = app => {
       // move
       if (action === 101) {
         if (role.system === 1) return null;
+      }
+      // userRoles
+      if (action === 103) {
+        if (role.catalog === 1) return null;
       }
       // default
       return res;

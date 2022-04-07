@@ -91,22 +91,29 @@ module.exports = app => {
               actionComponent: 'actionRole',
               icon: { f7: ':outline:add-circle-outline' },
             },
-            includes: {
+            userRoles: {
               code: 103,
+              title: 'Users',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:group-outline' },
+            },
+            includes: {
+              code: 104,
               title: 'Includes',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':role:role' },
             },
             resourceAuthorization: {
-              code: 104,
+              code: 105,
               title: 'Resource Authorization',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:archive-lock-outline' },
             },
             atomAuthorization: {
-              code: 105,
+              code: 106,
               title: 'Atom Authorization',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
