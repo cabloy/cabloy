@@ -5,6 +5,11 @@ import configRoleRenderList from './config/role/configRenderList.js';
 import configUserRenderItem from './config/user/configRenderItem.js';
 import configUserRenderList from './config/user/configRenderList.js';
 export default {
+  role: {
+    select: {
+      maxLevelAutoOpened: 2,
+    },
+  },
   atoms: {
     role: {
       render: {

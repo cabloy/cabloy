@@ -46,10 +46,17 @@ export default {
         },
       };
     },
+    maxLevelAutoOpened() {
+      return this.$meta.config.modules['a-baseadmin'].role.select.maxLevelAutoOpened;
+    },
   },
   methods: {
     async _loadNodeRoles(node) {
       try {
+        const refTree = this.$refs.tree;
+        //
+        const levelCurrent = node.__level || 0;
+        const level = levelCurrent + 1;
         // roleId
         const roleId = node.root ? this.roleIdStart : node.id;
         // promise
@@ -65,12 +72,14 @@ export default {
         }
         // then
         const data = await promise;
-        let list = data.list.map(item => {
+        let list = [];
+        for (const item of data.list) {
           const checkbox = !this.leafOnly || item.catalog === 0;
           const disabled = this.roleIdsDisable && this.roleIdsDisable.indexOf(item.id) > -1;
-          const node = {
+          const nodeChild = {
             id: item.id,
             attrs: {
+              id: refTree._calcNodeAttrId(node, item),
               label: item.atomNameLocale || item.roleName,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
@@ -82,9 +91,13 @@ export default {
               disabled,
             },
             data: item,
+            __level: level,
           };
-          return node;
-        });
+          if (item.catalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
+            await refTree._preloadChildren(nodeChild);
+          }
+          list.push(nodeChild);
+        }
         // filter
         if (this.catalogOnly) {
           list = list.filter(item => item.data.catalog === 1);
