@@ -62,9 +62,9 @@ export default {
             roleIdStart: null,
             multiple: true,
           },
-          callback: (code, data) => {
+          callback: (code, roles) => {
             if (code === 200) {
-              this._resourceRoleAdd(data);
+              this._resourceRoleAdd(roles);
             }
           },
         },
@@ -72,7 +72,7 @@ export default {
     },
     async _resourceRoleAdd(_roles) {
       if (!_roles || _roles.length === 0) return;
-      const roles = _roles.map(item => item.id);
+      const roles = _roles.map(item => item.itemId);
       await this.$api.post('/a/base/resource/resourceRoleAdd', {
         key: { atomId: this.atomId },
         data: { roles },

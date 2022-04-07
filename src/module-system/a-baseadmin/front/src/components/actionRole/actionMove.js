@@ -34,9 +34,9 @@ export default {
               roleIdsDisable: [item.itemId, item.roleIdParent],
               // catalogOnly: true,
             },
-            callback: (code, data) => {
+            callback: (code, role) => {
               if (code === 200) {
-                resolve(data.id);
+                resolve(role.itemId);
               } else if (code === false) {
                 resolve();
               }

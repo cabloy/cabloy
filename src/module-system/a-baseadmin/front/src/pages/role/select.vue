@@ -119,11 +119,18 @@ export default {
     onPerformDone(event) {
       const checked = this.$refs.tree.checked();
       if (!checked || checked.length === 0) return;
+      // res
+      let res;
+      if (Array.isArray(checked)) {
+        res = checked.map(item => item.data);
+      } else {
+        res = checked.data;
+      }
       // onSelect
-      this.onSelect(event, checked.data);
+      this.onSelect(event, res);
     },
-    onSelect(event, role) {
-      this.contextCallback(200, role);
+    onSelect(event, res) {
+      this.contextCallback(200, res);
       this.$f7router.back();
     },
     onPerformClearRole(event) {

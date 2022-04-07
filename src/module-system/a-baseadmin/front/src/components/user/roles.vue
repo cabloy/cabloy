@@ -69,10 +69,11 @@ export default {
             multiple: false,
             leafOnly: true,
           },
-          callback: (code, data) => {
+          callback: (code, role) => {
             if (code === 200) {
-              this.$api.post('user/addRole', { userId: this.user.id, roleId: data.id }).then(() => {
-                this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId: data.id });
+              const roleId = role.itemId;
+              this.$api.post('user/addRole', { userId: this.user.id, roleId }).then(() => {
+                this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId });
                 this.reload();
                 this.$view.toast.show({ text: this.$text('Operation Succeeded') });
               });

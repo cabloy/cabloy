@@ -52,9 +52,9 @@ export default {
             multiple: false,
             roleIdsDisable: [this.roleId],
           },
-          callback: (code, data) => {
+          callback: (code, role) => {
             if (code === 200) {
-              this._addRoleInc(data.id);
+              this._addRoleInc(role.itemId);
             }
           },
         },

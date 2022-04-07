@@ -22,12 +22,11 @@ export default {
             roleIdStart: null,
             multiple: true,
           },
-          callback: (code, data) => {
+          callback: (code, roles) => {
             if (code === 200) {
-              if (data) {
-                const roles = data.map(item => item.data);
+              if (roles) {
                 for (const role of roles) {
-                  const _role = this.assignees.roles.find(item => item.id === role.id);
+                  const _role = this.assignees.roles.find(item => item.id === role.itemId);
                   if (!_role) {
                     // eslint-disable-next-line
                     this.assignees.roles.push(role);

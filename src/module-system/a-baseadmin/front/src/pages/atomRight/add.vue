@@ -61,7 +61,7 @@ export default {
     },
     scopeTitle() {
       if (!this.scope) return null;
-      return this.scope.map(item => item.data.atomNameLocale).join(',');
+      return this.scope.map(item => item.atomNameLocale).join(',');
     },
     scopeSelfEnable() {
       const action = this.actionCurrent;
@@ -116,9 +116,9 @@ export default {
             roleIdStart: null,
             multiple: true,
           },
-          callback: (code, data) => {
+          callback: (code, roles) => {
             if (code === 200) {
-              this.scope = data;
+              this.scope = roles;
             }
           },
         },
@@ -132,7 +132,7 @@ export default {
         atomClass: this.atomClass,
         actionCode: parseInt(action.code),
         scopeSelf: this.scopeSelf,
-        scope: this.scope ? this.scope.map(item => item.id) : [],
+        scope: this.scope ? this.scope.map(item => item.itemId) : [],
       });
       this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
       this.$f7router.back();
