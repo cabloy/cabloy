@@ -32,6 +32,16 @@ module.exports = app => {
           tableAlias: null,
         },
       },
+      role: {
+        type: 'number',
+        ebType: null, // 'role',
+        ebTitle: 'TitleRoleOrg',
+        ebParams: {},
+        ebSearch: {
+          tableAlias: null,
+          ignoreValue: 0,
+        },
+      },
       __divider: {
         ebType: 'divider',
       },
