@@ -53,10 +53,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Atom Right Management',
       atomStaticKey: 'atomRight',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -64,10 +65,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Resource Right Management',
       atomStaticKey: 'resourceRight',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
