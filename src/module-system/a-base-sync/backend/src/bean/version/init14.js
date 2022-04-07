@@ -70,6 +70,9 @@ module.exports = function (ctx) {
         // { roleName: 'system', action: 'clone', scopeNames: 'root' },
         { roleName: 'system', action: 'enable', scopeNames: 'root' },
         { roleName: 'system', action: 'disable', scopeNames: 'root' },
+        { roleName: 'system', action: 'userRoles', scopeNames: 'root' },
+        { roleName: 'system', action: 'resourceAuthorization', scopeNames: 'root' },
+        { roleName: 'system', action: 'atomAuthorization', scopeNames: 'root' },
         // { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
       ];

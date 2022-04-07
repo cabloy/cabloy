@@ -155,7 +155,29 @@ module.exports = app => {
               },
             },
           },
-          actions: {},
+          actions: {
+            userRoles: {
+              code: 101,
+              title: 'Users',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':outline:group-outline' },
+            },
+            resourceAuthorization: {
+              code: 102,
+              title: 'Resource Authorization',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':outline:archive-lock-outline' },
+            },
+            atomAuthorization: {
+              code: 103,
+              title: 'Atom Authorization',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':outline:database-lock-outline' },
+            },
+          },
           validator: 'userAdmin',
           search: {
             validator: 'userAdminSearch',
