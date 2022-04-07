@@ -55,11 +55,24 @@ export default {
         });
       });
     },
+    _getMapperKey(fieldName) {
+      const { property } = this.context;
+      // mapper
+      const mapper = this.$meta.util.getProperty(property, 'ebParams.mapper');
+      if (!mapper) return null;
+      return Object.keys(mapper).find(key => {
+        return mapper[key] === fieldName;
+      });
+    },
+    _getMapperRoleName() {
+      const key = this._getMapperKey('roleName');
+      return key ? this.context.getValue(key) : this.context.getValue();
+    },
   },
   render() {
     const { dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
-    const value = this.context.getValue('__roleName') || this.context.getValue();
+    const value = this._getMapperRoleName();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>

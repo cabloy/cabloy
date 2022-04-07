@@ -41,6 +41,9 @@ module.exports = app => {
           multiple: false,
           catalogOnly: false,
           leafOnly: false,
+          mapper: {
+            __roleName: 'roleName',
+          },
         },
         ebSearch: {
           tableAlias: null,
