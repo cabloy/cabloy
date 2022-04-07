@@ -7,6 +7,14 @@ const list = {
     ],
   },
   layouts: {
+    base: {
+      extend: {
+        component: {
+          module: 'a-baseadmin',
+          name: 'userListLayoutExtend',
+        },
+      },
+    },
     table: {
       blocks: {
         items: {

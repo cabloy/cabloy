@@ -1,13 +1,15 @@
-// listLayoutTree
+// role: listLayoutTree
 import roleListLayoutTree from './components/role/listLayoutTree/listLayoutTree.jsx';
 import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
 import roleListLayoutBlockTreeTitle from './components/role/listLayoutTree/listLayoutBlockTreeTitle.jsx';
-// itemLayoutDefault
+// role: itemLayoutDefault
 import roleItemLayoutBlockDefaultTitle from './components/role/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
 import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
-// listLayoutData
+// role: listLayoutData
 import roleListLayoutDataProviderTree from './components/role/listLayoutData/providerTree.jsx';
+// user: listLayoutExtend
+import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
 //
 import actionRole from './components/actionRole.js';
 import roleIncludes from './components/role/includes.jsx';
@@ -20,16 +22,18 @@ import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
-  // roleListLayoutTree
+  // role: roleListLayoutTree
   roleListLayoutTree,
   roleListLayoutBlockTreeItems,
   roleListLayoutBlockTreeTitle,
-  // itemLayoutDefault
+  // role: itemLayoutDefault
   roleItemLayoutBlockDefaultTitle,
   roleItemLayoutBlockDefaultSubnavbar,
   roleItemLayoutBlockDefaultMain,
-  // listLayoutData
+  // role: listLayoutData
   roleListLayoutDataProviderTree,
+  // user: listLayoutExtend
+  userListLayoutExtend,
   //
   actionRole,
   roleIncludes,
