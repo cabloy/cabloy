@@ -29,6 +29,7 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     // function
+    // deprecated
     {
       atomName: 'User Management',
       atomStaticKey: 'user',
@@ -40,6 +41,7 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Role Management',
       atomStaticKey: 'role',
@@ -106,10 +108,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Select Users',
       atomStaticKey: 'selectUsers',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({}),

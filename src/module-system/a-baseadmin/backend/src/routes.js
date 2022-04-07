@@ -120,7 +120,6 @@ module.exports = app => {
       method: 'post',
       path: 'user/select',
       controller: 'user',
-      meta: { right: { type: 'resource', name: 'user,selectUsers' } },
     },
     { method: 'post', path: 'user/roles', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
     { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
