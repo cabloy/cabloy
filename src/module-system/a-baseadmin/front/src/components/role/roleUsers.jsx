@@ -33,18 +33,20 @@ export default {
       this.items = this.items.concat(data.list);
       return data;
     },
-    onPerformDelete(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api
-          .post('user/delete', {
-            userId: item.id,
-          })
-          .then(() => {
-            this.$meta.eventHub.$emit('user:delete', { userId: item.id });
-            this.$meta.util.swipeoutDelete(event.currentTarget);
-            return true;
-          });
+    async onPerformDelete(event, item) {
+      await this.$view.dialog.confirm();
+      // remove
+      const userId = item.itemId;
+      await this.$api.post('role/deleteUserRole', {
+        key: this.roleKey,
+        userId,
       });
+      // remove
+      const index = this.items.findIndex(item => item.itemId === userId);
+      if (index > -1) this.items.splice(index, 1);
+      // swipeoutDelete
+      this.$meta.util.swipeoutDelete(event.currentTarget);
+      return true;
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/user/select', {
@@ -65,12 +67,6 @@ export default {
       this.reload();
       // toast
       this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-    },
-    onUserRemoveRole(data) {
-      if (data.roleId === this.roleId) {
-        const index = this.items.findIndex(item => item.id === data.userId);
-        if (index > -1) this.items.splice(index, 1);
-      }
     },
     getItemMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;

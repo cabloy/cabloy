@@ -40,6 +40,10 @@ module.exports = app => {
       return await this.ctx.bean.role.addUserRole({ roleAtomId, userId, user });
     }
 
+    async deleteUserRole({ roleAtomId, userId, user }) {
+      return await this.ctx.bean.role.deleteUserRole({ roleAtomId, userId, user });
+    }
+
     async includes({ roleAtomId, page, user }) {
       return await this.ctx.bean.role.includes({ roleAtomId, page, user });
     }

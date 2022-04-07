@@ -91,6 +91,17 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async deleteUserRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.deleteUserRole({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        userId: this.ctx.request.body.userId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async addRoleInc() {
       // check demo
       this.ctx.bean.util.checkDemo();

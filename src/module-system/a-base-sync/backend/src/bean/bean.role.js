@@ -384,16 +384,16 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async deleteUserRole({ id, userId, roleId }) {
-      if (!id) {
-        const item = await this.modelUserRole.get({
-          userId,
-          roleId,
-        });
-        if (!item) return;
-        id = item.id;
-      }
-      await this.modelUserRole.delete({ id });
+    async deleteUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      // user
+      const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      // delete
+      await this.modelUserRole.delete({
+        userId: _user.id,
+        roleId: _role.id,
+      });
     }
 
     async deleteAllUserRoles({ userId }) {
