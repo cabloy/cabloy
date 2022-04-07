@@ -14,6 +14,7 @@ import renderTableCellLink from './components/render/renderTableCellLink.jsx';
 import renderTableCellButton from './components/render/renderTableCellButton.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUser from './components/render/renderUser.jsx';
+import renderRole from './components/render/renderRole.jsx';
 // category
 import categorySelect from './components/category/categorySelect.jsx';
 // tag
@@ -44,6 +45,7 @@ export default {
   renderTableCellButton,
   renderUserLabel,
   renderUser,
+  renderRole,
   // category
   categorySelect,
   // tag
