@@ -83,7 +83,7 @@ module.exports = app => {
     async addUserRole() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.addRoleInc({
+      const res = await this.service.role.addUserRole({
         roleAtomId: this.ctx.request.body.key.atomId,
         userId: this.ctx.request.body.userId,
         user: this.ctx.state.user.op,
