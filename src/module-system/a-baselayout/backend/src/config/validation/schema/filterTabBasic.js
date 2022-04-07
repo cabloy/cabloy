@@ -42,7 +42,9 @@ module.exports = app => {
           catalogOnly: false,
           leafOnly: false,
           mapper: {
-            __roleName: 'roleName',
+            role: 'itemId',
+            roleName: 'atomName',
+            roleNameLocale: 'atomNameLocale',
           },
         },
         ebSearch: {

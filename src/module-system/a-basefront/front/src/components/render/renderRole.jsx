@@ -34,16 +34,17 @@ export default {
               leafOnly,
               buttonClearRole: true,
             },
-            callback: (code, selectedUser) => {
+            callback: (code, node) => {
               if (code === 200) {
+                const selectedRole = node.data;
                 // mapper
                 if (mapper) {
                   for (const key in mapper) {
-                    const value = selectedUser[mapper[key]];
+                    const value = selectedRole[mapper[key]];
                     this.context.setValue(value, key);
                   }
                 } else {
-                  const value = selectedUser[key];
+                  const value = selectedRole[key];
                   this.context.setValue(value, key);
                 }
                 resolve(true);
@@ -65,7 +66,7 @@ export default {
       });
     },
     _getMapperRoleName() {
-      const key = this._getMapperKey('roleName');
+      const key = this._getMapperKey('atomNameLocale') || this._getMapperKey('atomName');
       return key ? this.context.getValue(key) : this.context.getValue();
     },
   },
