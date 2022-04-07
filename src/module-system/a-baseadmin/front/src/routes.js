@@ -7,6 +7,7 @@ function loadjsx(name) {
 
 export default [
   { path: 'role/select', component: load('role/select') },
+  { path: 'role/roleUsers', component: loadjsx('role/roleUsers') },
   { path: 'role/includes', component: loadjsx('role/includes') },
   { path: 'user/select', component: load('user/select') },
   { path: 'user/rights', component: load('user/rights') },

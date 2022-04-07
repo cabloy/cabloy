@@ -28,7 +28,7 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
+    async onLoadMore({ index }) {
       const data = await this.$api.post('role/roleUsers', { key: this.roleKey, page: { index } });
       this.items = this.items.concat(data.list);
       return data;

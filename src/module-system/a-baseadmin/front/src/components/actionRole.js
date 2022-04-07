@@ -3,6 +3,7 @@ import ActionDelete from './actionRole/actionDelete.js';
 import ActionClone from './actionRole/actionClone.js';
 import ActionMove from './actionRole/actionMove.js';
 import ActionAddChild from './actionRole/actionAddChild.js';
+import ActionRoleUsers from './actionRole/actionRoleUsers.js';
 import ActionIncludes from './actionRole/actionIncludes.js';
 import ActionResourceAuthorization from './actionRole/actionResourceAuthorization.js';
 import ActionAtomAuthorization from './actionRole/actionAtomAuthorization.js';
@@ -18,6 +19,7 @@ export default {
     ActionClone,
     ActionMove,
     ActionAddChild,
+    ActionRoleUsers,
     ActionIncludes,
     ActionResourceAuthorization,
     ActionAtomAuthorization,
@@ -32,6 +34,8 @@ export default {
         return await this._onActionMove();
       } else if (this.action.name === 'addChild') {
         return await this._onActionAddChild();
+      } else if (this.action.name === 'roleUsers') {
+        return await this._onActionRoleUsers();
       } else if (this.action.name === 'includes') {
         return await this._onActionIncludes();
       } else if (this.action.name === 'resourceAuthorization') {
