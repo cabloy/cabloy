@@ -158,10 +158,10 @@ module.exports = app => {
           actions: {
             userRoles: {
               code: 101,
-              title: 'Users',
+              title: 'Roles',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionUser',
-              icon: { f7: ':outline:group-outline' },
+              icon: { f7: ':role:role' },
             },
             resourceAuthorization: {
               code: 102,

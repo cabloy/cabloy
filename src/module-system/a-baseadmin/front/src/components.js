@@ -12,6 +12,7 @@ import roleListLayoutDataProviderTree from './components/role/listLayoutData/pro
 import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
 //
 import actionRole from './components/actionRole.js';
+import actionUser from './components/actionUser.js';
 import roleIncludes from './components/role/includes.jsx';
 import roleUsers from './components/role/roleUsers.jsx';
 import userRoles from './components/user/roles.vue';
@@ -36,6 +37,7 @@ export default {
   userListLayoutExtend,
   //
   actionRole,
+  actionUser,
   roleIncludes,
   roleUsers,
   userRoles,
