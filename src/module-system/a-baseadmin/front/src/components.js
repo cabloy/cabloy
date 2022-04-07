@@ -13,6 +13,7 @@ import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
 //
 import actionRole from './components/actionRole.js';
 import roleIncludes from './components/role/includes.jsx';
+import roleUsers from './components/role/roleUsers.jsx';
 import userRoles from './components/user/roles.vue';
 import userSelect from './components/user/select.vue';
 import atomRightRights from './components/atomRight/rights.vue';
@@ -36,6 +37,7 @@ export default {
   //
   actionRole,
   roleIncludes,
+  roleUsers,
   userRoles,
   userSelect,
   atomRightRights,

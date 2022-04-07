@@ -6,11 +6,11 @@ export default {
     actions_onAction(event, action) {
       return this.layoutManager.actions_onAction(event, action);
     },
-    // addChild / userRoles / includes
+    // addChild / roleUsers / includes
     info_renderActionsLeft() {
       if (!this.layoutManager.base_ready) return;
       const children = [];
-      this._renderActionsGeneral(children, ['addChild', 'userRoles', 'includes']);
+      this._renderActionsGeneral(children, ['addChild', 'roleUsers', 'includes']);
       // ok
       return children;
     },

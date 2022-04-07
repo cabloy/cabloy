@@ -91,7 +91,7 @@ module.exports = app => {
               actionComponent: 'actionRole',
               icon: { f7: ':outline:add-circle-outline' },
             },
-            userRoles: {
+            roleUsers: {
               code: 103,
               title: 'Users',
               actionModule: 'a-baseadmin',

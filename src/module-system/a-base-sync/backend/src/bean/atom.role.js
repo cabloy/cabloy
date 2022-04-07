@@ -169,7 +169,7 @@ module.exports = app => {
       if (action === 101) {
         if (role.system === 1) return null;
       }
-      // userRoles
+      // roleUsers
       if (action === 103) {
         if (role.catalog === 1) return null;
       }
