@@ -204,31 +204,6 @@ module.exports = ctx => {
       return await this.add({ roleName, roleIdParent });
     }
 
-    // add user role
-    async addUserRole({ userId, roleId }) {
-      const res = await this.modelUserRole.insert({
-        userId,
-        roleId,
-      });
-      return res.insertId;
-    }
-
-    async deleteUserRole({ id, userId, roleId }) {
-      if (!id) {
-        const item = await this.modelUserRole.get({
-          userId,
-          roleId,
-        });
-        if (!item) return;
-        id = item.id;
-      }
-      await this.modelUserRole.delete({ id });
-    }
-
-    async deleteAllUserRoles({ userId }) {
-      await this.modelUserRole.delete({ userId });
-    }
-
     // add role right
     async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope }) {
       roleId = await this._forceRoleId({ roleAtomId, roleId });
@@ -393,6 +368,36 @@ module.exports = ctx => {
         user,
       });
       return list;
+    }
+
+    // add user role
+    async addUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      // user
+      const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      // insert
+      const res = await this.modelUserRole.insert({
+        userId: _user.id,
+        roleId: _role.id,
+      });
+      return res.insertId;
+    }
+
+    async deleteUserRole({ id, userId, roleId }) {
+      if (!id) {
+        const item = await this.modelUserRole.get({
+          userId,
+          roleId,
+        });
+        if (!item) return;
+        id = item.id;
+      }
+      await this.modelUserRole.delete({ id });
+    }
+
+    async deleteAllUserRoles({ userId }) {
+      await this.modelUserRole.delete({ userId });
     }
 
     // includes
@@ -916,6 +921,18 @@ module.exports = ctx => {
         return await this.get({ atomId: roleAtomId });
       }
       return await this.get({ id: roleId });
+    }
+
+    async _forceRoleAndCheckRightRead({ roleAtomId, roleId, user }) {
+      const role = await this._forceRole({ roleAtomId, roleId });
+      if (!user || user.id === 0) return role;
+      // check
+      const res = await ctx.bean.atom.checkRightRead({
+        atom: { id: role.atomId },
+        user,
+      });
+      if (!res) ctx.throw(403);
+      return role;
     }
 
     async _checkRightActionOfRole({ roleAtomId, roleId, action, user }) {

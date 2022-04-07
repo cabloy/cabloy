@@ -51,6 +51,13 @@ module.exports = app => {
       controller: 'role',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
     },
+    // role/addUserRole
+    {
+      method: 'post',
+      path: 'role/addUserRole',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
+    },
     // role/includes
     {
       method: 'post',

@@ -46,17 +46,25 @@ export default {
           });
       });
     },
-    disableUser(event, item, disabled) {
-      return this.$api
-        .post('user/disable', {
-          userId: item.id,
-          disabled,
-        })
-        .then(() => {
-          this.$meta.eventHub.$emit('user:disable', { userId: item.id, disabled });
-          this.$meta.util.swipeoutClose(event.currentTarget);
-          return true;
-        });
+    onPerformAdd() {
+      this.$view.navigate('/a/baseadmin/user/select', {
+        target: '_self',
+        context: {
+          params: {},
+          callback: (code, selectedUser) => {
+            if (code === 200) {
+              this._addUserRole(selectedUser.itemId);
+            }
+          },
+        },
+      });
+    },
+    async _addUserRole(userId) {
+      await this.$api.post('role/addUserRole', { key: this.roleKey, userId });
+      // reload
+      this.reload();
+      // toast
+      this.$view.toast.show({ text: this.$text('Operation Succeeded') });
     },
     onUserRemoveRole(data) {
       if (data.roleId === this.roleId) {

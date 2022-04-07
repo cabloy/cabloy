@@ -80,6 +80,17 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
+    async addUserRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.addRoleInc({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        userId: this.ctx.request.body.userId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async addRoleInc() {
       // check demo
       this.ctx.bean.util.checkDemo();

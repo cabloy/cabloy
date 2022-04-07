@@ -144,18 +144,18 @@ module.exports = ctx => {
       const { query, page } = params;
       const options = {
         where: {
-          'a.anonymous': 0,
-          'a.disabled': 0,
+          'f.anonymous': 0,
+          'f.disabled': 0,
         },
-        orders: [['a.userName', 'asc']],
+        orders: [['f.userName', 'asc']],
         page,
         removePrivacy: true,
       };
       if (query) {
         options.where.__or__ = [
-          { 'a.userName': { op: 'like', val: query } },
-          { 'a.realName': { op: 'like', val: query } },
-          { 'a.mobile': { op: 'like', val: query } },
+          { 'f.userName': { op: 'like', val: query } },
+          { 'f.realName': { op: 'like', val: query } },
+          { 'f.mobile': { op: 'like', val: query } },
         ];
       }
       return await this._list({ options, user, pageForce, count });
@@ -179,6 +179,7 @@ module.exports = ctx => {
         for (const fieldName of fieldNames) {
           itemRes[fieldName] = item[fieldName];
         }
+        itemRes.itemId = item.itemId;
         itemsRes.push(itemRes);
       }
       // ok
@@ -237,6 +238,18 @@ module.exports = ctx => {
         return await this.get({ atomId: userAtomId });
       }
       return await this.get({ id: userId });
+    }
+
+    async _forceUserAndCheckRightRead({ userAtomId, userId, user }) {
+      const _user = await this._forceUser({ userAtomId, userId });
+      if (!user || user.id === 0) return _user;
+      // check
+      const res = await ctx.bean.atom.checkRightRead({
+        atom: { id: _user.atomId },
+        user,
+      });
+      if (!res) ctx.throw(403);
+      return _user;
     }
   }
   return User;
