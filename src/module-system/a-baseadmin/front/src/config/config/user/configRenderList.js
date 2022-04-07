@@ -9,7 +9,56 @@ const list = {
   layouts: {
     table: {
       blocks: {
-        items: {},
+        items: {
+          columns: [
+            {
+              dataIndex: 'atomName',
+              title: 'Username',
+              align: 'left',
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutTableCellAtomName',
+                options: {
+                  props: {
+                    mapper: {
+                      avatar: true,
+                    },
+                  },
+                },
+              },
+            },
+            {
+              dataIndex: 'realName',
+              title: 'Realname',
+              align: 'left',
+            },
+            {
+              dataIndex: 'email',
+              title: 'Email',
+              align: 'left',
+            },
+            {
+              dataIndex: 'mobile',
+              title: 'Mobile',
+              align: 'left',
+            },
+            {
+              dataIndex: 'locale',
+              title: 'Locale',
+              align: 'left',
+            },
+            {
+              dataIndex: 'atomCreatedAt',
+              title: 'Join Time',
+              align: 'center',
+              params: {
+                dateFormat: {
+                  lines: true,
+                },
+              },
+            },
+          ],
+        },
       },
     },
   },

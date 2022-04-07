@@ -114,11 +114,11 @@ module.exports = app => {
       return res;
     }
 
-    async _getMeta(/* options, item*/) {
-      // // meta
-      // const meta = this._ensureItemMeta(item);
-      // // meta.summary
-      // meta.summary = item.description;
+    async _getMeta(options, item) {
+      // meta
+      const meta = this._ensureItemMeta(item);
+      // meta.summary
+      meta.summary = item.motto;
     }
   }
 
