@@ -36,7 +36,12 @@ module.exports = app => {
         type: 'number',
         ebType: null, // 'role',
         ebTitle: 'TitleRoleOrg',
-        ebParams: {},
+        ebParams: {
+          roleIdStart: null,
+          multiple: false,
+          catalogOnly: false,
+          leafOnly: false,
+        },
         ebSearch: {
           tableAlias: null,
           ignoreValue: 0,
