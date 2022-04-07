@@ -20,8 +20,8 @@ export default {
         star: (this.container.options && this.container.options.star) || 0,
         label: (this.container.options && this.container.options.label) || 0,
         role: (this.container.options && this.container.options.role) || 0,
-        roleName: (this.container.options && this.container.options.roleName) || '',
-        roleNameLocale: (this.container.options && this.container.options.roleNameLocale) || '',
+        roleName: (this.container.options && this.container.options.roleName) || null,
+        roleNameLocale: (this.container.options && this.container.options.roleNameLocale) || null,
         atomClass: this.container.atomClass,
       };
       const formAtomClass = this.$meta.util.getProperty(this.container, 'params.filter.formAtomClass') || {};

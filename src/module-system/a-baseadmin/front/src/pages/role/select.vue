@@ -2,9 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Roles')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconF7="::done" @click.prevent="onDone"></eb-link>
+        <eb-link iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
+    <eb-button v-if="buttonClearRole" :onPerform="onPerformClearRole">{{ this.$text('Clear Role') }}</eb-button>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>
   </eb-page>
 </template>
@@ -34,6 +35,9 @@ export default {
     },
     onFetchChildren() {
       return this.contextParams.onFetchChildren;
+    },
+    buttonClearRole() {
+      return this.contextParams.buttonClearRole;
     },
     root() {
       return {
@@ -112,12 +116,26 @@ export default {
     async onLoadChildren(node) {
       return await this._loadNodeRoles(node);
     },
-    onDone() {
+    onPerformDone(event) {
       const checked = this.$refs.tree.checked();
       if (!checked || checked.length === 0) return;
-
-      this.contextCallback(200, checked);
+      // onSelect
+      this.onSelect(event, checked.data);
+    },
+    onSelect(event, role) {
+      this.contextCallback(200, role);
       this.$f7router.back();
+    },
+    onPerformClearRole(event) {
+      const role = {
+        id: 0,
+        atomId: 0,
+        itemId: 0,
+        atomName: null,
+        atomNameLocale: null,
+        roleName: null,
+      };
+      this.onSelect(event, role);
     },
   },
 };

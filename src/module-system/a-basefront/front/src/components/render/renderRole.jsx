@@ -34,9 +34,8 @@ export default {
               leafOnly,
               buttonClearRole: true,
             },
-            callback: (code, node) => {
+            callback: (code, selectedRole) => {
               if (code === 200) {
-                const selectedRole = node.data;
                 // mapper
                 if (mapper) {
                   for (const key in mapper) {
