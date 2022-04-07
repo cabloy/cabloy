@@ -44,6 +44,13 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'addChild' } },
     },
+    // role/roleUsers
+    {
+      method: 'post',
+      path: 'role/roleUsers',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
+    },
     // role/includes
     {
       method: 'post',

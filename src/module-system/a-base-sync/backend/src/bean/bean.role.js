@@ -4,6 +4,10 @@ module.exports = ctx => {
     module: moduleInfo.relativeName,
     atomClassName: 'role',
   };
+  const __atomClassUser = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'user',
+  };
 
   class Role extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
@@ -368,6 +372,27 @@ module.exports = ctx => {
       if (roleName !== undefined && role.roleName !== roleName) {
         await this.modelAtom.update({ id: role.atomId, atomName: roleName });
       }
+    }
+
+    async roleUsers({ roleAtomId, roleId, page, user }) {
+      // user, should check user right scope
+      // user = { id: 0 };
+      // roleId
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      page = ctx.bean.util.page(page, false);
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassUser,
+        options: {
+          orders: [['f.userName', 'asc']],
+          page,
+          stage: 'formal',
+          role: roleId,
+          // where,
+        },
+        user,
+      });
+      return list;
     }
 
     // includes

@@ -60,6 +60,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async roleUsers() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.role.roleUsers({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        page,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
     async includes() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.includes({
