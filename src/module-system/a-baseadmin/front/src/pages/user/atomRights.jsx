@@ -33,11 +33,12 @@ export default {
         infinitePreloader={false}
         onInfinite={this.page_onInfinite}
       >
-        <eb-navbar large largeTransparent title={this.getPageTitle('Atom Authorization')} eb-back-link="Back">
-          <f7-nav-right>
-            <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>
-          </f7-nav-right>
-        </eb-navbar>
+        <eb-navbar
+          large
+          largeTransparent
+          title={this.getPageTitle('Atom Authorization')}
+          eb-back-link="Back"
+        ></eb-navbar>
         {domSpreads}
       </eb-page>
     );

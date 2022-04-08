@@ -342,7 +342,8 @@ module.exports = ctx => {
       return items;
     }
 
-    async resourceRightsOfUser({ userId, page }) {
+    async resourceRightsOfUser({ userAtomId, userId, page }) {
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
       // check locale
       const locale = ctx.locale;
       // items
