@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="getPageTitle('Atom Authorization')" eb-back-link="Back">
+    <eb-navbar :title="getPageTitle('Atom Authorizations')" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" top tabbar>
           <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>{{ $text('Rights') }}</f7-link>

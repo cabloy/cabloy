@@ -113,9 +113,9 @@ module.exports = app => {
               actionComponent: 'actionRole',
               icon: { f7: ':outline:archive-lock-outline' },
             },
-            atomAuthorization: {
+            atomAuthorizations: {
               code: 106,
-              title: 'Atom Authorization',
+              title: 'Atom Authorizations',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:database-lock-outline' },
@@ -171,9 +171,9 @@ module.exports = app => {
               actionComponent: 'actionUser',
               icon: { f7: ':outline:archive-lock-outline' },
             },
-            atomAuthorization: {
+            atomAuthorizations: {
               code: 103,
-              title: 'Atom Authorization',
+              title: 'Atom Authorizations',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionUser',
               icon: { f7: ':outline:database-lock-outline' },

@@ -36,7 +36,7 @@ export default {
         <eb-navbar
           large
           largeTransparent
-          title={this.getPageTitle('Atom Authorization')}
+          title={this.getPageTitle('Atom Authorizations')}
           eb-back-link="Back"
         ></eb-navbar>
         {domSpreads}

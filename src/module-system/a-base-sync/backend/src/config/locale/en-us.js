@@ -23,4 +23,5 @@ module.exports = {
   'Atom Name': 'Title',
   'Cannot delete if has atoms': 'Cannot delete if has data',
   'Atom Authorization': 'Data Authorization',
+  'Atom Authorizations': 'Data Authorizations',
 };

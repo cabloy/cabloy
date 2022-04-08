@@ -53,7 +53,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'roleUsers', scopeNames: 'root' },
         { roleName: 'system', action: 'includes', scopeNames: 'root' },
         { roleName: 'system', action: 'resourceAuthorization', scopeNames: 'root' },
-        { roleName: 'system', action: 'atomAuthorization', scopeNames: 'root' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'root' },
         { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
         // { roleName: 'system', action: 'buildBulk' },
@@ -72,7 +72,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'disable', scopeNames: 'root' },
         { roleName: 'system', action: 'userRoles', scopeNames: 'root' },
         { roleName: 'system', action: 'resourceAuthorization', scopeNames: 'root' },
-        { roleName: 'system', action: 'atomAuthorization', scopeNames: 'root' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'root' },
         // { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
       ];

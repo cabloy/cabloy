@@ -115,25 +115,25 @@ module.exports = app => {
       method: 'post',
       path: 'atomRight/rights',
       controller: 'atomRight',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',
       path: 'atomRight/add',
       controller: 'atomRight',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',
       path: 'atomRight/delete',
       controller: 'atomRight',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',
       path: 'atomRight/spreads',
       controller: 'atomRight',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     // user/select
     {
@@ -166,7 +166,7 @@ module.exports = app => {
       method: 'post',
       path: 'user/atomRights',
       controller: 'user',
-      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'atomAuthorization' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',

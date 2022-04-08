@@ -14,11 +14,11 @@ export default {
       // ok
       return children;
     },
-    // resourceAuthorization/atomAuthorization
+    // resourceAuthorizations/atomAuthorizations
     info_renderActionsRight() {
       if (!this.layoutManager.base_ready) return;
       const children = [];
-      this._renderActionsGeneral(children, ['resourceAuthorization', 'atomAuthorization']);
+      this._renderActionsGeneral(children, ['resourceAuthorizations', 'atomAuthorizations']);
       // ok
       return children;
     },
