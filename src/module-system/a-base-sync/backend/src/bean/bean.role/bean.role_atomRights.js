@@ -186,6 +186,10 @@ module.exports = ctx => {
             `,
         [ctx.instance.id]
       );
+      return this._translateRoleNamesLocale({ items });
+    }
+
+    _translateRoleNamesLocale({ items }) {
       for (const item of items) {
         item.roleNameLocale = ctx.text(item.roleName);
       }

@@ -27,6 +27,22 @@ module.exports = ctx => {
       return list;
     }
 
+    async userRoles({ userAtomId, userId, page, user }) {
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(
+        `
+        select a.*,b.roleName from aUserRole a
+          left join aRole b on a.roleId=b.id
+            where a.iid=? and a.userId=?
+            ${_limit}
+        `,
+        [ctx.instance.id, userId]
+      );
+      return this._translateRoleNamesLocale({ items });
+    }
+
     // add user role
     async addUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
       // role

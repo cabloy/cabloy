@@ -202,21 +202,6 @@ module.exports = ctx => {
       await ctx.bean.atom.delete({ key: { atomId: userAtomId } });
     }
 
-    // roles
-    async roles({ userId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(
-        `
-        select a.*,b.roleName from aUserRole a
-          left join aRole b on a.roleId=b.id
-            where a.iid=? and a.userId=?
-            ${_limit}
-        `,
-        [ctx.instance.id, userId]
-      );
-    }
-
     async _forceUserAtomId({ userAtomId, userId }) {
       if (!userAtomId) {
         const item = await this.get({ id: userId });

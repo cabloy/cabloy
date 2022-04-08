@@ -10,30 +10,34 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async roles() {
+    async userRoles() {
       const page = this.ctx.request.body.page;
-      const items = await this.service.user.roles({
-        userId: this.ctx.request.body.userId,
+      const items = await this.service.user.userRoles({
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async addRole() {
+    async addUserRole() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.addRole({
-        userId: this.ctx.request.body.userId,
+      const res = await this.service.user.addUserRole({
+        userAtomId: this.ctx.request.body.key.atomId,
         roleId: this.ctx.request.body.roleId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
 
-    async removeRole() {
+    async deleteUserRole() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.removeRole({
-        id: this.ctx.request.body.id,
+      const res = await this.service.user.deleteUserRole({
+        userAtomId: this.ctx.request.body.key.atomId,
+        roleId: this.ctx.request.body.roleId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

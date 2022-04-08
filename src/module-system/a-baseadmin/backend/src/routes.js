@@ -135,20 +135,32 @@ module.exports = app => {
       controller: 'atomRight',
       meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorization' } },
     },
-
-    // user
+    // user/select
     {
       method: 'post',
       path: 'user/select',
       controller: 'user',
     },
-    { method: 'post', path: 'user/roles', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
+    // user/userRoles
     {
       method: 'post',
-      path: 'user/removeRole',
+      path: 'user/userRoles',
       controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
+    },
+    // user/addUserRole
+    {
+      method: 'post',
+      path: 'user/addUserRole',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
+    },
+    // role/deleteUserRole
+    {
+      method: 'post',
+      path: 'user/deleteUserRole',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
     },
     {
       method: 'post',

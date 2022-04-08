@@ -4,16 +4,16 @@ module.exports = app => {
       return await this.ctx.bean.user.selectGeneral({ params: { query, page }, user });
     }
 
-    async roles({ userId, page }) {
-      return await this.ctx.bean.user.roles({ userId, page });
+    async userRoles({ userAtomId, page, user }) {
+      return await this.ctx.bean.role.userRoles({ userAtomId, page, user });
     }
 
-    async addRole({ userId, roleId }) {
-      return await this.ctx.bean.role.addUserRole({ userId, roleId });
+    async addUserRole({ userAtomId, roleId, user }) {
+      return await this.ctx.bean.role.addUserRole({ userAtomId, roleId, user });
     }
 
-    async removeRole({ id }) {
-      return await this.ctx.bean.role.deleteUserRole({ id });
+    async deleteUserRole({ userAtomId, roleId, user }) {
+      return await this.ctx.bean.role.deleteUserRole({ userAtomId, roleId, user });
     }
 
     async atomRights({ userId, page }) {
