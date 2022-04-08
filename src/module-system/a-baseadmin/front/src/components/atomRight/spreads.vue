@@ -24,7 +24,12 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <eb-load-more
+      ref="loadMore"
+      :onLoadClear="onLoadClear"
+      :onLoadMore="onLoadMore"
+      :autoInit="autoInit"
+    ></eb-load-more>
   </div>
 </template>
 <script>
@@ -44,6 +49,10 @@ export default {
     user: {
       type: Object,
     },
+    autoInit: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -56,6 +65,9 @@ export default {
     },
     roleKey() {
       return { atomId: this.role.atomId, itemId: this.role.itemId };
+    },
+    userKey() {
+      return { atomId: this.user.atomId, itemId: this.user.atomId };
     },
     itemGroups() {
       if (!this.items) return [];
@@ -127,7 +139,10 @@ export default {
         return data;
       }
       // user
-      const data = await this.$api.post('user/atomRights', { userId: this.user.id, page: { index } });
+      const data = await this.$api.post('user/atomRights', {
+        key: this.userKey,
+        page: { index },
+      });
       this.items = this.items.concat(data.list);
       return data;
     },
