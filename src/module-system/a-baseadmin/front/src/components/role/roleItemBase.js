@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     async loadRole() {
-      this.role = await this.$api.post('/a/base/atom/read', { key: { atomId: this.roleAtomId } });
+      this.role = await this.$api.post('/a/base/atom/read', { key: this.roleKey });
     },
     getPageTitle(titleName) {
       let title = this.$text(titleName);
