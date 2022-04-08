@@ -6,13 +6,9 @@ export default {
     actions_onAction(event, action) {
       return this.layoutManager.actions_onAction(event, action);
     },
-    // addChild / roleUsers / includes
+    // default
     info_renderActionsLeft() {
-      if (!this.layoutManager.base_ready) return;
-      const children = [];
-      this._renderActionsGeneral(children, ['addChild', 'roleUsers', 'includes']);
-      // ok
-      return children;
+      return this.layoutManager.info_renderActionsLeft();
     },
     // resourceAuthorizations/atomAuthorizations
     info_renderActionsRight() {
@@ -28,8 +24,8 @@ export default {
       // write
       const buttonSave = this.layoutManager.actions_renderButtonSave();
       if (buttonSave) children.push(buttonSave);
-      // delete / clone / move
-      this._renderActionsGeneral(children, ['delete', 'clone', 'move']);
+      // delete / userRoles
+      this._renderActionsGeneral(children, ['delete', 'enable', 'disable', 'userRoles']);
       // ok
       return children;
     },
