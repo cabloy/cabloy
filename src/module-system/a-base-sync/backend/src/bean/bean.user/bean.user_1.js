@@ -102,14 +102,11 @@ module.exports = ctx => {
         await this.model.update(user);
       }
       if (user.userName) {
-        await ctx.bean.atom.modelAtom.update(
-          { atomName: user.userName },
-          {
-            where: {
-              itemId: user.id,
-            },
-          }
-        );
+        const userAtomId = await this._forceUserId({ userAtomId: null, userId });
+        await ctx.bean.atom.modelAtom.update({
+          id: userAtomId,
+          atomName: user.userName,
+        });
       }
     }
 
