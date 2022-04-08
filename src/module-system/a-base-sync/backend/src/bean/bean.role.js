@@ -1,6 +1,22 @@
 const role_base = require('./bean.role/bean.role_base.js');
-// const user_1 = require('./bean.user/bean.user_1.js');
+const role_atomRights = require('./bean.role/bean.role_atomRights.js');
+const role_build = require('./bean.role/bean.role_build.js');
+const role_includes = require('./bean.role/bean.role_includes.js');
+const role_others = require('./bean.role/bean.role_others.js');
+const role_resourceRights = require('./bean.role/bean.role_resourceRights.js');
+const role_users = require('./bean.role/bean.role_users.js');
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(role_base, [], ctx);
+  return ctx.app.meta.util.mixinClasses(
+    role_base,
+    [
+      role_atomRights, //
+      role_build,
+      role_includes,
+      role_others,
+      role_resourceRights,
+      role_users,
+    ],
+    ctx
+  );
 };

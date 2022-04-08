@@ -4,10 +4,6 @@ module.exports = ctx => {
     module: moduleInfo.relativeName,
     atomClassName: 'role',
   };
-  const __atomClassUser = {
-    module: moduleInfo.relativeName,
-    atomClassName: 'user',
-  };
 
   class Role {
     // includes
