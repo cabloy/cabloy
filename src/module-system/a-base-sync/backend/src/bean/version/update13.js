@@ -75,6 +75,13 @@ module.exports = function (ctx) {
               inner join aRoleInc b on a.id=b.roleIdInc
         `;
       await ctx.model.query(sql);
+      // view: aRoleUsersView
+      sql = `
+          CREATE VIEW aRoleUserRolesView as
+            select a.*,b.id as userRoleId,b.userId as userIdWho from aRole a
+              inner join aUserRole b on a.id=b.roleId
+        `;
+      await ctx.model.query(sql);
     }
   }
 

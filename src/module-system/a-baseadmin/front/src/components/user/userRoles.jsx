@@ -73,6 +73,17 @@ export default {
       const index = this.items.findIndex(item => item.roleId === data.roleId);
       if (index > -1) this.items.splice(index, 1);
     },
+    async onPerformItem(event, item) {
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'read',
+        navigateOptions: {
+          target: '_self',
+        },
+      };
+      await this.$meta.util.performAction({ ctx: this, action, item });
+    },
     _renderList() {
       const children = [];
       for (const item of this.items) {
@@ -80,11 +91,12 @@ export default {
           <eb-list-item
             class="item"
             key={item.id}
-            title={item.roleNameLocale || item.roleName}
+            title={item.atomNameLocale || item.roleName}
             link="#"
             propsOnPerform={event => this.onPerformItem(event, item)}
             swipeout
           >
+            <f7-icon slot="media" f7={item._roleTypeCodeOptions.icon.f7}></f7-icon>
             <eb-context-menu>
               <div slot="right">
                 <div color="red" propsOnPerform={event => this.onPerformDelete(event, item)}>

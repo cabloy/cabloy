@@ -42,6 +42,7 @@ module.exports = app => {
             tableNameModes: {
               default: 'aRoleView',
               includes: 'aRoleIncludesView',
+              userRoles: 'aRoleUserRolesView',
             },
             resource: true,
             simple: true,
