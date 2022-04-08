@@ -8,8 +8,8 @@ module.exports = ctx => {
   class Role {
     // includes
     async includes({ roleAtomId, roleId, page, user }) {
-      // user, not check user right scope
-      user = { id: 0 };
+      // user, should check user right scope
+      // user = { id: 0 };
       //
       roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
