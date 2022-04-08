@@ -45,8 +45,9 @@ module.exports = app => {
     async atomRights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.user.atomRights({
-        userId: this.ctx.request.body.userId,
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -54,8 +55,9 @@ module.exports = app => {
     async resourceRights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.user.resourceRights({
-        userId: this.ctx.request.body.userId,
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }

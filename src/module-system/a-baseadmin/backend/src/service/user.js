@@ -16,12 +16,12 @@ module.exports = app => {
       return await this.ctx.bean.role.deleteUserRole({ userAtomId, roleId, user });
     }
 
-    async atomRights({ userId, page }) {
-      return await this.ctx.bean.role.atomRightsOfUser({ userId, page });
+    async atomRights({ userAtomId, page, user }) {
+      return await this.ctx.bean.role.atomRightsOfUser({ userAtomId, page, user });
     }
 
-    async resourceRights({ userId, page }) {
-      return await this.ctx.bean.resource.resourceRightsOfUser({ userId, page });
+    async resourceRights({ userAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceRightsOfUser({ userAtomId, page, user });
     }
   }
 

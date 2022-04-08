@@ -166,13 +166,13 @@ module.exports = app => {
       method: 'post',
       path: 'user/atomRights',
       controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'atomAuthorization' } },
     },
     {
       method: 'post',
       path: 'user/resourceRights',
       controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'resourceAuthorization' } },
     },
     // auth
     { method: 'post', path: 'auth/list', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },

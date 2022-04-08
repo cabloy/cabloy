@@ -144,7 +144,8 @@ module.exports = ctx => {
     }
 
     // atom rights of user
-    async atomRightsOfUser({ userId, page }) {
+    async atomRightsOfUser({ userAtomId, userId, page }) {
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
