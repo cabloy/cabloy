@@ -92,7 +92,7 @@ export default {
         children.push(
           <eb-list-item
             class="item"
-            key={item.id}
+            key={item.roleIncId}
             title={item.atomNameLocale || item.roleName}
             link="#"
             propsOnPerform={event => this.onPerformItem(event, item)}
