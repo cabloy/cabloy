@@ -33,6 +33,13 @@ export default {
       this.items = this.items.concat(data.list);
       return data;
     },
+    async _addUserRole(roleId) {
+      await this.$api.post('user/addUserRole', { key: this.userKey, roleId });
+      // reload
+      this.reload();
+      // toast
+      this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+    },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
         target: '_self',
@@ -44,34 +51,26 @@ export default {
           },
           callback: (code, role) => {
             if (code === 200) {
-              const roleId = role.itemId;
-              this.$api.post('user/addRole', { userId: this.user.id, roleId }).then(() => {
-                this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId });
-                this.reload();
-                this.$view.toast.show({ text: this.$text('Operation Succeeded') });
-              });
+              this._addUserRole(role.itemId);
             }
           },
         },
       });
     },
-    onPerformDelete(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('user/removeRole', { id: item.id }).then(() => {
-          this.onRoleDelete({ roleId: item.roleId });
-          this.$meta.eventHub.$emit('user:removeRole', { userId: this.user.id, roleId: item.roleId });
-          this.$meta.util.swipeoutDelete(event.currentTarget);
-          return true;
-        });
+    async onPerformDelete(event, item) {
+      await this.$view.dialog.confirm();
+      // remove
+      const roleId = item.itemId;
+      await this.$api.post('user/deleteUserRole', {
+        key: this.userKey,
+        roleId,
       });
-    },
-    onRoleSave(data) {
-      const index = this.items.findIndex(item => item.roleId === data.roleId);
-      if (index > -1) this.reload();
-    },
-    onRoleDelete(data) {
-      const index = this.items.findIndex(item => item.roleId === data.roleId);
+      // remove
+      const index = this.items.findIndex(item => item.itemId === roleId);
       if (index > -1) this.items.splice(index, 1);
+      // swipeoutDelete
+      this.$meta.util.swipeoutDelete(event.currentTarget);
+      return true;
     },
     async onPerformItem(event, item) {
       const action = {
@@ -90,7 +89,7 @@ export default {
         children.push(
           <eb-list-item
             class="item"
-            key={item.id}
+            key={item.userRoleId}
             title={item.atomNameLocale || item.roleName}
             link="#"
             propsOnPerform={event => this.onPerformItem(event, item)}
