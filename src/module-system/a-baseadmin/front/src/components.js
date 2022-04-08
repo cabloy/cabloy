@@ -8,6 +8,9 @@ import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDef
 import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
 // role: listLayoutData
 import roleListLayoutDataProviderTree from './components/role/listLayoutData/providerTree.jsx';
+// user: itemLayoutDefault
+import userItemLayoutBlockDefaultTitle from './components/user/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
+import userItemLayoutBlockDefaultSubnavbar from './components/user/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
 // user: listLayoutExtend
 import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
 //
@@ -33,6 +36,9 @@ export default {
   roleItemLayoutBlockDefaultMain,
   // role: listLayoutData
   roleListLayoutDataProviderTree,
+  // user: itemLayoutDefault
+  userItemLayoutBlockDefaultTitle,
+  userItemLayoutBlockDefaultSubnavbar,
   // user: listLayoutExtend
   userListLayoutExtend,
   //
