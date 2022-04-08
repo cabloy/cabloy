@@ -27,7 +27,8 @@ export default {
       };
       const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
       if (atomClass && atomClass.resource) {
-        clause.__or__atomNameResource.push({ 'f.atomNameLocale': clauseValue });
+        const fieldName = ctx.container && ctx.container.resource ? 'm.atomNameLocale' : 'f.atomNameLocale';
+        clause.__or__atomNameResource.push({ [fieldName]: clauseValue });
       }
       return clause;
     },
