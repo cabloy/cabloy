@@ -39,6 +39,8 @@ export default {
       this.container.scene = 'selecting';
       this.container.layout = 'selecting';
     }
+    // resource
+    this.container.resource = contextParams.resource;
   },
   render() {
     return (

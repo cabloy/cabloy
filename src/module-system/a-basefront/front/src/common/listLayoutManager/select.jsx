@@ -18,12 +18,17 @@ export default {
       const selectedAtomIds = this.container.params.selectedAtomIds;
       if (selectedAtomIds && selectedAtomIds.length > 0) {
         // fetch
-        const params = {
-          options: {
-            where: {
-              'a.id': selectedAtomIds,
-            },
+        const options = {
+          where: {
+            'a.id': selectedAtomIds,
           },
+        };
+        if (this.container.resource) {
+          options.resource = 1;
+          options.resourceLocale = this.$meta.util.getLocale();
+        }
+        const params = {
+          options,
         };
         const res = await this.$api.post('/a/base/atom/select', params);
         this.select.selectedAtoms = res.list;

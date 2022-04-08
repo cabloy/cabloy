@@ -30,6 +30,7 @@ export default {
             atomClass: this.layoutManager.container.atomClass,
             options: this.layoutManager.container.options,
             params,
+            resource: this.layoutManager.container.resource,
           },
           callback: (code, selectedAtoms) => {
             if (code === 200) {

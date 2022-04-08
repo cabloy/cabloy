@@ -10,6 +10,7 @@ export default {
     const params = query && query.params ? JSON.parse(query.params) : null;
     const scene = query && query.scene;
     const layout = query && query.layout;
+    const resource = query && query.resource;
     return {
       container: {
         atomClass,
@@ -17,6 +18,7 @@ export default {
         params,
         scene,
         layout,
+        resource,
       },
     };
   },

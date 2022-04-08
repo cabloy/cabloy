@@ -911,15 +911,16 @@ module.exports = ctx => {
       } else {
         // check if resource
         if (atomClassBase.resource) {
-          const optionsResource = options && options.resource;
-          if (!optionsResource) {
-            tableName = `(
+          // also support resource
+          // const optionsResource = options && options.resource;
+          // if (!optionsResource) {
+          tableName = `(
                   select ___a.*,
                     ___c.atomNameLocale
                     from ${tableName} ___a
                     left join aResourceLocale ___c on ___a.atomId=___c.atomId and ___c.locale='${ctx.locale}'
                 )`;
-          }
+          // }
         }
       }
       // ok

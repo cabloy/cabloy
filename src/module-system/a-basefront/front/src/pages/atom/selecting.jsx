@@ -23,6 +23,8 @@ export default {
     this.container.options = contextParams.options;
     // params
     this.container.params = contextParams.params;
+    // resource
+    this.container.resource = contextParams.resource;
   },
   render() {
     return (

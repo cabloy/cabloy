@@ -69,6 +69,7 @@ export default {
             selectMode: 'multiple',
             selectedAtomIds: this.atoms ? this.atoms.map(item => item.atomId) : null,
             atomClass: this.atomClass,
+            resource: 1,
           },
           callback: (code, selectedAtoms) => {
             if (code === 200) {
