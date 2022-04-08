@@ -39,6 +39,11 @@ export default {
       const options = {};
       // layout
       options.layout = this.layout.current;
+      // resource
+      if (this.container.resource) {
+        options.resource = 1;
+        options.resourceLocale = this.$meta.util.getLocale();
+      }
       // options
       return options;
     },
@@ -49,6 +54,11 @@ export default {
       };
       // layout
       options.layout = this.layout.current;
+      // resource
+      if (this.container.resource) {
+        options.resource = 1;
+        options.resourceLocale = this.$meta.util.getLocale();
+      }
       // search
       if (this.search.query) {
         options.where['a.atomName'] = { val: this.search.query, op: 'like' };
@@ -57,11 +67,6 @@ export default {
       if (this.container.scene === 'select') {
         options.where['a.id'] =
           this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
-      }
-      // resource
-      if (this.container.resource) {
-        options.resource = 1;
-        options.resourceLocale = this.$meta.util.getLocale();
       }
       // extend 1
       if (this.container.options) {
