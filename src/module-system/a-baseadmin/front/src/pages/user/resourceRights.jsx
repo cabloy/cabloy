@@ -36,7 +36,7 @@ export default {
         <eb-navbar
           large
           largeTransparent
-          title={this.getPageTitle('Resource Authorization')}
+          title={this.getPageTitle('Resource Authorizations')}
           eb-back-link="Back"
         ></eb-navbar>
         {domSpreads}

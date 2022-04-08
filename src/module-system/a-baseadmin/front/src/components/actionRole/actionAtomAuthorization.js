@@ -1,8 +1,8 @@
 export default {
   methods: {
-    async _onActionAtomAuthorization() {
+    async _onActionAtomAuthorizations() {
       const { ctx, action, item } = this.$props;
-      // atomAuthorization
+      // atomAuthorizations
       // open
       const url = ctx.$meta.util.replaceTemplate(
         '/a/baseadmin/atomRight/edit?roleAtomId={{atomId}}&roleId={{itemId}}',

@@ -1,8 +1,8 @@
 export default {
   methods: {
-    async _onActionResourceAuthorization() {
+    async _onActionResourceAuthorizations() {
       const { ctx, action, item } = this.$props;
-      // resourceAuthorization
+      // resourceAuthorizations
       // open
       const url = ctx.$meta.util.replaceTemplate(
         '/a/baseadmin/user/resourceRights?userAtomId={{atomId}}&userId={{itemId}}',

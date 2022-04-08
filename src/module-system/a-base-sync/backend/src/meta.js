@@ -106,9 +106,9 @@ module.exports = app => {
               actionComponent: 'actionRole',
               icon: { f7: ':role:role' },
             },
-            resourceAuthorization: {
+            resourceAuthorizations: {
               code: 105,
-              title: 'Resource Authorization',
+              title: 'Resource Authorizations',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:archive-lock-outline' },
@@ -164,9 +164,9 @@ module.exports = app => {
               actionComponent: 'actionUser',
               icon: { f7: ':role:role' },
             },
-            resourceAuthorization: {
+            resourceAuthorizations: {
               code: 102,
-              title: 'Resource Authorization',
+              title: 'Resource Authorizations',
               actionModule: 'a-baseadmin',
               actionComponent: 'actionUser',
               icon: { f7: ':outline:archive-lock-outline' },
