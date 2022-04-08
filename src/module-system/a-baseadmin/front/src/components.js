@@ -15,7 +15,7 @@ import actionRole from './components/actionRole.js';
 import actionUser from './components/actionUser.js';
 import roleIncludes from './components/role/includes.jsx';
 import roleUsers from './components/role/roleUsers.jsx';
-import userRoles from './components/user/roles.vue';
+import userRoles from './components/user/userRoles.jsx';
 import userSelect from './components/user/select.vue';
 import atomRightRights from './components/atomRight/rights.vue';
 import atomRightSpreads from './components/atomRight/spreads.vue';

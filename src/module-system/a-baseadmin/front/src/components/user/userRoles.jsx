@@ -1,33 +1,10 @@
-<template>
-  <div>
-    <f7-list>
-      <eb-list-item
-        class="item"
-        v-for="item of items"
-        :key="item.id"
-        :title="item.roleName"
-        link="#"
-        :eb-href="`role/edit?roleId=${item.roleId}`"
-        swipeout
-      >
-        <eb-context-menu>
-          <div slot="right">
-            <div color="red" :context="item" :onPerform="onRemove">{{ $text('Remove') }}</div>
-          </div>
-        </eb-context-menu>
-      </eb-list-item>
-    </f7-list>
-    <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
-  </div>
-</template>
-<script>
 export default {
-  meta: {
-    global: false,
-  },
   props: {
-    user: {
-      type: Object,
+    userAtomId: {
+      type: Number,
+    },
+    userId: {
+      type: Number,
     },
   },
   data() {
@@ -35,13 +12,10 @@ export default {
       items: [],
     };
   },
-  mounted() {
-    this.$meta.eventHub.$on('role:save', this.onRoleSave);
-    this.$meta.eventHub.$on('role:delete', this.onRoleDelete);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('role:save', this.onRoleSave);
-    this.$meta.eventHub.$off('role:delete', this.onRoleDelete);
+  computed: {
+    userKey() {
+      return { atomId: this.userAtomId, itemId: this.userId };
+    },
   },
   methods: {
     reload(force) {
@@ -54,11 +28,10 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
-      return this.$api.post('user/roles', { userId: this.user.id, page: { index } }).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+    async onLoadMore({ index }) {
+      const data = await this.$api.post('user/userRoles', { key: this.userKey, page: { index } });
+      this.items = this.items.concat(data.list);
+      return data;
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
@@ -82,7 +55,7 @@ export default {
         },
       });
     },
-    onRemove(event, item) {
+    onPerformDelete(event, item) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/removeRole', { id: item.id }).then(() => {
           this.onRoleDelete({ roleId: item.roleId });
@@ -100,7 +73,42 @@ export default {
       const index = this.items.findIndex(item => item.roleId === data.roleId);
       if (index > -1) this.items.splice(index, 1);
     },
+    _renderList() {
+      const children = [];
+      for (const item of this.items) {
+        children.push(
+          <eb-list-item
+            class="item"
+            key={item.id}
+            title={item.roleNameLocale || item.roleName}
+            link="#"
+            propsOnPerform={event => this.onPerformItem(event, item)}
+            swipeout
+          >
+            <eb-context-menu>
+              <div slot="right">
+                <div color="red" propsOnPerform={event => this.onPerformDelete(event, item)}>
+                  {this.$text('Remove')}
+                </div>
+              </div>
+            </eb-context-menu>
+          </eb-list-item>
+        );
+      }
+      return <f7-list>{children}</f7-list>;
+    },
+  },
+  render() {
+    return (
+      <div>
+        {this._renderList()}
+        <eb-load-more
+          ref="loadMore"
+          propsOnLoadClear={this.onLoadClear}
+          propsOnLoadMore={this.onLoadMore}
+          autoInit={true}
+        ></eb-load-more>
+      </div>
+    );
   },
 };
-</script>
-<style scoped></style>

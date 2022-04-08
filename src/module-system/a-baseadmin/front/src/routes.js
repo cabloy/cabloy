@@ -11,7 +11,7 @@ export default [
   { path: 'role/includes', component: loadjsx('role/includes') },
   { path: 'user/select', component: load('user/select') },
   { path: 'user/rights', component: load('user/rights') },
-  { path: 'user/userRoles', component: load('user/userRoles') },
+  { path: 'user/userRoles', component: loadjsx('user/userRoles') },
   { path: 'atomRight/edit', component: load('atomRight/edit') },
   { path: 'atomRight/add', component: load('atomRight/add') },
   { path: 'resourceRight/edit', component: load('resourceRight/edit') },

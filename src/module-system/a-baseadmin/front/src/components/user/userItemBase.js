@@ -20,7 +20,7 @@ export default {
     },
     getPageTitle(titleName) {
       let title = this.$text(titleName);
-      if (this.role) title = `${title}: ${this.user.atomName}`;
+      if (this.user) title = `${title}: ${this.user.atomName}`;
       return title;
     },
   },
