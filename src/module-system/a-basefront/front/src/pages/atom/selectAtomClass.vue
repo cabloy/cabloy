@@ -64,7 +64,10 @@ export default {
           // check inner
           if (this.inner2 !== null && Boolean(this.inner2) !== Boolean(atomClass.inner)) continue;
           // check resource
-          if (this.resource && !atomClass.resource) continue;
+          if (this.resource) {
+            if (!atomClass.resource) continue;
+            if (moduleName === 'a-base' && atomClassName === 'role') continue;
+          }
           // check simple
           if (this.simple === 0 && atomClass.simple) continue;
           if (this.simple === 1 && !atomClass.simple) continue;
