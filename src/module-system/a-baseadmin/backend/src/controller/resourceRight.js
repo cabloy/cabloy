@@ -26,7 +26,7 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.resourceRight.delete({
         roleAtomId: this.ctx.request.body.key.atomId,
-        resourceRoleId: this.ctx.request.body.resourceRoleId,
+        atomId: this.ctx.request.body.atomId,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

@@ -216,7 +216,7 @@ module.exports = ctx => {
     }
 
     // add resource role
-    async addResourceRole({ atomId, atomStaticKey, roleId }) {
+    async addResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
       if (!atomId && !atomStaticKey) return null;
       if (!atomId) {
         const atom = await ctx.bean.atom.modelAtom.get({
@@ -242,6 +242,12 @@ module.exports = ctx => {
       return res.insertId;
     }
 
+    // delete resource role
+    async deleteResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
+      // id + roleId for safety
+      await this.modelResourceRole.delete({ id: resourceRoleId, roleId });
+    }
+
     // const roleResources = [
     //   { roleName: 'root', atomStaticKey: 'a-base:listComment' },
     //   { roleName: 'root', name: 'listComment' },
@@ -261,18 +267,10 @@ module.exports = ctx => {
     }
 
     // add resource roles
-    async addResourceRoles({ roleAtomId, roleId, atomIds }) {
-      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
+    async addResourceRoles({ roleAtomId, roleId, atomIds, user }) {
       for (const atomId of atomIds) {
-        await this.addResourceRole({ atomId, roleId });
+        await this.addResourceRole({ roleAtomId, roleId, atomId, atomStaticKey: null, user });
       }
-    }
-
-    // delete resource role
-    async deleteResourceRole({ roleAtomId, roleId, resourceRoleId }) {
-      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
-      // id + roleId for safety
-      await this.modelResourceRole.delete({ id: resourceRoleId, roleId });
     }
 
     async _getAtomClassesResource() {
