@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     roleIdStart() {
-      return this.contextParams.roleIdStart;
+      return this.contextParams.roleIdStart || 0;
     },
     multiple() {
       return this.contextParams.multiple;
