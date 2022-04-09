@@ -13,7 +13,12 @@ module.exports = ctx => {
         } else if (!Array.isArray(scope)) {
           scope = [scope];
         }
+        // check right
+        for (const roleIdScope of scope) {
+          await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdScope, user });
+        }
       }
+
       // force action exists in db
       await ctx.bean.atomAction.get({ atomClassId, code: action });
 
@@ -42,7 +47,18 @@ module.exports = ctx => {
 
     // delete role right
     async deleteRoleRight({ roleAtomId, roleId, roleRightId, user }) {
-      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // scope
+      const item = await this.modelRoleRight.get({ id: roleRightId });
+      const scope = JSON.parse(item.scope);
+      if (scope) {
+        // check right
+        for (const roleIdScope of scope) {
+          await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdScope, user });
+        }
+      }
       // id + roleId for safety
       await this.modelRoleRight.delete({ id: roleRightId, roleId });
       await this.modelRoleRightRef.delete({ roleRightId, roleId });
