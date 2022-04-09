@@ -2,8 +2,10 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope }) {
-      roleId = await this._forceRoleId({ roleAtomId, roleId });
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
       // scope
       if (scope) {
         if (typeof scope === 'string') {
@@ -36,6 +38,14 @@ module.exports = ctx => {
         }
       }
       return roleRightId;
+    }
+
+    // delete role right
+    async deleteRoleRight({ roleAtomId, roleId, roleRightId, user }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      // id + roleId for safety
+      await this.modelRoleRight.delete({ id: roleRightId, roleId });
+      await this.modelRoleRightRef.delete({ roleRightId, roleId });
     }
 
     // const roleRights = [
@@ -85,14 +95,6 @@ module.exports = ctx => {
           scope,
         });
       }
-    }
-
-    // delete role right
-    async deleteRoleRight({ roleAtomId, roleId, roleRightId }) {
-      roleId = await this._forceRoleId({ roleAtomId, roleId });
-      // id + roleId for safety
-      await this.modelRoleRight.delete({ id: roleRightId, roleId });
-      await this.modelRoleRightRef.delete({ roleRightId, roleId });
     }
 
     // role rights

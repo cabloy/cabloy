@@ -57,18 +57,20 @@ module.exports = ctx => {
     async addUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
       // role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
       // user
       const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      userId = _user.id;
       // check if exists
       const item = await this.modelUserRole.get({
-        userId: _user.id,
-        roleId: _role.id,
+        userId,
+        roleId,
       });
       if (item) return item.id;
       // insert
       const res = await this.modelUserRole.insert({
-        userId: _user.id,
-        roleId: _role.id,
+        userId,
+        roleId,
       });
       return res.insertId;
     }
@@ -76,12 +78,14 @@ module.exports = ctx => {
     async deleteUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
       // role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
       // user
       const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      userId = _user.id;
       // delete
       await this.modelUserRole.delete({
-        userId: _user.id,
-        roleId: _role.id,
+        userId,
+        roleId,
       });
     }
 
