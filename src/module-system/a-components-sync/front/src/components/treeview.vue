@@ -55,6 +55,9 @@ export default {
     this.start();
   },
   methods: {
+    _openNodeContextMenu(node) {
+      return this._onNodeContextMenuOpened(null, node);
+    },
     _onNodeContextMenuOpened(e, node) {
       // popover
       const domNode = this.getElementByNode(node);
@@ -87,6 +90,48 @@ export default {
         this.$emit('node:close', node, e);
         this.$emit('nodeClose', node, e);
       }
+    },
+    _onNodeClick(e, node) {
+      // target
+      const $target = this.$$(e.target);
+
+      // selectable
+      if (!$target.is('.treeview-toggle')) {
+        this._setSelectedNode(node);
+      }
+
+      // checkbox
+      if ($target.is('input') || $target.is('.icon-checkbox') || $target.is('.icon-radio')) {
+        e.preventF7Router = true;
+        return;
+      }
+
+      // ignore
+      let ignore = false;
+
+      // checkbox
+      const disabled = node.attrs.disabled === undefined ? this.treeviewRoot.attrs.disabled : node.attrs.disabled;
+      const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
+      const checkOnLabel =
+        node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
+      if (!disabled && checkbox && checkOnLabel) {
+        const radio = !this.treeviewRoot.attrs.multiple;
+        if (radio) {
+          if (!node.attrs.checked) this._onNodeChange(node, true);
+        } else {
+          this._onNodeChange(node, !node.attrs.checked);
+        }
+        ignore = true;
+      }
+
+      if (ignore) {
+        e.preventF7Router = true;
+        return;
+      }
+
+      // node:click
+      this.$emit('node:click', node, e);
+      this.$emit('nodeClick', node, e);
     },
     getElementByNode(node) {
       const elementId = node.attrs.id;
@@ -213,48 +258,6 @@ export default {
         );
       }
       return slots;
-    },
-    _onNodeClick(e, node) {
-      // target
-      const $target = this.$$(e.target);
-
-      // selectable
-      if (!$target.is('.treeview-toggle')) {
-        this._setSelectedNode(node);
-      }
-
-      // checkbox
-      if ($target.is('input') || $target.is('.icon-checkbox') || $target.is('.icon-radio')) {
-        e.preventF7Router = true;
-        return;
-      }
-
-      // ignore
-      let ignore = false;
-
-      // checkbox
-      const disabled = node.attrs.disabled === undefined ? this.treeviewRoot.attrs.disabled : node.attrs.disabled;
-      const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
-      const checkOnLabel =
-        node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
-      if (!disabled && checkbox && checkOnLabel) {
-        const radio = !this.treeviewRoot.attrs.multiple;
-        if (radio) {
-          if (!node.attrs.checked) this._onNodeChange(node, true);
-        } else {
-          this._onNodeChange(node, !node.attrs.checked);
-        }
-        ignore = true;
-      }
-
-      if (ignore) {
-        e.preventF7Router = true;
-        return;
-      }
-
-      // node:click
-      this.$emit('node:click', node, e);
-      this.$emit('nodeClick', node, e);
     },
   },
 };
