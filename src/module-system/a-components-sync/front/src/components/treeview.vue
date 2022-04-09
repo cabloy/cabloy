@@ -51,14 +51,10 @@ export default {
   },
   // not use created
   mounted() {
-    this.setAdapter(treeviewAdapter(this));
+    this.setAdapter(treeviewAdapter(this, this));
     this.start();
   },
   methods: {
-    _openNode(node) {
-      const $el = this.getElementByNode(node);
-      this.$f7.treeview.open($el);
-    },
     _onNodeContextMenuOpened(e, node) {
       // popover
       const domNode = this.getElementByNode(node);
@@ -78,6 +74,20 @@ export default {
       // ok
       return true;
     },
+    _onNodeOpen(e, node) {
+      if (!node.attrs.opened) {
+        node.attrs.opened = true;
+        this.$emit('node:open', node, e);
+        this.$emit('nodeOpen', node, e);
+      }
+    },
+    _onNodeClose(e, node) {
+      if (node.attrs.opened) {
+        node.attrs.opened = false;
+        this.$emit('node:close', node, e);
+        this.$emit('nodeClose', node, e);
+      }
+    },
     getElementByNode(node) {
       const elementId = node.attrs.id;
       return this.$$(`#${elementId}`);
@@ -88,7 +98,7 @@ export default {
       _node.attrs = this.$utils.extend({}, node.attrs);
       // attrs
       if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewRoot.attrs.itemToggle;
-      // if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
+      if (_node.attrs.opened === undefined) _node.attrs.opened = false;
       if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) _node.attrs.selected = this.selectedItem && this.selectedItem.id === node.id;
@@ -168,6 +178,12 @@ export default {
             },
             contextmenuOpened: e => {
               this._onNodeContextMenuOpened(e, node);
+            },
+            treeviewOpen: () => {
+              this._onNodeOpen(null, node);
+            },
+            treeviewClose: () => {
+              this._onNodeClose(null, node);
             },
           },
         },

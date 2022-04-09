@@ -169,20 +169,15 @@ export default {
     expandNode(node) {
       // current
       if (node.attrs.toggle) {
-        this._openNode(node);
+        this.adapter.openNode(node);
       }
       // parent
       this.treeParent(node, item => {
         if (item.attrs.toggle) {
-          this._openNode(item);
+          this.adapter.openNode(item);
         }
       });
     },
-    // todo:
-    // _openNode(node) {
-    //   const $el = this.getElementByNode(node);
-    //   this.$f7.treeview.open($el);
-    // },
     _openNodeContextMenu(node) {
       return this._onNodeContextMenuOpened(null, node);
     },
@@ -339,7 +334,7 @@ export default {
     },
     async _loadChildren(node) {
       if (!this._needLoadChildren(node)) return node.children;
-      const data = await this.adapter.onLoadChildren(node, this);
+      const data = await this.adapter.onLoadChildren(node);
       return this.childrenLoaded(node, data);
     },
     async _preloadChildren(node, options) {
