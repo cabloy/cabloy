@@ -76,14 +76,14 @@ export default {
     },
     _onNodeOpen(e, node) {
       if (!node.attrs.opened) {
-        node.attrs.opened = true;
+        this.$set(node.attrs, 'opened', true);
         this.$emit('node:open', node, e);
         this.$emit('nodeOpen', node, e);
       }
     },
     _onNodeClose(e, node) {
       if (node.attrs.opened) {
-        node.attrs.opened = false;
+        this.$set(node.attrs, 'opened', false);
         this.$emit('node:close', node, e);
         this.$emit('nodeClose', node, e);
       }
