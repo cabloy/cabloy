@@ -68,7 +68,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.15.4",
-    "extend2": "^1.0.0",
+    "extend2": "^1.0.1",
     "fs-extra": "^8.1.0",
     "function-bind": "^1.1.1",
     "glob": "^7.1.6",

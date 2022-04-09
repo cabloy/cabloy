@@ -30,7 +30,7 @@
     "@zhennann/prosemirror-utils": "^0.9.6",
     "codemirror": "^5.62.3",
     "egg-born-mock": "^2.1.4",
-    "extend2": "^1.0.0",
+    "extend2": "^1.0.1",
     "linkify-it": "^3.0.2",
     "prosemirror-commands": "^1.1.10",
     "prosemirror-example-setup": "^1.1.2",
