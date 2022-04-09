@@ -31,8 +31,13 @@ module.exports = ctx => {
     }
 
     // add role include
-    async addRoleInc({ roleAtomId, roleId, roleIdInc }) {
-      roleId = await this._forceRoleId({ roleAtomId, roleId });
+    async addRoleInc({ roleAtomId, roleId, roleIdInc, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // role inc
+      const _roleInc = await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdInc, user });
+      roleIdInc = _roleInc.id;
       // check if exists
       const item = await this.modelRoleInc.get({
         roleId,
@@ -53,8 +58,15 @@ module.exports = ctx => {
     }
 
     // remove role include
-    async removeRoleInc({ roleAtomId, roleId, roleIdInc }) {
-      roleId = await this._forceRoleId({ roleAtomId, roleId });
+    async removeRoleInc({ roleAtomId, roleId, roleIdInc, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // role inc
+      const _roleInc = await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdInc, user });
+      roleIdInc = _roleInc.id;
+
+      // delete
       await this.modelRoleInc.delete({ roleId, roleIdInc });
 
       // set dirty
