@@ -9,18 +9,13 @@ export default {
     root: {
       type: Object,
     },
-    onNodePerform: {
-      type: Function,
-    },
-    onLoadChildren: {
-      type: Function,
-    },
   },
   data() {
     return {
       treeviewId: Vue.prototype.$meta.util.nextId('treeview'),
       treeviewRoot: null,
       selectedItem: null,
+      adapter: null,
     };
   },
   watch: {
@@ -28,13 +23,18 @@ export default {
       this.reload();
     },
   },
-  // not use created
-  mounted() {
-    if (this.auto) {
-      this.reload();
-    }
+  beforeDestroy() {
+    this.adapter = null;
   },
   methods: {
+    setAdapter(adapter) {
+      this.adapter = adapter;
+    },
+    async start() {
+      if (this.auto) {
+        await this.reload();
+      }
+    },
     async reload() {
       await this.load(this.root);
     },
@@ -299,7 +299,7 @@ export default {
       // attrs id
       _root.attrs.id = this.treeviewId;
       // loadChildren
-      if (_root.attrs.loadChildren === undefined && this.onLoadChildren) _root.attrs.loadChildren = true;
+      if (_root.attrs.loadChildren === undefined && this.adapter.onLoadChildren) _root.attrs.loadChildren = true;
       // children
       if (!_root.children) _root.children = [];
       // record parent
@@ -310,7 +310,7 @@ export default {
       this.treeviewRoot = _root;
     },
     _needLoadChildren(node) {
-      return this.onLoadChildren && node.attrs.loadChildren && !node._loaded;
+      return this.adapter.onLoadChildren && node.attrs.loadChildren && !node._loaded;
     },
     _calcNodeAttrId(nodeParent, node) {
       return `${nodeParent.attrs.id}-${node.id}`;
@@ -339,7 +339,7 @@ export default {
     },
     async _loadChildren(node) {
       if (!this._needLoadChildren(node)) return node.children;
-      const data = await this.onLoadChildren(node);
+      const data = await this.adapter.onLoadChildren(node, this);
       return this.childrenLoaded(node, data);
     },
     async _preloadChildren(node, options) {

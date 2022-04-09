@@ -3,7 +3,7 @@ import Vue from 'vue';
 import Utils from '@zhennann/framework7/packages/vue/utils/utils.js';
 import Mixins from '@zhennann/framework7/packages/vue/utils/mixins';
 import treeviewBase from '../common/treeviewBase.js';
-// import treeviewAdapter from '../common/treeviewAdapter.js';
+import treeviewAdapter from '../common/treeviewAdapter.js';
 const f7Treeview = Vue.options.components['f7-treeview'].extendOptions;
 
 export default {
@@ -13,11 +13,16 @@ export default {
   name: 'eb-treeview',
   extends: f7Treeview,
   mixins: [treeviewBase],
-  props: {},
+  props: {
+    onNodePerform: {
+      type: Function,
+    },
+    onLoadChildren: {
+      type: Function,
+    },
+  },
   data() {
-    return {
-      adapter: null,
-    };
+    return {};
   },
   render() {
     //
@@ -44,7 +49,11 @@ export default {
       nodes
     );
   },
-  created() {},
+  // not use created
+  mounted() {
+    this.setAdapter(treeviewAdapter(this));
+    this.start();
+  },
   methods: {
     _openNode(node) {
       const $el = this.getElementByNode(node);
