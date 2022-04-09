@@ -223,7 +223,9 @@ module.exports = ctx => {
           atomStaticKey,
           atomStage: 1, // formal
         });
-        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        if (!atom) {
+          throw new Error(`resource not found: ${atomStaticKey}`);
+        }
         atomId = atom.id;
       }
       // check if exists
@@ -238,6 +240,24 @@ module.exports = ctx => {
         roleId,
       });
       return res.insertId;
+    }
+
+    // const roleResources = [
+    //   { roleName: 'root', atomStaticKey: 'a-base:listComment' },
+    //   { roleName: 'root', name: 'listComment' },
+    // ];
+    async addRoleResourceBatch({ module, roleResources }) {
+      // module
+      module = module || this.moduleName;
+      // roleResources
+      if (!roleResources || !roleResources.length) return;
+      for (const roleResource of roleResources) {
+        // role
+        const role = await ctx.bean.role.parseRoleName({ roleName: roleResource.roleName, force: true });
+        // atomStaticKey
+        const atomStaticKey = roleResource.atomStaticKey || `${module}:${roleResource.name}`;
+        await this.addResourceRole({ atomStaticKey, roleId: role.id });
+      }
     }
 
     // add resource roles
@@ -396,27 +416,6 @@ module.exports = ctx => {
     }
 
     // /* backup */
-
-    // // const roleFunctions = [
-    // //   { roleName: 'root', name: 'listComment' },
-    // // ];
-    // async addRoleFunctionBatch({ module, roleFunctions }) {
-    //   if (!roleFunctions || !roleFunctions.length) return;
-    //   module = module || this.moduleName;
-    //   for (const roleFunction of roleFunctions) {
-    //     // func
-    //     const func = await ctx.bean.function.get({ module, name: roleFunction.name });
-    //     if (roleFunction.roleName) {
-    //       // role
-    //       const role = await this.get({ roleName: roleFunction.roleName });
-    //       // add role function
-    //       await this.addRoleFunction({
-    //         roleId: role.id,
-    //         functionId: func.id,
-    //       });
-    //     }
-    //   }
-    // }
 
     // // function rights
     // async functionRights({ menu, roleId, page }) {
