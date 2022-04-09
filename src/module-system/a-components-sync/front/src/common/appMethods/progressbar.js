@@ -95,10 +95,14 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   //
   function checking(item) {
     if (!item) return;
-    if (item.counter > counter) {
-      counter = item.counter;
+    if (item.counter <= counter) {
+      // old message
+      return;
     }
+    counter = item.counter;
+    // data
     const data = item.data ? (typeof item.data === 'string' ? JSON.parse(item.data) : item.data) : {};
+    // handle
     if (item.done === 0) {
       setProgresses(data);
     } else if (item.done === -1) {

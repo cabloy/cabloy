@@ -21,6 +21,7 @@ module.exports = ctx => {
         if (progressId) {
           await ctx.bean.progress.done({ progressId });
         }
+        return;
       }
       // queue
       await ctx.meta.util.queuePushAsync({
@@ -40,6 +41,7 @@ module.exports = ctx => {
         if (progressId) {
           await ctx.bean.progress.done({ progressId });
         }
+        return;
       }
       // total
       let total;

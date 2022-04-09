@@ -33,6 +33,13 @@ module.exports = ctx => {
     // add role include
     async addRoleInc({ roleAtomId, roleId, roleIdInc }) {
       roleId = await this._forceRoleId({ roleAtomId, roleId });
+      // check if exists
+      const item = await this.modelRoleInc.get({
+        roleId,
+        roleIdInc,
+      });
+      if (item) return item.id;
+      // insert
       const res = await this.modelRoleInc.insert({
         roleId,
         roleIdInc,

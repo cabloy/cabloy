@@ -59,6 +59,12 @@ module.exports = ctx => {
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       // user
       const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      // check if exists
+      const item = await this.modelUserRole.get({
+        userId: _user.id,
+        roleId: _role.id,
+      });
+      if (item) return item.id;
       // insert
       const res = await this.modelUserRole.insert({
         userId: _user.id,
