@@ -218,16 +218,11 @@ module.exports = ctx => {
     // add resource role
     async addResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
       if (!atomId && !atomStaticKey) return null;
-      if (!atomId) {
-        const atom = await ctx.bean.atom.modelAtom.get({
-          atomStaticKey,
-          atomStage: 1, // formal
-        });
-        if (!atom) {
-          throw new Error(`resource not found: ${atomStaticKey}`);
-        }
-        atomId = atom.id;
-      }
+      // atomId
+      atomId = await this._forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user });
+      // role
+      const _role = await ctx.bean.role._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
       // check if exists
       const item = await this.modelResourceRole.get({
         atomId,
@@ -244,8 +239,17 @@ module.exports = ctx => {
 
     // delete resource role
     async deleteResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
-      // id + roleId for safety
-      await this.modelResourceRole.delete({ id: resourceRoleId, roleId });
+      if (!atomId && !atomStaticKey) return null;
+      // atomId
+      atomId = await this._forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user });
+      // role
+      const _role = await ctx.bean.role._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // delete
+      await this.modelResourceRole.delete({
+        atomId,
+        roleId,
+      });
     }
 
     // const roleResources = [
@@ -411,6 +415,29 @@ module.exports = ctx => {
           item.roleNameBaseLocale = ctx.text(item.roleNameBase);
         }
       }
+    }
+
+    async _forceResourceAtomId({ atomId, atomStaticKey }) {
+      if (!atomId) {
+        const atom = await ctx.bean.atom.modelAtom.get({
+          atomStaticKey,
+          atomStage: 1, // formal
+        });
+        if (!atom) {
+          throw new Error(`resource not found: ${atomStaticKey}`);
+        }
+        atomId = atom.id;
+      }
+      return atomId;
+    }
+
+    async _forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user }) {
+      atomId = await this._forceResourceAtomId({ atomId, atomStaticKey });
+      if (!user || user.id === 0) return atomId;
+      // check
+      const res = await this.checkRightResource({ resourceAtomId: atomId, user });
+      if (!res) ctx.throw(403);
+      return atomId;
     }
 
     // /* backup */
