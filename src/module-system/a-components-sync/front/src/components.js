@@ -27,11 +27,11 @@ import searchPage from './components/searchPage.vue';
 import popover from './components/popover.vue';
 import contextMenu from './components/contextMenu.vue';
 import box from './components/box.vue';
-import treeview from './components/treeview.vue';
-import treeviewItem from './components/treeviewItem.vue';
+import treeview from './components/treeview/treeview.vue';
+import treeviewItem from './components/treeview/treeviewItem.vue';
 import stats from './components/stats.jsx';
 import statsColor from './components/statsColor.jsx';
-import treeviewData from './common/treeviewData.js';
+import treeviewData from './components/treeview/treeviewData.js';
 
 export default {
   ebLoadMore: loadMore,
