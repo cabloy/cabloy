@@ -158,14 +158,36 @@ export default {
     expandNode(node) {
       // current
       if (node.attrs.toggle) {
-        this.adapter.openNode(node);
+        this.openNode(node);
       }
       // parent
       this.treeParent(node, item => {
         if (item.attrs.toggle) {
-          this.adapter.openNode(item);
+          this.openNode(item);
         }
       });
+    },
+    async openNode(node) {
+      try {
+        // check if opened
+        if (node.attrs.opened) return;
+        // emit event first
+        this.$set(node.attrs, 'opened', true);
+        this.adapter.onNodeOpen(node);
+        // load children
+        await this._loadChildren(node);
+      } catch (err) {
+        this.$set(node.attrs, 'opened', false);
+        this.adapter.onNodeClose(node);
+        throw err;
+      }
+    },
+    async closeNode(node) {
+      // check if opened
+      if (!node.attrs.opened) return;
+      // emit event first
+      this.$set(node.attrs, 'opened', false);
+      this.adapter.onNodeClose(node);
     },
     selected() {
       return this.selectedItem;

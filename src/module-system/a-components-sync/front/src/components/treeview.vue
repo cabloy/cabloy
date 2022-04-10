@@ -70,14 +70,8 @@ export default {
       if (this.treeviewDataCustom) return;
       await this.treeviewData.load(this.root);
     },
-    _openNode(node) {
-      // this._onNodeOpen(null, node);
-      // return;
-      const $el = this.getElementByNode(node);
-      this.$f7.treeview.open($el);
-    },
     _openNodeContextMenu(node) {
-      this._openNode(node);
+      this.treeviewData.openNode(node);
       return;
       return this._onNodeContextMenuOpened(null, node);
     },
@@ -100,29 +94,8 @@ export default {
       // ok
       return true;
     },
-    _onNodeOpen(e, node) {
-      if (!node.attrs.opened) {
-        this.$set(node.attrs, 'opened', true);
-        this.$emit('node:open', node, e);
-        this.$emit('nodeOpen', node, e);
-      }
-    },
-    _onNodeClose(e, node) {
-      if (node.attrs.opened) {
-        this.$set(node.attrs, 'opened', false);
-        this.$emit('node:close', node, e);
-        this.$emit('nodeClose', node, e);
-      }
-    },
-    _onNodeLoadChildren(e, done, node) {
-      this.treeviewData
-        ._loadChildren(node)
-        .then(() => {
-          this.$nextTick(() => {
-            return done();
-          });
-        })
-        .catch(done);
+    _onNodeLoadChildren(/* e, done, node*/) {
+      throw new Error('should not invoked here');
     },
     _onNodeClick(e, node) {
       // target
@@ -260,12 +233,6 @@ export default {
             },
             contextmenuOpened: e => {
               this._onNodeContextMenuOpened(e, node);
-            },
-            treeviewOpen: () => {
-              this._onNodeOpen(null, node);
-            },
-            treeviewClose: () => {
-              this._onNodeClose(null, node);
             },
           },
         },

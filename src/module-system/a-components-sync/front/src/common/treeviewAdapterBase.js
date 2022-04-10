@@ -6,8 +6,15 @@ export default function (ctx) {
     dispose() {
       this.treeviewData = null;
     }
-    openNode(/* node*/) {}
     async onLoadChildren(/* node*/) {}
+    onNodeOpen(node) {
+      ctx.$emit('node:open', node);
+      ctx.$emit('nodeOpen', node);
+    }
+    onNodeClose(node) {
+      ctx.$emit('node:close', node);
+      ctx.$emit('nodeClose', node);
+    }
     onNodeSelect(node) {
       ctx.$emit('node:select', node);
       ctx.$emit('nodeSelect', node);
