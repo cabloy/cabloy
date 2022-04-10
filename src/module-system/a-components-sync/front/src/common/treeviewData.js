@@ -10,11 +10,14 @@ export default {
     };
   },
   beforeDestroy() {
-    this.adapter = null;
+    if (this.adapter) {
+      this.adapter.dispose();
+      this.adapter = null;
+    }
   },
   methods: {
-    setAdapter(adapter) {
-      this.adapter = adapter;
+    setAdapter(Adapter) {
+      this.adapter = new Adapter(this);
     },
     _setRoot(root) {
       if (root) {

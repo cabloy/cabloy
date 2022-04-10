@@ -29,7 +29,7 @@ export default {
       // provider switch
       await this.layoutManager.data_providerSwitch({
         providerName: 'tree',
-        autoInit: false,
+        autoInit: true,
       });
       // instance
       await this.layoutManager.layout_setInstance(this);

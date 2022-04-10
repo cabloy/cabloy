@@ -3,7 +3,7 @@ import Vue from 'vue';
 import Utils from '@zhennann/framework7/packages/vue/utils/utils.js';
 import Mixins from '@zhennann/framework7/packages/vue/utils/mixins';
 import TreeviewData from '../common/treeviewData.js';
-import treeviewAdapter from '../common/treeviewAdapter.js';
+import TreeviewAdapterFn from '../common/treeviewAdapter.js';
 const f7Treeview = Vue.options.components['f7-treeview'].extendOptions;
 
 export default {
@@ -51,11 +51,18 @@ export default {
   methods: {
     async _start() {
       // adapter
-      this.treeviewData.setAdapter(treeviewAdapter(this, this.treeviewData));
-      // load
+      if (!this.treeviewDataCustom) {
+        const AdapterDefault = this._createAdapterDefault();
+        this.treeviewData.setAdapter(AdapterDefault);
+      }
+      // check auto
       if (this.auto) {
+        // load
         await this.reload();
       }
+    },
+    _createAdapterDefault() {
+      return TreeviewAdapterFn(this);
     },
     async reload() {
       await this.treeviewData.load(this.root);

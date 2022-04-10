@@ -1,3 +1,6 @@
+import Vue from 'vue';
+const ebTreeviewData = Vue.prototype.$meta.module.get('a-components').options.components.ebTreeviewData;
+
 export default {
   props: {
     layoutManager: {
@@ -7,18 +10,36 @@ export default {
   data() {
     return {
       inited: false,
-      refTree: null,
+      treeviewData: null,
     };
   },
   beforeDestroy() {
-    this.refTree = null;
+    if (this.treeviewData) {
+      this.treeviewData.$destroy();
+      this.treeviewData = null;
+    }
   },
   methods: {
     async switch(options) {
       // only inited once
       if (this.inited) return;
+      // start
+      await this._start(options);
       // inited
       this.inited = true;
+    },
+    async _start(options) {
+      // treeviewData
+      const componentOptions = {
+        propsData: {},
+      };
+      this.treeviewData = this.$meta.util.createComponentInstance(ebTreeviewData, componentOptions);
+      // adapter
+      this.treeviewData.setAdapter(options.treeviewAdapter);
+      // autoInit
+      if (options.autoInit) {
+        await this.treeviewData.reload();
+      }
     },
     onPageRefresh() {
       // do nothing
