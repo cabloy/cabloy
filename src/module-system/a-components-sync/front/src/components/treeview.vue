@@ -97,6 +97,15 @@ export default {
     _onNodeLoadChildren(/* e, done, node*/) {
       throw new Error('should not invoked here');
     },
+    _onNodeOpen(e, node) {
+      this.treeviewData.openNode(node);
+    },
+    _onNodeClose(e, node) {
+      this.treeviewData.closeNode(node);
+    },
+    _onNodeToggle(e, node) {
+      this.treeviewData.toggleNode(node);
+    },
     _onNodeClick(e, node) {
       // target
       const $target = this.$$(e.target);
@@ -233,6 +242,15 @@ export default {
             },
             contextmenuOpened: e => {
               this._onNodeContextMenuOpened(e, node);
+            },
+            treeviewOpen: () => {
+              this._onNodeOpen(null, node);
+            },
+            treeviewClose: () => {
+              this._onNodeClose(null, node);
+            },
+            treeviewToggle: () => {
+              this._onNodeToggle(null, node);
             },
           },
         },

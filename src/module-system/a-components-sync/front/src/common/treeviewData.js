@@ -189,6 +189,13 @@ export default {
       this.$set(node.attrs, 'opened', false);
       this.adapter.onNodeClose(node);
     },
+    async toggleNode(node) {
+      if (node.attrs.opened) {
+        await this.closeNode(node);
+      } else {
+        await this.openNode(node);
+      }
+    },
     selected() {
       return this.selectedItem;
     },
