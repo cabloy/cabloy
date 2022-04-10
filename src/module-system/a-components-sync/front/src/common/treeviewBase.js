@@ -1,15 +1,6 @@
 import Vue from 'vue';
 
 export default {
-  props: {
-    auto: {
-      type: Boolean,
-      default: true,
-    },
-    root: {
-      type: Object,
-    },
-  },
   data() {
     return {
       treeviewId: Vue.prototype.$meta.util.nextId('treeview'),
@@ -18,11 +9,6 @@ export default {
       adapter: null,
     };
   },
-  watch: {
-    root() {
-      this.reload();
-    },
-  },
   beforeDestroy() {
     this.adapter = null;
   },
@@ -30,18 +16,18 @@ export default {
     setAdapter(adapter) {
       this.adapter = adapter;
     },
-    async start() {
-      if (this.auto) {
-        await this.reload();
+    _setRoot(root) {
+      if (root) {
+        this.treeviewRoot = this._initRootNode(root);
+      } else {
+        this.treeviewRoot = null;
       }
     },
-    async reload() {
-      await this.load(this.root);
-    },
     async load(root) {
-      if (!root) return;
-      this._initRootNode(root);
-      await this._loadChildren(this.treeviewRoot);
+      this._setRoot(root);
+      if (this.treeviewRoot) {
+        await this._loadChildren(this.treeviewRoot);
+      }
     },
     async reloadNode(node, nodeNew) {
       // support root
@@ -274,7 +260,7 @@ export default {
         item.parent = itemParent;
       });
       // ready
-      this.treeviewRoot = _root;
+      return _root;
     },
     _needLoadChildren(node) {
       return this.adapter.onLoadChildren && node.attrs.loadChildren && !node._loaded;

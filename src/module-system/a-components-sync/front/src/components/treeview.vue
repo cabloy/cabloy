@@ -14,6 +14,13 @@ export default {
   extends: f7Treeview,
   mixins: [treeviewBase],
   props: {
+    auto: {
+      type: Boolean,
+      default: true,
+    },
+    root: {
+      type: Object,
+    },
     onNodePerform: {
       type: Function,
     },
@@ -24,37 +31,27 @@ export default {
   data() {
     return {};
   },
-  render() {
-    //
-    const _h = this.$createElement;
-    const props = this.props;
-    let { className, id, style } = props;
-    const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
-
-    if (!id) id = this.treeviewId;
-
-    // nodes
-    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children) : [];
-
-    //
-    return _h(
-      'div',
-      {
-        style,
-        class: classes,
-        attrs: {
-          id,
-        },
-      },
-      nodes
-    );
+  watch: {
+    root() {
+      this.reload();
+    },
   },
   // not use created
   mounted() {
-    this.setAdapter(treeviewAdapter(this, this));
-    this.start();
+    this._start();
   },
   methods: {
+    async _start() {
+      // adapter
+      this.setAdapter(treeviewAdapter(this, this));
+      // load
+      if (this.auto) {
+        await this.reload();
+      }
+    },
+    async reload() {
+      await this.load(this.root);
+    },
     _openNodeContextMenu(node) {
       return this._onNodeContextMenuOpened(null, node);
     },
@@ -259,6 +256,31 @@ export default {
       }
       return slots;
     },
+  },
+  render() {
+    //
+    const _h = this.$createElement;
+    const props = this.props;
+    let { className, id, style } = props;
+    const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
+
+    if (!id) id = this.treeviewId;
+
+    // nodes
+    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children) : [];
+
+    //
+    return _h(
+      'div',
+      {
+        style,
+        class: classes,
+        attrs: {
+          id,
+        },
+      },
+      nodes
+    );
   },
 };
 </script>
