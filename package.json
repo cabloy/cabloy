@@ -49,7 +49,7 @@
     "@babel/register": "^7.8.3",
     "@zhennann/docdash": "^1.2.3",
     "@zhennann/extend": "^3.0.2",
-    "@zhennann/framework7": "^5.7.34",
+    "@zhennann/framework7": "^6.0.0",
     "@zhennann/vue": "^2.6.15",
     "async": "^3.2.0",
     "autoprefixer": "^9.7.4",

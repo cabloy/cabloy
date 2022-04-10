@@ -71,8 +71,8 @@ export default {
       await this.treeviewData.load(this.root);
     },
     _openNodeContextMenu(node) {
-      // this.treeviewData.toggleNode(node);
-      // return;
+      this.treeviewData.toggleNode(node);
+      return;
       return this._onNodeContextMenuOpened(null, node);
     },
     _onNodeContextMenuOpened(e, node) {
