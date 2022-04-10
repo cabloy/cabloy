@@ -25,7 +25,7 @@
   "homepage": "https://github.com/zhennann/egg-born-front#readme",
   "dependencies": {
     "@zhennann/extend": "^3.0.2",
-    "@zhennann/framework7": "^6.0.0",
+    "@zhennann/framework7": "^6.0.1",
     "@zhennann/vue": "^2.6.15",
     "async": "^3.2.0",
     "axios": "^0.21.1",

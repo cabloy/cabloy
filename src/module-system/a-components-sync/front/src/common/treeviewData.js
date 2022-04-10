@@ -319,11 +319,11 @@ export default {
     async _loadChildren(node) {
       if (!this._needLoadChildren(node)) return node.children;
       try {
-        this.$set(node, '_loading', true);
+        this.$set(node.attrs, 'loading', true);
         const data = await this.adapter.onLoadChildren(node);
         return this.childrenLoaded(node, data);
       } finally {
-        this.$set(node, '_loading', false);
+        this.$set(node.attrs, 'loading', false);
       }
     },
     _needLoadChildren(node) {
