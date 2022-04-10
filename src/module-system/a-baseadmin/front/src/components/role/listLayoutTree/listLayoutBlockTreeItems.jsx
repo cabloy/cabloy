@@ -14,14 +14,7 @@ export default {
     },
   },
   data() {
-    return {
-      root: {
-        attrs: {
-          itemToggle: false,
-          selectable: true,
-        },
-      },
-    };
+    return {};
   },
   computed: {
     maxLevelAutoOpened() {
@@ -120,10 +113,10 @@ export default {
     },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
+      console.log(this.layout.treeviewData);
       return (
         <eb-treeview
           ref="tree"
-          root={this.root}
           propsOnLoadChildren={this.onLoadChildren}
           propsOnNodePerform={this.onNodePerformClick}
           onNodeContextmenuOpened={this.onNodeContextmenuOpened}

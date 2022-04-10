@@ -14,10 +14,12 @@ export default {
   extends: f7Treeview,
   mixins: [TreeviewData],
   props: {
+    // disabled for treeviewDataCustom
     auto: {
       type: Boolean,
       default: true,
     },
+    // disabled for treeviewDataCustom
     root: {
       type: Object,
     },
@@ -41,6 +43,7 @@ export default {
   },
   watch: {
     root() {
+      if (this.treeviewDataCustom) return;
       this.reload();
     },
   },
@@ -50,11 +53,10 @@ export default {
   },
   methods: {
     async _start() {
+      if (this.treeviewDataCustom) return;
       // adapter
-      if (!this.treeviewDataCustom) {
-        const AdapterDefault = this._createAdapterDefault();
-        this.treeviewData.setAdapter(AdapterDefault);
-      }
+      const AdapterDefault = this._createAdapterDefault();
+      this.treeviewData.setAdapter(AdapterDefault);
       // check auto
       if (this.auto) {
         // load
@@ -65,6 +67,7 @@ export default {
       return TreeviewAdapterFn(this);
     },
     async reload() {
+      if (this.treeviewDataCustom) return;
       await this.treeviewData.load(this.root);
     },
     _openNode(node) {

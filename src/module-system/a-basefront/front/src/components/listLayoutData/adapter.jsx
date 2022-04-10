@@ -40,11 +40,13 @@ export default {
         this.$set(this.providers, providerName, provider);
       }
       // provider switch
-      await provider.switch(options);
+      const res = await provider.switch(options);
       // save as ready
       this.providerName = providerName;
       // bulk
       this.layoutManager.bulk_closeSelecting();
+      // ok
+      return res;
     },
     async providerCreate(providerName) {
       // config component

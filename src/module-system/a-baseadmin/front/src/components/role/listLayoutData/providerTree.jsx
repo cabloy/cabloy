@@ -22,11 +22,15 @@ export default {
   methods: {
     async switch(options) {
       // only inited once
-      if (this.inited) return;
+      if (this.inited) {
+        return { treeviewData: this.treeviewData };
+      }
       // start
       await this._start(options);
       // inited
       this.inited = true;
+      // ok
+      return { treeviewData: this.treeviewData };
     },
     async _start(options) {
       // treeviewData
@@ -38,7 +42,7 @@ export default {
       this.treeviewData.setAdapter(options.treeviewAdapter);
       // autoInit
       if (options.autoInit) {
-        await this.treeviewData.reload();
+        await this.treeviewData.load(options.treeviewRoot);
       }
     },
     onPageRefresh() {
