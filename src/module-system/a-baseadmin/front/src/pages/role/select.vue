@@ -55,9 +55,8 @@ export default {
     },
   },
   methods: {
-    async _loadNodeRoles(node) {
+    async _loadNodeRoles(node, treeviewData) {
       try {
-        const refTree = this.$refs.tree;
         //
         const levelCurrent = node.__level || 0;
         const level = levelCurrent + 1;
@@ -83,7 +82,7 @@ export default {
           const nodeChild = {
             id: item.id,
             attrs: {
-              id: refTree._calcNodeAttrId(node, item),
+              id: treeviewData._calcNodeAttrId(node, item),
               label: item.atomNameLocale || item.roleName,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
@@ -98,7 +97,7 @@ export default {
             __level: level,
           };
           if (item.catalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
-            await refTree._preloadChildren(nodeChild);
+            await treeviewData._preloadChildren(nodeChild);
           }
           list.push(nodeChild);
         }
@@ -113,8 +112,8 @@ export default {
         throw err;
       }
     },
-    async onLoadChildren(node) {
-      return await this._loadNodeRoles(node);
+    async onLoadChildren(node, treeviewData) {
+      return await this._loadNodeRoles(node, treeviewData);
     },
     onPerformDone(event) {
       const checked = this.$refs.tree.checked();

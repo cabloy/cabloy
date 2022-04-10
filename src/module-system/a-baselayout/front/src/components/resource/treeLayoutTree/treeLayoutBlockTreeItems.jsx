@@ -26,8 +26,7 @@ export default {
   mounted() {},
   beforeDestroy() {},
   methods: {
-    async _loadNodeCategories(node) {
-      const refTree = this.$refs.tree;
+    async _loadNodeCategories(node, treeviewData) {
       //
       const levelCurrent = node.__level || 0;
       const level = levelCurrent + 1;
@@ -42,7 +41,7 @@ export default {
         const nodeChild = {
           id: item.id,
           attrs: {
-            id: refTree._calcNodeAttrId(node, item),
+            id: treeviewData._calcNodeAttrId(node, item),
             // link: '#',
             label: item.categoryNameLocale,
             toggle: true,
@@ -56,7 +55,7 @@ export default {
           level <= this.layoutManager.container.maxLevelAutoOpened ||
           this.layoutManager.container.maxLevelAutoOpened === -1
         ) {
-          await refTree._preloadChildren(nodeChild);
+          await treeviewData._preloadChildren(nodeChild);
         }
         list.push(nodeChild);
       }
@@ -78,11 +77,11 @@ export default {
         return node;
       });
     },
-    async onLoadChildren(node) {
+    async onLoadChildren(node, treeviewData) {
       if (node.root || node.data.categoryCatalog === 1) {
-        return await this._loadNodeCategories(node);
+        return await this._loadNodeCategories(node, treeviewData);
       }
-      return await this._loadNodeResources(node);
+      return await this._loadNodeResources(node, treeviewData);
     },
     onNodePerformClick(event, context, node) {
       return this.layoutManager.base_onPerformResource(event, node.data);
