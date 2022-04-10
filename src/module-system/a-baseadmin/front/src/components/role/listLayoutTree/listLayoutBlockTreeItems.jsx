@@ -62,10 +62,11 @@ export default {
     },
     _renderTree() {
       if (!this.layoutManager.base.ready) return;
-      console.log(this.layout.treeviewData);
+      if (!this.layout.treeviewData) return;
       return (
         <eb-treeview
           ref="tree"
+          treeviewDataCustom={this.layout.treeviewData}
           propsOnNodePerform={this.onNodePerformClick}
           onNodeContextmenuOpened={this.onNodeContextmenuOpened}
           {...{
