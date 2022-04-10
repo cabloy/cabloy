@@ -3,10 +3,6 @@ const ebTreeviewAdapterBase = Vue.prototype.$meta.module.get('a-components').opt
 
 export default function (ctx) {
   return class Adapter extends ebTreeviewAdapterBase(ctx) {
-    openNode(node) {
-      // const $el = ctx.getElementByNode(node);
-      // ctx.$f7.treeview.open($el);
-    }
     async onLoadChildren(node) {
       const treeviewData = this.treeviewData;
       //
