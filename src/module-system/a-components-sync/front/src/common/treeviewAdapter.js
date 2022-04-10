@@ -7,5 +7,13 @@ export default function (ctx, instance) {
     async onLoadChildren(node) {
       return await ctx.onLoadChildren(node, instance);
     },
+    onNodeSelect(node) {
+      ctx.$emit('node:select', node);
+      ctx.$emit('nodeSelect', node);
+    },
+    onNodeChange(node) {
+      ctx.$emit('node:change', node);
+      ctx.$emit('nodeChange', node);
+    },
   };
 }

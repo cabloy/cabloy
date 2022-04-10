@@ -339,8 +339,7 @@ export default {
       if (selectable && this.selectedItem !== node) {
         this.selectedItem = node;
         // node:select
-        this.$emit('node:select', node);
-        this.$emit('nodeSelect', node);
+        this.adapter.onNodeSelect(node);
       }
     },
     _onNodeChange(node, checked) {
@@ -383,8 +382,7 @@ export default {
         });
       }
       // node:change
-      this.$emit('node:change', node);
-      this.$emit('nodeChange', node);
+      this.adapter.onNodeChange(node);
     },
   },
 };
