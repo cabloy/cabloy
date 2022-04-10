@@ -265,12 +265,6 @@ export default {
       // ready
       return _root;
     },
-    _needLoadChildren(node) {
-      return this.adapter.onLoadChildren && node.attrs.loadChildren && !node._loaded;
-    },
-    _calcNodeAttrId(nodeParent, node) {
-      return `${nodeParent.attrs.id}-${node.id}`;
-    },
     childrenLoaded(node, children) {
       this.$set(node, '_loaded', true);
       if (!node.children) node.children = [];
@@ -295,8 +289,19 @@ export default {
     },
     async _loadChildren(node) {
       if (!this._needLoadChildren(node)) return node.children;
-      const data = await this.adapter.onLoadChildren(node);
-      return this.childrenLoaded(node, data);
+      try {
+        this.$set(node, '_loading', true);
+        const data = await this.adapter.onLoadChildren(node);
+        return this.childrenLoaded(node, data);
+      } finally {
+        this.$set(node, '_loading', false);
+      }
+    },
+    _needLoadChildren(node) {
+      return this.adapter.onLoadChildren && node.attrs.loadChildren && !node._loaded;
+    },
+    _calcNodeAttrId(nodeParent, node) {
+      return `${nodeParent.attrs.id}-${node.id}`;
     },
     async _preloadChildren(node, options) {
       // attrs.id

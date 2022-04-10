@@ -71,10 +71,14 @@ export default {
       await this.treeviewData.load(this.root);
     },
     _openNode(node) {
+      // this._onNodeOpen(null, node);
+      // return;
       const $el = this.getElementByNode(node);
       this.$f7.treeview.open($el);
     },
     _openNodeContextMenu(node) {
+      this._openNode(node);
+      return;
       return this._onNodeContextMenuOpened(null, node);
     },
     _onNodeContextMenuOpened(e, node) {
