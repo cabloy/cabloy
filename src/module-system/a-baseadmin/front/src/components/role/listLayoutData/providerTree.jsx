@@ -17,15 +17,23 @@ export default {
     if (this.treeviewData) {
       this.treeviewData.$destroy();
       this.treeviewData = null;
+      this.treeviewRoot = null;
     }
   },
   methods: {
     async switch(options) {
+      const treeviewRoot = options.treeviewRoot;
       // only inited once
       if (this.inited) {
+        if (JSON.stringify(treeviewRoot) !== JSON.stringify(this.treeviewRoot)) {
+          // reload
+          this.treeviewRoot = treeviewRoot;
+          await this.treeviewData.load(this.treeviewRoot);
+        }
         return { treeviewData: this.treeviewData };
       }
       // start
+      this.treeviewRoot = treeviewRoot;
       await this._start(options);
       // inited
       this.inited = true;
@@ -42,7 +50,7 @@ export default {
       this.treeviewData.setAdapter(options.treeviewAdapter);
       // autoInit
       if (options.autoInit) {
-        await this.treeviewData.load(options.treeviewRoot);
+        await this.treeviewData.load(this.treeviewRoot);
       }
     },
     onPageRefresh() {
