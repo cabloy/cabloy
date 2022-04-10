@@ -51,14 +51,14 @@ export default {
   methods: {
     async _start() {
       // adapter
-      this.setAdapter(treeviewAdapter(this, this));
+      this.treeviewData.setAdapter(treeviewAdapter(this, this.treeviewData));
       // load
       if (this.auto) {
         await this.reload();
       }
     },
     async reload() {
-      await this.load(this.root);
+      await this.treeviewData.load(this.root);
     },
     _openNodeContextMenu(node) {
       return this._onNodeContextMenuOpened(null, node);
@@ -75,7 +75,7 @@ export default {
       // open
       this.$f7.popover.open(domPopover[0], domTarget[0]);
       // select
-      this.selectNode(node.id);
+      this.treeviewData.selectNode(node.id);
       // event
       this.$emit('node:contextmenuOpened', node, e);
       this.$emit('nodeContextmenuOpened', node, e);
@@ -96,13 +96,23 @@ export default {
         this.$emit('nodeClose', node, e);
       }
     },
+    _onNodeLoadChildren(e, done, node) {
+      this.treeviewData
+        ._loadChildren(node)
+        .then(() => {
+          this.$nextTick(() => {
+            return done();
+          });
+        })
+        .catch(done);
+    },
     _onNodeClick(e, node) {
       // target
       const $target = this.$$(e.target);
 
       // selectable
       if (!$target.is('.treeview-toggle')) {
-        this._setSelectedNode(node);
+        this.treeviewData._setSelectedNode(node);
       }
 
       // checkbox
@@ -115,16 +125,17 @@ export default {
       let ignore = false;
 
       // checkbox
-      const disabled = node.attrs.disabled === undefined ? this.treeviewRoot.attrs.disabled : node.attrs.disabled;
-      const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
+      const treeviewRoot = this.treeviewData.treeviewRoot;
+      const disabled = node.attrs.disabled === undefined ? treeviewRoot.attrs.disabled : node.attrs.disabled;
+      const checkbox = node.attrs.checkbox === undefined ? treeviewRoot.attrs.checkbox : node.attrs.checkbox;
       const checkOnLabel =
-        node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
+        node.attrs.checkOnLabel === undefined ? treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
       if (!disabled && checkbox && checkOnLabel) {
-        const radio = !this.treeviewRoot.attrs.multiple;
+        const radio = !treeviewRoot.attrs.multiple;
         if (radio) {
-          if (!node.attrs.checked) this._onNodeChange(node, true);
+          if (!node.attrs.checked) this.treeviewData._onNodeChange(node, true);
         } else {
-          this._onNodeChange(node, !node.attrs.checked);
+          this.treeviewData._onNodeChange(node, !node.attrs.checked);
         }
         ignore = true;
       }
@@ -147,12 +158,15 @@ export default {
       const _node = { ...node };
       _node.attrs = this.$utils.extend({}, node.attrs);
       // attrs
-      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewRoot.attrs.itemToggle;
+      const treeviewRoot = this.treeviewData.treeviewRoot;
+      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = treeviewRoot.attrs.itemToggle;
       if (_node.attrs.opened === undefined) _node.attrs.opened = false;
-      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
-      if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
-      if (_node.attrs.selectable) _node.attrs.selected = this.selectedItem && this.selectedItem.id === node.id;
-      if (_node.attrs.disabled === undefined) _node.attrs.disabled = this.treeviewRoot.attrs.disabled;
+      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = treeviewRoot.attrs.checkbox;
+      if (_node.attrs.selectable === undefined) _node.attrs.selectable = treeviewRoot.attrs.selectable;
+      if (_node.attrs.selectable) {
+        _node.attrs.selected = this.treeviewData.selectedItem && this.treeviewData.selectedItem.id === node.id;
+      }
+      if (_node.attrs.disabled === undefined) _node.attrs.disabled = treeviewRoot.attrs.disabled;
       // attrs folder
       if (_node.attrs.folder) {
         if (_node.attrs.opened === true) {
@@ -170,7 +184,7 @@ export default {
       // children
       let children = [];
       // checkbox
-      const radio = !this.treeviewRoot.attrs.multiple;
+      const radio = !this.treeviewData.treeviewRoot.attrs.multiple;
       if (_node.attrs.checkbox && radio) {
         children.push(
           _h('f7-radio', {
@@ -182,7 +196,7 @@ export default {
             },
             on: {
               change: e => {
-                this._onNodeChange(node, e.target.checked);
+                this.treeviewData._onNodeChange(node, e.target.checked);
               },
             },
           })
@@ -199,7 +213,7 @@ export default {
             },
             on: {
               change: () => {
-                this._onNodeChange(node, !node.attrs.checked);
+                this.treeviewData._onNodeChange(node, !node.attrs.checked);
               },
             },
           })
@@ -272,10 +286,10 @@ export default {
     let { className, id, style } = props;
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
-    if (!id) id = this.treeviewId;
+    if (!id) id = this.treeviewData.treeviewId;
 
     // nodes
-    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children) : [];
+    const nodes = this.treeviewData.treeviewRoot ? this._renderNodes(_h, this.treeviewData.treeviewRoot.children) : [];
 
     //
     return _h(

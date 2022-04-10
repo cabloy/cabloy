@@ -309,15 +309,6 @@ export default {
       // ok
       return data;
     },
-    _onNodeLoadChildren(e, done, node) {
-      this._loadChildren(node)
-        .then(() => {
-          this.$nextTick(() => {
-            return done();
-          });
-        })
-        .catch(done);
-    },
     _setSelectedNode(node) {
       // selectable
       const selectable =
