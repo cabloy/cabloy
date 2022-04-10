@@ -67,6 +67,10 @@ export default {
     async reload() {
       await this.treeviewData.load(this.root);
     },
+    _openNode(node) {
+      const $el = this.getElementByNode(node);
+      this.$f7.treeview.open($el);
+    },
     _openNodeContextMenu(node) {
       return this._onNodeContextMenuOpened(null, node);
     },
