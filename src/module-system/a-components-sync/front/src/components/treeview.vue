@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import Utils from '@zhennann/framework7/packages/vue/utils/utils.js';
 import Mixins from '@zhennann/framework7/packages/vue/utils/mixins';
-import treeviewBase from '../common/treeviewBase.js';
+import TreeviewData from '../common/treeviewData.js';
 import treeviewAdapter from '../common/treeviewAdapter.js';
 const f7Treeview = Vue.options.components['f7-treeview'].extendOptions;
 
@@ -12,7 +12,7 @@ export default {
   },
   name: 'eb-treeview',
   extends: f7Treeview,
-  mixins: [treeviewBase],
+  mixins: [TreeviewData],
   props: {
     auto: {
       type: Boolean,
@@ -27,9 +27,17 @@ export default {
     onLoadChildren: {
       type: Function,
     },
+    treeviewDataCustom: {
+      type: Object,
+    },
   },
   data() {
     return {};
+  },
+  computed: {
+    treeviewData() {
+      return this.treeviewDataCustom || this;
+    },
   },
   watch: {
     root() {

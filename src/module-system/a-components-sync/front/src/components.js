@@ -31,6 +31,7 @@ import treeview from './components/treeview.vue';
 import treeviewItem from './components/treeviewItem.vue';
 import stats from './components/stats.jsx';
 import statsColor from './components/statsColor.jsx';
+import treeviewData from './common/treeviewData.js';
 
 export default {
   ebLoadMore: loadMore,
@@ -66,4 +67,5 @@ export default {
   ebTreeviewItem: treeviewItem,
   ebStats: stats,
   ebStatsColor: statsColor,
+  ebTreeviewData: treeviewData,
 };
