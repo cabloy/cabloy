@@ -61,9 +61,6 @@ export default {
       // do nothing
     },
     onPageClear() {},
-    setTreeInstance(refTree) {
-      this.refTree = refTree;
-    },
     getItems() {
       // return this.items;
     },

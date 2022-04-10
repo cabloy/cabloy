@@ -17,6 +17,16 @@ export default {
       treeviewData: null,
     };
   },
+  computed: {
+    maxLevelAutoOpened() {
+      let maxLevelAutoOpened = this.layoutManager.container.maxLevelAutoOpened;
+      if (maxLevelAutoOpened === undefined) maxLevelAutoOpened = 2;
+      return maxLevelAutoOpened;
+    },
+    roleIdStart() {
+      return this.layoutManager.container.roleIdStart || 0;
+    },
+  },
   created() {
     this.init();
   },

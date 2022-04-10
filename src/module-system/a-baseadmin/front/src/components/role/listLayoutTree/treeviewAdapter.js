@@ -8,7 +8,38 @@ export default function (ctx) {
       // ctx.$f7.treeview.open($el);
     }
     async onLoadChildren(node) {
-      return await ctx.onLoadChildren(node, this.treeviewData);
+      const treeviewData = this.treeviewData;
+      //
+      const levelCurrent = node.__level || 0;
+      const level = levelCurrent + 1;
+      //
+      let data;
+      const roleId = node.root ? ctx.roleIdStart : node.id;
+      if (roleId === 0) {
+        data = await ctx.$api.post('/a/baseadmin/role/childrenTop', { page: { size: 0 } });
+      } else {
+        data = await ctx.$api.post('/a/baseadmin/role/children', { roleId, page: { size: 0 } });
+      }
+      const list = [];
+      for (const item of data.list) {
+        const nodeChild = {
+          id: item.id,
+          attrs: {
+            id: treeviewData._calcNodeAttrId(node, item),
+            // label: item.atomNameLocale || item.roleName || `[${ctx.$text('New Role')}]`,
+            toggle: item.catalog === 1,
+            loadChildren: item.catalog === 1,
+            iconF7: item._roleTypeCodeOptions.icon.f7,
+          },
+          data: item,
+          __level: level,
+        };
+        if (item.catalog === 1 && (level <= ctx.maxLevelAutoOpened || ctx.maxLevelAutoOpened === -1)) {
+          await treeviewData._preloadChildren(nodeChild);
+        }
+        list.push(nodeChild);
+      }
+      return list;
     }
   };
 }
