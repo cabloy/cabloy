@@ -10,37 +10,34 @@ export default {
     this.$meta.eventHub.$off('atom:actions', this.event_onActionsChanged);
   },
   methods: {
-    async event_onActionChanged(data) {
+    async event_onActionChanged_create(data) {
       const key = data.key;
-      const action = data.action;
-      // create
-      if (action.name === 'create') {
-        // params
-        const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
-        const paramsAtomClass = params.atomClass;
-        const paramsStage = params.options.stage;
-        // atom
-        const atom = data.atom;
-        // check stage
-        if (this.layoutManager.base_stageToString(atom.atomStage) !== paramsStage) {
-          // do nothing
-          return;
-        }
-        // check atomClass
-        if (
-          paramsAtomClass &&
-          (paramsAtomClass.module !== atom.module || paramsAtomClass.atomClassName !== atom.atomClassName)
-        ) {
-          // do nothing
-          return;
-        }
-        // refresh list
-        await this._loopProviders(async provider => {
-          this._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
-        });
-        // ok
+      const atom = data.atom;
+      // params
+      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+      const paramsAtomClass = params.atomClass;
+      const paramsStage = params.options.stage;
+
+      // check stage
+      if (this.layoutManager.base_stageToString(atom.atomStage) !== paramsStage) {
+        // do nothing
         return;
       }
+      // check atomClass
+      if (
+        paramsAtomClass &&
+        (paramsAtomClass.module !== atom.module || paramsAtomClass.atomClassName !== atom.atomClassName)
+      ) {
+        // do nothing
+        return;
+      }
+      // refresh list
+      await this._loopProviders(async provider => {
+        this._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
+      });
+    },
+    async event_onActionChanged_delete(data) {
+      const key = data.key;
       // loop
       await this._loopProviders(async provider => {
         // findItem
@@ -48,11 +45,19 @@ export default {
         // item: support tree provider
         const { item } = bundle;
         if (!item) return;
-        if (action.name === 'delete') {
-          this._callMethodProvider(provider, 'spliceItem', bundle);
-          return;
-        }
-        // other actions
+        // delete
+        this._callMethodProvider(provider, 'spliceItem', bundle);
+      });
+    },
+    async event_onActionChanged_others(data) {
+      const key = data.key;
+      // loop
+      await this._loopProviders(async provider => {
+        // findItem
+        const bundle = this.findItemProvier(provider, key.atomId);
+        // item: support tree provider
+        const { item } = bundle;
+        if (!item) return;
         // fetch new atom
         const options = this.layoutManager.base_prepareReadOptions();
         const itemNew = await this.$api.post('/a/base/atom/read', {
@@ -61,6 +66,19 @@ export default {
         });
         this._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
       });
+    },
+    async event_onActionChanged(data) {
+      const action = data.action;
+      if (action.name === 'create') {
+        // create
+        await this.event_onActionChanged_create(data);
+      } else if (action.name === 'delete') {
+        // delete
+        await this.event_onActionChanged_delete(data);
+      } else {
+        // others
+        await this.event_onActionChanged_others(data);
+      }
     },
     async event_onActionExtChanged(bundle) {
       // loop

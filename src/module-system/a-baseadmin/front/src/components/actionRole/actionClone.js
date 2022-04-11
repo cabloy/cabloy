@@ -14,7 +14,11 @@ export default {
         const progressId = data.progressId;
         await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
         // event
-        ctx.$meta.eventHub.$emit('atom:action:ext', { key: keyDraft, action: { name: 'addChild' }, atom: atomDraft });
+        ctx.$meta.eventHub.$emit('atom:action', {
+          key: keyDraft,
+          action: { name: 'addChild' },
+          node: { parentId: atomDraft.roleIdParent },
+        });
         // open
         const url = ctx.$meta.util.replaceTemplate(
           '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
