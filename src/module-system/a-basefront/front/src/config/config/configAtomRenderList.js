@@ -26,6 +26,15 @@ const list = {
               name: 'listLayoutDataProviderPaged',
             },
           },
+          tree: {
+            component: {
+              module: 'a-basefront',
+              name: 'listLayoutDataProviderTree',
+            },
+            fields: {
+              sorting: null,
+            },
+          },
         },
       },
     },

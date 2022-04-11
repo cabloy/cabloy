@@ -6,8 +6,6 @@ import roleListLayoutBlockTreeTitle from './components/role/listLayoutTree/listL
 import roleItemLayoutBlockDefaultTitle from './components/role/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
 import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
-// role: listLayoutData
-import roleListLayoutDataProviderTree from './components/role/listLayoutData/providerTree.jsx';
 // user: itemLayoutDefault
 import userItemLayoutBlockDefaultTitle from './components/user/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import userItemLayoutBlockDefaultSubnavbar from './components/user/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
@@ -34,8 +32,6 @@ export default {
   roleItemLayoutBlockDefaultTitle,
   roleItemLayoutBlockDefaultSubnavbar,
   roleItemLayoutBlockDefaultMain,
-  // role: listLayoutData
-  roleListLayoutDataProviderTree,
   // user: itemLayoutDefault
   userItemLayoutBlockDefaultTitle,
   userItemLayoutBlockDefaultSubnavbar,

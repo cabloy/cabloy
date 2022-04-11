@@ -11,10 +11,6 @@ const list = {
       adapter: {
         providers: {
           tree: {
-            component: {
-              module: 'a-baseadmin',
-              name: 'roleListLayoutDataProviderTree',
-            },
             fields: {
               sorting: 'sorting',
             },

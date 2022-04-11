@@ -25,6 +25,7 @@ import atomTab from './components/tab/atomTab.jsx';
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderContinuous from './components/listLayoutData/providerContinuous.jsx';
 import listLayoutDataProviderPaged from './components/listLayoutData/providerPaged.jsx';
+import listLayoutDataProviderTree from './components/listLayoutData/providerTree.jsx';
 // tools
 import developerTool from './components/tools/developerTool.js';
 
@@ -56,6 +57,7 @@ export default {
   listLayoutDataAdapter,
   listLayoutDataProviderContinuous,
   listLayoutDataProviderPaged,
+  listLayoutDataProviderTree,
   // developerTool
   developerTool,
 };
