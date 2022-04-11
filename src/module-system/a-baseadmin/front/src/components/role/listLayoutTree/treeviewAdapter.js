@@ -1,9 +1,13 @@
 import Vue from 'vue';
 const ebTreeviewAdapterBase = Vue.prototype.$meta.module.get('a-components').options.mixins.ebTreeviewAdapterBase;
 
-export default function (ctx) {
-  const roleIdStart = ctx.roleIdStart;
-  const maxLevelAutoOpened = ctx.maxLevelAutoOpened;
+export default function (ctx, { layoutManager }) {
+  // roleIdStart
+  const roleIdStart = layoutManager.container.roleIdStart || 0;
+  // maxLevelAutoOpened
+  let maxLevelAutoOpened = layoutManager.container.maxLevelAutoOpened;
+  if (maxLevelAutoOpened === undefined) maxLevelAutoOpened = 2;
+  // adapter
   return class Adapter extends ebTreeviewAdapterBase(ctx) {
     async onLoadChildren(node) {
       const treeviewData = this.treeviewData;

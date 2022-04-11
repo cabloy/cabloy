@@ -1,5 +1,3 @@
-import TreeviewAdapterFn from './treeviewAdapter.js';
-
 export default {
   meta: {
     global: false,
@@ -17,16 +15,6 @@ export default {
       treeviewData: null,
     };
   },
-  computed: {
-    maxLevelAutoOpened() {
-      let maxLevelAutoOpened = this.layoutManager.container.maxLevelAutoOpened;
-      if (maxLevelAutoOpened === undefined) maxLevelAutoOpened = 2;
-      return maxLevelAutoOpened;
-    },
-    roleIdStart() {
-      return this.layoutManager.container.roleIdStart || 0;
-    },
-  },
   created() {
     this.init();
   },
@@ -41,11 +29,13 @@ export default {
       this.layoutManager.subnavbar.enable = false;
       // eslint-disable-next-line
       this.layoutManager.subnavbar.render = false;
+      // treeviewAdapter
+      const treeviewAdapter = await this._createTreeviewAdapter();
       // provider switch
       const res = await this.layoutManager.data_providerSwitch({
         providerName: 'tree',
         autoInit: true,
-        treeviewAdapter: TreeviewAdapterFn(this),
+        treeviewAdapter,
         treeviewRoot: {
           attrs: {
             itemToggle: false,
@@ -56,6 +46,23 @@ export default {
       this.treeviewData = res.treeviewData;
       // instance
       await this.layoutManager.layout_setInstance(this);
+    },
+    async _createTreeviewAdapter() {
+      // config component
+      const treeviewAdapterConfig = this.layoutConfig.treeviewAdapter;
+      if (!treeviewAdapterConfig) throw new Error('treeview adapter not found');
+      // performAction
+      const action = {
+        actionModule: treeviewAdapterConfig.component.module,
+        actionComponent: treeviewAdapterConfig.component.name,
+        name: 'createTreeviewAdapter',
+      };
+      const item = {
+        layoutManager: this.layoutManager,
+        layoutConfig: this.layoutConfig,
+        treeviewAdapterConfig,
+      };
+      return await this.$meta.util.performAction({ ctx: this, action, item });
     },
   },
   render() {

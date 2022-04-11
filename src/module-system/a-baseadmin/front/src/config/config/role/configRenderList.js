@@ -23,8 +23,14 @@ const list = {
     tree: {
       title: 'LayoutTree',
       component: {
-        module: 'a-baseadmin',
-        name: 'roleListLayoutTree',
+        module: 'a-baselayout',
+        name: 'listLayoutTree',
+      },
+      treeviewAdapter: {
+        component: {
+          module: 'a-baseadmin',
+          name: 'roleListLayoutTreeviewAdapter',
+        },
       },
       blocks: {
         items: {
