@@ -58,6 +58,13 @@ export default {
       }
       return null;
     },
+    _renderNodeLabelStart(node) {
+      // root
+      if (node.id === 0) return this.$text('Root');
+      // others
+      const item = node.data;
+      return item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`;
+    },
     _createNodeRoot(children) {
       const checkbox = !this.leafOnly;
       const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(0) > -1;
@@ -65,7 +72,7 @@ export default {
         {
           id: 0,
           attrs: {
-            label: this.$text('Root'),
+            // label: this.$text('Root'),
             toggle: true,
             loadChildren: true,
             checkbox,
@@ -91,7 +98,7 @@ export default {
         const node = {
           id: item.id,
           attrs: {
-            label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
+            // label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
             loadChildren: item.categoryCatalog === 1,
             checkbox,
@@ -144,6 +151,13 @@ export default {
         auto={false}
         propsOnLoadChildren={this.onLoadChildren}
         onNodeChange={this.onNodeChange}
+        {...{
+          scopedSlots: {
+            'label-start': ({ node }) => {
+              return this._renderNodeLabelStart(node);
+            },
+          },
+        }}
       ></eb-treeview>
     );
   },
