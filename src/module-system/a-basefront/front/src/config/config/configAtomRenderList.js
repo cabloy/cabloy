@@ -203,6 +203,24 @@ const list = {
         },
       },
     },
+    tree: {
+      title: 'LayoutTree',
+      component: {
+        module: 'a-baselayout',
+        name: 'listLayoutTree',
+      },
+      treeviewAdapter: {
+        component: null,
+      },
+      blocks: {
+        title: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockTreeTitle',
+          },
+        },
+      },
+    },
     select: {
       component: {
         module: 'a-baselayout',

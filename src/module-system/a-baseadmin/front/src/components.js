@@ -1,7 +1,7 @@
 // role: listLayoutTree
 import roleListLayoutTreeviewAdapter from './components/role/listLayoutTree/listLayoutTreeviewAdapter.js';
 import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
-import roleListLayoutBlockTreeTitle from './components/role/listLayoutTree/listLayoutBlockTreeTitle.jsx';
+
 // role: listLayoutTreeTable
 import roleListLayoutTreeTableItems from './components/role/listLayoutTreeTable/listLayoutBlockTreeTableItems.jsx';
 // role: itemLayoutDefault
@@ -29,7 +29,6 @@ export default {
   // role: roleListLayoutTree
   roleListLayoutTreeviewAdapter,
   roleListLayoutBlockTreeItems,
-  roleListLayoutBlockTreeTitle,
   // role: roleListLayoutTreeTable
   roleListLayoutTreeTableItems,
   // role: itemLayoutDefault

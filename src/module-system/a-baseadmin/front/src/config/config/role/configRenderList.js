@@ -21,11 +21,6 @@ const list = {
   },
   layouts: {
     tree: {
-      title: 'LayoutTree',
-      component: {
-        module: 'a-baselayout',
-        name: 'listLayoutTree',
-      },
       treeviewAdapter: {
         component: {
           module: 'a-baseadmin',
@@ -37,12 +32,6 @@ const list = {
           component: {
             module: 'a-baseadmin',
             name: 'roleListLayoutBlockTreeItems',
-          },
-        },
-        title: {
-          component: {
-            module: 'a-baseadmin',
-            name: 'roleListLayoutBlockTreeTitle',
           },
         },
       },
