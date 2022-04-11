@@ -21,7 +21,7 @@ export default [
   { path: 'auth/config', component: loadjsx('auth/config') },
   { path: 'settings/list', component: load('settings/list') },
   { path: 'category/management', component: loadjsx('category/management') },
-  { path: 'category/tree', component: load('category/tree') },
+  { path: 'category/tree', component: loadjsx('category/tree') },
   { path: 'category/edit', component: load('category/edit') },
   { path: 'tag/management', component: loadjsx('tag/management') },
   { path: 'tag/list', component: load('tag/list') },

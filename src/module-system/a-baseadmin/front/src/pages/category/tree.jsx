@@ -1,16 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
-    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
-      <div class="treeview-item-root-end" slot="root-end" slot-scope="{ node }">
-        <eb-link :context="node" :onPerform="onPerformAdd">{{ $text('Add') }}</eb-link>
-        <eb-link v-if="node.id > 0" :context="node" :onPerform="onPerformMove">{{ $text('Move') }}</eb-link>
-        <eb-link v-if="node.id > 0" :context="node" :onPerform="onPerformDelete">{{ $text('Delete') }}</eb-link>
-      </div>
-    </eb-treeview>
-  </eb-page>
-</template>
-<script>
 export default {
   data() {
     const query = this.$f7route.query;
@@ -96,7 +83,7 @@ export default {
       });
       return list;
     },
-    onNodeClick(node) {
+    onNodePerformClick(event, context, node) {
       if (!node.id) return;
       const queries = this.combineAtomClassAndLanguage();
       queries.categoryId = node.id;
@@ -193,6 +180,70 @@ export default {
         categories: null,
       });
     },
+    async onNodePerformPopover(event, node) {
+      const refTree = this.$refs.tree;
+      refTree._openNodeContextMenu(node);
+    },
+    _renderListItemContextMenu(node) {
+      const domActions = [];
+      domActions.push(
+        <div key="add" propsOnPerform={event => this.onPerformAdd(event, node)}>
+          <f7-icon slot="media" f7=":outline:add-circle-outline"></f7-icon>
+          <div slot="title">{this.$text('Add')}</div>
+        </div>
+      );
+      if (node.id > 0) {
+        domActions.push(
+          <div key="move" propsOnPerform={event => this.onPerformMove(event, node)}>
+            <f7-icon slot="media" f7=":outline:folder-transfer-outline"></f7-icon>
+            <div slot="title">{this.$text('Move')}</div>
+          </div>
+        );
+        domActions.push(
+          <div key="delete" propsOnPerform={event => this.onPerformDelete(event, node)}>
+            <f7-icon slot="media" f7="::delete"></f7-icon>
+            <div slot="title">{this.$text('Delete')}</div>
+          </div>
+        );
+      }
+      const domRight = <div slot="right">{domActions}</div>;
+      return <eb-context-menu mode="menu">{domRight}</eb-context-menu>;
+    },
+    _renderNodeAfter(node) {
+      const domPopover = (
+        <eb-link
+          iconF7="::more-horiz"
+          iconColor="gray"
+          propsOnPerform={event => this.onNodePerformPopover(event, node)}
+        ></eb-link>
+      );
+      const domContextMenu = this._renderListItemContextMenu(node);
+      return (
+        <div class="treeview-item-root-end" slot="root-end" slot-scope="{ node }">
+          {domPopover}
+          {domContextMenu}
+        </div>
+      );
+    },
+  },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar large largeTransparent title={this.pageTitle} eb-back-link="Back"></eb-navbar>
+        <eb-treeview
+          ref="tree"
+          root={this.root}
+          propsOnLoadChildren={this.onLoadChildren}
+          propsOnNodePerform={this.onNodePerformClick}
+          {...{
+            scopedSlots: {
+              'root-end': ({ node }) => {
+                return this._renderNodeAfter(node);
+              },
+            },
+          }}
+        ></eb-treeview>
+      </eb-page>
+    );
   },
 };
-</script>
