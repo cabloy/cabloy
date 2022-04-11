@@ -6,6 +6,9 @@ export default {
     layoutManager: {
       type: Object,
     },
+    providerConfig: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -114,13 +117,19 @@ export default {
       });
       if (!node) return;
       const itemOld = node.data;
-      if (itemOld.sorting !== itemNew.sorting) {
+      if (this._replaceItemSorting(itemOld, itemNew)) {
         // reload parent
-        this._reloadNode(this._findNodeByNodeId(itemOld.roleIdParent));
+        this._reloadNode(node.parent);
       } else {
         // change current
         node.data = itemNew;
       }
+    },
+    _replaceItemSorting(itemOld, itemNew) {
+      // fieldName
+      const fieldName = this.providerConfig.fields && this.providerConfig.fields.sorting;
+      if (!fieldName) return false;
+      return itemOld[fieldName] !== itemNew[fieldName];
     },
     addChildNode({ /* key,*/ node }) {
       this._addChild(node.parentId);

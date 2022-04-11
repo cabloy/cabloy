@@ -50,15 +50,16 @@ export default {
     },
     async providerCreate(providerName) {
       // config component
-      const provider = this.getProviderConfig(providerName);
-      if (!provider) throw new Error(`adapter provider not found: ${providerName}`);
-      const configComponent = provider.component;
+      const providerConfig = this.getProviderConfig(providerName);
+      if (!providerConfig) throw new Error(`adapter provider not found: ${providerName}`);
+      const configComponent = providerConfig.component;
       // load module
       const moduleProvider = await this.$meta.module.use(configComponent.module);
       // create provider
       const providerOptions = {
         propsData: {
           layoutManager: this.layoutManager,
+          providerConfig,
         },
       };
       const component = moduleProvider.options.components[configComponent.name];
