@@ -105,6 +105,12 @@ const list = {
             },
           ],
         },
+        title: {
+          component: {
+            module: 'a-baseadmin',
+            name: 'roleListLayoutBlockTreeTitle',
+          },
+        },
       },
     },
   },
