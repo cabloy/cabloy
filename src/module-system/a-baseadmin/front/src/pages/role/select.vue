@@ -6,7 +6,11 @@
       </f7-nav-right>
     </eb-navbar>
     <eb-button v-if="buttonClearRole" :onPerform="onPerformClearRole">{{ this.$text('Clear Role') }}</eb-button>
-    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren"> </eb-treeview>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
+      <template slot="label-start" slot-scope="{ node }">
+        {{ node.data.atomNameLocale || node.data.roleName }}
+      </template>
+    </eb-treeview>
   </eb-page>
 </template>
 <script>
@@ -83,7 +87,7 @@ export default {
             id: item.id,
             attrs: {
               id: treeviewData._calcNodeAttrId(node, item),
-              label: item.atomNameLocale || item.roleName,
+              // label: item.atomNameLocale || item.roleName,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
               iconF7: item._roleTypeCodeOptions.icon.f7,
