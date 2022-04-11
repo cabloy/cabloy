@@ -102,7 +102,7 @@ module.exports = ctx => {
         await this.model.update(user);
       }
       if (user.userName) {
-        const userAtomId = await this._forceUserId({ userAtomId: null, userId });
+        const userAtomId = await this._forceUserAtomId({ userAtomId: null, userId });
         await ctx.bean.atom.modelAtom.update({
           id: userAtomId,
           atomName: user.userName,
