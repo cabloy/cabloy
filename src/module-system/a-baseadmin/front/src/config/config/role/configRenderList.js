@@ -15,6 +15,9 @@ const list = {
               module: 'a-baseadmin',
               name: 'roleListLayoutDataProviderTree',
             },
+            fields: {
+              sorting: 'sorting',
+            },
           },
         },
       },
