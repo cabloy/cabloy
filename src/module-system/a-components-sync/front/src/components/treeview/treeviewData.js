@@ -45,8 +45,8 @@ export default {
         nodeParent.children.splice(index, 1, node);
       }
       // load again
-      if (node._loaded) {
-        node._loaded = false;
+      if (node.attrs.loaded) {
+        node.attrs.loaded = false;
       }
       await this._loadChildren(node);
     },
@@ -295,7 +295,7 @@ export default {
       return _root;
     },
     childrenLoaded(node, children) {
-      this.$set(node, '_loaded', true);
+      this.$set(node.attrs, 'loaded', true);
       if (!node.children) node.children = [];
       const nodeChildren = node.children;
       for (const item of children) {
@@ -327,7 +327,7 @@ export default {
       }
     },
     _needLoadChildren(node) {
-      return this.adapter.onLoadChildren && node.attrs.loadChildren && !node._loaded;
+      return this.adapter.onLoadChildren && node.attrs.loadChildren && !node.attrs.loaded;
     },
     _calcNodeAttrId(nodeParent, node) {
       return `${nodeParent.attrs.id}-${node.id}`;
