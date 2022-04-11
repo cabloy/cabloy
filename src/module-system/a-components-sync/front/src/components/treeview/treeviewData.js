@@ -189,7 +189,7 @@ export default {
       this.$set(node.attrs, 'opened', false);
       this.adapter.onNodeClose(node);
     },
-    async toggleNode(node) {
+    async switchNode(node) {
       if (node.attrs.opened) {
         await this.closeNode(node);
       } else {

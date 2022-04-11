@@ -102,7 +102,7 @@ export default {
       this.treeviewData.closeNode(node);
     },
     _onNodeToggle(e, node) {
-      this.treeviewData.toggleNode(node);
+      this.treeviewData.switchNode(node);
     },
     _onNodeClick(e, node) {
       // target
