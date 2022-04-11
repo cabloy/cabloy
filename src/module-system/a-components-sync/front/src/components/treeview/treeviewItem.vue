@@ -40,33 +40,6 @@ export default {
       if ($content.length === 0) return null;
       return $content.closest('a');
     },
-    _switchFolderIcon(el) {
-      const $el = this.$$(el);
-      // icon
-      const $icon = $el.find('i.icon.f7-icons svg use').eq(0);
-      if ($icon.length === 0) return;
-      // iconName
-      const parts = $icon[0].href.baseVal.split('#');
-      let iconName = parts[1];
-      if (iconName !== 'folder' && iconName !== 'folder-open') return;
-      // switch
-      if ($el.hasClass('treeview-item-opened')) {
-        iconName = 'folder-open';
-      } else {
-        iconName = 'folder';
-      }
-      $icon[0].href.baseVal = [parts[0], iconName].join('#');
-    },
-    onOpen(el) {
-      if (this.eventTargetEl !== el) return;
-      this._switchFolderIcon(el);
-      this.dispatchEvent('treeview:open treeviewOpen', el);
-    },
-    onClose(el) {
-      if (this.eventTargetEl !== el) return;
-      this._switchFolderIcon(el);
-      this.dispatchEvent('treeview:close treeviewClose', el);
-    },
   },
 };
 </script>
