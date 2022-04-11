@@ -219,6 +219,12 @@ const list = {
             name: 'listLayoutBlockTreeTitle',
           },
         },
+        items: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockTreeItems',
+          },
+        },
       },
     },
     select: {

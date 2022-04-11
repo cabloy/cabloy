@@ -1,6 +1,5 @@
 // role: listLayoutTree
 import roleListLayoutTreeviewAdapter from './components/role/listLayoutTree/listLayoutTreeviewAdapter.js';
-import roleListLayoutBlockTreeItems from './components/role/listLayoutTree/listLayoutBlockTreeItems.jsx';
 
 // role: listLayoutTreeTable
 import roleListLayoutTreeTableItems from './components/role/listLayoutTreeTable/listLayoutBlockTreeTableItems.jsx';
@@ -28,7 +27,6 @@ import resourceRightSpreads from './components/resourceRight/spreads.vue';
 export default {
   // role: roleListLayoutTree
   roleListLayoutTreeviewAdapter,
-  roleListLayoutBlockTreeItems,
   // role: roleListLayoutTreeTable
   roleListLayoutTreeTableItems,
   // role: itemLayoutDefault

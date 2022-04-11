@@ -33,7 +33,7 @@ export default {
     },
     _renderNodeLabelStart(node) {
       const item = node.data;
-      return item.atomNameLocale || item.roleName;
+      return item.atomNameLocale || item.atomName;
     },
     _renderNodeLabelStar(node) {
       if (!node.data.star) return;

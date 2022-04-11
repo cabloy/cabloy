@@ -22,6 +22,7 @@ import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listL
 // listLayoutTree
 import listLayoutTree from './components/atom/listLayoutTree/listLayoutTree.jsx';
 import listLayoutBlockTreeTitle from './components/atom/listLayoutTree/listLayoutBlockTreeTitle.jsx';
+import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayoutBlockTreeItems.jsx';
 // itemLayoutDefault
 import itemLayoutDefault from './components/atom/itemLayoutDefault/itemLayoutDefault.jsx';
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
@@ -61,6 +62,7 @@ export default {
   // listLayoutTree
   listLayoutTree,
   listLayoutBlockTreeTitle,
+  listLayoutBlockTreeItems,
   // itemLayoutDefault
   itemLayoutDefault,
   itemLayoutBlockDefaultCaption,

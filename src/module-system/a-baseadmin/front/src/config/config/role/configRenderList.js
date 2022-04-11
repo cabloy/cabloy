@@ -27,14 +27,6 @@ const list = {
           name: 'roleListLayoutTreeviewAdapter',
         },
       },
-      blocks: {
-        items: {
-          component: {
-            module: 'a-baseadmin',
-            name: 'roleListLayoutBlockTreeItems',
-          },
-        },
-      },
     },
     treeTable: {
       title: 'LayoutTreeTable',
