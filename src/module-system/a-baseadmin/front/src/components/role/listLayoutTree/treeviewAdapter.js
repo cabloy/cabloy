@@ -2,6 +2,8 @@ import Vue from 'vue';
 const ebTreeviewAdapterBase = Vue.prototype.$meta.module.get('a-components').options.mixins.ebTreeviewAdapterBase;
 
 export default function (ctx) {
+  const roleIdStart = ctx.roleIdStart;
+  const maxLevelAutoOpened = ctx.maxLevelAutoOpened;
   return class Adapter extends ebTreeviewAdapterBase(ctx) {
     async onLoadChildren(node) {
       const treeviewData = this.treeviewData;
@@ -10,7 +12,7 @@ export default function (ctx) {
       const level = levelCurrent + 1;
       //
       let data;
-      const roleId = node.root ? ctx.roleIdStart : node.id;
+      const roleId = node.root ? roleIdStart : node.id;
       if (roleId === 0) {
         data = await ctx.$api.post('/a/baseadmin/role/childrenTop', { page: { size: 0 } });
       } else {
@@ -30,7 +32,7 @@ export default function (ctx) {
           data: item,
           __level: level,
         };
-        if (item.catalog === 1 && (level <= ctx.maxLevelAutoOpened || ctx.maxLevelAutoOpened === -1)) {
+        if (item.catalog === 1 && (level <= maxLevelAutoOpened || maxLevelAutoOpened === -1)) {
           await treeviewData._preloadChildren(nodeChild);
         }
         list.push(nodeChild);

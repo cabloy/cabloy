@@ -162,6 +162,7 @@ export default {
   Layout: '布局',
   LayoutAccordion: '折叠布局',
   LayoutTree: '树形布局',
+  LayoutTreeTable: '树形表格布局',
   LayoutList: '列表布局',
   LayoutTable: '表格布局',
   LayoutCard: '卡片布局',

@@ -187,6 +187,10 @@ export default {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
       }
+      if (!blockConfig.component) {
+        const errorMessage = `${this.$text('Block Component Not Found')}: ${blockName}`;
+        return <div>{errorMessage}</div>;
+      }
       const blockOptions = this.layout_getBlockComponentOptions({ blockConfig, info });
       if (listItem) {
         return (

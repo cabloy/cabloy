@@ -41,7 +41,12 @@ const list = {
         },
       },
     },
-    table: {
+    treeTable: {
+      title: 'LayoutTreeTable',
+      component: {
+        module: 'a-baseadmin',
+        name: 'roleListLayoutTree',
+      },
       blocks: {
         items: {
           columns: [

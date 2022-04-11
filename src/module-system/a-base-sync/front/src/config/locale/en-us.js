@@ -18,6 +18,7 @@ export default {
   ReferenceForFunction: 'Reference',
   LayoutAccordion: 'Accordion Layout',
   LayoutTree: 'Tree Layout',
+  LayoutTreeTable: 'Tree Table Layout',
   LayoutList: 'List Layout',
   LayoutTable: 'Table Layout',
   LayoutCard: 'Card Layout',
