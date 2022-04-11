@@ -16,7 +16,7 @@ export default {
         // event
         ctx.$meta.eventHub.$emit('atom:action', {
           key: keyDraft,
-          action: { name: 'addChild' },
+          action: { name: 'addChildNode' },
           node: { parentId: atomDraft.roleIdParent },
         });
         // open

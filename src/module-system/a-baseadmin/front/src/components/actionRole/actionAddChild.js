@@ -14,7 +14,7 @@ export default {
         // event
         ctx.$meta.eventHub.$emit('atom:action', {
           key: keyChild,
-          action: { name: 'addChild' },
+          action: { name: 'addChildNode' },
           node: { parentId: atomChild.roleIdParent },
         });
         // open
