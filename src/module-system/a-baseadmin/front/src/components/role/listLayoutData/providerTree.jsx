@@ -54,15 +54,19 @@ export default {
       }
     },
     onPageRefresh() {
-      // do nothing
-      this.refTree.reload();
+      this.treeviewData.load(this.treeviewRoot);
     },
     onPageInfinite() {
       // do nothing
     },
-    onPageClear() {},
+    onPageClear() {
+      // do nothing
+    },
+    getTreeviewData() {
+      return this.treeviewData;
+    },
     getItems() {
-      // return this.items;
+      // do nothing
     },
     getLoading() {
       return false;
