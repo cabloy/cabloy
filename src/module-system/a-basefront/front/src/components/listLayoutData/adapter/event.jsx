@@ -67,6 +67,14 @@ export default {
         this._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
       });
     },
+    async event_onActionChanged_addChildNode(data) {
+      const key = data.key;
+      const node = data.node;
+      // loop
+      await this._loopProviders(async provider => {
+        this._callMethodProvider(provider, 'addChildNode', { key, node });
+      });
+    },
     async event_onActionChanged(data) {
       const action = data.action;
       if (action.name === 'create') {
@@ -75,6 +83,9 @@ export default {
       } else if (action.name === 'delete') {
         // delete
         await this.event_onActionChanged_delete(data);
+      } else if (action.name === 'addChildNode') {
+        // delete
+        await this.event_onActionChanged_addChildNode(data);
       } else {
         // others
         await this.event_onActionChanged_others(data);

@@ -116,7 +116,7 @@ export default {
       const itemOld = node.data;
       if (itemOld.sorting !== itemNew.sorting) {
         // reload parent
-        this._reloadNode(this._findNodeByRoleId(itemOld.roleIdParent));
+        this._reloadNode(this._findNodeByNodeId(itemOld.roleIdParent));
       } else {
         // change current
         node.data = itemNew;
@@ -130,8 +130,11 @@ export default {
         this._addChild(atom.roleIdParent);
       }
     },
-    _addChild(roleIdParent) {
-      const nodeParent = this._findNodeByRoleId(roleIdParent);
+    addChildNode({ /* key,*/ node }) {
+      this._addChild(node.parentId);
+    },
+    _addChild(nodeIdParent) {
+      const nodeParent = this._findNodeByNodeId(nodeIdParent);
       this._reloadNode(nodeParent, {
         attrs: {
           toggle: true,
@@ -147,9 +150,9 @@ export default {
       if (!atomId) return null;
       return this.treeviewData.find(null, item => item.data.atomId === atomId);
     },
-    _findNodeByRoleId(roleId) {
-      if (!roleId) return null;
-      return this.treeviewData.find(null, node => node.id === roleId);
+    _findNodeByNodeId(nodeId) {
+      if (nodeId === undefined) return null;
+      return this.treeviewData.find(null, node => node.id === nodeId);
     },
   },
 };
