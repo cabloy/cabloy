@@ -81,7 +81,7 @@ export default {
       const node = this._findNodeByAtomId(atomId);
       const item = node ? node.data : null;
       return { item };
-      // const node = this.refTree.find(null, item => {
+      // const node = this.treeviewData.find(null, item => {
       //   return item.data.atomId === atomId;
       // });
       // const nodeParent = node.parent;
@@ -96,7 +96,7 @@ export default {
       const node = this._findNodeByAtomId(item.atomId);
       const nodeParent = node.parent;
       if (node) {
-        this.refTree.removeNode(node);
+        this.treeviewData.removeNode(node);
       }
       // adjust parent's catalog->false if no children
       if (nodeParent.children.length === 0) {
@@ -109,7 +109,7 @@ export default {
       }
     },
     replaceItem(bundle, itemNew) {
-      const node = this.refTree.find(null, item => {
+      const node = this.treeviewData.find(null, item => {
         return item.data.atomId === itemNew.atomId;
       });
       if (!node) return;
@@ -141,15 +141,15 @@ export default {
     },
     _reloadNode(node, nodeNew) {
       if (!node) return;
-      this.refTree.reloadNode(node, nodeNew);
+      this.treeviewData.reloadNode(node, nodeNew);
     },
     _findNodeByAtomId(atomId) {
       if (!atomId) return null;
-      return this.refTree.find(null, item => item.data.atomId === atomId);
+      return this.treeviewData.find(null, item => item.data.atomId === atomId);
     },
     _findNodeByRoleId(roleId) {
       if (!roleId) return null;
-      return this.refTree.find(null, node => node.id === roleId);
+      return this.treeviewData.find(null, node => node.id === roleId);
     },
   },
 };
