@@ -20,12 +20,12 @@ module.exports = app => {
           roleIdParent = role.id;
         }
         // check if addChild right of roleIdParent
-        const writeRight = await this.beanRole._checkRightActionOfRole({
+        const addChildRight = await this.beanRole._checkRightActionOfRole({
           roleId: roleIdParent,
           action: 'addChild',
           user,
         });
-        if (!writeRight) this.ctx.throw(403);
+        if (!addChildRight) this.ctx.throw(403);
       }
       // super
       const key = await super.create({ atomClass, item, options, user });
