@@ -186,7 +186,36 @@ export default {
         },
       };
     },
+    _prepareNodeAttrs(node) {
+      // attrs
+      const _node = { ...node };
+      _node.attrs = this.$utils.extend({}, node.attrs);
+      // attrs
+      const treeviewRoot = this.layout.treeviewData.treeviewRoot;
+      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = treeviewRoot.attrs.itemToggle;
+      if (_node.attrs.opened === undefined) _node.attrs.opened = false;
+      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = treeviewRoot.attrs.checkbox;
+      if (_node.attrs.selectable === undefined) _node.attrs.selectable = treeviewRoot.attrs.selectable;
+      if (_node.attrs.selectable) {
+        _node.attrs.selected = this.treeviewData.selectedItem && this.treeviewData.selectedItem.id === node.id;
+      }
+      if (_node.attrs.disabled === undefined) _node.attrs.disabled = treeviewRoot.attrs.disabled;
+      // attrs folder
+      if (_node.attrs.folder) {
+        if (_node.attrs.opened === true) {
+          _node.attrs.iconF7 = '::folder-open';
+        } else {
+          _node.attrs.iconF7 = '::folder';
+        }
+      }
+      // ok
+      return _node;
+    },
     _expandIcon({ prefixCls, expanded, record, needIndentSpaced, expandable, onExpand }) {
+      if (!record._treeviewNode) return null;
+      // node
+      const node = this._prepareNodeAttrs(record._treeviewNode);
+      //
       return <div>icon</div>;
     },
     _renderListItemContextMenu() {

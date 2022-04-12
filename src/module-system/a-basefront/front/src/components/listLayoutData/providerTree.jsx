@@ -77,9 +77,10 @@ export default {
       // children
       for (const node of nodeParent.children) {
         // current first
+        const _treeviewNode = Object.assign({}, node, { data: null });
         const item = {
           ...node.data,
-          _nodeAttrs: node.attrs,
+          _treeviewNode,
         };
         // children
         const children = this._getItems(node);

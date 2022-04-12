@@ -179,6 +179,8 @@ export default {
           return this.onNodePerform(e, context, node);
         };
       }
+      // ok
+      return _node;
     },
     _renderNode(_h, node) {
       // node
