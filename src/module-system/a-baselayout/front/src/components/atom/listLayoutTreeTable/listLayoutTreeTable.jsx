@@ -1,7 +1,10 @@
+import Antdv from '../../../common/antdv.jsx';
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [Antdv],
   props: {
     layoutManager: {
       type: Object,
@@ -64,8 +67,21 @@ export default {
       };
       return await this.$meta.util.performAction({ ctx: this, action, item });
     },
+    _renderEmpty() {
+      const loading = this.layoutManager.data_getLoading();
+      if (loading) return <f7-preloader></f7-preloader>;
+      return <div>{this.$text('No Data')}</div>;
+    },
+    _renderConfigProvider() {
+      if (!this.antdv.locales) return null;
+      return (
+        <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
+          {this.layoutManager.layout_renderBlock({ blockName: 'items' })}
+        </a-config-provider>
+      );
+    },
   },
   render() {
-    return <div>{this.layoutManager.layout_renderBlock({ blockName: 'items' })}</div>;
+    return <div class="eb-antdv">{this._renderConfigProvider()}</div>;
   },
 };
