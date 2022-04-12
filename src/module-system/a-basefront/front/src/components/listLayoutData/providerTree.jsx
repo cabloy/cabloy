@@ -69,7 +69,27 @@ export default {
       return this.treeviewData;
     },
     getItems() {
-      // do nothing
+      return this._getItems(this.treeviewData.treeviewRoot);
+    },
+    _getItems(nodeParent) {
+      if (!nodeParent.attrs.loadChildren) return null;
+      const items = [];
+      // children
+      for (const node of nodeParent.children) {
+        // current first
+        const item = {
+          ...node.data,
+          _nodeAttrs: node.attrs,
+        };
+        // children
+        const children = this._getItems(node);
+        if (children) {
+          item.children = children;
+        }
+        // push
+        items.push(item);
+      }
+      return items;
     },
     getLoading() {
       return false;
