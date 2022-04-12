@@ -38,12 +38,6 @@ export default {
       const res = await this.layoutManager.data_providerSwitch({
         providerName: 'tree',
         autoInit: true,
-        treeviewRoot: {
-          attrs: {
-            itemToggle: false,
-            selectable: true,
-          },
-        },
       });
       this.treeviewData = res.treeviewData;
       // instance

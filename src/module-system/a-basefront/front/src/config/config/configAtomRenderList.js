@@ -37,6 +37,12 @@ const list = {
             treeviewAdapter: {
               component: null,
             },
+            treeviewRoot: {
+              attrs: {
+                itemToggle: false,
+                selectable: true,
+              },
+            },
           },
         },
       },
