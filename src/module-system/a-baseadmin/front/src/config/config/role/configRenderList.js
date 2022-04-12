@@ -14,27 +14,20 @@ const list = {
             fields: {
               sorting: 'sorting',
             },
+            treeviewAdapter: {
+              component: {
+                module: 'a-baseadmin',
+                name: 'roleListLayoutTreeviewAdapter',
+              },
+            },
           },
         },
       },
     },
   },
   layouts: {
-    tree: {
-      treeviewAdapter: {
-        component: {
-          module: 'a-baseadmin',
-          name: 'roleListLayoutTreeviewAdapter',
-        },
-      },
-    },
+    tree: {},
     treeTable: {
-      treeviewAdapter: {
-        component: {
-          module: 'a-baseadmin',
-          name: 'roleListLayoutTreeviewAdapter',
-        },
-      },
       blocks: {
         items: {
           // columns: [

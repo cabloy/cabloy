@@ -34,6 +34,9 @@ const list = {
             fields: {
               sorting: null,
             },
+            treeviewAdapter: {
+              component: null,
+            },
           },
         },
       },
@@ -208,9 +211,6 @@ const list = {
       component: {
         module: 'a-baselayout',
         name: 'listLayoutTree',
-      },
-      treeviewAdapter: {
-        component: null,
       },
       blocks: {
         title: {

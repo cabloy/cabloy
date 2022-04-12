@@ -50,11 +50,29 @@ export default {
       };
       this.treeviewData = this.$meta.util.createComponentInstance(ebTreeviewData, componentOptions);
       // adapter
-      this.treeviewData.setAdapter(options.treeviewAdapter);
+      const treeviewAdapter = await this._createTreeviewAdapter();
+      this.treeviewData.setAdapter(treeviewAdapter);
       // autoInit
       if (options.autoInit) {
         await this.treeviewData.load(this.treeviewRoot);
       }
+    },
+    async _createTreeviewAdapter() {
+      // config component
+      const treeviewAdapterConfig = this.providerConfig.treeviewAdapter;
+      if (!treeviewAdapterConfig) throw new Error('treeview adapter not found');
+      // performAction
+      const action = {
+        actionModule: treeviewAdapterConfig.component.module,
+        actionComponent: treeviewAdapterConfig.component.name,
+        name: 'createTreeviewAdapter',
+      };
+      const item = {
+        layoutManager: this.layoutManager,
+        providerConfig: this.providerConfig,
+        treeviewAdapterConfig,
+      };
+      return await this.$meta.util.performAction({ ctx: this, action, item });
     },
     onPageRefresh() {
       this.treeviewData.load(this.treeviewRoot);
