@@ -235,7 +235,7 @@ export default {
       // ok
       return _node;
     },
-    _expandIcon({ prefixCls, expanded, record, needIndentSpaced, expandable, onExpand }) {
+    _expandIcon({ record }) {
       if (!record._treeviewNode) return null;
       // node
       const node = this._prepareNodeAttrs(record._treeviewNode);
@@ -276,7 +276,6 @@ export default {
             onClick={() => {
               const treeviewData = this.layout.treeviewData;
               treeviewData.switchNode(node.id);
-              // onExpand(record, event);
             }}
           ></div>
         );
