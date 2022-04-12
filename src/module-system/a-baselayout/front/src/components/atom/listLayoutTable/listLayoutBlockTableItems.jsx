@@ -231,6 +231,18 @@ export default {
         link,
         loading,
       } = node.attrs;
+      // loading
+      let domLoading;
+      if (!loading) {
+        domLoading = (
+          <div
+            class="preloader treeview-preloader"
+            domProps={{
+              innerHTML: this.$f7.utils[`${this.$f7.theme}PreloaderContent`],
+            }}
+          ></div>
+        );
+      }
       // icon
       let domIcon;
       if (icon || iconMaterial || iconF7 || iconMd || iconIos || iconAurora) {
@@ -247,8 +259,13 @@ export default {
           ></f7-icon>
         );
       }
-
-      return <div>{domIcon}</div>;
+      // render
+      return (
+        <div>
+          {domLoading}
+          {domIcon}
+        </div>
+      );
     },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
