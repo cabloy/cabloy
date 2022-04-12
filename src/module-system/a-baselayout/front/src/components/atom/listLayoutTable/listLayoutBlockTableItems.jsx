@@ -262,9 +262,10 @@ export default {
         domToggle = (
           <div
             class={loading ? 'treeview-toggle treeview-toggle-hidden' : 'treeview-toggle'}
-            onClick={() => {
+            onClick={event => {
               const treeviewData = this.layout.treeviewData;
               treeviewData.switchNode(node.id);
+              onExpand(record, event);
             }}
           ></div>
         );
