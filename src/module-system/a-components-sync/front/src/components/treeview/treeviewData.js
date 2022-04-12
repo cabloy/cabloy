@@ -168,6 +168,7 @@ export default {
       });
     },
     async openNode(node) {
+      node = this._forceNode(node);
       try {
         // check if opened
         if (node.attrs.opened) return;
@@ -183,6 +184,7 @@ export default {
       }
     },
     async closeNode(node) {
+      node = this._forceNode(node);
       // check if opened
       if (!node.attrs.opened) return;
       // emit event first
@@ -190,11 +192,19 @@ export default {
       this.adapter.onNodeClose(node);
     },
     async switchNode(node) {
+      node = this._forceNode(node);
       if (node.attrs.opened) {
         await this.closeNode(node);
       } else {
         await this.openNode(node);
       }
+    },
+    _forceNode(node) {
+      if (node === undefined || node === null) return null;
+      if (typeof node === 'number' || typeof node === 'string') {
+        return this.find(null, _node => _node.id === node);
+      }
+      return node;
     },
     selected() {
       return this.selectedItem;

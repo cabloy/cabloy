@@ -254,7 +254,15 @@ export default {
       let domToggle;
       const needToggle = toggle || loadChildren;
       if (needToggle) {
-        domToggle = <div class={loading ? 'treeview-toggle treeview-toggle-hidden' : 'treeview-toggle'}></div>;
+        domToggle = (
+          <div
+            class={loading ? 'treeview-toggle treeview-toggle-hidden' : 'treeview-toggle'}
+            onClick={() => {
+              const treeviewData = this.layout.treeviewData;
+              treeviewData.switchNode(node.id);
+            }}
+          ></div>
+        );
       }
       // icon
       let domIcon;
@@ -274,7 +282,7 @@ export default {
       }
       // render
       return (
-        <div class="treeview-item-root">
+        <div id={id} class="treeview-item-root">
           {domLoading}
           {domToggle}
           {domIcon}
