@@ -227,6 +227,67 @@ const list = {
         },
       },
     },
+    treeTable: {
+      title: 'LayoutTreeTable',
+      component: {
+        module: 'a-baselayout',
+        name: 'listLayoutTreeTable',
+      },
+      blocks: {
+        title: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockTreeTitle',
+          },
+        },
+        items: {
+          component: {
+            module: 'a-baselayout',
+            name: 'listLayoutBlockTableItems',
+          },
+          columns: [
+            {
+              dataIndex: 'atomName',
+              title: 'Atom Name',
+              align: 'left',
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutTableCellAtomName',
+              },
+            },
+            {
+              dataIndex: 'userName',
+              title: 'Creator',
+              align: 'left',
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutTableCellUserName',
+              },
+            },
+            {
+              dataIndex: 'atomCreatedAt',
+              title: 'Created Time',
+              align: 'center',
+              params: {
+                dateFormat: {
+                  lines: true,
+                },
+              },
+            },
+            {
+              dataIndex: 'atomUpdatedAt',
+              title: 'Modification Time',
+              align: 'center',
+              params: {
+                dateFormat: {
+                  lines: true,
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
     select: {
       component: {
         module: 'a-baselayout',
