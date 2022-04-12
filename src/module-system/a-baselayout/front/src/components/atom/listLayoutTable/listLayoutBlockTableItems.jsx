@@ -28,6 +28,9 @@ export default {
     };
   },
   computed: {
+    dataSource() {
+      return this.layoutManager.data_getItems();
+    },
     columns() {
       const columns = this.blockConfig.columns;
       const _columns = [];
@@ -188,14 +191,13 @@ export default {
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
     },
     _renderTable() {
-      const items = this.layoutManager.data_getItems();
       return (
         <a-table
           bordered
           rowSelection={this.rowSelection}
           columns={this.columns}
           rowKey={item => item.atomId}
-          dataSource={items}
+          dataSource={this.dataSource}
           pagination={false}
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
