@@ -163,8 +163,8 @@ export default {
         <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
       );
     },
-    _customCell(record) {
-      if (!record._treeviewNode) return null;
+    _customCell(record, index, column, { expandIcon }) {
+      if (!record._treeviewNode || !expandIcon) return {};
       return {
         class: 'treeview-item-root-wrapper',
       };
