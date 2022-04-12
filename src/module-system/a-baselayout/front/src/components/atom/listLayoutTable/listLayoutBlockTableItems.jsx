@@ -31,6 +31,17 @@ export default {
     dataSource() {
       return this.layoutManager.data_getItems();
     },
+    expandedRowKeys() {
+      const treeviewData = this.layout.treeviewData;
+      if (!treeviewData) return [];
+      const rowKeys = [];
+      treeviewData.treeDown(null, node => {
+        if (node.attrs.opened) {
+          rowKeys.push(node.data.atomId);
+        }
+      });
+      return rowKeys;
+    },
     columns() {
       const columns = this.blockConfig.columns;
       const _columns = [];
@@ -262,10 +273,10 @@ export default {
         domToggle = (
           <div
             class={loading ? 'treeview-toggle treeview-toggle-hidden' : 'treeview-toggle'}
-            onClick={event => {
+            onClick={() => {
               const treeviewData = this.layout.treeviewData;
               treeviewData.switchNode(node.id);
-              onExpand(record, event);
+              // onExpand(record, event);
             }}
           ></div>
         );
@@ -306,6 +317,7 @@ export default {
           rowSelection={this.rowSelection}
           columns={this.columns}
           rowKey={item => item.atomId}
+          expandedRowKeys={this.expandedRowKeys}
           dataSource={this.dataSource}
           pagination={false}
           scroll={{ y: this.tableHeight }}
