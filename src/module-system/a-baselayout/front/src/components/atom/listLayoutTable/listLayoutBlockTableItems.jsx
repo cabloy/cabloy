@@ -165,8 +165,13 @@ export default {
     },
     _customCell(record, index, column, { expandIcon }) {
       if (!record._treeviewNode || !expandIcon) return {};
+      const node = record._treeviewNode;
       return {
-        class: 'treeview-item-root-wrapper',
+        class: {
+          'treeview-item-root-wrapper': true,
+          'treeview-item-opened': node.attrs.opened,
+          'treeview-load-children': node.attrs.loadChildren,
+        },
       };
     },
     _customRow(record) {
