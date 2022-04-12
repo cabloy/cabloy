@@ -46,6 +46,7 @@ export default {
         _column.ellipsis = true;
         // customRender
         _column.customRender = this._customRender;
+        _column.customCell = this._customCell;
         // sorter
         _column.sorter = !!this._columnSorterFind(_column.dataIndex);
         _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
@@ -161,6 +162,12 @@ export default {
       return (
         <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
       );
+    },
+    _customCell(record) {
+      if (!record._treeviewNode) return null;
+      return {
+        class: 'treeview-item-root-wrapper',
+      };
     },
     _customRow(record) {
       return {
