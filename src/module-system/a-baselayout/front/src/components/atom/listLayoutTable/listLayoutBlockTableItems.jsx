@@ -220,6 +220,7 @@ export default {
       const {
         id,
         toggle,
+        loadChildren,
         icon,
         iconMaterial,
         iconF7,
@@ -228,12 +229,11 @@ export default {
         iconAurora,
         iconSize,
         iconColor,
-        link,
         loading,
       } = node.attrs;
       // loading
       let domLoading;
-      if (!loading) {
+      if (loading) {
         domLoading = (
           <div
             class="preloader treeview-preloader"
@@ -242,6 +242,12 @@ export default {
             }}
           ></div>
         );
+      }
+      // toggle
+      let domToggle;
+      const needToggle = toggle || loadChildren;
+      if (needToggle) {
+        domToggle = <div class={loading ? 'treeview-toggle treeview-toggle-hidden' : 'treeview-toggle'}></div>;
       }
       // icon
       let domIcon;
@@ -261,8 +267,9 @@ export default {
       }
       // render
       return (
-        <div>
+        <div class="treeview-item-root">
           {domLoading}
+          {domToggle}
           {domIcon}
         </div>
       );
