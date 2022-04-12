@@ -245,6 +245,7 @@ const list = {
             module: 'a-baselayout',
             name: 'listLayoutBlockTableItems',
           },
+          sorter: false,
           columns: [
             {
               dataIndex: 'atomName',

@@ -59,8 +59,10 @@ export default {
         _column.customRender = this._customRender;
         _column.customCell = this._customCell;
         // sorter
-        _column.sorter = !!this._columnSorterFind(_column.dataIndex);
-        _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
+        if (this.blockConfig.sorter !== false) {
+          _column.sorter = !!this._columnSorterFind(_column.dataIndex);
+          _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
+        }
         // push
         _columns.push(_column);
       }
