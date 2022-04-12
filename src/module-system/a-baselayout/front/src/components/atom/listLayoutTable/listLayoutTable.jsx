@@ -27,7 +27,7 @@ export default {
       // subnavbar
       this.layoutManager.subnavbar_policyDefault();
       // eslint-disable-next-line
-      this.layoutManager.bottombar.enable = true;
+      this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
       // provider switch
       await this.layoutManager.data_providerSwitch({
         providerName: 'paged',

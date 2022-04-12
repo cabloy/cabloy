@@ -24,10 +24,13 @@ export default {
       contextmenuRecord: null,
       // viewSize
       header: true,
-      toolbar: true,
+      // toolbar: true,
     };
   },
   computed: {
+    toolbar() {
+      return this.layoutManager.bottombar.enable;
+    },
     dataSource() {
       return this.layoutManager.data_getItems();
     },

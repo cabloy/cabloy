@@ -287,6 +287,7 @@ const list = {
             },
           ],
         },
+        bottombar: false,
       },
     },
     select: {

@@ -32,6 +32,8 @@ export default {
       this.layoutManager.subnavbar.enable = false;
       // eslint-disable-next-line
       this.layoutManager.subnavbar.render = false;
+      // eslint-disable-next-line
+      this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
       // treeviewAdapter
       const treeviewAdapter = await this._createTreeviewAdapter();
       // provider switch
