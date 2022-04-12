@@ -1,10 +1,10 @@
 let Vue;
 
-// import Antdv from 'ant-design-vue';
-// import 'ant-design-vue/dist/antd.css';
-import ConfigProvider from 'ant-design-vue/lib/config-provider';
-import Table from 'ant-design-vue/lib/table';
-import Pagination from 'ant-design-vue/lib/pagination';
+// import Antdv from '@zhennann/ant-design-vue';
+// import '@zhennann/ant-design-vue/dist/antd.css';
+import ConfigProvider from '@zhennann/ant-design-vue/lib/config-provider';
+import Table from '@zhennann/ant-design-vue/lib/table';
+import Pagination from '@zhennann/ant-design-vue/lib/pagination';
 
 import './assets/css/module.less';
 

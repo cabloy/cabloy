@@ -1,4 +1,4 @@
-import zhCN from 'ant-design-vue/es/locale-provider/zh_CN';
+import zhCN from '@zhennann/ant-design-vue/es/locale-provider/zh_CN';
 
 export default {
   meta: {
