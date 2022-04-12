@@ -191,13 +191,14 @@ export default {
       const _node = { ...node };
       _node.attrs = this.$utils.extend({}, node.attrs);
       // attrs
-      const treeviewRoot = this.layout.treeviewData.treeviewRoot;
+      const treeviewData = this.layout.treeviewData;
+      const treeviewRoot = treeviewData.treeviewRoot;
       if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = treeviewRoot.attrs.itemToggle;
       if (_node.attrs.opened === undefined) _node.attrs.opened = false;
       if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = treeviewRoot.attrs.checkbox;
       if (_node.attrs.selectable === undefined) _node.attrs.selectable = treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) {
-        _node.attrs.selected = this.treeviewData.selectedItem && this.treeviewData.selectedItem.id === node.id;
+        _node.attrs.selected = treeviewData.selectedItem && treeviewData.selectedItem.id === node.id;
       }
       if (_node.attrs.disabled === undefined) _node.attrs.disabled = treeviewRoot.attrs.disabled;
       // attrs folder
@@ -215,8 +216,39 @@ export default {
       if (!record._treeviewNode) return null;
       // node
       const node = this._prepareNodeAttrs(record._treeviewNode);
-      //
-      return <div>icon</div>;
+      // attrs
+      const {
+        id,
+        toggle,
+        icon,
+        iconMaterial,
+        iconF7,
+        iconMd,
+        iconIos,
+        iconAurora,
+        iconSize,
+        iconColor,
+        link,
+        loading,
+      } = node.attrs;
+      // icon
+      let domIcon;
+      if (icon || iconMaterial || iconF7 || iconMd || iconIos || iconAurora) {
+        domIcon = (
+          <f7-icon
+            material={iconMaterial}
+            f7={iconF7}
+            icon={icon}
+            md={iconMd}
+            ios={iconIos}
+            aurora={iconAurora}
+            color={iconColor}
+            size={iconSize}
+          ></f7-icon>
+        );
+      }
+
+      return <div>{domIcon}</div>;
     },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
