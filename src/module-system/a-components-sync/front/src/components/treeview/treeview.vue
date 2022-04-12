@@ -151,7 +151,7 @@ export default {
       const elementId = node.attrs.id;
       return this.$$(`#${elementId}`);
     },
-    _renderNode(_h, node) {
+    _prepareNodeAttrs(node) {
       // node
       const _node = { ...node };
       _node.attrs = this.$utils.extend({}, node.attrs);
@@ -179,6 +179,10 @@ export default {
           return this.onNodePerform(e, context, node);
         };
       }
+    },
+    _renderNode(_h, node) {
+      // node
+      const _node = this._prepareNodeAttrs(node);
       // children
       let children = [];
       // checkbox

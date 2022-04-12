@@ -186,6 +186,9 @@ export default {
         },
       };
     },
+    _expandIcon({ prefixCls, expanded, record, needIndentSpaced, expandable, onExpand }) {
+      return <div>icon</div>;
+    },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
       return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
@@ -202,6 +205,7 @@ export default {
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
           customRow={this._customRow}
+          expandIcon={this._expandIcon}
         ></a-table>
       );
     },
