@@ -14,10 +14,10 @@ const list = {
             fields: {
               sorting: 'sorting',
             },
-            treeviewAdapter: {
+            dataSourceAdapter: {
               component: {
                 module: 'a-baseadmin',
-                name: 'roleListLayoutTreeviewAdapter',
+                name: 'roleListLayoutTreeDataSourceAdapter',
               },
             },
           },

@@ -1,5 +1,5 @@
 // role: listLayoutTree
-import roleListLayoutTreeviewAdapter from './components/role/listLayoutTree/listLayoutTreeviewAdapter.js';
+import roleListLayoutTreeDataSourceAdapter from './components/role/listLayoutTree/listLayoutTreeDataSourceAdapter.js';
 // role: itemLayoutDefault
 import roleItemLayoutBlockDefaultTitle from './components/role/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
@@ -23,7 +23,7 @@ import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
 export default {
   // role: roleListLayoutTree
-  roleListLayoutTreeviewAdapter,
+  roleListLayoutTreeDataSourceAdapter,
   // role: itemLayoutDefault
   roleItemLayoutBlockDefaultTitle,
   roleItemLayoutBlockDefaultSubnavbar,

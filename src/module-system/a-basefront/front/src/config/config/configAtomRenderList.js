@@ -34,7 +34,7 @@ const list = {
             fields: {
               sorting: null,
             },
-            treeviewAdapter: {
+            dataSourceAdapter: {
               component: null,
             },
             treeviewRoot: {

@@ -54,18 +54,18 @@ export default {
     },
     async _createTreeviewAdapter() {
       // config component
-      const treeviewAdapterConfig = this.providerConfig.treeviewAdapter;
-      if (!treeviewAdapterConfig) throw new Error('treeview adapter not found');
+      const dataSourceAdapterConfig = this.providerConfig.dataSourceAdapter;
+      if (!dataSourceAdapterConfig) throw new Error('treeview adapter not found');
       // performAction
       const action = {
-        actionModule: treeviewAdapterConfig.component.module,
-        actionComponent: treeviewAdapterConfig.component.name,
+        actionModule: dataSourceAdapterConfig.component.module,
+        actionComponent: dataSourceAdapterConfig.component.name,
         name: 'createTreeviewAdapter',
       };
       const item = {
         layoutManager: this.layoutManager,
         providerConfig: this.providerConfig,
-        treeviewAdapterConfig,
+        dataSourceAdapterConfig,
       };
       return await this.$meta.util.performAction({ ctx: this, action, item });
     },
