@@ -45,10 +45,15 @@ const list = {
               title: 'Role Type',
               align: 'left',
               params: {
-                computed: {
-                  expression: 'record._roleTypeCodeTitleLocale',
-                },
+                // computed: {
+                //   expression: 'record._roleTypeCodeTitleLocale',
+                // },
               },
+            },
+            {
+              dataIndex: 'sorting',
+              title: 'Sorting',
+              align: 'left',
             },
             {
               dataIndex: 'createdAt',
