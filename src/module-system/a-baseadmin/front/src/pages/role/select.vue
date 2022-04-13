@@ -146,6 +146,16 @@ export default {
       }
     },
     onPerformClearRole(event) {
+      // uncheck
+      if (this.immediate) {
+        let checked = this.$refs.tree.checked();
+        if (checked) {
+          if (!Array.isArray(checked)) checked = [checked];
+          const nodeIds = checked.map(item => item.id);
+          this.$refs.tree.uncheckNodes(nodeIds, false);
+        }
+      }
+      // select 0
       const role = {
         id: 0,
         atomId: 0,
