@@ -90,7 +90,7 @@ export default {
       // children
       for (const node of nodeParent.children) {
         // current first
-        const _treeviewNode = Object.assign({}, node, { data: null });
+        const _treeviewNode = Object.assign({}, node, { parent: undefined, children: undefined, data: undefined });
         const item = {
           ...node.data,
           _treeviewNode,

@@ -50,7 +50,11 @@ export default {
   methods: {
     evaluate() {
       // evaluate
-      const { text, record, index, column } = this.info;
+      let { text, record, index, column } = this.info;
+      // for tree table
+      if (record.children) {
+        record = Object.assign({}, record, { children: undefined });
+      }
       const scope = {
         text,
         record,
