@@ -1,4 +1,8 @@
+// const demo = require('./controller/demo.js');
+
 module.exports = app => {
-  const controllers = {};
+  const controllers = {
+    // demo,
+  };
   return controllers;
 };

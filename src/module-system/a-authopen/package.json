@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "title": "Open Auth",
   "eggBornModule": {
-    "fileVersion": 0,
+    "fileVersion": 1,
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0",
