@@ -1,3 +1,4 @@
+const authFn = require('./config/passport/auth.js');
 module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
@@ -5,6 +6,7 @@ module.exports = app => {
   const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
+    auth: authFn,
     base: {
       atoms: {
         authOpen: {
