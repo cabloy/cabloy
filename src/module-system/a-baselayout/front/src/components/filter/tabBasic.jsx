@@ -20,12 +20,7 @@ export default {
     },
     _renderFormBasic() {
       // host
-      const host = {
-        hint: false,
-        container: this.layoutManager.container,
-        stages: this.filterContainer.stages,
-        stage: this.filterContainer.stage,
-      };
+      const host = this.filterContainer._getFormHost();
       // meta
       const meta = {
         schema: this.layoutManager.layout_extend_onFilterSchema({
@@ -58,11 +53,7 @@ export default {
     _renderFormAtomClass() {
       if (!this.filterContainer.schemaSearch) return null;
       // host
-      const host = {
-        hint: false,
-        container: this.layoutManager.container,
-        stage: this.filterContainer.stage,
-      };
+      const host = this.filterContainer._getFormHost();
       // meta
       const meta = {
         schema: this.layoutManager.layout_extend_onFilterSchema({

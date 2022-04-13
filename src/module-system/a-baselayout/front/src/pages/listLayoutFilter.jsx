@@ -225,6 +225,17 @@ export default {
         };
       }
     },
+    _getFormHost() {
+      const host = {
+        hint: false,
+        container: this.layoutManager.container,
+        atomClassBase: this.atomClassBase,
+        stages: this.stages,
+        stage: this.stage,
+        immediate: this.immediate,
+      };
+      return host;
+    },
     _renderNavbar() {
       const domNavbarRight = this._renderNavbarRight();
       const domNavbarSub = this._renderNavbarSub();

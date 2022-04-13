@@ -20,12 +20,7 @@ export default {
     },
     _renderFormGeneral() {
       // host
-      const host = {
-        hint: false,
-        container: this.layoutManager.container,
-        atomClassBase: this.filterContainer.atomClassBase,
-        stage: this.filterContainer.stage,
-      };
+      const host = this.filterContainer._getFormHost();
       // meta
       const meta = {
         schema: this.layoutManager.layout_extend_onFilterSchema({
