@@ -10,10 +10,10 @@ module.exports = function (ctx) {
   };
   class VersionUpdate14 {
     get modelRole() {
-      return ctx.model.role;
+      return ctx.model.module(moduleInfo.relativeName).role;
     }
     get modelUser() {
-      return ctx.model.user;
+      return ctx.model.module(moduleInfo.relativeName).user;
     }
 
     async run(options) {
@@ -87,10 +87,13 @@ module.exports = function (ctx) {
 
     async _adjustUsersInstance() {
       // select all roles where atomId=0
-      const items = await this.modelUserRole.select({ where: { atomId: 0 } });
+      const items = await this.modelUser.select({ where: { atomId: 0 } });
       for (const item of items) {
         const userId = item.id;
-        const userName = item.userName;
+        let userName = item.userName;
+        if (!userName && item.anonymous) {
+          userName = 'anonymous';
+        }
         // add atom
         const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassUser,
