@@ -10,7 +10,7 @@ export default {
   created() {},
   methods: {
     async onChooseRole() {
-      const { key, property } = this.context;
+      const { key, property, validate } = this.context;
       // target
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
@@ -21,6 +21,8 @@ export default {
       const multiple = property.ebParams.multiple;
       const catalogOnly = property.ebParams.catalogOnly;
       const leafOnly = property.ebParams.leafOnly;
+      // immediate
+      const immediate = validate.host && validate.host.immediate;
       // select
       return new Promise(resolve => {
         const url = '/a/baseadmin/role/select';
@@ -33,6 +35,7 @@ export default {
               catalogOnly,
               leafOnly,
               buttonClearRole: true,
+              immediate,
             },
             callback: (code, selectedRole) => {
               if (code === 200) {
