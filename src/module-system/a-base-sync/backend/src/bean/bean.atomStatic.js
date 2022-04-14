@@ -16,16 +16,23 @@ module.exports = ctx => {
           const atomClass = { module: atomClassModule, atomClassName };
           const items = statics[atomClassKey].items;
           if (!items) continue;
-          for (const item of items) {
-            await this._loadAtomStatic({ moduleName, atomClass, item });
-          }
+          await this.loadAtomStatics({ moduleName, atomClass, items });
         }
       }
     }
 
-    async _loadAtomStatic({ moduleName, atomClass, item }) {
+    async loadAtomStatics({ moduleName, atomClass, items }) {
+      for (const item of items) {
+        await this.loadAtomStatic({ moduleName, atomClass, item });
+      }
+    }
+
+    async loadAtomStatic({ moduleName, atomClass, item }) {
+      moduleName = moduleName || this.moduleName;
       // key not empty
-      if (!item.atomStaticKey) throw new Error('atomStaticKey cannot be empty');
+      if (!item.atomStaticKey) {
+        throw new Error(`atomStaticKey cannot be empty for atom: ${moduleName}:${item.atomName}`);
+      }
       const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
       const atomRevision = item.atomRevision || 0;
       // atomClassBase
