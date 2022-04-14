@@ -4,7 +4,7 @@ const VersionInit1Fn = require('./version/init1.js');
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
-      if (options.version === 14) {
+      if (options.version === 1) {
         const versionUpdate1 = new (VersionUpdate1Fn(this.ctx))();
         await versionUpdate1.run();
       }
