@@ -5,7 +5,7 @@ module.exports = app => {
       meta: {
         title: 'Open Auth',
         mode: 'direct',
-        scene: true,
+        scene: false,
         bean: 'open',
         render: null,
         validator: null,
