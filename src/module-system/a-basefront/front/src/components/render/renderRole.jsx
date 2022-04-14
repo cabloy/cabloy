@@ -21,6 +21,7 @@ export default {
       const multiple = property.ebParams.multiple;
       const catalogOnly = property.ebParams.catalogOnly;
       const leafOnly = property.ebParams.leafOnly;
+      const roleTypes = property.ebParams.roleTypes;
       // immediate
       const immediate = validate.host && validate.host.immediate;
       // select
@@ -36,6 +37,7 @@ export default {
               leafOnly,
               buttonClearRole: true,
               immediate,
+              roleTypes,
             },
             callback: (code, selectedRole) => {
               if (code === 200) {
