@@ -43,37 +43,42 @@ module.exports = ctx => {
         atomStaticKey,
         atomStage: 'formal',
       });
+      // exists
       if (atom) {
         if (atomRevision === -1) {
           // delete
           await ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
-        } else {
-          // check revision: not use !==
-          const changed = this._ifChanged({
+          return null;
+        }
+        // check revision: not use !==
+        const changed = this._ifChanged({
+          atomClassBase,
+          atomRevisionWill: atomRevision,
+          atomRevisionCurrent: atom.atomRevision,
+        });
+        if (changed) {
+          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
+          await this._updateRevision({
             atomClassBase,
-            atomRevisionWill: atomRevision,
-            atomRevisionCurrent: atom.atomRevision,
+            atomClass,
+            atomIdFormal: atom.atomId,
+            atomIdDraft: atom.atomIdDraft,
+            item,
           });
-          if (changed) {
-            item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-            await this._updateRevision({
-              atomClassBase,
-              atomClass,
-              atomIdFormal: atom.atomId,
-              atomIdDraft: atom.atomIdDraft,
-              item,
-            });
-            await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
-          }
+          await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
         }
-      } else {
-        if (atomRevision !== -1) {
-          // register
-          item = await this._adjustItem({ moduleName, atomClass, item, register: true });
-          const atomId = await this._register({ atomClass, item });
-          await this._addResourceRoles({ atomId, roles: item.resourceRoles });
-        }
+        return { atomId: atom.atomId, itemId: atom.itemId };
       }
+      // not exists
+      if (atomRevision === -1) {
+        // do nothing
+        return null;
+      }
+      // register
+      item = await this._adjustItem({ moduleName, atomClass, item, register: true });
+      const atomKey = await this._register({ atomClass, item });
+      await this._addResourceRoles({ atomId: atomKey.atomId, roles: item.resourceRoles });
+      return atomKey;
     }
 
     _ifChanged({ atomClassBase, atomRevisionWill, atomRevisionCurrent }) {
@@ -244,7 +249,9 @@ module.exports = ctx => {
         atomStaticKey: item.atomStaticKey,
         atomStage: 'formal',
       });
-      if (atom) return atom.atomId;
+      if (atom) {
+        return { atomId: atom.atomId, itemId: atom.itemId };
+      }
       // add atom
       const atomKey = await ctx.bean.atom.create({
         atomClass,
@@ -264,7 +271,7 @@ module.exports = ctx => {
         options: { ignoreFlow: true },
         user: { id: 0 },
       });
-      return res.formal.key.atomId;
+      return res.formal.key;
     }
   }
 
