@@ -197,11 +197,10 @@ module.exports = ctx => {
       let roleIds = await this._childrenTop_byAuth({ atomClass, user });
       if (roleIds.length === 0) return [];
       // filter
-      roleIds = await this._childrenTop_filter({ roleIds, atomClass });
+      roleIds = await this._childrenTop_filter({ roleIds });
       if (roleIds.length === 0) return [];
       // select
       const list = await this._childrenTop_select({ roleIds, atomClass, page, user });
-      console.log(list.map(item => item.atomName));
       return list;
     }
 
@@ -223,7 +222,26 @@ module.exports = ctx => {
       return roleIds;
     }
 
-    async _childrenTop_filter({ roleIds, atomClass }) {}
+    async _childrenTop_filter({ roleIds }) {
+      if (roleIds.length <= 1) return roleIds;
+      const items = await ctx.model.query(
+        `
+          select * from aRoleRef a 
+            where a.iid=? and a.roleId in (${roleIds.join(',')})
+        `,
+        [ctx.instance.id]
+      );
+      const res = [];
+      for (const roleId of roleIds) {
+        const exists = items.some(item => {
+          return item.roleId === roleId && item.level > 0 && roleIds.includes(item.roleIdParent);
+        });
+        if (!exists) {
+          res.push(roleId);
+        }
+      }
+      return res;
+    }
 
     async _childrenTop_select({ roleIds, atomClass, page, user }) {
       // select
