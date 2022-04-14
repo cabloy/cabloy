@@ -22,6 +22,7 @@ const beanAtomBase = require('./bean/bean.atomBase.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
+const beanAtomStatic = require('./bean/bean.atomStatic.js');
 const beanAuth = require('./bean/bean.auth.js');
 const beanBase = require('./bean/bean.base.js');
 const beanResource = require('./bean/bean.resource.js');
@@ -144,6 +145,11 @@ module.exports = app => {
     atomClass: {
       mode: 'ctx',
       bean: beanAtomClass,
+      global: true,
+    },
+    atomStatic: {
+      mode: 'ctx',
+      bean: beanAtomStatic,
       global: true,
     },
     auth: {
