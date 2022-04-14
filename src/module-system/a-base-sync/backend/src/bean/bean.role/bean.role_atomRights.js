@@ -92,8 +92,14 @@ module.exports = ctx => {
             ? roleRight.scopeNames
             : roleRight.scopeNames.split(',');
           for (const scopeName of scopeNames) {
-            const roleScope = await this.get({ roleName: scopeName });
-            scope.push(roleScope.id);
+            let roleScopeId;
+            if (typeof scopeName === 'number') {
+              roleScopeId = scopeName;
+            } else {
+              const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
+              roleScopeId = roleScope.id;
+            }
+            scope.push(roleScopeId);
           }
         }
         // add role right

@@ -42,9 +42,9 @@ module.exports = function (ctx) {
           atomClass: __atomClassRole,
           item,
         });
-        if (atomKey) {
+        if (atomKey && roleScope._roleRights) {
           // role rights
-          const roleRights = [{ roleName: roleScope._roleRights, action: 'read', scopeNames: atomKey.itemId }];
+          const roleRights = [{ roleName: roleScope._roleRights, action: 'read', scopeNames: [atomKey.itemId] }];
           await ctx.bean.role.addRoleRightBatch({
             module: 'a-base',
             atomClassName: 'role',

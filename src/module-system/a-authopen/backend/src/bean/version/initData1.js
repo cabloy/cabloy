@@ -1,6 +1,6 @@
 // roleScopes
-const roleScopes = {
-  OpenAuthScope: {
+const roleScopes = [
+  {
     atomName: 'OpenAuthScope',
     atomStaticKey: 'roleScope_openAuthScope',
     atomRevision: 0,
@@ -10,7 +10,7 @@ const roleScopes = {
     roleTypeCode: 6,
     roleIdParent: 'authenticated',
   },
-  Full: {
+  {
     atomName: 'Full',
     atomStaticKey: 'roleScope_full',
     atomRevision: 0,
@@ -21,7 +21,7 @@ const roleScopes = {
     roleIdParent: 'OpenAuthScope',
     _roleRights: 'authenticated',
   },
-  Cli: {
+  {
     atomName: 'Cli',
     atomStaticKey: 'roleScope_cli',
     atomRevision: 0,
@@ -32,7 +32,7 @@ const roleScopes = {
     roleIdParent: 'OpenAuthScope',
     _roleRights: 'template.system',
   },
-};
+];
 
 module.exports = {
   roleScopes,
