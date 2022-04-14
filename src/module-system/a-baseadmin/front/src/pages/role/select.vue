@@ -46,6 +46,9 @@ export default {
     immediate() {
       return this.contextParams.immediate;
     },
+    roleTypes() {
+      return this.contextParams.roleTypes;
+    },
     root() {
       return {
         attrs: {
@@ -75,9 +78,16 @@ export default {
           promise = this.onFetchChildren({ roleId });
         } else {
           if (roleId === 0) {
-            promise = this.$api.post('/a/baseadmin/role/childrenTop', { page: { size: 0 } });
+            promise = this.$api.post('/a/baseadmin/role/childrenTop', {
+              roleTypes: this.roleTypes,
+              page: { size: 0 },
+            });
           } else {
-            promise = this.$api.post('/a/baseadmin/role/children', { roleId, page: { size: 0 } });
+            promise = this.$api.post('/a/baseadmin/role/children', {
+              roleTypes: this.roleTypes,
+              roleId,
+              page: { size: 0 },
+            });
           }
         }
         // then
