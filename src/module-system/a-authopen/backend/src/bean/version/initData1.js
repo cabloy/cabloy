@@ -9,6 +9,7 @@ const roleScopes = [
     sorting: 0,
     roleTypeCode: 6,
     roleIdParent: 'authenticated',
+    _roleRights: 'template.system',
   },
   {
     atomName: 'Full',
@@ -30,7 +31,6 @@ const roleScopes = [
     sorting: 1,
     roleTypeCode: 6,
     roleIdParent: 'OpenAuthScope',
-    _roleRights: 'template.system',
   },
 ];
 
