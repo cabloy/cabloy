@@ -3,6 +3,7 @@ module.exports = app => {
     async childrenTop() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.childrenTop({
+        roleTypes: this.ctx.request.body.roleTypes,
         page,
         user: this.ctx.state.user.op,
       });
@@ -12,6 +13,7 @@ module.exports = app => {
     async children() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.children({
+        roleTypes: this.ctx.request.body.roleTypes,
         roleId: this.ctx.request.body.roleId,
         page,
         user: this.ctx.state.user.op,

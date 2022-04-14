@@ -1,11 +1,11 @@
 module.exports = app => {
   class Role extends app.Service {
-    async childrenTop({ page, user }) {
-      return await this.ctx.bean.role.childrenTop({ page, user });
+    async childrenTop({ roleTypes, page, user }) {
+      return await this.ctx.bean.role.childrenTop({ roleTypes, page, user });
     }
 
-    async children({ roleId, page, user }) {
-      return await this.ctx.bean.role.children({ roleId, page, user });
+    async children({ roleTypes, roleId, page, user }) {
+      return await this.ctx.bean.role.children({ roleTypes, roleId, page, user });
     }
 
     async delete({ roleAtomId, user }) {
