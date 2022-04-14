@@ -457,7 +457,7 @@ module.exports = ctx => {
         userIdFrom,
       ]);
       // delete user
-      await this.model.delete({ id: userIdFrom });
+      await this.delete({ userId: userIdFrom });
     }
 
     async _downloadAvatar({ avatar }) {
