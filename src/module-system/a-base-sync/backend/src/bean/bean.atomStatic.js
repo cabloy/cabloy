@@ -159,7 +159,7 @@ module.exports = ctx => {
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
-            beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
+            beanFullName: 'atomStatic',
             context: { atomClassBase, atomClass, atomIdFormal, atomIdDraft, item },
             fn: '_updateRevisionLock',
           });
@@ -229,7 +229,7 @@ module.exports = ctx => {
         fn: async () => {
           return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
-            beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
+            beanFullName: 'atomStatic',
             context: { atomClass, item },
             fn: '_registerLock',
           });
