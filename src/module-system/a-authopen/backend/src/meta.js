@@ -1,4 +1,14 @@
 const authFn = require('./config/passport/auth.js');
+
+// actionPathListOpenAuthSelf
+const _options = {
+  stage: 'formal',
+  mine: 1,
+};
+const actionPathListOpenAuthSelf = `/a/basefront/atom/list?module=a-authopen&atomClassName=authOpen&options=${encodeURIComponent(
+  JSON.stringify(_options)
+)}`;
+
 module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
@@ -42,6 +52,11 @@ module.exports = app => {
       },
       keywords: {},
       schemas,
+    },
+    settings: {
+      user: {
+        actionPath: actionPathListOpenAuthSelf,
+      },
     },
     index: {
       indexes: {
