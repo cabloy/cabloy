@@ -7,7 +7,7 @@ module.exports = ctx => {
     }
 
     async loadAllAtomStatics() {
-      for (const module of this.ctx.app.meta.modulesArray) {
+      for (const module of ctx.app.meta.modulesArray) {
         const moduleName = module.info.relativeName;
         const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
         if (!statics) continue;
@@ -29,9 +29,9 @@ module.exports = ctx => {
       const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
       const atomRevision = item.atomRevision || 0;
       // atomClassBase
-      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // get by key
-      const atom = await this.ctx.bean.atom.readByStaticKey({
+      const atom = await ctx.bean.atom.readByStaticKey({
         atomClass,
         atomStaticKey,
         atomStage: 'formal',
@@ -39,7 +39,7 @@ module.exports = ctx => {
       if (atom) {
         if (atomRevision === -1) {
           // delete
-          await this.ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
+          await ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
         } else {
           // check revision: not use !==
           const changed = this._ifChanged({
@@ -83,7 +83,7 @@ module.exports = ctx => {
       if (!roles || !roles.length) return;
       for (const role of roles) {
         if (!role) continue;
-        await this.ctx.bean.resource.addResourceRole({
+        await ctx.bean.resource.addResourceRole({
           atomId,
           roleId: role.id,
         });
@@ -95,7 +95,7 @@ module.exports = ctx => {
     _getAtomFieldValueByLocale(item, field) {
       const value = item[field];
       if (value && item.atomLanguage) {
-        return this.ctx.text.locale(item.atomLanguage, value);
+        return ctx.text.locale(item.atomLanguage, value);
       }
       return value;
     }
@@ -114,7 +114,7 @@ module.exports = ctx => {
       }
       // atomLanguage,atomCategoryId,atomTags
       if (typeof item.atomCategoryId === 'string') {
-        const category = await this.ctx.bean.category.parseCategoryName({
+        const category = await ctx.bean.category.parseCategoryName({
           atomClass,
           language: item.atomLanguage,
           categoryName: item.atomCategoryId,
@@ -123,7 +123,7 @@ module.exports = ctx => {
         item.atomCategoryId = category.id;
       }
       if (typeof item.atomTags === 'string') {
-        const tagIds = await this.ctx.bean.tag.parseTags({
+        const tagIds = await ctx.bean.tag.parseTags({
           atomClass,
           language: item.atomLanguage,
           tagName: item.atomTags,
@@ -135,22 +135,22 @@ module.exports = ctx => {
       if (register) {
         // roleIdOwner
         const roleName = item.roleIdOwner || 'template.system';
-        const role = await this.ctx.bean.role.parseRoleName({ roleName });
+        const role = await ctx.bean.role.parseRoleName({ roleName });
         item.roleIdOwner = role.id;
       }
       // resourceRoles
       if (item.resourceRoles) {
-        item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles, force: true });
+        item.resourceRoles = await ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles, force: true });
       }
       // ok
       return item;
     }
 
     async _updateRevision({ atomClassBase, atomClass, atomIdFormal, atomIdDraft, item }) {
-      return await this.ctx.meta.util.lock({
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.meta.util.executeBeanIsolate({
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClassBase, atomClass, atomIdFormal, atomIdDraft, item },
@@ -165,7 +165,7 @@ module.exports = ctx => {
       const atomKey = {
         atomId: atomClassBase.simple ? atomIdFormal : atomIdDraft,
       };
-      const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
+      const atom = await ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
       atomKey.itemId = atom.itemId;
       // check changed again
       const changed = this._ifChanged({
@@ -177,38 +177,38 @@ module.exports = ctx => {
       // simple/normal
       if (atomClassBase.simple) {
         // write
-        await this.ctx.bean.atom.write({
+        await ctx.bean.atom.write({
           key: atomKey,
           item,
           user: { id: 0 },
         });
         // submit
-        await this.ctx.bean.atom.submit({
+        await ctx.bean.atom.submit({
           key: atomKey,
           options: { ignoreFlow: true },
           user: { id: 0 },
         });
         // update
-        await this.ctx.bean.atom.modelAtom.update({
+        await ctx.bean.atom.modelAtom.update({
           id: atomKey.atomId,
           atomName: item.atomName,
           atomRevision: item.atomRevision + 1,
         });
       } else {
         // update
-        await this.ctx.bean.atom.modelAtom.update({
+        await ctx.bean.atom.modelAtom.update({
           id: atomKey.atomId,
           atomName: item.atomName,
           atomRevision: item.atomRevision,
         });
         // write
-        await this.ctx.bean.atom.write({
+        await ctx.bean.atom.write({
           key: atomKey,
           item,
           user: { id: 0 },
         });
         // submit
-        await this.ctx.bean.atom.submit({
+        await ctx.bean.atom.submit({
           key: atomKey,
           options: { ignoreFlow: true },
           user: { id: 0 },
@@ -217,10 +217,10 @@ module.exports = ctx => {
     }
 
     async _register({ atomClass, item }) {
-      return await this.ctx.meta.util.lock({
+      return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
         fn: async () => {
-          return await this.ctx.meta.util.executeBeanIsolate({
+          return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
             context: { atomClass, item },
@@ -232,27 +232,27 @@ module.exports = ctx => {
 
     async _registerLock({ atomClass, item }) {
       // get again
-      const atom = await this.ctx.bean.atom.readByStaticKey({
+      const atom = await ctx.bean.atom.readByStaticKey({
         atomClass,
         atomStaticKey: item.atomStaticKey,
         atomStage: 'formal',
       });
       if (atom) return atom.atomId;
       // add atom
-      const atomKey = await this.ctx.bean.atom.create({
+      const atomKey = await ctx.bean.atom.create({
         atomClass,
         roleIdOwner: item.roleIdOwner,
         item,
         user: { id: 0 },
       });
       // write
-      await this.ctx.bean.atom.write({
+      await ctx.bean.atom.write({
         key: atomKey,
         item,
         user: { id: 0 },
       });
       // submit
-      const res = await this.ctx.bean.atom.submit({
+      const res = await ctx.bean.atom.submit({
         key: atomKey,
         options: { ignoreFlow: true },
         user: { id: 0 },
