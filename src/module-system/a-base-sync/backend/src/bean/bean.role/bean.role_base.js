@@ -187,14 +187,14 @@ module.exports = ctx => {
     }
 
     // childrenTop
-    async childrenTop({ page, user }) {
+    async childrenTop({ roleTypes, page, user }) {
       if (!user) user = { id: 0 };
       // page
       page = ctx.bean.util.page(page, false);
       // atomClass
       const atomClass = await ctx.bean.atomClass.get(__atomClassRole);
       // roles by auth
-      let roleIds = await this._childrenTop_byAuth({ atomClass, user });
+      let roleIds = await this._childrenTop_byAuth({ roleTypes, atomClass, user });
       if (roleIds.length === 0) return [];
       // filter
       roleIds = await this._childrenTop_filter({ roleIds });
@@ -204,19 +204,27 @@ module.exports = ctx => {
       return list;
     }
 
-    async _childrenTop_byAuth({ atomClass, user }) {
+    async _childrenTop_byAuth({ roleTypes, atomClass, user }) {
       let roleIds;
       if (user.id === 0) {
         const roleRoot = await this.parseRoleName({ roleName: 'root' });
         roleIds = [roleRoot.id];
       } else {
-        const roles = await ctx.model.query(
-          `
-            select * from aViewUserRightRefAtomClass a 
+        let sql;
+        if (!roleTypes || roleTypes.length === 0) {
+          sql = `
+            select * from aViewUserRightRefAtomClass a
               where a.iid=? and a.userIdWho=? and a.atomClassId=? and a.action=2
-          `,
-          [ctx.instance.id, user.id, atomClass.id]
-        );
+          `;
+        } else {
+          sql = `
+            select * from aViewUserRightRefAtomClass a
+              inner join aRole b on a.roleIdWhom=b.id
+              where a.iid=? and a.userIdWho=? and a.atomClassId=? and a.action=2
+                    and b.roleTypeCode in (${roleTypes.join(',')})
+          `;
+        }
+        const roles = await ctx.model.query(sql, [ctx.instance.id, user.id, atomClass.id]);
         roleIds = roles.map(item => item.roleIdWhom);
       }
       return roleIds;
