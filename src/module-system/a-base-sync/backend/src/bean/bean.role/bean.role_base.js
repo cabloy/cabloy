@@ -193,7 +193,19 @@ module.exports = ctx => {
       page = ctx.bean.util.page(page, false);
       // atomClass
       const atomClass = await ctx.bean.atomClass.get(__atomClassRole);
-      // roles by authed
+      // roles by auth
+      let roleIds = await this._childrenTop_byAuth({ atomClass, user });
+      if (roleIds.length === 0) return [];
+      // filter
+      roleIds = await this._childrenTop_filter({ roleIds, atomClass });
+      if (roleIds.length === 0) return [];
+      // select
+      const list = await this._childrenTop_select({ roleIds, atomClass, page, user });
+      console.log(list.map(item => item.atomName));
+      return list;
+    }
+
+    async _childrenTop_byAuth({ atomClass, user }) {
       let roleIds;
       if (user.id === 0) {
         const roleRoot = await this.parseRoleName({ roleName: 'root' });
@@ -208,9 +220,14 @@ module.exports = ctx => {
         );
         roleIds = roles.map(item => item.roleIdWhom);
       }
-      if (roleIds.length === 0) return [];
+      return roleIds;
+    }
+
+    async _childrenTop_filter({ roleIds, atomClass }) {}
+
+    async _childrenTop_select({ roleIds, atomClass, page, user }) {
       // select
-      const list = await ctx.bean.atom.select({
+      return await ctx.bean.atom.select({
         atomClass,
         options: {
           orders: [['a.id', 'asc']],
@@ -226,7 +243,6 @@ module.exports = ctx => {
         user,
         pageForce: false,
       });
-      return list;
     }
 
     // children

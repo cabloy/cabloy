@@ -12,7 +12,7 @@ const roleScopes = [
     _roleRights: 'template.system',
   },
   {
-    atomName: 'Full',
+    atomName: 'RoleScopeFull',
     atomStaticKey: 'roleScope_full',
     atomRevision: 0,
     description: '',
