@@ -37,11 +37,20 @@ module.exports = function (ctx) {
         const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
         item.roleIdParent = role.id;
         // loadAtomStatic
-        await ctx.bean.atomStatic.loadAtomStatic({
+        const atomKey = await ctx.bean.atomStatic.loadAtomStatic({
           moduleName: moduleInfo.relativeName,
           atomClass: __atomClassRole,
           item,
         });
+        if (atomKey) {
+          // role rights
+          const roleRights = [{ roleName: roleScope._roleRights, action: 'read', scopeNames: atomKey.itemId }];
+          await ctx.bean.role.addRoleRightBatch({
+            module: 'a-base',
+            atomClassName: 'role',
+            roleRights,
+          });
+        }
       }
     }
   }
