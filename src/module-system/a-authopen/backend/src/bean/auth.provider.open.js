@@ -8,13 +8,10 @@ module.exports = function (ctx) {
       return ctx.config.module(moduleInfo.relativeName);
     }
     async getConfigDefault() {
-      const configGitHub = this.configModule.account.github;
-      return {
-        scenes: configGitHub.scenes,
-      };
+      return null;
     }
-    checkConfigValid(config) {
-      return !!config.clientID && !!config.clientSecret;
+    checkConfigValid(/* config*/) {
+      return true;
     }
     getStrategy() {
       return Strategy;

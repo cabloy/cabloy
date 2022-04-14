@@ -44,7 +44,7 @@ module.exports = app => {
     },
     {
       code: 6,
-      title: 'OpenAuthScene',
+      title: 'OpenAuthScope',
       options: {
         icon: { f7: ':role:shield-key' },
       },
@@ -52,7 +52,7 @@ module.exports = app => {
   ];
   const dictLocales = {
     'en-us': {
-      OpenAuthScene: 'Open Auth Scene',
+      OpenAuthScope: 'Open Auth Scope',
     },
     'zh-cn': {
       Role: '角色',
@@ -60,14 +60,14 @@ module.exports = app => {
       Position: '岗位',
       Level: '级别',
       Relation: '关系',
-      OpenAuthScene: '开放认证场景',
+      OpenAuthScope: '开放认证范围',
       'Role Template': '角色模版',
     },
   };
   const definition = {
     atomName: 'Role Type',
     atomStaticKey: 'dictRoleType',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
