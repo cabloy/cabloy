@@ -14,7 +14,7 @@ module.exports = function (ctx) {
         PRIMARY KEY (id)
       )
     `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
     }
   }
 

@@ -1,11 +1,17 @@
+const initData = require('./initData1.js');
+
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: 'a-base',
+    atomClassName: 'role',
+  };
   class VersionInit {
     async run(options) {
       // rights
       await this._init_rights();
       // open auth scopes
-      await this._init_scopes();
+      await this._init_roleScopes();
     }
 
     async _init_rights() {
@@ -20,19 +26,23 @@ module.exports = function (ctx) {
         { roleName: 'authenticated', action: 'exportBulk' },
         { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
       ];
-      await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'authOpen', roleRights });
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'authOpen', roleRights });
     }
 
-    async _init_scopes() {
-      // const roleIds = {};
-      // roleIds.system = 0;
-      // // system roles
-      // for (const roleName of ctx.constant.systemRoles) {
-      //   const role = extend(true, { module: moduleInfo.relativeName }, initData.roles[roleName]);
-      //   role.roleIdParent = roleIds[role.roleIdParent];
-      //   roleIds[roleName] = await ctx.bean.role.add(role);
-      // }
-      // return roleIds;
+    async _init_roleScopes() {
+      for (const roleScope of initData.roleScopes) {
+        // item
+        const item = { ...roleScope };
+        // roleIdParent
+        const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
+        item.roleIdParent = role.id;
+        // loadAtomStatic
+        await ctx.bean.atomStatic.loadAtomStatic({
+          moduleName: moduleInfo.relativeName,
+          atomClass: __atomClassRole,
+          item,
+        });
+      }
     }
   }
   return VersionInit;

@@ -1,5 +1,5 @@
-// scopes
-const scopes = {
+// roleScopes
+const roleScopes = {
   OpenAuthScope: {
     atomName: 'OpenAuthScope',
     atomStaticKey: 'roleScope_openAuthScope',
@@ -35,5 +35,5 @@ const scopes = {
 };
 
 module.exports = {
-  scopes,
+  roleScopes,
 };
