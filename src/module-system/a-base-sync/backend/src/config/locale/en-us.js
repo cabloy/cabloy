@@ -18,6 +18,7 @@ module.exports = {
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
   StarsLabels: 'Stars & Labels',
+  OpenAuthScope: 'Open Auth Scope',
   'Only Valid for Formal Atom': 'Only Valid for Formal Data',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
