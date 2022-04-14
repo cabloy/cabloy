@@ -272,7 +272,7 @@ module.exports = ctx => {
     }
 
     // children
-    async children({ roleId, roleName, page, user }) {
+    async children({ roleTypes, roleId, roleName, page, user }) {
       if (!user) user = { id: 0 };
       // page
       page = ctx.bean.util.page(page, false);
@@ -284,6 +284,12 @@ module.exports = ctx => {
       const where = { 'f.roleIdParent': roleId };
       if (roleName !== undefined) {
         where['f.roleName'] = roleName;
+      }
+      if (roleTypes && roleTypes.length > 0) {
+        where['f.roleTypeCode'] = {
+          op: 'in',
+          val: roleTypes,
+        };
       }
       // select
       const list = await ctx.bean.atom.select({
