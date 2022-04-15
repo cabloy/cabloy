@@ -52,6 +52,7 @@ module.exports = function (ctx) {
           });
         }
       }
+      await ctx.bean.role.setDirty(true);
     }
   }
   return VersionInit;

@@ -91,6 +91,7 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:add-circle-outline' },
+              enableOnStatic: true,
             },
             roleUsers: {
               code: 103,
@@ -98,6 +99,7 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:group-outline' },
+              enableOnStatic: true,
             },
             includes: {
               code: 104,
@@ -105,6 +107,7 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':role:role' },
+              enableOnStatic: true,
             },
             resourceAuthorizations: {
               code: 105,
@@ -112,6 +115,7 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:archive-lock-outline' },
+              enableOnStatic: true,
             },
             atomAuthorizations: {
               code: 106,
@@ -119,6 +123,7 @@ module.exports = app => {
               actionModule: 'a-baseadmin',
               actionComponent: 'actionRole',
               icon: { f7: ':outline:database-lock-outline' },
+              enableOnStatic: true,
             },
             // buildBulk: {
             //   code: 201,
