@@ -15,12 +15,17 @@ export default {
       tabName: 'rights',
     };
   },
+  computed: {
+    tabSingle() {
+      return this.role && this.role.roleTypeCode === 6;
+    },
+  },
   methods: {
     onPerformRightsAdd() {
       return this.$refs.rights.onPerformAdd();
     },
     _renderSubnavbar() {
-      if (!this.role) return null;
+      if (!this.role || this.tabSingle) return null;
       return (
         <f7-subnavbar>
           <f7-toolbar top tabbar>
@@ -33,7 +38,7 @@ export default {
       );
     },
     _renderTabs() {
-      if (!this.role) return;
+      if (!this.role || this.tabSingle) return null;
       return (
         <f7-tabs>
           <eb-tab-page-content
@@ -57,7 +62,7 @@ export default {
       );
     },
     _renderNavRight() {
-      if (this.tabName !== 'rights') return;
+      if (!this.tabSingle && this.tabName !== 'rights') return;
       return (
         <f7-nav-right>
           <eb-link
@@ -68,15 +73,20 @@ export default {
         </f7-nav-right>
       );
     },
+    _renderSingleRights() {
+      if (!this.role || !this.tabSingle) return null;
+      return <rights ref="rights" role={this.role} autoInit={true}></rights>;
+    },
   },
   render() {
     return (
-      <eb-page page-content={false} tabs with-subnavbar>
+      <eb-page page-content={this.tabSingle} tabs={!this.tabSingle} with-subnavbar={!this.tabSingle}>
         <eb-navbar title={this.getPageTitle('Resource Authorizations')} eb-back-link="Back">
           {this._renderNavRight()}
           {this._renderSubnavbar()}
         </eb-navbar>
         {this._renderTabs()}
+        {this._renderSingleRights()}
       </eb-page>
     );
   },
