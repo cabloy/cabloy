@@ -60,7 +60,7 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aAuthOpen: 'createdAt,updatedAt,atomId',
+        aAuthOpen: 'createdAt,updatedAt,atomId,userId,scopeRoleId',
       },
     },
   };
