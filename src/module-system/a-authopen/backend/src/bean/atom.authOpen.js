@@ -1,14 +1,25 @@
+const require3 = require('require3');
+const randomize = require3('randomatic');
+
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
       // super
       const key = await super.create({ atomClass, item, options, user });
+      const atomId = key.atomId;
+      // clientID clientSecret
+      const clientID = randomize('0a', 20);
+      const clientSecret = randomize('0a', 40);
       // add authOpen
       const res = await this.ctx.model.authOpen.insert({
-        atomId: key.atomId,
+        atomId,
+        userId: user.id,
+        clientID,
+        clientSecret,
       });
+      const itemId = res.insertId;
       // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      return { atomId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
