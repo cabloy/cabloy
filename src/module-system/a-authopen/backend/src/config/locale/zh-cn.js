@@ -3,6 +3,7 @@ module.exports = {
   'Create AuthOpen': '新建AuthOpen',
   'AuthOpen List': 'AuthOpen列表',
   'Not Specified': '未指定',
+  'Hide Client Secret': '隐藏Client Secret',
   RoleScopeFull: '全部',
   RoleScopeCliDevelopment: '开发Cli',
 };
