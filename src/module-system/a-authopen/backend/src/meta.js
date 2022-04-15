@@ -24,6 +24,9 @@ module.exports = app => {
             bean: 'authOpen',
             title: 'Open Auth',
             tableName: 'aAuthOpen',
+            tableNameModes: {
+              default: 'aAuthOpenView',
+            },
             simple: true,
             history: false,
             inner: true,

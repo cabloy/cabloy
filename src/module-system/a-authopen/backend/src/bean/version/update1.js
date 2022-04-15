@@ -2,7 +2,7 @@ module.exports = function (ctx) {
   class VersionUpdate {
     async run() {
       // create table: aAuthOpen
-      const sql = `
+      let sql = `
       CREATE TABLE aAuthOpen (
         id int(11) NOT NULL AUTO_INCREMENT,
         createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -21,6 +21,13 @@ module.exports = function (ctx) {
         PRIMARY KEY (id)
       )
     `;
+      await ctx.model.query(sql);
+      // view: aAuthOpenView
+      sql = `
+          CREATE VIEW aAuthOpenView as
+            select a.*,b.roleName as scopeRoleName from aAuthOpen a
+              left join aRole b on a.scopeRoleId=b.id
+        `;
       await ctx.model.query(sql);
     }
   }

@@ -60,15 +60,22 @@ module.exports = app => {
     }
 
     _getMeta(item) {
-      // clientSecretHidden
-      if (item.clientSecretHidden) {
-        item.clientSecret = '******';
-      }
       // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary
       meta.summary = item.description;
+      // clientSecretHidden
+      if (item.clientSecretHidden) {
+        item.clientSecret = '******';
+      }
+      // scopeRoleName
+      if (!item.scopeRoleId) {
+        item.scopeRoleName = 'Not Specified';
+      }
+      if (item.scopeRoleName) {
+        item.scopeRoleNameLocale = this.ctx.text(item.scopeRoleName);
+      }
     }
   }
 
