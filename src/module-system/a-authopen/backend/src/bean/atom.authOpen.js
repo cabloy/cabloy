@@ -49,6 +49,11 @@ module.exports = app => {
     }
 
     _getMeta(item) {
+      // clientSecretHidden
+      if (item.clientSecretHidden) {
+        item.clientSecret = '******';
+      }
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary

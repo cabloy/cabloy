@@ -27,6 +27,9 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            fields: {
+              custom: ['clientSecretHidden'],
+            },
           },
           actions: {},
           validator: 'authOpen',

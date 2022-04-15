@@ -15,6 +15,7 @@ module.exports = function (ctx) {
         scopeRoleId int(11) DEFAULT '0',
         clientID varchar(50) DEFAULT NULL,
         clientSecret varchar(255) DEFAULT NULL,
+        clientSecretHidden int(11) DEFAULT '0',
         neverExpire int(11) DEFAULT '1',
         expired timestamp DEFAULT NULL,
         PRIMARY KEY (id)
