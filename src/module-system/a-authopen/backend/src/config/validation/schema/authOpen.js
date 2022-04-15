@@ -42,6 +42,7 @@ module.exports = app => {
             scopeRoleNameLocale: 'atomNameLocale',
           },
         },
+        notEmpty: true,
       },
       neverExpire: {
         type: 'number',
