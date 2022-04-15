@@ -34,7 +34,15 @@ module.exports = app => {
               custom: ['clientID,clientSecret,clientSecretHidden'],
             },
           },
-          actions: {},
+          actions: {
+            hideClientSecret: {
+              code: 101,
+              title: 'Hide Client Secret',
+              actionModule: 'a-authopen',
+              actionComponent: 'action',
+              icon: { f7: ':outline:visibility-outline-off' },
+            },
+          },
           validator: 'authOpen',
           search: {
             validator: 'authOpenSearch',
