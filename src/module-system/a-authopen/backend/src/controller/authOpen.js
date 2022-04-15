@@ -7,6 +7,14 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async resetClientSecret() {
+      const res = await this.ctx.service.authOpen.resetClientSecret({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
 
   return AuthOpenController;
