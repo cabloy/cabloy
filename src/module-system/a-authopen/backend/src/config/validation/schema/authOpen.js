@@ -48,7 +48,7 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'NeverExpire',
       },
-      expiredTime: {
+      expireTime: {
         type: ['object', 'null'],
         ebType: 'datePicker',
         ebTitle: 'Expiration Time',
@@ -70,6 +70,18 @@ module.exports = app => {
       __groupAuthInfo: {
         ebType: 'group-flatten',
         ebTitle: 'Auth Info',
+      },
+      clientID: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Client ID',
+        ebReadOnly: true,
+      },
+      clientSecret: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Client Secret',
+        ebReadOnly: true,
       },
     },
   };

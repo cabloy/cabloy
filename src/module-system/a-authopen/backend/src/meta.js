@@ -28,7 +28,7 @@ module.exports = app => {
             history: false,
             inner: true,
             fields: {
-              custom: ['clientSecretHidden'],
+              custom: ['clientID,clientSecret,clientSecretHidden'],
             },
           },
           actions: {},

@@ -13,11 +13,11 @@ module.exports = function (ctx) {
         description varchar(255) DEFAULT NULL,
         userId int(11) DEFAULT '0',
         scopeRoleId int(11) DEFAULT '0',
+        neverExpire int(11) DEFAULT '1',
+        expireTime timestamp DEFAULT NULL,
         clientID varchar(50) DEFAULT NULL,
         clientSecret varchar(255) DEFAULT NULL,
         clientSecretHidden int(11) DEFAULT '0',
-        neverExpire int(11) DEFAULT '1',
-        expiredTime timestamp DEFAULT NULL,
         PRIMARY KEY (id)
       )
     `;
