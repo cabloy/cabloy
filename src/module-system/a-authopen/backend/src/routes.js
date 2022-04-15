@@ -1,6 +1,12 @@
 module.exports = app => {
   const routes = [
-    // { method: 'post', path: 'demo/action', controller: 'demo' },
+    // authOpen
+    {
+      method: 'post',
+      path: 'authOpen/hideClientSecret',
+      controller: 'authOpen',
+      meta: { right: { type: 'atom', atomClass: 'a-authopen:authOpen', action: 'hideClientSecret' } },
+    },
   ];
   return routes;
 };

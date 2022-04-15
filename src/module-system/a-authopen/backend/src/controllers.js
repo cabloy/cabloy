@@ -1,8 +1,8 @@
-// const demo = require('./controller/demo.js');
+const authOpen = require('./controller/authOpen.js');
 
 module.exports = app => {
   const controllers = {
-    // demo,
+    authOpen,
   };
   return controllers;
 };

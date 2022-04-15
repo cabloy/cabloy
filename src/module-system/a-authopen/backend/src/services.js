@@ -1,8 +1,8 @@
-// const demo = require('./service/demo.js');
+const authOpen = require('./service/authOpen.js');
 
 module.exports = app => {
   const services = {
-    // demo,
+    authOpen,
   };
   return services;
 };
