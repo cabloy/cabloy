@@ -22,6 +22,7 @@ export default {
       const catalogOnly = property.ebParams.catalogOnly;
       const leafOnly = property.ebParams.leafOnly;
       const roleTypes = property.ebParams.roleTypes;
+      const titleAlias = property.ebParams.titleAlias;
       // immediate
       const immediate = validate.host && validate.host.immediate;
       // select
@@ -31,6 +32,7 @@ export default {
           target,
           context: {
             params: {
+              titleAlias,
               roleIdStart,
               multiple,
               catalogOnly,

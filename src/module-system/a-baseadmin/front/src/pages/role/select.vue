@@ -1,11 +1,11 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Select Roles')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!immediate" iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-button v-if="buttonClearRole" :onPerform="onPerformClearRole">{{ this.$text('Clear Role') }}</eb-button>
+    <eb-button v-if="buttonClearRole" :onPerform="onPerformClearRole">{{ clearRoleTitle }}</eb-button>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @nodeChange="onNodeChange">
       <template slot="label-start" slot-scope="{ node }">
         {{ node.data.atomNameLocale || node.data.roleName }}
@@ -22,6 +22,9 @@ export default {
     return {};
   },
   computed: {
+    titleAlias() {
+      return this.contextParams.titleAlias || 'Roles';
+    },
     roleIdStart() {
       return this.contextParams.roleIdStart || 0;
     },
@@ -62,6 +65,16 @@ export default {
     },
     maxLevelAutoOpened() {
       return this.$meta.config.modules['a-baseadmin'].role.select.maxLevelAutoOpened;
+    },
+    pageTitle() {
+      const op = this.$text('Select');
+      const title = this.$text(this.titleAlias);
+      return `${op} ${title}`;
+    },
+    clearRoleTitle() {
+      const op = this.$text('Clear');
+      const title = this.$text(this.titleAlias);
+      return `${op} ${title}`;
     },
   },
   methods: {

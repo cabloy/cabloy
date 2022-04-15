@@ -58,6 +58,7 @@ export default {
   Avatar: '头像',
   Search: '搜索',
   Link: '链接',
+  Clear: '清除',
   Select: '选择',
   Selecting: '选择中',
   Selected: '已选择',

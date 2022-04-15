@@ -30,22 +30,23 @@ module.exports = app => {
         ebType: 'role',
         ebTitle: 'Scope',
         ebParams: {
+          titleAlias: 'Scope',
           roleIdStart: null,
           multiple: false,
           catalogOnly: false,
           leafOnly: true,
           roleTypes: [6],
           mapper: {
-            role: 'itemId',
-            roleName: 'atomName',
-            roleNameLocale: 'atomNameLocale',
+            scopeRoleId: 'itemId',
+            scopeRoleName: 'atomName',
+            scopeRoleNameLocale: 'atomNameLocale',
           },
         },
       },
       // Auth Info
       __groupAuthInfo: {
         ebType: 'group-flatten',
-        ebTitle: 'Authh Info',
+        ebTitle: 'Auth Info',
       },
     },
   };
