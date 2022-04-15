@@ -5,7 +5,9 @@
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
           <div slot="after">
-            <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{ $text('Self') }}</f7-badge>
+            <f7-badge v-if="!isOpenAuthScope && item.actionBulk === 0 && item.scope === '0'">
+              {{ $text('Self') }}
+            </f7-badge>
             <template v-if="item.scopeRoles">
               <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">
                 {{ scopeRole.roleNameLocale }}
@@ -97,6 +99,9 @@ export default {
         group.items.push(item);
       }
       return groups;
+    },
+    isOpenAuthScope() {
+      return this.role && this.role.roleTypeCode === 6;
     },
   },
   mounted() {

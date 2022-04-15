@@ -5,7 +5,7 @@
         <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
+    <eb-list v-if="role" form inline-labels no-hairlines-md @submit="onFormSubmit">
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{ atomClass && atomClass.title }}</div>
       </f7-list-item>
@@ -17,11 +17,11 @@
       >
         <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
       </f7-list-item>
-      <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
+      <f7-list-item v-if="!isOpenAuthScope && scopeSelfEnable" :title="$text('Scope')">
         <span class="text-color-gray">{{ $text('Self') }}</span>
         <eb-toggle v-model="scopeSelf"></eb-toggle>
       </f7-list-item>
-      <f7-list-item v-if="scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
+      <f7-list-item v-if="!isOpenAuthScope && scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
         <div slot="after">{{ scopeTitle }}</div>
       </f7-list-item>
     </eb-list>
@@ -80,6 +80,9 @@ export default {
         atomClassName: this.atomClass.atomClassName,
         name: this.actionName,
       });
+    },
+    isOpenAuthScope() {
+      return this.role && this.role.roleTypeCode === 6;
     },
   },
   watch: {
