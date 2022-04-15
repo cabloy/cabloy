@@ -2,7 +2,7 @@
 const roleScopes = [
   {
     atomName: 'OpenAuthScope',
-    atomStaticKey: 'roleScope_openAuthScope',
+    atomStaticKey: 'roleOpenAuthScope',
     atomRevision: 0,
     description: '',
     system: 1,
@@ -13,7 +13,7 @@ const roleScopes = [
   },
   {
     atomName: 'RoleScopeFull',
-    atomStaticKey: 'roleScope_full',
+    atomStaticKey: 'roleScopeFull',
     atomRevision: 0,
     description: '',
     system: 1,
@@ -24,7 +24,7 @@ const roleScopes = [
   },
   {
     atomName: 'RoleScopeCliDevelopment',
-    atomStaticKey: 'roleScope_cli',
+    atomStaticKey: 'roleScopeCliDevelopment',
     atomRevision: 0,
     description: '',
     system: 1,
