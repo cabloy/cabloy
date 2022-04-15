@@ -22,7 +22,7 @@ module.exports = app => {
         authOpen: {
           info: {
             bean: 'authOpen',
-            title: 'AuthOpen',
+            title: 'Open Auth',
             tableName: 'aAuthOpen',
             simple: true,
             history: false,

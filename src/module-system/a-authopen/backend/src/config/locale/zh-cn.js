@@ -3,4 +3,5 @@ module.exports = {
   'Create AuthOpen': '新建AuthOpen',
   'AuthOpen List': 'AuthOpen列表',
   RoleScopeFull: '全部',
+  RoleScopeCliDevelopment: '开发Cli',
 };

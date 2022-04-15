@@ -23,7 +23,7 @@ const roleScopes = [
     _roleRights: 'authenticated',
   },
   {
-    atomName: 'Cli',
+    atomName: 'RoleScopeCliDevelopment',
     atomStaticKey: 'roleScope_cli',
     atomRevision: 0,
     description: '',
