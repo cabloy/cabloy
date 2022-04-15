@@ -185,11 +185,11 @@ module.exports = app => {
       }
       // resourceAuthorizations
       if (action === 105) {
-        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+        if (['OpenAuthScope', 'RoleScopeFull'].includes(atom.atomName) && role.roleTypeCode === 6) return null;
       }
       // atomAuthorizations
       if (action === 106) {
-        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+        if (['OpenAuthScope', 'RoleScopeFull'].includes(atom.atomName) && role.roleTypeCode === 6) return null;
       }
       // default
       return res;
