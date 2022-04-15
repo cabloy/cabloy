@@ -15,7 +15,7 @@ export default {
       tabName: 'rights',
     };
   },
-  omputed: {
+  computed: {
     tabSingle() {
       return this.role && this.role.roleTypeCode === 6;
     },
