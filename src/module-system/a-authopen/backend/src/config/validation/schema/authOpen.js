@@ -43,6 +43,29 @@ module.exports = app => {
           },
         },
       },
+      neverExpire: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'NeverExpire',
+      },
+      expiredTime: {
+        type: ['object', 'null'],
+        ebType: 'datePicker',
+        ebTitle: 'Expiration Time',
+        ebParams: {
+          timePicker: true,
+          dateFormat: 'YYYY-MM-DD HH:mm:00',
+          header: false,
+          toolbar: true,
+        },
+        ebDisplay: {
+          expression: '!neverExpire',
+          dependencies: ['neverExpire'],
+        },
+        notEmpty: {
+          expression: '!neverExpire',
+        },
+      },
       // Auth Info
       __groupAuthInfo: {
         ebType: 'group-flatten',
