@@ -153,8 +153,8 @@ module.exports = app => {
       const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
       if (atom.atomStage !== 1) return res;
-      // delete/clone/move
-      if (![4, 5, 101, 103].includes(action)) return res;
+      // delete/clone/move/addChild/roleUsers/includes/resourceAuthorizations/atomAuthorizations
+      if (![4, 5, 101, 102, 103, 104, 105, 106].includes(action)) return res;
       // role
       const role = await this.ctx.model.role.get({ id: atom.itemId });
       // delete
@@ -164,14 +164,32 @@ module.exports = app => {
       // clone
       if (action === 5) {
         if (role.roleIdParent === 0) return null;
+        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
       }
       // move
       if (action === 101) {
         if (role.system === 1) return null;
       }
+      // addChild
+      if (action === 102) {
+        if (atom.atomName !== 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+      }
       // roleUsers
       if (action === 103) {
         if (role.catalog === 1) return null;
+        if (role.roleTypeCode === 6) return null;
+      }
+      // includes
+      if (action === 104) {
+        if (role.roleTypeCode === 6) return null;
+      }
+      // resourceAuthorizations
+      if (action === 105) {
+        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+      }
+      // atomAuthorizations
+      if (action === 106) {
+        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
       }
       // default
       return res;
