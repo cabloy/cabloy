@@ -14,7 +14,7 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
     // login
     const result = await app
       .httpRequest()
-      .post(mockUrl('/a/authopen/auth/login'))
+      .post(mockUrl('/a/authopen/auth/signin'))
       .send({
         data: {
           clientID: token.clientID,

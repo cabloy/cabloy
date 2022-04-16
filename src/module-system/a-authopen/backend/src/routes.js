@@ -13,6 +13,13 @@ module.exports = app => {
       controller: 'authOpen',
       meta: { right: { type: 'atom', atomClass: 'a-authopen:authOpen', action: 'resetClientSecret' } },
     },
+    // auth
+    {
+      method: 'post',
+      path: 'auth/signin',
+      controller: 'auth',
+      meta: { auth: { enable: false } },
+    },
   ];
   return routes;
 };
