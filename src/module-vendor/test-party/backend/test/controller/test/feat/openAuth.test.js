@@ -21,8 +21,8 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
           clientSecret: token.clientSecret,
         },
       });
-    assert.equal(result.body.code, 0);
     console.log(result.body);
+    assert.equal(result.body.code, 0);
   });
 });
 

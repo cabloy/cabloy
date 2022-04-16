@@ -16,7 +16,7 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(body) {
-      const { clientID, clientSecret } = body;
+      const { clientID, clientSecret } = body.data;
       // verify
       const authOpen = await this.modelAuthOpen.get({ clientID, clientSecret });
       if (!authOpen) return ctx.throw(403);
