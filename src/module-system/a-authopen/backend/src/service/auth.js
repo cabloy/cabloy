@@ -3,13 +3,15 @@ module.exports = app => {
   class Auth extends app.Service {
     // data: { clientID, clientSecret }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.bean.authProvider.authenticateDirect({
+      // signin
+      await this.ctx.bean.authProvider.authenticateDirect({
         module: moduleInfo.relativeName,
         providerName: 'authopen',
         query: { state },
         body: { data },
       });
-      return res;
+      // echo
+      return await this.ctx.bean.auth.echo();
     }
   }
 
