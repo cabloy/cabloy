@@ -1,11 +1,13 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class eventBean {
+    get modelAuthOpen() {
+      return ctx.model.module(moduleInfo.relativeName).authOpen;
+    }
     async execute(context, next) {
       const data = context.data;
-      const modelAuthOpen = ctx.model.module(moduleInfo.relativeName).authOpen;
       // delete aAuthOpen/aAuth
-      const items = await modelAuthOpen.select({
+      const items = await this.modelAuthOpen.select({
         where: { userId: data.userIdFrom },
       });
       for (const item of items) {

@@ -6,12 +6,22 @@ module.exports = function (ctx) {
     module: 'a-base',
     atomClassName: 'role',
   };
+  const __atomClassAuthOpen = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'authOpen',
+  };
   class VersionInit {
+    get modelAuthOpen() {
+      return ctx.model.module(moduleInfo.relativeName).authOpen;
+    }
+
     async run(options) {
       // rights
       await this._init_rights();
       // open auth scopes
       await this._init_roleScopes();
+      // RoleScopeCliDevelopment
+      await this._init_rootCliDevTest();
     }
 
     async _init_rights() {
@@ -53,6 +63,42 @@ module.exports = function (ctx) {
         }
       }
       await ctx.bean.role.setDirty(true);
+    }
+
+    async _init_rootCliDevTest() {
+      // only for test/local env
+      if (ctx.app.meta.isProd) return;
+      // create aAuthOpen record for user:root
+      const userRoot = await ctx.bean.user.get({ userName: 'root' });
+      const authOpenKey = await ctx.bean.atom.create({
+        atomClass: __atomClassAuthOpen,
+        user: userRoot,
+      });
+      // write
+      const scopeRole = await ctx.bean.role.parseRoleName({ roleName: 'RoleScopeCliDevelopment' });
+      const item = {
+        atomName: 'Cli For Development',
+        scopeRoleId: scopeRole.id,
+        neverExpire: 1,
+        expireTime: null,
+      };
+      await ctx.bean.atom.write({
+        key: authOpenKey,
+        item,
+        user: userRoot,
+      });
+      // submit
+      await ctx.bean.atom.submit({
+        key: authOpenKey,
+        options: { ignoreFlow: true },
+        user: userRoot,
+      });
+      // hidden
+      await this.modelAuthOpen.update({
+        id: authOpenKey.itemId,
+        userId: userRoot.id,
+        clientSecretHidden: 1,
+      });
     }
   }
   return VersionInit;
