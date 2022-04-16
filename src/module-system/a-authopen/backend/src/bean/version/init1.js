@@ -122,13 +122,13 @@ module.exports = function (ctx) {
       const { fileName, config } = await this._readCabloyInitFile();
       // backend port
       const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
-      const host = `http://localhost:${buildConfig.backend.port}`;
+      const port = buildConfig.backend.port;
+      // token name
+      const tokenName = `clidev@${ctx.app.name}`;
       // config
-      let configHost = config.hosts[host];
-      if (!configHost) {
-        configHost = config.hosts[host] = {};
-      }
-      configHost.clidev = {
+      if (!config.tokens) config.tokens = {};
+      config.tokens[tokenName] = {
+        host: `http://localhost:${port}`,
         clientID: item.clientID,
         clientSecret: item.clientSecret,
       };
@@ -143,9 +143,7 @@ module.exports = function (ctx) {
       let config;
       const exists = await fse.pathExists(fileName);
       if (!exists) {
-        config = {
-          hosts: {},
-        };
+        config = {};
       } else {
         const content = await fse.readFile(fileName);
         config = JSON.parse(content);
