@@ -79,6 +79,11 @@ module.exports = app => {
         actionPath: actionPathListOpenAuthSelf,
       },
     },
+    event: {
+      implementations: {
+        'a-base:accountMigration': 'accountMigration',
+      },
+    },
     index: {
       indexes: {
         aAuthOpen: 'createdAt,updatedAt,atomId,userId,scopeRoleId',
