@@ -11,8 +11,14 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Middleware {
     async execute(options, next) {
+      // isAuthOpen
+      const isAuthOpen =
+        ctx.state.user.provider.module === 'a-authopen' && ctx.state.user.provider.providerName === 'authopen';
       // ignore
-      if (!options.type) return await next();
+      if (!options.type) {
+        if (isAuthOpen) return ctx.throw(403);
+        return await next();
+      }
 
       const types = options.type.split(',');
       if (types.length === 1) {
