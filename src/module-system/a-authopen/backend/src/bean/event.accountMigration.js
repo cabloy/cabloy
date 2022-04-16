@@ -5,7 +5,9 @@ module.exports = ctx => {
       const data = context.data;
       const modelAuthOpen = ctx.model.module(moduleInfo.relativeName).authOpen;
       // delete aAuthOpen/aAuth
-      const items = await modelAuthOpen.select({ userId: data.userIdFrom });
+      const items = await modelAuthOpen.select({
+        where: { userId: data.userIdFrom },
+      });
       for (const item of items) {
         await ctx.bean.atom.delete({ key: { atomId: item.atomId } });
       }
