@@ -2,8 +2,14 @@ const require3 = require('require3');
 const randomize = require3('randomatic');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
+    get modelAuth() {
+      return this.ctx.model.module('a-base').auth;
+    }
+
     async create({ atomClass, item, options, user }) {
+      const userId = user.id;
       // super
       const key = await super.create({ atomClass, item, options, user });
       const atomId = key.atomId;
@@ -13,11 +19,24 @@ module.exports = app => {
       // add authOpen
       const res = await this.ctx.model.authOpen.insert({
         atomId,
-        userId: user.id,
+        userId,
         clientID,
         clientSecret,
       });
       const itemId = res.insertId;
+      // add aAuth record
+      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authopen',
+      });
+      await this.modelAuth.insert({
+        userId,
+        providerId: providerItem.id,
+        profileId: itemId,
+        profile: JSON.stringify({
+          authOpenId: itemId,
+        }),
+      });
       // return key
       return { atomId, itemId };
     }
@@ -51,11 +70,22 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
+      const itemId = key.itemId;
       // super
       await super.delete({ atomClass, key, user });
+      // delete aAuth record
+      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authopen',
+      });
+      // not use userId
+      await this.modelAuth.delete({
+        providerId: providerItem.id,
+        profileId: itemId,
+      });
       // delete authOpen
       await this.ctx.model.authOpen.delete({
-        id: key.itemId,
+        id: itemId,
       });
     }
 
