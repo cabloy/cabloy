@@ -7,4 +7,5 @@ module.exports = {
   'Reset Client Secret': '重置Client Secret',
   RoleScopeFull: '全部',
   RoleScopeCliDevelopment: '开发Cli',
+  AuthOpenTokenExpired: '令牌已过期',
 };

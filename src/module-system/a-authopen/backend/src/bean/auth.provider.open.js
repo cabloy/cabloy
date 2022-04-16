@@ -1,11 +1,10 @@
-const require3 = require('require3');
-const Strategy = require3('passport-github').Strategy;
+const Strategy = require('../config/passport/strategy.js');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
-    get configModule() {
-      return ctx.config.module(moduleInfo.relativeName);
+    get modelAuthOpen() {
+      return ctx.model.module(moduleInfo.relativeName).authOpen;
     }
     async getConfigDefault() {
       return null;
@@ -16,19 +15,24 @@ module.exports = function (ctx) {
     getStrategy() {
       return Strategy;
     }
-    async onVerify(accessToken, refreshToken, profile) {
+    async onVerify(body) {
+      const { clientID, clientSecret } = body;
+      // verify
+      const authOpen = await this.modelAuthOpen.get({ clientID, clientSecret });
+      if (!authOpen) return ctx.throw(403);
+      // neverExpire/expireTime
+      if (!authOpen.neverExpire && authOpen.expireTime <= Date.now()) {
+        return ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       return {
         module: this.providerModule,
         provider: this.providerName,
         providerScene: this.providerScene,
-        profileId: profile.id,
+        profileId: authOpen.id,
+        maxAge: 0,
+        authShouldExists: true,
         profile: {
-          userName: profile.username,
-          realName: profile.displayName,
-          avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
-          accessToken,
-          refreshToken,
-          profile,
+          authOpenId: authOpen.id,
         },
       };
     }
