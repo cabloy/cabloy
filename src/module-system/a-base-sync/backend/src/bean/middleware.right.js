@@ -3,7 +3,7 @@
 //   atomClass: id,module,atomClassName,atomClassIdParent
 //   item:
 // options
-//   type: atom/function
+//   type: atom/resource/detail
 //   action(atom):
 //   name(function):
 //   module:
