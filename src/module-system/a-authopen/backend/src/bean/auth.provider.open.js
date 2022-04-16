@@ -20,6 +20,9 @@ module.exports = function (ctx) {
       // verify
       const authOpen = await this.modelAuthOpen.get({ clientID, clientSecret });
       if (!authOpen) return ctx.throw(403);
+      // atomDisabled
+      const atom = await ctx.bean.atom.modelAtom.get({ id: authOpen.atomId });
+      if (atom.atomDisabled) return ctx.throw(403);
       // neverExpire/expireTime
       if (!authOpen.neverExpire && authOpen.expireTime <= Date.now()) {
         return ctx.throw.module(moduleInfo.relativeName, 1001);

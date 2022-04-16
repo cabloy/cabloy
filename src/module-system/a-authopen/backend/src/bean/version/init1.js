@@ -36,6 +36,8 @@ module.exports = function (ctx) {
         { roleName: 'authenticated', action: 'read', scopeNames: 0 },
         { roleName: 'authenticated', action: 'write', scopeNames: 0 },
         { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+        { roleName: 'authenticated', action: 'enable', scopeNames: 0 },
+        { roleName: 'authenticated', action: 'disable', scopeNames: 0 },
         { roleName: 'authenticated', action: 'hideClientSecret', scopeNames: 0 },
         { roleName: 'authenticated', action: 'resetClientSecret', scopeNames: 0 },
         { roleName: 'authenticated', action: 'deleteBulk' },
