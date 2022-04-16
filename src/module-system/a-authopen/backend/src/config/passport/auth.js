@@ -6,6 +6,7 @@ module.exports = app => {
         title: 'Open Auth',
         mode: 'direct',
         scene: false,
+        inner: true,
         bean: 'open',
         render: null,
         validator: null,
