@@ -3,7 +3,7 @@ const os = require('os');
 const path = require('path');
 const fse = require('fs-extra');
 
-describe('test/controller/test/feat/openAuth.test.js', () => {
+describe.only('test/controller/test/feat/openAuth.test.js', () => {
   it('action:openAuth', async () => {
     // init file
     const { config } = await _readCabloyInitFile();
@@ -11,7 +11,7 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
     // login
-    const result = await app
+    let result = await app
       .httpRequest()
       .post(mockUrl('/a/authopen/auth/signin'))
       .set('Authorization', 'Bearer ')
@@ -22,7 +22,17 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
         },
       });
     assert.equal(result.body.code, 0);
-    assert.equal(!!result.body['eb-jwt-oauth'].accessToken, true);
+    // accessToken
+    const accessToken = result.body['eb-jwt-oauth'].accessToken;
+    assert.equal(!!accessToken, true);
+    // resourceCheckSuccess
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/test/party/test/feat/openAuth/resourceCheckSuccess'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send();
+    assert.equal(result.body.code, 0);
+    // resourceCheckFail
   });
 });
 
