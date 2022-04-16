@@ -3,26 +3,26 @@ const os = require('os');
 const path = require('path');
 const fse = require('fs-extra');
 
-describe.only('test/controller/test/feat/openAuth.test.js', () => {
+describe('test/controller/test/feat/openAuth.test.js', () => {
   it('action:openAuth', async () => {
     // init file
     const { config } = await _readCabloyInitFile();
     // token
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
-    console.log(token);
     // login
     const result = await app
       .httpRequest()
       .post(mockUrl('/a/authopen/auth/signin'))
+      .set('Authorization', 'Bearer ')
       .send({
         data: {
           clientID: token.clientID,
           clientSecret: token.clientSecret,
         },
       });
-    console.log(result.body);
     assert.equal(result.body.code, 0);
+    assert.equal(!!result.body['eb-jwt-oauth'].accessToken, true);
   });
 });
 
