@@ -1,3 +1,8 @@
+const os = require('os');
+const path = require('path');
+const require3 = require('require3');
+const fse = require3('fs-extra');
+const chalk = require3('chalk');
 const initData = require('./initData1.js');
 
 module.exports = function (ctx) {
@@ -68,6 +73,13 @@ module.exports = function (ctx) {
     async _init_rootCliDevTest() {
       // only for test/local env
       if (ctx.app.meta.isProd) return;
+      // create
+      const authOpenKey = await this._init_rootCliDevTest_create();
+      // persistence
+      await this._init_rootCliDevTest_persistence({ authOpenKey });
+    }
+
+    async _init_rootCliDevTest_create() {
       // create aAuthOpen record for user:root
       const userRoot = await ctx.bean.user.get({ userName: 'root' });
       const authOpenKey = await ctx.bean.atom.create({
@@ -99,6 +111,49 @@ module.exports = function (ctx) {
         userId: userRoot.id,
         clientSecretHidden: 1,
       });
+      // ok
+      return authOpenKey;
+    }
+
+    async _init_rootCliDevTest_persistence({ authOpenKey }) {
+      // authOpen
+      const item = await this.modelAuthOpen.get({ id: authOpenKey.itemId });
+      // init file
+      const { fileName, config } = await this._readCabloyInitFile();
+      // backend port
+      const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
+      const host = `http://localhost:${buildConfig.backend.port}`;
+      // config
+      let configHost = config.hosts[host];
+      if (!configHost) {
+        configHost = config.hosts[host] = {};
+      }
+      configHost.clidev = {
+        clientID: item.clientID,
+        clientSecret: item.clientSecret,
+      };
+      // save
+      await fse.outputFile(fileName, JSON.stringify(config, null, 2));
+    }
+
+    async _readCabloyInitFile() {
+      // fileName
+      const fileName = path.join(os.homedir(), '.cabloy', 'openauth.json');
+      // config
+      let config;
+      const exists = await fse.pathExists(fileName);
+      if (!exists) {
+        config = {
+          hosts: {},
+        };
+      } else {
+        const content = await fse.readFile(fileName);
+        config = JSON.parse(content);
+      }
+      // chalk
+      console.log(chalk.cyan(`\n  ${fileName}\n`));
+      // ok
+      return { fileName, config };
     }
   }
   return VersionInit;
