@@ -181,7 +181,7 @@ module.exports = app => {
       }
       // includes
       if (action === 104) {
-        if (role.roleTypeCode === 6) return null;
+        // if (role.roleTypeCode === 6) return null;
       }
       // resourceAuthorizations
       if (action === 105) {

@@ -47,6 +47,7 @@ module.exports = function (ctx) {
     }
 
     async _init_roleScopes() {
+      //
       for (const roleScope of initData.roleScopes) {
         // item
         const item = { ...roleScope };
@@ -63,9 +64,11 @@ module.exports = function (ctx) {
           atomClass: __atomClassRole,
           item,
         });
-        if (atomKey && roleScope._roleRights) {
-          // role rights
-          const roleRights = [{ roleName: roleScope._roleRights, action: 'read', scopeNames: [atomKey.itemId] }];
+        if (atomKey && roleScope._roleRightsRead) {
+          // role rights read
+          const roleName = roleScope._roleRightsRead;
+          const scopeNames = [atomKey.itemId];
+          const roleRights = [{ roleName, action: 'read', scopeNames }];
           await ctx.bean.role.addRoleRightBatch({
             module: 'a-base',
             atomClassName: 'role',
@@ -73,7 +76,23 @@ module.exports = function (ctx) {
           });
         }
       }
+      // setDirty
       await ctx.bean.role.setDirty(true);
+      // add role rights
+      const roleRights = [
+        // template
+        { roleName: 'system', action: 'read', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'write', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'delete', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'clone', scopeNames: 'OpenAuthScope' },
+        // { roleName: 'system', action: 'move', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'addChild', scopeNames: 'OpenAuthScope' },
+        // { roleName: 'system', action: 'roleUsers', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'includes', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'resourceAuthorizations', scopeNames: 'OpenAuthScope' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'OpenAuthScope' },
+      ];
+      await ctx.bean.role.addRoleRightBatch({ module: 'a-base', atomClassName: 'role', roleRights });
     }
 
     async _init_rootCliDevTest() {
