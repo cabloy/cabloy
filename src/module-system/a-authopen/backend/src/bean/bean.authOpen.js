@@ -33,7 +33,7 @@ module.exports = ctx => {
       const provider = this.isAuthOpen();
       if (!provider) return true; // not auth open provider
       const authOpen = await this.getAuthOpenByAuthId({ authId: provider.id });
-      const right = await ctx.model.query(
+      const right = await ctx.model.queryOne(
         `
           select * from aViewRoleRightResource a
             where a.iid=? and a.roleIdWho=? and a.atomId=?
@@ -44,7 +44,7 @@ module.exports = ctx => {
     }
 
     async getAuthOpenByAuthId({ authId }) {
-      return await ctx.model.query(
+      return await ctx.model.queryOne(
         `
           select a.* from aAuthOpen a
             inner join aAuth b on a.id=b.profileId
