@@ -25,6 +25,14 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
     // accessToken
     const accessToken = result.body['eb-jwt-oauth'].accessToken;
     assert.equal(!!accessToken, true);
+    // echo
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/auth/echo'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send();
+    assert.equal(result.body.code, 0);
+    assert.equal(result.body.data.user.op.userName, 'root');
     // resourceCheckSuccess
     result = await app
       .httpRequest()
@@ -33,6 +41,13 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
       .send();
     assert.equal(result.body.code, 0);
     // resourceCheckFail
+    // logout
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/auth/logout'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send();
+    assert.equal(result.body.code, 0);
   });
 });
 

@@ -16,7 +16,7 @@ module.exports = ctx => {
         ctx.state.user.provider.module === 'a-authopen' && ctx.state.user.provider.providerName === 'authopen';
       // ignore
       if (!options.type) {
-        if (isAuthOpen) return ctx.throw(403);
+        if (isAuthOpen && !options.enableAuthOpen) return ctx.throw(403);
         return await next();
       }
 
