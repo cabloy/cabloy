@@ -41,6 +41,12 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
       .send();
     assert.equal(result.body.code, 0);
     // resourceCheckFail
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/test/party/test/feat/openAuth/resourceCheckFail'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send();
+    assert.equal(result.status, 403);
     // logout
     result = await app
       .httpRequest()
