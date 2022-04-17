@@ -51,8 +51,12 @@ module.exports = function (ctx) {
         // item
         const item = { ...roleScope };
         // roleIdParent
-        const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
-        item.roleIdParent = role.id;
+        if (roleScope.roleIdParent === 0) {
+          item.roleIdParent = 0;
+        } else {
+          const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
+          item.roleIdParent = role.id;
+        }
         // loadAtomStatic
         const atomKey = await ctx.bean.atomStatic.loadAtomStatic({
           moduleName: moduleInfo.relativeName,

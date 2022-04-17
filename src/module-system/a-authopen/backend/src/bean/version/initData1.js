@@ -8,7 +8,7 @@ const roleScopes = [
     system: 1,
     sorting: 0,
     roleTypeCode: 6,
-    roleIdParent: 'authenticated',
+    roleIdParent: 0, // 'authenticated',
     _roleRights: 'template.system',
   },
   {
