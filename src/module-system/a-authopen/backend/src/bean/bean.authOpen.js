@@ -31,7 +31,7 @@ module.exports = ctx => {
 
     async checkRightResource({ resourceAtomId }) {
       const provider = this.isAuthOpen();
-      if (!provider) return true;
+      if (!provider) return true; // not auth open provider
       const authOpen = await this.getAuthOpenByAuthId({ authId: provider.id });
       const right = await this.modelResourceRole.get({
         atomId: resourceAtomId,
