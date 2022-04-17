@@ -61,6 +61,13 @@ module.exports = function (ctx) {
             inner join aRoleRef c on b.roleIdScope=c.roleIdParent
         `;
       await ctx.model.query(sql);
+      // aViewRoleRightResource
+      sql = `
+        create view aViewRoleRightResource as
+          select a.iid,a.roleId as roleIdWho,a.roleIdBase,b.id as resourceRoleId,b.atomId from aRoleExpand a
+            inner join aResourceRole b on a.roleIdBase=b.roleId
+          `;
+      await ctx.model.query(sql);
       // view: aRoleView
       sql = `
           CREATE VIEW aRoleView as

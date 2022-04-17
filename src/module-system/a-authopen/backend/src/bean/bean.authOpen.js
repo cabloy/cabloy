@@ -33,10 +33,13 @@ module.exports = ctx => {
       const provider = this.isAuthOpen();
       if (!provider) return true; // not auth open provider
       const authOpen = await this.getAuthOpenByAuthId({ authId: provider.id });
-      const right = await this.modelResourceRole.get({
-        atomId: resourceAtomId,
-        roleId: authOpen.scopeRoleId,
-      });
+      const right = await ctx.model.query(
+        `
+          select * from aViewRoleRightResource a
+            where a.iid=? and a.roleIdWho=? and a.atomId=?
+        `,
+        [ctx.instance.id, authOpen.scopeRoleId, resourceAtomId]
+      );
       return !!right;
     }
 
