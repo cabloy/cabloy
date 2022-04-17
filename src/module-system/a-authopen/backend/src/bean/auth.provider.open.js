@@ -3,9 +3,6 @@ const Strategy = require('../config/passport/strategy.js');
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
-    get modelAuthOpen() {
-      return ctx.model.module(moduleInfo.relativeName).authOpen;
-    }
     async getConfigDefault() {
       return null;
     }
@@ -18,15 +15,7 @@ module.exports = function (ctx) {
     async onVerify(body) {
       const { clientID, clientSecret } = body.data;
       // verify
-      const authOpen = await this.modelAuthOpen.get({ clientID, clientSecret });
-      if (!authOpen) return ctx.throw(403);
-      // atomDisabled
-      const atom = await ctx.bean.atom.modelAtom.get({ id: authOpen.atomId });
-      if (atom.atomDisabled) return ctx.throw(403);
-      // neverExpire/expireTime
-      if (!authOpen.neverExpire && authOpen.expireTime <= Date.now()) {
-        return ctx.throw.module(moduleInfo.relativeName, 1001);
-      }
+      const authOpen = await ctx.bean.authOpen.verify({ clientID, clientSecret });
       return {
         module: this.providerModule,
         provider: this.providerName,
