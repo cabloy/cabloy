@@ -735,6 +735,11 @@ module.exports = ctx => {
         // use default detail
         detailClass = await this.getDetailClassDefault({ atomId });
       }
+      // parse action code
+      action = ctx.bean.detailAction.parseActionCode({
+        action,
+        detailClass,
+      });
       // actionBase
       const actionBase = ctx.bean.detailAction.action({
         module: detailClass.module,

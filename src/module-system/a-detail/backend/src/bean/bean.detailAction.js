@@ -26,6 +26,22 @@ module.exports = ctx => {
       return actions[key];
     }
 
+    parseActionCode({ action, detailClass }) {
+      // is number
+      if (!isNaN(action)) return parseInt(action);
+      // add role right
+      const actionCode = ctx.constant.module('a-detail').detail.action[action];
+      if (actionCode) return actionCode;
+      // detailClass
+      if (!detailClass) throw new Error(`should specify the detailClass of action: ${action}`);
+      const actions = this.actions();
+      const _action = actions[detailClass.module][detailClass.detailClassName][action];
+      if (!_action) {
+        throw new Error(`detail action not found: ${detailClass.module}:${detailClass.detailClassName}.${action}`);
+      }
+      return _action.code;
+    }
+
     _prepareActions() {
       const actions = {};
       for (const relativeName in ctx.app.meta.modules) {
