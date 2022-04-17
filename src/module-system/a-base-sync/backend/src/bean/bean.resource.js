@@ -184,6 +184,15 @@ module.exports = ctx => {
     }
 
     async checkRightResource({ resourceAtomId, atomStaticKey, user }) {
+      // normal check
+      const res = await this._checkRightResource_normal({ resourceAtomId, atomStaticKey, user });
+      if (!res) return null;
+      // auth open
+      console.log(res);
+      return res;
+    }
+
+    async _checkRightResource_normal({ resourceAtomId, atomStaticKey, user }) {
       if (!resourceAtomId) {
         const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
         if (!atom) return null;
