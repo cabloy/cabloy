@@ -760,6 +760,7 @@ module.exports = ctx => {
 
     // right
     async _checkRightForMiddleware({ options }) {
+      const action = options.action;
       // atomId/detailClass
       let atomId;
       let detailClass;
@@ -786,7 +787,13 @@ module.exports = ctx => {
         if (!atomId) ctx.throw(403);
         // detailClass maybe empty
         detailClass = ctx.request.body.detailClass;
+        if (!detailClass) {
+          // use default detail
+          detailClass = await this.getDetailClassDefault({ atomId });
+        }
       }
+      // _checkdetailClassExpect
+      await _checkDetailClassExpect({ detailClass, options, ctx });
       // flowTaskId
       const flowTaskId = ctx.request.body.flowTaskId;
       // check
@@ -794,7 +801,7 @@ module.exports = ctx => {
         flowTaskId,
         atomId,
         detailClass,
-        action: options.action,
+        action,
         user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
@@ -803,3 +810,26 @@ module.exports = ctx => {
 
   return Detail;
 };
+
+function _parseDetailClass(detailClass) {
+  if (!detailClass) return detailClass;
+  if (typeof detailClass === 'string') {
+    const [module, detailClassName] = detailClass.split(':');
+    return { module, detailClassName };
+  }
+  return detailClass;
+}
+
+function _checkIfSameDetailClass(detailClassA, detailClassB) {
+  return detailClassA.module === detailClassB.module && detailClassA.detailClassName === detailClassB.detailClassName;
+}
+
+async function _checkDetailClassExpect({ detailClass, options, ctx }) {
+  // detailClassExpect
+  const detailClassExpect = _parseDetailClass(options.detailClass);
+  //
+  if (!detailClass && !detailClassExpect) ctx.throw(403);
+  if (detailClass && detailClassExpect && !_checkIfSameDetailClass(detailClass, detailClassExpect)) {
+    ctx.throw(403);
+  }
+}
