@@ -4,6 +4,9 @@ module.exports = ctx => {
     get modelAuthOpen() {
       return ctx.model.module(moduleInfo.relativeName).authOpen;
     }
+    get modelResourceRole() {
+      return ctx.model.module('a-base').resourceRole;
+    }
 
     async verify({ clientID, clientSecret }) {
       // authOpen
@@ -21,9 +24,31 @@ module.exports = ctx => {
     }
 
     isAuthOpen() {
-      const provider = this.getProperty(this.ctx, 'state.user.provider');
+      const provider = ctx.bean.util.getProperty(ctx, 'state.user.provider');
       if (!provider) return false;
       return provider.module === 'a-authopen' && provider.providerName === 'authopen' ? provider : null;
+    }
+
+    async checkRightResource({ resourceAtomId }) {
+      const provider = this.isAuthOpen();
+      if (!provider) return true;
+      const authOpen = await this.getAuthOpenByAuthId({ authId: provider.id });
+      const right = await this.modelResourceRole.get({
+        atomId: resourceAtomId,
+        roleId: authOpen.scopeRoleId,
+      });
+      return !!right;
+    }
+
+    async getAuthOpenByAuthId({ authId }) {
+      return await ctx.model.query(
+        `
+          select a.* from aAuthOpen a
+            inner join aAuth b on a.id=b.profileId
+              where a.iid=? and a.deleted=0 and b.id=? 
+        `,
+        [ctx.instance.id, authId]
+      );
     }
   }
   return AuthOpen;
