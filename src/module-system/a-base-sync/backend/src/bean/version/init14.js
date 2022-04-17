@@ -1,9 +1,16 @@
 module.exports = function (ctx) {
   class VersionInit {
     async run() {
+      await this._changeTemplateRole();
       await this._addRoleRightsResource();
       await this._addRoleRightsRole();
       await this._addRoleRightsUser();
+    }
+
+    async _changeTemplateRole() {
+      const role = await ctx.bean.role.parseRoleName({ roleName: 'template' });
+      await ctx.bean.role.move({ roleId: role.id, roleIdParent: 0 });
+      await ctx.bean.role.setDirty(true);
     }
 
     async _addRoleRightsResource() {
@@ -44,6 +51,18 @@ module.exports = function (ctx) {
         // { roleName: 'system', action: 'disable', scopeNames: 'root' },
         // { roleName: 'system', action: 'authorize', scopeNames: 0 },
         // { roleName: 'system', action: 'authorize', scopeNames: 'root' },
+        // template
+        { roleName: 'system', action: 'read', scopeNames: 'template' },
+        { roleName: 'system', action: 'write', scopeNames: 'template' },
+        { roleName: 'system', action: 'delete', scopeNames: 'template' },
+        { roleName: 'system', action: 'clone', scopeNames: 'template' },
+        { roleName: 'system', action: 'move', scopeNames: 'template' },
+        { roleName: 'system', action: 'addChild', scopeNames: 'template' },
+        // { roleName: 'system', action: 'roleUsers', scopeNames: 'template' },
+        // { roleName: 'system', action: 'includes', scopeNames: 'template' },
+        { roleName: 'system', action: 'resourceAuthorizations', scopeNames: 'template' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'template' },
+        // root
         { roleName: 'system', action: 'read', scopeNames: 'root' },
         { roleName: 'system', action: 'write', scopeNames: 'root' },
         { roleName: 'system', action: 'delete', scopeNames: 'root' },
