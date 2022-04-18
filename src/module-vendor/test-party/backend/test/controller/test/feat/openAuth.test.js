@@ -4,6 +4,11 @@ const path = require('path');
 const fse = require('fs-extra');
 
 describe.only('test/controller/test/feat/openAuth.test.js', () => {
+  const __atomClassParty = {
+    module: 'test-party',
+    atomClassName: 'party',
+  };
+
   it('action:openAuth:resource', async () => {
     // init file
     const { config } = await _readCabloyInitFile();
@@ -82,7 +87,19 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
       .httpRequest()
       .post(mockUrl('/test/party/test/atom/checkRightCreate'))
       .set('Authorization', `Bearer ${accessToken}`)
-      .send();
+      .send({
+        atomClass: __atomClassParty,
+      });
+    assert.equal(result.body.code, 0);
+    const partyKeyDraft = result.body.data;
+    // read
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/test/party/test/atom/checkRightRead'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        key: partyKeyDraft,
+      });
     assert.equal(result.body.code, 0);
     // logout
     result = await app

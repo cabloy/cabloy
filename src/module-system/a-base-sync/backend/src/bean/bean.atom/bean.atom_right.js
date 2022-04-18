@@ -23,12 +23,23 @@ module.exports = ctx => {
     }
 
     async checkRightRead({ atom: { id }, user, checkFlow }) {
-      // draft: only userIdUpdated
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // normal check
+      const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'read' });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightRead_normal({ _atom, atomClass, user, checkFlow }) {
+      // draft: only userIdUpdated
       // check right
       if (_atom.atomStage === 0) {
         // self
