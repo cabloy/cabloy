@@ -37,6 +37,7 @@
     "compressing": "^1.5.1",
     "egg-born-backend": "^6.3.1",
     "egg-born-front": "^8.5.3",
+    "egg-born-utils": "^1.0.3",
     "egg-mock": "^3.25.1",
     "extend2": "^1.0.1",
     "glob": "^7.1.6",

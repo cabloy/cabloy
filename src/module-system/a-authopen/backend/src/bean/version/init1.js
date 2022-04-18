@@ -1,6 +1,5 @@
 const path = require('path');
 const require3 = require('require3');
-const fse = require3('fs-extra');
 const chalk = require3('chalk');
 const eggBornUtils = require3('egg-born-utils');
 const initData = require('./initData1.js');

@@ -1,9 +1,6 @@
-const path = require('path');
 const chalk = require('chalk');
-const babel = require('@babel/core');
-const UglifyJS = require('uglify-js');
-const fse = require('fs-extra');
 const inquirer = require('inquirer');
+const eggBornUtils = require('egg-born-utils');
 const Command = require('@zhennann/egg-bin').Command;
 
 class TokenAddCommand extends Command {
@@ -71,7 +68,18 @@ class TokenAddCommand extends Command {
       Object.assign(varsReady, res);
     }
 
-    console.log(varsReady);
+    // load
+    const { fileName, config } = yield eggBornUtils.openAuthConfig.load();
+    config.tokens[varsReady.name] = {
+      host: varsReady.host,
+      clientID: varsReady.clientID,
+      clientSecret: varsReady.clientSecret,
+    };
+    // save
+    yield eggBornUtils.openAuthConfig.save({ config });
+
+    // chalk
+    console.log(chalk.cyan(`\n  ${fileName}\n`));
 
     // done
     console.log(chalk.cyan('  token-add successfully!'));
