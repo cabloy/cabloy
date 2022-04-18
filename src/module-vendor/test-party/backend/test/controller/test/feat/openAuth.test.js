@@ -109,6 +109,15 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
         key: partyKeyDraft,
       });
     assert.equal(result.body.code, 0);
+    // party/overBulk
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/test/party/party/overBulk'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        keys: [],
+      });
+    assert.equal(result.body.code, 0);
     // write
     result = await app
       .httpRequest()
