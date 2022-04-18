@@ -188,7 +188,18 @@ module.exports = ctx => {
     async preferredRoles({ atomClass, user }) {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const roles = await this._preferredRoles_normal({ atomClass, user });
+      if (!roles || roles.length === 0) return roles;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
+      if (!resAuthOpenCheck) return [];
+      // ok
+      return roles;
+    }
 
+    // preffered roles
+    async _preferredRoles_normal({ atomClass, user }) {
       const roles = await ctx.model.query(
         `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
           inner join aUserRole b on a.roleIdWho=b.roleId
