@@ -1,8 +1,8 @@
-const os = require('os');
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
 const chalk = require3('chalk');
+const eggBornUtils = require3('egg-born-utils');
 const initData = require('./initData1.js');
 
 module.exports = function (ctx) {
@@ -144,7 +144,9 @@ module.exports = function (ctx) {
       // authOpen
       const item = await this.modelAuthOpen.get({ id: authOpenKey.itemId });
       // init file
-      const { fileName, config } = await this._readCabloyInitFile();
+      const { fileName, config } = await eggBornUtils.readOpenAuthConfig();
+      // chalk
+      console.log(chalk.cyan(`\n  ${fileName}\n`));
       // backend port
       const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
       const port = buildConfig.backend.port;
@@ -159,24 +161,6 @@ module.exports = function (ctx) {
       };
       // save
       await fse.outputFile(fileName, JSON.stringify(config, null, 2));
-    }
-
-    async _readCabloyInitFile() {
-      // fileName
-      const fileName = path.join(os.homedir(), '.cabloy', 'openauth.json');
-      // config
-      let config;
-      const exists = await fse.pathExists(fileName);
-      if (!exists) {
-        config = {};
-      } else {
-        const content = await fse.readFile(fileName);
-        config = JSON.parse(content);
-      }
-      // chalk
-      console.log(chalk.cyan(`\n  ${fileName}\n`));
-      // ok
-      return { fileName, config };
     }
   }
   return VersionInit;

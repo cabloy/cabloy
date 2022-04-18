@@ -30,6 +30,7 @@
   "author": "zhennann",
   "dependencies": {
     "egg-born-mock": "^2.1.4",
+    "egg-born-utils": "^1.0.0",
     "extend2": "^1.0.1",
     "p-map": "^3.0.0",
     "require3": "^2.1.4"

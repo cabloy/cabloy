@@ -3,10 +3,10 @@ const path = require('path');
 const fse = require('fs-extra');
 
 module.exports = {
-  readOpenAuth,
+  readOpenAuthConfig,
 };
 
-async function readOpenAuth() {
+async function readOpenAuthConfig() {
   // fileName
   const fileName = path.join(os.homedir(), '.cabloy', 'openauth.json');
   // config

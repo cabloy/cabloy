@@ -1,7 +1,5 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
-const os = require('os');
-const path = require('path');
-const fse = require('fs-extra');
+const eggBornUtils = require('egg-born-utils');
 
 describe('test/controller/test/feat/openAuth.test.js', () => {
   const __atomClassParty = {
@@ -11,7 +9,7 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
 
   it('action:openAuth:resource', async () => {
     // init file
-    const { config } = await _readCabloyInitFile();
+    const { config } = await eggBornUtils.readOpenAuthConfig();
     // token
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
@@ -63,7 +61,7 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
 
   it('action:openAuth:atom', async () => {
     // init file
-    const { config } = await _readCabloyInitFile();
+    const { config } = await eggBornUtils.readOpenAuthConfig();
     // token
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
@@ -145,13 +143,3 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
     assert.equal(result.body.code, 0);
   });
 });
-
-async function _readCabloyInitFile() {
-  // fileName
-  const fileName = path.join(os.homedir(), '.cabloy', 'openauth.json');
-  // config
-  const content = await fse.readFile(fileName);
-  const config = JSON.parse(content);
-  // ok
-  return { fileName, config };
-}
