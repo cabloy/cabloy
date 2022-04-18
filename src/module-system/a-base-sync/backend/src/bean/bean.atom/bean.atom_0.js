@@ -816,13 +816,25 @@ module.exports = ctx => {
       return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
 
-    async checkRightCreateRole({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, roleIdOwner, user }) {
+    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    async checkRightCreateRole({ atomClass, roleIdOwner, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const res = await this._checkRightCreateRole_normal({ atomClass, roleIdOwner, user });
+      if (!res) return res;
+      // // auth open check
+      // const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
+      // if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightCreateRole_normal({ atomClass, roleIdOwner, user }) {
       if (!roleIdOwner) return null;
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
       const sql = this.sqlProcedure.checkRightCreateRole({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: id,
+        atomClassId: atomClass.id,
         roleIdOwner,
       });
       return await ctx.model.queryOne(sql);
