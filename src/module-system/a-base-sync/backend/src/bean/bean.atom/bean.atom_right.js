@@ -76,12 +76,22 @@ module.exports = ctx => {
     }
 
     async checkRightAction({ atom: { id }, action, stage, user, checkFlow }) {
-      // atom
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // normal check
+      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
