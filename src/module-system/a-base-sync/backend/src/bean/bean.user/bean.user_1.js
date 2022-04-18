@@ -187,9 +187,9 @@ module.exports = ctx => {
       const item = await this._forceUser({ userAtomId, userId });
       const key = { atomId: item.atomId, itemId: item.id };
       if (disabled) {
-        await this.ctx.bean.atom.disable({ key, user: { id: 0 } });
+        await ctx.bean.atom.disable({ key, user: { id: 0 } });
       } else {
-        await this.ctx.bean.atom.enable({ key, user: { id: 0 } });
+        await ctx.bean.atom.enable({ key, user: { id: 0 } });
       }
     }
 
