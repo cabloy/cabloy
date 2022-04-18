@@ -33,6 +33,9 @@ module.exports = ctx => {
       const provider = this.isAuthOpen();
       if (!provider) return true; // not auth open provider
       const authOpen = await this.getAuthOpenByAuthId({ authId: provider.id });
+      // check full
+      if (authOpen.scopeRoleName === 'RoleScopeFull') return true;
+      // check others
       const right = await ctx.model.queryOne(
         `
           select * from aViewRoleRightResource a
@@ -46,7 +49,7 @@ module.exports = ctx => {
     async getAuthOpenByAuthId({ authId }) {
       return await ctx.model.queryOne(
         `
-          select a.* from aAuthOpen a
+          select a.* from aAuthOpenView a
             inner join aAuth b on a.id=b.profileId
               where a.iid=? and a.deleted=0 and b.id=? 
         `,
