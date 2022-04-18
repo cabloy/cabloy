@@ -19,6 +19,7 @@
   "dependencies": {
     "@zhennann/markdown": "^3.2.3",
     "@zhennann/markdown-it-block": "^4.1.4",
-    "egg-born-mparse": "^2.1.2"
+    "egg-born-mparse": "^2.1.2",
+    "egg-born-utils": "^1.0.1"
   }
 }
