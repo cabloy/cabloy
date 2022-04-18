@@ -855,12 +855,13 @@ module.exports = ctx => {
     }
 
     // actionsBulk of atomClass
-    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, stage, user }) {
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+    async actionsBulk({ atomClass, stage, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      const atomClassId = atomClass.id;
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: id,
+        atomClassId,
       });
       const actionsRes = await ctx.model.query(sql);
       const res = [];

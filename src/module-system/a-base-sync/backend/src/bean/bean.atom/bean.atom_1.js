@@ -482,7 +482,7 @@ module.exports = ctx => {
     // atom
 
     async _add({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      atomClass,
       atom: {
         atomStage = 0,
         itemId,
@@ -499,8 +499,7 @@ module.exports = ctx => {
       },
       user,
     }) {
-      let atomClassId = id;
-      if (!atomClassId) atomClassId = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      const atomClassId = atomClass.id;
       const res = await this.modelAtom.insert({
         atomStage,
         itemId,
