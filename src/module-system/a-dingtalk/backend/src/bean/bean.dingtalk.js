@@ -62,7 +62,7 @@ module.exports = ctx => {
       providerName,
       providerScene,
     });
-    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    if (!beanProvider.providerSceneValid) ctx.throw.module('a-base', 1015);
     // config
     const config = beanProvider.configProviderScene;
     // api

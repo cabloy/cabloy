@@ -14,4 +14,5 @@ module.exports = {
   1012: 'Cannot delete if has atoms',
   1013: 'Cannot delete if has children',
   1014: 'DisabledOnDemoMode',
+  1015: 'Invalid Configuration',
 };

@@ -49,7 +49,7 @@ module.exports = function (ctx) {
       providerName: 'wechat',
       providerScene: null,
     });
-    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    if (!beanProvider.providerSceneValid) ctx.throw.module('a-base', 1015);
     // config
     const config = beanProvider.configProviderScene;
     // api
@@ -95,7 +95,7 @@ module.exports = function (ctx) {
       providerName: 'wechatmini',
       providerScene,
     });
-    if (!beanProvider.providerSceneValid) ctx.throw(423);
+    if (!beanProvider.providerSceneValid) ctx.throw.module('a-base', 1015);
     // config
     const config = beanProvider.configProviderScene;
     // api

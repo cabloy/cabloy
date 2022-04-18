@@ -40,6 +40,7 @@ module.exports = {
   'Resource Authorizations': '资源授权',
   'Atom Authorization': '数据授权',
   'Atom Authorizations': '数据授权',
+  'Invalid Configuration': '无效的配置',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',

@@ -46,7 +46,7 @@ module.exports = app => {
         providerName: 'wechatmini',
         providerScene,
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // verify
       await this.ctx.bean.local.helper.verifyAuthUser({ beanProvider, openid, userInfo, needLogin: true });
       // save session_key, because ctx.state.user maybe changed

@@ -17,7 +17,7 @@ module.exports = app => {
         providerName,
         providerScene,
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // verify
       await this.localHelper.verifyAuthUser({ beanProvider, state, memberId, needLogin: true });
       // echo

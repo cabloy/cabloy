@@ -169,7 +169,7 @@ module.exports = app => {
         providerName: 'wxwork',
         providerScene: 'contacts',
       });
-      // if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      // if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       return beanProvider;
     }
 
@@ -180,7 +180,7 @@ module.exports = app => {
     }
 
     async queueSync({ type, progressId, userOp }) {
-      if (!this.beanProviderContacts.providerSceneValid) this.ctx.throw(423);
+      if (!this.beanProviderContacts.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       if (type === 'departments') {
         await this._queueSyncDepartments({ progressId, userOp });
       } else if (type === 'members') {

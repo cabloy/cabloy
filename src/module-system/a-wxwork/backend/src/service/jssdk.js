@@ -8,7 +8,7 @@ module.exports = app => {
         providerName: 'wxwork',
         providerScene: 'selfBuilt',
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // config
       const config = beanProvider.configProviderScene;
       // params
@@ -27,7 +27,7 @@ module.exports = app => {
         providerName: 'wxwork',
         providerScene: 'selfBuilt',
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // config
       const config = beanProvider.configProviderScene;
       // params

@@ -21,7 +21,7 @@ module.exports = app => {
         providerName: 'wxworkmini',
         providerScene,
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // verify
       await this.localHelper.verifyAuthUser({ beanProvider, memberId, needLogin: true });
       // save session_key, because ctx.state.user maybe changed

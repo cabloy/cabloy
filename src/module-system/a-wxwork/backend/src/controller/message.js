@@ -21,7 +21,7 @@ module.exports = app => {
         providerName,
         providerScene,
       });
-      if (!beanProvider.providerSceneValid) this.ctx.throw(423);
+      if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
       // handle message
       await this._handleMessage(beanProvider, async ({ message }) => {
         return await this.ctx.service.message.general({ beanProvider, message });
