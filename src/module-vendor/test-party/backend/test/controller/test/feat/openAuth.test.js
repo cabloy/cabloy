@@ -110,6 +110,14 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
       });
     assert.equal(result.body.code, 0);
     // write
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/test/party/test/atom/checkRightWrite'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        key: partyKeyDraft,
+      });
+    assert.equal(result.body.code, 0);
     // delete
     // logout
     result = await app

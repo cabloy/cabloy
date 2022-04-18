@@ -100,15 +100,20 @@ module.exports = ctx => {
       });
     }
 
-    async checkRightActionBulk({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action,
-      stage,
-      user,
-    }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    async checkRightActionBulk({ atomClass, action, stage, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const res = await this._checkRightActionBulk_normal({ atomClass, action, stage, user });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
       // parse action code
       action = ctx.bean.atomAction.parseActionCode({
         action,
