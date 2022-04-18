@@ -3,7 +3,7 @@ const os = require('os');
 const path = require('path');
 const fse = require('fs-extra');
 
-describe.only('test/controller/test/feat/openAuth.test.js', () => {
+describe('test/controller/test/feat/openAuth.test.js', () => {
   const __atomClassParty = {
     module: 'test-party',
     atomClassName: 'party',
