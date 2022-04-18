@@ -45,15 +45,6 @@ module.exports = ctx => {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
-    async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
-      const res = await this.atomClass.get({
-        module,
-        atomClassName,
-        atomClassIdParent,
-      });
-      return res.id;
-    }
-
     // atom and item
 
     // create
@@ -936,6 +927,12 @@ module.exports = ctx => {
       }
       // ok
       return tableName;
+    }
+
+    async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
+      ctx.app.meta.util.deprecated('ctx.bean.atom.getAtomClassId', 'ctx.bean.atomClass.get');
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      return atomClass.id;
     }
   }
 
