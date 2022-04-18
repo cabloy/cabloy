@@ -19,7 +19,9 @@
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "tools:babel": "egg-born-bin tools-babel",
-    "tools:icons": "egg-born-bin tools-icons"
+    "tools:icons": "egg-born-bin tools-icons",
+    "token:add": "egg-born-bin token-add",
+    "token:delete": "egg-born-bin token-delete"
   },
   "author": "{{author}}",
   "devDependencies": {},

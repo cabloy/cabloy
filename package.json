@@ -38,7 +38,9 @@
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "tools:babel": "node ./packages/egg-born-bin/bin/egg-born-bin.js tools-babel",
     "tools:icons": "node ./packages/egg-born-bin/bin/egg-born-bin.js tools-icons",
-    "docs:build": "node_modules/.bin/jsdoc -c jsdoc.json --readme docs/jsdoc-readme.md"
+    "docs:build": "node_modules/.bin/jsdoc -c jsdoc.json --readme docs/jsdoc-readme.md",
+    "token:add": "node ./packages/egg-born-bin/bin/egg-born-bin.js token-add",
+    "token:delete": "node ./packages/egg-born-bin/bin/egg-born-bin.js token-delete"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
