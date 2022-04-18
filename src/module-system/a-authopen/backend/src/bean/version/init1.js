@@ -144,7 +144,7 @@ module.exports = function (ctx) {
       // authOpen
       const item = await this.modelAuthOpen.get({ id: authOpenKey.itemId });
       // init file
-      const { fileName, config } = await eggBornUtils.readOpenAuthConfig();
+      const { fileName, config } = await eggBornUtils.openAuthConfig.load();
       // chalk
       console.log(chalk.cyan(`\n  ${fileName}\n`));
       // backend port
@@ -160,7 +160,7 @@ module.exports = function (ctx) {
         clientSecret: item.clientSecret,
       };
       // save
-      await fse.outputFile(fileName, JSON.stringify(config, null, 2));
+      await eggBornUtils.openAuthConfig.save({ config });
     }
   }
   return VersionInit;

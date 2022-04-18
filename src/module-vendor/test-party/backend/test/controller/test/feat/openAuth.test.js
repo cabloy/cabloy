@@ -9,7 +9,7 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
 
   it('action:openAuth:resource', async () => {
     // init file
-    const { config } = await eggBornUtils.readOpenAuthConfig();
+    const { config } = await eggBornUtils.openAuthConfig.load();
     // token
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
@@ -61,7 +61,7 @@ describe('test/controller/test/feat/openAuth.test.js', () => {
 
   it('action:openAuth:atom', async () => {
     // init file
-    const { config } = await eggBornUtils.readOpenAuthConfig();
+    const { config } = await eggBornUtils.openAuthConfig.load();
     // token
     const tokenName = `clidev@${app.name}`;
     const token = config.tokens[tokenName];
