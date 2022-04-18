@@ -10,7 +10,8 @@
     },
     "dependencies": {
       "a-instance": "4.0.0",
-      "a-base": "4.0.0"
+      "a-base": "4.0.0",
+      "a-authopen": "4.0.0"
     }
   },
   "description": "",
