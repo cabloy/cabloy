@@ -82,7 +82,7 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
     // accessToken
     const accessToken = result.body['eb-jwt-oauth'].accessToken;
     assert.equal(!!accessToken, true);
-    // create
+    // create check
     result = await app
       .httpRequest()
       .post(mockUrl('/test/party/test/atom/checkRightCreate'))
@@ -91,6 +91,14 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
         atomClass: __atomClassParty,
       });
     assert.equal(result.body.code, 0);
+    // create
+    result = await app
+      .httpRequest()
+      .post(mockUrl('/a/base/atom/create'))
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        atomClass: __atomClassParty,
+      });
     const partyKeyDraft = result.body.data;
     // read
     result = await app
@@ -101,6 +109,8 @@ describe.only('test/controller/test/feat/openAuth.test.js', () => {
         key: partyKeyDraft,
       });
     assert.equal(result.body.code, 0);
+    // write
+    // delete
     // logout
     result = await app
       .httpRequest()

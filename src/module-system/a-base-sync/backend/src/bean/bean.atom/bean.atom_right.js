@@ -40,6 +40,7 @@ module.exports = ctx => {
 
     async _checkRightRead_normal({ _atom, atomClass, user, checkFlow }) {
       // draft: only userIdUpdated
+      const atomId = _atom.id;
       // check right
       if (_atom.atomStage === 0) {
         // self
@@ -68,7 +69,7 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomId: id,
+        atomId,
         forAtomUser,
       });
       return await ctx.model.queryOne(sql);
