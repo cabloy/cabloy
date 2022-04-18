@@ -813,9 +813,9 @@ module.exports = ctx => {
       // normal check
       const res = await this._checkRightCreateRole_normal({ atomClass, roleIdOwner, user });
       if (!res) return res;
-      // // auth open check
-      // const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
-      // if (!resAuthOpenCheck) return null;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
+      if (!resAuthOpenCheck) return null;
       // ok
       return res;
     }
