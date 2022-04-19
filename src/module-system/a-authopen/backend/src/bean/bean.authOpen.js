@@ -10,13 +10,18 @@ module.exports = ctx => {
     get modelResourceRole() {
       return ctx.model.module('a-base').resourceRole;
     }
+    get localAuthSimple() {
+      return ctx.bean.local.module('a-authsimple').simple;
+    }
 
     async hideClientSecret({ atomId, itemId, user }) {
-      itemId = await this._forceAuthOpenId({ atomId, itemId });
+      const item = await this._forceAuthOpen({ atomId, itemId });
+      const clientSecret = await this.localAuthSimple.calcPassword({ password: item.clientSecret });
       // use userId for safety
       await this.modelAuthOpen.update({
         id: itemId,
         userId: user.id,
+        clientSecret,
         clientSecretHidden: 1,
       });
     }

@@ -16,7 +16,7 @@ module.exports = function (ctx) {
         neverExpire int(11) DEFAULT '1',
         expireTime timestamp DEFAULT NULL,
         clientID varchar(50) DEFAULT NULL,
-        clientSecret varchar(50) DEFAULT NULL,
+        clientSecret text DEFAULT NULL,
         clientSecretHidden int(11) DEFAULT '0',
         PRIMARY KEY (id)
       )
