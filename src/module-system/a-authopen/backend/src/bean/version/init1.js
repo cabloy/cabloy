@@ -97,15 +97,16 @@ module.exports = function (ctx) {
     async _init_rootCliDevTest() {
       // only for test/local env
       if (ctx.app.meta.isProd || ctx.subdomain) return;
+      // userRoot
+      const userRoot = await ctx.bean.user.get({ userName: 'root' });
       // create
-      const authOpenKey = await this._init_rootCliDevTest_create();
+      const authOpenKey = await this._init_rootCliDevTest_create({ userRoot });
       // persistence
-      await this._init_rootCliDevTest_persistence({ authOpenKey });
+      await this._init_rootCliDevTest_persistence({ authOpenKey, userRoot });
     }
 
-    async _init_rootCliDevTest_create() {
+    async _init_rootCliDevTest_create({ userRoot }) {
       // create aAuthOpen record for user:root
-      const userRoot = await ctx.bean.user.get({ userName: 'root' });
       const authOpenKey = await ctx.bean.atom.create({
         atomClass: __atomClassAuthOpen,
         user: userRoot,
@@ -139,7 +140,7 @@ module.exports = function (ctx) {
       return authOpenKey;
     }
 
-    async _init_rootCliDevTest_persistence({ authOpenKey }) {
+    async _init_rootCliDevTest_persistence({ authOpenKey, userRoot }) {
       // authOpen
       const item = await this.modelAuthOpen.get({ id: authOpenKey.itemId });
       // init file
@@ -160,6 +161,8 @@ module.exports = function (ctx) {
       };
       // save
       await eggBornUtils.openAuthConfig.save({ config });
+      // hideClientSecret
+      await ctx.bean.authOpen.hideClientSecret({ itemId: item.id, user: userRoot });
     }
   }
   return VersionInit;
