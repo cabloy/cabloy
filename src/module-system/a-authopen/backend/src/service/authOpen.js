@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const randomize = require3('randomatic');
-
 module.exports = app => {
   class AuthOpen extends app.Service {
     async hideClientSecret({ key, user }) {
