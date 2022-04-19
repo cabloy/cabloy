@@ -1,7 +1,9 @@
 const path = require('path');
 const fse = require('fs-extra');
+const urllib = require('urllib');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
+const utils = require('./lib/utils.js');
 
 const DISPATCH = Symbol.for('eb:Command#dispatch');
 const PARSE = Symbol.for('eb:Command#parse');
@@ -31,12 +33,19 @@ class EggBornBinCommand extends Command {
     // argv
     const argv = {};
     argv.projectPath = context.cwd;
-    // token
-    const token = yield this._prepareToken(argv, context.argv.token);
     // cli
     const cliFullName = this._prepareCliFullName(context.argv._[1]);
+    // token
+    const token = yield this._prepareToken(argv, context.argv.token);
+    //
     console.log(token);
     console.log(cliFullName);
+    //
+    const res = yield utils.fetchByOpenAuth({
+      host: token.host,
+      path: '/a/cli/meta',
+    });
+    console.log(res);
   }
 
   _prepareCliFullName(cliName) {

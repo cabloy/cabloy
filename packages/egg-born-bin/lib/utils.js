@@ -10,6 +10,26 @@ const extend = require('extend2');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
+  async fetchByOpenAuth({ host, path, body, accessToken }) {
+    const httpClient = urllib.create();
+    const url = `${host}/api${path}`;
+    const options = {
+      method: 'POST',
+      data: body,
+      dataType: 'json',
+      followRedirect: true,
+      maxRedirects: 5,
+      timeout: 20000,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const res = await httpClient.request(url, options);
+    if (res.data.code !== 0) {
+      throw new Error(res.data.message);
+    }
+    return res.data.data;
+  },
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {
       const httpClient = urllib.create();
