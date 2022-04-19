@@ -96,7 +96,7 @@ module.exports = function (ctx) {
 
     async _init_rootCliDevTest() {
       // only for test/local env
-      if (ctx.app.meta.isProd) return;
+      if (ctx.app.meta.isProd || ctx.subdomain) return;
       // create
       const authOpenKey = await this._init_rootCliDevTest_create();
       // persistence
