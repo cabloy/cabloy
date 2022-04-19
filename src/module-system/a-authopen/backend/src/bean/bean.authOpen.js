@@ -41,8 +41,18 @@ module.exports = ctx => {
 
     async verify({ clientID, clientSecret }) {
       // authOpen
-      const authOpen = await this.modelAuthOpen.get({ clientID, clientSecret });
+      const authOpen = await this.modelAuthOpen.get({ clientID });
       if (!authOpen) return ctx.throw(403);
+      // clientSecret
+      if (authOpen.clientSecretHidden) {
+        const res = await this.localAuthSimple.verifyPassword({
+          password: clientSecret,
+          hash: authOpen.clientSecret,
+        });
+        if (!res) return ctx.throw(403);
+      } else {
+        if (clientSecret !== authOpen.clientSecret) return ctx.throw(403);
+      }
       // atomDisabled
       const atom = await ctx.bean.atom.modelAtom.get({ id: authOpen.atomId });
       if (atom.atomDisabled) return ctx.throw(403);
