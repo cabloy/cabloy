@@ -1,6 +1,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const Command = require('@zhennann/egg-bin').Command;
+const DISPATCH = Symbol.for('eb:Command#dispatch');
 
 class EggBornBinCommand extends Command {
   constructor(rawArgv) {
@@ -9,6 +10,14 @@ class EggBornBinCommand extends Command {
 
     // load directory
     this.load(path.join(__dirname, 'lib/cmd'));
+  }
+
+  *[DISPATCH]() {
+    const commandName = this.rawArgv[0];
+    if (commandName !== 'cli') {
+      yield super[DISPATCH]();
+      return;
+    }
   }
 }
 
