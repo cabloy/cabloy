@@ -49,14 +49,6 @@ class BackendTestCommand extends TestCommand {
     }
   }
 
-  /**
-   * format test args then change it to array style
-   * @param {Object} context - { cwd, argv, ...}
-   * @param context.argv
-   * @param context.debugOptions
-   * @return {Array} [ '--require=xxx', 'xx.test.js' ]
-   * @protected
-   */
   *formatTestArgs({ argv, debugOptions }) {
     const testArgv = Object.assign({}, argv);
 
