@@ -41,6 +41,8 @@
     "egg-born-module-a-captcha": "^4.2.9",
     "egg-born-module-a-captchasimple": "^4.1.8",
     "egg-born-module-a-chartjs": "^4.1.6",
+    "egg-born-module-a-cli": "^4.0.0",
+    "egg-born-module-a-clibooster": "^4.0.0",
     "egg-born-module-a-cms": "^4.3.30",
     "egg-born-module-a-codemirror": "^4.1.10",
     "egg-born-module-a-components-sync": "^4.5.2",
