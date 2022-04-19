@@ -1,5 +1,12 @@
 # History
 
+## 2022-04-19, Version 4.16.0
+
+- **Feat**
+  - 开放认证引擎
+    - 允许用户动态分配 ClientID/ClientSecret，并分配可以访问的权限子集
+    - 允许通过命令行直接访问后端服务 API
+
 ## 2022-04-13, Version 4.15.0
 
 - **Refactor**
