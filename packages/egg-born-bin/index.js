@@ -40,12 +40,25 @@ class EggBornBinCommand extends Command {
     //
     console.log(token);
     console.log(cliFullName);
-    //
-    const res = yield utils.fetchByOpenAuth({
+    // signin
+    let res = yield utils.fetchByOpenAuth({
       host: token.host,
-      path: '/a/cli/meta',
+      path: '/a/authopen/auth/signin',
+      body: {
+        data: {
+          clientID: token.clientID,
+          clientSecret: token.clientSecret,
+        },
+      },
+    });
+    // cli meta
+    res = yield utils.fetchByOpenAuth({
+      host: token.host,
+      path: '/a/cli/cli/meta',
     });
     console.log(res);
+    // cli run
+    // logout
   }
 
   _prepareCliFullName(cliName) {

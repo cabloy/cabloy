@@ -10,12 +10,15 @@ const extend = require('extend2');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
-  async fetchByOpenAuth({ host, path, body, accessToken }) {
+  _jwt: null,
+  async fetchByOpenAuth({ host, path, body }) {
+    const accessToken = (this._jwt && this._jwt.accessToken) || '';
     const httpClient = urllib.create();
     const url = `${host}/api${path}`;
     const options = {
       method: 'POST',
       data: body,
+      contentType: 'json',
       dataType: 'json',
       followRedirect: true,
       maxRedirects: 5,
@@ -25,9 +28,16 @@ const utils = {
       },
     };
     const res = await httpClient.request(url, options);
+    // error
     if (res.data.code !== 0) {
       throw new Error(res.data.message);
     }
+    // jwt
+    const jwt = res.data['eb-jwt-oauth'];
+    if (jwt) {
+      this._jwt = jwt;
+    }
+    // ok
     return res.data.data;
   },
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
