@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const randomize = require3('randomatic');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AuthOpen {
@@ -6,6 +9,29 @@ module.exports = ctx => {
     }
     get modelResourceRole() {
       return ctx.model.module('a-base').resourceRole;
+    }
+
+    async hideClientSecret({ atomId, itemId, user }) {
+      itemId = await this._forceAuthOpenId({ atomId, itemId });
+      // use userId for safety
+      await this.modelAuthOpen.update({
+        id: itemId,
+        userId: user.id,
+        clientSecretHidden: 1,
+      });
+    }
+
+    async resetClientSecret({ atomId, itemId, user }) {
+      itemId = await this._forceAuthOpenId({ atomId, itemId });
+      // clientSecret
+      const clientSecret = randomize('0a', 40);
+      // use userId for safety
+      await this.modelAuthOpen.update({
+        id: itemId,
+        userId: user.id,
+        clientSecret,
+        clientSecretHidden: 0,
+      });
     }
 
     async verify({ clientID, clientSecret }) {
@@ -83,6 +109,21 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, authId]
       );
+    }
+
+    async _forceAuthOpenId({ atomId, itemId }) {
+      if (!itemId) {
+        const item = await this.modelAuthOpen.get({ atomId });
+        itemId = item.id;
+      }
+      return itemId;
+    }
+
+    async _forceAuthOpen({ atomId, itemId }) {
+      if (!itemId) {
+        return await this.modelAuthOpen.get({ atomId });
+      }
+      return await this.modelAuthOpen.get({ id: itemId });
     }
   }
   return AuthOpen;
