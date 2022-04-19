@@ -1,7 +1,10 @@
 const path = require('path');
 const fse = require('fs-extra');
 const Command = require('@zhennann/egg-bin').Command;
+const eggBornUtils = require('egg-born-utils');
+
 const DISPATCH = Symbol.for('eb:Command#dispatch');
+const PARSE = Symbol.for('eb:Command#parse');
 
 class EggBornBinCommand extends Command {
   constructor(rawArgv) {
@@ -14,10 +17,52 @@ class EggBornBinCommand extends Command {
 
   *[DISPATCH]() {
     const commandName = this.rawArgv[0];
+    // general
     if (commandName !== 'cli') {
       yield super[DISPATCH]();
       return;
     }
+    // cli
+    yield this._handleCli();
+  }
+
+  *_handleCli() {
+    const context = this.context;
+    // argv
+    const argv = {};
+    argv.projectPath = context.cwd;
+    // token
+    const token = yield this._prepareToken(argv, context.argv.token);
+    // cli
+    const cliFullName = this._prepareCliFullName(context.argv._[1]);
+    console.log(token);
+    console.log(cliFullName);
+  }
+
+  _prepareCliFullName(cliName) {
+    if (!cliName) {
+      throw new Error('Please specify the cli name');
+    }
+    const parts = cliName.split(':');
+    if (parts.length !== 2) {
+      throw new Error('The cli name is not valid');
+    }
+    if (!parts[0]) parts[0] = 'a-clibooster';
+    return parts.join(':');
+  }
+
+  *_prepareToken(argv, tokenName) {
+    // tokenName
+    tokenName = this._prepareTokenName(argv, tokenName);
+    // init file
+    const { config } = yield eggBornUtils.openAuthConfig.load();
+    return config.tokens[tokenName];
+  }
+
+  _prepareTokenName(argv, tokenName) {
+    if (tokenName) return tokenName;
+    const pkg = require(path.join(argv.projectPath, 'package.json'));
+    return `clidev@${pkg.name}`;
   }
 }
 
