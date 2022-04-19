@@ -6,11 +6,20 @@ class CliCommand extends Command {
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin cli';
+    this.version = '1.0.0';
     this.options = {};
+    this.questions = {
+      // name: {
+      //   type: 'input',
+      //   message: 'name',
+      // },
+    };
   }
 
   *run({ cwd, argv }) {
     console.log('run cli at %s', cwd);
+
+    console.log(argv);
 
     const varsReady = {};
     const varsWant = [];
@@ -30,6 +39,7 @@ class CliCommand extends Command {
       const res = yield inquirer.prompt(varsWant);
       Object.assign(varsReady, res);
     }
+    console.log(varsReady);
 
     // done
     console.log(chalk.cyan('  cli successfully!'));
