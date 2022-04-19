@@ -41,7 +41,7 @@ class EggBornBinCommand extends Command {
     console.log(token);
     console.log(cliFullName);
     // signin
-    let res = yield utils.fetchByOpenAuth({
+    const res = yield utils.fetchByOpenAuth({
       host: token.host,
       path: '/a/authopen/auth/signin',
       body: {
@@ -52,13 +52,17 @@ class EggBornBinCommand extends Command {
       },
     });
     // cli meta
-    res = yield utils.fetchByOpenAuth({
-      host: token.host,
-      path: '/a/cli/cli/meta',
-    });
-    console.log(res);
+    // res = yield utils.fetchByOpenAuth({
+    //   host: token.host,
+    //   path: '/a/cli/cli/meta',
+    // });
+    // console.log(res);
     // cli run
     // logout
+    yield utils.fetchByOpenAuth({
+      host: token.host,
+      path: '/a/base/auth/logout',
+    });
   }
 
   _prepareCliFullName(cliName) {
