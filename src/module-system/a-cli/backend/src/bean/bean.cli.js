@@ -13,7 +13,10 @@ module.exports = ctx => {
       if (!right) ctx.throw(403);
       // command
       const command = this._findCliCommand({ cliFullName });
-      return command;
+      // command bean
+      const beanCommand = ctx.bean._getBean(command.beanFullName);
+      if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
+      return await beanCommand.meta({ argv, user });
     }
 
     _findCliCommand({ cliFullName }) {
