@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const enquirer = require('enquirer');
+const { NodeVM } = require('vm2');
 const BaseCommand = require('@zhennann/common-bin');
 
 class CliCommand extends BaseCommand {
@@ -34,6 +35,10 @@ class CliCommand extends BaseCommand {
   }
 
   *_promptGroup({ group, argv }) {
+    // check
+    const check = this._checkGroupCondition({ group, argv });
+    if (!check) return;
+    // prepare
     const varsWant = [];
     for (const key in group.questions) {
       const value = argv[key];
@@ -44,10 +49,37 @@ class CliCommand extends BaseCommand {
         ...question,
       });
     }
-    if (varsWant.length > 0) {
-      const res = yield enquirer.prompt(varsWant);
-      Object.assign(argv, res);
+    if (varsWant.length === 0) return;
+    // log description
+    if (group.description) {
+      console.log('===>', group.description);
     }
+    // prompt
+    const res = yield enquirer.prompt(varsWant);
+    Object.assign(argv, res);
+  }
+
+  _checkGroupCondition({ group, argv }) {
+    const expression = group.condition && group.condition.expression;
+    if (!expression) return true;
+    return this.evaluateExpression({ expression, globals: argv });
+  }
+
+  evaluateExpression({ expression, globals, wrapper }) {
+    if (!wrapper) {
+      wrapper = 'none';
+    } else if (wrapper === true) {
+      wrapper = 'commonjs';
+    }
+    const vm = new NodeVM({
+      console: 'inherit',
+      sandbox: globals || {},
+      require: false,
+      nesting: true,
+      wrapper,
+    });
+    const script = wrapper === 'none' ? `return (${expression})` : expression;
+    return vm.run(script);
   }
 
   description() {
