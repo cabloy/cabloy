@@ -4,7 +4,6 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli Demo',
-      usage: 'Usage: npm run :demo [options]',
     },
     options: {
       username: {
