@@ -17,6 +17,14 @@ module.exports = app => {
       keywords: {},
       schemas,
     },
+    cli: {
+      commands: {
+        demo: {
+          title: 'Cli Demo',
+          bean: 'demo',
+        },
+      },
+    },
   };
   return meta;
 };
