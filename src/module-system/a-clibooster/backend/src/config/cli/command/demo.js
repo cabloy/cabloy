@@ -29,7 +29,7 @@ module.exports = app => {
     },
     groups: {
       default: {
-        description: 'Specify your basic info',
+        description: 'Your basic info',
         condition: {
           expression: null,
         },
@@ -46,7 +46,7 @@ module.exports = app => {
         },
       },
       teacher: {
-        description: 'Specify the teacher info',
+        description: 'The teacher info',
         condition: {
           expression: 'role==="teacher"',
         },
@@ -58,7 +58,7 @@ module.exports = app => {
         },
       },
       student: {
-        description: 'Specify the student info',
+        description: 'The student info',
         condition: {
           expression: 'role==="student"',
         },

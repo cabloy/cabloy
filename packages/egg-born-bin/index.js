@@ -59,7 +59,7 @@ class EggBornBinCommand extends Command {
         argv,
       },
     });
-    console.log(res);
+    console.log(JSON.stringify(res, null, 2));
     // cli run
     // logout
     yield openAuth.post({

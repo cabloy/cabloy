@@ -10,7 +10,33 @@ module.exports = ctx => {
       const meta = {};
       meta.info = this._commandMeta_info({ info: command.info, argv });
       meta.options = this._commandMeta_options({ options: command.options, argv });
+      meta.groups = this._commandMeta_groups({ groups: command.groups, argv });
       return meta;
+    }
+
+    _commandMeta_groups({ groups }) {
+      const metaGroups = {};
+      for (const groupName in groups) {
+        const group = groups[groupName];
+        metaGroups[groupName] = this._commandMeta_group({ group });
+      }
+      return metaGroups;
+    }
+
+    _commandMeta_group({ group }) {
+      const metaGroup = {
+        description: ctx.text(group.description),
+        condition: group.condition,
+        questions: {},
+      };
+      for (const key in group.questions) {
+        const question = group.questions[key];
+        metaGroup.questions[key] = {
+          ...question,
+          message: ctx.text(question.message),
+        };
+      }
+      return metaGroup;
     }
 
     _commandMeta_options({ options }) {
