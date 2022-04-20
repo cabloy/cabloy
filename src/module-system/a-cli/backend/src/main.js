@@ -5,7 +5,7 @@ const CliBaseFn = require('./bean/bean.cliBase.js');
 
 module.exports = app => {
   // base
-  app.meta.CliBase = CliBaseFn(app);
+  app.meta.CliBase = CliBaseFn;
 
   // aops
   const aops = require('./aops.js')(app);

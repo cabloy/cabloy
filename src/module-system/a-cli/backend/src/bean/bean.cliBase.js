@@ -1,9 +1,9 @@
-module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class CliBase extends app.meta.BeanBase {
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class CliBase {
     async meta({ argv, user }) {
       return {
-        ok: 1,
+        locale: ctx.locale,
       };
     }
   }
