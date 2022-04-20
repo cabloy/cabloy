@@ -41,6 +41,7 @@
     "docs:build": "node_modules/.bin/jsdoc -c jsdoc.json --readme docs/jsdoc-readme.md",
     "token:add": "node ./packages/egg-born-bin/bin/egg-born-bin.js token-add",
     "token:delete": "node ./packages/egg-born-bin/bin/egg-born-bin.js token-delete",
+    "token:list": "node ./packages/egg-born-bin/bin/egg-born-bin.js token-list",
     "cli": "node ./packages/egg-born-bin/bin/egg-born-bin.js cli"
   },
   "devDependencies": {
