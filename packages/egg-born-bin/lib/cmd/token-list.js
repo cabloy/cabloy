@@ -1,5 +1,4 @@
 const chalk = require('chalk');
-const inquirer = require('inquirer');
 const Table = require('cli-table3');
 const eggBornUtils = require('egg-born-utils');
 const Command = require('@zhennann/egg-bin').Command;
