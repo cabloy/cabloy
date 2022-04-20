@@ -9,7 +9,20 @@ module.exports = ctx => {
     _commandMeta({ command, argv }) {
       const meta = {};
       meta.info = this._commandMeta_info({ info: command.info, argv });
+      meta.options = this._commandMeta_options({ options: command.options, argv });
       return meta;
+    }
+
+    _commandMeta_options({ options }) {
+      const metaOptions = {};
+      for (const key in options) {
+        const option = options[key];
+        metaOptions[key] = {
+          ...option,
+          description: ctx.text(option.description),
+        };
+      }
+      return metaOptions;
     }
 
     _commandMeta_info({ info, argv }) {
