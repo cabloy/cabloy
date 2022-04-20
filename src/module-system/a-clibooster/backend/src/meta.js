@@ -3,6 +3,9 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   // static
   const staticResources = require('./config/static/resources.js')(app);
+  // cli commands
+  const cliCommands = require('./config/cli/commands.js')(app);
+  // meta
   const meta = {
     base: {
       atoms: {},
@@ -18,12 +21,7 @@ module.exports = app => {
       schemas,
     },
     cli: {
-      commands: {
-        demo: {
-          title: 'Cli Demo',
-          bean: 'demo',
-        },
-      },
+      commands: cliCommands,
     },
   };
   return meta;
