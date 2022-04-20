@@ -4,12 +4,17 @@ module.exports = app => {
     // data: { clientID, clientSecret }
     async signin({ data, state = 'login' }) {
       // signin
-      return await this.ctx.bean.authProvider.authenticateDirect({
+      await this.ctx.bean.authProvider.authenticateDirect({
         module: moduleInfo.relativeName,
         providerName: 'authopen',
         query: { state },
         body: { data },
       });
+      // user info
+      return {
+        user: this.ctx.state.user,
+        locales: this.ctx.config.module('a-base').locales,
+      };
     }
   }
 

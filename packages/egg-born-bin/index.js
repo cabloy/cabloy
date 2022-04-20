@@ -47,9 +47,14 @@ class EggBornBinCommand extends Command {
         },
       },
     });
+    // locale
+    let locale = res.user.agent.locale;
+    if (!locale) {
+      locale = eggBornUtils.tools.preferredLocale({ locale: null, locales: res.locales });
+    }
     // cli meta
     res = yield openAuth.post({
-      path: '/a/cli/cli/meta',
+      path: `/a/cli/cli/meta?locale=${locale}`,
       body: {
         argv,
       },
