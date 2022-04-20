@@ -1,10 +1,8 @@
 const path = require('path');
 const fse = require('fs-extra');
-const urllib = require('urllib');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
-const utils = require('./lib/utils.js');
-
+const OpenAuth = require('./lib/openAuth.js');
 const DISPATCH = Symbol.for('eb:Command#dispatch');
 const PARSE = Symbol.for('eb:Command#parse');
 
@@ -37,12 +35,10 @@ class EggBornBinCommand extends Command {
     const cliFullName = this._prepareCliFullName(context.argv._[1]);
     // token
     const token = yield this._prepareToken(argv, context.argv.token);
-    //
-    console.log(token);
-    console.log(cliFullName);
+    // OpenAuth
+    const openAuth = new OpenAuth({ host: token.host });
     // signin
-    const res = yield utils.fetchByOpenAuth({
-      host: token.host,
+    let res = yield openAuth.post({
       path: '/a/authopen/auth/signin',
       body: {
         data: {
@@ -52,15 +48,13 @@ class EggBornBinCommand extends Command {
       },
     });
     // cli meta
-    // res = yield utils.fetchByOpenAuth({
-    //   host: token.host,
-    //   path: '/a/cli/cli/meta',
-    // });
-    // console.log(res);
+    res = yield openAuth.post({
+      path: '/a/cli/cli/meta',
+    });
+    console.log(res);
     // cli run
     // logout
-    yield utils.fetchByOpenAuth({
-      host: token.host,
+    yield openAuth.post({
       path: '/a/base/auth/logout',
     });
   }
