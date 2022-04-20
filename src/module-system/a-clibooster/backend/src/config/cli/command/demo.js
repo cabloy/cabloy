@@ -1,5 +1,6 @@
 module.exports = app => {
   return {
+    bean: 'demo',
     info: {
       version: '4.0.0',
       title: 'Cli Demo',
@@ -70,6 +71,5 @@ module.exports = app => {
         },
       },
     },
-    bean: 'demo',
   };
 };
