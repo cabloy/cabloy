@@ -3,46 +3,51 @@ const inquirer = require('inquirer');
 const BaseCommand = require('@zhennann/common-bin');
 
 class CliCommand extends BaseCommand {
-  constructor(rawArgv, { meta }) {
+  constructor(rawArgv, { meta, argv }) {
     super(rawArgv);
-    this.usage = 'Usage: egg-born-bin cli';
-    this.version = '2.0.0';
-    this.options = {};
-    this.questions = {
-      // name: {
-      //   type: 'input',
-      //   message: 'name',
-      // },
-    };
+    this.usage = meta.info.usage;
+    this.version = meta.info.version;
+    this.options = meta.options;
+    this.groups = meta.groups;
+    this.__argv = argv;
   }
 
-  *run({ cwd, argv }) {
-    console.log('run cli at %s', cwd);
-
+  *run(context) {
+    let { cwd, argv } = context;
+    // argv
+    argv = Object.assign({}, argv, this.__argv);
+    // log start
+    console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
+    // prompt
+    yield this._promptGroups({ argv });
     console.log(argv);
-
-    const varsReady = {};
-    const varsWant = [];
-    for (const key in this.questions) {
-      const value = argv[key];
-      if (value !== undefined) {
-        varsReady[key] = value;
-      } else {
-        const question = this.questions[key];
-        varsWant.push({
-          name: key,
-          ...question,
-        });
-      }
-    }
-    if (varsWant.length > 0) {
-      const res = yield inquirer.prompt(varsWant);
-      Object.assign(varsReady, res);
-    }
-    console.log(varsReady);
 
     // done
     console.log(chalk.cyan('  cli successfully!'));
+  }
+
+  *_promptGroups({ argv }) {
+    for (const groupName in this.groups) {
+      const group = this.groups[groupName];
+      yield this._promptGroup({ group, argv });
+    }
+  }
+
+  *_promptGroup({ group, argv }) {
+    const varsWant = [];
+    for (const key in group.questions) {
+      const value = argv[key];
+      if (value !== undefined) continue;
+      const question = group.questions[key];
+      varsWant.push({
+        name: key,
+        ...question,
+      });
+    }
+    if (varsWant.length > 0) {
+      const res = yield inquirer.prompt(varsWant);
+      Object.assign(argv, res);
+    }
   }
 
   description() {
