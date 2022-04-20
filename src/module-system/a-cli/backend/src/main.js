@@ -1,8 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const CliBaseFn = require('./bean/bean.cliBase.js');
 
 module.exports = app => {
+  // base
+  app.meta.CliBase = CliBaseFn(app);
+
   // aops
   const aops = require('./aops.js')(app);
   // beans
