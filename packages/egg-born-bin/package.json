@@ -40,6 +40,7 @@
     "egg-born-front": "^8.5.3",
     "egg-born-utils": "^1.0.3",
     "egg-mock": "^3.25.1",
+    "enquirer": "^2.3.6",
     "extend2": "^1.0.1",
     "glob": "^7.1.6",
     "nock": "^11.7.2",

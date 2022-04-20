@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const inquirer = require('inquirer');
+const enquirer = require('enquirer');
 const BaseCommand = require('@zhennann/common-bin');
 
 class CliCommand extends BaseCommand {
@@ -45,7 +45,7 @@ class CliCommand extends BaseCommand {
       });
     }
     if (varsWant.length > 0) {
-      const res = yield inquirer.prompt(varsWant);
+      const res = yield enquirer.prompt(varsWant);
       Object.assign(argv, res);
     }
   }
