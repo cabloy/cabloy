@@ -6,7 +6,7 @@ class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta }) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin cli';
-    this.version = '1.0.0';
+    this.version = '2.0.0';
     this.options = {};
     this.questions = {
       // name: {

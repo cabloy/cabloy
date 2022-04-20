@@ -5,6 +5,7 @@ const eggBornUtils = require('egg-born-utils');
 const OpenAuth = require('./lib/openAuth.js');
 const CliCommand = require('./lib/cmd/cli.js');
 const DISPATCH = Symbol.for('eb:Command#dispatch');
+const PARSE = Symbol.for('eb:Command#parse');
 
 class EggBornBinCommand extends Command {
   constructor(rawArgv) {
@@ -27,14 +28,15 @@ class EggBornBinCommand extends Command {
   }
 
   *_handleCli() {
-    const context = this.context;
+    // get parsed argument without handling helper and version
+    const parsed = yield this[PARSE](this.rawArgv);
     // argv
     const argv = {};
-    argv.projectPath = context.cwd;
+    argv.projectPath = process.cwd();
     // cli
-    argv.cliFullName = this._prepareCliFullName(context.argv._[1]);
+    argv.cliFullName = this._prepareCliFullName(parsed._[1]);
     // token
-    const token = yield this._prepareToken(argv, context.argv.token);
+    const token = yield this._prepareToken(argv, parsed.token);
     // OpenAuth
     const openAuth = new OpenAuth({ host: token.host });
     // signin
