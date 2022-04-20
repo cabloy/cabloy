@@ -1,9 +1,9 @@
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const Command = require('@zhennann/egg-bin').Command;
+const BaseCommand = require('@zhennann/common-bin');
 
-class CliCommand extends Command {
-  constructor(rawArgv) {
+class CliCommand extends BaseCommand {
+  constructor(rawArgv, { meta }) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin cli';
     this.version = '1.0.0';

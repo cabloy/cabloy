@@ -3,8 +3,8 @@ const fse = require('fs-extra');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
 const OpenAuth = require('./lib/openAuth.js');
+const CliCommand = require('./lib/cmd/cli.js');
 const DISPATCH = Symbol.for('eb:Command#dispatch');
-const PARSE = Symbol.for('eb:Command#parse');
 
 class EggBornBinCommand extends Command {
   constructor(rawArgv) {
@@ -38,7 +38,7 @@ class EggBornBinCommand extends Command {
     // OpenAuth
     const openAuth = new OpenAuth({ host: token.host });
     // signin
-    let res = yield openAuth.post({
+    const res = yield openAuth.post({
       path: '/a/authopen/auth/signin',
       body: {
         data: {
@@ -53,14 +53,17 @@ class EggBornBinCommand extends Command {
       locale = eggBornUtils.tools.preferredLocale({ locale: null, locales: res.locales });
     }
     // cli meta
-    res = yield openAuth.post({
+    const meta = yield openAuth.post({
       path: `/a/cli/cli/meta?locale=${locale}`,
       body: {
         argv,
       },
     });
-    console.log(JSON.stringify(res, null, 2));
     // cli run
+    const rawArgv = this.rawArgv.slice();
+    rawArgv.splice(rawArgv.indexOf('cli'), 1);
+    const command = new CliCommand(rawArgv, { meta });
+    yield command[DISPATCH]();
     // logout
     yield openAuth.post({
       path: '/a/base/auth/logout',
