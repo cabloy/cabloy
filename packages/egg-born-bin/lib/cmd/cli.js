@@ -158,10 +158,16 @@ class CliCommand extends BaseCommand {
           const item = list[progressNo];
           text += `(${item.progress + 1}/${item.total})`;
           if (progressNo === length - 1) {
-            text += `===>${item.text}`;
+            text = adjustText(`${text}===> `, item.text);
           }
         }
         console.log(text);
+      }
+      function adjustText(prefix, text) {
+        return String(text)
+          .split('\n')
+          .map(item => prefix + item)
+          .join('\n');
       }
       //
       async function onDestroy() {
