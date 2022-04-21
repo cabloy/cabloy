@@ -10,6 +10,46 @@ module.exports = ctx => {
     async meta({ context, user }) {
       const { argv } = context;
       const cliFullName = argv.cliFullName;
+      const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
+      // command bean
+      const beanCommand = ctx.bean._getBean(command.beanFullName);
+      if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
+      // meta
+      return await beanCommand.meta({ command, context, user });
+    }
+
+    async execute({ context, user }) {
+      // create progress
+      const progressId = await ctx.bean.progress.create();
+      // background
+      ctx.runInBackground(async () => {
+        await this._progressInBackground({ progressId, context, user });
+      });
+      // return progressId
+      return { progressId };
+    }
+
+    async _progressInBackground({ progressId, context, user }) {
+      try {
+        const { argv } = context;
+        const cliFullName = argv.cliFullName;
+        const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
+        // command bean
+        const beanCommand = ctx.bean._getBean(command.beanFullName);
+        if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
+        // execute
+        await beanCommand.execute({ progressId, command, context, user });
+        // progress done
+        await ctx.bean.progress.done({ progressId, message: this.ctx.text('Well Done') });
+      } catch (err) {
+        // progress error
+        await ctx.bean.progress.error({ progressId, message: err.message });
+        // throw err
+        throw err;
+      }
+    }
+
+    async _findCliCommandAndCheckRight({ cliFullName, user }) {
       // command
       const command = this._findCliCommand({ cliFullName });
       // check right first
@@ -18,17 +58,7 @@ module.exports = ctx => {
         user,
       });
       if (!right) ctx.throw(403);
-      // command bean
-      const beanCommand = ctx.bean._getBean(command.beanFullName);
-      if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
-      return await beanCommand.meta({ command, context, user });
-    }
-
-    async execute({ context, user }) {
-      // create progress
-      const progressId = await ctx.bean.progress.create();
-
-      return { progressId };
+      return command;
     }
 
     _findCliCommand({ cliFullName }) {
