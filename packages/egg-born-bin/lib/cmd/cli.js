@@ -2,6 +2,8 @@ const chalk = require('chalk');
 const enquirer = require('enquirer');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
+const IOFn = require('@zhennann/socketio').default;
+const adapter = require('../adapter.js');
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -23,7 +25,7 @@ class CliCommand extends BaseCommand {
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
-    yield this._promptGroups({ argv, groups: this.__groups });
+    // yield this._promptGroups({ argv, groups: this.__groups });
     // execute
     const res = yield this.__openAuth.post({
       path: '/a/cli/cli/execute',
@@ -83,19 +85,14 @@ class CliCommand extends BaseCommand {
   }
 
   _progressbar({ progressId }) {
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => {
+      const io = this._getIOInstance();
+      console.log(io);
+    });
   }
 
   _getIOInstance() {
-    _io = IOFn(adapter);
-    const _subscribe = _io.subscribe;
-    _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
-      options = options || {};
-      if (options.scene === undefined) {
-        options.scene = Vue.prototype.$meta.store.state.auth.clientId;
-      }
-      return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
-    };
+    return IOFn(adapter);
   }
 }
 
