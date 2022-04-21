@@ -6,6 +6,10 @@ module.exports = ctx => {
       return metaLocale;
     }
 
+    async execute(/* { progressId, command, context, user }*/) {
+      // do nothing
+    }
+
     _commandMeta({ command, context }) {
       const { argv } = context;
       const meta = {};
