@@ -29,7 +29,7 @@
     "@babel/register": "^7.8.3",
     "@zhennann/build": "^1.2.13",
     "@zhennann/egg-bin": "^5.0.4",
-    "@zhennann/socketio": "^2.1.3",
+    "@zhennann/socketio": "^3.0.0",
     "babel-loader": "^8.2.2",
     "bluebird": "^3.7.2",
     "boxen": "^4.2.0",
