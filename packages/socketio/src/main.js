@@ -131,8 +131,8 @@ export default adapter => {
           if (err.code === 401) {
             this._logout();
           } else {
-            // timeout
-            this._subscribesWaitingTimeoutId = window.setTimeout(() => {
+            // timeout: not use window.
+            this._subscribesWaitingTimeoutId = setTimeout(() => {
               this._subscribesWaitingTimeoutId = 0;
               this._doSubscribesWaiting();
             }, 2000);
@@ -176,8 +176,8 @@ export default adapter => {
           if (err.code === 401) {
             this._logout();
           } else {
-            // timeout
-            this._unsubscribesWaitingTimeoutId = window.setTimeout(() => {
+            // // timeout: not use window.
+            this._unsubscribesWaitingTimeoutId = setTimeout(() => {
               this._unsubscribesWaitingTimeoutId = 0;
               this._doUnsubscribesWaiting();
             }, 2000);
@@ -195,7 +195,8 @@ export default adapter => {
       return this._socket;
     },
     _logout() {
-      window.setTimeout(() => {
+      // timeout: not use window.
+      setTimeout(() => {
         this.disconnect();
         if (adapter.logout) {
           adapter.logout();
