@@ -5,7 +5,6 @@ module.exports = ctx => {
       return meta;
     }
     async execute({ progressId, command, context, user }) {
-      console.log(ctx.locale);
       // super
       await super.meta({ progressId, command, context, user });
       //  level one
