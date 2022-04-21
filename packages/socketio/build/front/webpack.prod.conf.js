@@ -1,36 +1,35 @@
 const utils = require('./utils');
 const webpack = require('webpack');
-const config = require('./config.js');
 const { merge } = require('webpack-merge');
-const baseWebpackConfig = require('./webpack.base.conf');
+const baseWebpackConfigFn = require('./webpack.base.conf');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const env = config.build.env;
+module.exports = function (config) {
+  const env = config.build.env;
 
-const plugins = [
-  new webpack.DefinePlugin({
-    'process.env': env,
-  }),
-  new VueLoaderPlugin(),
-  new MiniCssExtractPlugin({
-    filename: utils.assetsPath('[name].css'),
-  }),
-];
-
-const webpackConfig = merge(baseWebpackConfig, {
-  mode: 'production',
-  module: {
-    rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
-      extract: true,
+  const plugins = [
+    new webpack.DefinePlugin({
+      'process.env': env,
     }),
-  },
-  devtool: config.build.productionSourceMap ? 'source-map' : false,
-  plugins,
-  optimization: {
-    minimize: config.build.uglify,
-  },
-});
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: utils.assetsPath('[name].css'),
+    }),
+  ];
 
-module.exports = webpackConfig;
+  return merge(baseWebpackConfigFn(config), {
+    mode: 'production',
+    module: {
+      rules: utils.styleLoaders({
+        sourceMap: config.build.productionSourceMap,
+        extract: true,
+      }),
+    },
+    devtool: config.build.productionSourceMap ? 'source-map' : false,
+    plugins,
+    optimization: {
+      minimize: config.build.uglify,
+    },
+  });
+};
