@@ -7,7 +7,8 @@ let __commandsAll;
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli {
-    async meta({ argv, user }) {
+    async meta({ context, user }) {
+      const { argv } = context;
       const cliFullName = argv.cliFullName;
       // command
       const command = this._findCliCommand({ cliFullName });
@@ -20,7 +21,14 @@ module.exports = ctx => {
       // command bean
       const beanCommand = ctx.bean._getBean(command.beanFullName);
       if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
-      return await beanCommand.meta({ command, argv, user });
+      return await beanCommand.meta({ command, context, user });
+    }
+
+    async execute({ context, user }) {
+      // create progress
+      const progressId = await ctx.bean.progress.create();
+
+      return { progressId };
     }
 
     _findCliCommand({ cliFullName }) {

@@ -58,13 +58,15 @@ class EggBornBinCommand extends Command {
     const meta = yield openAuth.post({
       path: `/a/cli/cli/meta?locale=${locale}`,
       body: {
-        argv,
+        context: {
+          argv,
+        },
       },
     });
     // cli run
     const rawArgv = this.rawArgv.slice();
     rawArgv.splice(rawArgv.indexOf('cli'), 2);
-    const command = new CliCommand(rawArgv, { meta, argv });
+    const command = new CliCommand(rawArgv, { meta, argv, openAuth, locale });
     yield command[DISPATCH]();
     // logout
     yield openAuth.post({

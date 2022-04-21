@@ -1,12 +1,13 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CliBase {
-    async meta({ command, argv, user }) {
-      const metaLocale = this._commandMeta({ command, argv });
+    async meta({ command, context, user }) {
+      const metaLocale = this._commandMeta({ command, context });
       return metaLocale;
     }
 
-    _commandMeta({ command, argv }) {
+    _commandMeta({ command, context }) {
+      const { argv } = context;
       const meta = {};
       meta.info = this._commandMeta_info({ info: command.info, argv });
       meta.options = this._commandMeta_options({ options: command.options, argv });

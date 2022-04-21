@@ -7,6 +7,12 @@ module.exports = app => {
       controller: 'cli',
       meta: { right: { enableAuthOpen: true } },
     },
+    {
+      method: 'post',
+      path: 'cli/execute',
+      controller: 'cli',
+      meta: { right: { enableAuthOpen: true } },
+    },
   ];
   return routes;
 };

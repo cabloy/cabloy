@@ -4,32 +4,48 @@ const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 
 class CliCommand extends BaseCommand {
-  constructor(rawArgv, { meta, argv }) {
+  constructor(rawArgv, { meta, argv, openAuth, locale }) {
     super(rawArgv);
     this.usage = meta.info.usage;
     this.version = meta.info.version;
     this.options = meta.options;
-    this.groups = meta.groups;
+    this.__groups = meta.groups;
     this.__argv = argv;
+    this.__openAuth = openAuth;
+    this.__locale = locale;
   }
 
   *run(context) {
+    console.log(context);
     let { cwd, argv } = context;
     // argv
     argv = Object.assign({}, argv, this.__argv);
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
-    yield this._promptGroups({ argv });
-    console.log(argv);
-
+    yield this._promptGroups({ argv, groups: this.__groups });
+    // execute
+    const res = yield this.__openAuth.post({
+      path: `/a/cli/cli/execute?locale=${this.__locale}`,
+      body: {
+        context: {
+          argv,
+          cwd,
+          env: context.env,
+          rawArgv: context.rawArgv,
+        },
+      },
+    });
+    // progress
+    const progressId = res.progressId;
+    console.log(progressId);
     // done
     console.log(chalk.cyan('  cli successfully!'));
   }
 
-  *_promptGroups({ argv }) {
-    for (const groupName in this.groups) {
-      const group = this.groups[groupName];
+  *_promptGroups({ argv, groups }) {
+    for (const groupName in groups) {
+      const group = groups[groupName];
       yield this._promptGroup({ group, argv });
     }
   }
