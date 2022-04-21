@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const enquirer = require('enquirer');
-const { NodeVM } = require('vm2');
+const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 
 class CliCommand extends BaseCommand {
@@ -62,24 +62,7 @@ class CliCommand extends BaseCommand {
   _checkGroupCondition({ group, argv }) {
     const expression = group.condition && group.condition.expression;
     if (!expression) return true;
-    return this.evaluateExpression({ expression, globals: argv });
-  }
-
-  evaluateExpression({ expression, globals, wrapper }) {
-    if (!wrapper) {
-      wrapper = 'none';
-    } else if (wrapper === true) {
-      wrapper = 'commonjs';
-    }
-    const vm = new NodeVM({
-      console: 'inherit',
-      sandbox: globals || {},
-      require: false,
-      nesting: true,
-      wrapper,
-    });
-    const script = wrapper === 'none' ? `return (${expression})` : expression;
-    return vm.run(script);
+    return eggBornUtils.tools.evaluateExpression({ expression, scope: argv });
   }
 
   description() {

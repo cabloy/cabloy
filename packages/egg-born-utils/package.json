@@ -22,5 +22,7 @@
   "bugs": {
     "url": "https://github.com/zhennann/cabloy-lerna/issues"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vm2": "^3.9.3"
+  }
 }

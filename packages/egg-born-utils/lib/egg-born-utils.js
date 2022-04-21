@@ -1,6 +1,7 @@
 const os = require('os');
 const path = require('path');
 const fse = require('fs-extra');
+const { NodeVM } = require('vm2');
 
 // openAuthConfig
 const openAuthConfig = {
@@ -37,6 +38,36 @@ const tools = {
     // match fuzzy
     const localeShort = locale.split('-')[0];
     return Object.keys(locales).find(item => item.indexOf(localeShort) === 0);
+  },
+  evaluateExpression({ expression, scope, wrapper }) {
+    if (wrapper === undefined) {
+      wrapper = this._checkExpressionWrapper({ expression, scope });
+    }
+    if (!wrapper) {
+      wrapper = 'none';
+    } else if (wrapper === true) {
+      wrapper = 'commonjs';
+    }
+    const vm = new NodeVM({
+      console: 'inherit',
+      sandbox: scope || {},
+      require: false,
+      nesting: true,
+      wrapper,
+    });
+    const script = wrapper === 'none' ? `return (${expression})` : expression;
+    return vm.run(script);
+  },
+  _checkExpressionWrapper({ expression, scope }) {
+    try {
+      const scopeKeys = Object.keys(scope);
+      const js = `return (${expression})`;
+      // eslint-disable-next-line
+      new Function(scopeKeys.join(','), js);
+      return 'none';
+    } catch (err) {
+      return 'commonjs';
+    }
   },
 };
 module.exports = {
