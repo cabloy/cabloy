@@ -24,8 +24,8 @@ class CliCommand extends BaseCommand {
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
-    // yield this._promptGroups({ argv, groups: this.__groups });
-    // console.log(argv);
+    yield this._promptGroups({ argv, groups: this.__groups });
+    console.log(argv);
     // execute
     const res = yield this.__openAuth.post({
       path: '/a/cli/cli/execute',
