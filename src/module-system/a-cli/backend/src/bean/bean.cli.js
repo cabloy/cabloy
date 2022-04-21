@@ -1,4 +1,5 @@
-let __commands;
+let __commandsMap;
+let __commandsAll;
 
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -20,38 +21,47 @@ module.exports = ctx => {
     }
 
     _findCliCommand({ cliFullName }) {
-      if (!__commands) {
-        __commands = this._collectCommands();
+      if (!__commandsMap) {
+        this._collectCommands();
       }
-      const command = __commands[cliFullName];
+      const command = __commandsMap[cliFullName];
       if (!command) throw new Error(`cli command not found: ${cliFullName}`);
       return command;
     }
 
     _collectCommands() {
-      const _commands = {};
+      const _commandsMap = {};
+      const _commandsAll = {};
       for (const module of ctx.app.meta.modulesArray) {
+        const moduleName = module.info.relativeName;
         const commands = module.main.meta && module.main.meta.cli && module.main.meta.cli.commands;
         if (!commands) continue;
-        for (const key in commands) {
-          const command = commands[key];
-          const fullKey = `${module.info.relativeName}:${key}`;
-          // bean
-          const beanName = command.bean;
-          let beanFullName;
-          if (typeof beanName === 'string') {
-            beanFullName = `${module.info.relativeName}.cli.${beanName}`;
-          } else {
-            beanFullName = `${beanName.module || module.info.relativeName}.cli.${beanName.name}`;
+        const _commandsModule = (_commandsAll[moduleName] = {});
+        for (const groupName in commands) {
+          const group = commands[groupName];
+          const _commandsGroup = (_commandsModule[groupName] = {});
+          for (const key in group) {
+            const command = group[key];
+            const fullKey = `${moduleName}:${groupName}:${key}`;
+            // bean
+            const beanName = command.bean;
+            let beanFullName;
+            if (typeof beanName === 'string') {
+              beanFullName = `${moduleName}.cli.${beanName}`;
+            } else {
+              beanFullName = `${beanName.module || moduleName}.cli.${beanName.name}`;
+            }
+            // ok
+            _commandsMap[fullKey] = _commandsGroup[key] = {
+              ...command,
+              beanFullName,
+            };
           }
-          // ok
-          _commands[fullKey] = {
-            ...command,
-            beanFullName,
-          };
         }
       }
-      return _commands;
+      // ok
+      __commandsMap = _commandsMap;
+      __commandsAll = _commandsAll;
     }
   }
   return Cli;
