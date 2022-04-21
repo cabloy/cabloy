@@ -58,7 +58,7 @@ module.exports = ctx => {
         usage: ctx.text(info.usage),
       };
       if (!metaInfo.usage) {
-        metaInfo.usage = `${ctx.text('Usage')}: npm run ${argv.cliFullName} -- [options]`;
+        metaInfo.usage = `${ctx.text('Usage')}: npm run cli ${argv.cliFullName} -- [options] [-h] [-v]`;
       }
       return metaInfo;
     }
