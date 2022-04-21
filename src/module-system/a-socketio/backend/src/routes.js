@@ -1,8 +1,24 @@
 module.exports = app => {
   const routes = [
     // io
-    { method: 'post', path: 'subscribe', controller: 'io', meta: { auth: { user: true } } },
-    { method: 'post', path: 'unsubscribe', controller: 'io', meta: { auth: { user: true } } },
+    {
+      method: 'post',
+      path: 'subscribe',
+      controller: 'io',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
+    {
+      method: 'post',
+      path: 'unsubscribe',
+      controller: 'io',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
     // messageClass
     { method: 'post', path: 'messageClass/messageClass', controller: 'messageClass', meta: { auth: { user: true } } },
     // message

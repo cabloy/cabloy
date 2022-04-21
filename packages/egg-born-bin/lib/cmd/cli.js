@@ -138,9 +138,6 @@ class CliCommand extends BaseCommand {
               reject(data);
             });
         } else if (item.done === 1) {
-          // alert
-          const progress = { total: 0, progress: 100, text: data.message };
-          setProgresses([progress]);
           onDestroy()
             .then(() => {
               // resolve: should after the dialog closed
@@ -155,36 +152,26 @@ class CliCommand extends BaseCommand {
       // setProgresses
       function setProgresses(list) {
         // setProgress
-        for (const progressNo in list) {
-          const _item = list[progressNo];
-          setProgress({
-            progressNo,
-            total: _item.total,
-            progress: _item.progress,
-            text: _item.text,
-          });
+        const length = list.length;
+        let text = '';
+        for (let progressNo = 0; progressNo < length; progressNo++) {
+          const item = list[progressNo];
+          text += `(${item.progress + 1}/${item.total})`;
+          if (progressNo === length - 1) {
+            text += `===>${item.text}`;
+          }
         }
-      }
-      // setProgress
-      function setProgress({ progressNo = 0, total = 0, progress = 0, text = '' }) {
-        console.log(progressNo, total, progress, text);
-        // // setProgress
-        // const _progress = total > 0 ? parseInt((progress * 100) / total) : progress;
-        // app.progressbar.set(progressbar.find('.progressbar'), _progress);
-        // // set text
-        // const _text = total > 0 ? `(${progress + 1}/${total}) ${text}` : text;
-        // const $textEl = progressbar.find('.progressbar-text');
-        // $textEl.text(_text);
+        console.log(text);
       }
       //
-      function* onDestroy() {
+      async function onDestroy() {
         // unsubscribe
         if (subscribeId) {
           io.unsubscribe(subscribeId);
           subscribeId = null;
         }
         // delete progress
-        yield this.openAuth.post({
+        await this.openAuth.post({
           path: '/a/progress/progress/delete',
           body: {
             progressId,
