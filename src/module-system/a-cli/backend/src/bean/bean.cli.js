@@ -40,7 +40,7 @@ module.exports = ctx => {
         // execute
         await beanCommand.execute({ progressId, command, context, user });
         // progress done
-        await ctx.bean.progress.done({ progressId, message: this.ctx.text('Well Done') });
+        await ctx.bean.progress.done({ progressId, message: ctx.text('Well Done') });
       } catch (err) {
         // progress error
         await ctx.bean.progress.error({ progressId, message: err.message });

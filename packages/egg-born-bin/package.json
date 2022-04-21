@@ -47,6 +47,7 @@
     "should": "^13.2.3",
     "uglify-js": "^3.7.7",
     "urllib": "^2.34.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "socket.io-client": "^2.3.0"
   }
 }

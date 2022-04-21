@@ -26,7 +26,7 @@ class CliCommand extends BaseCommand {
     yield this._promptGroups({ argv, groups: this.__groups });
     // execute
     const res = yield this.__openAuth.post({
-      path: `/a/cli/cli/execute?locale=${this.__locale}`,
+      path: '/a/cli/cli/execute',
       body: {
         context: {
           argv,
@@ -38,7 +38,8 @@ class CliCommand extends BaseCommand {
     });
     // progress
     const progressId = res.progressId;
-    console.log(progressId);
+    // progressbar
+    yield this._progressbar({ progressId });
     // done
     console.log(chalk.cyan('  cli successfully!'));
   }
@@ -81,8 +82,20 @@ class CliCommand extends BaseCommand {
     return eggBornUtils.tools.evaluateExpression({ expression, scope: argv });
   }
 
-  description() {
-    return 'cli';
+  _progressbar({ progressId }) {
+    return new Promise((resolve, reject) => {});
+  }
+
+  _getIOInstance() {
+    _io = IOFn(adapter);
+    const _subscribe = _io.subscribe;
+    _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
+      options = options || {};
+      if (options.scene === undefined) {
+        options.scene = Vue.prototype.$meta.store.state.auth.clientId;
+      }
+      return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
+    };
   }
 }
 
