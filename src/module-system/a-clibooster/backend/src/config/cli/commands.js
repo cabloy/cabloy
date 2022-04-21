@@ -1,8 +1,10 @@
-const demo = require('./command/demo.js');
+const defaultDemo = require('./command/default.demo.js');
 
 module.exports = app => {
   const commands = {
-    demo: demo(app),
+    default: {
+      demo: defaultDemo(app),
+    },
   };
   return commands;
 };

@@ -1,5 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
-const cliDemo = require('./bean/cli.demo.js');
+const cliDefaultDemo = require('./bean/cli.default.demo.js');
 
 module.exports = app => {
   const beans = {
@@ -9,9 +9,9 @@ module.exports = app => {
       bean: versionManager,
     },
     // cli
-    'cli.demo': {
+    'cli.default.demo': {
       mode: 'ctx',
-      bean: cliDemo,
+      bean: cliDefaultDemo,
     },
   };
   return beans;
