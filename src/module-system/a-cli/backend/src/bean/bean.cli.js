@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 let __commandsMap;
 let __commandsAll;
 
@@ -5,15 +8,15 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli {
     async meta({ argv, user }) {
-      // check right first
       const cliFullName = argv.cliFullName;
+      // command
+      const command = this._findCliCommand({ cliFullName });
+      // check right first
       const right = await ctx.bean.resource.checkRightResource({
-        atomStaticKey: cliFullName,
+        atomStaticKey: command.resource.atomStaticKey,
         user,
       });
       if (!right) ctx.throw(403);
-      // command
-      const command = this._findCliCommand({ cliFullName });
       // command bean
       const beanCommand = ctx.bean._getBean(command.beanFullName);
       if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
@@ -43,6 +46,8 @@ module.exports = ctx => {
           for (const key in group) {
             const command = group[key];
             const fullKey = `${moduleName}:${groupName}:${key}`;
+            // command
+            const _command = extend(true, {}, command);
             // bean
             const beanName = command.bean;
             let beanFullName;
@@ -51,11 +56,16 @@ module.exports = ctx => {
             } else {
               beanFullName = `${beanName.module || moduleName}.cli.${beanName.name}`;
             }
+            _command.beanFullName = beanFullName;
+            // resource
+            let atomStaticKey = _command.resource && _command.resource.atomStaticKey;
+            if (!atomStaticKey) throw new Error(`cli command resource.atomStaticKey not specified: ${fullKey}`);
+            if (atomStaticKey.indexOf(':') === -1) {
+              atomStaticKey = `${moduleName}:${atomStaticKey}`;
+            }
+            _command.resource.atomStaticKey = atomStaticKey;
             // ok
-            _commandsMap[fullKey] = _commandsGroup[key] = {
-              ...command,
-              beanFullName,
-            };
+            _commandsMap[fullKey] = _commandsGroup[key] = _command;
           }
         }
       }

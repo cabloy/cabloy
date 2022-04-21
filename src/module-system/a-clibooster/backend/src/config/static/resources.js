@@ -4,7 +4,7 @@ module.exports = app => {
     // function
     {
       atomName: 'Cli Demo',
-      atomStaticKey: 'demo',
+      atomStaticKey: 'cliDefaultDemo',
       atomRevision: 1,
       atomCategoryId: 'a-base:function.Cli',
       resourceType: 'a-base:function',

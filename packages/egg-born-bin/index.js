@@ -77,10 +77,11 @@ class EggBornBinCommand extends Command {
       throw new Error('Please specify the cli name');
     }
     const parts = cliName.split(':');
-    if (parts.length !== 2) {
+    if (parts.length !== 3) {
       throw new Error('The cli name is not valid');
     }
     if (!parts[0]) parts[0] = 'a-clibooster';
+    if (!parts[1]) parts[1] = 'default';
     return parts.join(':');
   }
 

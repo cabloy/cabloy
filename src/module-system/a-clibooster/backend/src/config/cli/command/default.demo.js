@@ -1,6 +1,9 @@
 module.exports = app => {
   return {
     bean: 'default.demo',
+    resource: {
+      atomStaticKey: 'cliDefaultDemo',
+    },
     info: {
       version: '4.0.0',
       title: 'Cli Demo',
