@@ -223,13 +223,15 @@ export default adapter => {
         this._logout();
       } else if (type === 'provider') {
         const user = adapter.user();
-        if (user.op.anonymous) {
-          this._logout();
-        } else {
-          const providerCurrent = user.provider;
-          const providerMessage = data.provider;
-          if (providerCurrent.scene === providerMessage.scene && providerCurrent.id === providerMessage.id) {
+        if (user) {
+          if (user.op.anonymous) {
             this._logout();
+          } else {
+            const providerCurrent = user.provider;
+            const providerMessage = data.provider;
+            if (providerCurrent.scene === providerMessage.scene && providerCurrent.id === providerMessage.id) {
+              this._logout();
+            }
           }
         }
       }
@@ -288,7 +290,7 @@ export default adapter => {
       }
 
       const user = adapter.user();
-      if (!user.op.anonymous) {
+      if (user && !user.op.anonymous) {
         this.subscribe('/a/socketio/messageSystem', ({ message }) => {
           this._onMessageSystem(JSON.parse(message.content));
         });

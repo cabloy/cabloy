@@ -3,7 +3,7 @@ const enquirer = require('enquirer');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
-const adapter = require('../adapter.js');
+const AdapterFn = require('../adapter.js');
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -92,7 +92,8 @@ class CliCommand extends BaseCommand {
   }
 
   _getIOInstance() {
-    return IOFn(adapter);
+    console.log(IOFn);
+    return IOFn(AdapterFn({ openAuth: this.__openAuth }));
   }
 }
 

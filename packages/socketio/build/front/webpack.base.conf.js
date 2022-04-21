@@ -14,8 +14,9 @@ module.exports = {
     path: config.build.assetsRoot,
     filename: '[name].min.js',
     publicPath: config.build.assetsPublicPath,
-    library: 'socketio',
-    libraryTarget: 'umd',
+    // library: 'socketio',
+    // libraryTarget: 'umd',
+    libraryTarget: 'commonjs2',
   },
   externals: {
     vue: 'vue',

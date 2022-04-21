@@ -41,5 +41,11 @@ module.exports = options => {
       opts.query['eb-jwt'] = openAuth.jwt.accessToken;
       return ioc(url, opts);
     },
+    user() {
+      return null;
+    },
+    logout() {
+      // do nothing
+    },
   };
 };
