@@ -1,5 +1,7 @@
 const require3 = require('require3');
-const boxenFn = require3('boxen');
+const Chalk = require3('chalk');
+const TableClass = require3('cli-table3');
+const Boxen = require3('boxen');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -7,11 +9,17 @@ module.exports = ctx => {
     get moduleConfig() {
       return ctx.config.module(moduleInfo.relativeName);
     }
+    get chalk() {
+      return Chalk;
+    }
+    get Table() {
+      return TableClass;
+    }
     boxen({ text, options }) {
       if (!options) {
         options = this.moduleConfig.helper.boxen.options;
       }
-      return boxenFn(text, options);
+      return Boxen(text, options);
     }
   }
   return Local;

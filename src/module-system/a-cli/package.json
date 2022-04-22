@@ -24,6 +24,9 @@
   "dependencies": {
     "egg-born-mock": "^2.1.4",
     "require3": "^2.1.2",
-    "extend2": "^1.0.1"
+    "extend2": "^1.0.1",
+    "boxen": "^4.2.0",
+    "chalk": "^3.0.0",
+    "cli-table3": "^0.6.2"
   }
 }
