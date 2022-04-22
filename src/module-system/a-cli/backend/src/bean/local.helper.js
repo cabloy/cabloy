@@ -10,10 +10,16 @@ module.exports = ctx => {
       return ctx.config.module(moduleInfo.relativeName);
     }
     get chalk() {
-      return Chalk;
+      return this.newChalk();
     }
     get Table() {
       return TableClass;
+    }
+    newChalk(options) {
+      if (!options) {
+        options = this.moduleConfig.helper.chalk.options;
+      }
+      return new Chalk.Instance(options);
     }
     newTable(options) {
       return new TableClass(options);
