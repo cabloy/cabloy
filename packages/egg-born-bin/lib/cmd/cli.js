@@ -27,8 +27,8 @@ class CliCommand extends BaseCommand {
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
-    // yield this._promptGroups({ argv, groups: this.__groups });
-    // console.log(argv);
+    yield this._promptGroups({ argv, groups: this.__groups });
+    console.log(argv);
     // execute
     const progressId = uuid.v4().replace(/-/g, '');
     const _context = {
@@ -167,7 +167,6 @@ class CliCommand extends BaseCommand {
         if (index === -1) {
           queue.push(item);
         } else {
-          console.log(item.counter, item.done);
           queue.splice(index, 0, item);
         }
         queueHandler();
