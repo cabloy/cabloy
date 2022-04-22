@@ -1,13 +1,12 @@
 const chalk = require('chalk');
 const enquirer = require('enquirer');
 const uuid = require('uuid');
-const async = require('async');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
-const __debounceTimeout = 100;
+const __debounceTimeout = 300;
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -85,7 +84,6 @@ class CliCommand extends BaseCommand {
   _progressbar({ progressId, context }) {
     const self = this;
     return new Promise((resolve, reject) => {
-      let counter = 0;
       let subscribeId = null;
       const subscribePath = `/a/progress/update/${progressId}`;
       // io
@@ -94,14 +92,16 @@ class CliCommand extends BaseCommand {
       let queue = [];
       const queueHandler = eggBornUtils.tools.debounce(() => {
         for (const item of queue) {
-          console.log(item.text);
+          checking(item);
         }
         queue = [];
       }, __debounceTimeout);
       // onMessage
       function onMessage({ message }) {
         const item = JSON.parse(message.content);
-        checking(item);
+        if (item) {
+          queuePush(item);
+        }
       }
       // onSubscribed
       function onSubscribed() {
@@ -115,17 +115,11 @@ class CliCommand extends BaseCommand {
       }
       //
       function checking(item) {
-        if (!item) return;
-        // not check old message
-        // if (item.counter <= counter) {
-        //   return;
-        // }
-        counter = item.counter;
         // data
         const data = item.data ? (typeof item.data === 'string' ? JSON.parse(item.data) : item.data) : {};
         // handle
         if (item.done === 0) {
-          setProgresses(counter, data);
+          setProgresses(data);
         } else if (item.done === -1) {
           // done:1 error:-1
           // force close and destroy
@@ -150,7 +144,7 @@ class CliCommand extends BaseCommand {
         }
       }
       // setProgresses
-      function setProgresses(counter, list) {
+      function setProgresses(list) {
         // setProgress
         const length = list.length;
         let text = '';
@@ -166,14 +160,15 @@ class CliCommand extends BaseCommand {
             }
           }
         }
-        queuePush({ counter, text });
+        console.log(text);
       }
-      function queuePush({ counter, text }) {
-        const index = queue.findIndex(item => item.counter > counter);
+      function queuePush(item) {
+        const index = queue.findIndex(_item => _item.counter > item.counter);
         if (index === -1) {
-          queue.push({ counter, text });
+          queue.push(item);
         } else {
-          queue.splice(index, 0, { counter, text });
+          console.log(item.counter, item.done);
+          queue.splice(index, 0, item);
         }
         queueHandler();
       }
@@ -197,10 +192,6 @@ class CliCommand extends BaseCommand {
             progressId,
           },
         });
-        // queue done
-        while (queue.length > 0) {
-          await eggBornUtils.tools.sleep(__debounceTimeout);
-        }
       }
       // subscribe
       subscribeId = io.subscribe(subscribePath, onMessage, onSubscribed);
