@@ -19,6 +19,11 @@ module.exports = ctx => {
     }
 
     async execute({ progressId, context, user }) {
+      // directly
+      if (!progressId) {
+        await this._progressInBackground({ progressId, context, user });
+        return null;
+      }
       // create progress
       await ctx.bean.progress.create({ progressId });
       // background
@@ -35,10 +40,10 @@ module.exports = ctx => {
         const cliFullName = argv.cliFullName;
         const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
         // command bean
-        const beanCommand = ctx.bean._getBean(command.beanFullName);
+        const beanCommand = ctx.bean._newBean(command.beanFullName, { progressId });
         if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
         // execute
-        await beanCommand.execute({ progressId, command, context, user });
+        await beanCommand.execute({ command, context, user });
         // progress done
         await ctx.bean.progress.done({ progressId, message: ctx.text('CliDone') });
       } catch (err) {

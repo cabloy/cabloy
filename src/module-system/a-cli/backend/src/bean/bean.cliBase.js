@@ -1,6 +1,9 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CliBase {
+    constructor(options) {
+      this.options = options;
+    }
     get helper() {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }
@@ -10,12 +13,18 @@ module.exports = ctx => {
       return metaLocale;
     }
 
-    async execute(/* { progressId, command, context, user }*/) {
+    async execute(/* { command, context, user }*/) {
       // do nothing
     }
 
-    async log({ progressId, progressNo, total, progress, text }) {
-      return await ctx.bean.progress.update({ progressId, progressNo, total, progress, text });
+    async log({ progressNo, total, progress, text }) {
+      return await ctx.bean.progress.update({
+        progressId: this.options.progressId,
+        progressNo,
+        total,
+        progress,
+        text,
+      });
     }
 
     _commandMeta({ command, context }) {
