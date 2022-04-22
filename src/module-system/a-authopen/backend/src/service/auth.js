@@ -11,10 +11,7 @@ module.exports = app => {
         body: { data },
       });
       // user info
-      return {
-        user: this.ctx.state.user,
-        locales: this.ctx.config.module('a-base').locales,
-      };
+      return await this.ctx.bean.auth.getLoginInfo({ clientId: true });
     }
   }
 

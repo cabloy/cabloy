@@ -50,22 +50,30 @@ module.exports = ctx => {
 
     async getLoginInfo(options) {
       options = options || {};
-      // config
-      const config = await this._getConfig();
+      const needClientId = options.clientId === true;
+      const isAuthOpen = ctx.bean.authOpen.isAuthOpen();
+      // info
       const info = {
         user: ctx.state.user,
         instance: this._getInstance(),
-        config,
+        locales: ctx.config.module('a-base').locales,
       };
+      // config
+      if (!isAuthOpen) {
+        info.config = await this._getConfig();
+      }
       // clientId
-      if (options.clientId === true) {
+      if (needClientId) {
         info.clientId = uuid.v4().replace(/-/g, '');
       }
       // login info event
-      await ctx.bean.event.invoke({
-        name: 'loginInfo',
-        data: { info },
-      });
+      if (!isAuthOpen) {
+        await ctx.bean.event.invoke({
+          name: 'loginInfo',
+          data: { info },
+        });
+      }
+      // ok
       return info;
     }
 
