@@ -6,7 +6,7 @@ const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
-const __debounceTimeout = 300;
+const __debounceTimeout = 500;
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
