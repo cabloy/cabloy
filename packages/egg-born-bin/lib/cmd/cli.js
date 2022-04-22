@@ -85,12 +85,13 @@ class CliCommand extends BaseCommand {
   }
 
   _progressbar({ progressId }) {
+    const self = this;
     return new Promise((resolve, reject) => {
       let counter = 0;
       let subscribeId = null;
       const subscribePath = `/a/progress/update/${progressId}`;
       // io
-      const io = this._getIOInstance();
+      const io = self._getIOInstance();
       // onMessage
       function onMessage({ message }) {
         const item = JSON.parse(message.content);
@@ -98,7 +99,7 @@ class CliCommand extends BaseCommand {
       }
       // onSubscribed
       function onSubscribed() {
-        this.openAuth
+        self.__openAuth
           .post({
             path: '/a/progress/progress/check',
             body: {
@@ -182,7 +183,7 @@ class CliCommand extends BaseCommand {
           subscribeId = null;
         }
         // delete progress
-        await this.openAuth.post({
+        await self.__openAuth.post({
           path: '/a/progress/progress/delete',
           body: {
             progressId,
