@@ -139,7 +139,7 @@ class CliCommand extends BaseCommand {
         }
       }
       // setProgresses
-      function setProgresses(list) {
+      async function setProgresses(list) {
         // setProgress
         const length = list.length;
         let text = '';
@@ -156,6 +156,7 @@ class CliCommand extends BaseCommand {
           }
         }
         console.log(text);
+        await eggBornUtils.tools.sleep(50);
       }
       function adjustText(prefix, text) {
         return String(text)

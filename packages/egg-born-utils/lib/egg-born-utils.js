@@ -28,6 +28,9 @@ const openAuthConfig = {
 };
 // tools
 const tools = {
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  },
   preferredLocale({ locale, locales }) {
     if (!locale) {
       locale = Intl.DateTimeFormat().resolvedOptions().locale;
