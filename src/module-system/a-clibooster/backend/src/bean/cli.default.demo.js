@@ -9,6 +9,9 @@ module.exports = ctx => {
       await super.meta({ progressId, command, context, user });
       //  level one
       await this._levelOne({ progressId, progressNo: 0 });
+      // chalk
+      const text = this.helper.chalk.keyword('orange')('chalk test');
+      this.log({ progressId, text });
     }
 
     async _levelOne({ progressId, progressNo }) {
@@ -24,7 +27,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(500);
+        await ctx.bean.util.sleep(200);
         // level two
         await this._levelTwo({ progressId, progressNo: progressNo + 1 });
       }
@@ -43,7 +46,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(500);
+        await ctx.bean.util.sleep(200);
         // level two
         await this._levelThree({ progressId, progressNo: progressNo + 1 });
       }
@@ -62,7 +65,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(500);
+        await ctx.bean.util.sleep(200);
       }
     }
   }
