@@ -15,6 +15,9 @@ module.exports = ctx => {
     get Table() {
       return TableClass;
     }
+    newTable(options) {
+      return new TableClass(options);
+    }
     boxen({ text, options }) {
       if (!options) {
         options = this.moduleConfig.helper.boxen.options;

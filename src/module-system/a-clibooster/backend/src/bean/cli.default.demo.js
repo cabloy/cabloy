@@ -7,11 +7,23 @@ module.exports = ctx => {
     async execute({ progressId, command, context, user }) {
       // super
       await super.meta({ progressId, command, context, user });
+      // chalk
+      let text = this.helper.chalk.keyword('orange')('chalk test');
+      await this.log({ progressId, text });
+      // boxen
+      text = this.helper.boxen({ text: 'boxen test' });
+      await this.log({ progressId, text });
+      // table
+      const table = this.helper.newTable({
+        head: ['Name', 'Sex'],
+        colWidths: [20, 20],
+      });
+      table.push(['Tom', 'M']);
+      table.push(['Jane', 'F']);
+      await this.log({ progressId, text: 'table test' });
+      await this.log({ progressId, text: table.toString() });
       //  level one
       await this._levelOne({ progressId, progressNo: 0 });
-      // chalk
-      const text = this.helper.chalk.keyword('orange')('chalk test');
-      this.log({ progressId, text });
     }
 
     async _levelOne({ progressId, progressNo }) {
