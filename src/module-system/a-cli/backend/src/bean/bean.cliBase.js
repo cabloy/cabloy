@@ -1,6 +1,10 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CliBase {
+    get helper() {
+      return ctx.bean.local.module(moduleInfo.relativeName).helper;
+    }
+
     async meta({ command, context, user }) {
       const metaLocale = this._commandMeta({ command, context });
       return metaLocale;
