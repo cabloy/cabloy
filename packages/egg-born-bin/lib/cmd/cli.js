@@ -1,10 +1,13 @@
 const chalk = require('chalk');
 const enquirer = require('enquirer');
 const uuid = require('uuid');
+const async = require('async');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
+
+const __sleepTimeout = 300;
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -87,6 +90,12 @@ class CliCommand extends BaseCommand {
       const subscribePath = `/a/progress/update/${progressId}`;
       // io
       const io = self._getIOInstance();
+      // queue
+      const queue = async.queue(async (info, cb) => {
+        console.log(info.text);
+        await eggBornUtils.tools.sleep(__sleepTimeout);
+        cb();
+      });
       // onMessage
       function onMessage({ message }) {
         const item = JSON.parse(message.content);
@@ -139,7 +148,7 @@ class CliCommand extends BaseCommand {
         }
       }
       // setProgresses
-      async function setProgresses(list) {
+      function setProgresses(list) {
         // setProgress
         const length = list.length;
         let text = '';
@@ -155,8 +164,7 @@ class CliCommand extends BaseCommand {
             }
           }
         }
-        console.log(text);
-        await eggBornUtils.tools.sleep(50);
+        queue.push({ text });
       }
       function adjustText(prefix, text) {
         return String(text)
@@ -178,6 +186,10 @@ class CliCommand extends BaseCommand {
             progressId,
           },
         });
+        // queue done
+        while (queue.length() > 0) {
+          await eggBornUtils.tools.sleep(__sleepTimeout);
+        }
       }
       // subscribe
       subscribeId = io.subscribe(subscribePath, onMessage, onSubscribed);
