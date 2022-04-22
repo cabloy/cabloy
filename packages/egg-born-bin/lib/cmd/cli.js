@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const enquirer = require('enquirer');
+const uuid = require('uuid');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
@@ -27,21 +28,15 @@ class CliCommand extends BaseCommand {
     yield this._promptGroups({ argv, groups: this.__groups });
     console.log(argv);
     // execute
-    const res = yield this.__openAuth.post({
-      path: '/a/cli/cli/execute',
-      body: {
-        context: {
-          argv,
-          cwd,
-          env: context.env,
-          rawArgv: context.rawArgv,
-        },
-      },
-    });
-    // progress
-    const progressId = res.progressId;
+    const progressId = uuid.v4().replace(/-/g, '');
+    const _context = {
+      argv,
+      cwd,
+      env: context.env,
+      rawArgv: context.rawArgv,
+    };
     // progressbar
-    yield this._progressbar({ progressId });
+    yield this._progressbar({ progressId, context: _context });
     // done
     console.log(chalk.cyan('  cli successfully!'));
   }
@@ -84,7 +79,7 @@ class CliCommand extends BaseCommand {
     return eggBornUtils.tools.evaluateExpression({ expression, scope: argv });
   }
 
-  _progressbar({ progressId }) {
+  _progressbar({ progressId, context }) {
     const self = this;
     return new Promise((resolve, reject) => {
       let counter = 0;
@@ -99,20 +94,13 @@ class CliCommand extends BaseCommand {
       }
       // onSubscribed
       function onSubscribed() {
-        self.__openAuth
-          .post({
-            path: '/a/progress/progress/check',
-            body: {
-              progressId,
-              counter,
-            },
-          })
-          .then(item => {
-            checking(item);
-          })
-          .catch(() => {
-            // donothing
-          });
+        return self.__openAuth.post({
+          path: '/a/cli/cli/execute',
+          body: {
+            progressId,
+            context,
+          },
+        });
       }
       //
       function checking(item) {

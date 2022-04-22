@@ -4,8 +4,8 @@ module.exports = app => {
       return await this.ctx.bean.cli.meta({ context, user });
     }
 
-    async execute({ context, user }) {
-      return await this.ctx.bean.cli.execute({ context, user });
+    async execute({ progressId, context, user }) {
+      return await this.ctx.bean.cli.execute({ progressId, context, user });
     }
   }
 

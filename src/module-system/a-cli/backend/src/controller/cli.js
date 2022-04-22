@@ -10,6 +10,7 @@ module.exports = app => {
 
     async execute() {
       const res = await this.ctx.service.cli.execute({
+        progressId: this.ctx.request.body.progressId,
         context: this.ctx.request.body.context,
         user: this.ctx.state.user.op,
       });

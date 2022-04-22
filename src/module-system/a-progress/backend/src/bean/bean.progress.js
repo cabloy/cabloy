@@ -47,9 +47,17 @@ module.exports = ctx => {
       await this.redis.del(key);
     }
 
-    async create() {
+    async create({ progressId }) {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
-      const progressId = uuid.v4().replace(/-/g, '');
+      // create
+      if (!progressId) {
+        progressId = uuid.v4().replace(/-/g, '');
+      } else {
+        // check if exists
+        const item = await this._getRedisValue({ progressId });
+        if (item) return ctx.throw(403);
+      }
+      // redis
       await this._setRedisValue({
         progressId,
         content: {

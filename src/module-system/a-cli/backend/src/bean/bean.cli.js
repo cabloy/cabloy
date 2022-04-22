@@ -18,9 +18,9 @@ module.exports = ctx => {
       return await beanCommand.meta({ command, context, user });
     }
 
-    async execute({ context, user }) {
+    async execute({ progressId, context, user }) {
       // create progress
-      const progressId = await ctx.bean.progress.create();
+      await ctx.bean.progress.create({ progressId });
       // background
       ctx.runInBackground(async () => {
         await this._progressInBackground({ progressId, context, user });
