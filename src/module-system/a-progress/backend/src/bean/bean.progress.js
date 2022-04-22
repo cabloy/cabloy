@@ -73,6 +73,7 @@ module.exports = ctx => {
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -112,6 +113,7 @@ module.exports = ctx => {
     }
 
     async done({ progressId, message }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -144,6 +146,7 @@ module.exports = ctx => {
     }
 
     async error({ progressId, message }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -176,12 +179,14 @@ module.exports = ctx => {
     }
 
     async check({ progressId, counter, user }) {
+      if (!progressId) return null;
       const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id || item.counter <= counter) return null;
       return item;
     }
 
     async abort({ progressId, user }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id) return null;
       await this._setRedisValue({
@@ -194,6 +199,7 @@ module.exports = ctx => {
     }
 
     async delete({ progressId, user }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id) return;
       await this._deleteRedisValue({ progressId });
