@@ -7,7 +7,7 @@ const BaseCommand = require('@zhennann/common-bin');
 const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
-const __sleepTimeout = 300;
+const __debounceTimeout = 100;
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -28,8 +28,8 @@ class CliCommand extends BaseCommand {
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
-    yield this._promptGroups({ argv, groups: this.__groups });
-    console.log(argv);
+    // yield this._promptGroups({ argv, groups: this.__groups });
+    // console.log(argv);
     // execute
     const progressId = uuid.v4().replace(/-/g, '');
     const _context = {
@@ -91,11 +91,13 @@ class CliCommand extends BaseCommand {
       // io
       const io = self._getIOInstance();
       // queue
-      const queue = async.queue(async (info, cb) => {
-        console.log(info.text);
-        await eggBornUtils.tools.sleep(__sleepTimeout);
-        cb();
-      });
+      let queue = [];
+      const queueHandler = eggBornUtils.tools.debounce(() => {
+        for (const item of queue) {
+          console.log(item.text);
+        }
+        queue = [];
+      }, __debounceTimeout);
       // onMessage
       function onMessage({ message }) {
         const item = JSON.parse(message.content);
@@ -114,16 +116,16 @@ class CliCommand extends BaseCommand {
       //
       function checking(item) {
         if (!item) return;
-        if (item.counter <= counter) {
-          // old message
-          return;
-        }
+        // not check old message
+        // if (item.counter <= counter) {
+        //   return;
+        // }
         counter = item.counter;
         // data
         const data = item.data ? (typeof item.data === 'string' ? JSON.parse(item.data) : item.data) : {};
         // handle
         if (item.done === 0) {
-          setProgresses(data);
+          setProgresses(counter, data);
         } else if (item.done === -1) {
           // done:1 error:-1
           // force close and destroy
@@ -148,7 +150,7 @@ class CliCommand extends BaseCommand {
         }
       }
       // setProgresses
-      function setProgresses(list) {
+      function setProgresses(counter, list) {
         // setProgress
         const length = list.length;
         let text = '';
@@ -164,7 +166,16 @@ class CliCommand extends BaseCommand {
             }
           }
         }
-        queue.push({ text });
+        queuePush({ counter, text });
+      }
+      function queuePush({ counter, text }) {
+        const index = queue.findIndex(item => item.counter > counter);
+        if (index === -1) {
+          queue.push({ counter, text });
+        } else {
+          queue.splice(index, 0, { counter, text });
+        }
+        queueHandler();
       }
       function adjustText(prefix, text) {
         return String(text)
@@ -187,8 +198,8 @@ class CliCommand extends BaseCommand {
           },
         });
         // queue done
-        while (queue.length() > 0) {
-          await eggBornUtils.tools.sleep(__sleepTimeout);
+        while (queue.length > 0) {
+          await eggBornUtils.tools.sleep(__debounceTimeout);
         }
       }
       // subscribe

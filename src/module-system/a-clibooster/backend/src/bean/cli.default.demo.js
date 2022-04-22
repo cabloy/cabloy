@@ -23,7 +23,7 @@ module.exports = ctx => {
       await this.log({ text: 'table test' });
       await this.log({ text: table.toString() });
       //  level one
-      await this._levelOne({ progressNo: 0 });
+      // await this._levelOne({ progressNo: 0 });
     }
 
     async _levelOne({ progressNo }) {
