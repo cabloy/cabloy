@@ -10,6 +10,10 @@ module.exports = ctx => {
       // do nothing
     }
 
+    async log({ progressId, progressNo, total, progress, text }) {
+      return await ctx.bean.progress.update({ progressId, progressNo, total, progress, text });
+    }
+
     _commandMeta({ command, context }) {
       const { argv } = context;
       const meta = {};

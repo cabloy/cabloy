@@ -16,7 +16,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level One')}: ${i + 1}`;
-        await ctx.bean.progress.update({
+        await this.log({
           progressId,
           progressNo,
           total,
@@ -35,7 +35,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level Two')}: ${i + 1}`;
-        await ctx.bean.progress.update({
+        await this.log({
           progressId,
           progressNo,
           total,
@@ -54,7 +54,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level Three')}: ${i + 1}`;
-        await ctx.bean.progress.update({
+        await this.log({
           progressId,
           progressNo,
           total,
