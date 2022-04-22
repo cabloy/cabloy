@@ -47,8 +47,9 @@ module.exports = ctx => {
       await this.redis.del(key);
     }
 
-    async create({ progressId }) {
+    async create(options) {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
+      let progressId = options && options.progressId;
       // create
       if (!progressId) {
         progressId = uuid.v4().replace(/-/g, '');
