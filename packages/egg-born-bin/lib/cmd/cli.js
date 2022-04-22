@@ -156,9 +156,10 @@ class CliCommand extends BaseCommand {
         let text = '';
         for (let progressNo = 0; progressNo < length; progressNo++) {
           const item = list[progressNo];
-          text += `(${item.progress + 1}/${item.total})`;
+          const progressValid = item.progress >= 0;
+          text += `(${progressValid ? item.progress + 1 : '-'}/${item.total})`;
           if (progressNo === length - 1) {
-            if (item.progress === -1) {
+            if (!progressValid) {
               text = item.text;
             } else {
               text = adjustText(`${text}=> `, item.text);
