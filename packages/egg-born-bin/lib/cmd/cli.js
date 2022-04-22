@@ -91,8 +91,8 @@ class CliCommand extends BaseCommand {
       // queue
       let queue = [];
       const queueHandler = eggBornUtils.tools.debounce(() => {
-        for (const item of queue) {
-          checking(item);
+        for (const queueItem of queue) {
+          checking(queueItem.item);
         }
         queue = [];
       }, __debounceTimeout);
@@ -163,12 +163,20 @@ class CliCommand extends BaseCommand {
         console.log(text);
       }
       function queuePush(item) {
-        const index = queue.findIndex(_item => _item.counter > item.counter);
+        const queueItem = { item, timestamp: Date.now() };
+        // push
+        const index = queue.findIndex(_queueItem => _queueItem.item.counter > item.counter);
         if (index === -1) {
-          queue.push(item);
+          queue.push(queueItem);
         } else {
-          queue.splice(index, 0, item);
+          queue.splice(index, 0, queueItem);
         }
+        // check directly
+        while (queue[0] && queue[0].timestamp + 2 * __debounceTimeout < queueItem.timestamp) {
+          const queueItem = queue.shift();
+          checking(queueItem.item);
+        }
+        // queueHandler
         queueHandler();
       }
       function adjustText(prefix, text) {
