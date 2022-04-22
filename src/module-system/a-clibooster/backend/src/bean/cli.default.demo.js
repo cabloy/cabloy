@@ -24,7 +24,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(1500);
+        await ctx.bean.util.sleep(500);
         // level two
         await this._levelTwo({ progressId, progressNo: progressNo + 1 });
       }
@@ -43,7 +43,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(1500);
+        await ctx.bean.util.sleep(500);
         // level two
         await this._levelThree({ progressId, progressNo: progressNo + 1 });
       }
@@ -62,7 +62,7 @@ module.exports = ctx => {
           text,
         });
         // sleep
-        await ctx.bean.util.sleep(1500);
+        await ctx.bean.util.sleep(500);
       }
     }
   }
