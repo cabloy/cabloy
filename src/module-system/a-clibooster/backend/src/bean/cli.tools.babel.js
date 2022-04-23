@@ -11,7 +11,17 @@ module.exports = ctx => {
       // super
       await super.execute({ command, context, user });
       const files = argv._;
-      for (const file of files) {
+      const total = files.length;
+      for (let index; index < total; index++) {
+        const file = files[index];
+        // log
+        await this.log({
+          progressNo: 0,
+          total,
+          progress: index,
+          text: file,
+        });
+        // transform
         const fileSrc = path.join(cwd, file);
         const pos = fileSrc.lastIndexOf('.js');
         if (pos === -1) continue;
