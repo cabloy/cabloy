@@ -6,10 +6,24 @@ const chalk = require('chalk');
 const boxen = require('boxen');
 const globby = require('globby');
 const extend = require('extend2');
+const eggBornUtils = require('egg-born-utils');
+const OpenAuth = require('./lib/openAuth.js');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
+  async checkIfDevServerRunning(projectPath) {
+    // token
+    const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, null);
+    if (!token) return false;
+    // OpenAuth
+    const openAuth = new OpenAuth({ host: token.host });
+    // echo
+    const res = await openAuth.post({
+      path: '/a/authopen/auth/echo',
+    });
+    console.log('echo: ', res);
+  },
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {
       const httpClient = urllib.create();

@@ -36,7 +36,7 @@ class EggBornBinCommand extends Command {
     // cli
     argv.cliFullName = this._prepareCliFullName(parsed._[1]);
     // token
-    const token = yield this._prepareToken(argv, parsed.token);
+    const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, parsed.token);
     // OpenAuth
     const openAuth = new OpenAuth({ host: token.host });
     // signin
@@ -85,20 +85,6 @@ class EggBornBinCommand extends Command {
     if (!parts[0]) parts[0] = 'a-clibooster';
     if (!parts[1]) parts[1] = 'default';
     return parts.join(':');
-  }
-
-  *_prepareToken(argv, tokenName) {
-    // tokenName
-    tokenName = this._prepareTokenName(argv, tokenName);
-    // init file
-    const { config } = yield eggBornUtils.openAuthConfig.load();
-    return config.tokens[tokenName];
-  }
-
-  _prepareTokenName(argv, tokenName) {
-    if (tokenName) return tokenName;
-    const pkg = require(path.join(argv.projectPath, 'package.json'));
-    return `clidev@${pkg.name}`;
   }
 }
 

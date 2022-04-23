@@ -25,6 +25,19 @@ const openAuthConfig = {
   async save({ fileName, config }) {
     await fse.outputFile(fileName || this._fileName, JSON.stringify(config, null, 2));
   },
+  async prepareToken(projectPath, tokenName) {
+    if (!projectPath) projectPath = process.cwd();
+    // tokenName
+    tokenName = this.prepareTokenName(projectPath, tokenName);
+    // init file
+    const { config } = await this.load();
+    return config.tokens[tokenName];
+  },
+  prepareTokenName(projectPath, tokenName) {
+    if (tokenName) return tokenName;
+    const pkg = require(path.join(projectPath, 'package.json'));
+    return `clidev@${pkg.name}`;
+  },
 };
 // tools
 const tools = {
