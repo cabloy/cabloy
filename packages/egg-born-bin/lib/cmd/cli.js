@@ -24,6 +24,9 @@ class CliCommand extends BaseCommand {
     let { cwd, argv } = context;
     // argv
     argv = Object.assign({}, argv, this.__argv);
+    delete argv.t;
+    delete argv.token;
+    delete argv.$0;
     // log start
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
