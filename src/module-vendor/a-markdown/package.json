@@ -46,6 +46,6 @@
     "prosemirror-tables": "^1.1.1",
     "prosemirror-transform": "^1.3.2",
     "prosemirror-view": "^1.19.3",
-    "require3": "^2.1.4"
+    "require3": "^2.1.5"
   }
 }

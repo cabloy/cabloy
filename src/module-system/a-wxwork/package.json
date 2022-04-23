@@ -28,7 +28,7 @@
     "@zhennann/passport-wechat": "^4.0.0",
     "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.1",
-    "require3": "^2.1.4",
+    "require3": "^2.1.5",
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23"
   }

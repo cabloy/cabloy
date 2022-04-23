@@ -20,6 +20,6 @@
     "ajv-keywords": "^3.4.1",
     "egg-born-mock": "^2.1.4",
     "js-beautify": "^1.10.3",
-    "require3": "^2.1.4"
+    "require3": "^2.1.5"
   }
 }

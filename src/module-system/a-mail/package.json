@@ -22,6 +22,6 @@
     "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.1",
     "nodemailer": "^6.7.2",
-    "require3": "^2.1.4"
+    "require3": "^2.1.5"
   }
 }

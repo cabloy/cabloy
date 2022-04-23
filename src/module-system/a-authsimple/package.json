@@ -22,6 +22,6 @@
     "egg-born-mock": "^2.1.4",
     "passport-strategy": "^1.0.0",
     "password-hash-and-salt": "^0.1.4",
-    "require3": "^2.1.4"
+    "require3": "^2.1.5"
   }
 }
