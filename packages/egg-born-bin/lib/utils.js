@@ -16,6 +16,7 @@ const utils = {
     options = options || {};
     const projectPath = options.projectPath;
     const needDevServer = options.needDevServer;
+    const warnWhenRunning = options.warnWhenRunning;
     // token
     const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, null);
     if (!token) return false;
@@ -26,6 +27,10 @@ const utils = {
       await openAuth.post({
         path: '/a/base/auth/echo',
       });
+      if (warnWhenRunning) {
+        const message = chalk.keyword('orange')('The backend dev server is running!');
+        console.log('\n' + boxen(message, boxenOptions) + '\n');
+      }
       return true;
     } catch (err) {
       if (err.status === -1 && err.address === '127.0.0.1') {

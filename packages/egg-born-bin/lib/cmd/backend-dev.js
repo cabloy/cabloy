@@ -40,12 +40,14 @@ class BackendDevCommand extends DevCommand {
       context.argv.framework = utils.getModulePath('egg-born-backend');
     }
 
-    // check dev server
-    const devServerRunning = yield utils.checkIfDevServerRunning();
-    if (devServerRunning) return;
-
     // need not sticky
     // if (context.argv.sticky === undefined) context.argv.sticky = true;
+
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      warnWhenRunning: true,
+    });
+    if (devServerRunning) return;
 
     utils.versionCheckCabloy({ scene: 'dev' }).then(() => {});
 
