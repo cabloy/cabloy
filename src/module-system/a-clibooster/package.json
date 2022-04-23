@@ -31,6 +31,9 @@
     "egg-born-mock": "^2.1.4",
     "require3": "^2.1.5",
     "extend2": "^1.0.1",
-    "uglify-js": "^3.7.7"
+    "uglify-js": "^3.7.7",
+    "glob": "^7.1.6",
+    "bluebird": "^3.7.2",
+    "xml2js": "^0.4.23"
   }
 }
