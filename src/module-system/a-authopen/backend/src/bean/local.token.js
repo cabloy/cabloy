@@ -24,6 +24,24 @@ module.exports = ctx => {
       // ok
       return { fileName, config };
     }
+
+    async delete({ name, log }) {
+      // init file
+      const { fileName, config } = await eggBornUtils.openAuthConfig.load();
+      // config
+      if (config.tokens && config.tokens[name]) {
+        // delete
+        delete config.tokens[name];
+        // save
+        await eggBornUtils.openAuthConfig.save({ config });
+      }
+      // log
+      if (log) {
+        console.log(chalk.cyan(`\n  ${fileName}\n`));
+      }
+      // ok
+      return { fileName, config };
+    }
   }
   return Local;
 };

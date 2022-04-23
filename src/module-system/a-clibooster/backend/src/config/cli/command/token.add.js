@@ -6,7 +6,7 @@ module.exports = app => {
     },
     info: {
       version: '4.0.0',
-      title: 'Cli Open Auth Token',
+      title: 'Cli: Add Open Auth Token',
     },
     options: {
       name: {
