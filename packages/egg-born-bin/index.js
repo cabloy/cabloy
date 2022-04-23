@@ -2,6 +2,7 @@ const path = require('path');
 const fse = require('fs-extra');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
+const utils = require('./lib/utils.js');
 const OpenAuth = require('./lib/openAuth.js');
 const CliCommand = require('./lib/cmd/cli.js');
 const DISPATCH = Symbol.for('eb:Command#dispatch');
@@ -35,6 +36,12 @@ class EggBornBinCommand extends Command {
     argv.projectPath = process.cwd();
     // cli
     argv.cliFullName = this._prepareCliFullName(parsed._[1]);
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      projectPath: argv.projectPath,
+      needDevServer: true,
+    });
+    if (!devServerRunning) return;
     // token
     const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, parsed.token);
     // OpenAuth
