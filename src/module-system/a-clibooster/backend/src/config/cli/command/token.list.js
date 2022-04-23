@@ -8,7 +8,7 @@ module.exports = app => {
       version: '4.0.0',
       title: 'Cli: Open Auth Tokens',
     },
-    options: null,
-    groups: null,
+    // options: null,
+    // groups: null,
   };
 };

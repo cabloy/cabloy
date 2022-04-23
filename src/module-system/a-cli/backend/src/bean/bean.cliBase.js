@@ -38,9 +38,11 @@ module.exports = ctx => {
 
     _commandMeta_groups({ groups }) {
       const metaGroups = {};
-      for (const groupName in groups) {
-        const group = groups[groupName];
-        metaGroups[groupName] = this._commandMeta_group({ group });
+      if (groups) {
+        for (const groupName in groups) {
+          const group = groups[groupName];
+          metaGroups[groupName] = this._commandMeta_group({ group });
+        }
       }
       return metaGroups;
     }
@@ -63,12 +65,14 @@ module.exports = ctx => {
 
     _commandMeta_options({ options }) {
       const metaOptions = {};
-      for (const key in options) {
-        const option = options[key];
-        metaOptions[key] = {
-          ...option,
-          description: ctx.text(option.description),
-        };
+      if (options) {
+        for (const key in options) {
+          const option = options[key];
+          metaOptions[key] = {
+            ...option,
+            description: ctx.text(option.description),
+          };
+        }
       }
       return metaOptions;
     }
