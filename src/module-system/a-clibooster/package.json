@@ -23,8 +23,14 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
     "egg-born-mock": "^2.1.4",
     "require3": "^2.1.5",
-    "extend2": "^1.0.1"
+    "extend2": "^1.0.1",
+    "uglify-js": "^3.7.7"
   }
 }

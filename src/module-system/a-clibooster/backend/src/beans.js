@@ -3,6 +3,7 @@ const cliDefaultDemo = require('./bean/cli.default.demo.js');
 const cliTokenAdd = require('./bean/cli.token.add.js');
 const cliTokenDelete = require('./bean/cli.token.delete.js');
 const cliTokenList = require('./bean/cli.token.list.js');
+const cliToolsBabel = require('./bean/cli.tools.babel.js');
 
 module.exports = app => {
   const beans = {
@@ -27,6 +28,10 @@ module.exports = app => {
     'cli.token.list': {
       mode: 'ctx',
       bean: cliTokenList,
+    },
+    'cli.tools.babel': {
+      mode: 'ctx',
+      bean: cliToolsBabel,
     },
   };
   return beans;
