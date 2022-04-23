@@ -31,7 +31,6 @@ class CliCommand extends BaseCommand {
     console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
     // prompt
     yield this._promptGroups({ argv, groups: this.__groups });
-    console.log(argv);
     // execute
     const progressId = uuid.v4().replace(/-/g, '');
     const _context = {
