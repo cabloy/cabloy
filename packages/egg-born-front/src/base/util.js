@@ -524,9 +524,25 @@ export default function (Vue) {
       // default
       return 'en-us';
     },
+    getLocales() {
+      // _locales
+      const loginInfo = Vue.prototype.$meta.store.getState('auth/loginInfo');
+      const _locales = loginInfo && loginInfo.locales;
+      // locales
+      let locales;
+      if (_locales) {
+        locales = {};
+        for (const item of _locales) {
+          locales[item.value] = item.title;
+        }
+      } else {
+        locales = Vue.prototype.$meta.config.locales;
+      }
+      return locales;
+    },
     preferredLocale(locale) {
       locale = locale.toLowerCase().replace(/_/g, '-');
-      const locales = Vue.prototype.$meta.config.locales;
+      const locales = this.getLocales();
       // match exactly
       if (locales[locale]) return locale;
       // match fuzzy

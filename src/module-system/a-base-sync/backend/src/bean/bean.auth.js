@@ -56,7 +56,7 @@ module.exports = ctx => {
       const info = {
         user: ctx.state.user,
         instance: this._getInstance(),
-        locales: ctx.config.module('a-base').locales,
+        locales: ctx.bean.base.locales(),
       };
       // config
       if (!isAuthOpen) {
