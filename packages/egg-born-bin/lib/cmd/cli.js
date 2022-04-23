@@ -28,7 +28,7 @@ class CliCommand extends BaseCommand {
     delete argv.token;
     delete argv.$0;
     // log start
-    console.log(`npm run cli ${argv.cliFullName} at %s`, cwd);
+    console.log(`npm run cli ${argv.cliFullName} at %s\n`, cwd);
     // prompt
     yield this._promptGroups({ argv, groups: this.__groups });
     // execute
@@ -42,7 +42,7 @@ class CliCommand extends BaseCommand {
     // progressbar
     yield this._progressbar({ progressId, context: _context });
     // done
-    console.log(chalk.cyan('  cli successfully!'));
+    console.log(chalk.cyan('\n  cli successfully!\n'));
   }
 
   *_promptGroups({ argv, groups }) {

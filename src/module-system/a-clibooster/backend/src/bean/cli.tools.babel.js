@@ -12,7 +12,7 @@ module.exports = ctx => {
       await super.execute({ command, context, user });
       const files = argv._;
       const total = files.length;
-      for (let index; index < total; index++) {
+      for (let index = 0; index < total; index++) {
         const file = files[index];
         // log
         await this.log({
