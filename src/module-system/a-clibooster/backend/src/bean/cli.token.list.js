@@ -21,10 +21,10 @@ module.exports = ctx => {
         const token = config.tokens[tokenName];
         table.push([tokenName, token.host]);
       }
-      await this.log({ text: table.toString() });
+      await this.console.log({ text: table.toString() });
       // fileName
       const text = this.helper.chalk.keyword('cyan')(`\n  ${fileName}\n`);
-      await this.log({ text });
+      await this.console.log({ text });
     }
   }
 

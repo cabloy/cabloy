@@ -3,6 +3,7 @@ module.exports = ctx => {
   class CliBase {
     constructor(options) {
       this.options = options;
+      this.console = ctx.bean._newBean(`${moduleInfo.relativeName}.local.console`, options);
     }
     get helper() {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
@@ -15,16 +16,6 @@ module.exports = ctx => {
 
     async execute(/* { command, context, user }*/) {
       // do nothing
-    }
-
-    async log({ progressNo, total, progress, text }) {
-      return await ctx.bean.progress.update({
-        progressId: this.options.progressId,
-        progressNo,
-        total,
-        progress,
-        text,
-      });
     }
 
     _commandMeta({ command, context }) {

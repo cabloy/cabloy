@@ -9,10 +9,10 @@ module.exports = ctx => {
       await super.execute({ command, context, user });
       // chalk
       let text = this.helper.chalk.keyword('orange')('chalk test');
-      await this.log({ text });
+      await this.console.log({ text });
       // boxen
       text = this.helper.boxen({ text: 'boxen test' });
-      await this.log({ text });
+      await this.console.log({ text });
       // table
       const table = this.helper.newTable({
         head: ['Name', 'Sex'],
@@ -20,8 +20,8 @@ module.exports = ctx => {
       });
       table.push(['Tom', 'M']);
       table.push(['Jane', 'F']);
-      await this.log({ text: 'table test' });
-      await this.log({ text: table.toString() });
+      await this.console.log({ text: 'table test' });
+      await this.console.log({ text: table.toString() });
       //  level one
       await this._levelOne({ progressNo: 0 });
     }
@@ -31,7 +31,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level One')}: ${i + 1}`;
-        await this.log({
+        await this.console.log({
           progressNo,
           total,
           progress: current++,
@@ -49,7 +49,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level Two')}: ${i + 1}`;
-        await this.log({
+        await this.console.log({
           progressNo,
           total,
           progress: current++,
@@ -67,7 +67,7 @@ module.exports = ctx => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${ctx.text('Level Three')}: ${i + 1}`;
-        await this.log({
+        await this.console.log({
           progressNo,
           total,
           progress: current++,

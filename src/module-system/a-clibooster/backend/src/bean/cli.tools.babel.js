@@ -15,7 +15,7 @@ module.exports = ctx => {
       for (let index = 0; index < total; index++) {
         const file = files[index];
         // log
-        await this.log({
+        await this.console.log({
           progressNo: 0,
           total,
           progress: index,

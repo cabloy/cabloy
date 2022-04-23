@@ -1,4 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
+const localConsole = require('./bean/local.console.js');
 const localHelper = require('./bean/local.helper.js');
 const beanCliBase = require('./bean/bean.cliBase.js');
 const beanCli = require('./bean/bean.cli.js');
@@ -14,6 +15,10 @@ module.exports = app => {
     'local.helper': {
       mode: 'ctx',
       bean: localHelper,
+    },
+    'local.console': {
+      mode: 'ctx',
+      bean: localConsole,
     },
     // global
     cliBase: {

@@ -18,7 +18,7 @@ module.exports = ctx => {
       });
       // chalk
       const text = this.helper.chalk.keyword('cyan')(`\n  ${fileName}\n`);
-      await this.log({ text });
+      await this.console.log({ text });
     }
   }
 
