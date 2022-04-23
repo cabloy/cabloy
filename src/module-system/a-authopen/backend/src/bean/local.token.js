@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const chalk = require3('chalk');
+const Table = require3('cli-table3');
 const eggBornUtils = require3('egg-born-utils');
 
 module.exports = ctx => {
@@ -37,6 +38,29 @@ module.exports = ctx => {
       }
       // log
       if (log) {
+        console.log(chalk.cyan(`\n  ${fileName}\n`));
+      }
+      // ok
+      return { fileName, config };
+    }
+
+    async list({ log }) {
+      // init file
+      const { fileName, config } = await eggBornUtils.openAuthConfig.load();
+      // log
+      if (log) {
+        // tokens
+        if (!config.tokens) config.tokens = {};
+        const table = new Table({
+          head: ['Token Name', 'Host'],
+          colWidths: [30, 50],
+        });
+        for (const tokenName in config.tokens) {
+          const token = config.tokens[tokenName];
+          table.push([tokenName, token.host]);
+        }
+        console.log(table.toString());
+        // fileName
         console.log(chalk.cyan(`\n  ${fileName}\n`));
       }
       // ok

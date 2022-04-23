@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const cliDefaultDemo = require('./bean/cli.default.demo.js');
 const cliTokenAdd = require('./bean/cli.token.add.js');
 const cliTokenDelete = require('./bean/cli.token.delete.js');
+const cliTokenList = require('./bean/cli.token.list.js');
 
 module.exports = app => {
   const beans = {
@@ -22,6 +23,10 @@ module.exports = app => {
     'cli.token.delete': {
       mode: 'ctx',
       bean: cliTokenDelete,
+    },
+    'cli.token.list': {
+      mode: 'ctx',
+      bean: cliTokenList,
     },
   };
   return beans;
