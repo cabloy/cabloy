@@ -28,7 +28,7 @@ class CliCommand extends BaseCommand {
     delete argv.token;
     delete argv.$0;
     // log start
-    console.log(`npm run cli ${argv.cliFullName} at %s\n`, cwd);
+    console.log(`npm run cli ${chalk.cyan(argv.cliFullName)} at %s\n`, cwd);
     // prompt
     yield this._promptGroups({ argv, groups: this.__groups });
     // execute
@@ -128,10 +128,10 @@ class CliCommand extends BaseCommand {
           onDestroy()
             .then(() => {
               // reject
-              reject(data);
+              reject(new Error(data.message));
             })
             .catch(() => {
-              reject(data);
+              reject(new Error(data.message));
             });
         } else if (item.done === 1) {
           onDestroy()
