@@ -1,5 +1,6 @@
 const path = require('path');
 const fse = require('fs-extra');
+const chalk = require('chalk');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
 const utils = require('./lib/utils.js');
@@ -43,7 +44,12 @@ class EggBornBinCommand extends Command {
     });
     if (!devServerRunning) return;
     // token
-    const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, parsed.token);
+    const tokenName = parsed.token || parsed.t;
+    const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, tokenName);
+    if (!token) {
+      console.log(chalk.red(`Open auth token not found: ${tokenName}\n`));
+      return;
+    }
     // OpenAuth
     const openAuth = new OpenAuth({ host: token.host });
     // signin
