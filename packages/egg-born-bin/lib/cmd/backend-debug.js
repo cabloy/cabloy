@@ -14,6 +14,12 @@ class BackendDebugCommand extends DebugCommand {
 
     if (!context.argv.baseDir) context.argv.baseDir = 'src/backend';
 
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      warnWhenRunning: true,
+    });
+    if (devServerRunning) return;
+
     utils.versionCheckCabloy({ scene: 'debug' }).then(() => {});
 
     yield super.run(context);

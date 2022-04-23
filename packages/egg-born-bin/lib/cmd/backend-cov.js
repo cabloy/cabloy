@@ -22,6 +22,12 @@ class BackendCovCommand extends CovCommand {
 
     context.argv.x = ['src/**/backend/**/*.spec.js', 'src/**/dist/backend.js'];
 
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      warnWhenRunning: true,
+    });
+    if (devServerRunning) return;
+
     yield super.run(context);
   }
 

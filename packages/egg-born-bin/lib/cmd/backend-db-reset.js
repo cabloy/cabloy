@@ -22,6 +22,12 @@ class BackendDbResetCommand extends TestCommand {
     options.baseDir = context.env.EGG_BASE_DIR;
     options.framework = context.env.EGG_FRAMEWORK;
 
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      warnWhenRunning: true,
+    });
+    if (devServerRunning) return;
+
     // env
     mock.env('unittest');
     // app

@@ -25,6 +25,12 @@ class BackendTestCommand extends TestCommand {
       pattern: context.argv._,
     });
 
+    // check dev server
+    const devServerRunning = yield utils.checkIfDevServerRunning({
+      warnWhenRunning: true,
+    });
+    if (devServerRunning) return;
+
     if (!context.argv._.length) {
       // options
       const options = {};
