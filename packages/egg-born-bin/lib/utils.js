@@ -23,10 +23,9 @@ const utils = {
     const openAuth = new OpenAuth({ host: token.host });
     // echo
     try {
-      const res = await openAuth.post({
-        path: '/a/authopen/auth/echo',
+      await openAuth.post({
+        path: '/a/base/auth/echo',
       });
-      console.log('echo: ', res);
       return true;
     } catch (err) {
       if (err.status === -1 && err.address === '127.0.0.1') {
