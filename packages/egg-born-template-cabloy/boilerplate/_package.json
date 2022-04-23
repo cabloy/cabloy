@@ -20,9 +20,6 @@
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "tools:babel": "egg-born-bin tools-babel",
     "tools:icons": "egg-born-bin tools-icons",
-    "token:add": "egg-born-bin token-add",
-    "token:delete": "egg-born-bin token-delete",
-    "token:list": "egg-born-bin token-list",
     "cli": "egg-born-bin cli"
   },
   "author": "{{author}}",
