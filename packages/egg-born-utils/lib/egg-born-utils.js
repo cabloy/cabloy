@@ -41,7 +41,19 @@ const tools = {
       }, wait);
     };
   },
+  _adjustLocales(_locales) {
+    if (!Array.isArray(_locales)) return _locales;
+    // prepare locales
+    const locales = {};
+    for (const item of _locales) {
+      locales[item.value] = item.title;
+    }
+    return locales;
+  },
   preferredLocale({ locale, locales }) {
+    // adjustLocales
+    locales = this._adjustLocales(locales);
+    // locale
     if (!locale) {
       locale = Intl.DateTimeFormat().resolvedOptions().locale;
     }
