@@ -31,7 +31,7 @@ const openAuthConfig = {
     tokenName = this.prepareTokenName(projectPath, tokenName);
     // init file
     const { config } = await this.load();
-    return config.tokens[tokenName];
+    return config.tokens && config.tokens[tokenName];
   },
   prepareTokenName(projectPath, tokenName) {
     if (tokenName) return tokenName;
