@@ -7,22 +7,38 @@ const boxen = require('boxen');
 const globby = require('globby');
 const extend = require('extend2');
 const eggBornUtils = require('egg-born-utils');
-const OpenAuth = require('./lib/openAuth.js');
+const OpenAuth = require('./openAuth.js');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
-  async checkIfDevServerRunning(projectPath) {
+  async checkIfDevServerRunning(options) {
+    options = options || {};
+    const projectPath = options.projectPath;
+    const needDevServer = options.needDevServer;
     // token
     const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, null);
     if (!token) return false;
     // OpenAuth
     const openAuth = new OpenAuth({ host: token.host });
     // echo
-    const res = await openAuth.post({
-      path: '/a/authopen/auth/echo',
-    });
-    console.log('echo: ', res);
+    try {
+      const res = await openAuth.post({
+        path: '/a/authopen/auth/echo',
+      });
+      console.log('echo: ', res);
+      return true;
+    } catch (err) {
+      if (err.status === -1 && err.address === '127.0.0.1') {
+        if (needDevServer) {
+          const message = `Run ${chalk.keyword('orange')('> npm run dev:backend <')} first!`;
+          console.log('\n' + boxen(message, boxenOptions) + '\n');
+        }
+        return false;
+      }
+      throw err;
+      // return true;
+    }
   },
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {

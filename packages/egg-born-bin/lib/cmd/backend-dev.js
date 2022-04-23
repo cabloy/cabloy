@@ -40,6 +40,10 @@ class BackendDevCommand extends DevCommand {
       context.argv.framework = utils.getModulePath('egg-born-backend');
     }
 
+    const res = yield utils.checkIfDevServerRunning();
+    console.log('res: ', res);
+    return;
+
     // need not sticky
     // if (context.argv.sticky === undefined) context.argv.sticky = true;
 
