@@ -1,7 +1,5 @@
 const path = require('path');
 const require3 = require('require3');
-const chalk = require3('chalk');
-const eggBornUtils = require3('egg-born-utils');
 const initData = require('./initData1.js');
 
 module.exports = function (ctx) {
@@ -17,6 +15,9 @@ module.exports = function (ctx) {
   class VersionInit {
     get modelAuthOpen() {
       return ctx.model.module(moduleInfo.relativeName).authOpen;
+    }
+    get localToken() {
+      return ctx.bean.local.module(moduleInfo.relativeName).token;
     }
 
     async run(options) {
@@ -143,24 +144,19 @@ module.exports = function (ctx) {
     async _init_rootCliDevTest_persistence({ authOpenKey, userRoot }) {
       // authOpen
       const item = await this.modelAuthOpen.get({ id: authOpenKey.itemId });
-      // init file
-      const { fileName, config } = await eggBornUtils.openAuthConfig.load();
-      // chalk
-      console.log(chalk.cyan(`\n  ${fileName}\n`));
-      // backend port
+      // name
+      const name = `clidev@${ctx.app.name}`;
+      // host
       const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
-      const port = buildConfig.backend.port;
-      // token name
-      const tokenName = `clidev@${ctx.app.name}`;
-      // config
-      if (!config.tokens) config.tokens = {};
-      config.tokens[tokenName] = {
-        host: `http://localhost:${port}`,
+      const host = `http://localhost:${buildConfig.backend.port}`;
+      // add
+      await this.localToken.add({
+        name,
+        host,
         clientID: item.clientID,
         clientSecret: item.clientSecret,
-      };
-      // save
-      await eggBornUtils.openAuthConfig.save({ config });
+        log: true,
+      });
       // hideClientSecret
       await ctx.bean.authOpen.hideClientSecret({ itemId: item.id, user: userRoot });
     }
