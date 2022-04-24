@@ -1,4 +1,5 @@
 const defaultDemo = require('./command/default.demo.js');
+const defaultList = require('./command/default.list.js');
 const tokenAdd = require('./command/token.add.js');
 const tokenDelete = require('./command/token.delete.js');
 const tokenList = require('./command/token.list.js');
@@ -9,6 +10,7 @@ module.exports = app => {
   const commands = {
     default: {
       demo: defaultDemo(app),
+      list: defaultList(app),
     },
     token: {
       add: tokenAdd(app),

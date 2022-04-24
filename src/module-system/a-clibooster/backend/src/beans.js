@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const cliDefaultDemo = require('./bean/cli.default.demo.js');
+const cliDefaultList = require('./bean/cli.default.list.js');
 const cliTokenAdd = require('./bean/cli.token.add.js');
 const cliTokenDelete = require('./bean/cli.token.delete.js');
 const cliTokenList = require('./bean/cli.token.list.js');
@@ -17,6 +18,10 @@ module.exports = app => {
     'cli.default.demo': {
       mode: 'ctx',
       bean: cliDefaultDemo,
+    },
+    'cli.default.list': {
+      mode: 'ctx',
+      bean: cliDefaultList,
     },
     'cli.token.add': {
       mode: 'ctx',
