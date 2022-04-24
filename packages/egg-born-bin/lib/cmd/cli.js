@@ -20,41 +20,37 @@ class CliCommand extends BaseCommand {
     this.__locale = locale;
   }
 
-  *run(context) {
-    let { cwd, argv } = context;
+  *run({ argv, cwd, env, rawArgv }) {
     // argv
     argv = Object.assign({}, argv, this.__argv);
     delete argv.t;
     delete argv.token;
     delete argv.$0;
+    // context
+    const context = { argv, cwd, env, rawArgv };
     // log start
     console.log(`npm run cli ${chalk.cyan(argv.cliFullName)} at %s\n`, cwd);
     // prompt
-    yield this._promptGroups({ argv, groups: this.__groups });
+    yield this._promptGroups({ context, groups: this.__groups });
     // execute
     const progressId = uuid.v4().replace(/-/g, '');
-    const _context = {
-      argv,
-      cwd,
-      env: context.env,
-      rawArgv: context.rawArgv,
-    };
     // progressbar
-    yield this._progressbar({ progressId, context: _context });
+    yield this._progressbar({ progressId, context });
     // done
     console.log(chalk.cyan('\n  cli successfully!\n'));
   }
 
-  *_promptGroups({ argv, groups }) {
+  *_promptGroups({ context, groups }) {
     for (const groupName in groups) {
       const group = groups[groupName];
-      yield this._promptGroup({ group, argv });
+      yield this._promptGroup({ group, context });
     }
   }
 
-  *_promptGroup({ group, argv }) {
+  *_promptGroup({ group, context }) {
+    const { argv } = context;
     // check
-    const check = this._checkGroupCondition({ group, argv });
+    const check = this._checkGroupCondition({ group, context });
     if (!check) return;
     // prepare
     const varsWant = [];
@@ -77,10 +73,10 @@ class CliCommand extends BaseCommand {
     Object.assign(argv, res);
   }
 
-  _checkGroupCondition({ group, argv }) {
+  _checkGroupCondition({ group, context }) {
     const expression = group.condition && group.condition.expression;
     if (!expression) return true;
-    return eggBornUtils.tools.evaluateExpression({ expression, scope: argv });
+    return eggBornUtils.tools.evaluateExpression({ expression, scope: context });
   }
 
   _progressbar({ progressId, context }) {

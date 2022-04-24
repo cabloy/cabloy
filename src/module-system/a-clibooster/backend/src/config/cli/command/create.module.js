@@ -24,7 +24,7 @@ module.exports = app => {
             choices: [
               { name: 'module', message: 'cabloy module template' },
               { name: 'module-business', message: 'cabloy business module template' },
-              { name: 'module-business-details', message: 'cabloy business module template with details"' },
+              { name: 'module-business-details', message: 'cabloy business module template with details' },
               { name: 'module-icon', message: 'cabloy icon module template' },
             ],
           },
@@ -35,6 +35,9 @@ module.exports = app => {
           name: {
             type: 'input',
             message: 'module name',
+            initial: {
+              expression: '',
+            },
           },
           description: {
             type: 'input',
@@ -47,6 +50,9 @@ module.exports = app => {
         },
       },
       atomClassInfo: {
+        condition: {
+          expression: 'template==="module-business" || template==="module-business-details"',
+        },
         questions: {
           providerId: {
             type: 'input',
