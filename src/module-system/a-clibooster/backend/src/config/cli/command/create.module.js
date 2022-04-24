@@ -36,7 +36,9 @@ module.exports = app => {
             type: 'input',
             message: 'module name',
             initial: {
-              expression: '',
+              expression: `
+                 return 'test!';
+              `,
             },
           },
           description: {

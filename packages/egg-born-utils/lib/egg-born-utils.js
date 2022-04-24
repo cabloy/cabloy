@@ -96,6 +96,29 @@ const tools = {
     const script = wrapper === 'none' ? `return (${expression})` : expression;
     return vm.run(script);
   },
+  evaluateExpressionSimple({ expression, scope }) {
+    const scopeKeys = Object.keys(scope);
+    const scopeParams = [];
+    for (let i = 0; i < scopeKeys.length; i++) {
+      const key = scopeKeys[i];
+      scopeParams.push(scope[key]);
+    }
+    const fn = this._createFunction(expression, scopeKeys);
+    return fn.apply(null, scopeParams);
+  },
+  // function
+  _createFunction(expression, scopeKeys) {
+    let fn;
+    try {
+      const js = `return (${expression})`;
+      // eslint-disable-next-line
+      fn = new Function(scopeKeys.join(','), js);
+    } catch (err) {
+      // eslint-disable-next-line
+      fn = new Function(scopeKeys.join(','), expression);
+    }
+    return fn;
+  },
   _checkExpressionWrapper({ expression, scope }) {
     try {
       const scopeKeys = Object.keys(scope);

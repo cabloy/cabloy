@@ -58,10 +58,8 @@ class CliCommand extends BaseCommand {
       const value = argv[key];
       if (value !== undefined) continue;
       const question = group.questions[key];
-      varsWant.push({
-        name: key,
-        ...question,
-      });
+      const varWant = this._prepareQuestion({ group, question, key, context });
+      varsWant.push(varWant);
     }
     if (varsWant.length === 0) return;
     // log description
@@ -73,10 +71,24 @@ class CliCommand extends BaseCommand {
     Object.assign(argv, res);
   }
 
+  _prepareQuestion({ group, question, key, context }) {
+    const varWant = {
+      name: key,
+      ...question,
+    };
+    if (question.initial && question.initial.expression) {
+      varWant.initial = function () {
+        const expression = question.initial.expression;
+        return eggBornUtils.tools.evaluateExpressionSimple({ expression, scope: { group, question, key, context } });
+      };
+    }
+    return varWant;
+  }
+
   _checkGroupCondition({ group, context }) {
     const expression = group.condition && group.condition.expression;
     if (!expression) return true;
-    return eggBornUtils.tools.evaluateExpression({ expression, scope: context });
+    return eggBornUtils.tools.evaluateExpressionSimple({ expression, scope: context });
   }
 
   _progressbar({ progressId, context }) {
