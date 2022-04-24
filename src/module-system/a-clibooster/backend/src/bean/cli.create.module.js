@@ -8,17 +8,8 @@ module.exports = ctx => {
       const { argv } = context;
       // super
       await super.execute({ command, context, user });
-      // add
-      const { fileName } = await this.localToken.add({
-        name: argv.name,
-        host: argv.host,
-        clientID: argv.clientID,
-        clientSecret: argv.clientSecret,
-        log: false,
-      });
-      // chalk
-      const text = this.helper.chalk.keyword('cyan')(`\n  ${fileName}\n`);
-      await this.console.log({ text });
+      // log
+      await this.console.log({ text: JSON.stringify(argv, null, 2) });
     }
   }
 

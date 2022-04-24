@@ -7,4 +7,5 @@ module.exports = {
   'Your basic info': '您的基本信息',
   'The teacher info': '教师信息',
   'The student info': '学生信息',
+  'Specify the module template': '指定模块模版',
 };

@@ -1,50 +1,60 @@
 module.exports = app => {
   return {
-    bean: 'token.add',
+    bean: 'create.module',
     resource: {
-      atomStaticKey: 'cliToken',
+      atomStaticKey: 'cliCreate',
     },
     info: {
       version: '4.0.0',
-      title: 'Cli: Add Open Auth Token',
+      title: 'Cli: Create Module',
+      usage: 'npm run cli :create:module modulePath -- [--template=?]',
     },
     options: {
-      name: {
-        description: 'name',
-        type: 'string',
-      },
-      host: {
-        description: 'host',
-        type: 'string',
-      },
-      clientID: {
-        description: 'clientID',
-        type: 'string',
-      },
-      clientSecret: {
-        description: 'clientSecret',
+      template: {
+        description: 'template',
         type: 'string',
       },
     },
     groups: {
       default: {
-        description: 'Toke Info',
+        questions: {
+          template: {
+            type: 'select',
+            message: 'Specify the module template',
+            choices: [
+              { name: 'module', message: 'cabloy module template' },
+              { name: 'module-business', message: 'cabloy business module template' },
+              { name: 'module-business-details', message: 'cabloy business module template with details"' },
+              { name: 'module-icon', message: 'cabloy icon module template' },
+            ],
+          },
+        },
+      },
+      moduleInfo: {
         questions: {
           name: {
             type: 'input',
-            message: 'name',
+            message: 'module name',
           },
-          host: {
+          description: {
             type: 'input',
-            message: 'host',
+            message: 'module description',
           },
-          clientID: {
+          author: {
             type: 'input',
-            message: 'clientID',
+            message: 'module author',
           },
-          clientSecret: {
+        },
+      },
+      atomClassInfo: {
+        questions: {
+          providerId: {
             type: 'input',
-            message: 'clientSecret',
+            message: 'providerId',
+          },
+          atomClassName: {
+            type: 'input',
+            message: 'atomClassName',
           },
         },
       },
