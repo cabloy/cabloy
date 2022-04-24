@@ -52,7 +52,9 @@ module.exports = ctx => {
         colWidths: [30, 10, 40],
       });
       // group
-      for (const groupShow of groupsShow) {
+      const groupCount = groupsShow.length;
+      for (let index = 0; index < groupCount; index++) {
+        const groupShow = groupsShow[index];
         const _group = _module[groupShow];
         for (const commandName in _group) {
           const _command = _group[commandName];
@@ -60,6 +62,9 @@ module.exports = ctx => {
           const version = _command.info.version;
           const description = ctx.text(_command.info.description || _command.info.title);
           table.push([cliFullName, version, description]);
+        }
+        if (index < groupCount - 1) {
+          table.push([]);
         }
       }
       // log
