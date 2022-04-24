@@ -81,6 +81,10 @@ module.exports = ctx => {
       return command;
     }
 
+    _commandsAll() {
+      return __commandsAll;
+    }
+
     _collectCommands() {
       const _commandsMap = {};
       const _commandsAll = {};
