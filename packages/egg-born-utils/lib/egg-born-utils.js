@@ -78,9 +78,6 @@ const tools = {
     return Object.keys(locales).find(item => item.indexOf(localeShort) === 0);
   },
   evaluateExpression({ expression, scope, wrapper }) {
-    if (wrapper === undefined) {
-      wrapper = this._checkExpressionWrapper({ expression, scope });
-    }
     if (!wrapper) {
       wrapper = 'none';
     } else if (wrapper === true) {
@@ -93,7 +90,17 @@ const tools = {
       nesting: true,
       wrapper,
     });
-    const script = wrapper === 'none' ? `return (${expression})` : expression;
+    let script;
+    if (wrapper === 'commonjs') {
+      script = expression;
+    } else {
+      const res = this._checkExpressionWrapperNone({ expression, scope });
+      if (res) {
+        script = `return (${expression})`;
+      } else {
+        script = `return (function __inner_function_name(){${expression}})()`;
+      }
+    }
     return vm.run(script);
   },
   evaluateExpressionSimple({ expression, scope }) {
@@ -119,15 +126,15 @@ const tools = {
     }
     return fn;
   },
-  _checkExpressionWrapper({ expression, scope }) {
+  _checkExpressionWrapperNone({ expression, scope }) {
     try {
       const scopeKeys = Object.keys(scope);
       const js = `return (${expression})`;
       // eslint-disable-next-line
       new Function(scopeKeys.join(','), js);
-      return 'none';
+      return true;
     } catch (err) {
-      return 'commonjs';
+      return false;
     }
   },
 };

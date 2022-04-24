@@ -79,7 +79,7 @@ class CliCommand extends BaseCommand {
     if (question.initial && question.initial.expression) {
       varWant.initial = function () {
         const expression = question.initial.expression;
-        return eggBornUtils.tools.evaluateExpressionSimple({ expression, scope: { group, question, key, context } });
+        return eggBornUtils.tools.evaluateExpression({ expression, scope: { group, question, key, context } });
       };
     }
     return varWant;
@@ -88,7 +88,7 @@ class CliCommand extends BaseCommand {
   _checkGroupCondition({ group, context }) {
     const expression = group.condition && group.condition.expression;
     if (!expression) return true;
-    return eggBornUtils.tools.evaluateExpressionSimple({ expression, scope: context });
+    return eggBornUtils.tools.evaluateExpression({ expression, scope: context });
   }
 
   _progressbar({ progressId, context }) {
