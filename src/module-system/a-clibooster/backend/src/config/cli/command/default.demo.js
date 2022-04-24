@@ -51,7 +51,7 @@ module.exports = app => {
       teacher: {
         description: 'The teacher info',
         condition: {
-          expression: 'role==="teacher"',
+          expression: 'argv.role==="teacher"',
         },
         questions: {
           course: {
@@ -63,7 +63,7 @@ module.exports = app => {
       student: {
         description: 'The student info',
         condition: {
-          expression: 'role==="student"',
+          expression: 'argv.role==="student"',
         },
         questions: {
           grade: {

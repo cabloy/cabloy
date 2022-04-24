@@ -51,7 +51,7 @@ module.exports = app => {
       },
       atomClassInfo: {
         condition: {
-          expression: 'template==="module-business" || template==="module-business-details"',
+          expression: 'argv.template==="module-business" || argv.template==="module-business-details"',
         },
         questions: {
           providerId: {
