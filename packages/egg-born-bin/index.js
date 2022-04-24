@@ -89,7 +89,8 @@ class EggBornBinCommand extends Command {
 
   _prepareCliFullName(cliName) {
     if (!cliName) {
-      throw new Error('Please specify the cli name');
+      return 'a-clibooster:default:list';
+      // throw new Error('Please specify the cli name');
     }
     const parts = cliName.split(':');
     if (parts.length !== 3) {
