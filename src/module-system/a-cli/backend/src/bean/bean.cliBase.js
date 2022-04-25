@@ -3,13 +3,9 @@ module.exports = ctx => {
   class CliBase {
     constructor(options) {
       this.options = options;
-      this.console = ctx.bean._newBean(`${moduleInfo.relativeName}.local.console`, options);
-    }
-    get helper() {
-      return ctx.bean.local.module(moduleInfo.relativeName).helper;
-    }
-    get template() {
-      return ctx.bean.local.module(moduleInfo.relativeName).template;
+      this.console = ctx.bean._newBean(`${moduleInfo.relativeName}.local.console`, this, options);
+      this.helper = ctx.bean._newBean(`${moduleInfo.relativeName}.local.helper`, this);
+      this.template = ctx.bean._newBean(`${moduleInfo.relativeName}.local.template`, this);
     }
 
     async meta({ command, context, user }) {
