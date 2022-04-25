@@ -61,10 +61,16 @@ module.exports = app => {
           providerId: {
             type: 'input',
             message: 'providerId',
+            initial: {
+              expression: 'context.argv.name.split("-")[0]',
+            },
           },
           atomClassName: {
             type: 'input',
             message: 'atomClassName',
+            initial: {
+              expression: 'context.argv.name.split("-")[1]',
+            },
           },
         },
       },
