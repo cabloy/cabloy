@@ -49,13 +49,21 @@ module.exports = ctx => {
       return dir;
     }
     async formatFile({ fileName, logPrefix }) {
-      await this.spawn({
-        cmd: 'prettier',
-        args: ['--write', fileName],
-        options: {
-          logPrefix,
-        },
-      });
+      try {
+        await this.spawn({
+          cmd: 'prettier',
+          args: ['--write', fileName],
+          options: {
+            logPrefix,
+          },
+        });
+      } catch (err) {
+        if (err.code === 2) {
+          // not throw error
+          return;
+        }
+        throw err;
+      }
     }
     async spawn({ cmd, args = [], options = {} }) {
       const logPrefix = options.logPrefix;
@@ -69,7 +77,9 @@ module.exports = ctx => {
         });
         proc.once('exit', code => {
           if (code !== 0) {
-            return reject(new Error(`spawn ${cmd} ${args.join(' ')} fail, exit code: ${code}`));
+            const err = new Error(`spawn ${cmd} ${args.join(' ')} fail, exit code: ${code}`);
+            err.code = code;
+            return reject(err);
           }
           resolve();
         });
