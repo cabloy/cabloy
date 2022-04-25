@@ -1,3 +1,4 @@
+const is = require('is-type-of');
 const chalk = require('chalk');
 const enquirer = require('enquirer');
 const uuid = require('uuid');
@@ -68,7 +69,9 @@ class CliCommand extends BaseCommand {
       if (value !== undefined) continue;
       const question = group.questions[key];
       const varWant = this._prepareQuestion({ group, question, key, context });
-      varsWant.push(varWant);
+      if (varWant) {
+        varsWant.push(varWant);
+      }
     }
     if (varsWant.length === 0) return;
     // log description
@@ -81,6 +84,8 @@ class CliCommand extends BaseCommand {
   }
 
   _prepareQuestion({ group, question, key, context }) {
+    const { argv } = context;
+    // want
     const varWant = {
       name: key,
       ...question,
@@ -91,6 +96,25 @@ class CliCommand extends BaseCommand {
         return eggBornUtils.tools.evaluateExpression({ expression, scope: { group, question, key, context } });
       };
     }
+    // result
+    varWant.result = function (value) {
+      if (question.result && question.result.expression) {
+        const expression = question.result.expression;
+        value = eggBornUtils.tools.evaluateExpression({ expression, scope: { value, group, question, key, context } });
+      }
+      argv[key] = value;
+      return value;
+    };
+    // skip
+    if (question.skip) {
+      let initial = varWant.initial;
+      if (is.function(initial)) {
+        initial = initial();
+      }
+      argv[key] = initial;
+      return null;
+    }
+    // ok
     return varWant;
   }
 

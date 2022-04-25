@@ -35,6 +35,8 @@ module.exports = ctx => {
       if (template === 'module') {
         await this._create_template_module({ targetDir, templateDir });
       } else if (template === 'module-business') {
+        await this.console.log('upper:' + argv.atomClassNameCapitalize);
+        return;
         await this._create_template_module_business({ targetDir, templateDir });
       }
     }

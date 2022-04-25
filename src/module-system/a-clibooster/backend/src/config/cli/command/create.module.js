@@ -71,6 +71,23 @@ module.exports = app => {
             initial: {
               expression: 'context.argv.name.split("-")[1]',
             },
+            // result: {
+            //   expression: '',
+            // },
+          },
+        },
+      },
+      atomClassInfoAuto: {
+        condition: {
+          expression: 'argv.template==="module-business" || argv.template==="module-business-details"',
+        },
+        questions: {
+          atomClassNameCapitalize: {
+            initial: {
+              expression:
+                'context.argv.atomClassName.replace(context.argv.atomClassName[0], context.argv.atomClassName[0].toUpperCase())',
+            },
+            skip: true,
           },
         },
       },
