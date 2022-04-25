@@ -20,7 +20,7 @@ module.exports = ctx => {
       // template
       const template = argv.template;
       // templateDir
-      const templateDir = this.template.getTemplateDir({
+      const templateDir = this.template.resolvePath({
         module: moduleInfo.relativeName,
         path: `create/${template}`,
       });

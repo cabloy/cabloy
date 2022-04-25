@@ -29,7 +29,7 @@ module.exports = ctx => {
       return this.moduleConfig.template.fileMapping;
     }
 
-    getTemplateDir({ module, path: _path }) {
+    resolvePath({ module, path: _path }) {
       const _module = ctx.app.meta.modules[module];
       return path.join(_module.root, 'backend/cli/templates', _path);
     }
