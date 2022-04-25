@@ -7,6 +7,7 @@ const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
 const __debounceTimeout = 500;
+const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG'];
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {
@@ -27,7 +28,7 @@ class CliCommand extends BaseCommand {
     delete argv.token;
     delete argv.$0;
     // context
-    const context = { argv, cwd, env, rawArgv };
+    const context = { argv, cwd, env: this._adjustEnv({ env }), rawArgv };
     // log start
     console.log(`npm run cli ${chalk.cyan(argv.cliFullName)} at %s\n`, cwd);
     // prompt
@@ -38,6 +39,14 @@ class CliCommand extends BaseCommand {
     yield this._progressbar({ progressId, context });
     // done
     console.log(chalk.cyan('\n  cli successfully!\n'));
+  }
+
+  _adjustEnv({ env }) {
+    const res = {};
+    for (const field of __envFields) {
+      if (env[field]) res[field] = env[field];
+    }
+    return res;
   }
 
   *_promptGroups({ context, groups }) {
