@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "The Ultimate Javascript Full Stack Framework",
   "preferGlobal": true,
   "bin": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born#readme",
   "dependencies": {
-    "@zhennann/egg-init": "^2.3.2",
+    "@zhennann/egg-init": "^2.3.3",
     "co": "^4.6.0",
     "egg-born-init-config": "^2.2.0",
     "fs-extra": "^8.1.0",
