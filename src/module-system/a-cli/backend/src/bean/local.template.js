@@ -26,7 +26,11 @@ module.exports = ctx => {
     }
 
     get fileMapping() {
-      return this.moduleConfig.template.fileMapping;
+      return this.moduleConfig.template.render.fileMapping;
+    }
+
+    get filesIgnore() {
+      return this.moduleConfig.template.render.ignore;
     }
 
     resolvePath({ module, path: _path }) {
@@ -46,6 +50,7 @@ module.exports = ctx => {
       // loop
       for (const file of files) {
         const { dir: dirname, base: basename } = path.parse(file);
+        if (this.filesIgnore.includes(basename)) continue;
         const templateFile = path.join(templateDir, file);
         const fileName = this.fileMapping[basename] || basename;
         const targetFile = path.join(targetDir, dirname, ctx.bean.util.replaceTemplate(fileName, argv));

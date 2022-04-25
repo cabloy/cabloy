@@ -10,15 +10,18 @@ module.exports = appInfo => {
       },
     },
     template: {
-      fileMapping: {
-        gitignore: '.gitignore',
-        _gitignore: '.gitignore',
-        '_.gitignore': '.gitignore',
-        '_package.json': 'package.json',
-        '_.eslintrc': '.eslintrc',
-        '_.eslintignore': '.eslintignore',
-        '_.npmignore': '.npmignore',
-        '_.eslintrc.js': '.eslintrc.js',
+      render: {
+        fileMapping: {
+          gitignore: '.gitignore',
+          _gitignore: '.gitignore',
+          '_.gitignore': '.gitignore',
+          '_package.json': 'package.json',
+          '_.eslintrc': '.eslintrc',
+          '_.eslintignore': '.eslintignore',
+          '_.npmignore': '.npmignore',
+          '_.eslintrc.js': '.eslintrc.js',
+        },
+        ignore: ['.DS_Store'],
       },
     },
   };
