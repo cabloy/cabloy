@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-<%=argv.name%>",
   "version": "4.0.0",
-  "title": "<%=argv.name%>",
+  "title": "<%=argv.moduleInfo.relativeName%>",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
