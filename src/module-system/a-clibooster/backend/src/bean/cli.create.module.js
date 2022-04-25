@@ -19,18 +19,18 @@ module.exports = ctx => {
       }
       // template
       const template = argv.template;
-      if (template === 'module') {
-        await this._create_template_module({ context, targetDir });
-      }
-    }
-
-    async _create_template_module({ context, targetDir }) {
       // templateDir
       const templateDir = this.template.getTemplateDir({
         module: moduleInfo.relativeName,
-        path: 'create/module',
+        path: `create/${template}`,
       });
-      await this.template.renderDir({ templateDir, targetDir, context });
+      if (template === 'module') {
+        await this._create_template_module({ context, targetDir, templateDir });
+      }
+    }
+
+    async _create_template_module({ context, targetDir, templateDir }) {
+      await this.template.renderDir({ context, targetDir, templateDir });
     }
   }
 

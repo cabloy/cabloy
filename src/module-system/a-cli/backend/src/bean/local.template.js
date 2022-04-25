@@ -34,7 +34,7 @@ module.exports = ctx => {
       return path.join(_module.root, 'backend/cli/templates', _path);
     }
 
-    async renderDir({ templateDir, targetDir, context }) {
+    async renderDir({ context, targetDir, templateDir }) {
       const { argv } = context;
       // files
       const files = glob.sync('**/*', {
@@ -65,7 +65,7 @@ module.exports = ctx => {
           if (!isTextOrBinary.isTextSync(from, content)) {
             result = content;
           } else {
-            result = await this.renderContent({ content: content.toString('utf8'), context });
+            result = await this.renderContent({ context, content: content.toString('utf8') });
           }
           fs.writeFileSync(to, result);
         } else {
@@ -75,7 +75,7 @@ module.exports = ctx => {
       return files;
     }
 
-    async renderContent({ content, context }) {
+    async renderContent({ context, content }) {
       const data = this.getEjsData({ context });
       const options = this.getEjsOptions();
       return await ejs.render(content, data, options);
