@@ -6,12 +6,18 @@ module.exports = ctx => {
       this.options = options;
     }
 
-    async log(options) {
-      if (!options) return;
-      if (typeof options !== 'object') {
-        options = { text: String(options) };
+    async log(data, options = {}) {
+      if (!data) return;
+      // data
+      if (typeof data !== 'object') {
+        data = { text: String(data) };
       }
-      const { progressNo, total, progress, text } = options;
+      let { progressNo, total, progress, text } = data;
+      // logPrefix
+      const logPrefix = options.logPrefix;
+      if (logPrefix) {
+        text = this._adjustText(logPrefix, text);
+      }
       // update
       return await ctx.bean.progress.update({
         progressId: this.options.progressId,
@@ -20,6 +26,13 @@ module.exports = ctx => {
         progress,
         text,
       });
+    }
+
+    _adjustText(prefix, text) {
+      return String(text)
+        .split('\n')
+        .map(item => (item ? prefix + item : item))
+        .join('\n');
     }
   }
   return Local;

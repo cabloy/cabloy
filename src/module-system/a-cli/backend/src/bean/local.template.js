@@ -84,7 +84,7 @@ module.exports = ctx => {
         fs.writeFileSync(targetFile, result);
         // format
         if (changed) {
-          await this.helper.formatFile({ fileName: targetFile });
+          await this.helper.formatFile({ fileName: targetFile, logPrefix: 'format: ' });
         }
       } else {
         await this.console.log(`ignore ${templateFile}, only support file, dir, symlink`);

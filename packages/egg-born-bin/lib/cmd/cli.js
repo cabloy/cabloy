@@ -201,7 +201,7 @@ class CliCommand extends BaseCommand {
       function adjustText(prefix, text) {
         return String(text)
           .split('\n')
-          .map(item => prefix + item)
+          .map(item => (item ? prefix + item : item))
           .join('\n');
       }
       //

@@ -48,17 +48,24 @@ module.exports = ctx => {
       await fse.ensureDir(dir);
       return dir;
     }
-    async formatFile({ fileName }) {
-      await this.spawn('prettier', ['--write', fileName]);
+    async formatFile({ fileName, logPrefix }) {
+      await this.spawn({
+        cmd: 'prettier',
+        args: ['--write', fileName],
+        options: {
+          logPrefix,
+        },
+      });
     }
-    async spawn(cmd, args = [], options = {}) {
+    async spawn({ cmd, args = [], options = {} }) {
+      const logPrefix = options.logPrefix;
       return new Promise((resolve, reject) => {
         const proc = spawn(cmd, args, options);
         proc.stdout.on('data', async data => {
-          await this.console.log({ text: data.toString() });
+          await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.stderr.on('data', async data => {
-          await this.console.log({ text: data.toString() });
+          await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.once('exit', code => {
           if (code !== 0) {
