@@ -74,8 +74,11 @@ module.exports = ctx => {
       }
     }
     async spawn({ cmd, args = [], options = {} }) {
-      const logPrefix = options.logPrefix;
+      if (!options.cwd) {
+        options.cwd = this.context.cwd;
+      }
       return new Promise((resolve, reject) => {
+        const logPrefix = options.logPrefix;
         const proc = spawn(cmd, args, options);
         proc.stdout.on('data', async data => {
           await this.console.log({ text: data.toString() }, { logPrefix });
