@@ -7,7 +7,7 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Create Module',
-      usage: 'npm run cli :create:module modulePath -- [--template=] [--force]',
+      usage: 'npm run cli :create:module moduleName -- [--template=] [--force]',
     },
     options: {
       template: {
