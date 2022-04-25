@@ -12,10 +12,10 @@ module.exports = ctx => {
       const cliFullName = argv.cliFullName;
       const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
       // command bean
-      const beanCommand = ctx.bean._getBean(command.beanFullName);
+      const beanCommand = ctx.bean._newBean(command.beanFullName, { command, context });
       if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
       // meta
-      return await beanCommand.meta({ command, context, user });
+      return await beanCommand.meta({ user });
     }
 
     async execute({ progressId, context, user }) {
@@ -40,10 +40,10 @@ module.exports = ctx => {
         const cliFullName = argv.cliFullName;
         const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
         // command bean
-        const beanCommand = ctx.bean._newBean(command.beanFullName, { progressId });
+        const beanCommand = ctx.bean._newBean(command.beanFullName, { command, context, progressId });
         if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
         // execute
-        await beanCommand.execute({ command, context, user });
+        await beanCommand.execute({ user });
         // progress done
         await ctx.bean.progress.done({ progressId, message: ctx.text('CliDone') });
       } catch (err) {

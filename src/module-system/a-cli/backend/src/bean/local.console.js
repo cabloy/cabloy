@@ -1,9 +1,12 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Local {
-    constructor(cli, options) {
+    constructor(cli) {
       this.cli = cli;
-      this.options = options;
+    }
+
+    get options() {
+      return this.cli.options;
     }
 
     async log(data, options = {}) {
