@@ -104,6 +104,7 @@ class CliCommand extends BaseCommand {
     const self = this;
     return new Promise((resolve, reject) => {
       let executing = false;
+      let counter = 0;
       let subscribeId = null;
       const subscribePath = `/a/progress/update/${progressId}`;
       // io
@@ -126,15 +127,28 @@ class CliCommand extends BaseCommand {
       // onSubscribed
       async function onSubscribed() {
         try {
-          if (executing) return;
-          executing = true;
-          return await self.__openAuth.post({
-            path: '/a/cli/cli/execute',
+          // execute
+          if (!executing) {
+            executing = true;
+            return await self.__openAuth.post({
+              path: '/a/cli/cli/execute',
+              body: {
+                progressId,
+                context,
+              },
+            });
+          }
+          // check
+          const item = await self.__openAuth.post({
+            path: '/a/progress/progress/check',
             body: {
               progressId,
-              context,
+              counter,
             },
           });
+          if (item) {
+            queuePush(item);
+          }
         } catch (err) {
           // force close and destroy
           onDestroy()
@@ -197,6 +211,7 @@ class CliCommand extends BaseCommand {
         console.log(text);
       }
       function queuePush(item) {
+        counter = item.counter;
         const queueItem = { item, timestamp: Date.now() };
         // push
         const index = queue.findIndex(_queueItem => _queueItem.item.counter > item.counter);
