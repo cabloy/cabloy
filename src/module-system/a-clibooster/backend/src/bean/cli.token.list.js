@@ -4,9 +4,9 @@ module.exports = ctx => {
       return ctx.bean.local.module('a-authopen').token;
     }
 
-    async execute({ command, context, user }) {
+    async execute({ user }) {
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       // add
       const { fileName, config } = await this.localToken.list({
         log: false,

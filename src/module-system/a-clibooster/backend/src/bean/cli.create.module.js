@@ -8,10 +8,10 @@ module.exports = ctx => {
       return ctx.bean.local.module('a-authopen').token;
     }
 
-    async execute({ command, context, user }) {
-      const { argv } = context;
+    async execute({ user }) {
+      const { argv } = this.context;
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       // target dir
       const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, argv._[0]));
       if (!argv.force && fs.existsSync(targetDir)) {

@@ -1,9 +1,9 @@
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
-    async execute({ command, context, user }) {
+    async execute({ user }) {
       const { argv } = context;
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       // module/group
       const moduleWant = argv.module;
       let groupWant = argv.group;

@@ -1,12 +1,12 @@
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
-    async meta({ command, context, user }) {
-      const meta = await super.meta({ command, context, user });
+    async meta({ user }) {
+      const meta = await super.meta({ user });
       return meta;
     }
-    async execute({ command, context, user }) {
+    async execute({ user }) {
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       // chalk
       let text = this.helper.chalk.keyword('orange')('chalk test');
       await this.console.log({ text });

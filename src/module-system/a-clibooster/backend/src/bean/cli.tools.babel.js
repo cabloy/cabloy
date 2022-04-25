@@ -6,10 +6,10 @@ const fse = require3('fs-extra');
 
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
-    async execute({ command, context, user }) {
+    async execute({ user }) {
       const { cwd, argv } = context;
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       const files = argv._;
       const total = files.length;
       for (let index = 0; index < total; index++) {

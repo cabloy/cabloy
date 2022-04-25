@@ -7,10 +7,10 @@ const xml2js = require3('xml2js');
 
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
-    async execute({ command, context, user }) {
+    async execute({ user }) {
       const { cwd, argv } = context;
       // super
-      await super.execute({ command, context, user });
+      await super.execute({ user });
       const moduleNames = argv._;
       const total = moduleNames.length;
       for (let index = 0; index < total; index++) {

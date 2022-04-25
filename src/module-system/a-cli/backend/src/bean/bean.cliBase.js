@@ -12,17 +12,18 @@ module.exports = ctx => {
       return this.options.context;
     }
 
-    async meta({ command, context, user }) {
-      const metaLocale = this._commandMeta({ command, context });
+    async meta({ user }) {
+      const metaLocale = this._commandMeta();
       return metaLocale;
     }
 
-    async execute(/* { command, context, user }*/) {
+    async execute(/* { user } */) {
       // do nothing
     }
 
-    _commandMeta({ command, context }) {
-      const { argv } = context;
+    _commandMeta() {
+      const { command } = this.options;
+      const { argv } = this.context;
       const meta = {};
       meta.info = this._commandMeta_info({ info: command.info, argv });
       meta.options = this._commandMeta_options({ options: command.options, argv });
