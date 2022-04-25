@@ -12,16 +12,24 @@ module.exports = ctx => {
       const { argv } = this.context;
       // super
       await super.execute({ user });
+      // module name/info
+      const moduleName = argv.name;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!argv.force && _module) {
+        throw new Error(`module exists: ${moduleName}`);
+      }
       // target dir
-      const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, argv._[0]));
+      const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, 'src/module', moduleName));
       if (!argv.force && fs.existsSync(targetDir)) {
-        throw new Error(`module exists: ${argv.name}`);
+        throw new Error(`module exists: ${moduleName}`);
       }
       // template
       const template = argv.template;
       // templateDir
       const templateDir = this.template.resolvePath({
-        module: moduleInfo.relativeName,
+        moduleName: moduleInfo.relativeName,
         path: `create/${template}`,
       });
       if (template === 'module') {

@@ -40,14 +40,7 @@ module.exports = app => {
             type: 'input',
             message: 'module name',
             initial: {
-              expression: `
-                var modulePath=context.argv._[0];
-                if(!modulePath) throw new Error('Please specify the module path');
-                modulePath = modulePath.replace(/\\\\/g, '/');
-                var pos=modulePath.lastIndexOf('/');
-                if(pos===-1) throw new Error('The module path is not valid');
-                return modulePath.substring(pos+1);
-              `,
+              expression: 'context.argv._[0]',
             },
           },
           description: {

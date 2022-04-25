@@ -10,9 +10,9 @@ export default {
     if (!moduleName) return null;
     if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
-    let parts = moduleName.split('/');
+    let parts = moduleName.split('/').filter(item => item);
     if (parts.length < 2) {
-      parts = moduleName.split('-');
+      parts = moduleName.split('-').filter(item => item);
       if (parts.length < 2) return null;
     }
     return {

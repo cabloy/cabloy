@@ -47,10 +47,14 @@ var PREFIX_D = './';
     if (!moduleName) return null;
     if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
-    var parts = moduleName.split('/');
+    var parts = moduleName.split('/').filter(function (item) {
+      return item;
+    });
 
     if (parts.length < 2) {
-      parts = moduleName.split('-');
+      parts = moduleName.split('-').filter(function (item) {
+        return item;
+      });
       if (parts.length < 2) return null;
     }
 

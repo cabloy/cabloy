@@ -4,6 +4,7 @@ const Chalk = require3('chalk');
 const TableClass = require3('cli-table3');
 const Boxen = require3('boxen');
 const fse = require3('fs-extra');
+const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -51,6 +52,15 @@ module.exports = ctx => {
         options = this.moduleConfig.helper.boxen.options;
       }
       return Boxen(text, options);
+    }
+    parseModuleInfo(moduleName) {
+      const moduleInfo = mparse.parseInfo(moduleName);
+      if (!moduleInfo) throw new Error(`module name is not valid: ${moduleName}`);
+      return moduleInfo;
+    }
+    findModule(moduleName) {
+      const moduleInfo = this.parseModuleInfo(moduleName);
+      return ctx.app.meta.modules[moduleInfo.relativeName];
     }
     async ensureDir(dir) {
       await fse.ensureDir(dir);

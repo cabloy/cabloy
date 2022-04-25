@@ -41,9 +41,9 @@ module.exports = ctx => {
       return this.moduleConfig.template.render.ignore;
     }
 
-    resolvePath({ module, path: _path }) {
-      const _module = ctx.app.meta.modules[module];
-      return path.join(_module.root, 'backend/cli/templates', _path);
+    resolvePath({ moduleName, path: _path }) {
+      const module = this.helper.findModule(moduleName);
+      return path.join(module.root, 'backend/cli/templates', _path);
     }
 
     async renderDir({ targetDir, templateDir }) {
