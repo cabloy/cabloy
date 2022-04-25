@@ -14,7 +14,7 @@ module.exports = ctx => {
       await super.execute({ command, context, user });
       // target dir
       const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, argv._[0]));
-      if (fs.existsSync(targetDir)) {
+      if (!argv.force && fs.existsSync(targetDir)) {
         throw new Error(`module exists: ${argv.name}`);
       }
       // template

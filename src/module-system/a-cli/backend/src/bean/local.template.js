@@ -4,6 +4,7 @@ const require3 = require('require3');
 const glob = require3('globby');
 const mkdirp = require3('mkdirp');
 const isTextOrBinary = require3('istextorbinary');
+const ejs = require3('@zhennann/ejs');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -75,7 +76,26 @@ module.exports = ctx => {
     }
 
     async renderContent({ content, context }) {
-      return content;
+      const data = this.getEjsData({ context });
+      const options = this.getEjsOptions();
+      return await ejs.render(content, data, options);
+    }
+
+    getEjsOptions() {
+      return {
+        async: true,
+        cache: false,
+        compileDebug: ctx.app.meta.isTest || ctx.app.meta.isLocal,
+        outputFunctionName: 'echo',
+        rmWhitespace: true,
+      };
+    }
+
+    async getEjsData({ context }) {
+      return {
+        ...context,
+        ctx: this.ctx,
+      };
     }
   }
   return Local;

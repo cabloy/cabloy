@@ -22,11 +22,15 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
+    "@zhennann/ejs": "^3.0.1",
     "egg-born-mock": "^2.1.4",
     "require3": "^2.1.5",
     "extend2": "^1.0.1",
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
-    "cli-table3": "^0.6.2"
+    "cli-table3": "^0.6.2",
+    "globby": "^11.0.0",
+    "istextorbinary": "^3.3.0",
+    "mkdirp": "^1.0.3"
   }
 }
