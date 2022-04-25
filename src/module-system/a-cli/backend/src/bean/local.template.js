@@ -8,6 +8,8 @@ module.exports = ctx => {
     get fileMapping() {
       return this.moduleConfig.template.fileMapping;
     }
+
+    async outputDir({ templateDir, targetDir, scope }) {}
   }
   return Local;
 };

@@ -15,7 +15,11 @@ module.exports = ctx => {
       }
     }
 
-    async _create_template_module() {}
+    async _create_template_module() {
+      const templateDir;
+      const  targetDir;
+      const  scope;
+    }
   }
 
   return Cli;
