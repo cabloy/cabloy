@@ -103,6 +103,7 @@ class CliCommand extends BaseCommand {
   _progressbar({ progressId, context }) {
     const self = this;
     return new Promise((resolve, reject) => {
+      let executing = false;
       let subscribeId = null;
       const subscribePath = `/a/progress/update/${progressId}`;
       // io
@@ -123,14 +124,28 @@ class CliCommand extends BaseCommand {
         }
       }
       // onSubscribed
-      function onSubscribed() {
-        return self.__openAuth.post({
-          path: '/a/cli/cli/execute',
-          body: {
-            progressId,
-            context,
-          },
-        });
+      async function onSubscribed() {
+        try {
+          if (executing) return;
+          executing = true;
+          return await self.__openAuth.post({
+            path: '/a/cli/cli/execute',
+            body: {
+              progressId,
+              context,
+            },
+          });
+        } catch (err) {
+          // force close and destroy
+          onDestroy()
+            .then(() => {
+              // reject
+              reject(err);
+            })
+            .catch(() => {
+              reject(err);
+            });
+        }
       }
       //
       function checking(item) {
