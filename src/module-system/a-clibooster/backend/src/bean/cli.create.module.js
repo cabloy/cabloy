@@ -34,10 +34,20 @@ module.exports = ctx => {
       });
       if (template === 'module') {
         await this._create_template_module({ targetDir, templateDir });
+      } else if (template === 'module-business') {
+        await this._create_template_module_business({ targetDir, templateDir });
       }
     }
 
     async _create_template_module({ targetDir, templateDir }) {
+      await this.template.renderDir({ targetDir, templateDir });
+    }
+
+    async _create_template_module_business({ targetDir, templateDir }) {
+      const { argv } = this.context;
+      argv.atomClassNameCapitalize = argv.atomClassName.replace(/^\S/, function (s) {
+        return s.toUpperCase();
+      });
       await this.template.renderDir({ targetDir, templateDir });
     }
   }
