@@ -12,6 +12,14 @@ module.exports = ctx => {
       this.cli = cli;
     }
 
+    get options() {
+      return this.cli.options;
+    }
+
+    get context() {
+      return this.cli.options.context;
+    }
+
     get console() {
       return this.cli.console;
     }

@@ -5,7 +5,7 @@ module.exports = ctx => {
     }
 
     async execute({ user }) {
-      const { argv } = context;
+      const { argv } = this.context;
       // super
       await super.execute({ user });
       // add

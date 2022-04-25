@@ -7,7 +7,7 @@ const fse = require3('fs-extra');
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
     async execute({ user }) {
-      const { cwd, argv } = context;
+      const { cwd, argv } = this.context;
       // super
       await super.execute({ user });
       const files = argv._;

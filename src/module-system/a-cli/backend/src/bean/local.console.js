@@ -9,6 +9,10 @@ module.exports = ctx => {
       return this.cli.options;
     }
 
+    get context() {
+      return this.cli.options.context;
+    }
+
     async log(data, options = {}) {
       if (!data) return;
       // data

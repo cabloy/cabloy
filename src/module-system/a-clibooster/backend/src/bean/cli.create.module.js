@@ -25,12 +25,12 @@ module.exports = ctx => {
         path: `create/${template}`,
       });
       if (template === 'module') {
-        await this._create_template_module({ context, targetDir, templateDir });
+        await this._create_template_module({ targetDir, templateDir });
       }
     }
 
-    async _create_template_module({ context, targetDir, templateDir }) {
-      await this.template.renderDir({ context, targetDir, templateDir });
+    async _create_template_module({ targetDir, templateDir }) {
+      await this.template.renderDir({ targetDir, templateDir });
     }
   }
 

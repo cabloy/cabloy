@@ -13,6 +13,14 @@ module.exports = ctx => {
       this.cli = cli;
     }
 
+    get options() {
+      return this.cli.options;
+    }
+
+    get context() {
+      return this.cli.options.context;
+    }
+
     get console() {
       return this.cli.console;
     }
@@ -38,8 +46,8 @@ module.exports = ctx => {
       return path.join(_module.root, 'backend/cli/templates', _path);
     }
 
-    async renderDir({ context, targetDir, templateDir }) {
-      const { argv } = context;
+    async renderDir({ targetDir, templateDir }) {
+      const { argv } = this.context;
       // files
       const files = glob.sync('**/*', {
         cwd: templateDir,
@@ -54,12 +62,12 @@ module.exports = ctx => {
         const templateFile = path.join(templateDir, file);
         const fileName = this.fileMapping[basename] || basename;
         const targetFile = path.join(targetDir, dirname, ctx.bean.util.replaceTemplate(fileName, argv));
-        await this.renderFile({ context, targetFile, templateFile });
+        await this.renderFile({ targetFile, templateFile });
       }
       return files;
     }
 
-    async renderFile({ context, targetFile, templateFile }) {
+    async renderFile({ targetFile, templateFile }) {
       const stats = fs.lstatSync(templateFile);
       if (stats.isSymbolicLink()) {
         const target = fs.readlinkSync(templateFile);
@@ -77,7 +85,7 @@ module.exports = ctx => {
           result = content;
         } else {
           content = content.toString('utf8');
-          result = await this.renderContent({ context, content });
+          result = await this.renderContent({ content });
           changed = content !== result;
         }
         // save
@@ -91,8 +99,8 @@ module.exports = ctx => {
       }
     }
 
-    async renderContent({ context, content }) {
-      const data = this.getEjsData({ context });
+    async renderContent({ content }) {
+      const data = this.getEjsData();
       const options = this.getEjsOptions();
       return await ejs.render(content, data, options);
     }
@@ -107,9 +115,9 @@ module.exports = ctx => {
       };
     }
 
-    getEjsData({ context }) {
+    getEjsData() {
       return {
-        ...context,
+        ...this.context,
         ctx,
       };
     }
