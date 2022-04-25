@@ -8,9 +8,14 @@ module.exports = ctx => {
       const { argv } = context;
       // super
       await super.execute({ command, context, user });
-      // log
-      await this.console.log({ text: JSON.stringify(argv, null, 2) });
+      // template
+      const template = argv.template;
+      if (template === 'module') {
+        await this._create_template_module();
+      }
     }
+
+    async _create_template_module() {}
   }
 
   return Cli;

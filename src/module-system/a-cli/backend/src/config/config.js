@@ -9,6 +9,18 @@ module.exports = appInfo => {
         options: { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' },
       },
     },
+    template: {
+      fileMapping: {
+        gitignore: '.gitignore',
+        _gitignore: '.gitignore',
+        '_.gitignore': '.gitignore',
+        '_package.json': 'package.json',
+        '_.eslintrc': '.eslintrc',
+        '_.eslintignore': '.eslintignore',
+        '_.npmignore': '.npmignore',
+        '_.eslintrc.js': '.eslintrc.js',
+      },
+    },
   };
   return config;
 };
