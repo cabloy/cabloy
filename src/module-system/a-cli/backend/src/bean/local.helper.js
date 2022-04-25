@@ -1,3 +1,4 @@
+const { spawn } = require('child_process');
 const require3 = require('require3');
 const Chalk = require3('chalk');
 const TableClass = require3('cli-table3');
@@ -46,6 +47,26 @@ module.exports = ctx => {
     async ensureDir(dir) {
       await fse.ensureDir(dir);
       return dir;
+    }
+    async formatFile({ fileName }) {
+      await this.spawn('prettier', ['--write', fileName]);
+    }
+    async spawn(cmd, args = [], options = {}) {
+      return new Promise((resolve, reject) => {
+        const proc = spawn(cmd, args, options);
+        proc.stdout.on('data', async data => {
+          await this.console.log({ text: data.toString() });
+        });
+        proc.stderr.on('data', async data => {
+          await this.console.log({ text: data.toString() });
+        });
+        proc.once('exit', code => {
+          if (code !== 0) {
+            return reject(new Error(`spawn ${cmd} ${args.join(' ')} fail, exit code: ${code}`));
+          }
+          resolve();
+        });
+      });
     }
   }
   return Local;

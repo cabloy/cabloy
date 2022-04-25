@@ -68,16 +68,24 @@ module.exports = ctx => {
       } else if (stats.isDirectory()) {
         mkdirp.sync(targetFile);
       } else if (stats.isFile()) {
-        const content = fs.readFileSync(templateFile);
+        let content = fs.readFileSync(templateFile);
         await this.console.log(`write to ${targetFile}`);
         // check if content is a text file
         let result;
+        let changed;
         if (!isTextOrBinary.isTextSync(templateFile, content)) {
           result = content;
         } else {
-          result = await this.renderContent({ context, content: content.toString('utf8') });
+          content = content.toString('utf8');
+          result = await this.renderContent({ context, content });
+          changed = content !== result;
         }
+        // save
         fs.writeFileSync(targetFile, result);
+        // format
+        if (changed) {
+          await this.helper.formatFile({ fileName: targetFile });
+        }
       } else {
         await this.console.log(`ignore ${templateFile}, only support file, dir, symlink`);
       }
@@ -95,7 +103,7 @@ module.exports = ctx => {
         cache: false,
         compileDebug: ctx.app.meta.isTest || ctx.app.meta.isLocal,
         outputFunctionName: 'echo',
-        rmWhitespace: true,
+        rmWhitespace: false,
       };
     }
 
