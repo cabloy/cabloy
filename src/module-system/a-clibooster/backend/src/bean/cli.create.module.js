@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 
 module.exports = ctx => {
@@ -13,6 +14,9 @@ module.exports = ctx => {
       await super.execute({ command, context, user });
       // target dir
       const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, argv._[0]));
+      if (fs.existsSync(targetDir)) {
+        throw new Error(`module exists: ${argv.name}`);
+      }
       // template
       const template = argv.template;
       if (template === 'module') {
@@ -21,13 +25,12 @@ module.exports = ctx => {
     }
 
     async _create_template_module({ context, targetDir }) {
-      const { argv } = context;
       // templateDir
       const templateDir = this.template.getTemplateDir({
         module: moduleInfo.relativeName,
         path: 'create/module',
       });
-      await this.template.renderDir({ templateDir, targetDir, scope: context });
+      await this.template.renderDir({ templateDir, targetDir, context });
     }
   }
 
