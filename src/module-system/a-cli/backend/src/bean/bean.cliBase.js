@@ -8,6 +8,9 @@ module.exports = ctx => {
     get helper() {
       return ctx.bean.local.module(moduleInfo.relativeName).helper;
     }
+    get template() {
+      return ctx.bean.local.module(moduleInfo.relativeName).template;
+    }
 
     async meta({ command, context, user }) {
       const metaLocale = this._commandMeta({ command, context });
