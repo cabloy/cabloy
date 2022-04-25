@@ -55,7 +55,7 @@ module.exports = app => {
       },
       atomClassInfo: {
         condition: {
-          expression: 'argv.template==="module-business" || argv.template==="module-business-details"',
+          expression: 'context.argv.template==="module-business" || context.argv.template==="module-business-details"',
         },
         questions: {
           providerId: {
@@ -71,15 +71,12 @@ module.exports = app => {
             initial: {
               expression: 'context.argv.name.split("-")[1]',
             },
-            // result: {
-            //   expression: '',
-            // },
           },
         },
       },
       atomClassInfoAuto: {
         condition: {
-          expression: 'argv.template==="module-business" || argv.template==="module-business-details"',
+          expression: 'context.argv.template==="module-business" || context.argv.template==="module-business-details"',
         },
         questions: {
           atomClassNameCapitalize: {
