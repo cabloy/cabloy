@@ -46,33 +46,36 @@ module.exports = ctx => {
       // loop
       for (const file of files) {
         const { dir: dirname, base: basename } = path.parse(file);
-        const from = path.join(templateDir, file);
+        const templateFile = path.join(templateDir, file);
         const fileName = this.fileMapping[basename] || basename;
-        const to = path.join(targetDir, dirname, ctx.bean.util.replaceTemplate(fileName, argv));
-
-        const stats = fs.lstatSync(from);
-        if (stats.isSymbolicLink()) {
-          const target = fs.readlinkSync(from);
-          fs.symlinkSync(target, to);
-          await this.console.log(`${to} link to ${target}`);
-        } else if (stats.isDirectory()) {
-          mkdirp.sync(to);
-        } else if (stats.isFile()) {
-          const content = fs.readFileSync(from);
-          await this.console.log(`write to ${to}`);
-          // check if content is a text file
-          let result;
-          if (!isTextOrBinary.isTextSync(from, content)) {
-            result = content;
-          } else {
-            result = await this.renderContent({ context, content: content.toString('utf8') });
-          }
-          fs.writeFileSync(to, result);
-        } else {
-          await this.console.log(`ignore ${file} only support file, dir, symlink`);
-        }
+        const targetFile = path.join(targetDir, dirname, ctx.bean.util.replaceTemplate(fileName, argv));
+        await this.renderFile({ context, targetFile, templateFile });
       }
       return files;
+    }
+
+    async renderFile({ context, targetFile, templateFile }) {
+      const stats = fs.lstatSync(templateFile);
+      if (stats.isSymbolicLink()) {
+        const target = fs.readlinkSync(templateFile);
+        fs.symlinkSync(target, targetFile);
+        await this.console.log(`${targetFile} link to ${target}`);
+      } else if (stats.isDirectory()) {
+        mkdirp.sync(targetFile);
+      } else if (stats.isFile()) {
+        const content = fs.readFileSync(templateFile);
+        await this.console.log(`write to ${targetFile}`);
+        // check if content is a text file
+        let result;
+        if (!isTextOrBinary.isTextSync(templateFile, content)) {
+          result = content;
+        } else {
+          result = await this.renderContent({ context, content: content.toString('utf8') });
+        }
+        fs.writeFileSync(targetFile, result);
+      } else {
+        await this.console.log(`ignore ${templateFile}: only support file, dir, symlink`);
+      }
     }
 
     async renderContent({ context, content }) {
