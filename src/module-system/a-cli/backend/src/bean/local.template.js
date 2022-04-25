@@ -74,7 +74,7 @@ module.exports = ctx => {
         }
         fs.writeFileSync(targetFile, result);
       } else {
-        await this.console.log(`ignore ${templateFile}: only support file, dir, symlink`);
+        await this.console.log(`ignore ${templateFile}, only support file, dir, symlink`);
       }
     }
 

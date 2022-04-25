@@ -1,6 +1,6 @@
 {
   "name": "create-cabloy",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "so you could use `npm init cabloy showcase` to init cabloy project",
   "bin": "./bin/create-cabloy.js",
   "repository": {
@@ -14,6 +14,6 @@
   },
   "homepage": "https://github.com/zhennann/create-cabloy#readme",
   "dependencies": {
-    "egg-born": "^2.3.0"
+    "egg-born": "^3.0.0"
   }
 }
