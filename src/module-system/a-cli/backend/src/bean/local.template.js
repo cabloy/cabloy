@@ -91,10 +91,10 @@ module.exports = ctx => {
       };
     }
 
-    async getEjsData({ context }) {
+    getEjsData({ context }) {
       return {
         ...context,
-        ctx: this.ctx,
+        ctx,
       };
     }
   }
