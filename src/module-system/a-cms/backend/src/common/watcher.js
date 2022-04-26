@@ -9,6 +9,8 @@ module.exports = function (app) {
   class Watcher {
     constructor() {
       this._watchers = {};
+      this._freezeCounter = 0;
+      this._needReload = false;
       this._init();
     }
 
@@ -35,6 +37,12 @@ module.exports = function (app) {
             this._registerLanguages(info);
           },
         });
+        app.meta.messenger.addProvider({
+          name: 'a-cms:reload',
+          handler: info => {
+            this._reloadByApp(info);
+          },
+        });
       }
     }
 
@@ -46,6 +54,11 @@ module.exports = function (app) {
     // called by app
     registerLanguages(info) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
+    }
+
+    // called by app
+    reload({ action }) {
+      app.meta.messenger.callAgent({ name: 'a-cms:reload', data: { action } });
     }
 
     _getWatcherKey({ development, subdomain, atomClass }) {
@@ -159,10 +172,34 @@ module.exports = function (app) {
     // invoked in agent
     _developmentChange(info) {
       app.logger.warn(`[agent:development] reload worker because ${info} changed`);
+      this._reloadByApp({ action: 'now' });
+    }
+
+    // invoked in agent
+    _reloadByAgent() {
       process.send({
         to: 'master',
         action: 'reload-worker',
       });
+    }
+
+    //  invoked in agent
+    _reloadByApp({ action }) {
+      if (action === 'now') {
+        if (this._freezeCounter > 0) {
+          this._needReload = true;
+        } else {
+          this._reloadByAgent();
+        }
+      } else if (action === 'freeze') {
+        this._freezeCounter++;
+      } else if (action === 'unfreeze') {
+        this._freezeCounter--;
+        if (this._freezeCounter === 0 && this._needReload) {
+          this._needReload = false;
+          this._reloadByAgent();
+        }
+      }
     }
   }
 

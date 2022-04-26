@@ -4,6 +4,7 @@ const utilFn = require('./util.js');
 const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
 const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
+const reloadFn = require('./reload.js');
 
 module.exports = function (loader) {
   // meta
@@ -39,6 +40,9 @@ module.exports = function (loader) {
 
   // BeanModuleBase
   meta.BeanModuleBase = BeanModuleBaseClass;
+
+  // reload
+  meta.reload = reloadFn(loader.app);
 
   return meta;
 };
