@@ -1,6 +1,8 @@
+const path = require('path');
 const require3 = require('require3');
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
+const glob = require3('glob');
 
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -86,9 +88,13 @@ module.exports = function (app) {
 
     // invoked in agent
     _register({ development, subdomain, atomClass, language, watchers }) {
+      // watchers
+      if (development) {
+        watchers = this._collectDevelopmentWatchDirs();
+      }
       // watcherEntry
       const watcherEntry = this._getWatcherAtomClassLanguage({ development, subdomain, atomClass, language });
-      watcherEntry.info = { subdomain, atomClass, language, watchers };
+      watcherEntry.info = { development, subdomain, atomClass, language, watchers };
       // close
       if (watcherEntry.watcher) {
         const _watcher = watcherEntry.watcher;
@@ -104,11 +110,15 @@ module.exports = function (app) {
       // watcher
       const _watcher = chokidar.watch(watchers).on(
         'change',
-        debounce(function () {
-          app.meta.messenger.callRandom({
-            name: 'a-cms:watcherChange',
-            data: { subdomain, atomClass, language },
-          });
+        debounce(() => {
+          if (development) {
+            this._developmentChange();
+          } else {
+            app.meta.messenger.callRandom({
+              name: 'a-cms:watcherChange',
+              data: { subdomain, atomClass, language },
+            });
+          }
         }, 300)
       );
       // on ready
@@ -135,6 +145,22 @@ module.exports = function (app) {
           atomClass,
           language,
         },
+      });
+    }
+
+    // invoked in agent
+    _collectDevelopmentWatchDirs() {
+      const pathSrc = path.resolve(app.config.baseDir, '..');
+      let watchDirs = glob.sync(`${pathSrc}/**/backend/src`);
+      watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
+      return watchDirs;
+    }
+
+    // invoked in agent
+    _developmentChange() {
+      process.send({
+        to: 'master',
+        action: 'reload-worker',
       });
     }
   }

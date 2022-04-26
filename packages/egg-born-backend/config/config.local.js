@@ -1,6 +1,3 @@
-const path = require('path');
-const glob = require('glob');
-
 module.exports = appInfo => {
   const config = {};
 
@@ -41,17 +38,6 @@ module.exports = appInfo => {
       },
     };
   }
-
-  // development
-  let watchDirs = glob
-    .sync(`${path.join(appInfo.baseDir, '..')}/*/*/backend/src`)
-    .map(file => '../' + file.substr(path.join(appInfo.baseDir, '../').length));
-  watchDirs = ['config', 'mocks', 'mocks_proxy', 'app.js'].concat(watchDirs);
-
-  config.development = {
-    overrideDefault: true,
-    watchDirs,
-  };
 
   return config;
 };
