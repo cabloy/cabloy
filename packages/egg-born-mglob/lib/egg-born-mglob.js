@@ -160,6 +160,7 @@ function __parseModules(projectPath) {
       }
       // info
       const info = mparse.parseInfo(name);
+      if (!info) throw new Error(`module name is not valid: ${name}`);
       info.public = __path.public;
       // check if exists
       if (!modules[info.relativeName]) {
@@ -178,10 +179,10 @@ function __parseModules(projectPath) {
         const _moduleMeta = __parseModule(__path, moduleMeta);
         if (_moduleMeta) {
           // enhance check public
-          //if (_moduleMeta.info.public) {
+          // if (_moduleMeta.info.public) {
           const file = _moduleMeta.js.front || _moduleMeta.js.backend;
           _moduleMeta.info.public = file.replace(/\\/g, '/').indexOf('/dist/') > -1;
-          //}
+          // }
           // record
           modules[info.relativeName] = _moduleMeta;
         }
