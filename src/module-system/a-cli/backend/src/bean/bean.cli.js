@@ -8,14 +8,22 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli {
     async meta({ context, user }) {
-      const { argv } = context;
-      const cliFullName = argv.cliFullName;
-      const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
-      // command bean
-      const beanCommand = ctx.bean._newBean(command.beanFullName, { command, context });
-      if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
-      // meta
-      return await beanCommand.meta({ user });
+      try {
+        // reload freeze
+        ctx.app.meta.reload.freeze();
+        // command
+        const { argv } = context;
+        const cliFullName = argv.cliFullName;
+        const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
+        // command bean
+        const beanCommand = ctx.bean._newBean(command.beanFullName, { command, context });
+        if (!beanCommand) throw new Error(`cli command bean not found: ${command.beanFullName}`);
+        // meta
+        return await beanCommand.meta({ user });
+      } finally {
+        // reload unfreeze
+        ctx.app.meta.reload.unfreeze();
+      }
     }
 
     async execute({ progressId, context, user }) {
@@ -36,6 +44,9 @@ module.exports = ctx => {
 
     async _progressInBackground({ progressId, context, user }) {
       try {
+        // reload freeze
+        ctx.app.meta.reload.freeze();
+        // command
         const { argv } = context;
         const cliFullName = argv.cliFullName;
         const command = await this._findCliCommandAndCheckRight({ cliFullName, user });
@@ -57,6 +68,9 @@ module.exports = ctx => {
         await ctx.bean.progress.error({ progressId, message });
         // throw err
         throw err;
+      } finally {
+        // reload unfreeze
+        ctx.app.meta.reload.unfreeze();
       }
     }
 
