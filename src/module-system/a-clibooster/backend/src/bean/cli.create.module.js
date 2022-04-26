@@ -36,6 +36,8 @@ module.exports = ctx => {
       await this.template.renderDir({ targetDir, templateDir });
       // lerna bootstrap
       await this.helper.lernaBootstrap();
+      // reload
+      await ctx.app.meta.reload.now();
     }
   }
 
