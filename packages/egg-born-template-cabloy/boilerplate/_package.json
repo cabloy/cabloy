@@ -5,6 +5,7 @@
   "description": "{{description}}",
   "keywords": ["Cabloy Project"],
   "scripts": {
+    "cli": "egg-born-bin cli",
     "db:reset": "egg-born-bin backend-db-reset",
     "dev:front": "egg-born-bin front-dev",
     "build:front": "egg-born-bin front-build",
@@ -17,8 +18,7 @@
     "stop:backend": "egg-born-scripts backend-stop",
     "update:test": "egg-born-bin test-update",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "cli": "egg-born-bin cli"
+    "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\""
   },
   "author": "{{author}}",
   "devDependencies": {},

@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "scripts": {
+    "cli": "node ./packages/egg-born-bin/bin/egg-born-bin.js cli",
     "db:reset": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-db-reset",
     "dev:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
     "build:front": "node ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
@@ -36,8 +37,7 @@
     "commits-all": "./scripts/commits-all.sh",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
-    "docs:build": "node_modules/.bin/jsdoc -c jsdoc.json --readme docs/jsdoc-readme.md",
-    "cli": "node ./packages/egg-born-bin/bin/egg-born-bin.js cli"
+    "docs:build": "node_modules/.bin/jsdoc -c jsdoc.json --readme docs/jsdoc-readme.md"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
