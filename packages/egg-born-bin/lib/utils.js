@@ -133,9 +133,11 @@ const utils = {
     return extend(true, {}, configDefault, configEnv);
   },
   combineTestPattern({ baseDir, env, pattern }) {
+    // pattern
     if (!pattern || pattern.length === 0) {
       pattern = ['src/**/backend/test/**/*.test.js'];
     }
+    // disabledModules
     const configEnv = this.loadEnvConfig({ baseDir, env });
     const disabledModules = configEnv.disabledModules || [];
     for (const relativeName of disabledModules) {
@@ -143,6 +145,8 @@ const utils = {
       pattern.push(`!src/**/${relativeName}-sync/**/*.test.js`);
       pattern.push(`!src/**/${relativeName}-monkey/**/*.test.js`);
     }
+    // cli templates
+    pattern.push('!src/**/backend/cli/templates/**/*.test.js');
     // expand glob
     return globby.sync(pattern);
   },
