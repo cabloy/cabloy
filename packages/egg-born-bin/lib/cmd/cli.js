@@ -79,8 +79,16 @@ class CliCommand extends BaseCommand {
       console.log('===>', group.description);
     }
     // prompt
-    const res = yield enquirer.prompt(varsWant);
-    Object.assign(argv, res);
+    yield enquirer.prompt(varsWant);
+  }
+
+  _prepareQuestionPropertyExpression({ group, question, key, context, propName }) {
+    // expression
+    const expression = question[propName] && question[propName].expression;
+    if (!expression) return null;
+    return function (value) {
+      return eggBornUtils.tools.evaluateExpression({ expression, scope: { value, group, question, key, context } });
+    };
   }
 
   _prepareQuestion({ group, question, key, context }) {
@@ -90,17 +98,24 @@ class CliCommand extends BaseCommand {
       name: key,
       ...question,
     };
-    if (question.initial && question.initial.expression) {
-      varWant.initial = function () {
-        const expression = question.initial.expression;
-        return eggBornUtils.tools.evaluateExpression({ expression, scope: { group, question, key, context } });
-      };
+    // message/skip/initial/format/validate
+    for (const propName of ['message', 'skip', 'initial', 'format', 'validate']) {
+      const propFunction = this._prepareQuestionPropertyExpression({ group, question, key, context, propName });
+      if (propFunction) {
+        varWant[propName] = propFunction;
+      }
     }
     // result
-    varWant.result = function (value) {
-      if (question.result && question.result.expression) {
-        const expression = question.result.expression;
-        value = eggBornUtils.tools.evaluateExpression({ expression, scope: { value, group, question, key, context } });
+    varWant.result = value => {
+      const propFunction = this._prepareQuestionPropertyExpression({
+        group,
+        question,
+        key,
+        context,
+        propName: 'result',
+      });
+      if (propFunction) {
+        value = propFunction(value);
       }
       argv[key] = value;
       return value;

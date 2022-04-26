@@ -42,6 +42,7 @@ module.exports = app => {
             initial: {
               expression: 'context.argv._[0]',
             },
+            required: true,
           },
           description: {
             type: 'input',
@@ -64,6 +65,7 @@ module.exports = app => {
             initial: {
               expression: 'context.argv.name.split("-")[0]',
             },
+            required: true,
           },
           atomClassName: {
             type: 'input',
@@ -71,6 +73,7 @@ module.exports = app => {
             initial: {
               expression: 'context.argv.name.split("-")[1]',
             },
+            required: true,
           },
         },
       },
