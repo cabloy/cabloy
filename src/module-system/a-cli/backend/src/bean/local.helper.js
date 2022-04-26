@@ -66,6 +66,13 @@ module.exports = ctx => {
       await fse.ensureDir(dir);
       return dir;
     }
+    async lernaBootstrap() {
+      await this.console.log('lerna bootstrap ...');
+      await this.spawn({
+        cmd: 'lerna bootstrap',
+        // args: ['--write', fileName],
+      });
+    }
     async formatFile({ fileName, logPrefix }) {
       try {
         await this.spawn({

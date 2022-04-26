@@ -34,6 +34,8 @@ module.exports = ctx => {
       });
       // render
       await this.template.renderDir({ targetDir, templateDir });
+      // lerna bootstrap
+      await this.helper.lernaBootstrap();
     }
   }
 
