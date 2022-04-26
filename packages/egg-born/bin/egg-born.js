@@ -20,6 +20,7 @@ co(function* () {
       - cd ${this.targetDir}
       - lerna bootstrap
       - npm run cli
+      - npm run db:reset
       - npm run test:backend
       - npm run dev:backend
       - npm run dev:front
@@ -32,6 +33,11 @@ co(function* () {
       - npm run lint
       - npm run format
     `);
+  };
+
+  command.getTemplateDir = function* () {
+    // download boilerplate
+    return yield this.downloadBoilerplate('egg-born-template-cabloy');
   };
 
   const askForVariable = command.askForVariable;
