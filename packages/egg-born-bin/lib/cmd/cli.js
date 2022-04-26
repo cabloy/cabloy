@@ -120,6 +120,13 @@ class CliCommand extends BaseCommand {
       argv[key] = value;
       return value;
     };
+    // required
+    if (question.required) {
+      varWant.validate = value => {
+        if (!value) return 'Required';
+        return true;
+      };
+    }
     // silent
     if (question.silent) {
       let initial = varWant.initial;
