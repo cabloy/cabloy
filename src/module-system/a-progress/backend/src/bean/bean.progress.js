@@ -189,7 +189,7 @@ module.exports = ctx => {
     async abort({ progressId, user }) {
       if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
-      if (!item || item.userId !== user.id) return null;
+      if (!item || item.userId !== user.id) return;
       await this._setRedisValue({
         progressId,
         content: {
