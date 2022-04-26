@@ -105,8 +105,8 @@ class CliCommand extends BaseCommand {
       argv[key] = value;
       return value;
     };
-    // skip
-    if (question.skip) {
+    // silent
+    if (question.silent) {
       let initial = varWant.initial;
       if (is.function(initial)) {
         initial = initial();

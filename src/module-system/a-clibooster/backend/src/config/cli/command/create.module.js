@@ -86,7 +86,7 @@ module.exports = app => {
               expression:
                 'context.argv.atomClassName.replace(context.argv.atomClassName[0], context.argv.atomClassName[0].toUpperCase())',
             },
-            skip: true,
+            silent: true,
           },
         },
       },
