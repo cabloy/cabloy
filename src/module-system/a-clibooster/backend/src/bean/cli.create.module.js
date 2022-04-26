@@ -37,7 +37,7 @@ module.exports = ctx => {
       // lerna bootstrap
       await this.helper.lernaBootstrap();
       // reload
-      await ctx.app.meta.reload.now();
+      ctx.app.meta.reload.now();
     }
   }
 
