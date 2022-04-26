@@ -33,7 +33,8 @@ co(function* () {
     } else {
       this.log(`usage:
       - cd ${this.targetDir}
-      - npm install
+      - lerna bootstrap
+      - npm run cli
       - npm run test:backend
       - npm run dev:backend
       - npm run dev:front
@@ -43,7 +44,6 @@ co(function* () {
       - npm run stop:backend
       - npm run debug:backend
       - npm run cov:backend
-      - npm run update:test
       - npm run lint
       - npm run format
     `);
