@@ -11,6 +11,12 @@ module.exports = function (app) {
       this._watchers = {};
       this._freezeCounter = 0;
       this._needReload = false;
+      this._reloadDebounce = debounce(() => {
+        if (this._freezeCounter === 0 && this._needReload) {
+          this._needReload = false;
+          this._reloadByAgent();
+        }
+      }, 1000);
       this._init();
     }
 
@@ -196,8 +202,7 @@ module.exports = function (app) {
       } else if (action === 'unfreeze') {
         this._freezeCounter--;
         if (this._freezeCounter === 0 && this._needReload) {
-          this._needReload = false;
-          this._reloadByAgent();
+          this._reloadDebounce();
         }
       }
     }
