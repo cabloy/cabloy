@@ -1,5 +1,6 @@
 module.exports = {
   view: false,
+  development: false,
 
   static: {
     enable: true,

@@ -17,6 +17,10 @@ module.exports = appInfo => {
       instance: true,
       debounce: true,
     },
+    registerDevelopment: {
+      bean: 'registerDevelopment',
+      debounce: true,
+    },
   };
 
   // article

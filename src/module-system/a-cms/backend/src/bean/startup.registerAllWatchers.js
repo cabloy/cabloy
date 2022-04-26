@@ -3,6 +3,10 @@ module.exports = app => {
     async execute() {
       // only in development
       if (!app.meta.isLocal) return;
+      await this._registerCms();
+    }
+
+    async _registerCms() {
       // loop modules
       for (const module of app.meta.modulesArray) {
         // loop atomClasses

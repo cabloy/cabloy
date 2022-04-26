@@ -46,20 +46,21 @@ module.exports = function (app) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
     }
 
-    _getWatcherKey({ subdomain, atomClass }) {
+    _getWatcherKey({ development, subdomain, atomClass }) {
+      if (development) return 'development';
       return `${subdomain}&&${atomClass.module}&&${atomClass.atomClassName}`;
     }
 
-    _getWatcherAtomClass({ subdomain, atomClass }) {
-      const watcherKey = this._getWatcherKey({ subdomain, atomClass });
+    _getWatcherAtomClass({ development, subdomain, atomClass }) {
+      const watcherKey = this._getWatcherKey({ development, subdomain, atomClass });
       if (!this._watchers[watcherKey]) {
         this._watchers[watcherKey] = {};
       }
       return this._watchers[watcherKey];
     }
 
-    _getWatcherAtomClassLanguage({ subdomain, atomClass, language }) {
-      const watchers = this._getWatcherAtomClass({ subdomain, atomClass });
+    _getWatcherAtomClassLanguage({ development, subdomain, atomClass, language }) {
+      const watchers = this._getWatcherAtomClass({ development, subdomain, atomClass });
       if (!watchers[language]) {
         watchers[language] = {};
       }
@@ -84,9 +85,9 @@ module.exports = function (app) {
     }
 
     // invoked in agent
-    _register({ subdomain, atomClass, language, watchers }) {
+    _register({ development, subdomain, atomClass, language, watchers }) {
       // watcherEntry
-      const watcherEntry = this._getWatcherAtomClassLanguage({ subdomain, atomClass, language });
+      const watcherEntry = this._getWatcherAtomClassLanguage({ development, subdomain, atomClass, language });
       watcherEntry.info = { subdomain, atomClass, language, watchers };
       // close
       if (watcherEntry.watcher) {
