@@ -8,7 +8,7 @@ const xml2js = require3('xml2js');
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {
     async execute({ user }) {
-      const { cwd, argv } = this.context;
+      const { argv } = this.context;
       // super
       await super.execute({ user });
       const moduleNames = argv._;
@@ -23,12 +23,14 @@ module.exports = ctx => {
           text: moduleName,
         });
         // generate
-        await this._generateIcons({ cwd, moduleName });
+        await this._generateIcons({ moduleName });
       }
     }
 
-    async _generateIcons({ cwd, moduleName }) {
-      const modulePath = await this._resolveModulePath({ cwd, moduleName });
+    async _generateIcons({ moduleName }) {
+      const module = this.helper.findModule(moduleName);
+      if (!module) throw new Error(`module not found: ${moduleName}`);
+      const modulePath = module.root;
       const iconsSrc = path.join(modulePath, 'icons/src');
       // groups
       const groups = await this._resolveGroups({ iconsSrc });
@@ -100,14 +102,6 @@ ${symbols.join('\n')}
       if (domRoot.viewBox) attrs.viewBox = domRoot.viewBox;
       svg.$ = attrs;
       return this.buildXML({ xml: svg, rootName: 'symbol' });
-    }
-
-    async _resolveModulePath({ cwd, moduleName }) {
-      const files = await bb.fromCallback(cb => {
-        glob(`${cwd}/src/**/${moduleName}/`, cb);
-      });
-      if (files.length === 0) throw new Error('module not found: ', moduleName);
-      return files[0];
     }
 
     async _resolveGroups({ iconsSrc }) {
