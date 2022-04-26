@@ -110,9 +110,9 @@ module.exports = function (app) {
       // watcher
       const _watcher = chokidar.watch(watchers).on(
         'change',
-        debounce(() => {
+        debounce(info => {
           if (development) {
-            this._developmentChange();
+            this._developmentChange(info);
           } else {
             app.meta.messenger.callRandom({
               name: 'a-cms:watcherChange',
@@ -157,7 +157,8 @@ module.exports = function (app) {
     }
 
     // invoked in agent
-    _developmentChange() {
+    _developmentChange(info) {
+      app.logger.warn(`[agent:development] reload worker because ${info} changed`);
       process.send({
         to: 'master',
         action: 'reload-worker',
