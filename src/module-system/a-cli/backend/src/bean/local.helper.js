@@ -67,10 +67,19 @@ module.exports = ctx => {
       return dir;
     }
     async lernaBootstrap() {
-      await this.console.log('lerna bootstrap ...');
+      // registry
+      const locale = ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
+      const registry = this.moduleConfig.helper.lerna.registry.locales[locale];
+      const registryOption = registry ? `--registry=${registry}` : '';
+      // args
+      const args = [];
+      if (registryOption) args.push(registryOption);
+      // log
+      await this.console.log(`===> lerna bootstrap ${registryOption}`);
+      // spawn
       await this.spawn({
         cmd: 'lerna bootstrap',
-        // args: ['--write', fileName],
+        args,
       });
     }
     async formatFile({ fileName, logPrefix }) {

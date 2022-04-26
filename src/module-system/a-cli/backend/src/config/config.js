@@ -8,6 +8,14 @@ module.exports = appInfo => {
       boxen: {
         options: { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' },
       },
+      lerna: {
+        registry: {
+          locales: {
+            'en-us': null,
+            'zh-cn': 'https://registry.npmmirror.com',
+          },
+        },
+      },
     },
     template: {
       render: {
