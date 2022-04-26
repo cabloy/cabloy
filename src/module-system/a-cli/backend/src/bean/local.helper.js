@@ -72,13 +72,13 @@ module.exports = ctx => {
       const registry = this.moduleConfig.helper.lerna.registry.locales[locale];
       const registryOption = registry ? `--registry=${registry}` : '';
       // args
-      const args = [];
+      const args = ['bootstrap'];
       if (registryOption) args.push(registryOption);
       // log
       await this.console.log(`===> lerna bootstrap ${registryOption}`);
       // spawn
       await this.spawn({
-        cmd: 'lerna bootstrap',
+        cmd: 'lerna',
         args,
       });
     }
