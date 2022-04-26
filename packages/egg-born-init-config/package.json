@@ -1,28 +1,12 @@
 {
   "name": "egg-born-init-config",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "egg-born-init-config",
   "config": {
     "boilerplate": {
       "cabloy": {
         "package": "egg-born-template-cabloy",
         "description": "cabloy project template"
-      },
-      "module": {
-        "package": "egg-born-template-module",
-        "description": "cabloy module template"
-      },
-      "module-business": {
-        "package": "egg-born-template-module-business",
-        "description": "cabloy business module template"
-      },
-      "module-business-details": {
-        "package": "egg-born-template-module-business-details",
-        "description": "cabloy business module template with details"
-      },
-      "module-icon": {
-        "package": "egg-born-template-module-icon",
-        "description": "cabloy icon module template"
       }
     }
   },
