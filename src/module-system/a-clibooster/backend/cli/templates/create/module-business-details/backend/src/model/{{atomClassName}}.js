@@ -1,8 +1,8 @@
 module.exports = app => {
-  class {{atomClassNameCapitalize}} extends app.meta.Model {
+  class <%=argv.atomClassNameCapitalize%> extends app.meta.Model {
     constructor(ctx) {
-      super(ctx, { table: '{{providerId}}{{atomClassNameCapitalize}}', options: { disableDeleted: false } });
+      super(ctx, { table: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>', options: { disableDeleted: false } });
     }
   }
-  return {{atomClassNameCapitalize}};
+  return <%=argv.atomClassNameCapitalize%>;
 };

@@ -1,7 +1,7 @@
 module.exports = app => {
   const schemas = {};
   // detail
-  schemas.{{atomClassName}}Detail = {
+  schemas.<%=argv.atomClassName%>Detail = {
     type: 'object',
     properties: {
       detailName: {

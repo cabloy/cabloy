@@ -6,7 +6,7 @@ describe('[your tests start from here]', () => {
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
-    const atomClassName = '{{atomClassName}}';
+    const atomClassName = '<%=argv.atomClassName%>';
 
     // login as root
     await app

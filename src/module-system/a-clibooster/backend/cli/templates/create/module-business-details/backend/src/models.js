@@ -1,10 +1,10 @@
-const {{atomClassName}} = require('./model/{{atomClassName}}.js');
-const {{atomClassName}}Detail = require('./model/{{atomClassName}}Detail.js');
+const <%=argv.atomClassName%> = require('./model/<%=argv.atomClassName%>.js');
+const <%=argv.atomClassName%>Detail = require('./model/<%=argv.atomClassName%>Detail.js');
 
 module.exports = app => {
   const models = {
-    {{atomClassName}},
-    {{atomClassName}}Detail,
+    <%=argv.atomClassName%>,
+    <%=argv.atomClassName%>Detail,
   };
   return models;
 };

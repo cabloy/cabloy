@@ -3,8 +3,8 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // super
       const key = await super.create({ atomClass, item, options, user });
-      // add {{atomClassName}}
-      const res = await this.ctx.model.{{atomClassName}}.insert({
+      // add <%=argv.atomClassName%>
+      const res = await this.ctx.model.<%=argv.atomClassName%>.insert({
         atomId: key.atomId,
       });
       // return key
@@ -33,17 +33,17 @@ module.exports = app => {
     async write({ atomClass, target, key, item, options, user }) {
       // super
       await super.write({ atomClass, target, key, item, options, user });
-      // update {{atomClassName}}
-      const data = await this.ctx.model.{{atomClassName}}.prepareData(item);
+      // update <%=argv.atomClassName%>
+      const data = await this.ctx.model.<%=argv.atomClassName%>.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.{{atomClassName}}.update(data);
+      await this.ctx.model.<%=argv.atomClassName%>.update(data);
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
-      // delete {{atomClassName}}
-      await this.ctx.model.{{atomClassName}}.delete({
+      // delete <%=argv.atomClassName%>
+      await this.ctx.model.<%=argv.atomClassName%>.delete({
         id: key.itemId,
       });
     }

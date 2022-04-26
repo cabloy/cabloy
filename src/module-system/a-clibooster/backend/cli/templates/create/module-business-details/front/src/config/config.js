@@ -1,6 +1,6 @@
 export default {
   atoms: {
-    {{atomClassName}}: {
+    <%=argv.atomClassName%>: {
       render: {
         list: {
           layouts: {

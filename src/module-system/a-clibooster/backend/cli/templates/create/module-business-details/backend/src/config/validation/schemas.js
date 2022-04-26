@@ -1,12 +1,12 @@
-const {{atomClassName}} = require('./schema/{{atomClassName}}.js');
-const {{atomClassName}}Detail = require('./schema/{{atomClassName}}Detail.js');
+const <%=argv.atomClassName%> = require('./schema/<%=argv.atomClassName%>.js');
+const <%=argv.atomClassName%>Detail = require('./schema/<%=argv.atomClassName%>Detail.js');
 
 module.exports = app => {
   const schemas = {};
-  // {{atomClassName}}
-  Object.assign(schemas, {{atomClassName}}(app));
-  // {{atomClassName}} detail
-  Object.assign(schemas, {{atomClassName}}Detail(app));
+  // <%=argv.atomClassName%>
+  Object.assign(schemas, <%=argv.atomClassName%>(app));
+  // <%=argv.atomClassName%> detail
+  Object.assign(schemas, <%=argv.atomClassName%>Detail(app));
   // ok
   return schemas;
 };

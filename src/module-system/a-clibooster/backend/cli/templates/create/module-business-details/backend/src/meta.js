@@ -7,20 +7,20 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {
-        {{atomClassName}}: {
+        <%=argv.atomClassName%>: {
           info: {
-            bean: '{{atomClassName}}',
-            title: '{{atomClassNameCapitalize}}',
-            tableName: '{{providerId}}{{atomClassNameCapitalize}}',
+            bean: '<%=argv.atomClassName%>',
+            title: '<%=argv.atomClassNameCapitalize%>',
+            tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
             language: false,
             category: true,
             tag: true,
             details: ['default'],
           },
           actions: {},
-          validator: '{{atomClassName}}',
+          validator: '<%=argv.atomClassName%>',
           search: {
-            validator: '{{atomClassName}}Search',
+            validator: '<%=argv.atomClassName%>Search',
           },
         },
       },
@@ -34,27 +34,27 @@ module.exports = app => {
       details: {
         default: {
           info: {
-            bean: '{{atomClassName}}',
+            bean: '<%=argv.atomClassName%>',
             title: 'Details',
-            tableName: '{{providerId}}{{atomClassNameCapitalize}}Detail',
+            tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>Detail',
           },
           actions: {},
-          validator: '{{atomClassName}}Detail',
+          validator: '<%=argv.atomClassName%>Detail',
         },
       },
     },
     validation: {
       validators: {
-        // {{atomClassName}}
-        {{atomClassName}}: {
-          schemas: '{{atomClassName}}',
+        // <%=argv.atomClassName%>
+        <%=argv.atomClassName%>: {
+          schemas: '<%=argv.atomClassName%>',
         },
-        {{atomClassName}}Search: {
-          schemas: '{{atomClassName}}Search',
+        <%=argv.atomClassName%>Search: {
+          schemas: '<%=argv.atomClassName%>Search',
         },
-        // {{atomClassName}}Detail
-        {{atomClassName}}Detail: {
-          schemas: '{{atomClassName}}Detail',
+        // <%=argv.atomClassName%>Detail
+        <%=argv.atomClassName%>Detail: {
+          schemas: '<%=argv.atomClassName%>Detail',
         },
       },
       keywords: {},
@@ -62,8 +62,8 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        {{providerId}}{{atomClassNameCapitalize}}: 'createdAt,updatedAt,atomId',
-        {{providerId}}{{atomClassNameCapitalize}}Detail: 'createdAt,updatedAt,atomId,detailId',
+        <%=argv.providerId%><%=argv.atomClassNameCapitalize%>: 'createdAt,updatedAt,atomId',
+        <%=argv.providerId%><%=argv.atomClassNameCapitalize%>Detail: 'createdAt,updatedAt,atomId,detailId',
       },
     },
   };

@@ -3,8 +3,8 @@ module.exports = app => {
     async create({ atomKey, detailClass, item, user }) {
       // super
       const key = await super.create({ atomKey, detailClass, item, user });
-      // add {{atomClassName}} detail
-      const res = await this.ctx.model.{{atomClassName}}Detail.insert({
+      // add <%=argv.atomClassName%> detail
+      const res = await this.ctx.model.<%=argv.atomClassName%>Detail.insert({
         atomId: atomKey.atomId,
         detailId: key.detailId,
       });
@@ -34,18 +34,18 @@ module.exports = app => {
     async write({ detailClass, target, key, item, options, user }) {
       // super
       await super.write({ detailClass, target, key, item, options, user });
-      // update {{atomClassName}} detail
-      const data = await this.ctx.model.{{atomClassName}}Detail.prepareData(item);
+      // update <%=argv.atomClassName%> detail
+      const data = await this.ctx.model.<%=argv.atomClassName%>Detail.prepareData(item);
       data.id = key.detailItemId;
       // update
-      await this.ctx.model.{{atomClassName}}Detail.update(data);
+      await this.ctx.model.<%=argv.atomClassName%>Detail.update(data);
     }
 
     async delete({ detailClass, target, key, user }) {
       // super
       await super.delete({ detailClass, target, key, user });
-      // delete {{atomClassName}} detail
-      await this.ctx.model.{{atomClassName}}Detail.delete({
+      // delete <%=argv.atomClassName%> detail
+      await this.ctx.model.<%=argv.atomClassName%>Detail.delete({
         id: key.detailItemId,
       });
     }

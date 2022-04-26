@@ -1,4 +1,4 @@
 module.exports = {
-  'Create {{atomClassNameCapitalize}}': '新建{{atomClassNameCapitalize}}',
-  '{{atomClassNameCapitalize}} List': '{{atomClassNameCapitalize}}列表',
+  'Create <%=argv.atomClassNameCapitalize%>': '新建<%=argv.atomClassNameCapitalize%>',
+  '<%=argv.atomClassNameCapitalize%> List': '<%=argv.atomClassNameCapitalize%>列表',
 };

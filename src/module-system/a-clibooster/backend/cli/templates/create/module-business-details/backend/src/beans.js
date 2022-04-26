@@ -1,6 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
-const atom{{atomClassNameCapitalize}} = require('./bean/atom.{{atomClassName}}.js');
-const detail{{atomClassNameCapitalize}} = require('./bean/detail.{{atomClassName}}.js');
+const atom<%=argv.atomClassNameCapitalize%> = require('./bean/atom.<%=argv.atomClassName%>.js');
+const detail<%=argv.atomClassNameCapitalize%> = require('./bean/detail.<%=argv.atomClassName%>.js');
 
 module.exports = app => {
   const beans = {
@@ -10,14 +10,14 @@ module.exports = app => {
       bean: versionManager,
     },
     // atom
-    'atom.{{atomClassName}}': {
+    'atom.<%=argv.atomClassName%>': {
       mode: 'app',
-      bean: atom{{atomClassNameCapitalize}},
+      bean: atom<%=argv.atomClassNameCapitalize%>,
     },
     // detail
-    'detail.{{atomClassName}}': {
+    'detail.<%=argv.atomClassName%>': {
       mode: 'app',
-      bean: detail{{atomClassNameCapitalize}},
+      bean: detail<%=argv.atomClassNameCapitalize%>,
     },
   };
   return beans;

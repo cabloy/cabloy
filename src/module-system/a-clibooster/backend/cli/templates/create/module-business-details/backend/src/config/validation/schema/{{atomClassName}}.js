@@ -1,8 +1,8 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
-  // {{atomClassName}}
-  schemas.{{atomClassName}} = {
+  // <%=argv.atomClassName%>
+  schemas.<%=argv.atomClassName%> = {
     type: 'object',
     properties: {
       // Basic Info
@@ -60,8 +60,8 @@ module.exports = app => {
       },
     },
   };
-  // {{atomClassName}} search
-  schemas.{{atomClassName}}Search = {
+  // <%=argv.atomClassName%> search
+  schemas.<%=argv.atomClassName%>Search = {
     type: 'object',
     properties: {
       description: {

@@ -2,9 +2,9 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
       if (options.version === 1) {
-        // create table: {{providerId}}{{atomClassNameCapitalize}}
+        // create table: <%=argv.providerId%><%=argv.atomClassNameCapitalize%>
         let sql = `
-          CREATE TABLE {{providerId}}{{atomClassNameCapitalize}} (
+          CREATE TABLE <%=argv.providerId%><%=argv.atomClassNameCapitalize%> (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -18,9 +18,9 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create table: {{providerId}}{{atomClassNameCapitalize}}Detail
+        // create table: <%=argv.providerId%><%=argv.atomClassNameCapitalize%>Detail
         sql = `
-          CREATE TABLE {{providerId}}{{atomClassNameCapitalize}}Detail (
+          CREATE TABLE <%=argv.providerId%><%=argv.atomClassNameCapitalize%>Detail (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -49,7 +49,7 @@ module.exports = app => {
           { roleName: 'authenticated', action: 'exportBulk' },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: '{{atomClassName}}', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: '<%=argv.atomClassName%>', roleRights });
       }
     }
 
