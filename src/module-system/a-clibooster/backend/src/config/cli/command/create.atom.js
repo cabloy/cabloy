@@ -29,6 +29,7 @@ module.exports = app => {
           module: {
             type: 'input',
             message: 'module name',
+            required: true,
           },
         },
       },
