@@ -4,10 +4,6 @@ const path = require('path');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli extends ctx.app.meta.CliBase(ctx) {
-    get localToken() {
-      return ctx.bean.local.module('a-authopen').token;
-    }
-
     async execute({ user }) {
       const { argv } = this.context;
       // super
