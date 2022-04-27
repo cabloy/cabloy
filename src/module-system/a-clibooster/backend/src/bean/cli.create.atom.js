@@ -18,6 +18,15 @@ module.exports = ctx => {
       }
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
+      // render boilerplate
+      await this._renderBoilerplate({ targetDir });
+      // apply snippets
+      await this._applySnippets({ targetDir });
+      // reload
+      ctx.app.meta.reload.now();
+    }
+
+    async _renderBoilerplate({ targetDir }) {
       // templateDir
       const templateDir = this.template.resolvePath({
         moduleName: moduleInfo.relativeName,
@@ -25,8 +34,16 @@ module.exports = ctx => {
       });
       // render
       await this.template.renderDir({ targetDir, templateDir });
-      // reload
-      ctx.app.meta.reload.now();
+    }
+
+    async _applySnippets({ targetDir }) {
+      // snippetsDir
+      const snippetsDir = this.template.resolvePath({
+        moduleName: moduleInfo.relativeName,
+        path: 'create/atom/snippets',
+      });
+      // render
+      await this.template.applySnippets({ targetDir, snippetsDir });
     }
   }
 

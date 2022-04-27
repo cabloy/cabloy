@@ -121,6 +121,8 @@ module.exports = ctx => {
         ctx,
       };
     }
+
+    async applySnippets({ targetDir, snippetsDir }) {}
   }
   return Local;
 };
