@@ -6,6 +6,7 @@ const tokenList = require('./command/token.list.js');
 const toolsBabel = require('./command/tools.babel.js');
 const toolsIcons = require('./command/tools.icons.js');
 const createModule = require('./command/create.module.js');
+const createAtom = require('./command/create.atom.js');
 
 module.exports = app => {
   const commands = {
@@ -24,6 +25,7 @@ module.exports = app => {
     },
     create: {
       module: createModule(app),
+      atom: createAtom(app),
     },
   };
   return commands;
