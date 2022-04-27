@@ -129,9 +129,25 @@ module.exports = ctx => {
         cwd: snippetsDir,
         onlyFiles: true,
       });
-      // sort
+      // snippets sort
       files.sort((a, b) => this._parseSnippetFilePrefix(a) - this._parseSnippetFilePrefix(b));
-      await this.console.log({ text: files });
+      // for
+      for (const file of files) {
+        const snippet = require3(path.join(snippetsDir, file));
+        const targetFile = path.join(targetDir, snippet.file);
+        await this.applySnippet({ targetFile, snippet });
+      }
+    }
+
+    async applySnippet({ targetFile, snippet }) {
+      await this.console.log(`apply changes to ${targetFile}`);
+      const sourceCode = fs.readFileSync(targetFile);
+      const ast = gogocode(sourceCode, { parseOptions: snippet.parseOptions });
+      const outAst = snippet.transform({ ast, snippet, context: this.context });
+      const outputCode = outAst.root().generate();
+      fs.writeFileSync(targetFile, outputCode);
+      // format
+      await this.helper.formatFile({ fileName: targetFile, logPrefix: 'format: ' });
     }
 
     _parseSnippetFilePrefix(fileName) {

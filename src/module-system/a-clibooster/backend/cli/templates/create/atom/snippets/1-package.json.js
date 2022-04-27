@@ -1,4 +1,6 @@
 module.exports = {
   file: 'package.json',
-  transform() {},
+  transform({ ast, context }) {
+    return ast;
+  },
 };
