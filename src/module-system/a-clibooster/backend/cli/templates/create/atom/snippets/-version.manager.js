@@ -34,11 +34,11 @@ module.exports = {
   file: 'backend/src/bean/version.manager.js',
   async transform({ cli, ast, argv, ctx }) {
     // update
-    const codeUpdate = await cli.template.renderContent({ content: __snippet_update });
-    ast.replace(`async update($$$0) {$$$1}`, `async update($$$0) {$$$1 \n ${codeUpdate}}`);
+    let code = await cli.template.renderContent({ content: __snippet_update });
+    ast.replace(`async update($$$0) {$$$1}`, `async update($$$0) {$$$1 \n ${code}}`);
     // init
-    const codeInit = await cli.template.renderContent({ content: __snippet_init });
-    ast.replace(`async init($$$0) {$$$1}`, `async init($$$0) {$$$1 \n ${codeInit}}`);
+    code = await cli.template.renderContent({ content: __snippet_init });
+    ast.replace(`async init($$$0) {$$$1}`, `async init($$$0) {$$$1 \n ${code}}`);
     // ok
     return ast;
   },
