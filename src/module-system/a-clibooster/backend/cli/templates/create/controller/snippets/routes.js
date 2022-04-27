@@ -9,7 +9,7 @@ module.exports = {
     if (!ast.has(`const routes = [$_$]`)) {
       ast.replace(`const routes = []`, `const routes = [${code}]`);
     } else {
-      ast.replace(`const routes = [$_$]`, `const routes = [$_$, ${code}]`);
+      ast.replace(`const routes = [$_$]`, `const routes = [$_$, \n ${code}]`);
     }
     // ok
     return ast;
