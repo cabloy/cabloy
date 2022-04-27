@@ -18,8 +18,3 @@ Thanks to `npm init` feature introduced at npm@6, see [npm-init](https://docs.np
 $ npm init cabloy showcase
 $ npm init cabloy showcase --type=cabloy
 ```
-
-## License
-
-[LGPL](./LICENSE)
-
