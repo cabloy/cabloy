@@ -30,7 +30,16 @@ module.exports = {
   async transform({ cli, ast, argv, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
-    ast.replace(`const resources = [$_$]`, `const resources = [$_$, ${code}]`);
+    if (!ast.has(`const resources = [$_$]`)) {
+      ast.replace(`const resources = []`, `const resources = [${code}]`);
+    } else {
+      ast.replace(`const resources = [$_$]`, `const resources = [$_$, ${code}]`);
+    }
+    // moduleInfo
+    const moduleInfo = 'const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname)';
+    if (!ast.has(moduleInfo)) {
+      ast.replace('module.exports = $$$0=>{$$$1}', `module.exports = $$$0=>{ ${moduleInfo} \n $$$1}`);
+    }
     // ok
     return ast;
   },
