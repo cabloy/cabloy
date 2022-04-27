@@ -14,12 +14,32 @@ const __snippet_update = `if (options.version === <%=argv.fileVersion%>) {
   \`;
   await this.ctx.model.query(sql);
 }`;
+
+const __snippet_init = `if (options.version === <%=argv.fileVersion%>) {
+  // add role rights
+  const roleRights = [
+    { roleName: 'authenticated', action: 'create' },
+    { roleName: 'authenticated', action: 'read', scopeNames: 0 },
+    { roleName: 'authenticated', action: 'write', scopeNames: 0 },
+    { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+    { roleName: 'authenticated', action: 'clone', scopeNames: 0 },
+    { roleName: 'authenticated', action: 'deleteBulk' },
+    { roleName: 'authenticated', action: 'exportBulk' },
+    { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+  ];
+  await this.ctx.bean.role.addRoleRightBatch({ atomClassName: '<%=argv.atomClassName%>', roleRights });
+}`;
+
 module.exports = {
   file: 'backend/src/bean/version.manager.js',
   async transform({ cli, ast, argv, ctx }) {
     // update
     const codeUpdate = await cli.template.renderContent({ content: __snippet_update });
     ast.replace(`async update(options) {$_$}`, `async update(options) {$_$ \n ${codeUpdate}}`);
+    // init
+    const codeInit = await cli.template.renderContent({ content: __snippet_init });
+    ast.replace(`async init(options) {$_$}`, `async init(options) {$_$ \n ${codeInit}}`);
+    // ok
     return ast;
   },
 };
