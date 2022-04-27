@@ -1,6 +1,6 @@
 module.exports = {
   file: 'backend/src/bean/version.manager.js',
-  transform({ ast, context }) {
+  transform({ ast, argv }) {
     return ast;
   },
 };

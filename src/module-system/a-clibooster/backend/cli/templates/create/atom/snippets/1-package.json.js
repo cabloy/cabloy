@@ -1,7 +1,7 @@
 module.exports = {
   file: 'package.json',
   parseOptions: { language: 'json' },
-  transform({ ast, context }) {
+  transform({ ast, argv }) {
     return ast;
   },
 };

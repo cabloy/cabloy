@@ -123,6 +123,15 @@ module.exports = ctx => {
       };
     }
 
+    getAstData(ast, snippet) {
+      return {
+        ast,
+        snippet,
+        ...this.context,
+        ctx,
+      };
+    }
+
     async applySnippets({ targetDir, snippetsDir }) {
       // snippets
       const files = glob.sync('*.js', {
@@ -150,11 +159,11 @@ module.exports = ctx => {
       let outputCode;
       if (language === 'json') {
         const ast = JSON.parse(sourceCode);
-        const outAst = snippet.transform({ ast, snippet, context: this.context });
+        const outAst = snippet.transform(this.getAstData(ast, snippet));
         outputCode = JSON.stringify(outAst, null, 2);
       } else {
         const ast = gogocode(sourceCode, { parseOptions: snippet.parseOptions });
-        const outAst = snippet.transform({ ast, snippet, context: this.context });
+        const outAst = snippet.transform(this.getAstData(ast, snippet));
         outputCode = outAst.root().generate();
       }
       // save
