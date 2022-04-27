@@ -5,6 +5,7 @@ const glob = require3('globby');
 const mkdirp = require3('mkdirp');
 const isTextOrBinary = require3('istextorbinary');
 const ejs = require3('@zhennann/ejs');
+const gogocode = require3('gogocode');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -122,7 +123,22 @@ module.exports = ctx => {
       };
     }
 
-    async applySnippets({ targetDir, snippetsDir }) {}
+    async applySnippets({ targetDir, snippetsDir }) {
+      // snippets
+      const files = glob.sync('*.js', {
+        cwd: snippetsDir,
+        onlyFiles: true,
+      });
+      // sort
+      files.sort((a, b) => this._parseSnippetFilePrefix(a) - this._parseSnippetFilePrefix(b));
+      await this.console.log({ text: files });
+    }
+
+    _parseSnippetFilePrefix(fileName) {
+      const num = fileName.split('-')[0];
+      if (!num || isNaN(num)) return 10000;
+      return parseInt(num);
+    }
   }
   return Local;
 };
