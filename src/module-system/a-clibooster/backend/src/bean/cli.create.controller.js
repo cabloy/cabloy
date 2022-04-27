@@ -15,32 +15,15 @@ module.exports = ctx => {
       }
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
-      // render boilerplate
-      await this._renderBoilerplate({ targetDir });
-      // apply snippets
-      await this._applySnippets({ targetDir });
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'create/controller/snippets',
+        boilerplatePath: 'create/controller/boilerplate',
+      });
       // reload
       ctx.app.meta.reload.now();
-    }
-
-    async _renderBoilerplate({ targetDir }) {
-      // templateDir
-      const templateDir = this.template.resolvePath({
-        moduleName: moduleInfo.relativeName,
-        path: 'create/controller/boilerplate',
-      });
-      // render
-      await this.template.renderDir({ targetDir, templateDir });
-    }
-
-    async _applySnippets({ targetDir }) {
-      // snippetsDir
-      const snippetsDir = this.template.resolvePath({
-        moduleName: moduleInfo.relativeName,
-        path: 'create/controller/snippets',
-      });
-      // render
-      await this.template.applySnippets({ targetDir, snippetsDir });
     }
   }
 

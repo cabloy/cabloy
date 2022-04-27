@@ -47,6 +47,25 @@ module.exports = ctx => {
       return path.join(module.root, 'backend/cli/templates', _path);
     }
 
+    async renderBoilerplateAndSnippets({ targetDir, moduleName, snippetsPath, boilerplatePath }) {
+      // first
+      if (snippetsPath) {
+        const snippetsDir = this.resolvePath({
+          moduleName,
+          path: snippetsPath,
+        });
+        await this.applySnippets({ targetDir, snippetsDir });
+      }
+      // then
+      if (boilerplatePath) {
+        const templateDir = this.resolvePath({
+          moduleName,
+          path: boilerplatePath,
+        });
+        await this.renderDir({ targetDir, templateDir });
+      }
+    }
+
     async renderDir({ targetDir, templateDir }) {
       const { argv } = this.context;
       // files
