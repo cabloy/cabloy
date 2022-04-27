@@ -62,8 +62,13 @@ module.exports = ctx => {
         if (this.filesIgnore.includes(basename)) continue;
         const templateFile = path.join(templateDir, file);
         const fileName = this.fileMapping[basename] || basename;
-        const targetFile = path.join(targetDir, dirname, ctx.bean.util.replaceTemplate(fileName, argv));
+        const parentPath = path.join(targetDir, dirname);
+        const targetFile = path.join(parentPath, ctx.bean.util.replaceTemplate(fileName, argv));
         await this.renderFile({ targetFile, templateFile });
+        const gitkeep = path.join(parentPath, '.gitkeep');
+        if (fs.existsSync(gitkeep)) {
+          fs.unlinkSync(gitkeep);
+        }
       }
       return files;
     }
