@@ -160,7 +160,11 @@ module.exports = ctx => {
       const language = snippet.parseOptions && snippet.parseOptions.language;
       // transform
       let outputCode;
-      if (language === 'json') {
+      if (language === 'plain') {
+        const ast = sourceCode;
+        const outAst = await snippet.transform(this.getAstData(ast, snippet));
+        outputCode = outAst;
+      } else if (language === 'json') {
         const ast = JSON.parse(sourceCode);
         const outAst = await snippet.transform(this.getAstData(ast, snippet));
         outputCode = JSON.stringify(outAst, null, 2);
