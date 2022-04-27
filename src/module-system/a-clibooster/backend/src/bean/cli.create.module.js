@@ -17,10 +17,11 @@ module.exports = ctx => {
         throw new Error(`module exists: ${moduleName}`);
       }
       // target dir
-      const targetDir = await this.helper.ensureDir(path.join(argv.projectPath, 'src/module', moduleName));
+      let targetDir = path.join(argv.projectPath, 'src/module', moduleName);
       if (!argv.force && fs.existsSync(targetDir)) {
         throw new Error(`module exists: ${moduleName}`);
       }
+      targetDir = await this.helper.ensureDir(targetDir);
       // template
       const template = argv.template;
       // templateDir
