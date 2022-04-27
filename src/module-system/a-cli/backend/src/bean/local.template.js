@@ -141,10 +141,23 @@ module.exports = ctx => {
 
     async applySnippet({ targetFile, snippet }) {
       await this.console.log(`apply changes to ${targetFile}`);
-      const sourceCode = fs.readFileSync(targetFile);
-      const ast = gogocode(sourceCode, { parseOptions: snippet.parseOptions });
-      const outAst = snippet.transform({ ast, snippet, context: this.context });
-      const outputCode = outAst.root().generate();
+      // source code
+      let sourceCode = fs.readFileSync(targetFile);
+      sourceCode = sourceCode.toString('utf8');
+      // language
+      const language = snippet.parseOptions && snippet.parseOptions.language;
+      // transform
+      let outputCode;
+      if (language === 'json') {
+        const ast = JSON.parse(sourceCode);
+        const outAst = snippet.transform({ ast, snippet, context: this.context });
+        outputCode = JSON.stringify(outAst, null, 2);
+      } else {
+        const ast = gogocode(sourceCode, { parseOptions: snippet.parseOptions });
+        const outAst = snippet.transform({ ast, snippet, context: this.context });
+        outputCode = outAst.root().generate();
+      }
+      // save
       fs.writeFileSync(targetFile, outputCode);
       // format
       await this.helper.formatFile({ fileName: targetFile, logPrefix: 'format: ' });
