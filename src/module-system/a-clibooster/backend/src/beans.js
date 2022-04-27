@@ -8,6 +8,7 @@ const cliToolsBabel = require('./bean/cli.tools.babel.js');
 const cliToolsIcons = require('./bean/cli.tools.icons.js');
 const cliCreateModule = require('./bean/cli.create.module.js');
 const cliCreateAtom = require('./bean/cli.create.atom.js');
+const cliCreateController = require('./bean/cli.create.controller.js');
 
 module.exports = app => {
   const beans = {
@@ -52,6 +53,10 @@ module.exports = app => {
     'cli.create.atom': {
       mode: 'ctx',
       bean: cliCreateAtom,
+    },
+    'cli.create.controller': {
+      mode: 'ctx',
+      bean: cliCreateController,
     },
   };
   return beans;
