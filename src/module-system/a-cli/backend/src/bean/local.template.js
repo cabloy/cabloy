@@ -125,6 +125,7 @@ module.exports = ctx => {
 
     getAstData(ast, snippet) {
       return {
+        cli: this.cli,
         ast,
         snippet,
         ...this.context,
@@ -159,11 +160,11 @@ module.exports = ctx => {
       let outputCode;
       if (language === 'json') {
         const ast = JSON.parse(sourceCode);
-        const outAst = snippet.transform(this.getAstData(ast, snippet));
+        const outAst = await snippet.transform(this.getAstData(ast, snippet));
         outputCode = JSON.stringify(outAst, null, 2);
       } else {
         const ast = gogocode(sourceCode, { parseOptions: snippet.parseOptions });
-        const outAst = snippet.transform(this.getAstData(ast, snippet));
+        const outAst = await snippet.transform(this.getAstData(ast, snippet));
         outputCode = outAst.root().generate();
       }
       // save

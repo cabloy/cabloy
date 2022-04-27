@@ -1,7 +1,8 @@
 module.exports = {
   file: 'package.json',
   parseOptions: { language: 'json' },
-  transform({ ast, argv }) {
+  async transform({ ast, argv }) {
+    argv.fileVersion = ++ast.eggBornModule.fileVersion;
     return ast;
   },
 };
