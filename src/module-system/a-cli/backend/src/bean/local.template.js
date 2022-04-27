@@ -135,12 +135,14 @@ module.exports = ctx => {
 
     async applySnippets({ targetDir, snippetsDir }) {
       // snippets
-      const files = glob.sync('*.js', {
+      let files = glob.sync('*.js', {
         cwd: snippetsDir,
         onlyFiles: true,
       });
       // snippets sort
-      files.sort((a, b) => this._parseSnippetFilePrefix(a) - this._parseSnippetFilePrefix(b));
+      files = files
+        .filter(item => item[0] !== '-')
+        .sort((a, b) => this._parseSnippetFilePrefix(a) - this._parseSnippetFilePrefix(b));
       // for
       for (const file of files) {
         const snippet = require3(path.join(snippetsDir, file));
