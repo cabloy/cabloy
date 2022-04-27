@@ -35,10 +35,10 @@ module.exports = {
   async transform({ cli, ast, argv, ctx }) {
     // update
     const codeUpdate = await cli.template.renderContent({ content: __snippet_update });
-    ast.replace(`async update(options) {$_$}`, `async update(options) {$_$ \n ${codeUpdate}}`);
+    ast.replace(`async update($$$0) {$$$1}`, `async update($$$0) {$$$1 \n ${codeUpdate}}`);
     // init
     const codeInit = await cli.template.renderContent({ content: __snippet_init });
-    ast.replace(`async init(options) {$_$}`, `async init(options) {$_$ \n ${codeInit}}`);
+    ast.replace(`async init($$$0) {$$$1}`, `async init($$$0) {$$$1 \n ${codeInit}}`);
     // ok
     return ast;
   },
