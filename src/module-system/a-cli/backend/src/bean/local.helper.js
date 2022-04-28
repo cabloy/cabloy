@@ -62,6 +62,15 @@ module.exports = ctx => {
       const moduleInfo = this.parseModuleInfo(moduleName);
       return ctx.app.meta.modules[moduleInfo.relativeName];
     }
+    parseSuiteInfo(suiteName) {
+      const suiteInfo = mparse.parseInfo(suiteName);
+      if (!suiteInfo) throw new Error(`suite name is not valid: ${suiteName}`);
+      return suiteInfo;
+    }
+    findSuite(suiteName) {
+      const suiteInfo = this.parseSuiteInfo(suiteName);
+      return ctx.app.meta.suites[suiteInfo.relativeName];
+    }
     async ensureDir(dir) {
       await fse.ensureDir(dir);
       return dir;

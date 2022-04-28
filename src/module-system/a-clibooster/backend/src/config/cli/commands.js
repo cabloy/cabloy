@@ -5,6 +5,7 @@ const tokenDelete = require('./command/token.delete.js');
 const tokenList = require('./command/token.list.js');
 const toolsBabel = require('./command/tools.babel.js');
 const toolsIcons = require('./command/tools.icons.js');
+const createSuite = require('./command/create.suite.js');
 const createModule = require('./command/create.module.js');
 const createAtom = require('./command/create.atom.js');
 const createController = require('./command/create.controller.js');
@@ -25,6 +26,7 @@ module.exports = app => {
       icons: toolsIcons(app),
     },
     create: {
+      suite: createSuite(app),
       module: createModule(app),
       atom: createAtom(app),
       controller: createController(app),
