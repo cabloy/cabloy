@@ -7,6 +7,9 @@ module.exports = appInfo => {
   // disabledModules
   config.disabledModules = [];
 
+  // disabledSuites
+  config.disabledSuites = [];
+
   // subdomainOffset
   config.subdomainOffset = 2;
 

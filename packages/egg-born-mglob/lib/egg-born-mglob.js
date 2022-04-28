@@ -66,9 +66,10 @@ const __paths = [
   },
 ];
 
-function eggBornMglob(projectPath, disabledModules, log) {
+function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
   // context
   const context = {
+    suites: {},
     modules: {},
     modulesArray: [],
     modulesLast: [],
@@ -78,8 +79,10 @@ function eggBornMglob(projectPath, disabledModules, log) {
     modulesMonkey: {},
     disabledModules: __getDisabledModules(disabledModules),
   };
-  // parse
+  // parse modules
   const modules = __parseModules(projectPath);
+  // parse suites
+  const suites = __parseSuites(modules);
   // order
   __orderModules(context, modules);
   // log

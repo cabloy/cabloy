@@ -6,6 +6,7 @@ module.exports = function (loader) {
   const { modules, modulesArray, modulesMonkey } = mglob.glob(
     path.join(loader.app.options.baseDir, '../..'),
     loader.app.config.disabledModules,
+    loader.app.config.disabledSuites,
     !!loader.app.meta.inAgent
   );
   const ebModules = (loader.app.meta.modules = modules);

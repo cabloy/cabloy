@@ -6,16 +6,13 @@ module.exports = appInfo => {
 
   // disabledModules
   config.disabledModules = [
-    'test-dingtalk', //
-    'test-flow',
-    'test-hostsimple',
-    'test-localeone',
-    'test-localetwo',
+    'test-flow', //
     'test-note',
-    'test-party',
-    'test-partymonkey',
-    'test-wechat',
-    'test-wxwork',
+  ];
+
+  // disabledSuites
+  config.disabledSuites = [
+    'test-party', //
   ];
 
   // instances

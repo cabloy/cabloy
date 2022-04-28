@@ -141,9 +141,14 @@ const utils = {
     const configEnv = this.loadEnvConfig({ baseDir, env });
     const disabledModules = configEnv.disabledModules || [];
     for (const relativeName of disabledModules) {
-      pattern.push(`!src/**/${relativeName}/**/*.test.js`);
-      pattern.push(`!src/**/${relativeName}-sync/**/*.test.js`);
-      pattern.push(`!src/**/${relativeName}-monkey/**/*.test.js`);
+      pattern.push(`!src/**/${relativeName}/backend/test/**/*.test.js`);
+      pattern.push(`!src/**/${relativeName}-sync/backend/test/**/*.test.js`);
+      pattern.push(`!src/**/${relativeName}-monkey/backend/test/**/*.test.js`);
+    }
+    // disabledSuites
+    const disabledSuites = configEnv.disabledSuites || [];
+    for (const relativeName of disabledSuites) {
+      pattern.push(`!src/**/${relativeName}/modules/*/backend/test/**/*.test.js`);
     }
     // cli templates
     pattern.push('!src/**/backend/cli/templates/**/*.test.js');

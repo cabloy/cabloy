@@ -1,6 +1,7 @@
 export default {
   base: {
-    disabledModules: [
+    disabledModules: [],
+    disabledSuites: [
       // 'test-party',
     ],
   },

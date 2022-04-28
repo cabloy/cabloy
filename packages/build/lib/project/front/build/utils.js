@@ -77,6 +77,7 @@ module.exports = context => {
       const { modules, modulesGlobal } = mglob.glob(
         context.config.projectPath,
         context.config.configProject.base.disabledModules,
+        context.config.configProject.base.disabledSuites,
         true
       );
 
