@@ -1,0 +1,38 @@
+{
+  "name": "egg-born-module-test-party",
+  "version": "4.6.2",
+  "title": "Party Test",
+  "eggBornModule": {
+    "fileVersion": 2,
+    "cms": {
+      "name": "Party",
+      "theme": true
+    },
+    "dependencies": {
+      "a-instance": "4.0.0",
+      "a-base": "4.0.0",
+      "a-authopen": "4.0.0"
+    }
+  },
+  "description": "",
+  "files": [
+    "dist",
+    "docs",
+    "backend/cms",
+    "backend/test"
+  ],
+  "scripts": {
+    "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
+    "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",
+    "build:all": "npm run build:front && npm run build:backend",
+    "preversion": "npm run build:all && git add ."
+  },
+  "author": "zhennann",
+  "dependencies": {
+    "egg-born-mock": "^2.1.4",
+    "egg-born-utils": "^1.0.4",
+    "extend2": "^1.0.1",
+    "p-map": "^3.0.0",
+    "require3": "^2.1.5"
+  }
+}
