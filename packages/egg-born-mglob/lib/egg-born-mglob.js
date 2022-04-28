@@ -99,6 +99,7 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
 
   // ok
   return {
+    suites: context.suites,
     modules: context.modules,
     modulesArray: context.modulesArray,
     //
