@@ -78,11 +78,13 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
     modulesGlobal: {},
     modulesMonkey: {},
     disabledModules: __getDisabledModules(disabledModules),
+    disabledSuites: __getDisabledSuites(disabledSuites),
   };
   // parse modules
   const modules = __parseModules(projectPath);
   // parse suites
   const suites = __parseSuites(modules);
+  console.log(suites);
   // order
   __orderModules(context, modules);
   // log
@@ -277,4 +279,50 @@ function __getDisabledModules(disabledModules) {
     }
   }
   return disabledModulesMap;
+}
+
+function __getDisabledSuites(disabledSuites) {
+  const disabledSuitesMap = {};
+  if (disabledSuites && disabledSuites.length > 0) {
+    for (const suiteName of disabledSuites) {
+      disabledSuitesMap[suiteName] = true;
+    }
+  }
+  return disabledSuitesMap;
+}
+
+const __suite_pattern1 = /src\/suite\/([^\/]+)\/modules/;
+const __suite_pattern2 = /src\/suite-vendor\/([^\/]+)\/modules/;
+function __parseSuites(modules) {
+  const suites = {};
+  for (const moduleName in modules) {
+    const module = modules[moduleName];
+    // check
+    let res = module.root.match(__suite_pattern1);
+    if (!res) {
+      res = module.root.match(__suite_pattern2);
+    }
+    if (!res) continue;
+    // suiteName
+    const suiteName = res[1];
+    // suite
+    if (!suites[suiteName]) {
+      // suite
+      const root = module.root.split('/').slice(0, -2).join('/');
+      const filePkg = path.join(root, 'package.json');
+      const _package = require(filePkg);
+      suites[suiteName] = {
+        name: suiteName,
+        root,
+        pkg: filePkg,
+        package: _package,
+        modules: [],
+      };
+    }
+    // record module
+    module.suite = suiteName;
+    suites[suiteName].modules.push(moduleName);
+  }
+  // ok
+  return suites;
 }
