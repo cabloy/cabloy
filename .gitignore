@@ -30,6 +30,12 @@ package-lock.json
 /src/backend/run
 /src/front/config
 
+/src/suite/*
+!/src/suite/.gitkeep
+
+/src/suite-vendor/*
+!/src/suite-vendor/.gitkeep
+
 /src/module/*
 !/src/module/.gitkeep
 
