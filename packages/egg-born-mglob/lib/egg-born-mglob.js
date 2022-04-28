@@ -77,6 +77,10 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
     modulesLocal: {},
     modulesGlobal: {},
     modulesMonkey: {},
+    //
+    suitesLocal: {},
+    suitesVendor: {},
+    //
     disabledModules: __getDisabledModules(disabledModules),
     disabledSuites: __getDisabledSuites(disabledSuites),
   };
@@ -84,11 +88,14 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
   const modules = __parseModules(projectPath);
   // parse suites
   const suites = __parseSuites(modules);
-  console.log(suites);
+  __checkSuites(context, suites);
+
   // order
   __orderModules(context, modules);
   // log
   __logModules(context, log);
+  __logSuites(context, log);
+
   // ok
   return {
     modules: context.modules,
@@ -268,6 +275,28 @@ function __logModules(context, log) {
   for (const key in context.modulesMonkey) {
     console.log(chalk.cyan('> ' + key));
   }
+  // console.log('\n');
+}
+
+function __logSuites(context, log) {
+  for (const suiteName in context.suites) {
+    const suite = context.suites[suiteName];
+    if (suite.vendor) {
+      context.suitesVendor[suiteName] = suite;
+    } else {
+      context.suitesLocal[suiteName] = suite;
+    }
+  }
+  if (!log) return;
+  // log
+  console.log(chalk.yellow('\n=== Local Suites ==='));
+  for (const key in context.suitesLocal) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log(chalk.yellow('\n=== Vendor Suites ==='));
+  for (const key in context.suitesVendor) {
+    console.log(chalk.cyan('> ' + key));
+  }
   console.log('\n');
 }
 
@@ -298,9 +327,11 @@ function __parseSuites(modules) {
   for (const moduleName in modules) {
     const module = modules[moduleName];
     // check
+    let vendor = false;
     let res = module.root.match(__suite_pattern1);
     if (!res) {
       res = module.root.match(__suite_pattern2);
+      vendor = true;
     }
     if (!res) continue;
     // suiteName
@@ -316,6 +347,7 @@ function __parseSuites(modules) {
         root,
         pkg: filePkg,
         package: _package,
+        vendor,
         modules: [],
       };
     }
@@ -325,4 +357,14 @@ function __parseSuites(modules) {
   }
   // ok
   return suites;
+}
+
+function __checkSuites(context, suites) {
+  for (const key in suites) {
+    const suite = suites[key];
+    // check if disable
+    if (!context.disabledSuites[key]) {
+      context.suites[key] = suite;
+    }
+  }
 }
