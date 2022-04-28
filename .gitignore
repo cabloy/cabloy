@@ -39,41 +39,8 @@ package-lock.json
 /src/module/*
 !/src/module/.gitkeep
 
-/src/module-vendor/test-note/backend/src
-/src/module-vendor/test-note/backend/static
-/src/module-vendor/test-note/build
-/src/module-vendor/test-note/front
-/src/module-vendor/test-note/.gitignore
-
-/src/module-vendor/test-party/backend/src
-/src/module-vendor/test-party/backend/static
-/src/module-vendor/test-party/build
-/src/module-vendor/test-party/front
-/src/module-vendor/test-party/.gitignore
-
-/src/module-vendor/test-flow/backend/src
-/src/module-vendor/test-flow/backend/static
-/src/module-vendor/test-flow/build
-/src/module-vendor/test-flow/front
-/src/module-vendor/test-flow/.gitignore
-
-/src/module-vendor/a-flowtask/backend/src
-/src/module-vendor/a-flowtask/backend/static
-/src/module-vendor/a-flowtask/build
-/src/module-vendor/a-flowtask/front
-/src/module-vendor/a-flowtask/.gitignore
-
-/src/module-vendor/a-markdown/backend/src
-/src/module-vendor/a-markdown/backend/static
-/src/module-vendor/a-markdown/build
-/src/module-vendor/a-markdown/front
-/src/module-vendor/a-markdown/.gitignore
-
-/src/module-vendor/a-flownodebooster/backend
-/src/module-vendor/a-flownodebooster/build
-/src/module-vendor/a-flownodebooster/dist
-/src/module-vendor/a-flownodebooster/front
-/src/module-vendor/a-flownodebooster/.gitignore
+/src/module-vendor/*
+!/src/module-vendor/.gitkeep
 
 # package-lock.json
 # yarn.lock
