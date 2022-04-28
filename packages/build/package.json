@@ -34,7 +34,7 @@
     "connect-history-api-fallback": "^1.6.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
-    "egg-born-mglob": "^2.2.6",
+    "egg-born-mglob": "^3.0.0",
     "egg-born-mparse": "^2.1.2",
     "eslint": "^7.21.0",
     "eslint-config-egg-born": "^1.1.2",

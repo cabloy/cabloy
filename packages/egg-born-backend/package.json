@@ -34,7 +34,7 @@
     "debug": "^4.3.3",
     "egg": "^2.33.1",
     "egg-born-localeutil": "^2.1.2",
-    "egg-born-mglob": "^2.2.6",
+    "egg-born-mglob": "^3.0.0",
     "egg-born-mock": "^2.1.4",
     "egg-born-mparse": "^2.1.2",
     "egg-mysql": "^3.0.0",
