@@ -1,12 +1,19 @@
 {
   "version": "independent",
-  "packages": ["packages/*", "src/module/*", "src/module-system/*", "src/module-vendor/*"],
+  "packages": [
+    "packages/*",
+    "src/module/*",
+    "src/module-system/*",
+    "src/module-vendor/*",
+    "src/suite/*/modules/*",
+    "src/suite-vendor/*/modules/*"
+  ],
   "command": {
     "bootstrap": {
       "hoist": "**"
     },
     "publish": {
-      "ignoreChanges": ["src/module-vendor/a-flownodebooster/**", "src/module/**"]
+      "ignoreChanges": ["src/module/**", "src/suite/**"]
     }
   }
 }
