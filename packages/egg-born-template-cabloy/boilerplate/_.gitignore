@@ -27,6 +27,9 @@ node_modules
 /src/backend/run
 /src/front/config
 
+/src/suite-vendor/*
+!/src/suite-vendor/.gitkeep
+
 /src/module-vendor/*
 !/src/module-vendor/.gitkeep
 
