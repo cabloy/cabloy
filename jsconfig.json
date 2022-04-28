@@ -6,11 +6,14 @@
     "src/module/**/*", //
     "src/module-system/**/*",
     "src/module-vendor/**/*",
+    "src/suite/**/*",
+    "src/suite-vendor/**/*",
     "packages/**/*"
   ],
   "exclude": [
     "node_modules", //
     "**/dist/**",
-    "**/*.min.js"
+    "**/*.min.js",
+    "backend/cli/templates"
   ]
 }
