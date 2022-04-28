@@ -88,6 +88,7 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
   const modules = __parseModules(projectPath);
   // parse suites
   const suites = __parseSuites(modules);
+  // check suites
   __checkSuites(context, suites);
 
   // order
@@ -365,6 +366,11 @@ function __checkSuites(context, suites) {
     // check if disable
     if (!context.disabledSuites[key]) {
       context.suites[key] = suite;
+    } else {
+      // disabledModules
+      for (const moduleName of suite.modules) {
+        context.disabledModules[moduleName] = true;
+      }
     }
   }
 }
