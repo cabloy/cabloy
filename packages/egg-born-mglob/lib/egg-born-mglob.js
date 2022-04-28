@@ -28,17 +28,26 @@ const __paths = [
       { js: 'dist/backend.js', static: 'dist/staticBackend' },
     ],
   },
-  // {
-  //   prefix: 'src/suite/*/modules/',
-  //   public: false,
-  //   fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
-  //   backends: [
-  //     { js: 'backend/src/main.js', static: 'backend/static' },
-  //     { js: 'dist/backend.js', static: 'dist/staticBackend' },
-  //   ],
-  // },
+  {
+    prefix: 'src/suite/*/modules/',
+    public: false,
+    fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
+    backends: [
+      { js: 'backend/src/main.js', static: 'backend/static' },
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+    ],
+  },
   {
     prefix: 'src/module-vendor/',
+    public: false,
+    fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
+    backends: [
+      { js: 'dist/backend.js', static: 'dist/staticBackend' },
+      { js: 'backend/src/main.js', static: 'backend/static' },
+    ],
+  },
+  {
+    prefix: 'src/suite-vendor/*/modules/',
     public: false,
     fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
     backends: [
@@ -161,15 +170,15 @@ function __parseModules(projectPath) {
     const filePkgs = glob.sync(`${prefix}*/package.json`);
     for (const filePkg of filePkgs) {
       // name
-      const pos1 = prefix.length;
-      const pos2 = filePkg.indexOf('/', pos1);
-      const name = filePkg.substr(pos1, pos2 - pos1);
+      const name = filePkg.split('/').slice(-2)[0];
       if (!__path.public && name.indexOf('egg-born-module-') > -1) {
         throw new Error(`Should use relative name for local module: ${name}`);
       }
       // info
       const info = mparse.parseInfo(name);
-      if (!info) throw new Error(`module name is not valid: ${name}`);
+      if (!info) {
+        throw new Error(`module name is not valid: ${name}`);
+      }
       info.public = __path.public;
       // check if exists
       if (!modules[info.relativeName]) {
