@@ -7,11 +7,15 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Create Module',
-      usage: 'npm run cli :create:module moduleName -- [--template=] [--force]',
+      usage: 'npm run cli :create:module moduleName -- [--template=] [--suite=] [--force]',
     },
     options: {
       template: {
         description: 'template',
+        type: 'string',
+      },
+      suite: {
+        description: 'suite name',
         type: 'string',
       },
       force: {
@@ -31,6 +35,10 @@ module.exports = app => {
               { name: 'module-business-details', message: 'cabloy business module template with details' },
               { name: 'module-icon', message: 'cabloy icon module template' },
             ],
+          },
+          suite: {
+            type: 'input',
+            message: 'suite name',
           },
         },
       },

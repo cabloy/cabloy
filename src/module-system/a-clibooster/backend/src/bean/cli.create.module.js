@@ -8,6 +8,17 @@ module.exports = ctx => {
       const { argv } = this.context;
       // super
       await super.execute({ user });
+      // suite name/info
+      const suiteName = argv.suite;
+      // need not check if exists
+      // if (suiteName) {
+      //   argv.suiteInfo = this.helper.parseSuiteInfo(suiteName);
+      //   // check if exists
+      //   const _suite = this.helper.findSuite(suiteName);
+      //   if (!_suite) {
+      //     throw new Error(`suite does not exist: ${suiteName}`);
+      //   }
+      // }
       // module name/info
       const moduleName = argv.name;
       argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
@@ -17,7 +28,12 @@ module.exports = ctx => {
         throw new Error(`module exists: ${moduleName}`);
       }
       // target dir
-      let targetDir = path.join(argv.projectPath, 'src/module', moduleName);
+      let targetDir;
+      if (suiteName) {
+        targetDir = path.join(argv.projectPath, `src/suite/${suiteName}/modules`, moduleName);
+      } else {
+        targetDir = path.join(argv.projectPath, 'src/module', moduleName);
+      }
       if (!argv.force && fs.existsSync(targetDir)) {
         throw new Error(`module exists: ${moduleName}`);
       }

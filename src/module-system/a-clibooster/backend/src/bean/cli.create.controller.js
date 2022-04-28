@@ -11,7 +11,7 @@ module.exports = ctx => {
       // check if exists
       const _module = this.helper.findModule(moduleName);
       if (!_module) {
-        throw new Error(`module does not exists: ${moduleName}`);
+        throw new Error(`module does not exist: ${moduleName}`);
       }
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
