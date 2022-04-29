@@ -1,5 +1,11 @@
 # History
 
+## 2022-04-29, Version 4.18.0
+
+- **Feat**
+  - Suite 机制
+    - 一个 Suite 可以包含多个 Modules
+
 ## 2022-04-27, Version 4.17.0
 
 - **Feat**
