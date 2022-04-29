@@ -44,6 +44,7 @@ var PREFIX_C = './egg-born-module-';
 var PREFIX_D = './';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   parseInfo: function parseInfo(moduleName) {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'module';
     if (!moduleName) return null;
     if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
@@ -56,6 +57,15 @@ var PREFIX_D = './';
         return item;
       });
       if (parts.length < 2) return null;
+    }
+
+    if (type === 'suite') {
+      return {
+        pid: parts[0],
+        name: parts[1],
+        fullName: "egg-born-suite-".concat(parts[0], "-").concat(parts[1]),
+        relativeName: "".concat(parts[0], "-").concat(parts[1])
+      };
     }
 
     return {

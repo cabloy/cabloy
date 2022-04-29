@@ -6,7 +6,7 @@ const PREFIX_D = './';
 export default {
   // aa-hello aa/hello
   //   first check / then -
-  parseInfo(moduleName) {
+  parseInfo(moduleName, type = 'module') {
     if (!moduleName) return null;
     if (moduleName.indexOf('://') > -1) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
@@ -14,6 +14,14 @@ export default {
     if (parts.length < 2) {
       parts = moduleName.split('-').filter(item => item);
       if (parts.length < 2) return null;
+    }
+    if (type === 'suite') {
+      return {
+        pid: parts[0],
+        name: parts[1],
+        fullName: `egg-born-suite-${parts[0]}-${parts[1]}`,
+        relativeName: `${parts[0]}-${parts[1]}`,
+      };
     }
     return {
       pid: parts[0],

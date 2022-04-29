@@ -204,7 +204,7 @@ function __parseModules(projectPath) {
         throw new Error(`Should use relative name for local module: ${name}`);
       }
       // info
-      const info = mparse.parseInfo(name);
+      const info = mparse.parseInfo(name, 'module');
       if (!info) {
         throw new Error(`module name is not valid: ${name}`);
       }
@@ -346,7 +346,7 @@ function __parseSuites(projectPath) {
       // name
       const name = filePkg.split('/').slice(-2)[0];
       // info
-      const info = mparse.parseInfo(name);
+      const info = mparse.parseInfo(name, 'suite');
       if (!info) {
         throw new Error(`suite name is not valid: ${name}`);
       }
