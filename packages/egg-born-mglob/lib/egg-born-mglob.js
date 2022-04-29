@@ -371,7 +371,24 @@ function __parseSuites(projectPath) {
   return suites;
 }
 
-function __bindSuitesModules(suites, modules) {}
+const __suite_pattern1 = /src\/suite\/([^\/]+)\/modules/;
+const __suite_pattern2 = /src\/suite-vendor\/([^\/]+)\/modules/;
+function __bindSuitesModules(suites, modules) {
+  for (const moduleName in modules) {
+    const module = modules[moduleName];
+    // check
+    let res = module.root.match(__suite_pattern1);
+    if (!res) {
+      res = module.root.match(__suite_pattern2);
+    }
+    if (!res) continue;
+    // suiteName
+    const suiteName = res[1];
+    // bind
+    module.suite = suiteName;
+    suites[suiteName].modules.push(moduleName);
+  }
+}
 
 function __checkSuites(context, suites) {
   for (const key in suites) {
