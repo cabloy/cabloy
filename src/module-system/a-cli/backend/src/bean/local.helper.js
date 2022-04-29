@@ -63,7 +63,7 @@ module.exports = ctx => {
       return ctx.app.meta.modules[moduleInfo.relativeName];
     }
     parseSuiteInfo(suiteName) {
-      const suiteInfo = mparse.parseInfo(suiteName);
+      const suiteInfo = mparse.parseInfo(suiteName, 'suite');
       if (!suiteInfo) throw new Error(`suite name is not valid: ${suiteName}`);
       return suiteInfo;
     }
