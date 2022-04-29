@@ -8,7 +8,7 @@ const IOFn = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
 const __debounceTimeout = 500;
-const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG'];
+const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG', 'npm_config_registry'];
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuth, locale }) {

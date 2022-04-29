@@ -75,14 +75,23 @@ module.exports = ctx => {
       await fse.ensureDir(dir);
       return dir;
     }
+    getNpmRegistry() {
+      let registry = this.context.env.npm_config_registry;
+      if (!registry) {
+        const locale = ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
+        registry = this.moduleConfig.helper.lerna.registry.locales[locale];
+      }
+      return registry;
+    }
     async lernaBootstrap() {
-      // registry
-      const locale = ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
-      const registry = this.moduleConfig.helper.lerna.registry.locales[locale];
-      const registryOption = registry ? `--registry=${registry}` : '';
       // args
       const args = ['bootstrap'];
-      if (registryOption) args.push(registryOption);
+      // registry
+      const registry = this.getNpmRegistry();
+      const registryOption = registry ? `--registry=${registry}` : '';
+      if (registryOption) {
+        args.push(registryOption);
+      }
       // log
       await this.console.log(`===> lerna bootstrap ${registryOption}`);
       // spawn
