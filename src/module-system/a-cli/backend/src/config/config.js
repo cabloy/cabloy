@@ -28,6 +28,7 @@ module.exports = appInfo => {
           '_.eslintignore': '.eslintignore',
           '_.npmignore': '.npmignore',
           '_.eslintrc.js': '.eslintrc.js',
+          '_jsconfig.json': 'jsconfig.json',
         },
         ignore: ['.DS_Store'],
       },

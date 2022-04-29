@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born#readme",
   "dependencies": {
-    "@zhennann/egg-init": "^2.3.3",
+    "@zhennann/egg-init": "^2.3.5",
     "co": "^4.6.0",
     "egg-born-init-config": "^3.0.0",
     "fs-extra": "^8.1.0",

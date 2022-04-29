@@ -3,16 +3,11 @@
     "target": "es2017"
   },
   "include": [
-    "src/module/**/*", //
+    "src/module/**/*",
     "src/module-vendor/**/*",
     "src/suite/**/*",
     "src/suite-vendor/**/*",
     "node_modules/egg-born-*/**/*"
   ],
-  "exclude": [
-    "node_modules", //
-    "**/dist/**",
-    "**/*.min.js",
-    "backend/cli/templates"
-  ]
+  "exclude": ["node_modules", "**/dist/**", "**/*.min.js", "backend/cli/templates"]
 }

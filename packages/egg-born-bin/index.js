@@ -137,11 +137,20 @@ function confirmFormat() {
     '.eslintignore',
     '.prettierrc',
     '.prettierignore',
-    'jsconfig.json',
+    ['_jsconfig.json', 'jsconfig.json'],
   ];
   for (const file of files) {
-    const fileDest = path.join(process.cwd(), file);
-    const fileSrc = path.join(__dirname, `./format/${file}`);
+    let fileSrc;
+    let fileDest;
+    if (Array.isArray(file)) {
+      fileSrc = file[0];
+      fileDest = file[1];
+    } else {
+      fileSrc = file;
+      fileDest = file;
+    }
+    fileSrc = path.join(__dirname, `./format/${fileSrc}`);
+    fileDest = path.join(process.cwd(), fileDest);
     fse.copySync(fileSrc, fileDest);
   }
   console.log('eslint updated!!!\n');
