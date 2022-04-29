@@ -9,7 +9,18 @@ module.exports = {
   glob: eggBornMglob,
 };
 
-const __paths = [
+const __pathSuites = [
+  {
+    prefix: 'src/suite/',
+    vendor: false,
+  },
+  {
+    prefix: 'src/suite-vendor/',
+    vendor: true,
+  },
+];
+
+const __pathsModules = [
   {
     prefix: 'src/module/',
     public: false,
@@ -84,10 +95,14 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
     disabledModules: __getDisabledModules(disabledModules),
     disabledSuites: __getDisabledSuites(disabledSuites),
   };
+
+  // parse suites
+  const suites = __parseSuites(projectPath);
   // parse modules
   const modules = __parseModules(projectPath);
-  // parse suites
-  const suites = __parseSuites(modules);
+  // bind suites modules
+  __bindSuitesModules(suites, modules);
+
   // check suites
   __checkSuites(context, suites);
 
@@ -179,7 +194,7 @@ function __orderDependencies(context, modules, module) {
 
 function __parseModules(projectPath) {
   const modules = {};
-  for (const __path of __paths) {
+  for (const __path of __pathsModules) {
     const prefix = `${projectPath}/${__path.prefix}`;
     const filePkgs = glob.sync(`${prefix}*/package.json`);
     for (const filePkg of filePkgs) {
@@ -283,7 +298,7 @@ function __logModules(context, log) {
 function __logSuites(context, log) {
   for (const suiteName in context.suites) {
     const suite = context.suites[suiteName];
-    if (suite.vendor) {
+    if (suite.info.vendor) {
       context.suitesVendor[suiteName] = suite;
     } else {
       context.suitesLocal[suiteName] = suite;
@@ -322,44 +337,41 @@ function __getDisabledSuites(disabledSuites) {
   return disabledSuitesMap;
 }
 
-const __suite_pattern1 = /src\/suite\/([^\/]+)\/modules/;
-const __suite_pattern2 = /src\/suite-vendor\/([^\/]+)\/modules/;
-function __parseSuites(modules) {
+function __parseSuites(projectPath) {
   const suites = {};
-  for (const moduleName in modules) {
-    const module = modules[moduleName];
-    // check
-    let vendor = false;
-    let res = module.root.match(__suite_pattern1);
-    if (!res) {
-      res = module.root.match(__suite_pattern2);
-      vendor = true;
+  for (const __path of __pathSuites) {
+    const prefix = `${projectPath}/${__path.prefix}`;
+    const filePkgs = glob.sync(`${prefix}*/package.json`);
+    for (const filePkg of filePkgs) {
+      // name
+      const name = filePkg.split('/').slice(-2)[0];
+      // info
+      const info = mparse.parseInfo(name);
+      if (!info) {
+        throw new Error(`suite name is not valid: ${name}`);
+      }
+      info.vendor = __path.vendor;
+      // check if exists
+      if (!suites[info.relativeName]) {
+        // meta
+        const _package = require(filePkg);
+        const root = path.dirname(filePkg);
+        suites[info.relativeName] = {
+          name,
+          info,
+          root,
+          pkg: filePkg,
+          package: _package,
+          modules: [],
+        };
+      }
     }
-    if (!res) continue;
-    // suiteName
-    const suiteName = res[1];
-    // suite
-    if (!suites[suiteName]) {
-      // suite
-      const root = module.root.split('/').slice(0, -2).join('/');
-      const filePkg = path.join(root, 'package.json');
-      const _package = require(filePkg);
-      suites[suiteName] = {
-        name: suiteName,
-        root,
-        pkg: filePkg,
-        package: _package,
-        vendor,
-        modules: [],
-      };
-    }
-    // record module
-    module.suite = suiteName;
-    suites[suiteName].modules.push(moduleName);
   }
   // ok
   return suites;
 }
+
+function __bindSuitesModules(suites, modules) {}
 
 function __checkSuites(context, suites) {
   for (const key in suites) {
