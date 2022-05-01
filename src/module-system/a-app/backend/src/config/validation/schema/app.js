@@ -10,10 +10,23 @@ module.exports = app => {
         ebTitle: 'Name',
         notEmpty: true,
       },
+      atomStaticKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'KeyForAtom',
+        ebReadOnly: true,
+        notEmpty: true,
+      },
       description: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Description',
+      },
+      content: {
+        type: 'string',
+        ebType: 'json',
+        ebTitle: 'Content',
+        notEmpty: true,
       },
     },
   };
