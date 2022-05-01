@@ -7,8 +7,15 @@ module.exports = app => {
       const res = await this.ctx.model.app.insert({
         atomId: key.atomId,
       });
-      // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      const itemId = res.insertId;
+      // add content
+      const content = {};
+      await this.ctx.model.appContent.insert({
+        atomId: key.atomId,
+        itemId,
+        content: JSON.stringify(content),
+      });
+      return { atomId: key.atomId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
@@ -37,6 +44,17 @@ module.exports = app => {
       const data = await this.ctx.model.app.prepareData(item);
       data.id = key.itemId;
       await this.ctx.model.app.update(data);
+      // update content
+      await this.ctx.model.appContent.update(
+        {
+          content: item.content,
+        },
+        {
+          where: {
+            atomId: key.atomId,
+          },
+        }
+      );
     }
 
     async delete({ atomClass, key, options, user }) {
@@ -46,13 +64,17 @@ module.exports = app => {
       await this.ctx.model.app.delete({
         id: key.itemId,
       });
+      // delete content
+      await this.ctx.model.appContent.delete({
+        itemId: key.itemId,
+      });
     }
 
     _getMeta(item) {
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary
-      meta.summary = item.description;
+      meta.summary = this.ctx.text(item.description);
     }
   }
 

@@ -12,11 +12,19 @@ module.exports = app => {
             bean: 'app',
             title: 'App',
             tableName: 'aApp',
+            tableNameModes: {
+              full: 'aAppViewFull',
+            },
+            resource: true,
             language: false,
             category: true,
-            tag: true,
+            tag: false,
           },
-          actions: {},
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'app',
           search: {
             validator: 'appSearch',
