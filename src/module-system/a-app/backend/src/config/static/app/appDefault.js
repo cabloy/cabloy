@@ -6,6 +6,8 @@ module.exports = app => {
     atomStaticKey: 'appDefault',
     atomRevision: 0,
     description: '',
+    appIcon: null,
+    appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
