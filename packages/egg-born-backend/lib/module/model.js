@@ -24,6 +24,11 @@ module.exports = function (loader, modules) {
   function createModelContainer(context, relativeName) {
     // base
     const modelContainer = new (ModelClass(loader.app))(context, { table: null });
+    // remove app/config/service
+    // delete modelContainer.ctx; // should not remove
+    modelContainer.app = undefined;
+    modelContainer.config = undefined;
+    modelContainer.service = undefined;
     // module
     modelContainer.__ebCacheModule = new Map();
     modelContainer.module = function (moduleName) {

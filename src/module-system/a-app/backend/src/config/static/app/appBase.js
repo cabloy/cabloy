@@ -13,7 +13,12 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardDefault',
             page: null,
           },
-          user: {},
+          user: {
+            render: {
+              module: 'a-appbooster',
+              name: 'userAnonymous',
+            },
+          },
         },
         pc: {
           layout: 'a-layoutpc:layoutPCAnonymous',
@@ -25,7 +30,12 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardDefault',
             page: null,
           },
-          user: {},
+          user: {
+            render: {
+              module: 'a-appbooster',
+              name: 'userAnonymous',
+            },
+          },
         },
       },
       authenticated: {
@@ -39,7 +49,12 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardDefault',
             page: null,
           },
-          user: {},
+          user: {
+            render: {
+              module: 'a-appbooster',
+              name: 'userAuthenticated',
+            },
+          },
         },
         pc: {
           layout: 'a-layoutpc:layoutPC',
@@ -51,7 +66,12 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardDefault',
             page: null,
           },
-          user: {},
+          user: {
+            render: {
+              module: 'a-appbooster',
+              name: 'userAuthenticated',
+            },
+          },
         },
       },
     },
