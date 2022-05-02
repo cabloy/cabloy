@@ -19,14 +19,15 @@ export default function (Vue) {
         };
       },
     },
-    mutations: {},
-    actions: {
+    mutations: {
       setAppItem(state, { appKey, appItem }) {
         state.appItems = {
           ...state.appItems,
           [appKey]: appItem,
         };
       },
+    },
+    actions: {
       async getAppItem({ state, commit, dispatch }, { appKey }) {
         let appItem = state.appItems[appKey];
         if (appItem) return appItem;
