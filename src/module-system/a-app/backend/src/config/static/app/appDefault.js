@@ -1,6 +1,11 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const content = {};
+  const content = {
+    presets: {
+      anonymous: {},
+      authenticated: {},
+    },
+  };
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
