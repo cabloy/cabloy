@@ -255,6 +255,7 @@ export default {
       return atomStaticKey;
     },
     async __init() {
+      await this.$store.dispatch('a/app/getAppItem', { appKey: 'a-app:appDefault' });
       const atomStaticKey = this.__getLayoutKey();
       // buttonsAll
       await this.__getResourcesAll();
