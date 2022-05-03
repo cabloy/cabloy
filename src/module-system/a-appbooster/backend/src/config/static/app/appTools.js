@@ -9,9 +9,9 @@ module.exports = app => {
   const _app = {
     atomName: 'Tools',
     atomStaticKey: 'appTools',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
-    appIcon: null,
+    appIcon: ':outline:build-circle-outline',
     appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'template.system',
