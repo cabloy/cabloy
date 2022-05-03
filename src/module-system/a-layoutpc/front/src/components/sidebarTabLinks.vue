@@ -10,7 +10,10 @@ export default {
           key: this.layout._panelFullName(panel),
           staticClass: this.layout._panelFullName(panel) === this.sidebar.options.panelActive ? 'active' : '',
           props: {
-            text: this.__getPanelTitle(panel),
+            iconF7: this.__getPanelIcon(panel),
+            iconSize: this.__getPanelIconSize(panel),
+            text: this.__getPanelLabel(panel),
+            tooltip: this.__getPanelTooltip(panel),
           },
           nativeOn: {
             click: event => {
@@ -99,8 +102,24 @@ export default {
       // save
       this.layout.__saveLayoutConfig();
     },
+    __getPanelIcon(panel) {
+      const icon = panel.resourceConfig && panel.resourceConfig.icon;
+      return icon && icon.f7;
+    },
+    __getPanelIconSize(/* panel*/) {
+      return 16;
+    },
     __getPanelTitle(panel) {
       return panel.titleLocale || this.$text(panel.title) || panel.name;
+    },
+    __getPanelLabel(panel) {
+      if (panel.resourceConfig && panel.resourceConfig.showLabel === false) return null;
+      return this.__getPanelTitle(panel);
+    },
+    __getPanelTooltip(panel) {
+      const label = this.__getPanelLabel(panel);
+      if (label) return null;
+      return this.__getPanelTitle(panel);
     },
   },
 };

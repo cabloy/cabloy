@@ -33,12 +33,15 @@ export default {
     },
     app_openAppMenu_panelSceneOptions(appKey, appItem) {
       let title;
+      let titleLocale;
       let showLabel;
       if (this.app_isDefault(appKey)) {
-        title = this.$text('Apps');
+        title = 'Apps';
+        titleLocale = this.$text('Apps');
         showLabel = false;
       } else {
-        title = appItem.atomNameLocale;
+        title = appItem.atomName;
+        titleLocale = appItem.atomNameLocale;
         showLabel = true;
       }
       // ok
@@ -46,8 +49,11 @@ export default {
         side: 'left',
         name: appKey,
         title,
-        showLabel,
-        icon: { f7: appItem.appIcon },
+        titleLocale,
+        resourceConfig: {
+          showLabel,
+          icon: { f7: appItem.appIcon },
+        },
       };
     },
     async app_openAppHome() {},
