@@ -17,14 +17,14 @@ export default {
       // app default
       if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
         const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.appKeyDefault });
-        this.navigate('/a/app/appMenu', {
+        this.navigate(`/a/app/appMenu?appKey=${this.appKeyDefault}`, {
           scene: 'sidebar',
           sceneOptions: this.app_openAppMenu_panelSceneOptions(this.appKeyDefault, appItemDefault),
           imActive: true,
         });
       }
       // app current
-      this.navigate('/a/app/appMenu?1', {
+      this.navigate(`/a/app/appMenu?appKey=${current.appKey}`, {
         scene: 'sidebar',
         sceneOptions: this.app_openAppMenu_panelSceneOptions(current.appKey, appItemCurrent),
         imActive: false,
