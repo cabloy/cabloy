@@ -4,7 +4,7 @@ module.exports = app => {
     sidebar: {
       top: {
         buttons: [
-          { module: 'a-layoutpc', name: 'buttonHome' },
+          { module: 'a-layoutpc', name: 'buttonAppHome' },
           { module: 'a-layoutpc', name: 'buttonSearch' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
           { module: 'a-layoutpc', name: 'buttonMine' },
@@ -30,7 +30,7 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     content: JSON.stringify(content),
     resourceRoles: 'root',

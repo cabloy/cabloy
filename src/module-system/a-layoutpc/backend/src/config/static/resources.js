@@ -32,7 +32,7 @@ module.exports = app => {
     {
       atomName: 'Menu',
       atomStaticKey: 'panelMenu',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -43,7 +43,7 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'panelAtom',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -54,7 +54,7 @@ module.exports = app => {
     {
       atomName: 'Search',
       atomStaticKey: 'panelSearch',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -75,9 +75,37 @@ module.exports = app => {
     },
     // buttons
     {
+      atomName: 'App Home',
+      atomStaticKey: 'buttonAppHome',
+      atomRevision: 2,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppHome',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Search',
+      atomStaticKey: 'buttonSearch',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: '::search' },
+        actionPath: '/a/basefront/atom/searchQuick',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'search', title: 'Search' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
       atomName: 'Home',
       atomStaticKey: 'buttonHome',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
@@ -93,7 +121,7 @@ module.exports = app => {
     {
       atomName: 'Dashboard',
       atomStaticKey: 'buttonDashboard',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({

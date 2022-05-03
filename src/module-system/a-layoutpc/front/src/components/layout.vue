@@ -209,6 +209,7 @@ export default {
       this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
+      return;
       // home
       let [_button] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonHome' });
       if (!_button) {

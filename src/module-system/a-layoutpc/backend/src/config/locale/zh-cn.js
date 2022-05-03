@@ -19,4 +19,5 @@ module.exports = {
   'PC Layout': 'PC布局',
   'PC Layout(Authenticated)': 'PC布局（认证用户）',
   'PC Layout(Anonymous)': 'PC布局（匿名用户）',
+  'App Home': '应用首页',
 };
