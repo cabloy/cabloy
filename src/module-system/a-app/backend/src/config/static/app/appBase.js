@@ -81,7 +81,7 @@ module.exports = app => {
     atomStaticKey: 'appBase',
     atomRevision: 0,
     description: '',
-    appIcon: null,
+    appIcon: ':outline:apps-outline',
     appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'root',

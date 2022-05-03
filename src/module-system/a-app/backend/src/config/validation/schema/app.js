@@ -22,6 +22,12 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      appIcon: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Icon',
+        notEmpty: true,
+      },
       content: {
         type: 'string',
         ebType: 'json',

@@ -104,6 +104,7 @@ export default {
     },
     __getPanelIcon(panel) {
       const icon = panel.resourceConfig && panel.resourceConfig.icon;
+      console.log(panel);
       return icon && icon.f7;
     },
     __getPanelIconSize(/* panel*/) {
