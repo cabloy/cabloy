@@ -74,16 +74,16 @@ export default {
       event.preventDefault();
       this.sidebar.createView({ ctx: null, panel });
     },
-    onDragStart({ $el, context, dragElement }) {
-      const [panel, panelIndexDrag] = this.sidebar._getPanelAndIndex(context.panel);
+    onDragStart({ /* $el,*/ context /* , dragElement*/ }) {
+      const [panel] = this.sidebar._getPanelAndIndex(context.panel);
       const tooltip = this.__getPanelTitle(panel);
       return { tooltip };
     },
-    onDragElement({ $el, context }) {},
-    onDropElement({ $el, context, dragElement, dragContext }) {
+    onDragElement(/* {  $el, context }*/) {},
+    onDropElement({ $el, context, /* dragElement,*/ dragContext }) {
       const [panelDrop, panelIndexDrop] = this.sidebar._getPanelAndIndex(context.panel);
-      const [panelDrag, panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
-      if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
+      const [, /* panelDrag, */ panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
+      if (panelIndexDrop === panelIndexDrag || panelIndexDrop === panelIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
       // tooltip
@@ -91,10 +91,10 @@ export default {
       // ok
       return { dropElement, tooltip };
     },
-    onDropLeave({ $el, context, dropElement }) {},
-    onDropEnter({ $el, context, dropElement }) {},
-    onDragEnd({ $el, context, dragElement }) {},
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+    onDropLeave(/* { $el, context, dropElement }*/) {},
+    onDropEnter(/* { $el, context, dropElement }*/) {},
+    onDragEnd(/* { $el, context, dragElement }*/) {},
+    onDragDone({ /* $el,*/ context, /* dragElement, dropElement,*/ dropContext }) {
       const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
       this.panels.splice(panelIndexDrag, 1);
       const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
