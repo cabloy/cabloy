@@ -75,9 +75,9 @@ module.exports = app => {
     },
     // buttons
     {
-      atomName: 'App Home',
+      atomName: 'Home',
       atomStaticKey: 'buttonAppHome',
-      atomRevision: 3,
+      atomRevision: 4,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
