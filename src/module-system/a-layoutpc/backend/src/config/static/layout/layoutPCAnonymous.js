@@ -5,16 +5,13 @@ module.exports = app => {
       top: {
         buttons: [
           { module: 'a-layoutpc', name: 'buttonHome' },
+          { module: 'a-layoutpc', name: 'buttonSearch' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
           { module: 'a-layoutpc', name: 'buttonMine' },
         ],
       },
       left: {
-        panels: [
-          { module: 'a-layoutpc', name: 'panelMenu' },
-          { module: 'a-layoutpc', name: 'panelAtom' },
-          { module: 'a-layoutpc', name: 'panelSearch' },
-        ],
+        panels: [],
       },
       right: {
         panels: [],
