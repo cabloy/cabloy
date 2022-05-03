@@ -17,6 +17,11 @@ export default {
           sceneOptions: { side: 'left', name: 'a-app:appDefault', title: appItemDefault.atomNameLocale },
         });
       }
+      // app current
+      this.navigate('/a/app/appMenu?1', {
+        scene: 'sidebar',
+        sceneOptions: { side: 'left', name: current.appKey, title: appItemCurrent.atomNameLocale },
+      });
     },
     async app_openAppHome() {},
   },
