@@ -6,5 +6,6 @@ function loadjsx(name) {
 }
 
 export default [
-  // { path: 'demo', component: load('demo') },
+  //
+  { path: 'appMenu', component: loadjsx('appMenu') },
 ];

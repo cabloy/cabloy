@@ -3,12 +3,14 @@ import Vue from 'vue';
 import Header from './header.vue';
 import Sidebar from './sidebar.vue';
 import Groups from './groups.vue';
+import MixinApp from '../common/layout/app.js';
 const appMethods = Vue.prototype.$meta.module.get('a-components').options.utils.appMethods;
 
 export default {
   meta: {
     global: false,
   },
+  mixins: [MixinApp],
   components: {
     ebHeader: Header,
     ebSidebar: Sidebar,
@@ -209,9 +211,7 @@ export default {
       this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
-      // menu
-      // home
-      // user
+      return this.app_openHome();
     },
     // options:
     //  target: _self/_view/_group
