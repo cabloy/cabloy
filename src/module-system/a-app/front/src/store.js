@@ -6,15 +6,15 @@ export default function (Vue) {
       // global
       currentInner: {
         appKey: null,
-        language: null,
+        appLanguage: null,
       },
       appItems: {},
     },
     getters: {
       current(state) {
         return {
-          appKey: state.currentInner.appKey || query.app || 'a-app:appDefault',
-          language: state.currentInner.language || query.language || Vue.prototype.$meta.util.getLocale(),
+          appKey: state.currentInner.appKey || query.appKey || 'a-app:appDefault',
+          appLanguage: state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale(),
           layout: Vue.prototype.$meta.vueApp.layout,
         };
       },
