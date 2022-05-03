@@ -4,18 +4,18 @@ export default function (Vue) {
   const query = Vue.prototype.$utils.parseUrlQuery();
 
   Vue.prototype.$meta.eventHub.$on('auth:login', data => {
-    Vue.prototype.$meta.store.commit('a/app/clearAppItems', data);
+    Vue.prototype.$meta.store.commit('a/app/clearUserInfo', data);
   });
 
   return {
     state: {
       // user
-      appItems: {}, // maybe fallback to appDefault
-      // global
       currentInner: {
         appKey: null,
         appLanguage: null,
       },
+      // global
+      appItems: {},
     },
     getters: {
       current(state) {
@@ -50,9 +50,16 @@ export default function (Vue) {
       },
     },
     mutations: {
-      clearAppItems(state) {
+      clearUserInfo(state) {
         // clear
-        state.appItems = {};
+        // maybe fallback to appDefault from appTools
+        if (state.currentInner.appKey === __appKeyDefault) {
+          state.currentInner.appKey = null;
+        }
+      },
+      setCurrent(state, { appKey, appLanguage }) {
+        if (appKey) state.currentInner.appKey = appKey;
+        if (appLanguage) state.currentInner.appLanguage = appLanguage;
       },
       setAppItem(state, { appKey, appItem }) {
         state.appItems = {
@@ -62,9 +69,14 @@ export default function (Vue) {
       },
     },
     actions: {
-      async getPresetConfigCurrent({ state, getters, dispatch }) {
+      async getPresetConfigCurrent({ state, getters, commit, dispatch }) {
         // force appItem exists
-        await dispatch('getAppItemCurrent');
+        const appItem = await dispatch('getAppItemCurrent');
+        if (!appItem) {
+          // fallback to appDefault
+          commit('setCurrent', { appKey: __appKeyDefault });
+          await dispatch('getAppItemCurrent');
+        }
         // current
         return getters.presetConfigCurrent;
       },
@@ -75,6 +87,7 @@ export default function (Vue) {
         let appItem = state.appItems[appKey];
         if (appItem) return appItem;
         appItem = await __fetchAppItem({ Vue, appKey });
+        if (!appItem) return null; // maybe no access right
         appItem.content = appItem.content ? JSON.parse(appItem.content) : null;
         // get base app
         if (appKey !== __appKeyBase) {
@@ -89,25 +102,18 @@ export default function (Vue) {
 }
 
 async function __fetchAppItem({ Vue, appKey }) {
-  let appItem;
   try {
-    appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
+    const appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
       atomStaticKey: appKey,
       options: {
         //  locale: false, // should return locale info
       },
     });
+    return appItem;
   } catch (err) {
-    if ((err.code === 401 || err.code === 403) && appKey !== __appKeyDefault) {
-      appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
-        atomStaticKey: __appKeyDefault,
-        options: {
-          //  locale: false, // should return locale info
-        },
-      });
-    } else {
-      throw err;
+    if (err.code === 401 || err.code === 403) {
+      return null;
     }
+    throw err;
   }
-  return appItem;
 }
