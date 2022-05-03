@@ -12,9 +12,21 @@ export default function (Vue) {
     },
     getters: {
       current(state) {
+        // appKey
+        const appKey = state.currentInner.appKey || query.appKey || 'a-app:appDefault';
+        // appLanguage
+        const appLanguage = state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale();
+        // user
+        const user = Vue.prototype.$meta.store.state.auth.user.op;
+        const userStatus = user.anonymous ? 'anonymous' : 'authenticated';
+        // layout
+        const layout = Vue.prototype.$meta.vueApp.layout;
+        // ok
         return {
-          appKey: state.currentInner.appKey || query.appKey || 'a-app:appDefault',
-          appLanguage: state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale(),
+          appKey,
+          appLanguage,
+          userStatus,
+          layout,
         };
       },
     },
@@ -30,14 +42,11 @@ export default function (Vue) {
       async getPresetConfigCurrent({ state, getters, dispatch }) {
         // appItem
         const appItem = await dispatch('getAppItemCurrent');
-        // user
-        const user = Vue.prototype.$meta.store.state.auth.user.op;
-        const userStatus = user.anonymous ? 'anonymous' : 'authenticated';
-        // layout
-        const layout = Vue.prototype.$meta.vueApp.layout;
+        // current
+        const current = getters.current;
         // preset config
-        const presetConfig = appItem.content.presets[userStatus][layout];
-        return presetConfig[getters.current.appLanguage] || presetConfig;
+        const presetConfig = appItem.content.presets[current.userStatus][current.layout];
+        return presetConfig[current.appLanguage] || presetConfig;
       },
       async getAppItemCurrent({ state, getters, dispatch }) {
         return await dispatch('getAppItem', { appKey: getters.current.appKey });

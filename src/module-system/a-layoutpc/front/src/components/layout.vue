@@ -209,23 +209,9 @@ export default {
       this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
-      return;
+      // menu
       // home
-      let [_button] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonHome' });
-      if (!_button) {
-        // default
-        [_button] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonDashboard' });
-      }
-      if (_button) {
-        const resourceConfig = _button.resourceConfig;
-        const action = this.$utils.extend({}, resourceConfig, {
-          navigateOptions: {
-            scene: resourceConfig.scene,
-            sceneOptions: resourceConfig.sceneOptions,
-          },
-        });
-        return this.$meta.util.performAction({ ctx: this, action, item: null });
-      }
+      // user
     },
     // options:
     //  target: _self/_view/_group
