@@ -1,4 +1,5 @@
-// eslint-disable-next-line
+const __appKeyDefault = 'a-app:appDefault';
+const __appKeyBase = 'a-app:appBase';
 export default function (Vue) {
   const query = Vue.prototype.$utils.parseUrlQuery();
   return {
@@ -13,7 +14,7 @@ export default function (Vue) {
     getters: {
       current(state) {
         // appKey
-        const appKey = state.currentInner.appKey || query.appKey || 'a-app:appDefault';
+        const appKey = state.currentInner.appKey || query.appKey || __appKeyDefault;
         // appLanguage
         const appLanguage = state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale();
         // user
@@ -63,16 +64,11 @@ export default function (Vue) {
       async getAppItem({ state, commit, dispatch }, { appKey }) {
         let appItem = state.appItems[appKey];
         if (appItem) return appItem;
-        appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
-          atomStaticKey: appKey,
-          options: {
-            //  locale: false, // should return locale info
-          },
-        });
+        appItem = await __fetchAppItem({ Vue, appKey });
         appItem.content = appItem.content ? JSON.parse(appItem.content) : null;
         // get base app
-        if (appKey !== 'a-app:appBase') {
-          const appItemBase = await dispatch('getAppItem', { appKey: 'a-app:appBase' });
+        if (appKey !== __appKeyBase) {
+          const appItemBase = await dispatch('getAppItem', { appKey: __appKeyBase });
           appItem.content = Vue.prototype.$meta.util.extend({}, appItemBase.content, appItem.content);
         }
         commit('setAppItem', { appKey, appItem });
@@ -80,4 +76,28 @@ export default function (Vue) {
       },
     },
   };
+}
+
+async function __fetchAppItem({ Vue, appKey }) {
+  let appItem;
+  try {
+    appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
+      atomStaticKey: appKey,
+      options: {
+        //  locale: false, // should return locale info
+      },
+    });
+  } catch (err) {
+    if ((err.code === 401 || err.code === 403) && appKey !== __appKeyDefault) {
+      appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
+        atomStaticKey: __appKeyDefault,
+        options: {
+          //  locale: false, // should return locale info
+        },
+      });
+    } else {
+      throw err;
+    }
+  }
+  return appItem;
 }

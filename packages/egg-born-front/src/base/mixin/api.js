@@ -68,7 +68,9 @@ export default function (Vue) {
       function (error) {
         if (error.code === 401) {
           // login
-          Vue.prototype.$meta.vueLayout.openLogin();
+          if (Vue.prototype.$meta.vueLayout.started) {
+            Vue.prototype.$meta.vueLayout.openLogin();
+          }
         }
         return Promise.reject(error);
       }
