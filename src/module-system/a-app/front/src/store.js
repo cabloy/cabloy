@@ -65,7 +65,9 @@ export default function (Vue) {
         if (appItem) return appItem;
         appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
           atomStaticKey: appKey,
-          options: { locale: false },
+          options: {
+            //  locale: false, // should return locale info
+          },
         });
         appItem.content = appItem.content ? JSON.parse(appItem.content) : null;
         // get base app

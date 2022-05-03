@@ -6,11 +6,18 @@ export default {
       // await this.app_openAppUser();
     },
     async app_openAppMenu() {
+      // current
+      const current = this.$store.getters['a/app/current'];
+      const appItemCurrent = this.$store.getters['a/app/appItemCurrent'];
       // app default
-      this.navigate('/a/app/appMenu', {
-        scene: 'sidebar',
-        sceneOptions: { side: 'left', name: 'properties', title: 'Properties' },
-      });
+      if (current.appKey !== 'a-app:appDefault' && !appItemCurrent.isolate) {
+        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: 'a-app:appDefault' });
+        console.log(appItemDefault);
+        this.navigate('/a/app/appMenu', {
+          scene: 'sidebar',
+          sceneOptions: { side: 'left', name: 'a-app:appDefault', title: appItemDefault.atomNameLocale },
+        });
+      }
     },
     async app_openAppHome() {},
   },
