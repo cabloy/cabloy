@@ -1,4 +1,6 @@
 export default {
+  App: '应用',
+  Apps: '应用',
   Atom: '数据',
   Atoms: '数据',
   AtomName: '标题',
