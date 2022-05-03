@@ -2,14 +2,20 @@ const __appKeyDefault = 'a-app:appDefault';
 const __appKeyBase = 'a-app:appBase';
 export default function (Vue) {
   const query = Vue.prototype.$utils.parseUrlQuery();
+
+  Vue.prototype.$meta.eventHub.$on('auth:login', data => {
+    Vue.prototype.$meta.store.commit('a/app/clearAppItems', data);
+  });
+
   return {
     state: {
+      // user
+      appItems: {}, // maybe fallback to appDefault
       // global
       currentInner: {
         appKey: null,
         appLanguage: null,
       },
-      appItems: {},
     },
     getters: {
       current(state) {
@@ -44,6 +50,10 @@ export default function (Vue) {
       },
     },
     mutations: {
+      clearAppItems(state) {
+        // clear
+        state.appItems = {};
+      },
       setAppItem(state, { appKey, appItem }) {
         state.appItems = {
           ...state.appItems,
