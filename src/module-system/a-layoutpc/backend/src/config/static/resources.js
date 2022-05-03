@@ -77,12 +77,13 @@ module.exports = app => {
     {
       atomName: 'App Home',
       atomStaticKey: 'buttonAppHome',
-      atomRevision: 2,
+      atomRevision: 3,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonAppHome',
+        icon: { f7: '::home' },
       }),
       resourceRoles: 'root',
     },
