@@ -2,8 +2,30 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const content = {
     presets: {
-      anonymous: {},
-      authenticated: {},
+      anonymous: {
+        mobile: {
+          menu: {
+            layout: '',
+          },
+        },
+        pc: {
+          menu: {
+            layout: '',
+          },
+        },
+      },
+      authenticated: {
+        mobile: {
+          menu: {
+            layout: '',
+          },
+        },
+        pc: {
+          menu: {
+            layout: '',
+          },
+        },
+      },
     },
   };
   const _app = {
