@@ -218,12 +218,13 @@ export default {
       // remove dynamic resources
       this.__removeDynamicResources(value);
       // save
-      const atomStaticKey = this.__getLayoutKey();
-      this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-layoutmobile',
-        key: `layout:${atomStaticKey}`,
-        value,
-      });
+      if (this.layoutAtomStaticKey) {
+        this.$store.commit('a/base/setLayoutConfigKey', {
+          module: 'a-layoutmobile',
+          key: `layout:${this.layoutAtomStaticKey}`,
+          value,
+        });
+      }
     },
     __removeDynamicResource(resources) {
       for (let index = resources.length - 1; index >= 0; index--) {
@@ -243,20 +244,13 @@ export default {
         this.__removeDynamicResource(resources);
       }
     },
-    __getLayoutKey() {
-      if (this.layoutAtomStaticKey) return this.layoutAtomStaticKey;
-      const presets = this.$config.layout.presets;
-      const layoutConfig = !this.user || this.user.op.anonymous ? presets.anonymous : presets.authenticated;
-      let atomStaticKey = layoutConfig.scene[this.$meta.config.scene];
-      if (!atomStaticKey) {
-        atomStaticKey = layoutConfig.scene.web;
-      }
-      this.layoutAtomStaticKey = atomStaticKey;
-      return atomStaticKey;
+    async __initLayoutKey() {
+      const appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      this.layoutAtomStaticKey = appPresetConfig.layout;
+      return this.layoutAtomStaticKey;
     },
     async __init() {
-      await this.$store.dispatch('a/app/getAppItem', { appKey: 'a-app:appDefault' });
-      const atomStaticKey = this.__getLayoutKey();
+      const atomStaticKey = await this.__initLayoutKey();
       // buttonsAll
       await this.__getResourcesAll();
       // layoutDefault

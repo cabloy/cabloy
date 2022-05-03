@@ -15,7 +15,6 @@ export default function (Vue) {
         return {
           appKey: state.currentInner.appKey || query.appKey || 'a-app:appDefault',
           appLanguage: state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale(),
-          layout: Vue.prototype.$meta.vueApp.layout,
         };
       },
     },
@@ -28,6 +27,21 @@ export default function (Vue) {
       },
     },
     actions: {
+      async getPresetConfigCurrent({ state, getters, dispatch }) {
+        // appItem
+        const appItem = await dispatch('getAppItemCurrent');
+        // user
+        const user = Vue.prototype.$meta.store.state.auth.user.op;
+        const userStatus = user.anonymous ? 'anonymous' : 'authenticated';
+        // layout
+        const layout = Vue.prototype.$meta.vueApp.layout;
+        // preset config
+        const presetConfig = appItem.content.presets[userStatus][layout];
+        return presetConfig[getters.current.appLanguage] || presetConfig;
+      },
+      async getAppItemCurrent({ state, getters, dispatch }) {
+        return await dispatch('getAppItem', { appKey: getters.current.appKey });
+      },
       async getAppItem({ state, commit, dispatch }, { appKey }) {
         let appItem = state.appItems[appKey];
         if (appItem) return appItem;
