@@ -21,6 +21,9 @@ export default {
       return this.$meta.util.extend({}, panelStock, panel, _panelExtra);
     },
     _createPanel({ side, panel, url, options, init }) {
+      // imActive
+      const imActive = options.imActive;
+      // side
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       // prepare panel
       panel = this._preparePanel(panel, url);
@@ -38,9 +41,11 @@ export default {
         this.sidebar[side].panels.splice(_panelTabIndex, 1, panel);
       }
       // create view
-      this.$nextTick(() => {
-        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, options, init });
-      });
+      if (!imActive) {
+        this.$nextTick(() => {
+          this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, options, init });
+        });
+      }
     },
   },
 };

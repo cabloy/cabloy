@@ -20,12 +20,14 @@ export default {
         this.navigate('/a/app/appMenu', {
           scene: 'sidebar',
           sceneOptions: this.app_openAppMenu_panelSceneOptions(this.appKeyDefault, appItemDefault),
+          imActive: true,
         });
       }
       // app current
       this.navigate('/a/app/appMenu?1', {
         scene: 'sidebar',
         sceneOptions: this.app_openAppMenu_panelSceneOptions(current.appKey, appItemCurrent),
+        imActive: false,
       });
     },
     app_isDefault(appKey) {
