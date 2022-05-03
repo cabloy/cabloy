@@ -31,9 +31,9 @@ module.exports = app => {
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
-    appIcon: null,
+    appIcon: ':outline:apps-outline',
     appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'root',
