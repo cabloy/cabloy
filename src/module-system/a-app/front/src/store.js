@@ -29,6 +29,18 @@ export default function (Vue) {
           layout,
         };
       },
+      appItemCurrent(state, getters) {
+        return state.appItems[getters.current.appKey];
+      },
+      presetConfigCurrent(state, getters) {
+        const appItem = getters.appItemCurrent;
+        if (!appItem) return null;
+        // current
+        const current = getters.current;
+        // preset config
+        const presetConfig = appItem.content.presets[current.userStatus][current.layout];
+        return presetConfig[current.appLanguage] || presetConfig;
+      },
     },
     mutations: {
       setAppItem(state, { appKey, appItem }) {
@@ -40,13 +52,10 @@ export default function (Vue) {
     },
     actions: {
       async getPresetConfigCurrent({ state, getters, dispatch }) {
-        // appItem
-        const appItem = await dispatch('getAppItemCurrent');
+        // force appItem exists
+        await dispatch('getAppItemCurrent');
         // current
-        const current = getters.current;
-        // preset config
-        const presetConfig = appItem.content.presets[current.userStatus][current.layout];
-        return presetConfig[current.appLanguage] || presetConfig;
+        return getters.presetConfigCurrent;
       },
       async getAppItemCurrent({ state, getters, dispatch }) {
         return await dispatch('getAppItem', { appKey: getters.current.appKey });
