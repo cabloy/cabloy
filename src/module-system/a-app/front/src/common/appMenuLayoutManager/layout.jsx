@@ -62,7 +62,7 @@ export default {
       return `appMenu.${appKey}.render.list.layout.current`;
     },
     layout_onGetLayoutNames() {
-      return this.layoutBase.configFull.info.layout;
+      return this.layout.configFull.info.layout;
     },
     async layout_onPrepareConfigFull() {
       return configFull;
