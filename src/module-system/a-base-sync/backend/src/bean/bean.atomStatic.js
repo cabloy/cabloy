@@ -146,7 +146,7 @@ module.exports = ctx => {
       // only valid for register
       if (register) {
         // roleIdOwner
-        const roleName = item.roleIdOwner || 'template.system';
+        const roleName = item.roleIdOwner || 'authenticated.builtIn';
         const role = await ctx.bean.role.parseRoleName({ roleName });
         item.roleIdOwner = role.id;
       }

@@ -9,6 +9,7 @@ module.exports = function (ctx) {
       // roles
       await this._initRoles();
       // change roleIdOwner
+      await this._changeRoleIdOwner();
     }
 
     // roles
@@ -27,6 +28,19 @@ module.exports = function (ctx) {
         }
       }
       return roleIds;
+    }
+
+    async _changeRoleIdOwner() {
+      // change roleIdOwner from template.system to authenticated.builtIn for atomClass except role
+      const roleSystem = await ctx.bean.role.getSystemRole({ roleName: 'system' });
+      const roleBuiltIn = await ctx.bean.role.getSystemRole({ roleName: 'builtIn' });
+      const atomClassRole = await ctx.bean.atomClass.get({ module: moduleInfo.relativeName, atomClassName: 'role' });
+      await ctx.model.query(
+        `
+          update aAtom set roleIdOwner=? where iid=? and atomClassId<>? and roleIdOwner=?
+      `,
+        [roleBuiltIn.id, ctx.instance.id, atomClassRole.id, roleSystem.id]
+      );
     }
   }
 
