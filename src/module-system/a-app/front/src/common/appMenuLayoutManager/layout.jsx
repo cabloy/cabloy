@@ -82,5 +82,8 @@ export default {
     async layout_onPrepareConfigFull() {
       return configFull;
     },
+    layout_renderLayout() {
+      return <div>{this.layoutBase_renderComponent()}</div>;
+    },
   },
 };

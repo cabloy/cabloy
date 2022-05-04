@@ -167,23 +167,15 @@ export default {
     },
     layoutBase_renderSubnavbar() {
       if (!this.base.ready) return null;
-      if (!this.layout.instance || !this.subnavbar.enable) return null;
-      return this.layout_renderBlock({ blockName: 'subnavbar' });
+      if (!this.layoutBase.instance || !this.subnavbar.enable) return null;
+      return this.layoutBase_renderBlock({ blockName: 'subnavbar' });
     },
-    layout_renderBottombar() {
+    layoutBase_renderBottombar() {
       if (!this.base.ready) return null;
-      if (!this.layout.instance || !this.bottombar.enable) return null;
+      if (!this.layoutBase.instance || !this.bottombar.enable) return null;
       return <f7-toolbar position="bottom">{this.layout_renderBlock({ blockName: 'bottombar' })}</f7-toolbar>;
     },
-    layout_renderLayout() {
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {this.order_renderPopover()}
-        </div>
-      );
-    },
-    layout_renderCaptionInit() {
+    layoutBase_renderCaptionInit() {
       if (this.base.ready) return null;
       return (
         <f7-nav-title>
@@ -191,7 +183,7 @@ export default {
         </f7-nav-title>
       );
     },
-    layout_renderPage() {
+    layoutBase_renderPage() {
       return (
         <eb-page
           withSubnavbar={this.subnavbar.enable}

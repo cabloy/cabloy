@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Base from './base.jsx';
+import Layout from './layout.jsx';
 const ebLayoutManager = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManager;
 
 // container: {
@@ -8,7 +9,7 @@ const ebLayoutManager = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [ebLayoutManager, Base],
+  mixins: [ebLayoutManager, Base, Layout],
   data() {
     return {};
   },
