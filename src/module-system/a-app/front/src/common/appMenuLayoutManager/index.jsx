@@ -19,7 +19,7 @@ export default {
   methods: {
     async index_load() {
       await this.base_init();
-      await this.layoutBase_prepareConfigLayout();
+      await this.layout_prepareConfigLayout();
     },
   },
 };

@@ -1,7 +1,7 @@
 export default {
   data() {
     return {
-      layoutBase: {
+      layout: {
         layoutConfig: null,
         //
         configFull: null,
@@ -14,24 +14,24 @@ export default {
   },
   created() {},
   beforeDestroy() {
-    this.layoutBase_destroyInstanceExtend();
+    this.layout_destroyInstanceExtend();
   },
   methods: {
-    async layoutBase_initLayoutConfig() {
+    async layout_initLayoutConfig() {
       // layoutConfig
-      this.layoutBase.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+      this.layout.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
     },
-    layoutBase_destroyInstanceExtend() {
-      if (this.layoutBase.instanceExtend) {
-        this.layoutBase.instanceExtend.$destroy();
-        this.layoutBase.instanceExtend = null;
+    layout_destroyInstanceExtend() {
+      if (this.layout.instanceExtend) {
+        this.layout.instanceExtend.$destroy();
+        this.layout.instanceExtend = null;
       }
     },
-    async layoutBase_createInstanceExtend() {
+    async layout_createInstanceExtend() {
       // config component
-      const configComponent = this.$meta.util.getProperty(this.layoutBase.config, 'extend.component');
+      const configComponent = this.$meta.util.getProperty(this.layout.config, 'extend.component');
       if (!configComponent) {
-        this.layoutBase_destroyInstanceExtend();
+        this.layout_destroyInstanceExtend();
         return;
       }
       // load module
@@ -46,27 +46,27 @@ export default {
       if (!component) throw new Error(`extend.component not found: ${configComponent.module}:${configComponent.name}`);
       const instanceExtend = this.$meta.util.createComponentInstance(component, options);
       // ready
-      this.layoutBase_destroyInstanceExtend();
-      this.layoutBase.instanceExtend = instanceExtend;
+      this.layout_destroyInstanceExtend();
+      this.layout.instanceExtend = instanceExtend;
     },
-    async layoutBase_setInstance(instance) {
-      await this.layoutBase_createInstanceExtend();
-      this.layoutBase.instance = instance;
+    async layout_setInstance(instance) {
+      await this.layout_createInstanceExtend();
+      this.layout.instance = instance;
     },
-    layoutBase_clearInstance(instance) {
-      if (this.layoutBase.instance === instance) {
-        this.layoutBase.instance = null;
+    layout_clearInstance(instance) {
+      if (this.layout.instance === instance) {
+        this.layout.instance = null;
       }
     },
-    layoutBase_getDefault() {
+    layout_getDefault() {
       const layoutConfigKeyCurrent = this.layout_onGetLayoutConfigKeyCurrent();
-      const configCurrent = this.layoutBase.layoutConfig[layoutConfigKeyCurrent];
+      const configCurrent = this.layout.layoutConfig[layoutConfigKeyCurrent];
       if (configCurrent) return configCurrent;
       // from config
-      const layouts = this.layoutBase_getLayouts();
+      const layouts = this.layout_getLayouts();
       return layouts[0].name;
     },
-    layoutBase_getLayouts() {
+    layout_getLayouts() {
       // layoutNames
       let layoutNames = this.layout_onGetLayoutNames();
       if (!Array.isArray(layoutNames)) {
@@ -75,7 +75,7 @@ export default {
       // layouts
       const layouts = [];
       for (const layoutName of layoutNames) {
-        const layoutConfig = this.layoutBase.configFull.layouts[layoutName];
+        const layoutConfig = this.layout.configFull.layouts[layoutName];
         layouts.push({
           name: layoutName,
           title: this.$text(layoutConfig.title),
@@ -84,26 +84,26 @@ export default {
       }
       return layouts;
     },
-    async layoutBase_prepareConfigLayout(layoutCurrent) {
+    async layout_prepareConfigLayout(layoutCurrent) {
       // configFull
-      if (!this.layoutBase.configFull) {
-        this.layoutBase.configFull = await this.layout_onPrepareConfigFull();
+      if (!this.layout.configFull) {
+        this.layout.configFull = await this.layout_onPrepareConfigFull();
       }
       // current
-      this.layoutBase.current = layoutCurrent || this.container.layout || this.layoutBase_getDefault();
+      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
       // layoutConfig
-      const config = this.$meta.util.getProperty(this.layoutBase.configFull, `layouts.${this.layoutBase.current}`);
+      const config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${this.layout.current}`);
       if (!config) return false;
-      const configBase = this.$meta.util.getProperty(this.layoutBase.configFull, 'layouts.base');
-      this.layoutBase.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
+      const configBase = this.$meta.util.getProperty(this.layout.configFull, 'layouts.base');
+      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
       return true;
     },
-    async layoutBase_switchLayout(layoutCurrent) {
-      if (layoutCurrent === this.layoutBase.current) return true;
+    async layout_switchLayout(layoutCurrent) {
+      if (layoutCurrent === this.layout.current) return true;
       // force clear status
-      this.layoutBase.current = null;
-      this.layoutBase.config = null;
-      // this.layoutBase.instance = null;
+      this.layout.current = null;
+      this.layout.config = null;
+      // this.layout.instance = null;
       this.subnavbar.enable = false;
       this.subnavbar.render = false;
       this.bottombar.enable = false;
@@ -111,7 +111,7 @@ export default {
         this.data.adapter.providerName = null;
       }
       // prepare
-      if (!this.layoutBase_prepareConfigLayout(layoutCurrent)) {
+      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
         return false;
       }
       // save
@@ -123,38 +123,38 @@ export default {
       });
       return true;
     },
-    layoutBase_getComponentOptions() {
+    layout_getComponentOptions() {
       return {
         props: {
           layoutManager: this,
-          layoutConfig: this.layoutBase.config,
+          layoutConfig: this.layout.config,
         },
       };
     },
-    layoutBase_renderComponent() {
+    layout_renderComponent() {
       if (!this.base.ready) return null;
       return (
         <eb-component
-          module={this.layoutBase.config.component.module}
-          name={this.layoutBase.config.component.name}
-          options={this.layoutBase_getComponentOptions()}
+          module={this.layout.config.component.module}
+          name={this.layout.config.component.name}
+          options={this.layout_getComponentOptions()}
         ></eb-component>
       );
     },
-    layoutBase_getBlockComponentOptions({ blockConfig, info }) {
+    layout_getBlockComponentOptions({ blockConfig, info }) {
       return {
         props: {
           layoutManager: this,
-          layout: this.layoutBase.instance,
+          layout: this.layout.instance,
           blockConfig,
           info,
         },
       };
     },
-    layoutBase_renderBlock({ blockName, key, info, listItem }) {
+    layout_renderBlock({ blockName, key, info, listItem }) {
       if (!this.base.ready) return null;
-      if (!this.layoutBase.instance) return null;
-      const blockConfig = this.layoutBase.config.blocks[blockName];
+      if (!this.layout.instance) return null;
+      const blockConfig = this.layout.config.blocks[blockName];
       if (!blockConfig) {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
@@ -163,7 +163,7 @@ export default {
         const errorMessage = `${this.$text('Block Component Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
       }
-      const blockOptions = this.layoutBase_getBlockComponentOptions({ blockConfig, info });
+      const blockOptions = this.layout_getBlockComponentOptions({ blockConfig, info });
       if (listItem) {
         return (
           <eb-list-item-component
@@ -183,17 +183,17 @@ export default {
         ></eb-component>
       );
     },
-    layoutBase_renderSubnavbar() {
+    layout_renderSubnavbar() {
       if (!this.base.ready) return null;
-      if (!this.layoutBase.instance || !this.subnavbar.enable) return null;
-      return this.layoutBase_renderBlock({ blockName: 'subnavbar' });
+      if (!this.layout.instance || !this.subnavbar.enable) return null;
+      return this.layout_renderBlock({ blockName: 'subnavbar' });
     },
-    layoutBase_renderBottombar() {
+    layout_renderBottombar() {
       if (!this.base.ready) return null;
-      if (!this.layoutBase.instance || !this.bottombar.enable) return null;
+      if (!this.layout.instance || !this.bottombar.enable) return null;
       return <f7-toolbar position="bottom">{this.layout_renderBlock({ blockName: 'bottombar' })}</f7-toolbar>;
     },
-    layoutBase_renderCaptionInit() {
+    layout_renderCaptionInit() {
       if (this.base.ready) return null;
       return (
         <f7-nav-title>
@@ -201,7 +201,7 @@ export default {
         </f7-nav-title>
       );
     },
-    layoutBase_renderPage() {
+    layout_renderPage() {
       return (
         <eb-page
           withSubnavbar={this.subnavbar.enable}

@@ -9,7 +9,7 @@ export default {
   methods: {
     async base_init() {
       // layoutConfig
-      await this.layoutBase_initLayoutConfig();
+      await this.layout_initLayoutConfig();
     },
   },
 };
