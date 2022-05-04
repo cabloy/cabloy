@@ -73,6 +73,7 @@ module.exports = app => {
     _getMeta(item, options) {
       // layout: list/table/mobile/pc
       const layout = options && options.layout;
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       if (layout !== 'table') {
