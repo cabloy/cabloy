@@ -93,11 +93,11 @@ export default {
         this.data.adapter.providerName = null;
       }
       // prepare
-      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+      if (!this.layoutBase_prepareConfigLayout(layoutCurrent)) {
         return false;
       }
       // save
-      const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
+      const layoutConfigKeyCurrent = this.layout_onGetLayoutConfigKeyCurrent();
       this.$store.commit('a/base/setLayoutConfigKey', {
         module: 'a-basefront',
         key: layoutConfigKeyCurrent,
@@ -105,38 +105,38 @@ export default {
       });
       return true;
     },
-    layout_getComponentOptions() {
+    layoutBase_getComponentOptions() {
       return {
         props: {
           layoutManager: this,
-          layoutConfig: this.layout.config,
+          layoutConfig: this.layoutBase.config,
         },
       };
     },
-    layout_renderComponent() {
+    layoutBase_renderComponent() {
       if (!this.base.ready) return null;
       return (
         <eb-component
-          module={this.layout.config.component.module}
-          name={this.layout.config.component.name}
-          options={this.layout_getComponentOptions()}
+          module={this.layoutBase.config.component.module}
+          name={this.layoutBase.config.component.name}
+          options={this.layoutBase_getComponentOptions()}
         ></eb-component>
       );
     },
-    layout_getBlockComponentOptions({ blockConfig, info }) {
+    layoutBase_getBlockComponentOptions({ blockConfig, info }) {
       return {
         props: {
           layoutManager: this,
-          layout: this.layout.instance,
+          layout: this.layoutBase.instance,
           blockConfig,
           info,
         },
       };
     },
-    layout_renderBlock({ blockName, key, info, listItem }) {
+    layoutBase_renderBlock({ blockName, key, info, listItem }) {
       if (!this.base.ready) return null;
-      if (!this.layout.instance) return null;
-      const blockConfig = this.layout.config.blocks[blockName];
+      if (!this.layoutBase.instance) return null;
+      const blockConfig = this.layoutBase.config.blocks[blockName];
       if (!blockConfig) {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
@@ -145,7 +145,7 @@ export default {
         const errorMessage = `${this.$text('Block Component Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
       }
-      const blockOptions = this.layout_getBlockComponentOptions({ blockConfig, info });
+      const blockOptions = this.layoutBase_getBlockComponentOptions({ blockConfig, info });
       if (listItem) {
         return (
           <eb-list-item-component
@@ -165,7 +165,7 @@ export default {
         ></eb-component>
       );
     },
-    layout_renderSubnavbar() {
+    layoutBase_renderSubnavbar() {
       if (!this.base.ready) return null;
       if (!this.layout.instance || !this.subnavbar.enable) return null;
       return this.layout_renderBlock({ blockName: 'subnavbar' });
