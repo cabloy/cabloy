@@ -4,9 +4,11 @@ export default {
   data() {
     const query = this.$f7route.query;
     const appKey = query.appKey;
+    const layout = query.layout;
     return {
       container: {
         appKey,
+        layout,
       },
     };
   },
