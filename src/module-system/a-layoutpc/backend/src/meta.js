@@ -5,28 +5,6 @@ module.exports = app => {
   // meta
   const meta = {
     base: {
-      atoms: {
-        layout: {
-          info: {
-            bean: 'layout',
-            title: 'Layout',
-            tableName: 'aLayout',
-            tableNameModes: {
-              full: 'aLayoutViewFull',
-            },
-            resource: true,
-          },
-          actions: {
-            write: {
-              enableOnStatic: true,
-            },
-          },
-          validator: 'layout',
-          search: {
-            validator: 'layoutSearch',
-          },
-        },
-      },
       resources: {
         button: {
           title: 'Sidebar Button',
@@ -45,19 +23,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        layout: {
-          schemas: 'layout',
-        },
-        layoutSearch: {
-          schemas: 'layoutSearch',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        layout: schemas.layout,
-        layoutSearch: schemas.layoutSearch,
-      },
+      schemas: {},
     },
   };
   return meta;

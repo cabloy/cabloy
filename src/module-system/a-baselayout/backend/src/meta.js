@@ -1,15 +1,50 @@
 module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
-    validation: {
-      validators: {},
-      keywords: {},
-      schemas: {
-        filterTabBasic: schemas.filterTabBasic,
-        filterTabGeneral: schemas.filterTabGeneral,
+    base: {
+      atoms: {
+        layout: {
+          info: {
+            bean: 'layout',
+            title: 'Layout',
+            tableName: 'aLayout',
+            tableNameModes: {
+              full: 'aLayoutViewFull',
+            },
+            resource: true,
+          },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
+          validator: 'layout',
+          search: {
+            validator: 'layoutSearch',
+          },
+        },
       },
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
+    validation: {
+      validators: {
+        layout: {
+          schemas: 'layout',
+        },
+        layoutSearch: {
+          schemas: 'layoutSearch',
+        },
+      },
+      keywords: {},
+      schemas,
     },
   };
   return meta;

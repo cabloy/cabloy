@@ -1,5 +1,6 @@
 const filterTabBasic = require('./schema/filterTabBasic.js');
 const filterTabGeneral = require('./schema/filterTabGeneral.js');
+const layout = require('./schema/layout.js');
 
 module.exports = app => {
   const schemas = {};
@@ -7,6 +8,8 @@ module.exports = app => {
   Object.assign(schemas, filterTabBasic(app));
   // filterTabGeneral
   Object.assign(schemas, filterTabGeneral(app));
+  // layout
+  Object.assign(schemas, layout(app));
   // ok
   return schemas;
 };

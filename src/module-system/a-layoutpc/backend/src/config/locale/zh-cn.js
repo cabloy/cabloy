@@ -14,8 +14,6 @@ module.exports = {
   Theme: '主题',
   'Sidebar Button': '边栏按钮',
   'Sidebar Panel': '边栏面板',
-  'Create Layout': '新建布局',
-  'Layout List': '布局列表',
   'PC Layout': 'PC布局',
   'PC Layout(Authenticated)': 'PC布局（认证用户）',
   'PC Layout(Anonymous)': 'PC布局（匿名用户）',

@@ -9,10 +9,7 @@ module.exports = app => {
       });
       const itemId = res.insertId;
       // add content
-      const content = {
-        login: '/a/login/login',
-        loginOnStart: true,
-      };
+      const content = {};
       await this.ctx.model.layoutContent.insert({
         atomId: key.atomId,
         itemId,

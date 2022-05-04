@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Create Layout',
       atomStaticKey: 'createLayout',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.Create',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -18,7 +18,7 @@ module.exports = app => {
     {
       atomName: 'Layout List',
       atomStaticKey: 'listLayout',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.List',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
