@@ -63,8 +63,26 @@ export default {
       const configCurrent = this.layoutBase.layoutConfig[layoutConfigKeyCurrent];
       if (configCurrent) return configCurrent;
       // from config
-      const layouts = this.layout_onGetLayouts();
+      const layouts = this.layoutBase_getLayouts();
       return layouts[0].name;
+    },
+    layoutBase_getLayouts() {
+      // layoutNames
+      let layoutNames = this.layout_onGetLayoutNames();
+      if (!Array.isArray(layoutNames)) {
+        layoutNames = layoutNames.split(',');
+      }
+      // layouts
+      const layouts = [];
+      for (const layoutName of layoutNames) {
+        const layoutConfig = this.layoutBase.configFull.layouts[layoutName];
+        layouts.push({
+          name: layoutName,
+          title: this.$text(layoutConfig.title),
+          config: layoutConfig,
+        });
+      }
+      return layouts;
     },
     async layoutBase_prepareConfigLayout(layoutCurrent) {
       // configFull

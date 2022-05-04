@@ -61,23 +61,8 @@ export default {
       const appKey = this.container.appKey;
       return `appMenu.${appKey}.render.list.layout.current`;
     },
-    layout_onGetLayouts() {
-      // layoutNames
-      let layoutNames = this.layoutBase.configFull.info.layout;
-      if (!Array.isArray(layoutNames)) {
-        layoutNames = layoutNames.split(',');
-      }
-      // layouts
-      const layouts = [];
-      for (const layoutName of layoutNames) {
-        const layoutConfig = this.layoutBase.configFull.layouts[layoutName];
-        layouts.push({
-          name: layoutName,
-          title: this.$text(layoutConfig.title),
-          config: layoutConfig,
-        });
-      }
-      return layouts;
+    layout_onGetLayoutNames() {
+      return this.layoutBase.configFull.info.layout;
     },
     async layout_onPrepareConfigFull() {
       return configFull;
