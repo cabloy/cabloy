@@ -56,11 +56,18 @@ const roles = {
     sorting: 4,
     roleIdParent: 'authenticated',
   },
+  builtIn: {
+    roleName: 'builtIn',
+    leader: 0,
+    system: 1,
+    sorting: 5,
+    roleIdParent: 'authenticated',
+  },
   organization: {
     roleName: 'organization',
     leader: 0,
     system: 1,
-    sorting: 5,
+    sorting: 6,
     roleIdParent: 'authenticated',
   },
   internal: {

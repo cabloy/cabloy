@@ -9,6 +9,7 @@ module.exports = app => {
     { atomName: 'registered', roleTypeCode: 0 },
     { atomName: 'activated', roleTypeCode: 0 },
     { atomName: 'superuser', roleTypeCode: 0 },
+    { atomName: 'builtIn', roleTypeCode: 0 },
     { atomName: 'organization', roleTypeCode: 1 },
     { atomName: 'internal', roleTypeCode: 1 },
     { atomName: 'external', roleTypeCode: 1 },

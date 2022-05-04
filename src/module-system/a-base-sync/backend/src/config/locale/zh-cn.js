@@ -145,4 +145,5 @@ module.exports = {
   organization: '组织',
   internal: '内部',
   external: '外部',
+  builtIn: '内置',
 };

@@ -10,6 +10,7 @@ module.exports = app => {
       'registered',
       'activated',
       'superuser',
+      'builtIn',
       'organization',
       'internal',
       'external',
