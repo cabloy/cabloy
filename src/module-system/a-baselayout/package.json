@@ -3,7 +3,11 @@
   "version": "4.2.22",
   "title": "Base Layout",
   "eggBornModule": {
-    "dependencies": {}
+    "fileVersion": 0,
+    "dependencies": {
+      "a-instance": "4.0.0",
+      "a-base": "4.0.0"
+    }
   },
   "description": "",
   "scripts": {
