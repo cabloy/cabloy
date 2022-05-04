@@ -23,6 +23,17 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      layoutTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Layout Type',
+        ebOptionsBlankAuto: true,
+        ebParams: {
+          dictKey: 'a-baselayout:dictLayoutType',
+          mode: 'select',
+        },
+        notEmpty: true,
+      },
       content: {
         type: 'string',
         ebType: 'json',
@@ -35,10 +46,15 @@ module.exports = app => {
   schemas.layoutSearch = {
     type: 'object',
     properties: {
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
+      layoutTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Layout Type',
+        ebParams: {
+          dictKey: 'a-baselayout:dictLayoutType',
+          mode: 'select',
+        },
+        ebOptionsBlankAuto: true,
       },
     },
   };
