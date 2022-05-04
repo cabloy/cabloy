@@ -30,8 +30,9 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
+    layoutTypeCode: 2,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };

@@ -22,6 +22,13 @@ module.exports = app => {
           `;
         await this.ctx.model.query(sql);
 
+        // aLayout
+        sql = `
+          ALTER TABLE aLayout
+            Add COLUMN layoutTypeCode INT(11) DEFAULT '0'
+          `;
+        await this.ctx.model.query(sql);
+
         // create table: aLayoutContent
         sql = `
           CREATE TABLE if not exists aLayoutContent (

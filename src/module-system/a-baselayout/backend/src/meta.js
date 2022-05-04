@@ -2,6 +2,7 @@ module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
+  const staticDicts = require('./config/static/dicts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
@@ -16,6 +17,13 @@ module.exports = app => {
               full: 'aLayoutViewFull',
             },
             resource: true,
+            dict: {
+              fields: {
+                layoutTypeCode: {
+                  dictKey: 'a-baselayout:dictLayoutType',
+                },
+              },
+            },
           },
           actions: {
             write: {
@@ -29,6 +37,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-dict.dict': {
+          items: staticDicts,
+        },
         'a-base.resource': {
           items: staticResources,
         },

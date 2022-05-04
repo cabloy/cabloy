@@ -28,8 +28,9 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Anonymous)',
     atomStaticKey: 'layoutPCAnonymous',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
+    layoutTypeCode: 2,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
