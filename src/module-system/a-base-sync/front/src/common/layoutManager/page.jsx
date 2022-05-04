@@ -8,6 +8,12 @@ export default {
     },
   },
   methods: {
+    page_ptr() {
+      return true;
+    },
+    page_infinite() {
+      return true;
+    },
     page_onRefresh(done) {
       done && done();
       this.data_onPageRefresh(true);

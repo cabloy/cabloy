@@ -205,9 +205,9 @@ export default {
       return (
         <eb-page
           withSubnavbar={this.subnavbar.enable}
-          ptr
+          ptr={this.page_ptr}
           onPtrRefresh={this.page_onRefresh}
-          infinite
+          infinite={this.page_infinite}
           infinitePreloader={false}
           onInfinite={this.page_onInfinite}
         >
