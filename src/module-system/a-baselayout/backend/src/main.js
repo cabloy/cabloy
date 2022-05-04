@@ -10,6 +10,8 @@ module.exports = app => {
   const beans = require('./beans.js')(app);
   // controllers
   const controllers = require('./controllers.js')(app);
+  // models
+  const models = require('./models.js')(app);
   // meta
   const meta = require('./meta.js')(app);
   return {
@@ -17,6 +19,7 @@ module.exports = app => {
     routes,
     controllers,
     services,
+    models,
     config,
     locales,
     errors,
