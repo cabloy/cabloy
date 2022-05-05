@@ -33,6 +33,9 @@ export default {
       }
     },
     page_getSubtitle() {
+      if (this.page_onGetTitleSub) {
+        return this.page_onGetTitleSub();
+      }
       return '';
     },
   },

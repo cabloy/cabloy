@@ -1,8 +1,8 @@
 import Vue from 'vue';
-const tagSelect = Vue.prototype.$meta.module.get('a-basefront').options.components.tagSelect;
+// const tagSelect = Vue.prototype.$meta.module.get('a-basefront').options.components.tagSelect;
 export default {
   components: {
-    tagSelect,
+    // tagSelect,
   },
   props: {
     layoutManager: {

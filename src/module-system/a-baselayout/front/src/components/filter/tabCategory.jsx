@@ -1,8 +1,8 @@
 import Vue from 'vue';
-const categorySelect = Vue.prototype.$meta.module.get('a-basefront').options.components.categorySelect;
+// const categorySelect = Vue.prototype.$meta.module.get('a-basefront').options.components.categorySelect;
 export default {
   components: {
-    categorySelect,
+    // categorySelect,
   },
   props: {
     layoutManager: {

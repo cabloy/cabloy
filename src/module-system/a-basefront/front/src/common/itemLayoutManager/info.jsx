@@ -59,7 +59,7 @@ export default {
       const item = this.base.item;
       const children = [];
       // comment
-      if (item.atomStage === 0 || this.base.config.render.item.info.comment) {
+      if (item.atomStage === 0 || this.layout.configFull.info.comment) {
         children.push(
           <eb-link
             key="actionsLeft:comment"
@@ -71,7 +71,7 @@ export default {
         );
       }
       // attachment
-      if (this.base.config.render.item.info.attachment) {
+      if (this.layout.configFull.info.attachment) {
         children.push(
           <eb-link
             key="actionsLeft:attachment"
