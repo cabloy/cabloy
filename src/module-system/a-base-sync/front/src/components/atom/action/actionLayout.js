@@ -14,7 +14,7 @@ export default {
         buttons.push({
           icon,
           text: layout.titleLocale,
-          data: layout.config,
+          data: layout,
         });
       }
       // choose
