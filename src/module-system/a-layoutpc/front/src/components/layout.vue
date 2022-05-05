@@ -402,18 +402,18 @@ export default {
       return this.layoutAtomStaticKey;
     },
     async __init() {
-      const atomStaticKey = await this.__initLayoutKey();
+      const layoutKey = await this.__initLayoutKey();
       // panelsAll & buttonsAll
       await this.__getResourcesAll();
       // layoutDefault
       this.layoutDefault = this.$config.layout.default;
       // layoutScene
-      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey: atomStaticKey });
+      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey });
       this.layoutScene = _layoutItem.content;
       // layoutConfig
       const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc');
       // init layoutConfig
-      this.__initLayoutConfig(res[`layout:${atomStaticKey}`]);
+      this.__initLayoutConfig(res[`layout:${layoutKey}`]);
       // init sidebar
       this.__initSidebar('top');
       this.__initSidebar('left');
