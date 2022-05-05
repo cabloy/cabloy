@@ -61,8 +61,8 @@ module.exports = app => {
             },
             layout: {
               config: {
-                module: 'a-baseadmin',
-                name: 'role',
+                atomList: 'a-baseadmin:layoutAtomListRole',
+                atomItem: 'a-baseadmin:layoutAtomItemRole',
               },
             },
           },
@@ -156,8 +156,8 @@ module.exports = app => {
             },
             layout: {
               config: {
-                module: 'a-baseadmin',
-                name: 'user',
+                atomList: 'a-baseadmin:layoutAtomListUser',
+                atomItem: 'a-baseadmin:layoutAtomItemUser',
               },
             },
           },
