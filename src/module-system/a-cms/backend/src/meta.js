@@ -5,6 +5,7 @@ module.exports = app => {
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
+  const staticLayouts = require('./config/static/layouts.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -52,6 +53,9 @@ module.exports = app => {
         },
         'a-base.resource': {
           items: staticResources,
+        },
+        'a-baselayout.layout': {
+          items: staticLayouts,
         },
       },
     },
