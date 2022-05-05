@@ -166,7 +166,7 @@ export default {
       return this.$meta.util.getProperty(schema, `properties.${key}`);
     },
     filter_getConfig() {
-      return this.$meta.util.getProperty(this.base.config, 'render.list.info.filter');
+      return this.$meta.util.getProperty(this.layout.configFull, 'info.filter');
     },
     filter_openTab(tabName) {
       this.filter.tabNameCurrent = tabName;

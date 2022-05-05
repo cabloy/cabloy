@@ -103,7 +103,7 @@ export default {
       return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
     base_getExportFields() {
-      return this.$meta.util.getProperty(this.base.config, 'render.list.info.export.fields');
+      return this.$meta.util.getProperty(this.layout.configFull, 'info.export.fields');
     },
   },
 };
