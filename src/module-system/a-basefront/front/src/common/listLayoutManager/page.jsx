@@ -2,26 +2,8 @@ export default {
   data() {
     return {};
   },
-  computed: {
-    page_title() {
-      return this.page_getTitle();
-    },
-  },
   methods: {
-    page_onRefresh(done) {
-      done && done();
-      this.data_onPageRefresh(true);
-    },
-    page_onInfinite() {
-      this.data_onPageInfinite();
-    },
-    page_onClear() {
-      this.data_onPageClear();
-    },
-    page_getTitle() {
-      //
-      if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
-      //
+    page_onGetTitle() {
       const atomClass = this.getAtomClass(this.container.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
       if (this.container.scene === 'select') {
@@ -38,7 +20,7 @@ export default {
       // return `${this.$text('Atom')}: ${atomClassTitle}`;
       return atomClassTitle;
     },
-    page_getSubtitle() {
+    page_onGetTitleSub() {
       const stage = this.base_getCurrentStage();
       if (!stage || stage === 'formal') return '';
       return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
