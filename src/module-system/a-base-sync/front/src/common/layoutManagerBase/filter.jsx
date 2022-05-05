@@ -1,74 +1,31 @@
 export default {
   data() {
-    return {};
+    return {
+      filter: {
+        data: null,
+        tabNameCurrent: null,
+      },
+    };
   },
   methods: {
-    async filter_onPrepareData() {
-      // form
-      const form = {
-        atomName: null,
-        mine: (this.container.options && this.container.options.mine) || 0,
-        stage: (this.container.options && this.container.options.stage) || 'formal',
-        language: (this.container.options && this.container.options.language) || '',
-        category: (this.container.options && this.container.options.category) || 0,
-        tag: (this.container.options && this.container.options.tag) || 0,
-        star: (this.container.options && this.container.options.star) || 0,
-        label: (this.container.options && this.container.options.label) || 0,
-        role: (this.container.options && this.container.options.role) || 0,
-        roleName: (this.container.options && this.container.options.roleName) || null,
-        roleNameLocale: (this.container.options && this.container.options.roleNameLocale) || null,
-        atomClass: this.container.atomClass,
-      };
-      const formAtomClass = this.$meta.util.getProperty(this.container, 'params.filter.formAtomClass') || {};
-      // validator: tabBasic/tabGeneral
-      const schemaBasic = await this.filter_loadSchemaBasic();
-      const schemaGeneral = await this.filter_loadSchemaGeneral();
-      // validator: formAtomClass
-      const schemaSearch = await this.filter_loadSchemaSearch(this.container.atomClass);
+    async filter_prepareData() {
+      this.filter.data = await this.filter_onPrepareData();
+    },
+    async filter_loadSchemaAndCombineSearchClauseLoadModules({ module, validator, schema }) {
+      // module
+      await this.$meta.module.use(module);
+      // load
+      const _schema = await this.$api.post('/a/validation/validation/schema', {
+        module,
+        validator,
+        schema,
+      });
+      // combine
+      await this.$meta.util.combineSearchClauseLoadModules({ schema: _schema });
       // ok
-      return {
-        form,
-        formAtomClass,
-        schemaBasic,
-        schemaGeneral,
-        schemaSearch,
-        searchStatesBasic: null,
-        searchStatesGeneral: null,
-        searchStatesSearch: null,
-      };
+      return _schema;
     },
-    async filter_loadSchemaBasic() {
-      const filterConfig = this.filter_getConfig();
-      const configTabBasic = filterConfig.tabs.basic;
-      return await this.filter_loadSchemaAndCombineSearchClauseLoadModules({
-        module: configTabBasic.schema.module,
-        schema: configTabBasic.schema.schema,
-      });
-    },
-    async filter_loadSchemaGeneral() {
-      const filterConfig = this.filter_getConfig();
-      const configTabGeneral = filterConfig.tabs.general;
-      return await this.filter_loadSchemaAndCombineSearchClauseLoadModules({
-        module: configTabGeneral.schema.module,
-        schema: configTabGeneral.schema.schema,
-      });
-    },
-    async filter_loadSchemaSearch(atomClass) {
-      if (!atomClass) return null;
-      // validator
-      const validator = await this.$api.post('/a/base/atomClass/validatorSearch', {
-        atomClass: {
-          module: atomClass.module,
-          atomClassName: atomClass.atomClassName,
-        },
-      });
-      // schema
-      return await this.filter_loadSchemaAndCombineSearchClauseLoadModules({
-        module: validator.module,
-        validator: validator.validator,
-        schema: null,
-      });
-    },
+
     filter_prepareSelectParams() {
       if (!this.filter.data) return null;
       // options
