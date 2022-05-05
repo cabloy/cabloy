@@ -100,16 +100,20 @@ export default {
       // default
       const layoutDefault = this.layout_getDefault();
       // current
-      this.layout.current = this.layout_calcCurrent(layoutCurrent, layoutDefault);
+      layoutCurrent = this.layout_calcCurrent(layoutCurrent, layoutDefault);
       // layoutConfig
-      let config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${this.layout.current}`);
-      if (!config && this.layout.current !== layoutDefault) {
+      let config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${layoutCurrent}`);
+      if (!config && layoutCurrent !== layoutDefault) {
         config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${layoutDefault}`);
+        layoutCurrent = layoutDefault;
       }
-      if (!config) return false;
+      if (!config) return null;
+      // base
       const configBase = this.$meta.util.getProperty(this.layout.configFull, 'layouts.base');
+      // combine
       this.layout.config = this.$meta.util.extend({}, configBase, config);
-      return true;
+      this.layout.current = layoutCurrent;
+      return layoutCurrent;
     },
     async layout_switchLayout(layoutCurrent) {
       if (layoutCurrent === this.layout.current) return true;
@@ -124,7 +128,8 @@ export default {
         this.data.adapter.providerName = null;
       }
       // prepare
-      if (!this.layout_prepareConfigLayout(layoutCurrent)) {
+      layoutCurrent = this.layout_prepareConfigLayout(layoutCurrent);
+      if (!layoutCurrent) {
         return false;
       }
       // save
