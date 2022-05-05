@@ -9,10 +9,10 @@ export default {
   },
   methods: {
     page_ptr() {
-      return true;
+      return false;
     },
     page_infinite() {
-      return true;
+      return false;
     },
     page_onRefresh(done) {
       done && done();
