@@ -7,7 +7,7 @@ import detailActions from './common/detailActions.js';
 import modules from './common/modules.js';
 import renderTableCellFormat from './common/renderTableCellFormat.js';
 import authLoginBase from './common/authLoginBase.js';
-import layoutManager from './common/layoutManager.js';
+import layoutManagerBase from './common/layoutManagerBase.js';
 
 /** The mixins of a-base
  * @property {module:a-base/front/mixins/ebActionBase} ebActionBase - This provides the basic members used for action handler
@@ -25,5 +25,5 @@ export default {
   ebModules: modules,
   ebRenderTableCellFormat: renderTableCellFormat,
   ebAuthLoginBase: authLoginBase,
-  ebLayoutManager: layoutManager,
+  ebLayoutManagerBase: layoutManagerBase,
 };

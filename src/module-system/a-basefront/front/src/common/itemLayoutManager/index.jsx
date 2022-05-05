@@ -6,7 +6,7 @@ import Info from './info.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 import Share from './share.jsx';
-const ebLayoutManager = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManager;
+const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
@@ -20,7 +20,7 @@ const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixin
 
 export default {
   mixins: [
-    ebLayoutManager, //
+    ebLayoutManagerBase, //
     ebAtomClasses,
     ebAtomActions,
     ebPageDirty,
