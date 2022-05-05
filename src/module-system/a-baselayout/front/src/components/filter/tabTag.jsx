@@ -16,11 +16,11 @@ export default {
     };
   },
   methods: {
-    getComponentTagSelect() {
+    getComponentInstance() {
       return this.$refs.tagSelect.getComponentInstance();
     },
     onChange() {
-      const checked = this.getComponentTagSelect().checked();
+      const checked = this.getComponentInstance().checked();
       // eslint-disable-next-line
       this.filterContainer.form.tag = checked;
     },
