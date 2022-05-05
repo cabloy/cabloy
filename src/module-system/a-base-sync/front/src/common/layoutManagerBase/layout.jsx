@@ -219,6 +219,20 @@ export default {
         </f7-nav-title>
       );
     },
+    layout_extend_onTableColumns({ columns }) {
+      const instanceExtend = this.layout.instanceExtend;
+      if (instanceExtend && instanceExtend.onTableColumns) {
+        columns = instanceExtend.onTableColumns({ columns });
+      }
+      return columns;
+    },
+    layout_extend_onFilterSchema({ schema, type }) {
+      const instanceExtend = this.layout.instanceExtend;
+      if (instanceExtend && instanceExtend.onFilterSchema) {
+        schema = instanceExtend.onFilterSchema({ schema, type });
+      }
+      return schema;
+    },
     layout_renderPage() {
       return (
         <eb-page

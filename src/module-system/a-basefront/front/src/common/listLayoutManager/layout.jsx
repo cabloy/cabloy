@@ -41,20 +41,6 @@ export default {
       // combine
       return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
-    layout_extend_onTableColumns({ columns }) {
-      const instanceExtend = this.layout.instanceExtend;
-      if (instanceExtend && instanceExtend.onTableColumns) {
-        columns = instanceExtend.onTableColumns({ columns });
-      }
-      return columns;
-    },
-    layout_extend_onFilterSchema({ schema, type }) {
-      const instanceExtend = this.layout.instanceExtend;
-      if (instanceExtend && instanceExtend.onFilterSchema) {
-        schema = instanceExtend.onFilterSchema({ schema, type });
-      }
-      return schema;
-    },
     layout_renderLayout() {
       return (
         <div>
