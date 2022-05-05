@@ -30,7 +30,7 @@ export default {
       }
       // atom
       if (atomClass) {
-        const atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
+        const atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomList');
         if (atomLayoutKey) {
           layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
             layoutKey: atomLayoutKey,
