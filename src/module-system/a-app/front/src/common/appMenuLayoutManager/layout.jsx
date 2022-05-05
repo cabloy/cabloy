@@ -1,6 +1,12 @@
 const configFull = {
   info: {
-    layout: ['default'],
+    layout: {
+      viewSize: {
+        small: 'default',
+        medium: 'default',
+        large: 'default',
+      },
+    },
   },
   layouts: {
     base: {

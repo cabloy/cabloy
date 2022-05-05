@@ -408,11 +408,8 @@ export default {
       // layoutDefault
       this.layoutDefault = this.$config.layout.default;
       // layoutScene
-      const _layout = await this.$api.post('/a/base/resource/read', {
-        atomStaticKey,
-        options: { locale: false },
-      });
-      this.layoutScene = JSON.parse(_layout.content);
+      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey: atomStaticKey });
+      this.layoutScene = _layoutItem.content;
       // layoutConfig
       const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc');
       // init layoutConfig

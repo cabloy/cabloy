@@ -1,68 +1,25 @@
 export default {
   data() {
-    return {
-      layout: {
-        current: null,
-        config: null,
-        instance: null,
-        instanceExtend: null,
-      },
-    };
-  },
-  created() {},
-  beforeDestroy() {
-    this.layout_destroyInstanceExtend();
+    return {};
   },
   methods: {
-    layout_destroyInstanceExtend() {
-      if (this.layout.instanceExtend) {
-        this.layout.instanceExtend.$destroy();
-        this.layout.instanceExtend = null;
-      }
+    layout_onGetLayoutConfigKeyCurrent() {
+      const atomClassKey = `${this.base.atomClass.module}_${this.base.atomClass.atomClassName}`;
+      return `atom.${atomClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
-    async layout_createInstanceExtend() {
-      // config component
-      const configComponent = this.$meta.util.getProperty(this.layout.config, 'extend.component');
-      if (!configComponent) {
-        this.layout_destroyInstanceExtend();
-        return;
-      }
-      // load module
-      const moduleExtend = await this.$meta.module.use(configComponent.module);
-      // create extend
-      const options = {
-        propsData: {
-          layoutManager: this,
-        },
-      };
-      const component = moduleExtend.options.components[configComponent.name];
-      if (!component) throw new Error(`extend.component not found: ${configComponent.module}:${configComponent.name}`);
-      const instanceExtend = this.$meta.util.createComponentInstance(component, options);
-      // ready
-      this.layout_destroyInstanceExtend();
-      this.layout.instanceExtend = instanceExtend;
+    layout_onGetLayoutNames() {
+      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
+      return configViewSize[this.container.mode][this.$view.size];
     },
-    async layout_setInstance(instance) {
-      await this.layout_createInstanceExtend();
-      this.layout.instance = instance;
-    },
-    layout_clearInstance(instance) {
-      if (this.layout.instance === instance) {
-        this.layout.instance = null;
-      }
-    },
-    layout_getMetaLayoutConfig(atomClass) {
-      const atomClassBase = this.getAtomClass(atomClass);
-      const layoutConfig = this.$meta.util.getProperty(atomClassBase, 'layout.config');
-      if (layoutConfig) return layoutConfig;
-      return {
-        module: atomClass.module,
-        name: atomClass.atomClassName,
-      };
-    },
-    async layout_prepareConfig() {
+    async layout_onPrepareConfigFull() {
+      // atom
+      // atom cms
+      // atom base
+
       const atomClass = this.base.atomClass;
       // configAtomBase
+      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey: atomStaticKey });
+
       this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
       const metaLayoutConfig = this.layout_getMetaLayoutConfig(atomClass);
@@ -84,8 +41,33 @@ export default {
       this.base.config = this.base.configAtom
         ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom)
         : this.base.configAtomBase;
-      // prepareConfigLayout
-      this.layout_prepareConfigLayout();
+
+      return configFull;
+    },
+    layout_renderLayout() {
+      if (this.base.notfound) {
+        return (
+          <f7-card>
+            <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
+            <f7-card-content>{this.$text('Not Found')}</f7-card-content>
+          </f7-card>
+        );
+      }
+      return (
+        <div>
+          {this.layout_renderComponent()}
+          {this.actions_renderPopover()}
+        </div>
+      );
+    },
+    layout_getMetaLayoutConfig(atomClass) {
+      const atomClassBase = this.getAtomClass(atomClass);
+      const layoutConfig = this.$meta.util.getProperty(atomClassBase, 'layout.config');
+      if (layoutConfig) return layoutConfig;
+      return {
+        module: atomClass.module,
+        name: atomClass.atomClassName,
+      };
     },
     layout_getDefault() {
       const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
@@ -185,22 +167,6 @@ export default {
       if (!this.base.ready) return null;
       if (!this.layout.instance || !this.subnavbar.enable) return null;
       return this.layout_renderBlock({ blockName: 'subnavbar' });
-    },
-    layout_renderLayout() {
-      if (this.base.notfound) {
-        return (
-          <f7-card>
-            <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
-            <f7-card-content>{this.$text('Not Found')}</f7-card-content>
-          </f7-card>
-        );
-      }
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {this.actions_renderPopover()}
-        </div>
-      );
     },
     layout_renderCaptionInit() {
       if (this.base.ready) return null;

@@ -1,9 +1,46 @@
 // eslint-disable-next-line
 export default function (Vue) {
   return {
-    state: {},
+    state: {
+      // global
+      layoutItems: {},
+    },
     getters: {},
-    mutations: {},
-    actions: {},
+    mutations: {
+      setLayoutItem(state, { layoutKey, layoutItem }) {
+        state.layoutItems = {
+          ...state.layoutItems,
+          [layoutKey]: layoutItem,
+        };
+      },
+    },
+    actions: {
+      async getLayoutItem({ state, commit }, { layoutKey }) {
+        let layoutItem = state.layoutItems[layoutKey];
+        if (layoutItem) return layoutItem;
+        layoutItem = await __fetchLayoutItem({ Vue, layoutKey });
+        if (!layoutItem) return null; // maybe no access right
+        layoutItem.content = layoutItem.content ? JSON.parse(layoutItem.content) : null;
+        commit('setLayoutItem', { layoutKey, layoutItem });
+        return layoutItem;
+      },
+    },
   };
+}
+
+async function __fetchLayoutItem({ Vue, layoutKey }) {
+  try {
+    const layoutItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
+      atomStaticKey: layoutKey,
+      options: {
+        locale: false,
+      },
+    });
+    return layoutItem;
+  } catch (err) {
+    if (err.code === 401 || err.code === 403) {
+      return null;
+    }
+    throw err;
+  }
 }
