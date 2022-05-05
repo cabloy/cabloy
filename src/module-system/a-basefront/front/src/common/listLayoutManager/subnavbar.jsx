@@ -1,18 +1,8 @@
 export default {
   data() {
-    return {
-      subnavbar: {
-        enable: false,
-        render: false, // will render in title if true
-      },
-    };
+    return {};
   },
   methods: {
-    subnavbar_policyDefault() {
-      const { enable, render } = this.subnavbar_policyDefaultCalc();
-      this.subnavbar.enable = enable;
-      this.subnavbar.render = render;
-    },
     subnavbar_policyDefaultCalc() {
       let enable;
       // render

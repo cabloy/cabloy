@@ -15,7 +15,7 @@ export default {
   methods: {
     async data_adapterInit() {
       // config component
-      const configComponent = this.$meta.util.getProperty(this.base.config, 'render.list.info.data.adapter.component');
+      const configComponent = this.$meta.util.getProperty(this.layout.configFull, 'info.data.adapter.component');
       // load module
       const moduleAdapter = await this.$meta.module.use(configComponent.module);
       // create adapter
