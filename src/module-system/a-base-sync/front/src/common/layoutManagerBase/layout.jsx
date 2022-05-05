@@ -84,11 +84,14 @@ export default {
       const layouts = [];
       for (const layoutName of layoutNames) {
         const layoutConfig = this.layout.configFull.layouts[layoutName];
-        layouts.push({
-          name: layoutName,
-          title: this.$text(layoutConfig.title),
-          config: layoutConfig,
-        });
+        if (layoutConfig) {
+          layouts.push({
+            name: layoutName,
+            title: layoutConfig.title,
+            titleLocale: this.$text(layoutConfig.title),
+            config: layoutConfig,
+          });
+        }
       }
       return layouts;
     },
