@@ -20,7 +20,14 @@ export default function (Vue) {
         if (layoutItem) return layoutItem;
         layoutItem = await __fetchLayoutItem({ Vue, layoutKey });
         if (!layoutItem) return null; // maybe no access right
+        // content
         layoutItem.content = layoutItem.content ? JSON.parse(layoutItem.content) : null;
+        // use module
+        const parts = layoutKey.split(':');
+        if (parts.length === 2) {
+          await Vue.prototype.$meta.module.use(parts[0]);
+        }
+        // ok
         commit('setLayoutItem', { layoutKey, layoutItem });
         return layoutItem;
       },

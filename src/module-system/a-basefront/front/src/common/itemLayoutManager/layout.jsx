@@ -12,37 +12,29 @@ export default {
       return configViewSize[this.container.mode][this.$view.size];
     },
     async layout_onPrepareConfigFull() {
-      // atom
-      // atom cms
-      // atom base
-
       const atomClass = this.base.atomClass;
-      // configAtomBase
-      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey: atomStaticKey });
-
-      this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
-      // configAtom
-      const metaLayoutConfig = this.layout_getMetaLayoutConfig(atomClass);
-      await this.$meta.module.use(metaLayoutConfig.module);
-      this.base.configAtom = this.$meta.util.getProperty(
-        this.$meta.config.modules[metaLayoutConfig.module],
-        `atoms.${metaLayoutConfig.name}`
-      );
-      // special for cms
+      // atom base
+      let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+        layoutKey: 'a-basefront:layoutAtomItemBase',
+      });
+      this.base.configAtomBase = layoutItem.content;
+      // atom cms
       const atomClassBase = this.getAtomClass(atomClass);
-      if (atomClassBase.cms && !(atomClass.module === 'a-cms' && atomClass.atomClassName === 'article')) {
-        await this.$meta.module.use('a-cms');
-        const configCMS = this.$meta.util.getProperty(this.$meta.config.modules['a-cms'], 'atoms.article');
-        this.base.configAtom = this.base.configAtom
-          ? this.$meta.util.extend({}, configCMS, this.base.configAtom)
-          : configCMS;
+      if (atomClassBase.cms) {
+        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+          layoutKey: 'a-cms:layoutAtomItemCms',
+        });
+        this.base.configAtomCms = layoutItem.content;
       }
-      // config
-      this.base.config = this.base.configAtom
-        ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom)
-        : this.base.configAtomBase;
-
-      return configFull;
+      // atom
+      const atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
+      if (atomLayoutKey) {
+        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+          layoutKey: atomLayoutKey,
+        });
+        this.base.configAtom = layoutItem.content;
+      }
+      return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
     layout_renderLayout() {
       if (this.base.notfound) {
