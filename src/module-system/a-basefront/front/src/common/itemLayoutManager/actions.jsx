@@ -1,6 +1,12 @@
+import Vue from 'vue';
 export default {
   data() {
-    return {};
+    return {
+      actions: {
+        list: null,
+        popoverId: Vue.prototype.$meta.util.nextId('popover'),
+      },
+    };
   },
   computed: {
     actions_listPopover() {
