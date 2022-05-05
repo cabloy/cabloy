@@ -11,6 +11,7 @@ import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
 import Actions from './actions.jsx';
 import Data from './data.jsx';
+const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
@@ -25,7 +26,8 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 
 export default {
   mixins: [
-    ebAtomClasses, //
+    ebLayoutManagerBase, //
+    ebAtomClasses,
     ebAtomActions,
     Base,
     Page,
@@ -55,7 +57,7 @@ export default {
     async index_init() {
       await this.base_init();
       await this.select_prepareSelectedAtoms();
-      await this.layout_prepareConfig();
+      await this.layout_prepareConfigLayout();
       await this.bulk_actionsInit();
       await this.filter_prepareData();
       await this.data_adapterInit();

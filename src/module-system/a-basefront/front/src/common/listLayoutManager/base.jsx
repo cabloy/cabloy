@@ -4,9 +4,8 @@ export default {
       base: {
         ready: false,
         configAtomBase: null,
+        configAtomCms: null,
         configAtom: null,
-        config: null,
-        layoutConfig: null,
       },
     };
   },
@@ -24,15 +23,9 @@ export default {
   methods: {
     async base_init() {
       // layoutConfig
-      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+      await this.layout_initLayoutConfig();
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
-    },
-    base_getLayoutConfigKeyCurrent() {
-      const atomClassKey = this.container.atomClass
-        ? `${this.container.atomClass.module}_${this.container.atomClass.atomClassName}`
-        : null;
-      return `atom.${atomClassKey}.render.list.layout.current.${this.$view.size}`;
     },
     base_prepareReadOptions() {
       // options

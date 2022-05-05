@@ -13,13 +13,13 @@ export default {
     },
     async layout_onPrepareConfigFull() {
       const atomClass = this.base.atomClass;
+      const atomClassBase = this.getAtomClass(atomClass);
       // atom base
       let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
         layoutKey: 'a-basefront:layoutAtomItemBase',
       });
       this.base.configAtomBase = layoutItem.content;
       // atom cms
-      const atomClassBase = this.getAtomClass(atomClass);
       if (atomClassBase.cms) {
         layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
           layoutKey: 'a-cms:layoutAtomItemCms',
@@ -34,6 +34,7 @@ export default {
         });
         this.base.configAtom = layoutItem.content;
       }
+      // combine
       return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
     layout_renderLayout() {
