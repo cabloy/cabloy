@@ -1,9 +1,4 @@
-import Vue from 'vue';
-// const tagSelect = Vue.prototype.$meta.module.get('a-basefront').options.components.tagSelect;
 export default {
-  components: {
-    // tagSelect,
-  },
   props: {
     layoutManager: {
       type: Object,
@@ -21,8 +16,11 @@ export default {
     };
   },
   methods: {
+    getComponentTagSelect() {
+      return this.$refs.tagSelect.getComponentInstance();
+    },
     onChange() {
-      const checked = this.$refs.tagSelect.checked();
+      const checked = this.getComponentTagSelect().checked();
       // eslint-disable-next-line
       this.filterContainer.form.tag = checked;
     },
@@ -34,18 +32,20 @@ export default {
     },
     _renderTagSelect() {
       const selectedTags = this.filterContainer.form.tag;
-      return (
-        <tagSelect
-          ref="tagSelect"
-          atomClass={this.filterContainer.atomClass}
-          language={this.filterContainer.form.language}
-          multiple={false}
-          searchQuery={this.searchQuery}
-          selectedTags={selectedTags}
-          showBlockCurrent={false}
-          onChange={this.onChange}
-        ></tagSelect>
-      );
+      const options = {
+        props: {
+          atomClass: this.filterContainer.atomClass,
+          language: this.filterContainer.form.language,
+          multiple: false,
+          searchQuery: this.searchQuery,
+          selectedTags,
+          showBlockCurrent: false,
+        },
+        on: {
+          change: this.onChange,
+        },
+      };
+      return <eb-component ref="tagSelect" module="a-basefront" name="tagSelect" options={options}></eb-component>;
     },
   },
   render() {

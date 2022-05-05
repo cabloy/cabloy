@@ -41,6 +41,7 @@ export default {
       return <eb-button propsOnPerform={this.onPerformClearCategory}>{this.$text('Clear Category')}</eb-button>;
     },
     _renderCategoryTree() {
+      return null;
       const selectedCategoryIds = [this.filterContainer.form.category];
       return (
         <categorySelect
