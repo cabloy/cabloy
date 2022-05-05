@@ -52,15 +52,6 @@ export default {
         </div>
       );
     },
-    layout_getMetaLayoutConfig(atomClass) {
-      const atomClassBase = this.getAtomClass(atomClass);
-      const layoutConfig = this.$meta.util.getProperty(atomClassBase, 'layout.config');
-      if (layoutConfig) return layoutConfig;
-      return {
-        module: atomClass.module,
-        name: atomClass.atomClassName,
-      };
-    },
     layout_getDefault() {
       const layoutConfigKeyCurrent = this.base_getLayoutConfigKeyCurrent();
       const configCurrent = this.base.layoutConfig[layoutConfigKeyCurrent];

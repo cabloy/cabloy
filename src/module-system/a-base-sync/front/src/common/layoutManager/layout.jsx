@@ -59,12 +59,20 @@ export default {
       }
     },
     layout_getDefault() {
+      const layouts = this.layout_getLayouts();
+      return layouts[0].name;
+    },
+    layout_calcCurrent(layoutCurrent, layoutDefault) {
+      // 1 from params
+      if (layoutCurrent) return layoutCurrent;
+      // 2 from container
+      if (this.container.layout) return this.container.layout;
+      // 3 from custom
       const layoutConfigKeyCurrent = this.layout_onGetLayoutConfigKeyCurrent();
       const configCurrent = this.layout.layoutConfig[layoutConfigKeyCurrent];
       if (configCurrent) return configCurrent;
-      // from config
-      const layouts = this.layout_getLayouts();
-      return layouts[0].name;
+      // 4 from default
+      return layoutDefault || this.layout_getDefault();
     },
     layout_getLayouts() {
       // layoutNames
@@ -89,13 +97,18 @@ export default {
       if (!this.layout.configFull) {
         this.layout.configFull = await this.layout_onPrepareConfigFull();
       }
+      // default
+      const layoutDefault = this.layout_getDefault();
       // current
-      this.layout.current = layoutCurrent || this.container.layout || this.layout_getDefault();
+      this.layout.current = this.layout_calcCurrent(layoutCurrent, layoutDefault);
       // layoutConfig
-      const config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${this.layout.current}`);
+      let config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${this.layout.current}`);
+      if (!config && this.layout.current !== layoutDefault) {
+        config = this.$meta.util.getProperty(this.layout.configFull, `layouts.${layoutDefault}`);
+      }
       if (!config) return false;
       const configBase = this.$meta.util.getProperty(this.layout.configFull, 'layouts.base');
-      this.layout.config = configBase ? this.$meta.util.extend({}, configBase, config) : config;
+      this.layout.config = this.$meta.util.extend({}, configBase, config);
       return true;
     },
     async layout_switchLayout(layoutCurrent) {
