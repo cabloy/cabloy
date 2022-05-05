@@ -5,22 +5,16 @@ export default {
       // icon
       const iconDone = await ctx.$meta.util.combineIcon({ f7: '::done' });
       // config
-      const configViewSize = ctx.$meta.util.getProperty(ctx.base.config, 'render.item.info.layout.viewSize');
-      let layouts = configViewSize[ctx.container.mode][ctx.$view.size];
-      if (!Array.isArray(layouts)) {
-        layouts = [layouts];
-      }
+      const layouts = ctx.layout_getLayouts();
       // buttons
       const layoutCurrent = ctx.layout.current;
       const buttons = [];
       for (const layout of layouts) {
-        const layoutConfig = ctx.$meta.util.getProperty(ctx.base.config, `render.item.layouts.${layout.name}`);
-        if (!layoutConfig) continue;
         const icon = layoutCurrent === layout.name ? iconDone : '<i class="icon"></i>';
         buttons.push({
           icon,
-          text: ctx.$text(layoutConfig.title),
-          data: layout,
+          text: layout.titleLocale,
+          data: layout.config,
         });
       }
       // choose
