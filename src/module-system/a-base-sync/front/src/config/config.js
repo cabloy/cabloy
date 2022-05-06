@@ -1,6 +1,5 @@
 /** @module a-base/front/config */
 
-import configResourceRenderList from './config/configResourceRenderList.js';
 import avatarUser from '../assets/img/user.png';
 
 /** The front config of a-base
@@ -21,13 +20,6 @@ export default {
   user: {
     avatar: {
       default: avatarUser,
-    },
-  },
-  atoms: {
-    resource: {
-      render: {
-        list: configResourceRenderList,
-      },
     },
   },
 };

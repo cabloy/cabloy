@@ -48,6 +48,8 @@ export default {
   'Tag Management': '标签管理',
   'Please Reload App': '请重新加载App',
   'Resource Class': '资源类别',
+  'Resource Type': '资源类型',
+  'Resource Sorting': '资源排序',
   'Clear User': '清除用户',
   'Auth Info': '认证信息',
   'URL Info': 'URL信息',

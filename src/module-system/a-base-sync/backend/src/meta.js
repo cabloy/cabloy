@@ -23,6 +23,11 @@ module.exports = app => {
             category: true,
             tag: true,
             resource: true,
+            layout: {
+              config: {
+                atomList: 'a-baseadmin:layoutAtomListResource',
+              },
+            },
           },
           actions: {
             write: {
