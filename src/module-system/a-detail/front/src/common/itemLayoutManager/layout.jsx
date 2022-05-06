@@ -1,23 +1,38 @@
 export default {
   data() {
-    return {
-      layout: {
-        current: null,
-        config: null,
-        instance: null,
-      },
-    };
+    return {};
   },
   created() {},
   methods: {
-    async layout_setInstance(instance) {
-      this.layout.instance = instance;
+    layout_onGetLayoutConfigKeyCurrent() {
+      const detailClassKey = `${this.base.detailClass.module}_${this.base.detailClass.detailClassName}`;
+      return `detail.${detailClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
-    layout_clearInstance(instance) {
-      if (this.layout.instance === instance) {
-        this.layout.instance = null;
+    layout_onGetLayoutNames() {
+      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
+      return configViewSize[this.container.mode][this.$view.size];
+    },
+    async layout_onPrepareConfigFull() {
+      const atomClass = this.base.atomClass;
+      const atomClassBase = this.getAtomClass(atomClass);
+      // detail base
+      let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+        layoutKey: 'a-detail:layoutDetailItemBase',
+      });
+      this.base.configDetailBase = layoutItem.content;
+      // detail
+      let atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
+      atomLayoutKey = this.$meta.util.normalizeResourceKey(atomLayoutKey, atomClass.module);
+      if (atomLayoutKey) {
+        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+          layoutKey: atomLayoutKey,
+        });
+        this.base.configAtom = layoutItem.content;
       }
+      // combine
+      return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
+
     async layout_prepareConfig() {
       // configDetailBase
       this.base.configDetailBase = this.$meta.config.modules['a-detail'].detail;

@@ -5,8 +5,6 @@ export default {
         ready: false,
         configDetailBase: null,
         configDetail: null,
-        config: null,
-        layoutConfig: null,
         //
         item: null,
         detailClass: null,
@@ -34,11 +32,7 @@ export default {
   methods: {
     async base_init() {
       // layoutConfig
-      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
-    },
-    base_getLayoutConfigKeyCurrent() {
-      const detailClassKey = `${this.base.detailClass.module}_${this.base.detailClass.detailClassName}`;
-      return `detail.${detailClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
+      await this.layout_initLayoutConfig();
     },
     async base_loadItem() {
       try {
