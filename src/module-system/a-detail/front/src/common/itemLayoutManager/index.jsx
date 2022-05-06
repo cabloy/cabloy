@@ -5,6 +5,7 @@ import Layout from './layout.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
+const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 
 // container: {
@@ -16,22 +17,28 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 // },
 
 export default {
-  mixins: [ebDetailActions, Base, Page, Layout, Subnavbar, Actions, Validate],
+  mixins: [
+    ebLayoutManagerBase, //
+    ebDetailActions,
+    Base,
+    Page,
+    Layout,
+    Subnavbar,
+    Actions,
+    Validate,
+  ],
   data() {
     return {};
   },
   created() {
     this.index_load();
   },
-  beforeDestroy() {
-    this.$emit('layoutManager:destroy');
-  },
   methods: {
     async index_load() {
       await this.base_init();
       const res = await this.base_loadItem();
       if (!res) return;
-      await this.layout_prepareConfig();
+      await this.layout_prepareConfigLayout();
       this.base.ready = true;
     },
   },

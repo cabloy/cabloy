@@ -7,4 +7,7 @@ import Bottombar from './bottombar.jsx';
 
 export default {
   mixins: [Layout, Page, Data, Filter, Subnavbar, Bottombar],
+  beforeDestroy() {
+    this.$emit('layoutManager:destroy');
+  },
 };

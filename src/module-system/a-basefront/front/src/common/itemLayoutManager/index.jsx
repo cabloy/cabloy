@@ -38,9 +38,6 @@ export default {
   created() {
     this.index_load();
   },
-  beforeDestroy() {
-    this.$emit('layoutManager:destroy');
-  },
   methods: {
     async index_load() {
       await this.base_init();

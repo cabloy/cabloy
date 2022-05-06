@@ -46,9 +46,6 @@ export default {
       this.index_init();
     });
   },
-  beforeDestroy() {
-    this.$emit('layoutManager:destroy');
-  },
   methods: {
     async index_init() {
       await this.base_init();
