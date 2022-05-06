@@ -27,7 +27,8 @@ export default {
         this.base.configAtomCms = layoutItem.content;
       }
       // atom
-      const atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
+      let atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
+      atomLayoutKey = this.$meta.util.normalizeResourceKey(atomLayoutKey, atomClass.module);
       if (atomLayoutKey) {
         layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
           layoutKey: atomLayoutKey,

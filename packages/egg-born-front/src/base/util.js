@@ -664,6 +664,19 @@ export default function (Vue) {
       const urlParamScene = providerScene ? `/${providerScene}` : '';
       return `/api/a/auth/passport/${providerModule}/${providerName}${urlParamScene}`;
     },
+    normalizeResourceKey(key, module, sep = ':') {
+      if (!key) return key;
+      let _sep, _parts;
+      for (let index = 0; index < sep.length; index++) {
+        _sep = sep[index];
+        _parts = key.split(_sep);
+        if (_parts.length > 1) break;
+      }
+      if (_parts.length === 1 && module) {
+        _parts.unshift(module);
+      }
+      return _parts.join(_sep);
+    },
   };
 
   // moment
