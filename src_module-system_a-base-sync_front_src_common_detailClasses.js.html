@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>src/module-system/a-base-sync/front/src/common/atomClasses.js - CabloyJS API</title>
+    <title>src/module-system/a-base-sync/front/src/common/detailClasses.js - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">src/module-system/a-base-sync/front/src/common/atomClasses.js</h1>
+    <h1 class="page-title">src/module-system/a-base-sync/front/src/common/detailClasses.js</h1>
     
 
     
@@ -56,33 +56,33 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module a-base/front/mixins/ebAtomClasses */
+            <pre class="prettyprint source linenums"><code>/** @module a-base/front/mixins/ebDetailClasses */
 
-/** ebAtomClasses
+/** ebDetailClasses
  */
 export default {
   /**
-   * @property {object} atomClassesAll - get all atomClasses
+   * @property {object} detailClassesAll - get all detailClasses
    */
   computed: {
-    atomClassesAll() {
-      return this.$store.getState('a/base/atomClasses');
+    detailClassesAll() {
+      return this.$store.getState('a/base/detailClasses');
     },
   },
   methods: {
     /**
-     * @function getAtomClass
-     * @param {object} atomClass
-     * @returns {object}
+     * @function getDetailClass
+     * @param {object} detailClass
+     * @return {object}
      */
-    getAtomClass(atomClass) {
-      if (!this.atomClassesAll || !atomClass) return null;
-      return this.atomClassesAll[atomClass.module][atomClass.atomClassName];
+    getDetailClass(detailClass) {
+      if (!this.detailClassesAll || !detailClass) return null;
+      return this.detailClassesAll[detailClass.module][detailClass.detailClassName];
     },
   },
   created() {
-    this.$store.dispatch('a/base/getAtomClasses').then(() => {
-      this.onAtomClassesReady &amp;&amp; this.onAtomClassesReady();
+    this.$store.dispatch('a/base/getDetailClasses').then(() => {
+      this.onDetailClassesReady &amp;&amp; this.onDetailClassesReady();
     });
   },
 };

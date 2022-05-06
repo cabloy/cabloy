@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>a-base/front/mixins/ebActionBase - CabloyJS API</title>
+    <title>a-base/front/mixins/ebDetailClasses - CabloyJS API</title>
     
     
     
@@ -46,7 +46,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">a-base/front/mixins/ebActionBase</h1>
+    <h1 class="page-title">a-base/front/mixins/ebDetailClasses</h1>
     
 
     
@@ -75,7 +75,7 @@
 
     
 
-    <h4 class="name" id="module:a-base/front/mixins/ebActionBase"><span class="type-signature"></span>module:a-base/front/mixins/ebActionBase<span class="type-signature"></span></h4>
+    <h4 class="name" id="module:a-base/front/mixins/ebDetailClasses"><span class="type-signature"></span>module:a-base/front/mixins/ebDetailClasses<span class="type-signature"></span></h4>
 
     
 
@@ -85,13 +85,13 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>ebActionBase</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>ebDetailClasses</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line5">line 5</a>
+        <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html">src/module-system/a-base-sync/front/src/common/detailClasses.js</a>, <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -177,7 +177,7 @@
 
         
             
-<h4 class="name" id=".props"><span class="type-signature">(static) </span>props<span class="type-signature"></span></h4>
+<h4 class="name" id=".computed"><span class="type-signature">(static) </span>computed<span class="type-signature"></span></h4>
 
 
 
@@ -189,7 +189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line11">line 11</a>
+        <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html">src/module-system/a-base-sync/front/src/common/detailClasses.js</a>, <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -252,7 +252,7 @@
 
         <tr>
             
-                <td class="name"><code>ctx</code></td>
+                <td class="name"><code>detailClassesAll</code></td>
             
 
             <td class="type">
@@ -268,53 +268,7 @@
 
             
 
-            <td class="description last"><p>Generally speaking, it is the caller component</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>action</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Action info</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>item</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Action Parameters</p></td>
+            <td class="description last"><p>get all detailClasses</p></td>
         </tr>
 
     
@@ -336,6 +290,159 @@
         
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="~getDetailClass"><span class="type-signature">(inner) </span>getDetailClass<span class="signature">(detailClass)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html">src/module-system/a-base-sync/front/src/common/detailClasses.js</a>, <a href="src_module-system_a-base-sync_front_src_common_detailClasses.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>detailClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
     
 
     
