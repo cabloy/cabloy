@@ -2,6 +2,7 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = require('./config/validation/schemas.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
+  const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
@@ -20,6 +21,11 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
+            layout: {
+              config: {
+                atomList: 'layoutAtomListPost',
+              },
+            },
           },
           actions: {
             preview: {
@@ -42,6 +48,9 @@ module.exports = app => {
       statics: {
         'a-flow.flowDef': {
           items: staticFlowDefs,
+        },
+        'a-baselayout.layout': {
+          items: staticLayouts,
         },
         'a-base.resource': {
           items: staticResources,
