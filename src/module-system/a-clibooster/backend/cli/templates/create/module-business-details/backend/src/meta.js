@@ -2,6 +2,7 @@ module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
+  const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
@@ -15,6 +16,11 @@ module.exports = app => {
             language: false,
             category: true,
             tag: true,
+            layout: {
+              config: {
+                // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
+              },
+            },
             details: ['default'],
           },
           actions: {},
@@ -25,6 +31,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
         'a-base.resource': {
           items: staticResources,
         },
