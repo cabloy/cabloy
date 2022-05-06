@@ -78,7 +78,12 @@ module.exports = ctx => {
         __dicts[dictKey] = {};
       }
       if (!__dicts[dictKey][locale]) {
-        __dicts[dictKey][locale] = await this._prepareDict({ dictKey, locale });
+        const res = await this._prepareDict({ dictKey, locale });
+        // maybe cleared by broadcast
+        if (!__dicts[dictKey]) {
+          __dicts[dictKey] = {};
+        }
+        __dicts[dictKey][locale] = res;
       }
       return __dicts[dictKey][locale];
     }
