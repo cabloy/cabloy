@@ -6,6 +6,11 @@ const __snippet_atom = `<%=argv.atomClassName%>: {
     language: false,
     category: true,
     tag: true,
+    layout: {
+      config: {
+        // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
+      },
+    },
   },
   actions: {},
   validator: '<%=argv.atomClassName%>',
