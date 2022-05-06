@@ -257,5 +257,33 @@ export default {
         </eb-page>
       );
     },
+    layout_renderLayout_template_item() {
+      if (this.base.notfound) {
+        return (
+          <f7-card>
+            <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
+            <f7-card-content>{this.$text('Not Found')}</f7-card-content>
+          </f7-card>
+        );
+      }
+      return (
+        <div>
+          {this.layout_renderComponent()}
+          {this.actions_renderPopover()}
+        </div>
+      );
+    },
+    layout_renderLayout_template_list() {
+      let domOrder;
+      if (this.order_renderPopover) {
+        domOrder = this.order_renderPopover();
+      }
+      return (
+        <div>
+          {this.layout_renderComponent()}
+          {domOrder}
+        </div>
+      );
+    },
   },
 };

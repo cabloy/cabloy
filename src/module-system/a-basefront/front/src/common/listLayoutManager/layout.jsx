@@ -43,12 +43,7 @@ export default {
       return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
     layout_renderLayout() {
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {this.order_renderPopover()}
-        </div>
-      );
+      return this.layout_renderLayout_template_list();
     },
   },
 };

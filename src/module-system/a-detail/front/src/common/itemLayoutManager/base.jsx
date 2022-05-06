@@ -33,6 +33,8 @@ export default {
     async base_init() {
       // layoutConfig
       await this.layout_initLayoutConfig();
+      // load detailClasses
+      await this.$store.dispatch('a/base/getDetailClasses');
     },
     async base_loadItem() {
       try {

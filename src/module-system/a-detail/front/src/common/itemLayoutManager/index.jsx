@@ -6,6 +6,7 @@ import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
+const ebDetailClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailClasses;
 const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
 
 // container: {
@@ -19,6 +20,7 @@ const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.
 export default {
   mixins: [
     ebLayoutManagerBase, //
+    ebDetailClasses,
     ebDetailActions,
     Base,
     Page,

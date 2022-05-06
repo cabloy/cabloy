@@ -39,20 +39,7 @@ export default {
       return this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtomCms, this.base.configAtom);
     },
     layout_renderLayout() {
-      if (this.base.notfound) {
-        return (
-          <f7-card>
-            <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
-            <f7-card-content>{this.$text('Not Found')}</f7-card-content>
-          </f7-card>
-        );
-      }
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {this.actions_renderPopover()}
-        </div>
-      );
+      return this.layout_renderLayout_template_item();
     },
   },
 };
