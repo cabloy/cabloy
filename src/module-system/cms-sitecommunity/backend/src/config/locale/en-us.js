@@ -1,3 +1,3 @@
 module.exports = {
-  Post2: 'Post',
+  CMSPostTitle: 'Post',
 };

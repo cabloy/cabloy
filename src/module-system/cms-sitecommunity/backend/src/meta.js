@@ -10,7 +10,7 @@ module.exports = app => {
         post: {
           info: {
             bean: 'post',
-            title: 'Post2',
+            title: 'CMSPostTitle',
             tableName: '',
             tableNameModes: {
               default: '',

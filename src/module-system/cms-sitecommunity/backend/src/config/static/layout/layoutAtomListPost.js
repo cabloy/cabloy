@@ -6,7 +6,7 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'Post2',
+    atomName: 'CMSPostTitle',
     atomStaticKey: 'layoutAtomListPost',
     atomRevision: 0,
     description: '',
