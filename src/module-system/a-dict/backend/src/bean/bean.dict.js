@@ -95,14 +95,21 @@ module.exports = ctx => {
     async _prepareDict_load({ dictKey, user, returnDict }) {
       if (!dictKey) throw new Error('dictKey not set');
       // get atomId
+      let atomId;
       const atomClass = await ctx.bean.atomClass.get(this.atomClass);
       const atom = await ctx.bean.atom.modelAtom.get({
         atomClassId: atomClass.id,
         atomStaticKey: dictKey,
         atomStage: 1,
       });
-      if (!atom) throw new Error(`dict not found: ${dictKey}`);
-      const atomId = atom.id;
+      if (!atom) {
+        // try preload
+        const atomKey = await ctx.bean.atomStatic.preloadAtomStatic({ atomStaticKey: dictKey });
+        if (!atomKey) throw new Error(`dict not found: ${dictKey}`);
+        atomId = atomKey.atomId;
+      } else {
+        atomId = atom.id;
+      }
       // check resource right
       if (user) {
         const res = await ctx.bean.resource.checkRightResource({ resourceAtomId: atomId, user });

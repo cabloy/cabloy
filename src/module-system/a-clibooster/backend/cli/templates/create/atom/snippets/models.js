@@ -1,4 +1,4 @@
-const __snippet_declare = `const <%=argv.atomClassName%> = require('./model/<%=argv.atomClassName%>.js');`;
+const __snippet_declare = `const <%=argv.atomClassName%> = require('./model/<%=argv.atomClassName%>.js');\n`;
 const __snippet_body = `<%=argv.atomClassName%>,`;
 
 module.exports = {
