@@ -18,7 +18,7 @@ module.exports = app => {
             tag: true,
             layout: {
               config: {
-                atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
+                // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
               },
             },
           },
