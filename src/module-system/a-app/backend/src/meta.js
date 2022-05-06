@@ -24,7 +24,6 @@ module.exports = app => {
             layout: {
               config: {
                 atomList: 'layoutAtomListApp',
-                atomItem: 'layoutAtomItemApp',
               },
             },
           },
