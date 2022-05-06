@@ -1,30 +1,30 @@
 /** @module a-base/front/mixins/ebDetailClasses */
 
-/** ebAtomClasses
+/** ebDetailClasses
  */
 export default {
   /**
-   * @property {object} atomClassesAll - get all atomClasses
+   * @property {object} detailClassesAll - get all detailClasses
    */
   computed: {
-    atomClassesAll() {
-      return this.$store.getState('a/base/atomClasses');
+    detailClassesAll() {
+      return this.$store.getState('a/base/detailClasses');
     },
   },
   methods: {
     /**
-     * @function getAtomClass
-     * @param {object} atomClass
+     * @function getDetailClass
+     * @param {object} detailClass
      * @return {object}
      */
-    getAtomClass(atomClass) {
-      if (!this.atomClassesAll || !atomClass) return null;
-      return this.atomClassesAll[atomClass.module][atomClass.atomClassName];
+    getDetailClass(detailClass) {
+      if (!this.detailClassesAll || !detailClass) return null;
+      return this.detailClassesAll[detailClass.module][detailClass.detailClassName];
     },
   },
   created() {
-    this.$store.dispatch('a/base/getAtomClasses').then(() => {
-      this.onAtomClassesReady && this.onAtomClassesReady();
+    this.$store.dispatch('a/base/getDetailClasses').then(() => {
+      this.onDetailClassesReady && this.onDetailClassesReady();
     });
   },
 };
