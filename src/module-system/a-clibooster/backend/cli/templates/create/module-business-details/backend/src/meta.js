@@ -46,6 +46,11 @@ module.exports = app => {
             bean: '<%=argv.atomClassName%>',
             title: 'Details',
             tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>Detail',
+            layout: {
+              config: {
+                detailList: 'layoutDetailList<%=argv.atomClassNameCapitalize%>',
+              },
+            },
           },
           actions: {},
           validator: '<%=argv.atomClassName%>Detail',
