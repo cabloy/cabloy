@@ -37,8 +37,10 @@ export default {
       const res = await provider.switch(options);
       // save as ready
       this.providerName = providerName;
-      // bulk
-      this.layoutManager.bulk_closeSelecting();
+      // callback
+      if (this.layoutManager.data_adapter_onProviderSwitch) {
+        await this.layoutManager.data_adapter_onProviderSwitch(options);
+      }
       // ok
       return res;
     },
@@ -91,6 +93,10 @@ export default {
     },
     getItems() {
       const items = this._callMethod('getItems');
+      return items || [];
+    },
+    getItemsAll() {
+      const items = this._callMethod('getItemsAll');
       return items || [];
     },
     getLoading() {

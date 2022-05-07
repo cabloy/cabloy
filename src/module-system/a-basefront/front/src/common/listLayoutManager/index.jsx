@@ -9,6 +9,7 @@ import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
+import Data from './data.jsx';
 import Star from './other/star.jsx';
 import Labels from './other/labels.jsx';
 import Event from './other/event.jsx';
@@ -41,6 +42,7 @@ export default {
     Filter,
     Subnavbar,
     Actions,
+    Data,
     Star,
     Labels,
     Event,

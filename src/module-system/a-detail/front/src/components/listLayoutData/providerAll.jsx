@@ -82,11 +82,15 @@ export default {
     },
     findItem(detailId) {
       const index = this.items.findIndex(item => item.detailId === detailId);
-      return { pageNum: 1, items: this.items, index };
+      const item = index === -1 ? null : this.items[index];
+      return { pageNum: 1, items: this.items, index, item };
     },
-    spliceItem(items, index, howmany, ...args) {
+    spliceItem(bundle, howmany, ...args) {
       if (howmany === undefined) howmany = 1;
-      return items.splice(index, howmany, ...args);
+      return bundle.items.splice(bundle.index, howmany, ...args);
+    },
+    replaceItem(bundle, itemNew) {
+      this.$set(bundle.items, bundle.index, itemNew);
     },
   },
 };
