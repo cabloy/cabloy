@@ -1,15 +1,15 @@
 export default {
   methods: {
     async item_onAction(event, item, action) {
-      const _action = this.layoutManager.getDetailAction(action);
+      const _action = this.getDetailAction(action);
       if (!_action) return;
       const res = await this.$meta.util.performAction({
-        ctx: this.layoutManager,
+        ctx: this,
         action: _action,
         item: {
           item,
           meta: {
-            flowTaskId: this.layoutManager.container.flowTaskId,
+            flowTaskId: this.container.flowTaskId,
           },
         },
       });
@@ -20,7 +20,7 @@ export default {
       return await this.item_onAction(event, item, {
         module: item.module,
         detailClassName: item.detailClassName,
-        name: this.layoutManager.container.mode === 'view' ? 'read' : 'write',
+        name: this.container.mode === 'view' ? 'read' : 'write',
       });
     },
     item_getDetailName(item) {
@@ -41,10 +41,10 @@ export default {
       return 'blue';
     },
     item_getActionTitle(action) {
-      return this.layoutManager.getDetailActionTitle(action);
+      return this.getDetailActionTitle(action);
     },
     item_getActions(mode) {
-      const actions = this.layoutManager.actions.list;
+      const actions = this.actions.list;
       if (!actions) return actions;
       if (mode === 'menu' || (!mode && this.$device.desktop)) {
         // show all on menu
@@ -61,7 +61,7 @@ export default {
         for (let index in itemActions) {
           index = parseInt(index);
           const action = itemActions[index];
-          const _action = this.layoutManager.getDetailAction(action);
+          const _action = this.getDetailAction(action);
           let domActionTitle;
           if (mode === 'menu' || (!mode && this.$device.desktop)) {
             domActionTitle = <div slot="title">{this.item_getActionTitle(action)}</div>;

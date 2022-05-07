@@ -9,9 +9,9 @@ export default {
     async event_onActionChanged(data) {
       const { atomKey, detailClass } = data;
       if (
-        atomKey.atomId !== this.layoutManager.container.atomId ||
-        detailClass.module !== this.layoutManager.container.detailClass.module ||
-        detailClass.detailClassName !== this.layoutManager.container.detailClass.detailClassName
+        atomKey.atomId !== this.container.atomId ||
+        detailClass.module !== this.container.detailClass.module ||
+        detailClass.detailClassName !== this.container.detailClass.detailClassName
       ) {
         return;
       }
@@ -21,14 +21,14 @@ export default {
         // details:change
         this.$meta.eventHub.$emit('details:change', {
           ...data,
-          details: this.layoutManager.data_getItemsAll(),
+          details: this.data_getItemsAll(),
         });
       }
     },
     async event_onActionChanged2(data) {
       let res = false;
       // loop
-      await this._loopProviders(async provider => {
+      await this.data.adapter._loopProviders(async provider => {
         const res2 = await this.event_onActionChanged2_provider(data, provider);
         if (res2) {
           // changed
@@ -42,7 +42,7 @@ export default {
       // create
       if (action.name === 'create') {
         // load
-        this._callMethodProvider(provider, 'onPageRefresh');
+        this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
         return true;
       }
       // move
@@ -50,32 +50,32 @@ export default {
         if (!result) return false;
         const a = action.name === 'moveUp' ? result.to : result.from;
         const b = action.name === 'moveUp' ? result.from : result.to;
-        const findA = this.findItemProvier(provider, a);
+        const findA = this.data.adapter.findItemProvier(provider, a);
         const items = findA.items;
         const aIndex = findA.index;
-        const findB = this.findItemProvier(provider, b);
+        const findB = this.data.adapter.findItemProvier(provider, b);
         const bIndex = findB.index;
         if (aIndex === -1 || bIndex === -1) {
           // load
-          this._callMethodProvider(provider, 'onPageRefresh');
+          this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
           return false; // not changed
         }
-        const row = this._callMethodProvider(provider, 'spliceItem', items, bIndex);
-        this._callMethodProvider(provider, 'spliceItem', items, aIndex, 0, row[0]);
+        const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', items, bIndex);
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', items, aIndex, 0, row[0]);
         return false; // not changed
       }
       // findItem
-      const { items, index } = this.findItemProvier(provider, key.detailId);
+      const { items, index } = this.data.adapter.findItemProvier(provider, key.detailId);
       if (index === -1) return false;
       // delete
       if (action.name === 'delete') {
-        this._callMethodProvider(provider, 'spliceItem', items, index);
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', items, index);
         return true;
       }
       // others
-      const options = this.layoutManager.base_prepareReadOptions();
+      const options = this.base_prepareReadOptions();
       const detailNew = await this.$api.post('/a/detail/detail/read', {
-        flowTaskId: this.layoutManager.container.flowTaskId,
+        flowTaskId: this.container.flowTaskId,
         key,
         options,
       });
