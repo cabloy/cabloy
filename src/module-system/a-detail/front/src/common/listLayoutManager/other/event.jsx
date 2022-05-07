@@ -60,8 +60,8 @@ export default {
           this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
           return false; // not changed
         }
-        const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', items, bIndex);
-        this.data.adapter._callMethodProvider(provider, 'spliceItem', items, aIndex, 0, row[0]);
+        const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: bIndex });
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: aIndex }, 0, row[0]);
         return false; // not changed
       }
       // findItem
@@ -69,7 +69,7 @@ export default {
       if (index === -1) return false;
       // delete
       if (action.name === 'delete') {
-        this.data.adapter._callMethodProvider(provider, 'spliceItem', items, index);
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index });
         return true;
       }
       // others
