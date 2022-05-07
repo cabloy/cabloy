@@ -46,6 +46,12 @@ export default {
                 name: 'baseLayoutBlockSubnavbar',
               },
             },
+            form: {
+              component: {
+                module: 'a-baselayout',
+                name: 'baseLayoutBlockForm',
+              },
+            },
           },
         },
       },

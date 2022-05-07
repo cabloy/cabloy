@@ -11,24 +11,6 @@ const configFull = {
   layouts: {
     base: {
       blocks: {
-        caption: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockDefaultCaption',
-          },
-        },
-        title: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockDefaultTitle',
-          },
-        },
-        subnavbar: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockDefaultSubnavbar',
-          },
-        },
         main: {
           component: {
             module: 'a-baselayout',
