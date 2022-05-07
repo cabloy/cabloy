@@ -32,6 +32,22 @@ module.exports = app => {
       code: 8,
       title: 'MessageList',
     },
+    {
+      code: 9,
+      title: 'FlowList',
+    },
+    {
+      code: 10,
+      title: 'FlowItem',
+    },
+    {
+      code: 11,
+      title: 'FlowTaskList',
+    },
+    {
+      code: 12,
+      title: 'FlowTaskAtom',
+    },
   ];
   const dictLocales = {
     'en-us': {
@@ -43,6 +59,10 @@ module.exports = app => {
       DetailItem: 'Detail Item',
       MessageGroup: 'Message Group',
       MessageList: 'Message List',
+      FlowList: 'Flow List',
+      FlowItem: 'Flow Item',
+      FlowTaskList: 'Flow Task List',
+      FlowTaskAtom: 'Flow Task Data',
     },
     'zh-cn': {
       LayoutMobile: '移动布局',
@@ -53,12 +73,16 @@ module.exports = app => {
       DetailItem: '明细条目',
       MessageGroup: '消息组',
       MessageList: '消息列表',
+      FlowList: '流程列表',
+      FlowItem: '流程条目',
+      FlowTaskList: '流程任务列表',
+      FlowTaskAtom: '流程任务数据',
     },
   };
   const definition = {
     atomName: 'Layout Type',
     atomStaticKey: 'dictLayoutType',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
