@@ -13,10 +13,10 @@ export default {
     page_onClear() {
       this.layout.instance && this.layout.instance.onPageClear();
     },
-    page_getTitle() {
+    page_onGetTitle() {
       return `${this.$text('Messages')}: ${this.container.messageClass.info.titleLocale}`;
     },
-    page_getSubtitle() {
+    page_onGetTitleSub() {
       return '';
     },
   },
