@@ -10,8 +10,6 @@ import listLayoutTable from './components/detail/listLayoutTable/listLayoutTable
 import listLayoutBlockTableItems from './components/detail/listLayoutTable/listLayoutBlockTableItems.jsx';
 import listLayoutTableCellDetailLineNo from './components/detail/listLayoutTable/listLayoutTableCellDetailLineNo.jsx';
 import listLayoutTableCellDetailName from './components/detail/listLayoutTable/listLayoutTableCellDetailName.jsx';
-// itemLayoutDefault
-import itemLayoutDefault from './components/detail/itemLayoutDefault/itemLayoutDefault.jsx';
 // listLayoutData
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
@@ -29,8 +27,6 @@ export default {
   listLayoutBlockTableItems,
   listLayoutTableCellDetailLineNo,
   listLayoutTableCellDetailName,
-  // itemLayoutDefault
-  itemLayoutDefault,
   // layout
   listLayoutDataAdapter,
   listLayoutDataProviderAll,

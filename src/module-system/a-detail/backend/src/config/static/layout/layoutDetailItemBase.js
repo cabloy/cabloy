@@ -24,8 +24,11 @@ module.exports = app => {
       default: {
         title: 'LayoutDefault',
         component: {
-          module: 'a-detail',
-          name: 'itemLayoutDefault',
+          module: 'a-baselayout',
+          name: 'baseLayoutDefault',
+        },
+        subnavbar: {
+          policyDefault: false,
         },
         blocks: {},
       },
@@ -34,7 +37,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutDetailItemBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 6,
     content: JSON.stringify(content),

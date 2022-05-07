@@ -30,7 +30,7 @@ export default {
     },
   },
   render() {
-    const blockName = this.layoutConfig.blockName || 'main';
+    const blockName = this.layoutConfig.blockMain || 'main';
     return <div>{this.layoutManager.layout_renderBlock({ blockName })}</div>;
   },
 };

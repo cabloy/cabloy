@@ -28,10 +28,6 @@ module.exports = app => {
       },
       default: {
         title: 'LayoutInfo',
-        component: {
-          module: 'a-baselayout',
-          name: 'itemLayoutDefault',
-        },
         blocks: {
           main: {
             component: {
@@ -44,10 +40,6 @@ module.exports = app => {
       },
       content: {
         title: 'LayoutContent',
-        component: {
-          module: 'a-baselayout',
-          name: 'itemLayoutDefault',
-        },
         blocks: {
           main: {
             component: {

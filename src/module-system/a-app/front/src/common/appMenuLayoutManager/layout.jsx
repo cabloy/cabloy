@@ -12,22 +12,6 @@ const configFull = {
     base: {
       blocks: {},
     },
-    default: {
-      title: 'LayoutInfo',
-      component: {
-        module: 'a-baselayout',
-        name: 'itemLayoutDefault',
-      },
-      blocks: {},
-    },
-    content: {
-      title: 'LayoutContent',
-      component: {
-        module: 'a-baselayout',
-        name: 'itemLayoutDefault',
-      },
-      blocks: {},
-    },
   },
 };
 
