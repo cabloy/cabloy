@@ -34,7 +34,7 @@ module.exports = app => {
         title: 'LayoutInfo',
         component: {
           module: 'a-baselayout',
-          name: 'itemLayoutDefault',
+          name: 'baseLayoutDefault',
         },
         blocks: {},
       },
@@ -42,7 +42,7 @@ module.exports = app => {
         title: 'LayoutContent',
         component: {
           module: 'a-baselayout',
-          name: 'itemLayoutDefault',
+          name: 'baseLayoutDefault',
         },
         blocks: {},
       },

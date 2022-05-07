@@ -22,12 +22,15 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      this.layoutManager.subnavbar_policyDefault();
+      if (this.layoutConfig.subnavbar && this.layoutConfig.subnavbar.policyDefault) {
+        this.layoutManager.subnavbar_policyDefault();
+      }
       // instance
       await this.layoutManager.layout_setInstance(this);
     },
   },
   render() {
-    return <div>{this.layoutManager.layout_renderBlock({ blockName: 'main' })}</div>;
+    const blockName = this.layoutConfig.blockName || 'main';
+    return <div>{this.layoutManager.layout_renderBlock({ blockName })}</div>;
   },
 };

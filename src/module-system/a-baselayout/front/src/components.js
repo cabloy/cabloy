@@ -1,4 +1,5 @@
 // baseLayout
+import baseLayoutDefault from './components/base/baseLayoutDefault.jsx';
 import baseLayoutBlockCaption from './components/base/baseLayoutBlockCaption.jsx';
 import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
 import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
@@ -31,7 +32,6 @@ import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayou
 // listLayoutTreeTable
 import listLayoutTreeTable from './components/atom/listLayoutTreeTable/listLayoutTreeTable.jsx';
 // itemLayoutDefault
-import itemLayoutDefault from './components/atom/itemLayoutDefault/itemLayoutDefault.jsx';
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
 // resourceTreeLayoutAccordion
 import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
@@ -43,6 +43,7 @@ import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTr
 
 export default {
   // baseLayout
+  baseLayoutDefault,
   baseLayoutBlockCaption,
   baseLayoutBlockTitle,
   baseLayoutBlockSubnavbar,
@@ -75,7 +76,6 @@ export default {
   // listLayoutTreeTable
   listLayoutTreeTable,
   // itemLayoutDefault
-  itemLayoutDefault,
   itemLayoutBlockDefaultCaption,
   // resourceTreeLayoutAccordion
   resourceTreeLayoutAccordion,
