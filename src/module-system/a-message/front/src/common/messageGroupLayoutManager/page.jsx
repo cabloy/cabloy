@@ -3,10 +3,10 @@ export default {
     return {};
   },
   methods: {
-    page_getTitle() {
+    page_onGetTitle() {
       return this.$text('Messages');
     },
-    page_getSubtitle() {
+    page_onGetTitleSub() {
       return '';
     },
   },
