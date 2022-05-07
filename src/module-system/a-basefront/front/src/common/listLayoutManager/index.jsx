@@ -9,6 +9,10 @@ import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
+import Star from './other/star.jsx';
+import Labels from './other/labels.jsx';
+import Event from './other/event.jsx';
+import Item from './other/item.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
@@ -37,6 +41,10 @@ export default {
     Filter,
     Subnavbar,
     Actions,
+    Star,
+    Labels,
+    Event,
+    Item,
   ],
   data() {
     return {};

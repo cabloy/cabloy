@@ -1,10 +1,4 @@
-import Star from './adapter/star.jsx';
-import Labels from './adapter/labels.jsx';
-import Event from './adapter/event.jsx';
-import Item from './adapter/item.jsx';
-
 export default {
-  mixins: [Star, Labels, Event, Item],
   props: {
     layoutManager: {
       type: Object,

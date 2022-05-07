@@ -14,12 +14,12 @@ export default {
       const key = data.key;
       const atom = data.atom;
       // params
-      const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+      const params = this.base_prepareSelectParams({ setOrder: false });
       const paramsAtomClass = params.atomClass;
       const paramsStage = params.options.stage;
 
       // check stage
-      if (this.layoutManager.base_stageToString(atom.atomStage) !== paramsStage) {
+      if (this.base_stageToString(atom.atomStage) !== paramsStage) {
         // do nothing
         return;
       }
@@ -32,55 +32,55 @@ export default {
         return;
       }
       // refresh list
-      await this._loopProviders(async provider => {
-        this._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
+      await this.data.adapter._loopProviders(async provider => {
+        this.data.adapter._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
       });
     },
     async event_onActionChanged_delete(data) {
       const key = data.key;
       // loop
-      await this._loopProviders(async provider => {
+      await this.data.adapter._loopProviders(async provider => {
         // findItem
-        const bundle = this.findItemProvier(provider, key.atomId);
+        const bundle = this.data.adapter.findItemProvier(provider, key.atomId);
         // item: support tree provider
         const { item } = bundle;
         if (!item) return;
         // delete
-        this._callMethodProvider(provider, 'spliceItem', bundle);
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', bundle);
       });
     },
     async event_onActionChanged_others(data) {
       const key = data.key;
       // loop
-      await this._loopProviders(async provider => {
+      await this.data.adapter._loopProviders(async provider => {
         // findItem
-        const bundle = this.findItemProvier(provider, key.atomId);
+        const bundle = this.data.adapter.findItemProvier(provider, key.atomId);
         // item: support tree provider
         const { item } = bundle;
         if (!item) return;
         // fetch new atom
-        const options = this.layoutManager.base_prepareReadOptions();
+        const options = this.base_prepareReadOptions();
         const itemNew = await this.$api.post('/a/base/atom/read', {
           key,
           options,
         });
-        this._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
+        this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
       });
     },
     async event_onActionChanged_addChildNode(data) {
       const key = data.key;
       const node = data.node;
       // loop
-      await this._loopProviders(async provider => {
-        this._callMethodProvider(provider, 'addChildNode', { key, node });
+      await this.data.adapter._loopProviders(async provider => {
+        this.data.adapter._callMethodProvider(provider, 'addChildNode', { key, node });
       });
     },
     async event_onActionChanged_moveNode(data) {
       const key = data.key;
       const node = data.node;
       // loop
-      await this._loopProviders(async provider => {
-        this._callMethodProvider(provider, 'moveNode', { key, node });
+      await this.data.adapter._loopProviders(async provider => {
+        this.data.adapter._callMethodProvider(provider, 'moveNode', { key, node });
       });
     },
     async event_onActionChanged(data) {
@@ -104,20 +104,20 @@ export default {
     },
     async event_onActionExtChanged(bundle) {
       // loop
-      await this._loopProviders(async provider => {
-        this._callMethodProvider(provider, 'onActionExt', bundle);
+      await this.data.adapter._loopProviders(async provider => {
+        this.data.adapter._callMethodProvider(provider, 'onActionExt', bundle);
       });
     },
     async event_onActionsChanged(data) {
       const key = data.key;
       // loop
-      await this._loopProviders(async provider => {
+      await this.data.adapter._loopProviders(async provider => {
         // findItem
-        const bundle = this.findItemProvier(provider, key.atomId);
+        const bundle = this.data.adapter.findItemProvier(provider, key.atomId);
         // item: support tree provider
         const { item } = bundle;
         if (!item) return;
-        this._callMethodProvider(provider, 'replaceItem', bundle, {
+        this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
           ...item,
           _actions: null,
         });
