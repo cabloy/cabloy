@@ -24,6 +24,14 @@ module.exports = app => {
       code: 6,
       title: 'DetailItem',
     },
+    {
+      code: 7,
+      title: 'MessageGroup',
+    },
+    {
+      code: 8,
+      title: 'MessageList',
+    },
   ];
   const dictLocales = {
     'en-us': {
@@ -33,6 +41,8 @@ module.exports = app => {
       AtomItem: 'Data Item',
       DetailList: 'Detail List',
       DetailItem: 'Detail Item',
+      MessageGroup: 'Message Group',
+      MessageList: 'Message List',
     },
     'zh-cn': {
       LayoutMobile: '移动布局',
@@ -41,12 +51,14 @@ module.exports = app => {
       AtomItem: '数据条目',
       DetailList: '明细列表',
       DetailItem: '明细条目',
+      MessageGroup: '消息组',
+      MessageList: '消息列表',
     },
   };
   const definition = {
     atomName: 'Layout Type',
     atomStaticKey: 'dictLayoutType',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
