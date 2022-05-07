@@ -24,7 +24,54 @@ export default {
   },
   layoutManager: {
     base: {
-      info: {},
+      info: {
+        data: {
+          adapter: {
+            component: {
+              module: 'a-basefront',
+              name: 'listLayoutDataAdapter',
+            },
+            providers: {
+              all: {
+                component: {
+                  module: 'a-basefront',
+                  name: 'listLayoutDataProviderAll',
+                },
+              },
+              continuous: {
+                component: {
+                  module: 'a-basefront',
+                  name: 'listLayoutDataProviderContinuous',
+                },
+              },
+              paged: {
+                component: {
+                  module: 'a-basefront',
+                  name: 'listLayoutDataProviderPaged',
+                },
+              },
+              tree: {
+                component: {
+                  module: 'a-basefront',
+                  name: 'listLayoutDataProviderTree',
+                },
+                fields: {
+                  sorting: null,
+                },
+                dataSourceAdapter: {
+                  component: null,
+                },
+                treeviewRoot: {
+                  attrs: {
+                    itemToggle: false,
+                    selectable: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       layouts: {
         base: {
           blocks: {

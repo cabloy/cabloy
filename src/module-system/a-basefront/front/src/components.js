@@ -23,6 +23,7 @@ import tagSelect from './components/tag/tagSelect.jsx';
 import atomTab from './components/tab/atomTab.jsx';
 // listLayoutData
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
+import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
 import listLayoutDataProviderContinuous from './components/listLayoutData/providerContinuous.jsx';
 import listLayoutDataProviderPaged from './components/listLayoutData/providerPaged.jsx';
 import listLayoutDataProviderTree from './components/listLayoutData/providerTree.jsx';
@@ -55,6 +56,7 @@ export default {
   atomTab,
   // layout
   listLayoutDataAdapter,
+  listLayoutDataProviderAll,
   listLayoutDataProviderContinuous,
   listLayoutDataProviderPaged,
   listLayoutDataProviderTree,

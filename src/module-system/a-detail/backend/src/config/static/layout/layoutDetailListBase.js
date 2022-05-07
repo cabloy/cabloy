@@ -9,22 +9,6 @@ module.exports = app => {
           large: 'table',
         },
       },
-      data: {
-        adapter: {
-          component: {
-            module: 'a-detail',
-            name: 'listLayoutDataAdapter',
-          },
-          providers: {
-            all: {
-              component: {
-                module: 'a-detail',
-                name: 'listLayoutDataProviderAll',
-              },
-            },
-          },
-        },
-      },
     },
     layouts: {
       base: {

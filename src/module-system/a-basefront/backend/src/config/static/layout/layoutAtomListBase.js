@@ -9,46 +9,6 @@ module.exports = app => {
           large: 'table',
         },
       },
-      data: {
-        adapter: {
-          component: {
-            module: 'a-basefront',
-            name: 'listLayoutDataAdapter',
-          },
-          providers: {
-            continuous: {
-              component: {
-                module: 'a-basefront',
-                name: 'listLayoutDataProviderContinuous',
-              },
-            },
-            paged: {
-              component: {
-                module: 'a-basefront',
-                name: 'listLayoutDataProviderPaged',
-              },
-            },
-            tree: {
-              component: {
-                module: 'a-basefront',
-                name: 'listLayoutDataProviderTree',
-              },
-              fields: {
-                sorting: null,
-              },
-              dataSourceAdapter: {
-                component: null,
-              },
-              treeviewRoot: {
-                attrs: {
-                  itemToggle: false,
-                  selectable: true,
-                },
-              },
-            },
-          },
-        },
-      },
       ordersBase: [
         { name: 'atomCreatedAt', title: 'Created Time', by: 'desc', tableAlias: '' },
         { name: 'atomUpdatedAt', title: 'Modification Time', by: 'desc', tableAlias: '' },

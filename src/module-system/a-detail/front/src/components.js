@@ -10,9 +10,6 @@ import listLayoutTable from './components/detail/listLayoutTable/listLayoutTable
 import listLayoutBlockTableItems from './components/detail/listLayoutTable/listLayoutBlockTableItems.jsx';
 import listLayoutTableCellDetailLineNo from './components/detail/listLayoutTable/listLayoutTableCellDetailLineNo.jsx';
 import listLayoutTableCellDetailName from './components/detail/listLayoutTable/listLayoutTableCellDetailName.jsx';
-// listLayoutData
-import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
-import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
 
 export default {
   action,
@@ -27,7 +24,4 @@ export default {
   listLayoutBlockTableItems,
   listLayoutTableCellDetailLineNo,
   listLayoutTableCellDetailName,
-  // layout
-  listLayoutDataAdapter,
-  listLayoutDataProviderAll,
 };
