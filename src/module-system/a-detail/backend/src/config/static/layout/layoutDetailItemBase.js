@@ -19,20 +19,7 @@ module.exports = app => {
     },
     layouts: {
       base: {
-        blocks: {
-          title: {
-            component: {
-              module: 'a-detail',
-              name: 'itemLayoutBlockDefaultTitle',
-            },
-          },
-          main: {
-            component: {
-              module: 'a-detail',
-              name: 'itemLayoutBlockDefaultMain',
-            },
-          },
-        },
+        blocks: {},
       },
       default: {
         title: 'LayoutDefault',

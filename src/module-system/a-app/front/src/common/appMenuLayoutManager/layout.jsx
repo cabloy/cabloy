@@ -10,14 +10,7 @@ const configFull = {
   },
   layouts: {
     base: {
-      blocks: {
-        main: {
-          component: {
-            module: 'a-baselayout',
-            name: 'itemLayoutBlockDefaultMain',
-          },
-        },
-      },
+      blocks: {},
     },
     default: {
       title: 'LayoutInfo',

@@ -19,12 +19,6 @@ module.exports = app => {
               name: 'roleItemLayoutBlockDefaultSubnavbar',
             },
           },
-          main: {
-            component: {
-              module: 'a-baseadmin',
-              name: 'roleItemLayoutBlockDefaultMain',
-            },
-          },
         },
       },
     },

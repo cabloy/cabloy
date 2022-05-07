@@ -2,7 +2,7 @@
 import baseLayoutBlockCaption from './components/base/baseLayoutBlockCaption.jsx';
 import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
 import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
-import baseLayoutBlockForm from './components/base/baseLayoutBlockForm.jsx';
+import baseLayoutBlockMain from './components/base/baseLayoutBlockMain.jsx';
 // listLayoutCard
 import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx';
 import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
@@ -33,9 +33,6 @@ import listLayoutTreeTable from './components/atom/listLayoutTreeTable/listLayou
 // itemLayoutDefault
 import itemLayoutDefault from './components/atom/itemLayoutDefault/itemLayoutDefault.jsx';
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
-import itemLayoutBlockDefaultTitle from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
-import itemLayoutBlockDefaultSubnavbar from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
-import itemLayoutBlockDefaultMain from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
 // resourceTreeLayoutAccordion
 import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
 import resourceTreeLayoutBlockAccordionTitle from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionTitle.jsx';
@@ -49,7 +46,7 @@ export default {
   baseLayoutBlockCaption,
   baseLayoutBlockTitle,
   baseLayoutBlockSubnavbar,
-  baseLayoutBlockForm,
+  baseLayoutBlockMain,
   // listLayoutCard
   listLayoutCard,
   listLayoutBlockCardItems,
@@ -80,9 +77,6 @@ export default {
   // itemLayoutDefault
   itemLayoutDefault,
   itemLayoutBlockDefaultCaption,
-  itemLayoutBlockDefaultTitle,
-  itemLayoutBlockDefaultSubnavbar,
-  itemLayoutBlockDefaultMain,
   // resourceTreeLayoutAccordion
   resourceTreeLayoutAccordion,
   resourceTreeLayoutBlockAccordionTitle,

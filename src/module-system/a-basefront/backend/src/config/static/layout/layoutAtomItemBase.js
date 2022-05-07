@@ -28,24 +28,6 @@ module.exports = app => {
               name: 'itemLayoutBlockDefaultCaption',
             },
           },
-          title: {
-            component: {
-              module: 'a-baselayout',
-              name: 'itemLayoutBlockDefaultTitle',
-            },
-          },
-          subnavbar: {
-            component: {
-              module: 'a-baselayout',
-              name: 'itemLayoutBlockDefaultSubnavbar',
-            },
-          },
-          main: {
-            component: {
-              module: 'a-baselayout',
-              name: 'itemLayoutBlockDefaultMain',
-            },
-          },
         },
       },
       default: {

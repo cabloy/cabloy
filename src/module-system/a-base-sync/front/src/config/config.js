@@ -46,10 +46,10 @@ export default {
                 name: 'baseLayoutBlockSubnavbar',
               },
             },
-            form: {
+            main: {
               component: {
                 module: 'a-baselayout',
-                name: 'baseLayoutBlockForm',
+                name: 'baseLayoutBlockMain',
               },
             },
           },

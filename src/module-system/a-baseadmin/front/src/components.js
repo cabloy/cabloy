@@ -3,7 +3,6 @@ import roleListLayoutTreeDataSourceAdapter from './components/role/listLayoutTre
 // role: itemLayoutDefault
 import roleItemLayoutBlockDefaultTitle from './components/role/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import roleItemLayoutBlockDefaultSubnavbar from './components/role/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
-import roleItemLayoutBlockDefaultMain from './components/role/itemLayoutDefault/itemLayoutBlockDefaultMain.jsx';
 // user: itemLayoutDefault
 import userItemLayoutBlockDefaultTitle from './components/user/itemLayoutDefault/itemLayoutBlockDefaultTitle.jsx';
 import userItemLayoutBlockDefaultSubnavbar from './components/user/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
@@ -27,7 +26,6 @@ export default {
   // role: itemLayoutDefault
   roleItemLayoutBlockDefaultTitle,
   roleItemLayoutBlockDefaultSubnavbar,
-  roleItemLayoutBlockDefaultMain,
   // user: itemLayoutDefault
   userItemLayoutBlockDefaultTitle,
   userItemLayoutBlockDefaultSubnavbar,
