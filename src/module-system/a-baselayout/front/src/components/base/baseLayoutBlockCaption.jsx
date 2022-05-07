@@ -40,7 +40,7 @@ export default {
     return (
       <f7-nav-title>
         <div>{this.layoutManager.page_title}</div>
-        <div class="subtitle">{this.page_getSubtitle()}</div>
+        <div class="subtitle">{this.layoutManager.page_getSubtitle()}</div>
       </f7-nav-title>
     );
   },
