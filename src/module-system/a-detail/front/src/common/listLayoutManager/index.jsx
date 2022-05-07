@@ -3,6 +3,8 @@ import Base from './base.jsx';
 import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Actions from './actions.jsx';
+import Event from './other/event.jsx';
+import Item from './other/item.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebDetailClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailClasses;
 const ebDetailActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebDetailActions;
@@ -27,6 +29,8 @@ export default {
     Layout,
     Bulk,
     Actions,
+    Event,
+    Item,
   ],
   data() {
     return {};

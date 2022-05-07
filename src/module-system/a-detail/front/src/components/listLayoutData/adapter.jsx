@@ -1,8 +1,4 @@
-import Event from './adapter/event.jsx';
-import Item from './adapter/item.jsx';
-
 export default {
-  mixins: [Event, Item],
   props: {
     layoutManager: {
       type: Object,
