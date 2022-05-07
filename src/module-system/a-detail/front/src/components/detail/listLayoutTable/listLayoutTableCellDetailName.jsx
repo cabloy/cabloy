@@ -22,21 +22,21 @@ export default {
   created() {},
   methods: {
     onItemClick(event) {
-      return this.layoutManager.data.adapter.item_onItemClick(event, this.info.record);
+      return this.layoutManager.item_onItemClick(event, this.info.record);
     },
   },
   render() {
     const item = this.info.record;
     // domAfter
-    const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+    const domAfterMetaFlags = this.layoutManager.item_renderMetaFlags(item);
     // domSummary
-    const domSummary = <div class="atomName-summary">{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>;
+    const domSummary = <div class="atomName-summary">{this.layoutManager.item_getMetaSummary(item)}</div>;
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
             <eb-link propsOnPerform={event => this.onItemClick(event)}>
-              {this.layoutManager.data.adapter.item_getDetailName(item)}
+              {this.layoutManager.item_getDetailName(item)}
             </eb-link>
           </div>
           <div class="atomName-right">{domAfterMetaFlags}</div>

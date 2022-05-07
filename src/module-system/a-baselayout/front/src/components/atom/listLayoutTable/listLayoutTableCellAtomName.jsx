@@ -25,7 +25,7 @@ export default {
   created() {},
   methods: {
     onItemClick(event) {
-      return this.layoutManager.data.adapter.item_onActionView(event, this.info.record);
+      return this.layoutManager.item_onActionView(event, this.info.record);
     },
     _renderMedia() {
       let avatarFieldName = this.mapper && this.mapper.avatar;
@@ -33,7 +33,7 @@ export default {
       if (avatarFieldName === true) {
         avatarFieldName = undefined;
       }
-      return this.layoutManager.data.adapter.item_renderMedia(
+      return this.layoutManager.item_renderMedia(
         this.info.record,
         'avatar avatar24 eb-vertical-align',
         avatarFieldName
@@ -43,10 +43,10 @@ export default {
   render() {
     const item = this.info.record;
     // domAfter
-    const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
-    const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
+    const domAfterMetaFlags = this.layoutManager.item_renderMetaFlags(item);
+    const domAfterLabels = this.layoutManager.item_renderLabels(item);
     // domSummary
-    const domSummary = <div class="atomName-summary">{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>;
+    const domSummary = <div class="atomName-summary">{this.layoutManager.item_getMetaSummary(item)}</div>;
     // domMedia
     const domMedia = this._renderMedia();
     return (
@@ -55,11 +55,11 @@ export default {
           <div class="atomName-left">
             <eb-link propsOnPerform={event => this.onItemClick(event)}>
               {domMedia}
-              {this.layoutManager.data.adapter.item_getAtomName(item)}
+              {this.layoutManager.item_getAtomName(item)}
             </eb-link>
           </div>
           <div class="atomName-right">
-            <span class="stats">{this.layoutManager.data.adapter.item_renderStats(item)}</span>
+            <span class="stats">{this.layoutManager.item_renderStats(item)}</span>
             {domAfterMetaFlags}
             {domAfterLabels}
           </div>

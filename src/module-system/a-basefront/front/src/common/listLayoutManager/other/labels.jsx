@@ -8,48 +8,48 @@ export default {
   methods: {
     async labels_onClick(event, item) {
       // anonymous
-      if (this.layoutManager.base_user.anonymous) {
-        await this.layoutManager.$view.dialog.confirm(this.$text('Please Sign In'));
+      if (this.base_user.anonymous) {
+        await this.$view.dialog.confirm(this.$text('Please Sign In'));
         // login
         this.$meta.vueLayout.openLogin();
         return;
       }
       // navigate
       const navigateOptions = {};
-      if (this.layoutManager.$view.inPanel()) {
+      if (this.$view.inPanel()) {
         navigateOptions.target = '_self';
       }
-      this.layoutManager.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, navigateOptions);
+      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, navigateOptions);
       // swipeoutClose
       this.$meta.util.swipeoutClose(event.currentTarget);
     },
     async labels_onChanged(data) {
       const atomId = data.key.atomId;
       // loop
-      await this._loopProviders(async provider => {
+      await this.data.adapter._loopProviders(async provider => {
         // findItem
-        const bundle = this.findItemProvier(provider, atomId);
+        const bundle = this.data.adapter.findItemProvier(provider, atomId);
         // item: support tree provider
         const { item } = bundle;
         const foundItem = !!item;
-        const params = this.layoutManager.base_prepareSelectParams({ setOrder: false });
+        const params = this.base_prepareSelectParams({ setOrder: false });
         const label = params.options.label;
         if (label) {
           // switch
           const exists = data.labels.indexOf(String(label)) > -1;
           if (!exists && foundItem) {
-            this._callMethodProvider(provider, 'spliceItem', bundle);
+            this.data.adapter._callMethodProvider(provider, 'spliceItem', bundle);
           } else if (exists && !foundItem) {
-            this._callMethodProvider(provider, 'onPageRefresh');
+            this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
           } else if (foundItem) {
-            this._callMethodProvider(provider, 'replaceItem', bundle, {
+            this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
               ...item,
               labels: JSON.stringify(data.labels),
             });
           }
         } else {
           // just change
-          this._callMethodProvider(provider, 'replaceItem', bundle, {
+          this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
             ...item,
             labels: JSON.stringify(data.labels),
           });

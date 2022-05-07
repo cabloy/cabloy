@@ -18,26 +18,26 @@ export default {
   },
   methods: {
     async onItemClick(event, item) {
-      return this.layoutManager.data.adapter.item_onItemClick(event, item);
+      return this.layoutManager.item_onItemClick(event, item);
     },
     onSwipeoutOpened(/* event, item*/) {},
     _renderListItem(item, index) {
       // media
-      const domMedia = <div slot="media">{this.layoutManager.data.adapter.item_renderMedia(item, index)}</div>;
+      const domMedia = <div slot="media">{this.layoutManager.item_renderMedia(item, index)}</div>;
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{this.layoutManager.data.adapter.item_getDetailName(item)}</div>
+          <div>{this.layoutManager.item_getDetailName(item)}</div>
         </div>
       );
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
+          {this.layoutManager.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
+      const domAfterMetaFlags = this.layoutManager.item_renderMetaFlags(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}
@@ -67,7 +67,7 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      return this.layoutManager.data.adapter.item_renderContextMenu(item);
+      return this.layoutManager.item_renderContextMenu(item);
     },
     _renderList() {
       const items = this.layoutManager.data_getItems();

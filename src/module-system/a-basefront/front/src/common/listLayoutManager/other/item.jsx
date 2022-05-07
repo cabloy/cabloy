@@ -1,9 +1,9 @@
 export default {
   methods: {
     async item_onAction(event, item, action) {
-      const _action = this.layoutManager.getAction(action);
+      const _action = this.getAction(action);
       if (!_action) return;
-      await this.$meta.util.performAction({ ctx: this.layoutManager, action: _action, item });
+      await this.$meta.util.performAction({ ctx: this, action: _action, item });
       this.$meta.util.swipeoutClose(event.currentTarget);
     },
     async item_onActionView(event, item) {
@@ -35,8 +35,8 @@ export default {
     item_getMetaSummary(item) {
       const arr = [];
       // atomClass
-      if (!this.layoutManager.container.atomClass) {
-        const atomClass = this.layoutManager.getAtomClass({
+      if (!this.container.atomClass) {
+        const atomClass = this.getAtomClass({
           module: item.module,
           atomClassName: item.atomClassName,
         });
@@ -71,8 +71,8 @@ export default {
       return flags;
     },
     item_getLabel(id) {
-      if (!this.layoutManager.base_userLabels) return null;
-      return this.layoutManager.base_userLabels[id];
+      if (!this.base_userLabels) return null;
+      return this.base_userLabels[id];
     },
     item_getActionColor(action, index) {
       if (index === 0) return 'orange';
@@ -80,7 +80,7 @@ export default {
       return 'blue';
     },
     item_getActionTitle(action, item) {
-      return this.layoutManager.getActionTitle(action, item);
+      return this.getActionTitle(action, item);
     },
     item_renderContextMenu(item, mode) {
       // domLeft
@@ -125,7 +125,7 @@ export default {
         for (let index in item._actions) {
           index = parseInt(index);
           const action = item._actions[index];
-          const _action = this.layoutManager.getAction(action);
+          const _action = this.getAction(action);
           let domActionTitle;
           if (mode === 'menu' || (!mode && this.$device.desktop)) {
             domActionTitle = <div slot="title">{this.item_getActionTitle(action, item)}</div>;
@@ -215,7 +215,7 @@ export default {
     },
     item_renderLabels(item) {
       const domLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
+      if (item.labels && this.base_userLabels) {
         for (const label of JSON.parse(item.labels)) {
           const _label = this.item_getLabel(label);
           domLabels.push(

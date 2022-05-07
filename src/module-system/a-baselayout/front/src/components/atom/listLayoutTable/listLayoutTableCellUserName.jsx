@@ -26,7 +26,7 @@ export default {
   methods: {
     _renderMedia() {
       const avatarFieldName = (this.mapper && this.mapper.avatar) || undefined;
-      return this.layoutManager.data.adapter.item_renderMedia(
+      return this.layoutManager.item_renderMedia(
         this.info.record,
         'avatar avatar24 eb-vertical-align',
         avatarFieldName

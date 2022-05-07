@@ -34,7 +34,7 @@ export default {
             <f7-list>{domListItem}</f7-list>
           </f7-card-header>
           <f7-card-content padding>
-            <div>{this.layoutManager.data.adapter.item_getMetaSummary(item)}</div>
+            <div>{this.layoutManager.item_getMetaSummary(item)}</div>
           </f7-card-content>
         </f7-card>
       );

@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      return this.layoutManager.data.adapter.item_onActionView(event, item);
+      return this.layoutManager.item_onActionView(event, item);
     },
     onActionSelectRemove(event, item) {
       // close
@@ -42,17 +42,17 @@ export default {
       // media
       const domMedia = (
         <div slot="media" class="avatar24-wrapper">
-          {this.layoutManager.data.adapter.item_renderMedia(item)}
+          {this.layoutManager.item_renderMedia(item)}
         </div>
       );
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
           <div class="mediaLabel">
-            <span>{this.layoutManager.data.adapter.item_getMetaMediaLabel(item)}</span>
+            <span>{this.layoutManager.item_getMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            {this.layoutManager.data.adapter.item_renderStats(item)}
+            {this.layoutManager.item_renderStats(item)}
             <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
           </div>
         </div>
@@ -60,18 +60,18 @@ export default {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{this.layoutManager.data.adapter.item_getAtomName(item)}</div>
+          <div>{this.layoutManager.item_getAtomName(item)}</div>
         </div>
       );
       // domSummary
       const domSummary = (
         <div slot="root-end" class="summary">
-          {this.layoutManager.data.adapter.item_getMetaSummary(item)}
+          {this.layoutManager.item_getMetaSummary(item)}
         </div>
       );
       // domAfter
-      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
-      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
+      const domAfterMetaFlags = this.layoutManager.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.item_renderLabels(item);
       const domAfter = (
         <div slot="after" class="after">
           {domAfterMetaFlags}

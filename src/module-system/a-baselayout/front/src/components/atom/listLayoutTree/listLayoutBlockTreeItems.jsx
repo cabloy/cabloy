@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     onNodePerformClick(event, context, node) {
-      return this.layoutManager.data.adapter.item_onActionView(event, node.data);
+      return this.layoutManager.item_onActionView(event, node.data);
     },
     async onNodePerformPopover(event, node) {
       const refTree = this.$refs.tree;
@@ -29,7 +29,7 @@ export default {
       await this.layoutManager.actions_fetchActions(item);
     },
     _renderListItemContextMenu(item) {
-      return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
+      return this.layoutManager.item_renderContextMenu(item, 'menu');
     },
     _renderNodeLabelStart(node) {
       const item = node.data;
@@ -41,8 +41,8 @@ export default {
     },
     _renderNodeAfter(node) {
       const item = node.data;
-      const domAfterMetaFlags = this.layoutManager.data.adapter.item_renderMetaFlags(item);
-      const domAfterLabels = this.layoutManager.data.adapter.item_renderLabels(item);
+      const domAfterMetaFlags = this.layoutManager.item_renderMetaFlags(item);
+      const domAfterLabels = this.layoutManager.item_renderLabels(item);
       const domPopover = (
         <eb-link
           iconF7="::more-horiz"

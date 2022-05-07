@@ -312,7 +312,7 @@ export default {
     },
     _renderListItemContextMenu() {
       const item = this.contextmenuRecord;
-      return this.layoutManager.data.adapter.item_renderContextMenu(item, 'menu');
+      return this.layoutManager.item_renderContextMenu(item, 'menu');
     },
     _renderTable() {
       return (
