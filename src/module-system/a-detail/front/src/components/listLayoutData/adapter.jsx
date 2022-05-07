@@ -60,8 +60,8 @@ export default {
     },
     getProviderConfig(providerName) {
       return this.$meta.util.getProperty(
-        this.layoutManager.base.config,
-        `render.list.info.data.adapter.providers.${providerName}`
+        this.layoutManager.layout.configFull,
+        `info.data.adapter.providers.${providerName}`
       );
     },
     _callMethod(methodName, ...args) {

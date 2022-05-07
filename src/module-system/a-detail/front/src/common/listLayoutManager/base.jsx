@@ -5,8 +5,6 @@ export default {
         ready: false,
         configDetailBase: null,
         configDetail: null,
-        config: null,
-        layoutConfig: null,
       },
     };
   },
@@ -19,13 +17,9 @@ export default {
   methods: {
     async base_init() {
       // layoutConfig
-      this.base.layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-basefront');
-    },
-    base_getLayoutConfigKeyCurrent() {
-      const detailClassKey = this.container.detailClass
-        ? `${this.container.detailClass.module}_${this.container.detailClass.detailClassName}`
-        : null;
-      return `detail.${detailClassKey}.render.list.layout.current.${this.$view.size}`;
+      await this.layout_initLayoutConfig();
+      // load detailClasses
+      await this.$store.dispatch('a/base/getDetailClasses');
     },
     base_prepareReadOptions() {
       // options
