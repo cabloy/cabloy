@@ -43,19 +43,6 @@ export default {
     this.container.resource = contextParams.resource;
   },
   render() {
-    return (
-      <eb-page
-        ptr
-        onPtrRefresh={this.page_onRefresh}
-        infinite
-        infinitePreloader={false}
-        onInfinite={this.page_onInfinite}
-      >
-        <eb-navbar title={this.page_getTitle()} eb-back-link="Back">
-          {this.layout_renderBlock({ blockName: 'title' })}
-        </eb-navbar>
-        {this.layout_renderLayout()}
-      </eb-page>
-    );
+    return this.layout_renderPage();
   },
 };

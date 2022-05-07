@@ -3,6 +3,12 @@ export default {
     return {};
   },
   methods: {
+    page_ptr() {
+      return true;
+    },
+    page_infinite() {
+      return true;
+    },
     page_onRefresh(done) {
       done && done();
       this.layout.instance && this.layout.instance.onPageRefresh(true);

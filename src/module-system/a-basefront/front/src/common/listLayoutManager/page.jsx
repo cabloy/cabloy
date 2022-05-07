@@ -3,6 +3,12 @@ export default {
     return {};
   },
   methods: {
+    page_ptr() {
+      return true;
+    },
+    page_infinite() {
+      return true;
+    },
     page_onGetTitle() {
       const atomClass = this.getAtomClass(this.container.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
