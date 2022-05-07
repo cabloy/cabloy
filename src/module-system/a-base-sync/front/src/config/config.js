@@ -31,19 +31,19 @@ export default {
             caption: {
               component: {
                 module: 'a-baselayout',
-                name: 'listLayoutBlockListCaption',
+                name: 'baseLayoutBlockCaption',
               },
             },
             title: {
               component: {
                 module: 'a-baselayout',
-                name: 'listLayoutBlockListTitle',
+                name: 'baseLayoutBlockTitle',
               },
             },
             subnavbar: {
               component: {
                 module: 'a-baselayout',
-                name: 'listLayoutBlockListSubnavbar',
+                name: 'baseLayoutBlockSubnavbar',
               },
             },
           },

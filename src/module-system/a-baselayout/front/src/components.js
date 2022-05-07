@@ -1,3 +1,7 @@
+// baseLayout
+import baseLayoutBlockCaption from './components/base/baseLayoutBlockCaption.jsx';
+import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
+import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
 // listLayoutCard
 import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx';
 import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
@@ -40,6 +44,10 @@ import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLay
 import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
 
 export default {
+  // baseLayout
+  baseLayoutBlockCaption,
+  baseLayoutBlockTitle,
+  baseLayoutBlockSubnavbar,
   // listLayoutCard
   listLayoutCard,
   listLayoutBlockCardItems,
