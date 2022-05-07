@@ -1,15 +1,8 @@
 export default {
   data() {
     return {
-      base: {
-        ready: false,
-      },
+      base: {},
     };
   },
-  methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
-    },
-  },
+  methods: {},
 };

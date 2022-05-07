@@ -2,7 +2,6 @@ export default {
   data() {
     return {
       base: {
-        ready: false,
         configAtomBase: null,
         configAtomCms: null,
         configAtom: null,
@@ -18,9 +17,6 @@ export default {
   computed: {
     base_ready() {
       return this.base.ready && this.base_userLabels && this.atomClassesAll && this.actionsAll;
-    },
-    base_user() {
-      return this.$store.state.auth.user.op;
     },
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
@@ -46,9 +42,7 @@ export default {
     this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
   },
   methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
+    async base_onInit() {
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
     },

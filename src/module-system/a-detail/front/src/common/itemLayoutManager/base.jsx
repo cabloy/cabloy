@@ -2,7 +2,6 @@ export default {
   data() {
     return {
       base: {
-        ready: false,
         configDetailBase: null,
         configDetail: null,
         //
@@ -18,11 +17,7 @@ export default {
     base_ready() {
       return this.base.ready && this.detailActionsAll;
     },
-    base_user() {
-      return this.$store.state.auth.user.op;
-    },
   },
-  created() {},
   mounted() {
     this.$meta.eventHub.$on('detail:action', this.base_onActionChanged);
   },
@@ -30,9 +25,7 @@ export default {
     this.$meta.eventHub.$off('detail:action', this.base_onActionChanged);
   },
   methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
+    async base_onInit() {
       // load detailClasses
       await this.$store.dispatch('a/base/getDetailClasses');
     },

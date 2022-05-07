@@ -2,22 +2,12 @@ export default {
   data() {
     return {
       base: {
-        ready: false,
         configMessageBase: null,
       },
     };
   },
-  computed: {
-    base_user() {
-      return this.$store.state.auth.user.op;
-    },
-  },
-  created() {},
+  computed: {},
   methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
-    },
     base_prepareSelectOptions() {
       // options
       let options = {

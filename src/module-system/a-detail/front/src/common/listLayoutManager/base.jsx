@@ -2,22 +2,14 @@ export default {
   data() {
     return {
       base: {
-        ready: false,
         configDetailBase: null,
         configDetail: null,
       },
     };
   },
-  computed: {
-    base_user() {
-      return this.$store.state.auth.user.op;
-    },
-  },
-  created() {},
+  computed: {},
   methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
+    async base_onInit() {
       // load detailClasses
       await this.$store.dispatch('a/base/getDetailClasses');
     },

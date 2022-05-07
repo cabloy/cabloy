@@ -2,16 +2,12 @@ export default {
   data() {
     return {
       base: {
-        ready: false,
         configMessageBase: null,
         // configMessage: null, // todo: later
       },
     };
   },
   computed: {
-    base_user() {
-      return this.$store.state.auth.user.op;
-    },
     base_messageClass() {
       const messageClass = this.container.messageClass;
       return {
@@ -20,12 +16,7 @@ export default {
       };
     },
   },
-  created() {},
   methods: {
-    async base_init() {
-      // layoutConfig
-      await this.layout_initLayoutConfig();
-    },
     base_prepareSelectOptions() {
       // options
       let options = {
