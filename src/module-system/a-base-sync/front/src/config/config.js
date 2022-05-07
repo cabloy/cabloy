@@ -22,4 +22,33 @@ export default {
       default: avatarUser,
     },
   },
+  layoutManager: {
+    base: {
+      info: {},
+      layouts: {
+        base: {
+          blocks: {
+            caption: {
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutBlockListCaption',
+              },
+            },
+            title: {
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutBlockListTitle',
+              },
+            },
+            subnavbar: {
+              component: {
+                module: 'a-baselayout',
+                name: 'listLayoutBlockListSubnavbar',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

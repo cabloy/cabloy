@@ -98,7 +98,9 @@ export default {
     async layout_prepareConfigLayout(layoutCurrent) {
       // configFull
       if (!this.layout.configFull) {
-        this.layout.configFull = await this.layout_onPrepareConfigFull();
+        const configFull = await this.layout_onPrepareConfigFull();
+        const configBase = this.$meta.config.modules['a-base'].layoutManager.base;
+        this.layout.configFull = this.$meta.util.extend({}, configBase, configFull);
       }
       // default
       const layoutDefault = this.layout_getDefault();
