@@ -6,9 +6,9 @@ import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
 import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
 import baseLayoutBlockMain from './components/base/baseLayoutBlockMain.jsx';
 import baseLayoutBlockListItems from './components/base/baseLayoutBlockListItems.jsx';
+import baseLayoutBlockCardItems from './components/base/baseLayoutBlockCardItems.jsx';
 // listLayoutCard
 import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx';
-import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
@@ -50,9 +50,9 @@ export default {
   baseLayoutBlockSubnavbar,
   baseLayoutBlockMain,
   baseLayoutBlockListItems,
+  baseLayoutBlockCardItems,
   // listLayoutCard
   listLayoutCard,
-  listLayoutBlockCardItems,
   listLayoutBlockCardItem,
   // listLayoutList
   listLayoutBlockListCaption,

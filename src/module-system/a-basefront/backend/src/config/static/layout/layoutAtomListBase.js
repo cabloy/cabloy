@@ -74,8 +74,9 @@ module.exports = app => {
           items: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockCardItems',
+              name: 'baseLayoutBlockCardItems',
             },
+            itemKey: 'atomId',
           },
           item: {
             component: {
