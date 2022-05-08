@@ -105,8 +105,9 @@ module.exports = app => {
           items: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockListItems',
+              name: 'baseLayoutBlockListItems',
             },
+            itemKey: 'atomId',
           },
           item: {
             component: {

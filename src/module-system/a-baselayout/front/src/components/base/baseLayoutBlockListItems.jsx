@@ -18,12 +18,13 @@ export default {
   },
   methods: {
     _renderList() {
+      const key = this.blockConfig.itemKey;
       const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         const domListItem = this.layoutManager.layout_renderBlock({
           blockName: 'item',
-          key: item.atomId,
+          key: item[key],
           info: { item },
           listItem: true,
         });
