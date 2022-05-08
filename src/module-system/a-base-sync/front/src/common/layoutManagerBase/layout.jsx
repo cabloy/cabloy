@@ -156,8 +156,10 @@ export default {
     },
     layout_renderComponent() {
       if (!this.base.ready) return null;
+      if (!this.layout.config) return null;
       return (
         <eb-component
+          label={this.layout.current}
           module={this.layout.config.component.module}
           name={this.layout.config.component.name}
           options={this.layout_getComponentOptions()}

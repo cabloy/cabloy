@@ -1,5 +1,8 @@
 export default {
   props: {
+    label: {
+      type: String,
+    },
     module: {
       type: String,
     },
@@ -19,11 +22,13 @@ export default {
       debounceTimerId: 0,
     };
   },
-  watch: {
-    module() {
-      this.prepareComponent();
+  computed: {
+    labelUnique() {
+      return `${this.label}_${this.module}_${this.name}`;
     },
-    name() {
+  },
+  watch: {
+    labelUnique() {
       this.prepareComponent();
     },
   },
