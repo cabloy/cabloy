@@ -1,12 +1,13 @@
-// baseLayout
-import baseLayoutDefault from './components/base/baseLayoutDefault.jsx';
-import baseLayoutList from './components/base/baseLayoutList.jsx';
-import baseLayoutBlockCaption from './components/base/baseLayoutBlockCaption.jsx';
-import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
-import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
-import baseLayoutBlockMain from './components/base/baseLayoutBlockMain.jsx';
-import baseLayoutBlockListItems from './components/base/baseLayoutBlockListItems.jsx';
-import baseLayoutBlockCardItems from './components/base/baseLayoutBlockCardItems.jsx';
+// baseLayoutDefault
+import baseLayoutDefault from './components/base/baseLayoutDefault/baseLayoutDefault.jsx';
+import baseLayoutBlockCaption from './components/base/baseLayoutDefault/baseLayoutBlockCaption.jsx';
+import baseLayoutBlockTitle from './components/base/baseLayoutDefault/baseLayoutBlockTitle.jsx';
+import baseLayoutBlockSubnavbar from './components/base/baseLayoutDefault/baseLayoutBlockSubnavbar.jsx';
+import baseLayoutBlockMain from './components/base/baseLayoutDefault/baseLayoutBlockMain.jsx';
+import baseLayoutBlockListItems from './components/base/baseLayoutDefault/baseLayoutBlockListItems.jsx';
+import baseLayoutBlockCardItems from './components/base/baseLayoutDefault/baseLayoutBlockCardItems.jsx';
+// baseLayoutList
+import baseLayoutList from './components/base/baseLayoutList/baseLayoutList.jsx';
 // listLayoutCard
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
