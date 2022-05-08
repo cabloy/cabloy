@@ -53,7 +53,7 @@ module.exports = app => {
           title: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockListTitle',
+              name: 'baseLayoutBlockListTitle',
             },
           },
           subnavbar: {

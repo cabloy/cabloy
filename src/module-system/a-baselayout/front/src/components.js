@@ -6,6 +6,7 @@ import baseLayoutBlockSubnavbar from './components/base/baseLayoutDefault/baseLa
 import baseLayoutBlockMain from './components/base/baseLayoutDefault/baseLayoutBlockMain.jsx';
 // baseLayoutList
 import baseLayoutList from './components/base/baseLayoutList/baseLayoutList.jsx';
+import baseLayoutBlockListTitle from './components/base/baseLayoutList/baseLayoutBlockListTitle.jsx';
 import baseLayoutBlockListSubnavbar from './components/base/baseLayoutList/baseLayoutBlockListSubnavbar.jsx';
 import baseLayoutBlockListItems from './components/base/baseLayoutList/baseLayoutBlockListItems.jsx';
 import baseLayoutBlockCardItems from './components/base/baseLayoutList/baseLayoutBlockCardItems.jsx';
@@ -13,7 +14,6 @@ import baseLayoutBlockCardItems from './components/base/baseLayoutList/baseLayou
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
-import listLayoutBlockListTitle from './components/atom/listLayoutList/listLayoutBlockListTitle.jsx';
 import listLayoutBlockListItem from './components/atom/listLayoutList/listLayoutBlockListItem.jsx';
 import listLayoutBlockSelectTitle from './components/atom/listLayoutList/listLayoutBlockSelectTitle.jsx';
 import listLayoutBlockSelectItems from './components/atom/listLayoutList/listLayoutBlockSelectItems.jsx';
@@ -50,6 +50,7 @@ export default {
   baseLayoutBlockMain,
   // baseLayoutList
   baseLayoutList,
+  baseLayoutBlockListTitle,
   baseLayoutBlockListSubnavbar,
   baseLayoutBlockListItems,
   baseLayoutBlockCardItems,
@@ -57,7 +58,6 @@ export default {
   listLayoutBlockCardItem,
   // listLayoutList
   listLayoutBlockListCaption,
-  listLayoutBlockListTitle,
   listLayoutBlockListItem,
   listLayoutBlockSelectTitle,
   listLayoutBlockSelectItems,
