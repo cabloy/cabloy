@@ -17,6 +17,8 @@ import baseLayoutBlockTableBottombar from './components/base/baseLayoutTable/bas
 import baseLayoutBlockTableItems from './components/base/baseLayoutTable/baseLayoutBlockTableItems.jsx';
 // baseLayoutTree
 import baseLayoutTree from './components/base/baseLayoutTree/baseLayoutTree.jsx';
+// baseLayoutTreeTable
+import baseLayoutTreeTable from './components/base/baseLayoutTreeTable/baseLayoutTreeTable.jsx';
 // listLayoutCard
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
@@ -32,8 +34,6 @@ import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listL
 // listLayoutTree
 import listLayoutBlockTreeTitle from './components/atom/listLayoutTree/listLayoutBlockTreeTitle.jsx';
 import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayoutBlockTreeItems.jsx';
-// listLayoutTreeTable
-import listLayoutTreeTable from './components/atom/listLayoutTreeTable/listLayoutTreeTable.jsx';
 // itemLayoutDefault
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
 // resourceTreeLayoutAccordion
@@ -64,6 +64,8 @@ export default {
   baseLayoutBlockTableItems,
   // baseLayoutTree
   baseLayoutTree,
+  // baseLayoutTreeTable
+  baseLayoutTreeTable,
   // listLayoutCard
   listLayoutBlockCardItem,
   // listLayoutList
@@ -79,8 +81,6 @@ export default {
   // listLayoutTree
   listLayoutBlockTreeTitle,
   listLayoutBlockTreeItems,
-  // listLayoutTreeTable
-  listLayoutTreeTable,
   // itemLayoutDefault
   itemLayoutBlockDefaultCaption,
   // resourceTreeLayoutAccordion
