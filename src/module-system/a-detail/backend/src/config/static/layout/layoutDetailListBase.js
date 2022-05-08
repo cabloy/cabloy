@@ -50,6 +50,7 @@ module.exports = app => {
             },
             itemKey: 'detailId',
             enableTableHeight: false,
+            sorter: false,
             columns: [
               {
                 dataIndex: 'detailLineNo',
@@ -79,7 +80,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
