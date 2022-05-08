@@ -133,7 +133,7 @@ export default {
         this.data.adapter.providerName = null;
       }
       // prepare
-      layoutCurrent = this.layout_prepareConfigLayout(layoutCurrent);
+      layoutCurrent = await this.layout_prepareConfigLayout(layoutCurrent);
       if (!layoutCurrent) {
         return false;
       }
