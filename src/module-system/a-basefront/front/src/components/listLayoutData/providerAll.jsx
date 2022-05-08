@@ -30,7 +30,7 @@ export default {
     },
     onPageRefresh(/* force*/) {
       this.onPageClear();
-      this.loadDetails();
+      this.loadItemsAll();
     },
     onPageInfinite() {
       // do nothing
@@ -44,14 +44,16 @@ export default {
         total: 0,
       };
       this.loading = false;
+      // callback
+      if (this.layoutManager.data_provider_onItemsClear) {
+        this.layoutManager.data_provider_onItemsClear();
+      }
     },
-    async loadDetails() {
+    async loadItemsAll() {
       this.loading = true;
       try {
-        // params
-        const params = this.layoutManager.base_prepareSelectParams();
         // fetch
-        const res = await this.$api.post('/a/detail/detail/select', params);
+        const res = await this.layoutManager.data_provider_onLoadItemsAll();
         this.items = res.list;
         this.info = {
           pageCurrent: 1,

@@ -76,7 +76,10 @@ export default {
       // do nothing
     },
     onPageClear() {
-      // do nothing
+      // callback
+      if (this.layoutManager.data_provider_onItemsClear) {
+        this.layoutManager.data_provider_onItemsClear();
+      }
     },
     getTreeviewData() {
       return this.treeviewData;

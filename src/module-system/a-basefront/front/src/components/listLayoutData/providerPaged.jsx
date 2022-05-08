@@ -40,8 +40,6 @@ export default {
       // do nothing
     },
     onPageClear() {
-      // eslint-disable-next-line
-      this.layoutManager.bulk_clearSelectedAtoms();
       // items
       this.loading = false;
       this.itemsPages = {};
@@ -51,6 +49,10 @@ export default {
         total: 0,
       };
       this._changePageCurrent(0);
+      // callback
+      if (this.layoutManager.data_provider_onItemsClear) {
+        this.layoutManager.data_provider_onItemsClear();
+      }
     },
     getItems() {
       return this.dataSource || [];

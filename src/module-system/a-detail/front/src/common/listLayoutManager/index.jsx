@@ -3,6 +3,7 @@ import Base from './base.jsx';
 import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Actions from './actions.jsx';
+import Data from './data.jsx';
 import Event from './other/event.jsx';
 import Item from './other/item.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
@@ -29,6 +30,7 @@ export default {
     Layout,
     Bulk,
     Actions,
+    Data,
     Event,
     Item,
   ],

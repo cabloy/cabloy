@@ -46,19 +46,19 @@ export default {
       this.loadMoreComponent.clear();
     },
     onLoadClear(done) {
-      // eslint-disable-next-line
-      this.layoutManager.bulk_clearSelectedAtoms();
       // items
       this.items = [];
+      // callback
+      if (this.layoutManager.data_provider_onItemsClear) {
+        this.layoutManager.data_provider_onItemsClear();
+      }
+      // done
       done();
     },
     async onLoadMore({ index }) {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // index
-      params.options.page = { index };
       // fetch
-      const res = await this.$api.post('/a/base/atom/select', params);
+      const page = { index };
+      const res = await this.layoutManager.data_provider_onLoadItemsPage({ page });
       this.items = this.items.concat(res.list);
       return res;
     },
