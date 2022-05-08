@@ -50,8 +50,5 @@ export default {
       // ok
       return params;
     },
-    base_getItems() {
-      return this.layout.instance ? this.layout.instance.getItems() : [];
-    },
   },
 };
