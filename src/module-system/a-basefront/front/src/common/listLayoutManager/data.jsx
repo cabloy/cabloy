@@ -7,7 +7,11 @@ export default {
       // bulk
       this.bulk_closeSelecting();
     },
-    async data_provider_onItemsClear() {
+    data_provider_onItemsClear() {
+      // bulk
+      this.bulk_clearSelectedAtoms();
+    },
+    data_provider_onPageCurrentChanged() {
       // bulk
       this.bulk_clearSelectedAtoms();
     },

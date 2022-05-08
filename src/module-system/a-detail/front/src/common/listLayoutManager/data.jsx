@@ -6,7 +6,10 @@ export default {
     async data_adapter_onProviderSwitch() {
       // do nothing
     },
-    async data_provider_onItemsClear() {
+    data_provider_onItemsClear() {
+      // do nothing
+    },
+    data_provider_onPageCurrentChanged() {
       // do nothing
     },
     async data_provider_onLoadItemsAll() {

@@ -49,10 +49,6 @@ export default {
         total: 0,
       };
       this._changePageCurrent(0);
-      // callback
-      if (this.layoutManager.data_provider_onItemsClear) {
-        this.layoutManager.data_provider_onItemsClear();
-      }
     },
     getItems() {
       return this.dataSource || [];
@@ -90,8 +86,6 @@ export default {
     gotoPage(pageNum) {
       // check if same
       if (this.info.pageCurrent === pageNum) return;
-      // eslint-disable-next-line
-      this.layoutManager.bulk_clearSelectedAtoms();
       const items = this.itemsPages[pageNum];
       if (items) {
         this._changePageCurrent(pageNum);
@@ -140,8 +134,14 @@ export default {
       return res.list;
     },
     _changePageCurrent(pageNum) {
+      // page current
       this.info.pageCurrent = pageNum;
-      this.layoutManager.$emit('providerPaged:pageCurrentChanged', { pageCurrent: pageNum });
+      // callback
+      if (this.layoutManager.data_provider_onPageCurrentChanged) {
+        this.layoutManager.data_provider_onPageCurrentChanged(this.info);
+      }
+      // event
+      this.layoutManager.$emit('providerPaged:pageCurrentChanged', this.info);
     },
   },
 };
