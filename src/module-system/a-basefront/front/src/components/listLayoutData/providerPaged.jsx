@@ -86,6 +86,9 @@ export default {
     replaceItem(bundle, itemNew) {
       this.$set(bundle.items, bundle.index, itemNew);
     },
+    renderLoadMore() {
+      return null;
+    },
     gotoPage(pageNum) {
       // check if same
       if (this.info.pageCurrent === pageNum) return;

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
+import Data from './data.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 
 // container: {
@@ -13,6 +14,7 @@ export default {
     Base,
     Page,
     Layout,
+    Data,
   ],
   data() {
     return {};
@@ -24,6 +26,7 @@ export default {
     async index_init() {
       await this.base_init();
       await this.layout_prepareConfigLayout();
+      await this.data_adapterInit();
       this.base.ready = true;
     },
   },

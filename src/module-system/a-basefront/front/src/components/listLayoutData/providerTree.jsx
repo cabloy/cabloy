@@ -167,6 +167,9 @@ export default {
         node.data = itemNew;
       }
     },
+    renderLoadMore() {
+      return null;
+    },
     _replaceItemSorting(itemOld, itemNew) {
       // fieldName
       const fieldName = this.providerConfig.fields && this.providerConfig.fields.sorting;

@@ -99,5 +99,8 @@ export default {
     replaceItem(bundle, itemNew) {
       this.$set(bundle.items, bundle.index, itemNew);
     },
+    renderLoadMore() {
+      return null;
+    },
   },
 };

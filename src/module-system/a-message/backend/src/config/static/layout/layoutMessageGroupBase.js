@@ -12,20 +12,18 @@ module.exports = app => {
     },
     layouts: {
       base: {
-        blocks: {
-          title: {
-            component: {
-              module: 'a-message',
-              name: 'messageGroupLayoutBlockListTitle',
-            },
-          },
-        },
+        blocks: {},
       },
       list: {
         title: 'LayoutList',
         component: {
-          module: 'a-message',
-          name: 'messageGroupLayoutList',
+          module: 'a-baselayout',
+          name: 'baseLayoutList',
+        },
+        subnavbar: false,
+        providerOptions: {
+          providerName: 'all',
+          autoInit: true,
         },
         blocks: {
           items: {
