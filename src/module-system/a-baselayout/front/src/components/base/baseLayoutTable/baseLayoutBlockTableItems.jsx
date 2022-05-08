@@ -27,6 +27,12 @@ export default {
     };
   },
   computed: {
+    itemKey() {
+      return this.blockConfig.itemKey;
+    },
+    selectedItemsKey() {
+      return this.blockConfig.selectedItemsKey || 'selectedItems';
+    },
     toolbar() {
       return this.layoutManager.bottombar.enable;
     },
@@ -39,7 +45,7 @@ export default {
       const rowKeys = [];
       treeviewData.treeDown(null, node => {
         if (node.attrs.opened) {
-          rowKeys.push(node.data.atomId);
+          rowKeys.push(node.data[this.itemKey]);
         }
       });
       return rowKeys;
@@ -71,12 +77,17 @@ export default {
       return this.layoutManager.layout_extend_onTableColumns({ columns: _columns });
     },
     rowSelection() {
-      if (!this.layoutManager.bulk.selecting) return null;
-      const selectedRowKeys = this.layoutManager.bulk.selectedAtoms.map(item => item.atomId);
+      if (!this.enableSelection) return null;
+      const selectedRowKeys = this.layoutManager.bulk[this.selectedItemsKey].map(item => item[this.itemKey]);
       return {
         selectedRowKeys,
         onChange: this.onSelectChange,
       };
+    },
+    enableSelection() {
+      return (
+        this.layoutManager.bulk && this.layoutManager.bulk[this.selectedItemsKey] && this.layoutManager.bulk.selecting
+      );
     },
   },
   mounted() {
@@ -122,8 +133,8 @@ export default {
     onSelectChange(selectedRowKeys) {
       const items = this.layoutManager.base_getItems();
       // eslint-disable-next-line
-      this.layoutManager.bulk.selectedAtoms = items.filter(item => {
-        return selectedRowKeys.findIndex(atomId => atomId === item.atomId) > -1;
+      this.layoutManager.bulk[this.selectedItemsKey] = items.filter(item => {
+        return selectedRowKeys.findIndex(atomId => atomId === item[this.itemKey]) > -1;
       });
     },
     onSwipeoutOpened(event, item) {
@@ -319,7 +330,7 @@ export default {
           bordered
           rowSelection={this.rowSelection}
           columns={this.columns}
-          rowKey={item => item.atomId}
+          rowKey={item => item[this.itemKey]}
           expandedRowKeys={this.expandedRowKeys}
           dataSource={this.dataSource}
           pagination={false}

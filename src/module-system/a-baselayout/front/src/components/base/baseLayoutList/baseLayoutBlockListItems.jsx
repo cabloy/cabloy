@@ -16,15 +16,19 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    itemKey() {
+      return this.blockConfig.itemKey;
+    },
+  },
   methods: {
     _renderList() {
-      const key = this.blockConfig.itemKey;
       const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         const domListItem = this.layoutManager.layout_renderBlock({
           blockName: 'item',
-          key: item[key],
+          key: item[this.itemKey],
           info: { item },
           listItem: true,
         });
