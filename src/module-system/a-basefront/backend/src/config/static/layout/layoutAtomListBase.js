@@ -125,7 +125,10 @@ module.exports = app => {
         title: 'LayoutTable',
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutTable',
+          name: 'baseLayoutTable',
+        },
+        subnavbar: {
+          policyDefault: true,
         },
         blocks: {
           items: {

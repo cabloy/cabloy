@@ -25,14 +25,17 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      this.layoutManager.subnavbar_policyDefault();
+      if (this.layoutConfig.subnavbar && this.layoutConfig.subnavbar.policyDefault) {
+        this.layoutManager.subnavbar_policyDefault();
+      }
       // eslint-disable-next-line
       this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
       // provider switch
-      await this.layoutManager.data_providerSwitch({
+      const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'paged',
         autoInit: true,
-      });
+      };
+      await this.layoutManager.data_providerSwitch(providerOptions);
       // instance
       await this.layoutManager.layout_setInstance(this);
     },
@@ -43,9 +46,10 @@ export default {
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
+      const blockName = this.layoutConfig.blockItems || 'items';
       return (
         <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
-          {this.layoutManager.layout_renderBlock({ blockName: 'items' })}
+          {this.layoutManager.layout_renderBlock({ blockName })}
         </a-config-provider>
       );
     },
