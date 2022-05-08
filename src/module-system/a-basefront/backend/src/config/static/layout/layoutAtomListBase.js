@@ -131,8 +131,10 @@ module.exports = app => {
           items: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockTableItems',
+              name: 'baseLayoutBlockTableItems',
             },
+            itemKey: 'atomId',
+            selectedItemsKey: 'selectedAtoms',
             columns: [
               {
                 dataIndex: 'atomName',
@@ -219,8 +221,10 @@ module.exports = app => {
           items: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockTableItems',
+              name: 'baseLayoutBlockTableItems',
             },
+            itemKey: 'atomId',
+            selectedItemsKey: 'selectedAtoms',
             sorter: false,
             columns: [
               {
