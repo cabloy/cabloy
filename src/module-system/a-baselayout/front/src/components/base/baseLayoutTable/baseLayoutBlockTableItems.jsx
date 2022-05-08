@@ -131,15 +131,15 @@ export default {
       const { field, order = 'ascend' } = sorter;
       const currentOrder = this._columnSorterCurrent(field);
       if (currentOrder === order) return;
-      const atomOrder = this._columnSorterFind(field);
-      this.layoutManager.order_onPerformChange(null, atomOrder);
+      const _order = this._columnSorterFind(field);
+      this.layoutManager.order_onPerformChange(null, _order);
     },
     onSelectChange(selectedRowKeys) {
       if (!this.enableSelection) return;
       const items = this.layoutManager.base_getItems();
       // eslint-disable-next-line
       this.layoutManager.bulk[this.selectedItemsKey] = items.filter(item => {
-        return selectedRowKeys.findIndex(atomId => atomId === item[this.itemKey]) > -1;
+        return selectedRowKeys.findIndex(rowKey => rowKey === item[this.itemKey]) > -1;
       });
     },
     onSwipeoutOpened(event, item) {
