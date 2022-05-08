@@ -59,7 +59,7 @@ module.exports = app => {
           subnavbar: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockListSubnavbar',
+              name: 'baseLayoutBlockListSubnavbar',
             },
           },
         },

@@ -4,16 +4,16 @@ import baseLayoutBlockCaption from './components/base/baseLayoutDefault/baseLayo
 import baseLayoutBlockTitle from './components/base/baseLayoutDefault/baseLayoutBlockTitle.jsx';
 import baseLayoutBlockSubnavbar from './components/base/baseLayoutDefault/baseLayoutBlockSubnavbar.jsx';
 import baseLayoutBlockMain from './components/base/baseLayoutDefault/baseLayoutBlockMain.jsx';
-import baseLayoutBlockListItems from './components/base/baseLayoutDefault/baseLayoutBlockListItems.jsx';
-import baseLayoutBlockCardItems from './components/base/baseLayoutDefault/baseLayoutBlockCardItems.jsx';
 // baseLayoutList
 import baseLayoutList from './components/base/baseLayoutList/baseLayoutList.jsx';
+import baseLayoutBlockListSubnavbar from './components/base/baseLayoutList/baseLayoutBlockListSubnavbar.jsx';
+import baseLayoutBlockListItems from './components/base/baseLayoutList/baseLayoutBlockListItems.jsx';
+import baseLayoutBlockCardItems from './components/base/baseLayoutList/baseLayoutBlockCardItems.jsx';
 // listLayoutCard
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
 import listLayoutBlockListTitle from './components/atom/listLayoutList/listLayoutBlockListTitle.jsx';
-import listLayoutBlockListSubnavbar from './components/atom/listLayoutList/listLayoutBlockListSubnavbar.jsx';
 import listLayoutBlockListItem from './components/atom/listLayoutList/listLayoutBlockListItem.jsx';
 import listLayoutBlockSelectTitle from './components/atom/listLayoutList/listLayoutBlockSelectTitle.jsx';
 import listLayoutBlockSelectItems from './components/atom/listLayoutList/listLayoutBlockSelectItems.jsx';
@@ -42,13 +42,15 @@ import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLay
 import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
 
 export default {
-  // baseLayout
+  // baseLayoutDefault
   baseLayoutDefault,
-  baseLayoutList,
   baseLayoutBlockCaption,
   baseLayoutBlockTitle,
   baseLayoutBlockSubnavbar,
   baseLayoutBlockMain,
+  // baseLayoutList
+  baseLayoutList,
+  baseLayoutBlockListSubnavbar,
   baseLayoutBlockListItems,
   baseLayoutBlockCardItems,
   // listLayoutCard
@@ -56,7 +58,6 @@ export default {
   // listLayoutList
   listLayoutBlockListCaption,
   listLayoutBlockListTitle,
-  listLayoutBlockListSubnavbar,
   listLayoutBlockListItem,
   listLayoutBlockSelectTitle,
   listLayoutBlockSelectItems,
