@@ -105,32 +105,25 @@ export default {
           this.layoutManager.$view.toast.show({ text: err.message });
         });
     },
-    _loadTotal() {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // fetch
+    async _loadTotal() {
       this.loading = true;
-      this.$api
-        .post('/a/base/atom/count', params)
-        .then(res => {
-          this.loading = false;
-          this.info.total = res;
-          if (this.info.total === 0) return;
-          // page 1
-          this.gotoPage(1);
-        })
-        .catch(err => {
-          this.layoutManager.$view.toast.show({ text: err.message });
-          this.loading = false;
-        });
+      try {
+        // fetch
+        const res = await this.layoutManager.data_provider_onLoadItemsCount();
+        this.loading = false;
+        this.info.total = res;
+        if (this.info.total === 0) return;
+        // page 1, not await
+        this.gotoPage(1);
+      } catch (err) {
+        this.layoutManager.$view.toast.show({ text: err.message });
+        this.loading = false;
+      }
     },
     async _loadMore({ index, size }) {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // index
-      params.options.page = { index, size };
       // fetch
-      const res = await this.$api.post('/a/base/atom/select', params);
+      const page = { index, size };
+      const res = await this.layoutManager.data_provider_onLoadItemsPage({ page });
       return res.list;
     },
     _changePageCurrent(pageNum) {

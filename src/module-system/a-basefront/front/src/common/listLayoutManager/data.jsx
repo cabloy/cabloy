@@ -16,9 +16,13 @@ export default {
       this.bulk_clearSelectedAtoms();
     },
     async data_provider_onLoadItemsPage({ page }) {
-      const params = this.layoutManager.base_prepareSelectParams();
+      const params = this.base_prepareSelectParams();
       params.options.page = page;
       return await this.$api.post('/a/base/atom/select', params);
+    },
+    async data_provider_onLoadItemsCount() {
+      const params = this.base_prepareSelectParams();
+      return await this.$api.post('/a/base/atom/count', params);
     },
   },
 };
