@@ -68,7 +68,10 @@ module.exports = app => {
         title: 'LayoutCard',
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutCard',
+          name: 'baseLayoutList',
+        },
+        subnavbar: {
+          policyDefault: true,
         },
         blocks: {
           items: {
