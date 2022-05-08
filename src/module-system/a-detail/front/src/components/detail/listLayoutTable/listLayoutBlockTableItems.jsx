@@ -119,7 +119,7 @@ export default {
   },
   render() {
     return (
-      <div class="detai-list-layout-table-container">
+      <div class="detail-list-layout-table-container">
         {this._renderTable()}
         {this._renderListItemContextMenu()}
       </div>
