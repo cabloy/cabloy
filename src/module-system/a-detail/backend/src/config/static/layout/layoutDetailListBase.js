@@ -45,9 +45,11 @@ module.exports = app => {
         blocks: {
           items: {
             component: {
-              module: 'a-detail',
-              name: 'listLayoutBlockTableItems',
+              module: 'a-baselayout',
+              name: 'baseLayoutBlockTableItems',
             },
+            itemKey: 'detailId',
+            enableTableHeight: false,
             columns: [
               {
                 dataIndex: 'detailLineNo',

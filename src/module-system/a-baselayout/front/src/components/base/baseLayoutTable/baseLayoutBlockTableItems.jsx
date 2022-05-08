@@ -33,6 +33,9 @@ export default {
     selectedItemsKey() {
       return this.blockConfig.selectedItemsKey || 'selectedItems';
     },
+    enableTableHeight() {
+      return this.blockConfig.enableTableHeight !== false;
+    },
     toolbar() {
       return this.layoutManager.bottombar.enable;
     },
@@ -337,6 +340,10 @@ export default {
       return this.layoutManager.item_renderContextMenu(item, 'menu');
     },
     _renderTable() {
+      const scroll = {};
+      if (this.enableTableHeight) {
+        scroll.y = this.tableHeight;
+      }
       return (
         <a-table
           bordered
@@ -346,7 +353,7 @@ export default {
           expandedRowKeys={this.expandedRowKeys}
           dataSource={this.dataSource}
           pagination={false}
-          scroll={{ y: this.tableHeight }}
+          scroll={scroll}
           onChange={this.onTableChange}
           customRow={this._customRow}
           expandIcon={this._expandIcon}
