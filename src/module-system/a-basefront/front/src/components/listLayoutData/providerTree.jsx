@@ -117,23 +117,23 @@ export default {
     gotoPage(/* pageNum*/) {
       // do nothing
     },
-    findItem(atomId) {
-      const node = this._findNodeByAtomId(atomId);
+    findItem(key) {
+      const node = this._findNodeByKey(key);
       const item = node ? node.data : null;
       return { item };
       // const node = this.treeviewData.find(null, item => {
-      //   return item.data.atomId === atomId;
+      //   return item.data[this.key] === key;
       // });
       // const nodeParent = node.parent;
       // const items = nodeParent.children.map(node => {
       //   return node.data;
       // });
-      // const index = items.findIndex(item => item.atomId === atomId);
+      // const index = items.findIndex(item => item[this.key] === key);
       // return { items, index };
     },
     spliceItem(bundle) {
       const item = bundle.item;
-      const node = this._findNodeByAtomId(item.atomId);
+      const node = this._findNodeByKey(item[this.key]);
       const nodeParent = node.parent;
       if (node) {
         this.treeviewData.removeNode(node);
@@ -150,7 +150,7 @@ export default {
     },
     replaceItem(bundle, itemNew) {
       const node = this.treeviewData.find(null, item => {
-        return item.data.atomId === itemNew.atomId;
+        return item.data[this.key] === itemNew[this.key];
       });
       if (!node) return;
       const itemOld = node.data;
@@ -172,7 +172,7 @@ export default {
       this._addChild(node.parentId);
     },
     moveNode({ key, node }) {
-      const bundle = this.findItem(key.atomId);
+      const bundle = this.findItem(key[this.key]);
       this.spliceItem(bundle);
       this.addChildNode({ key, node });
     },
@@ -189,9 +189,9 @@ export default {
       if (!node) return;
       this.treeviewData.reloadNode(node, nodeNew);
     },
-    _findNodeByAtomId(atomId) {
-      if (!atomId) return null;
-      return this.treeviewData.find(null, item => item.data.atomId === atomId);
+    _findNodeByKey(key) {
+      if (!key) return null;
+      return this.treeviewData.find(null, item => item.data[this.key] === key);
     },
     _findNodeByNodeId(nodeId) {
       if (nodeId === undefined) return null;

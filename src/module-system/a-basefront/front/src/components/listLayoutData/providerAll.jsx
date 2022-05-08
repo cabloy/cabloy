@@ -16,6 +16,11 @@ export default {
       loading: false,
     };
   },
+  computed: {
+    key() {
+      return this.layoutManager.data.provider.key;
+    },
+  },
   beforeDestroy() {},
   methods: {
     async switch(options) {
@@ -82,8 +87,8 @@ export default {
     gotoPage(/* pageNum*/) {
       // do nothing
     },
-    findItem(detailId) {
-      const index = this.items.findIndex(item => item.detailId === detailId);
+    findItem(key) {
+      const index = this.items.findIndex(item => item[this.key] === key);
       const item = index === -1 ? null : this.items[index];
       return { pageNum: 1, items: this.items, index, item };
     },

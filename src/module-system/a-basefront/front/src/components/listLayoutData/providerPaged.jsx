@@ -17,6 +17,9 @@ export default {
     };
   },
   computed: {
+    key() {
+      return this.layoutManager.data.provider.key;
+    },
     dataSource() {
       return this.itemsPages[this.info.pageCurrent];
     },
@@ -59,10 +62,10 @@ export default {
     getPageInfo() {
       return this.info;
     },
-    findItem(atomId) {
+    findItem(key) {
       for (const pageNum in this.itemsPages) {
         const items = this.itemsPages[pageNum];
-        const index = items.findIndex(item => item.atomId === atomId);
+        const index = items.findIndex(item => item[this.key] === key);
         const item = index === -1 ? null : items[index];
         if (index !== -1) {
           return {

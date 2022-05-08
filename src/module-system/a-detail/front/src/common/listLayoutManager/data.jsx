@@ -1,6 +1,12 @@
 export default {
   data() {
-    return {};
+    return {
+      data: {
+        provider: {
+          key: 'detailId',
+        },
+      },
+    };
   },
   methods: {
     async data_adapter_onProviderSwitch() {

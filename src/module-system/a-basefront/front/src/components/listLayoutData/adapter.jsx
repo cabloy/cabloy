@@ -108,13 +108,13 @@ export default {
     gotoPage(pageNum) {
       return this._callMethod('gotoPage', pageNum);
     },
-    findItem(atomId) {
-      const res = this._callMethod('findItem', atomId);
+    findItem(key) {
+      const res = this._callMethod('findItem', key);
       if (res) return res;
       return { pageNum: null, items: null, index: -1, item: null };
     },
-    findItemProvier(provider, atomId) {
-      const res = this._callMethodProvider(provider, 'findItem', atomId);
+    findItemProvier(provider, key) {
+      const res = this._callMethodProvider(provider, 'findItem', key);
       if (res) return res;
       return { pageNum: null, items: null, index: -1, item: null };
     },

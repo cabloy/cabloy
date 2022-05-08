@@ -14,6 +14,11 @@ export default {
       items: [],
     };
   },
+  computed: {
+    key() {
+      return this.layoutManager.data.provider.key;
+    },
+  },
   beforeDestroy() {
     if (this.loadMoreComponent) {
       this.loadMoreComponent.$destroy();
@@ -74,8 +79,8 @@ export default {
     gotoPage(/* pageNum*/) {
       // do nothing
     },
-    findItem(atomId) {
-      const index = this.items.findIndex(item => item.atomId === atomId);
+    findItem(key) {
+      const index = this.items.findIndex(item => item[this.key] === key);
       const item = index === -1 ? null : this.items[index];
       return { pageNum: 1, items: this.items, index, item };
     },
