@@ -16,6 +16,11 @@ export default {
       treeviewData: null,
     };
   },
+  computed: {
+    key() {
+      return this.layoutManager.data.provider.key;
+    },
+  },
   beforeDestroy() {
     if (this.treeviewData) {
       this.treeviewData.$destroy();
