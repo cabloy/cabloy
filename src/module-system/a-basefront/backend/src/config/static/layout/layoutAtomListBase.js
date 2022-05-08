@@ -191,8 +191,9 @@ module.exports = app => {
         title: 'LayoutTree',
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutTree',
+          name: 'baseLayoutTree',
         },
+        subnavbar: false,
         blocks: {
           title: {
             component: {
