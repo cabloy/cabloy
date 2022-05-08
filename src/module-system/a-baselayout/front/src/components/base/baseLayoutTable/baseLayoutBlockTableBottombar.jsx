@@ -16,12 +16,6 @@ export default {
   data() {
     return {};
   },
-  computed: {
-    layout() {
-      return this.layoutManager.layout.instance;
-    },
-  },
-  created() {},
   methods: {
     onPageChange(page) {
       this.layoutManager.data.adapter.gotoPage(page);

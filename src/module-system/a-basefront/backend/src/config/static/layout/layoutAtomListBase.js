@@ -177,7 +177,7 @@ module.exports = app => {
           bottombar: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutBlockTableBottombar',
+              name: 'baseLayoutBlockTableBottombar',
             },
           },
         },
