@@ -80,7 +80,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 2,
+    atomRevision: 0,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
