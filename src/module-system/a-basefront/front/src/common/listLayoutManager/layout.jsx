@@ -13,6 +13,13 @@ export default {
       const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
       return configViewSize[this.$view.size];
     },
+    layout_onSwipeoutOpened(event, item) {
+      this.actions_fetchActions(item);
+    },
+    layout_onColumnNameEqualOrder(atomOrder, columnName) {
+      const key = this.order_getKey(atomOrder);
+      return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
+    },
     async layout_onPrepareConfigFull() {
       const atomClass = this.container.atomClass;
       const atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;

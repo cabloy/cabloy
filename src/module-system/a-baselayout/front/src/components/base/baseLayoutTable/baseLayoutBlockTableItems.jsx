@@ -89,6 +89,9 @@ export default {
         this.layoutManager.bulk && this.layoutManager.bulk[this.selectedItemsKey] && this.layoutManager.bulk.selecting
       );
     },
+    enableOrder() {
+      return this.layoutManager.order_list;
+    },
   },
   mounted() {
     // queueScroll
@@ -124,6 +127,7 @@ export default {
       this.tableHeight = size.height - _heightTableHeader;
     },
     onTableChange(pagination, filters, sorter) {
+      if (!this.enableOrder) return;
       const { field, order = 'ascend' } = sorter;
       const currentOrder = this._columnSorterCurrent(field);
       if (currentOrder === order) return;
@@ -131,6 +135,7 @@ export default {
       this.layoutManager.order_onPerformChange(null, atomOrder);
     },
     onSelectChange(selectedRowKeys) {
+      if (!this.enableSelection) return;
       const items = this.layoutManager.base_getItems();
       // eslint-disable-next-line
       this.layoutManager.bulk[this.selectedItemsKey] = items.filter(item => {
@@ -138,21 +143,27 @@ export default {
       });
     },
     onSwipeoutOpened(event, item) {
-      this.layoutManager.actions_fetchActions(item);
+      // callback
+      if (this.layoutManager.layout_onSwipeoutOpened) {
+        this.layoutManager.layout_onSwipeoutOpened(event, item);
+      }
     },
-    _checkColumnNameEqualOrder(atomOrder, columnName) {
-      const key = this.layoutManager.order_getKey(atomOrder);
-      return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
+    _checkColumnNameEqualOrder(order, columnName) {
+      // callback
+      if (this.layoutManager.layout_onColumnNameEqualOrder) {
+        return this.layoutManager.layout_onColumnNameEqualOrder(order, columnName);
+      }
+      return false;
     },
     _columnSorterFind(columnName) {
-      return this.layoutManager.order_list.find(atomOrder => {
-        return this._checkColumnNameEqualOrder(atomOrder, columnName);
+      return this.layoutManager.order_list.find(order => {
+        return this._checkColumnNameEqualOrder(order, columnName);
       });
     },
     _columnSorterCurrent(columnName) {
-      const atomOrderCurrent = this.layoutManager.order_current;
-      if (this._checkColumnNameEqualOrder(atomOrderCurrent, columnName)) {
-        return atomOrderCurrent.by === 'desc' ? 'descend' : 'ascend';
+      const orderCurrent = this.layoutManager.order_current;
+      if (this._checkColumnNameEqualOrder(orderCurrent, columnName)) {
+        return orderCurrent.by === 'desc' ? 'descend' : 'ascend';
       }
       return false;
     },
@@ -321,6 +332,7 @@ export default {
       );
     },
     _renderListItemContextMenu() {
+      if (!this.layoutManager.item_renderContextMenu) return null;
       const item = this.contextmenuRecord;
       return this.layoutManager.item_renderContextMenu(item, 'menu');
     },
