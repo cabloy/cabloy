@@ -22,20 +22,25 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      this.layoutManager.subnavbar_policyDefault();
+      if (this.layoutConfig.subnavbar && this.layoutConfig.subnavbar.policyDefault) {
+        this.layoutManager.subnavbar_policyDefault();
+      }
       // provider switch
-      await this.layoutManager.data_providerSwitch({
+      const containerScene = this.layoutManager.container && this.layoutManager.container.scene;
+      const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'continuous',
-        autoInit: this.layoutManager.container.scene !== 'search',
-      });
+        autoInit: containerScene !== 'search',
+      };
+      await this.layoutManager.data_providerSwitch(providerOptions);
       // instance
       await this.layoutManager.layout_setInstance(this);
     },
   },
   render() {
+    const blockName = this.layoutConfig.blockItems || 'items';
     return (
       <div>
-        {this.layoutManager.layout_renderBlock({ blockName: 'items' })}
+        {this.layoutManager.layout_renderBlock({ blockName })}
         {this.layoutManager.data_renderLoadMore()}
       </div>
     );

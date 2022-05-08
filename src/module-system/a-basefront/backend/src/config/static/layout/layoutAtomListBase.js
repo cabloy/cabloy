@@ -96,7 +96,10 @@ module.exports = app => {
         title: 'LayoutList',
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutList',
+          name: 'baseLayoutList',
+        },
+        subnavbar: {
+          policyDefault: true,
         },
         blocks: {
           items: {
@@ -261,7 +264,10 @@ module.exports = app => {
       select: {
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutList',
+          name: 'baseLayoutList',
+        },
+        subnavbar: {
+          policyDefault: true,
         },
         blocks: {
           title: {
@@ -281,7 +287,10 @@ module.exports = app => {
       selecting: {
         component: {
           module: 'a-baselayout',
-          name: 'listLayoutList',
+          name: 'baseLayoutList',
+        },
+        subnavbar: {
+          policyDefault: true,
         },
         blocks: {
           title: {

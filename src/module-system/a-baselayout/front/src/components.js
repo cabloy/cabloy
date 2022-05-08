@@ -1,5 +1,6 @@
 // baseLayout
 import baseLayoutDefault from './components/base/baseLayoutDefault.jsx';
+import baseLayoutList from './components/base/baseLayoutList.jsx';
 import baseLayoutBlockCaption from './components/base/baseLayoutBlockCaption.jsx';
 import baseLayoutBlockTitle from './components/base/baseLayoutBlockTitle.jsx';
 import baseLayoutBlockSubnavbar from './components/base/baseLayoutBlockSubnavbar.jsx';
@@ -9,7 +10,6 @@ import listLayoutCard from './components/atom/listLayoutCard/listLayoutCard.jsx'
 import listLayoutBlockCardItems from './components/atom/listLayoutCard/listLayoutBlockCardItems.jsx';
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
-import listLayoutList from './components/atom/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
 import listLayoutBlockListTitle from './components/atom/listLayoutList/listLayoutBlockListTitle.jsx';
 import listLayoutBlockListSubnavbar from './components/atom/listLayoutList/listLayoutBlockListSubnavbar.jsx';
@@ -44,6 +44,7 @@ import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTr
 export default {
   // baseLayout
   baseLayoutDefault,
+  baseLayoutList,
   baseLayoutBlockCaption,
   baseLayoutBlockTitle,
   baseLayoutBlockSubnavbar,
@@ -53,7 +54,6 @@ export default {
   listLayoutBlockCardItems,
   listLayoutBlockCardItem,
   // listLayoutList
-  listLayoutList,
   listLayoutBlockListCaption,
   listLayoutBlockListTitle,
   listLayoutBlockListSubnavbar,
