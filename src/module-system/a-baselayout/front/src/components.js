@@ -13,6 +13,7 @@ import baseLayoutBlockListItems from './components/base/baseLayoutList/baseLayou
 import baseLayoutBlockCardItems from './components/base/baseLayoutCard/baseLayoutBlockCardItems.jsx';
 // baseLayoutTable
 import baseLayoutBlockTableBottombar from './components/base/baseLayoutTable/baseLayoutBlockTableBottombar.jsx';
+import baseLayoutBlockTableItems from './components/base/baseLayoutTable/baseLayoutBlockTableItems.jsx';
 // listLayoutCard
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
@@ -24,7 +25,6 @@ import listLayoutBlockSelectingTitle from './components/atom/listLayoutList/list
 import listLayoutBlockSelectingItems from './components/atom/listLayoutList/listLayoutBlockSelectingItems.jsx';
 // listLayoutTable
 import listLayoutTable from './components/atom/listLayoutTable/listLayoutTable.jsx';
-import listLayoutBlockTableItems from './components/atom/listLayoutTable/listLayoutBlockTableItems.jsx';
 import listLayoutTableCellUserName from './components/atom/listLayoutTable/listLayoutTableCellUserName.jsx';
 import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listLayoutTableCellAtomName.jsx';
 // listLayoutTree
@@ -59,6 +59,7 @@ export default {
   baseLayoutBlockCardItems,
   // baseLayoutTable
   baseLayoutBlockTableBottombar,
+  baseLayoutBlockTableItems,
   // listLayoutCard
   listLayoutBlockCardItem,
   // listLayoutList
@@ -70,7 +71,6 @@ export default {
   listLayoutBlockSelectingItems,
   // listLayoutTable
   listLayoutTable,
-  listLayoutBlockTableItems,
   listLayoutTableCellUserName,
   listLayoutTableCellAtomName,
   // listLayoutTree

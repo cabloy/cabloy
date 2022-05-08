@@ -1,12 +1,11 @@
 import Vue from 'vue';
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 const ebViewSizeChange = Vue.prototype.$meta.module.get('a-components').options.mixins.ebViewSizeChange;
 const _heightTableHeader = 44;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebAtomActions, ebViewSizeChange],
+  mixins: [ebViewSizeChange],
   props: {
     layoutManager: {
       type: Object,
