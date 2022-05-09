@@ -48,7 +48,6 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockTableItems',
             },
-            itemKey: 'detailId',
             enableTableHeight: false,
             sorter: false,
             columns: [

@@ -28,10 +28,10 @@ export default {
   },
   computed: {
     itemKey() {
-      return this.blockConfig.itemKey;
+      return this.layoutManager.data.provider.itemKey;
     },
     selectedItemsKey() {
-      return this.blockConfig.selectedItemsKey || 'selectedItems';
+      return this.layoutManager.data.provider.selectedItemsKey || 'selectedItems';
     },
     enableTableHeight() {
       return this.blockConfig.enableTableHeight !== false;

@@ -79,7 +79,6 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockCardItems',
             },
-            itemKey: 'atomId',
           },
           item: {
             component: {
@@ -111,7 +110,6 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockListItems',
             },
-            itemKey: 'atomId',
           },
           item: {
             component: {
@@ -136,8 +134,6 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockTableItems',
             },
-            itemKey: 'atomId',
-            selectedItemsKey: 'selectedAtoms',
             columns: [
               {
                 dataIndex: 'atomName',
@@ -228,8 +224,6 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockTableItems',
             },
-            itemKey: 'atomId',
-            selectedItemsKey: 'selectedAtoms',
             sorter: false,
             columns: [
               {

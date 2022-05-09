@@ -4,6 +4,7 @@ export default {
       data: {
         provider: {
           itemKey: 'atomId',
+          selectedItemsKey: 'selectedAtoms',
         },
       },
     };

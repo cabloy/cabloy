@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     itemKey() {
-      return this.blockConfig.itemKey;
+      return this.layoutManager.data.provider.itemKey;
     },
   },
   methods: {
