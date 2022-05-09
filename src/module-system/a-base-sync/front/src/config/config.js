@@ -101,6 +101,28 @@ export default {
             },
           },
         },
+        list: {
+          title: 'LayoutList',
+          component: {
+            module: 'a-baselayout',
+            name: 'baseLayoutList',
+          },
+          subnavbar: false,
+          blocks: {
+            item: {
+              component: {
+                module: 'a-baselayout',
+                name: 'baseLayoutBlockListItem',
+              },
+            },
+            items: {
+              component: {
+                module: 'a-baselayout',
+                name: 'baseLayoutBlockListItems',
+              },
+            },
+          },
+        },
       },
     },
   },

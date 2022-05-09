@@ -14,22 +14,7 @@ module.exports = app => {
       base: {
         blocks: {},
       },
-      list: {
-        title: 'LayoutList',
-        component: {
-          module: 'a-baselayout',
-          name: 'baseLayoutList',
-        },
-        subnavbar: false,
-        blocks: {
-          items: {
-            component: {
-              module: 'a-message',
-              name: 'messageListLayoutBlockListItems',
-            },
-          },
-        },
-      },
+      list: {},
     },
   };
   const layout = {
