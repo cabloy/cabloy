@@ -28,7 +28,7 @@ export default {
           messageIds,
         })
         .then(() => {
-          this.layout.messageReadSet({ message: item });
+          this.layoutManager.message_readSet({ message: item });
         });
       // content
       const content = JSON.parse(item.content);
@@ -109,7 +109,7 @@ export default {
       );
     },
     _renderList() {
-      const items = this.layout.items;
+      const items = this.layoutManager.data_getItems();
       const children = [];
       for (const item of items) {
         children.push(this._renderListItem(item));

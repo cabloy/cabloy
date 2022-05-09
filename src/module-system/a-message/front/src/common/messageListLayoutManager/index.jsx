@@ -4,6 +4,7 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Data from './data.jsx';
 import Notification from './notification.jsx';
+import Message from './message.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 
 // container: {
@@ -18,6 +19,7 @@ export default {
     Layout,
     Data,
     Notification,
+    Message,
   ],
   data() {
     return {};

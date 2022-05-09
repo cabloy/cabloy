@@ -24,9 +24,10 @@ module.exports = app => {
       list: {
         title: 'LayoutList',
         component: {
-          module: 'a-message',
-          name: 'messageListLayoutList',
+          module: 'a-baselayout',
+          name: 'baseLayoutList',
         },
+        subnavbar: false,
         blocks: {
           items: {
             component: {

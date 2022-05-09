@@ -20,7 +20,7 @@ export default {
         messageClass: this.layoutManager.base_messageClass,
         all: true,
       });
-      this.layoutManager.layout.instance.messageReadAll();
+      this.layoutManager.message_readAll();
     },
   },
   render() {

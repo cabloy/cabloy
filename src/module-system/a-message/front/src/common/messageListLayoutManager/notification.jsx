@@ -35,16 +35,12 @@ export default {
       if (scene === 'show') {
         // just only append to list
         const messageNew = { ...message, messageRead: 0 };
-        if (this.layout.instance) {
-          this.layout.instance.messageAppendNew({ message: messageNew });
-        }
+        this.message_appendNew({ message: messageNew });
         // false
         return false;
       } else if (scene === 'click') {
         // just change messageRead=1
-        if (this.layout.instance) {
-          this.layout.instance.messageReadSet({ message });
-        }
+        this.message_readSet({ message });
         // false
         return false;
       }
