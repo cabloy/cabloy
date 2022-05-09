@@ -15,23 +15,9 @@ module.exports = app => {
         blocks: {},
       },
       list: {
-        title: 'LayoutList',
-        component: {
-          module: 'a-baselayout',
-          name: 'baseLayoutList',
-        },
-        subnavbar: false,
         providerOptions: {
           providerName: 'all',
           autoInit: true,
-        },
-        blocks: {
-          items: {
-            component: {
-              module: 'a-message',
-              name: 'messageGroupLayoutBlockListItems',
-            },
-          },
         },
       },
     },
