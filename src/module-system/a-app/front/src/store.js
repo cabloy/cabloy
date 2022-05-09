@@ -77,6 +77,9 @@ export default function (Vue) {
         // current
         return getters.presetConfigCurrent;
       },
+      async getPresetConfigDefault({ state, dispatch }) {
+        return await dispatch('getPresetConfig', { appKey: __appKeyDefault });
+      },
       async getAppItemCurrent({ state, getters, dispatch }) {
         return await dispatch('getAppItem', { appKey: getters.current.appKey });
       },

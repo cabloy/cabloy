@@ -245,7 +245,10 @@ export default {
       }
     },
     async __initLayoutKey() {
-      const appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      let appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      if (!appPresetConfig.layout) {
+        appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigDefault');
+      }
       this.layoutAtomStaticKey = appPresetConfig.layout;
       return this.layoutAtomStaticKey;
     },
