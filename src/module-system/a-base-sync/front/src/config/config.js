@@ -93,6 +93,12 @@ export default {
                 name: 'baseLayoutBlockSubnavbar',
               },
             },
+            main: {
+              component: {
+                module: 'a-baselayout',
+                name: 'baseLayoutBlockMain',
+              },
+            },
           },
         },
         default: {
@@ -102,12 +108,6 @@ export default {
             name: 'baseLayoutDefault',
           },
           subnavbar: false,
-          main: {
-            component: {
-              module: 'a-baselayout',
-              name: 'baseLayoutBlockMain',
-            },
-          },
         },
         list: {
           title: 'LayoutList',
