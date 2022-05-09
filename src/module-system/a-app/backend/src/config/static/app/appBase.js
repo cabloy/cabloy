@@ -4,73 +4,61 @@ module.exports = app => {
     presets: {
       anonymous: {
         mobile: {
-          layout: 'a-layoutmobile:layoutMobileAnonymous',
+          layout: null,
           menu: {
-            layout: '',
+            layout: null,
           },
           home: {
-            mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            mode: null,
+            dashboard: null,
             page: null,
           },
           user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAnonymous',
-            },
+            render: null,
           },
         },
         pc: {
-          layout: 'a-layoutpc:layoutPCAnonymous',
+          layout: null,
           menu: {
-            layout: '',
+            layout: null,
           },
           home: {
-            mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            mode: null,
+            dashboard: null,
             page: null,
           },
           user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAnonymous',
-            },
+            render: null,
           },
         },
       },
       authenticated: {
         mobile: {
-          layout: 'a-layoutmobile:layoutMobile',
+          layout: null,
           menu: {
-            layout: '',
+            layout: null,
           },
           home: {
-            mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            mode: null,
+            dashboard: null,
             page: null,
           },
           user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAuthenticated',
-            },
+            render: null,
           },
         },
         pc: {
-          layout: 'a-layoutpc:layoutPC',
+          layout: null,
           menu: {
-            layout: '',
+            layout: null,
           },
           home: {
-            mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            mode: null,
+            dashboard: null,
             page: null,
           },
           user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAuthenticated',
-            },
+            render: null,
           },
         },
       },
