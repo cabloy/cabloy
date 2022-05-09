@@ -42,11 +42,8 @@ export default function (Vue) {
       presetConfigCurrent(state, getters) {
         const appItem = getters.appItemCurrent;
         if (!appItem) return null;
-        // current
-        const current = getters.current;
         // preset config
-        const presetConfig = appItem.content.presets[current.userStatus][current.layout];
-        return presetConfig[current.appLanguage] || presetConfig;
+        return __getPresetConfig({ appItem, current: getters.current });
       },
     },
     mutations: {
@@ -83,6 +80,12 @@ export default function (Vue) {
       async getAppItemCurrent({ state, getters, dispatch }) {
         return await dispatch('getAppItem', { appKey: getters.current.appKey });
       },
+      async getPresetConfig({ state, getters, dispatch }, { appKey }) {
+        // force appItem exists
+        const appItem = await dispatch('getAppItem', { appKey });
+        if (!appItem) return null; // maybe no access right
+        return __getPresetConfig({ appItem, current: getters.current });
+      },
       async getAppItem({ state, commit, dispatch }, { appKey }) {
         let appItem = state.appItems[appKey];
         if (appItem) return appItem;
@@ -99,6 +102,11 @@ export default function (Vue) {
       },
     },
   };
+}
+
+function __getPresetConfig({ appItem, current }) {
+  const presetConfig = appItem.content.presets[current.userStatus][current.layout];
+  return presetConfig[current.appLanguage] || presetConfig;
 }
 
 async function __fetchAppItem({ Vue, appKey }) {
