@@ -11,9 +11,7 @@ export default {
     },
   },
   data() {
-    return {
-      items: [],
-    };
+    return {};
   },
   created() {
     this.init();
@@ -27,32 +25,6 @@ export default {
       this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
       // instance
       await this.layoutManager.layout_setInstance(this);
-    },
-    onPageRefresh(force) {
-      this.$refs.loadMore.reload(force);
-    },
-    onPageInfinite() {
-      this.$refs.loadMore.loadMore();
-    },
-    onPageClear() {
-      this.$refs.loadMore.clear();
-    },
-    onLoadClear(done) {
-      this.items = [];
-      done();
-    },
-    async onLoadMore({ index }) {
-      // params
-      const params = this.layoutManager.base_prepareSelectParams();
-      // index
-      params.options.page = { index };
-      // fetch
-      const res = await this.$api.post('/a/socketio/message/select', params);
-      this.items = this.items.concat(res.list);
-      return res;
-    },
-    getItems() {
-      return this.items;
     },
     messageReadSet({ message }) {
       const item = this.items.find(item => item.id === message.id);
