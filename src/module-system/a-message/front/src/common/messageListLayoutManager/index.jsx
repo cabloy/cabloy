@@ -6,6 +6,7 @@ import Actions from './actions.jsx';
 import Data from './data.jsx';
 import Notification from './notification.jsx';
 import Message from './message.jsx';
+import Item from './other/item.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 
 // container: {
@@ -22,6 +23,7 @@ export default {
     Data,
     Notification,
     Message,
+    Item,
   ],
   data() {
     return {};

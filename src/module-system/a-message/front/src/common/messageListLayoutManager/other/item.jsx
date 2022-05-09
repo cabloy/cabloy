@@ -61,11 +61,11 @@ export default {
       const messageIds = [item.id];
       this.$api
         .post('/a/socketio/message/setRead', {
-          messageClass: this.layoutManager.base_messageClass,
+          messageClass: this.base_messageClass,
           messageIds,
         })
         .then(() => {
-          this.layoutManager.message_readSet({ message: item });
+          this.message_readSet({ message: item });
         });
       // content
       const content = JSON.parse(item.content);
