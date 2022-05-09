@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
+import Actions from './actions.jsx';
 import Data from './data.jsx';
 import Notification from './notification.jsx';
 import Message from './message.jsx';
@@ -17,6 +18,7 @@ export default {
     Base,
     Page,
     Layout,
+    Actions,
     Data,
     Notification,
     Message,

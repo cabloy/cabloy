@@ -12,14 +12,7 @@ module.exports = app => {
     },
     layouts: {
       base: {
-        blocks: {
-          title: {
-            component: {
-              module: 'a-message',
-              name: 'messageListLayoutBlockListTitle',
-            },
-          },
-        },
+        blocks: {},
       },
       list: {
         title: 'LayoutList',

@@ -31,7 +31,7 @@ export default {
     }
   },
   methods: {
-    async notification_callback({ scene, message, content }) {
+    async notification_callback({ scene, message /* , content*/ }) {
       if (scene === 'show') {
         // just only append to list
         const messageNew = { ...message, messageRead: 0 };
