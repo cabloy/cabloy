@@ -39,7 +39,6 @@ module.exports = app => {
         subnavbar: {
           policyDefault: true,
         },
-        blocks: {},
       },
       content: {
         title: 'LayoutContent',
@@ -50,7 +49,6 @@ module.exports = app => {
         subnavbar: {
           policyDefault: true,
         },
-        blocks: {},
       },
     },
   };

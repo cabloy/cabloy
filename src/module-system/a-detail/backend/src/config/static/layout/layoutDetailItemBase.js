@@ -22,15 +22,7 @@ module.exports = app => {
         blocks: {},
       },
       default: {
-        title: 'LayoutDefault',
-        component: {
-          module: 'a-baselayout',
-          name: 'baseLayoutDefault',
-        },
-        subnavbar: {
-          policyDefault: false,
-        },
-        blocks: {},
+        subnavbar: false,
       },
     },
   };
