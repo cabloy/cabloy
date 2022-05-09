@@ -17,8 +17,8 @@ export default {
     };
   },
   computed: {
-    key() {
-      return this.layoutManager.data.provider.key;
+    itemKey() {
+      return this.layoutManager.data.provider.itemKey;
     },
   },
   beforeDestroy() {
@@ -127,18 +127,18 @@ export default {
       const item = node ? node.data : null;
       return { item };
       // const node = this.treeviewData.find(null, item => {
-      //   return item.data[this.key] === key;
+      //   return item.data[this.itemKey] === key;
       // });
       // const nodeParent = node.parent;
       // const items = nodeParent.children.map(node => {
       //   return node.data;
       // });
-      // const index = items.findIndex(item => item[this.key] === key);
+      // const index = items.findIndex(item => item[this.itemKey] === key);
       // return { items, index };
     },
     spliceItem(bundle) {
       const item = bundle.item;
-      const node = this._findNodeByKey(item[this.key]);
+      const node = this._findNodeByKey(item[this.itemKey]);
       const nodeParent = node.parent;
       if (node) {
         this.treeviewData.removeNode(node);
@@ -155,7 +155,7 @@ export default {
     },
     replaceItem(bundle, itemNew) {
       const node = this.treeviewData.find(null, item => {
-        return item.data[this.key] === itemNew[this.key];
+        return item.data[this.itemKey] === itemNew[this.itemKey];
       });
       if (!node) return;
       const itemOld = node.data;
@@ -180,7 +180,7 @@ export default {
       this._addChild(node.parentId);
     },
     moveNode({ key, node }) {
-      const bundle = this.findItem(key[this.key]);
+      const bundle = this.findItem(key[this.itemKey]);
       this.spliceItem(bundle);
       this.addChildNode({ key, node });
     },
@@ -199,7 +199,7 @@ export default {
     },
     _findNodeByKey(key) {
       if (!key) return null;
-      return this.treeviewData.find(null, item => item.data[this.key] === key);
+      return this.treeviewData.find(null, item => item.data[this.itemKey] === key);
     },
     _findNodeByNodeId(nodeId) {
       if (nodeId === undefined) return null;

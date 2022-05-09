@@ -3,7 +3,7 @@ export default {
     return {
       data: {
         provider: {
-          key: 'id',
+          itemKey: 'id',
         },
       },
     };

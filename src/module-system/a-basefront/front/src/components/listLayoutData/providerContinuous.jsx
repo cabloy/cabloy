@@ -15,8 +15,8 @@ export default {
     };
   },
   computed: {
-    key() {
-      return this.layoutManager.data.provider.key;
+    itemKey() {
+      return this.layoutManager.data.provider.itemKey;
     },
   },
   beforeDestroy() {
@@ -80,7 +80,7 @@ export default {
       // do nothing
     },
     findItem(key) {
-      const index = this.items.findIndex(item => item[this.key] === key);
+      const index = this.items.findIndex(item => item[this.itemKey] === key);
       const item = index === -1 ? null : this.items[index];
       return { pageNum: 1, items: this.items, index, item };
     },
