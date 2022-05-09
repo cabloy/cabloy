@@ -28,7 +28,6 @@ export default {
     async index_init() {
       await this.base_init();
       await this.layout_prepareConfigLayout();
-      await this.data_adapterInit();
       this.base.ready = true;
     },
   },

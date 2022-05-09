@@ -28,6 +28,9 @@ export default {
       this.data.adapter = this.$meta.util.createComponentInstance(component, options);
     },
     async data_providerSwitch(options) {
+      if (!this.data.adapter) {
+        await this.data_adapterInit();
+      }
       return await this.data.adapter.providerSwitch(options);
     },
     data_callMethod(methodName, ...args) {
