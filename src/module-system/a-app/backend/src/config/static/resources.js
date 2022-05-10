@@ -28,6 +28,32 @@ module.exports = app => {
       }),
       resourceRoles: 'authenticated',
     },
+    {
+      atomName: 'Create AppMenu',
+      atomStaticKey: 'createAppMenu',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Create',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'appMenu',
+        atomAction: 'create',
+      }),
+      resourceRoles: 'authenticated',
+    },
+    {
+      atomName: 'AppMenu List',
+      atomStaticKey: 'listAppMenu',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'appMenu',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'authenticated',
+    },
   ];
   return resources;
 };

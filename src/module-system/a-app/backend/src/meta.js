@@ -5,10 +5,29 @@ module.exports = app => {
   const staticApps = require('./config/static/apps.js')(app);
   const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
-  // meta
   const meta = {
     base: {
       atoms: {
+        appMenu: {
+          info: {
+            bean: 'appMenu',
+            title: 'AppMenu',
+            tableName: 'aAppMenu',
+            language: false,
+            category: true,
+            tag: true,
+            layout: {
+              config: {
+                // atomList: 'layoutAtomListAppMenu',
+              },
+            },
+          },
+          actions: {},
+          validator: 'appMenu',
+          search: {
+            validator: 'appMenuSearch',
+          },
+        },
         app: {
           info: {
             bean: 'app',
@@ -52,6 +71,12 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        appMenu: {
+          schemas: 'appMenu',
+        },
+        appMenuSearch: {
+          schemas: 'appMenuSearch',
+        },
         app: {
           schemas: 'app',
         },
@@ -63,9 +88,7 @@ module.exports = app => {
       schemas,
     },
     index: {
-      indexes: {
-        aApp: 'createdAt,updatedAt,atomId',
-      },
+      indexes: { aAppMenu: 'createdAt,updatedAt,atomId', aApp: 'createdAt,updatedAt,atomId' },
     },
   };
   return meta;
