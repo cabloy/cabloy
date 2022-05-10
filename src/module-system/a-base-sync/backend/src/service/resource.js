@@ -1,7 +1,7 @@
 module.exports = app => {
   class Resource extends app.Service {
-    async select({ options, user }) {
-      return await this.ctx.bean.resource.select({ options, user });
+    async select({ atomClass, options, user }) {
+      return await this.ctx.bean.resource.select({ atomClass, options, user });
     }
 
     async read({ atomStaticKey, options, user }) {

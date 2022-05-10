@@ -6,6 +6,7 @@ module.exports = app => {
       const options = this.ctx.request.body.options || {};
       options.page = this.ctx.bean.util.page(options.page, false); // false
       const items = await this.ctx.service.resource.select({
+        atomClass: this.ctx.request.body.atomClass,
         options,
         user: this.ctx.state.user.op,
       });
