@@ -14,13 +14,18 @@ module.exports = app => {
       base: {
         blocks: {},
       },
-      list: {},
+      list: {
+        providerOptions: {
+          providerName: 'all',
+          autoInit: true,
+        },
+      },
     },
   };
   const layout = {
     atomName: 'Default',
     atomStaticKey: 'layoutAppMenuDefault',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),

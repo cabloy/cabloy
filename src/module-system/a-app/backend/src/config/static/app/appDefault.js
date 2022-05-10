@@ -6,7 +6,7 @@ module.exports = app => {
         mobile: {
           layout: 'a-layoutmobile:layoutMobileAnonymous',
           menu: {
-            layout: '',
+            layout: 'a-app:layoutAppMenuDefault',
           },
           home: {
             mode: 'dashboard', // dashboard,page
@@ -23,7 +23,7 @@ module.exports = app => {
         pc: {
           layout: 'a-layoutpc:layoutPCAnonymous',
           menu: {
-            layout: '',
+            layout: 'a-app:layoutAppMenuDefault',
           },
           home: {
             mode: 'dashboard', // dashboard,page
@@ -42,7 +42,7 @@ module.exports = app => {
         mobile: {
           layout: 'a-layoutmobile:layoutMobile',
           menu: {
-            layout: '',
+            layout: 'a-app:layoutAppMenuDefault',
           },
           home: {
             mode: 'dashboard', // dashboard,page
@@ -59,7 +59,7 @@ module.exports = app => {
         pc: {
           layout: 'a-layoutpc:layoutPC',
           menu: {
-            layout: '',
+            layout: 'a-app:layoutAppMenuDefault',
           },
           home: {
             mode: 'dashboard', // dashboard,page
@@ -79,7 +79,7 @@ module.exports = app => {
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     appIcon: ':outline:apps-outline',
     appIsolate: true,
