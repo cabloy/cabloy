@@ -88,11 +88,11 @@ export default {
         if (this.query && icon.indexOf(this.query) === -1) continue;
         const svg = this._combineIconName(moduleName, groupName, icon);
         children.push(
-          <div key={icon} class="icon-cell" data-clipboard-text={svg}>
-            <div class="icon-cell-icon">
+          <div key={icon} class="box-grid-cell" data-clipboard-text={svg}>
+            <div class="box-grid-cell-icon">
               <f7-icon f7={svg} size="24"></f7-icon>
             </div>
-            <div class="icon-cell-label">{icon}</div>
+            <div class="box-grid-cell-label">{icon}</div>
           </div>
         );
       }
@@ -101,7 +101,7 @@ export default {
       // single
       const domListItem = (
         <f7-list-item>
-          <div class="icons-row">{children}</div>
+          <div class="eb-box-grid-row">{children}</div>
         </f7-list-item>
       );
       if (groupSingle) return domListItem;
