@@ -71,6 +71,9 @@ module.exports = app => {
     }
 
     _getMeta(item) {
+      // locale of atomCategoryName
+      item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary
