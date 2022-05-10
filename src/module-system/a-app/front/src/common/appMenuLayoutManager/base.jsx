@@ -1,8 +1,20 @@
 export default {
   data() {
     return {
-      base: {},
+      base: {
+        configAppMenuBase: null,
+        configAppMenu: null,
+        //
+        appPresetConfig: null,
+      },
     };
   },
-  methods: {},
+  methods: {
+    async base_onInit() {
+      // load appItem
+      this.base.appPresetConfig = await this.$store.dispatch('a/app/getPresetConfig', {
+        appKey: this.container.appKey,
+      });
+    },
+  },
 };
