@@ -80,6 +80,7 @@ module.exports = app => {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
     atomRevision: 2,
+    atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
     appIsolate: true,

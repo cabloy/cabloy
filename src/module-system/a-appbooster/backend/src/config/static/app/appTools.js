@@ -9,7 +9,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Tools',
     atomStaticKey: 'appTools',
-    atomRevision: 1,
+    atomRevision: 2,
+    atomCategoryId: 'System',
     description: '',
     appIcon: ':outline:build-circle-outline',
     appIsolate: true,
