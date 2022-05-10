@@ -98,7 +98,7 @@ export default {
         value: appGroup.id,
       });
     },
-    _renderListItems(appGroup) {
+    _renderAppGroup(appGroup) {
       const children = [];
       for (const item of appGroup.items) {
         const domItem = (
@@ -121,8 +121,8 @@ export default {
         </div>
       );
       // domAccordionContent
-      const domListItems = this._renderListItems(appGroup);
-      const domAccordionContent = <f7-accordion-content>{domListItems}</f7-accordion-content>;
+      const domAppGroup = this._renderAppGroup(appGroup);
+      const domAccordionContent = <f7-accordion-content>{domAppGroup}</f7-accordion-content>;
       const accordionItemOpened =
         this.accordionItemOpened === appGroup.id || (this.accordionItemOpened === 0 && index === 0);
       // ok
@@ -142,6 +142,11 @@ export default {
       const appGroups = this.appGroups;
       if (!appGroups) return null;
       const children = [];
+      // single
+      if (appGroups.length === 1) {
+        return this._renderAppGroup(appGroups[0]);
+      }
+      // more
       for (let index = 0; index < appGroups.length; index++) {
         children.push(this._renderAccordion(appGroups[index], index));
       }
