@@ -16,7 +16,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      this._getMeta(item);
+      this._getMeta(options, item, true);
       // ok
       return item;
     }
@@ -25,8 +25,9 @@ module.exports = app => {
       // super
       await super.select({ atomClass, options, items, user });
       // meta
+      const showSorting = !!(options && options.category);
       for (const item of items) {
-        this._getMeta(item);
+        this._getMeta(options, item, showSorting);
       }
     }
 
@@ -48,9 +49,15 @@ module.exports = app => {
       });
     }
 
-    _getMeta(item) {
+    _getMeta(options, item, showSorting) {
+      // locale of atomCategoryName
+      item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
+      if (showSorting) {
+        meta.flags.push(item.appMenuSorting);
+      }
       // meta.summary
       meta.summary = item.description;
     }

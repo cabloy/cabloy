@@ -15,14 +15,19 @@ module.exports = app => {
             tableName: 'aAppMenu',
             language: false,
             category: true,
-            tag: true,
+            tag: false,
+            resource: true,
             layout: {
               config: {
-                // atomList: 'layoutAtomListAppMenu',
+                atomList: 'layoutAtomListAppMenu',
               },
             },
           },
-          actions: {},
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'appMenu',
           search: {
             validator: 'appMenuSearch',
