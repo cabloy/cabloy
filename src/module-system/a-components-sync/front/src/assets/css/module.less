@@ -214,6 +214,29 @@ input[type='search']::-webkit-search-decoration {
   padding-right: 6px;
 }
 
+.eb-box-grid-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  width: 100%;
+  .box-grid-cell {
+    display: block;
+    width: 100px;
+    text-align: center;
+    margin: 6px;
+    padding: 4px;
+    border: 1px solid var(--f7-list-group-title-bg-color);
+    border-radius: 6px;
+    cursor: pointer;
+    &:hover {
+      background: var(--f7-list-group-title-bg-color);
+    }
+    .box-grid-cell-label {
+      font-size: 8px;
+    }
+  }
+}
+
 :root {
   .eb-vertical-align {
     vertical-align: middle;

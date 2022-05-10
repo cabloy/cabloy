@@ -102,17 +102,16 @@ export default {
       const children = [];
       for (const item of appGroup.items) {
         const domItem = (
-          <eb-list-item
-            class="item"
-            key={item.atomId}
-            link="#"
-            title={item.atomNameLocale}
-            propsOnPerform={event => this.onItemClick(event, item)}
-          ></eb-list-item>
+          <eb-link key={item.atomId} class="box-grid-cell" propsOnPerform={event => this.onItemClick(event, item)}>
+            <div class="box-grid-cell-icon">
+              <f7-icon f7={item.appIcon} size="24"></f7-icon>
+            </div>
+            <div class="box-grid-cell-label">{item.atomNameLocale}</div>
+          </eb-link>
         );
         children.push(domItem);
       }
-      return children;
+      return <div class="eb-box-grid-row">{children}</div>;
     },
     _renderAccordion(appGroup, index) {
       // domTitle
@@ -123,11 +122,7 @@ export default {
       );
       // domAccordionContent
       const domListItems = this._renderListItems(appGroup);
-      const domAccordionContent = (
-        <f7-accordion-content>
-          <eb-list inset>{domListItems}</eb-list>
-        </f7-accordion-content>
-      );
+      const domAccordionContent = <f7-accordion-content>{domListItems}</f7-accordion-content>;
       const accordionItemOpened =
         this.accordionItemOpened === appGroup.id || (this.accordionItemOpened === 0 && index === 0);
       // ok
