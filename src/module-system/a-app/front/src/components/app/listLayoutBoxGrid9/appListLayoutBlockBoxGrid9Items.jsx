@@ -1,3 +1,5 @@
+const __categoriesInner = ['General', 'Management', 'System'];
+
 export default {
   meta: {
     global: false,
@@ -17,15 +19,44 @@ export default {
     return {
       accordionItemOpened: 0,
       layoutConfigKeyOpened: null,
+      categoriesAll: null,
     };
   },
   created() {
-    this.layoutConfigKeyOpened = `resource.${this.layoutManager.container.resourceType}.tree.layouts.accordion.opened`;
-    this.accordionItemOpened = this.layoutManager.base.layoutConfig[this.layoutConfigKeyOpened] || 0;
+    this.init();
   },
   mounted() {},
   beforeDestroy() {},
   methods: {
+    async init() {
+      this.init_layoutConfig();
+      await this.init_categoriesAll();
+    },
+    init_layoutConfig() {
+      // accordionItemOpened
+      const appKey = this.layoutManager.container.appKey;
+      this.layoutConfigKeyOpened = `app.${appKey}.list.layouts.boxGrid9.opened`;
+      this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
+    },
+    async init_categoriesAll() {
+      // categoriesAll
+      let categoriesAll = await this.$store.dispatch('a/base/getCategories', {
+        atomClass: this.layoutManager.base_atomClassApp,
+      });
+      // 0 -> 1,2,3
+      for (const category of categoriesAll) {
+        if (category.categorySorting === 0) {
+          const index = __categoriesInner.indexOf(category.categoryName);
+          if (index > -1) {
+            category.categorySorting = index + 1;
+          }
+        }
+      }
+      // sort
+      categoriesAll = categoriesAll.sort((a, b) => a.categorySorting - b.categorySorting);
+      // ok
+      this.categoriesAll = categoriesAll;
+    },
     onItemClick(event, resource) {
       return this.layoutManager.base_onPerformResource(event, resource);
     },
