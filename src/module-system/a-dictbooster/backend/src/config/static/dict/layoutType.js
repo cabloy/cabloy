@@ -48,6 +48,10 @@ module.exports = app => {
       code: 12,
       title: 'FlowTaskAtom',
     },
+    {
+      code: 13,
+      title: 'AppMenu',
+    },
   ];
   const dictLocales = {
     'en-us': {
@@ -63,6 +67,7 @@ module.exports = app => {
       FlowItem: 'Flow Item',
       FlowTaskList: 'Flow Task List',
       FlowTaskAtom: 'Flow Task Data',
+      AppMenu: 'App Menu',
     },
     'zh-cn': {
       LayoutMobile: '移动布局',
@@ -77,12 +82,13 @@ module.exports = app => {
       FlowItem: '流程条目',
       FlowTaskList: '流程任务列表',
       FlowTaskAtom: '流程任务数据',
+      AppMenu: '应用菜单',
     },
   };
   const definition = {
     atomName: 'Layout Type',
     atomStaticKey: 'dictLayoutType',
-    atomRevision: 2,
+    atomRevision: 0,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
