@@ -22,6 +22,34 @@ export default {
       categoriesAll: null,
     };
   },
+  computed: {
+    appGroups() {
+      //
+      if (!this.categoriesAll) return null;
+      const items = this.layoutManager.data_getItemsAll();
+      if (!items) return null;
+      //
+      let groups = this.categoriesAll.map(item => {
+        return {
+          id: item.id,
+          categoryName: item.categoryName,
+          categoryNameLocale: item.categoryNameLocale,
+          items: [],
+        };
+      });
+      for (const item of items) {
+        // group
+        const groupId = item.atomCategoryId;
+        const group = groups.find(item => item.id === groupId);
+        if (group) {
+          group.items.push(item);
+        }
+      }
+      groups = groups.filter(item => item.items.length > 0);
+      // ok
+      return groups;
+    },
+  },
   created() {
     this.init();
   },
@@ -104,34 +132,35 @@ export default {
       return children;
     },
     _renderListItems(categoryParent) {
+      return [];
       if (categoryParent.categoryCatalog === 1) {
         return this._renderCategories(categoryParent);
       }
       return this._renderResources(categoryParent);
     },
-    _renderAccordion(item, index) {
+    _renderAccordion(appGroup, index) {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.categoryNameLocale}</div>
+          <div>{appGroup.categoryNameLocale}</div>
         </div>
       );
       // domAccordionContent
-      const domListItems = this._renderListItems(item);
+      const domListItems = this._renderListItems(appGroup);
       const domAccordionContent = (
         <f7-accordion-content>
           <eb-list inset>{domListItems}</eb-list>
         </f7-accordion-content>
       );
       const accordionItemOpened =
-        this.accordionItemOpened === item.id || (this.accordionItemOpened === 0 && index === 0);
+        this.accordionItemOpened === appGroup.id || (this.accordionItemOpened === 0 && index === 0);
       // ok
       return (
         <eb-list-item
-          key={item.id}
+          key={appGroup.id}
           accordion-item
           accordion-item-opened={accordionItemOpened}
-          onAccordionOpen={event => this.onAccordionOpen(event, item)}
+          onAccordionOpen={event => this.onAccordionOpen(event, appGroup)}
         >
           {domTitle}
           {domAccordionContent}
@@ -139,11 +168,11 @@ export default {
       );
     },
     _renderAccordions() {
-      if (!this.layoutManager.base_ready) return;
-      const items = this.layoutManager.base.treeData;
+      const appGroups = this.appGroups;
+      if (!appGroups) return null;
       const children = [];
-      for (let index = 0; index < items.length; index++) {
-        children.push(this._renderAccordion(items[index], index));
+      for (let index = 0; index < appGroups.length; index++) {
+        children.push(this._renderAccordion(appGroups[index], index));
       }
       return <eb-list accordion-list>{children}</eb-list>;
     },
