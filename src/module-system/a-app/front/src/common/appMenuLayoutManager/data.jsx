@@ -12,8 +12,8 @@ export default {
     // apps
     async data_provider_onLoadItemsAll() {
       return await this.$api.post('/a/base/resource/select', {
+        atomClass: this.base_atomClassApp,
         options: {
-          atomClass: this.base_atomClassApp,
           orders: [
             ['f.appSorting', 'asc'],
             ['f.createdAt', 'asc'],
