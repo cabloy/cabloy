@@ -6,7 +6,7 @@ module.exports = app => {
       atomStaticKey: 'listComment',
       atomRevision: 1,
       atomCategoryId: 0,
-      appKey: 'a-appbooster:tools',
+      appKey: 'a-appbooster:appTools',
       appMenuConfig: JSON.stringify({
         actionPath: '/a/basefront/comment/all',
       }),
@@ -18,7 +18,7 @@ module.exports = app => {
       atomStaticKey: 'developerTool',
       atomRevision: 3,
       atomCategoryId: 0,
-      appKey: 'a-appbooster:tools',
+      appKey: 'a-appbooster:appTools',
       appMenuConfig: JSON.stringify({
         actionModule: 'a-basefront',
         actionComponent: 'developerTool',
