@@ -30,8 +30,9 @@ export default function (Vue) {
         // appLanguage
         const appLanguage = state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale();
         // user
-        const user = Vue.prototype.$meta.store.state.auth.user.op;
-        const userStatus = user.anonymous ? 'anonymous' : 'authenticated';
+        const user = Vue.prototype.$meta.store.state.auth.user;
+        const userOp = user && user.op;
+        const userStatus = !userOp || userOp.anonymous ? 'anonymous' : 'authenticated';
         // layout
         const layout = Vue.prototype.$meta.vueApp.layout;
         // ok
