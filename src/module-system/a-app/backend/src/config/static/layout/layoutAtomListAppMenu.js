@@ -16,8 +16,18 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'description',
-                title: 'Description',
+                dataIndex: 'appKey',
+                title: 'App Key',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record.appNameLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'atomCategoryNameLocale',
+                title: 'Category',
                 align: 'left',
               },
               {
@@ -30,14 +40,24 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'atomCreatedAt',
+                dataIndex: 'createdAt',
                 title: 'Created Time',
-                align: 'left',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
               },
               {
-                dataIndex: 'atomUpdatedAt',
+                dataIndex: 'updatedAt',
                 title: 'Modification Time',
-                align: 'left',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
               },
             ],
           },
