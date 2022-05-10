@@ -55,6 +55,9 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             description varchar(255) DEFAULT NULL,
+            appKey varchar(50) DEFAULT NULL,
+            appMenuSorting int(11) DEFAULT '0',
+            appMenuConfig JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
