@@ -13,6 +13,9 @@ module.exports = app => {
             bean: 'appMenu',
             title: 'AppMenu',
             tableName: 'aAppMenu',
+            tableNameModes: {
+              default: 'aAppMenuView',
+            },
             language: false,
             category: true,
             tag: false,

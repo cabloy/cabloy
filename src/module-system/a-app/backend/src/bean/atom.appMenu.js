@@ -50,6 +50,8 @@ module.exports = app => {
     }
 
     _getMeta(options, item, showSorting) {
+      // locale of appName
+      item.appNameLocale = this.ctx.text(item.appName);
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // meta

@@ -36,17 +36,8 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create view: aAppViewFull
-        sql = `
-          CREATE VIEW aAppViewFull as
-            select a.*,b.content from aApp a
-              left join aAppContent b on a.id=b.itemId
-        `;
-        await this.ctx.model.query(sql);
-      }
-      if (options.version === 2) {
         // create table: aAppMenu
-        const sql = `
+        sql = `
           CREATE TABLE aAppMenu (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -62,13 +53,29 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
+
+        // create view: aAppViewFull
+        sql = `
+          CREATE VIEW aAppViewFull as
+            select a.*,b.content from aApp a
+              left join aAppContent b on a.id=b.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // create view: aAppMenuView
+        sql = `
+          CREATE VIEW aAppMenuView as
+            select a.*,b.id as appAtomId,b.atomName as appName from aAppMenu a
+              left join aAtom b on a.appKey=b.atomStaticKey
+        `;
+        await this.ctx.model.query(sql);
       }
     }
 
     async init(options) {
       if (options.version === 1) {
-        // add role rights
-        const roleRights = [
+        // app: add role rights
+        let roleRights = [
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
@@ -84,10 +91,9 @@ module.exports = app => {
           { roleName: 'system', action: 'exportBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'app', roleRights });
-      }
-      if (options.version === 2) {
-        // add role rights
-        const roleRights = [
+
+        // appMenu: add role rights
+        roleRights = [
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
