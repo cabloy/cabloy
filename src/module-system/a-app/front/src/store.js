@@ -1,5 +1,10 @@
 const __appKeyDefault = 'a-app:appDefault';
 const __appKeyBase = 'a-app:appBase';
+const __atomClassApp = {
+  module: 'a-app',
+  atomClassName: 'app',
+};
+
 export default function (Vue) {
   const query = Vue.prototype.$utils.parseUrlQuery();
 
@@ -14,6 +19,7 @@ export default function (Vue) {
         appKey: null,
         appLanguage: null,
       },
+      appItemsAll: null,
       // global
       appItems: {},
     },
@@ -53,6 +59,7 @@ export default function (Vue) {
         if (state.currentInner.appKey === __appKeyDefault) {
           state.currentInner.appKey = null;
         }
+        state.appItemsAll = null;
       },
       setCurrent(state, { appKey, appLanguage }) {
         if (appKey) state.currentInner.appKey = appKey;
@@ -63,6 +70,9 @@ export default function (Vue) {
           ...state.appItems,
           [appKey]: appItem,
         };
+      },
+      setAppItemsAll(state, { appItems }) {
+        state.appItemsAll = appItems;
       },
     },
     actions: {
@@ -102,6 +112,21 @@ export default function (Vue) {
         }
         commit('setAppItem', { appKey, appItem });
         return appItem;
+      },
+      async getAppItemsAll({ state, commit }) {
+        if (state.appItemsAll) return state.appItemsAll;
+        const res = await Vue.prototype.$meta.api.post('/a/base/resource/select', {
+          atomClass: __atomClassApp,
+          options: {
+            orders: [
+              ['f.appSorting', 'asc'],
+              ['f.createdAt', 'asc'],
+            ],
+          },
+        });
+        const appItems = res.list;
+        commit('setAppItemsAll', { appItems });
+        return appItems;
       },
     },
   };

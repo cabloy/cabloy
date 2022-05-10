@@ -11,15 +11,8 @@ export default {
   methods: {
     // apps
     async data_provider_onLoadItemsAll() {
-      return await this.$api.post('/a/base/resource/select', {
-        atomClass: this.base_atomClassApp,
-        options: {
-          orders: [
-            ['f.appSorting', 'asc'],
-            ['f.createdAt', 'asc'],
-          ],
-        },
-      });
+      const list = await this.$store.dispatch('a/app/getAppItemsAll');
+      return { list };
     },
     // appmenu
     async data_provider_onLoadItemsPage({ page }) {
