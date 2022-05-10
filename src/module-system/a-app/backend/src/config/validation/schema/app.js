@@ -4,17 +4,15 @@ module.exports = app => {
   schemas.app = {
     type: 'object',
     properties: {
+      // title
+      __groupTitle: {
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Name',
-        notEmpty: true,
-      },
-      atomStaticKey: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'KeyForAtom',
-        ebReadOnly: true,
         notEmpty: true,
       },
       description: {
@@ -22,16 +20,48 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      // config
+      __groupConfig: {
+        ebType: 'group-flatten',
+        ebTitle: 'Config',
+      },
+      content: {
+        type: 'string',
+        ebType: 'json',
+        ebTitle: 'Content',
+        notEmpty: true,
+      },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      atomCategoryId: {
+        type: 'number',
+        ebType: 'category',
+        ebTitle: 'Category',
+      },
       appIcon: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Icon',
         notEmpty: true,
       },
-      content: {
+      // Extra
+      __groupExtra: {
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      appSorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
+      atomStaticKey: {
         type: 'string',
-        ebType: 'json',
-        ebTitle: 'Content',
+        ebType: 'text',
+        ebTitle: 'KeyForAtom',
+        ebReadOnly: true,
         notEmpty: true,
       },
     },

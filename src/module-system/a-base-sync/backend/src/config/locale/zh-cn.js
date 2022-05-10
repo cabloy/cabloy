@@ -133,6 +133,8 @@ module.exports = {
   Roles: '角色',
   Move: '移动',
   OpenAuthScope: '开放认证范围',
+  System: '系统',
+  Management: '管理',
   // role name
   root: '根',
   anonymous: '匿名',

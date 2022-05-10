@@ -86,6 +86,7 @@ module.exports = app => {
     appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'root',
+    appSorting: 0,
   };
   return _app;
 };

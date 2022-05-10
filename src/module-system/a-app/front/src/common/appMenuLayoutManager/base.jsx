@@ -10,6 +10,14 @@ export default {
       },
     };
   },
+  computed: {
+    base_atomClassApp() {
+      return {
+        module: 'a-app',
+        atomClassName: 'app',
+      };
+    },
+  },
   methods: {
     async base_onInit() {
       // load appItem
