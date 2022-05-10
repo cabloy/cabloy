@@ -85,58 +85,34 @@ export default {
       // ok
       this.categoriesAll = categoriesAll;
     },
-    onItemClick(event, resource) {
-      return this.layoutManager.base_onPerformResource(event, resource);
+    onItemClick(event, item) {
+      console.log(item);
+      // return this.layoutManager.base_onPerformResource(event, resource);
     },
-    onAccordionOpen(event, item) {
-      this.accordionItemOpened = item.id;
+    onAccordionOpen(event, appGroup) {
+      this.accordionItemOpened = appGroup.id;
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
         module: 'a-basefront',
         key: this.layoutConfigKeyOpened,
-        value: item.id,
+        value: appGroup.id,
       });
     },
-    _renderCategories(categoryParent) {
+    _renderListItems(appGroup) {
       const children = [];
-      if (!categoryParent.children) return children;
-      for (const category of categoryParent.children) {
-        const domListItems = this._renderListItems(category);
-        const domCategory = (
-          <f7-list-group key={category.id}>
-            <f7-list-item group-title title={category.categoryNameLocale}></f7-list-item>
-            {domListItems}
-          </f7-list-group>
-        );
-        children.push(domCategory);
-      }
-      return children;
-    },
-    _renderResources(categoryParent) {
-      const children = [];
-      const resources = this.layoutManager.base.resourcesArrayAll.filter(
-        item => item.atomCategoryId === categoryParent.id
-      );
-      for (const resource of resources) {
-        const domResource = (
+      for (const item of appGroup.items) {
+        const domItem = (
           <eb-list-item
             class="item"
-            key={resource.atomId}
+            key={item.atomId}
             link="#"
-            title={resource.atomNameLocale}
-            propsOnPerform={event => this.onItemClick(event, resource)}
+            title={item.atomNameLocale}
+            propsOnPerform={event => this.onItemClick(event, item)}
           ></eb-list-item>
         );
-        children.push(domResource);
+        children.push(domItem);
       }
       return children;
-    },
-    _renderListItems(categoryParent) {
-      return [];
-      if (categoryParent.categoryCatalog === 1) {
-        return this._renderCategories(categoryParent);
-      }
-      return this._renderResources(categoryParent);
     },
     _renderAccordion(appGroup, index) {
       // domTitle
