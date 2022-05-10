@@ -16,6 +16,7 @@ export default {
   DeleteBulkNotAllDone: 'Some Items Cannot be Deleted',
   ReferenceForHelp: 'Reference',
   ReferenceForFunction: 'Reference',
+  LayoutBoxGrid9: '9-Box Grid Layout',
   LayoutAccordion: 'Accordion Layout',
   LayoutTree: 'Tree Layout',
   LayoutTreeTable: 'Tree Table Layout',

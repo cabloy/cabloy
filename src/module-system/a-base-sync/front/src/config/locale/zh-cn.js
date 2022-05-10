@@ -163,6 +163,7 @@ export default {
   Custom: '自定义',
   Bulk: '批量',
   Layout: '布局',
+  LayoutBoxGrid9: '9宫格布局',
   LayoutAccordion: '折叠布局',
   LayoutTree: '树形布局',
   LayoutTreeTable: '树形表格布局',

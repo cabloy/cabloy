@@ -4,9 +4,9 @@ module.exports = app => {
     info: {
       layout: {
         viewSize: {
-          small: 'list',
-          medium: 'list',
-          large: 'list',
+          small: 'boxGrid9',
+          medium: 'boxGrid9',
+          large: 'boxGrid9',
         },
       },
     },
@@ -14,10 +14,23 @@ module.exports = app => {
       base: {
         blocks: {},
       },
-      list: {
+      boxGrid9: {
+        title: 'LayoutBoxGrid9',
+        component: {
+          module: 'a-baselayout',
+          name: 'baseLayoutList',
+        },
         providerOptions: {
           providerName: 'all',
           autoInit: true,
+        },
+        blocks: {
+          items: {
+            component: {
+              module: 'a-app',
+              name: 'appListLayoutBlockBoxGrid9Items',
+            },
+          },
         },
       },
     },
@@ -25,7 +38,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Default',
     atomStaticKey: 'layoutAppMenuDefault',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),
