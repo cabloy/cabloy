@@ -1,7 +1,7 @@
 module.exports = function (ctx) {
   class VersionUpdate16 {
     async run() {
-      // aResource: add appKey
+      // aResource: add resourceIcon/appKey
       let sql = `
         ALTER TABLE aResource
           resourceIcon varchar(255) DEFAULT NULL,
