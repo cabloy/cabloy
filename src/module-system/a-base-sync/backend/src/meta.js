@@ -20,7 +20,9 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {},
+            tableNameModes: {
+              default: 'aResourceView',
+            },
             category: true,
             tag: true,
             resource: true,

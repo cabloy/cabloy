@@ -36,37 +36,11 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aAppMenu
-        sql = `
-          CREATE TABLE aAppMenu (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            description varchar(255) DEFAULT NULL,
-            appKey varchar(50) DEFAULT NULL,
-            appMenuSorting int(11) DEFAULT '0',
-            appMenuConfig JSON DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
         // create view: aAppViewFull
         sql = `
           CREATE VIEW aAppViewFull as
             select a.*,b.content from aApp a
               left join aAppContent b on a.id=b.itemId
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aAppMenuView
-        sql = `
-          CREATE VIEW aAppMenuView as
-            select a.*,b.id as appAtomId,b.atomName as appName from aAppMenu a
-              left join aAtom b on a.appKey=b.atomStaticKey
         `;
         await this.ctx.model.query(sql);
       }
@@ -75,7 +49,7 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // app: add role rights
-        let roleRights = [
+        const roleRights = [
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
@@ -91,24 +65,6 @@ module.exports = app => {
           { roleName: 'system', action: 'exportBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'app', roleRights });
-
-        // appMenu: add role rights
-        roleRights = [
-          { roleName: 'system', action: 'create' },
-          { roleName: 'system', action: 'read', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'write', scopeNames: 0 },
-          { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'clone', scopeNames: 0 },
-          { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'authorize', scopeNames: 0 },
-          { roleName: 'system', action: 'authorize', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'deleteBulk' },
-          { roleName: 'system', action: 'exportBulk' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'appMenu', roleRights });
       }
     }
 

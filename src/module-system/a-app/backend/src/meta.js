@@ -8,34 +8,6 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {
-        appMenu: {
-          info: {
-            bean: 'appMenu',
-            title: 'AppMenu',
-            tableName: 'aAppMenu',
-            tableNameModes: {
-              default: 'aAppMenuView',
-            },
-            language: false,
-            category: true,
-            tag: false,
-            resource: true,
-            layout: {
-              config: {
-                atomList: 'layoutAtomListAppMenu',
-              },
-            },
-          },
-          actions: {
-            write: {
-              enableOnStatic: true,
-            },
-          },
-          validator: 'appMenu',
-          search: {
-            validator: 'appMenuSearch',
-          },
-        },
         app: {
           info: {
             bean: 'app',
