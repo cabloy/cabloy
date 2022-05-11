@@ -97,6 +97,11 @@ export default {
     setLayoutInstance(layoutInstance) {
       this.layoutInstance = layoutInstance;
     },
+    clearLayoutInstance(layoutInstance) {
+      if (this.layoutInstance === layoutInstance) {
+        this.layoutInstance = null;
+      }
+    },
     getLayoutInstance() {
       return this.layoutInstance;
     },

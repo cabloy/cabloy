@@ -57,7 +57,7 @@ export default {
     }, 1000);
   },
   beforeDestroy() {
-    this.$meta.vueApp.setLayoutInstance(null);
+    this.$meta.vueApp.clearLayoutInstance(this);
   },
   mounted() {
     this.$meta.vueApp.setLayoutInstance(this);
@@ -92,10 +92,14 @@ export default {
       }
     },
     start() {
+      const vueApp = this.$meta.vueApp;
+      if (vueApp.getLayoutInstance() !== this) {
+        // do nothing
+        return;
+      }
       // size
       this.setSize();
       // loginOnStart
-      const vueApp = this.$meta.vueApp;
       if (vueApp.checkIfNeedOpenLogin()) {
         // open view login
         this.openLogin();
