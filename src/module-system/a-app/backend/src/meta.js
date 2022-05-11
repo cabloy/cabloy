@@ -62,7 +62,7 @@ module.exports = app => {
       schemas,
     },
     index: {
-      indexes: { aAppMenu: 'createdAt,updatedAt,atomId', aApp: 'createdAt,updatedAt,atomId' },
+      indexes: { aApp: 'createdAt,updatedAt,atomId' },
     },
   };
   return meta;

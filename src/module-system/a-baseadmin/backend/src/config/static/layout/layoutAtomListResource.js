@@ -23,16 +23,6 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'appKey',
-                title: 'App Key',
-                align: 'left',
-                params: {
-                  computed: {
-                    expression: 'record.appNameLocale',
-                  },
-                },
-              },
-              {
                 dataIndex: 'resourceType',
                 title: 'Resource Type',
                 align: 'left',
@@ -46,6 +36,25 @@ module.exports = app => {
                 dataIndex: 'atomCategoryNameLocale',
                 title: 'Category',
                 align: 'left',
+              },
+              {
+                dataIndex: 'appKey',
+                title: 'App Key',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record.appNameLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'resourceIcon',
+                title: 'Icon',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellIcon',
+                },
               },
               {
                 dataIndex: 'userName',
@@ -85,7 +94,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Resource',
     atomStaticKey: 'layoutAtomListResource',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

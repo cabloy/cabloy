@@ -39,7 +39,6 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'App Key',
-        notEmpty: true,
       },
       resourceType: {
         type: 'string',
@@ -66,6 +65,11 @@ module.exports = app => {
       __groupExtra: {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
+      },
+      resourceIcon: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Icon',
       },
       resourceSorting: {
         type: 'number',
