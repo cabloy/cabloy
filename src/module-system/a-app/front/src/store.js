@@ -20,21 +20,18 @@ export default function (Vue) {
         appLanguage: null,
       },
       appItemsAll: null,
+      layoutConfig: null,
       // global
       appItems: {},
     },
     getters: {
       current(state) {
         // appKey
-        const appKey = state.currentInner.appKey || query.appKey || __appKeyDefault;
+        const appKey = state.currentInner.appKey;
         // appLanguage
-        const appLanguage = state.currentInner.appLanguage || query.appLanguage || Vue.prototype.$meta.util.getLocale();
-        // user
-        const user = Vue.prototype.$meta.store.state.auth.user;
-        const userOp = user && user.op;
-        const userStatus = !userOp || userOp.anonymous ? 'anonymous' : 'authenticated';
-        // layout
-        const layout = Vue.prototype.$meta.vueApp.layout;
+        const appLanguage = state.currentInner.appLanguage;
+        // userStatus/layout
+        const { userStatus, layout } = __getUserStatusAndLayout({ Vue });
         // ok
         return {
           appKey,
@@ -61,10 +58,32 @@ export default function (Vue) {
           state.currentInner.appKey = null;
         }
         state.appItemsAll = null;
+        //
+        state.layoutConfig = null;
       },
       setCurrent(state, { appKey, appLanguage }) {
         if (appKey) state.currentInner.appKey = appKey;
         if (appLanguage) state.currentInner.appLanguage = appLanguage;
+        // layout config
+        const layoutConfig = state.layoutConfig;
+        if (!layoutConfig) throw new Error('app current not inited');
+        const { layoutConfigKeyApp, layoutConfigKeyLanguage } = __getLayoutConfigKeys({ Vue });
+        const layoutConfigValueApp = layoutConfig[layoutConfigKeyApp];
+        const layoutConfigValueLanguage = layoutConfig[layoutConfigKeyLanguage];
+        if (layoutConfigValueApp !== state.currentInner.appKey) {
+          Vue.prototype.$meta.store.commit('a/base/setLayoutConfigKey', {
+            module: 'a-basefront',
+            key: layoutConfigKeyApp,
+            value: state.currentInner.appKey,
+          });
+        }
+        if (layoutConfigValueLanguage !== state.currentInner.appLanguage) {
+          Vue.prototype.$meta.store.commit('a/base/setLayoutConfigKey', {
+            module: 'a-basefront',
+            key: layoutConfigKeyLanguage,
+            value: state.currentInner.appLanguage,
+          });
+        }
       },
       setAppItem(state, { appKey, appItem }) {
         state.appItems = {
@@ -75,9 +94,36 @@ export default function (Vue) {
       setAppItemsAll(state, { appItems }) {
         state.appItemsAll = appItems;
       },
+      setLayoutConfig(state, { layoutConfig }) {
+        state.layoutConfig = layoutConfig;
+      },
     },
     actions: {
+      async getLayoutConfig({ state, commit }) {
+        if (state.layoutConfig) return state.layoutConfig;
+        const layoutConfig = await Vue.prototype.$meta.store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+        commit('setLayoutConfig', { layoutConfig });
+        return layoutConfig;
+      },
+      async getCurrent({ state, getters, commit, dispatch }) {
+        if (state.currentInner.appKey) {
+          // has inited
+          return getters.current;
+        }
+        // layout config
+        const layoutConfig = await dispatch('getLayoutConfig');
+        const { layoutConfigKeyApp, layoutConfigKeyLanguage } = __getLayoutConfigKeys({ Vue });
+        const layoutConfigValueApp = layoutConfig[layoutConfigKeyApp];
+        const layoutConfigValueLanguage = layoutConfig[layoutConfigKeyLanguage];
+        // current
+        const appKey = query.appKey || layoutConfigValueApp || __appKeyDefault;
+        const appLanguage = query.appLanguage || layoutConfigValueLanguage || Vue.prototype.$meta.util.getLocale();
+        commit('setCurrent', { appKey, appLanguage });
+        return getters.current;
+      },
       async getPresetConfigCurrent({ state, getters, commit, dispatch }) {
+        // force init current
+        await dispatch('getCurrent');
         // force appItem exists
         const appItem = await dispatch('getAppItemCurrent');
         if (!appItem) {
@@ -131,6 +177,24 @@ export default function (Vue) {
       },
     },
   };
+}
+
+function __getUserStatusAndLayout({ Vue }) {
+  // userStatus
+  const user = Vue.prototype.$meta.store.state.auth.user;
+  const userOp = user && user.op;
+  const userStatus = !userOp || userOp.anonymous ? 'anonymous' : 'authenticated';
+  // layout
+  const layout = Vue.prototype.$meta.vueApp.layout;
+  // ok
+  return { userStatus, layout };
+}
+
+function __getLayoutConfigKeys({ Vue }) {
+  const { userStatus, layout } = __getUserStatusAndLayout({ Vue });
+  const layoutConfigKeyApp = `apps.current.appKey.${userStatus}.${layout}`;
+  const layoutConfigKeyLanguage = `apps.current.appLanguage.${userStatus}.${layout}`;
+  return { layoutConfigKeyApp, layoutConfigKeyLanguage };
 }
 
 function __getPresetConfig({ appItem, current }) {

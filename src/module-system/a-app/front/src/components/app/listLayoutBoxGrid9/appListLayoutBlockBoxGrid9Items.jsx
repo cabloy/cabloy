@@ -63,7 +63,7 @@ export default {
     init_layoutConfig() {
       // accordionItemOpened
       const appKey = this.layoutManager.container.appKey;
-      this.layoutConfigKeyOpened = `app.${appKey}.list.layouts.boxGrid9.opened`;
+      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.boxGrid9.opened`;
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
