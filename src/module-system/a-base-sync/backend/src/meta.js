@@ -5,7 +5,6 @@ module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
-  const staticAppMenus = require('./config/static/appMenus.js')(app);
   const staticDicts = require('./config/static/dicts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   const staticRoles = require('./config/static/roles.js')(app);
@@ -211,9 +210,6 @@ module.exports = app => {
         },
       },
       statics: {
-        'a-app.appMenu': {
-          items: staticAppMenus,
-        },
         'a-dict.dict': {
           items: staticDicts,
         },
