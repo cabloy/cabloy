@@ -4,9 +4,9 @@ module.exports = function (ctx) {
       // aResource: add resourceIcon/appKey
       let sql = `
         ALTER TABLE aResource
-          resourceIcon varchar(255) DEFAULT NULL,
-          appKey varchar(50) DEFAULT NULL
-                  `;
+          Add COLUMN resourceIcon varchar(255) DEFAULT NULL,
+          Add COLUMN appKey varchar(50) DEFAULT NULL
+      `;
       await ctx.model.query(sql);
       // create view: aResourceView
       sql = `
