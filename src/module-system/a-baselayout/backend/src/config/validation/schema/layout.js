@@ -32,7 +32,9 @@ module.exports = app => {
           dictKey: 'a-dictbooster:dictLayoutType',
           mode: 'select',
         },
-        notEmpty: true,
+        notEmpty: {
+          ignoreZero: true,
+        },
       },
       content: {
         type: 'string',

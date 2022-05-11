@@ -1,6 +1,10 @@
 module.exports = app => {
   const dictItems = [
     {
+      code: 0,
+      title: 'General',
+    },
+    {
       code: 1,
       title: 'LayoutMobile',
     },
@@ -70,6 +74,7 @@ module.exports = app => {
       AppMenu: 'App Menu',
     },
     'zh-cn': {
+      General: '通用',
       LayoutMobile: '移动布局',
       LayoutPC: 'PC布局',
       AtomList: '数据列表',
@@ -88,7 +93,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Layout Type',
     atomStaticKey: 'dictLayoutType',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
