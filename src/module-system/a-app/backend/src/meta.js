@@ -51,12 +51,6 @@ module.exports = app => {
     },
     validation: {
       validators: {
-        appMenu: {
-          schemas: 'appMenu',
-        },
-        appMenuSearch: {
-          schemas: 'appMenuSearch',
-        },
         app: {
           schemas: 'app',
         },

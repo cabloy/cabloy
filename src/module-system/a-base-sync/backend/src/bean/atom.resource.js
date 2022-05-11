@@ -60,6 +60,10 @@ module.exports = app => {
       if (resourceType) {
         item.resourceTypeLocale = resourceType.titleLocale;
       }
+      // locale of appName
+      if (item.appName) {
+        item.appNameLocale = this.ctx.text(item.appName);
+      }
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
       // meta

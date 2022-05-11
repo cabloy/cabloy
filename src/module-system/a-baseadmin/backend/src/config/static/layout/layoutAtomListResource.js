@@ -23,6 +23,16 @@ module.exports = app => {
                 },
               },
               {
+                dataIndex: 'appKey',
+                title: 'App Key',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record.appNameLocale',
+                  },
+                },
+              },
+              {
                 dataIndex: 'resourceType',
                 title: 'Resource Type',
                 align: 'left',

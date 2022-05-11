@@ -35,6 +35,12 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
+      appKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'App Key',
+        notEmpty: true,
+      },
       resourceType: {
         type: 'string',
         ebType: 'resourceType',
