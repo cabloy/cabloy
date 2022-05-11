@@ -7,12 +7,12 @@ module.exports = app => {
     },
   };
   const _app = {
-    atomName: 'Tools',
-    atomStaticKey: 'appTools',
-    atomRevision: 2,
+    atomName: 'System',
+    atomStaticKey: 'appSystem',
+    atomRevision: 3,
     atomCategoryId: 'System',
     description: '',
-    appIcon: ':outline:build-circle-outline',
+    appIcon: '::menu',
     appIsolate: true,
     content: JSON.stringify(content),
     resourceRoles: 'template.system',

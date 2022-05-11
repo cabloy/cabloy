@@ -30,7 +30,7 @@ export default {
     _resetClipboards() {
       this.$nextTick(() => {
         this.removeAllClipboardTriggers();
-        const domCells = this.$$('.icon-cell', this.$el);
+        const domCells = this.$$('.box-grid-cell', this.$el);
         for (let index = 0; index < domCells.length; index++) {
           this.addClipboardTrigger(domCells[index]);
         }

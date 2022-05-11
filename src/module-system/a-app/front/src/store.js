@@ -53,7 +53,7 @@ export default function (Vue) {
     mutations: {
       clearUserInfo(state) {
         // clear
-        // maybe fallback to appDefault from appTools
+        // maybe fallback to appDefault from appSystem
         if (state.currentInner.appKey === __appKeyDefault) {
           state.currentInner.appKey = null;
         }
