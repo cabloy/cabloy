@@ -9,7 +9,7 @@ module.exports = app => {
   const _app = {
     atomName: 'System',
     atomStaticKey: 'appSystem',
-    atomRevision: 3,
+    atomRevision: 0,
     atomCategoryId: 'System',
     description: '',
     appIcon: '::menu',
