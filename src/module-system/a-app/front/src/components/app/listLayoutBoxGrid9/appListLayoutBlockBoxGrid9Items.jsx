@@ -71,17 +71,14 @@ export default {
       let categoriesAll = await this.$store.dispatch('a/base/getCategories', {
         atomClass: this.layoutManager.base_atomClassApp,
       });
-      // 0 -> 1,2,3
-      for (const category of categoriesAll) {
-        if (category.categorySorting === 0) {
-          const index = __categoriesInner.indexOf(category.categoryName);
-          if (index > -1) {
-            category.categorySorting = index + 1;
-          }
-        }
-      }
       // sort
-      categoriesAll = categoriesAll.sort((a, b) => a.categorySorting - b.categorySorting);
+      categoriesAll = categoriesAll.sort((a, b) => {
+        const indexA = __categoriesInner.indexOf(a.categoryName);
+        const indexB = __categoriesInner.indexOf(b.categoryName);
+        const sortingA = indexA > -1 ? indexA - __categoriesInner.length : a.categorySorting;
+        const sortingB = indexB > -1 ? indexB - __categoriesInner.length : b.categorySorting;
+        return sortingA - sortingB;
+      });
       // ok
       this.categoriesAll = categoriesAll;
     },
