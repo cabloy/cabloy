@@ -69,7 +69,7 @@ module.exports = ctx => {
       }
       if (appKey !== undefined) {
         // appKey maybe null/empty string
-        where['f.appKey'] = null;
+        where['f.appKey'] = appKey ? appKey : null;
       }
       // options
       const options = {

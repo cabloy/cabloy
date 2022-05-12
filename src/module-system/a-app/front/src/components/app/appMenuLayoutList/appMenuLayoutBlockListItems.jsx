@@ -17,13 +17,13 @@ export default {
     return {
       accordionItemOpened: 0,
       layoutConfigKeyOpened: null,
-      categoriesAll: null,
+      categoryTree: null,
     };
   },
   computed: {
-    appGroups() {
+    appMenuGroups() {
       return this.layoutManager.data_tools_groupItems({
-        categories: this.categoriesAll,
+        categories: this.categoryTree,
         items: this.layoutManager.data_getItemsAll(),
         categoriesTop: this.blockConfig.categoriesTop,
       });
@@ -42,13 +42,11 @@ export default {
     init_layoutConfig() {
       // accordionItemOpened
       const appKey = this.layoutManager.container.appKey;
-      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.boxGrid9.opened`;
+      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.list.opened`;
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
-      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
-        atomClass: this.layoutManager.base_atomClassApp,
-      });
+      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
     },
     onItemClick(event, item) {
       const appKey = item.atomStaticKey;
@@ -104,16 +102,11 @@ export default {
       );
     },
     _renderAccordions() {
-      const appGroups = this.appGroups;
-      if (!appGroups) return null;
+      const appMenuGroups = this.appMenuGroups;
+      if (!appMenuGroups) return null;
       const children = [];
-      // single
-      if (appGroups.length === 1) {
-        return this._renderAppGroup(appGroups[0]);
-      }
-      // more
-      for (let index = 0; index < appGroups.length; index++) {
-        children.push(this._renderAccordion(appGroups[index], index));
+      for (let index = 0; index < appMenuGroups.length; index++) {
+        children.push(this._renderAccordion(appMenuGroups[index], index));
       }
       return <eb-list accordion-list>{children}</eb-list>;
     },
