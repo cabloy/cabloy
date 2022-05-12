@@ -6,7 +6,7 @@ module.exports = app => {
         mobile: {
           layout: null,
           menu: {
-            layout: null,
+            layout: 'a-app:layoutAppMenuBase',
           },
           home: {
             mode: null,
@@ -20,7 +20,7 @@ module.exports = app => {
         pc: {
           layout: null,
           menu: {
-            layout: null,
+            layout: 'a-app:layoutAppMenuBase',
           },
           home: {
             mode: null,
@@ -36,7 +36,7 @@ module.exports = app => {
         mobile: {
           layout: null,
           menu: {
-            layout: null,
+            layout: 'a-app:layoutAppMenuBase',
           },
           home: {
             mode: null,
@@ -50,7 +50,7 @@ module.exports = app => {
         pc: {
           layout: null,
           menu: {
-            layout: null,
+            layout: 'a-app:layoutAppMenuBase',
           },
           home: {
             mode: null,

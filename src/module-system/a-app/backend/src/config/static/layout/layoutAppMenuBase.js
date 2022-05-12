@@ -14,7 +14,12 @@ module.exports = app => {
       base: {
         blocks: {},
       },
-      list: {},
+      list: {
+        providerOptions: {
+          providerName: 'all',
+          autoInit: true,
+        },
+      },
     },
   };
   const layout = {
