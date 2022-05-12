@@ -67,21 +67,18 @@ export default function (Vue) {
         // layout config
         const layoutConfig = state.layoutConfig;
         if (!layoutConfig) throw new Error('app current not inited');
-        const { layoutConfigKeyApp, layoutConfigKeyLanguage } = __getLayoutConfigKeys({ Vue });
-        const layoutConfigValueApp = layoutConfig[layoutConfigKeyApp];
-        const layoutConfigValueLanguage = layoutConfig[layoutConfigKeyLanguage];
-        if (layoutConfigValueApp !== state.currentInner.appKey) {
+        const layoutConfigKey = __getLayoutConfigKey({ Vue });
+        const layoutConfigValue = layoutConfig[layoutConfigKey] || {};
+        const layoutConfigValueApp = layoutConfigValue.appKey;
+        const layoutConfigValueLanguage = layoutConfigValue.appLanguage;
+        if (
+          layoutConfigValueApp !== state.currentInner.appKey ||
+          layoutConfigValueLanguage !== state.currentInner.appLanguage
+        ) {
           Vue.prototype.$meta.store.commit('a/base/setLayoutConfigKey', {
             module: 'a-basefront',
-            key: layoutConfigKeyApp,
-            value: state.currentInner.appKey,
-          });
-        }
-        if (layoutConfigValueLanguage !== state.currentInner.appLanguage) {
-          Vue.prototype.$meta.store.commit('a/base/setLayoutConfigKey', {
-            module: 'a-basefront',
-            key: layoutConfigKeyLanguage,
-            value: state.currentInner.appLanguage,
+            key: layoutConfigKey,
+            value: { appKey: state.currentInner.appKey, appLanguage: state.currentInner.appLanguage },
           });
         }
       },
@@ -112,9 +109,10 @@ export default function (Vue) {
         }
         // layout config
         const layoutConfig = await dispatch('getLayoutConfig');
-        const { layoutConfigKeyApp, layoutConfigKeyLanguage } = __getLayoutConfigKeys({ Vue });
-        const layoutConfigValueApp = layoutConfig[layoutConfigKeyApp];
-        const layoutConfigValueLanguage = layoutConfig[layoutConfigKeyLanguage];
+        const layoutConfigKey = __getLayoutConfigKey({ Vue });
+        const layoutConfigValue = layoutConfig[layoutConfigKey] || {};
+        const layoutConfigValueApp = layoutConfigValue.appKey;
+        const layoutConfigValueLanguage = layoutConfigValue.appLanguage;
         // current
         const appKey = query.appKey || layoutConfigValueApp || __appKeyDefault;
         const appLanguage = query.appLanguage || layoutConfigValueLanguage || Vue.prototype.$meta.util.getLocale();
@@ -190,11 +188,9 @@ function __getUserStatusAndLayout({ Vue }) {
   return { userStatus, layout };
 }
 
-function __getLayoutConfigKeys({ Vue }) {
+function __getLayoutConfigKey({ Vue }) {
   const { userStatus, layout } = __getUserStatusAndLayout({ Vue });
-  const layoutConfigKeyApp = `apps.current.appKey.${userStatus}.${layout}`;
-  const layoutConfigKeyLanguage = `apps.current.appLanguage.${userStatus}.${layout}`;
-  return { layoutConfigKeyApp, layoutConfigKeyLanguage };
+  return `apps.current.${userStatus}.${layout}`;
 }
 
 function __getPresetConfig({ appItem, current }) {
