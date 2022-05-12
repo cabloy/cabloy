@@ -83,7 +83,7 @@ export default {
       this.categoriesAll = categoriesAll;
     },
     onItemClick(event, item) {
-      console.log(item);
+      const appKey = item.atomStaticKey;
       // return this.layoutManager.base_onPerformResource(event, resource);
     },
     onAccordionOpen(event, appGroup) {

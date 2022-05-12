@@ -62,6 +62,7 @@ export default function (Vue) {
         state.layoutConfig = null;
       },
       setCurrent(state, { appKey, appLanguage }) {
+        if (!appKey && !appLanguage) return;
         if (appKey) state.currentInner.appKey = appKey;
         if (appLanguage) state.currentInner.appLanguage = appLanguage;
         // layout config

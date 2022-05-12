@@ -216,7 +216,7 @@ export default {
       this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
-      return this.app_openHome();
+      return this.app_openHome({ force: true });
     },
     // options:
     //  target: _self/_view/_group

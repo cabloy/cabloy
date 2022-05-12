@@ -5,7 +5,7 @@ export default {
     };
   },
   methods: {
-    async app_openHome() {
+    async app_openHome({ appKey, appLanguage, force = false }) {
       await this.app_openAppMenu();
       await this.app_openAppHome();
       // await this.app_openAppUser();
