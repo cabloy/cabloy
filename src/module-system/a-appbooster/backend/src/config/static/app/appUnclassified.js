@@ -16,7 +16,7 @@ module.exports = app => {
     appIsolate: false,
     content: JSON.stringify(content),
     resourceRoles: 'template.system',
-    appSorting: 2,
+    appSorting: 1,
   };
   return _app;
 };
