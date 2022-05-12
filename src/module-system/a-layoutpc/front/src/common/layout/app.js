@@ -1,28 +1,27 @@
 export default {
   data() {
     return {
-      appKeyDefault: 'a-app:appDefault',
+      app: {
+        keyDefault: 'a-app:appDefault',
+        appMenuDefaultChecked: false, // only once
+      },
     };
   },
   methods: {
     async app_openHome({ appKey, appLanguage, force = false }) {
-      await this.app_openAppMenu();
+      // set current
+      this.$meta.store.commit('a/app/setCurrent', { appKey, appLanguage });
+      // get current
+      const current = this.$store.getters['a/app/current'];
+      await this.app_openAppMenu({ current });
       await this.app_openAppHome();
       // await this.app_openAppUser();
     },
-    async app_openAppMenu() {
+    async app_openAppMenu({ current }) {
       // current
-      const current = this.$store.getters['a/app/current'];
-      const appItemCurrent = this.$store.getters['a/app/appItemCurrent'];
+      const appItemCurrent = await this.$store.dispatch('a/app/getAppItem', { appKey: current.appKey });
       // app default
-      if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
-        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.appKeyDefault });
-        this.navigate(`/a/app/appMenu?appKey=${this.appKeyDefault}`, {
-          scene: 'sidebar',
-          sceneOptions: this.app_openAppMenu_panelSceneOptions(this.appKeyDefault, appItemDefault),
-          imActive: true,
-        });
-      }
+      await this.app_checkAppMenuDefault({ current, appItemCurrent });
       // app current
       this.navigate(`/a/app/appMenu?appKey=${current.appKey}`, {
         scene: 'sidebar',
@@ -31,7 +30,7 @@ export default {
       });
     },
     app_isDefault(appKey) {
-      return appKey === this.appKeyDefault;
+      return appKey === this.app.keyDefault;
     },
     app_openAppMenu_panelSceneOptions(appKey, appItem) {
       let title;
@@ -57,6 +56,20 @@ export default {
           icon: { f7: appItem.appIcon },
         },
       };
+    },
+    async app_checkAppMenuDefault({ current, appItemCurrent }) {
+      if (this.app.appMenuDefaultChecked) return;
+      // app default
+      if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
+        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.app.keyDefault });
+        this.navigate(`/a/app/appMenu?appKey=${this.app.keyDefault}`, {
+          scene: 'sidebar',
+          sceneOptions: this.app_openAppMenu_panelSceneOptions(this.app.keyDefault, appItemDefault),
+          imActive: true,
+        });
+      }
+      // checked
+      this.app.appMenuDefaultChecked = true;
     },
     async app_openAppHome() {},
   },
