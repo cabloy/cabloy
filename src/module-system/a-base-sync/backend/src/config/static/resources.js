@@ -42,20 +42,20 @@ module.exports = app => {
     {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',
-      atomRevision: 2,
+      atomRevision: 3,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         actionPath: '/a/basefront/comment/all',
       }),
       resourceIcon: '::comment-dots',
-      appKey: 'a-appbooster:appSystem',
+      appKey: 'a-appbooster:appGeneral',
       resourceRoles: 'root',
     },
     {
       atomName: 'Developer Tool',
       atomStaticKey: 'developerTool',
-      atomRevision: 3,
+      atomRevision: 4,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
