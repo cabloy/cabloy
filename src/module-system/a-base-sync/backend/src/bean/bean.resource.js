@@ -67,9 +67,9 @@ module.exports = ctx => {
       if (resourceType) {
         where['f.resourceType'] = resourceType;
       }
-      if (appKey !== undefined && appKey !== null) {
-        // appKey maybe empty string
-        where['f.appKey'] = appKey;
+      if (appKey !== undefined) {
+        // appKey maybe null/empty string
+        where['f.appKey'] = null;
       }
       // options
       const options = {
