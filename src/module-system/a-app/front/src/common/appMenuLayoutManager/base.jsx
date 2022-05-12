@@ -28,31 +28,36 @@ export default {
         appKey: this.container.appKey,
       });
     },
-    base_prepareSelectOptions() {
-      // options
-      let options = {
-        where: {},
-      };
-      // layout
-      options.layout = this.layout.current;
-      // order
-      options.orders = [['a.createdAt', 'desc']];
-      // extend 1
-      if (this.container.options) {
-        options = this.$utils.extend({}, options, this.container.options);
+    base_onPerformResource(event, resource) {
+      const resourceConfig = JSON.parse(resource.resourceConfig);
+      // special for action
+      let action;
+      let item;
+      if (resourceConfig.atomAction === 'create') {
+        //
+        action = this.getAction({
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+          name: resourceConfig.atomAction,
+        });
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else if (resourceConfig.atomAction === 'read') {
+        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
+          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        }
+        action = resourceConfig;
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else {
+        action = resourceConfig;
       }
-      // options
-      return options;
-    },
-    base_prepareSelectParams() {
-      // options
-      const options = this.base_prepareSelectOptions();
-      // params
-      const params = {
-        messageClass: this.base_messageClass,
-        options,
-      };
-      return params;
+      action = this.$utils.extend({}, action, { targetEl: event.currentTarget });
+      return this.$meta.util.performAction({ ctx: this, action, item });
     },
   },
 };

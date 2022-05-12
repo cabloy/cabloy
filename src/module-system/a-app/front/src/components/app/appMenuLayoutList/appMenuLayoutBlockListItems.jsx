@@ -49,8 +49,7 @@ export default {
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
     },
     onItemClick(event, item) {
-      const appKey = item.atomStaticKey;
-      this.layoutManager.$meta.vueLayout.app_openHome({ appKey, force: false });
+      return this.layoutManager.base_onPerformResource(event, item);
     },
     onAccordionOpen(event, group) {
       this.accordionItemOpened = group.id;
