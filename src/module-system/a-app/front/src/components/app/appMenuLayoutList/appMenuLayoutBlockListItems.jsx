@@ -52,49 +52,52 @@ export default {
       const appKey = item.atomStaticKey;
       this.layoutManager.$meta.vueLayout.app_openHome({ appKey, force: false });
     },
-    onAccordionOpen(event, appGroup) {
-      this.accordionItemOpened = appGroup.id;
+    onAccordionOpen(event, group) {
+      this.accordionItemOpened = group.id;
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
         module: 'a-basefront',
         key: this.layoutConfigKeyOpened,
-        value: appGroup.id,
+        value: group.id,
       });
     },
-    _renderAppGroup(appGroup) {
+    _renderGroup(group) {
       const children = [];
-      for (const item of appGroup.items) {
+      for (const item of group.items) {
         const domItem = (
-          <eb-link key={item.atomId} class="box-grid-cell" propsOnPerform={event => this.onItemClick(event, item)}>
-            <div class="box-grid-cell-icon">
-              <f7-icon f7={item.appIcon} size="24"></f7-icon>
-            </div>
-            <div class="box-grid-cell-label">{item.atomNameLocale}</div>
-          </eb-link>
+          <eb-list-item
+            class="item"
+            key={item.atomId}
+            link="#"
+            title={item.atomNameLocale}
+            propsOnPerform={event => this.onItemClick(event, item)}
+          >
+            <f7-icon slot="media" f7={item.resourceIcon}></f7-icon>
+          </eb-list-item>
         );
         children.push(domItem);
       }
-      return <div class="eb-box-grid-row">{children}</div>;
+      return <eb-list inset>{children}</eb-list>;
     },
-    _renderAccordion(appGroup, index) {
+    _renderAccordion(group, index) {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{appGroup.categoryNameLocale}</div>
+          <div>{group.categoryNameLocale}</div>
         </div>
       );
       // domAccordionContent
-      const domAppGroup = this._renderAppGroup(appGroup);
-      const domAccordionContent = <f7-accordion-content>{domAppGroup}</f7-accordion-content>;
+      const domGroup = this._renderGroup(group);
+      const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
       const accordionItemOpened =
-        this.accordionItemOpened === appGroup.id || (this.accordionItemOpened === 0 && index === 0);
+        this.accordionItemOpened === group.id || (this.accordionItemOpened === 0 && index === 0);
       // ok
       return (
         <eb-list-item
-          key={appGroup.id}
+          key={group.id}
           accordion-item
           accordion-item-opened={accordionItemOpened}
-          onAccordionOpen={event => this.onAccordionOpen(event, appGroup)}
+          onAccordionOpen={event => this.onAccordionOpen(event, group)}
         >
           {domTitle}
           {domAccordionContent}

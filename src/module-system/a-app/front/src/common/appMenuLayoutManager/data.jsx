@@ -1,5 +1,6 @@
 const __categoriesTop = {
   'a-app:appDefault': ['General', 'Management', 'System'],
+  'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
 };
 
 export default {
