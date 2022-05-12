@@ -104,12 +104,14 @@ export default function (Vue) {
         return layoutConfig;
       },
       async getCurrent({ state, getters, commit, dispatch }) {
+        // force exists
+        const layoutConfig = await dispatch('getLayoutConfig');
+        // current
         if (state.currentInner.appKey) {
           // has inited
           return getters.current;
         }
         // layout config
-        const layoutConfig = await dispatch('getLayoutConfig');
         const layoutConfigKey = __getLayoutConfigKey({ Vue });
         const layoutConfigValue = layoutConfig[layoutConfigKey] || {};
         const layoutConfigValueApp = layoutConfigValue.appKey;
