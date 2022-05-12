@@ -125,14 +125,15 @@ export default function (Vue) {
           [resourceType]: tree,
         };
       },
-      setResources(state, { resourceType, resources, resourcesArray }) {
+      setResources(state, { resourceType, appKey, resources, resourcesArray }) {
+        const key = appKey ? `${resourceType}_${appKey}` : resourceType;
         state.resources = {
           ...state.resources,
-          [resourceType]: resources,
+          [key]: resources,
         };
         state.resourcesArray = {
           ...state.resourcesArray,
-          [resourceType]: resourcesArray,
+          [key]: resourcesArray,
         };
       },
       setCategoryTree(state, { atomClass, language, tree }) {
@@ -310,11 +311,11 @@ export default function (Vue) {
             });
         });
       },
-      getResources({ state, commit }, { resourceType }) {
-        return __getResources({ state, commit }, { resourceType, useArray: false });
+      getResources({ state, commit }, { resourceType, appKey }) {
+        return __getResources({ state, commit }, { resourceType, appKey, useArray: false });
       },
-      getResourcesArray({ state, commit }, { resourceType }) {
-        return __getResources({ state, commit }, { resourceType, useArray: true });
+      getResourcesArray({ state, commit }, { resourceType, appKey }) {
+        return __getResources({ state, commit }, { resourceType, appKey, useArray: true });
       },
       getCategoryTree({ state, commit }, { atomClass, language }) {
         return new Promise((resolve, reject) => {
@@ -398,33 +399,27 @@ export default function (Vue) {
     },
   };
 
-  function __getResources({ state, commit }, { resourceType, useArray }) {
-    return new Promise((resolve, reject) => {
-      if (state.resources[resourceType]) {
-        return resolve(useArray ? state.resourcesArray[resourceType] : state.resources[resourceType]);
-      }
-      Vue.prototype.$meta.api
-        .post('/a/base/resource/select', {
-          options: {
-            resourceType,
-            orders: [
-              ['f.resourceSorting', 'asc'],
-              ['f.createdAt', 'asc'],
-            ],
-          },
-        })
-        .then(data => {
-          const resourcesArray = data.list;
-          const resources = {};
-          for (const item of resourcesArray) {
-            resources[item.atomStaticKey] = item;
-          }
-          commit('setResources', { resourceType, resources, resourcesArray });
-          resolve(useArray ? resourcesArray : resources);
-        })
-        .catch(err => {
-          reject(err);
-        });
+  async function __getResources({ state, commit }, { resourceType, appKey, useArray }) {
+    const key = appKey ? `${resourceType}_${appKey}` : resourceType;
+    if (state.resources[key]) {
+      return useArray ? state.resourcesArray[key] : state.resources[key];
+    }
+    const data = await Vue.prototype.$meta.api.post('/a/base/resource/select', {
+      options: {
+        resourceType,
+        appKey,
+        orders: [
+          ['f.resourceSorting', 'asc'],
+          ['f.createdAt', 'asc'],
+        ],
+      },
     });
+    const resourcesArray = data.list;
+    const resources = {};
+    for (const item of resourcesArray) {
+      resources[item.atomStaticKey] = item;
+    }
+    commit('setResources', { resourceType, appKey, resources, resourcesArray });
+    return useArray ? resourcesArray : resources;
   }
 }

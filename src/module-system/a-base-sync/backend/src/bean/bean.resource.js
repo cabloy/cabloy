@@ -44,6 +44,7 @@ module.exports = ctx => {
         orders,
         page,
         resourceType,
+        appKey,
         star = 0,
         label = 0,
         stage = 'formal',
@@ -65,6 +66,10 @@ module.exports = ctx => {
       if (!where) where = {};
       if (resourceType) {
         where['f.resourceType'] = resourceType;
+      }
+      if (appKey !== undefined && appKey !== null) {
+        // appKey maybe empty string
+        where['f.appKey'] = appKey;
       }
       // options
       const options = {

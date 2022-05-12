@@ -21,12 +21,9 @@ export default {
       // app other
       const resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {
         resourceType: 'a-base:menu',
+        appKey,
       });
-      const treeData = await this.$store.dispatch('a/base/getCategoryTreeResource', {
-        resourceType: 'a-base:menu',
-      });
-      console.log(resourcesArrayAll);
-      console.log(treeData);
+      return { list: resourcesArrayAll };
     },
   },
 };
