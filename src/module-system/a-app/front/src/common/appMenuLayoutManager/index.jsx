@@ -4,6 +4,7 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Data from './data.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
 // container: {
 //   appKey,
@@ -13,6 +14,7 @@ const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mix
 export default {
   mixins: [
     ebLayoutManagerBase, //
+    ebAtomActions,
     Base,
     Page,
     Layout,
