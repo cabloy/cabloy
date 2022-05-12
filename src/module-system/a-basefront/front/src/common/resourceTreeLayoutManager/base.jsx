@@ -31,7 +31,7 @@ export default {
       this.base.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {
         resourceType: this.container.resourceType,
       });
-      this.base.treeData = await this.$store.dispatch('a/base/getResourceTree', {
+      this.base.treeData = await this.$store.dispatch('a/base/getCategoryTreeResource', {
         resourceType: this.container.resourceType,
       });
       return true;

@@ -30,7 +30,7 @@ export default function (Vue) {
       labels: null,
       layoutConfig: {},
       userAtomClassRolesPreferred: {},
-      resourceTrees: {},
+      categoryTreesResource: {},
       resources: {},
       resourcesArray: {},
       categoryTrees: {},
@@ -59,7 +59,7 @@ export default function (Vue) {
         state.labels = null;
         state.layoutConfig = {};
         state.userAtomClassRolesPreferred = {};
-        state.resourceTrees = {};
+        state.categoryTreesResource = {};
         state.resources = {};
         state.resourcesArray = {};
         state.categoryTrees = {};
@@ -119,9 +119,9 @@ export default function (Vue) {
       setResourceTypes(state, resourceTypes) {
         state.resourceTypes = resourceTypes;
       },
-      setResourceTree(state, { resourceType, tree }) {
-        state.resourceTrees = {
-          ...state.resourceTrees,
+      setCategoryTreeResource(state, { resourceType, tree }) {
+        state.categoryTreesResource = {
+          ...state.categoryTreesResource,
           [resourceType]: tree,
         };
       },
@@ -279,9 +279,9 @@ export default function (Vue) {
             });
         });
       },
-      getResourceTree({ state, commit }, { resourceType }) {
+      getCategoryTreeResource({ state, commit }, { resourceType }) {
         return new Promise((resolve, reject) => {
-          if (state.resourceTrees[resourceType]) return resolve(state.resourceTrees[resourceType]);
+          if (state.categoryTreesResource[resourceType]) return resolve(state.categoryTreesResource[resourceType]);
           Vue.prototype.$meta.api
             .post('/a/base/category/child', {
               atomClass: __atomClassResource,
@@ -298,7 +298,7 @@ export default function (Vue) {
                 })
                 .then(data => {
                   const tree = data.list;
-                  commit('setResourceTree', { resourceType, tree });
+                  commit('setCategoryTreeResource', { resourceType, tree });
                   resolve(tree);
                 })
                 .catch(err => {
