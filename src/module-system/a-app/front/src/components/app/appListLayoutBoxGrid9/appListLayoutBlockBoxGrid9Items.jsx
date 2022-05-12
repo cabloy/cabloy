@@ -1,5 +1,3 @@
-const __categoriesInner = ['General', 'Management', 'System'];
-
 export default {
   meta: {
     global: false,
@@ -24,30 +22,11 @@ export default {
   },
   computed: {
     appGroups() {
-      //
-      if (!this.categoriesAll) return null;
-      const items = this.layoutManager.data_getItemsAll();
-      if (!items) return null;
-      //
-      let groups = this.categoriesAll.map(item => {
-        return {
-          id: item.id,
-          categoryName: item.categoryName,
-          categoryNameLocale: item.categoryNameLocale,
-          items: [],
-        };
+      return this.layoutManager.data_tools_groupItems({
+        categories: this.categoriesAll,
+        items: this.layoutManager.data_getItemsAll(),
+        categoriesTop: this.blockConfig.categoriesTop,
       });
-      for (const item of items) {
-        // group
-        const groupId = item.atomCategoryId;
-        const group = groups.find(item => item.id === groupId);
-        if (group) {
-          group.items.push(item);
-        }
-      }
-      groups = groups.filter(item => item.items.length > 0);
-      // ok
-      return groups;
     },
   },
   created() {
@@ -67,20 +46,9 @@ export default {
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
-      // categoriesAll
-      let categoriesAll = await this.$store.dispatch('a/base/getCategories', {
+      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
         atomClass: this.layoutManager.base_atomClassApp,
       });
-      // sort
-      categoriesAll = categoriesAll.sort((a, b) => {
-        const indexA = __categoriesInner.indexOf(a.categoryName);
-        const indexB = __categoriesInner.indexOf(b.categoryName);
-        const sortingA = indexA > -1 ? indexA - __categoriesInner.length : a.categorySorting;
-        const sortingB = indexB > -1 ? indexB - __categoriesInner.length : b.categorySorting;
-        return sortingA - sortingB;
-      });
-      // ok
-      this.categoriesAll = categoriesAll;
     },
     onItemClick(event, item) {
       const appKey = item.atomStaticKey;
