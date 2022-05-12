@@ -67,6 +67,9 @@ module.exports = ctx => {
       if (resourceType) {
         where['f.resourceType'] = resourceType;
       }
+      if (appKey === 'a-appbooster:appUnclassified') {
+        appKey = null;
+      }
       if (appKey !== undefined) {
         // appKey maybe null/empty string
         where['f.appKey'] = appKey ? appKey : null;

@@ -7,16 +7,16 @@ module.exports = app => {
     },
   };
   const _app = {
-    atomName: 'System',
-    atomStaticKey: 'appSystem',
+    atomName: 'Unclassified',
+    atomStaticKey: 'appUnclassified',
     atomRevision: 0,
     atomCategoryId: 'System',
     description: '',
-    appIcon: '::menu',
+    appIcon: '::info-circle',
     appIsolate: false,
     content: JSON.stringify(content),
     resourceRoles: 'template.system',
-    appSorting: 1,
+    appSorting: 2,
   };
   return _app;
 };
