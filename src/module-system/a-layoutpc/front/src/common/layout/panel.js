@@ -14,7 +14,7 @@ export default {
       // extra
       const _panelExtra = { resourceConfig: {} };
       if (url) _panelExtra.resourceConfig.url = url;
-      if (panel.title) _panelExtra.titleLocale = this.$text(panel.title);
+      if (panel.title && !panel.titleLocale) _panelExtra.titleLocale = this.$text(panel.title);
       // stock
       const panelStock = this._findPanelStock(panel);
       // extend
