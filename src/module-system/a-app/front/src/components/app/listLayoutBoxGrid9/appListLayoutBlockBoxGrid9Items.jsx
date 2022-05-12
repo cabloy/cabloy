@@ -84,8 +84,7 @@ export default {
     },
     onItemClick(event, item) {
       const appKey = item.atomStaticKey;
-
-      // return this.layoutManager.base_onPerformResource(event, resource);
+      this.layoutManager.$meta.vueLayout.app_openHome({ appKey, force: false });
     },
     onAccordionOpen(event, appGroup) {
       this.accordionItemOpened = appGroup.id;
