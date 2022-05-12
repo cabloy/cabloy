@@ -19,13 +19,21 @@ module.exports = app => {
           providerName: 'all',
           autoInit: true,
         },
+        blocks: {
+          items: {
+            component: {
+              module: 'a-app',
+              name: 'appMenuLayoutBlockListItems',
+            },
+          },
+        },
       },
     },
   };
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMenuBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),
