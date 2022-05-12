@@ -25,6 +25,7 @@ export default {
       return this.layoutManager.data_tools_groupItems({
         categories: this.categoriesAll,
         items: this.layoutManager.data_getItemsAll(),
+        categoriesTop: this.blockConfig.categoriesTop,
       });
     },
   },
@@ -45,20 +46,9 @@ export default {
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
-      // categoriesAll
-      let categoriesAll = await this.$store.dispatch('a/base/getCategories', {
+      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
         atomClass: this.layoutManager.base_atomClassApp,
       });
-      // sort
-      categoriesAll = categoriesAll.sort((a, b) => {
-        const indexA = __categoriesInner.indexOf(a.categoryName);
-        const indexB = __categoriesInner.indexOf(b.categoryName);
-        const sortingA = indexA > -1 ? indexA - __categoriesInner.length : a.categorySorting;
-        const sortingB = indexB > -1 ? indexB - __categoriesInner.length : b.categorySorting;
-        return sortingA - sortingB;
-      });
-      // ok
-      this.categoriesAll = categoriesAll;
     },
     onItemClick(event, item) {
       const appKey = item.atomStaticKey;
