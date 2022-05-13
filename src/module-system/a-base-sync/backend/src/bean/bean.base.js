@@ -168,6 +168,10 @@ module.exports = ctx => {
           description: ctx.text(module.package.description),
           info: module.info,
         };
+        const icon = module.package.eggBornModule && module.package.eggBornModule.icon;
+        if (icon) {
+          _module.icon = icon;
+        }
         _module.titleLocale = ctx.text(_module.title);
         modules[relativeName] = _module;
       }

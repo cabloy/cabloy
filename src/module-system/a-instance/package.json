@@ -3,6 +3,7 @@
   "version": "4.2.10",
   "title": "Instance",
   "eggBornModule": {
+    "icon": "::module",
     "fileVersion": 4,
     "dependencies": {}
   },
