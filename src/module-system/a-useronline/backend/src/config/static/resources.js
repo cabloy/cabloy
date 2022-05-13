@@ -18,7 +18,7 @@ module.exports = app => {
     {
       atomName: 'Users Status',
       atomStaticKey: 'listUserStatus',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -26,6 +26,8 @@ module.exports = app => {
         atomClassName: 'userOnline',
         atomAction: 'read',
       }),
+      resourceIcon: '::people',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     // {
