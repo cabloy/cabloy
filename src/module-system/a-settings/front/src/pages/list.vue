@@ -37,7 +37,7 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
+    onLoadMore(/* { index }*/) {
       // fetch
       return this.$api.post(`settings/${this.scene}/list`).then(data => {
         this.items = this.items.concat(data.list);
@@ -45,12 +45,15 @@ export default {
       });
     },
     onItemClick(event, item) {
-      const action = item.validator
-        ? {
-            actionModule: 'a-settings',
-            actionPath: `${this.scene}/edit?module=${item.module}`,
-          }
-        : item;
+      let action;
+      if (item.validator) {
+        action = {
+          actionModule: 'a-settings',
+          actionPath: `${this.scene}/edit?module=${item.module}`,
+        };
+      } else {
+        action = item;
+      }
       return this.$meta.util.performAction({ ctx: this, action, item }).then(() => {
         return;
       });
