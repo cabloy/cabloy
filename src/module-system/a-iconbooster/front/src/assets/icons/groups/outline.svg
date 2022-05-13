@@ -49,6 +49,10 @@
 <symbol id="delete-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12M8 9h8v10H8V9m7.5-5l-1-1h-5l-1 1H5v2h14V4h-3.5Z"/>
 </symbol>
+<symbol id="dict-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48">
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M8.4 6.5v35a2 2 0 0 0 2 2h2.33v-39H10.4a2 2 0 0 0-2 2Zm4.33-2v39H37.6a2 2 0 0 0 2-2v-35a2 2 0 0 0-2-2Z"/>
+  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M32.165 26.1a6 6 0 0 0-6-6h0a6 6 0 0 0-6 6V30a6 6 0 0 0 6 6h0a6 6 0 0 0 6-6m0 6V12"/>
+</symbol>
 <symbol id="draft-outline" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M20 2a1 1 0 0 1 1 1v3.757l-2 2V4H5v16h14v-2.758l2-2V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h16zm1.778 6.808l1.414 1.414L15.414 18l-1.416-.002l.002-1.412l7.778-7.778zM13 12v2H8v-2h5zm3-4v2H8V8h8z"/>
 </symbol>
