@@ -21,11 +21,21 @@ export default {
   },
   computed: {
     groups() {
-      return this.layoutManager.data_tools_groupItems({
+      // categoriesTop
+      let categoriesTop = this.blockConfig.categoriesTop;
+      if (!categoriesTop) {
+        categoriesTop = this.layoutManager.data_tools_prepareCategoriesTop() || [];
+      }
+      // groups
+      let groups = this._groupItems({
         categories: this.categoryTree,
         items: this.layoutManager.data_getItemsAll(),
-        categoriesTop: this.blockConfig.categoriesTop,
+        categoriesTop,
       });
+      if (this.onGroups) {
+        groups = this.onGroups({ groups });
+      }
+      return groups;
     },
   },
   created() {
@@ -63,6 +73,39 @@ export default {
         key: this.layoutConfigKeyOpened,
         value: group.id,
       });
+    },
+    _groupItems({ categories, items, categoriesTop }) {
+      if (!categories || !items) return null;
+      // groups
+      let groups = categories.map(item => {
+        return {
+          id: item.id,
+          categoryName: item.categoryName,
+          categoryNameLocale: item.categoryNameLocale,
+          categorySorting: item.categorySorting,
+          items: [],
+        };
+      });
+      // sort
+      groups = groups.sort((a, b) => {
+        const indexA = categoriesTop.indexOf(a.categoryName);
+        const indexB = categoriesTop.indexOf(b.categoryName);
+        const sortingA = indexA > -1 ? indexA - categoriesTop.length : a.categorySorting;
+        const sortingB = indexB > -1 ? indexB - categoriesTop.length : b.categorySorting;
+        return sortingA - sortingB;
+      });
+      // items
+      for (const item of items) {
+        const groupId = item.atomCategoryId;
+        const group = groups.find(item => item.id === groupId);
+        if (group) {
+          group.items.push(item);
+        }
+      }
+      // filter
+      groups = groups.filter(item => item.items.length > 0);
+      // ok
+      return groups;
     },
     _renderGroup(group) {
       const children = [];
