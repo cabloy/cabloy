@@ -21,10 +21,16 @@ export default {
       const appKey = this.container.appKey;
       // app default
       if (appKey === __appKeyDefault) {
-        const list = await this.$store.dispatch('a/app/getAppItemsAll');
-        return { list };
+        return await this.data_provider_onLoadItemsAll_appDefault();
       }
       // app other
+      return await this.data_provider_onLoadItemsAll_appOther({ appKey });
+    },
+    async data_provider_onLoadItemsAll_appDefault() {
+      const list = await this.$store.dispatch('a/app/getAppItemsAll');
+      return { list };
+    },
+    async data_provider_onLoadItemsAll_appOther({ appKey }) {
       const resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {
         resourceType: 'a-base:menu',
         appKey,
