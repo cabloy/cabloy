@@ -21,7 +21,7 @@ export default {
     };
   },
   computed: {
-    groups() {
+    appMenuGroups() {
       return this.layoutManager.data_tools_groupItems({
         categories: this.categoryTree,
         items: this.layoutManager.data_getItemsAll(),
@@ -42,8 +42,7 @@ export default {
     init_layoutConfig() {
       // accordionItemOpened
       const appKey = this.layoutManager.container.appKey;
-      const layoutCurrent = this.layoutManager.layout.current;
-      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.${layoutCurrent}.opened`;
+      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.list.opened`;
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
@@ -105,11 +104,11 @@ export default {
       );
     },
     _renderAccordions() {
-      const groups = this.groups;
-      if (!groups) return null;
+      const appMenuGroups = this.appMenuGroups;
+      if (!appMenuGroups) return null;
       const children = [];
-      for (let index = 0; index < groups.length; index++) {
-        children.push(this._renderAccordion(groups[index], index));
+      for (let index = 0; index < appMenuGroups.length; index++) {
+        children.push(this._renderAccordion(appMenuGroups[index], index));
       }
       return <eb-list accordion-list>{children}</eb-list>;
     },

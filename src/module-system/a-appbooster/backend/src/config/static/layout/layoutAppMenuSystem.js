@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const content = {
     info: {
       layout: {
@@ -16,12 +16,12 @@ module.exports = app => {
       },
       list: {
         blocks: {
-          // items: {
-          //   component: {
-          //     module: 'a-app',
-          //     name: 'appListLayoutBlockBoxGrid9Items',
-          //   },
-          // },
+          items: {
+            component: {
+              module: moduleInfo.relativeName,
+              name: 'appSystemLayoutBlockListItems',
+            },
+          },
         },
       },
     },
