@@ -1,6 +1,7 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = require('./config/validation/schemas.js')(app);
+  const staticApps = require('./config/static/apps.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
@@ -46,6 +47,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-app.app': {
+          items: staticApps,
+        },
         'a-flow.flowDef': {
           items: staticFlowDefs,
         },
