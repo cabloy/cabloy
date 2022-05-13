@@ -9,6 +9,8 @@ const __snippet = `{
     atomClassName: '<%=argv.atomClassName%>',
     atomAction: 'create',
   }),
+  resourceIcon: '::add',
+  appKey: 'a-appbooster:appGeneral',
   resourceRoles: 'authenticated',
 },
 {
@@ -22,6 +24,8 @@ const __snippet = `{
     atomClassName: '<%=argv.atomClassName%>',
     atomAction: 'read',
   }),
+  resourceIcon: ':outline:data-list-outline',
+  appKey: 'a-appbooster:appGeneral',
   resourceRoles: 'authenticated',
 },`;
 
