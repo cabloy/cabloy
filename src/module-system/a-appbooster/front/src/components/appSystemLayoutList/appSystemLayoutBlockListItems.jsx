@@ -11,8 +11,17 @@ function installFactory(_Vue) {
   return {
     mixins: [ebAppMenuLayoutBlockListItemsBase],
     data() {
-      return {};
+      return {
+        settingsInstance: null,
+      };
     },
-    methods: {},
+    methods: {
+      async onInit() {
+        // fetch
+        const res = await this.$api.post('/a/settings/settings/instance/list');
+        this.settingsInstance = res.list;
+        console.log(res.list);
+      },
+    },
   };
 }

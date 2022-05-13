@@ -1,5 +1,5 @@
 // appSystemLayoutList
-const appSystemLayoutBlockListItems = require('./components/appSystemLayoutList/appSystemLayoutBlockListItems.jsx');
+import appSystemLayoutBlockListItems from './components/appSystemLayoutList/appSystemLayoutBlockListItems.jsx';
 
 export default {
   // appSystemLayoutList
