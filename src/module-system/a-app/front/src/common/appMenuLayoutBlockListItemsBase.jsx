@@ -15,6 +15,7 @@ export default {
       accordionItemOpened: 0,
       layoutConfigKeyOpened: null,
       categoryTree: null,
+      supportSingle: false,
       ready: false,
     };
   },
@@ -110,6 +111,11 @@ export default {
       const groups = this.groups;
       if (!groups) return null;
       const children = [];
+      // single
+      if (groups.length === 1) {
+        return this._renderGroup(groups[0]);
+      }
+      // more
       for (let index = 0; index < groups.length; index++) {
         children.push(this._renderAccordion(groups[index], index));
       }
