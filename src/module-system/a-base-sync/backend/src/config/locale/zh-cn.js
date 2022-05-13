@@ -135,6 +135,8 @@ module.exports = {
   OpenAuthScope: '开放认证范围',
   System: '系统',
   Management: '管理',
+  Demonstration: '演示',
+  About: '关于',
   // role name
   root: '根',
   anonymous: '匿名',
