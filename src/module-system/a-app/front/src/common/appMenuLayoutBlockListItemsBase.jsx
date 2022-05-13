@@ -27,14 +27,11 @@ export default {
         categoriesTop = this.layoutManager.data_tools_prepareCategoriesTop() || [];
       }
       // groups
-      let groups = this._groupItems({
+      const groups = this._groupItems({
         categories: this.categoryTree,
         items: this.layoutManager.data_getItemsAll(),
         categoriesTop,
       });
-      if (this.onGroups) {
-        groups = this.onGroups({ groups });
-      }
       return groups;
     },
   },
@@ -63,6 +60,9 @@ export default {
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
     },
     onItemClick(event, item) {
+      if (item.onPerform) {
+        return item.onPerform(event, item);
+      }
       return this.layoutManager.base_onPerformResource(event, item);
     },
     onAccordionOpen(event, group) {
@@ -86,14 +86,6 @@ export default {
           items: [],
         };
       });
-      // sort
-      groups = groups.sort((a, b) => {
-        const indexA = categoriesTop.indexOf(a.categoryName);
-        const indexB = categoriesTop.indexOf(b.categoryName);
-        const sortingA = indexA > -1 ? indexA - categoriesTop.length : a.categorySorting;
-        const sortingB = indexB > -1 ? indexB - categoriesTop.length : b.categorySorting;
-        return sortingA - sortingB;
-      });
       // items
       for (const item of items) {
         const groupId = item.atomCategoryId;
@@ -102,6 +94,18 @@ export default {
           group.items.push(item);
         }
       }
+      // onGroupItems
+      if (this.onGroupItems) {
+        groups = this.onGroupItems({ groups });
+      }
+      // sort
+      groups = groups.sort((a, b) => {
+        const indexA = categoriesTop.indexOf(a.categoryName);
+        const indexB = categoriesTop.indexOf(b.categoryName);
+        const sortingA = indexA > -1 ? indexA - categoriesTop.length : a.categorySorting;
+        const sortingB = indexB > -1 ? indexB - categoriesTop.length : b.categorySorting;
+        return sortingA - sortingB;
+      });
       // filter
       groups = groups.filter(item => item.items.length > 0);
       // ok
