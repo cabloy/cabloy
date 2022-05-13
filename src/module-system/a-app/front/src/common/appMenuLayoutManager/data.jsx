@@ -27,7 +27,19 @@ export default {
       return await this.data_provider_onLoadItemsAll_appOther({ appKey });
     },
     async data_provider_onLoadItemsAll_appDefault() {
+      // list
       const list = await this.$store.dispatch('a/app/getAppItemsAll');
+      // check appUnclassified
+      const __appUnclassified = this.$config.appKey.unclassified;
+      const index = list.findIndex(item => item.atomStaticKey === __appUnclassified);
+      if (index > -1) {
+        const res = await this.data_provider_onLoadItemsAll_appOther({ appKey: __appUnclassified });
+        if (res.list.length === 0) {
+          // remove app
+          list.splice(index, 1);
+        }
+      }
+      // ok
       return { list };
     },
     async data_provider_onLoadItemsAll_appOther({ appKey }) {
