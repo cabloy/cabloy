@@ -3,7 +3,18 @@ module.exports = app => {
   const content = {
     presets: {
       anonymous: {},
-      authenticated: {},
+      authenticated: {
+        mobile: {
+          menu: {
+            layout: 'a-appbooster:layoutAppMenuSystem',
+          },
+        },
+        pc: {
+          menu: {
+            layout: 'a-appbooster:layoutAppMenuSystem',
+          },
+        },
+      },
     },
   };
   const _app = {
