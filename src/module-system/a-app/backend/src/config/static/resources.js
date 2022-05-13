@@ -5,28 +5,32 @@ module.exports = app => {
     {
       atomName: 'Create App',
       atomStaticKey: 'createApp',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'app',
         atomAction: 'create',
       }),
-      resourceRoles: 'authenticated',
+      resourceIcon: ':outline:apps-outline',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
     },
     {
       atomName: 'App List',
       atomStaticKey: 'listApp',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'app',
         atomAction: 'read',
       }),
-      resourceRoles: 'authenticated',
+      resourceIcon: ':outline:apps-outline',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
     },
   ];
   return resources;

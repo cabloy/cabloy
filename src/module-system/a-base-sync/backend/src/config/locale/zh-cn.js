@@ -137,6 +137,8 @@ module.exports = {
   Management: '管理',
   Demonstration: '演示',
   About: '关于',
+  BasicProfile: '基础资料',
+  BasicAdmin: '基础管理',
   // role name
   root: '根',
   anonymous: '匿名',
