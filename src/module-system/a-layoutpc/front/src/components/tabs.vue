@@ -90,7 +90,7 @@ export default {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
     _getGroupIcon(group) {
-      return this.$meta.util.getProperty(group, 'sceneOptions.icon.f7');
+      return this.$meta.util.getProperty(group, 'sceneOptions.resourceConfig.icon.f7');
     },
     async _onContextMenuItemClick_refresh(groupId) {
       await this.groups.refreshGroup(groupId);

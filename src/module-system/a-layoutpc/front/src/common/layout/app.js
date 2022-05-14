@@ -116,7 +116,9 @@ export default {
         sceneOptions: {
           appHome: true,
           appKey,
-          icon: { f7: appIcon },
+          resourceConfig: {
+            icon: { f7: appIcon },
+          },
         },
       };
       this.navigate(url, navigateOptions);
