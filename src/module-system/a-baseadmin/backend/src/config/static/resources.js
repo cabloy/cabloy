@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Role Management',
       atomStaticKey: 'roleManagement',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -16,11 +16,12 @@ module.exports = app => {
       resourceIcon: ':role:role',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 1,
     },
     {
       atomName: 'User Management',
       atomStaticKey: 'userManagement',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -31,6 +32,7 @@ module.exports = app => {
       resourceIcon: '::person',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 2,
     },
     // function
     // deprecated
@@ -84,7 +86,7 @@ module.exports = app => {
     {
       atomName: 'Auth Management',
       atomStaticKey: 'auth',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -93,11 +95,12 @@ module.exports = app => {
       resourceIcon: ':role:shield-key',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 3,
     },
     {
       atomName: 'Category Management',
       atomStaticKey: 'category',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -106,11 +109,12 @@ module.exports = app => {
       resourceIcon: '::folder-open',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 4,
     },
     {
       atomName: 'Tag Management',
       atomStaticKey: 'tag',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -119,6 +123,7 @@ module.exports = app => {
       resourceIcon: ':outline:label-outline',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 5,
     },
     // deprecated
     {
