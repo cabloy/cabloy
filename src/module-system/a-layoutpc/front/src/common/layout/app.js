@@ -109,7 +109,6 @@ export default {
         // appLanguage: current.appLanguage, // not set appLanguage
       });
       const navigateOptions = {
-        scene: configHome.mode === 'dashboard' ? 'dashboard' : null,
         sceneOptions: {
           appHome: true,
           appKey: current.appKey,
