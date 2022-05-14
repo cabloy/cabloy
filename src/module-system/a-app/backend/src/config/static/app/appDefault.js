@@ -10,7 +10,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
           user: {
@@ -27,7 +27,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
           user: {
@@ -46,7 +46,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
           user: {
@@ -63,7 +63,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardDefault',
+            dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
           user: {
@@ -79,7 +79,7 @@ module.exports = app => {
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
-    atomRevision: 2,
+    atomRevision: 3,
     atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
