@@ -30,7 +30,11 @@ export default {
           {
             ref: group.id,
             key: group.id,
-            attrs: { tabLink: `#${group.id}` },
+            attrs: {
+              tabLink: `#${group.id}`,
+              iconSize: 16,
+              iconF7: this._getGroupIcon(group),
+            },
             props: {
               onPerform: event => {
                 this.onPerformTabClick(event, group.id);
@@ -84,6 +88,9 @@ export default {
   methods: {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
+    },
+    _getGroupIcon(group) {
+      return this.$meta.util.getProperty(group, 'sceneOptions.icon.f7');
     },
     async _onContextMenuItemClick_refresh(groupId) {
       await this.groups.refreshGroup(groupId);
