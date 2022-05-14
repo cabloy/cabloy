@@ -13,8 +13,10 @@ export default {
       this.$meta.store.commit('a/app/setCurrent', { appKey, appLanguage });
       // get current
       const current = this.$store.getters['a/app/current'];
+      // open menu
       await this.app_openAppMenu({ current });
-      await this.app_openAppHome();
+      // open home
+      await this.app_openAppHome({ force });
       // await this.app_openAppUser();
     },
     async app_openAppMenu({ current }) {
@@ -71,6 +73,16 @@ export default {
       // checked
       this.app.appMenuDefaultChecked = true;
     },
-    async app_openAppHome() {},
+    async app_openAppHome({ force }) {
+      let configHome;
+      const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      configHome = presetConfigCurrent.home;
+      if (!configHome.mode && force) {
+        const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
+        configHome = presetConfigDefault.home;
+      }
+      if (!configHome.mode) return;
+      console.log(configHome);
+    },
   },
 };
