@@ -14,7 +14,9 @@ function installFactory(_Vue) {
     },
     created() {},
     methods: {
-      async onPerform() {},
+      async onPerform() {
+        await this.$meta.vueLayout.app_openHome({ force: true });
+      },
     },
     render() {
       return (
