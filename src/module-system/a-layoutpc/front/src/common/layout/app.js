@@ -93,33 +93,27 @@ export default {
         configHome = presetConfigDefault.home;
       }
       if (!configHome.mode) return;
-      // action
-      let action = {
-        sceneOptions: {
-          tabGroup: 'appHome',
-          icon: appItemCurrent.appIcon,
-        },
-      };
+      // navigate
+      let url;
       if (configHome.mode === 'dashboard') {
-        action = {
-          actionPath: `/a/dashboard/dashboard?key=${configHome.dashboard}`,
-          scene: 'dashboard',
-          ...action,
-        };
+        url = `/a/dashboard/dashboard?key=${configHome.dashboard}`;
       } else {
-        action = {
-          actionPath: configHome.page,
-          scene: null,
-          ...action,
-        };
+        url = configHome.page;
       }
-      // actionPath: for unique
-      action.actionPath = this.$meta.util.combineQueries(action.actionPath, {
+      // for unique
+      url = this.$meta.util.combineQueries(url, {
         appKey: current.appKey,
         // appLanguage: current.appLanguage, // not set appLanguage
       });
-      // performAction
-      return this.$meta.util.performAction({ ctx: this, action, item: null });
+      const navigateOptions = {
+        scene: configHome.mode === 'dashboard' ? 'dashboard' : null,
+        sceneOptions: {
+          appHome: true,
+          appKey: current.appKey,
+          icon: appItemCurrent.appIcon,
+        },
+      };
+      this.navigate(url, navigateOptions);
     },
   },
 };
