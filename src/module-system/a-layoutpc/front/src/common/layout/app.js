@@ -8,6 +8,16 @@ export default {
     };
   },
   methods: {
+    async app_openHome_bySlogon() {
+      // current
+      const current = this.$store.getters['a/app/current'];
+      const appItemCurrent = await this.$store.dispatch('a/app/getAppItem', { appKey: current.appKey });
+      if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
+        this.$meta.store.commit('a/app/setCurrent', { appKey: this.app.keyDefault });
+      }
+      // open
+      await this.app_openHome({ force: true });
+    },
     async app_openHome({ appKey, appLanguage, force = false }) {
       // set current
       this.$meta.store.commit('a/app/setCurrent', { appKey, appLanguage });

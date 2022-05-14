@@ -42,19 +42,8 @@ export default {
     isTabActive(groupId) {
       return this.$refs.tabs.isTabActive(groupId);
     },
-    onPerformClickTitle() {
-      const action = {
-        actionPath: null,
-        navigateOptions: {
-          scene: 'sidebar',
-          sceneOptions: {
-            side: 'left',
-            module: 'a-layoutpc',
-            name: 'panelMenu',
-          },
-        },
-      };
-      this.$meta.util.performAction({ ctx: this, action, item: null });
+    async onPerformClickTitle() {
+      await this.layout.app_openHome_bySlogon();
     },
   },
 };
