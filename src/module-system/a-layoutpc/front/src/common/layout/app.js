@@ -88,10 +88,12 @@ export default {
     async app_openAppHome({ current, appItemCurrent, force }) {
       // configHome
       let configHome;
+      let appKey = current.appKey;
       let appIcon = appItemCurrent.appIcon;
       const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
       configHome = presetConfigCurrent.home;
       if (!configHome.mode && force) {
+        appKey = this.app.keyDefault;
         const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
         configHome = presetConfigDefault.home;
         const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
@@ -107,13 +109,13 @@ export default {
       }
       // for unique
       url = this.$meta.util.combineQueries(url, {
-        appKey: current.appKey,
+        appKey,
         // appLanguage: current.appLanguage, // not set appLanguage
       });
       const navigateOptions = {
         sceneOptions: {
           appHome: true,
-          appKey: current.appKey,
+          appKey,
           icon: { f7: appIcon },
         },
       };
