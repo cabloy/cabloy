@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Create Article',
       atomStaticKey: 'createArticle',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -20,7 +20,7 @@ module.exports = app => {
     {
       atomName: 'Article List',
       atomStaticKey: 'listArticle',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
