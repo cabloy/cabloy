@@ -21,11 +21,6 @@ module.exports = app => {
       keywords: {},
       schemas: {},
     },
-    settings: {
-      instance: {
-        actionPath: 'settings/list',
-      },
-    },
   };
 
   return meta;
