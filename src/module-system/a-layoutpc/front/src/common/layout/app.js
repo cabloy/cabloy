@@ -67,6 +67,8 @@ export default {
           showLabel,
           icon: { f7: appItem.appIcon },
         },
+        appHome: true,
+        appKey,
       };
     },
     async app_checkAppMenuDefault({ current, appItemCurrent }) {

@@ -72,7 +72,11 @@ export default {
     onClickTab(event, panel) {
       event.stopPropagation();
       event.preventDefault();
-      this.sidebar.createView({ ctx: null, panel });
+      if (panel.appHome) {
+        this.layout.app_openHome({ appKey: panel.appKey, force: false });
+      } else {
+        this.sidebar.createView({ ctx: null, panel });
+      }
     },
     onDragStart({ /* $el,*/ context /* , dragElement*/ }) {
       const [panel] = this.sidebar._getPanelAndIndex(context.panel);
