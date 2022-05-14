@@ -83,11 +83,7 @@ export default {
             sceneOptions,
             views: [],
           };
-          if (sceneOptions && sceneOptions.name === 'home') {
-            this.groups.unshift(group);
-          } else {
-            this.groups.push(group);
-          }
+          this._addGroup(group);
         }
         // view
         if (group.url === url && group.views.length > 0 && !options.reloadGroup) {
@@ -157,6 +153,26 @@ export default {
         group.title = title;
       }
     },
+    _addGroup(group) {
+      const appHome = this.$meta.util.getProperty(group, 'sceneOptions.appHome');
+      const appKey = this.$meta.util.getProperty(group, 'sceneOptions.appKey');
+      // normal
+      if (!appHome) {
+        this.groups.push(group);
+        return;
+      }
+      // appDefault
+      if (this.layout.app_isDefault(appKey)) {
+        this.groups.unshift(group);
+        return;
+      }
+      // findLast
+      const index = this.groups.findLastIndex(item => {
+        const appHome = this.$meta.util.getProperty(item, 'sceneOptions.appHome');
+        return !!appHome;
+      });
+      this.groups.splice(index + 1, 0, group);
+    },
     removeGroup(groupId, onlyRemove) {
       // current
       const index = this._getGroupIndex(groupId);
@@ -181,8 +197,8 @@ export default {
           this.switchGroup(groupIdNext);
         }
         // check if appHome
-        const __appHome = this.$meta.util.getProperty(groupCurrent, 'sceneOptions.appHome');
-        if (this.groups.length === 0 && !__appHome) {
+        const appHome = this.$meta.util.getProperty(groupCurrent, 'sceneOptions.appHome');
+        if (this.groups.length === 0 && !appHome) {
           this.layout.openHome();
         }
       });
