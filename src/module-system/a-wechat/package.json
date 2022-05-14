@@ -4,6 +4,7 @@
   "title": "Wechat",
   "eggBornModule": {
     "fileVersion": 4,
+    "icon": ":auth:wechat-outline",
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0",

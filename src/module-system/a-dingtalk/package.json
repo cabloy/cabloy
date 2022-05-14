@@ -4,6 +4,7 @@
   "title": "DingTalk",
   "eggBornModule": {
     "fileVersion": 2,
+    "icon": ":auth:dingtalk-square",
     "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0",

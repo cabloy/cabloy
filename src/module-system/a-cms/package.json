@@ -4,6 +4,7 @@
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 12,
+    "icon": ":outline:article-outline",
     "cms": {},
     "dependencies": {
       "a-instance": "4.0.0",
