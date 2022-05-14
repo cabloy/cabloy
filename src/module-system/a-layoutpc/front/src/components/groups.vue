@@ -180,9 +180,9 @@ export default {
         if (groupIdNext) {
           this.switchGroup(groupIdNext);
         }
-        // check if openHome
-        const _groupCurrentName = groupCurrent.sceneOptions && groupCurrent.sceneOptions.name;
-        if (this.groups.length === 0 && _groupCurrentName !== 'home' && _groupCurrentName !== 'dashboard') {
+        // check if appHome
+        const __appHome = this.$meta.util.getProperty(groupCurrent, 'sceneOptions.appHome');
+        if (this.groups.length === 0 && !__appHome) {
           this.layout.openHome();
         }
       });
