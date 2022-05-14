@@ -13,15 +13,15 @@ export default {
       this.$meta.store.commit('a/app/setCurrent', { appKey, appLanguage });
       // get current
       const current = this.$store.getters['a/app/current'];
-      // open menu
-      await this.app_openAppMenu({ current });
-      // open home
-      await this.app_openAppHome({ force });
-      // await this.app_openAppUser();
-    },
-    async app_openAppMenu({ current }) {
       // current
       const appItemCurrent = await this.$store.dispatch('a/app/getAppItem', { appKey: current.appKey });
+      // open menu
+      await this.app_openAppMenu({ current, appItemCurrent });
+      // open home
+      await this.app_openAppHome({ current, appItemCurrent, force });
+      // await this.app_openAppUser();
+    },
+    async app_openAppMenu({ current, appItemCurrent }) {
       // app default
       await this.app_checkAppMenuDefault({ current, appItemCurrent });
       // app current
@@ -73,7 +73,8 @@ export default {
       // checked
       this.app.appMenuDefaultChecked = true;
     },
-    async app_openAppHome({ force }) {
+    async app_openAppHome({ appItemCurrent, force }) {
+      // configHome
       let configHome;
       const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
       configHome = presetConfigCurrent.home;
@@ -82,7 +83,28 @@ export default {
         configHome = presetConfigDefault.home;
       }
       if (!configHome.mode) return;
-      console.log(configHome);
+      // action
+      let action = {
+        sceneOptions: {
+          tabGroup: 'appHome',
+          icon: appItemCurrent.appIcon,
+        },
+      };
+      if (configHome.mode === 'dashboard') {
+        action = {
+          actionPath: `/a/dashboard/dashboard?key=${configHome.dashboard}`,
+          scene: 'dashboard',
+          ...action,
+        };
+      } else {
+        action = {
+          actionPath: configHome.page,
+          scene: null,
+          ...action,
+        };
+      }
+      // performAction
+      return this.$meta.util.performAction({ ctx: this, action, item: null });
     },
   },
 };
