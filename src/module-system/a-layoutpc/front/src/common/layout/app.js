@@ -86,11 +86,14 @@ export default {
     async app_openAppHome({ current, appItemCurrent, force }) {
       // configHome
       let configHome;
+      let appIcon = appItemCurrent.appIcon;
       const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
       configHome = presetConfigCurrent.home;
       if (!configHome.mode && force) {
         const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
         configHome = presetConfigDefault.home;
+        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.app.keyDefault });
+        appIcon = appItemDefault.appIcon;
       }
       if (!configHome.mode) return;
       // navigate
@@ -110,7 +113,7 @@ export default {
         sceneOptions: {
           appHome: true,
           appKey: current.appKey,
-          icon: appItemCurrent.appIcon,
+          icon: { f7: appIcon },
         },
       };
       this.navigate(url, navigateOptions);
