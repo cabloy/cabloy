@@ -138,14 +138,17 @@ export default function (Vue) {
       async getPresetConfigDefault({ state, dispatch }) {
         return await dispatch('getPresetConfig', { appKey: __appKeyDefault });
       },
-      async getAppItemCurrent({ state, getters, dispatch }) {
-        return await dispatch('getAppItem', { appKey: getters.current.appKey });
-      },
       async getPresetConfig({ state, getters, dispatch }, { appKey }) {
         // force appItem exists
         const appItem = await dispatch('getAppItem', { appKey });
         if (!appItem) return null; // maybe no access right
         return __getPresetConfig({ appItem, current: getters.current });
+      },
+      async getAppItemCurrent({ state, getters, dispatch }) {
+        return await dispatch('getAppItem', { appKey: getters.current.appKey });
+      },
+      async getAppItemDefault({ state, dispatch }) {
+        return await dispatch('getAppItem', { appKey: __appKeyDefault });
       },
       async getAppItem({ state, commit, dispatch }, { appKey }) {
         let appItem = state.appItems[appKey];

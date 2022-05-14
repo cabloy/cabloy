@@ -73,7 +73,7 @@ export default {
       if (this.app.appMenuDefaultChecked) return;
       // app default
       if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
-        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.app.keyDefault });
+        const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
         this.navigate(`/a/app/appMenu?appKey=${this.app.keyDefault}`, {
           scene: 'sidebar',
           sceneOptions: this.app_openAppMenu_panelSceneOptions(this.app.keyDefault, appItemDefault),
@@ -92,7 +92,7 @@ export default {
       if (!configHome.mode && force) {
         const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
         configHome = presetConfigDefault.home;
-        const appItemDefault = await this.$store.dispatch('a/app/getAppItem', { appKey: this.app.keyDefault });
+        const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
         appIcon = appItemDefault.appIcon;
       }
       if (!configHome.mode) return;
