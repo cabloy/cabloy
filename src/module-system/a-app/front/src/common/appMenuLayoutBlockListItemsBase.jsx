@@ -159,7 +159,7 @@ export default {
       if (!groups) return null;
       const children = [];
       // single
-      if (groups.length === 1) {
+      if (this.supportSingle && groups.length === 1) {
         return this._renderGroup(groups[0]);
       }
       // more

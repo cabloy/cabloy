@@ -73,7 +73,7 @@ export default {
       // checked
       this.app.appMenuDefaultChecked = true;
     },
-    async app_openAppHome({ appItemCurrent, force }) {
+    async app_openAppHome({ current, appItemCurrent, force }) {
       // configHome
       let configHome;
       const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
@@ -103,6 +103,11 @@ export default {
           ...action,
         };
       }
+      // actionPath: for unique
+      action.actionPath = this.$meta.util.combineQueries(action.actionPath, {
+        appKey: current.appKey,
+        // appLanguage: current.appLanguage, // not set appLanguage
+      });
       // performAction
       return this.$meta.util.performAction({ ctx: this, action, item: null });
     },
