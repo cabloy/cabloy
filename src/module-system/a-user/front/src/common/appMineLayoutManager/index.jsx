@@ -2,12 +2,12 @@ import Vue from 'vue';
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
-import Data from './data.jsx';
+import Actions from './actions.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 
 // container: {
-//   appKey,
+//   mode,  // edit/view
 //   layout,
 // },
 
@@ -18,16 +18,16 @@ export default {
     Base,
     Page,
     Layout,
-    Data,
+    Actions,
   ],
   data() {
     return {};
   },
   created() {
-    this.index_init();
+    this.index_load();
   },
   methods: {
-    async index_init() {
+    async index_load() {
       await this.base_init();
       await this.layout_prepareConfigLayout();
       this.base.ready = true;

@@ -6,32 +6,23 @@ export default {
   },
   methods: {
     layout_onGetLayoutConfigKeyCurrent() {
-      const appKey = this.container.appKey;
-      return `appMenu.${appKey}.render.list.layout.current.${this.$view.size}`;
+      return `appMine.base.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
     layout_onGetLayoutNames() {
       const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.$view.size];
+      return configViewSize[this.container.mode][this.$view.size];
     },
     async layout_onPrepareConfigFull() {
-      // configAppMenuBase
-      let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: 'a-app:layoutAppMenuBase',
+      // configAppMineBase
+      const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+        layoutKey: 'a-user:layoutAppMineBase',
       });
-      this.base.configAppMenuBase = layoutItem.content;
-      // configAppMenu
-      const layoutKey = this.base.appPresetConfig.menu.layout;
-      if (layoutKey) {
-        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey,
-        });
-        this.base.configAppMenu = layoutItem.content;
-      }
-      // combine
-      return this.$meta.util.extend({}, this.base.configAppMenuBase, this.base.configAppMenu);
+      this.base.configAppMineBase = layoutItem.content;
+      // ok
+      return this.base.configAppMineBase;
     },
     layout_renderLayout() {
-      return this.layout_renderLayout_template_list();
+      return this.layout_renderLayout_template_item();
     },
   },
 };
