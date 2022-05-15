@@ -86,7 +86,6 @@ export default {
       return <f7-list>{children}</f7-list>;
     },
   },
-
   render() {
     return this.renderList();
   },

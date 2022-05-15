@@ -1,34 +1,20 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const info = {
+    home: {
+      mode: 'page',
+      page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
+    },
+  };
   const content = {
     presets: {
       anonymous: {
-        mobile: {
-          home: {
-            mode: 'page',
-            page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
-          },
-        },
-        pc: {
-          home: {
-            mode: 'page',
-            page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
-          },
-        },
+        mobile: info,
+        pc: info,
       },
       authenticated: {
-        mobile: {
-          home: {
-            mode: 'page',
-            page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
-          },
-        },
-        pc: {
-          home: {
-            mode: 'page',
-            page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
-          },
-        },
+        mobile: info,
+        pc: info,
       },
     },
   };
