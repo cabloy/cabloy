@@ -16,6 +16,9 @@ export default {
     base_inAgent() {
       return this.base_user.id !== this.base_userAgent.id;
     },
+    base_loggedIn() {
+      return this.$store.state.auth.loggedIn;
+    },
   },
   methods: {
     async base_onInit() {},
