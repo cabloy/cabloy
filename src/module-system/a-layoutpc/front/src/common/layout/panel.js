@@ -22,7 +22,7 @@ export default {
     },
     _createPanel({ side, panel, url, options, init }) {
       // imActive
-      const imActive = options.imActive;
+      const imActive = options && options.imActive;
       // side
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       // prepare panel
