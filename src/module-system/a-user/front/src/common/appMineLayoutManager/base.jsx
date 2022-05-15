@@ -5,7 +5,7 @@ export default {
         configAppMineBase: null,
         configAppMine: null,
         //
-        appCurrent: null,
+        appCurrent: {},
         apps: [],
         appMineDefaultChecked: false,
         //
