@@ -17,8 +17,5 @@ export default {
       // ok
       return this.base.configAppMineBase;
     },
-    layout_renderLayout() {
-      return this.layout_renderLayout_template_item();
-    },
   },
 };

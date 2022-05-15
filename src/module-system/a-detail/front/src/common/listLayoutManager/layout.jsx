@@ -33,9 +33,6 @@ export default {
       // combine
       return this.$meta.util.extend({}, this.base.configDetailBase, this.base.configDetail);
     },
-    layout_renderLayout() {
-      return this.layout_renderLayout_template_list();
-    },
     layout_renderTitle() {
       return (
         <f7-list-item groupTitle>

@@ -3,6 +3,7 @@ export default {
     return {
       base: {
         ready: false,
+        notfound: false,
       },
     };
   },

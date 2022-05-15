@@ -9,7 +9,6 @@ export default {
         detailClass: null,
         module: null,
         validateParams: null,
-        notfound: false,
       },
     };
   },

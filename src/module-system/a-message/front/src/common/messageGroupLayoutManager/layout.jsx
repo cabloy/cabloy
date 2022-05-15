@@ -16,8 +16,5 @@ export default {
       // ok
       return this.base.configMessageBase;
     },
-    layout_renderLayout() {
-      return this.layout_renderLayout_template_list();
-    },
   },
 };

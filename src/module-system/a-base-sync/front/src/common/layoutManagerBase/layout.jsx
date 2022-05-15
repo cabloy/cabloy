@@ -268,7 +268,7 @@ export default {
         </eb-page>
       );
     },
-    layout_renderLayout_template_item() {
+    layout_renderLayout() {
       if (this.base.notfound) {
         return (
           <f7-card>
@@ -277,9 +277,6 @@ export default {
           </f7-card>
         );
       }
-      return <div>{this.layout_renderComponent()}</div>;
-    },
-    layout_renderLayout_template_list() {
       return <div>{this.layout_renderComponent()}</div>;
     },
   },

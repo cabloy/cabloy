@@ -26,8 +26,5 @@ export default {
       // combine
       return this.$meta.util.extend({}, this.base.configAppMenuBase, this.base.configAppMenu);
     },
-    layout_renderLayout() {
-      return this.layout_renderLayout_template_list();
-    },
   },
 };
