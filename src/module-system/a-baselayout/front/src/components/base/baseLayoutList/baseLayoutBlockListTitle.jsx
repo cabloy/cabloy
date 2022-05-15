@@ -44,6 +44,10 @@ export default {
       if (this.layoutManager.order_renderAction) {
         domOrder = this.layoutManager.order_renderAction();
       }
+      let domOrderPopover;
+      if (this.layoutManager.order_renderPopover) {
+        domOrderPopover = this.layoutManager.order_renderPopover();
+      }
       let domFilter;
       if (this.layoutManager.filter_renderAction) {
         domFilter = this.layoutManager.filter_renderAction();
@@ -53,6 +57,7 @@ export default {
           {domBulkActionsRight}
           {domBulkActionsLeftB}
           {domOrder}
+          {domOrderPopover}
           {domFilter}
         </f7-nav-right>
       );

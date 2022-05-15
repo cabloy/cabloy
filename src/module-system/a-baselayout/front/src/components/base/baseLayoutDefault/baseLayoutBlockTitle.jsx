@@ -15,42 +15,37 @@ export default {
   },
   created() {},
   methods: {
-    _renderNormal() {
+    _renderNavRight() {
+      const isFull = this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable;
+      const children = [];
+      // full
+      if (isFull) {
+        let domInfoActionsLeft;
+        if (this.layoutManager.info_renderActionsLeft) {
+          domInfoActionsLeft = this.layoutManager.info_renderActionsLeft();
+        }
+        let domInfoActionsRight;
+        if (this.layoutManager.info_renderActionsRight) {
+          domInfoActionsRight = this.layoutManager.info_renderActionsRight();
+        }
+        children.push(domInfoActionsLeft);
+        children.push(domInfoActionsRight);
+      }
+      // normal
       let domActions;
       if (this.layoutManager.actions_render) {
         domActions = this.layoutManager.actions_render();
       }
-      return <f7-nav-right>{domActions}</f7-nav-right>;
-    },
-    _renderFull() {
-      let domInfoActionsLeft;
-      if (this.layoutManager.info_renderActionsLeft) {
-        domInfoActionsLeft = this.layoutManager.info_renderActionsLeft();
+      let domActionsPopover;
+      if (this.layoutManager.actions_renderPopover) {
+        domActionsPopover = this.layoutManager.actions_renderPopover();
       }
-      let domInfoActionsRight;
-      if (this.layoutManager.info_renderActionsRight) {
-        domInfoActionsRight = this.layoutManager.info_renderActionsRight();
-      }
-      let domActions;
-      if (this.layoutManager.actions_render) {
-        domActions = this.layoutManager.actions_render();
-      }
-      return (
-        <f7-nav-right class="atom-item-title-info-container">
-          {domInfoActionsLeft}
-          {domInfoActionsRight}
-          {domActions}
-        </f7-nav-right>
-      );
+      children.push(domActions, domActionsPopover);
+      // ok
+      return <f7-nav-right class={{ 'atom-item-title-info-container': isFull }}>{children}</f7-nav-right>;
     },
   },
   render() {
-    let domNavRight;
-    if (this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable) {
-      domNavRight = this._renderFull();
-    } else {
-      domNavRight = this._renderNormal();
-    }
-    return domNavRight;
+    return this._renderNavRight();
   },
 };

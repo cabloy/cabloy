@@ -277,24 +277,10 @@ export default {
           </f7-card>
         );
       }
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {this.actions_renderPopover()}
-        </div>
-      );
+      return <div>{this.layout_renderComponent()}</div>;
     },
     layout_renderLayout_template_list() {
-      let domOrder;
-      if (this.order_renderPopover) {
-        domOrder = this.order_renderPopover();
-      }
-      return (
-        <div>
-          {this.layout_renderComponent()}
-          {domOrder}
-        </div>
-      );
+      return <div>{this.layout_renderComponent()}</div>;
     },
   },
 };
