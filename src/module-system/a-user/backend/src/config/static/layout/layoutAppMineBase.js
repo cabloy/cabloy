@@ -37,6 +37,12 @@ module.exports = app => {
               name: 'appMineLayoutBlockDefaultMineHeader',
             },
           },
+          mineBody: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockDefaultMineBody',
+            },
+          },
         },
       },
     },
