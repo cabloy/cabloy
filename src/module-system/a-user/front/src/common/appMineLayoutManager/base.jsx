@@ -29,26 +29,28 @@ export default {
   },
   methods: {
     async base_onInit() {
-      await this.base_app_init({ force: true });
-    },
-    async base_app_init({ force }) {
       const current = this.$store.getters['a/app/current'];
-      const appCurrent = await this.$store.dispatch('a/user/getAppInfo', { appKey: current.appKey, force });
-      if (!appCurrent) return;
-      if (this.base_app_isCurrentSame(this.base.appCurrent, appCurrent)) return;
+      await this.base_app_prepareAppCurrent({ appKey: current.appKey, force: true });
+    },
+    async base_app_switch({ appKey }) {
+      // prepareAppCurrent
+      await this.base_app_prepareAppCurrent({ appKey, force: false });
+      // prepareConfigLayout
+      await this.layout_prepareConfigLayout(this.layout.current);
+    },
+    async base_app_prepareAppCurrent({ appKey, force }) {
+      const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });
+      if (!appInfo) return;
+      if (this.base_app_isCurrentSameFull(this.base.appCurrent, appInfo)) return;
       // current
-      this.base.appCurrent = appCurrent;
+      this.base.appCurrent = appInfo;
       // configAppMine
       const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: appCurrent.appMineLayout,
+        layoutKey: appInfo.appMineLayout,
       });
       this.base.configAppMine = layoutItem.content;
-      // prepareConfigLayout when inited
-      if (this.base.configAppMineBase) {
-        await this.layout_prepareConfigLayout(this.layout.current);
-      }
       // add
-      await this.base_app_add(appCurrent);
+      await this.base_app_add(appInfo);
     },
     async base_app_add(appCurrent) {
       // app default
@@ -57,8 +59,13 @@ export default {
       const index = this.base.appInfos.findIndex(item => {
         return this.base_app_isCurrentSame(item, appCurrent);
       });
-      if (index > -1) return;
-      this.base.appInfos.push(appCurrent);
+      if (index > -1) {
+        // replace
+        this.base.appInfos.splice(index, 1, appCurrent);
+      } else {
+        // append
+        this.base.appInfos.push(appCurrent);
+      }
     },
     async base_checkAppMineDefault({ appCurrent }) {
       if (this.base.appMineDefaultChecked) return;
@@ -77,6 +84,10 @@ export default {
       return appKey === this.base.appKeyDefault;
     },
     base_app_isCurrentSame(a, b) {
+      // only check appKey
+      return a.appKey === b.appKey;
+    },
+    base_app_isCurrentSameFull(a, b) {
       // not check appLanguage
       return a.appKey === b.appKey && a.appMineLayout === b.appMineLayout;
     },
