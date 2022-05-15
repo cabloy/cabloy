@@ -16,6 +16,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aAppViewFull',
             },
+            inner: true,
             resource: true,
             language: false,
             category: true,

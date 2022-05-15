@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-app",
   "version": "4.0.0",
-  "title": "a-app",
+  "title": "App",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {

@@ -15,6 +15,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aLayoutViewFull',
             },
+            inner: true,
             resource: true,
             dict: {
               fields: {

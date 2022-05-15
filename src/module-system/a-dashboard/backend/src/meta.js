@@ -13,6 +13,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aDashboardViewFull',
             },
+            inner: true,
             resource: true,
           },
           actions: {

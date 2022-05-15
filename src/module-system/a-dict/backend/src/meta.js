@@ -16,6 +16,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aDictViewFull',
             },
+            inner: true,
             resource: true,
             language: false,
             category: false,

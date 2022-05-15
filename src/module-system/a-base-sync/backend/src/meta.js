@@ -22,6 +22,7 @@ module.exports = app => {
             tableNameModes: {
               default: 'aResourceView',
             },
+            inner: true,
             category: true,
             tag: true,
             resource: true,
