@@ -14,8 +14,8 @@ export default {
         layoutKey: 'a-user:layoutAppMineBase',
       });
       this.base.configAppMineBase = layoutItem.content;
-      // ok
-      return this.base.configAppMineBase;
+      // combine
+      return this.$meta.util.extend({}, this.base.configAppMineBase, this.base.configAppMine);
     },
   },
 };
