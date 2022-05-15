@@ -74,6 +74,13 @@ export default {
       // 4 from default
       return layoutDefault || this.layout_getDefault();
     },
+    layout_onGetLayoutNames() {
+      let configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
+      if (this.container.mode) {
+        configViewSize = configViewSize[this.container.mode];
+      }
+      return configViewSize[this.$view.size];
+    },
     layout_getLayouts() {
       // layoutNames
       let layoutNames = this.layout_onGetLayoutNames();

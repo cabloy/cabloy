@@ -8,10 +8,6 @@ export default {
       const detailClassKey = `${this.base.detailClass.module}_${this.base.detailClass.detailClassName}`;
       return `detail.${detailClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
-    layout_onGetLayoutNames() {
-      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.container.mode][this.$view.size];
-    },
     async layout_onPrepareConfigFull() {
       const detailClass = this.base.detailClass;
       const detailClassBase = this.getDetailClass(detailClass);

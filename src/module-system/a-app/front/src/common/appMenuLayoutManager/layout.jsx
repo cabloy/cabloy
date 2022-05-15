@@ -9,10 +9,6 @@ export default {
       const appKey = this.container.appKey;
       return `appMenu.${appKey}.render.list.layout.current.${this.$view.size}`;
     },
-    layout_onGetLayoutNames() {
-      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.$view.size];
-    },
     async layout_onPrepareConfigFull() {
       // configAppMenuBase
       let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {

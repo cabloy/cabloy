@@ -9,10 +9,6 @@ export default {
         : null;
       return `atom.${atomClassKey}.render.list.layout.current.${this.$view.size}`;
     },
-    layout_onGetLayoutNames() {
-      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.$view.size];
-    },
     layout_onSwipeoutOpened(event, item) {
       this.actions_fetchActions(item);
     },

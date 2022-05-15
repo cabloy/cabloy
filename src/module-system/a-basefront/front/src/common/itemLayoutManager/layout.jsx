@@ -7,10 +7,6 @@ export default {
       const atomClassKey = `${this.base.atomClass.module}_${this.base.atomClass.atomClassName}`;
       return `atom.${atomClassKey}.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
     },
-    layout_onGetLayoutNames() {
-      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.container.mode][this.$view.size];
-    },
     async layout_onPrepareConfigFull() {
       const atomClass = this.base.atomClass;
       const atomClassBase = this.getAtomClass(atomClass);

@@ -7,10 +7,6 @@ export default {
       const messageClassKey = null;
       return `message.${messageClassKey}.render.group.layout.current.${this.$view.size}`;
     },
-    layout_onGetLayoutNames() {
-      const configViewSize = this.$meta.util.getProperty(this.layout.configFull, 'info.layout.viewSize');
-      return configViewSize[this.$view.size];
-    },
     async layout_onPrepareConfigFull() {
       // configMessageBase
       const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
