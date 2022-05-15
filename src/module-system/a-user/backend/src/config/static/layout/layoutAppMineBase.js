@@ -20,12 +20,6 @@ module.exports = app => {
     layouts: {
       base: {
         blocks: {
-          title: {
-            component: {
-              module: 'a-user',
-              name: 'appMineLayoutBlockDefaultTitle',
-            },
-          },
           main: {
             component: {
               module: 'a-user',
