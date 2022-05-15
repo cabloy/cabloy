@@ -17,9 +17,17 @@ export default {
     return {};
   },
   render() {
-    const mineHeader = this.layoutManager.layout_renderBlock({
+    const domMineHeader = this.layoutManager.layout_renderBlock({
       blockName: 'mineHeader',
     });
-    return <div>{mineHeader}</div>;
+    const domMineBody = this.layoutManager.layout_renderBlock({
+      blockName: 'mineBody',
+    });
+    return (
+      <div>
+        {domMineHeader}
+        {domMineBody}
+      </div>
+    );
   },
 };
