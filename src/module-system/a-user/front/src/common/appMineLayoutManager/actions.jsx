@@ -78,27 +78,22 @@ export default {
     },
     actions_render() {
       if (!this.base_ready) return null;
+      if (this.base_user.anonymous) return null;
       const children = [];
-      // only show on draft
-      const actionWrite = this.actions_findAction('write');
-      if (actionWrite) {
-        const actionIcon = '::save';
-        const actionName = 'save';
+      // message
+      children.push(
+        <eb-link-color
+          key="messages"
+          iconF7="::message"
+          eb-href="/a/message/group"
+          eb-target="_self"
+          stats_params={{ module: 'a-message', name: 'message' }}
+        ></eb-link-color>
+      );
+      // settings
+      if (!this.base_inAgent) {
         children.push(
-          <eb-link
-            key={actionName}
-            ref="buttonSave"
-            iconF7={actionIcon}
-            propsOnPerform={event => this.actions_onAction(event, actionName)}
-          ></eb-link>
-        );
-        children.push(
-          <eb-link
-            key="saveDone"
-            ref="buttonSaveDone"
-            iconF7="::done"
-            propsOnPerform={event => this.actions_onSaveDone(event)}
-          ></eb-link>
+          <eb-link key="settings" iconF7="::settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
         );
       }
       //
