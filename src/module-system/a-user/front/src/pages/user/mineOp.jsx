@@ -170,7 +170,7 @@ export default {
           <div class="mine-block">
             <img class="avatar avatar48" src={this.userAvatar} style="cursor:pointer;" onClick={this.onClickAvatar} />
           </div>
-          <div class="mine-block name">{this.userName}</div>
+          {this.loggedIn && <div class="mine-block name">{this.userName}</div>}
           {!this.loggedIn && <div class="mine-block status">{this.$text('Not LoggedIn')}</div>}
           <f7-segmented strong tag="div" class="login">
             {this.inAgent && <eb-button propsOnPerform={this.onPerformSwitchOff}>{this.$text('Quit Agent')}</eb-button>}
