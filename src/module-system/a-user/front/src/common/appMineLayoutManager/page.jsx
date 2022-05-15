@@ -12,7 +12,7 @@ export default {
     page_renderAppCurrent() {
       const { appKey, appItem } = this.base.appCurrent;
       if (!appItem) return '';
-      if (this.base_isAppDefault(appKey) || appItem.isolate) return '';
+      if (this.base.appInfos.length === 1 || appItem.isolate) return '';
       return (
         <f7-chip
           iconF7={appItem.appIcon}

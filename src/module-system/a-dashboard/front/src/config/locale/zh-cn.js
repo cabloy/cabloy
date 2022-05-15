@@ -3,7 +3,7 @@ export default {
   Clone: '克隆',
   Dashboard: '仪表板',
   Delete: '删除',
-  Default: '缺省',
+  Default: '默认',
   General: '通用',
   Group: '组',
   Height: '高度',
