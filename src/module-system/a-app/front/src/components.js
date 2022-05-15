@@ -3,7 +3,7 @@ import appListLayoutBlockBoxGrid9Items from './components/app/appListLayoutBoxGr
 // appMenuLayoutList
 import appMenuLayoutBlockListItems from './components/app/appMenuLayoutList/appMenuLayoutBlockListItems.jsx';
 // appMineLayoutDefault
-import appMineLayoutBlockDefaultMineBody from './components/appMineLayoutDefault/appMineLayoutBlockDefaultMineBody.jsx';
+import appMineLayoutBlockDefaultMineBody from './components/app/appMineLayoutDefault/appMineLayoutBlockDefaultMineBody.jsx';
 
 export default {
   // listLayoutBoxGrid9
