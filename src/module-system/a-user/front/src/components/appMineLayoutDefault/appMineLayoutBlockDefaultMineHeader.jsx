@@ -17,9 +17,6 @@ export default {
     return {};
   },
   render() {
-    const mineHeader = this.layoutManager.layout_renderBlock({
-      blockName: 'mineHeader',
-    });
-    return <div>{mineHeader}</div>;
+    return <div>mineHeader</div>;
   },
 };

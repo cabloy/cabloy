@@ -30,13 +30,21 @@ module.exports = app => {
       },
       default: {
         subnavbar: false,
+        blocks: {
+          mineHeader: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockDefaultMineHeader',
+            },
+          },
+        },
       },
     },
   };
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMineBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 14,
     content: JSON.stringify(content),
