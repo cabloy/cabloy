@@ -13,8 +13,8 @@ module.exports = app => {
             dashboard: null,
             page: null,
           },
-          user: {
-            render: null,
+          mine: {
+            layout: null,
           },
         },
         pc: {
@@ -27,8 +27,8 @@ module.exports = app => {
             dashboard: null,
             page: null,
           },
-          user: {
-            render: null,
+          mine: {
+            layout: null,
           },
         },
       },
@@ -43,8 +43,8 @@ module.exports = app => {
             dashboard: null,
             page: null,
           },
-          user: {
-            render: null,
+          mine: {
+            layout: null,
           },
         },
         pc: {
@@ -57,8 +57,8 @@ module.exports = app => {
             dashboard: null,
             page: null,
           },
-          user: {
-            render: null,
+          mine: {
+            layout: null,
           },
         },
       },

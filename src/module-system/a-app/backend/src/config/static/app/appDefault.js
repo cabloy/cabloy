@@ -13,11 +13,8 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
-          user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAnonymous',
-            },
+          mine: {
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
         pc: {
@@ -30,11 +27,8 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
-          user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAnonymous',
-            },
+          mine: {
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
       },
@@ -49,11 +43,8 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
-          user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAuthenticated',
-            },
+          mine: {
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
         pc: {
@@ -66,11 +57,8 @@ module.exports = app => {
             dashboard: 'a-dashboard:dashboardHome',
             page: null,
           },
-          user: {
-            render: {
-              module: 'a-appbooster',
-              name: 'userAuthenticated',
-            },
+          mine: {
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
       },

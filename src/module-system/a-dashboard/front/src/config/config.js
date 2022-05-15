@@ -1,18 +1,6 @@
 // eslint-disable-next-line
 export default function (Vue) {
   return {
-    dashboard: {
-      presets: {
-        anonymous: {
-          default: 'a-dashboard:dashboardDefault',
-          home: 'a-dashboard:dashboardHome',
-        },
-        authenticated: {
-          default: 'a-dashboard:dashboardDefault',
-          home: 'a-dashboard:dashboardHome',
-        },
-      },
-    },
     profile: {
       meta: {
         widget: {
