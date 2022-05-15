@@ -36,6 +36,7 @@ export default {
       // prepareAppCurrent
       await this.base_app_prepareAppCurrent({ appKey, force: false });
       // prepareConfigLayout
+      this.layout.configFull = null;
       await this.layout_prepareConfigLayout(this.layout.current);
     },
     async base_app_prepareAppCurrent({ appKey, force }) {
