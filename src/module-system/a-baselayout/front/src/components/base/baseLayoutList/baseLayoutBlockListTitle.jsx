@@ -15,30 +15,21 @@ export default {
   },
   created() {},
   methods: {
-    _renderNormal() {
-      let domOrder;
-      if (this.layoutManager.order_renderAction) {
-        domOrder = this.layoutManager.order_renderAction();
-      }
-      let domFilter;
-      if (this.layoutManager.filter_renderAction) {
-        domFilter = this.layoutManager.filter_renderAction();
-      }
-      return (
-        <f7-nav-right>
-          {domOrder}
-          {domFilter}
-        </f7-nav-right>
-      );
-    },
-    _renderFull() {
-      let domBulkActionsRight;
-      if (this.layoutManager.bulk_renderActionsRight) {
-        domBulkActionsRight = this.layoutManager.bulk_renderActionsRight();
-      }
-      let domBulkActionsLeftB;
-      if (this.layoutManager.bulk_renderActionsLeftB) {
-        domBulkActionsLeftB = this.layoutManager.bulk_renderActionsLeftB();
+    _renderNavRight() {
+      const isFull = this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable;
+      const children = [];
+      // full
+      if (isFull) {
+        let domBulkActionsRight;
+        if (this.layoutManager.bulk_renderActionsRight) {
+          domBulkActionsRight = this.layoutManager.bulk_renderActionsRight();
+        }
+        let domBulkActionsLeftB;
+        if (this.layoutManager.bulk_renderActionsLeftB) {
+          domBulkActionsLeftB = this.layoutManager.bulk_renderActionsLeftB();
+        }
+        children.push(domBulkActionsRight);
+        children.push(domBulkActionsLeftB);
       }
       let domOrder;
       if (this.layoutManager.order_renderAction) {
@@ -52,24 +43,14 @@ export default {
       if (this.layoutManager.filter_renderAction) {
         domFilter = this.layoutManager.filter_renderAction();
       }
-      return (
-        <f7-nav-right>
-          {domBulkActionsRight}
-          {domBulkActionsLeftB}
-          {domOrder}
-          {domOrderPopover}
-          {domFilter}
-        </f7-nav-right>
-      );
+      children.push(domOrder);
+      children.push(domOrderPopover);
+      children.push(domFilter);
+      // ok
+      return <f7-nav-right>{children}</f7-nav-right>;
     },
   },
   render() {
-    let domNavRight;
-    if (this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable) {
-      domNavRight = this._renderFull();
-    } else {
-      domNavRight = this._renderNormal();
-    }
-    return domNavRight;
+    return this._renderNavRight();
   },
 };
