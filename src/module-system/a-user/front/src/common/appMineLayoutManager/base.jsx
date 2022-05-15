@@ -6,7 +6,7 @@ export default {
         configAppMine: null,
         //
         appCurrent: {},
-        apps: [],
+        appInfos: [],
         appMineDefaultChecked: false,
         //
         appKeyDefault: 'a-app:appDefault',
@@ -54,11 +54,11 @@ export default {
       // app default
       await this.base_checkAppMineDefault({ appCurrent });
       // exists
-      const index = this.base.apps.findIndex(item => {
+      const index = this.base.appInfos.findIndex(item => {
         return this.base_app_isCurrentSame(item, appCurrent);
       });
       if (index > -1) return;
-      this.base.apps.push(appCurrent);
+      this.base.appInfos.push(appCurrent);
     },
     async base_checkAppMineDefault({ appCurrent }) {
       if (this.base.appMineDefaultChecked) return;
@@ -68,7 +68,7 @@ export default {
           appKey: this.base.appKeyDefault,
           force: false,
         });
-        this.base.apps.push(appDefault);
+        this.base.appInfos.push(appDefault);
       }
       // checked
       this.base.appMineDefaultChecked = true;
