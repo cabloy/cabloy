@@ -9,7 +9,9 @@ export default {
           appKey: null,
           appLanguage: null,
           appMineLayout: null,
+          appItem: null,
         },
+        apps: [],
         //
         appKeyDefault: 'a-app:appDefault',
       },
@@ -44,15 +46,29 @@ export default {
         layoutKey: current.appMineLayout,
       });
       this.base.configAppMine = layoutItem.content;
+      // add
+      this.base_app_add(current);
+    },
+    base_app_add(appCurrent) {
+      const index = this.base.apps.findIndex(item => {
+        return this.base_app_isCurrentSame(item, appCurrent);
+      });
+      if (index > -1) return;
+      if (appCurrent.appKey === this.base.appKeyDefault) {
+        this.base.apps.unshift(appCurrent);
+      } else {
+        this.base.apps.push(appCurrent);
+      }
     },
     base_app_isCurrentSame(a, b) {
-      return a.appKey === b.appKey && a.appLanguage === b.appLanguage && a.appMineLayout === b.appMineLayout;
+      // not check appLanguage
+      return a.appKey === b.appKey && a.appMineLayout === b.appMineLayout;
     },
     async base_app_calcCurrent({ force }) {
+      let configMine;
       // get current
       const current = this.$store.getters['a/app/current'];
-      //
-      let configMine;
+      let appItem = await this.$store.dispatch('a/app/getAppItemCurrent');
       let appKey = current.appKey;
       const appLanguage = current.appLanguage;
       // current
@@ -62,6 +78,7 @@ export default {
         appKey = this.appKeyDefault;
         const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
         configMine = presetConfigDefault.mine;
+        appItem = await this.$store.dispatch('a/app/getAppItemDefault');
       }
       if (!configMine.layout) return null;
       // ok
@@ -69,6 +86,7 @@ export default {
         appKey,
         appLanguage,
         appMineLayout: configMine.layout,
+        appItem,
       };
     },
   },
