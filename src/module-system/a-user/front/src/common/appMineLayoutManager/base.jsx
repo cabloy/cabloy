@@ -1,0 +1,63 @@
+export default {
+  data() {
+    return {
+      base: {
+        configAppMenuBase: null,
+        configAppMenu: null,
+        //
+        appItem: null,
+        appPresetConfig: null,
+      },
+    };
+  },
+  computed: {
+    base_atomClassApp() {
+      return {
+        module: 'a-app',
+        atomClassName: 'app',
+      };
+    },
+  },
+  methods: {
+    async base_onInit() {
+      // load appItem
+      this.base.appItem = await this.$store.dispatch('a/app/getAppItem', {
+        appKey: this.container.appKey,
+      });
+      this.base.appPresetConfig = await this.$store.dispatch('a/app/getPresetConfig', {
+        appKey: this.container.appKey,
+      });
+    },
+    base_onPerformResource(event, resource) {
+      const resourceConfig = JSON.parse(resource.resourceConfig);
+      // special for action
+      let action;
+      let item;
+      if (resourceConfig.atomAction === 'create') {
+        //
+        action = this.getAction({
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+          name: resourceConfig.atomAction,
+        });
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else if (resourceConfig.atomAction === 'read') {
+        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
+          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        }
+        action = resourceConfig;
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else {
+        action = resourceConfig;
+      }
+      action = this.$utils.extend({}, action, { targetEl: event.currentTarget });
+      return this.$meta.util.performAction({ ctx: this, action, item });
+    },
+  },
+};

@@ -6,7 +6,7 @@ function loadjsx(name) {
 }
 
 export default [
-  { path: 'user/mine', component: loadjsx('user/mineOp') },
+  { path: 'user/mine', component: loadjsx('user/appMine') },
   { path: 'user/mineAgent', component: load('user/mineAgent') },
   { path: 'user/edit', component: load('user/edit') },
   { path: 'user/agent', component: load('user/agent') },
