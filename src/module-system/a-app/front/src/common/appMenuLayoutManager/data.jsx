@@ -1,9 +1,3 @@
-const __categoriesTop = {
-  'a-app:appDefault': ['General', 'Management', 'System'],
-  'a-appbooster:appGeneral': ['Create', 'List', 'Tools'],
-  'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
-};
-
 export default {
   data() {
     return {
@@ -51,6 +45,7 @@ export default {
     },
     // tools
     data_tools_prepareCategoriesTop() {
+      const __categoriesTop = this.$config.appMenu.categoriesTop;
       const appKey = this.container.appKey;
       return __categoriesTop[appKey];
     },

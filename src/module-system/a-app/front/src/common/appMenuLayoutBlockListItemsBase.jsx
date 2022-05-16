@@ -100,16 +100,20 @@ export default {
       }
       // sort
       groups = groups.sort((a, b) => {
-        const indexA = categoriesTop.indexOf(a.categoryName);
-        const indexB = categoriesTop.indexOf(b.categoryName);
-        const sortingA = indexA > -1 ? indexA - categoriesTop.length : a.categorySorting;
-        const sortingB = indexB > -1 ? indexB - categoriesTop.length : b.categorySorting;
+        const sortingA = this._adjustCategorySorting(a, categoriesTop);
+        const sortingB = this._adjustCategorySorting(b, categoriesTop);
         return sortingA - sortingB;
       });
       // filter
       groups = groups.filter(item => item.items.length > 0);
       // ok
       return groups;
+    },
+    _adjustCategorySorting(group, categoriesTop) {
+      if (group.categorySorting > 0) return group.categorySorting;
+      const index = categoriesTop.indexOf(group.categoryName);
+      if (index === -1) return group.categorySorting;
+      return index - categoriesTop.length;
     },
     _renderGroup(group) {
       const children = [];

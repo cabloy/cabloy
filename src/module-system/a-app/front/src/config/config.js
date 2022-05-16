@@ -4,4 +4,11 @@ export default {
     base: 'a-app:appBase',
     unclassified: 'a-appbooster:appUnclassified',
   },
+  appMenu: {
+    categoriesTop: {
+      'a-app:appDefault': ['General', 'Management', 'System'],
+      'a-appbooster:appGeneral': ['Create', 'List', 'Tools'],
+      'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
+    },
+  },
 };
