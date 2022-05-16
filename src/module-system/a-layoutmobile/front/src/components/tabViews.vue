@@ -26,11 +26,12 @@ export default {
         })
       );
       // view
+      const url = button.resourceConfig && button.resourceConfig.url;
       const _viewAttrs = {
         id,
         name: fullName,
         tab: true,
-        'data-url': button.resourceConfig.url,
+        'data-url': url,
         init: true,
         tabActive: fullName === this.buttonActiveFullName,
         pushState: false,
@@ -116,7 +117,10 @@ export default {
       if (target.hasClass('eb-layout-tab')) {
         const path = target[0].f7View.router.currentRoute.path;
         if (!path || path === '/') {
-          target[0].f7View.router.navigate(target.data('url'));
+          const url = target.data('url');
+          if (url) {
+            target[0].f7View.router.navigate(url);
+          }
         }
         const fullName = target[0].f7View.name;
         if (this.buttonActiveFullName !== fullName) {
