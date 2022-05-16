@@ -33,13 +33,15 @@ export default {
       await this.app_openAppMine({ current, appItemCurrent, force });
     },
     async app_openAppMenu({ current, appItemCurrent }) {
+      const appKey = current.appKey;
       // app default
       await this.app_checkAppMenuDefault({ current, appItemCurrent });
       // app current
-      this.navigate(`/a/app/appMenu?appKey=${current.appKey}`, {
+      this.navigate(`/a/app/appMenu?appKey=${appKey}`, {
         scene: 'sidebar',
-        sceneOptions: this.app_openAppMenu_panelSceneOptions(current.appKey, appItemCurrent),
+        sceneOptions: this.app_openAppMenu_panelSceneOptions(appKey, appItemCurrent),
         imActive: false,
+        panelIndex: this.app_isDefault(appKey) ? 0 : undefined,
       });
     },
     app_isDefault(appKey) {
