@@ -23,6 +23,10 @@ export default {
       });
     },
     _renderHome() {
+      // backLink
+      const backLink = this.$meta.vueLayout.backLink(this.layoutManager.$view);
+      if (backLink) return null;
+      // childMode
       if (!this.layoutManager.base_isChildMode()) return null;
       return <eb-link key="home" iconF7="::home" propsOnPerform={this.onPerformHome}></eb-link>;
     },
