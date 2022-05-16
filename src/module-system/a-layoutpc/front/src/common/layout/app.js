@@ -29,7 +29,8 @@ export default {
       await this.app_openAppMenu({ current, appItemCurrent });
       // open home
       await this.app_openAppHome({ current, appItemCurrent, force });
-      // await this.app_openAppUser();
+      // open mine
+      await this.app_openAppMine({ current, appItemCurrent, force });
     },
     async app_openAppMenu({ current, appItemCurrent }) {
       // app default
@@ -60,7 +61,7 @@ export default {
       // ok
       return {
         side: 'left',
-        name: appKey,
+        name: `appMenu_${appKey}`,
         title,
         titleLocale,
         resourceConfig: {
@@ -122,6 +123,33 @@ export default {
         },
       };
       this.navigate(url, navigateOptions);
+    },
+    async app_openAppMine({ current, appItemCurrent, force }) {
+      // appInfo
+      const appKey = current.appKey;
+      const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });
+      if (!appInfo) return;
+      // open
+      this.navigate('/a/user/user/mine', {
+        scene: 'sidebar',
+        sceneOptions: this.app_openAppMine_panelSceneOptions(),
+      });
+    },
+    app_openAppMine_panelSceneOptions() {
+      const title = 'Mine';
+      const titleLocale = this.$text('Mine');
+      const showLabel = true;
+      // ok
+      return {
+        side: 'right',
+        name: 'appMine',
+        title,
+        titleLocale,
+        resourceConfig: {
+          showLabel,
+        },
+        appMine: true,
+      };
     },
   },
 };
