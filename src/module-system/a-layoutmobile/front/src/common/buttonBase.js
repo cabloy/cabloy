@@ -42,8 +42,15 @@ export default function (Vue) {
       onPerformClick() {
         this.setTabActive();
       },
+      getDomView() {
+        return this.$$(`#eb-layout-tab-${this.button.buttonFullName.replace(':', '_')}`);
+      },
+      getView() {
+        const domView = this.getDomView();
+        return domView[0].__vue__;
+      },
       setTabActive() {
-        this.$f7.tab.show(`#eb-layout-tab-${this.button.buttonFullName.replace(':', '_')}`);
+        this.$f7.tab.show(this.getDomView());
       },
     },
   };
