@@ -34,7 +34,7 @@ export default {
       if (backLink) return null;
       // childMode
       if (!this.layoutManager.base_isChildMode()) return null;
-      return <eb-link key="home" iconF7="::home" propsOnPerform={this.onPerformHome}></eb-link>;
+      return <eb-link key="home" iconF7=":outline:apps-outline" propsOnPerform={this.onPerformHome}></eb-link>;
     },
     _renderDashboard() {
       return <eb-link key="dashboard" iconF7="::dashboard" propsOnPerform={this.onPerformDashboard}></eb-link>;
