@@ -30,7 +30,7 @@ function installFactory(_Vue) {
       },
       openAppMenu() {
         const view = this.getView();
-        this.$meta.vueLayout.app_openAppMenu({ view });
+        this.$meta.vueLayout.app_openHome({ view });
       },
     },
     render() {

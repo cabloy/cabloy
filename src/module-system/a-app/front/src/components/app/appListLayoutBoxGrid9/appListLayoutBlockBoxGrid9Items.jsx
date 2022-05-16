@@ -23,7 +23,11 @@ function installFactory(_Vue) {
       },
       onItemClick(event, item) {
         const appKey = item.atomStaticKey;
-        this.layoutManager.$meta.vueLayout.app_openHome({ appKey, force: false });
+        this.layoutManager.$meta.vueLayout.app_openHome({
+          view: this.layoutManager.$view,
+          appKey,
+          force: false,
+        });
       },
       _renderGroup(group) {
         const children = [];
