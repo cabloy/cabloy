@@ -25,6 +25,33 @@ export default {
         reloadAll: this.app_isDefault(appKey),
       });
     },
+    async app_openAppHome({ view, current, force = false }) {
+      if (!current) current = this.$store.getters['a/app/current'];
+      // configHome
+      let configHome;
+      let appKey = current.appKey;
+      const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      configHome = presetConfigCurrent.home;
+      if (!configHome.mode && force) {
+        appKey = this.app.keyDefault;
+        const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
+        configHome = presetConfigDefault.home;
+      }
+      if (!configHome.mode) return;
+      // navigate
+      let url;
+      if (configHome.mode === 'dashboard') {
+        url = `/a/dashboard/dashboard?key=${configHome.dashboard}`;
+      } else {
+        url = configHome.page;
+      }
+      // for unique
+      url = this.$meta.util.combineQueries(url, {
+        appKey,
+        // appLanguage: current.appLanguage, // not set appLanguage
+      });
+      view.navigate(url);
+    },
     app_isDefault(appKey) {
       return appKey === this.app.keyDefault;
     },
