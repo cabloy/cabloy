@@ -22,7 +22,8 @@ export default {
       // navigate
       view.navigate(url, {
         target: '_self',
-        reloadAll: this.app_isDefault(appKey),
+        reloadAll: true, // give a chance to select appDefault
+        // reloadAll: this.app_isDefault(appKey),
       });
     },
     async app_openAppHome({ view, current, force = false }) {
