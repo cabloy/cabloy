@@ -1,10 +1,13 @@
 <script>
 import TabViews from './tabViews.vue';
 import Group from './group.vue';
+import MixinApp from '../common/layout/app.js';
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [MixinApp],
   components: {
     ebTabViews: TabViews,
     ebGroup: Group,
