@@ -34,15 +34,16 @@ export default {
     },
     async base_app_switch({ appKey }) {
       // prepareAppCurrent
-      await this.base_app_prepareAppCurrent({ appKey, force: false });
+      const res = await this.base_app_prepareAppCurrent({ appKey, force: false });
+      if (!res) return;
       // prepareConfigLayout
       this.layout.configFull = null;
       await this.layout_prepareConfigLayout(this.layout.current);
     },
     async base_app_prepareAppCurrent({ appKey, force }) {
       const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });
-      if (!appInfo) return;
-      if (this.base_app_isCurrentSameFull(this.base.appCurrent, appInfo)) return;
+      if (!appInfo) return false;
+      if (this.base_app_isCurrentSameFull(this.base.appCurrent, appInfo)) return false;
       // current
       this.base.appCurrent = appInfo;
       // configAppMine
@@ -52,6 +53,8 @@ export default {
       this.base.configAppMine = layoutItem.content;
       // add
       await this.base_app_add(appInfo);
+      // ok
+      return true;
     },
     async base_app_add(appCurrent) {
       // app default
