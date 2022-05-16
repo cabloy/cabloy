@@ -23,7 +23,7 @@ function installFactory(_Vue) {
         this.onPerform();
       },
       onPerform() {
-        this.onPerformClick();
+        this.setTabActive();
       },
     },
     render() {

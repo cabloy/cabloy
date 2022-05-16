@@ -40,6 +40,9 @@ export default function (Vue) {
     },
     methods: {
       onPerformClick() {
+        this.setTabActive();
+      },
+      setTabActive() {
         this.$f7.tab.show(`#eb-layout-tab-${this.button.buttonFullName.replace(':', '_')}`);
       },
     },
