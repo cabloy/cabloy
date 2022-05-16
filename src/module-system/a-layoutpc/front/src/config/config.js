@@ -3,7 +3,7 @@ export default {
     default: {
       login: '/a/login/login',
       loginOnStart: true,
-      autoHideSidebarOnOpenUrl: true,
+      autoHideSidebarOnOpenPage: false,
       sidebar: {
         top: {
           buttons: [],

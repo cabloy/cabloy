@@ -380,7 +380,7 @@ export default {
       }
     },
     _autoHideAllSidebars() {
-      if (!this.layoutConfig.autoHideSidebarOnOpenUrl) return;
+      if (!this.layoutConfig.autoHideSidebarOnOpenPage) return;
       this._hideAllSidebars();
     },
     __getResourcesAll() {
