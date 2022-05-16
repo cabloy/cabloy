@@ -88,6 +88,21 @@ module.exports = app => {
       resourceRoles: 'root',
     },
     {
+      atomName: 'Mine',
+      atomStaticKey: 'buttonAppMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppMine',
+        icon: { f7: '::person' },
+        showSeparator: true,
+        fixed: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
       atomName: 'Search',
       atomStaticKey: 'buttonSearch',
       atomRevision: 0,
@@ -150,7 +165,7 @@ module.exports = app => {
     {
       atomName: 'Mine',
       atomStaticKey: 'buttonMine',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({

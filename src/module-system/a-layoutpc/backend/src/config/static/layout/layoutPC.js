@@ -7,7 +7,7 @@ module.exports = app => {
           { module: 'a-layoutpc', name: 'buttonAppHome' },
           { module: 'a-layoutpc', name: 'buttonSearch' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
-          { module: 'a-layoutpc', name: 'buttonMine' },
+          { module: 'a-layoutpc', name: 'buttonAppMine' },
         ],
       },
       left: {
@@ -30,7 +30,7 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 2,
     content: JSON.stringify(content),
