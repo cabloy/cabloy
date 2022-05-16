@@ -24,7 +24,6 @@ export default {
       // imActive
       const imActive = options && options.imActive;
       const panelIndex = options && options.panelIndex;
-      console.log(panelIndex);
       // side
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       const sidePanels = this.sidebar[side].panels;
