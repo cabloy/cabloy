@@ -27,13 +27,13 @@ function installFactory(_Vue) {
       this._checkSpecialPath();
     },
     created() {
-      this.$meta.eventHub.$on('appMine:open', this.onAppMineOpen);
+      this.$meta.eventHub.$on('mine:open', this.onMineOpen);
     },
     beforeDestroy() {
-      this.$meta.eventHub.$off('appMine:open', this.onAppMineOpen);
+      this.$meta.eventHub.$off('mine:open', this.onMineOpen);
     },
     methods: {
-      onAppMineOpen() {
+      onMineOpen() {
         this.onPerformClick();
       },
       _checkSpecialPath() {

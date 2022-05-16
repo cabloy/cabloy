@@ -126,11 +126,11 @@ export default {
     },
     openMine() {
       this.tabShowed = true;
-      this.$meta.eventHub.$emit('appMine:open');
+      this.$meta.eventHub.$emit('mine:open');
     },
     openHome() {
       this.tabShowed = true;
-      this.$meta.eventHub.$emit('appMenu:open');
+      this.$meta.eventHub.$emit('home:open');
     },
     // options:
     //  target: _self/_view/_group
