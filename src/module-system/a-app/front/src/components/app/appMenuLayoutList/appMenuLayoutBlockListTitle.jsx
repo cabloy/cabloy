@@ -15,15 +15,21 @@ export default {
   },
   created() {},
   methods: {
+    onPerformHome() {
+      const __appKeyDefault = this.$config.appKey.default;
+      this.$meta.vueLayout.app_openHome({
+        view: this.layoutManager.$view,
+        appKey: __appKeyDefault,
+      });
+    },
     _renderHome() {
-      // get current
-      const appItem = this.layoutManager.base.appItem;
-      // if(this.layoutManager.)
+      if (!this.layoutManager.base_isChildMode()) return null;
+      return <eb-link key="home" iconF7="::home" propsOnPerform={this.onPerformHome}></eb-link>;
     },
     _renderNavRight() {
       const children = [];
       // home
-      children.push(this._renderHome);
+      children.push(this._renderHome());
       // dashboard
 
       // ok

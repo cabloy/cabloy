@@ -14,11 +14,7 @@ export default {
       const inPanel = this.$view.inPanel();
       const titleDefault = inPanel ? this.$text('Apps') : this.$text('Home');
       // app title
-      const __appKeyDefault = this.$config.appKey.default;
-      if (this.container.appKey === __appKeyDefault) return titleDefault;
-      if (!this.base.appItem) return titleDefault; // default
-      if (this.base.appItem.isolate) return titleDefault;
-      return this.base.appItem.atomNameLocale;
+      return this.base_isChildMode() ? this.base.appItem.atomNameLocale : titleDefault;
     },
     page_onGetTitleSub() {
       return '';

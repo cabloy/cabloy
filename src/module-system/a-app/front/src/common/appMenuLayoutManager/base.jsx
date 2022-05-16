@@ -59,5 +59,12 @@ export default {
       action = this.$utils.extend({}, action, { targetEl: event.currentTarget });
       return this.$meta.util.performAction({ ctx: this, action, item });
     },
+    base_isChildMode() {
+      const __appKeyDefault = this.$config.appKey.default;
+      if (this.container.appKey === __appKeyDefault) return false;
+      if (!this.base.appItem) return false;
+      if (this.base.appItem.isolate) return false;
+      return true;
+    },
   },
 };
