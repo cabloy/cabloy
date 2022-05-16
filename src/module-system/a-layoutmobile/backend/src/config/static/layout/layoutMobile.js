@@ -3,7 +3,7 @@ module.exports = app => {
   const content = {
     toolbar: {
       buttons: [
-        { module: 'a-layoutmobile', name: 'buttonHome' },
+        { module: 'a-layoutmobile', name: 'buttonAppHome' },
         { module: 'a-layoutmobile', name: 'buttonSearch' },
         { module: 'a-layoutmobile', name: 'buttonMine' },
       ],
@@ -12,7 +12,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Mobile Layout(Authenticated)',
     atomStaticKey: 'layoutMobile',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 1,
     content: JSON.stringify(content),

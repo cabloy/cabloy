@@ -4,13 +4,13 @@ module.exports = app => {
     // tabbar buttons
     {
       atomName: 'Home',
-      atomStaticKey: 'buttonHome',
-      atomRevision: 2,
+      atomStaticKey: 'buttonAppHome',
+      atomRevision: 0,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'buttonHome',
+        component: 'buttonAppHome',
         icon: { f7: '::home' },
       }),
       resourceRoles: 'root',
@@ -55,6 +55,20 @@ module.exports = app => {
         icon: { f7: '::person' },
         url: '/a/user/user/mine',
         fixed: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Home',
+      atomStaticKey: 'buttonHome',
+      atomRevision: -1,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: '::home' },
+        url: '/a/basefront/resource/tree',
       }),
       resourceRoles: 'root',
     },
