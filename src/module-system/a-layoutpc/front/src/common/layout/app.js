@@ -124,7 +124,8 @@ export default {
       };
       this.navigate(url, navigateOptions);
     },
-    async app_openAppMine({ current, appItemCurrent, force }) {
+    async app_openAppMine({ current, force }) {
+      if (!current) current = this.$store.getters['a/app/current'];
       // appInfo
       const appKey = current.appKey;
       const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });

@@ -213,7 +213,7 @@ export default {
       return false;
     },
     openMine() {
-      this.$meta.eventHub.$emit('mine:open');
+      return this.app_openAppMine({ force: true });
     },
     openHome() {
       return this.app_openHome({ force: true });
