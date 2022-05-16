@@ -10,7 +10,7 @@ export default {
       return this.page_renderAppCurrent();
     },
     page_renderAppCurrent() {
-      const { appKey, appItem } = this.base.appCurrent;
+      const { appKey, appItem } = this.base.appInfoCurrent;
       if (!appItem) return '';
       if (this.base.appInfos.length === 1 || appItem.isolate) return '';
       return (
@@ -26,15 +26,15 @@ export default {
     },
     async page_onClickAppCurrent(event) {
       try {
-        const appCurrent = this.base.appCurrent;
-        const { appKey, appItem, appMineLayout } = appCurrent;
+        const appInfoCurrent = this.base.appInfoCurrent;
+        const { appKey, appItem, appMineLayout } = appInfoCurrent;
         if (!appItem) return '';
         // icon
         const iconDone = await this.$meta.util.combineIcon({ f7: '::done' });
         // buttons
         const buttons = [];
         for (const appInfo of this.base.appInfos) {
-          const icon = this.base_app_isCurrentSame(appInfo, appCurrent) ? iconDone : '<i class="icon"></i>';
+          const icon = this.base_app_isCurrentSame(appInfo, appInfoCurrent) ? iconDone : '<i class="icon"></i>';
           buttons.push({
             icon,
             text: appInfo.appItem.atomNameLocale,
@@ -48,7 +48,7 @@ export default {
           buttons,
         };
         const button = await this.$view.actions.choose(params);
-        if (!this.base_app_isCurrentSame(button.data, appCurrent)) {
+        if (!this.base_app_isCurrentSame(button.data, appInfoCurrent)) {
           await this.base_app_switch({ appKey: button.data.appKey });
         }
       } catch (err) {
