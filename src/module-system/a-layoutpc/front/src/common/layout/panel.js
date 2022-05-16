@@ -23,22 +23,29 @@ export default {
     _createPanel({ side, panel, url, options, init }) {
       // imActive
       const imActive = options && options.imActive;
+      const panelIndex = options && options.panelIndex;
+      console.log(panelIndex);
       // side
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      const sidePanels = this.sidebar[side].panels;
       // prepare panel
       panel = this._preparePanel(panel, url);
       // check if has exists
-      const _panelTabIndex = this.sidebar[side].panels.findIndex(
-        item => this._panelFullName(item) === this._panelFullName(panel)
-      );
+      const panelCountOld = sidePanels.length;
+      const _panelTabIndex = sidePanels.findIndex(item => this._panelFullName(item) === this._panelFullName(panel));
       if (_panelTabIndex === -1) {
-        this.sidebar[side].panels.push(panel);
-        if (this.sidebar[side].panels.length === 1) {
-          this.onResize();
+        if (panelIndex !== undefined) {
+          sidePanels.splice(panelIndex, 0, panel);
+        } else {
+          sidePanels.push(panel);
         }
       } else {
         // always update, maybe some properties have changed
-        this.sidebar[side].panels.splice(_panelTabIndex, 1, panel);
+        sidePanels.splice(_panelTabIndex, 1, panel);
+      }
+      const panelCountNew = sidePanels.length;
+      if (panelCountOld === 0 && panelCountNew === 1) {
+        this.onResize();
       }
       // create view
       if (!imActive) {

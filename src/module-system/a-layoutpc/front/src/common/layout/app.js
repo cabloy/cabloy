@@ -81,6 +81,7 @@ export default {
           scene: 'sidebar',
           sceneOptions: this.app_openAppMenu_panelSceneOptions(this.app.keyDefault, appItemDefault),
           imActive: true,
+          panelIndex: 0,
         });
       }
       // checked
@@ -134,6 +135,7 @@ export default {
       this.navigate('/a/user/user/mine', {
         scene: 'sidebar',
         sceneOptions: this.app_openAppMine_panelSceneOptions(),
+        panelIndex: 0,
       });
     },
     app_openAppMine_panelSceneOptions() {
