@@ -16,12 +16,17 @@ export default {
       await this.app_openAppMenu({ view, current });
     },
     async app_openAppMenu({ view, current }) {
+      const appKey = current.appKey;
       // url
-      const url = `/a/app/appMenu?appKey=${current.appKey}`;
+      const url = `/a/app/appMenu?appKey=${appKey}`;
       // navigate
       view.navigate(url, {
         target: '_self',
+        reloadAll: this.app_isDefault(appKey),
       });
+    },
+    app_isDefault(appKey) {
+      return appKey === this.app.keyDefault;
     },
   },
 };
