@@ -4,7 +4,7 @@ module.exports = app => {
     toolbar: {
       buttons: [
         { module: 'a-layoutmobile', name: 'buttonHome' },
-        { module: 'a-layoutmobile', name: 'buttonAtom' },
+        { module: 'a-layoutmobile', name: 'buttonSearch' },
         { module: 'a-layoutmobile', name: 'buttonMine' },
       ],
     },
@@ -12,7 +12,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Mobile Layout(Anonymous)',
     atomStaticKey: 'layoutMobileAnonymous',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 1,
     content: JSON.stringify(content),
