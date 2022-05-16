@@ -1,4 +1,4 @@
-const StartCommand = require('egg-scripts').StartCommand;
+const StartCommand = require('@zhennann/egg-scripts').StartCommand;
 const utils = require('../utils.js');
 
 class BackendStartCommand extends StartCommand {

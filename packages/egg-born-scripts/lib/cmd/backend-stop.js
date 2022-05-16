@@ -1,4 +1,4 @@
-const StopCommand = require('egg-scripts').StopCommand;
+const StopCommand = require('@zhennann/egg-scripts').StopCommand;
 const utils = require('../utils.js');
 
 class BackendStopCommand extends StopCommand {
