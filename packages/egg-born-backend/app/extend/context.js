@@ -18,7 +18,10 @@ module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
       const url = this.req.mockUrl || this.req.url || '';
-      const info = mparse.parseInfo(mparse.parseName(url));
+      let info = mparse.parseInfo(mparse.parseName(url));
+      if (!info) {
+        info = mparse.parseInfo('a-base');
+      }
       this[MODULE] = info ? this.app.meta.modules[info.relativeName] : null;
     }
     return this[MODULE];
