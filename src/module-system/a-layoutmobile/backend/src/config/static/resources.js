@@ -3,6 +3,19 @@ module.exports = app => {
   const resources = [
     // tabbar buttons
     {
+      atomName: 'Menu',
+      atomStaticKey: 'buttonAppMenu',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppMenu',
+        icon: { f7: ':outline:apps-outline' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
       atomName: 'Home',
       atomStaticKey: 'buttonAppHome',
       atomRevision: 0,
