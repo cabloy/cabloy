@@ -26,7 +26,7 @@ function installFactory(_Vue) {
         this.onPerform();
       },
       onPerform() {
-        this.setTabActive();
+        this.onPerformClick();
       },
       openAppMenu() {
         const view = this.getView();

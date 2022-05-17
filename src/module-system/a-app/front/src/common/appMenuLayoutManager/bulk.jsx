@@ -10,10 +10,9 @@ export default {
         appKey: __appKeyDefault,
       });
     },
-    bulk_onPerformDashboard() {
-      this.$meta.vueLayout.app_openAppHome({
-        view: this.$view,
-        force: true,
+    bulk_onPerformSearch() {
+      this.$view.navigate('/a/basefront/atom/searchQuick', {
+        target: '_self',
       });
     },
     bulk_renderHome() {
@@ -24,16 +23,15 @@ export default {
       if (!this.base_isChildMode()) return null;
       return <eb-link key="home" iconF7=":outline:apps-outline" propsOnPerform={this.bulk_onPerformHome}></eb-link>;
     },
-    bulk_renderDashboard() {
-      return <eb-link key="dashboard" iconF7="::dashboard" propsOnPerform={this.bulk_onPerformDashboard}></eb-link>;
+    bulk_renderSearch() {
+      return <eb-link key="search" iconF7="::search" propsOnPerform={this.bulk_onPerformSearch}></eb-link>;
     },
     bulk_renderActionsNormal() {
       const children = [];
       // home
       children.push(this.bulk_renderHome());
-      // dashboard
-      //   always show, even if no app home config
-      children.push(this.bulk_renderDashboard());
+      // search
+      children.push(this.bulk_renderSearch());
       // ok
       return children;
     },
