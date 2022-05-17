@@ -23,9 +23,6 @@ function installFactory(_Vue) {
     },
     methods: {
       onAppMenuOpen() {
-        this.onPerform();
-      },
-      onPerform() {
         this.onPerformClick();
       },
       openAppMenu() {

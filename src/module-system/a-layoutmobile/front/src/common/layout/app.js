@@ -51,7 +51,10 @@ export default {
         appKey,
         // appLanguage: current.appLanguage, // not set appLanguage
       });
-      view.navigate(url);
+      view.navigate(url, {
+        target: '_self',
+        reloadAll: true,
+      });
     },
     app_isDefault(appKey) {
       return appKey === this.app.keyDefault;
