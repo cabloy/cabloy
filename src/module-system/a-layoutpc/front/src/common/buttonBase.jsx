@@ -54,5 +54,18 @@ export default function (Vue) {
         this.$meta.util.performAction({ ctx: this, action, item: null });
       },
     },
+    render() {
+      return (
+        <eb-link
+          class={this.buttonClass}
+          iconMaterial={this.buttonIcon && this.buttonIcon.material}
+          iconF7={this.buttonIcon && this.buttonIcon.f7}
+          iconSize={this.buttonIconSize}
+          text={this.buttonLabel}
+          tooltip={this.buttonTooltip}
+          propsOnPerform={this.onPerformClick}
+        ></eb-link>
+      );
+    },
   };
 }

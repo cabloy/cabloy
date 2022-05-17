@@ -1,5 +1,5 @@
 import layout from './components/layout.vue';
-import buttonLink from './components/buttons/buttonLink.vue';
+import buttonLink from './components/buttons/buttonLink.jsx';
 import buttonFullscreen from './components/buttons/buttonFullscreen.vue';
 import buttonAppMine from './components/buttons/buttonAppMine.vue';
 import buttonClock from './components/buttons/buttonClock.jsx';
