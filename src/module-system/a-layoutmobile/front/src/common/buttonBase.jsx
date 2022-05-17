@@ -53,5 +53,16 @@ export default function (Vue) {
         this.$f7.tab.show(this.getDomView());
       },
     },
+    render() {
+      return (
+        <eb-link
+          class={this.buttonClass}
+          iconMaterial={this.buttonIcon && this.buttonIcon.material}
+          iconF7={this.buttonIcon && this.buttonIcon.f7}
+          text={this.buttonLabel}
+          propsOnPerform={this.onPerformClick}
+        ></eb-link>
+      );
+    },
   };
 }

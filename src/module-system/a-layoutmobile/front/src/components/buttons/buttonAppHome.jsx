@@ -33,16 +33,5 @@ function installFactory(_Vue) {
         this.$meta.vueLayout.app_openHome({ view });
       },
     },
-    render() {
-      return (
-        <eb-link
-          class={this.buttonClass}
-          iconMaterial={this.buttonIcon && this.buttonIcon.material}
-          iconF7={this.buttonIcon && this.buttonIcon.f7}
-          text={this.buttonLabel}
-          propsOnPerform={this.onPerform}
-        ></eb-link>
-      );
-    },
   };
 }
