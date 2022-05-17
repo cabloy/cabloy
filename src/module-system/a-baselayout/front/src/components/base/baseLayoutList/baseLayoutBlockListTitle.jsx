@@ -31,21 +31,16 @@ export default {
         children.push(domBulkActionsRight);
         children.push(domBulkActionsLeftB);
       }
-      let domOrder;
-      if (this.layoutManager.order_renderAction) {
-        domOrder = this.layoutManager.order_renderAction();
+      // normal
+      let domActions;
+      if (this.layoutManager.bulk_renderActionsNormal) {
+        domActions = this.layoutManager.bulk_renderActionsNormal();
       }
-      let domOrderPopover;
-      if (this.layoutManager.order_renderPopover) {
-        domOrderPopover = this.layoutManager.order_renderPopover();
+      let domActionsPopover;
+      if (this.layoutManager.bulk_renderActionsNormalPopover) {
+        domActionsPopover = this.layoutManager.bulk_renderActionsNormalPopover();
       }
-      let domFilter;
-      if (this.layoutManager.filter_renderAction) {
-        domFilter = this.layoutManager.filter_renderAction();
-      }
-      children.push(domOrder);
-      children.push(domOrderPopover);
-      children.push(domFilter);
+      children.push(domActions, domActionsPopover);
       // ok
       return <f7-nav-right>{children}</f7-nav-right>;
     },
