@@ -1,12 +1,3 @@
-<template>
-  <eb-link
-    :class="buttonClass"
-    :iconF7="this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'"
-    :tooltip="this.$meta.util.screenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')"
-    :onPerform="onPerform"
-  ></eb-link>
-</template>
-<script>
 // export
 export default {
   installFactory,
@@ -31,6 +22,15 @@ function installFactory(_Vue) {
         this.$meta.util.screenfull.toggle();
       },
     },
+    render() {
+      return (
+        <eb-link
+          class={this.buttonClass}
+          iconF7={this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
+          tooltip={this.$meta.util.screenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')}
+          propsOnPerform={this.onPerform}
+        ></eb-link>
+      );
+    },
   };
 }
-</script>
