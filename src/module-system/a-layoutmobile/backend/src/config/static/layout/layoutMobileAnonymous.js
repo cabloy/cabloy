@@ -5,14 +5,14 @@ module.exports = app => {
       buttons: [
         { module: 'a-layoutmobile', name: 'buttonAppMenu' },
         { module: 'a-layoutmobile', name: 'buttonAppHome' },
-        { module: 'a-layoutmobile', name: 'buttonMine' },
+        { module: 'a-layoutmobile', name: 'buttonAppMine' },
       ],
     },
   };
   const layout = {
     atomName: 'Mobile Layout(Anonymous)',
     atomStaticKey: 'layoutMobileAnonymous',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 1,
     content: JSON.stringify(content),
