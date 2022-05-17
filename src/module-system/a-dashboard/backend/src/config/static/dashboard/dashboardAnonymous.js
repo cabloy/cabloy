@@ -11,10 +11,10 @@ module.exports = app => {
     },
   };
   const dashboard = {
-    atomName: 'Anonymous',
+    atomName: 'Home',
     atomStaticKey: 'dashboardAnonymous',
-    atomRevision: 0,
-    description: '',
+    atomRevision: 1,
+    description: 'Home(Anonymous)',
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };

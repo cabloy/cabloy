@@ -123,8 +123,8 @@ module.exports = app => {
   const dashboard = {
     atomName: 'Home',
     atomStaticKey: 'dashboardHome',
-    atomRevision: 1,
-    description: '',
+    atomRevision: 2,
+    description: 'Home(Authenticated)',
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
