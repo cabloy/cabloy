@@ -17,6 +17,7 @@ export default {
     },
     async app_openAppMenu({ view, current }) {
       const appKey = current.appKey;
+      if (!appKey) return;
       // url
       const url = `/a/app/appMenu?appKey=${appKey}`;
       // navigate
@@ -28,9 +29,10 @@ export default {
     },
     async app_openAppHome({ view, current, force = false }) {
       if (!current) current = this.$store.getters['a/app/current'];
+      let appKey = current.appKey;
+      if (!appKey) return;
       // configHome
       let configHome;
-      let appKey = current.appKey;
       const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
       configHome = presetConfigCurrent.home;
       if (!configHome.mode && force) {

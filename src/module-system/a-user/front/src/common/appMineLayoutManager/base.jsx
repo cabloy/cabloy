@@ -44,6 +44,7 @@ export default {
       this.base.appMineInited = true;
     },
     async base_app_switch({ appKey }) {
+      if (!appKey) return;
       // prepareAppCurrent
       const res = await this.base_app_prepareAppCurrent({ appKey, force: false });
       if (!res) return;
