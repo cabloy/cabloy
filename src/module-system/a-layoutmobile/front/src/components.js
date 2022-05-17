@@ -2,12 +2,12 @@ import layout from './components/layout.vue';
 import buttonLink from './components/buttons/buttonLink.jsx';
 import buttonAppMenu from './components/buttons/buttonAppMenu.jsx';
 import buttonAppHome from './components/buttons/buttonAppHome.jsx';
-import buttonMine from './components/buttons/buttonMine.vue';
+import buttonAppMine from './components/buttons/buttonAppMine.jsx';
 
 export default {
   layout,
   buttonLink,
   buttonAppMenu,
   buttonAppHome,
-  buttonMine,
+  buttonAppMine,
 };

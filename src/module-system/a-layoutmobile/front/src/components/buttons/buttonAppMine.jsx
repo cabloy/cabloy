@@ -1,14 +1,3 @@
-<template>
-  <eb-link-color
-    :class="buttonClass"
-    :iconMaterial="buttonIcon && buttonIcon.material"
-    :iconF7="buttonIcon && buttonIcon.f7"
-    :text="buttonLabel"
-    :onPerform="onPerformClick"
-    :stats_params="{ module: 'a-user', name: 'user' }"
-  ></eb-link-color>
-</template>
-<script>
 // export
 export default {
   installFactory,
@@ -45,6 +34,17 @@ function installFactory(_Vue) {
         }
       },
     },
+    render() {
+      return (
+        <eb-link-color
+          class={this.buttonClass}
+          iconMaterial={this.buttonIcon && this.buttonIcon.material}
+          iconF7={this.buttonIcon && this.buttonIcon.f7}
+          text={this.buttonLabel}
+          propsOnPerform={this.onPerformClick}
+          stats_params={{ module: 'a-user', name: 'user' }}
+        ></eb-link-color>
+      );
+    },
   };
 }
-</script>
