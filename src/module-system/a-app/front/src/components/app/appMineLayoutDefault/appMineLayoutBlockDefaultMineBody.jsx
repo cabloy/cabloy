@@ -74,6 +74,7 @@ export default {
     },
     renderList() {
       if (!this.ready) return;
+      if (this.layoutManager.base_user.anonymous) return null;
       const children = [];
       for (const category of this.treeData) {
         children.push(
