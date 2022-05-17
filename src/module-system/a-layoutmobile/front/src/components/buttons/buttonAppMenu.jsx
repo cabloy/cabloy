@@ -13,16 +13,16 @@ function installFactory(_Vue) {
       return {};
     },
     created() {
-      this.$meta.eventHub.$on('home:open', this.onHomeOpen);
+      this.$meta.eventHub.$on('appMenu:open', this.onAppMenuOpen);
     },
     beforeDestroy() {
-      this.$meta.eventHub.$off('home:open', this.onHomeOpen);
+      this.$meta.eventHub.$off('appMenu:open', this.onAppMenuOpen);
     },
     mounted() {
       this.openAppMenu();
     },
     methods: {
-      onHomeOpen() {
+      onAppMenuOpen() {
         this.onPerform();
       },
       onPerform() {
