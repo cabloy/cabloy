@@ -1,14 +1,3 @@
-<template>
-  <eb-link :class="buttonClass" :onPerform="onPerform">
-    <div class="item" v-if="loggedIn">
-      <img class="avatar" :src="userAvatar" />
-    </div>
-    <div class="item name" v-if="loggedIn">{{ userName }}</div>
-    <div class="item status" v-if="!loggedIn">{{ $text('Not LoggedIn') }}</div>
-    <div class="item"><eb-stats-color :stats_params="{ module: 'a-user', name: 'user' }"></eb-stats-color></div>
-  </eb-link>
-</template>
-<script>
 // export
 export default {
   installFactory,
@@ -71,6 +60,33 @@ function installFactory(_Vue) {
         }
       },
     },
+    render() {
+      let domAvatar;
+      if (this.loggedIn) {
+        domAvatar = (
+          <div class="item">
+            <img class="avatar" src={this.userAvatar} />
+          </div>
+        );
+      }
+      let domUserName;
+      if (this.loggedIn) {
+        domUserName = <div class="item name">{this.userName}</div>;
+      } else {
+        domUserName = <div class="item status">{this.$text('Not LoggedIn')}</div>;
+      }
+      const domStats = (
+        <div class="item">
+          <eb-stats-color stats_params={{ module: 'a-user', name: 'user' }}></eb-stats-color>
+        </div>
+      );
+      return (
+        <eb-link class={this.buttonClass} propsOnPerform={this.onPerform}>
+          {domAvatar}
+          {domUserName}
+          {domStats}
+        </eb-link>
+      );
+    },
   };
 }
-</script>
