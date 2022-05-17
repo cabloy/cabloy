@@ -291,7 +291,10 @@ export default {
             if (res.options) options = this.$utils.extend({}, options, res.options);
             res.view.f7View.router.navigate(url, options);
             // autohide
-            this._autoHideAllSidebars();
+            const appHome = options.sceneOptions && options.sceneOptions.appHome;
+            if (!appHome) {
+              this._autoHideAllSidebars();
+            }
           });
       }
     },
@@ -380,7 +383,7 @@ export default {
       }
     },
     _autoHideAllSidebars() {
-      if (!this.layoutConfig.autoHideSidebarOnOpenPage) return;
+      if (!this.layoutConfig.autoHideSidebarOnOpenUrl) return;
       this._hideAllSidebars();
     },
     __getResourcesAll() {
