@@ -251,16 +251,6 @@ export default {
         this.contextCallback(200, { content: JSON.stringify(this.profile) });
       }
     },
-    __adjustDashboardKey(atomStaticKey) {
-      const presets = this.$config.dashboard.presets;
-      const dashboardConfig = this.user.op.anonymous ? presets.anonymous : presets.authenticated;
-      if (!atomStaticKey || atomStaticKey === 'default') {
-        return dashboardConfig.default;
-      } else if (atomStaticKey === 'home') {
-        return dashboardConfig.home;
-      }
-      return atomStaticKey;
-    },
     async __changeProfileUserDefault({ dashboardUserId }) {
       await this.$api.post('/a/dashboard/dashboard/changeItemUserDefault', {
         key: { atomId: this.dashboardAtomId },
@@ -278,7 +268,7 @@ export default {
           title = this.item.atomName;
         } else {
           const res = await this.$api.post('/a/dashboard/dashboard/itemByKey', {
-            atomStaticKey: this.__adjustDashboardKey(this.atomStaticKey),
+            atomStaticKey: this.atomStaticKey,
           });
           if (res.dashboardUser) {
             this.dashboardUser = res.dashboardUser;

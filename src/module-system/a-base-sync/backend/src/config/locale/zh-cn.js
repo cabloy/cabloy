@@ -139,6 +139,8 @@ module.exports = {
   About: '关于',
   BasicProfile: '基础资料',
   BasicAdmin: '基础管理',
+  Authenticated: '已验证',
+  Anonymous: '匿名',
   // role name
   root: '根',
   anonymous: '匿名',
